@@ -1,0 +1,55 @@
+﻿using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Linq;
+using Core;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+
+namespace KursAM2.ViewModel.Logistiks
+{
+    public class KontragentGruzoInfoWindowViewModel : RSWindowViewModelBase
+    {
+        private Kontragent mySelectedKontr;
+
+        public KontragentGruzoInfoWindowViewModel()
+        {
+            Kontrs = new ObservableCollection<Kontragent>();
+            Data = new ObservableCollection<KontragentGruzoInfoViewModel>();
+            ActualData = new ObservableCollection<KontragentGruzoInfoViewModel>();
+        }
+
+        public Kontragent SelectedKontr
+        {
+            get => mySelectedKontr;
+            set
+            {
+                if (mySelectedKontr != null && mySelectedKontr.Equals(value)) return;
+                mySelectedKontr = value;
+                LoadActualGruzoInfo(mySelectedKontr.DocCode);
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(ActualData));
+            }
+        }
+
+        public ObservableCollection<KontragentGruzoInfoViewModel> Data { set; get; }
+        public ObservableCollection<KontragentGruzoInfoViewModel> ActualData { set; get; }
+        public ObservableCollection<Kontragent> Kontrs { set; get; }
+
+        public void LoadActualGruzoInfo(decimal dc)
+        {
+            ActualData.Clear();
+            foreach (var d in Data.Where(_ => _.DocCode == dc))
+                ActualData.Add(d);
+        }
+
+        public override void RefreshData(object data)
+        {
+            Kontrs.Clear();
+            foreach (var d in GlobalOptions.GetEntities().SD_43.Include(_ => _.SD_301))
+                Kontrs.Add(new Kontragent(d));
+            Data.Clear();
+            foreach (var d in GlobalOptions.GetEntities().SD_43_GRUZO)
+                Data.Add(new KontragentGruzoInfoViewModel(d));
+        }
+    }
+}

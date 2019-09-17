@@ -1,0 +1,29 @@
+using System.Collections.ObjectModel;
+using Core.EntityViewModel;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+
+namespace Calculates.Materials
+{
+    public class NomenklCost : RSViewModelData
+    {
+        private NomenklViewModel myNomenkl;
+
+        public NomenklViewModel NomenklViewModel
+        {
+            get { return myNomenkl; }
+            set
+            {
+                if (myNomenkl == value) return;
+                myNomenkl = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<NomenklSkladRemain> Remains { set; get; } =
+            new ObservableCollection<NomenklSkladRemain>();
+
+        public ObservableCollection<NomenklCalcCostOperation> Operations { set; get; } =
+            new ObservableCollection<NomenklCalcCostOperation>();
+    }
+}

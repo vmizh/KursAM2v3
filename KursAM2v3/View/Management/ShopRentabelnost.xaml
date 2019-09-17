@@ -1,0 +1,176 @@
+﻿<dx:DXWindow
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:control="clr-namespace:Core.Control;assembly=Core"
+    x:Class="KursAM2.View.Management.ShopRentabelnost"
+    Title="Рентабельность Shop" Height="520.149" Width="959.328">
+    <DockPanel>
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
+               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <dxe:ComboBoxEdit x:Name="periodCB" HorizontalAlignment="Left" Margin="4,10,0,0"
+                              VerticalAlignment="Top" Width="150" Height="22"
+                              ItemsSource="{Binding Period, Mode=OneTime}"
+                              SelectedItem="{Binding CurrentPeriod, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                              IsTextEditable="False">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand PassEventArgsToCommand="False"
+                                           Command="{Binding PeriodChangedCommand}"
+                                           CommandParameter="{Binding ElementName=periodCB, Path=SelectedItem}"
+                                           EventName="EditValueChanged" />
+                </dxmvvm:Interaction.Behaviors>
+            </dxe:ComboBoxEdit>
+        </StackPanel>
+        <dxlc:LayoutControl
+            x:Name="mainLayoutControl"
+            Margin="0,10,0,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch" Padding="0">
+            <dxlc:LayoutGroup Orientation="Vertical" x:Name="LayoutGroup1">
+                <dxlc:LayoutGroup Header="LayoutGroup" x:Name="LayoutGroup1_1" View="Group"
+                                  dxlc:LayoutControl.AllowVerticalSizing="True">
+                    <dxg:GridControl
+                        AutoGenerateColumns="None"
+                        EnableSmartColumnsGeneration="True"
+                        dx:DXSerializer.StoreLayoutMode="ALL"
+                        dx:DXSerializer.SerializationID="gridHeader"
+                        dxg:GridSerializationOptions.AddNewColumns="False"
+                        dxg:GridSerializationOptions.RemoveOldColumns="False"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        ItemsSource="{Binding COList}"
+                        x:Name="gridHeader">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Name="col1" Header="Центр ответственности" ReadOnly="True" FieldName="Name" />
+                            <dxg:GridColumn Name="col2" Header="Сумма" ReadOnly="True" FieldName="Summa">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="col3" Header="Себестоимость" ReadOnly="True" FieldName="Sebestoimost">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="col4" Header="Результат" ReadOnly="True" FieldName="Documents">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView NavigationStyle="Row" 
+                                           AllowPerPixelScrolling="True" 
+                                           ShowTotalSummary="True"
+                                           CellStyle="{StaticResource FocusedCellStyle}" 
+                                           RowStyle="{StaticResource FocusedRowStyle}"/>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Header="LayoutGroup" x:Name="LayoutGroup2" View="Group"
+                                  dxlc:LayoutControl.AllowVerticalSizing="True">
+                    <dxg:GridControl
+                        x:Name="gridNomenkl"
+                        EnableSmartColumnsGeneration="False"
+                        dx:DXSerializer.StoreLayoutMode="ALL"
+                        dx:DXSerializer.SerializationID="gridNomenkl"
+                        dxg:GridSerializationOptions.AddNewColumns="False"
+                        dxg:GridSerializationOptions.RemoveOldColumns="False"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        ItemsSource="{Binding NomenklList}"
+                        CurrentItem="{Binding CurrentNomenklItem}"
+                        CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Name="col11" Header="Наименование" ReadOnly="True" FieldName="Name"
+                                            VisibleIndex="6" />
+                            <dxg:GridColumn Name="col12" Header="Ном.№" ReadOnly="True" FieldName="NomenklNumber"
+                                            VisibleIndex="3" />
+                            <dxg:GridColumn Name="col13" Header="Кол-во" ReadOnly="True" FieldName="Quantity"
+                                            VisibleIndex="0">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="col14" Header="Цена" ReadOnly="True" FieldName="Price"
+                                            VisibleIndex="5">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="col15" Header="Сумма" ReadOnly="True" FieldName="Summa">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="col16" Header="Себестоимость(ед)" ReadOnly="True" FieldName="CostOne"
+                                            VisibleIndex="1">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="col17" Header="Себестоимость" ReadOnly="True" FieldName="Cost"
+                                            VisibleIndex="7">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="col18" Header="Результат" ReadOnly="True" FieldName="Documents"
+                                            VisibleIndex="2">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.TotalSummary>
+                            <dxg:GridSummaryItem FieldName="Name" SummaryType="Count" />
+                            <dxg:GridSummaryItem FieldName="Quantity" SummaryType="Sum"
+                                                 DisplayFormat="n0" />
+                            <dxg:GridSummaryItem FieldName="Summa" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="Cost" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="Documents" SummaryType="Sum" DisplayFormat="n2" />
+                        </dxg:GridControl.TotalSummary>
+
+                        <dxg:GridControl.View>
+                            <dxg:TableView x:Name="gridNomenklView"
+                                           CellStyle="{StaticResource FocusedCellStyle}" 
+                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           NavigationStyle="Row"
+                                           ShowAutoFilterRow="True"
+                                           AllowPerPixelScrolling="True"
+                                           ShowTotalSummary="True">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Открыть расчет себестоимость"
+                                                  Command="{Binding OpenCalcRentabelnostCommand}" />
+                                        <Separator />
+                                        <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                                  CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}">
+                                            <MenuItem.Icon>
+                                                <Image
+                                                    Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Копировать итоговую сумму"
+                                                  Command="{Binding GetColumnSummaCommand}"
+                                                  CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}" />
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:DXWindow>

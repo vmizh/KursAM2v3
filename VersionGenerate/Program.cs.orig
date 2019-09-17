@@ -1,0 +1,56 @@
+﻿using System;
+using System.IO;
+using System.Xml;
+
+namespace VersionGenerate
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+<<<<<<< working copy
+            string fVerName = "..\\..\\KursAM2v3\\bin\\Release\\Version.xml";
+=======
+
+            var fVerName = Directory.GetCurrentDirectory() + "\\KursAM2v3\\bin\\Release\\Version.xml";
+>>>>>>> merge rev
+            try
+            {
+                if (args[0] == "Release")
+                {
+                    var xmlDoc = new XmlDocument();
+                    xmlDoc.Load(fVerName);
+                    if (xmlDoc.DocumentElement != null)
+                    {
+                        var nodeList = xmlDoc.DocumentElement.SelectNodes("/Version/Version");
+                        foreach (XmlNode node in nodeList)
+                        {
+
+                            var ver = Convert.ToInt32(node.InnerText);
+                            node.InnerText = Convert.ToString(ver + 1);
+                        }
+                    }
+                    File.Delete(fVerName);
+                    xmlDoc.Save(fVerName);
+<<<<<<< working copy
+=======
+                    File.Copy(fVerName, "Version.xml", true);
+>>>>>>> merge rev
+                }
+<<<<<<< working copy
+                File.Copy(fVerName, "Version.xml",true);
+=======
+                else
+                {
+                    File.Copy(fVerName, Directory.GetCurrentDirectory() + "\\KursAM2v3\\bin\\Debug\\Version.xml", true);
+                }
+>>>>>>> merge rev
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+    }
+}

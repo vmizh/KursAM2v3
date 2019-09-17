@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="KursAM2.View.Logistiks.UC.SelectNomenklSimpleUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top">
+            <dxlc:LayoutItem Label="Строка поиска  " Height="30" Margin="0,0,0,3">
+                <dxe:ButtonEdit
+                    Text="{Binding SearchText, Mode=TwoWay, 
+                    UpdateSourceTrigger=PropertyChanged}"
+                    AllowDefaultButton="False"
+                    KeyDown="ButtonEdit_KeyDown">
+                    <dxe:ButtonEdit.Buttons>
+                        <dxe:ButtonInfo GlyphKind="Search" Command="{Binding SearchExecuteCommand}" />
+                        <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding SearchClearCommand}" />
+                    </dxe:ButtonEdit.Buttons>
+                </dxe:ButtonEdit>
+            </dxlc:LayoutItem>
+        </StackPanel>
+        <dxg:GridControl x:Name="gridControlNomenkl"
+                         AutoGenerateColumns="None"
+                         EnableSmartColumnsGeneration="True"
+                         MaxHeight="10000"
+                         MaxWidth="10000"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         dx:DXSerializer.SerializationID="gridControlNomenkl"
+                         dx:DXSerializer.StoreLayoutMode="All"
+                         dxg:DataControlSerializationOptions.AddNewColumns="True"
+                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                         ItemsSource="{Binding NomenklCollection, Mode=TwoWay}"
+                         CurrentItem="{Binding CurrentNomenkl,Mode=TwoWay}"
+                         SelectionMode="Row">
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn Name="col_2_1" Header="Наименование" FieldName="Name"
+                                ReadOnly="True" />
+                <dxg:GridColumn Name="col_2_2" Header="Ном.№" FieldName="NomenklNumber"
+                                ReadOnly="True" />
+                <dxg:GridColumn Name="col_2_3" Header="Полное наименование" FieldName="NameFull"
+                                ReadOnly="True" />
+                <dxg:GridColumn Name="col_2_4" Header="Валюта" FieldName="Currency" ReadOnly="True"
+                                SortMode="DisplayText" />
+                <dxg:GridColumn Name="col_2_5" Header="Примечания" FieldName="Note" ReadOnly="True" />
+            </dxg:GridControl.Columns>
+            <dxg:GridControl.View>
+                <dxg:TableView x:Name="tableViewNomenkl"
+                               AllowPerPixelScrolling="True"
+                               ShowTotalSummary="False"
+                               ShowAutoFilterRow="True"
+                               ShowGroupPanel="False" 
+                               CellStyle="{StaticResource FocusedCellStyle}" 
+                               RowStyle="{StaticResource FocusedRowStyle}"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,150 @@
+﻿<dx:DXWindow
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    x:Class="KursAM2.View.KontragentGruzoInfoReferenceView"
+    Title="KontragentGruzoInfoReferenceView" Height="350" Width="525">
+
+    <Grid>
+
+        <dxb:BarManager HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <dxb:BarManager.Items>
+                <dxb:BarButtonItem x:Name="ctxExport" Content="Экспорт" GlyphSize="Large"
+                                   Glyph="pack://siteoforigin:,,,/Images/export1.png"
+                                   ToolTip="Экспортирует таблицу во внешний файл." />
+                <dxb:BarButtonItem x:Name="bnExit" Content="Закрыть окно" GlyphSize="Large"
+                                   Glyph="pack://siteoforigin:,,,/Images/exit.png" GlyphAlignment="Right"
+                                   ToolTip="Закрывает форму." />
+                <dxb:BarButtonItem x:Name="bnRefresh" Content="Обновить" GlyphSize="Large"
+                                   Glyph="pack://siteoforigin:,,,/Images/document_refresh.png"
+                                   ToolTip="Перегружает данные." />
+                <dxb:BarSubItem x:Name="barSubItemOptions" Content="Настройки" GlyphSize="Large"
+                                Glyph="pack://siteoforigin:,,,/Images/document_info.png" />
+                <dxb:BarButtonItem x:Name="barButtonItemResetSum" Content="Переустановка сумм" GlyphSize="Large"
+                                   Glyph="pack://siteoforigin:,,,/Images/recycle_preferences.png"
+                                   ItemClick="BarButtonItemResetSum_OnItemClick" />
+            </dxb:BarManager.Items>
+            <dxb:BarManager.Bars>
+                <dxb:Bar x:Name="mainBar" Caption="Главное меню" IsMainMenu="True" UseWholeRow="True"
+                         ShowDragWidget="False">
+                    <dxb:Bar.DockInfo>
+                        <dxb:BarDockInfo />
+                    </dxb:Bar.DockInfo>
+                    <dxb:BarSubItemLink BarItemName="barSubItemOptions" UserGlyphSize="Large" />
+                    <dxb:BarButtonItemLink x:Name="bnClose" BarItemName="" Alignment="Far" UserGlyphSize="Large" />
+                    <dxb:BarButtonItemLink BarItemName="bnRefresh" />
+                    <dxb:BarButtonItemLink BarItemName="ctxExport" />
+                    <dxb:BarButtonItemLink BarItemName="bnExit" Alignment="Far" />
+                </dxb:Bar>
+                <dxb:Bar x:Name="statusBar" Caption="Status Bar" IsStatusBar="True" ShowDragWidget="False"
+                         UseWholeRow="True">
+                    <dxb:Bar.DockInfo>
+                        <dxb:BarDockInfo ContainerType="Bottom" />
+                    </dxb:Bar.DockInfo>
+                </dxb:Bar>
+            </dxb:BarManager.Bars>
+
+            <dxlc:LayoutControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0">
+                <dxlc:LayoutGroup Orientation="Vertical">
+                    <dxlc:LayoutGroup Header="Список контрагентов" View="GroupBox" Padding="-8">
+                        <dxg:GridControl x:Name="gridKontr"
+                                         HorizontalAlignment="Stretch"
+                                         Margin="0"
+                                         MaxHeight="10000"
+                                         MaxWidth="10000"
+                                         VerticalAlignment="Stretch"
+                                         dx:DXSerializer.SerializationID="grid"
+                                         dx:DXSerializer.StoreLayoutMode="All"
+                                         dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                         ItemsSource="{Binding Kontragents, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                         SelectionMode="Row">
+                            <dxg:GridControl.Columns>
+                                <dxg:GridColumn x:Name="kCol1" Header="Наименование" FieldName="Name" />
+                                <dxg:GridColumn x:Name="kCol2" Header="Вне баланса" FieldName="IsOutBalans" />
+                            </dxg:GridControl.Columns>
+                            <dxg:GridControl.View>
+                                <dxg:TableView ShowTotalSummary="False"
+                                               ShowGroupPanel="False"
+                                               CellStyle="{StaticResource FocusedCellStyle}" 
+                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               x:Name="tableViewKontr"
+                                               ShowAutoFilterRow="True"
+                                               AllowEditing="False" />
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup Header="Реквизиты" View="Tabs" Padding="0">
+                        <dxlc:LayoutGroup Header="Грузовые реквизиты" Padding="-8">
+                            <dxg:GridControl x:Name="gridGruzo"
+                                             HorizontalAlignment="Stretch"
+                                             Margin="0"
+                                             MaxHeight="10000"
+                                             MaxWidth="10000"
+                                             VerticalAlignment="Stretch"
+                                             dx:DXSerializer.SerializationID="grid"
+                                             dx:DXSerializer.StoreLayoutMode="All"
+                                             dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                             dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                             ItemsSource="{Binding Kontragents.GruzoInfoCollection, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                             SelectionMode="Cell">
+                                <dxg:GridControl.Columns>
+                                    <dxg:GridColumn x:Name="gCol1" Header="ОКПО" FieldName="OKPO" />
+                                    <dxg:GridColumn x:Name="gCol2" Header="Для накладной" FieldName="NakladGruzoText">
+                                        <dxg:GridColumn.EditSettings>
+                                            <dxe:MemoEditSettings MemoTextWrapping="Wrap" IsTextEditable="True" />
+                                        </dxg:GridColumn.EditSettings>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn x:Name="gCol3" Header="Для с/фактуры" FieldName="SFGruzoText">
+                                        <dxg:GridColumn.EditSettings>
+                                            <dxe:MemoEditSettings MemoTextWrapping="Wrap" IsTextEditable="True" />
+                                        </dxg:GridColumn.EditSettings>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn x:Name="gCol4" Header="Посл.изм." FieldName="DateChanged" />
+                                </dxg:GridControl.Columns>
+                                <dxg:GridControl.View>
+                                    <dxg:TableView ShowTotalSummary="False"
+                                                   ShowGroupPanel="False"
+                                                   x:Name="tableViewGruzo"
+                                                   CellStyle="{StaticResource FocusedCellStyle}" 
+                                                   RowStyle="{StaticResource FocusedRowStyle}"
+                                                   ShowAutoFilterRow="True"
+                                                   AllowEditing="True" />
+                                </dxg:GridControl.View>
+                            </dxg:GridControl>
+                        </dxlc:LayoutGroup>
+                        <dxlc:LayoutGroup Header="Банковские счета" Padding="-8">
+                            <dxg:GridControl x:Name="gridBank"
+                                             HorizontalAlignment="Stretch"
+                                             Margin="0"
+                                             MaxHeight="10000"
+                                             MaxWidth="10000"
+                                             VerticalAlignment="Stretch"
+                                             dx:DXSerializer.SerializationID="grid"
+                                             dx:DXSerializer.StoreLayoutMode="All"
+                                             dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                             dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                             ItemsSource="{Binding SelectedItem.BankCollection, ElementName=gridKontr, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                             SelectionMode="Cell">
+                                <dxg:GridControl.View>
+                                    <dxg:TableView ShowTotalSummary="False"
+                                                   ShowGroupPanel="False"
+                                                   CellStyle="{StaticResource FocusedCellStyle}" 
+                                                   RowStyle="{StaticResource FocusedRowStyle}"
+                                                   x:Name="tableViewBank"
+                                                   ShowAutoFilterRow="True"
+                                                   AllowEditing="True" />
+                                </dxg:GridControl.View>
+                            </dxg:GridControl>
+                        </dxlc:LayoutGroup>
+                    </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutControl>
+
+        </dxb:BarManager>
+    </Grid>
+</dx:DXWindow>

@@ -1,0 +1,389 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+<<<<<<< working copy
+using System.Text;
+using System.Threading.Tasks;
+=======
+>>>>>>> merge rev
+using System.Windows;
+using Core;
+using Core.EntityViewModel;
+using Core.Menu;
+using Core.ViewModel.Base;
+using KursAM2.Managers;
+using KursAM2.View.Finance;
+
+namespace KursAM2.ViewModel.Finance
+{
+    class BankOperationsWindowViewModel : RSWindowViewModelBase
+    {
+<<<<<<< working copy
+        #region Header
+
+        public ObservableCollection<BankStatements> BankStatementsCollection { set; get; } = new ObservableCollection<BankStatements>();
+        public ObservableCollection<TD_101ViewModel> BankOperationsCollection { set; get; } = new ObservableCollection<TD_101ViewModel>();
+
+        public ObservableCollection<RemainderCurrenciesDatePeriod> BankPeriodOperationsCollection { set; get; } =
+            new ObservableCollection<RemainderCurrenciesDatePeriod>();
+
+        public ObservableCollection<RemainderCurrenciesDatePeriod> Periods { set; get; } =
+            new ObservableCollection<RemainderCurrenciesDatePeriod>();
+
+        private readonly BankOperationsManager Manager = new BankOperationsManager();
+
+        #endregion
+
+=======
+>>>>>>> merge rev
+        public BankOperationsWindowViewModel()
+        {
+            
+        }
+<<<<<<< working copy
+        public BankOperationsWindowViewModel(Window form)
+=======
+
+        public BankOperationsWindowViewModel(Window form) : this()
+>>>>>>> merge rev
+        {
+            Form = form;
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            Periods = new ObservableCollection<RemainderCurrenciesDatePeriod>();
+            RefreshData(null);
+        }
+
+<<<<<<< working copy
+        #region Current
+
+        private RemainderCurrenciesDatePeriod myCurrentPeriods;
+
+        public RemainderCurrenciesDatePeriod CurrentPeriods
+        {
+            set
+            {
+                if (myCurrentPeriods == value) return;
+                myCurrentPeriods = value;
+                GetBankOperation();
+                RaisePropertyChanged();
+            }
+            get => myCurrentPeriods;
+        }
+
+        
+=======
+        #region Header
+
+        public ObservableCollection<BankStatements> BankStatementsCollection { set; get; } =
+            new ObservableCollection<BankStatements>();
+>>>>>>> merge rev
+
+<<<<<<< working copy
+        private BankStatements myCurrentBankStatements;
+
+        public BankStatements CurrentBankStatements
+        {
+            set
+            {
+                if (myCurrentBankStatements == value) return;
+                myCurrentBankStatements = value;
+                CurrentPeriods = null;
+                BankOperationsCollection.Clear();
+                GetPeriods();
+                RaisePropertyChanged();
+            }
+            get => myCurrentBankStatements;
+        }
+
+        #endregion
+
+        #region Command
+=======
+        public ObservableCollection<TD_101ViewModel> BankOperationsCollection { set; get; } =
+            new ObservableCollection<TD_101ViewModel>();
+
+        public ObservableCollection<BankPeriodsOperationsViewModel> BankPeriodOperationsCollection { set; get; } =
+            new ObservableCollection<BankPeriodsOperationsViewModel>();
+
+        public ObservableCollection<RemainderCurrenciesDatePeriod> Periods { set; get; } =
+            new ObservableCollection<RemainderCurrenciesDatePeriod>();
+
+        private readonly BankOperationsManager Manager = new BankOperationsManager();
+
+        #endregion
+
+        #region Current
+
+        private RemainderCurrenciesDatePeriod myCurrentPeriods;
+
+        public RemainderCurrenciesDatePeriod CurrentPeriods
+        {
+            set
+            {
+                if (myCurrentPeriods == value) return;
+                myCurrentPeriods = value;
+                GetBankOperation();
+                RaisePropertyChanged();
+            }
+            get => myCurrentPeriods;
+        }
+
+
+        private BankStatements myCurrentBankStatements;
+
+        public BankStatements CurrentBankStatements
+        {
+            set
+            {
+                if (myCurrentBankStatements == value) return;
+                myCurrentBankStatements = value;
+                CurrentPeriods = null;
+                BankOperationsCollection.Clear();
+                GetPeriods();
+                RaisePropertyChanged();
+            }
+            get => myCurrentBankStatements;
+        }
+
+        #endregion
+
+        #region Command
+
+>>>>>>> merge rev
+        public override void RefreshData(object obj)
+        {
+            BankStatementsCollection = Manager.GetBankStatements();
+            GetVisibleBankStatements();
+<<<<<<< working copy
+            GetVisiblePeriod();
+            RaisePropertyChanged(nameof(Periods));
+=======
+>>>>>>> merge rev
+        }
+
+        private void GetBankOperation()
+        {
+            if (CurrentPeriods == null || CurrentBankStatements == null) return;
+            BankOperationsCollection = Manager.GetBankOperations(CurrentPeriods.DateStart, CurrentPeriods.DateEnd,
+                CurrentBankStatements.BankDC);
+            RaisePropertyChanged(nameof(BankOperationsCollection));
+        }
+
+        private void GetVisibleBankStatements()
+        {
+            var form = (BankOperationsView) Form;
+            if (form == null) return;
+            decimal? sumCHF = 0;
+            decimal? sumEUR = 0;
+            decimal? sumGBP = 0;
+            decimal? sumRUB = 0;
+            decimal? sumUSD = 0;
+            decimal? sumSEK = 0;
+            foreach (var item in BankStatementsCollection)
+            {
+                sumCHF += item.RemainderCHF;
+                sumEUR += item.RemainderEUR;
+                sumGBP += item.RemainderGBP;
+                sumRUB += item.RemainderRUB;
+                sumUSD += item.RemainderUSD;
+                sumSEK += item.RemainderSEK;
+            }
+            foreach (var col in form.gridBank.Columns)
+<<<<<<< working copy
+            {
+                switch (col.FieldName)
+                {
+                    case "RemainderCHF":
+                        if (sumCHF == 0) col.Visible = false;
+                        break;
+                    case "RemainderEUR":
+                        if (sumEUR == 0) col.Visible = false;
+                        break;
+                    case "RemainderGBP":
+                        if (sumGBP == 0) col.Visible = false;
+                        break;
+                    case "RemainderRUB":
+                        if (sumRUB == 0) col.Visible = false;
+                        break;
+                    case "RemainderUSD":
+                        if (sumUSD == 0) col.Visible = false;
+                        break;
+                    case "RemainderSEK":
+                        if (sumSEK == 0) col.Visible = false;
+                        break;
+                }
+            }
+        }
+        private void GetVisiblePeriod()
+        {
+            var form = (BankOperationsView)Form;
+            if (form == null) return;
+            decimal? sumCHF = 0;
+            decimal? sumEUR = 0;
+            decimal? sumGBP = 0;
+            decimal? sumRUB = 0;
+            decimal? sumUSD = 0;
+            decimal? sumSEK = 0;
+            foreach (var item in Periods)
+            {
+                sumCHF += item.RemainderCHF;
+                sumEUR += item.RemainderEUR;
+                sumGBP += item.RemainderGBP;
+                sumRUB += item.RemainderRUB;
+                sumUSD += item.RemainderUSD;
+                sumSEK += item.RemainderSEK;
+            }
+            foreach (var col in form.TreePeriods.Columns)
+            {
+                switch (col.FieldName)
+                {
+                    case "RemainderCHF":
+                        if (sumCHF == 0) col.Visible = false;
+                        break;
+                    case "RemainderEUR":
+                        if (sumEUR == 0) col.Visible = false;
+                        break;
+                    case "RemainderGBP":
+                        if (sumGBP == 0) col.Visible = false;
+                        break;
+                    case "RemainderRUB":
+                        if (sumRUB == 0) col.Visible = false;
+                        break;
+                    case "RemainderUSD":
+                        if (sumUSD == 0) col.Visible = false;
+                        break;
+                    case "RemainderSEK":
+                        if (sumSEK == 0) col.Visible = false;
+                        break;
+                }
+            }
+        }
+
+        private void GetPeriods()
+        {
+            if (CurrentBankStatements == null) return;
+            BankPeriodOperationsCollection = Manager.GetBankPeriodOperations(CurrentBankStatements.BankDC);
+            Periods.Clear();
+            foreach (var d in DatePeriod.GenerateIerarhy(
+                DateTime.Today.AddYears(-2), DateTime.Today,
+                PeriodIerarhy.YearMonth))
+                Periods.Add(new RemainderCurrenciesDatePeriod(d));
+=======
+                switch (col.FieldName)
+                {
+                    case "RemainderCHF":
+                        if (sumCHF == 0) col.Visible = false;
+                        break;
+                    case "RemainderEUR":
+                        if (sumEUR == 0) col.Visible = false;
+                        break;
+                    case "RemainderGBP":
+                        if (sumGBP == 0) col.Visible = false;
+                        break;
+                    case "RemainderRUB":
+                        if (sumRUB == 0) col.Visible = false;
+                        break;
+                    case "RemainderUSD":
+                        if (sumUSD == 0) col.Visible = false;
+                        break;
+                    case "RemainderSEK":
+                        if (sumSEK == 0) col.Visible = false;
+                        break;
+                }
+        }
+
+        private void GetPeriods()
+        {
+            if (CurrentBankStatements == null) return;
+            Periods = new ObservableCollection<RemainderCurrenciesDatePeriod>();
+            var PeriodAdapter = new List<RemainderCurrenciesDatePeriod>();
+            BankPeriodOperationsCollection = Manager.GetBankPeriodOperations(CurrentBankStatements.BankDC);
+            foreach (var d in DatePeriod.GenerateIerarhy(BankPeriodOperationsCollection.Count > 0
+                    ? BankPeriodOperationsCollection.Min(_ => _.Date)
+                    : DateTime.Today.AddYears(-2), DateTime.Today,
+                PeriodIerarhy.YearMonth))
+                PeriodAdapter.Add(new RemainderCurrenciesDatePeriod(d));
+            foreach (var date in PeriodAdapter)
+            {
+                //foreach (var item in BankPeriodOperationsCollection.Select(_ => _.CrsDC).Distinct())
+                //{
+                //}
+                var newItem =
+                    BankPeriodOperationsCollection.Where(_ => _.Date <= date.DateEnd && _.Date >= date.DateStart);
+                if (newItem == null || !newItem.Any()) return;
+                var adapter = date;
+                foreach (var cur in newItem.Select(_=>_.CrsDC).Distinct())
+                {
+                    IEnumerable<BankPeriodsOperationsViewModel> item;
+                    DateTime minDate;
+                    DateTime maxDate;
+                    switch (cur)
+                    {
+                        case CurrencyCode.RUB:
+                            item = newItem.Where(_ => _.CrsDC == CurrencyCode.RUB);
+                            minDate = item.Min(_ => _.Date);
+                            maxDate = item.Max(_ => _.Date);
+                            adapter.SummaOutRUB = item.Sum(_ => _.SummaOut);
+                            adapter.SummaInRUB = item.Sum(_ => _.SummaIn);
+                            adapter.SummaStartRUB = item.FirstOrDefault(_ => _.Date == minDate).SummaStart;
+                            adapter.SummaEndRUB = item.FirstOrDefault(_ => _.Date == maxDate).SummaEnd;
+                            break;
+                        case CurrencyCode.GBP:
+                            item = newItem.Where(_ => _.CrsDC == CurrencyCode.GBP);
+                            minDate = item.Min(_ => _.Date);
+                            maxDate = item.Max(_ => _.Date);
+                            adapter.SummaOutGBP = item.Sum(_ => _.SummaOut);
+                            adapter.SummaInGBP = item.Sum(_ => _.SummaIn);
+                            adapter.SummaStartGBP = item.FirstOrDefault(_ => _.Date == minDate).SummaStart;
+                            adapter.SummaEndGBP = item.FirstOrDefault(_ => _.Date == maxDate).SummaEnd;
+                            break;
+                        case CurrencyCode.EUR:
+                            item = newItem.Where(_ => _.CrsDC == CurrencyCode.EUR);
+                            minDate = item.Min(_ => _.Date);
+                            maxDate = item.Max(_ => _.Date);
+                            adapter.SummaOutEUR = item.Sum(_ => _.SummaOut);
+                            adapter.SummaInEUR = item.Sum(_ => _.SummaIn);
+                            adapter.SummaStartEUR = item.FirstOrDefault(_ => _.Date == minDate).SummaStart;
+                            adapter.SummaEndEUR = item.FirstOrDefault(_ => _.Date == maxDate).SummaEnd;
+                            break;
+                        case CurrencyCode.SEK:
+                            item = newItem.Where(_ => _.CrsDC == CurrencyCode.SEK);
+                            minDate = item.Min(_ => _.Date);
+                            maxDate = item.Max(_ => _.Date);
+                            adapter.SummaOutSEK = item.Sum(_ => _.SummaOut);
+                            adapter.SummaInSEK = item.Sum(_ => _.SummaIn);
+                            adapter.SummaStartSEK = item.FirstOrDefault(_ => _.Date == minDate).SummaStart;
+                            adapter.SummaEndSEK = item.FirstOrDefault(_ => _.Date == maxDate).SummaEnd;
+                            break;
+                        case CurrencyCode.CHF:
+                            item = newItem.Where(_ => _.CrsDC == CurrencyCode.CHF);
+                            minDate = item.Min(_ => _.Date);
+                            maxDate = item.Max(_ => _.Date);
+                            adapter.SummaOutCHF = item.Sum(_ => _.SummaOut);
+                            adapter.SummaInCHF = item.Sum(_ => _.SummaIn);
+                            adapter.SummaStartCHF = item.FirstOrDefault(_ => _.Date == minDate).SummaStart;
+                            adapter.SummaEndCHF = item.FirstOrDefault(_ => _.Date == maxDate).SummaEnd;
+                            break;
+                        case CurrencyCode.USD:
+                            item = newItem.Where(_ => _.CrsDC == CurrencyCode.USD);
+                            minDate = item.Min(_ => _.Date);
+                            maxDate = item.Max(_ => _.Date);
+                            adapter.SummaOutUSD = item.Sum(_ => _.SummaOut);
+                            adapter.SummaInUSD = item.Sum(_ => _.SummaIn);
+                            adapter.SummaStartUSD = item.FirstOrDefault(_ => _.Date == minDate).SummaStart;
+                            adapter.SummaEndUSD = item.FirstOrDefault(_ => _.Date == maxDate).SummaEnd;
+                            break;
+                    }
+                }
+                Periods.Add(adapter);
+            }
+
+            RaisePropertyChanged(nameof(Periods));
+>>>>>>> merge rev
+        }
+
+        #endregion
+    }
+}

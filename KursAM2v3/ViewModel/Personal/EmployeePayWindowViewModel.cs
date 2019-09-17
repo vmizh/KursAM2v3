@@ -1,0 +1,542 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Core;
+using Core.Menu;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using Core.WindowsManager;
+using KursAM2.View.Personal;
+
+namespace KursAM2.ViewModel.Personal
+{
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    public class EmployeePayWindowViewModel : RSWindowViewModelBase
+    {
+        private readonly bool isPersonaItog = true;
+        private EmployeePayMainViewModel myCurrentEmploee;
+        private EmployeePayDocumentViewModel myCurrentPayDocument;
+        private EmployeePayMainViewModel mySelectEmployee;
+        private EmployeePayMainViewModel mySelEmp;
+
+        public EmployeePayWindowViewModel()
+        {
+            Documents = new ObservableCollection<EmployeePayDocumentViewModel>();
+            EmployeeMain = new ObservableCollection<EmployeePayMainViewModel>();
+            Periods = new ObservableCollection<NachEmployeeForPeriod>();
+            DocumentsForEmployee = new ObservableCollection<EmployeePayDocumentViewModel>();
+            DocumentsForPeriod = new ObservableCollection<EmployeePayDocumentViewModel>();
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = GetRightMenu();
+        }
+
+        public EmployeePayWindowViewModel(bool isPersItog)
+        {
+            Documents = new ObservableCollection<EmployeePayDocumentViewModel>();
+            EmployeeMain = new ObservableCollection<EmployeePayMainViewModel>();
+            Periods = new ObservableCollection<NachEmployeeForPeriod>();
+            DocumentsForEmployee = new ObservableCollection<EmployeePayDocumentViewModel>();
+            DocumentsForPeriod = new ObservableCollection<EmployeePayDocumentViewModel>();
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = GetRightMenu();
+            isPersonaItog = isPersItog;
+        }
+
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<EmployeePayDocumentViewModel> DocumentsForPeriod { get; set; }
+        public ObservableCollection<EmployeePayDocumentViewModel> Documents { set; get; }
+        public ObservableCollection<EmployeePayDocumentViewModel> DocumentsForEmployee { set; get; }
+        public ObservableCollection<EmployeePayMainViewModel> EmployeeMain { get; }
+
+        public EmployeePayMainViewModel CurrentEmploee
+        {
+            get => myCurrentEmploee;
+            set
+            {
+                if (myCurrentEmploee != null && myCurrentEmploee.Equals(value)) return;
+                myCurrentEmploee = value;
+                UpdatePeriods(myCurrentEmploee);
+                RaisePropertyChanged();
+            }
+        }
+
+        public EmployeePayMainViewModel SelectEmployee
+        {
+            get => mySelectEmployee;
+            set
+            {
+                if (mySelectEmployee != null && mySelectEmployee.Equals(value)) return;
+                mySelectEmployee = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public EmployeePayDocumentViewModel CurrentPayDocument
+        {
+            get => myCurrentPayDocument;
+            set
+            {
+                if (myCurrentPayDocument != null && myCurrentPayDocument.Equals(value)) return;
+                myCurrentPayDocument = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ICommand PayDocumentOpenCommand
+        {
+            get { return new Command(PayDocumentOpen, param => IsDocPayVedomost); }
+        }
+
+        public bool IsDocPayVedomost => CurrentPayDocument != null && CurrentPayDocument.PayType == "Начисление";
+
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<NachEmployeeForPeriod> Periods { set; get; }
+
+        private void PayDocumentOpen(object obj)
+        {
+            if (CurrentPayDocument == null) return;
+            switch (CurrentPayDocument.PayType)
+            {
+                case "Начисление":
+                    var pr = new PayRollVedomostWindowViewModel(CurrentPayDocument.Id, CurrentEmploee?.Employee);
+                    var form = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = pr};
+                    form.Show();
+                    break;
+            }
+        }
+
+        private ObservableCollection<MenuButtonInfo> GetRightMenu()
+        {
+            return new ObservableCollection<MenuButtonInfo>
+            {
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuRefresh"] as ControlTemplate,
+                    ToolTip = "Обновить",
+                    Command = RefreshDataCommand
+                },
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuExit"] as ControlTemplate,
+                    ToolTip = "Закрыть документ",
+                    Command = CloseWindowCommand
+                }
+            };
+        }
+
+        private decimal CalcSummaWithRate(decimal dcDest, decimal dcSrc, decimal summa, decimal rate)
+        {
+            if (dcDest == dcSrc)
+                return summa;
+            if (rate == 0)
+                return -1;
+            if (dcDest == CurrencyCode.USD && dcSrc == CurrencyCode.EUR)
+                return summa * rate;
+            if (dcDest == CurrencyCode.EUR && dcSrc == CurrencyCode.USD)
+                return summa * rate;
+            return summa / rate;
+        }
+
+        // ReSharper disable once FunctionComplexityOverflow
+        public void DocumentsLoad(DateTime? dt, bool isAll = false)
+        {
+            if (dt == null) dt = DateTime.Today;
+            Documents.Clear();
+            List<decimal> persRight;
+            using (var ent = GlobalOptions.GetEntities())
+            {
+                try
+                {
+                    if (isAll)
+                        persRight = ent.SD_2.Select(_ => _.DOC_CODE).ToList();
+                    else
+                        persRight =
+                            ent.EMP_USER_RIGHTS.Where(
+                                    t => t.USER.ToUpper() == GlobalOptions.UserInfo.Name.ToUpper())
+                                .Select(d => d.EMP_DC)
+                                .ToList();
+                    foreach (var newItem in ent.EMP_PR_ROWS.Include(_ => _.EMP_PR_DOC)
+                        .Where(
+                            d =>
+                                d.EMP_PR_DOC.IS_TEMPLATE == 0 && persRight.Any(t => t == d.EMP_DC) &&
+                                d.EMP_PR_DOC.Date <= dt)
+                        .ToList()
+                        .Select(nach => new EmployeePayDocumentViewModel
+                        {
+                            Employee = MainReferences.Employees[nach.EMP_DC],
+                            Crs = MainReferences.Currencies[nach.CRS_DC],
+                            DocDate = nach.NachDate ?? nach.EMP_PR_DOC.Date,
+                            Note = nach.NOTES,
+                            Summa = nach.SUMMA,
+                            DocSumma = nach.SUMMA,
+                            PlatDocNotes = nach.NOTES,
+                            PlatDocName = "Платежная ведомость",
+                            PayType = "Начисление",
+                            NachRUB =
+                                MainReferences.Currencies[nach.CRS_DC].Name == "RUB" ||
+                                nach.SD_301.CRS_SHORTNAME == "RUR"
+                                    ? nach.SUMMA
+                                    : 0,
+                            NachUSD = MainReferences.Currencies[nach.CRS_DC].Name == "USD" ? nach.SUMMA : 0,
+                            NachEUR = MainReferences.Currencies[nach.CRS_DC].Name == "EUR" ? nach.SUMMA : 0,
+                            RUB = 0,
+                            USD = 0,
+                            EUR = 0,
+                            Id = nach.ID
+                        }))
+                        Documents.Add(newItem);
+                    foreach (var p in ent.SD_34.AsNoTracking()
+                        .Where(t => t.NCODE == 100 && t.DATE_ORD <= dt)
+                        .Where(p => p.TABELNUMBER != null)
+                        .ToList())
+                        try
+                        {
+                            //if (p.CRS_KOEF == null) continue;
+                            var per =
+                                MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == p.TABELNUMBER);
+                            if (p.CRS_DC == null) continue;
+                            var crs = MainReferences.Currencies[(decimal) p.CRS_DC];
+                            if (p.DATE_ORD == null) continue;
+                            if (per == null) continue;
+                            if (per.TabelNumber == 25 && (p.DOC_CODE == 10340051230 || p.DOC_CODE == 10340051240
+                                                                                    || p.DOC_CODE == 10340051656
+                                                                                    || p.DOC_CODE == 10340051674
+                                                          //|| p.DOC_CODE == 10340054355
+                                                          //|| p.DOC_CODE == 10340054410
+                                                      )
+                                                      && isPersonaItog)
+                                continue;
+                            var s = new EmployeePayDocumentViewModel
+                            {
+                                Employee = per,
+                                Crs = crs,
+                                DocDate = p.DATE_ORD.Value,
+                                DocSumma = p.SUMM_ORD ?? 0,
+                                PlatSumma = p.SUMM_ORD ?? 0,
+                                PlatSummaEmp =
+                                    Math.Round(CalcSummaWithRate(per.Currency.DocCode, p.CRS_DC.Value,
+                                        p.SUMM_ORD ?? 0,
+                                        p.CRS_KOEF ?? 1), 2),
+                                PlatDocNotes = p.NOTES_ORD,
+                                PlatDocName = $"Расходный кассовый ордер № {p.NUM_ORD}",
+                                PayType = "Выплата",
+                                NachRUB = 0,
+                                NachUSD = 0,
+                                NachEUR = 0,
+                                // ReSharper disable PossibleInvalidOperationException
+                                RUB =
+                                    (decimal)
+                                    (crs.Name == "RUB" || crs.Name == "RUR"
+                                        ? p.SUMM_ORD
+                                        : 0),
+                                USD = (decimal) (crs.Name == "USD" ? p.SUMM_ORD : 0),
+                                EUR = (decimal) (crs.Name == "EUR" ? p.SUMM_ORD : 0)
+                                // ReSharper restore PossibleInvalidOperationException
+                            };
+                            if (persRight.Any(t => t == s.Employee.DocCode))
+                                Documents.Add(s);
+                        }
+                        catch (Exception ex)
+                        {
+                            WindowManager.ShowError(ex);
+                        }
+
+                    var maxDate = dt;
+                    var minDate = dt;
+                    if (Documents.Count > 0)
+                    {
+                        maxDate = Documents.Max(t => t.DocDate);
+                        minDate = Documents.Min(t => t.DocDate);
+                    }
+
+                    CurrencyRate.LoadCBrates((DateTime) minDate, (DateTime) maxDate);
+                    foreach (var row in Documents)
+                    {
+                        row.SummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, row.Employee.Currency.DocCode,
+                            row.DocDate,
+                            row.Summa);
+                        if (row.DocDate <= new DateTime(2013, 7, 31)) continue;
+                        row.Rate =
+                            Math.Round(
+                                CurrencyRate.GetRate(row.Crs.DocCode, row.Employee.Currency.DocCode, row.DocDate), 4);
+                        if ((row.Crs.Name == "RUB" || row.Crs.Name == "RUR") && row.Rate != 0)
+                            row.Rate = 1 / row.Rate;
+                        else
+                            row.Rate = row.Rate;
+                        row.PlatSummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, row.Employee.Currency.DocCode,
+                            row.DocDate, row.PlatSumma);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    WindowManager.ShowError(ex);
+                }
+            }
+        }
+
+        public void UpdateDocumentsForPeriod(NachEmployeeForPeriod item)
+        {
+            DocumentsForPeriod.Clear();
+            foreach (
+                var r in DocumentsForEmployee.Where(_ => _.DocDate >= item.DateStart && _.DocDate <= item.DateEnd))
+            {
+                var old = DocumentsForPeriod.FirstOrDefault(_ =>
+                    _.PayType == r.PayType && _.DocDate == r.DocDate && _.Crs.DocCode == r.Crs.DocCode);
+                if (old == null)
+                {
+                    var newItem = new EmployeePayDocumentViewModel
+                    {
+                        Employee = r.Employee,
+                        Crs = r.Crs,
+                        DocDate = r.DocDate,
+                        DocSumma = r.DocSumma,
+                        PlatSumma = r.PlatSumma,
+                        PlatSummaEmp = r.PlatSummaEmp,
+                        Summa = r.Summa,
+                        SummaEmp = r.SummaEmp,
+                        PlatDocNotes = r.PlatDocNotes,
+                        PlatDocName = r.PayType == "Выплата"
+                            ? "№" + r.PlatDocName.Replace("Расходный кассовый ордер № ", string.Empty)
+                            : r.PlatDocName,
+                        PayType = r.PayType,
+                        NachRUB = r.NachRUB,
+                        NachUSD = r.NachUSD,
+                        NachEUR = r.NachEUR,
+                        // ReSharper disable PossibleInvalidOperationException
+                        RUB = r.RUB,
+                        USD = r.USD,
+                        EUR = r.EUR
+                    };
+                    DocumentsForPeriod.Add(newItem);
+                }
+                else 
+                {
+                    if (old.PayType == "Выплата")
+                    {
+                        var s = r.PlatDocName.Replace("Расходный кассовый ордер № ", string.Empty);
+                        old.PlatDocName += ", №"+s;
+                    }
+                    old.DocSumma += r.DocSumma;
+                    old.NachEUR += r.NachEUR;
+                    old.NachRUB += r.NachRUB;
+                    old.NachUSD += r.NachUSD;
+                    old.EUR += r.EUR;
+                    old.USD += r.USD;
+                    old.RUB += r.RUB;
+                    old.PlatSumma += r.PlatSumma;
+                    old.PlatSummaEmp += r.PlatSummaEmp;
+                    old.Summa += r.Summa;
+                    old.SummaEmp += r.PlatSumma;
+                }
+            }
+            RaisePropertyChanged(nameof(DocumentsForPeriod));
+        }
+
+        public void UpdatePeriods(EmployeePayMainViewModel item)
+        {
+            if (item == null) return;
+            DocumentsForEmployee.Clear();
+            var dates = new List<DateTime>();
+            foreach (
+                var r in
+                Documents.Where(t => t.Employee.DocCode == item.Employee.DocCode))
+            {
+                if (dates.All(t => t != r.DocDate))
+                    dates.Add(r.DocDate);
+                DocumentsForEmployee.Add(r);
+            }
+
+            var dPeriods = DatePeriod.GenerateIerarhy(dates, PeriodIerarhy.YearMonth);
+            var datesSource = dPeriods.Select(p => new NachEmployeeForPeriod
+                {
+                    Id = p.Id,
+                    ParentId = p.ParentId,
+                    Name = p.Name,
+                    DateStart = p.DateStart,
+                    DateEnd = p.DateEnd,
+                    Start = 0,
+                    In = 0,
+                    Out = 0,
+                    End = 0
+                })
+                .ToList();
+            foreach (var r in datesSource)
+            {
+                r.Start = Math.Round(DocumentsForEmployee.Where(t => t.DocDate < r.DateStart)
+                                         .Sum(
+                                             s =>
+                                                 CurrencyRate.GetSummaRate(s.Crs.DocCode, s.Employee.Currency.DocCode,
+                                                     s.DocDate,
+                                                     s.Summa))
+                                     - DocumentsForEmployee.Where(t => t.DocDate < r.DateStart)
+                                         .Sum(
+                                             s => s.PlatSummaEmp), 2);
+                r.In =
+                    Math.Round(DocumentsForEmployee.Where(t => t.DocDate >= r.DateStart && t.DocDate <= r.DateEnd)
+                        .Sum(
+                            s =>
+                                CurrencyRate.GetSummaRate(s.Crs.DocCode, s.Employee.Currency.DocCode,
+                                    s.DocDate,
+                                    s.Summa)), 2);
+                r.Out =
+                    Math.Round(DocumentsForEmployee.Where(t => t.DocDate >= r.DateStart && t.DocDate <= r.DateEnd)
+                        .Sum(
+                            s => s.PlatSummaEmp), 2);
+                r.End = r.Start + r.In - r.Out;
+                r.RUB =
+                    Math.Round(
+                        DocumentsForEmployee.Where(
+                                t => t.DocDate >= r.DateStart && t.DocDate <= r.DateEnd)
+                            .Sum(s => s.RUB), 2);
+                r.USD =
+                    Math.Round(
+                        DocumentsForEmployee.Where(
+                                t => t.DocDate >= r.DateStart && t.DocDate <= r.DateEnd)
+                            .Sum(s => s.USD), 2);
+                r.EUR =
+                    Math.Round(
+                        DocumentsForEmployee.Where(
+                                t => t.DocDate >= r.DateStart && t.DocDate <= r.DateEnd)
+                            .Sum(s => s.EUR), 2);
+                r.NachRUB =
+                    Math.Round(
+                        DocumentsForEmployee.Where(
+                                t => t.DocDate >= r.DateStart && t.DocDate <= r.DateEnd)
+                            .Sum(s => s.NachRUB), 2);
+                r.NachUSD =
+                    Math.Round(
+                        DocumentsForEmployee.Where(
+                                t => t.DocDate >= r.DateStart && t.DocDate <= r.DateEnd)
+                            .Sum(s => s.NachUSD), 2);
+                r.NachEUR =
+                    Math.Round(
+                        DocumentsForEmployee.Where(
+                                t => t.DocDate >= r.DateStart && t.DocDate <= r.DateEnd)
+                            .Sum(s => s.NachEUR), 2);
+            }
+
+            Periods = new ObservableCollection<NachEmployeeForPeriod>(datesSource.OrderByDescending(_ => _.DateStart));
+            RaisePropertyChanged(nameof(Periods));
+        }
+
+        public void LoadForAll(DateTime date)
+        {
+            mySelEmp = CurrentEmploee;
+            var tempMain = new ObservableCollection<EmployeePayMainViewModel>();
+            DocumentsLoad(date, true);
+            if (Documents.Any())
+            {
+                var maxDate = Documents.Max(t => t.DocDate);
+                var minDate = Documents.Min(t => t.DocDate);
+                CurrencyRate.LoadCBrates(minDate, maxDate);
+            }
+            else
+            {
+                return;
+            }
+
+            foreach (
+                var nach in
+                Documents.Where(
+                    nach => tempMain.All(t => t.Employee.DocCode != nach.Employee.DocCode)))
+                tempMain.Add(new EmployeePayMainViewModel
+                {
+                    Employee = nach.Employee,
+                    DolgSumma = 0,
+                    PlatSumma = 0,
+                    SummaNach = 0,
+                    DateLastOper = DateTime.MinValue
+                });
+            foreach (var emp in tempMain)
+            {
+                var emp1 = emp;
+                var s =
+                    Documents.Where(t => t.Employee.DocCode == emp1.Employee.DocCode);
+                foreach (var nach in s)
+                {
+                    if (nach.DocDate > emp.DateLastOper)
+                        emp.DateLastOper = nach.DocDate;
+                    emp.SummaNach += CurrencyRate.GetSummaRate(nach.Crs.DocCode, emp.Employee.Currency.DocCode,
+                        nach.DocDate,
+                        nach.Summa);
+                    emp.PlatSumma += nach.PlatSummaEmp;
+                    emp.DolgSumma = emp.SummaNach - emp.PlatSumma;
+                }
+            }
+
+            EmployeeMain.Clear();
+            foreach (var t in tempMain.Where(_ => _.DolgSumma != 0 || _.PlatSumma != 0 || _.SummaNach != 0))
+                EmployeeMain.Add(t);
+
+            //RaisePropertyChanged(nameof(EmployeeMain));
+            //if (mySelEmp == null) return;
+            //SelectEmployee = EmployeeMain.SingleOrDefault(_ => _.Employee.DocCode == mySelEmp.Employee.DocCode);
+            //CurrentEmploee = EmployeeMain.SingleOrDefault(_ => _.Employee.DocCode == mySelEmp.Employee.DocCode);
+        }
+
+        public override void RefreshData(object obj)
+        {
+            mySelEmp = CurrentEmploee;
+            var tempMain = new ObservableCollection<EmployeePayMainViewModel>();
+            var d = obj as DateTime?;
+            DocumentsLoad(obj != null ? d : null);
+            if (Documents.Any())
+            {
+                var maxDate = Documents.Max(t => t.DocDate);
+                var minDate = Documents.Min(t => t.DocDate);
+                CurrencyRate.LoadCBrates(minDate, maxDate);
+            }
+            else
+            {
+                return;
+            }
+
+            foreach (
+                var nach in
+                Documents.Where(
+                    nach => tempMain.All(t => t.Employee.DocCode != nach.Employee.DocCode)))
+                tempMain.Add(new EmployeePayMainViewModel
+                {
+                    Employee = nach.Employee,
+                    DolgSumma = 0,
+                    PlatSumma = 0,
+                    SummaNach = 0,
+                    DateLastOper = DateTime.MinValue
+                });
+            foreach (var emp in tempMain)
+            {
+                var emp1 = emp;
+                var s =
+                    Documents.Where(t => t.Employee.DocCode == emp1.Employee.DocCode);
+                foreach (var nach in s)
+                {
+                    if (nach.DocDate > emp.DateLastOper)
+                        emp.DateLastOper = nach.DocDate;
+                    emp.SummaNach += CurrencyRate.GetSummaRate(nach.Crs.DocCode, emp.Employee.Currency.DocCode,
+                        nach.DocDate,
+                        nach.Summa);
+                    emp.PlatSumma += nach.PlatSummaEmp;
+                    emp.DolgSumma = emp.SummaNach - emp.PlatSumma;
+                }
+            }
+
+            EmployeeMain.Clear();
+            foreach (var t in tempMain)
+                EmployeeMain.Add(t);
+            RaisePropertyChanged(nameof(EmployeeMain));
+            if (mySelEmp == null) return;
+            SelectEmployee = EmployeeMain.SingleOrDefault(_ => _.Employee.DocCode == mySelEmp.Employee.DocCode);
+            CurrentEmploee = EmployeeMain.SingleOrDefault(_ => _.Employee.DocCode == mySelEmp.Employee.DocCode);
+        }
+    }
+}

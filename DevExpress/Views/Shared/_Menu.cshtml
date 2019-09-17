@@ -1,0 +1,77 @@
+﻿@using System.Diagnostics.CodeAnalysis
+@using DevExpress.Models.DataModel
+@model List<DevExpress.Models.DataModel.MenuModel>
+
+@helper BuildMenu(IEnumerable<MenuModel> data, int? parentId = null)
+{
+    IEnumerable<MenuModel> mainItem = data.Where(_ => _.ParentId == parentId);
+    if (mainItem.Any())
+    {
+        <ul class="menu" id="menu">
+            @foreach (MenuModel i in mainItem)
+            {
+                <li class="menu__list">
+                    <a>@i.Name</a>
+                    @* ReSharper disable once MissingAltAttributeInImgTag *@
+                    @if (i.Id == 1)
+                    {
+                        <img src="~/Content/images/icons/user.png"/>
+                    }
+                    @if (i.Id == 2)
+                    {
+                        <img src="~/Content/images/icons/user.png"/>
+                    }
+                    <ul class="menu__drop">
+
+
+                        @{
+                            var ii = i;
+                        }
+                        @if (data.Any(_ => _.ParentId == ii.Id))
+                        {
+                            var i1 = i;
+                            foreach (MenuModel sub in data.Where(_ => _.ParentId == i1.Id))
+                            {
+                                <li>
+                                    <a href="@sub.StrLink">@sub.Name</a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </li>
+            }
+        </ul>
+    }
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+
+    $(document).ready(function() {
+        MenuMove();
+    });
+
+    function MenuMove() {
+        var menuIsOpen = false;
+// ReSharper disable once ConditionIsAlwaysConst
+// ReSharper disable once ExpressionIsAlwaysConst
+        if (menuIsOpen === false) {
+            $("#menu-button").click(function() {
+// ReSharper disable once CoercedEqualsUsing
+                if (menuIsOpen == false) {
+                    $('#content').animate({ left: "250px" }, 200);
+                    $('#side').animate({ left: "0" }, 200);
+                    menuIsOpen = true;
+                } else {
+                    $('#content').animate({ left: "0px" }, 200);
+                    $('#side').animate({ left: "-250px" }, 200);
+                    menuIsOpen = false;
+                }
+            });
+        }
+    }
+</script>
+<div class="side" id="side">
+    <div id="menu-button"></div>
+    @BuildMenu(Model)
+</div>

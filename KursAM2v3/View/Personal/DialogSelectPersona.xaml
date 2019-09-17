@@ -1,0 +1,121 @@
+﻿<dx:DXWindow
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    x:Class="KursAM2.View.Personal.DialogSelectPersona"
+    Title="DialogSelectPersona" Height="300" Width="800">
+    <dxb:BarManager>
+        <dxb:BarManager.Items>
+            <dxb:BarButtonItem x:Name="barButtonItemRefresh" Content="Обновить" GlyphSize="Large"
+                               Glyph="pack://siteoforigin:,,,/Images/refresh.png"
+                               ItemClick="BarButtonItemRefresh_OnItemClick" />
+            <dxb:BarButtonItem x:Name="barButtonItemOK" Content="Сохранить" GlyphSize="Large"
+                               Glyph="pack://siteoforigin:,,,/Images/document_ok.png" Alignment="Far"
+                               ItemClick="BarButtonItemOK_OnItemClick" />
+            <dxb:BarButtonItem x:Name="barButtonItemCancel" Content="Закрыть" GlyphSize="Large"
+                               Glyph="pack://siteoforigin:,,,/Images/document_out.png" Alignment="Far"
+                               ItemClick="BarButtonItemCancel_OnItemClick" />
+        </dxb:BarManager.Items>
+        <dxb:BarManager.Bars>
+            <dxb:Bar Caption="bar1" UseWholeRow="True" ShowDragWidget="False" AllowCustomizationMenu="False"
+                     AllowDrop="False" AllowHide="False" AllowQuickCustomization="False">
+                <dxb:Bar.DockInfo>
+                    <dxb:BarDockInfo ContainerType="Top" />
+                </dxb:Bar.DockInfo>
+                <dxb:BarButtonItemLink BarItemName="barButtonItemRefresh" />
+                <dxb:BarButtonItemLink BarItemName="barButtonItemOK" />
+                <dxb:BarButtonItemLink BarItemName="barButtonItemCancel" />
+            </dxb:Bar>
+            <dxb:Bar x:Name="statusBar" Caption="Status Bar" IsStatusBar="True">
+                <dxb:Bar.DockInfo>
+                    <dxb:BarDockInfo ContainerType="Bottom" />
+                </dxb:Bar.DockInfo>
+            </dxb:Bar>
+        </dxb:BarManager.Bars>
+
+        <dxlc:LayoutControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0">
+            <dxlc:LayoutGroup Orientation="Vertical">
+                <dxlc:LayoutGroup Header="Список сотрудников" View="GroupBox"
+                                  dxlc:LayoutControl.AllowVerticalSizing="True">
+                    <dxg:GridControl Name="gridEmp"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalContentAlignment="Stretch"
+                                     Margin="0"
+                                     MaxHeight="10000"
+                                     MaxWidth="10000"
+                                     VerticalAlignment="Stretch"
+                                     dx:DXSerializer.SerializationID="grid"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                     ItemsSource="{Binding EmploeeCollection, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                     SelectedItems="{Binding EmployeeSelected, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                     SelectionMode="Row">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Name="nomCol1" Header="Сотрудник" FieldName="Name" />
+                            <dxg:GridColumn Name="nomCol2" Header="Табельный номер" FieldName="TabelNumber" />
+                            <dxg:GridColumn Name="nomCol22" Header="Валюта" FieldName="Crs" />
+                            <dxg:GridColumn Name="nomCol6" Header="Примечание" FieldName="ExtNotes" />
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Добавить в выбранные" Click="EmployeeAddToSelect_OnClick" />
+                            </ContextMenu>
+                        </dxg:GridControl.ContextMenu>
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowTotalSummary="False"
+                                           ShowGroupPanel="False"
+                                           Name="tableViewEmployee"
+                                           CellStyle="{StaticResource FocusedCellStyle}" 
+                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           ShowAutoFilterRow="True"
+                                           AllowEditing="False" MouseDoubleClick="tableViewEmployee_MouseDoubleClick" />
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Header="Выбранные сотрудники" View="GroupBox"
+                                  dxlc:LayoutControl.AllowVerticalSizing="True">
+                    <dxg:GridControl Name="gridSelect"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalContentAlignment="Stretch"
+                                     Margin="0"
+                                     MaxHeight="10000"
+                                     MaxWidth="10000"
+                                     VerticalAlignment="Stretch"
+                                     dx:DXSerializer.SerializationID="grid"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                     ItemsSource="{Binding SelectedCollection, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                     SelectedItems="{Binding SelectedItems,  NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                     SelectionMode="Row">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Name="mCol1" Header="Сотрудник" FieldName="Name" />
+                            <dxg:GridColumn Name="mCol2" Header="Табельный номер" FieldName="TabelNumber" />
+                            <dxg:GridColumn Name="mCol22" Header="Валюта" FieldName="Crs" />
+                            <dxg:GridColumn Name="mCol6" Header="Примечание" FieldName="ExtNotes" />
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Удалить из выбранных" Click="RemoveFromSelect_OnClick" />
+                            </ContextMenu>
+                        </dxg:GridControl.ContextMenu>
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowTotalSummary="False"
+                                           ShowGroupPanel="False"
+                                           Name="tableViewSelected"
+                                           CellStyle="{StaticResource FocusedCellStyle}" 
+                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           ShowAutoFilterRow="True"
+                                           AllowEditing="False" MouseDoubleClick="tableViewSelected_MouseDoubleClick" />
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+
+    </dxb:BarManager>
+</dx:DXWindow>

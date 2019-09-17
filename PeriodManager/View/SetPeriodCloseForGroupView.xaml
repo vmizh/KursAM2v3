@@ -1,0 +1,74 @@
+﻿<dx:DXWindow
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    x:Class="PeriodManager.View.SetPeriodCloseForGroupView"
+    Title="SetPeriodCloseForGroupView" Height="350" Width="525">
+
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top" LastChildFill="False" Height="80">
+            <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
+            <Button Template="{StaticResource buttonClose}" DockPanel.Dock="Right" Height="51" Width="51"
+                    x:Name="btnClose"
+                    Command="{Binding CloseCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+            <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
+            <Button Template="{StaticResource buttonOK}" DockPanel.Dock="Right" Height="51" Width="51"
+                    x:Name="btnOK" Command="{Binding OKCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+            <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center" />
+        </DockPanel>
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch" Orientation="Horizontal" Margin="0,0,0,10">
+                <Label Margin="0,0,10,0" Content="Начиная от:" />
+                <dxe:DateEdit Width="153" EditValue="{Binding DateFrom}" />
+                <Label Margin="0,0,10,0" Content="Действует до:" />
+                <dxe:DateEdit Width="153" EditValue="{Binding DateWhile}" />
+            </StackPanel>
+            <dxlc:LayoutControl Name="mainLayoutControl" HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch" Padding="0">
+                <dxlc:LayoutGroup Header="LayoutGroup" View="Group" VerticalAlignment="Stretch"
+                                        HorizontalAlignment="Stretch"
+                                        dxlc:LayoutControl.AllowHorizontalSizing="True">
+                    <dxlc:LayoutItem Label="Группы пользователей" LabelPosition="Top"
+                                           VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                           VerticalContentAlignment="Stretch">
+                        <dxe:ListBoxEdit Name="listUserGroups"
+                                         ItemsSource="{Binding Groups}"
+                                         SelectedItem="{Binding SelectedUserGroup}"
+                                         DisplayMember="Name" />
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Header="Группы документов"
+                                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                        View="GroupBox" dxlc:LayoutControl.AllowHorizontalSizing="True"
+                                        Padding="0">
+                    <dxg:GridControl Name="grid" AutoGenerateColumns="AddNew" EnableSmartColumnsGeneration="True"
+                                     Margin="-8"
+                                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                     dx:DXSerializer.SerializationID="grid"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                     ItemsSource="{Binding DocTypes}">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn FieldName="IsSelected" Header="Выбрать">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CheckEditSettings />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn FieldName="Name" Header="Группа" />
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView AllowPerPixelScrolling="True" ShowTotalSummary="True" MaxHeight="10000"
+                                           MaxWidth="10000" />
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutControl>
+        </DockPanel>
+    </DockPanel>
+</dx:DXWindow>

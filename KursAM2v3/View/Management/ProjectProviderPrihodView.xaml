@@ -1,0 +1,308 @@
+﻿<dx:DXWindow x:Class="KursAM2.View.Management.ProjectProviderPrihodView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:control="clr-namespace:Core.Control;assembly=Core"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             mc:Ignorable="d"
+             Title="Распределение приходов номенклатур по проектам" Height="300" Width="300">
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+            <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
+                   Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
+        </DockPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                <Label>Начиная с</Label>
+                <dxe:DateEdit Margin="8,0,0,0"
+                              x:Name="dateStart"
+                              EditValue="{Binding StartDate, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              Width="150"
+                              ShowBorder="True" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5,0" VerticalAlignment="Top">
+                <Label>по</Label>
+                <dxe:DateEdit x:Name="dateEnd"
+                              Margin="8,0,0,0"
+                              EditValue="{Binding EndDate, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              Width="150"
+                              ShowBorder="True" />
+            </StackPanel>
+        </StackPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <dxe:CheckEdit Content="Режим просмотра" EditValue="{Binding SelectionMode}" DockPanel.Dock="Right" />
+            <dxe:CheckEdit Content="{Binding ListingTypeName}" EditValue="{Binding IsAll}" />
+        </DockPanel>
+        <dxlc:LayoutControl Name="mainLayoutControl" Padding="1" Orientation="Vertical">
+            <dxlc:LayoutGroup Name="mainGroup">
+                <dxlc:LayoutGroup Name="docsGroup" Orientation="Vertical">
+                    <dxlc:LayoutGroup Name="docsrowGroup" dxlc:LayoutControl.AllowVerticalSizing="True">
+                        <dxg:GridControl Name="gridrowDocuments"
+                                         AutoGenerateColumns="None"
+                                         EnableSmartColumnsGeneration="True"
+                                         HorizontalAlignment="Stretch"
+                                         MaxHeight="10000"
+                                         MaxWidth="10000"
+                                         VerticalAlignment="Stretch"
+                                         dx:DXSerializer.SerializationID="gridrowDocuments"
+                                         dx:DXSerializer.StoreLayoutMode="All"
+                                         dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                         ItemsSource="{Binding RowDocuments, NotifyOnSourceUpdated=True}"
+                                         CurrentItem="{Binding CurrentRowDocument, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                         SelectedItems="{Binding SelectedItems, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                         CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
+                            <dxg:GridControl.Columns>
+                                <dxg:GridColumn Name="NumAccount" FieldName="NumAccount" ReadOnly="True" Header="№ с/ф"
+                                                AllowCellMerge="True" />
+                                <dxg:GridColumn Name="NumNaklad" FieldName="NumNaklad" ReadOnly="True" Header="№ накл."
+                                                AllowCellMerge="True" />
+                                <dxg:GridColumn Name="DocDate" FieldName="Date" ReadOnly="True" Header="Дата прихода" />
+                                <dxg:GridColumn Name="Kontragent" FieldName="Kontragent" ReadOnly="True"
+                                                Header="Поставщик" AllowCellMerge="True" />
+                                <dxg:GridColumn Name="IsUsluga" FieldName="IsUsluga" ReadOnly="True"
+                                                Header="Услуга" />
+                                <dxg:GridColumn Name="NomenklNumber" FieldName="NomenklNumber" ReadOnly="True"
+                                                Header="Ном.№" />
+                                <dxg:GridColumn Name="Nomenkl" FieldName="Nomenkl" ReadOnly="True"
+                                                Header="Номенклатура" />
+                                <dxg:GridColumn Name="Price" FieldName="Price" ReadOnly="True" Header="Цена">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="Quantity" FieldName="Quantity" ReadOnly="True" Header="Кол-во">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="Summa" FieldName="Summa" ReadOnly="True" Header="Сумма">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="Unit" FieldName="Unit" ReadOnly="True" Header="Ед.изм." />
+                                <dxg:GridColumn Name="Дата" FieldName="Date" ReadOnly="True" Header="Дата" />
+                                <dxg:GridColumn Name="DistributeQuantity" FieldName="DistributeQuantity"
+                                                ReadOnly="True" Header="Кол-во (распр)">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="DistributeSumma" FieldName="DistributeSumma" ReadOnly="True"
+                                                Header="Сумма (распр)">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="Creator" FieldName="Creator" ReadOnly="True" Header="Создатель" />
+                            </dxg:GridControl.Columns>
+                            <dxg:GridControl.TotalSummary>
+                                <dxg:GridSummaryItem FieldName="Nomenkl" SummaryType="Count"
+                                                     DisplayFormat="n2" />
+                                <dxg:GridSummaryItem FieldName="Quantity" SummaryType="Sum"
+                                                     DisplayFormat="n2" />
+                                <dxg:GridSummaryItem FieldName="DistributeQuantity" SummaryType="Sum"
+                                                     DisplayFormat="n2" />
+                                <dxg:GridSummaryItem FieldName="Summa" SummaryType="Sum"
+                                                     DisplayFormat="n2" />
+                                <dxg:GridSummaryItem FieldName="DistributeSumma" SummaryType="Sum"
+                                                     DisplayFormat="n2" />
+                            </dxg:GridControl.TotalSummary>
+                            <dxg:GridControl.View>
+                                <dxg:TableView ShowTotalSummary="True"
+                                               Name="tableViewRowDocuments"
+                                               ShowAutoFilterRow="True">
+                                    <dxg:TableView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Добавить связь с проектом"
+                                                      Command="{Binding AddDistributeRowLinkCommand}" />
+                                            <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}" />
+                                            <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                                      CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Копировать итоговую сумму"
+                                                      Command="{Binding GetColumnSummaCommand}"
+                                                      CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}" />
+                                        </ContextMenu>
+                                    </dxg:TableView.ContextMenu>
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup Name="docDistrGroup" dxlc:LayoutControl.AllowVerticalSizing="True">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label VerticalAlignment="Center" Content="Проект по умолчанию" />
+                                <dxg:LookUpEdit
+                                    VerticalAlignment="Center"
+                                    Margin="10,0,0,0"
+                                    Width="200"
+                                    ItemsSource="{Binding ProjectList}"
+                                    ValueMember="Id"
+                                    DisplayMember="Name"
+                                    SelectedItem="{Binding DefaultProject}"
+                                    AutoPopulateColumns="False"
+                                    PopupOpening="PopupBaseEdit_OnPopupOpening">
+                                    <dxg:LookUpEdit.PopupContentTemplate>
+                                        <ControlTemplate>
+                                            <dxg:GridControl x:Name="PART_GridControl"
+                                                             AutoGenerateColumns="None">
+                                                <dxg:GridControl.Columns>
+                                                    <dxg:GridColumn FieldName="Name" Header="Наименование"
+                                                                    ReadOnly="True" />
+                                                </dxg:GridControl.Columns>
+                                                <dxg:GridControl.View>
+                                                    <dxg:TreeListView Name="treeListView1" AutoWidth="True"
+                                                                      KeyFieldName="Id" ParentFieldName="ParentId"
+                                                                      TreeDerivationMode="Selfreference"
+                                                                      NavigationStyle="Row" />
+                                                </dxg:GridControl.View>
+                                            </dxg:GridControl>
+                                        </ControlTemplate>
+                                    </dxg:LookUpEdit.PopupContentTemplate>
+                                </dxg:LookUpEdit>
+                            </StackPanel>
+                            <dxg:GridControl Name="gridDistDocuments"
+                                             DockPanel.Dock="Top"
+                                             AutoGenerateColumns="None"
+                                             EnableSmartColumnsGeneration="True"
+                                             HorizontalAlignment="Stretch"
+                                             MaxHeight="1000"
+                                             MaxWidth="2000"
+                                             VerticalAlignment="Stretch"
+                                             dx:DXSerializer.SerializationID="gridDistDocuments"
+                                             dx:DXSerializer.StoreLayoutMode="All"
+                                             dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                             dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                             SelectionMode="Row"
+                                             ItemsSource="{Binding DistributeRows, NotifyOnSourceUpdated=True}"
+                                             CurrentItem="{Binding CurrentDistRow, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"
+                                             SelectedItems="{Binding SelectedDistRows, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                             CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
+                                <dxg:GridControl.Columns>
+                                    <dxg:GridColumn Name="NumAccount1" FieldName="NumAccount" ReadOnly="True"
+                                                    Header="№ с/ф"
+                                                    AllowCellMerge="True" />
+                                    <dxg:GridColumn Name="NumNaklad1" FieldName="NumNaklad" ReadOnly="True"
+                                                    Header="№ накл."
+                                                    AllowCellMerge="True" />
+                                    <dxg:GridColumn Name="DocDate1" FieldName="Date" ReadOnly="True"
+                                                    Header="Дата прихода" />
+                                    <dxg:GridColumn Name="Kontragent1" FieldName="Kontragent" ReadOnly="True"
+                                                    Header="Поставщик" AllowCellMerge="True" />
+                                    <dxg:GridColumn Name="IsUsluga1" FieldName="IsUsluga" ReadOnly="True"
+                                                    Header="Услуга" />
+                                    <dxg:GridColumn Name="NomenklNumber1" FieldName="NomenklNumber" ReadOnly="True"
+                                                    Header="Ном.№" />
+                                    <dxg:GridColumn Name="Nomenkl1" FieldName="Nomenkl" ReadOnly="True"
+                                                    Header="Номенклатура" />
+                                    <dxg:GridColumn Name="Project" FieldName="Project"
+                                                    Header="Проект" IsSmart="True">
+                                        <dxg:GridColumn.EditSettings>
+                                            <dxg:LookUpEditSettings ItemsSource="{Binding ProjectList}"
+                                                                    AutoPopulateColumns="False"
+                                                                    ImmediatePopup="True"
+                                                                    IsTextEditable="False"
+                                                                    DefaultButtonClick="ButtonEditSettings_OnDefaultButtonClick">
+                                                <dxg:LookUpEditSettings.PopupContentTemplate>
+                                                    <ControlTemplate>
+                                                        <dxg:GridControl x:Name="PART_GridControl" SelectionMode="Row">
+                                                            <dxg:GridControl.Columns>
+                                                                <dxg:GridColumn FieldName="Name" Header="Наименование"
+                                                                                ReadOnly="True" />
+                                                            </dxg:GridControl.Columns>
+                                                            <dxg:GridControl.View>
+                                                                <dxg:TreeListView
+                                                                    ShowAutoFilterRow="True"
+                                                                    ShowSearchPanelMode="Always"
+                                                                    AutoWidth="True"
+                                                                    KeyFieldName="Id"
+                                                                    ParentFieldName="ParentId"
+                                                                    NavigationStyle="Row" />
+                                                            </dxg:GridControl.View>
+                                                        </dxg:GridControl>
+                                                    </ControlTemplate>
+                                                </dxg:LookUpEditSettings.PopupContentTemplate>
+                                            </dxg:LookUpEditSettings>
+                                        </dxg:GridColumn.EditSettings>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn Name="DQuan" FieldName="Quantity" Header="Кол-во"
+                                                    ReadOnly="{Binding IsNotUsluga}">
+                                        <dxg:GridColumn.EditSettings>
+                                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="True" />
+                                        </dxg:GridColumn.EditSettings>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn Name="DSumma" FieldName="Summa" Header="Сумма"
+                                                    ReadOnly="{Binding IsUsluga}">
+                                        <dxg:GridColumn.EditSettings>
+                                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="True" />
+                                        </dxg:GridColumn.EditSettings>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn Name="Note" FieldName="Note" Header="Примечания">
+                                        <dxg:GridColumn.EditSettings>
+                                            <dxe:MemoEditSettings ShowIcon="False" />
+                                        </dxg:GridColumn.EditSettings>
+                                    </dxg:GridColumn>
+                                </dxg:GridControl.Columns>
+                                <dxg:GridControl.View>
+                                    <dxg:TableView ShowTotalSummary="True"
+                                                   Name="tableViewDistDocuments"
+                                                   ShowAutoFilterRow="True"
+                                                   EditorButtonShowMode="ShowForFocusedRow"
+                                                   CellStyle="{StaticResource FocusedCellStyle}" 
+                                                   RowStyle="{StaticResource FocusedRowStyle}">
+                                        <dxmvvm:Interaction.Behaviors>
+                                            <dxmvvm:EventToCommand EventName="CellValueChanged"
+                                                                   Command="{Binding DistributeRowChanged}"
+                                                                   PassEventArgsToCommand="True" />
+                                        </dxmvvm:Interaction.Behaviors>
+                                        <dxg:TableView.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Удалить связь с документами"
+                                                          Command="{Binding RemoveProjectLinkCommand}" />
+                                                <MenuItem Header="Экспорт"
+                                                          Command="{Binding VisualControlExportCommand}"
+                                                          CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}">
+                                                    <MenuItem.Icon>
+                                                        <Image
+                                                            Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem Header="Копировать итоговую сумму"
+                                                          Command="{Binding GetColumnSummaCommand}"
+                                                          CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}" />
+                                            </ContextMenu>
+                                        </dxg:TableView.ContextMenu>
+                                    </dxg:TableView>
+                                </dxg:GridControl.View>
+                            </dxg:GridControl>
+                        </DockPanel>
+                    </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:DXWindow>

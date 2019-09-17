@@ -1,0 +1,141 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Core;
+using Core.EntityViewModel;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using Data;
+using KursAM2.ViewModel.Finance;
+
+namespace KursAM2.ViewModel.Logistiks
+{
+    public class Waybill : SD_24ViewModel, IDocument<Waybill>
+    {
+        /// <summary>
+        ///     Счет-фактура, связанный с данной накладной
+        /// </summary>
+        private SFClientViewModel mySchet;
+
+        public Waybill()
+        {
+            Rows = new ObservableCollection<WaybillRow>();
+            DeletedRows = new List<WaybillRow>();
+        }
+
+        public Waybill(SD_24 entity) : base(entity)
+        {
+            Rows = new ObservableCollection<WaybillRow>();
+            DeletedRows = new List<WaybillRow>();
+            if (entity.TD_24.Count > 0)
+                foreach (var row in entity.TD_24)
+                    Rows.Add(new WaybillRow(row));
+            Schet = new SFClientViewModel(entity.SD_84);
+        }
+
+        public ObservableCollection<WaybillRow> Rows { set; get; }
+        public List<WaybillRow> DeletedRows { set; get; }
+
+        public override decimal DocCode
+        {
+            get => Entity.DOC_CODE;
+            set
+            {
+                if (Entity.DOC_CODE == value) return;
+                Entity.DOC_CODE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public override string Name =>
+            $"№{Entity.DD_IN_NUM}/{Entity.DD_EXT_NUM} от {Entity.DD_DATE.ToShortDateString()} Склад-{Store?.Name} Получатель-{Client?.Name}";
+
+        public Kontragent Client
+        {
+            get => MainReferences.GetKontragent(Entity.DD_KONTR_POL_DC);
+            set
+            {
+                if (value == null)
+                {
+                    Entity.DD_KONTR_POL_DC = null;
+                }
+                else
+                {
+                    if (Entity.DD_KONTR_POL_DC == value.DocCode) return;
+                    Entity.DD_KONTR_POL_DC = value.DocCode;
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public Store Store
+        {
+            get => Entity.DD_SKLAD_OTPR_DC != null
+                ? MainReferences.Sklads.ContainsKey(Entity.DD_SKLAD_OTPR_DC.Value)
+                    ? MainReferences.Sklads[Entity.DD_SKLAD_OTPR_DC.Value]
+                    : null
+                : null;
+            set
+            {
+                if (value == null)
+                {
+                    Entity.DD_SKLAD_OTPR_DC = null;
+                }
+                else
+                {
+                    if (Entity.DD_SKLAD_OTPR_DC != value.DocCode)
+                        Entity.DD_SKLAD_OTPR_DC = value.DocCode;
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public SFClientViewModel Schet
+        {
+            get => mySchet;
+            set
+            {
+                if (mySchet == value) return;
+                mySchet = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public void RefreshData()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsCanSave { get; set; }
+
+        public bool Check()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Waybill NewDocument()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Waybill CopyDocument()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Waybill CopyRequisite()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UnDeleteRows()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

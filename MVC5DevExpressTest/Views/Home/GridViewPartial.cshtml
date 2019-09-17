@@ -1,0 +1,21 @@
+﻿@using DevExpress.Web
+@using DevExpress.Web.Mvc.UI
+
+@Html.DevExpress().GridView(
+    settings =>
+    {
+        settings.Name = "myGridView";
+        settings.CallbackRouteValues = new { Controller = "Home", Action = "GridViewPart" };
+        settings.SettingsEditing.AddNewRowRouteValues = new {Controller = "Home", Action = "GridViewPartialAddNew"};
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Home", Action = "GridViewPartialDelete" };
+        settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+        settings.Width = 450;
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.ShowNewButton = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.KeyFieldName = "Id";
+        settings.Columns.Add("ContactName");
+        settings.Columns.Add("City");
+        settings.Columns.Add("Region");
+        settings.Columns.Add("Country");
+    }).Bind(Model).GetHtml()

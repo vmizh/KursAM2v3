@@ -1,0 +1,234 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using Core;
+using Core.EntityViewModel;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using Core.WindowsManager;
+using KursAM2.Managers;
+
+namespace KursAM2.View.DialogUserControl
+{
+    public class KontragentSelectDialog : RSWindowViewModelBase, IDataUserControl
+    {
+        private Currency myCurrency;
+        private Kontragent myCurrentKontragent;
+        private KontragentSelectDialogUC myDataUserControl;
+
+        public KontragentSelectDialog(Currency crs, bool isDateCheck = false)
+        {
+            Currency = crs;
+            LayoutControl =
+                myDataUserControl = new KontragentSelectDialogUC();
+            while (!MainReferences.IsReferenceLoadComplete)
+            {
+            }
+            WindowName = "Выбор контрагента";
+            LoadKontragentFromReference();
+        }
+        public KontragentSelectDialog(decimal KontrDC)
+        {            LayoutControl =
+                myDataUserControl = new KontragentSelectDialogUC();
+            while (!MainReferences.IsReferenceLoadComplete)
+            {
+            }
+            WindowName = "Выбор контрагента";
+            LoadKontragentFromReference();
+        }
+
+        public Currency Currency
+        {
+            get => myCurrency;
+            set
+            {
+                if (Equals(myCurrency, value)) return;
+                myCurrency = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public KontragentSelectDialogUC DataUserControl
+        {
+            get => myDataUserControl;
+            set
+            {
+                if (Equals(myDataUserControl, value)) return;
+                myDataUserControl = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<Kontragent> KontragentCollection { set; get; } =
+            new ObservableCollection<Kontragent>();
+
+        public Kontragent CurrentKontragent
+        {
+            get => myCurrentKontragent;
+            set
+            {
+                if (myCurrentKontragent != null && myCurrentKontragent.Equals(value)) return;
+                myCurrentKontragent = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public override bool IsCanSearch => !string.IsNullOrWhiteSpace(SearchText);
+        
+        public DependencyObject LayoutControl { get; }
+
+        private void LoadKontragentFromReference()
+        {
+            try
+            {
+                KontragentCollection.Clear();
+                if (Currency == null)
+                    foreach (var k in KontragentManager.GetAllKontragentSortedByUsed())
+                    {
+                        if (k.IsDeleted) continue;
+                        KontragentCollection.Add(new Kontragent
+                        {
+                            DocCode = k.DocCode,
+                            Name = k.Name,
+                            BalansCurrency = k.BalansCurrency,
+                            OtvetstLico = k.OtvetstLico,
+                            FullName = k.FullName,
+                            IsBalans = k.IsBalans,
+                            INN = k.INN,
+                            DELETED = k.DELETED,
+                            Note = k.Note
+                        });
+                    }
+                else
+                    foreach (var k in KontragentManager.GetAllKontragentSortedByUsed()
+                        .Where(_ => _.BalansCurrency.Name == Currency.Name))
+                    {
+                        if (k.IsDeleted) continue;
+                        var kontr = new Kontragent
+                        {
+                            DocCode = k.DocCode,
+                            Name = k.Name,
+                            BalansCurrency = k.BalansCurrency,
+                            OtvetstLico = k.OtvetstLico,
+                            FullName = k.FullName,
+                            IsBalans = k.IsBalans,
+                            INN = k.INN,
+                            DELETED = k.DELETED,
+                            Note = k.Note
+                        };
+                        KontragentCollection.Add(kontr);
+                    }
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+        }
+
+        private void LoadKontragentFromReference(decimal KontrDC)
+        {
+            try
+            {
+                KontragentCollection.Clear();
+                if (Currency == null)
+                    foreach (var k in KontragentManager.GetAllKontragentSortedByUsed())
+                    {
+                        if (k.IsDeleted) continue;
+                        KontragentCollection.Add(new Kontragent
+                        {
+                            DocCode = k.DocCode,
+                            Name = k.Name,
+                            BalansCurrency = k.BalansCurrency,
+                            OtvetstLico = k.OtvetstLico,
+                            FullName = k.FullName,
+                            IsBalans = k.IsBalans,
+                            INN = k.INN,
+                            DELETED = k.DELETED
+                        });
+                    }
+                else
+                    foreach (var k in KontragentManager.GetAllKontragentSortedByUsed()
+                        .Where(_ => _.BalansCurrency.Name == Currency.Name))
+                    {
+                        if (k.IsDeleted) continue;
+                        var kontr = new Kontragent
+                        {
+                            DocCode = k.DocCode,
+                            Name = k.Name,
+                            BalansCurrency = k.BalansCurrency,
+                            OtvetstLico = k.OtvetstLico,
+                            FullName = k.FullName,
+                            IsBalans = k.IsBalans,
+                            INN = k.INN,
+                            DELETED = k.DELETED
+                        };
+                        KontragentCollection.Add(kontr);
+                    }
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+        }
+
+        public override void SearchClear(object obj)
+        {
+            SearchText = null;
+            LoadKontragentFromReference();
+        }
+
+        public override void Search(object obj)
+        {
+            KontragentCollection.Clear();
+            try
+            {
+                foreach (var k in MainReferences.GetAllKontragents().Values)
+                    if (k.Name.ToUpper().Contains(SearchText.ToUpper())
+                        || k.BalansCurrency.Name.ToUpper().Contains(SearchText.ToUpper())
+                        || k.OtvetstLico != null && k.OtvetstLico.Name.ToUpper().Contains(SearchText.ToUpper())
+                        || k.FullName != null && k.FullName.ToUpper().Contains(SearchText.ToUpper())
+                        || k.INN != null && k.INN.ToUpper().Contains(SearchText.ToUpper()))
+                        if (Currency == null)
+                        {
+                            KontragentCollection.Add(new Kontragent
+                            {
+                                Name = k.Name,
+                                DocCode = k.DocCode,
+                                BalansCurrency = k.BalansCurrency,
+                                OtvetstLico = k.OtvetstLico,
+                                FullName = k.FullName,
+                                IsBalans = k.IsBalans,
+                                INN = k.INN,
+                                DELETED = k.DELETED
+                            });
+                        }
+                        else
+                        {
+                            if (k.BalansCurrency.Name == Currency?.Name)
+                                KontragentCollection.Add(new Kontragent
+                                {
+                                    Name = k.Name,
+                                    DocCode = k.DocCode,
+                                    BalansCurrency = k.BalansCurrency,
+                                    OtvetstLico = k.OtvetstLico,
+                                    FullName = k.FullName,
+                                    IsBalans = k.IsBalans,
+                                    INN = k.INN,
+                                    DELETED = k.DELETED
+                                });
+                        }
+                RaisePropertyChanged(nameof(KontragentCollection));
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+        }
+
+        public override void ResetLayout(object form)
+        {
+            myDataUserControl?.LayoutManager.ResetLayout();
+        }
+    }
+}

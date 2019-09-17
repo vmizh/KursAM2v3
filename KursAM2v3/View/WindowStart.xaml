@@ -1,0 +1,8 @@
+﻿<Window x:Class="KursAM2.View.WindowStart" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="WindowStart" Height="10" Width="10"
+        Margin="-100,-100,0,0"
+        ShowInTaskbar="False" ResizeMode="NoResize" WindowState="Minimized" IsEnabled="False" ShowActivated="False"
+        Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top"
+        Icon="pack://siteoforigin:,,,/Images/Box_Blue.png" WindowStyle="None" AllowsTransparency="True" Opacity="0">
+
+</Window>

@@ -1,0 +1,148 @@
+﻿<dx:DXWindow
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:control="clr-namespace:Core.Control;assembly=Core"
+    x:Class="KursAM2.View.Period.PeriodCloseManagementView"
+    Title="Закрытие периодов" Height="350" Width="525">
+    <DockPanel>
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <dxlc:LayoutControl x:Name="mainLayoutControl" DockPanel.Dock="Top">
+            <dxlc:LayoutGroup View="Tabs"
+                              Name="Tabs">
+                <dxlc:LayoutGroup Header="Исключения" Name="Tab3">
+                    <dxlc:LayoutGroup Name="Group7" dxlc:LayoutControl.AllowHorizontalSizing="True">
+                        <dxg:GridControl x:Name="closedTypeGridControl5"
+                                         AutoGenerateColumns="AddNew"
+                                         VerticalAlignment="Stretch"
+                                         EnableSmartColumnsGeneration="True"
+                                         dx:DXSerializer.SerializationID="closedTypeGridControl5"
+                                         dx:DXSerializer.StoreLayoutMode="All"
+                                         dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                         CurrentItem="{Binding CurrentPeriodClosed}"
+                                         ItemsSource="{Binding PeriodClosed}">
+                            <dxg:GridControl.View>
+                                <dxg:TableView ShowTotalSummary="True"
+                                               EnableImmediatePosting="True"
+                                               x:Name="closedTypeGridControlView5"
+                                               CellStyle="{StaticResource FocusedCellStyle}" 
+                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               ShowAutoFilterRow="True"
+                                               ShowGroupPanel="False"
+                                               AllowEditing="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand EventName="CellValueChanged"
+                                                               Command="{Binding SetNewClosedDateCommand}" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup Name="Group8" dxlc:LayoutControl.AllowHorizontalSizing="True">
+                        <dxg:GridControl x:Name="closedTypeGridControl6"
+                                         AutoGenerateColumns="AddNew"
+                                         VerticalAlignment="Stretch"
+                                         EnableSmartColumnsGeneration="True"
+                                         dx:DXSerializer.SerializationID="closedTypeGridControl6"
+                                         dx:DXSerializer.StoreLayoutMode="All"
+                                         dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                         CurrentItem="{Binding CurrentPeriodExlude}"
+                                         ItemsSource="{Binding PeriodExclude}">
+                            <dxg:GridControl.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Добавить"
+                                              Command="{Binding AddNewPeriodExcludeCommand}" />
+                                    <MenuItem Header="Удалить"
+                                              Command="{Binding DeletePeriodExcludeCommand}" />
+                                </ContextMenu>
+                            </dxg:GridControl.ContextMenu>
+                            <dxg:GridControl.View>
+                                <dxg:TableView ShowTotalSummary="True"
+                                               EnableImmediatePosting="True"
+                                               x:Name="closedTypeGridControlView6"
+                                               CellStyle="{StaticResource FocusedCellStyle}" 
+                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               ShowAutoFilterRow="True"
+                                               ShowGroupPanel="False"
+                                               AllowEditing="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand EventName="CellValueChanged"
+                                                               Command="{Binding NewPeriodExcludeCommand}" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Header="Группы пользователей" Name="Tab2" Orientation="Horizontal">
+                    <dxg:GridControl x:Name="closedTypeGridControl2"
+                                     AutoGenerateColumns="AddNew"
+                                     VerticalAlignment="Stretch"
+                                     EnableSmartColumnsGeneration="True"
+                                     dx:DXSerializer.SerializationID="closedTypeGridControl2"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                     CurrentItem="{Binding CurrentGroup}"
+                                     ItemsSource="{Binding PeriodGroups}">
+                        <dxg:GridControl.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Добавить"
+                                          Command="{Binding AddNewGroupCommand}" />
+                                <MenuItem Header="Удалить"
+                                          Command="{Binding DeleteGroupCommand}" />
+                            </ContextMenu>
+                        </dxg:GridControl.ContextMenu>
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowTotalSummary="True"
+                                           EnableImmediatePosting="True"
+                                           x:Name="closedTypeGridControlView2"
+                                           CellStyle="{StaticResource FocusedCellStyle}" 
+                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           ShowAutoFilterRow="True"
+                                           ShowGroupPanel="False"
+                                           AllowEditing="True" />
+
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                    <dxlc:LayoutGroup Name="Tab2item2" dxlc:LayoutControl.AllowHorizontalSizing="True">
+                        <dxg:GridControl x:Name="closedTypeGridControl4"
+                                         AutoGenerateColumns="AddNew"
+                                         VerticalAlignment="Stretch"
+                                         EnableSmartColumnsGeneration="True"
+                                         dx:DXSerializer.SerializationID="closedTypeGridControl4"
+                                         dx:DXSerializer.StoreLayoutMode="All"
+                                         dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                         ItemsSource="{Binding PeriodUsers}"
+                                         CurrentItem="{Binding CurrentPeriodUsers}">
+                            <dxg:GridControl.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Добавить"
+                                              Command="{Binding AddNewUserCommand}" />
+                                    <MenuItem Header="Удалить"
+                                              Command="{Binding DeleteUserCommand}" />
+                                </ContextMenu>
+                            </dxg:GridControl.ContextMenu>
+                            <dxg:GridControl.View>
+                                <dxg:TableView ShowTotalSummary="True"
+                                               EnableImmediatePosting="True"
+                                               x:Name="closedTypeGridControlView3"
+                                               CellStyle="{StaticResource FocusedCellStyle}" 
+                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               ShowAutoFilterRow="True"
+                                               ShowGroupPanel="False"
+                                               AllowEditing="True" />
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:DXWindow>

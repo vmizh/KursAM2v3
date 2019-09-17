@@ -1,0 +1,302 @@
+﻿using System;
+using Core.EntityViewModel;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using KursAM2.View.Logistiks.UC;
+
+
+namespace KursAM2.ViewModel.Logistiks
+{
+    /// <summary>
+    ///     ViewModel для Userontrol
+    ///     строки с неполной отгрузкй для клиентов
+    /// </summary>
+    public class NomenklAddFromNotShippedRowViewModel : RSViewModelBase
+    {
+        #region Общие свойства
+
+        private NomenklViewModel myNomenkl;
+
+        public NomenklViewModel NomenklViewModel
+        {
+            get => myNomenkl;
+            set
+            {
+                if (myNomenkl == value) return;
+                myNomenkl = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private Kontragent myKontagent;
+
+        public Kontragent Kontagent
+        {
+            get => myKontagent;
+            set
+            {
+                if (myKontagent == value) return;
+                myKontagent = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        /// <summary>
+        ///     Осталось недополученных товаров
+        /// </summary>
+        private decimal myRemainsQuantity;
+
+        public decimal RemainsQuantity
+        {
+            get => myRemainsQuantity;
+            set
+            {
+                if (myRemainsQuantity == value) return;
+                myRemainsQuantity = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        #endregion
+
+        #region Счет-фактура
+
+        private decimal mySFDocCode;
+
+        public decimal SFDocCode
+        {
+            get => mySFDocCode;
+            set
+            {
+                if (mySFDocCode == value) return;
+                mySFDocCode = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        private int mySFRowCode;
+
+        public int SFRowCode
+        {
+            get => mySFRowCode;
+            set
+            {
+                if (mySFRowCode == value) return;
+                mySFRowCode = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private DateTime mySFDate;
+
+        public DateTime SFDate
+        {
+            get => mySFDate;
+            set
+            {
+                if (mySFDate == value) return;
+                mySFDate = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private string mySFNumber;
+
+        public string SFNumber
+        {
+            get => mySFNumber;
+            set
+            {
+                if (mySFNumber == value) return;
+                mySFNumber = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private string mySFText;
+
+        public string SFText
+        {
+            get => mySFText;
+            set
+            {
+                if (mySFText == value) return;
+                mySFText = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        private string mySFNote;
+
+        public string SFNote
+        {
+            get => mySFNote;
+            set
+            {
+                if (mySFNote == value) return;
+                mySFNote = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private Currency mySFCurrency;
+
+        public Currency SFCurrency
+        {
+            get => mySFCurrency;
+            set
+            {
+                if (mySFCurrency == value) return;
+                mySFCurrency = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private decimal myPrice;
+
+        public decimal Price
+        {
+            get => myPrice;
+            set
+            {
+                if (myPrice == value) return;
+                myPrice = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private decimal mySFQuantity;
+
+        public decimal SFQuantity
+        {
+            get => mySFQuantity;
+            set
+            {
+                if (mySFQuantity == value) return;
+                mySFQuantity = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        #endregion
+
+        #region Накладная на отпуск
+
+        private decimal myNakladDocCode;
+
+        public decimal NakladDocCode
+        {
+            get => myNakladDocCode;
+            set
+            {
+                if (myNakladDocCode == value) return;
+                myNakladDocCode = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        private int myNakladRowCode;
+
+        public int NakladRowCode
+        {
+            get => myNakladRowCode;
+            set
+            {
+                if (myNakladRowCode == value) return;
+                myNakladRowCode = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private string myNakladNumber;
+
+        public string NakladNumber
+        {
+            get => myNakladNumber;
+            set
+            {
+                if (myNakladNumber == value) return;
+                myNakladNumber = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private DateTime myNakladDate;
+
+        public DateTime NakladDate
+        {
+            get => myNakladDate;
+            set
+            {
+                if (myNakladDate == value) return;
+                myNakladDate = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private string myNakladText;
+
+        public string NakladText
+        {
+            get => myNakladText;
+            set
+            {
+                if (myNakladText == value) return;
+                myNakladText = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private string myNakladNote;
+
+        public string NakladNote
+        {
+            get => myNakladNote;
+            set
+            {
+                if (myNakladNote == value) return;
+                myNakladNote = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private decimal myNakladQuantity;
+
+        public decimal NakladQuantity
+        {
+            get => myNakladQuantity;
+            set
+            {
+                if (myNakladQuantity == value) return;
+                myNakladQuantity = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        #endregion
+    }
+
+    public class NomenklAddFromNotShippedWindowViewModel : RSWindowViewModelBase
+    {
+        private NomenklAddFromNotShippedUC myDataUserControl;
+
+        public NomenklAddFromNotShippedWindowViewModel()
+        {
+            myDataUserControl = new NomenklAddFromNotShippedUC();
+        }
+
+        public NomenklAddFromNotShippedUC DataUserControl
+        {
+            get => myDataUserControl;
+            set
+            {
+                if (Equals(myDataUserControl, value)) return;
+                myDataUserControl = value;
+                RaisePropertyChanged();
+            }
+        }
+    }
+}

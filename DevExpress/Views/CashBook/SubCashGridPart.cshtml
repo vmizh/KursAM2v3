@@ -1,0 +1,38 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc.UI
+@Html.DevExpress().GridView(Setting =>
+{
+    Setting.Name = "SubCashMainGrid";
+    Setting.CallbackRouteValues = new {Controller = "CashBook", Action = "SubCashGridPart"};
+    Setting.SettingsBehavior.AllowFocusedRow = true;
+    Setting.KeyFieldName = "CurrencyName";
+    Setting.Width = Unit.Percentage(100);
+    Setting.Settings.VerticalScrollBarMode = ScrollBarMode.Visible;
+    Setting.Settings.VerticalScrollableHeight = 100;
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "CurrencyName";
+        col.Caption = "Валюты";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "Start";
+        col.Caption = "Начало";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "In";
+        col.Caption = "Приход";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "Out";
+        col.Caption = "Расход";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "End";
+        col.Caption = "Конец";
+    });
+}).Bind(Model).GetHtml()

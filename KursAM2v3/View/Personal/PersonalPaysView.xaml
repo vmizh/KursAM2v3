@@ -1,0 +1,282 @@
+﻿<dx:DXWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:control1="clr-namespace:Core.Control;assembly=Core"
+             x:Class="KursAM2.View.Personal.PersonalPaysView"
+             Title="Заработная плата сотрудников" Height="800" Width="1200">
+    <DockPanel>
+        <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
+               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
+        <dxlc:LayoutControl x:Name="mainLayoutControl" Padding="0" HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch" Orientation="Vertical" ScrollBars="None">
+            <dxlc:LayoutGroup Header="Сотрудники"
+                              Padding="0"
+                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                              View="GroupBox" dxlc:LayoutControl.AllowVerticalSizing="True" Margin="3,0,0,0">
+                <dxg:GridControl x:Name="gridEmployee"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalContentAlignment="Stretch"
+                                 Margin="0"
+                                 MaxHeight="10000"
+                                 MaxWidth="10000"
+                                 CurrentItemChanged="GridEmployee_OnCurrentItemChanged"
+                                 VerticalAlignment="Stretch"
+                                 dx:DXSerializer.SerializationID="gridMain"
+                                 dx:DXSerializer.StoreLayoutMode="All"
+                                 dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                 dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                 ItemsSource="{Binding EmployeeMain, NotifyOnSourceUpdated=True}"
+                                 CurrentItem="{Binding CurrentEmploee, Mode=TwoWay}"
+                                 SelectedItem="{Binding SelectEmployee, Mode=TwoWay}"
+                                 SelectionMode="Row">
+                    <dxg:GridControl.Columns>
+                        <dxg:GridColumn Name="nomCol1" Header="Сотрудник"
+                                        FieldName="EmployeeName" />
+                        <dxg:GridColumn Name="nomCol2" Header="Табельный номер" FieldName="TabelNumber" />
+                        <dxg:GridColumn Name="nomCol22" Header="Валюта" FieldName="CrsName" />
+                        <dxg:GridColumn Name="nomCol3" Header="Начислено" FieldName="SummaNach">
+                            <dxg:GridColumn.EditSettings>
+                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                            </dxg:GridColumn.EditSettings>
+                        </dxg:GridColumn>
+                        <dxg:GridColumn Name="nomCol4" Header="Выплачено" FieldName="PlatSumma">
+                            <dxg:GridColumn.EditSettings>
+                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                            </dxg:GridColumn.EditSettings>
+                        </dxg:GridColumn>
+                        <dxg:GridColumn Name="nomCol5" Header="Долг" FieldName="DolgSumma">
+                            <dxg:GridColumn.EditSettings>
+                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                            </dxg:GridColumn.EditSettings>
+                        </dxg:GridColumn>
+                        <dxg:GridColumn Name="nomCol6" Header="Посл.операция" FieldName="DateLastOper" />
+                    </dxg:GridControl.Columns>
+                    <dxg:GridControl.TotalSummary>
+                        <dxg:GridSummaryItem FieldName="SummaNach" SummaryType="Sum"
+                                             DisplayFormat="n2" />
+                        <dxg:GridSummaryItem FieldName="PlatSumma"
+                                             SummaryType="Sum"
+                                             DisplayFormat="n2" />
+                        <dxg:GridSummaryItem FieldName="DolgSumma"
+                                             SummaryType="Sum"
+                                             DisplayFormat="n2" />
+                    </dxg:GridControl.TotalSummary>
+                    <dxg:GridControl.View>
+                        <dxg:TableView ShowTotalSummary="True"
+                                       Name="tableViewEmployee"
+                                       CellStyle="{StaticResource FocusedCellStyle}" 
+                                       RowStyle="{StaticResource FocusedRowStyle}"
+                                       ShowAutoFilterRow="True"
+                                       AllowEditing="False" />
+                    </dxg:GridControl.View>
+                </dxg:GridControl>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <dxlc:LayoutGroup Header="Периоды" View="GroupBox" dxlc:LayoutControl.AllowHorizontalSizing="True"
+                                  dxlc:LayoutControl.AllowVerticalSizing="True"
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <dxg:TreeListControl x:Name="treePeriods"
+                                         AutoGenerateColumns="AddNew"
+                                         dx:DXSerializer.SerializationID="PeriodTreeGrid"
+                                         dx:DXSerializer.StoreLayoutMode="All"
+                                         dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                         CurrentItemChanged="treePeriods_CurrentItemChanged"
+                                         ItemsSource="{Binding Periods, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+                        <dxg:TreeListControl.Bands>
+                            <dxg:TreeListControlBand Name="bandt1" Header="В валюте сотрудника">
+                                <dxg:TreeListColumn Name="colt1" FieldName="Name" Header="Период" ReadOnly="True" />
+                                <dxg:TreeListColumn Name="colt2" FieldName="DateStart" Header="Дата начало"
+                                                    ReadOnly="True" BestFitMode="Smart" SortOrder="Descending"
+                                                    SortIndex="0" />
+                                <dxg:TreeListColumn Name="colt3" FieldName="DateEnd" Header="Дата конец"
+                                                    ReadOnly="True" />
+                                <dxg:TreeListColumn Name="colt4" FieldName="Start" Header="Начало" ReadOnly="True">
+                                    <dxg:TreeListColumn.EditSettings>
+                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                    </dxg:TreeListColumn.EditSettings>
+                                </dxg:TreeListColumn>
+                                <dxg:TreeListColumn Name="colt5" FieldName="In" Header="Начислено" ReadOnly="True">
+                                    <dxg:TreeListColumn.EditSettings>
+                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                    </dxg:TreeListColumn.EditSettings>
+                                </dxg:TreeListColumn>
+                                <dxg:TreeListColumn Name="colt6" FieldName="Out" Header="Выдано" ReadOnly="True">
+                                    <dxg:TreeListColumn.EditSettings>
+                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                    </dxg:TreeListColumn.EditSettings>
+                                </dxg:TreeListColumn>
+                                <dxg:TreeListColumn Name="colt7" FieldName="End" Header="Конец" ReadOnly="True">
+                                    <dxg:TreeListColumn.EditSettings>
+                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                    </dxg:TreeListColumn.EditSettings>
+                                </dxg:TreeListColumn>
+                            </dxg:TreeListControlBand>
+                            <dxg:TreeListControlBand Name="bandt2" Header="По валютам операций">
+                                <dxg:TreeListControlBand.Bands>
+                                    <dxg:TreeListControlBand Header="RUB">
+                                        <dxg:TreeListColumn Name="colt9" FieldName="NachRUB" Header="Начислено"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
+                                        <dxg:TreeListColumn Name="colt10" FieldName="RUB" Header="Выплачено"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
+                                    </dxg:TreeListControlBand>
+                                    <dxg:TreeListControlBand Name="bandt3" Header="USD">
+                                        <dxg:TreeListColumn Name="colt8" FieldName="NachUSD" Header="Начислено"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
+                                        <dxg:TreeListColumn Name="colt11" FieldName="USD" Header="Выплачено"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
+                                    </dxg:TreeListControlBand>
+                                    <dxg:TreeListControlBand Name="bandt4" Header="EUR">
+                                        <dxg:TreeListColumn Name="colt12" FieldName="NachEUR" Header="Начислено"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
+                                        <dxg:TreeListColumn Name="colt13" FieldName="EUR" Header="Выплачено"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
+                                    </dxg:TreeListControlBand>
+                                </dxg:TreeListControlBand.Bands>
+                            </dxg:TreeListControlBand>
+                        </dxg:TreeListControl.Bands>
+                        <dxg:TreeListControl.View>
+                            <dxg:TreeListView ParentFieldName="ParentId" KeyFieldName="Id" ShowTotalSummary="True" />
+                        </dxg:TreeListControl.View>
+                    </dxg:TreeListControl>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup x:Name="groupSave" Header="LayoutGroup"
+                                  dxlc:LayoutControl.AllowHorizontalSizing="True"
+                                  dxlc:LayoutControl.AllowVerticalSizing="True"
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <dxg:GridControl x:Name="gridRows"
+                                     dx:DXSerializer.SerializationID="gridDocs"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                     ItemsSource="{Binding DocumentsForPeriod, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                     CurrentItem="{Binding CurrentPayDocument, Mode=TwoWay}"
+                                     SelectionMode="Row">
+                        <dxg:GridControl.Bands>
+                            <dxg:GridControlBand Name="bandGrid1" Header="Документ">
+                                <dxg:GridColumn Name="colr1" FieldName="PayType" Header="Тип" />
+                                <dxg:GridColumn Name="colr2" FieldName="PlatDocName" Header="Наименование" />
+                                <dxg:GridColumn Name="colr3" FieldName="DocDate" Header="Дата" />
+                                <dxg:GridColumn Name="colr4" FieldName="Summa" Header="Начислено">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="colr15" FieldName="PlatSumma" Header="Выплачено">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="colr5" FieldName="Crs" Header="Валюта" />
+                                <dxg:GridColumn Name="colr6" FieldName="Rate" Header="Курс">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <!--<dxg:GridColumn Header="примечание" />-->
+                            </dxg:GridControlBand>
+                            <dxg:GridControlBand Name="bandGrid2" Header="В валюте сотрудника">
+                                <dxg:GridColumn Name="colr7" FieldName="SummaEmp" Header="Начислено">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="colr8" FieldName="PlatSummaEmp" Header="Выплачено">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                            </dxg:GridControlBand>
+                            <dxg:GridControlBand Name="bandGrid3" Header="В валюте операции">
+                                <dxg:GridControlBand.Bands>
+                                    <dxg:GridControlBand Name="bandGrid4" Header="RUB">
+                                        <dxg:GridColumn Name="colr9" FieldName="NachRUB" Header="Начислено">
+                                            <dxg:GridColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:GridColumn.EditSettings>
+                                        </dxg:GridColumn>
+                                        <dxg:GridColumn Name="colr10" FieldName="RUB" Header="Выплачено">
+                                            <dxg:GridColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:GridColumn.EditSettings>
+                                        </dxg:GridColumn>
+                                    </dxg:GridControlBand>
+                                    <dxg:GridControlBand Name="bandGrid5" Header="USD">
+                                        <dxg:GridColumn Name="colr11" FieldName="NachUSD" Header="Начислено">
+                                            <dxg:GridColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:GridColumn.EditSettings>
+                                        </dxg:GridColumn>
+                                        <dxg:GridColumn Name="colr12" FieldName="USD" Header="Выплачено">
+                                            <dxg:GridColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:GridColumn.EditSettings>
+                                        </dxg:GridColumn>
+                                    </dxg:GridControlBand>
+                                    <dxg:GridControlBand Name="bandGrid6" Header="EUR">
+                                        <dxg:GridColumn Name="colr13" FieldName="NachEUR" Header="Начислено">
+                                            <dxg:GridColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:GridColumn.EditSettings>
+                                        </dxg:GridColumn>
+                                        <dxg:GridColumn Name="colr14" FieldName="EUR" Header="Выплачено">
+                                            <dxg:GridColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:GridColumn.EditSettings>
+                                        </dxg:GridColumn>
+                                    </dxg:GridControlBand>
+                                </dxg:GridControlBand.Bands>
+                            </dxg:GridControlBand>
+                        </dxg:GridControl.Bands>
+                        <dxg:GridControl.TotalSummary>
+                            <dxg:GridSummaryItem FieldName="SummaEmp" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="PlatSummaEmp" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="NachRUB" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="RUB" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="NachUSD" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="USD" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="NachEUR" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="EUR" SummaryType="Sum" DisplayFormat="n2" />
+                        </dxg:GridControl.TotalSummary>
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowTotalSummary="True"
+                                           Name="tableViewDocuments"
+                                           ShowAutoFilterRow="True"
+                                           AllowEditing="False"
+                                           CellStyle="{StaticResource FocusedCellStyle}" 
+                                           RowStyle="{StaticResource FocusedRowStyle}"/>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:DXWindow>

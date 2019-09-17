@@ -1,0 +1,2134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\NUnit.3.11.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.11.0\build\NUnit.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.3.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.3.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F81539F9-9431-4D87-9BF0-7E195911349D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KursAM2</RootNamespace>
+    <AssemblyName>KursAM2v3</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>0436;</NoWarn>
+    <LangVersion>default</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>default</LangVersion>
+    <NoWarn>0436</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevExpress.Data.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.DemoData.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.DemoData.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Diagram.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Images.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Map.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Mvvm.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Office.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Pdf.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Pdf.v15.2.Drawing, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.PivotGrid.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Printing.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.RichEdit.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Sparkline.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.SpellChecker.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Charts.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Spreadsheet.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Tutorials.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Utils.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Utils.v15.2.UI, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Carousel.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Charts.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Controls.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Core.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Core.v15.2.Extensions, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.DemoBase.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Docking.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.DocumentViewer.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Gauges.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Grid.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Grid.v15.2.Extensions, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Layout.v15.2.Core, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.LayoutControl.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Map.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.NavBar.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.PdfViewer.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.PivotGrid.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Printing.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.PropertyGrid.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.ReportDesigner.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Ribbon.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.RichEdit.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Scheduler.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.SpellChecker.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Spreadsheet.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Themes.MetropolisLight.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraEditors.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraPrinting.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraLayout.v15.2, Version=15.2.19.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=7.1.3000.2254, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReSharper.Annotations.7.1.3.130415\lib\net\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Expression.Drawing, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Expression.Drawing.3.0.0\lib\net45\Microsoft.Expression.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.11.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity.Design" />
+    <Reference Include="System.Data.SQLite, Version=1.0.110.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.110.0\lib\net45\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.110.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.110.0\lib\net45\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.110.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.110.0\lib\net45\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsInput, Version=1.0.4.0, Culture=neutral, PublicKeyToken=9b287f7dc5073cad, processorArchitecture=MSIL">
+      <HintPath>..\packages\InputSimulator.1.0.4.0\lib\net20\WindowsInput.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dialogs\StandartDialogs.cs" />
+    <Compile Include="Managers\BankOperationsManager.cs" />
+    <Compile Include="Managers\Base\AttributeHelper.cs" />
+    <Compile Include="Managers\Base\BaseItemManager.cs" />
+    <Compile Include="Managers\Base\DocumentCopyType.cs" />
+    <Compile Include="Managers\Base\DocumentManager.cs" />
+    <Compile Include="Managers\Base\DocumentWithRowManager.cs" />
+    <Compile Include="Managers\Base\IItemManager.cs" />
+    <Compile Include="Managers\Base\ReferenceManager.cs" />
+    <Compile Include="Managers\AccessRightsManager.cs" />
+    <Compile Include="Managers\CashDocumentType.cs" />
+    <Compile Include="Managers\CashManager.cs" />
+    <Compile Include="Managers\Invoices\WarehouseManager.cs" />
+    <Compile Include="Managers\OffBalansOperationManagers\OffBalansInManager.cs" />
+    <Compile Include="Managers\OffBalansOperationManagers\OffBalansOutManager.cs" />
+    <Compile Include="Managers\StoreManager.cs" />
+    <Compile Include="Managers\DocumentsOpenManager.cs" />
+    <Compile Include="Managers\KontragentManager.cs" />
+    <Compile Include="Managers\Nomenkl\NomenklCategoryManager.cs" />
+    <Compile Include="Managers\Nomenkl\NomenklProductKindManager.cs" />
+    <Compile Include="Managers\Nomenkl\NomenklProductTypeManager.cs" />
+    <Compile Include="Managers\Nomenkl\UnitManager.cs" />
+    <Compile Include="Managers\PeriodGroupsRefenceManager.cs" />
+    <Compile Include="Managers\ProfitAndLossesManager.cs" />
+    <Compile Include="Managers\ProjectManager.cs" />
+    <Compile Include="Managers\ProjectsManager.cs" />
+    <Compile Include="Managers\Invoices\InvoicesManager.cs" />
+    <Compile Include="Managers\VersionManager.cs" />
+    <Compile Include="Managers\Invoices\InvoiceSupplierManager.cs" />
+    <Compile Include="Managers\ManagementBalansCompareManager.cs" />
+    <Compile Include="Managers\Nomenkl\NomenklMainManager.cs" />
+    <Compile Include="Managers\InventorySheetManager.cs" />
+    <Compile Include="Managers\Nomenkl\NomenklManager.cs" />
+    <Compile Include="Managers\WarehouseManager.cs" />
+    <Compile Include="ReportManagers\SFClientAndWayBill\SFClientZajavkaSkladReport.cs" />
+    <Compile Include="ReportManagers\SFClientAndWayBill\SFClientReportManager.cs" />
+    <Compile Include="ReportManagers\SFClientAndWayBill\SFClientZakazReport.cs" />
+    <Compile Include="ReportManagers\SFClientAndWayBill\WaybillReportManager.cs" />
+    <Compile Include="Tests\TreeControlFluentTests.xaml.cs">
+      <DependentUpon>TreeControlFluentTests.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\Costing\KontragentRefOut.cs" />
+    <Compile Include="ViewModel\Costing\KontragentRefOutRow.cs" />
+    <Compile Include="ViewModel\Dogovora\DogovorClientHead.cs" />
+    <Compile Include="ViewModel\Dogovora\DogovorClientRow.cs" />
+    <Compile Include="Managers\Base\MutualAccountingManager.cs" />
+    <Compile Include="ViewModel\Finance\BankOperationsWindowViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Cash\CashBookWindowViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Cash\CashCurrencyExchangeViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Cash\CashInWindowSearchViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Cash\CashInWindowViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Cash\CashOutWindowSearchViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Cash\CashOutWindowViewModel.cs" />
+    <Compile Include="ViewModel\Finance\controls\AddBankOperionUC.cs" />
+    <Compile Include="ViewModel\Finance\GridControlSummaryItem.cs" />
+    <Compile Include="ViewModel\Finance\Invoices\ProviderWindowViewModel.cs" />
+    <Compile Include="ViewModel\Finance\MoneyInPathItem.cs" />
+    <Compile Include="ViewModel\Finance\MutualAccountingDebitorCreditors.cs" />
+    <Compile Include="ViewModel\Finance\MutualAcountingInfoWindowViewModel.cs" />
+    <Compile Include="ViewModel\Finance\MutualAcountingWindowViewModel.cs" />
+    <Compile Include="ViewModel\Finance\MutualAccountingWindowSearchViewModel.cs" />
+    <Compile Include="ViewModel\Finance\InvoiceSupplierWindowViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Invoices\SchetSupplierSelectViewModel.cs" />
+    <Compile Include="ViewModel\Finance\KontragentPaymentInfo.cs" />
+    <Compile Include="ViewModel\Finance\PurchaseRow.cs" />
+    <Compile Include="ViewModel\Finance\SaleTaxNomenkl.cs" />
+    <Compile Include="ViewModel\Finance\SaleTaxNomenklWindowViewModel.cs" />
+    <Compile Include="ViewModel\Finance\KontragentReferenceOutWindowViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Invoices\SearchInvoiceProviderViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Invoices\InvoiceClientSearchViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklMoveOnSkladWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomPriceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomPriceViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklSelectedSimpleDialogViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklAddFromNotShippedRowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\InventorySheetSearchWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\InventorySheetViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\InventorySheetRowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\InventorySheetWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklMoveWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklAddNomenklForInViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklRemainWithPrice.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklTransferSearchViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklTransferViewModelExt.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklTransferRowViewModelExt.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklTransferWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklCostResetSearchWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomTransferAddForSklad.cs" />
+    <Compile Include="ViewModel\Logistiks\ProviderRowWithNakladViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\PurchaseOverheadsWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\PurchaseOverheads\InvoiceSupplierNakladRowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\SkladOstatkiWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklCostCalculatorWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklCostResetWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklInnerMoveWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\WarehouseSelectDialogViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\Warehouse\OrderOutWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\Warehouse\WarehouseOrderSearchViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\Warehouse\OrderInWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\FormPayReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\KontragentCategoryRefWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\CountriesRefWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Nomenkl\TypeOfProductReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\OffBalansSheetTypeReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\RegionRefViewModel.cs" />
+    <Compile Include="ViewModel\Reference\SDRReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\UsagePayReferenceWindowViewModel.cs" />
+    <Compile Include="View\Base\IOnAutoGeneratingColumn.cs" />
+    <Compile Include="View\DialogUserControl\AllInvocesDialogSelectUC.xaml.cs">
+      <DependentUpon>AllInvocesDialogSelectUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\KontragentCategoryReferenceView.xaml.cs">
+      <DependentUpon>KontragentCategoryReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\CountryReferenceView.xaml.cs">
+      <DependentUpon>CountryReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\OffBalanseSheetTypeReferenceView.xaml.cs">
+      <DependentUpon>OffBalanseSheetTypeReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\SDRReferenceView.xaml.cs">
+      <DependentUpon>SDRReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\BalansCompareMoneyInPathUI.xaml.cs">
+      <DependentUpon>BalansCompareMoneyInPathUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\ProfitAndLossesControls\ProfitAndLossExtendVzaimozachetUI.xaml.cs">
+      <DependentUpon>ProfitAndLossExtendVzaimozachetUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\ProfitAndLossesControls\ProfitAndLossExtendBaseUI.xaml.cs">
+      <DependentUpon>ProfitAndLossExtendBaseUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\Management\ProfitAndLossesWindowViewModel2.cs" />
+    <Compile Include="ViewModel\Management\KonragentBalansRowViewModel.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectPrihodDocRow.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectProviderPrihodWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectProfitAndLossesWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectResultInfo.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectSelectReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectDocumentViewModel.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\ManagementBalans\ManagementBalanceExtendRowViewModel.cs" />
+    <Compile Include="ViewModel\Management\ManagementBalans\ManagementBalansCompareWindowViewModel.cs" />
+    <Compile Include="ViewModel\Period\DataAnnotationsMultiCurrenciesDataPeriod.cs" />
+    <Compile Include="ViewModel\Period\MultyCurrenciesDatePeriod.cs" />
+    <Compile Include="ViewModel\Period\PeriodGroupsReferenceViewModel.cs" />
+    <Compile Include="ViewModel\Reference\AccessRightsViewModel.cs" />
+    <Compile Include="ViewModel\Reference\BankAndCashReferenceViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Dialogs\BankSelectDialogViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Dialogs\CurrencySelectDialogViewModel.cs" />
+    <Compile Include="ViewModel\Reference\ILayoutFluentSetEditors.cs" />
+    <Compile Include="ViewModel\Reference\RegionUCViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Store2ReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\EmployeesUCViewModel.cs" />
+    <Compile Include="ViewModel\Reference\ITreeKey.cs" />
+    <Compile Include="ViewModel\Reference\Nomenkl\CategoryReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Nomenkl\NomenklKindReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Nomenkl\ProductTypeReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\PeriodGroupsUCViewModel.cs" />
+    <Compile Include="ViewModel\Reference\ProjectsReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\MutualAcountingRefWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\SimpleObjectsSelectWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\TreeDocument.cs" />
+    <Compile Include="ViewModel\Reference\TreeReferenceBaseWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\UnitReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\UserUCViewModel.cs" />
+    <Compile Include="ViewModel\StartLogin\StartLoginViewModel.cs" />
+    <Compile Include="View\Base\BaseDocumentView.xaml.cs">
+      <DependentUpon>BaseDocumentView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Base\BaseSearchView.xaml.cs">
+      <DependentUpon>BaseSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Base\EmptyUI.xaml.cs">
+      <DependentUpon>EmptyUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Base\GridAutoWithLayoutContyWithLayoutConrol.xaml.cs">
+      <DependentUpon>GridAutoWithLayoutContyWithLayoutConrol.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Base\TreeListFormBaseView.xaml.cs">
+      <DependentUpon>TreeListFormBaseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Base\GridFormBaseView.xaml.cs">
+      <DependentUpon>GridFormBaseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Behaviors\FrameNavigator.cs" />
+    <Compile Include="View\Behaviors\FrameNavigationBase.cs" />
+    <Compile Include="View\Behaviors\INavigator.cs" />
+    <Compile Include="View\CustomTreeListCombobox.cs" />
+    <Compile Include="View\DialogUserControl\BankAccountSelectedDialog.cs" />
+    <Compile Include="View\DialogUserControl\CashOrdersForBankSelectDialog.cs" />
+    <Compile Include="View\DialogUserControl\CashOrdersSelectDialogUC.xaml.cs">
+      <DependentUpon>CashOrdersSelectDialogUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\CashRashOrderSelectDialog.cs" />
+    <Compile Include="View\DialogUserControl\CashSelectedDialog.cs" />
+    <Compile Include="View\DialogUserControl\InvoiceClientSearchDialog.cs" />
+    <Compile Include="View\DialogUserControl\StandartDialogSelectUC2.xaml.cs">
+      <DependentUpon>StandartDialogSelectUC2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\StandartDialogSelectUC.xaml.cs">
+      <DependentUpon>StandartDialogSelectUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\CashSetRemainsDialog.cs" />
+    <Compile Include="View\DialogUserControl\CashSetRemainsUC.xaml.cs">
+      <DependentUpon>CashSetRemainsUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\KontragentSelectDialog.cs" />
+    <Compile Include="View\DialogUserControl\KontragentSelectDialogUC.xaml.cs">
+      <DependentUpon>KontragentSelectDialogUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\ProjectDocumentSelect.cs" />
+    <Compile Include="View\Finance\BankOperationsView.xaml.cs">
+      <DependentUpon>BankOperationsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\Cash\CashBookView.xaml.cs">
+      <DependentUpon>CashBookView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\Cash\CashCurrencyExchangeView.xaml.cs">
+      <DependentUpon>CashCurrencyExchangeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\Cash\CashInSearchView.xaml.cs">
+      <DependentUpon>CashInSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\Cash\CashInView.xaml.cs">
+      <DependentUpon>CashInView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\Cash\CashOutSearchView.xaml.cs">
+      <DependentUpon>CashOutSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\Cash\CashoutView.xaml.cs">
+      <DependentUpon>CashoutView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\Invoices\InvoiceClientView.xaml.cs">
+      <DependentUpon>InvoiceClientView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\Invoices\InvoiceProviderView.xaml.cs">
+      <DependentUpon>InvoiceProviderView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\Invoices\ProviderSearchView.xaml.cs">
+      <DependentUpon>ProviderSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\Invoices\SearchInvoiceClientView.xaml.cs">
+      <DependentUpon>SearchInvoiceClientView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\MutualAccountingSearchView.xaml.cs">
+      <DependentUpon>MutualAccountingSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\MutualAccountingView.xaml.cs">
+      <DependentUpon>MutualAccountingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\UC\BankAccountSelectDialog.cs" />
+    <Compile Include="View\Finance\UC\BankOperationsComareRowView.xaml.cs">
+      <DependentUpon>BankOperationsComareRowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\UC\MutualAccountingDataTablesUC.xaml.cs">
+      <DependentUpon>MutualAccountingDataTablesUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\UC\SchetFacturaProviderSelectUC.xaml.cs">
+      <DependentUpon>SchetFacturaProviderSelectUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Helper\GridLayoutHelper.cs" />
+    <Compile Include="View\KursReferences\AccessRightsView.xaml.cs">
+      <DependentUpon>AccessRightsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\CashAndBanksReferenceView.xaml.cs">
+      <DependentUpon>CashAndBanksReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\KontragentReference2View.xaml.cs">
+      <DependentUpon>KontragentReference2View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\MUtualAccountingTypeRefView.xaml.cs">
+      <DependentUpon>MUtualAccountingTypeRefView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\ProjectReferenceView.xaml.cs">
+      <DependentUpon>ProjectReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\UC\PeriodGroupsUC.xaml.cs">
+      <DependentUpon>PeriodGroupsUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\UC\EmployeesUC.xaml.cs">
+      <DependentUpon>EmployeesUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\UC\UsersUC.xaml.cs">
+      <DependentUpon>UsersUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\InventorySheetView.xaml.cs">
+      <DependentUpon>InventorySheetView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\Logistiks\NomPriceDocumentViewModel.cs" />
+    <Compile Include="View\Logistiks\NomenklMoveOnSklad.xaml.cs">
+      <DependentUpon>NomenklMoveOnSklad.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\UC\AddNomenklUC.xaml.cs">
+      <DependentUpon>AddNomenklUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\UC\AddNomenklViewModel.cs" />
+    <Compile Include="View\Logistiks\UC\NomenklAddFromNotShippedUC.xaml.cs">
+      <DependentUpon>NomenklAddFromNotShippedUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\UC\NomenklMoveWithCalcPriceUC.xaml.cs">
+      <DependentUpon>NomenklMoveWithCalcPriceUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\UC\SelectWarehouse.xaml.cs">
+      <DependentUpon>SelectWarehouse.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\UC\SelectNomenkls.xaml.cs">
+      <DependentUpon>SelectNomenkls.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\Logistiks\WaybillSearchViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\PostInvoiceRow.cs" />
+    <Compile Include="ViewModel\Logistiks\DogovorForClientViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\DogovorForClientSearchViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Invoices\ClientWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\PostInvoice.cs" />
+    <Compile Include="ViewModel\Logistiks\DocumentRowSearchViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\DocumentSearchViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\DocumentsSearchWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\GruzoInfoViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\KontragentGruzoInfoViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\KontragentGruzoInfoWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NakladRowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\WaybillWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\BreakEven\BreakEvenCOrGroupViewModel.cs" />
+    <Compile Include="ViewModel\Management\BreakEven\BreakEvenDocumentViewModel.cs" />
+    <Compile Include="ViewModel\Management\BreakEven\BreakEvenKontrGroupViewModel.cs" />
+    <Compile Include="ViewModel\Management\BreakEven\BreakEvenNomGroupViewModel.cs" />
+    <Compile Include="ViewModel\Management\BreakEven\BreakEvenRowViewModel.cs" />
+    <Compile Include="ViewModel\Management\BreakEven\BreakEvenManagerGroupViewModel.cs" />
+    <Compile Include="ViewModel\Management\BreakEven\BreakEvenWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\Calculations\DebitorCreditorBuilder.cs" />
+    <Compile Include="ViewModel\Management\Calculations\RecalcKontragentBalans.cs" />
+    <Compile Include="ViewModel\Management\ManagementBalans\ManagementBalansBuilder.cs" />
+    <Compile Include="ViewModel\Management\MoneyPeriodRowViewModel.cs" />
+    <Compile Include="ViewModel\Management\MoneyPeriodWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\DebitorCreditor\DebitorCreditorWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\DebitorCreditor\DebitorCreditorRow.cs" />
+    <Compile Include="ViewModel\Management\KontragentBalansWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\ManagementBalans\ManagementBalanceGroupViewModel.cs" />
+    <Compile Include="ViewModel\Management\ManagementBalans\ManagementBalansWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\ProfitAndLossesExtendRowViewModel.cs" />
+    <Compile Include="ViewModel\Management\ProfitAndLossesMainRowViewModel.cs" />
+    <Compile Include="ViewModel\Management\ProfitAndLossesWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\ShopDocumentViewModel.cs" />
+    <Compile Include="ViewModel\Management\ShopHeaderViewModel.cs" />
+    <Compile Include="ViewModel\Management\ShopNomenklViewModel.cs" />
+    <Compile Include="ViewModel\Management\ShopRentabelnostViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PersonaAddUserForRights.cs" />
+    <Compile Include="ViewModel\Personal\PersonaReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Personal\EmployeePayWindowViewModel.cs" />
+    <Compile Include="ViewModel\Personal\EmployeePayMainViewModel.cs" />
+    <Compile Include="ViewModel\Personal\EmployeePayDocumentViewModel.cs" />
+    <Compile Include="ViewModel\Personal\EmployeePayPeriodViewModel.cs" />
+    <Compile Include="ViewModel\Personal\NachEmployeeForPeriod.cs" />
+    <Compile Include="ViewModel\Personal\NachForEmployeeModelOld.cs" />
+    <Compile Include="ViewModel\Personal\NachForEmployeeRowModelOld.cs" />
+    <Compile Include="ViewModel\Personal\PayrollSearchWindowViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PayRollType.cs" />
+    <Compile Include="ViewModel\Personal\PayrollTypeWindowViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PayRollVedomostEmployeeViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PayRollVedomostEmployeeRowViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PayRollVedomostSearch.cs" />
+    <Compile Include="ViewModel\Personal\PayRollVedomostSearchViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PayRollVedomostViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PayRollVedomostWindowViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PersonaDialogSelect.cs" />
+    <Compile Include="ViewModel\Personal\PersonaDialogSelectViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PersonalDialogSelectWindowViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PersonalNachRowViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PersonalNachViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PersonaReferenceModelOld.cs" />
+    <Compile Include="ViewModel\Personal\PersonaReferenceViewModelOld.cs" />
+    <Compile Include="ViewModel\Personal\PREmpEmpRightViewModel.cs" />
+    <Compile Include="ViewModel\Personal\PREmpUserRight.cs" />
+    <Compile Include="ViewModel\Personal\PREmpUserRightViewModel.cs" />
+    <Compile Include="ViewModel\Reconcilation\ActOfResponsibleShort.cs" />
+    <Compile Include="ViewModel\Reconcilation\AOFViewModel.cs" />
+    <Compile Include="ViewModel\Reconcilation\Responsible.cs" />
+    <Compile Include="ViewModel\Reconcilation\ResponsibleCorporate.cs" />
+    <Compile Include="ViewModel\Reference\StoreReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Nomenkl\MainCardWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Nomenkl\ReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Repozit\UsersHorizontalRightWindowViewModel.cs" />
+    <Compile Include="View\Base\SelectDialogView.xaml.cs">
+      <DependentUpon>SelectDialogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Convertors\ImageSourceToIconConverter.cs" />
+    <Compile Include="View\DialogUserControl\NameNameUC.xaml.cs">
+      <DependentUpon>NameNameUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\NameNoteUC.xaml.cs">
+      <DependentUpon>NameNoteUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\NameUC.xaml.cs">
+      <DependentUpon>NameUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\ViewModel\NameNoteViewModel.cs" />
+    <Compile Include="View\Finance\SaleTaxNomenklView.xaml.cs">
+      <DependentUpon>SaleTaxNomenklView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\Reference\KontragentCardWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\KontragentReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\KontragentReferenceViewModel.cs" />
+    <Compile Include="ViewModel\Splash\DebitorCreditorCalcKontrSplashViewModel.cs" />
+    <Compile Include="ViewModel\Splash\SplashBaseViewModel.cs" />
+    <Compile Include="View\Finance\KontragentRefOutView.xaml.cs">
+      <DependentUpon>KontragentRefOutView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KontragentGruzoInfoReferenceView.xaml.cs">
+      <DependentUpon>KontragentGruzoInfoReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\KontragentControls\KontragentBankUserControl.xaml.cs">
+      <DependentUpon>KontragentBankUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\KontragentControls\KontragentCardView.xaml.cs">
+      <DependentUpon>KontragentCardView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\KontragentControls\KontragentContactUserControl.xaml.cs">
+      <DependentUpon>KontragentContactUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\KontragentControls\KontragentGruzoUserControl.xaml.cs">
+      <DependentUpon>KontragentGruzoUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\KontragentControls\KontragentHelperUserControl.xaml.cs">
+      <DependentUpon>KontragentHelperUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\KontragentControls\KontragentMainUserControl.xaml.cs">
+      <DependentUpon>KontragentMainUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\KontragentControls\KontragentPersonaUserControl.xaml.cs">
+      <DependentUpon>KontragentPersonaUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\KontragentControls\KontragentUchetInfoUserControl.xaml.cs">
+      <DependentUpon>KontragentUchetInfoUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\NomenklMainCardView.xaml.cs">
+      <DependentUpon>NomenklMainCardView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\NomenklReferenceView.xaml.cs">
+      <DependentUpon>NomenklReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\StoreReferenceView.xaml.cs">
+      <DependentUpon>StoreReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\Logistiks\NomenklSelectedDialogViewModel.cs" />
+    <Compile Include="View\Logistiks\GruzoRequisiteView.xaml.cs" />
+    <Compile Include="View\Logistiks\InventorySheetSearchView.xaml.cs">
+      <DependentUpon>InventorySheetSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\KontragentGruzoInfoView.xaml.cs" />
+    <Compile Include="View\Logistiks\NomAddNomenklToMoveUC.xaml.cs">
+      <DependentUpon>NomAddNomenklToMoveUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\NomenklCostCalculator.xaml.cs">
+      <DependentUpon>NomenklCostCalculator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\NomenklCostReset.xaml.cs">
+      <DependentUpon>NomenklCostReset.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\NomenklInnerMove.xaml.cs">
+      <DependentUpon>NomenklInnerMove.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\NomenklMovePivotUC.xaml.cs">
+      <DependentUpon>NomenklMovePivotUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\NomenklTransferSearchView.xaml.cs">
+      <DependentUpon>NomenklTransferSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\NomenklTransferView.xaml.cs">
+      <DependentUpon>NomenklTransferView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\NomenklGridControlListUC.xaml.cs">
+      <DependentUpon>NomenklGridControlListUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\NomTransferAddForSkladUC.xaml.cs">
+      <DependentUpon>NomTransferAddForSkladUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\RemainsOfGoodsInWarehouse.xaml.cs">
+      <DependentUpon>RemainsOfGoodsInWarehouse.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\SkladOstatki.xaml.cs">
+      <DependentUpon>SkladOstatki.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\UC\NomenklCardUC.xaml.cs">
+      <DependentUpon>NomenklCardUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\UC\SelectSimpleObjects.xaml.cs">
+      <DependentUpon>SelectSimpleObjects.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\UC\SelectNomenklSimpleUC.xaml.cs">
+      <DependentUpon>SelectNomenklSimpleUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\WarehouseStorageOrderSearchView.xaml.cs">
+      <DependentUpon>WarehouseStorageOrderSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\WarehouseStorageOrderView.xaml.cs">
+      <DependentUpon>WarehouseStorageOrderView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\Warehouse\OrderInView.xaml.cs">
+      <DependentUpon>OrderInView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\Warehouse\OrderOutView.xaml.cs">
+      <DependentUpon>OrderOutView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\WaybillSearchView.xaml.cs">
+      <DependentUpon>WaybillSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\WaybillView.xaml.cs">
+      <DependentUpon>WaybillView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\NomenklMove.xaml.cs">
+      <DependentUpon>NomenklMove.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainWindow.xaml.cs" />
+    <Compile Include="View\Management\BreakEvenForm.xaml.cs" />
+    <Compile Include="View\Management\BreakEvenTemp.cs" />
+    <Compile Include="View\Management\Controls\BalansComareKontragentOperationsUI.xaml.cs">
+      <DependentUpon>BalansComareKontragentOperationsUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\BalansCompareFinanseUI.xaml.cs">
+      <DependentUpon>BalansCompareFinanseUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\BalansCompareKontragentUI.xaml.cs">
+      <DependentUpon>BalansCompareKontragentUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\BalansCompareSalaryUI.xaml.cs">
+      <DependentUpon>BalansCompareSalaryUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\BalansCompareStoreOperationsUI.xaml.cs">
+      <DependentUpon>BalansCompareStoreOperationsUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\BalansCompareStoreUI.xaml.cs">
+      <DependentUpon>BalansCompareStoreUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\LoadCircleBar.xaml.cs">
+      <DependentUpon>LoadCircleBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\ProfitAndLossesMainUI.xaml.cs">
+      <DependentUpon>ProfitAndLossesMainUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\ProjectReferenceSelectDialogUI.xaml.cs">
+      <DependentUpon>ProjectReferenceSelectDialogUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\ValueToAngleConverter.cs" />
+    <Compile Include="View\Management\Controls\IResetCurrencyColumns.cs" />
+    <Compile Include="View\Management\Controls\ManagementBalansCompareMainUI.xaml.cs">
+      <DependentUpon>ManagementBalansCompareMainUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\ManagementBalansMainUI.xaml.cs">
+      <DependentUpon>ManagementBalansMainUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\ManagementBalansRowsKontr.xaml.cs">
+      <DependentUpon>ManagementBalansRowsKontr.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\Controls\ProjectSelectDialogUI.xaml.cs">
+      <DependentUpon>ProjectSelectDialogUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\DebitorCreditorView.xaml.cs">
+      <DependentUpon>DebitorCreditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\KontargentDialogSelect.xaml.cs" />
+    <Compile Include="View\Management\KontragentBalansForm.xaml.cs" />
+    <Compile Include="View\Management\KontragentRightsControl.xaml.cs" />
+    <Compile Include="View\Management\ManagementBalansCompareView.xaml.cs">
+      <DependentUpon>ManagementBalansCompareView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\ManagementBalansView.xaml.cs">
+      <DependentUpon>ManagementBalansView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\MoneyPeriodMove.xaml.cs">
+      <DependentUpon>MoneyPeriodMove.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\MutualAccountingInfo.xaml.cs">
+      <DependentUpon>MutualAccountingInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\ProfitAndLosses.xaml.cs" />
+    <Compile Include="View\Logistiks\PurchaseInvoicesOverheadsView.xaml.cs">
+      <DependentUpon>PurchaseInvoicesOverheadsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\ProfitAndLosses2.xaml.cs">
+      <DependentUpon>ProfitAndLosses2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\ProjectProfitAndLossView.xaml.cs">
+      <DependentUpon>ProjectProfitAndLossView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\ProjectProviderPrihodView.xaml.cs">
+      <DependentUpon>ProjectProviderPrihodView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\ProjectsView.xaml.cs">
+      <DependentUpon>ProjectsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\ShopRentabelnost.xaml.cs" />
+    <Compile Include="View\KursReferences\KontragentReferenceView.xaml.cs">
+      <DependentUpon>KontragentReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Period\PeriodCloseManagementView.xaml.cs">
+      <DependentUpon>PeriodCloseManagementView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Personal\EmploeeSelectUC.xaml.cs">
+      <DependentUpon>EmploeeSelectUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Personal\PersonaAddUserRightsUC.xaml.cs">
+      <DependentUpon>PersonaAddUserRightsUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Repozit\UsersHorizontalRight.xaml.cs">
+      <DependentUpon>UsersHorizontalRight.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Search\SearchNakladForClientView.xaml.cs">
+      <DependentUpon>SearchNakladForClientView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Search\SearchNomenklPriceReset.xaml.cs">
+      <DependentUpon>SearchNomenklPriceReset.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Search\SearchDogovorForClientView.xaml.cs">
+      <DependentUpon>SearchDogovorForClientView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SplashWindow\DebitorCreditorKontrCalcSplashView.xaml.cs">
+      <DependentUpon>DebitorCreditorKontrCalcSplashView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Personal\DialogSelectPersona.xaml.cs" />
+    <Compile Include="View\Personal\PayRollDocSearch.xaml.cs" />
+    <Compile Include="View\Personal\PayRollTypeReference.xaml.cs" />
+    <Compile Include="View\Personal\PayRollVedomost.xaml.cs" />
+    <Compile Include="View\Personal\PersonalPaysView.xaml.cs" />
+    <Compile Include="View\Personal\PersonaReference.xaml.cs" />
+    <Compile Include="View\Personal\UsersRightToPayRoll.xaml.cs" />
+    <Compile Include="View\Reconciliation\ActOfReconciliation.xaml.cs" />
+    <Compile Include="View\StartLogin.xaml.cs" />
+    <Compile Include="View\WindowStart.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Resource Include="Font\Roboto-Black.ttf" />
+    <Resource Include="Font\Roboto-BlackItalic.ttf" />
+    <Resource Include="Font\Roboto-Bold.ttf" />
+    <Resource Include="Font\Roboto-BoldItalic.ttf" />
+    <Resource Include="Font\Roboto-Italic.ttf" />
+    <Resource Include="Font\Roboto-Light.ttf" />
+    <Resource Include="Font\Roboto-LightItalic.ttf" />
+    <Resource Include="Font\Roboto-Medium.ttf" />
+    <Resource Include="Font\Roboto-MediumItalic.ttf" />
+    <Resource Include="Font\Roboto-Regular.ttf" />
+    <Resource Include="Font\Roboto-Thin.ttf" />
+    <Resource Include="Font\Roboto-ThinItalic.ttf" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+    <None Include="Reports\Account.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Account2.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\SFClient.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\SFClientReport.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\torg12.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Zajavka.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Zakaz.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+    <Folder Include="ViewModel\Fabric\Base\" />
+    <Folder Include="ViewModel\Logistiks\Helper\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Resource\Error.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resource\Menu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resource\StandartButtons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resource\StandartIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resource\ViewControlTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resource\Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tests\TreeControlFluentTests.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\AllInvocesDialogSelectUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\KursReferences\KontragentCategoryReferenceView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\KursReferences\CountryReferenceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\OffBalanseSheetTypeReferenceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\SDRReferenceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\Controls\BalansCompareMoneyInPathUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Management\ProfitAndLossesControls\ProfitAndLossExtendVzaimozachetUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Management\ProfitAndLossesControls\ProfitAndLossExtendBaseUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\BaseDocumentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\BaseSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\EmptyUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\GridAutoWithLayoutContyWithLayoutConrol.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\TreeListFormBaseView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Base\GridFormBaseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\CashOrdersSelectDialogUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\StandartDialogSelectUC2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\DialogUserControl\StandartDialogSelectUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\CashSetRemainsUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\KontragentSelectDialogUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\BankOperationsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\Cash\CashBookView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\Cash\CashCurrencyExchangeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\Cash\CashInSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\Cash\CashInView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\Cash\CashOutSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\Cash\CashoutView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Finance\Invoices\InvoiceClientView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Finance\Invoices\InvoiceProviderView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Finance\Invoices\ProviderSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\Invoices\SearchInvoiceClientView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Finance\MutualAccountingSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\MutualAccountingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\UC\BankOperationsComareRowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\UC\MutualAccountingDataTablesUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\UC\SchetFacturaProviderSelectUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\AccessRightsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\CashAndBanksReferenceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\KontragentReference2View.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\MUtualAccountingTypeRefView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\ProjectReferenceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\UC\PeriodGroupsUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\KursReferences\UC\EmployeesUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\KursReferences\UC\UsersUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\InventorySheetView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\NomenklMoveOnSklad.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\UC\AddNomenklUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\UC\NomenklAddFromNotShippedUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\UC\NomenklMoveWithCalcPriceUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\UC\SelectWarehouse.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Logistiks\UC\SelectNomenkls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\SelectDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\NameNameUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\DialogUserControl\NameNoteUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\DialogUserControl\NameUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Finance\SaleTaxNomenklView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\KontragentRefOutView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KontragentGruzoInfoReferenceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\KontragentControls\KontragentBankUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\KontragentControls\KontragentCardView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\KontragentControls\KontragentContactUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\KontragentControls\KontragentGruzoUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\KontragentControls\KontragentHelperUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\KontragentControls\KontragentMainUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\KontragentControls\KontragentPersonaUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\KontragentControls\KontragentUchetInfoUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\NomenklMainCardView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\NomenklReferenceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\StoreReferenceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\GruzoRequisiteView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Logistiks\InventorySheetSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\KontragentGruzoInfoView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Logistiks\NomAddNomenklToMoveUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\NomenklCostCalculator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\NomenklCostReset.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\NomenklInnerMove.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\NomenklMovePivotUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\NomenklTransferSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\NomenklTransferView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\NomenklGridControlListUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Logistiks\NomTransferAddForSkladUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\RemainsOfGoodsInWarehouse.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\SkladOstatki.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\UC\NomenklCardUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\UC\SelectSimpleObjects.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\UC\SelectNomenklSimpleUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\WarehouseStorageOrderSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\WarehouseStorageOrderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\Warehouse\OrderInView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Logistiks\Warehouse\OrderOutView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Logistiks\WaybillSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\WaybillView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\NomenklMove.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Management\BreakEvenForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Management\Controls\BalansComareKontragentOperationsUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\Controls\BalansCompareFinanseUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\Controls\BalansCompareKontragentUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\Controls\BalansCompareSalaryUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Management\Controls\BalansCompareStoreOperationsUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\Controls\BalansCompareStoreUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\Controls\LoadCircleBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\Controls\ManagementBalansCompareMainUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\Controls\ManagementBalansMainUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\Controls\ManagementBalansRowsKontr.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\Controls\ProfitAndLossesMainUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\Controls\ProjectReferenceSelectDialogUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\Controls\ProjectSelectDialogUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\DebitorCreditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\KontargentDialogSelect.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Management\KontragentBalansForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Management\KontragentRightsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Management\ManagementBalansCompareView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\ManagementBalansView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Management\MoneyPeriodMove.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\MutualAccountingInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\ProfitAndLosses.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Logistiks\PurchaseInvoicesOverheadsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\ProfitAndLosses2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\ProjectProfitAndLossView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\ProjectProviderPrihodView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\ProjectsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Management\ShopRentabelnost.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\KursReferences\KontragentReferenceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Period\PeriodCloseManagementView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Personal\EmploeeSelectUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Personal\PersonaAddUserRightsUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Repozit\UsersHorizontalRight.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Search\SearchNakladForClientView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Search\SearchNomenklPriceReset.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Search\SearchDogovorForClientView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SplashWindow\DebitorCreditorKontrCalcSplashView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Personal\DialogSelectPersona.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Personal\PayRollDocSearch.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Personal\PayRollTypeReference.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Personal\PayRollVedomost.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Personal\PersonalPaysView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Personal\PersonaReference.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Personal\UsersRightToPayRoll.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Reconciliation\ActOfReconciliation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\StartLogin.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\WindowStart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\arrow_right.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\Box_Blue.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\Box_Green.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\Box_Grey.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\calculator.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\Circle_Blue.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\Circle_Green.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\Circle_Grey.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\Close_Box_Red.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\DeleteRed.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\disk_blue_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\documents.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\documents_gear.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\documents_new.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\documents_preferences.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_add.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_attachment.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_certificate.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_chart.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_check.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_connection.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_cup.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_delete.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_dirty.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_dirty_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_down.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_edit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_error.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_exchange.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_find.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_forbidden.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_gear.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_heart.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_info.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_into.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_lock.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_music.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_new.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_notebook.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_ok.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_out.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_pinned.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_plain.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_plain_green.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_plain_new.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_plain_red.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_plain_yellow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_preferences.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_pulse.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_refresh.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_stop.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_text.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_time.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_up.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_view.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_warning.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_zoom_in.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\document_zoom_out.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\edit_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\edit_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\elements1_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\elements1_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\elements2_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\elements2_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\elements_selection_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\elements_selection_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_add_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_add_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_copy_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_copy_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_delete_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_delete_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_down_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_down_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_find_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_find_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_into_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_into_input_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_into_input_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_into_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_new_after_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_new_after_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_new_before_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_new_before_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_new_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_new_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_next_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_next_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_ok_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_ok_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_preferences_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_preferences_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_previous_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_previous_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_refresh_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_refresh_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_replace_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_replace_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_run_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_run_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_selection_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_selection_delete_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_selection_delete_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_selection_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_stop_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_stop_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_time_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_time_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_up_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_up_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_view_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\element_view_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\exit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\export1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\export2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\find.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\find_text.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\form_blue_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\Help_Circle_Blue.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\id_card_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\information_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\Info_Box_Blue.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\memory.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer2_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer2_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_add_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_add_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_delete_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_delete_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_error_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_error_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_information_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_information_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_network_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_network_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_new_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_new_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_ok_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_ok_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_preferences_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_preferences_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_view_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_view_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_warning_big.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\printer_warning_s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\recycle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\recycle_add.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\recycle_delete.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\recycle_error.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\recycle_information.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\recycle_ok.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\recycle_preferences.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\recycle_warning.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\redo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\refresh.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\replace.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\replace2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\TileControlManagement.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\TileFinanceUchet.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\TileMaterialManagment.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\TilePayroll.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\TilePersonalControlGroup.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\User1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\Warning.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Layout\DataSources.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Layout\KursAM2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Calculates\Calculates.csproj">
+      <Project>{e9528bc7-a826-429b-b07d-c3fb58dd7165}</Project>
+      <Name>Calculates</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CoreView\CoreView.csproj">
+      <Project>{B8D071BD-8311-4038-AF17-37D74E2DF91E}</Project>
+      <Name>CoreView</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{3541be94-a5b6-4e4e-8a63-dbb103acde29}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Data\Data.csproj">
+      <Project>{ae6bdc42-9b1e-4f09-8923-2295b1c87212}</Project>
+      <Name>Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FinanceAnalitic\FinanceAnalitic.csproj">
+      <Project>{e384033f-66c5-414a-aa48-f2b7d6cdb7cf}</Project>
+      <Name>FinanceAnalitic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Helper\Helper.csproj">
+      <Project>{45442b20-578b-4519-a31c-6ba5102b240f}</Project>
+      <Name>Helper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LayoutManager\LayoutManager.csproj">
+      <Project>{0ac84fa1-a12e-414a-8d3e-ede48e795908}</Project>
+      <Name>LayoutManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PeriodManager\PeriodManager.csproj">
+      <Project>{9e3fa069-7e99-4ac0-9f79-9d850a51bdda}</Project>
+      <Name>PeriodManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Reports\Reports.csproj">
+      <Project>{66a3ecd4-693d-485f-97b2-35aad6ab6d48}</Project>
+      <Name>Reports</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SQLite.Base\SQLite.Base.csproj">
+      <Project>{be1eebbe-e696-4b56-b901-0d960cace377}</Project>
+      <Name>SQLite.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Updater\Updater.csproj">
+      <Project>{2b4bdbc7-a64f-44cd-b9cd-18e332965817}</Project>
+      <Name>Updater</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\businessman.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Font\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\TileProjects.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>$(SolutionDir)VersionGenerate.exe $(ConfigurationName)
+</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.3.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.3.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\NUnit.3.11.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.11.0\build\NUnit.props'))" />
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.110.0\build\net45\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.110.0\build\net45\System.Data.SQLite.Core.targets'))" />
+  </Target>
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.110.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.110.0\build\net45\System.Data.SQLite.Core.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

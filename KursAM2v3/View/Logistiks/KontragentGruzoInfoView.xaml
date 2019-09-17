@@ -1,0 +1,108 @@
+﻿<dx:DXWindow
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    x:Class="KursAM2.View.Logistiks.KontragentGruzoInfoView"
+    Title="KontragentGruzoInfoView" Height="350" Width="525">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="53*" MaxHeight="40" />
+            <RowDefinition Height="267*" />
+        </Grid.RowDefinitions>
+        <DockPanel LastChildFill="False">
+            <Button x:Name="btnClose" DockPanel.Dock="Right"
+                    Click="BtnClose_OnClick">
+                <Image Source="pack://siteoforigin:,,,/Images/document_out.png" />
+            </Button>
+            <Button x:Name="btnSave" DockPanel.Dock="Right">
+                <Image Source="pack://siteoforigin:,,,/Images/disk_blue_big.png" />
+            </Button>
+            <Button x:Name="btnRefresh" DockPanel.Dock="Right">
+                <Image Source="pack://siteoforigin:,,,/Images/document_refresh.png" />
+            </Button>
+        </DockPanel>
+        <dxlc:LayoutControl HorizontalAlignment="Stretch"
+                            Padding="0"
+                            Grid.Row="1"
+                            VerticalAlignment="Stretch">
+            <dxlc:LayoutGroup Orientation="Vertical">
+                <dxlc:LayoutGroup Header="LayoutGroup" View="Group" Padding="0">
+                    <dxg:GridControl AutoGenerateColumns="None"
+                                     EnableSmartColumnsGeneration="True"
+                                     HorizontalAlignment="Stretch"
+                                     CurrentItem="{Binding SelectedKontr, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                     ItemsSource="{Binding Kontrs}"
+                                     VerticalAlignment="Stretch"
+                                     dxlc:LayoutControl.AllowVerticalSizing="True"
+                                     SelectedItemChanged="GridControl_SelectedItemChanged"
+                                     SelectionMode="Row">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn x:Name="col1" Header="Наименование" FieldName="Name" />
+                            <dxg:GridColumn x:Name="col2" Header="Валюта" FieldName="BalansCurrency" />
+                            <dxg:GridColumn x:Name="col3" Header="Баланс" FieldName="IsBalans" />
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView AllowPerPixelScrolling="True"
+                                           ShowAutoFilterRow="True"
+                                           ShowTotalSummary="False" AllowGrouping="False"
+                                           ShowGroupPanel="False"
+                                           CellStyle="{StaticResource FocusedCellStyle}" 
+                                           RowStyle="{StaticResource FocusedRowStyle}"/>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup View="Group">
+                    <dxg:GridControl
+                        Name="gridGruzo"
+                        AutoGenerateColumns="AddNew"
+                        EnableSmartColumnsGeneration="True"
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{Binding ActualData, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True }"
+                        VerticalAlignment="Stretch"
+                        dxlc:LayoutControl.AllowVerticalSizing="True">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn x:Name="cole1"
+                                            Header="ОКПО"
+                                            FieldName="OKPO" />
+                            <dxg:GridColumn x:Name="cole2"
+                                            Header="Реквизиты С/ф"
+                                            FieldName="GruzoTextForSchetFactura">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:MemoEditSettings />
+                                </dxg:GridColumn.EditSettings>
+
+                            </dxg:GridColumn>
+                            <dxg:GridColumn x:Name="cole3"
+                                            Header="Реквизиты наклад."
+                                            FieldName="GruzoTextForNaklad">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:MemoEditSettings />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn x:Name="cole4"
+                                            Header="Посл.изм."
+                                            FieldName="DateChanged">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:DateEditSettings AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView AllowPerPixelScrolling="True"
+                                           ShowAutoFilterRow="True"
+                                           CellStyle="{StaticResource FocusedCellStyle}" 
+                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           ShowTotalSummary="False"
+                                           AllowGrouping="False"
+                                           ShowGroupPanel="False" />
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </Grid>
+</dx:DXWindow>

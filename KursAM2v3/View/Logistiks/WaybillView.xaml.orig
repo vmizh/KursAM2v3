@@ -1,0 +1,332 @@
+﻿<dx:DXWindow
+    x:Class="KursAM2.View.Logistiks.WaybillView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:control1="clr-namespace:Core.Control;assembly=Core"
+    Title="WaybillView" Height="529.375" Width="850">
+    <DockPanel>
+        <control1:WndowMenu Height="60" DockPanel.Dock="Top" />
+        <dxlc:LayoutControl Name="mainLayoutControl" Padding="0">
+            <dxlc:LayoutGroup Orientation="Vertical">
+                <dxlc:LayoutGroup View="GroupBox" VerticalAlignment="Stretch"
+                                  dxlc:LayoutControl.AllowVerticalSizing="True">
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" Margin="0,10,0,0">
+                        <StackPanel Margin="0,0,0,5" Background="Transparent">
+                            <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+                                <Label Content="№" />
+                                <Label Margin="5,0" HorizontalContentAlignment="Center"
+                                       Content="{Binding Document.DD_IN_NUM}" Width="70"
+                                       Background="#FFEEEAEA" />
+                                <Label Content="Внешн. №" />
+                                <dxe:TextEdit HorizontalContentAlignment="Center" Margin="5,0"
+                                              Text="{Binding Document.DD_EXT_NUM}"
+                                              Width="80"
+                                              Background="#FFEEEAEA" />
+                                <Label Content="от" />
+                                <dxe:DateEdit Margin="5,0" DateTime="{Binding Document.DD_DATE}"
+                                              Width="100" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,5" Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <Label Content="Склад" />
+                                    <dxe:ComboBoxEdit Margin="62,0,0,0" Width="300"
+                                                      DisplayMember="Name"
+                                                      ValueMember="DocCode"
+                                                      IsTextEditable="False"
+                                                      AutoComplete="true"
+                                                      SelectedItem="{Binding Document.Store, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                                      ItemsSource="{Binding Sklads}" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="Получатель" />
+                                    <dxg:LookUpEdit
+                                        Name="searchLookUpEditKontragent"
+                                        AutoPopulateColumns="False"
+                                        DisplayMember="Name"
+                                        ValueMember="DocCode"
+                                        VerticalAlignment="Top"
+                                        HorizontalAlignment="Left"
+                                        ItemsSource="{Binding Kontragents}"
+                                        SelectedItem="{Binding Document.Client, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                        Width="500"
+                                        Height="30"
+                                        Margin="30,0">
+                                        <dxg:LookUpEdit.StyleSettings>
+                                            <dxg:SearchLookUpEditStyleSettings />
+                                        </dxg:LookUpEdit.StyleSettings>
+                                        <dxg:LookUpEdit.PopupContentTemplate>
+                                            <ControlTemplate>
+                                                <dxg:GridControl Name="PART_GridControl"
+                                                                 Loaded="PART_GridControlKontragent_Loaded"
+                                                                 Unloaded="PART_GridControlKontragent_Unloaded"
+                                                                 dx:DXSerializer.SerializationID="PART_GridControlKontragent"
+                                                                 dx:DXSerializer.StoreLayoutMode="All"
+                                                                 dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                                                 dxg:DataControlSerializationOptions.RemoveOldColumns="True">
+                                                    <dxg:GridControl.ContextMenu>
+                                                        <ContextMenu>
+                                                            <MenuItem Header="Открыть карточку контрагента"
+                                                                      Command="{Binding KontragentCardCommand}" />
+                                                            <MenuItem Header="Открыть справочник контрагентов"
+                                                                      Command="{Binding KontragentReferenceCommand}" />
+                                                        </ContextMenu>
+                                                    </dxg:GridControl.ContextMenu>
+                                                    <dxg:GridControl.Columns>
+                                                        <dxg:GridColumn Name="colk_1" Header="Наименование"
+                                                                        FieldName="Name" />
+                                                        <dxg:GridColumn Name="colk_2" Header="Баланс"
+                                                                        FieldName="IsBalans" />
+                                                        <dxg:GridColumn Name="colk_3" Header="Валюта"
+                                                                        FieldName="BalansCurrency" />
+                                                        <dxg:GridColumn Name="colk_4" Header="ИНН" FieldName="INN" />
+                                                        <dxg:GridColumn Name="colk_5" Header="Примечание"
+                                                                        FieldName="Note" />
+                                                    </dxg:GridControl.Columns>
+                                                    <dxg:GridControl.View>
+                                                        <dxg:TableView AutoWidth="True" ShowAutoFilterRow="True" />
+                                                    </dxg:GridControl.View>
+                                                </dxg:GridControl>
+                                            </ControlTemplate>
+                                        </dxg:LookUpEdit.PopupContentTemplate>
+                                    </dxg:LookUpEdit>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Через кого</Label>
+                            <dxe:ComboBoxEdit Name="otvetsCombobox"
+                                              ItemsSource="{Binding ByWhoomLicoList,NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                              Width="200" Margin="32,0,0,0"
+                                              EditValue="{Binding Document.DD_KOMU_PEREDANO, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                              AutoComplete="True"
+                                              ValidateOnTextInput="False"
+                                              ProcessNewValue="otvetsCombobox_ProcessNewValue" />
+                        </StackPanel>
+                        <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                            <Label>Счет-фактура</Label>
+                            <dxe:ButtonEdit Margin="20,0,0,0"
+                                            EditValue="{Binding Document.Schet, NotifyOnSourceUpdated=True}"
+                                            Width="400"
+                                            IsReadOnly="True">
+                                <dxmvvm:Interaction.Triggers>
+                                    <dxmvvm:EventToCommand EventName="DefaultButtonClick"
+                                                           Command="{Binding SFClientSelectCommand}"
+                                                           PassEventArgsToCommand="True" />
+                                </dxmvvm:Interaction.Triggers>
+                            </dxe:ButtonEdit>
+                        </StackPanel>
+                    </StackPanel>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Header="LayoutGroup" View="Tabs"
+                                  dxlc:LayoutControl.AllowVerticalSizing="True" VerticalAlignment="Stretch">
+                    <dxlc:LayoutGroup Header="Позиции">
+                        <dxg:GridControl x:Name="gridRows"
+                                         MaxHeight="10000"
+                                         MaxWidth="10000"
+                                         VerticalAlignment="Stretch"
+                                         dx:DXSerializer.SerializationID="gridRows"
+                                         dx:DXSerializer.StoreLayoutMode="All"
+                                         dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                         CurrentItem="{Binding CurrentNomenklRow}"
+                                         ItemsSource="{Binding Document.Rows, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}">
+                            <dxg:GridControl.Columns>
+                                <dxg:GridColumn x:Name="cole21" Header="Ном.№" FieldName="NomenklViewModelNumber"
+                                                ReadOnly="True" />
+                                <dxg:GridColumn x:Name="cole11" Header="Наименовение" FieldName="NomenklViewModel">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxg:LookUpEditSettings
+                                            Name="searchLookUpEdit"
+                                            AutoPopulateColumns="False"
+                                            DisplayMember="Name"
+                                            ItemsSource="{Binding Nomenkls}">
+                                            <dxg:LookUpEditSettings.StyleSettings>
+                                                <dxg:SearchLookUpEditStyleSettings />
+                                            </dxg:LookUpEditSettings.StyleSettings>
+                                            <dxg:LookUpEditSettings.PopupContentTemplate>
+                                                <ControlTemplate>
+                                                    <dxg:GridControl Name="PART_GridControl">
+                                                        <dxg:GridControl.Columns>
+                                                            <dxg:GridColumn FieldName="Name" Header="Наименование" />
+                                                            <dxg:GridColumn FieldName="NomenklViewModelNumber" Header="Ном.№" />
+                                                            <dxg:GridColumn FieldName="IsUsluga" Header="Услуга" />
+                                                            <dxg:GridColumn FieldName="Unit" Header="Ед.изм." />
+                                                        </dxg:GridControl.Columns>
+                                                        <dxg:GridControl.View>
+                                                            <dxg:TableView AutoWidth="True" ShowAutoFilterRow="True" />
+                                                        </dxg:GridControl.View>
+                                                    </dxg:GridControl>
+                                                </ControlTemplate>
+                                            </dxg:LookUpEditSettings.PopupContentTemplate>
+                                        </dxg:LookUpEditSettings>
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn x:Name="cole212" Header="Ед.Изм" FieldName="Unit"
+                                                ReadOnly="True" />
+                                <dxg:GridColumn x:Name="cole5" Header="Отпущено" FieldName="DDT_KOL_RASHOD">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings DisplayFormat="n2"
+                                                              MaskUseAsDisplayFormat="True"
+                                                              AllowDefaultButton="False" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                            </dxg:GridControl.Columns>
+                            <dxg:GridControl.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Вставить строку" />
+                                    <MenuItem Header="Удалить строку" />
+                                    <Separator />
+                                    <MenuItem Header="Открыть счет" />
+                                </ContextMenu>
+                            </dxg:GridControl.ContextMenu>
+                            <dxg:GridControl.TotalSummary>
+                                <dxg:GridSummaryItem FieldName="DDT_KOL_RASHOD" SummaryType="Sum"
+                                                     DisplayFormat="n2" />
+                                <dxg:GridSummaryItem FieldName="Name"
+                                                     SummaryType="Count" />
+                            </dxg:GridControl.TotalSummary>
+                            <dxg:GridControl.View>
+                                <dxg:TableView ShowTotalSummary="True"
+                                               x:Name="nomTableView2"
+                                               ShowAutoFilterRow="True"
+                                               ShowGroupPanel="False"
+                                               AllowEditing="True" />
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup Header="Реквизиты">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <dx:GroupFrame Header="Продавец">
+                                    <StackPanel>
+                                        <dxlc:LayoutItem Label="Грузовые реквизиты">
+                                            <TextBox TextWrapping="Wrap"
+                                                     Margin="35,0"
+                                                     Height="60"
+                                                     Text="{Binding Document.SF_GROZOOTPRAVITEL,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                                        </dxlc:LayoutItem>
+                                        <StackPanel Orientation="Horizontal">
+                                            <dxlc:LayoutItem Label="Банк" Margin="0,5,0,5">
+                                                <dxg:LookUpEdit
+                                                    x:Name="searchLookUpEditReceiverBank"
+                                                    AutoPopulateColumns="False"
+                                                    DisplayMember="Name"
+                                                    ValueMember="DocCode"
+                                                    Width="780"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="122,0,0,0"
+                                                    Height="30">
+                                                    <dxg:LookUpEdit.StyleSettings>
+                                                        <dxg:SearchLookUpEditStyleSettings />
+                                                    </dxg:LookUpEdit.StyleSettings>
+                                                    <dxg:LookUpEdit.PopupContentTemplate>
+                                                        <ControlTemplate>
+                                                            <dxg:GridControl x:Name="PART_GridControl">
+                                                                <dxg:GridControl.Columns>
+                                                                    <dxg:GridColumn FieldName="Name" />
+                                                                    <dxg:GridColumn FieldName="IsBalans" />
+                                                                    <dxg:GridColumn FieldName="BalansCurrency" />
+                                                                    <dxg:GridColumn FieldName="StartBalans" />
+                                                                    <dxg:GridColumn FieldName="StartBalans" />
+                                                                    <dxg:GridColumn FieldName="IsDeleted" />
+                                                                </dxg:GridControl.Columns>
+                                                                <dxg:GridControl.View>
+                                                                    <dxg:TableView AutoWidth="True"
+                                                                                   ShowAutoFilterRow="True" />
+                                                                </dxg:GridControl.View>
+                                                            </dxg:GridControl>
+                                                        </ControlTemplate>
+                                                    </dxg:LookUpEdit.PopupContentTemplate>
+                                                </dxg:LookUpEdit>
+                                            </dxlc:LayoutItem>
+                                            <Button Margin="10,5,0,5">Добавить</Button>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <dxlc:LayoutItem Label="Расчетный счет" Margin="0,5,0,5" Padding="0">
+                                                <dxe:TextEdit Width="250" HorizontalAlignment="Stretch"
+                                                              Margin="61,0"
+                                                              Text="{Binding ReceiverBank.Account,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                                            </dxlc:LayoutItem>
+                                            <dxlc:LayoutItem Label="Корреспондентский счет" Margin="0,5,0,5">
+                                                <dxe:TextEdit Width="400" HorizontalAlignment="Left" Margin="10,0"
+                                                              Text="{Binding ReceiverBank.CorrAccount,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                                            </dxlc:LayoutItem>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </dx:GroupFrame>
+                                <dx:GroupFrame Header="Покупатель">
+                                    <StackPanel>
+                                        <dxlc:LayoutItem Label="Грузовые реквизиты">
+                                            <TextBox TextWrapping="Wrap"
+                                                     Margin="35,0"
+                                                     Height="60"
+                                                     Text="{Binding Document.SF_GRUZOPOLUCHATEL,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                                        </dxlc:LayoutItem>
+                                        <StackPanel Orientation="Horizontal">
+                                            <dxlc:LayoutItem Label="Банк" Margin="0,5,0,5">
+                                                <dxg:LookUpEdit
+                                                    x:Name="searchLookUpEditClientBank"
+                                                    AutoPopulateColumns="False"
+                                                    DisplayMember="Name"
+                                                    ValueMember="DocCode"
+                                                    Width="800"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="122,0,0,0"
+                                                    Height="30">
+                                                    <dxg:LookUpEdit.StyleSettings>
+                                                        <dxg:SearchLookUpEditStyleSettings />
+                                                    </dxg:LookUpEdit.StyleSettings>
+                                                    <dxg:LookUpEdit.PopupContentTemplate>
+                                                        <ControlTemplate>
+                                                            <dxg:GridControl x:Name="PART_GridControl">
+                                                                <dxg:GridControl.Columns>
+                                                                    <dxg:GridColumn FieldName="Name" />
+                                                                    <dxg:GridColumn FieldName="IsBalans" />
+                                                                    <dxg:GridColumn FieldName="BalansCurrency" />
+                                                                    <dxg:GridColumn FieldName="StartBalans" />
+                                                                    <dxg:GridColumn FieldName="StartBalans" />
+                                                                    <dxg:GridColumn FieldName="IsDeleted" />
+                                                                </dxg:GridControl.Columns>
+                                                                <dxg:GridControl.View>
+                                                                    <dxg:TableView AutoWidth="True"
+                                                                                   ShowAutoFilterRow="True" />
+                                                                </dxg:GridControl.View>
+                                                            </dxg:GridControl>
+                                                        </ControlTemplate>
+                                                    </dxg:LookUpEdit.PopupContentTemplate>
+                                                </dxg:LookUpEdit>
+                                            </dxlc:LayoutItem>
+                                            <Button Margin="10,5,0,5">Добавить</Button>
+                                        </StackPanel>
+                                        <dxlc:LayoutItem Label="Расчетный счет" Margin="0,5,0,5">
+                                            <dxe:TextEdit Width="500" HorizontalAlignment="Left"
+                                                          Margin="61,0"
+                                                          Text="{Binding ClientBank.Account,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                                        </dxlc:LayoutItem>
+                                        <dxlc:LayoutItem Label="Корреспондентский счет" Margin="0,5,0,5">
+                                            <dxe:TextEdit Width="500" HorizontalAlignment="Left" Margin="10,0"
+                                                          Text="{Binding ClientBank.CorrAccount,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                                        </dxlc:LayoutItem>
+                                    </StackPanel>
+                                </dx:GroupFrame>
+                                <dx:GroupFrame Header="Дополнительно">
+                                    <dxlc:LayoutItem Label="К платежному документу" Margin="0,5,0,5">
+                                        <dxe:MemoEdit ShowIcon="False" TextWrapping="Wrap"
+                                                      Text="{Binding SF_PAYDOC_TEXT,NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}" />
+                                    </dxlc:LayoutItem>
+                                </dx:GroupFrame>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup Header="Связанные документы" />
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup />
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:DXWindow>

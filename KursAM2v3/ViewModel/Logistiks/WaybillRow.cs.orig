@@ -1,0 +1,60 @@
+﻿using Core;
+using Core.EntityViewModel;
+using Core.ViewModel.Common;
+using Data;
+using KursAM2.ViewModel.Finance;
+using NomenklViewModel = Core.EntityViewModel.NomenklViewModel;
+
+namespace KursAM2.ViewModel.Logistiks
+{
+    /// <summary>
+    ///     строки товарных накладных
+    /// </summary>
+    public class WaybillRow : TD_24ViewModel
+    {
+        private SFClientRowViewModel mySchetLinkedRow;
+
+        public WaybillRow()
+        {
+            Entity = new TD_24 {DOC_CODE = -1, CODE = 0};
+        }
+
+        public WaybillRow(TD_24 entity) : base(entity)
+        {
+            if (entity == null)
+            {
+                Entity = new TD_24 {DOC_CODE = -1, CODE = 0};
+                return;
+            }
+            SchetLinkedRow = new SFClientRowViewModel(entity.TD_84);
+        }
+
+        public NomenklViewModel NomenklViewModel
+        {
+            get => MainReferences.GetNomenkl(Entity.DDT_NOMENKL_DC);
+            set
+            {
+                if (Entity.DDT_NOMENKL_DC == value.DocCode) return;
+                Entity.DDT_NOMENKL_DC = value.DocCode;
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(Unit));
+                RaisePropertyChanged(nameof(NomenklNumber));
+            }
+        }
+
+        public SFClientRowViewModel SchetLinkedRow
+        {
+            get => mySchetLinkedRow;
+            set
+            {
+                if (mySchetLinkedRow == value) return;
+                mySchetLinkedRow = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string NomenklNumber => NomenklViewModel?.NomenklNumber;
+
+        public Unit Unit => NomenklViewModel?.Unit;
+    }
+}

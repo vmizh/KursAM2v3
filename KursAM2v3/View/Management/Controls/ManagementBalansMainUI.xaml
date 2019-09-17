@@ -1,0 +1,91 @@
+﻿<UserControl x:Class="KursAM2.View.Management.Controls.ManagementBalansMainUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="900">
+    <dxg:TreeListControl AutoGenerateColumns="None"
+                         dx:DXSerializer.SerializationID="treeMain"
+                         dx:DXSerializer.LayoutVersion="1"
+                         dx:DXSerializer.StoreLayoutMode="All"
+                         dxg:DataControlSerializationOptions.AddNewColumns="True"
+                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                         ItemsSource="{Binding BalansStructure}"
+                         SelectedItem="{Binding CurrentBalansRow}"
+                         SelectionMode="Row"
+                         x:Name="treeListBalans">
+        <dxg:TreeListControl.Columns>
+            <dxg:TreeListColumn Name="tcol1_2" FieldName="Name" Header="Позиция" ReadOnly="True" Fixed="Left" />
+            <dxg:TreeListColumn Name="tcol2_5" FieldName="SummaUSD" Header="USD" ReadOnly="True">
+                <dxg:TreeListColumn.EditSettings>
+                    <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                </dxg:TreeListColumn.EditSettings>
+            </dxg:TreeListColumn>
+            <dxg:TreeListColumn Name="tcol2_6" FieldName="SummaRUB" Header="RUB" ReadOnly="True">
+                <dxg:TreeListColumn.EditSettings>
+                    <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                </dxg:TreeListColumn.EditSettings>
+            </dxg:TreeListColumn>
+            <dxg:TreeListColumn Name="tcol2_7" FieldName="SummaEUR" Header="EUR" ReadOnly="True">
+                <dxg:TreeListColumn.EditSettings>
+                    <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                </dxg:TreeListColumn.EditSettings>
+            </dxg:TreeListColumn>
+            <dxg:TreeListColumn Name="tcol2_8" FieldName="SummaGBP" Header="GBP" ReadOnly="True">
+                <dxg:TreeListColumn.EditSettings>
+                    <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                </dxg:TreeListColumn.EditSettings>
+            </dxg:TreeListColumn>
+            <dxg:TreeListColumn Name="tcol2_9" FieldName="SummaCHF" Header="CHF" ReadOnly="True">
+                <dxg:TreeListColumn.EditSettings>
+                    <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                </dxg:TreeListColumn.EditSettings>
+            </dxg:TreeListColumn>
+            <dxg:TreeListColumn Name="tcol2_10" FieldName="SummaSEK" Header="SEK" ReadOnly="True">
+                <dxg:TreeListColumn.EditSettings>
+                    <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                </dxg:TreeListColumn.EditSettings>
+            </dxg:TreeListColumn>
+            <dxg:TreeListColumn Name="tcol2_11" FieldName="RecalcCurrency" Header="{Binding RecalcCrsName}"
+                                ReadOnly="True">
+                <dxg:TreeListColumn.EditSettings>
+                    <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                </dxg:TreeListColumn.EditSettings>
+            </dxg:TreeListColumn>
+        </dxg:TreeListControl.Columns>
+        <dxg:TreeListControl.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Экспорт"
+                          Command="{Binding VisualControlExportCommand}"
+                          CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              AncestorType={x:Type ContextMenu}}}">
+                    <MenuItem.Icon>
+                        <Image
+                            Source="pack://siteoforigin:,,,/Images/export1.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </ContextMenu>
+        </dxg:TreeListControl.ContextMenu>
+        <dxg:TreeListControl.View>
+            <dxg:TreeListView
+                Name="treeListViewBalans"
+                ShowTotalSummary="False"
+                KeyFieldName="Id"
+                ParentFieldName="ParentId">
+                <dxg:TreeListView.RowStyle>
+                    <Style TargetType="{x:Type dxg:RowControl}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=Level}" Value="0">
+                                <Setter Property="Foreground" Value="Blue" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </dxg:TreeListView.RowStyle>
+            </dxg:TreeListView>
+        </dxg:TreeListControl.View>
+    </dxg:TreeListControl>
+</UserControl>

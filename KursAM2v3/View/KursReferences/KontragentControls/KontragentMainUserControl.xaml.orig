@@ -1,0 +1,106 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    x:Class="KursAM2.View.KursReferences.KontragentControls.KontragentMainUserControl"
+<<<<<<< working copy
+    mc:Ignorable="d">
+
+    <dxlc:LayoutControl Name="KontragentMainLayoutControl" Orientation="Vertical" HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center">
+        <dxlc:LayoutGroup HorizontalAlignment="Center" Orientation="Vertical">
+=======
+    mc:Ignorable="d" d:DesignWidth="676">
+
+    <dxlc:LayoutControl Name="KontragentMainLayoutControl" Orientation="Vertical" HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top" Padding="0">
+        <dxlc:LayoutGroup HorizontalAlignment="Stretch" Orientation="Vertical" Margin="0">
+>>>>>>> merge rev
+            <dxlc:LayoutItem>
+                <Label FontSize="20" Content="Наименование и баланс" />
+            </dxlc:LayoutItem>
+            <dxlc:LayoutGroup Orientation="Vertical">
+                <dxlc:LayoutItem Margin="0,0,0,5" Label="Краткое наименование">
+                    <dxe:TextEdit
+                        EditValue="{Binding Kontragent.Name, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Margin="0,0,0,5" HorizontalAlignment="Stretch" Label="Полное наименование">
+                    <TextBox
+                        Text="{Binding Kontragent.NAME_FULL, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                        TextWrapping="Wrap" Height="50" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Margin="0,0,0,5" Label="Категория">
+                    <dxe:ComboBoxEdit
+                        DisplayMember="Name"
+                        AutoComplete="True"
+                        EditValue="{Binding Category, Mode=TwoWay}"
+                        ItemsSource="{Binding Categories, Mode=OneWay}" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Margin="0,0,0,5" Label="Ответственное лицо">
+                    <dxe:ComboBoxEdit
+                        DisplayMember="Name"
+                        AutoComplete="True"
+                        EditValue="{Binding OtvetstLico, Mode=TwoWay}"
+                        ItemsSource="{Binding Employees, Mode=OneWay}" />
+                </dxlc:LayoutItem>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup Orientation="Vertical">
+                <dxlc:LayoutGroup Orientation="Vertical" HorizontalAlignment="Right">
+                    <dxlc:LayoutGroup Orientation="Horizontal">
+                        <dxlc:LayoutItem Margin="1,0,0,5" HorizontalAlignment="Left" Label="Включать в баланс ">
+                            <dxe:CheckEdit
+                                IsChecked="{Binding Kontragent.IsBalans, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Margin="5,0,0,5" Label="с ">
+                            <dxe:DateEdit Width="100"
+                                          EditValue="{Binding Kontragent.START_BALANS, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Margin="5 0 0 5" Label="Валюта">
+                            <dxe:ComboBoxEdit Width="100"
+                                              EditValue="{Binding CurrentCurrencies, Mode=TwoWay}"
+                                              ItemsSource="{Binding Currencies,Mode=OneWay}" />
+                        </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutItem HorizontalAlignment="Right" Margin="5,0,0,5"
+                                     Label="Сумма на начало (+ нам должны/ - - мы должны)">
+                        <dxe:PopupCalcEdit Width="100"
+                                           EditValue="{Binding Kontragent.START_SUMMA, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem HorizontalAlignment="Right"
+                                     Label="Максимальный кредит">
+                        <dxe:PopupCalcEdit Width="100"
+                                           EditValue="{Binding Kontragent.MAX_KREDIT_SUM, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup
+                    Orientation="Vertical"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch">
+                    <dxlc:LayoutItem HorizontalAlignment="Center">
+                        <dxe:CheckEdit Content="Физическое лицо"
+                                       IsChecked="{Binding Kontragent.IsPhysEmployes, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                    </dxlc:LayoutItem>
+<<<<<<< working copy
+                    <dxlc:LayoutItem Label="Сотрудник">
+=======
+                    <dxlc:LayoutItem Label="Сотрудник" Margin="0 0 0 5">
+>>>>>>> merge rev
+                        <dxe:ComboBoxEdit
+                            ItemsSource="{Binding Employees, Mode=OneWay}"
+                            EditValue="{Binding CurrentEmployees, Mode=TwoWay}"
+                            DisplayMember="Name"
+                            AutoComplete="True" />
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Паспорт">
+                        <TextBox TextWrapping="Wrap"
+                                 Text="{Binding Kontragent.PASSPORT, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                 Height="50" />
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutGroup>
+    </dxlc:LayoutControl>
+</UserControl>

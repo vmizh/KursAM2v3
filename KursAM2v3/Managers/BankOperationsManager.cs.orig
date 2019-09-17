@@ -1,0 +1,157 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Linq;
+using Core;
+using Core.EntityViewModel;
+using Core.ViewModel.Base;
+using Core.WindowsManager;
+
+namespace KursAM2.Managers
+{
+    internal class BankOperationsManager
+    {
+        public ObservableCollection<BankStatements> GetBankStatements()
+        {
+            var result = new ObservableCollection<BankStatements>();
+            try
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    var data = (from sd114 in ctx.SD_114
+                        let dMax = ctx.SD_101.Where(_ => _.VV_ACC_DC == sd114.DOC_CODE).Max(_ => _.VV_START_DATE)
+                        from sd101 in ctx.SD_101
+                        where sd101.VV_ACC_DC == sd114.DOC_CODE && sd101.VV_START_DATE == dMax
+                        from ud101 in ctx.UD_101
+                        where ud101.DOC_CODE == sd101.DOC_CODE && ud101.VVU_REST_TYPE == 1
+                        select new
+                        {
+                            DC114 = sd114.DOC_CODE,
+                            DC = sd101.DOC_CODE,
+                            Name = sd114.BA_RASH_ACC + "/" + sd114.BA_BANK_NAME,
+                            Date = sd101.VV_START_DATE,
+                            Remainder = ud101.VVU_VAL_SUMMA,
+                            Currency = ud101.VVU_CRS_DC
+                        }).ToList();
+
+                    var newItem = new BankStatements();
+                    foreach (var item in data.OrderBy(_=>_.DC))
+                    {
+                        if (item.DC != newItem.DocCode)
+                            newItem = new BankStatements();
+                        newItem.DocCode = item.DC;
+                        newItem.Date = item.Date;
+                        newItem.Name = item.Name;
+                        newItem.BankDC = item.DC114;
+
+                        switch (item.Currency)
+                        {
+                            case CurrencyCode.RUB:
+                                newItem.RemainderRUB = item.Remainder;
+                                break;
+                            case CurrencyCode.CHF:
+                                newItem.RemainderCHF = item.Remainder;
+                                break;
+                            case CurrencyCode.EUR:
+                                newItem.RemainderEUR = item.Remainder;
+                                break;
+                            case CurrencyCode.GBP:
+                                newItem.RemainderGBP = item.Remainder;
+                                break;
+                            case CurrencyCode.SEK:
+                                newItem.RemainderSEK = item.Remainder;
+                                break;
+                            case CurrencyCode.USD:
+                                newItem.RemainderUSD = item.Remainder;
+                                break;
+                        }
+
+                        if (result.Any(_=>_.DocCode == item.DC)) continue;
+                        result.Add(newItem);
+                    }
+<<<<<<< working copy
+                }
+            }
+            catch (Exception e)
+            {
+                WindowManager.ShowError(e);
+            }
+            return result;
+        }
+
+        public ObservableCollection<TD_101ViewModel> GetBankOperations(DateTime dateStart, DateTime dateEnd, decimal docCode)
+        {
+            ObservableCollection<TD_101ViewModel> result = new ObservableCollection<TD_101ViewModel>();
+            try
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    var data = ctx.TD_101
+                        .Include(_ => _.SD_101)
+                        .Where(_ => _.SD_101.VV_ACC_DC == docCode && _.SD_101.VV_START_DATE >= dateStart
+                                    && _.SD_101.VV_START_DATE <= dateEnd).AsNoTracking().ToList();
+                    foreach (var item in data)
+                    {
+                        result.Add(new TD_101ViewModel(item));
+=======
+>>>>>>> merge rev
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                WindowManager.ShowError(e);
+            }
+            return result;
+        }
+
+        public ObservableCollection<TD_101ViewModel> GetBankOperations(DateTime dateStart, DateTime dateEnd, decimal docCode)
+        {
+            ObservableCollection<TD_101ViewModel> result = new ObservableCollection<TD_101ViewModel>();
+            try
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    var data = ctx.TD_101
+                        .Include(_ => _.SD_101)
+                        .Where(_ => _.SD_101.VV_ACC_DC == docCode && _.SD_101.VV_START_DATE >= dateStart
+                                    && _.SD_101.VV_START_DATE <= dateEnd).AsNoTracking().ToList();
+                    foreach (var item in data)
+                    {
+                        result.Add(new TD_101ViewModel(item));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                WindowManager.ShowError(e);
+            }
+            return result;
+        }
+
+        public ObservableCollection<BankPeriodsOperationsViewModel> GetBankPeriodOperations(decimal bankDc)
+        {
+            ObservableCollection<BankPeriodsOperationsViewModel> result = new ObservableCollection<BankPeriodsOperationsViewModel>();
+            try
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    var data = (from bp in ctx.BankPeriodsOperations
+                        where bp.BankDC == bankDc
+                        select bp).ToList();
+                    foreach (var item in data)
+                    {
+                        result.Add(new BankPeriodsOperationsViewModel(item));
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                WindowManager.ShowError(e);
+            }
+
+            return result;
+        }
+    }
+}

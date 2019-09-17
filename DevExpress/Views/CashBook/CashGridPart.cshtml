@@ -1,0 +1,84 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@Html.DevExpress().GridView(Setting =>
+{
+    Setting.Name = "CashMainGrid";
+    Setting.CallbackRouteValues = new {Controller = "CashBook", Action = "MainGridPart"};
+    Setting.SettingsEditing.AddNewRowRouteValues = new {Controller = "CashBook", Action = "AddNewRowMainGrid"};
+    Setting.SettingsEditing.DeleteRowRouteValues = new {Controller = "CashBook", Action = "DeleteRowMainGrid"};
+    Setting.SettingsEditing.UpdateRowRouteValues = new {Controller = "CashBook", Action = "EditRowMainGrid"};
+    Setting.ClientSideEvents.Init = "OnInitMainGrid";
+    Setting.Settings.VerticalScrollBarMode = ScrollBarMode.Visible;
+    Setting.Settings.HorizontalScrollBarMode = ScrollBarMode.Visible;
+    Setting.SettingsBehavior.AllowFocusedRow = true;
+    Setting.KeyFieldName = "DocCode";
+    Setting.SettingsContextMenu.Enabled = true;
+    Setting.SettingsPager.Mode = GridViewPagerMode.ShowAllRecords;
+    Setting.Width = Unit.Percentage(100);
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "DocumnetTypeName";
+        col.Caption = "Документ";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.ColumnType = MVCxGridViewColumnType.DateEdit;
+        col.FieldName = "DocDate";
+        col.Caption = "Дата";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "DocNum";
+        col.Caption = "№";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "SummaIn";
+        col.Caption = "Приход";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "SummaOut";
+        col.Caption = "Расход";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "CurrencyName";
+        col.Caption = "Валюта";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "KontragnetTypeName";
+        col.Caption = "Тип плательщика";
+        col.Width = 110;
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "KontragnetName";
+        col.Caption = "Плательщик";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.ColumnType = MVCxGridViewColumnType.CheckBox;
+        col.FieldName = "IsSalary";
+        col.Caption = "Зар./плата";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "NameOrd";
+        col.Caption = "Доп.информация";
+        col.Width = 110;
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "OsnOrd";
+        col.Caption = "Основание";
+    });
+    Setting.Columns.Add(col =>
+    {
+        col.FieldName = "Note";
+        col.Caption = "Примечание";
+    });
+}).Bind(Model).GetHtml()

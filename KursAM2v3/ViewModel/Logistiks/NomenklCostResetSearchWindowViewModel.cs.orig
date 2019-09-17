@@ -1,0 +1,41 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using Core;
+using Core.EntityViewModel;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using NomenklViewModel = Core.EntityViewModel.NomenklViewModel;
+
+namespace KursAM2.ViewModel.Logistiks
+{
+    public class NomenklCostResetSearchWindowViewModel : RSWindowSearchViewModelBase
+    {
+        private Store myCurrentStore;
+        private NomenklViewModel mySelectedNomenkl;
+
+        public Store CurrentStore
+        {
+            get => myCurrentStore;
+            set
+            {
+                if (myCurrentStore == value) return;
+                myCurrentStore = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public NomenklViewModel SelectedNomenkl
+        {
+            get => mySelectedNomenkl;
+            set
+            {
+                if (mySelectedNomenkl == value) return;
+                mySelectedNomenkl = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public List<Store> Sklads { set; get; } = new List<Store>();
+        public List<Core.EntityViewModel.NomenklViewModel> Nomenkls => MainReferences.ALLNomenkls.Values.ToList();
+    }
+}

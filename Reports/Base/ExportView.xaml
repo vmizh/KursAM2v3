@@ -1,0 +1,64 @@
+﻿<dx:DXWindow xmlns:dxsps="http://schemas.devexpress.com/winfx/2008/xaml/spreadsheet"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+             x:Class="Reports.Base.ExportView"
+             Title="ExportView" Height="350" Width="525">
+    <dx:DXWindow.Resources>
+        <dxsps:SpreadsheetUICommand x:Key="commands" />
+        <dxsps:SpreadsheetStringIdConverter x:Key="stringIdConverter" />
+    </dx:DXWindow.Resources>
+    <dxb:BarManager x:Name="barManager1" ToolbarGlyphSize="Small">
+        <dxb:BarManager.Items>
+            <dxb:BarButtonItem x:Name="biFileNew"
+                               Command="{Binding FileNew, Mode=OneTime, Source={StaticResource commands}}" />
+            <dxb:BarButtonItem x:Name="biFileOpen"
+                               Command="{Binding FileOpen, Mode=OneTime, Source={StaticResource commands}}" />
+            <dxb:BarButtonItem x:Name="biFileSave"
+                               Command="{Binding FileSave, Mode=OneTime, Source={StaticResource commands}}" />
+            <dxb:BarButtonItem x:Name="biFileSaveAs"
+                               Command="{Binding FileSaveAs, Mode=OneTime, Source={StaticResource commands}}" />
+            <dxb:BarButtonItem x:Name="biFileQuickPrint"
+                               Command="{Binding FileQuickPrint, Mode=OneTime, Source={StaticResource commands}}" />
+            <dxb:BarButtonItem x:Name="biFilePrint"
+                               Command="{Binding FilePrint, Mode=OneTime, Source={StaticResource commands}}" />
+            <dxb:BarButtonItem x:Name="biFilePrintPreview"
+                               Command="{Binding FilePrintPreview, Mode=OneTime, Source={StaticResource commands}}" />
+            <dxb:BarButtonItem x:Name="biFileUndo"
+                               Command="{Binding FileUndo, Mode=OneTime, Source={StaticResource commands}}" />
+            <dxb:BarButtonItem x:Name="biFileRedo"
+                               Command="{Binding FileRedo, Mode=OneTime, Source={StaticResource commands}}" />
+        </dxb:BarManager.Items>
+        <DockPanel>
+            <dxr:RibbonControl x:Name="ribbonControl1" DockPanel.Dock="Top">
+                <dxr:RibbonDefaultPageCategory>
+                    <dxr:RibbonPage x:Name="pageFile"
+                                       Caption="{Binding ConverterParameter=Caption_PageFile, Converter={StaticResource stringIdConverter}, Mode=OneTime, Source={StaticResource stringIdConverter}}">
+                        <dxr:RibbonPageGroup x:Name="grpFileCommon"
+                                                Caption="{Binding ConverterParameter=Caption_GroupCommon, Converter={StaticResource stringIdConverter}, Mode=OneTime, Source={StaticResource stringIdConverter}}"
+                                                ShowCaptionButton="False">
+                            <dxr:RibbonPageGroup.ItemLinks>
+                                <dxb:BarButtonItemLink BarItemName="biFileNew" />
+                                <dxb:BarButtonItemLink BarItemName="biFileOpen" />
+                                <dxb:BarButtonItemLink BarItemName="biFileSave" />
+                                <dxb:BarButtonItemLink BarItemName="biFileSaveAs" />
+                                <dxb:BarButtonItemLink BarItemName="biFileQuickPrint" />
+                                <dxb:BarButtonItemLink BarItemName="biFilePrint" />
+                                <dxb:BarButtonItemLink BarItemName="biFilePrintPreview" />
+                                <dxb:BarButtonItemLink BarItemName="biFileUndo" />
+                                <dxb:BarButtonItemLink BarItemName="biFileRedo" />
+                            </dxr:RibbonPageGroup.ItemLinks>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                </dxr:RibbonDefaultPageCategory>
+            </dxr:RibbonControl>
+            <dxsps:SpreadsheetControl x:Name="spreadsheetControl1"
+                                      BarManager="{Binding ElementName=barManager1, Mode=OneTime}"
+                                      Ribbon="{Binding ElementName=ribbonControl1, Mode=OneTime}" />
+        </DockPanel>
+
+    </dxb:BarManager>
+
+</dx:DXWindow>

@@ -1,0 +1,157 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Linq;
+using System.Windows;
+using Core;
+using Core.EntityViewModel;
+using Core.Menu;
+using Core.ViewModel.Base;
+using Core.WindowsManager;
+using KursAM2.View.Logistiks;
+using Reports.Base;
+
+namespace KursAM2.ViewModel.Logistiks
+{
+    public class WaybillSearchViewModel : RSWindowSearchViewModelBase
+    {
+        private Waybill myCurrentDocument;
+
+        public WaybillSearchViewModel()
+        {
+            WindowName = "Расходные накладные для клиентов";
+            DocumentCollection = new ObservableCollection<Waybill>();
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
+            var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
+            if (prn != null)
+            {
+                prn.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Товарная накладная",
+                    Command = PrintSFCommand
+                });
+                prn.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Экспорт",
+                    Command = ExportSFCommand
+                });
+            }
+        }
+
+        public WaybillSearchViewModel(Window form) : base(form)
+        {
+            WindowName = "Расходные накладные для клиентов";
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
+            var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
+            if (prn == null) return;
+            prn.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "Товарная накладная",
+                Command = PrintSFCommand
+            });
+            prn.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "Экспорт",
+                Command = ExportSFCommand
+            });
+        }
+
+        public Waybill CurrentDocument
+        {
+            get => myCurrentDocument;
+            set
+            {
+                if (myCurrentDocument != null && myCurrentDocument.Equals(value)) return;
+                myCurrentDocument = value;
+                if (myCurrentDocument != null)
+                {
+                    IsDocumentOpenAllow = true;
+                    IsDocNewCopyAllow = true;
+                    IsDocNewCopyRequisiteAllow = true;
+                    IsPrintAllow = true;
+                }
+
+                RaisePropertyChanged();
+            }
+        }
+
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<Waybill> DocumentCollection { set; get; } = new ObservableCollection<Waybill>();
+
+        public Command ExportSFCommand
+        {
+            get { return new Command(ExportSF, param => IsDocumentOpenAllow); }
+        }
+
+        public Command PrintSFCommand
+        {
+            get { return new Command(PrintSF, param => IsDocumentOpenAllow); }
+        }
+
+        public override void Print(object form)
+        {
+            var rep = new ExportView();
+            rep.Show();
+        }
+
+        private void ExportSF(object obj)
+        {
+            var ctx = new WaybillWindowViewModel(CurrentDocument.DocCode);
+            ctx.ExportWayBill(null);
+        }
+
+        private void PrintSF(object obj)
+        {
+            var ctx = new WaybillWindowViewModel(CurrentDocument.DocCode);
+            ctx.PrintWaybill(null);
+        }
+
+        #region Commands
+
+        public override void RefreshData(object data)
+        {
+            try
+            {
+                IsDocumentOpenAllow = false;
+                IsDocNewCopyAllow = false;
+                IsDocNewCopyRequisiteAllow = false;
+                IsPrintAllow = false;
+                while (!MainReferences.IsReferenceLoadComplete)
+                {
+                }
+
+                DocumentCollection.Clear();
+                var query = GlobalOptions.GetEntities()
+                    .SD_24
+                    .Include(_ => _.SD_43)
+                    .Include(_ => _.SD_431)
+                    .Include(_ => _.SD_432)
+                    .Include(_ => _.SD_301)
+                    .Include(_ => _.TD_24)
+                    .Include(_ => _.SD_27)
+                    .Where(_ => _.DD_DATE >= StartDate && _.DD_DATE <= EndDate && _.DD_TYPE_DC == 2010000012);
+                foreach (var item in query.ToList())
+                    DocumentCollection.Add(new Waybill(item));
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+
+            RaisePropertyChanged();
+        }
+
+        public override void DocumentOpen(object form)
+        {
+            if (CurrentDocument == null) return;
+            var frm = new WaybillView {Owner = Application.Current.MainWindow};
+            var ctx = new WaybillWindowViewModel(CurrentDocument.DocCode);
+            frm.Show();
+            frm.DataContext = ctx;
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,252 @@
+﻿<dx:DXWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:control="clr-namespace:Core.Control;assembly=Core"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+             x:Class="KursAM2.View.Personal.PayRollVedomost" Title="Ведомость" Height="600" Width="800"
+             Icon="pack://siteoforigin:,,,/Images/form_blue_big.png">
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIDialogService />
+        <dxwui:WinUIMessageBoxService />
+    </dxmvvm:Interaction.Behaviors>
+    <DockPanel>
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
+               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
+        <dxlc:LayoutControl x:Name="mainLayoutControl" Margin="0" Padding="0">
+            <dxlc:LayoutGroup Orientation="Vertical">
+                <dxlc:LayoutGroup Header="LayoutGroup" x:Name="LayoutGroup1" View="Group" HorizontalAlignment="Left"
+                                  VerticalAlignment="Top">
+                    <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+                        <Label VerticalAlignment="Center">Наименование</Label>
+                        <TextBox VerticalAlignment="Center"
+                                 Margin="10,0" 
+                                 Width="150"
+                                 Name="vedName"
+                                 Text="{Binding Name, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}" />
+                        <Label VerticalAlignment="Center"
+                               Margin="10,0">Дата</Label>
+                        <dxe:DateEdit VerticalAlignment="Center" 
+                                      Margin="10,0" 
+                                      Width="100" 
+                                      Name="vedDate"
+                                      DateTime="{Binding Date, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                        <Button Width="100" 
+                                Background="White"
+                                Visibility="{Binding IsCanDateChange}">
+                            <TextBox Text="Установить дату для всех" 
+                                     TextAlignment="Center" 
+                                     TextWrapping="Wrap"
+                                     IsReadOnly="True" BorderBrush="{x:Null}"
+                                     />
+                        </Button>
+                        <Label VerticalAlignment="Center" 
+                               Margin="10,0">Шаблон</Label>
+                        <CheckBox Margin="10,0" 
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding IsTemplate, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                    </StackPanel>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup x:Name="LayoutGroup2">
+                    <dxlc:LayoutGroup x:Name="LayoutGroup3" Header="Сотрудники" View="GroupBox"
+                                      dxlc:LayoutControl.AllowHorizontalSizing="True" Margin="0" Padding="-12">
+                        <dxg:GridControl
+                            AutoGenerateColumns="None"
+                            EnableSmartColumnsGeneration="True"
+                            dx:DXSerializer.StoreLayoutMode="ALL"
+                            dx:DXSerializer.SerializationID="gridEmp"
+                            dxg:GridSerializationOptions.AddNewColumns="False"
+                            dxg:GridSerializationOptions.RemoveOldColumns="False"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            CurrentItem="{Binding CurrentEmployee, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                            ItemsSource="{Binding Employees, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                            x:Name="gridEmp"
+                            CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
+                            <dxg:GridControl.Columns>
+                                <dxg:GridColumn Name="col1" Header="Сотрудник" ReadOnly="True"
+                                                FieldName="Employee" AllowSorting="True" SortMode="DisplayText"
+                                                ColumnFilterMode="DisplayText" />
+                                <dxg:GridColumn Name="col5" Header="Валюта" ReadOnly="True"
+                                                FieldName="EmployeeCrs" AllowSorting="True"
+                                                SortMode="DisplayText"
+                                                ColumnFilterMode="DisplayText" />
+                                <dxg:GridColumn Name="col6" Header="Таб.№" ReadOnly="True"
+                                                FieldName="TabelNumber" />
+                                <dxg:GridColumn Name="col2" Header="RUB" ReadOnly="True" FieldName="RUBSumma">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:TextEditSettings DisplayFormat="n2" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="col3" Header="USD" ReadOnly="True" FieldName="USDSumma">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:TextEditSettings DisplayFormat="n2" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="col4" Header="EUR" ReadOnly="True" FieldName="EURSumma">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:TextEditSettings DisplayFormat="n2" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                            </dxg:GridControl.Columns>
+                            <dxg:GridControl.TotalSummary>
+                                <dxg:GridSummaryItem FieldName="RUBSumma" SummaryType="Sum" DisplayFormat="n2" />
+                                <dxg:GridSummaryItem FieldName="USDSumma" SummaryType="Sum" DisplayFormat="n2" />
+                                <dxg:GridSummaryItem FieldName="EURSumma" SummaryType="Sum" DisplayFormat="n2" />
+                            </dxg:GridControl.TotalSummary>
+                            <dxg:GridControl.View>
+                                <dxg:TableView
+                                    Name="tableViewEmp"
+                                    CellStyle="{StaticResource FocusedCellStyle}" 
+                                    RowStyle="{StaticResource FocusedRowStyle}"
+                                    ShowGroupPanel="False"
+                                    NavigationStyle="Row"
+                                    AllowPerPixelScrolling="True"
+                                    ShowAutoFilterRow="True"
+                                    ShowTotalSummary="True">
+                                    <dxg:TableView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Добавить сотрудников"
+                                                      Command="{Binding AddNewEmployeeCommand}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="pack://siteoforigin:,,,/Images/element_new_big.png" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Удалить сотрудника"
+                                                      Command="{Binding DeleteEmployeeCommand}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="pack://siteoforigin:,,,/Images/element_delete_big.png" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
+                                            <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                                      CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Копировать итоговую сумму"
+                                                      Command="{Binding GetColumnSummaCommand}"
+                                                      CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}" />
+                                        </ContextMenu>
+                                    </dxg:TableView.ContextMenu>
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup Header="Начисления" View="GroupBox" Padding="-12" Margin="0"
+                                      x:Name="groupLayout"
+                                      dxlc:LayoutControl.AllowHorizontalSizing="True">
+                        <dxg:GridControl
+                            AutoGenerateColumns="None"
+                            EnableSmartColumnsGeneration="True"
+                            dx:DXSerializer.StoreLayoutMode="ALL"
+                            dx:DXSerializer.SerializationID="gridNach"
+                            dxg:GridSerializationOptions.AddNewColumns="True"
+                            dxg:GridSerializationOptions.RemoveOldColumns="True"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            CurrentItem="{Binding CurrentNach,NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                            ItemsSource="{Binding CurrentItem.Rows, ElementName=gridEmp, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                            x:Name="gridNach"
+                            CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
+                            <dxg:GridControl.Columns>
+                                <dxg:GridColumn Name="ncol1" Header="Тип" FieldName="PRType"
+                                                AllowSorting="True" SortMode="DisplayText"
+                                                ColumnFilterMode="DisplayText">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:ComboBoxEditSettings
+                                            DisplayMember="Name"
+                                            ItemsSource="{Binding PayrollTypeCollection,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="ncol2" Header="Сумма" FieldName="Summa">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings DisplayFormat="n2" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name ="ncol_7" Header="Дата начисления" FieldName="NachDate"/>
+                                <dxg:GridColumn Name="ncol3" Header="Сумма (сотр)" ReadOnly="True"
+                                                FieldName="NachEmpRate">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="ncol4" Header="Валюта" FieldName="Crs"
+                                                AllowSorting="True" SortMode="DisplayText"
+                                                ColumnFilterMode="DisplayText">
+                                    <dxg:GridColumn.EditSettings>
+                                        <dxe:ComboBoxEditSettings
+                                            DisplayMember="Name"
+                                            ItemsSource="{Binding CurrencyCollection,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                                    </dxg:GridColumn.EditSettings>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn Name="ncol6_1" Header="Примечание"
+                                                FieldName="Note" />
+                            </dxg:GridControl.Columns>
+                            <dxg:GridControl.TotalSummary>
+                                <dxg:GridSummaryItem FieldName="NachEmpRate" SummaryType="Sum"
+                                                     DisplayFormat="n2" />
+                                <dxg:GridSummaryItem FieldName="Summa" SummaryType="Sum" DisplayFormat="n2" />
+                            </dxg:GridControl.TotalSummary>
+                            <dxg:GridControl.View>
+                                <dxg:TableView
+                                    Name="tableViewNach"
+                                    CellStyle="{StaticResource FocusedCellStyle}" 
+                                    RowStyle="{StaticResource FocusedRowStyle}"
+                                    ShowGroupPanel="False"
+                                    NavigationStyle="Cell"
+                                    AllowPerPixelScrolling="True"
+                                    ShowTotalSummary="True">
+                                    <dxg:TableView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Добавить начисление" Command="{Binding AddNachCommand}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="pack://siteoforigin:,,,/Images/element_new_big.png" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Удалить начисление"
+                                                      Command="{Binding DeleteNachCommand}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="pack://siteoforigin:,,,/Images/element_delete_big.png" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
+                                            <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                                      CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Копировать итоговую сумму"
+                                                      Command="{Binding GetColumnSummaCommand}"
+                                                      CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}" />
+                                        </ContextMenu>
+                                    </dxg:TableView.ContextMenu>
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:DXWindow>

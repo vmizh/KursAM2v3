@@ -1,0 +1,754 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Linq;
+using System.Transactions;
+using System.Windows;
+using System.Windows.Input;
+using Core;
+using Core.EntityViewModel;
+using Core.Menu;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using Core.WindowsManager;
+using Data;
+using DevExpress.Mvvm;
+using DevExpress.Mvvm.Xpf;
+using KursAM2.View.DialogUserControl.ViewModel;
+using KursAM2.View.KursReferences;
+
+using NomenklMain = Core.ViewModel.Common.NomenklMain;
+
+namespace KursAM2.ViewModel.Reference
+{
+    public sealed class NomenklReferenceWindowViewModel : RSWindowViewModelBase
+    {
+        private NomenklGroup myCurrentCategory;
+        private NomenklViewModel myCurrentNomenkl;
+
+        private NomenklMain myCurrentNomenklMain;
+
+
+        private bool myIsCanChangeCurrency;
+
+
+        private bool myIsSearchTextNull;
+
+        private string mySearchText;
+
+        public NomenklReferenceWindowViewModel()
+        {
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.ReferenceRightBar(this);
+            LoadReferences();
+            RefreshData(null);
+            myIsSearchTextNull = true;
+        }
+
+        private IDialogService DialogService => GetService<IDialogService>();
+        private IMessageBoxService MessageBoxService => GetService<IMessageBoxService>();
+
+        public ObservableCollection<NomenklGroup> CategoryCollection { set; get; } =
+            new ObservableCollection<NomenklGroup>();
+
+        // ReSharper disable once CollectionNeverUpdated.Global
+        public ObservableCollection<NomenklMain> NomenklMainCollection { set; get; } =
+            new ObservableCollection<NomenklMain>();
+
+        public ObservableCollection<Currency> CurrencyCollection { set; get; }
+
+        public bool IsSearchTextNull
+        {
+            get => myIsSearchTextNull;
+            set
+            {
+                if (myIsSearchTextNull == value) return;
+                myIsSearchTextNull = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        //public bool IsSearchTextNull => 
+
+        public bool IsCanChangeCurrency
+        {
+            get => myIsCanChangeCurrency;
+            set
+            {
+                if (myIsCanChangeCurrency == value) return;
+                myIsCanChangeCurrency = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ICommand FocusedRowChangedCommand
+        {
+            get { return new Command(FocusedRowChanged, _ => true); }
+        }
+
+        public NomenklViewModel CurrentNomenkl
+        {
+            get => myCurrentNomenkl;
+            set
+            {
+                //SaveData(CurrentNomenklMain.NomenklCollection);
+                if (myCurrentNomenkl == value) return;
+                myCurrentNomenkl = value;
+                if (myCurrentNomenkl != null)
+                    if (myCurrentNomenkl.State == RowStatus.NewRow)
+                        IsCanChangeCurrency = false;
+                    else
+                        try
+                        {
+                            IsCanChangeCurrency = true;
+                            using (var ctx = GlobalOptions.GetEntities())
+                            {
+                                if (ctx.TD_24.Any(_ => _.DDT_NOMENKL_DC == myCurrentNomenkl.DocCode))
+                                {
+                                    IsCanChangeCurrency = false;
+                                }
+                                else
+                                {
+                                    if (ctx.TD_26.Any(_ => _.SFT_NEMENKL_DC == myCurrentNomenkl.DocCode))
+                                    {
+                                        IsCanChangeCurrency = false;
+                                    }
+                                    else
+                                    {
+                                        if (ctx.TD_84.Any(_ => _.SFT_NEMENKL_DC == myCurrentNomenkl.DocCode))
+                                            IsCanChangeCurrency = false;
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            WindowManager.ShowError(ex);
+                        }
+                RaisePropertyChanged();
+            }
+        }
+
+        public NomenklMain CurrentNomenklMain
+        {
+            get => myCurrentNomenklMain;
+            set
+            {
+                if (myCurrentNomenklMain == value) return;
+                //if(myCurrentNomenklMain != null)
+                //    SaveData(myCurrentNomenklMain.NomenklCollection);
+                myCurrentNomenklMain = value;
+                if (myCurrentNomenklMain != null)
+                    LoadNomenklForMain(myCurrentNomenklMain);
+                RaisePropertyChanged();
+            }
+        }
+
+        public string SearchText
+        {
+            get => mySearchText;
+            set
+            {
+                if (mySearchText == value) return;
+                mySearchText = value;
+                RaisePropertyChanged();
+                RaisePropertiesChanged(nameof(IsSearchTextNull));
+                if (string.IsNullOrWhiteSpace(SearchText))
+                {
+                    IsSearchTextNull = true;
+                    return;
+                }
+                CurrentCategory = null;
+                IsSearchTextNull = false;
+            }
+        }
+
+        public NomenklGroup CurrentCategory
+        {
+            get => myCurrentCategory;
+            set
+            {
+                if (myCurrentCategory == value) return;
+                if (myCurrentCategory != null && myCurrentCategory.State == RowStatus.Edited)
+                    CategorySave(myCurrentCategory);
+                myCurrentCategory = value;
+                if (myCurrentCategory == null)
+                {
+                    NomenklMainCollection.Clear();
+                    RaisePropertiesChanged(nameof(NomenklMainCollection));
+                }
+                else
+                {
+                    LoadNomMainForCategory(myCurrentCategory);
+                }
+
+                RaisePropertyChanged();
+            }
+        }
+
+        public override bool IsCanSaveData
+        {
+            get
+            {
+                return CategoryCollection.Any(_ => _.State != RowStatus.NotEdited) ||
+                       NomenklMainCollection.Any(_ => _.State != RowStatus.NotEdited)
+                       ||
+                       CurrentNomenklMain != null &&
+                       CurrentNomenklMain.NomenklCollection.Any(_ => _.State != RowStatus.NotEdited);
+            }
+            set { }
+        }
+
+        private void FocusedRowChanged(object obj)
+        {
+            var d = obj as NomenklViewModel;
+            if (d == null) return;
+            if (d.State != RowStatus.NotEdited)
+                SaveNomenkl(d);
+        }
+
+        private void LoadReferences()
+        {
+            if (CurrencyCollection == null)
+                CurrencyCollection = new ObservableCollection<Currency>();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                //NomenklTypeCollection.Clear();
+                //NomenklCategoryCollection.Clear();
+                //CountryCollection.Clear();
+                //UnitCollection.Clear();
+                //foreach (var t in ctx.Countries.ToList())
+                //{
+                //    CountryCollection.Add(new Country(t));
+                //}
+                //foreach (var t in ctx.SD_119.ToList())
+                //{
+                //    NomenklTypeCollection.Add(new NomenklType(t));
+                //}
+                //foreach (var c in ctx.SD_82.ToList())
+                //{
+                //    // ReSharper disable once SuspiciousTypeConversion.Global
+                //    NomenklCategoryCollection.Add(new NomenklGroup(c));
+                //}
+                //foreach (var c in ctx.SD_175.ToList())
+                //{
+                //    UnitCollection.Add(new Unit(c));
+                //}
+                CurrencyCollection.Clear();
+                foreach (var c in ctx.SD_301.ToList())
+                    CurrencyCollection.Add(new Currency(c));
+            }
+        }
+
+        private void LoadNomenklForMain(NomenklMain main)
+        {
+            main.NomenklCollection.Clear();
+            try
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    var noms = (from n in ctx.SD_83
+                        join sd301 in ctx.SD_301 on n.NOM_SALE_CRS_DC equals sd301.DOC_CODE
+                        where n.MainId == main.Id
+                        select new NomenklViewModel
+                        {
+                            DocCode = n.DOC_CODE,
+                            Name = n.NOM_NAME,
+                            NomenklNumber = n.NOM_NOMENKL,
+                            NameFull = n.NOM_FULL_NAME,
+                            Currency = new Currency {DocCode = sd301.DOC_CODE, CRS_SHORTNAME = sd301.CRS_SHORTNAME},
+                            Note = n.NOM_NOTES
+                        }).ToList();
+
+                    foreach (var nom in noms)
+                    {
+                        nom.Currency = CurrencyCollection.SingleOrDefault(_ => _.DocCode == nom.Currency.DocCode);
+                        nom.Parent = CurrentNomenklMain;
+                        main.NomenklCollection.Add(nom);
+                        nom.State = RowStatus.NotEdited;
+                    }
+                    CurrentNomenklMain.State = RowStatus.NotEdited;
+                }
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+        }
+
+        public void LoadNomMainForCategory(NomenklGroup nomenklGroup)
+        {
+            var nomCat = nomenklGroup ?? CurrentCategory;
+            if (nomCat == null) return;
+            NomenklMainCollection.Clear();
+            try
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    foreach (var nom in ctx.NomenklMain
+                        .Include(_ => _.Countries)
+                        .Include(_ => _.SD_119)
+                        .Include(_ => _.SD_175)
+                        .Include(_ => _.SD_82)
+                        .Include(_ => _.SD_83)
+                        .Where(_ => _.CategoryDC == nomCat.DocCode)
+                        .ToList())
+                        NomenklMainCollection.Add(new NomenklMain(nom)
+                        {
+                            State = RowStatus.NotEdited
+                        });
+                }
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+        }
+
+        public override void RefreshData(object obj)
+        {
+            CategoryCollection.Clear();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                foreach (var grp in ctx.SD_82.ToList())
+                    CategoryCollection.Add(new NomenklGroup(grp)
+                    {
+                        State = RowStatus.NotEdited
+                    });
+            }
+        }
+
+        private void SaveNomenkl(NomenklViewModel nom)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                using (var tnx = ctx.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        switch (nom.State)
+                        {
+                            case RowStatus.NewRow:
+                                var newDC = ctx.SD_83.Max(_ => _.DOC_CODE) + 1;
+                                var newItem = new SD_83
+                                {
+                                    DOC_CODE = newDC,
+                                    NOM_NAME = nom.Name,
+                                    NOM_NOMENKL = nom.NomenklNumber,
+                                    NOM_NOTES = nom.Note,
+                                    NOM_SALE_CRS_DC = nom.Currency.DocCode,
+                                    NOM_FULL_NAME = nom.NameFull,
+                                    NOM_ED_IZM_DC = CurrentNomenklMain.Unit.DocCode,
+                                    NOM_CATEG_DC = CurrentNomenklMain.NomenklCategory.DocCode,
+                                    NOM_0MATER_1USLUGA = CurrentNomenklMain.IsUsluga ? 1 : 0,
+                                    NOM_1PROD_0MATER = 0,
+                                    NOM_1NAKLRASH_0NO = CurrentNomenklMain.IsNakladExpense ? 1 : 0,
+                                    NOM_PRODUCT_DC = CurrentNomenklMain.ProductType.DOC_CODE,
+                                    Id = nom.Id,
+                                    MainId = nom.MainId
+                                };
+                                ctx.SD_83.Add(newItem);
+                                break;
+                            case RowStatus.Edited:
+                                var d = ctx.SD_83.FirstOrDefault(_ => _.DOC_CODE == nom.DocCode);
+                                if (d == null) return;
+                                d.NOM_NAME = nom.Name;
+                                d.NOM_NOMENKL = nom.NomenklNumber;
+                                d.NOM_NOTES = nom.Note;
+                                d.NOM_SALE_CRS_DC = nom.Currency.DocCode;
+                                d.NOM_FULL_NAME = nom.NameFull ?? nom.Name;
+                                break;
+                        }
+
+                        ctx.SaveChanges();
+                        tnx.Commit();
+                        nom.State = RowStatus.NotEdited;
+                    }
+                    catch (Exception ex)
+                    {
+                        WindowManager.ShowError(ex);
+                        tnx.Rollback();
+                    }
+                }
+            }
+        }
+
+        public override void SaveData(object data)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                using (var tnx = ctx.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var nom in CurrentNomenklMain.NomenklCollection)
+                            switch (nom.State)
+                            {
+                                case RowStatus.NewRow:
+                                    var newDC = ctx.SD_83.Max(_ => _.DOC_CODE) + 1;
+                                    var newItem = new SD_83
+                                    {
+                                        DOC_CODE = newDC,
+                                        NOM_NAME = nom.Name,
+                                        NOM_NOMENKL = nom.NomenklNumber,
+                                        NOM_NOTES = nom.Note,
+                                        NOM_SALE_CRS_DC = nom.Currency.DocCode,
+                                        NOM_FULL_NAME = nom.NameFull,
+                                        NOM_ED_IZM_DC = CurrentNomenklMain.Unit.DocCode,
+                                        NOM_CATEG_DC = CurrentNomenklMain.NomenklCategory.DocCode,
+                                        NOM_0MATER_1USLUGA = CurrentNomenklMain.IsUsluga ? 1 : 0,
+                                        NOM_1PROD_0MATER = 0,
+                                        NOM_1NAKLRASH_0NO = CurrentNomenklMain.IsNakladExpense ? 1 : 0,
+                                        NOM_PRODUCT_DC = CurrentNomenklMain.ProductType.DOC_CODE,
+                                        Id = nom.Id,
+                                        MainId = nom.MainId
+                                    };
+                                    ctx.SD_83.Add(newItem);
+                                    break;
+                                case RowStatus.Edited:
+                                    var d = ctx.SD_83.FirstOrDefault(_ => _.DOC_CODE == nom.DocCode);
+                                    if (d == null) continue;
+                                    d.NOM_NAME = nom.Name;
+                                    d.NOM_NOMENKL = nom.NomenklNumber;
+                                    d.NOM_NOTES = nom.Note;
+                                    d.NOM_SALE_CRS_DC = nom.Currency.DocCode;
+                                    d.NOM_FULL_NAME = nom.NameFull ?? nom.Name;
+                                    break;
+                            }
+                        ctx.SaveChanges();
+                        tnx.Commit();
+                        foreach (var nom in CurrentNomenklMain.NomenklCollection)
+                            nom.State = RowStatus.NotEdited;
+                    }
+                    catch (Exception ex)
+                    {
+                        tnx.Rollback();
+                        WindowManager.ShowError(ex);
+                    }
+                }
+            }
+        }
+
+        #region Command
+
+        public ICommand NomenklAddCommand
+        {
+            get { return new Command(NomenklAdd, _ => true); }
+        }
+
+        private void NomenklAdd(object obj)
+        {
+            var newItem = new NomenklViewModel
+            {
+                DOC_CODE = -1,
+                Name = CurrentNomenklMain.Name,
+                NomenklNumber = CurrentNomenklMain.NomenklNumber,
+                NameFull = CurrentNomenklMain.Name,
+                MainId = CurrentNomenklMain.Id,
+                Id = Guid.NewGuid(),
+                IsDeleted = false,
+                Group = CurrentNomenklMain.NomenklCategory,
+                IsUsluga = CurrentNomenklMain.IsUsluga,
+                IsNaklRashod = CurrentNomenklMain.IsNakladExpense,
+                State = RowStatus.NewRow,
+                NOM_PRODUCT_DC = CurrentNomenklMain.ProductType.DOC_CODE
+            };
+            CurrentNomenklMain.NomenklCollection.Add(newItem);
+        }
+
+        public ICommand NomenklMainAddCommand
+        {
+            get { return new Command(NomenklMainNew, param => CurrentCategory != null); }
+        }
+
+        private void NomenklMainNew(object obj)
+        {
+            var ctx = new NomenklMainCardWindowViewModel(Guid.Empty, CurrentCategory)
+            {
+                ParentNomenklReference = this
+            };
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var form = new NomenklMainCardView {Owner = Application.Current.MainWindow, DataContext = ctx};
+            //form.DataContext = ctx;
+            form.Show();
+        }
+
+        public ICommand SearchCommand
+        {
+            get { return new Command(SearchNomenkls, param => !IsSearchTextNull); }
+        }
+
+        private void SearchNomenkls(object obj)
+        {
+            NomenklMainCollection.Clear();
+            //var noms = new List<NomenklMain>();
+            try
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    foreach (var n in ctx.NomenklMain.Include(_ => _.Countries)
+                        .Include(_ => _.SD_119)
+                        .Include(_ => _.SD_175)
+                        .Include(_ => _.SD_82)
+                        .Include(_ => _.SD_83)
+                        .ToList())
+                        if (n.Name.ToUpper().Contains(SearchText.ToUpper())
+                            || n.NomenklNumber.ToUpper().Contains(SearchText.ToUpper())
+                            || n.FullName.ToUpper().Contains(SearchText.ToUpper()))
+                        {
+                            var nn = new NomenklMain(n) {State = RowStatus.NotEdited};
+                            NomenklMainCollection.Add(nn);
+                        }
+                }
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+        }
+
+        public ICommand SearchClearCommand
+        {
+            get { return new Command(SearchClearText, param => !IsSearchTextNull); }
+        }
+
+        private void SearchClearText(object obj)
+        {
+            SearchText = null;
+        }
+
+        public ICommand NomenklMainEditCommand
+        {
+            get { return new Command(NomenklMainEdit, param => CurrentNomenklMain != null); }
+        }
+
+        public void NomenklMainEdit(object obj)
+        {
+            var ctx = new NomenklMainCardWindowViewModel(CurrentNomenklMain.Id, null)
+            {
+                ParentNomenklReference = this
+            };
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var form = new NomenklMainCardView {Owner = Application.Current.MainWindow, DataContext = ctx};
+            //form.DataContext = ctx;
+            form.Show();
+        }
+
+        public ICommand NomenklMainCopyCommand
+        {
+            get { return new Command(NomenklMainCopy, param => CurrentNomenklMain != null); }
+        }
+
+        private void NomenklMainCopy(object obj)
+        {
+            var newNom = new NomenklMain(CurrentNomenklMain.Entity) {State = RowStatus.NewRow};
+            var ctx = new NomenklMainCardWindowViewModel(newNom)
+            {
+                ParentNomenklReference = this
+            };
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var form = new NomenklMainCardView {Owner = Application.Current.MainWindow, DataContext = ctx};
+            //form.DataContext = ctx;
+            form.Show();
+        }
+
+        public ICommand NomenklMainDeleteCommand
+        {
+            get { return new Command(NomenklMainDelete, param => CurrentNomenklMain != null); }
+        }
+
+        private void NomenklMainDelete(object obj)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public ICommand TreeAddInRootCommand
+        {
+            get { return new Command(TreeAddInRoot, param => true); }
+        }
+
+        private void TreeAddInRoot(object obj)
+        {
+            var category = new NameNoteViewModel
+            {
+                HeaderName = "Наименование",
+                HeaderNote = "Примечания",
+                Name = "",
+                Note = ""
+            };
+            var res = DialogService.ShowDialog(MessageBoxButton.OKCancel, "Новая категория", "NameNoteUC", category);
+            if (res != MessageBoxResult.OK) return;
+            if (CategoryAdd(category, null)) return;
+            CurrentCategory.State = RowStatus.NotEdited;
+        }
+
+        private bool CategoryAdd(NameNoteViewModel cat, decimal? parentDC)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                using (var tnx = new TransactionScope())
+                {
+                    try
+                    {
+                        var newDC = ctx.SD_82.Any() ? ctx.SD_82.Max(_ => _.DOC_CODE) + 1 : 10820000001;
+                        var newCat = new SD_82
+                        {
+                            DOC_CODE = newDC,
+                            CAT_NAME = cat.Name,
+                            CAT_PATH_NAME = cat.Name,
+                            CAT_PARENT_DC = parentDC
+                        };
+                        ctx.SD_82.Add(newCat);
+                        ctx.SaveChanges();
+                        tnx.Complete();
+                        var newCatVM = new NomenklGroup(newCat)
+                        {
+                            State = RowStatus.NotEdited
+                        };
+                        CategoryCollection.Add(newCatVM);
+                        CurrentCategory = newCatVM;
+                    }
+                    catch (Exception ex)
+                    {
+                        WindowManager.ShowError(ex);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public ICommand TreeAddChildCommand
+        {
+            get { return new Command(TreeAddChild, param => true); }
+        }
+
+        private void TreeAddChild(object obj)
+        {
+            var category = new NameNoteViewModel
+            {
+                HeaderName = "Наименование",
+                HeaderNote = "Примечания",
+                Name = "",
+                Note = ""
+            };
+            var res = DialogService.ShowDialog(MessageBoxButton.OKCancel, "Новая категория", "NameNoteUC", category);
+            if (res != MessageBoxResult.OK) return;
+            if (CategoryAdd(category, CurrentCategory.DocCode)) return;
+            CurrentCategory.State = RowStatus.NotEdited;
+        }
+
+
+        public ICommand TreeAddOneLevelCommand
+        {
+            get { return new Command(TreeAddOneLevel, param => true); }
+        }
+
+        private void TreeAddOneLevel(object obj)
+        {
+            var category = new NameNoteViewModel
+            {
+                HeaderName = "Наименование",
+                HeaderNote = "Примечания",
+                Name = "",
+                Note = ""
+            };
+            var res = DialogService.ShowDialog(MessageBoxButton.OKCancel, "Новая категория", "NameNoteUC", category);
+            if (res != MessageBoxResult.OK) return;
+            if (CategoryAdd(category, CurrentCategory.ParentDC)) return;
+            CurrentCategory.State = RowStatus.NotEdited;
+        }
+
+        public ICommand TreeEditCommand
+        {
+            get { return new Command(TreeEdit, param => true); }
+        }
+
+        private void TreeEdit(object obj)
+        {
+            var category = new NameNoteViewModel
+            {
+                HeaderName = "Наименование",
+                HeaderNote = "Примечания",
+                Name = CurrentCategory?.Name,
+                Note = CurrentCategory?.Note
+            };
+            var res = DialogService.ShowDialog(MessageBoxButton.OKCancel, "Редактирование категории", "NameNoteUC",
+                category);
+            if (res != MessageBoxResult.OK) return;
+            if (CurrentCategory == null) return;
+            var oldCat = new NomenklGroup(CurrentCategory.Entity);
+            CurrentCategory.Name = category.Name;
+            CurrentCategory.Note = category.Note;
+            if (CategorySave(CurrentCategory)) return;
+            CurrentCategory.Name = oldCat.Name;
+            CurrentCategory.Note = oldCat.Note;
+            CurrentCategory.State = RowStatus.NotEdited;
+        }
+
+        private bool CategorySave(NomenklGroup cat)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                using (var tnx = new TransactionScope())
+                {
+                    try
+                    {
+                        var oldcat = ctx.SD_82.SingleOrDefault(_ => _.DOC_CODE == cat.DocCode);
+                        if (oldcat == null) return false;
+                        oldcat.CAT_NAME = cat.Name;
+                        ctx.SaveChanges();
+                        tnx.Complete();
+                        CurrentCategory.State = RowStatus.NotEdited;
+                    }
+                    catch (Exception ex)
+                    {
+                        WindowManager.ShowError(ex);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public ICommand TreeDeleteCommand
+        {
+            get
+            {
+                return new Command(TreeDelete, param => CurrentCategory != null && NomenklMainCollection.Count == 0
+                                                        &&
+                                                        CategoryCollection.All(
+                                                            _ => _.ParentDC != CurrentCategory.DocCode));
+            }
+        }
+
+        private void TreeDelete(object obj)
+        {
+            var res = MessageBoxService.Show($"Вы уверены, что хотите удалить категорию {CurrentCategory}?",
+                "Предупреждение", MessageBoxButton.OKCancel,
+                MessageBoxImage.Question);
+            if (res != MessageBoxResult.OK) return;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                using (var tnx = new TransactionScope())
+                {
+                    try
+                    {
+                        var oldcat = ctx.SD_82.SingleOrDefault(_ => _.DOC_CODE == CurrentCategory.DocCode);
+                        if (oldcat == null) return;
+                        ctx.SD_82.Remove(oldcat);
+                        ctx.SaveChanges();
+                        tnx.Complete();
+                        CategoryCollection.Remove(CurrentCategory);
+                    }
+                    catch (Exception ex)
+                    {
+                        WindowManager.ShowError(ex);
+                    }
+                }
+            }
+        }
+
+        #endregion
+    }
+}

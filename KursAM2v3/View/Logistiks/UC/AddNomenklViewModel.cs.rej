@@ -1,0 +1,181 @@
+--- AddNomenklViewModel.cs
++++ AddNomenklViewModel.cs
+@@ -0,0 +1,177 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Collections.ObjectModel;
++using System.Linq;
++using System.Windows.Input;
++using Core;
++using Core.EntityViewModel;
++using Core.ViewModel.Base;
++using Core.WindowsManager;
++
++namespace KursAM2.View.Logistiks.UC
++{
++    public class AddNomenklViewModel : RSWindowViewModelBase
++    {
++        private SD_82ViewModel myCurrentGroup;
++
++        private NomenklViewModel myCurrentNomenkl;
++        private NomenklViewModel myCurrentSelectNomenkl;
++        private AddNomenklUC myDataUserControl;
++
++        private string mySearchText;
++
++        public AddNomenklViewModel()
++        {
++            myDataUserControl = new AddNomenklUC();
++            RefreshData(null);
++        }
++
++
++        public ObservableCollection<SD_82ViewModel> NomenklGroup { set; get; } =
++            new ObservableCollection<SD_82ViewModel>();
++
++        public ObservableCollection<NomenklViewModel> NomenklItem { set; get; } =
++            new ObservableCollection<NomenklViewModel>();
++
++        public ObservableCollection<NomenklViewModel> NomenklItemCollection { set; get; } =
++            new ObservableCollection<NomenklViewModel>();
++
++        public ObservableCollection<NomenklViewModel> SelectedNomenkl { set; get; } =
++            new ObservableCollection<NomenklViewModel>();
++
++        public List<NomenklViewModel> ListNomenklCollection { set; get; } =
++            new List<NomenklViewModel>();
++
++        public SD_82ViewModel CurrentGroup
++        {
++            set
++            {
++                if (myCurrentGroup == value) return;
++                myCurrentGroup = value;
++                GetNomenklItem();
++                RaisePropertiesChanged();
++            }
++            get => myCurrentGroup;
++        }
++
++        public AddNomenklUC DataUserControl
++        {
++            set
++            {
++                if (Equals(myDataUserControl, value)) return;
++                myDataUserControl = value;
++                RaisePropertiesChanged();
++            }
++            get => myDataUserControl;
++        }
++
++        public NomenklViewModel CurrentNomenkl
++        {
++            set
++            {
++                if (myCurrentNomenkl == value) return;
++                myCurrentNomenkl = value;
++                RaisePropertiesChanged();
++            }
++            get => myCurrentNomenkl;
++        }
++
++        public NomenklViewModel CurrentSelectNomenkl
++        {
++            set
++            {
++                if (myCurrentSelectNomenkl == value) return;
++                myCurrentSelectNomenkl = value;
++                RaisePropertiesChanged();
++            }
++            get => myCurrentSelectNomenkl;
++        }
++
++        public string SearchText
++        {
++            set
++            {
++                if (mySearchText == value) return;
++                mySearchText = value;
++                RaisePropertiesChanged();
++            }
++            get => mySearchText;
++        }
++
++        public void GetNomenklItem()
++        {
++            NomenklItem.Clear();
++            foreach (var item in NomenklItemCollection)
++                if (item.NOM_CATEG_DC == CurrentGroup.DocCode)
++                    NomenklItem.Add(item);
++        }
++
++        #region command
++
++        public override void RefreshData(object obj)
++        {
++            NomenklItemCollection.Clear();
++            SelectedNomenkl.Clear();
++            NomenklGroup.Clear();
++            try
++            {
++                using (var ctx = GlobalOptions.GetEntities())
++                {
++                    foreach (var item in ctx.SD_82.ToList())
++                        NomenklGroup.Add(new SD_82ViewModel(item));
++                    foreach (var item in ctx.SD_83.ToList())
++                        NomenklItemCollection.Add(new NomenklViewModel(item));
++                }
++            }
++            catch (Exception e)
++            {
++                WindowManager.ShowError(e);
++            }
++        }
++
++        public ICommand AddNomenklToSelectCommand
++        {
++            get { return new Command(AddNomenklToSelect, _ => true); }
++        }
++
++        private void AddNomenklToSelect(object obj)
++        {
++            if (!SelectedNomenkl.Contains(CurrentNomenkl))
++                SelectedNomenkl.Add(CurrentNomenkl);
++            if (!ListNomenklCollection.Contains(CurrentNomenkl))
++                ListNomenklCollection.Add(CurrentNomenkl);
++        }
++
++        public ICommand DeletedNomenklInSelecktCommand
++        {
++            get { return new Command(DeletedNomenklInSeleckt, _ => true); }
++        }
++
++        private void DeletedNomenklInSeleckt(object obj)
++        {
++            if (CurrentSelectNomenkl != null && SelectedNomenkl.Count > 0)
++                SelectedNomenkl.Remove(CurrentSelectNomenkl);
++        }
++
++        public ICommand SearchCommand
++        {
++            get { return new Command(SearchNomenkl, param => true); }
++        }
++
++        public void SearchNomenkl(object obj)
++        {
++            NomenklItem.Clear();
++            foreach (var item in NomenklItemCollection)
++                if (item.NOM_POLNOE_IMIA.ToUpper().Contains(SearchText.ToUpper())
++                    || item.NOM_NOMENKL.ToUpper().Contains(SearchText.ToUpper()))
++                    NomenklItem.Add(item);
++        }
++
++        public ICommand SearchClearCommand
++        {
++            get { return new Command(RefreshData, param => true); }
++        }
++
++        #endregion
++    }
++}
+\ No newline at end of file

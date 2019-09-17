@@ -1,0 +1,455 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Linq;
+using System.Windows.Input;
+using Core;
+using Core.EntityViewModel;
+using Core.Menu;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using Core.WindowsManager;
+using Data;
+using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Navigation;
+using KursAM2.View.KursReferences.KontragentControls;
+
+namespace KursAM2.ViewModel.Reference
+{
+    public class KontragentCardWindowViewModel : RSWindowViewModelBase
+    {
+        private readonly decimal? GetDocCode;
+
+        public ObservableCollection<BankAndAccounts> DeletedBankAndAccountses =
+            new ObservableCollection<BankAndAccounts>();
+
+        private TileBarItem mySelectedTab;
+
+        public KontragentCardWindowViewModel()
+        {
+        }
+
+        public KontragentCardWindowViewModel(decimal dc) : this()
+        {
+            RightMenuBar = MenuGenerator.KontragentCardRightBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            if (dc < 0)
+                new ArgumentNullException("Неправильный код контрагента");
+            // ReSharper disable once DoNotCallOverridableMethodsInConstructor
+            IsNewDoc = false;
+            GetDocCode = dc;
+            RefreshData(dc);
+        }
+
+        public KontragentCardWindowViewModel(decimal dc, int groupId, bool IsCopyOld) : this()
+        {
+            RightMenuBar = MenuGenerator.KontragentCardRightBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            IsNewDoc = true;
+            if (IsCopyOld)
+                CopyData(dc);
+            else
+                NewData(groupId);
+        }
+
+        public List<KontragentCategory> Categories { set; get; } = new List<KontragentCategory>();
+        public DXWindow Window { set; get; }
+        public Kontragent Kontragent { set; get; }
+        public List<Employee> Employees => MainReferences.Employees.Values.ToList();
+
+        public ObservableCollection<BankAndAccounts> BankAndAccounts { set; get; } =
+            new ObservableCollection<BankAndAccounts>();
+
+        public ObservableCollection<TD_43ViewModel> Accounts { set; get; } = new ObservableCollection<TD_43ViewModel>();
+        public ObservableCollection<SD_44ViewModel> AllBanks { set; get; } = new ObservableCollection<SD_44ViewModel>();
+        public List<SD_23ViewModel> Regions { set; get; } = new List<SD_23ViewModel>();
+
+        public List<Currency> Currencies
+            => MainReferences.Currencies.Values.Where(_ => (_.CRS_ACTIVE ?? 0) == 1).ToList();
+
+        #region Property
+
+        private KontragentCategory myCategory;
+
+        public KontragentCategory Category
+        {
+            set
+            {
+                if (myCategory == value) return;
+                myCategory = value;
+                RaisePropertiesChanged();
+            }
+            get => myCategory;
+        }
+
+        private Employee myOtvetstLico;
+
+        public Employee OtvetstLico
+        {
+            set
+            {
+                if (myOtvetstLico == value) return;
+                myOtvetstLico = value;
+                RaisePropertiesChanged();
+            }
+            get => myOtvetstLico;
+        }
+
+        private Currency myCurrentCurrencies;
+
+        public Currency CurrentCurrencies
+        {
+            set
+            {
+                if (myCurrentCurrencies == value) return;
+                myCurrentCurrencies = value;
+                RaisePropertiesChanged();
+            }
+            get => myCurrentCurrencies;
+        }
+
+        private Employee myCurrentEmployees;
+
+        public Employee CurrentEmployees
+        {
+            set
+            {
+                if (myCurrentEmployees == value) return;
+                myCurrentEmployees = value;
+                RaisePropertiesChanged();
+            }
+            get => myCurrentEmployees;
+        }
+
+        private SD_23ViewModel myCurrentRegions;
+
+        public SD_23ViewModel CurrentRegions
+        {
+            set
+            {
+                if (myCurrentRegions == value) return;
+                myCurrentRegions = value;
+                RaisePropertiesChanged();
+            }
+            get => myCurrentRegions;
+        }
+
+        private BankAndAccounts myCurrentBankAndAccounts;
+
+        public BankAndAccounts CurrentBankAndAccounts
+        {
+            set
+            {
+                if (myCurrentBankAndAccounts == value) return;
+                myCurrentBankAndAccounts = value;
+                RaisePropertiesChanged();
+            }
+            get => myCurrentBankAndAccounts;
+        }
+
+        private BankAndAccounts myCurrentBankAndAccounts2;
+        public bool IsCurrencyChangeEnable => Kontragent.State == RowStatus.NewRow;
+        public bool IsNewDoc { set; get; }
+
+        public TileBarItem SelectedTab
+        {
+            set
+            {
+                if (Equals(mySelectedTab, value)) return;
+                mySelectedTab = value;
+                var w = Window as KontragentCardView;
+                if (w != null && mySelectedTab != null)
+                    w.ChangedTab(mySelectedTab.Name);
+                RaisePropertyChanged();
+            }
+            get => mySelectedTab;
+        }
+
+        #endregion
+
+        #region Command
+
+        public ICommand DeleteBankCommand
+        {
+            get { return new Command(DeleteBank, _ => true); }
+        }
+
+        private void DeleteBank(object obj)
+        {
+            if (CurrentBankAndAccounts == null) return;
+            var item = BankAndAccounts.FirstOrDefault(_ => _.CODE == CurrentBankAndAccounts.CODE);
+            item.DELETED = 1;
+            item.State = RowStatus.Edited;
+            DeletedBankAndAccountses.Add(CurrentBankAndAccounts);
+            BankAndAccounts.Remove(CurrentBankAndAccounts);
+        }
+
+        public ICommand AddNewBankCommand
+        {
+            get { return new Command(AddNewBank, _ => true); }
+        }
+
+        private void AddNewBank(object obj)
+        {
+            BankAndAccounts.Add(new BankAndAccounts {State = RowStatus.NewRow});
+            RaisePropertiesChanged(nameof(Kontragent.KontragentBanks));
+        }
+
+        public override void RefreshData(object data)
+        {
+            DeletedBankAndAccountses.Clear();
+            Categories.Clear();
+            foreach (var item in GlobalOptions.GetEntities().SD_148.ToList())
+                Categories.Add(new KontragentCategory(item));
+            AllBanks.Clear();
+            foreach (var item in GlobalOptions.GetEntities().SD_44.ToList())
+                AllBanks.Add(new Bank(item));
+            Regions.Clear();
+            foreach (var item in GlobalOptions.GetEntities().SD_23.ToList())
+                Regions.Add(new SD_23ViewModel(item));
+            Accounts.Clear();
+            if (GetDocCode == null) return;
+            var kontr = GlobalOptions.GetEntities()
+                .SD_43
+                .Include(_ => _.SD_301)
+                .Include(_ => _.SD_148)
+                .SingleOrDefault(_ => _.DOC_CODE == (decimal) GetDocCode);
+            Kontragent = new Kontragent(kontr);
+            RaisePropertiesChanged(nameof(Kontragent));
+            Accounts.Clear();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                if (ctx.TD_43.FirstOrDefault(_ => _.DOC_CODE == Kontragent.DOC_CODE) != null)
+                    foreach (var item in ctx.TD_43)
+                        Accounts.Add(new TD_43ViewModel(item));
+            }
+            BankAndAccounts.Clear();
+            foreach (var item in Accounts)
+            {
+                if (item.DELETED == 1) continue;
+                if (item.DOC_CODE != Kontragent.DocCode) continue;
+                BankAndAccounts.Add(new BankAndAccounts
+                {
+                    Id = Guid.NewGuid(),
+                    RASCH_ACC = item.RASCH_ACC,
+                    DISABLED = item.DISABLED,
+                    BankDC = item.BANK_DC,
+                    CODE = item.CODE,
+                    Bank = AllBanks.FirstOrDefault(_ => _.DOC_CODE == item.BANK_DC),
+                    State = RowStatus.NotEdited
+                });
+            }
+            if (Kontragent.CLIENT_CATEG_DC != null)
+                Category = Categories.FirstOrDefault(_ => _.DocCode == Kontragent.CLIENT_CATEG_DC);
+            if (Kontragent.OTVETSTV_LICO != null)
+                OtvetstLico = Employees.FirstOrDefault(_ => _.TabelNumber == Kontragent.OTVETSTV_LICO);
+            if (Kontragent.VALUTA_DC != null)
+                CurrentCurrencies = Currencies.FirstOrDefault(_ => _.DocCode == Kontragent.VALUTA_DC);
+            if (Kontragent.TABELNUMBER != null)
+                CurrentEmployees = Employees.FirstOrDefault(_ => _.TabelNumber == Kontragent.TABELNUMBER);
+            if (Kontragent.REGION_DC != null)
+                CurrentRegions = Regions.FirstOrDefault(_ => _.DOC_CODE == Kontragent.REGION_DC);
+        }
+
+        private void CopyData(object data)
+        {
+            if (!(data is decimal)) return;
+            var kontr = GlobalOptions.GetEntities()
+                .SD_43
+                .Include(_ => _.SD_43_GRUZO)
+                .Include(_ => _.TD_43)
+                .Include(_ => _.SD_301)
+                .Include(_ => _.SD_148)
+                .SingleOrDefault(_ => _.DOC_CODE == (decimal) data);
+            var copy = new Kontragent(kontr);
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                try
+                {
+                    copy.DocCode = ctx.SD_43.Max(_ => _.DOC_CODE) + 1;
+                }
+                catch (Exception ex)
+                {
+                    WindowManager.ShowError(ex);
+                }
+            }
+            copy.Name = null;
+            copy.NAME_FULL = null;
+            copy.Id = Guid.NewGuid();
+            Kontragent = copy;
+        }
+
+        private void NewData(int? groupId)
+        {
+            Kontragent = new Kontragent
+            {
+                Id = Guid.NewGuid(),
+                Group = groupId != null ? new KontragentGroup {EG_ID = groupId.Value} : null
+            };
+        }
+
+        public override bool IsCanSaveData => true;
+
+        public override void SaveData(object data)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                try
+                {
+                    var CurrentCategory = Category?.DocCode;
+                    var newDC = ctx.SD_43.Max(_ => _.DOC_CODE) + 1;
+                    var OtvetstvennojeLico = OtvetstLico?.TabelNumber;
+                    var myValuteDC = CurrentCurrencies?.DocCode;
+                    var myTabelnumber = CurrentEmployees?.TabelNumber;
+                    var GetRegion = CurrentRegions?.DOC_CODE;
+
+                    if (IsNewDoc)
+                    {
+                        ctx.SD_43.Add(new SD_43
+                        {
+                            DOC_CODE = newDC,
+                            INN = Kontragent.INN,
+                            NAME = Kontragent.Name,
+                            HEADER = Kontragent.Header,
+                            GLAVBUH = Kontragent.GlavBuh,
+                            NOTES = Kontragent.Note,
+                            TYPE_PROP = Kontragent.TYPE_PROP,
+                            ADDRESS = Kontragent.ADDRESS,
+                            TEL = Kontragent.TEL,
+                            FAX = Kontragent.FAX,
+                            OKONH = Kontragent.OKONH,
+                            PASSPORT = Kontragent.PASSPORT,
+                            SHIPPING_AUTO_DAYS = Kontragent.SHIPPING_AUTO_DAYS,
+                            PAYMENT_DAYS = Kontragent.PAYMENT_DAYS,
+                            EG_ID = Kontragent.EG_ID,
+                            TABELNUMBER = myTabelnumber,
+                            NAL_PAYER_DC = Kontragent.NAL_PAYER_DC,
+                            REGION_DC = GetRegion,
+                            CLIENT_CATEG_DC = CurrentCategory,
+                            AUTO_CLIENT_CATEGORY = Kontragent.AUTO_CLIENT_CATEGORY,
+                            AB_OTRASL_DC = Kontragent.AB_OTRASL_DC,
+                            AB_BUDGET_DC = Kontragent.AB_BUDGET_DC,
+                            AB_MINISTRY_DC = Kontragent.AB_MINISTRY_DC,
+                            PODRAZD_CORP_GOLOVNOE = Kontragent.PODRAZD_CORP_GOLOVNOE,
+                            PODRAZD_CORP_OBOSOBL = Kontragent.PODRAZD_CORP_OBOSOBL,
+                            FLAG_BALANS = Kontragent.FLAG_BALANS,
+                            VALUTA_DC = myValuteDC,
+                            START_BALANS = Kontragent.START_BALANS,
+                            START_SUMMA = Kontragent.START_SUMMA,
+                            INNER_CODE = Kontragent.INNER_CODE,
+                            NAME_FULL = Kontragent.NAME_FULL,
+                            NO_NDS = Kontragent.NO_NDS,
+                            PREFIX_IN_NUMBER = Kontragent.PREFIX_IN_NUMBER,
+                            CONTAKT_LICO = Kontragent.CONTAKT_LICO,
+                            KASSIR = Kontragent.KASSIR,
+                            SPOSOB_OTPRAV_DC = Kontragent.SPOSOB_OTPRAV_DC,
+                            KPP = Kontragent.KPP,
+                            KONTR_DISABLE = Kontragent.KONTR_DISABLE,
+                            MAX_KREDIT_SUM = Kontragent.MAX_KREDIT_SUM,
+                            TRANSP_KOEF = Kontragent.TRANSP_KOEF,
+                            TELEKS = Kontragent.TELEKS,
+                            E_MAIL = Kontragent.E_MAIL,
+                            WWW = Kontragent.WWW,
+                            OTVETSTV_LICO = OtvetstvennojeLico,
+                            LAST_MAX_VERSION = Kontragent.LAST_MAX_VERSION,
+                            FLAG_0UR_1PHYS = Kontragent.FLAG_0UR_1PHYS,
+                            OKPO = Kontragent.OKPO
+                        });
+                    }
+                    else
+                    {
+                        var doc = ctx.SD_43.FirstOrDefault(_ => _.DOC_CODE == Kontragent.DocCode);
+                        doc.INN = Kontragent.INN;
+                        doc.NAME = Kontragent.Name;
+                        doc.HEADER = Kontragent.Header;
+                        doc.GLAVBUH = Kontragent.GlavBuh;
+                        doc.NOTES = Kontragent.Note;
+                        doc.TYPE_PROP = Kontragent.TYPE_PROP;
+                        doc.ADDRESS = Kontragent.ADDRESS;
+                        doc.TEL = Kontragent.TEL;
+                        doc.FAX = Kontragent.FAX;
+                        doc.OKONH = Kontragent.OKONH;
+                        doc.PASSPORT = Kontragent.PASSPORT;
+                        doc.SHIPPING_AUTO_DAYS = Kontragent.SHIPPING_AUTO_DAYS;
+                        doc.PAYMENT_DAYS = Kontragent.PAYMENT_DAYS;
+                        doc.EG_ID = Kontragent.EG_ID;
+                        doc.TABELNUMBER = myTabelnumber;
+                        doc.NAL_PAYER_DC = Kontragent.NAL_PAYER_DC;
+                        doc.REGION_DC = GetRegion;
+                        doc.CLIENT_CATEG_DC = CurrentCategory;
+                        doc.AUTO_CLIENT_CATEGORY = Kontragent.AUTO_CLIENT_CATEGORY;
+                        doc.AB_OTRASL_DC = Kontragent.AB_OTRASL_DC;
+                        doc.AB_BUDGET_DC = Kontragent.AB_BUDGET_DC;
+                        doc.AB_MINISTRY_DC = Kontragent.AB_MINISTRY_DC;
+                        doc.PODRAZD_CORP_GOLOVNOE = Kontragent.PODRAZD_CORP_GOLOVNOE;
+                        doc.PODRAZD_CORP_OBOSOBL = Kontragent.PODRAZD_CORP_OBOSOBL;
+                        doc.FLAG_BALANS = Kontragent.FLAG_BALANS;
+                        doc.VALUTA_DC = myValuteDC;
+                        doc.START_BALANS = Kontragent.START_BALANS;
+                        doc.START_SUMMA = Kontragent.START_SUMMA;
+                        doc.INNER_CODE = Kontragent.INNER_CODE;
+                        doc.NAME_FULL = Kontragent.NAME_FULL;
+                        doc.NO_NDS = Kontragent.NO_NDS;
+                        doc.PREFIX_IN_NUMBER = Kontragent.PREFIX_IN_NUMBER;
+                        doc.CONTAKT_LICO = Kontragent.CONTAKT_LICO;
+                        doc.KASSIR = Kontragent.KASSIR;
+                        doc.SPOSOB_OTPRAV_DC = Kontragent.SPOSOB_OTPRAV_DC;
+                        doc.KPP = Kontragent.KPP;
+                        doc.KONTR_DISABLE = Kontragent.KONTR_DISABLE;
+                        doc.MAX_KREDIT_SUM = Kontragent.MAX_KREDIT_SUM;
+                        doc.TRANSP_KOEF = Kontragent.TRANSP_KOEF;
+                        doc.TELEKS = Kontragent.TELEKS;
+                        doc.E_MAIL = Kontragent.E_MAIL;
+                        doc.WWW = Kontragent.WWW;
+                        doc.OTVETSTV_LICO = OtvetstvennojeLico;
+                        doc.LAST_MAX_VERSION = Kontragent.LAST_MAX_VERSION;
+                        doc.FLAG_0UR_1PHYS = Kontragent.FLAG_0UR_1PHYS;
+                        doc.OKPO = Kontragent.OKPO;
+                    }
+                    foreach (var item in BankAndAccounts)
+                    {
+                        var getCode = ctx.TD_43.Max(_ => _.CODE) + 1;
+                        if (item.State == RowStatus.NewRow)
+                            ctx.TD_43.Add(new TD_43
+                            {
+                                RASCH_ACC = item.RASCH_ACC,
+                                DOC_CODE = Kontragent.DOC_CODE,
+                                DISABLED = item.DISABLED,
+                                BANK_DC = item.BankDC,
+                                CODE = getCode
+                            });
+                        if (item.State == RowStatus.Edited)
+                        {
+                            var i = ctx.TD_43.FirstOrDefault(_ => _.CODE == item.CODE);
+                            i.BANK_DC = item.BankDC;
+                            i.DISABLED = item.DISABLED;
+                            i.DELETED = item.DELETED;
+                            i.RASCH_ACC = item.RASCH_ACC;
+                        }
+                    }
+                    if (DeletedBankAndAccountses != null)
+                        foreach (var item in DeletedBankAndAccountses)
+                        {
+                            var firstOrDefault = ctx.TD_43.FirstOrDefault(_ => _.CODE == item.CODE);
+                            if (firstOrDefault != null)
+                                firstOrDefault.DELETED = 1;
+                        }
+                    DeletedBankAndAccountses.Clear();
+                    ctx.SaveChanges();
+                    if (IsNewDoc)
+                    {
+                        Kontragent.DocCode = newDC;
+                        MainReferences.AllKontragents.Add(Kontragent.DocCode, Kontragent);
+                    }
+                }
+                catch (Exception e)
+                {
+                    WindowManager.ShowError(e);
+                }
+            }
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,237 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Linq;
+using System.Windows;
+using Core;
+using Core.EntityViewModel;
+using Core.Menu;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using Core.WindowsManager;
+using KursAM2.View.Logistiks;
+using Reports.Base;
+using NomenklViewModel = Core.EntityViewModel.NomenklViewModel;
+
+namespace KursAM2.ViewModel.Logistiks
+{
+    public class WaybillForClientSearchViewModel : RSWindowSearchViewModelBase
+    {
+        private Store myCurrentStore;
+        private Waybill myMyCurrentWayBill;
+        private Kontragent mySelectedKontragent;
+        private NomenklViewModel mySelectedNomenkl;
+
+        public WaybillForClientSearchViewModel()
+        {
+            //LoadReferences();
+            WindowName = "Расходные накладные для клиентов";
+            Result = new ObservableCollection<Waybill>();
+            Sklads.Add(new Store {DocCode = 0, Name = "Все"});
+            foreach (var s in MainReferences.Sklads.Values)
+                Sklads.Add(s);
+            CurrentStore = Sklads.Single(_ => _.DocCode == 0);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
+            var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
+            if (prn != null)
+            {
+                prn.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Товарная накладная",
+                    Command = PrintSFCommand
+                });
+                prn.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Экспорт",
+                    Command = ExportSFCommand
+                });
+            }
+        }
+
+        public WaybillForClientSearchViewModel(Window form) : base(form)
+        {
+            WindowName = "Расходные накладные для клиентов";
+            //LoadReferences();
+            FirstSearchName = "Контрагент";
+            SecondSearchName = "Номенклатура";
+            Result = new ObservableCollection<Waybill>();
+            Sklads.Add(new Store {DocCode = 0, Name = "Все"});
+            foreach (var s in MainReferences.Sklads.Values)
+                Sklads.Add(s);
+            CurrentStore = Sklads.Single(_ => _.DocCode == 0);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
+            var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
+            if (prn == null) return;
+            prn.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "Товарная накладная",
+                Command = PrintSFCommand
+            });
+            prn.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "Экспорт",
+                Command = ExportSFCommand
+            });
+        }
+
+        public List<Store> Sklads { set; get; } = new List<Store>();
+        public List<Core.EntityViewModel.NomenklViewModel> Nomenkls => MainReferences.ALLNomenkls.Values.ToList();
+        public List<Kontragent> Kontragents => MainReferences.ActiveKontragents.Values.ToList();
+
+        public Store CurrentStore
+        {
+            get => myCurrentStore;
+            set
+            {
+                if (myCurrentStore == value) return;
+                myCurrentStore = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public NomenklViewModel SelectedNomenkl
+        {
+            get => mySelectedNomenkl;
+            set
+            {
+                if (mySelectedNomenkl == value) return;
+                mySelectedNomenkl = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Kontragent SelectedKontragent
+        {
+            get => mySelectedKontragent;
+            set
+            {
+                if (mySelectedKontragent == value) return;
+                mySelectedKontragent = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Waybill CurrentWayBill
+        {
+            get => myMyCurrentWayBill;
+            set
+            {
+                if (myMyCurrentWayBill == value) return;
+                myMyCurrentWayBill = value;
+                if (myMyCurrentWayBill != null)
+                {
+                    IsDocumentOpenAllow = true;
+                    IsDocNewCopyAllow = true;
+                    IsDocNewCopyRequisiteAllow = true;
+                    IsPrintAllow = true;
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<Waybill> Result { set; get; }
+
+        public Command ExportSFCommand
+        {
+            get { return new Command(ExportSF, param => IsDocumentOpenAllow); }
+        }
+
+        public Command PrintSFCommand
+        {
+            get { return new Command(PrintSF, param => IsDocumentOpenAllow); }
+        }
+
+        public override void Print(object form)
+        {
+            var rep = new ExportView();
+            rep.Show();
+        }
+
+        private void ExportSF(object obj)
+        {
+            var ctx = new WaybillWindowViewModel(CurrentWayBill.DocCode);
+            ctx.ExportWayBill(null);
+        }
+
+        private void PrintSF(object obj)
+        {
+            var ctx = new WaybillWindowViewModel(CurrentWayBill.DocCode);
+            ctx.PrintWaybill(null);
+        }
+
+        #region Commands
+
+        public override void RefreshData(object data)
+        {
+            try
+            {
+                IsDocumentOpenAllow = false;
+                IsDocNewCopyAllow = false;
+                IsDocNewCopyRequisiteAllow = false;
+                IsPrintAllow = false;
+                while (!MainReferences.IsReferenceLoadComplete)
+                {
+                }
+                Result.Clear();
+
+                var query = GlobalOptions.GetEntities()
+                    .SD_24
+                    .Include(_ => _.SD_43)
+                    .Include(_ => _.SD_431)
+                    .Include(_ => _.SD_432)
+                    .Include(_ => _.SD_301)
+                    .Include(_ => _.TD_24)
+                    .Include(_ => _.SD_27)
+                    .Where(_ => _.DD_DATE >= StartDate && _.DD_DATE <= EndDate && _.DD_TYPE_DC == 2010000012);
+                if (CurrentStore != null && CurrentStore.DocCode != 0)
+                    query = query.Where(_ => _.DD_SKLAD_OTPR_DC == CurrentStore.DocCode);
+                if (SelectedKontragent != null)
+                    query = query.Where(_ => _.DD_KONTR_POL_DC == SelectedKontragent.DOC_CODE);
+                if (SelectedNomenkl != null)
+                    query = query.Where(m => m.TD_24.Any(n => n.DDT_NOMENKL_DC == SelectedNomenkl.DOC_CODE));
+                foreach (var item in query.ToList())
+                    Result.Add(new Waybill(item));
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+            RaisePropertyChanged();
+        }
+
+        public override void DocumentOpen(object form)
+        {
+            if (CurrentWayBill == null) return;
+            var frm = new WaybillView {Owner = Application.Current.MainWindow};
+            var ctx = new WaybillWindowViewModel(CurrentWayBill.DocCode);
+            frm.Show();
+            frm.DataContext = ctx;
+        }
+
+        public Command ClearKontragentCommand
+        {
+            get { return new Command(ClearKontragent, param => SelectedKontragent != null); }
+        }
+
+        private void ClearKontragent(object obj)
+        {
+            SelectedKontragent = null;
+        }
+
+        public Command ClearNomenklCommand
+        {
+            get { return new Command(ClearNomenkl, param => SelectedNomenkl != null); }
+        }
+
+        private void ClearNomenkl(object obj)
+        {
+            SelectedKontragent = null;
+        }
+
+        #endregion
+    }
+}

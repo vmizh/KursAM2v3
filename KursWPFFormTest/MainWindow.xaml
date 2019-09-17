@@ -1,0 +1,15 @@
+﻿<Window x:Class="KursWPFFormTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <DockPanel LastChildFill="False">
+        <Button Content="Счет-фактура" DockPanel.Dock="Top" Margin="0,0,0,10" Width="300" Click="InvoiceFormButton_Click"/>
+        <Button Content="Счет клиенту" DockPanel.Dock="Top"  Margin="0,0,0,10"  Width="300" Click="InvoiceClientButton_Click"/>
+        <Button Content="Приходный складской ордер" DockPanel.Dock="Top"  Margin="0,0,0,10"  Width="300" Click="StorageOrderInButton_Click"/>
+        <Button Content="Расходный складской ордер" DockPanel.Dock="Top"  Margin="0,0,0,10"  Width="300" Click="StorageOrderOutButton_Click"/>
+
+    </DockPanel>
+</Window>

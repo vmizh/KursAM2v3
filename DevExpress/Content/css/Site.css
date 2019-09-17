@@ -1,0 +1,237 @@
+﻿@import url("https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&subset=cyrillic");
+
+@import url("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700&subset=cyrillic");
+
+.delete-button {
+    background-image: url(../images/icons/rubbish-bin-b.png);
+    background-size: cover;
+    border-radius: 3px;
+    display: block;
+    height: 18px;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 18px;
+}
+
+.delete-button:hover { background-image: url(../images/icons/rubbish-bin.png); }
+
+.delete-button .button {
+    height: 40px;
+    width: 100px;
+}
+
+.table-container { margin-left: 15px; }
+
+.table-container tr:hover .delete-button { display: block; }
+
+.table-container .delete-button { display: none; }
+
+.table-container table {
+    border-collapse: collapse;
+    font-weight: 300;
+}
+
+.table-container td { padding: 5px; }
+
+.table-container tr:first-child { font-weight: 400; }
+
+#kostul {
+    background-color: #3d3d3d;
+    height: 50px;
+    width: auto;
+}
+
+.side {
+    background-color: #f5f5ff;
+    border-right: solid 2px #8ba4c3;
+    font-size: 11pt;
+    font-weight: 400;
+    height: 3000px;
+    left: -250px;
+    margin-top: -1px;
+    position: fixed;
+    width: 310px;
+}
+
+.side .menu { margin-top: 40px; }
+
+.side #menu-button {
+    background-image: url("../images/icons/menu.png");
+    background-size: cover;
+    cursor: pointer;
+    float: left;
+    height: 25px;
+    position: absolute;
+    right: 18px;
+    top: 5px;
+    width: 25px;
+}
+
+.side a {
+    color: #4d698c;
+    display: block;
+    text-decoration: none;
+}
+
+.side ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.side li {
+    line-height: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.side .menu__list {
+    padding-right: 60px;
+    position: relative;
+    text-align: right;
+    text-transform: uppercase;
+}
+
+.side .menu__list img {
+    line-height: 40px;
+    margin-right: 20px;
+    position: absolute;
+    right: -3px;
+    top: 5px;
+    width: 30px;
+}
+
+.side .menu__list:hover { background-color: #e9edff; }
+
+.side .menu__list:hover ul { display: block; }
+
+.side .menu__drop {
+    background-color: #506d91;
+    display: none;
+    font-size: 10pt;
+    left: 100%;
+    margin-left: 1px;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 100%;
+    z-index: 99999;
+}
+
+.side .menu__drop a {
+    color: white;
+    font-weight: 300;
+}
+
+.side .menu__drop li:hover { background-color: #61b7b4; }
+
+.side .menu__list::after {
+    -webkit-transition: 0.5s;
+    border: 5px solid;
+    border-color: transparent transparent transparent #98cada;
+    content: " ";
+    position: absolute;
+    right: 0px;
+    top: 15px;
+    transition: 0.5s;
+}
+
+.side .menu__list:hover::after {
+    -ms-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+.addBlock {
+    background-color: #afc8e8;
+    font-weight: 300;
+    padding: 15px;
+    padding-left: 30px;
+}
+
+.addBlock input {
+    display: block;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+form { margin: 0; }
+
+#main-container {
+    overflow: hidden;
+    position: relative;
+}
+
+#content {
+    padding-left: 60px;
+    padding-right: 15px;
+    padding-top: 1px;
+    position: relative;
+    top: 0;
+}
+
+h2 {
+    font-weight: 200;
+    margin-left: 15px;
+}
+
+body { margin: 0; }
+
+html { font-family: 'Roboto', sans-serif; }
+
+.LoginFormMine {
+    background-color: #40566a;
+    bottom: 0;
+    color: white;
+    font-weight: 300;
+    height: 100%;
+    margin: auto;
+    overflow: hidden;
+    text-align: center;
+    width: 500px;
+}
+
+.LoginFormMine li {
+    color: white;
+    font-size: 18px;
+    font-weight: 300;
+    list-style-type: none;
+}
+
+.LoginFormMine ul {
+    margin: 0;
+    margin-top: 15px;
+    padding: 0;
+}
+
+.Login-button {
+    background-color: #6daa6d;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    height: 40px;
+    margin-top: 20px;
+    width: 100px;
+}
+
+.Login-button:hover { background-color: #90e59e; }
+
+.AuthArea input {
+    border: none;
+    color: black;
+    height: 30px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    text-align: center;
+    width: 250px;
+}
+
+.h2 { font-size: 30px; }

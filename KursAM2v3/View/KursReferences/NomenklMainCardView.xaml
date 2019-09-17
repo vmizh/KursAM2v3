@@ -1,0 +1,230 @@
+﻿<dx:DXWindow
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:control="clr-namespace:Core.Control;assembly=Core"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    x:Class="KursAM2.View.KursReferences.NomenklMainCardView"
+    Title="Карточка основной номенклатуры" Height="431.568" Width="974.839">
+    <DockPanel>
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
+               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
+
+        <dxlc:LayoutControl x:Name="mainLayoutControl" Visibility="Hidden" Orientation="Vertical" Margin="0,0,5,0" />
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Label VerticalAlignment="Center">Номенклатурный номер</Label>
+                <dxe:TextEdit
+                    EditValue="{Binding NomenklMain.NomenklNumber, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    NullText="&lt;автоматически&gt;"
+                    DockPanel.Dock="Left"
+                    Width="200"
+                    Margin="15,0,0,0"
+                    VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Наименование</Label>
+                <dxe:TextEdit
+                    EditValue="{Binding NomenklMain.Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Validate="TextEdit_Validate"
+                    ValidateOnTextInput="True"
+                    InvalidValueBehavior="AllowLeaveEditor"
+                    DockPanel.Dock="Left"
+                    Margin="67,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Stretch"
+                    Width="500" />
+            </StackPanel>
+            <DockPanel Height="90" HorizontalAlignment="Stretch">
+                <Label DockPanel.Dock="Left" VerticalAlignment="Center">Полное имя</Label>
+                <dxe:TextEdit Margin="83,0,0,0"
+                              Height="80"
+                              VerticalAlignment="Center"
+                              TextWrapping="Wrap"
+                              AcceptsReturn="True"
+                              EditValue="{Binding NomenklMain.FullName, Mode=TwoWay}" />
+            </DockPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label DockPanel.Dock="Left" VerticalAlignment="Center" Margin="4,0,0,0" Width="49">Услуга</Label>
+                <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsUsluga, Mode=TwoWay}" DockPanel.Dock="Left"
+                               Margin="5,0,0,0" VerticalAlignment="Center" />
+                <Label DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center">Накл. расход</Label>
+                <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsNakladExpense, Mode=TwoWay}" DockPanel.Dock="Left"
+                               Margin="5,0,0,0" VerticalAlignment="Center" />
+            </StackPanel>
+            <DockPanel Height="40" Margin="0,5,0,5" LastChildFill="False">
+                <StackPanel Orientation="Horizontal">
+                    <Label Margin="0,0,5,0" VerticalAlignment="Center">Категория</Label>
+                    <dxg:LookUpEdit Name="lookUpEdit"
+                                    dx:DXSerializer.StoreLayoutMode="None"
+                                    AutoPopulateColumns="False"
+                                    VerticalAlignment="Center"
+                                    DisplayMember="Name"
+                                    ValueMember="DocCode"
+                                    Width="250"
+                                    PopupMinWidth="400"
+                                    InvalidValueBehavior="AllowLeaveEditor"
+                                    ItemsSource="{Binding NomenklCategoryCollection}"
+                                    EditValue="{Binding NomenklMain.CategoryDC, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
+                                    SelectedItem="{Binding NomenklMain.NomenklCategory, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}">
+                        <dxg:LookUpEdit.Buttons>
+                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Edit" Command="{Binding CategoryEditCommand}" />
+                        </dxg:LookUpEdit.Buttons>
+                        <dxg:LookUpEdit.StyleSettings>
+                            <dxg:SearchLookUpEditStyleSettings />
+                        </dxg:LookUpEdit.StyleSettings>
+                        <dxg:LookUpEdit.PopupContentTemplate>
+                            <ControlTemplate>
+                                <dxg:GridControl Name="PART_GridControl"
+                                                 dx:DXSerializer.SerializationID="PART_GridControlCategory"
+                                                 dx:DXSerializer.StoreLayoutMode="All"
+                                                 dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                                 dxg:DataControlSerializationOptions.RemoveOldColumns="True">
+                                    <dxg:GridControl.Columns>
+                                        <dxg:GridColumn Name="colk_1" Header="Наименование" FieldName="Name" />
+                                    </dxg:GridControl.Columns>
+                                    <dxg:GridControl.View>
+                                        <dxg:TreeListView AutoWidth="True"
+                                                          KeyFieldName="DocCode"
+                                                          ParentFieldName="ParentDC"
+                                                          NavigationStyle="Row" />
+                                    </dxg:GridControl.View>
+                                </dxg:GridControl>
+                            </ControlTemplate>
+                        </dxg:LookUpEdit.PopupContentTemplate>
+                    </dxg:LookUpEdit>
+                    <Label Margin="10,0,5,0" VerticalAlignment="Center">Тип продукции</Label>
+                    <dxe:ComboBoxEdit VerticalAlignment="Center"
+                                      AutoComplete="True"
+                                      ItemsSource="{Binding NomenklTypeCollection}"
+                                      EditValue="{Binding NomenklMain.NomenklTypeDC,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
+                                      SelectedItem="{Binding NomenklMain.NomenklType, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                      DisplayMember="Name"
+                                      ValueMember="DocCode"
+                                      InvalidValueBehavior="AllowLeaveEditor"
+                                      Width="300">
+                        <dxe:ComboBoxEdit.Buttons>
+                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Edit" Command="{Binding TypeProductEditCommand}" />
+                        </dxe:ComboBoxEdit.Buttons>
+                    </dxe:ComboBoxEdit>
+                    <Label Margin="10,0,5,0" VerticalAlignment="Center">Вид продукции</Label>
+                    <dxg:LookUpEdit Name="prodeuctLookUpEdit"
+                                    dx:DXSerializer.StoreLayoutMode="None"
+                                    AutoPopulateColumns="False"
+                                    VerticalAlignment="Center"
+                                    DisplayMember="Name"
+                                    ValueMember="DocCode"
+                                    Width="250"
+                                    PopupMinWidth="400"
+                                    InvalidValueBehavior="AllowLeaveEditor"
+                                    ItemsSource="{Binding NomenklProductCollection}"
+                                    EditValue="{Binding NomenklMain.ProductTypeDC,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
+                                    SelectedItem="{Binding NomenklMain.ProductType, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                        <dxg:LookUpEdit.Buttons>
+                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Edit" Command="{Binding VidProductEditCommand}" />
+                        </dxg:LookUpEdit.Buttons>
+                        <dxg:LookUpEdit.StyleSettings>
+                            <dxg:SearchLookUpEditStyleSettings />
+                        </dxg:LookUpEdit.StyleSettings>
+                        <dxg:LookUpEdit.PopupContentTemplate>
+                            <ControlTemplate>
+                                <dxg:GridControl Name="PART_GridControl"
+                                                 dx:DXSerializer.SerializationID="PART_GridControlProduct"
+                                                 dx:DXSerializer.StoreLayoutMode="All"
+                                                 dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                                 dxg:DataControlSerializationOptions.RemoveOldColumns="True">
+                                    <dxg:GridControl.Columns>
+                                        <dxg:GridColumn Name="colk_1" Header="Наименование" FieldName="Name" />
+                                    </dxg:GridControl.Columns>
+                                    <dxg:GridControl.View>
+                                        <dxg:TreeListView AutoWidth="True"
+                                                          KeyFieldName="DocCode"
+                                                          ParentFieldName="ParentDC"
+                                                          NavigationStyle="Row" 
+                                                          ShowHorizontalLines="False"
+                                                          ShowSearchPanelFindButton="True"
+                                                          AutoExpandAllNodes="True"/>
+                                    </dxg:GridControl.View>
+                                </dxg:GridControl>
+                            </ControlTemplate>
+                        </dxg:LookUpEdit.PopupContentTemplate>
+                    </dxg:LookUpEdit>
+                </StackPanel>
+            </DockPanel>
+            <DockPanel Height="30">
+                <Label DockPanel.Dock="Left" Margin="0,0,40,0">Единица измерения</Label>
+                <dxe:ComboBoxEdit
+                    VerticalAlignment="Center"
+                    AutoComplete="True"
+                    Margin="0,0,25,0"
+                    ItemsSource="{Binding UnitCollection, Mode=TwoWay}"
+                    EditValue="{Binding NomenklMain.UnitDC,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    DisplayMember="Name"
+                    ValueMember="DocCode"
+                    Width="250"
+                    SelectedItem="{Binding NomenklMain.Unit, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                    InvalidValueBehavior="AllowLeaveEditor">
+                    <dxe:ComboBoxEdit.Buttons>
+                        <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Edit" Command="{Binding UnitEditCommand}" />
+                    </dxe:ComboBoxEdit.Buttons>
+                </dxe:ComboBoxEdit>
+                <Label DockPanel.Dock="Left">Страна происхождения</Label>
+                <dxg:LookUpEdit Name="lookUpEditCountry"
+                                Margin="20,0,0,0"
+                                AutoPopulateColumns="False"
+                                DisplayMember="Name"
+                                ValueMember="Id"
+                                Width="250"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                PopupMinWidth="600"
+                                ItemsSource="{Binding CountryCollection}"
+                                EditValue="{Binding NomenklMain.Country.Id,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedItem="{Binding NomenklMain.Country, UpdateSourceTrigger=PropertyChanged}">
+                    <dxg:LookUpEdit.Buttons>
+                        <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Edit" Command="{Binding CountryEditCommand}" />
+                    </dxg:LookUpEdit.Buttons>
+                    <dxg:LookUpEdit.StyleSettings>
+                        <dxg:SearchLookUpEditStyleSettings />
+                    </dxg:LookUpEdit.StyleSettings>
+                    <dxg:LookUpEdit.PopupContentTemplate>
+                        <ControlTemplate>
+                            <dxg:GridControl Name="PART_GridControl"
+                                             dx:DXSerializer.SerializationID="PART_GridControlCountry"
+                                             dx:DXSerializer.StoreLayoutMode="All"
+                                             dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                             dxg:DataControlSerializationOptions.RemoveOldColumns="True">
+                                <dxg:GridControl.Columns>
+                                    <dxg:GridColumn Name="colk_1" Header="Наименование" FieldName="Name" />
+                                    <dxg:GridColumn Name="colk_5" Header="Иностранное наименование"
+                                                    FieldName="ForeignName" />
+                                    <dxg:GridColumn Name="colk_2" Header="Sign2" FieldName="Sign2" />
+                                    <dxg:GridColumn Name="colk_3" Header="Sign3" FieldName="Sign3" />
+                                    <dxg:GridColumn Name="colk_4" Header="Iso" FieldName="Iso" />
+                                </dxg:GridControl.Columns>
+                                <dxg:GridControl.View>
+                                    <dxg:TableView AutoWidth="True"
+                                                   NavigationStyle="Row" 
+                                                   CellStyle="{StaticResource FocusedCellStyle}" 
+                                                   RowStyle="{StaticResource FocusedRowStyle}"/>
+                                </dxg:GridControl.View>
+                            </dxg:GridControl>
+                        </ControlTemplate>
+                    </dxg:LookUpEdit.PopupContentTemplate>
+                </dxg:LookUpEdit>
+            </DockPanel>
+            <DockPanel Height="90">
+                <Label DockPanel.Dock="Left" VerticalAlignment="Center">Примечание</Label>
+                <dxe:TextEdit Height="80"
+                              AcceptsReturn="True"
+                              EditValue="{Binding NomenklMain.Note, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                              TextWrapping="Wrap"
+                              Margin="80,0,0,0"
+                              VerticalAlignment="Center" />
+            </DockPanel>
+        </StackPanel>
+    </DockPanel>
+</dx:DXWindow>

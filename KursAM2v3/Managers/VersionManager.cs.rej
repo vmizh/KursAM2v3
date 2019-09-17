@@ -1,0 +1,11 @@
+--- VersionManager.cs
++++ VersionManager.cs
+@@ -113,7 +113,7 @@
+             {
+                 WindowManager.ShowError(ex);
+             }
+-
++            
+             return null;
+         }
+         

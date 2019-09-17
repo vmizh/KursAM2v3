@@ -1,0 +1,36 @@
+--- StandartDialogs.cs
++++ StandartDialogs.cs
+@@ -1,4 +1,7 @@
+-﻿using Core.EntityViewModel;
++﻿using System.Collections.Generic;
++using System.Collections.ObjectModel;
++using System.Windows.Documents;
++using Core.EntityViewModel;
+ using Core.ViewModel.Common;
+ using KursAM2.View.Base;
+ using KursAM2.View.DialogUserControl;
+@@ -2,6 +5,7 @@
+ using Core.ViewModel.Common;
+ using KursAM2.View.Base;
+ using KursAM2.View.DialogUserControl;
++using KursAM2.View.Logistiks.UC;
+ using KursAM2.ViewModel.Management.Projects;
+ 
+ 
+@@ -23,7 +27,15 @@
+             if (!ctx.DialogResult) return null;
+             return ctx.CurrentKontragent;
+         }
+-
++        public static List<NomenklViewModel> SelectNomenkls()
++        {
++            var ctx = new AddNomenklViewModel();
++            var dlg = new SelectDialogView { DataContext = ctx};
++            ctx.Form = dlg;
++            dlg.ShowDialog();
++            if (!ctx.DialogResult) return null;
++            return ctx.ListNomenklCollection;
++        }
+         public static Project SelectProject()
+         {
+             var ctx = new ProjectSelectReferenceWindowViewModel();

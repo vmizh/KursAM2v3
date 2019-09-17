@@ -1,0 +1,225 @@
+﻿<dx:DXWindow
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:control="clr-namespace:Core.Control;assembly=Core"
+    xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+    x:Class="KursAM2.View.KursReferences.NomenklReferenceView"
+    Title="Номенклатурный справочник" Height="431.568" Width="800">
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIDialogService />
+        <dxwui:WinUIMessageBoxService />
+    </dxmvvm:Interaction.Behaviors>
+    <DockPanel>
+        <control:WndowMenu Height="60" DockPanel.Dock="Top" />
+        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
+               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
+        <DockPanel Margin="0,5,5,5" DockPanel.Dock="Top" LastChildFill="False">
+            <Label Margin="0,0,5,0" Content="Поиск" />
+            <dxe:ButtonEdit Width="300"
+                            Margin="0,0,5,0"
+                            AllowDefaultButton="False"
+                            EditValue="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            NullText="введите часть текста или номенклатурного №">
+                <dxe:ButtonEdit.Buttons>
+                    <dxe:ButtonInfo GlyphKind="Search" Command="{Binding SearchCommand}" />
+                    <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding SearchClearCommand}" />
+
+                </dxe:ButtonEdit.Buttons>
+            </dxe:ButtonEdit>
+            <dxe:CheckEdit
+                Margin="0,0,5,0"
+                Content="Показать удаленные"
+                DockPanel.Dock="Right"
+                IsChecked="{Binding IsShowDeleted,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </DockPanel>
+        <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Horizontal" Padding="0">
+            <dxlc:LayoutGroup View="Group"
+                              dxlc:LayoutControl.AllowHorizontalSizing="True"
+                              IsEnabled="{Binding IsSearchTextNull, UpdateSourceTrigger=PropertyChanged}">
+                <dxg:TreeListControl x:Name="treeListCategory"
+                                     AutoGenerateColumns="None"
+                                     EnableSmartColumnsGeneration="True"
+                                     VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch"
+                                     dx:DXSerializer.SerializationID="treeListCategory"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                     ItemsSource="{Binding CategoryCollection}"
+                                     CurrentItem="{Binding CurrentCategory, Mode=TwoWay}"
+                                     CurrentItemChanged="treeListViewCategory_FocusedRowChanged"
+                                     ShowBorder="False">
+                    <dxg:TreeListControl.Columns>
+                        <dxg:TreeListColumn x:Name="tcol_1"
+                                            Header="Наименование"
+                                            FieldName="Name"
+                                            AllowEditing="False" />
+                    </dxg:TreeListControl.Columns>
+                    <dxg:TreeListControl.View>
+                        <dxg:TreeListView x:Name="treeListViewCategory"
+                                          AllowPerPixelScrolling="True"
+                                          KeyFieldName="DocCode"
+                                          ParentFieldName="ParentDC"
+                                          MouseDoubleClick="TreeListViewCategory_OnMouseDoubleClick"
+                                          NavigationStyle="Cell"
+                                          SearchPanelFindFilter="Contains"
+                                          PreviewKeyDown="treeListViewCategory_PreviewKeyDown"
+                                          ShowHorizontalLines="False"
+                                          ShowVerticalLines="False" ShowFilterPanelMode="Never"
+                                          ShowIndicator="False">
+                            <dxg:TreeListView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Добавить в корень" Command="{Binding TreeAddInRootCommand}" />
+                                    <MenuItem Header="Добавить дочернее" Command="{Binding TreeAddChildCommand}" />
+                                    <MenuItem Header="Добавить одноуровневое" Command="{Binding TreeAddOneLevelCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Редактировать"
+                                              Command="{Binding TreeEditCommand}" />
+                                    <MenuItem Header="Удалить" Command="{Binding TreeDeleteCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Экспорт" 
+                                              Command="{Binding VisualControlExportCommand}"
+                                              CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              AncestorType={x:Type ContextMenu}}}" >
+                                        <MenuItem.Icon>
+                                            <Image 
+                                                   Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </dxg:TreeListView.ContextMenu>
+                        </dxg:TreeListView>
+                    </dxg:TreeListControl.View>
+                </dxg:TreeListControl>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup x:Name="layoutGroup3"
+                              Orientation="Vertical"
+                              View="Group"
+                              dxlc:LayoutControl.AllowHorizontalSizing="True">
+                <dxlc:LayoutGroup x:Name="layoutGroup4"
+                                  View="Group"
+                                  dxlc:LayoutControl.AllowVerticalSizing="True">
+                    <dxg:GridControl x:Name="gridControlNomenklMain"
+                                     AutoGenerateColumns="None"
+                                     EnableSmartColumnsGeneration="True"
+                                     VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch"
+                                     dx:DXSerializer.SerializationID="gridControlNomenklViewModelMain"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                     ItemsSource="{Binding NomenklMainCollection}"
+                                     CurrentItem="{Binding CurrentNomenklMain,Mode=TwoWay}"
+                                     SelectionMode="Row"
+                                     MouseDoubleClick="GridControlNomenklMain_OnMouseDoubleClick">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Name="col_1_1" Header="Наименование" FieldName="Name" ReadOnly="True" />
+                            <dxg:GridColumn Name="col_1_2" Header="Ном.№" FieldName="NomenklViewModelNumber" ReadOnly="True" />
+                            <dxg:GridColumn Name="col_1_3" Header="Ед.измерения" FieldName="Unit" ReadOnly="True" />
+                            <dxg:GridColumn Name="col_1_4" Header="Страна проис." FieldName="Country" ReadOnly="True" />
+                            <dxg:GridColumn Name="col_1_5" Header="Тип продукции" FieldName="NomenklViewModelType"
+                                            ReadOnly="True" />
+                            <dxg:GridColumn Name="col_1_6" Header="Услуга" FieldName="IsUsluga" ReadOnly="True" />
+                            <dxg:GridColumn Name="col_1_7" Header="Накл. расход" FieldName="IsNakladExpense"
+                                            ReadOnly="True" />
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView x:Name="tableViewNomenklMain"
+                                           AllowPerPixelScrolling="True"
+                                           ShowTotalSummary="False">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Создать основную номенклатуру"
+                                                  Command="{Binding NomenklMainAddCommand}" />
+                                        <MenuItem Header="Редактировать" Command="{Binding NomenklMainEditCommand}" />
+                                        <MenuItem Header="Копия выделенной" Command="{Binding NomenklMainCopyCommand}" />
+                                        <MenuItem Header="Удалить" Command="{Binding NomenklMainDeleteCommand}" />
+                                        <Separator />
+                                        <MenuItem Header="Экспорт" 
+                                                  Command="{Binding VisualControlExportCommand}"
+                                                  CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              AncestorType={x:Type ContextMenu}}}" >
+                                            <MenuItem.Icon>
+                                                <Image 
+                                                       Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup x:Name="layoutGroup5"
+                                  View="Group"
+                                  dxlc:LayoutControl.AllowVerticalSizing="True">
+                    <dxg:GridControl x:Name="gridControlNomenkl"
+                                     AutoGenerateColumns="None"
+                                     EnableSmartColumnsGeneration="True"
+                                     VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch"
+                                     dx:DXSerializer.SerializationID="gridControlNomenklViewModel"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                     ItemsSource="{Binding ElementName=gridControlNomenklMain, Path=CurrentItem.NomenklCollection,Mode=TwoWay}"
+                                     CurrentItem="{Binding CurrentNomenkl,Mode=TwoWay}"
+                                     SelectionMode="Row">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Name="col_2_1" Header="Наименование" FieldName="Name" />
+                            <dxg:GridColumn Name="col_2_2" Header="Ном.№" FieldName="NomenklViewModelNumber" />
+                            <dxg:GridColumn Name="col_2_3" Header="Полное наименование" FieldName="NameFull" />
+                            <dxg:GridColumn Name="col_2_4" Header="Валюта" FieldName="Currency"
+                                            ReadOnly="{Binding IsCanChangeCurrency}">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:ComboBoxEditSettings
+                                        ItemsSource="{Binding CurrencyCollection}"
+                                        DisplayMember="Name"
+                                        IsTextEditable="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="col_2_5" Header="Примечания" FieldName="Note" />
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView x:Name="tableViewNomenkl"
+                                           AllowPerPixelScrolling="True"
+                                           ShowTotalSummary="False"
+                                           CellValueChanged="tableViewNomenkl_CellValueChanged">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand EventName="FocusedRowChanged"
+                                                           Command="{Binding FocusedRowChangedCommand}"
+                                                           CommandParameter="{Binding ElementName=gridControlNomenkl, Path=CurrentItem}" />
+                                </dxmvvm:Interaction.Behaviors>
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Создать номенклатуру" Command="{Binding NomenklAddCommand}" />
+                                        <MenuItem Header="Редактировать" Command="{Binding NomenklEditCommand}" />
+                                        <MenuItem Header="Удалить" Command="{Binding NomenklDeleteCommand}" />
+                                        <Separator />
+                                        <MenuItem Header="Экспорт" 
+                                                  Command="{Binding VisualControlExportCommand}"
+                                                  CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              AncestorType={x:Type ContextMenu}}}" >
+                                            <MenuItem.Icon>
+                                                <Image 
+                                                       Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:DXWindow>

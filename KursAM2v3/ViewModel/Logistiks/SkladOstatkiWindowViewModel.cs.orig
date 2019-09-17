@@ -1,0 +1,522 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Linq;
+using Calculates.Materials;
+using Core;
+using Core.EntityViewModel;
+using Core.Menu;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using Core.WindowsManager;
+using Helper;
+using JetBrains.Annotations;
+
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
+namespace KursAM2.ViewModel.Logistiks
+{
+    public class SkladOstatkiWindowViewModel : RSWindowViewModelBase
+    {
+        private readonly List<FilterNomenkl> myFilterNomenkls = new List<FilterNomenkl>();
+        private NomenklOstatkiForSklad myCurrentNomenklForSklad;
+        private NomenklQuantity myCurrentNomenklQuantity;
+        private NomenklOstatkiWithPrice myCurrentNomenklStore;
+        private Store myCurrentStore;
+        private bool myIsPeriodSet;
+        private DateTime myOstatokDate;
+        private DateTime? myPeriodDateEnd;
+        private DateTime? myPeriodDateStart;
+
+        public SkladOstatkiWindowViewModel()
+        {
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            myIsPeriodSet = false;
+            myOstatokDate = DateTime.Today;
+        }
+
+        public ObservableCollection<Store> Sklads { set; get; } = new ObservableCollection<Store>();
+
+        // ReSharper disable once CollectionNeverUpdated.Global
+        public List<NomPrice> Prices { set; get; } = new List<NomPrice>();
+
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<OperationNomenklMove> NomenklOperationsForSklad { set; get; } =
+            new ObservableCollection<OperationNomenklMove>();
+
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<NomenklCalcCostOperation> NomenklOperations { set; get; } =
+            new ObservableCollection<NomenklCalcCostOperation>();
+
+        public DateTime OstatokDate
+        {
+            get => myOstatokDate;
+            set
+            {
+                if (myOstatokDate == value) return;
+                myOstatokDate = value;
+                RefreshData(null);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsPeriodSet
+        {
+            get => myIsPeriodSet;
+            set
+            {
+                if (myIsPeriodSet == value) return;
+                myIsPeriodSet = value;
+                if (myIsPeriodSet)
+                    SetPeriodFilter();
+                else
+                    UnSetPeriodFilter();
+                RaisePropertyChanged();
+            }
+        }
+
+        public DateTime? PeriodDateStart
+        {
+            get => myPeriodDateStart;
+            set
+            {
+                if (myPeriodDateStart == value) return;
+                myPeriodDateStart = value;
+                IsPeriodSet = false;
+                if (myPeriodDateStart > PeriodDateEnd)
+                    PeriodDateEnd = myPeriodDateStart;
+                UpdateSkladOstatki();
+                RaisePropertyChanged();
+            }
+        }
+
+        public DateTime? PeriodDateEnd
+        {
+            get => myPeriodDateEnd;
+            set
+            {
+                if (myPeriodDateEnd == value) return;
+                myPeriodDateEnd = value;
+                IsPeriodSet = false;
+                if (PeriodDateStart > myPeriodDateEnd)
+                    PeriodDateStart = myPeriodDateEnd;
+                OstatokDate = myPeriodDateEnd ?? DateTime.Today;
+                UpdateSkladOstatki();
+                RaisePropertyChanged();
+            }
+        }
+
+        public Store CurrentStore
+        {
+            get => myCurrentStore;
+            set
+            {
+                if (myCurrentStore == value) return;
+                myCurrentStore = value;
+                if (myCurrentStore != null)
+                {
+                    UpdateSkladOstatki();
+                }
+                else
+                {
+                    NomenklOperationsForSklad.Clear();
+                    RaisePropertyChanged(nameof(NomenklOperationsForSklad));
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        [NotNull]
+        private List<NomenklOstatkiWithPrice> MainOstatki { get; } = new List<NomenklOstatkiWithPrice>();
+
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<NomenklQuantity> NomenklQuantity { set; get; } =
+            new ObservableCollection<NomenklQuantity>();
+
+        public NomenklOstatkiWithPrice CurrentNomenklStore
+        {
+            get => myCurrentNomenklStore;
+            set
+            {
+                if (myCurrentNomenklStore == value) return;
+                myCurrentNomenklStore = value;
+                if (CurrentStore == null) return;
+                NomenklOperations.Clear();
+                if (myCurrentNomenklStore == null) return;
+                var op = NomenklCostCalc.GetAllOperations(myCurrentNomenklStore.NomenklViewModel.DocCode);
+                if (IsPeriodSet)
+                    foreach (
+                        var opp in
+                        op.Operations.Where(opp => opp.DocDate >= PeriodDateStart && opp.DocDate <= PeriodDateEnd &&
+                                                   (opp.SkladInName == CurrentStore.Name ||
+                                                    opp.SkladOutName == CurrentStore.Name)))
+                        NomenklOperations.Add(opp);
+                else
+                    foreach (var opp in op.Operations.Where(opp => opp.DocDate <= OstatokDate &&
+                                                                   (opp.SkladInName == CurrentStore.Name ||
+                                                                    opp.SkladOutName == CurrentStore.Name)))
+                        NomenklOperations.Add(opp);
+                RaisePropertyChanged(nameof(NomenklOperations));
+                RaisePropertyChanged();
+            }
+        }
+
+        public NomenklQuantity CurrentNomenklQuantity
+        {
+            get => myCurrentNomenklQuantity;
+            set
+            {
+                if (myCurrentNomenklQuantity == value) return;
+                myCurrentNomenklQuantity = value;
+                if (myCurrentNomenklQuantity == null)
+                {
+                    NomenklOnSklads = null;
+                    RaisePropertyChanged(nameof(NomenklOnSklads));
+                }
+                else
+                {
+                    UpdateSkladQuantity();
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<SkladQuantity> NomenklOnSklads { set; get; } =
+            new ObservableCollection<SkladQuantity>();
+
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<NomenklOstatkiWithPrice> NomenklsForSklad { set; get; } =
+            new ObservableCollection<NomenklOstatkiWithPrice>();
+
+        public NomenklOstatkiForSklad CurrentNomenklForSklad
+        {
+            get => myCurrentNomenklForSklad;
+            set
+            {
+                if (myCurrentNomenklForSklad == value) return;
+                myCurrentNomenklForSklad = value;
+                if (myCurrentNomenklForSklad != null)
+                {
+                    UpdateOperationOstatki();
+                }
+                else
+                {
+                    NomenklOperationsForSklad.Clear();
+                    RaisePropertyChanged(nameof(NomenklOperationsForSklad));
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        private void UnSetPeriodFilter()
+        {
+            myFilterNomenkls.Clear();
+            UpdateSkladOstatki();
+            //RefreshData(null);
+        }
+
+        private void SetPeriodFilter()
+        {
+            if (myPeriodDateStart == null)
+            {
+                myPeriodDateStart = DateTime.Today;
+                RaisePropertyChanged(nameof(PeriodDateStart));
+            }
+            if (myPeriodDateEnd == null)
+            {
+                myPeriodDateEnd = DateTime.Today;
+                RaisePropertyChanged(nameof(PeriodDateEnd));
+            }
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var nomDCs = ctx.TD_24.Include(_ => _.SD_24)
+                    .Where(_ => _.SD_24.DD_DATE >= myPeriodDateStart && _.SD_24.DD_DATE <= myPeriodDateEnd)
+                    .Select(_ => _.DDT_NOMENKL_DC)
+                    .Distinct()
+                    .ToList();
+                myFilterNomenkls.Clear();
+                var clc = new NomenklCostMediumSliding();
+                foreach (var n in nomDCs)
+                {
+                    var ops =
+                        clc.GetAllOperations(n)
+                            .Where(_ => _.DocDate >= PeriodDateStart && _.DocDate <= PeriodDateEnd)
+                            .ToList();
+                    var any = ops.Any();
+                    if (!any) continue;
+                    foreach (var newItem in Sklads.Select(skl => new FilterNomenkl
+                        {
+                            NomDC = n,
+                            StoreName = skl.Name,
+                            In = ops.Where(_ => _.SkladInName == skl.Name).Sum(_ => _.QuantityIn),
+                            Out = ops.Where(_ => _.SkladOutName == skl.Name).Sum(_ => _.QuantityOut),
+                            SumIn = ops.Where(_ => _.SkladInName == skl.Name).Sum(_ => _.SummaInWithNaklad),
+                            SumOut = ops.Where(_ => _.SkladOutName == skl.Name).Sum(_ => _.SummaOutWithNaklad),
+                            SumInWONaklad = ops.Where(_ => _.SkladInName == skl.Name).Sum(_ => _.SummaIn),
+                            SumOutWONaklad = ops.Where(_ => _.SkladOutName == skl.Name).Sum(_ => _.SummaOut)
+                        })
+                        .Where(newItem => newItem.In > 0 || newItem.Out > 0))
+                        myFilterNomenkls.Add(newItem);
+                }
+            }
+            RefreshData(null);
+            UpdateSkladOstatki();
+        }
+
+        private void UpdateSkladQuantity()
+        {
+            if (NomenklOnSklads == null) return;
+            NomenklOnSklads.Clear();
+            foreach (var d in MainOstatki.Where(_ => _.NomenklViewModel.DocCode == CurrentNomenklQuantity.NomenklViewModel.DocCode))
+                NomenklOnSklads.Add(new SkladQuantity
+                {
+                    Store = MainReferences.Sklads[d.Store.DocCode],
+                    Ostatok = d.Quantity
+                });
+            RaisePropertyChanged(nameof(NomenklOnSklads));
+        }
+
+        private void UpdateSkladOstatki()
+        {
+            NomenklsForSklad.Clear();
+            if (CurrentStore == null) return;
+            if (IsPeriodSet)
+                foreach (
+                    var d in
+                    MainOstatki.Where(d => d.Store.DocCode == CurrentStore.DocCode)
+                        .Where(
+                            d =>
+                                myFilterNomenkls.Where(_ => _.StoreName == CurrentStore.Name)
+                                    .Select(_ => _.NomDC)
+                                    .Contains(d.NomenklViewModel.DocCode)))
+                    NomenklsForSklad.Add(d);
+            else
+                foreach (var d in MainOstatki.Where(d => d.Store.DocCode == CurrentStore.DocCode))
+                    NomenklsForSklad.Add(d);
+            RaisePropertyChanged(nameof(NomenklsForSklad));
+        }
+
+        private void UpdateOperationOstatki()
+        {
+            try
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    NomenklOperationsForSklad = new ObservableCollection<OperationNomenklMove>(
+                        ctx.Database.SqlQuery<OperationNomenklMove>("SELECT * FROM(SELECT s24.DOC_CODE AS DocDC, " +
+                                                                    "'Приход' AS Operation, " +
+                                                                    "CASE WHEN s24.DD_TYPE_DC = 2010000001 THEN 'Приходный ордер №' + CAST(s24.DD_IN_NUM as VARCHAR(100)) " +
+                                                                    " WHEN s24.DD_TYPE_DC = 2010000005 THEN 'Инвентаризационная ведомость №' + CAST(s24.DD_IN_NUM as VARCHAR(100)) " +
+                                                                    "WHEN s24.DD_TYPE_DC = 2010000008 THEN 'Акт приемки готовой продукции №' + CAST(s24.DD_IN_NUM as VARCHAR(100)) " +
+                                                                    " WHEN s24.DD_TYPE_DC = 2010000009 THEN 'Акт разукомплектации готовой продукции №' + CAST(s24.DD_IN_NUM as VARCHAR(100)) " +
+                                                                    " WHEN s24.DD_TYPE_DC = 2010000014 THEN 'Накладная на внутренее перемещение №' + CAST(s24.DD_IN_NUM as VARCHAR(100)) " +
+                                                                    "ELSE 'Документ не указан' END AS Document, " +
+                                                                    " s24.DD_DATE AS DocDate, " +
+                                                                    "s24.DD_SKLAD_POL_DC AS Store, " +
+                                                                    "DDT_NOMENKL_DC AS NomenklViewModel, " +
+                                                                    "DDT_KOL_PRIHOD AS Prihod, " +
+                                                                    "0 AS Rashod " +
+                                                                    "FROM TD_24 t24 " +
+                                                                    "INNER JOIN SD_24 s24 " +
+                                                                    " ON s24.DOC_CODE = t24.DOC_CODE AND s24.DD_TYPE_DC IN(2010000001, 2010000005, 2010000008, 2010000009, 2010000014)  AND s24.DD_SKLAD_POL_DC IS NOT NULL " +
+                                                                    " WHERE T24.DDT_KOL_PRIHOD > 0 " +
+                                                                    "UNION ALL " +
+                                                                    "SELECT " +
+                                                                    " s24.DOC_CODE AS DocDC, " +
+                                                                    "'Расход' AS Operation, " +
+                                                                    "CASE WHEN s24.DD_TYPE_DC = 2010000003 THEN 'Расходный складской ордер №' + CAST(s24.DD_IN_NUM as VARCHAR(100)) " +
+                                                                    " WHEN s24.DD_TYPE_DC = 2010000005 THEN 'Инвентаризационная ведомость №' + CAST(s24.DD_IN_NUM as VARCHAR(100)) " +
+                                                                    "WHEN s24.DD_TYPE_DC = 2010000008 THEN 'Акт приемки готовой продукции №' + CAST(s24.DD_IN_NUM as VARCHAR(100)) " +
+                                                                    "WHEN s24.DD_TYPE_DC = 2010000009 THEN 'Акт разукомплектации готовой продукции №' + CAST(s24.DD_IN_NUM as VARCHAR(100)) " +
+                                                                    "WHEN s24.DD_TYPE_DC = 2010000012 THEN 'Расходная накладная №' + CAST(s24.DD_IN_NUM as VARCHAR(100)) " +
+                                                                    "WHEN s24.DD_TYPE_DC = 2010000014 THEN 'Накладная на внутренее перемещение №' + CAST(s24.DD_IN_NUM as VARCHAR(100)) " +
+                                                                    "ELSE 'Документ не указан'  " +
+                                                                    "END AS Document, " +
+                                                                    "s24.DD_DATE AS DocDate, " +
+                                                                    "s24.DD_SKLAD_OTPR_DC AS Store, " +
+                                                                    "DDT_NOMENKL_DC AS NomenklViewModel, " +
+                                                                    "0 AS Prihod, " +
+                                                                    "t24.DDT_KOL_RASHOD AS Rashod " +
+                                                                    "FROM TD_24 t24 " +
+                                                                    "INNER JOIN SD_24 s24 " +
+                                                                    " ON s24.DOC_CODE = t24.DOC_CODE AND s24.DD_TYPE_DC IN(2010000003, 2010000005, 2010000008, 2010000009, 2010000010, 2010000012, 2010000014) AND s24.DD_SKLAD_OTPR_DC IS NOT NULL " +
+                                                                    " WHERE T24.DDT_KOL_RASHOD > 0) tab " +
+                                                                    "where tab.NomenklViewModel = " +
+                                                                    CustomFormat.DecimalToSqlDecimal(
+                                                                        // ReSharper disable once PossibleInvalidOperationException
+                                                                        (decimal)
+                                                                        CurrentNomenklForSklad?.NomenklViewModel.DocCode) +
+                                                                    " AND tab.Store = " +
+                                                                    CustomFormat.DecimalToSqlDecimal(
+                                                                        // ReSharper disable once PossibleInvalidOperationException
+                                                                        (decimal) CurrentStore?.DocCode) +
+                                                                    " AND tab.DocDate <= '" +
+                                                                    CustomFormat.DateTimeToString(OstatokDate) + "'")
+                            .ToList());
+                    RaisePropertyChanged(nameof(NomenklOperationsForSklad));
+                }
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+        }
+
+        public override void RefreshData(object obj)
+        {
+            try
+            {
+                var data = NomenklCalculationManager.GetNomenklStoreRemains(OstatokDate).ToList();
+                MainOstatki.Clear();
+                Sklads.Clear();
+                NomenklQuantity.Clear();
+                foreach (var d in data)
+                {
+                    var pr = Prices.FirstOrDefault(_ => _.NomDC == d.NomenklDC) ?? new NomPrice
+                    {
+                        NomDC = d.NomenklDC,
+                        Price = 0,
+                        PriceWONaklad = 0
+                    };
+                    MainOstatki.Add(new NomenklOstatkiWithPrice
+                    {
+                        NomenklViewModel = MainReferences.GetNomenkl(d.NomenklDC),
+                        Store = MainReferences.Sklads[d.SkladDC],
+                        Prihod = d.Prihod,
+                        Rashod = d.Rashod,
+                        Quantity = d.Prihod - d.Rashod,
+                        StartQuantity = 0,
+                        PriceWONaklad = pr.PriceWONaklad,
+                        Price = pr.Price,
+                        SummaWONaklad = Math.Round(pr.PriceWONaklad * (d.Prihod - d.Rashod), 2),
+                        Summa = Math.Round(pr.Price * (d.Prihod - d.Rashod), 2),
+                        CurrencyName = MainReferences.GetNomenkl(d.NomenklDC).Currency.Name
+                    });
+                }
+                foreach (var skl in data.Select(_ => _.SkladDC).Distinct())
+                    Sklads.Add(MainReferences.Sklads[skl]);
+                foreach (var n in data.Select(_ => _.NomenklDC).Distinct())
+                    NomenklQuantity.Add(new NomenklQuantity
+                    {
+                        NomenklViewModel = MainReferences.GetNomenkl(n),
+                        Ostatok = data.Where(_ => _.NomenklDC == n).Sum(_ => _.Remain)
+                    });
+                if (IsPeriodSet && myFilterNomenkls.Count > 0)
+                    foreach (var m in MainOstatki)
+                    {
+                        var fn =
+                            myFilterNomenkls.FirstOrDefault(
+                                _ => _.StoreName == m.Store.Name && _.NomDC == m.NomenklViewModel.DocCode);
+                        if (fn == null) continue;
+                        m.SummaIn = fn.SumIn;
+                        m.SummaInWONaklad = fn.SumInWONaklad;
+                        m.SummaOut = fn.SumOut;
+                        m.SummaOutWONaklad = fn.SumOutWONaklad;
+                        m.Prihod = fn.In;
+                        m.Rashod = fn.Out;
+                        m.Result = fn.SumIn - fn.SumOut;
+                        m.ResultWONaklad = fn.SumInWONaklad - fn.SumOutWONaklad;
+                        m.StartQuantity = m.Quantity + m.Rashod - m.Prihod;
+                    }
+                RaisePropertyChanged(nameof(Sklads));
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+        }
+
+        public class FilterNomenkl
+        {
+            public string StoreName { set; get; }
+            public decimal NomDC { set; get; }
+            public decimal In { set; get; }
+            public decimal Out { set; get; }
+            public decimal SumIn { set; get; }
+            public decimal SumOut { set; get; }
+            public decimal SumInWONaklad { set; get; }
+            public decimal SumOutWONaklad { set; get; }
+        }
+
+        #region Inner section
+
+        public class OperationNomenklMove
+        {
+            public decimal DocDC { set; get; }
+            public string Document { set; get; }
+            public string Operation { set; get; }
+            public string Note { set; get; }
+            public DateTime DocDate { set; get; }
+            public decimal Prihod { set; get; }
+            public decimal Rashod { set; get; }
+            public decimal Ostatok { set; get; }
+        }
+
+        public class NomPrice
+        {
+            public decimal NomDC { set; get; }
+            public decimal Price { set; get; }
+            public decimal PriceWONaklad { set; get; }
+        }
+
+        #endregion
+    }
+
+    public class NomenklQuantity
+    {
+        public NomenklViewModel NomenklViewModel { set; get; }
+        public string NomenklNumber => NomenklViewModel?.NomenklNumber;
+        public string Name => NomenklViewModel?.Name;
+
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public decimal Ostatok { set; get; }
+    }
+
+    public class SkladQuantity
+    {
+        public Store Store { set; get; }
+
+        public string Name => Store?.Name;
+
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public decimal Ostatok { set; get; }
+    }
+
+
+    public class NomenklOstatkiForSklad
+    {
+        public NomenklViewModel NomenklViewModel { set; get; }
+        public string NomenklName { set; get; }
+        public Store Store { set; get; }
+        public string StoreName { set; get; }
+        public string NomenklNumber => NomenklViewModel?.NomenklNumber;
+        public string Name => NomenklViewModel?.Name;
+        public decimal Prihod { set; get; }
+        public decimal Rashod { set; get; }
+        public decimal Quantity { set; get; }
+        public decimal StartQuantity { set; get; }
+        public string CurrencyName { set; get; }
+    }
+
+    public class NomenklOstatkiWithPrice : NomenklOstatkiForSklad
+    {
+        public decimal PriceWONaklad { set; get; }
+
+        public decimal Price { set; get; }
+        public decimal SummaWONaklad { set; get; }
+
+        public decimal Summa { set; get; }
+
+        public decimal SummaIn { set; get; }
+
+        public decimal SummaInWONaklad { set; get; }
+        public decimal SummaOut { set; get; }
+
+        public decimal SummaOutWONaklad { set; get; }
+        public decimal Result { set; get; }
+
+        public decimal ResultWONaklad { set; get; }
+    }
+}

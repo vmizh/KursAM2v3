@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<script>
+    var cashDeskId = null;
+
+    function OnBoxIndexChanged(s, e) {
+        cashDeskId = CashDesksBox.GetValue();
+        if (!PeriodsView.InCallback())
+            PeriodsView.PerformCallback();
+    }
+
+    function OnBeginCallback(s, e) {
+        e.customArgs["PeriodId"] = PeriodsView.GetFocusedNodeKey();
+        e.customArgs["CashId"] = cashDeskId;
+    }
+
+    function OnEndCallback(s, e) {
+        if (cashDeskId != null)
+            PeriodsView.PerformCallback();
+        if (!CashMainGrid.InCallback())
+            CashMainGrid.PerformCallback();
+        if (!SubCashMainGrid.InCallback())
+            SubCashMainGrid.PerformCallback();
+    }
+
+    function OnFocusedNodeChanged(s, e) {
+        if (!PeriodsView.InCallback())
+            PeriodsView.PerformCallback();
+    }
+</script>
+<script type="text/javascript">
+    function OnInitMainGrid(s, e) {
+// ReSharper disable once UnusedLocals
+        var width = window.document.getElementById("gridContainer").clientWidth;
+    }
+</script>
+<div style="overflow: hidden;">
+    <h2>Кассовая книга</h2>
+    <span style="font-weight: 200; margin-bottom: 5px">Выберите кассовую книгу:</span>
+    <div style="margin-bottom: 15px">@Html.Partial("CashDesksPart")</div>
+    <div style="float: left; width: 50%;">
+        @Html.Partial("PeriodsViewPart")
+    </div>
+    <div style="float: left; width: 50%;">
+        @Html.Partial("SubCashGridPart")
+    </div>
+</div>
+<div id="gridContainer" style="height: 100%; margin-top: 15px; overflow: hidden;";>
+    @Html.Action("MainGridPart")
+</div>

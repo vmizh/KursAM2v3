@@ -1,0 +1,10 @@
+--- AccessRightsView.xaml
++++ AccessRightsView.xaml
+@@ -17,7 +17,6 @@
+                Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
+         <dxlc:LayoutControl x:Name="MainLayoutControl">
+             <dxlc:LayoutGroup Name="LayoutGroup1" dxlc:LayoutControl.AllowHorizontalSizing="True">
+-
+                 <DockPanel>
+                     <dxe:CheckEdit DockPanel.Dock="Top"
+                                    x:Name="CheckEdit" EditValue="{Binding Path=IsShowAll}">

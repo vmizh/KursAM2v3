@@ -1,0 +1,284 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Windows;
+using Core;
+using Core.EntityViewModel;
+using Core.Menu;
+using Core.ViewModel.Base;
+using KursAM2.Managers;
+using KursAM2.View.Finance.Cash;
+using KursAM2.ViewModel.Management.Calculations;
+
+namespace KursAM2.ViewModel.Finance.Cash
+{
+    public sealed class CashInWindowViewModel : RSWindowViewModelBase
+    {
+        #region Methods
+
+        public void CreateMenu()
+        {
+            LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
+        }
+
+        #endregion
+
+        #region Fields
+
+        public CashBookView BookView;
+        private CashIn myDocument;
+        private readonly DateTime oldDate = DateTime.MaxValue;
+        public decimal OldSumma;
+
+        #endregion
+
+        #region Constructors
+
+        public CashInWindowViewModel()
+        {
+            IsDocNewCopyAllow = true;
+            IsDocNewCopyRequisiteAllow = false;
+            IsDocDeleteAllow = true;
+            IsCanSaveData = false;
+            WindowName = $"Приходный кассовый ордер от {Document?.Kontragent} в {Document?.Cash?.Name}";
+        }
+
+        public CashInWindowViewModel(decimal dc) : this()
+        {
+            RefreshData(dc);
+            oldDate = (DateTime) Document.DATE_ORD;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public bool IsSummaEnabled => Document != null && Document.BANK_RASCH_SCHET_DC == null
+                                                       && Document.RASH_ORDER_FROM_DC == null;
+
+        public bool IsKontrSelectEnable => Document != null && Document.KontragentType != CashKontragentType.NotChoice
+                                                            && Document.SFACT_DC == null;
+
+        public ObservableCollection<Currency> CurrencyList { get; set; } = new ObservableCollection<Currency>();
+
+        public CashIn Document
+        {
+            get => myDocument;
+            set
+            {
+                if (myDocument != null && myDocument.Equals(value)) return;
+                myDocument = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public override RowStatus State => Document?.State ?? RowStatus.NewRow;
+
+        public override bool IsCanSaveData
+        {
+            get
+            {
+                if (Form is CashInView frm)
+                {
+                    frm.KontrSelectButton.IsEnabled =
+                        Document?.Cash != null && Document.KontragentType != CashKontragentType.NotChoice;
+                    frm.SFactNameItem.IsEnabled =
+                        Document != null && Document.KontragentType == CashKontragentType.Kontragent;
+                    frm.NCodeItem.IsReadOnly =
+                        Document != null && Document.KontragentType != CashKontragentType.Employee;
+                    if (Document != null && Document.KontragentType != CashKontragentType.Employee)
+                        Document.NCODE = null;
+                    if (Document != null)
+                        frm.Sumordcont.IsEnabled =
+                            Document.BANK_RASCH_SCHET_DC == null && Document.RASH_ORDER_FROM_DC == null;
+                }
+
+                return Document != null && Document.State != RowStatus.NotEdited &&
+                       CashManager.CheckCashIn(Document);
+            }
+        }
+
+        public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
+        public override bool IsNewDocument => Document != null && Document.State == RowStatus.NewRow;
+        public bool IsNCODEEnable => Document != null && Document.KontragentType == CashKontragentType.Employee;
+        public override bool IsDocNewCopyRequisiteAllow => Document != null && Document.State != RowStatus.NewRow;
+
+        #endregion
+
+        #region Command
+
+        public override void CloseWindow(object form)
+        {
+            if (IsCanSaveData && Document?.State != RowStatus.Deleted)
+            {
+                var res = MessageBox.Show("В документ были внесены изменения, сохранить?", "Запрос",
+                    MessageBoxButton.YesNoCancel,
+                    MessageBoxImage.Question);
+                switch (res)
+                {
+                    case MessageBoxResult.Yes:
+                        SaveData(null);
+                        break;
+                    case MessageBoxResult.No:
+                        break;
+                    case MessageBoxResult.Cancel:
+                        return;
+                }
+            }
+
+            if (Form != null)
+            {
+                Form.Close();
+                return;
+            }
+
+            var frm = form as Window;
+            frm?.Close();
+        }
+
+        public override void SaveData(object data)
+        {
+            if (Document.State == RowStatus.NewRow)
+            {
+                CashManager.InsertDocument(CashDocumentType.CashIn, Document);
+                if (!(BookView?.DataContext is CashBookWindowViewModel ctx)) return;
+                ctx.RefreshActual(Document);
+                return;
+            }
+
+            if (Document.DATE_ORD != oldDate)
+            {
+                Document.State = RowStatus.NewRow;
+                CashManager.DeleteDocument(CashDocumentType.CashIn, Document);
+                CashManager.InsertDocument(CashDocumentType.CashIn, Document);
+                if (BookView?.DataContext is CashBookWindowViewModel ctx)
+                    ctx.RefreshActual(Document);
+                return;
+            }
+
+            if (Document.KONTRAGENT_DC != null)
+                RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC,
+                    (DateTime) (Document.DATE_ORD > oldDate ? oldDate : Document.DATE_ORD));
+            if (Document.State != RowStatus.Edited) return;
+            {
+                CashManager.UpdateDocument(CashDocumentType.CashIn, Document, oldDate);
+                if (BookView?.DataContext is CashBookWindowViewModel ctx)
+                    ctx.RefreshActual(Document);
+            }
+
+            //RaisePropertiesChanged(nameof(Document));
+        }
+
+        public override void DocDelete(object form)
+        {
+            var res = MessageBox.Show("Вы уверены, что хотите удалить данный документ?", "Запрос",
+                MessageBoxButton.YesNoCancel,
+                MessageBoxImage.Question);
+            switch (res)
+            {
+                case MessageBoxResult.Yes:
+                    var ctx = BookView?.DataContext as CashBookWindowViewModel;
+                    CashManager.DeleteDocument(CashDocumentType.CashIn, Document);
+                    RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC,
+                        (DateTime) Document.DATE_ORD);
+                    ctx?.RefreshActual(Document);
+                    CloseWindow(Form);
+                    break;
+                case MessageBoxResult.No:
+                    break;
+                case MessageBoxResult.Cancel:
+                    return;
+            }
+        }
+
+        public override void RefreshData(object obj)
+        {
+            base.RefreshData(obj);
+            if (IsCanSaveData)
+            {
+                var res = MessageBox.Show("В документ были внесены изменения, сохранить?", "Запрос",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+                switch (res)
+                {
+                    case MessageBoxResult.Yes:
+                        SaveData(null);
+                        break;
+                    case MessageBoxResult.No:
+                        break;
+                }
+            }
+
+            if (Document?.DocCode > 0)
+            {
+                Document = CashManager.LoadCashIn(Document.DOC_CODE);
+                RaisePropertyChanged(nameof(Document));
+            }
+            else
+            {
+                if (obj == null) return;
+                decimal dc = 0;
+                switch (obj)
+                {
+                    case decimal dec:
+                        dc = dec;
+                        break;
+                    case CashIn model:
+                        dc = model.DocCode;
+                        break;
+                }
+
+                Document = CashManager.LoadCashIn(dc);
+                if (Document == null)
+                {
+                    WinManager.ShowWinUIMessageBox($"Не найден документ с кодом {dc}!",
+                        "Ошибка обращения к базе данных", MessageBoxButton.OK, MessageBoxImage.Error,
+                        MessageBoxResult.None, MessageBoxOptions.None);
+                    return;
+                }
+
+                RaisePropertyChanged(nameof(Document));
+            }
+
+            Document.myState = RowStatus.NotEdited;
+            OldSumma = (decimal) Document.SUMM_ORD;
+        }
+
+        public override void DocNewEmpty(object form)
+        {
+            var vm = new CashInWindowViewModel
+            {
+                Document = CashManager.NewCashIn()
+            };
+            vm.Document.Cash = Document.Cash;
+            vm.BookView = BookView;
+            DocumentsOpenManager.Open(DocumentType.CashIn, vm, BookView);
+        }
+
+        public override void DocNewCopy(object form)
+        {
+            if (Document == null) return;
+            var vm = new CashInWindowViewModel
+            {
+                Document = CashManager.NewCopyCashIn(Document.DocCode)
+            };
+            vm.Document.Cash = Document.Cash;
+            vm.BookView = BookView;
+            DocumentsOpenManager.Open(DocumentType.CashIn, vm, BookView);
+         }
+
+        public override void DocNewCopyRequisite(object form)
+        {
+            if (Document == null) return;
+            var vm = new CashInWindowViewModel
+            {
+                Document = CashManager.NewRequisiteCashIn(Document.DocCode)
+            };
+            vm.Document.Cash = Document.Cash;
+            vm.BookView = BookView;
+            DocumentsOpenManager.Open(DocumentType.CashIn, vm, BookView);
+         }
+
+        #endregion
+    }
+}

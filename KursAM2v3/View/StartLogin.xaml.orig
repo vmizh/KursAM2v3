@@ -1,0 +1,132 @@
+﻿<dx:DXWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:splashWindow="clr-namespace:KursAM2.View.SplashWindow"
+             x:Class="KursAM2.View.StartLogin"
+             Title="Вход в КурсАМ2"
+             Icon="pack://siteoforigin:,,,/Images/User1.png" WindowStyle="ToolWindow"
+             WindowStartupLocation="CenterScreen"
+             ResizeMode="NoResize"
+             Width="400" Height="670" VerticalAlignment="Stretch"
+             FontFamily="pack://application:,,,/Font/#Roboto Light"
+             FontStyle="Normal">
+    <dxmvvm:Interaction.Behaviors>
+        <dx:DXSplashScreenService SplashScreenStartupLocation="CenterOwner">
+            <dx:DXSplashScreenService.ViewTemplate>
+                <DataTemplate>
+                    <splashWindow:DebitorCreditorKontrCalcSplashView
+                        FontSize="20"
+                        AnimationOne="True"
+                        IndicatorBrush="#edf9fd"
+                        IndicatorSecondBrush="#9ae4ff"
+                        ProgressLabelBrus="#9ae4ff">   <!--5e92a8-->
+                    </splashWindow:DebitorCreditorKontrCalcSplashView>
+                </DataTemplate>
+            </dx:DXSplashScreenService.ViewTemplate>
+            <dx:DXSplashScreenService.SplashScreenWindowStyle>
+                <Style TargetType="Window">
+                    <Setter Property="Topmost" Value="False" />
+                    <Setter Property="WindowStyle" Value="None" />
+                    <Setter Property="AllowsTransparency" Value="True" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="ShowInTaskbar" Value="False" />
+                    <Setter Property="SizeToContent" Value="WidthAndHeight" />
+                    <Setter Property="ResizeMode" Value="NoResize" />
+                </Style>
+            </dx:DXSplashScreenService.SplashScreenWindowStyle>
+        </dx:DXSplashScreenService>
+    </dxmvvm:Interaction.Behaviors>
+    <Window.Resources>
+        <ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
+            <Border
+                x:Name="ButtonBorder"
+                BorderBrush="#93b3bd"
+                CornerRadius="20" 
+                BorderThickness="0,1"
+                Background="White"
+                RenderTransformOrigin="0.5,0.5">
+                <ContentPresenter x:Name="ButtonContentPresenter"
+                                  VerticalAlignment="Center"  
+                                  HorizontalAlignment="Center"
+                                  TextBlock.Foreground="White"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property ="Border.Background" TargetName="ButtonBorder"
+                        Value="#edf9fd" />
+                    <Setter Property ="Border.BorderBrush" TargetName="ButtonBorder"
+                            Value="#93b3bd" />
+                </Trigger>
+                <Trigger Property="IsFocused" Value="true">
+                    <Setter Property ="Border.Background" TargetName="ButtonBorder"
+                            Value="#9ae4ff" />
+                    <Setter Property ="Border.BorderBrush" TargetName="ButtonBorder"
+                            Value="#9ae4ff" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </Window.Resources>
+    <dxlc:LayoutControl x:Name="MainLayout" Background="#FFF" Margin="0" Padding="0">
+        <dxlc:LayoutGroup Orientation="Vertical">
+            <dxlc:LayoutItem Margin="0 0 0 30" Height="200" Width="200">
+                <Image x:Name="AvatarObj" 
+                       Height="200">
+                    <Image.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Загрузить изображения" Command="{Binding SaveImageCommand}" Click="MenuItem_OnClick"></MenuItem>
+                        </ContextMenu>
+                       </Image.ContextMenu>
+                        <Image.Clip>
+                        <EllipseGeometry RadiusX="100" RadiusY="100" Center="100 100"></EllipseGeometry>
+                    </Image.Clip>
+                </Image>
+            </dxlc:LayoutItem>
+            <dxlc:LayoutItem Label="Логин" FontSize="14" Foreground="#5f5f5f" Margin="50 0 50 5"></dxlc:LayoutItem>
+            <dxlc:LayoutItem  FontSize="16"  Foreground="#5f5f5f" Margin="50 0 50 5">
+                <dxe:TextEdit x:Name="userNameText" Height="35" BorderThickness="0" 
+                              Text="{Binding CurrentUser, NotifyOnSourceUpdated=True, 
+                                     UpdateSourceTrigger=PropertyChanged}"/>
+            </dxlc:LayoutItem >
+            <dxlc:LayoutItem Label="Пароль" FontSize="14" Foreground="#5f5f5f" 
+                             Margin="50 0 50 5"></dxlc:LayoutItem>
+            <dxlc:LayoutItem FontSize="16"  Foreground="#5f5f5f" Margin="50 0 50 5">
+                <dxe:PasswordBoxEdit x:Name="pwdText" MaxLength="15" Height="35"
+                                     Text="{Binding CurrentPassword, NotifyOnSourceUpdated=True, 
+                                     UpdateSourceTrigger=PropertyChanged}"/>
+                </dxlc:LayoutItem>
+            <dxlc:LayoutItem Label="Предприятие" FontSize="14" Foreground="#5f5f5f" Margin="50 0 50 5"></dxlc:LayoutItem>
+            <dxlc:LayoutItem FontSize="16"  Foreground="#5f5f5f" Margin="50 0 50 5">
+                <dxe:ComboBoxEdit x:Name="dataSources"
+                                  DisplayMember="ShowName"
+                                  Height="35"
+                                  MaxLength="15"
+                                  ItemsSource="{Binding ComboBoxItemSource, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}"
+                                  EditValue="{Binding myCurrentBoxItem}"
+                                  EditValueChanged="dataSources_EditValueChanged"
+                                  IsTextEditable="False" RenderTransformOrigin="10,50">
+                    <dxe:ComboBoxEdit.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Name="showName" Text="{Binding Path=ShowName}" Foreground="{Binding Path=Color}" />
+                        </DataTemplate>
+                    </dxe:ComboBoxEdit.ItemTemplate>
+                </dxe:ComboBoxEdit>
+            </dxlc:LayoutItem>
+            <dxlc:LayoutItem HorizontalAlignment="Center" Margin="0 20 0 0">
+                <Button Template="{StaticResource ButtonTemplate}"
+                        Height="50" Width="150"
+                        Margin="0" Padding="0" Command="{Binding bnOk_ClickCommand}" IsDefault="True">
+                    <TextBlock Text="Войти" FontSize="20" Foreground="#5f5f5f"/>
+                </Button>
+            </dxlc:LayoutItem>
+            <dxlc:LayoutItem HorizontalAlignment="Center" Margin="0 20 0 0">
+                <Label Content="Забыли пароль? Обратитесь к администратору." Foreground="#a0a0a0"/>
+            </dxlc:LayoutItem>
+            <dxlc:LayoutItem Margin="0 10 0 0">
+                <Label Name="version" Content="{Binding VersionValue}" Foreground="#a0a0a0" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+            </dxlc:LayoutItem>
+        </dxlc:LayoutGroup>
+    </dxlc:LayoutControl>
+</dx:DXWindow>

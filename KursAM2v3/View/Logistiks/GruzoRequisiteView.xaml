@@ -1,0 +1,136 @@
+﻿<UserControl xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             x:Class="KursAM2.View.Logistiks.GruzoRequisiteView"
+             mc:Ignorable="d"
+             d:DesignHeight="380" d:DesignWidth="900">
+    <StackPanel>
+        <DockPanel Margin="0,10,0,0">
+            <Label Content="Банк" />
+            <dxg:LookUpEdit Margin="10,0,0,0"
+                            DisplayMember="FullName"
+                            ValueMember="KontrBankCode"
+                            ItemsSource="{Binding ActualBanks, Mode=TwoWay}"
+                            SelectedItem="{Binding ActualBank,NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}">
+                <dxg:LookUpEdit.StyleSettings>
+                    <dxg:SearchLookUpEditStyleSettings />
+                </dxg:LookUpEdit.StyleSettings>
+                <dxg:LookUpEdit.PopupContentTemplate>
+                    <ControlTemplate>
+                        <dxg:GridControl x:Name="PART_GridControl">
+                            <dxg:GridControl.Columns>
+                                <dxg:GridColumn FieldName="Name" />
+                                <dxg:GridColumn FieldName="IsBalans" />
+                                <dxg:GridColumn FieldName="BalansCurrency" />
+                                <dxg:GridColumn FieldName="StartBalans" />
+                                <dxg:GridColumn FieldName="StartBalans" />
+                                <dxg:GridColumn FieldName="IsDeleted" />
+                            </dxg:GridControl.Columns>
+                            <dxg:GridControl.View>
+                                <dxg:TableView AutoWidth="True" 
+                                               CellStyle="{StaticResource FocusedCellStyle}" 
+                                               RowStyle="{StaticResource FocusedRowStyle}"/>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </ControlTemplate>
+                </dxg:LookUpEdit.PopupContentTemplate>
+            </dxg:LookUpEdit>
+        </DockPanel>
+        <dx:DXTabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,10,0,0">
+            <dx:DXTabControl.View>
+                <dx:TabControlScrollView />
+            </dx:DXTabControl.View>
+            <dx:DXTabItem Header="Счет-фактура">
+                <StackPanel Margin="0,10,0,0">
+                    <DockPanel>
+                        <Label Content="Грузоотправитель" />
+                        <TextBox
+                            Text="{Binding AccGruzoOtprav, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                            TextWrapping="Wrap" Height="60" Margin="8,0,0,0" />
+                    </DockPanel>
+                    <DockPanel Margin="0,5">
+                        <Label Content="Грузополучатель" />
+                        <TextBox Text="{Binding AccGruzopol, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                 TextWrapping="Wrap" Height="60" Margin="15,0,0,0" />
+                    </DockPanel>
+                    <DockPanel>
+                        <Label Content="К плат/расх док-ту" />
+                        <TextBox Text="{Binding PlatDocText, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                 TextWrapping="Wrap" Height="60" Margin="7,0,0,0" />
+                    </DockPanel>
+                </StackPanel>
+            </dx:DXTabItem>
+            <dx:DXTabItem Header="Расходная накладная">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <DockPanel Margin="0,0,0,5">
+                            <Label Margin="0,25,0,0" Content="Грузоотправитель" />
+                            <TextBox
+                                Text="{Binding NaklGruzoOtprav, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                Width="300" TextWrapping="Wrap" Height="80" HorizontalAlignment="Stretch" />
+                            <StackPanel Margin="0,5" DockPanel.Dock="Left" Orientation="Horizontal">
+                                <Label Margin="0,25,0,0" Content="ОКПО" />
+                                <TextBox
+                                    Text="{Binding NaklGruzoOtpravOKPO, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                    Height="20" Margin="5,0,0,0" Width="100" />
+                            </StackPanel>
+                        </DockPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                            <DockPanel>
+                                <Label Content="Грузополучатель" />
+                                <TextBox
+                                    Text="{Binding NaklGruzopol, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                    Width="300" TextWrapping="Wrap" Height="80" Margin="8,0,0,0" />
+                            </DockPanel>
+                            <StackPanel Margin="0,5" Orientation="Horizontal">
+                                <Label Content="ОКПО" />
+                                <TextBox
+                                    Text="{Binding NaklGruzopolOKPO, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                    Margin="15,0,0,0" Width="100" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <DockPanel>
+                        <Border BorderThickness="0,1,0,0" BorderBrush="Black" DockPanel.Dock="Bottom">
+                            <StackPanel Margin="0,3,0,0">
+                                <DockPanel>
+                                    <Label Content="Поставщик" />
+                                    <TextBox
+                                        Text="{Binding PostavText, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                        Margin="40,0,0,0" />
+                                </DockPanel>
+                                <StackPanel Margin="0,5" Orientation="Horizontal">
+                                    <Label Content="ОКПО поставщика" />
+                                    <TextBox
+                                        Text="{Binding PostavOKPO, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                        Margin="40,0,0,0" Width="100" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DockPanel>
+                    <DockPanel>
+                        <Border BorderThickness="0,1,0,0" BorderBrush="Black">
+                            <StackPanel Margin="0,3,0,0">
+                                <DockPanel>
+                                    <Label Content="Плательщик" />
+                                    <TextBox
+                                        Text="{Binding PlatelText, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                        Margin="36,0,0,0" />
+                                </DockPanel>
+                                <StackPanel Margin="0,5" Orientation="Horizontal">
+                                    <Label Content="ОКПО плательщика" />
+                                    <TextBox
+                                        Text="{Binding PlatelOKPO, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                        Margin="36,0,0,0" Width="100" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DockPanel>
+                </StackPanel>
+            </dx:DXTabItem>
+        </dx:DXTabControl>
+    </StackPanel>
+</UserControl>

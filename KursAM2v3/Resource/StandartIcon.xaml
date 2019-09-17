@@ -1,0 +1,69 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:convertors="clr-namespace:KursAM2.View.Convertors">
+    <ControlTemplate x:Key="LoginIcon">
+        <Grid>
+            <Grid Name="backgroundGrid" Width="32" Height="32" Visibility="Visible">
+                <Rectangle Fill="#FFFFFFFF" Name="Rect" Visibility="Visible" />
+            </Grid>
+            <Path
+                Data="F1M484.766,361.437C484.766,361.272 484.766,361.044 484.766,360.702 484.766,354.202 473.334,
+                  347.86 463.161,344.493 462.697,344.342 459.766,343.021 461.598,337.451L461.572,337.451C466.346,
+                  332.535 469.995,324.617 469.995,316.825 469.995,304.846 462.027,298.566 452.769,298.566 443.505,
+                  298.566 435.583,304.846 435.583,316.825 435.583,324.647 439.212,332.596 444.014,337.502 445.887,
+                  342.413 442.538,344.236 441.837,344.493 432.143,348 420.766,354.392 420.766,360.702 420.766,361.044 420.766,
+                  361.272 420.766,361.437L484.766,361.437z"
+                Stretch="Uniform" Fill="#FF1C09E2" Width="16" Height="16" Margin="0,0,0,0"
+                RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <TransformGroup>
+                        <TransformGroup.Children>
+                            <RotateTransform Angle="0" />
+                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                        </TransformGroup.Children>
+                    </TransformGroup>
+                </Path.RenderTransform>
+            </Path>
+        </Grid>
+    </ControlTemplate>
+    <DrawingImage x:Key="drawingStandartWindow">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="Blue"
+                                     Geometry="M28.5,15c-0.829,0-1.5,0.672-1.5,1.5V29H3V5h12.5C16.329,5,17,4.328,17,3.5
+			S16.329,2,15.5,2H2C0.896,2,0,2.895,0,4v26c0,1.105,0.896,2,2,2h26c1.104,0,2-0.895,2-2V16.5C30,15.672,29.329,15,28.5,15z
+			 M31.651,4.651l-4.303-4.303C27.114,0.114,26.807,0,26.5,0c-0.307,0-0.614,0.114-0.848,0.349L9,17v6h6L31.651,6.349
+			C31.886,6.114,32,5.807,32,5.5C32,5.192,31.886,4.886,31.651,4.651z M14,20h-2v-2L26.5,3.5l2,2L14,20z" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <Image x:Key="imageStandartWindow" Source="{StaticResource drawingStandartWindow}" />
+    <DrawingImage x:Key="imageStandartSearch">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="LightGreen"
+                                     Geometry="M52,102.5c10.5,0,20.2-3.2,28.3-8.6l29.3,29.3c2.3,2.3,6.1,2.3,8.5,0l5.7-5.7c2.3-2.3,2.3-6.1,0-8.5L94.4,79.8
+	c5.4-8.1,8.6-17.8,8.6-28.3c0-28.1-22.9-51-51-51S1,23.4,1,51.5S23.8,102.5,52,102.5z M52,20.5c17.1,0,31,13.9,31,31s-13.9,31-31,31
+	s-31-13.9-31-31S34.9,20.5,52,20.5z" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <DrawingImage x:Key="drawingStandartReference">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="Yellow"
+                                     Geometry="M399.5,0v64h-32V0h-96v64h-32V0h-96v64h-32V0h-96v512h96v-64h32v64h96v-64h32v64h96v-64h32v64h96V0H399.5z M463.5,480h-32
+	v-64h-96v64h-32v-64h-96v64h-32v-64h-96v64h-32V32h32v64h96V32h32v64h96V32h32v64h96V32h32V480z M111.5,160h320v32h-320V160z
+	 M111.5,224h320v32h-320V224z M111.5,288h160v32h-160V288z" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <Image x:Key="imageStandartReference" Source="{StaticResource drawingStandartReference}" />
+    <convertors:ImageSourceToIconConverter x:Key="ImageSourceToIconConverter" />
+</ResourceDictionary>

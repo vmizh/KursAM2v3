@@ -1,0 +1,17 @@
+﻿<Application x:Class="KursAM2.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="View/WindowStart.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resource\StandartIcon.xaml" />
+                <ResourceDictionary Source="Resource\StandartButtons.xaml" />
+                <ResourceDictionary Source="Resource\Menu.xaml" />
+                <ResourceDictionary Source="Resource\Error.xaml" />
+                <ResourceDictionary Source="Resource\ViewControlTemplate.xaml" />
+                <ResourceDictionary Source="Resource\Window.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

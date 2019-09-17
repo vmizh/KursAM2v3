@@ -1,0 +1,63 @@
+﻿<dx:DXWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxd="http://schemas.devexpress.com/winfx/2008/xaml/docking"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             x:Class="KursAM2.View.MainWindow"
+             Title="Курс 2013 Альфа-Медиа Версия 3.0" Height="700" Width="1100" SnapsToDevicePixels="True"
+             UseLayoutRounding="True"
+             Loaded="DXWindow_Loaded"
+             Icon="pack://siteoforigin:,,,/Images/memory.png">
+    <dxb:BarManager Name="BarManager">
+        <dxb:BarManager.Items>
+            <dxb:BarSubItem x:Name="barSubItem1" Content="Система">
+                <dxb:BarButtonItemLink BarItemName="barButtonItem1" />
+                <dxb:BarButtonItemLink BarItemName="barButtonItem2" />
+                <dxb:BarButtonItemLink BarItemName="barButtonItem3" />
+            </dxb:BarSubItem>
+            <dxb:BarButtonItem x:Name="barButtonItem1" Content="Настройки пользователя" />
+            <dxb:BarButtonItem x:Name="barButtonItem2" Content="Обновить справочники"
+                               ItemClick="BarButtonItem2_OnItemClick" />
+            <dxb:BarButtonItem x:Name="barButtonItem3" Content="Выход" ItemClick="BarButtonItem3_OnItemClick" />
+        </dxb:BarManager.Items>
+        <dxb:BarManager.Bars>
+            <dxb:Bar Caption="Курс Альфа-Медиа" ShowDragWidget="False" IsMainMenu="True"
+                     AllowQuickCustomization="False" AllowHide="False" AllowDrop="False">
+                <dxb:Bar.DockInfo>
+                    <dxb:BarDockInfo ContainerType="Top" />
+                </dxb:Bar.DockInfo>
+                <dxb:BarSubItemLink BarItemName="barSubItem1" />
+
+            </dxb:Bar>
+            <dxb:Bar x:Name="statusBar" Caption="Status Bar" IsStatusBar="True" UseWholeRow="True"
+                     ShowDragWidget="False" AllowHide="False" AllowQuickCustomization="False" AllowDrop="False">
+                <dxb:Bar.DockInfo>
+                    <dxb:BarDockInfo ContainerType="Bottom" />
+                </dxb:Bar.DockInfo>
+            </dxb:Bar>
+        </dxb:BarManager.Bars>
+        <dxd:DockLayoutManager Margin="0" x:Name="dockLayout" AllowCustomization="False">
+            <dxd:DockLayoutManager.LayoutRoot>
+                <dxd:LayoutGroup Name="LayoutGroup" Padding="0" ShowCloseButton="False" ShowControlBox="False"
+                                 ShowScrollNextButton="False" ShowScrollPrevButton="False" Margin="0">
+                    <dxd:LayoutPanel Name="LayoutPanel" Caption="" ShowCloseButton="False" Padding="0" Margin="0"
+                                     ShowControlBox="False"
+                                     ShowPinButton="False" ShowMaximizeButton="False" ShowCaption="False"
+                                     ShowCaptionImage="False">
+                        <dxlc:TileLayoutControl x:Name="tileMainGroup" Background="#FFD0D6D3" Margin="0" Padding="12"
+                                                MaximizedElementPosition="Right" TileClick="tileMainGroup_TileClick" />
+                    </dxd:LayoutPanel>
+                    <dxd:LayoutPanel Caption="Panel2" ShowCloseButton="False" ShowPinButton="False"
+                                     ShowMaximizeButton="False" ShowRestoreButton="False" ShowControlBox="False"
+                                     ShowBorder="False" ShowCaption="False"
+                                     Padding="0" Margin="0">
+                        <dxlc:TileLayoutControl x:Name="tileDocumentItems" Background="#FFD0D6D3" Padding="10"
+                                                TileClick="tileDocumentItems_TileClick" />
+
+                    </dxd:LayoutPanel>
+                </dxd:LayoutGroup>
+            </dxd:DockLayoutManager.LayoutRoot>
+        </dxd:DockLayoutManager>
+    </dxb:BarManager>
+</dx:DXWindow>

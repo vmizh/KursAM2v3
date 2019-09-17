@@ -1,0 +1,248 @@
+﻿<dx:DXWindow x:Class="KursAM2.View.Finance.MutualAccountingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:control="clr-namespace:Core.Control;assembly=Core"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             mc:Ignorable="d"
+             Title="{Binding WindowName}" Height="674.286" Width="1612.381">
+    <DockPanel>
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
+               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
+        <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,7">
+                    <Label VerticalAlignment="Center">№</Label>
+                    <Label VerticalAlignment="Center" Margin="3,0,0,0" Width="70" Height="20"
+                           Content="{Binding Document.VZ_NUM}" />
+                    <Label Margin="5,0" VerticalAlignment="Center">от</Label>
+                    <dxe:DateEdit Margin="18,0"
+                                  Width="100"
+                                  DateTime="{Binding Document.VZ_DATE, Mode=TwoWay,
+                        NotifyOnSourceUpdated=True, 
+                        NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"
+                                  VerticalAlignment="Center" />
+                    <Label Margin="5,0" VerticalAlignment="Center">Создатель</Label>
+                    <Label Margin="5,0" BorderThickness="1" BorderBrush="#FFDFE9F0"
+                           VerticalAlignment="Center"
+                           FontSize="14"
+                           Content="{Binding Document.CREATOR}"
+                           Width="200" Background="{x:Null}" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Тип взаимозачета" />
+                <dxe:ComboBoxEdit Name="typeVzaimozachetComboBoxEdit"
+                                  Width="200"
+                                  Margin="37,0"
+                                  EditValue="{Binding Document.MutualAccountingOldType, UpdateSourceTrigger=PropertyChanged}"
+                                  IsEnabled="{Binding IsTypeVzaimEnabled}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,7,0,0">
+                <TextBox BorderThickness="0" IsReadOnly="True"
+                         VerticalAlignment="Center"
+                         TextWrapping="Wrap" Width="140">
+                    Дебиторы (-) по балансу
+                </TextBox>
+                <dxe:PopupCalcEdit
+                    Margin="5,0"
+                    DisplayFormatString="n2"
+                    AllowDefaultButton="False"
+                    IsReadOnly="True"
+                    Width="120"
+                    EditValue="{Binding Document.VZ_LEFT_UCH_CRS_SUM}"
+                    VerticalAlignment="Center" />
+                <dxe:ComboBoxEdit Width="60"
+                                  Name="debitorCrscomboBoxEdit"
+                                  DisplayMember="Name"
+                                  VerticalAlignment="Center"
+                                  EditValue="{Binding Document.DebitorCurrency, UpdateSourceTrigger=PropertyChanged}"
+                                  ItemsSource="{Binding CurrencyList}"
+                                  IsEnabled="{Binding IsCanDebitorCrsChanged, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox BorderThickness="0"
+                         Margin="5,0,0,0"
+                         IsReadOnly="True"
+                         VerticalAlignment="Center"
+                         TextWrapping="Wrap"
+                         Width="150">
+                    Кредиторы (+) по балансу
+                </TextBox>
+                <dxe:PopupCalcEdit
+                    Margin="5,0"
+                    DisplayFormatString="n2"
+                    AllowDefaultButton="False"
+                    IsReadOnly="True"
+                    Width="120"
+                    EditValue="{Binding Document.VZ_RIGHT_UCH_CRS_SUM, Mode=OneWay}"
+                    VerticalAlignment="Center" />
+                <dxe:ComboBoxEdit Width="60"
+                                  VerticalAlignment="Center"
+                                  DisplayMember="Name"
+                                  Name="creditorCrscomboBoxEdit"
+                                  EditValue="{Binding Document.CreditorCurrency, UpdateSourceTrigger=PropertyChanged}"
+                                  ItemsSource="{Binding CurrencyList}"
+                                  IsEnabled="{Binding IsCanCreditorCrsChanged, UpdateSourceTrigger=PropertyChanged}"
+                                  Visibility="{Binding Document.IsCurrencyConvert, Converter={StaticResource booleanToVisibilityConverter}}" />
+                <Label VerticalAlignment="Center" Margin="5,0">Результат</Label>
+                <dxe:PopupCalcEdit
+                    Margin="5,0"
+                    DisplayFormatString="n2"
+                    AllowDefaultButton="False"
+                    IsReadOnly="True"
+                    Width="120"
+                    EditValue="{Binding Document.VZ_PRIBIL_UCH_CRS_SUM}"
+                    VerticalAlignment="Center" />
+                <Label VerticalAlignment="Center" Margin="5,0"
+                       Visibility="{Binding Document.IsCurrencyConvert, Converter={StaticResource booleanToVisibilityConverter}}">
+                    Курс
+                </Label>
+                <dxe:PopupCalcEdit
+                    Margin="5,0"
+                    DisplayFormatString="n2"
+                    AllowDefaultButton="False"
+                    IsReadOnly="True"
+                    Width="120"
+                    EditValue="{Binding CurrencyConvertRate, Mode=OneWay}"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding Document.IsCurrencyConvert, Converter={StaticResource booleanToVisibilityConverter}}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,7,0,0">
+                <Label VerticalAlignment="Center" Content="Примечание" />
+                <dxe:MemoEdit Margin="39,0"
+                              ShowIcon="False"
+                              Height="50"
+                              Width="400"
+                              TextWrapping="Wrap"
+                              EditValue="{Binding Document.VZ_NOTES}" />
+            </StackPanel>
+        </StackPanel>
+        <dxlc:LayoutControl Name="mainLayoutControl" Padding="0" Margin="0,10,0,0"
+                            Orientation="Horizontal" DockPanel.Dock="Top"
+                            VerticalAlignment="Stretch">
+            <dxlc:LayoutGroup Header="Дебиторы (-) к балансу" View="GroupBox"
+                              dxlc:LayoutControl.AllowHorizontalSizing="True"
+                              Name="debitorLayoutGroup"
+                              Padding="-8">
+                <dxg:GridControl x:Name="gridControlDebitor"
+                                 AutoGenerateColumns="AddNew"
+                                 EnableSmartColumnsGeneration="True"
+                                 dx:DXSerializer.SerializationID="gridControlDebitor"
+                                 dx:DXSerializer.StoreLayoutMode="All"
+                                 dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                 dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                 ItemsSource="{Binding DebitorCollection}"
+                                 CurrentItem="{Binding CurrentDebitor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AutoGeneratingColumn="GridControlDebitor_OnAutoGeneratingColumn"
+                                 AutoGeneratedColumns="GridControlDebitor_OnAutoGeneratedColumns">
+                    <dxg:GridControl.View>
+                        <dxg:TableView x:Name="gridViewDebitor"
+                                       EnableImmediatePosting="True"
+                                       AllowPerPixelScrolling="True"
+                                       ShowAutoFilterRow="True"
+                                       ShowTotalSummary="True"
+                                       IsSynchronizedWithCurrentItem="True"
+                                       CellStyle="{StaticResource FocusedCellStyle}" 
+                                       >
+                            <dxg:TableView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Добавить" Command="{Binding AddNewDebitorCommand}" />
+                                    <MenuItem Header="Удалить" Command="{Binding RemoveDebitorCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Счет-фактура" Command="{Binding SetDebitorSFCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Экспорт"
+                                              Command="{Binding VisualControlExportCommand}"
+                                              CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              AncestorType={x:Type ContextMenu}}}">
+                                        <MenuItem.Icon>
+                                            <Image
+                                                Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </dxg:TableView.ContextMenu>
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand EventName="CellValueChanging"
+                                                       Command="{Binding UpdateCalcSummaCommand}" />
+                            </dxmvvm:Interaction.Behaviors>
+                            <dxg:TableView.RowStyle>
+                                <Style TargetType="{x:Type dxg:RowControl}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Row.IsBalans}" Value="True">
+                                            <Setter Property="Foreground" Value="Red" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </dxg:TableView.RowStyle>
+                        </dxg:TableView>
+                    </dxg:GridControl.View>
+                </dxg:GridControl>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup Header="Кредиторы (+) к балансу" View="GroupBox"
+                              dxlc:LayoutControl.AllowHorizontalSizing="True"
+                              Name="creditorLayoutGroup"
+                              Padding="-8">
+                <dxg:GridControl x:Name="gridControlCreditor"
+                                 AutoGenerateColumns="AddNew"
+                                 EnableSmartColumnsGeneration="True"
+                                 dx:DXSerializer.SerializationID="gridControlCreditor"
+                                 dx:DXSerializer.StoreLayoutMode="All"
+                                 dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                 dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                 ItemsSource="{Binding CreditorCollection}"
+                                 CurrentItem="{Binding CurrentCreditor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AutoGeneratingColumn="GridControlCreditor_OnAutoGeneratingColumn"
+                                 AutoGeneratedColumns="GridControlCreditor_OnAutoGeneratedColumns">
+                    <dxg:GridControl.View>
+                        <dxg:TableView x:Name="gridViewCreditor"
+                                       EnableImmediatePosting="True"
+                                       AllowPerPixelScrolling="True"
+                                       ShowAutoFilterRow="True"
+                                       ShowTotalSummary="True"
+                                       IsSynchronizedWithCurrentItem="True"
+                                       CellStyle="{StaticResource FocusedCellStyle}" 
+                                       >
+                            <dxg:TableView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Добавить" Command="{Binding AddNewCreditorCommand}" />
+                                    <MenuItem Header="Удалить" Command="{Binding RemoveCreditorCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Счет-фактура" Command="{Binding SetCreditorSFCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Экспорт"
+                                              Command="{Binding VisualControlExportCommand}"
+                                              CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              AncestorType={x:Type ContextMenu}}}">
+                                        <MenuItem.Icon>
+                                            <Image
+                                                Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </dxg:TableView.ContextMenu>
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand EventName="CellValueChanging"
+                                                       Command="{Binding UpdateCalcSummaCommand}" />
+                            </dxmvvm:Interaction.Behaviors>
+                            <dxg:TableView.RowStyle>
+                                <Style TargetType="{x:Type dxg:RowControl}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Row.IsBalans}" Value="True">
+                                            <Setter Property="Foreground" Value="Red" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </dxg:TableView.RowStyle>
+                        </dxg:TableView>
+                    </dxg:GridControl.View>
+                </dxg:GridControl>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:DXWindow>

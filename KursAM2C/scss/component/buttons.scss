@@ -1,0 +1,19 @@
+﻿.delete-button {
+    width: 18px;
+    height: 18px;
+    display: block;
+    border-radius: 3px;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-image: url(../images/icons/rubbish-bin-b.png);
+    background-size: cover;
+
+    &:hover {
+        background-image: url(../images/icons/rubbish-bin.png);
+    }
+
+    .button {
+        width: 100px;
+        height: 40px;
+    }
+}

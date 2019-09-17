@@ -1,0 +1,105 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using Core.ViewModel.Base;
+
+namespace KursAM2.ViewModel.Logistiks
+{
+    public class InventorySheetViewModel : RSViewModelData
+    {
+        private string myCreator;
+        private DateTime myDate;
+        private bool myIsClosed;
+        private int myNum;
+        private ObservableCollection<InventorySheetRowViewModel> myRows;
+        private Core.EntityViewModel.Warehouse myWarehouse;
+
+        public InventorySheetViewModel()
+        {
+            Rows = new ObservableCollection<InventorySheetRowViewModel>();
+            Rows.CollectionChanged += Rows_CollectionChanged;
+            DeletedRows = new ObservableCollection<InventorySheetRowViewModel>();
+            DeletedRows.CollectionChanged += DeletedRows_CollectionChanged;
+        }
+
+        public ObservableCollection<InventorySheetRowViewModel> Rows
+        {
+            get => myRows;
+            set
+            {
+                if (myRows == value) return;
+                myRows = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<InventorySheetRowViewModel> DeletedRows { set; get; }
+
+        public DateTime Date
+        {
+            get => myDate;
+            set
+            {
+                if (myDate == value) return;
+                myDate = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Core.EntityViewModel.Warehouse Warehouse
+        {
+            get => myWarehouse;
+            set
+            {
+                if (myWarehouse != null && myWarehouse.Equals(value)) return;
+                myWarehouse = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int Num
+        {
+            get => myNum;
+            set
+            {
+                if (myNum == value) return;
+                myNum = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsClosed
+        {
+            get => myIsClosed;
+            set
+            {
+                if (myIsClosed == value) return;
+                myIsClosed = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string Creator
+        {
+            get => myCreator;
+            set
+            {
+                if (myCreator == value) return;
+                myCreator = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private void Rows_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (State == RowStatus.NotEdited)
+                State = RowStatus.Edited;
+        }
+
+        private void DeletedRows_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (State == RowStatus.NotEdited)
+                State = RowStatus.Edited;
+        }
+    }
+}

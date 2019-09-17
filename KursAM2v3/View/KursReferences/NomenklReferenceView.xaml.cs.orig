@@ -1,0 +1,90 @@
+﻿using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Core.EntityViewModel;
+using Core.ViewModel.Common;
+using DevExpress.Utils;
+using DevExpress.Xpf.Grid;
+using KursAM2.ViewModel.Reference;
+using LayoutManager;
+using NomenklViewModel = Core.EntityViewModel.NomenklViewModel;
+
+namespace KursAM2.View.KursReferences
+{
+    /// <summary>
+    ///     Interaction logic for NomenklReferenceView.xaml
+    /// </summary>
+    public partial class NomenklReferenceView : ILayout
+    {
+        public NomenklReferenceView()
+        {
+            InitializeComponent();
+            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            Loaded += NomenklReferenceView_Loaded;
+            Closing += NomenklReferenceView_Closing;
+        }
+
+        public LayoutManagerBase LayoutManager { get; set; }
+
+        private void NomenklReferenceView_Closing(object sender, CancelEventArgs e)
+        {
+            LayoutManager.Save();
+        }
+
+        private void NomenklReferenceView_Loaded(object sender, RoutedEventArgs e)
+        {
+            LayoutManager.Load();
+        }
+
+        //private void MenuItemEdit_OnClick(object sender, RoutedEventArgs e)
+        //{
+        //    tcol_1.AllowEditing = DefaultBoolean.True;
+        //    treeListViewCategory.ShowEditor(false);
+        //}
+
+        private void treeListViewCategory_FocusedRowChanged(object sender,
+            CurrentItemChangedEventArgs currentItemChangedEventArgs)
+        {
+            tcol_1.AllowEditing = DefaultBoolean.False;
+        }
+
+
+        private void TreeListViewCategory_OnMouseDoubleClick(object sender,
+            MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            tcol_1.AllowEditing = DefaultBoolean.True;
+            treeListViewCategory.ShowEditor(false);
+        }
+
+        private void treeListViewCategory_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!(Keyboard.FocusedElement is TextBox)) return;
+            if ((((e.Key == Key.Right) &&
+                  (((TextBox) Keyboard.FocusedElement).CaretIndex == ((TextBox) Keyboard.FocusedElement).Text.Length)) ||
+                 ((e.Key == Key.Left) &&
+                  (((TextBox) Keyboard.FocusedElement).CaretIndex == 0))) &&
+                Equals(treeListCategory.CurrentColumn, treeListCategory.Columns[treeListCategory.Columns.Count - 1]))
+                e.Handled = true;
+        }
+
+        private void GridControlNomenklMain_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var ctx = DataContext as NomenklReferenceWindowViewModel;
+            if (ctx == null) return;
+            var item = gridControlNomenklMain.CurrentItem as NomenklMain;
+            if (item == null) return;
+            ctx.NomenklMainEdit(null);
+        }
+
+        private void tableViewNomenkl_CellValueChanged(object sender, CellValueChangedEventArgs e)
+        {
+            if (e.Column.FieldName != "Currency") return;
+            var r = e.Row as NomenklViewModel;
+            if (r == null) return;
+            if ((r.NomenklNumber.Length <= 5) ||
+                (r.NomenklNumber.Substring(r.NomenklNumber.Length - 4, 3) != r.Currency.Name))
+                r.NomenklNumber += " " + r.Currency.Name;
+        }
+    }
+}

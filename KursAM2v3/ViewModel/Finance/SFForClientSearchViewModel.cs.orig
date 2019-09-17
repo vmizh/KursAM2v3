@@ -1,0 +1,375 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using Core;
+using Core.EntityViewModel;
+using Core.Menu;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using Core.WindowsManager;
+using KursAM2.Managers;
+using KursAM2.View.Finance;
+using KursAM2.View.Search;
+using Reports.Base;
+
+namespace KursAM2.ViewModel.Finance
+{
+    public class SFForClientSearchViewModel : RSWindowSearchViewModelBase
+    {
+<<<<<<< working copy
+
+        private SFClientViewModel myMyCurrentSf;
+=======
+        private SFClient myMyCurrentSf;
+>>>>>>> merge rev
+        private Kontragent mySelectedKontragent;
+        private SD_83ViewModel mySelectedNomenkl;
+
+        public SFForClientSearchViewModel()
+        {
+            WindowName = "Счета фактуры для клиентов";
+            Result = new ObservableCollection<SFClient>();
+        }
+
+        public SFForClientSearchViewModel(Window form) : base(form)
+        {
+            WindowName = "Счета фактуры для клиентов";
+            FirstSearchName = "Контрагент";
+            SecondSearchName = "Номенклатура";
+            Result = new ObservableCollection<SFClient>();
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
+            var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
+            if (prn != null)
+            {
+                prn.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Заказ",
+                    Command = PrintZakazCommand
+                });
+                prn.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Счет",
+                    Command = PrintSFSchetCommand
+                });
+                prn.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Счет фактура",
+                    Command = PrintSFCommand
+                });
+                prn.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Экспорт",
+                    Command = ExportSFCommand
+                });
+            }
+        }
+
+<<<<<<< working copy
+        public List<NomenklViewModel> Nomenkls => MainReferences.ALLNomenkls.Values.ToList();
+=======
+        public List<Nomenkl> Nomenkls => MainReferences.ALLNomenkls.Values.ToList();
+>>>>>>> merge rev
+        public List<Kontragent> Kontragents => MainReferences.ActiveKontragents.Values.ToList();
+<<<<<<< working copy
+        public NomenklViewModel SelectedNomenkl
+=======
+
+        public SD_83ViewModel SelectedNomenkl
+>>>>>>> merge rev
+        {
+            get => mySelectedNomenkl;
+            set
+            {
+                if (mySelectedNomenkl == value) return;
+                mySelectedNomenkl = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private string mySearch;
+
+        public string Search
+        {
+            set
+            {
+                if (mySearch == value) return;
+                mySearch = value;
+                RaisePropertyChanged();
+            }
+            get => mySearch;
+        }
+
+        public Kontragent SelectedKontragent
+        {
+            get => mySelectedKontragent;
+            set
+            {
+                if (mySelectedKontragent == value) return;
+                mySelectedKontragent = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SFClient CurrentSF
+        {
+            get => myMyCurrentSf;
+            set
+            {
+                if (myMyCurrentSf == value) return;
+                myMyCurrentSf = value;
+                if (myMyCurrentSf != null)
+                {
+                    IsDocumentOpenAllow = true;
+                    IsDocNewCopyAllow = true;
+                    IsDocNewCopyRequisiteAllow = true;
+                    IsPrintAllow = true;
+                }
+                RaisePropertyChanged();
+            }
+        }
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<SFClient> Result { set; get; }
+
+        public Command ExportSFCommand
+        {
+            get { return new Command(ExportSF, param => IsDocumentOpenAllow); }
+        }
+
+        public Command PrintSFCommand
+        {
+            get { return new Command(PrintSF, param => IsDocumentOpenAllow); }
+        }
+
+        public Command PrintZakazCommand
+        {
+            get { return new Command(PrintZakaz, param => true); }
+        }
+
+        public Command PrintSFSchetCommand
+        {
+            get { return new Command(PrintSChet, param => true); }
+        }
+        private void PrintSChet(object obj)
+        {
+            var ctx = new SFClientWindowViewModel();
+            ctx.RefreshData(CurrentSF.DocCode);
+            ctx.PrintSChet(null);
+        }
+
+        private void PrintZakaz(object obj)
+        {
+            var ctx = new SFClientWindowViewModel();
+            ctx.RefreshData(CurrentSF.DocCode);
+            ctx.PrintZakaz(null);
+        }
+
+        public override void Print(object form)
+        {
+            var rep = new ExportView();
+            rep.Show();
+        }
+
+        private void ExportSF(object obj)
+        {
+            var ctx = new SFClientWindowViewModel();
+            ctx.RefreshData(CurrentSF.DocCode);
+            ctx.ExportSF(null);
+        }
+
+        private void PrintSF(object obj)
+        {
+            var ctx = new SFClientWindowViewModel();
+            ctx.RefreshData(CurrentSF.DocCode);
+            ctx.PrintSF(null);
+        }
+
+        #region Commands
+
+        public ICommand SearchCommand
+        {
+            get {  return new Command(GetSearchDocument, param=>true);}
+        }
+
+        public SFClientManager Manager = new SFClientManager();
+        private void Delete(object obj)
+        {
+            Manager.Deleted(CurrentSF.DocCode);
+            RefreshData(null);
+        }
+        public void GetSearchDocument(object obj)
+        {
+            try
+            {
+                Result.Clear();
+                var query = GlobalOptions.GetEntities()
+                    .SD_84
+                    .Include(_ => _.SD_43)
+                    .Include(_ => _.SD_431)
+                    .Include(_ => _.SD_432)
+                    .Include(_ => _.SD_301)
+                    .Include(_ => _.TD_84)
+                    .Include("TD_84.SD_83")
+                    .Include("TD_84.TD_24")
+                    .Where(_ => _.SF_DATE >= StartDate && _.SF_DATE <= EndDate);
+                if (SelectedKontragent != null)
+                    query = query.Where(_ => _.SF_CLIENT_DC == SelectedKontragent.DOC_CODE);
+                if (SelectedNomenkl != null)
+                    query = query.Where(m => m.TD_84.Any(n => n.SFT_NEMENKL_DC == SelectedNomenkl.DOC_CODE));
+                foreach (var item in query.ToList())
+                {
+                    var newItem = new SFClientViewModel(item);
+                    var s = (from row in item.TD_84
+                        let sum = row.TD_24.Sum(unknown => unknown.DDT_KOL_RASHOD)
+                        // ReSharper disable once PossibleInvalidOperationException
+                        select sum * (decimal)row.SFT_ED_CENA).Sum();
+                    newItem.SummaOtgruz = s;
+                    string d;
+                    if (newItem.Diler != null)
+                    {
+                        d = newItem.Diler.Name;
+                    }
+                    else
+                    {
+                        d = "";
+                    }
+                    if (newItem.SF_IN_NUM.ToString().ToUpper().Contains(Search.ToUpper())||
+                        newItem.SF_OUT_NUM.ToUpper().Contains(Search.ToUpper())||
+                        newItem.SF_CLIENT_NAME.ToUpper().Contains(Search.ToUpper())||
+                        newItem.ToString().ToUpper().Contains(Search.ToUpper())||
+                        newItem.SF_DILER_SUMMA.ToString().ToUpper().Contains(Search.ToUpper())||
+                        newItem.CO.Name.ToUpper().Contains(Search.ToUpper())||
+                        newItem.Summa.ToString().ToUpper().Contains(Search.ToUpper())||
+                        d.ToUpper().Contains(Search.ToUpper()))
+                        Result.Add(newItem);
+                }
+            }
+            catch (Exception e)
+            {
+                WindowManager.ShowError(e);
+            }
+        }
+        public ICommand DeleteCommand
+        {
+            get { return new Command(Delete, param => true); }
+        }
+        public ICommand SearchClearCommand
+        {
+            get { return new Command(RefreshData, param => true); }
+        }
+        public override void RefreshData(object data)
+        {
+            IsDocumentOpenAllow = false;
+            IsDocNewCopyAllow = false;
+            IsDocNewCopyRequisiteAllow = false;
+            IsPrintAllow = false;
+            while (!MainReferences.IsReferenceLoadComplete)
+            {
+            }
+            try
+            {
+                Result.Clear();
+                var query = GlobalOptions.GetEntities()
+                    .SD_84
+                    .Include(_ => _.SD_43)
+                    .Include(_ => _.SD_431)
+                    .Include(_ => _.SD_432)
+                    .Include(_ => _.SD_301)
+                    .Include(_ => _.TD_84)
+                    .Include("TD_84.SD_83")
+                    .Include("TD_84.TD_24")
+                    .Where(_ => _.SF_DATE >= StartDate && _.SF_DATE <= EndDate);
+                if (SelectedKontragent != null)
+                    query = query.Where(_ => _.SF_CLIENT_DC == SelectedKontragent.DOC_CODE);
+                if (SelectedNomenkl != null)
+                    query = query.Where(m => m.TD_84.Any(n => n.SFT_NEMENKL_DC == SelectedNomenkl.DOC_CODE));
+                foreach (var item in query.ToList())
+                {
+                    var newItem = new SFClient(item);
+                    var s = (from row in item.TD_84
+                        let sum = row.TD_24.Sum(unknown => unknown.DDT_KOL_RASHOD)
+                        // ReSharper disable once PossibleInvalidOperationException
+                        select sum * (decimal) row.SFT_ED_CENA).Sum();
+                    newItem.SummaOtgruz = s;
+                    Result.Add(newItem);
+                }
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+            RaisePropertyChanged(nameof(Result));
+            Search = "";
+        }
+
+        public override void DocumentOpen(object form)
+        {
+            if (CurrentSF == null) return;
+            var frm = new SFClientView {Owner = Application.Current.MainWindow};
+            var ctx = new SFClientWindowViewModel {Form = frm};
+            ctx.RefreshData(CurrentSF.DocCode);
+            frm.Show();
+            frm.DataContext = ctx;
+        }
+        public override void DocNewEmpty(object form)
+        {
+            var frm = new SFClientView { Owner = Application.Current.MainWindow };
+            var ctx = new SFClientWindowViewModel { Form = frm };
+            ctx.DocNewEmpty(-1);
+            frm.Show();
+            frm.DataContext = ctx;
+        }
+        public override void DocNewCopy(object obj)
+        {
+            if (CurrentSF == null) return;
+            var frm = new SFClientView { Owner = Application.Current.MainWindow };
+            var ctx = new SFClientWindowViewModel { Form = frm };
+            ctx.DocNewCopy(CurrentSF.DocCode);
+            frm.Show();
+            frm.DataContext = ctx;
+        }
+
+        public override void DocNewCopyRequisite(object obj)
+        {
+            if (CurrentSF == null) return;
+            var frm = new SFClientView { Owner = Application.Current.MainWindow };
+            var ctx = new SFClientWindowViewModel {Form = frm};
+            ctx.DocNewCopyRequisite(CurrentSF.DocCode);
+            frm.Show();
+            frm.DataContext = ctx;
+        }
+
+
+        public Command ClearKontragentCommand
+        {
+            get { return new Command(ClearKontragent, param => SelectedKontragent != null); }
+        }
+
+        private void ClearKontragent(object obj)
+        {
+            SelectedKontragent = null;
+        }
+
+        public Command ClearNomenklCommand
+        {
+            get { return new Command(ClearNomenkl, param => SelectedNomenkl != null); }
+        }
+
+        private void ClearNomenkl(object obj)
+        {
+            SelectedKontragent = null;
+        }
+
+        public override void ResetLayout(object form)
+        {
+            var frm = form as SearchSFForClientView;
+            frm?.LayoutManager.ResetLayout();
+        }
+
+        #endregion
+    }
+}

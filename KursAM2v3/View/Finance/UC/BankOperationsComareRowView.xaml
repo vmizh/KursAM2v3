@@ -1,0 +1,121 @@
+﻿<UserControl x:Class="KursAM2.View.Finance.UC.BankOperationsComareRowView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:entityViewModel="clr-namespace:Core.EntityViewModel;assembly=Core"
+             mc:Ignorable="d"
+             d:DesignHeight="250" d:DesignWidth="500"
+             >
+    <DockPanel>
+        <dxlc:LayoutControl Orientation="Horizontal" VerticalAlignment="Center">
+            <dxlc:LayoutGroup Orientation="Vertical" Margin="0 0 15 0">
+                <dxlc:LayoutItem Label="Дата">
+                    <dxe:DateEdit
+                        Height="25"
+                        DateTime="{Binding Date, Mode=TwoWay}" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="Валюта">
+                    <dxe:ComboBoxEdit HorizontalAlignment="Stretch"
+                              ItemsSource="{Binding CurrencysCompendium}"
+                              Height="25"
+                              EditValue="{Binding Currency, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                              DisplayMember="Name"
+                              
+                              Margin="0 0 0 5" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="Тип контрагента">
+                    <dxe:ComboBoxEdit HorizontalAlignment="Stretch"
+                              ItemsSource="{dxe:EnumItemsSource EnumType=entityViewModel:BankOperationType}"
+                              Height="25"
+                              EditValue="{Binding BankOperationType, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                              Margin="0 0 0 5" 
+                              EditValueChanged="BaseEdit_OnEditValueChanged"
+                              IsEnabled="{Binding IsChangeTypeEnable}"
+                                      Name="TypeKontragent"/>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="Контрагент">
+                    <dxe:ButtonEdit HorizontalAlignment="Stretch"
+                                    Height="25"
+                                    x:Name="Kontragent"
+                                    IsReadOnly="True"
+                                    EditValue="{Binding KontragentName, Mode=OneWay, NotifyOnSourceUpdated=True}"
+                                    Margin="0 0 0 5"
+                                    IsEnabled="{Binding IsKontragentEnabled, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                    DefaultButtonClick="Kontragent_OnDefaultButtonClick" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="Получатель">
+                    <dxe:ButtonEdit x:Name="Payment"
+                                    HorizontalAlignment="Stretch"
+                                    Height="25"
+                                    IsReadOnly="True"
+                                    EditValue="{Binding Payment, NotifyOnSourceUpdated=True,  NotifyOnTargetUpdated=True}"
+                                    Margin="0 0 0 5"
+                                    DefaultButtonClick="Payment_OnDefaultButtonClick">
+                        <dxe:ButtonEdit.Buttons>
+                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Undo" Click="ButtonInfo_OnClick"/>
+                        </dxe:ButtonEdit.Buttons>
+                    </dxe:ButtonEdit>
+                </dxlc:LayoutItem>
+
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup Orientation="Vertical" Margin="0 0 0 0">
+
+                <dxlc:LayoutItem Label="Приход">
+                    <dxe:PopupCalcEdit x:Name="Incoming"
+                                       Height="25"
+                                       Margin="0 0 0 5"
+                                       DisplayFormatString="n2"
+                                       EditValueChanged="Incoming_OnEditValueChanged"
+                                       Value="{Binding VVT_VAL_PRIHOD, Mode=TwoWay}" 
+                                       IsEnabled="{Binding IsPrihodSummaEnabled,   NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                       />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="Расход">
+                    <dxe:PopupCalcEdit
+                        x:Name="Consumption"
+                        Height="25"
+                        DisplayFormatString="n2"
+                        EditValueChanged="Consumption_OnEditValueChanged"
+                        Value="{Binding VVT_VAL_RASHOD, Mode=TwoWay}"
+                        IsEnabled="{Binding IsRashodSummaEnabled,   NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+
+                        Margin="0 0 0 5" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="Счет доходов/расходов">
+                     <ComboBox HorizontalAlignment="Stretch"
+                              ItemsSource="{Binding SHPZList}"
+                              Height="25"
+                              SelectedItem="{Binding SHPZ, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                              DisplayMemberPath="Name"
+                              Margin="0 0 0 5" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="Счет фактура">
+                    <dxe:ButtonEdit x:Name="SFNameButtonItem"
+                                    HorizontalAlignment="Stretch"
+                                    Height="25"
+                                    IsReadOnly="True"
+                                    EditValue="{Binding SFName, NotifyOnSourceUpdated=True,  NotifyOnTargetUpdated=True}"
+                                    IsTextEditable="False"
+                                    Margin="0 0 0 5"
+                                    DefaultButtonClick="SFName_OnDefaultButtonClick"
+                                    >
+                        <dxe:ButtonEdit.Buttons>
+                            <dxe:ButtonInfo GlyphKind="Cancel"
+                                            Command="{Binding SFNameRemoveCommand}"/>
+                        </dxe:ButtonEdit.Buttons>
+                    </dxe:ButtonEdit>
+                </dxlc:LayoutItem>
+
+                <dxlc:LayoutItem Label="Примечание">
+                    <dxe:MemoEdit EditValue="{Binding VVT_DOC_NUM, Mode=TwoWay}"
+                                  ShowIcon="False"
+                                    Height="55"
+                             Margin="0 0 0 5" />
+                </dxlc:LayoutItem>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</UserControl>

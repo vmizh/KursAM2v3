@@ -1,0 +1,77 @@
+﻿<dx:DXWindow x:Class="KursAM2.View.KursReferences.KontragentReferenceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:control="clr-namespace:Core.Control;assembly=Core"
+             Title="Справочник контрагентов" Height="396.739" Width="550">
+    <DockPanel>
+        
+        <control:WndowMenu Height="60" DockPanel.Dock="Top" />
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <ToggleButton x:Name="ToggleButton" Click="ButtonBase_OnClick">
+                Все контрагенты
+            </ToggleButton>
+        </StackPanel>
+        <dxlc:LayoutControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Padding="0"
+                            x:Name="mainLayoutControl">
+            <dxlc:LayoutGroup x:Name="LayoutGroup3">
+            <dxlc:LayoutGroup x:Name="LayoutGroup1" dxlc:LayoutControl.AllowHorizontalSizing="True">
+                <dxg:TreeListControl x:Name="treeGroups"
+                                     AutoGenerateColumns="AddNew"
+                                     EnableSmartColumnsGeneration="True"
+                                     dx:DXSerializer.SerializationID="treeGroups"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                     ItemsSource="{Binding Groups, NotifyOnSourceUpdated=True}"
+                                     CurrentItem="{Binding CurrentGroup, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                     AutoGeneratingColumn="TreeGroups_OnAutoGeneratingColumn">
+                    <dxg:TreeListControl.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Добавить группу" Command="{Binding GroupAddCommand}" />
+                            <Separator />
+                            <MenuItem Header="Удалить группу" Command="{Binding GroupDeleteCommand}" />
+                        </ContextMenu>
+                    </dxg:TreeListControl.ContextMenu>
+                    <dxg:TreeListControl.View>
+                        <dxg:TreeListView CellValueChanged="TreeListView_OnCellValueChanged"
+                                          ParentFieldName="EG_PARENT_ID"
+                                          KeyFieldName="EG_ID"
+                                          ShowTotalSummary="False" />
+                    </dxg:TreeListControl.View>
+                </dxg:TreeListControl>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup dxlc:LayoutControl.AllowHorizontalSizing="True" x:Name="Group2">
+                <dxg:GridControl x:Name="kontragentsGridControl"
+                                 MaxHeight="100000"
+                                 MaxWidth="100000"
+                                 AutoGenerateColumns="AddNew"
+                                 EnableSmartColumnsGeneration="True"
+                                 dx:DXSerializer.SerializationID="GridControlKontragents"
+                                 dx:DXSerializer.StoreLayoutMode="All"
+                                 dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                 dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                 CurrentItem="{Binding CurrentKontragent, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                 ItemsSource="{Binding KontragentsInGroup}" SelectionMode="Row"
+                                 AutoGeneratingColumn="KontragentsGridControl_OnAutoGeneratingColumn">
+                    <dxg:GridControl.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Открыть карточку контрагента" Command="{Binding DocumentOpenMenuCommand}" />
+                        </ContextMenu>
+                    </dxg:GridControl.ContextMenu>
+                    <dxg:GridControl.View>
+                        <dxg:TableView x:Name="TableView"
+                                       AutoWidth="True"
+                                       ShowAutoFilterRow="True"
+                                       ShowGroupPanel="False"
+                                       NavigationStyle="Row" />
+                    </dxg:GridControl.View>
+                </dxg:GridControl>
+            </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:DXWindow>

@@ -1,0 +1,82 @@
+﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
+using Core.EntityViewModel;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using KursAM2.Managers;
+using KursAM2.View.Logistiks.UC;
+
+namespace KursAM2.ViewModel.Logistiks
+{
+    public class NomenklSelectedSimpleDialogViewModel : RSWindowViewModelBase
+    {
+        private NomenklViewModel myCurrentNomenkl;
+
+        private SelectNomenklSimpleUC myDataUserControl;
+
+        private string mySearchText;
+
+        public NomenklSelectedSimpleDialogViewModel()
+        {
+            myDataUserControl = new SelectNomenklSimpleUC();
+        }
+
+        public ObservableCollection<NomenklViewModel> NomenklCollection { set; get; } = new ObservableCollection<NomenklViewModel>();
+
+
+        public SelectNomenklSimpleUC DataUserControl
+        {
+            get => myDataUserControl;
+            set
+            {
+                if (Equals(myDataUserControl, value)) return;
+                myDataUserControl = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string SearchText
+        {
+            get => mySearchText;
+            set
+            {
+                if (mySearchText == value) return;
+                mySearchText = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public NomenklViewModel CurrentNomenkl
+        {
+            get => myCurrentNomenkl;
+            set
+            {
+                if (myCurrentNomenkl == value) return;
+                myCurrentNomenkl = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        #region Command
+
+        public ICommand SearchExecuteCommand
+        {
+            get { return new Command(SearchExecute, _ => !string.IsNullOrWhiteSpace(SearchText)); }
+        }
+
+        public ICommand SearchClearCommand
+        {
+            get { return new Command(d => SearchText = null, _ => !string.IsNullOrWhiteSpace(SearchText)); }
+        }
+
+        public void SearchExecute(object obj)
+        {
+            NomenklCollection.Clear();
+            foreach (var n in NomenklManager.GetNomenklsSearch(SearchText))
+                NomenklCollection.Add(n);
+            RaisePropertiesChanged(nameof(NomenklCollection));
+        }
+
+        #endregion
+    }
+}

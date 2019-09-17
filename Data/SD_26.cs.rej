@@ -1,0 +1,11 @@
+--- SD_26.cs
++++ SD_26.cs
+@@ -62,7 +62,7 @@
+         public Nullable<decimal> SF_VZAIMOR_TYPE_DC { get; set; }
+         public Nullable<decimal> SF_DOGOVOR_POKUPKI_DC { get; set; }
+         public Nullable<decimal> SF_PREDOPL_DOC_DC { get; set; }
+-        public Nullable<int> SF_IN_NUM { get; set; }
++        public int SF_IN_NUM { get; set; }
+         public Nullable<decimal> SF_FORM_RASCH_DC { get; set; }
+         public Nullable<System.DateTime> SF_VIPOL_RABOT_DATE { get; set; }
+         public Nullable<short> SF_TRANZIT { get; set; }

@@ -1,0 +1,17 @@
+﻿<Application x:Class="KursWPFFormTest.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/KursAM2v3;component/Resource/StandartIcon.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/KursAM2v3;component/Resource/StandartButtons.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/KursAM2v3;component/Resource/Menu.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/KursAM2v3;component/Resource/Error.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/KursAM2v3;component/Resource/ViewControlTemplate.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/KursAM2v3;component/Resource/Window.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

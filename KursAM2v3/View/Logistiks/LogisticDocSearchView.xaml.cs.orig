@@ -1,0 +1,85 @@
+﻿using System.Linq;
+using System.Windows;
+using Core;
+using Core.EntityViewModel;
+using CoreView.Common;
+using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Grid;
+using KursAM2.View.Finance;
+using KursAM2.ViewModel.Logistiks;
+
+namespace KursAM2.View.Logistiks
+{
+    /// <summary>
+    ///     Interaction logic for LogisticDocSearchView.xaml
+    /// </summary>
+    public partial class LogisticDocSearchView : DXWindow
+    {
+        public LogisticDocSearchView()
+        {
+            InitializeComponent();
+            DataContext = new DocumentsSearchWindowViewModel();
+        }
+
+        private void RefreshButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var ctx = DataContext as DocumentsSearchWindowViewModel;
+            ctx?.RefreshData();
+        }
+
+        private void PrintButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var ctx = DataContext as DocumentsSearchWindowViewModel;
+            ctx?.PrintReports();
+        }
+
+        private void CloseButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void Country_OnDefaultButtonClick(object sender, RoutedEventArgs e)
+        {
+            var ctx = DataContext as DocumentsSearchWindowViewModel;
+            if (ctx?.NomenklRow != null)
+            {
+                var dlg = new CountrySelectView();
+                dlg.Show();
+            }
+        }
+
+        private void gridExtendRows_CurrentItemChanged(object sender, CurrentItemChangedEventArgs e)
+        {
+            var ctx = DataContext as DocumentsSearchWindowViewModel;
+            if (ctx == null) return;
+            ctx.NomenklRow = e.NewItem as DocumentRowSearchViewModel;
+        }
+
+        private void MenuItemSchet_OnClick(object sender, RoutedEventArgs e)
+        {
+            var ctx = DataContext as DocumentsSearchWindowViewModel;
+            if (ctx == null) return;
+            ctx.PrintSchet();
+        }
+
+        private void MenuItemSF_OnClick(object sender, RoutedEventArgs e)
+        {
+            var ctx = DataContext as DocumentsSearchWindowViewModel;
+            if (ctx == null) return;
+            ctx.PrintSF();
+        }
+
+        private void MenuDocOpen_OnClick(object sender, RoutedEventArgs e)
+        {
+            var ctx = DataContext as DocumentsSearchWindowViewModel;
+            if (ctx == null) return;
+            var form = new SFClientView
+            {
+                Owner = this,
+                DataContext = new SFClientViewModel(
+                    GlobalOptions.GetEntities().SD_84.Single(_ => _.DOC_CODE == ctx.SelectDocument.DocCode))
+            };
+            form.Show();
+        }
+    }
+}

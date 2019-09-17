@@ -1,0 +1,70 @@
+﻿<dx:DXWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:control="clr-namespace:Core.Control;assembly=Core"
+             xmlns:helper="clr-namespace:Helper;assembly=Helper"
+             x:Class="KursAM2.View.Personal.PayRollTypeReference"
+             Title="Справочник начислений / удержаний для заработной платы" Height="300" Width="300"
+             WindowStartupLocation="Manual"
+             Icon="pack://siteoforigin:,,,/Images/document_dirty.png">
+    <DockPanel>
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
+               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
+        <dxlc:LayoutControl x:Name="mainLayoutControl" Margin="0,0,0,-52" Padding="0" Orientation="Vertical">
+            <dxlc:LayoutGroup Name="listNach">
+                <dxg:GridControl Name="gridControl"
+                                 AutoGenerateColumns="None"
+                                 EnableSmartColumnsGeneration="True"
+                                 dx:DXSerializer.StoreLayoutMode="ALL"
+                                 dx:DXSerializer.SerializationID="gridEmp"
+                                 dxg:GridSerializationOptions.AddNewColumns="False"
+                                 dxg:GridSerializationOptions.RemoveOldColumns="False"
+                                 ItemsSource="{Binding Rows}"
+                                 CurrentItem="{Binding CurrentType}"
+                                 VerticalAlignment="Stretch"
+                                 HorizontalAlignment="Stretch"
+                                 CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
+                    <dxg:GridControl.Columns>
+                        <dxg:GridColumn Name="col1" Header="Наименование" FieldName="Name" AllowSorting="True"
+                                        helper:CommitHelper.CommitOnValueChanged="True" />
+                        <dxg:GridColumn Name="col2" Header="Начисление" FieldName="Type"
+                                        helper:CommitHelper.CommitOnValueChanged="True" />
+                    </dxg:GridControl.Columns>
+                    <dxg:GridControl.View>
+                        <dxg:TableView x:Name="tableView"
+                                       AllowPerPixelScrolling="True"
+                                       ShowTotalSummary="False"
+                                       CellStyle="{StaticResource FocusedCellStyle}" 
+                                       RowStyle="{StaticResource FocusedRowStyle}">
+                            <dxg:TableView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Добавить строку" Command="{Binding AddRowCommand}" />
+                                    <MenuItem Header="Удалить строку" Command="{Binding DeleteRowCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                              CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}">
+                                        <MenuItem.Icon>
+                                            <Image
+                                                Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Копировать итоговую сумму"
+                                              Command="{Binding GetColumnSummaCommand}"
+                                              CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}" />
+                                </ContextMenu>
+                            </dxg:TableView.ContextMenu>
+                        </dxg:TableView>
+                    </dxg:GridControl.View>
+                </dxg:GridControl>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+
+</dx:DXWindow>

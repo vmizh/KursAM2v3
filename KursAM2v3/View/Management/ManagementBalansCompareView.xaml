@@ -1,0 +1,58 @@
+﻿<dx:DXWindow x:Class="KursAM2.View.Management.ManagementBalansCompareView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:control="clr-namespace:Core.Control;assembly=Core"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:controls="clr-namespace:KursAM2.View.Management.Controls"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+             xmlns:behaviors="clr-namespace:KursAM2.View.Behaviors"
+             mc:Ignorable="d"
+             Title="Сравнение балансов" Height="300" Width="800">
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+            <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
+                   Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
+            <StackPanel DockPanel.Dock="Top">
+                <StackPanel Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Margin="5,5,0,0"
+                           MouseDoubleClick="Control_OnMouseDoubleClick">
+                        Баланс на
+                    </Label>
+                    <dxe:DateEdit
+                        x:Name="dateBalans"
+                        EditValue="{Binding FirstDate, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                        HorizontalAlignment="Left"
+                        Margin="5,5,0,0" VerticalAlignment="Top" Width="150" />
+                    <Label VerticalAlignment="Center" Margin="5,5,0,0">сравнить с</Label>
+                    <dxe:DateEdit
+                        x:Name="dateBalansCompare"
+                        EditValue="{Binding SecondDate, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                        HorizontalAlignment="Left"
+                        Margin="5,5,0,0" VerticalAlignment="Top" Width="150" />
+                </StackPanel>
+            </StackPanel>
+        </DockPanel>
+        <dxlc:LayoutControl Name="mainLayoutControl" Orientation="Vertical">
+            <dxlc:LayoutGroup x:Name="TreeMain" Header="LayoutGroup" View="Group"
+                              dxlc:LayoutControl.AllowVerticalSizing="True">
+                <controls:ManagementBalansCompareMainUI x:Name="ManagementBalansCompareMainUI" />
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup Header="LayoutGroup" dxlc:LayoutControl.AllowVerticalSizing="True">
+                <dxwui:NavigationFrame Source="EmptyUI" Name="navigationFrame"
+                                       AnimationType="SlideHorizontal"
+                                       NavigationCacheMode="Disabled"
+                                       Navigated="NavigationFrame_OnNavigated">
+                    <dxmvvm:Interaction.Behaviors>
+                        <behaviors:FrameBalansNavigation />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxwui:NavigationFrame>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:DXWindow>

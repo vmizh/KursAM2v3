@@ -1,0 +1,299 @@
+﻿<UserControl x:Class="KursAM2.View.Management.Controls.ManagementBalansRowsKontr"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="700">
+    <dxg:GridControl
+        x:Name="gridExtend"
+        AutoGenerateColumns="None"
+        EnableSmartColumnsGeneration="True"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        dx:DXSerializer.SerializationID="gridExtend"
+        dx:DXSerializer.StoreLayoutMode="All"
+        dxg:DataControlSerializationOptions.AddNewColumns="False"
+        dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+        SelectionMode="Row"
+        ItemsSource="{Binding ExtendRowsActual, Mode=OneWay}"
+        CurrentItem="{Binding CurrentExtendItem}">
+        <dxg:GridControl.Bands>
+            <dxg:GridControlBand Header="Основные данные" Fixed="Left">
+                <dxg:GridColumn Name="col1" FieldName="Name" Header="Позиция" ReadOnly="True" />
+                <dxg:GridColumn Name="colQuant_1" FieldName="QuantityStart"
+                                Header="{Binding FirstDateName}" ReadOnly="True">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colQuant_2" FieldName="QuantityEnd" Header="{Binding SecondDateName}"
+                                ReadOnly="True">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colSummaDelta" FieldName="Delta" Header="Разница"
+                                ReadOnly="True">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+
+                <dxg:GridColumn Name="col7" FieldName="CurrencyName" Header="Валюта" ReadOnly="True" />
+                <dxg:GridColumn Name="col6" FieldName="Note" Header="Примечания" ReadOnly="True" />
+                <dxg:GridColumn Name="col8_1" FieldName="Nomenkl" Header="Ном. №" ReadOnly="True" />
+            </dxg:GridControlBand>
+            <dxg:GridControlBand Header="RUB">
+                <dxg:GridColumn Name="colRUBFirstDate"
+                                Header="{Binding FirstDateName, NotifyOnTargetUpdated=True}"
+                                dxg:BandBase.GridRow="1" dxg:BandBase.GridColumn="0" />
+                <dxg:GridColumn Name="colRUBSecondDate"
+                                Header="{Binding SecondDateName, NotifyOnTargetUpdated=True}"
+                                dxg:BandBase.GridRow="1" dxg:BandBase.GridColumn="1" />
+                <dxg:GridColumn Name="colRUBPriceFirst" FieldName="PriceRUB" Header="Цена" ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="0">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colRUBSummaFirst" FieldName="SummaRUB" Header="Сумма" ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colRUBPriceSecond" FieldName="PriceRUB2" Header="Цена"
+                                ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="0">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colRUBSummaSecond" FieldName="SummaRUB2" Header="Сумма"
+                                ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+            </dxg:GridControlBand>
+            <dxg:GridControlBand Header="USD">
+                <dxg:GridColumn Name="colUSDFirstDate"
+                                Header="{Binding FirstDateName, NotifyOnTargetUpdated=True}"
+                                dxg:BandBase.GridRow="1" dxg:BandBase.GridColumn="0" />
+                <dxg:GridColumn Name="colUSDSecondDate"
+                                Header="{Binding SecondDateName, NotifyOnTargetUpdated=True}"
+                                dxg:BandBase.GridRow="1" dxg:BandBase.GridColumn="1" />
+                <dxg:GridColumn Name="colUSDPriceFirst" FieldName="PriceUSD" Header="Цена" ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="0">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colUSDSummaFirst" FieldName="SummaUSD" Header="Сумма" ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colUSDPriceSecond" FieldName="PriceUSD2" Header="Цена"
+                                ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="0">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colUSDSummaSecond" FieldName="SummaUSD2" Header="Сумма"
+                                ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+            </dxg:GridControlBand>
+            <dxg:GridControlBand Header="EUR">
+                <dxg:GridColumn Name="colEURFirstDate"
+                                Header="{Binding FirstDateName, NotifyOnTargetUpdated=True}"
+                                dxg:BandBase.GridRow="1" dxg:BandBase.GridColumn="0" />
+                <dxg:GridColumn Name="colEURSecondDate"
+                                Header="{Binding SecondDateName, NotifyOnTargetUpdated=True}"
+                                dxg:BandBase.GridRow="1" dxg:BandBase.GridColumn="1" />
+                <dxg:GridColumn Name="colEURPriceFirst" FieldName="PriceEUR" Header="Цена" ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="0">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colEURSummaFirst" FieldName="SummaEUR" Header="Сумма" ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colEURPriceSecond" FieldName="PriceEUR2" Header="Цена"
+                                ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="0">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colEURSummaSecond" FieldName="SummaEUR2" Header="Сумма"
+                                ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+            </dxg:GridControlBand>
+            <dxg:GridControlBand Header="GBP">
+                <dxg:GridColumn Name="colGBPFirstDate"
+                                Header="{Binding FirstDateName, NotifyOnTargetUpdated=True}"
+                                dxg:BandBase.GridRow="1" dxg:BandBase.GridColumn="0" />
+                <dxg:GridColumn Name="colGBPSecondDate"
+                                Header="{Binding SecondDateName, NotifyOnTargetUpdated=True}"
+                                dxg:BandBase.GridRow="1" dxg:BandBase.GridColumn="1" />
+                <dxg:GridColumn Name="colGBPPriceFirst" FieldName="PriceGBP" Header="Цена" ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="0">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colGBPSummaFirst" FieldName="SummaGBP" Header="Сумма" ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colGBPPriceSecond" FieldName="PriceGBP2" Header="Цена"
+                                ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="0">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colGBPSummaSecond" FieldName="SummaGBP2" Header="Сумма"
+                                ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+            </dxg:GridControlBand>
+            <dxg:GridControlBand Header="CHF">
+                <dxg:GridColumn Name="colCHFFirstDate"
+                                Header="{Binding FirstDateName, NotifyOnTargetUpdated=True}"
+                                dxg:BandBase.GridRow="1" dxg:BandBase.GridColumn="0" />
+                <dxg:GridColumn Name="colCHFSecondDate"
+                                Header="{Binding SecondDateName, NotifyOnTargetUpdated=True}"
+                                dxg:BandBase.GridRow="1" dxg:BandBase.GridColumn="1" />
+                <dxg:GridColumn Name="colCHFPriceFirst" FieldName="PriceCHF" Header="Цена" ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="0">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colCHFSummaFirst" FieldName="SummaCHF" Header="Сумма" ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colCHFPriceSecond" FieldName="PriceCHF2" Header="Цена"
+                                ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="0">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colCHFSummaSecond" FieldName="SummaCHF2" Header="Сумма"
+                                ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+            </dxg:GridControlBand>
+            <dxg:GridControlBand Header="SEK">
+                <dxg:GridColumn Name="colSEKFirstDate"
+                                Header="{Binding FirstDateName, NotifyOnTargetUpdated=True}"
+                                dxg:BandBase.GridRow="1" dxg:BandBase.GridColumn="0" />
+                <dxg:GridColumn Name="colSEKSecondDate"
+                                Header="{Binding SecondDateName, NotifyOnTargetUpdated=True}"
+                                dxg:BandBase.GridRow="1" dxg:BandBase.GridColumn="1" />
+                <dxg:GridColumn Name="colSEKPriceFirst" FieldName="PriceSEK" Header="Цена" ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="0">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colSEKSummaFirst" FieldName="SummaSEK" Header="Сумма" ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colSEKPriceSecond" FieldName="PriceSEK2" Header="Цена"
+                                ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="0">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn Name="colSEKSummaSecond" FieldName="SummaSEK2" Header="Сумма"
+                                ReadOnly="True"
+                                dxg:BandBase.GridRow="2" dxg:BandBase.GridColumn="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+            </dxg:GridControlBand>
+        </dxg:GridControl.Bands>
+        <dxg:GridControl.TotalSummary>
+            <dxg:GridSummaryItem FieldName="Name" SummaryType="Count" />
+            <dxg:GridSummaryItem FieldName="Summa" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="Delta" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="SummaRUB" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="SummaUSD" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="SummaEUR" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="SummaRUB2" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="SummaUSD2" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="SummaEUR2" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="SummaGBP" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="SummaCHF" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="SummaSEK" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="SummaGBP2" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="SummaCHF2" SummaryType="Sum" DisplayFormat="n2" />
+            <dxg:GridSummaryItem FieldName="SummaSEK2" SummaryType="Sum" DisplayFormat="n2" />
+        </dxg:GridControl.TotalSummary>
+        <dxg:GridControl.View>
+            <dxg:TableView x:Name="gridViewExtend" 
+                           CellStyle="{StaticResource FocusedCellStyle}" 
+                           RowStyle="{StaticResource FocusedRowStyle}"
+                           AllowPerPixelScrolling="True"
+                           ShowTotalSummary="True">
+                <dxg:TableView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Открыть калькуляцию себестоимости"
+                                  Command="{Binding NomenklCalcOpenCommand}" />
+                        <MenuItem Header="Открыть баланс контрагента"
+                                  Command="{Binding KontragentAccountOpenCommand}" />
+                        <Separator />
+                        <MenuItem Header="Экспорт"
+                                  Command="{Binding VisualControlExportCommand}"
+                                  CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              AncestorType={x:Type ContextMenu}}}">
+                            <MenuItem.Icon>
+                                <Image
+                                    Source="pack://siteoforigin:,,,/Images/export1.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </dxg:TableView.ContextMenu>
+            </dxg:TableView>
+        </dxg:GridControl.View>
+    </dxg:GridControl>
+</UserControl>

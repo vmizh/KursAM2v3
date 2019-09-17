@@ -1,0 +1,1316 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using Core.Helper;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using Data;
+using DevExpress.Mvvm.DataAnnotations;
+
+namespace Core.EntityViewModel
+{
+    [MetadataType(typeof(DataAnnotationsSFClientViewModel))]
+
+    public class SFClientViewModel : RSViewModelBase, IEntity<SD_84>
+    {
+        public decimal Summa => SF_CRS_SUMMA_K_OPLATE ?? 0;
+        public string COName => CO?.Name;
+        public bool IsAccepted
+        {
+            get => SF_ACCEPTED == 1;
+            set
+            {
+                if (SF_ACCEPTED == 1 == value) return;
+                SF_ACCEPTED = (short)(value ? 1 : 0);
+                RaisePropertyChanged();
+            }
+        }
+        public Kontragent Diler
+        {
+            get
+            {
+                if (Entity.SF_DILER_DC == null) return null;
+                return MainReferences.AllKontragents.ContainsKey(Entity.SF_DILER_DC.Value)
+                    ? MainReferences.AllKontragents[Entity.SF_DILER_DC.Value]
+                    : null;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    Entity.SF_DILER_DC = null;
+                }
+                else
+                {
+                    if (Entity.SF_DILER_DC == value.DOC_CODE) return;
+                    Entity.SF_DILER_DC = value.DOC_CODE;
+                }
+                RaisePropertyChanged();
+            }
+        }
+        public List<SFClientRowViewModel> DeletedRows { set; get; }
+        public ObservableCollection<SFClientRowViewModel> Rows { set; get; } = new ObservableCollection<SFClientRowViewModel>();
+        private SD_84 myEntity;
+        private decimal mySummaOtgruz;
+        public SFClientViewModel()
+        {
+            Entity = DefaultValue();
+            DeletedRows = new List<SFClientRowViewModel>();
+            Rows = new ObservableCollection<SFClientRowViewModel>();
+        }
+
+        public SFClientViewModel(SD_84 entity)
+        {
+            Entity = entity ?? DefaultValue();
+            Rows = new ObservableCollection<SFClientRowViewModel>();
+            if (entity.TD_84 == null || entity.TD_84.Count <= 0) return;
+            foreach (var row in entity.TD_84)
+            {
+                var newRow = new SFClientRowViewModel(row);
+                Rows.Add(newRow);
+            }
+        }
+        public Kontragent Receiver
+        {
+            //SF_RECEIVER_KONTR_DC
+
+            get
+            {
+                if (Entity.SF_RECEIVER_KONTR_DC == null) return null;
+                return MainReferences.AllKontragents.ContainsKey(Entity.SF_RECEIVER_KONTR_DC.Value)
+                    ? MainReferences.AllKontragents[Entity.SF_RECEIVER_KONTR_DC.Value]
+                    : null;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    Entity.SF_RECEIVER_KONTR_DC = null;
+                }
+                else
+                {
+                    if (Entity.SF_RECEIVER_KONTR_DC == value.DOC_CODE) return;
+                    Entity.SF_RECEIVER_KONTR_DC = value.DOC_CODE;
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public Kontragent Client
+        {
+            get => Entity.SF_CLIENT_DC == null ? null : MainReferences.GetKontragent(Entity.SF_CLIENT_DC.Value);
+            set
+            {
+                if (value == null)
+                {
+                    Entity.SF_CLIENT_DC = null;
+                }
+                else
+                {
+                    if (Entity.SF_CLIENT_DC == value.DOC_CODE) return;
+                    Entity.SF_CLIENT_DC = value.DOC_CODE;
+                    Entity.SF_CLIENT_NAME = value.Name;
+                }
+                RaisePropertyChanged();
+            }
+        }
+        public CentrOfResponsibility CO
+        {
+            get
+            {
+                if (Entity.SF_CENTR_OTV_DC == null) return null;
+                if (MainReferences.COList.ContainsKey(Entity.SF_CENTR_OTV_DC.Value))
+                    return MainReferences.COList[Entity.SF_CENTR_OTV_DC.Value];
+                return null;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    Entity.SF_CENTR_OTV_DC = null;
+                }
+                else
+                {
+                    if (Entity.SF_CENTR_OTV_DC == value.DOC_CODE) return;
+                    Entity.SF_CENTR_OTV_DC = value.DOC_CODE;
+                }
+                RaisePropertyChanged();
+            }
+        }
+        public VzaimoraschetType VzaimoraschetType
+        {
+            get
+            {
+                if (Entity.SF_VZAIMOR_TYPE_DC == null) return null;
+                if (MainReferences.VzaimoraschetTypes.ContainsKey(Entity.SF_VZAIMOR_TYPE_DC.Value))
+                    return MainReferences.VzaimoraschetTypes[Entity.SF_VZAIMOR_TYPE_DC.Value];
+                return null;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    Entity.SF_VZAIMOR_TYPE_DC = null;
+                }
+                else
+                {
+                    if (Entity.SF_VZAIMOR_TYPE_DC == value.DOC_CODE) return;
+                    Entity.SF_VZAIMOR_TYPE_DC = value.DOC_CODE;
+                }
+                RaisePropertyChanged();
+            }
+        }
+        public SD_189ViewModel FormRaschet
+        {
+            get
+            {
+                if (Entity.SF_FORM_RASCH_DC == null) return null;
+                if (MainReferences.FormRaschets.ContainsKey(Entity.SF_FORM_RASCH_DC.Value))
+                    return MainReferences.FormRaschets[Entity.SF_FORM_RASCH_DC.Value];
+                return null;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    Entity.SF_FORM_RASCH_DC = null;
+                }
+                else
+                {
+                    if (Entity.SF_FORM_RASCH_DC == value.DOC_CODE) return;
+                    Entity.SF_FORM_RASCH_DC = value.DOC_CODE;
+                }
+                RaisePropertyChanged();
+            }
+        }
+        public PayCondition PayCondition
+        {
+            get
+            {
+                if (MainReferences.PayConditions.ContainsKey(Entity.SF_PAY_COND_DC))
+                    return MainReferences.PayConditions[Entity.SF_PAY_COND_DC];
+                return null;
+            }
+            set
+            {
+                if (Entity.SF_PAY_COND_DC == value?.DOC_CODE) return;
+                if (value != null) Entity.SF_PAY_COND_DC = value.DOC_CODE;
+                RaisePropertyChanged();
+            }
+        }
+        public decimal SummaOtgruz
+        {
+            get => mySummaOtgruz;
+            set
+            {
+                if (mySummaOtgruz == value) return;
+                mySummaOtgruz = value;
+                RaisePropertyChanged();
+            }
+        }
+        public Currency Currency
+        {
+            get => !MainReferences.Currencies.ContainsKey(Entity.SF_CRS_DC)
+                ? null
+                : MainReferences.Currencies[Entity.SF_CRS_DC];
+            set
+            {
+                if (Entity.SF_CRS_DC == value.DOC_CODE) return;
+                Entity.SF_CRS_DC = value.DOC_CODE;
+                RaisePropertyChanged();
+            }
+        }
+        public override decimal DocCode
+        {
+            get => Entity.DOC_CODE;
+            set
+            {
+                if (Entity.DOC_CODE == value) return;
+                Entity.DOC_CODE = value;
+                RaisePropertyChanged();
+            }
+        }
+        public override string Name
+            => $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} от {Entity.SF_DATE.ToShortDateString()}";
+
+        public int SF_IN_NUM
+        {
+            get => Entity.SF_IN_NUM;
+            set
+            {
+                if (Entity.SF_IN_NUM == value) return;
+                Entity.SF_IN_NUM = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string SF_OUT_NUM
+        {
+            get => Entity.SF_OUT_NUM;
+            set
+            {
+                if (Entity.SF_OUT_NUM == value) return;
+                Entity.SF_OUT_NUM = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public DateTime SF_DATE
+        {
+            get => Entity.SF_DATE;
+            set
+            {
+                if (Entity.SF_DATE == value) return;
+                Entity.SF_DATE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_CLIENT_DC
+        {
+            get => Entity.SF_CLIENT_DC;
+            set
+            {
+                if (Entity.SF_CLIENT_DC == value) return;
+                Entity.SF_CLIENT_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string SF_CLIENT_NAME
+        {
+            get => Entity.SF_CLIENT_NAME;
+            set
+            {
+                if (Entity.SF_CLIENT_NAME == value) return;
+                Entity.SF_CLIENT_NAME = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int? SF_CLIENT_RS_CODE
+        {
+            get => Entity.SF_CLIENT_RS_CODE;
+            set
+            {
+                if (Entity.SF_CLIENT_RS_CODE == value) return;
+                Entity.SF_CLIENT_RS_CODE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal SF_CRS_DC
+        {
+            get => Entity.SF_CRS_DC;
+            set
+            {
+                if (Entity.SF_CRS_DC == value) return;
+                Entity.SF_CRS_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_CRS_SUMMA_K_OPLATE
+        {
+            get => Entity.SF_CRS_SUMMA_K_OPLATE;
+            set
+            {
+                if (Entity.SF_CRS_SUMMA_K_OPLATE == value) return;
+                Entity.SF_CRS_SUMMA_K_OPLATE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public double SF_CRS_RATE
+        {
+            get => Entity.SF_CRS_RATE;
+            set
+            {
+                if (Math.Abs(Entity.SF_CRS_RATE - value) < 0) return;
+                Entity.SF_CRS_RATE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_RUB_SUMMA_K_OPLATE
+        {
+            get => Entity.SF_RUB_SUMMA_K_OPLATE;
+            set
+            {
+                if (Entity.SF_RUB_SUMMA_K_OPLATE == value) return;
+                Entity.SF_RUB_SUMMA_K_OPLATE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal SF_PAY_COND_DC
+        {
+            get => Entity.SF_PAY_COND_DC;
+            set
+            {
+                if (Entity.SF_PAY_COND_DC == value) return;
+                Entity.SF_PAY_COND_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string CREATOR
+        {
+            get => Entity.CREATOR;
+            set
+            {
+                if (Entity.CREATOR == value) return;
+                Entity.CREATOR = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public short SF_ACCEPTED
+        {
+            get => Entity.SF_ACCEPTED;
+            set
+            {
+                if (Entity.SF_ACCEPTED == value) return;
+                Entity.SF_ACCEPTED = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string SF_GROZOOTPRAVITEL
+        {
+            get => Entity.SF_GROZOOTPRAVITEL;
+            set
+            {
+                if (Entity.SF_GROZOOTPRAVITEL == value) return;
+                Entity.SF_GROZOOTPRAVITEL = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string SF_GRUZOPOLUCHATEL
+        {
+            get => Entity.SF_GRUZOPOLUCHATEL;
+            set
+            {
+                if (Entity.SF_GRUZOPOLUCHATEL == value) return;
+                Entity.SF_GRUZOPOLUCHATEL = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string SF_PAYDOC_TEXT
+        {
+            get => Entity.SF_PAYDOC_TEXT;
+            set
+            {
+                if (Entity.SF_PAYDOC_TEXT == value) return;
+                Entity.SF_PAYDOC_TEXT = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_BASE_DC
+        {
+            get => Entity.SF_BASE_DC;
+            set
+            {
+                if (Entity.SF_BASE_DC == value) return;
+                Entity.SF_BASE_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string SF_DOPOLN
+        {
+            get => Entity.SF_DOPOLN;
+            set
+            {
+                if (Entity.SF_DOPOLN == value) return;
+                Entity.SF_DOPOLN = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public short? SF_SCHET_FLAG
+        {
+            get => Entity.SF_SCHET_FLAG;
+            set
+            {
+                if (Entity.SF_SCHET_FLAG == value) return;
+                Entity.SF_SCHET_FLAG = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public short? SF_SCHET_FACT_FLAG
+        {
+            get => Entity.SF_SCHET_FACT_FLAG;
+            set
+            {
+                if (Entity.SF_SCHET_FACT_FLAG == value) return;
+                Entity.SF_SCHET_FACT_FLAG = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_VZAIMOR_TYPE_DC
+        {
+            get => Entity.SF_VZAIMOR_TYPE_DC;
+            set
+            {
+                if (Entity.SF_VZAIMOR_TYPE_DC == value) return;
+                Entity.SF_VZAIMOR_TYPE_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_FACT_SUMMA
+        {
+            get => Entity.SF_FACT_SUMMA;
+            set
+            {
+                if (Entity.SF_FACT_SUMMA == value) return;
+                Entity.SF_FACT_SUMMA = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public short? SF_PAY_FLAG
+        {
+            get => Entity.SF_PAY_FLAG;
+            set
+            {
+                if (Entity.SF_PAY_FLAG == value) return;
+                Entity.SF_PAY_FLAG = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_CENTR_OTV_DC
+        {
+            get => Entity.SF_CENTR_OTV_DC;
+            set
+            {
+                if (Entity.SF_CENTR_OTV_DC == value) return;
+                Entity.SF_CENTR_OTV_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_RECEIVER_KONTR_DC
+        {
+            get => Entity.SF_RECEIVER_KONTR_DC;
+            set
+            {
+                if (Entity.SF_RECEIVER_KONTR_DC == value) return;
+                Entity.SF_RECEIVER_KONTR_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int? SF_RECEIVER_RS_CODE
+        {
+            get => Entity.SF_RECEIVER_RS_CODE;
+            set
+            {
+                if (Entity.SF_RECEIVER_RS_CODE == value) return;
+                Entity.SF_RECEIVER_RS_CODE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public short? SF_TRANZIT
+        {
+            get => Entity.SF_TRANZIT;
+            set
+            {
+                if (Entity.SF_TRANZIT == value) return;
+                Entity.SF_TRANZIT = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_TRANZIT_SPOST_DC
+        {
+            get => Entity.SF_TRANZIT_SPOST_DC;
+            set
+            {
+                if (Entity.SF_TRANZIT_SPOST_DC == value) return;
+                Entity.SF_TRANZIT_SPOST_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public double? SF_TRANZIT_NACEN_PERC
+        {
+            get => Entity.SF_TRANZIT_NACEN_PERC;
+            set
+            {
+                if (Entity.SF_TRANZIT_NACEN_PERC == value) return;
+                Entity.SF_TRANZIT_NACEN_PERC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_KONTR_CRS_DC
+        {
+            get => Entity.SF_KONTR_CRS_DC;
+            set
+            {
+                if (Entity.SF_KONTR_CRS_DC == value) return;
+                Entity.SF_KONTR_CRS_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_KONTR_CRS_SUMMA
+        {
+            get => Entity.SF_KONTR_CRS_SUMMA;
+            set
+            {
+                if (Entity.SF_KONTR_CRS_SUMMA == value) return;
+                Entity.SF_KONTR_CRS_SUMMA = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public double? SF_KONTR_CRS_RATE
+        {
+            get => Entity.SF_KONTR_CRS_RATE;
+            set
+            {
+                if (Entity.SF_KONTR_CRS_RATE == value) return;
+                Entity.SF_KONTR_CRS_RATE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_UCHET_VALUTA_DC
+        {
+            get => Entity.SF_UCHET_VALUTA_DC;
+            set
+            {
+                if (Entity.SF_UCHET_VALUTA_DC == value) return;
+                Entity.SF_UCHET_VALUTA_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public double? SF_UCHET_VALUTA_RATE
+        {
+            get => Entity.SF_UCHET_VALUTA_RATE;
+            set
+            {
+                if (Entity.SF_UCHET_VALUTA_RATE == value) return;
+                Entity.SF_UCHET_VALUTA_RATE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_SUMMA_V_UCHET_VALUTE
+        {
+            get => Entity.SF_SUMMA_V_UCHET_VALUTE;
+            set
+            {
+                if (Entity.SF_SUMMA_V_UCHET_VALUTE == value) return;
+                Entity.SF_SUMMA_V_UCHET_VALUTE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public short? SF_NDS_1INCLUD_0NO
+        {
+            get => Entity.SF_NDS_1INCLUD_0NO;
+            set
+            {
+                if (Entity.SF_NDS_1INCLUD_0NO == value) return;
+                Entity.SF_NDS_1INCLUD_0NO = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_FORM_RASCH_DC
+        {
+            get => Entity.SF_FORM_RASCH_DC;
+            set
+            {
+                if (Entity.SF_FORM_RASCH_DC == value) return;
+                Entity.SF_FORM_RASCH_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public double? SF_NALOG_NA_PROD_PROC
+        {
+            get => Entity.SF_NALOG_NA_PROD_PROC;
+            set
+            {
+                if (Entity.SF_NALOG_NA_PROD_PROC == value) return;
+                Entity.SF_NALOG_NA_PROD_PROC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_DILER_DC
+        {
+            get => Entity.SF_DILER_DC;
+            set
+            {
+                if (Entity.SF_DILER_DC == value) return;
+                Entity.SF_DILER_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_DILER_SUMMA
+        {
+            get => Entity.SF_DILER_SUMMA;
+            set
+            {
+                if (Entity.SF_DILER_SUMMA == value) return;
+                Entity.SF_DILER_SUMMA = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_DILER_CRS_DC
+        {
+            get => Entity.SF_DILER_CRS_DC;
+            set
+            {
+                if (Entity.SF_DILER_CRS_DC == value) return;
+                Entity.SF_DILER_CRS_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public double? SF_DILER_RATE
+        {
+            get => Entity.SF_DILER_RATE;
+            set
+            {
+                if (Entity.SF_DILER_RATE == value) return;
+                Entity.SF_DILER_RATE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public short? SF_1INCLUD_NAL_S_PROD_0NO
+        {
+            get => Entity.SF_1INCLUD_NAL_S_PROD_0NO;
+            set
+            {
+                if (Entity.SF_1INCLUD_NAL_S_PROD_0NO == value) return;
+                Entity.SF_1INCLUD_NAL_S_PROD_0NO = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SF_DOP_USL_DC
+        {
+            get => Entity.SF_DOP_USL_DC;
+            set
+            {
+                if (Entity.SF_DOP_USL_DC == value) return;
+                Entity.SF_DOP_USL_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public short? SF_AUTOMAT_CREATE
+        {
+            get => Entity.SF_AUTOMAT_CREATE;
+            set
+            {
+                if (Entity.SF_AUTOMAT_CREATE == value) return;
+                Entity.SF_AUTOMAT_CREATE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string SF_NOTE
+        {
+            get => Entity.SF_NOTE;
+            set
+            {
+                if (Entity.SF_NOTE == value) return;
+                Entity.SF_NOTE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int? SF_SOTRUDNIK_TN
+        {
+            get => Entity.SF_SOTRUDNIK_TN;
+            set
+            {
+                if (Entity.SF_SOTRUDNIK_TN == value) return;
+                Entity.SF_SOTRUDNIK_TN = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public byte[] TSTAMP
+        {
+            get => Entity.TSTAMP;
+            set
+            {
+                if (Entity.TSTAMP == value) return;
+                Entity.TSTAMP = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string SF_CORRECT_NUM
+        {
+            get => Entity.SF_CORRECT_NUM;
+            set
+            {
+                if (Entity.SF_CORRECT_NUM == value) return;
+                Entity.SF_CORRECT_NUM = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public DateTime? SF_CORRECT_DATE
+        {
+            get => Entity.SF_CORRECT_DATE;
+            set
+            {
+                if (Entity.SF_CORRECT_DATE == value) return;
+                Entity.SF_CORRECT_DATE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string SF_CRS_CODE
+        {
+            get => Entity.SF_CRS_CODE;
+            set
+            {
+                if (Entity.SF_CRS_CODE == value) return;
+                Entity.SF_CRS_CODE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string CORRECTION_NUM
+        {
+            get => Entity.CORRECTION_NUM;
+            set
+            {
+                if (Entity.CORRECTION_NUM == value) return;
+                Entity.CORRECTION_NUM = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string CORRECTION_DATE
+        {
+            get => Entity.CORRECTION_DATE;
+            set
+            {
+                if (Entity.CORRECTION_DATE == value) return;
+                Entity.CORRECTION_DATE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string COUNTRY_NAME
+        {
+            get => Entity.COUNTRY_NAME;
+            set
+            {
+                if (Entity.COUNTRY_NAME == value) return;
+                Entity.COUNTRY_NAME = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string COUNTRY_CODE
+        {
+            get => Entity.COUNTRY_CODE;
+            set
+            {
+                if (Entity.COUNTRY_CODE == value) return;
+                Entity.COUNTRY_CODE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string KPP
+        {
+            get => Entity.KPP;
+            set
+            {
+                if (Entity.KPP == value) return;
+                Entity.KPP = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Guid? GUID_ID
+        {
+            get => Entity.GUID_ID;
+            set
+            {
+                if (Entity.GUID_ID == value) return;
+                Entity.GUID_ID = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Guid? GRUZO_INFO_ID
+        {
+            get => Entity.GRUZO_INFO_ID;
+            set
+            {
+                if (Entity.GRUZO_INFO_ID == value) return;
+                Entity.GRUZO_INFO_ID = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public DateTime? REGISTER_DATE
+        {
+            get => Entity.REGISTER_DATE;
+            set
+            {
+                if (Entity.REGISTER_DATE == value) return;
+                Entity.REGISTER_DATE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? BUH_CLIENT_DC
+        {
+            get => Entity.BUH_CLIENT_DC;
+            set
+            {
+                if (Entity.BUH_CLIENT_DC == value) return;
+                Entity.BUH_CLIENT_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? BUH_RECEIVER_DC
+        {
+            get => Entity.BUH_RECEIVER_DC;
+            set
+            {
+                if (Entity.BUH_RECEIVER_DC == value) return;
+                Entity.BUH_RECEIVER_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string NAKL_GRUZOOTPRAV
+        {
+            get => Entity.NAKL_GRUZOOTPRAV;
+            set
+            {
+                if (Entity.NAKL_GRUZOOTPRAV == value) return;
+                Entity.NAKL_GRUZOOTPRAV = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string NAKL_GRUZOPOLUCH
+        {
+            get => Entity.NAKL_GRUZOPOLUCH;
+            set
+            {
+                if (Entity.NAKL_GRUZOPOLUCH == value) return;
+                Entity.NAKL_GRUZOPOLUCH = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public GROZO_REQUISITE GROZO_REQUISITE
+        {
+            get => Entity.GROZO_REQUISITE;
+            set
+            {
+                if (Entity.GROZO_REQUISITE == value) return;
+                Entity.GROZO_REQUISITE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SD_179 SD_179
+        {
+            get => Entity.SD_179;
+            set
+            {
+                if (Entity.SD_179 == value) return;
+                Entity.SD_179 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SD_189 SD_189
+        {
+            get => Entity.SD_189;
+            set
+            {
+                if (Entity.SD_189 == value) return;
+                Entity.SD_189 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SD_301 SD_301
+        {
+            get => Entity.SD_301;
+            set
+            {
+                if (Entity.SD_301 == value) return;
+                Entity.SD_301 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SD_301 SD_3011
+        {
+            get => Entity.SD_3011;
+            set
+            {
+                if (Entity.SD_3011 == value) return;
+                Entity.SD_3011 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SD_40 SD_40
+        {
+            get => Entity.SD_40;
+            set
+            {
+                if (Entity.SD_40 == value) return;
+                Entity.SD_40 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SD_43 SD_43
+        {
+            get => Entity.SD_43;
+            set
+            {
+                if (Entity.SD_43 == value) return;
+                Entity.SD_43 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SD_43 SD_431
+        {
+            get => Entity.SD_431;
+            set
+            {
+                if (Entity.SD_431 == value) return;
+                Entity.SD_431 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SD_43 SD_432
+        {
+            get => Entity.SD_432;
+            set
+            {
+                if (Entity.SD_432 == value) return;
+                Entity.SD_432 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SD_43 SD_433
+        {
+            get => Entity.SD_433;
+            set
+            {
+                if (Entity.SD_433 == value) return;
+                Entity.SD_433 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SD_43 SD_434
+        {
+            get => Entity.SD_434;
+            set
+            {
+                if (Entity.SD_434 == value) return;
+                Entity.SD_434 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SD_77 SD_77
+        {
+            get => Entity.SD_77;
+            set
+            {
+                if (Entity.SD_77 == value) return;
+                Entity.SD_77 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public SD_84 Entity
+        {
+            get => myEntity;
+            set
+            {
+                if (myEntity == value) return;
+                myEntity = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public virtual void Save(SD_84 doc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(decimal dc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateFrom(SD_84 ent)
+        {
+            SF_IN_NUM = ent.SF_IN_NUM;
+            SF_OUT_NUM = ent.SF_OUT_NUM;
+            SF_DATE = ent.SF_DATE;
+            SF_CLIENT_DC = ent.SF_CLIENT_DC;
+            SF_CLIENT_NAME = ent.SF_CLIENT_NAME;
+            SF_CLIENT_RS_CODE = ent.SF_CLIENT_RS_CODE;
+            SF_CRS_DC = ent.SF_CRS_DC;
+            SF_CRS_SUMMA_K_OPLATE = ent.SF_CRS_SUMMA_K_OPLATE;
+            SF_CRS_RATE = ent.SF_CRS_RATE;
+            SF_RUB_SUMMA_K_OPLATE = ent.SF_RUB_SUMMA_K_OPLATE;
+            SF_PAY_COND_DC = ent.SF_PAY_COND_DC;
+            CREATOR = ent.CREATOR;
+            SF_ACCEPTED = ent.SF_ACCEPTED;
+            SF_GROZOOTPRAVITEL = ent.SF_GROZOOTPRAVITEL;
+            SF_GRUZOPOLUCHATEL = ent.SF_GRUZOPOLUCHATEL;
+            SF_PAYDOC_TEXT = ent.SF_PAYDOC_TEXT;
+            SF_BASE_DC = ent.SF_BASE_DC;
+            SF_DOPOLN = ent.SF_DOPOLN;
+            SF_SCHET_FLAG = ent.SF_SCHET_FLAG;
+            SF_SCHET_FACT_FLAG = ent.SF_SCHET_FACT_FLAG;
+            SF_VZAIMOR_TYPE_DC = ent.SF_VZAIMOR_TYPE_DC;
+            SF_FACT_SUMMA = ent.SF_FACT_SUMMA;
+            SF_PAY_FLAG = ent.SF_PAY_FLAG;
+            SF_CENTR_OTV_DC = ent.SF_CENTR_OTV_DC;
+            SF_RECEIVER_KONTR_DC = ent.SF_RECEIVER_KONTR_DC;
+            SF_RECEIVER_RS_CODE = ent.SF_RECEIVER_RS_CODE;
+            SF_TRANZIT = ent.SF_TRANZIT;
+            SF_TRANZIT_SPOST_DC = ent.SF_TRANZIT_SPOST_DC;
+            SF_TRANZIT_NACEN_PERC = ent.SF_TRANZIT_NACEN_PERC;
+            SF_KONTR_CRS_DC = ent.SF_KONTR_CRS_DC;
+            SF_KONTR_CRS_SUMMA = ent.SF_KONTR_CRS_SUMMA;
+            SF_KONTR_CRS_RATE = ent.SF_KONTR_CRS_RATE;
+            SF_UCHET_VALUTA_DC = ent.SF_UCHET_VALUTA_DC;
+            SF_UCHET_VALUTA_RATE = ent.SF_UCHET_VALUTA_RATE;
+            SF_SUMMA_V_UCHET_VALUTE = ent.SF_SUMMA_V_UCHET_VALUTE;
+            SF_NDS_1INCLUD_0NO = ent.SF_NDS_1INCLUD_0NO;
+            SF_FORM_RASCH_DC = ent.SF_FORM_RASCH_DC;
+            SF_NALOG_NA_PROD_PROC = ent.SF_NALOG_NA_PROD_PROC;
+            SF_DILER_DC = ent.SF_DILER_DC;
+            SF_DILER_SUMMA = ent.SF_DILER_SUMMA;
+            SF_DILER_CRS_DC = ent.SF_DILER_CRS_DC;
+            SF_DILER_RATE = ent.SF_DILER_RATE;
+            SF_1INCLUD_NAL_S_PROD_0NO = ent.SF_1INCLUD_NAL_S_PROD_0NO;
+            SF_DOP_USL_DC = ent.SF_DOP_USL_DC;
+            SF_AUTOMAT_CREATE = ent.SF_AUTOMAT_CREATE;
+            SF_NOTE = ent.SF_NOTE;
+            SF_SOTRUDNIK_TN = ent.SF_SOTRUDNIK_TN;
+            TSTAMP = ent.TSTAMP;
+            SF_CORRECT_NUM = ent.SF_CORRECT_NUM;
+            SF_CORRECT_DATE = ent.SF_CORRECT_DATE;
+            SF_CRS_CODE = ent.SF_CRS_CODE;
+            CORRECTION_NUM = ent.CORRECTION_NUM;
+            CORRECTION_DATE = ent.CORRECTION_DATE;
+            COUNTRY_NAME = ent.COUNTRY_NAME;
+            COUNTRY_CODE = ent.COUNTRY_CODE;
+            KPP = ent.KPP;
+            GUID_ID = ent.GUID_ID;
+            GRUZO_INFO_ID = ent.GRUZO_INFO_ID;
+            REGISTER_DATE = ent.REGISTER_DATE;
+            BUH_CLIENT_DC = ent.BUH_CLIENT_DC;
+            BUH_RECEIVER_DC = ent.BUH_RECEIVER_DC;
+            NAKL_GRUZOOTPRAV = ent.NAKL_GRUZOOTPRAV;
+            NAKL_GRUZOPOLUCH = ent.NAKL_GRUZOPOLUCH;
+            GROZO_REQUISITE = ent.GROZO_REQUISITE;
+            SD_179 = ent.SD_179;
+            SD_189 = ent.SD_189;
+            SD_301 = ent.SD_301;
+            SD_3011 = ent.SD_3011;
+            SD_40 = ent.SD_40;
+            SD_43 = ent.SD_43;
+            SD_431 = ent.SD_431;
+            SD_432 = ent.SD_432;
+            SD_433 = ent.SD_433;
+            SD_434 = ent.SD_434;
+            SD_77 = ent.SD_77;
+        }
+
+        public void UpdateTo(SD_84 ent)
+        {
+            ent.SF_IN_NUM = SF_IN_NUM;
+            ent.SF_OUT_NUM = SF_OUT_NUM;
+            ent.SF_DATE = SF_DATE;
+            ent.SF_CLIENT_DC = SF_CLIENT_DC;
+            ent.SF_CLIENT_NAME = SF_CLIENT_NAME;
+            ent.SF_CLIENT_RS_CODE = SF_CLIENT_RS_CODE;
+            ent.SF_CRS_DC = SF_CRS_DC;
+            ent.SF_CRS_SUMMA_K_OPLATE = SF_CRS_SUMMA_K_OPLATE;
+            ent.SF_CRS_RATE = SF_CRS_RATE;
+            ent.SF_RUB_SUMMA_K_OPLATE = SF_RUB_SUMMA_K_OPLATE;
+            ent.SF_PAY_COND_DC = SF_PAY_COND_DC;
+            ent.CREATOR = CREATOR;
+            ent.SF_ACCEPTED = SF_ACCEPTED;
+            ent.SF_GROZOOTPRAVITEL = SF_GROZOOTPRAVITEL;
+            ent.SF_GRUZOPOLUCHATEL = SF_GRUZOPOLUCHATEL;
+            ent.SF_PAYDOC_TEXT = SF_PAYDOC_TEXT;
+            ent.SF_BASE_DC = SF_BASE_DC;
+            ent.SF_DOPOLN = SF_DOPOLN;
+            ent.SF_SCHET_FLAG = SF_SCHET_FLAG;
+            ent.SF_SCHET_FACT_FLAG = SF_SCHET_FACT_FLAG;
+            ent.SF_VZAIMOR_TYPE_DC = SF_VZAIMOR_TYPE_DC;
+            ent.SF_FACT_SUMMA = SF_FACT_SUMMA;
+            ent.SF_PAY_FLAG = SF_PAY_FLAG;
+            ent.SF_CENTR_OTV_DC = SF_CENTR_OTV_DC;
+            ent.SF_RECEIVER_KONTR_DC = SF_RECEIVER_KONTR_DC;
+            ent.SF_RECEIVER_RS_CODE = SF_RECEIVER_RS_CODE;
+            ent.SF_TRANZIT = SF_TRANZIT;
+            ent.SF_TRANZIT_SPOST_DC = SF_TRANZIT_SPOST_DC;
+            ent.SF_TRANZIT_NACEN_PERC = SF_TRANZIT_NACEN_PERC;
+            ent.SF_KONTR_CRS_DC = SF_KONTR_CRS_DC;
+            ent.SF_KONTR_CRS_SUMMA = SF_KONTR_CRS_SUMMA;
+            ent.SF_KONTR_CRS_RATE = SF_KONTR_CRS_RATE;
+            ent.SF_UCHET_VALUTA_DC = SF_UCHET_VALUTA_DC;
+            ent.SF_UCHET_VALUTA_RATE = SF_UCHET_VALUTA_RATE;
+            ent.SF_SUMMA_V_UCHET_VALUTE = SF_SUMMA_V_UCHET_VALUTE;
+            ent.SF_NDS_1INCLUD_0NO = SF_NDS_1INCLUD_0NO;
+            ent.SF_FORM_RASCH_DC = SF_FORM_RASCH_DC;
+            ent.SF_NALOG_NA_PROD_PROC = SF_NALOG_NA_PROD_PROC;
+            ent.SF_DILER_DC = SF_DILER_DC;
+            ent.SF_DILER_SUMMA = SF_DILER_SUMMA;
+            ent.SF_DILER_CRS_DC = SF_DILER_CRS_DC;
+            ent.SF_DILER_RATE = SF_DILER_RATE;
+            ent.SF_1INCLUD_NAL_S_PROD_0NO = SF_1INCLUD_NAL_S_PROD_0NO;
+            ent.SF_DOP_USL_DC = SF_DOP_USL_DC;
+            ent.SF_AUTOMAT_CREATE = SF_AUTOMAT_CREATE;
+            ent.SF_NOTE = SF_NOTE;
+            ent.SF_SOTRUDNIK_TN = SF_SOTRUDNIK_TN;
+            ent.TSTAMP = TSTAMP;
+            ent.SF_CORRECT_NUM = SF_CORRECT_NUM;
+            ent.SF_CORRECT_DATE = SF_CORRECT_DATE;
+            ent.SF_CRS_CODE = SF_CRS_CODE;
+            ent.CORRECTION_NUM = CORRECTION_NUM;
+            ent.CORRECTION_DATE = CORRECTION_DATE;
+            ent.COUNTRY_NAME = COUNTRY_NAME;
+            ent.COUNTRY_CODE = COUNTRY_CODE;
+            ent.KPP = KPP;
+            ent.GUID_ID = GUID_ID;
+            ent.GRUZO_INFO_ID = GRUZO_INFO_ID;
+            ent.REGISTER_DATE = REGISTER_DATE;
+            ent.BUH_CLIENT_DC = BUH_CLIENT_DC;
+            ent.BUH_RECEIVER_DC = BUH_RECEIVER_DC;
+            ent.NAKL_GRUZOOTPRAV = NAKL_GRUZOOTPRAV;
+            ent.NAKL_GRUZOPOLUCH = NAKL_GRUZOPOLUCH;
+            ent.GROZO_REQUISITE = GROZO_REQUISITE;
+            ent.SD_179 = SD_179;
+            ent.SD_189 = SD_189;
+            ent.SD_301 = SD_301;
+            ent.SD_3011 = SD_3011;
+            ent.SD_40 = SD_40;
+            ent.SD_43 = SD_43;
+            ent.SD_431 = SD_431;
+            ent.SD_432 = SD_432;
+            ent.SD_433 = SD_433;
+            ent.SD_434 = SD_434;
+            ent.SD_77 = SD_77;
+        }
+
+        public SD_84 DefaultValue()
+        {
+            return new SD_84
+            {
+                DOC_CODE = -1,
+                Id = Guid.NewGuid()
+            };
+        }
+
+        public List<SD_84> LoadList()
+        {
+            throw new NotImplementedException();
+        }
+
+        public EntityLoadCodition LoadCondition { get; set; }
+
+        public SD_84 Load(decimal dc, bool isShort = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public SD_84 Load(Guid id, bool isShort = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual SD_84 Load(decimal dc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual SD_84 Load(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class DataAnnotationsSFClientViewModel : DataAnnotationForFluentApiBase, IMetadataProvider<SFClientViewModel>
+    {
+        void IMetadataProvider<SFClientViewModel>.BuildMetadata(MetadataBuilder<SFClientViewModel> builder)
+        {
+            SetNotAutoGenerated(builder);
+            builder.Property(_ => _.Receiver).NotAutoGenerated();
+            builder.Property(_ => _.CO).NotAutoGenerated();
+            builder.Property(_ => _.VzaimoraschetType).NotAutoGenerated();
+            builder.Property(_ => _.FormRaschet).NotAutoGenerated();
+            builder.Property(_ => _.PayCondition).NotAutoGenerated();
+            builder.Property(_ => _.SF_DATE).AutoGenerated().DisplayName("Дата");
+            builder.Property(_ => _.SF_IN_NUM).AutoGenerated().DisplayName("№");
+            builder.Property(_ => _.SF_OUT_NUM).AutoGenerated().DisplayName("В№");
+            builder.Property(_ => _.Client).AutoGenerated().DisplayName("Контрагент");
+            builder.Property(_ => _.Currency).AutoGenerated().DisplayName("Валюта");
+            builder.Property(_ => _.SummaOtgruz).AutoGenerated().DisplayName("Отгружено");
+            builder.Property(_ => _.SF_DILER_SUMMA).AutoGenerated().DisplayName("Сумма дилера");
+            builder.Property(_ => _.Note).AutoGenerated().DisplayName("примечание");
+            builder.Property(_ => _.Diler).AutoGenerated().DisplayName("Дилер");
+            builder.Property(_ => _.IsAccepted).AutoGenerated().DisplayName("Акцептован");
+            builder.Property(_ => _.COName).AutoGenerated().DisplayName("ЦО");
+            builder.Property(_ => _.Summa).AutoGenerated().DisplayName("Сумма");
+        }
+    }
+}

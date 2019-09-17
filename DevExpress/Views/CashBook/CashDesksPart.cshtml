@@ -1,0 +1,15 @@
+﻿@using DevExpress.Controllers
+@using DevExpress.Web.Mvc.UI
+@Html.DevExpress().ComboBox(setting =>
+{
+    setting.Name = "CashDesksBox";
+    setting.Width = 200;
+    setting.SelectedIndex = 0;
+    setting.Properties.DisplayFormatString = "{0}";
+    setting.Properties.EnableClientSideAPI = true;
+    setting.Properties.ClientSideEvents.ValueChanged = "OnBoxIndexChanged";
+    setting.Properties.ValueField = "DOC_CODE";
+    setting.Properties.TextField = "Name";
+    setting.Properties.ValueType = typeof(decimal);
+    setting.Properties.EnableFocusedStyle = true;
+}).BindList(((CashBookController) ViewContext.Controller).CashList).Bind(Model).GetHtml()

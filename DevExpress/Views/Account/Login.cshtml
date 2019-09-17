@@ -1,0 +1,46 @@
+﻿@model DevExpress.Models.DataModel.LoginModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Login";
+    @Styles.Render("~/Content/css/Site.css")
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        position();
+        $(window).resize(position);
+    });
+
+    function position() {
+        $('#LoginFormMine').css('height', $(window).height());
+        $('#LoginContainerCenter')
+            .css('margin-top', $('#LoginFormMine').height() / 2 - $('#LoginContainerCenter').height() / 2);
+    }
+</script>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="LoginFormMine" id="LoginFormMine">
+        <div class="LoginContainerCenter" id="LoginContainerCenter">
+            <h2>KURS</h2>
+            <img src="~/Content/images/avatar.png" width="200px"/>
+            <div class="AuthArea">
+                <br>
+                Логин
+                <br>
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name, "")
+                <br>
+                Пароль
+                <br>
+                @Html.EditorFor(model => model.Password, new {@class = "form-control", placeholder = "Password"})
+                @Html.ValidationMessageFor(model => model.Password, "")
+            </div>
+            <input type="submit" value="Войти" class="Login-button"/>
+            @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+        </div>
+    </div>
+}

@@ -1,0 +1,73 @@
+﻿<UserControl x:Class="KursAM2.View.KursReferences.KontragentControls.KontragentContactUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             mc:Ignorable="d"
+             >
+    <dxlc:LayoutControl Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" Padding="0"
+                        Margin="0,0,0,0">
+        <dxlc:LayoutItem>
+            <Label FontSize="20">Контакты</Label>
+        </dxlc:LayoutItem>
+        <dxlc:LayoutGroup Orientation="Vertical" AllowBringChildIntoView="True" Padding="0" Margin="0">
+            <dxlc:LayoutGroup Orientation="Vertical" HorizontalAlignment="Stretch">
+                <dxlc:LayoutItem Label="Контактное лицо " Margin="0,0,0,5">
+                    <dxe:TextEdit
+                        EditValue="{Binding Kontragent.CONTAKT_LICO, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutGroup Orientation="Horizontal">
+                    <dxlc:LayoutItem Label="Телефон " Margin="0,0,0,5">
+                        <dxe:TextEdit
+                            EditValue="{Binding Kontragent.TEL, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Факс " Margin="10,0,0,5">
+                        <dxe:TextEdit
+                            EditValue="{Binding Kontragent.FAX, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutItem Label="Почтовый адрес" Margin="0,0,0,5" MinWidth="500">
+                    <TextBox
+                        Text="{Binding Kontragent.ADDRESS, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                        Height="50" TextWrapping="Wrap" />
+                </dxlc:LayoutItem>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup Orientation="Vertical" MinWidth="400">
+                <dxlc:LayoutItem Label="Руководитель" Margin="0,0,0,5">
+                    <dxe:TextEdit
+                        EditValue="{Binding Kontragent.Header, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutGroup>
+                    <dxlc:LayoutItem Label="Гл.бухгалтер">
+                        <dxe:TextEdit
+                            EditValue="{Binding Kontragent.GlavBuh, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}" />
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Кассир" Margin="10,0,0,5">
+                        <dxe:TextEdit
+                            EditValue="{Binding Kontragent.KASSIR, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}" />
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup>
+                    <dxlc:LayoutItem Label="EMail" Margin="0,0,0,0">
+                        <dxe:TextEdit
+                            EditValue="{Binding Kontragent.E_MAIL, 
+                        NotifyOnSourceUpdated=True,
+                        NotifyOnTargetUpdated=True}" />
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Margin="10,0,0,5" Label="WWW">
+                        <dxe:TextEdit
+                            EditValue="{Binding Kontragent.WWW, 
+                        NotifyOnSourceUpdated=True,
+                        NotifyOnTargetUpdated=True}" />
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutItem Label="Паспорт">
+                <TextBox Text="{Binding Kontragent.PASSPORT, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                         TextWrapping="Wrap" Height="50" />
+            </dxlc:LayoutItem>
+        </dxlc:LayoutGroup>
+    </dxlc:LayoutControl>
+</UserControl>

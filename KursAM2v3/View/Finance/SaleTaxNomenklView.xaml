@@ -1,0 +1,381 @@
+﻿<dx:DXWindow xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:control="clr-namespace:Core.Control;assembly=Core"
+             x:Class="KursAM2.View.Finance.SaleTaxNomenklView"
+             Title="Таксировка валютных продаж" Height="350" Width="525">
+
+    <DockPanel>
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Vertical" Padding="0">
+            <dxlc:LayoutGroup x:Name="groupControl" Header="LayoutGroup" View="Group">
+                <StackPanel Margin="0,5,0,0" Orientation="Horizontal" Height="30">
+                    <Label VerticalAlignment="Center" Margin="0,0,5,0">За период с </Label>
+                    <dxe:DateEdit DateTime="{Binding DateStart, UpdateSourceTrigger=PropertyChanged}" Width="100" />
+                    <Label VerticalAlignment="Center" Margin="5,0,5,0">  по  </Label>
+                    <dxe:DateEdit DateTime="{Binding DateEnd, UpdateSourceTrigger=PropertyChanged}" Width="100" />
+                </StackPanel>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup x:Name="groupControl2" Header="LayoutGroup" View="Group" Orientation="Horizontal">
+                <dxg:GridControl x:Name="gridRows"
+                                 Margin="0,5,0,0"
+                                 MaxHeight="10000"
+                                 MaxWidth="10000"
+                                 VerticalAlignment="Stretch"
+                                 AutoGenerateColumns="None"
+                                 dx:DXSerializer.SerializationID="gridRows"
+                                 dx:DXSerializer.StoreLayoutMode="All"
+                                 dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                 dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                 CurrentItem="{Binding CurrentNomenklRow, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                 ItemsSource="{Binding SaleTaxRows, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}">
+                    <dxg:GridControl.Resources>
+                        <Style x:Key="customRowStyle" TargetType="{x:Type dxg:RowControl}">
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path= Row.IsAutoTax}" Value="True" />
+                                        <Condition Binding="{Binding Path= Row.IsResult}" Value="True" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Foreground" Value="Blue" />
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path= Row.IsAutoTax}" Value="True" />
+                                        <Condition Binding="{Binding Path= Row.IsResult}" Value="False" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Foreground" Value="Red" />
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </dxg:GridControl.Resources>
+                    <dxg:GridControl.Bands>
+                        <dxg:GridControlBand x:Name="Band0" Header="Отгрузка" VisibleIndex="0">
+                            <dxg:GridColumn Name="col1" FieldName="Date" Header="Дата" ReadOnly="True" />
+                            <dxg:GridColumn Name="col2" FieldName="SkladName" Header="Склад" ReadOnly="True" />
+                            <dxg:GridColumn Name="col3" FieldName="KontragentName" Header="Контрагент" ReadOnly="True" />
+                        </dxg:GridControlBand>
+                        <dxg:GridControlBand x:Name="Band1" Header="Счета-фактура" VisibleIndex="1">
+                            <dxg:GridColumn Name="col10" FieldName="AccountDate" Header="Дата" ReadOnly="True" />
+                            <dxg:GridColumn Name="col11" FieldName="AccountInNum" Header="Внут.№" ReadOnly="True" />
+                            <dxg:GridColumn Name="col12" FieldName="AccountOutNum" Header="Внеш.№" ReadOnly="True" />
+                            <dxg:GridColumn Name="col13" FieldName="AccountCreator" Header="Создатель" ReadOnly="True" />
+                            <dxg:GridColumn Name="col14" FieldName="SaleCurrency" Header="Валюта" ReadOnly="True" />
+                            <dxg:GridColumn Header="Цена" Name="col15" FieldName="SalePrice">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Дилер" Name="col16" FieldName="SaleDilerSumma" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Сумма" Name="col17" FieldName="SaleSumma" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControlBand>
+                        <dxg:GridControlBand x:Name="Band3" Header="Перерасчет" VisibleIndex="3">
+                            <dxg:GridColumn Header="Курс" Name="col21" FieldName="Rate">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="True" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Себест.(сумма)" Name="col221" FieldName="RateSumma">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="True" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Себест.(ед.)" Name="col231" FieldName="RateCost">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="True" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="IsSaleTax" FieldName="IsSaleTax" Header="Учитывать" />
+                            <dxg:GridColumn Header="Результат" Name="col26" FieldName="RateDocuments" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Курс(ЦБ)" Name="col27" FieldName="CBRate" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Себестоимость(ЦБ)" Name="col28" FieldName="CBCostSumma"
+                                            ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Результат(ЦБ)" Name="col29" FieldName="Documents" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Разница(расчет-ЦБ)" Name="col30" FieldName="Delta" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="col31" FieldName="IsAutoTax" Header="Авто" ReadOnly="True" />
+                            <dxg:GridColumn Name="col32" FieldName="TaxUpdater" Header="Менеджер" ReadOnly="True" />
+                            <dxg:GridColumn Name="col25" FieldName="SaleNote" Header="Примечание" />
+                        </dxg:GridControlBand>
+                        <dxg:GridControlBand x:Name="Band2" Header="Номенклатура" VisibleIndex="2">
+                            <dxg:GridColumn Name="col4" FieldName="NomenklName" Header="Номенклатура" ReadOnly="True" />
+                            <dxg:GridColumn Name="col5" FieldName="NomenklNomNumber" Header="Ном.№" ReadOnly="True" />
+                            <dxg:GridColumn Name="col6" FieldName="NomenklCurrencyName" Header="Валюта" ReadOnly="True" />
+                            <dxg:GridColumn Header="Кол-во" Name="col7" FieldName="Quantity" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Себестоимость" Name="col8" FieldName="CostPrice" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Сумма (себ.)" Name="col9" FieldName="CostSumma" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControlBand>
+                    </dxg:GridControl.Bands>
+                    <dxg:GridControl.TotalSummary>
+                        <dxg:GridSummaryItem FieldName="Delta" SummaryType="Sum"
+                                             DisplayFormat="n2" />
+                        <dxg:GridSummaryItem FieldName="RateDocuments"
+                                             SummaryType="Sum"
+                                             DisplayFormat="n2" />
+                        <dxg:GridSummaryItem FieldName="RateSumma"
+                                             SummaryType="Sum"
+                                             DisplayFormat="n2" />
+                    </dxg:GridControl.TotalSummary>
+                    <dxg:GridControl.View>
+                        <dxg:TableView ShowTotalSummary="True"
+                                       x:Name="nomTableView"
+                                       ShowAutoFilterRow="True"
+                                       CellStyle="{StaticResource FocusedCellStyle}" 
+                                       ShowGroupPanel="False"
+                                       AllowEditing="True"
+                                       AllowConditionalFormattingManager="True"
+                                       AllowConditionalFormattingMenu="True"
+                                       RowStyle="{StaticResource customRowStyle}">
+                            <dxg:TableView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Экспорт"
+                                              Command="{Binding VisualControlExportCommand}"
+                                              CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              AncestorType={x:Type ContextMenu}}}">
+                                        <MenuItem.Icon>
+                                            <Image
+                                                Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </dxg:TableView.ContextMenu>
+                        </dxg:TableView>
+                    </dxg:GridControl.View>
+
+                </dxg:GridControl>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup x:Name="groupControl3" Header="LayoutGroup" View="Group" Orientation="Horizontal"
+                              dxlc:LayoutControl.AllowVerticalSizing="True">
+                <dxlc:LayoutGroup x:Name="groupControl4" Header="LayoutGroup" View="Group" Orientation="Vertical"
+                                  dxlc:LayoutControl.AllowHorizontalSizing="True">
+                    <dxg:GridControl x:Name="gridPokupDocuments"
+                                     Margin="0,5,0,0"
+                                     MaxHeight="10000"
+                                     MaxWidth="10000"
+                                     VerticalAlignment="Stretch"
+                                     AutoGenerateColumns="None"
+                                     dx:DXSerializer.SerializationID="gridDocs"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                     CurrentItem="{Binding CurrentPurchase, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                     ItemsSource="{Binding PurchaseDocuments, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Name="dCol1" Header="Дата счета" FieldName="TD_26.SD_26.SF_POSTAV_DATE"
+                                            ReadOnly="True" />
+                            <dxg:GridColumn Name="dCol19" Header="Дата прихода" FieldName="SD_24.DD_DATE"
+                                            ReadOnly="True" />
+                            <dxg:GridColumn Name="dCol2" Header="Внут.№" FieldName="TD_26.SD_26.SF_IN_NUM"
+                                            ReadOnly="True" />
+                            <dxg:GridColumn Name="dCol3" Header="Внеш.№" FieldName="TD_26.SD_26.SF_OUT_NUM"
+                                            ReadOnly="True" />
+                            <dxg:GridColumn Name="dCol4" Header="Поставщик" FieldName="PostName" ReadOnly="True" />
+                            <dxg:GridColumn Name="dCol5" Header="Валюта" FieldName="CurrencyName" ReadOnly="True" />
+                            <dxg:GridColumn Header="Курс" Name="dcol6" FieldName="TD_26.SD_26.SF_CRS_RATE"
+                                            ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Курс ЦБ" Name="dcol7" FieldName="CBRate" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Цена" Name="dcol8" FieldName="TD_26.SFT_ED_CENA" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Сумма накл." Name="dcol10" FieldName="TD_26.SFT_SUMMA_NAKLAD"
+                                            ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Кол-во" Name="dcol12" FieldName="DDT_KOL_PRIHOD" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Сумма" Name="dcol11" FieldName="SummaPurchase" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Средняя" Name="dcol13" FieldName="AveragePrice" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowTotalSummary="True"
+                                           x:Name="nomTableDocumentView"
+                                           CellStyle="{StaticResource FocusedCellStyle}" 
+                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           ShowAutoFilterRow="True"
+                                           ShowGroupPanel="False"
+                                           AllowEditing="True"
+                                           AllowConditionalFormattingManager="True"
+                                           AllowConditionalFormattingMenu="True">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Экспорт"
+                                                  Command="{Binding VisualControlExportCommand}"
+                                                  CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              AncestorType={x:Type ContextMenu}}}">
+                                            <MenuItem.Icon>
+                                                <Image
+                                                    Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Открыть лицевой счет" Click="MenuOpenBalansKontragent_Click" />
+                                        <MenuItem Header="Открыть документ" Click="MenuOpenPurchaseDocument_Click" />
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup x:Name="groupControl5" Header="LayoutGroup" View="Group" Orientation="Horizontal"
+                                  dxlc:LayoutControl.AllowHorizontalSizing="True">
+                    <dxg:GridControl x:Name="gridPaymentDocuments"
+                                     Margin="0,5,0,0"
+                                     MaxHeight="10000"
+                                     MaxWidth="10000"
+                                     VerticalAlignment="Stretch"
+                                     AutoGenerateColumns="None"
+                                     dx:DXSerializer.SerializationID="gridPaymentDocs"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                     CurrentItem="{Binding CurrentPayment, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                     ItemsSource="{Binding Payments, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Name="pCol0" Header="Документ" FieldName="DOC_NAME" ReadOnly="True" />
+                            <dxg:GridColumn Name="pCol1" Header="Дата счета" FieldName="DOC_DATE" ReadOnly="True" />
+                            <dxg:GridColumn Name="pCol2" Header="Валюта (опер)" FieldName="OperationCrsName"
+                                            ReadOnly="True" />
+                            <dxg:GridColumn Name="pCol5" Header="Валюта (контр)" FieldName="KontragentCrsName"
+                                            ReadOnly="True" />
+                            <dxg:GridColumn Header="Курс" Name="pCol6" FieldName="OPER_CRS_RATE" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n4" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Поступление(контр)" Name="pcol7" FieldName="CRS_KONTR_IN"
+                                            ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Выплаты(контр)" Name="pcol8" FieldName="CRS_KONTR_OUT"
+                                            ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Поступление(опер)" Name="pcol9" FieldName="CRS_OPER_IN"
+                                            ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Выплаты(опер)" Name="pcol10" FieldName="CRS_OPER_OUT"
+                                            ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.TotalSummary>
+                            <dxg:GridSummaryItem FieldName="CRS_OPER_IN" SummaryType="Sum"
+                                                 DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="CRS_OPER_OUT"
+                                                 SummaryType="Sum"
+                                                 DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="CRS_KONTR_IN"
+                                                 SummaryType="Sum"
+                                                 DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="CRS_KONTR_OUT"
+                                                 SummaryType="Sum"
+                                                 DisplayFormat="n2" />
+                        </dxg:GridControl.TotalSummary>
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowTotalSummary="True"
+                                           x:Name="nomTablePaymentDocumentView"
+                                           CellStyle="{StaticResource FocusedCellStyle}" 
+                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           ShowAutoFilterRow="True"
+                                           ShowGroupPanel="False"
+                                           AllowEditing="True"
+                                           AllowConditionalFormattingManager="True"
+                                           AllowConditionalFormattingMenu="True">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Экспорт"
+                                                  Command="{Binding VisualControlExportCommand}"
+                                                  CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              AncestorType={x:Type ContextMenu}}}">
+                                            <MenuItem.Icon>
+                                                <Image
+                                                    Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Открыть документ" Click="MenuOpenPaymentDocument_Click" />
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+
+    </DockPanel>
+</dx:DXWindow>

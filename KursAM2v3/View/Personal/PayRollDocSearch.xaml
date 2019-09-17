@@ -1,0 +1,165 @@
+﻿<dx:DXWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:control="clr-namespace:Core.Control;assembly=Core"
+             x:Class="KursAM2.View.Personal.PayRollDocSearch" Title="Список ведомостей з/п и шаблоны"
+             Icon="pack://siteoforigin:,,,/Images/Info_Box_Blue.png">
+    <DockPanel>
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
+               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
+        <DockPanel DockPanel.Dock="Top">
+            <dxlc:LayoutItem Label="Поиск"
+                             ToolTip="Строка поиска по полям документов"
+                             Height="26"
+                             Name="TextSearch"
+                             Width="350"
+                             HorizontalAlignment="Right">
+                <dxe:ButtonEdit AllowDefaultButton="False"
+                                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                IsEnabled="{Binding IsSearchEnabled}">
+                    <dxe:ButtonEdit.Buttons>
+                        <dxe:ButtonInfo GlyphKind="Search" Command="{Binding SearchCommand}" />
+                        <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding SearchClearCommand}" />
+                    </dxe:ButtonEdit.Buttons>
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:KeyToCommand Command="{Binding SearchKeyDownCommand}"
+                                             KeyGesture="Enter" />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxe:ButtonEdit>
+            </dxlc:LayoutItem>
+        </DockPanel>
+        <dxlc:LayoutControl Margin="0" Padding="0">
+            <dxlc:LayoutGroup x:Name="mainLayoutControl"
+                              Header="LayoutGroup"
+                              View="Tabs"
+                              Margin="0"
+                              SelectedTabChildChanged="LayoutGroup_SelectedTabChildChanged">
+                <dxlc:LayoutGroup Name="tabVedomost" Header="Ведомости">
+                    <dxg:GridControl x:Name="gridVedomost"
+                                     AutoGenerateColumns="None"
+                                     EnableSmartColumnsGeneration="True"
+                                     dx:DXSerializer.StoreLayoutMode="ALL"
+                                     dx:DXSerializer.SerializationID="gridVedomost"
+                                     dxg:GridSerializationOptions.AddNewColumns="False"
+                                     dxg:GridSerializationOptions.RemoveOldColumns="False"
+                                     SelectionMode="Row"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalAlignment="Stretch"
+                                     ItemsSource="{Binding Vedomost, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                     CurrentItem="{Binding CurrentVedomost}">
+                        <dxg:GridControl.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}">
+                                    <MenuItem.Icon>
+                                        <Image
+                                            Source="pack://siteoforigin:,,,/Images/document_into.png" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Создать копию" Command="{Binding DocNewCopyCommand}">
+                                    <MenuItem.Icon>
+                                        <Image
+                                            Source="pack://siteoforigin:,,,/Images/document_add.png" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Создать с текушими реквизитами" Command="{Binding DocNewCopyRequisiteCommand}"/>
+                            </ContextMenu>
+                        </dxg:GridControl.ContextMenu>
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Name="col0" Header="Наименование" ReadOnly="True" FieldName="Name" />
+                            <dxg:GridColumn Name="col1" Header="Дата" ReadOnly="True" FieldName="Date" />
+                            <dxg:GridColumn Name="col2" Header="RUB" ReadOnly="True" FieldName="RUB">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="col3" Header="USD" ReadOnly="True" FieldName="USD">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="col4" Header="EUR" ReadOnly="True" FieldName="EUR">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.TotalSummary>
+                            <dxg:GridSummaryItem FieldName="Date" SummaryType="Count" />
+                            <dxg:GridSummaryItem FieldName="RUBSumma" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="USDSumma" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="EURSumma" SummaryType="Sum" DisplayFormat="n2" />
+                        </dxg:GridControl.TotalSummary>
+                        <dxg:GridControl.View>
+                            <dxg:TableView AllowPerPixelScrolling="True"
+                                           ShowTotalSummary="True" 
+                                           CellStyle="{StaticResource FocusedCellStyle}" 
+                                           RowStyle="{StaticResource FocusedRowStyle}"/>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Name="tabTemplate" Header="Шаблоны">
+                    <dxg:GridControl x:Name="gridTemplate"
+                                     AutoGenerateColumns="None"
+                                     EnableSmartColumnsGeneration="True"
+                                     dx:DXSerializer.StoreLayoutMode="ALL"
+                                     dx:DXSerializer.SerializationID="gridTemplate"
+                                     dxg:GridSerializationOptions.AddNewColumns="False"
+                                     dxg:GridSerializationOptions.RemoveOldColumns="False"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalAlignment="Stretch"
+                                     SelectionMode="Row"
+                                     ItemsSource="{Binding Template, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                     CurrentItem="{Binding CurrentTemplate}">
+                        <dxg:GridControl.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Открыть документ" Click="TemplateOpen_OnClick">
+                                    <MenuItem.Icon>
+                                        <Image
+                                            Source="pack://siteoforigin:,,,/Images/document_into.png" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Создать копию" Click="MenuItemCopy_OnClick">
+                                    <MenuItem.Icon>
+                                        <Image
+                                            Source="pack://siteoforigin:,,,/Images/document_gear.png" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+
+                        </dxg:GridControl.ContextMenu>
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Name="tcol0" Header="Наименование" ReadOnly="True" FieldName="Name" />
+                            <dxg:GridColumn Name="tcol1" Header="Дата" ReadOnly="True" FieldName="Date" />
+                            <dxg:GridColumn Name="tcol2" Header="RUB" ReadOnly="True" FieldName="RUB">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="tcol3" Header="USD" ReadOnly="True" FieldName="USD">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="tcol4" Header="EUR" ReadOnly="True" FieldName="EUR">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.TotalSummary>
+                            <dxg:GridSummaryItem FieldName="Date" SummaryType="Count" />
+                            <dxg:GridSummaryItem FieldName="RUB" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="USD" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="EUR" SummaryType="Sum" DisplayFormat="n2" />
+                        </dxg:GridControl.TotalSummary>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:DXWindow>

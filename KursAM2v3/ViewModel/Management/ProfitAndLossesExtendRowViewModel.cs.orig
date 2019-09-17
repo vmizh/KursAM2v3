@@ -1,0 +1,63 @@
+using System;
+using Core;
+using Core.EntityViewModel;
+using Core.ViewModel.Base;
+using Core.ViewModel.Common;
+using FinanceAnalitic;
+
+namespace KursAM2.ViewModel.Management
+{
+    public class ProfitAndLossesExtendRowViewModel : RSViewModelBase, IProfitAndLossesBase
+    {
+        public DocumentType DocTypeCode { set; get; }
+        public string KontragentName { get; set; }
+
+        public decimal ProfitGBP { get; set; }
+        public decimal LossGBP { get; set; }
+        public decimal ResultGBP { get; set; }
+
+        public decimal ProfitCHF { get; set; }
+        public decimal LossCHF { get; set; }
+        public decimal ResultCHF { get; set; }
+
+        public decimal ProfitSEK { get; set; }
+        public decimal LossSEK { get; set; }
+        public decimal ResultSEK { get; set; }
+        public TypeProfitAndLossCalc CalcType { get; set; }
+        public Guid GroupId { set; get; }
+        public decimal Quantity { set; get; }
+        public decimal Price { set; get; }
+        public string CurrencyName { set; get; }
+        public Currency Currency { get; set; }
+
+        public decimal ProfitRUB { set; get; }
+        public decimal LossRUB { set; get; }
+        public decimal ResultRUB { set; get; }
+
+        public decimal ProfitUSD { set; get; }
+        public decimal LossUSD { set; get; }
+        public decimal ResultUSD { set; get; }
+
+        public decimal ProfitEUR { set; get; }
+        public decimal LossEUR { set; get; }
+        public decimal ResultEUR { set; get; }
+        public decimal ProfitOther { get; set; }
+        public decimal LossOther { get; set; }
+        public decimal ResultOther { get; set; }
+
+
+        public NomenklViewModel NomenklViewModel { set; get; }
+
+        public Kontragent KontragentBase
+        {
+            get { return null; }
+            set { }
+        }
+
+        public string Kontragent { set; get; }
+        public DateTime Docdate { set; get; }
+        public DateTime Date { set; get; }
+        public DateTime RowDate { set; get; }
+        public string DocNum { set; get; }
+    }
+}
