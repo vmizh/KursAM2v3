@@ -73,7 +73,7 @@ namespace KursAM2.View.Personal
                     row = r;
                 }
                 var pr = new PayRollVedomostWindowViewModel(row.Id);
-                var form = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = pr };
+                var form = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = pr};
                 form.Show();
             }
             catch (Exception ex)
@@ -103,13 +103,6 @@ namespace KursAM2.View.Personal
             form.Show();
         }
 
-        //private void barButtonItemNew_ItemClick(object sender, ItemClickEventArgs e)
-        //{
-        //    var ctx = PayRollVedomostWindowViewModel.CreateNew();
-        //    var form = new PayRollVedomost {Owner = this, DataContext = ctx};
-        //    form.Show();
-        //}
-
         private void LayoutGroup_SelectedTabChildChanged(object sender, ValueChangedEventArgs<FrameworkElement> e)
         {
             isTemplate = e.NewValue.Name == "tabTemplate";
@@ -127,7 +120,7 @@ namespace KursAM2.View.Personal
                 if (row == null) return;
                 var pr = new PayRollVedomostWindowViewModel(row.Id);
                 var dtx = pr.Copy();
-                var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = dtx };
+                var frm = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = dtx};
                 frm.Show();
                 foreach (var emp in dtx.Employees)
                 {
