@@ -21,7 +21,6 @@ namespace KursAM2.ViewModel.Management
         private decimal myEndSumma;
         private string myRemainsType;
         private decimal myStartSumma;
-
         public string RemainsType
         {
             get => myRemainsType;
@@ -32,7 +31,6 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
-
         public decimal StartSumma
         {
             get => myStartSumma;
@@ -43,7 +41,6 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
-
         public decimal EndSumma
         {
             get => myEndSumma;
@@ -54,7 +51,6 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
-
         public Currency Currency
         {
             get => myCurrency;
@@ -97,7 +93,6 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
-
         public DateTime Date
         {
             get => myDate;
@@ -108,7 +103,6 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
-
         public SDRState SDRState
         {
             get => mySDRState;
@@ -119,7 +113,6 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
-
         public SDRSchet SDRSchet
         {
             get => mySDRSchet;
@@ -130,7 +123,6 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
-
         public string Kontragent
         {
             get => myKontragent;
@@ -141,7 +133,6 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
-
         public string DocName
         {
             get => myDocName;
@@ -152,7 +143,6 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
-
         public decimal SummaPrihod
         {
             get => mySummaPrihod;
@@ -163,7 +153,6 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
-
         public decimal SummaRashod
         {
             get => mySummaRashod;
@@ -174,7 +163,6 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
-
         public Currency Currency
         {
             get => myCurrency;
