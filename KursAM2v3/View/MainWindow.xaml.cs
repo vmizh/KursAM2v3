@@ -43,6 +43,8 @@ using KursAM2.ViewModel.Reference.Nomenkl;
 using KursAM2.ViewModel.Repozit;
 using LayoutManager;
 
+// test git commit 
+
 namespace KursAM2.View
 {
     //TODO Выынести вызов форм в отдельный класс
