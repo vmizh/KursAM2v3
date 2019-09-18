@@ -68,5 +68,10 @@ namespace SQLite.Base
             var initializer = new LocalDBInitializer(modelBuilder);
             Database.SetInitializer(initializer);
         }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

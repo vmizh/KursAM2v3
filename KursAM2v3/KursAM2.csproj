@@ -255,7 +255,6 @@
     <Compile Include="ReportManagers\SFClientAndWayBill\SFClientReportManager.cs" />
     <Compile Include="ReportManagers\SFClientAndWayBill\SFClientZakazReport.cs" />
     <Compile Include="ReportManagers\SFClientAndWayBill\WaybillReportManager.cs" />
-    <Compile Include="Tests\CLASS.cs" />
     <Compile Include="Tests\TreeControlFluentTests.xaml.cs">
       <DependentUpon>TreeControlFluentTests.xaml</DependentUpon>
     </Compile>
