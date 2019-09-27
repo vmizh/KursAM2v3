@@ -252,7 +252,7 @@ namespace Core.EntityViewModel
                 if (value == 0 || CurrencyOut == null)
                     Entity.CH_CRS_OUT_SUM = 0;
                 else
-                    Entity.CH_CRS_OUT_SUM = decimal.Round((decimal) (Entity.CH_CRS_IN_SUM * CrossRate), 2);
+                    Entity.CH_CRS_OUT_SUM = decimal.Round((decimal) (Entity.CH_CRS_IN_SUM * ( CurrencyIn.DocCode == CurrencyCode.RUB ? 1m/CrossRate : CrossRate)),2);
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(CH_CRS_OUT_SUM));
             }
@@ -331,7 +331,7 @@ namespace Core.EntityViewModel
                     else if (Entity.CH_CRS_IN_SUM == 0 || CurrencyOut == null) Entity.CH_CRS_OUT_SUM = 0;
                     {
                         Entity.CH_CRS_OUT_SUM =
-                            CrossRate == 0 ? 0 : decimal.Round((decimal) (Entity.CH_CRS_IN_SUM * CrossRate), 2);
+                            CrossRate == 0 ? 0 : decimal.Round((decimal) (Entity.CH_CRS_IN_SUM * (CurrencyIn.DocCode == CurrencyCode.RUB ? 1m/CrossRate : CrossRate)), 2);
                     }
                 }
                 RaisePropertyChanged();

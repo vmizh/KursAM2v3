@@ -1,0 +1,31 @@
+syntax: glob
+*.suo
+*/bin/*
+*/obj/*
+*/_ReSharper.*
+*.DotSettings.user
+*.bak
+*.orig
+Bin/*
+bin/*
+/Bin/*
+/bin/*
+data/*.log
+*.csproj.user
+Artifacts/*
+*/Gen/*
+*.Generated.*
+BinService/*
+*.ide
+version*.*
+VersionGenerate/VersionGenerate.csproj
+VersionGenerate.pdb
+Version.xml
+VersionGenerate.exe
+.vs/KursAM2v3/v15/sqlite3/storage.ide-wal
+.vs/KursAM2v3/v15/Server/sqlite3/db.lock
+.vs/KursAM2v3/v15/sqlite3/storage.ide-shm
+.vs/KursAM2v3/v15/Server/sqlite3/storage.ide-shm
+.vs/KursAM2v3/v15/Server/sqlite3/storage.ide-wal
+.vs/KursAM2v3/v15/sqlite3/db.lock
+DataAnalysis/SD 43.dim

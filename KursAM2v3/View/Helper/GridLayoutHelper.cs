@@ -75,6 +75,7 @@ namespace KursAM2.View.Helper
             if (myIsLocked)
                 return;
             myIsLocked = true;
+            // ReSharper disable once PossibleNullReferenceException
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 myIsLocked = false;

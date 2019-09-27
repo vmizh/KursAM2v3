@@ -1,0 +1,49 @@
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows.Documents;
+using Core.EntityViewModel;
+using Core.ViewModel.Common;
+using KursAM2.View.Base;
+using KursAM2.View.DialogUserControl;
+using KursAM2.View.Logistiks.UC;
+using KursAM2.ViewModel.Management.Projects;
+
+
+namespace KursAM2.Dialogs
+{
+    public static class StandartDialogs
+    {
+        /// <summary>
+        /// Выбор контрагента
+        /// </summary>
+        /// <param name="crs">Currency.Если указан, то выбираются только контрагенты с соответствующей валютой учета, если нет, то все  </param>
+        /// <returns></returns>
+        public static Kontragent SelectKontragent(Currency crs)
+        {
+            var ctx = new KontragentSelectDialog(crs);
+            var dlg = new SelectDialogView { DataContext = ctx };
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            if (!ctx.DialogResult) return null;
+            return ctx.CurrentKontragent;
+        }
+        public static List<NomenklViewModel> SelectNomenkls()
+        {
+            var ctx = new AddNomenklViewModel();
+            var dlg = new SelectDialogView { DataContext = ctx};
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            if (!ctx.DialogResult) return null;
+            return ctx.ListNomenklCollection;
+        }
+        public static Project SelectProject()
+        {
+            var ctx = new ProjectSelectReferenceWindowViewModel();
+            var dlg = new SelectDialogView { DataContext = ctx };
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            if (!ctx.DialogResult) return null;
+            return ctx.CurrentProject;
+        }
+    }
+}

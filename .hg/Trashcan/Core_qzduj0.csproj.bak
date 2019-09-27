@@ -1,0 +1,307 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3541BE94-A5B6-4E4E-8A63-DBB103ACDE29}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Core</RootNamespace>
+    <AssemblyName>Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevExpress.Data.v15.2, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Mvvm.v15.2, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Office.v15.2.Core, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Printing.v15.2.Core, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Charts.v15.2.Core, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Spreadsheet.v15.2.Core, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Controls.v15.2, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Core.v15.2, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v15.2, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v15.2.Core, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Layout.v15.2.Core, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.LayoutControl.v15.2, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.NavBar.v15.2, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Printing.v15.2, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Ribbon.v15.2, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Spreadsheet.v15.2, Version=15.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=9.2.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.9.2.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="ServiceStack.Common, Version=4.5.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.Common.4.5.4\lib\net45\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=e06fbc6124f57c43, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.Interfaces.4.5.4\lib\portable-wp80+sl5+net45+win8+wpa81+monotouch+monoandroid+xamarin.ios10\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite, Version=4.5.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.OrmLite.4.5.4\lib\net45\ServiceStack.OrmLite.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text, Version=4.5.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.Text.4.5.4\lib\net45\ServiceStack.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.105.2, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.105.2\lib\net45\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.105.2, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.105.2\lib\net45\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DatePeriod.cs" />
+    <Compile Include="DocumentOpenInfo.cs" />
+    <Compile Include="DocumentType.cs" />
+    <Compile Include="EntityViewModel\BankAndAccounts.cs" />
+    <Compile Include="EntityViewModel\CashKontragentType.cs" />
+    <Compile Include="EntityViewModel\CLOSED_DOC_TYPEViewModel.cs" />
+    <Compile Include="EntityViewModel\PeriodGroupsExludeViewModel.cs" />
+    <Compile Include="EntityViewModel\PERIOD_GROUPS_USERSViewModel.cs" />
+    <Compile Include="EntityViewModel\PERIOD_GROUPSViewModel.cs" />
+    <Compile Include="EntityViewModel\PERIOD_CLOSED_EXCLUDEViewModel.cs" />
+    <Compile Include="EntityViewModel\PERIOD_CLOSEDViewModel.cs" />
+    <Compile Include="EntityViewModel\MAIN_DOCUMENT_ITEMViewModel.cs" />
+    <Compile Include="ShipmentRowViewModel.cs" />
+    <Compile Include="EntityViewModel\USER_FORMS_RIGHTViewModel.cs" />
+    <Compile Include="EntityViewModel\MAIN_DOCUMENT_GROUPViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_111ViewModel.cs" />
+    <Compile Include="EntityViewModel\EXT_USERSViewModel.cs" />
+    <Compile Include="EntityViewModel\NomenklTransferViewModel.cs" />
+    <Compile Include="EntityViewModel\CountriesViewModel.cs" />
+    <Compile Include="EntityViewModel\NomenklTransferRowViewModel.cs" />
+    <Compile Include="IMultiCurrency.cs" />
+    <Compile Include="IMultiWithPriceCurrency.cs" />
+    <Compile Include="IProfitMultiCurrency.cs" />
+    <Compile Include="MonthYearDayItem.cs" />
+    <Compile Include="MultiCurrenciesDatePeriod.cs" />
+    <Compile Include="NomenklViewModel.cs" />
+    <Compile Include="SFClientRowViewModel.cs" />
+    <Compile Include="SFClientViewModel.cs" />
+    <Compile Include="ViewModel\Base\CurrencyCode.cs" />
+    <Compile Include="ViewModel\Base\EntityLoadCodition.cs" />
+    <Compile Include="ViewModel\Base\IDataUserControl.cs" />
+    <Compile Include="ViewModel\Common\BankAccount.cs" />
+    <Compile Include="ViewModel\Common\CrossCurrencyRate.cs" />
+    <Compile Include="Helper\DataAnnotationForFluentApiBase.cs" />
+    <Compile Include="ViewModel\Common\Kontragent.cs" />
+    <Compile Include="ViewModel\Common\NomenklMoveOnSkladViewModel.cs" />
+    <Compile Include="ViewModel\Common\NomenklProductViewModel.cs" />
+    <Compile Include="ViewModel\Common\UserProfileViewModel.cs" />
+    <Compile Include="ViewModel\Common\ProjectsDocsViewModel.cs" />
+    <Compile Include="ViewModel\Common\Project.cs" />
+    <Compile Include="ViewModel\Common\NomenklMain.cs" />
+    <Compile Include="EntityViewModel\NomenklMainViewModel.cs" />
+    <Compile Include="Errors.cs" />
+    <Compile Include="Control\SearchButtonEditor.xaml.cs">
+      <DependentUpon>SearchButtonEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\WndowMenu.xaml.cs">
+      <DependentUpon>WndowMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CurrencyRates.cs" />
+    <Compile Include="DataSource.cs" />
+    <Compile Include="EntityViewModel\COUNTRYViewModel.cs" />
+    <Compile Include="EntityViewModel\EMP_PAYROLL_TYPEViewModel.cs" />
+    <Compile Include="EntityViewModel\KONTRAGENT_REF_OUTViewModel.cs" />
+    <Compile Include="EntityViewModel\KONTRAGENT_REF_OUT_REQUISITEViewModel.cs" />
+    <Compile Include="EntityViewModel\KONTR_BALANS_OPER_ARCViewModel.cs" />
+    <Compile Include="EntityViewModel\NomenklCostResetRowsViewModel.cs" />
+    <Compile Include="EntityViewModel\NomenklCostResetViewModel.cs" />
+    <Compile Include="EntityViewModel\NOM_SKLAD_CURRENCY_PRICEViewModel.cs" />
+    <Compile Include="EntityViewModel\SCHET_FACT_KONTR_OUTViewModel.cs" />
+    <Compile Include="EntityViewModel\SCHET_FACT_KONTR_OUT_ROWSViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_119ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_148ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_175ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_179ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_189ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_22ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_23ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_24ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_26ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_27ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_2ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_301ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_303ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_33ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_34ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_375ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_40ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_43_GRUZOViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_44ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_77ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_82ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_83ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_83_TransferViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_84ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_99ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_9ViewModel.cs" />
+    <Compile Include="EntityViewModel\TaxUpdateHistoryViewModel.cs" />
+    <Compile Include="EntityViewModel\TD_24ViewModel.cs" />
+    <Compile Include="EntityViewModel\TD_26ViewModel.cs" />
+    <Compile Include="EntityViewModel\TD_43ViewModel.cs" />
+    <Compile Include="EntityViewModel\TD_84ViewModel.cs" />
+    <Compile Include="EntityViewModel\TD_9ViewModel.cs" />
+    <Compile Include="EntityViewModel\UD_43ViewModel.cs" />
+    <Compile Include="Finance\DocumentTypes.cs" />
+    <Compile Include="GlobalOptions.cs" />
+    <Compile Include="KursMoney.cs" />
+    <Compile Include="MainReferences.cs" />
+    <Compile Include="Menu\MenuButtonInfo.cs" />
+    <Compile Include="Menu\MenuGenerator.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModel\Base\Column\ColumnSummary.cs" />
+    <Compile Include="ViewModel\Base\Column\ColumnHelper.cs" />
+    <Compile Include="ViewModel\Base\Command.cs" />
+    <Compile Include="ViewModel\Base\Column\GridColumnHelper.cs" />
+    <Compile Include="ViewModel\Base\Column\GridColumnTemplateSelector.cs" />
+    <Compile Include="ViewModel\Base\IDocument.cs" />
+    <Compile Include="ViewModel\Base\IEntity.cs" />
+    <Compile Include="ViewModel\Base\ITreeReference.cs" />
+    <Compile Include="ViewModel\Base\IViewModel.cs" />
+    <Compile Include="ViewModel\Base\KursViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RowStatus.cs" />
+    <Compile Include="ViewModel\Base\RSDataErrorWindowInfoViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RSViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RSViewModelData.cs" />
+    <Compile Include="ViewModel\Base\RSViewModelDataEntity.cs" />
+    <Compile Include="ViewModel\Base\RSViewModelWindow.cs" />
+    <Compile Include="ViewModel\Base\RSWindowDataErrorInfoViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RSWindowDialogViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RSWindowSearchViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RSWindowViewModelBase.cs" />
+    <Compile Include="ViewModel\Common\Bank.cs" />
+    <Compile Include="ViewModel\Common\CentrOfResponsibility.cs" />
+    <Compile Include="ViewModel\Common\Country.cs" />
+    <Compile Include="ViewModel\Common\CountryDialogViewModel.cs" />
+    <Compile Include="ViewModel\Common\Currency.cs" />
+    <Compile Include="ViewModel\Common\CurrencyRate.cs" />
+    <Compile Include="ViewModel\Common\DatePeriodViewModel.cs" />
+    <Compile Include="ViewModel\Common\Employee.cs" />
+    <Compile Include="ViewModel\Common\IncomeExpenseSchet.cs" />
+    <Compile Include="ViewModel\Common\IncomeExpenseStatia.cs" />
+    <Compile Include="ViewModel\Common\KontragentBank.cs" />
+    <Compile Include="ViewModel\Common\KontragentCategory.cs" />
+    <Compile Include="ViewModel\Common\KontragentGroup.cs" />
+    <Compile Include="ViewModel\Common\KontragentGruzoRequisite.cs" />
+    <Compile Include="ViewModel\Common\Nomenkl.cs" />
+    <Compile Include="ViewModel\Common\NomenklGroup.cs" />
+    <Compile Include="ViewModel\Common\NomenklRemains.cs" />
+    <Compile Include="ViewModel\Common\NomenklSkladRemain.cs" />
+    <Compile Include="ViewModel\Common\NomenklSkladRemains.cs" />
+    <Compile Include="ViewModel\Common\NomenklType.cs" />
+    <Compile Include="ViewModel\Common\PayCondition.cs" />
+    <Compile Include="ViewModel\Common\Persona.cs" />
+    <Compile Include="ViewModel\Common\SDRSchet.cs" />
+    <Compile Include="ViewModel\Common\SDRState.cs" />
+    <Compile Include="ViewModel\Common\Store.cs" />
+    <Compile Include="ViewModel\Common\Unit.cs" />
+    <Compile Include="ViewModel\Common\User.cs" />
+    <Compile Include="ViewModel\Common\UserDialogViewModel.cs" />
+    <Compile Include="ViewModel\Common\UserViewModel.cs" />
+    <Compile Include="ViewModel\Common\VzaimoraschetType.cs" />
+    <Compile Include="ViewModel\KontragentTypeEnum.cs" />
+    <Compile Include="ViewModel\MutualAccounting\TD_110ViewModel.cs" />
+    <Compile Include="ViewModel\MutualAccounting\SD_110ViewModel.cs" />
+    <Compile Include="ViewModel\MutualAccounting\UD_110ViewModel.cs" />
+    <Compile Include="ViewModel\StateEventArgs.cs" />
+    <Compile Include="WindowsManager\IWindowManager.cs" />
+    <Compile Include="WindowsManager\WindowManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Data\Data.csproj">
+      <Project>{ae6bdc42-9b1e-4f09-8923-2295b1c87212}</Project>
+      <Name>Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Helper\Helper.csproj">
+      <Project>{45442B20-578B-4519-A31C-6BA5102B240F}</Project>
+      <Name>Helper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LayoutManager\LayoutManager.csproj">
+      <Project>{0AC84FA1-A12E-414A-8D3E-EDE48E795908}</Project>
+      <Name>LayoutManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SQLite.Base\SQLite.Base.csproj">
+      <Project>{BE1EEBBE-E696-4B56-B901-0D960CACE377}</Project>
+      <Name>SQLite.Base</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Control\SearchButtonEditor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\WndowMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net45\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net45\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.105.2\build\net45\System.Data.SQLite.Core.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

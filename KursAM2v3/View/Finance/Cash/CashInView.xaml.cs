@@ -233,14 +233,14 @@ namespace KursAM2.View.Finance.Cash
         {
             if (!(DataContext is CashInWindowViewModel ctx)) return;
             var doc = ctx.Document;
-            if ((decimal)e.NewValue < 0)
+            if ((decimal)(e.NewValue ?? 0m) < 0)
             {
                 WindowManager.ShowMessage(this,"Сумма ордера не может быть меньше 0!","Ошибка",
                     MessageBoxImage.Stop);
                 doc.SUMM_ORD = 0;
                 return;
             }
-            if ((decimal) e.NewValue > doc.MaxSumma && doc.SFACT_DC != null)
+            if ((decimal) (e.NewValue ?? 0m) > doc.MaxSumma && doc.SFACT_DC != null)
             {
                 WindowManager.ShowMessage(this, "Сумма ордера не может быть больше сумму оплаты по счету!", "Ошибка",
                     MessageBoxImage.Stop);
@@ -253,7 +253,7 @@ namespace KursAM2.View.Finance.Cash
         {
             if (!(DataContext is CashInWindowViewModel ctx)) return;
             var doc = ctx.Document;
-            if (ctx.Document != null  && ctx.Document.State != RowStatus.NotEdited && (ctx.Document.RASH_ORDER_FROM_DC != null || ctx.Document.BANK_RASCH_SCHET_DC != null
+            if (ctx.Document != null  && ctx.Document.State != RowStatus.NotEdited && ctx.Document.State != RowStatus.NewRow && (ctx.Document.RASH_ORDER_FROM_DC != null || ctx.Document.BANK_RASCH_SCHET_DC != null
                                                                                  || ctx.Document.SFACT_DC != null))
             {
                 WindowManager.ShowMessage("Ордер уже проведен. Изменить кассу нельзя",
@@ -339,54 +339,60 @@ namespace KursAM2.View.Finance.Cash
             var doc = ctx?.Document;
             if (doc == null)
                 return;
-            if (ctx.Document != null && (ctx.Document.RASH_ORDER_FROM_DC != null || ctx.Document.BANK_RASCH_SCHET_DC != null
-                                         || ctx.Document.SFACT_DC!= null))
+            
+            if (ctx.Document.State != RowStatus.NewRow)
             {
-                WindowManager.ShowMessage("Ордер уже проведен. Изменить контрагента нельзя",
-                    "Предупреждение", MessageBoxImage.Information);
-                return;
+                // ReSharper disable once PossibleNullReferenceException
+                switch (ctx.Document.KontragentType)
+                {
+                    case CashKontragentType.Kontragent:
+                        var kontr = StandartDialogs.SelectKontragent(ctx.Document.Currency);
+                        if (kontr == null) return;
+                        ctx.Document.Currency = kontr.BalansCurrency;
+                        ctx.Document.KONTRAGENT_DC = kontr.DocCode;
+                        ctx.Document.NAME_ORD = kontr.Name;
+                        ctx.Document.KONTR_CRS_DC = kontr.BalansCurrency.DocCode;
+                        ctx.Document.SFactName = null;
+                        doc.SFACT_DC = null;
+                        break;
+                    case CashKontragentType.Employee:
+                        var emp = StandartDialogs.SelectEmployee();
+                        if (emp != null) ctx.Document.TABELNUMBER = emp.TabelNumber;
+                        ctx.Document.NAME_ORD = emp?.Name;
+                        ctx.Document.SFactName = null;
+                        doc.SFACT_DC = null;
+                        break;
+                    case CashKontragentType.Bank:
+                        var bank = StandartDialogs.SelectBankAccount();
+                        if (bank != null) ctx.Document.BankAccount = bank;
+                        ctx.Document.NAME_ORD = bank?.Name;
+                        ctx.Document.BankAccount = bank;
+                        ctx.Document.SFactName = null;
+                        doc.SFACT_DC = null;
+                        break;
+                    case CashKontragentType.Cash:
+                        var order = StandartDialogs.SelectCashRashOrderForPrihod(ctx.Document);
+                        if (order == null) return;
+                        ctx.Document.RASH_ORDER_FROM_DC = order.DocCode;
+                        ctx.Document.SUMM_ORD = order.SUMM_ORD;
+                        ctx.Document.Currency = order.Currency;
+                        ctx.Document.SDRSchet = order.SDRSchet;
+                        ctx.Document.RashodOrderFromName = order.Cash.Name;
+                        ctx.Document.OSN_ORD = order.ToString();
+                        ctx.Document.NAME_ORD = order.ToString();
+                        ctx.Document.SFactName = null;
+                        doc.SFACT_DC = null;
+                        break;
+                }
             }
-            // ReSharper disable once PossibleNullReferenceException
-            switch (ctx.Document.KontragentType)
+            else
             {
-                case CashKontragentType.Kontragent:
-                    var kontr = StandartDialogs.SelectKontragent(ctx.Document.Currency);
-                    if (kontr == null) return;
-                    ctx.Document.Currency = kontr.BalansCurrency;
-                    ctx.Document.KONTRAGENT_DC = kontr.DocCode;
-                    ctx.Document.NAME_ORD = kontr.Name;
-                    ctx.Document.KONTR_CRS_DC = kontr.BalansCurrency.DocCode;
-                    ctx.Document.SFactName = null;
-                    doc.SFACT_DC = null;
-                    break;
-                case CashKontragentType.Employee:
-                    var emp = StandartDialogs.SelectEmployee();
-                    if (emp != null) ctx.Document.TABELNUMBER = emp.TabelNumber;
-                    ctx.Document.NAME_ORD = emp?.Name;
-                    ctx.Document.SFactName = null;
-                    doc.SFACT_DC = null;
-                    break;
-                case CashKontragentType.Bank:
-                    var bank = StandartDialogs.SelectBankAccount();
-                    if (bank != null) ctx.Document.BankAccount = bank;
-                    ctx.Document.NAME_ORD = bank?.Name;
-                    ctx.Document.BankAccount = bank;
-                    ctx.Document.SFactName = null;
-                    doc.SFACT_DC = null;
-                    break;
-                case CashKontragentType.Cash:
-                    var order = StandartDialogs.SelectCashRashOrderForPrihod(ctx.Document);
-                    if (order == null) return;
-                    ctx.Document.RASH_ORDER_FROM_DC = order.DocCode;
-                    ctx.Document.SUMM_ORD = order.SUMM_ORD;
-                    ctx.Document.Currency = order.Currency;
-                    ctx.Document.SDRSchet = order.SDRSchet;
-                    ctx.Document.RashodOrderFromName = order.Cash.Name;
-                    ctx.Document.OSN_ORD = order.ToString();
-                    ctx.Document.NAME_ORD = order.ToString();
-                    ctx.Document.SFactName = null;
-                    doc.SFACT_DC = null;
-                    break;
+                if (ctx.Document.RASH_ORDER_FROM_DC != null || ctx.Document.BANK_RASCH_SCHET_DC != null
+                                                              || ctx.Document.SFACT_DC!= null)
+                {
+                    WindowManager.ShowMessage("Ордер уже проведен. Изменить контрагента нельзя",
+                        "Предупреждение", MessageBoxImage.Information);
+                }
             }
         }
 

@@ -53,11 +53,13 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         #region Properties
 
-        public bool IsSummaEnabled => Document != null && Document.BANK_RASCH_SCHET_DC == null
-                                                       && Document.RASH_ORDER_FROM_DC == null;
+        public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
+
+        public bool IsSummaEnabled => Document != null && Document.State == RowStatus.NewRow || Document != null && Document.BANK_RASCH_SCHET_DC == null
+                                                                                             && Document.RASH_ORDER_FROM_DC == null;
 
         public bool IsKontrSelectEnable => Document != null && Document.KontragentType != CashKontragentType.NotChoice
-                                                            && Document.SFACT_DC == null;
+                                                            && Document.SFACT_DC == null  && Document.State != RowStatus.NewRow;
 
         public ObservableCollection<Currency> CurrencyList { get; set; } = new ObservableCollection<Currency>();
 
@@ -90,7 +92,8 @@ namespace KursAM2.ViewModel.Finance.Cash
                         Document.NCODE = null;
                     if (Document != null)
                         frm.Sumordcont.IsEnabled =
-                            Document.BANK_RASCH_SCHET_DC == null && Document.RASH_ORDER_FROM_DC == null;
+                            (Document.BANK_RASCH_SCHET_DC == null && Document.RASH_ORDER_FROM_DC == null)
+                            || Document.State == RowStatus.NewRow;
                 }
 
                 return Document != null && Document.State != RowStatus.NotEdited &&
@@ -179,8 +182,9 @@ namespace KursAM2.ViewModel.Finance.Cash
                 case MessageBoxResult.Yes:
                     var ctx = BookView?.DataContext as CashBookWindowViewModel;
                     CashManager.DeleteDocument(CashDocumentType.CashIn, Document);
-                    RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC,
-                        (DateTime) Document.DATE_ORD);
+                    if(Document.KONTRAGENT_DC != null)
+                        RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC,
+                            (DateTime) Document.DATE_ORD);
                     ctx?.RefreshActual(Document);
                     CloseWindow(Form);
                     break;
@@ -241,7 +245,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             }
 
             Document.myState = RowStatus.NotEdited;
-            OldSumma = (decimal) Document.SUMM_ORD;
+            OldSumma = Document.SUMM_ORD ?? 0m;
         }
 
         public override void DocNewEmpty(object form)
@@ -274,7 +278,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             {
                 Document = CashManager.NewRequisiteCashIn(Document.DocCode)
             };
-            vm.Document.Cash = Document.Cash;
+            //vm.Document.Cash = Document.Cash;
             vm.BookView = BookView;
             DocumentsOpenManager.Open(DocumentType.CashIn, vm, BookView);
          }

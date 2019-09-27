@@ -1,0 +1,332 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XtraReportsLayoutSerializer SerializerVersion="14.2.7.0" Ref="1" Name="AccountForPay" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v14.2, Version=14.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" XmlDataPath="C:\Users\vmizh\work\Projects\C_Projects\Kurs2012v2\Kurs2012\WindowsFormsApplication1\bin\Debug\reports\data\54336D0674CE4ED1BDE47481EC7BFAFC.xml" DataSource="#Ref-0" Version="14.2" PageHeight="1100" PageWidth="850" Margins="100, 61, 79, 42">
+  <Bands>
+    <Item1 Ref="2" ControlType="DetailBand" Name="Detail" TextAlignment="TopLeft" Padding="0,0,0,0,100" HeightF="0" />
+    <Item2 Ref="3" Name="TopMargin" ControlType="TopMarginBand" Padding="0,0,0,0,100" TextAlignment="TopLeft" HeightF="79" />
+    <Item3 Ref="4" Name="BottomMargin" ControlType="BottomMarginBand" Padding="0,0,0,0,100" TextAlignment="TopLeft" HeightF="42" />
+    <Item4 Ref="5" Name="ReportHeader" ControlType="ReportHeaderBand" HeightF="511.5416">
+      <Controls>
+        <Item1 Ref="6" Name="xrLabel51" ControlType="XRLabel" SizeF="165.625,23" LocationFloat="189.1664, 463.5415" Padding="2,2,0,0,100" Text="xrLabel51">
+          <DataBindings>
+            <Item1 Ref="7" PropertyName="Text" DataMember="Currency.FullName" />
+          </DataBindings>
+        </Item1>
+        <Item2 Ref="8" Name="xrLabel50" ControlType="XRLabel" SizeF="11.66589,23" LocationFloat="177.5004, 463.5415" Padding="2,2,0,0,100" Text="/" />
+        <Item3 Ref="9" Name="xrLabel49" ControlType="XRLabel" SizeF="100,23" LocationFloat="77.5004, 463.5417" Padding="2,2,0,0,100">
+          <DataBindings>
+            <Item1 Ref="10" PropertyName="Text" DataMember="Currency.Name" />
+          </DataBindings>
+        </Item3>
+        <Item4 Ref="11" Name="xrLabel48" ControlType="XRLabel" SizeF="59.37506,23" LocationFloat="18.12534, 463.5417" Padding="2,2,0,0,100" Text="Валюта" />
+        <Item5 Ref="12" Name="xrLabel47" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="232.8331,23" LocationFloat="447.292, 237.0415" Padding="10,2,0,0,100" Borders="Right">
+          <DataBindings>
+            <Item1 Ref="13" PropertyName="Text" DataMember="GruzoInfoViewModel.BankAccount.BIK" />
+          </DataBindings>
+          <StylePriority Ref="14" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+        </Item5>
+        <Item6 Ref="15" Name="xrLabel4" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="572,39.66667" LocationFloat="100, 61.12499" Font="Times New Roman, 9.75pt, style=Bold" Padding="5,2,0,0,100" Borders="Right, Bottom">
+          <DataBindings>
+            <Item1 Ref="16" PropertyName="Text" DataMember="ReceiverKontragent.LegalAddress" />
+          </DataBindings>
+          <StylePriority Ref="17" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+        </Item6>
+        <Item7 Ref="18" Name="xrLabel1" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="89.99999,56.33334" LocationFloat="9.999974, 4.791657" Padding="2,2,0,0,100" Borders="All" Text="Поставщик:">
+          <StylePriority Ref="19" UseBorders="false" UseTextAlignment="false" />
+        </Item7>
+        <Item8 Ref="20" Name="xrLabel2" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="90.00002,39.66667" LocationFloat="9.999974, 61.12499" Padding="2,2,0,0,100" Borders="Left, Right, Bottom" Text="Юр. адрес:">
+          <StylePriority Ref="21" UseBorders="false" UseTextAlignment="false" />
+        </Item8>
+        <Item9 Ref="22" Name="xrLabel3" ControlType="XRLabel" TextAlignment="MiddleCenter" SizeF="571.9999,56.33334" LocationFloat="100, 4.791657" Font="Times New Roman, 10pt, style=Bold" Padding="5,2,0,0,100" Borders="Top, Right, Bottom" Multiline="true">
+          <DataBindings>
+            <Item1 Ref="23" PropertyName="Text" DataMember="ReceiverKontragent.FullName" />
+          </DataBindings>
+          <StylePriority Ref="24" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+        </Item9>
+        <Item10 Ref="25" Name="xrLabel5" ControlType="XRLabel" TextAlignment="TopCenter" SizeF="670.1254,23" LocationFloat="10.00001, 130.5416" Font="Times New Roman, 9.75pt, style=Bold" Padding="2,2,0,0,100" Text="Образец заполнения платежного поручения">
+          <StylePriority Ref="26" UseFont="false" UseTextAlignment="false" />
+        </Item10>
+        <Item11 Ref="27" Name="xrLabel6" ControlType="XRLabel" SizeF="49.792,23" LocationFloat="10.00001, 153.5416" Padding="2,2,0,0,100" Borders="Left, Top, Bottom" Text="ИНН">
+          <StylePriority Ref="28" UseBorders="false" />
+        </Item11>
+        <Item12 Ref="29" Name="xrLabel7" ControlType="XRLabel" SizeF="126.0417,23" LocationFloat="59.79201, 153.5416" Padding="2,2,0,0,100" Borders="Top, Bottom">
+          <DataBindings>
+            <Item1 Ref="30" PropertyName="Text" DataMember="ReceiverKontragent.INN" />
+          </DataBindings>
+          <StylePriority Ref="31" UseBorders="false" />
+        </Item12>
+        <Item13 Ref="32" Name="xrLabel8" ControlType="XRLabel" SizeF="39.58334,23" LocationFloat="185.8337, 153.5416" Padding="2,2,0,0,100" Borders="Left, Top, Bottom" Text="КПП">
+          <StylePriority Ref="33" UseBorders="false" />
+        </Item13>
+        <Item14 Ref="34" Name="xrLabel9" ControlType="XRLabel" SizeF="166.8747,23" LocationFloat="225.4169, 153.5416" Padding="2,2,0,0,100" Borders="Top, Bottom">
+          <DataBindings>
+            <Item1 Ref="35" PropertyName="Text" DataMember="ReceiverKontragent.KPP" />
+          </DataBindings>
+          <StylePriority Ref="36" UseBorders="false" />
+        </Item14>
+        <Item15 Ref="37" Name="xrLabel10" ControlType="XRLabel" TextAlignment="MiddleCenter" SizeF="55.00024,83.49995" LocationFloat="392.2918, 153.5416" Padding="2,2,0,0,100" Borders="All" Text="Cч.&#xD;&#xA;№" Multiline="true">
+          <StylePriority Ref="38" UseBorders="false" UseTextAlignment="false" />
+        </Item15>
+        <Item16 Ref="39" Name="xrLabel11" ControlType="XRLabel" TextAlignment="MiddleCenter" SizeF="55.00006,22.99998" LocationFloat="392.292, 237.0415" Padding="2,2,0,0,100" Borders="Left, Right" Text="БИК">
+          <StylePriority Ref="40" UseBorders="false" UseTextAlignment="false" />
+        </Item16>
+        <Item17 Ref="41" Name="xrLabel12" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="85.20876,60.50003" LocationFloat="9.999911, 176.5416" Padding="2,2,0,0,100" Borders="Left, Bottom" Text="Получатель">
+          <StylePriority Ref="42" UseBorders="false" UseTextAlignment="false" />
+        </Item17>
+        <Item18 Ref="43" Name="xrLabel13" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="297.083,60.50004" LocationFloat="95.20868, 176.5416" Padding="2,2,0,0,100" Borders="Left, Bottom">
+          <DataBindings>
+            <Item1 Ref="44" PropertyName="Text" DataMember="ReceiverKontragent.FullName" />
+          </DataBindings>
+          <StylePriority Ref="45" UseBorders="false" UseTextAlignment="false" />
+        </Item18>
+        <Item19 Ref="46" Name="xrLabel14" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="85.20865,66.74998" LocationFloat="10.00001, 237.0417" Padding="2,2,0,0,100" Borders="Left, Bottom" Text="Банк&#xD;&#xA;получателя" Multiline="true">
+          <StylePriority Ref="47" UseBorders="false" UseTextAlignment="false" />
+        </Item19>
+        <Item20 Ref="48" Name="xrLabel15" ControlType="XRLabel" TextAlignment="MiddleCenter" SizeF="55.00037,43.75014" LocationFloat="392.2917, 260.0416" Padding="2,2,0,0,100" Borders="All" Text="Cч.№" Multiline="true">
+          <StylePriority Ref="49" UseBorders="false" UseTextAlignment="false" />
+        </Item20>
+        <Item21 Ref="50" Name="xrLabel16" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="297.0829,66.75002" LocationFloat="95.20868, 237.0417" Padding="2,2,0,0,100" Borders="Left, Bottom">
+          <DataBindings>
+            <Item1 Ref="51" PropertyName="Text" DataMember="GruzoInfoViewModel.BankAccount.BankName" />
+          </DataBindings>
+          <StylePriority Ref="52" UseBorders="false" UseTextAlignment="false" />
+        </Item21>
+        <Item22 Ref="53" Name="xrLabel17" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="232.8333,83.49988" LocationFloat="447.292, 153.5416" Padding="10,2,0,0,100" Borders="Top, Right, Bottom">
+          <DataBindings>
+            <Item1 Ref="54" PropertyName="Text" DataMember="GruzoInfoViewModel.BankAccount.Account" />
+          </DataBindings>
+          <StylePriority Ref="55" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+        </Item22>
+        <Item23 Ref="56" Name="xrLabel18" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="232.8332,43.75015" LocationFloat="447.2921, 260.0415" Padding="10,2,0,0,100" Borders="Top, Right, Bottom">
+          <DataBindings>
+            <Item1 Ref="57" PropertyName="Text" DataMember="GruzoInfoViewModel.BankAccount.CorrAccount" />
+          </DataBindings>
+          <StylePriority Ref="58" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+        </Item23>
+        <Item24 Ref="59" Name="xrLabel19" ControlType="XRLabel" SizeF="64.16664,23.00002" LocationFloat="149.3754, 314.5416" Font="Times New Roman, 9.75pt, style=Bold" Padding="2,2,0,0,100" Text="СЧЕТ №">
+          <StylePriority Ref="60" UseFont="false" />
+        </Item24>
+        <Item25 Ref="61" Name="xrLabel20" ControlType="XRLabel" TextAlignment="TopCenter" SizeF="160.4167,22.99997" LocationFloat="342.7087, 314.5417" Font="Times New Roman, 9.75pt, style=Bold" Padding="2,2,0,0,100" Borders="Bottom">
+          <DataBindings>
+            <Item1 Ref="62" FormatString="{0:d MMMM yyyy 'г.'}" PropertyName="Text" DataMember="SF_DATE" />
+          </DataBindings>
+          <StylePriority Ref="63" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+        </Item25>
+        <Item26 Ref="64" Name="xrLabel21" ControlType="XRLabel" TextAlignment="TopCenter" SizeF="100,23" LocationFloat="213.542, 314.5417" Font="Times New Roman, 9.75pt, style=Bold" Padding="2,2,0,0,100" Borders="Bottom">
+          <DataBindings>
+            <Item1 Ref="65" PropertyName="Text" DataMember="SF_OUT_NUM" />
+          </DataBindings>
+          <StylePriority Ref="66" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+        </Item26>
+        <Item27 Ref="67" Name="xrLabel22" ControlType="XRLabel" SizeF="27.70831,23" LocationFloat="315.0004, 314.5417" Font="Times New Roman, 9.75pt, style=Bold" Padding="2,2,0,0,100" Borders="None" Text="от">
+          <StylePriority Ref="68" UseFont="false" UseBorders="false" />
+        </Item27>
+        <Item28 Ref="69" Name="xrLabel23" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="121.667,41.75" LocationFloat="10.00001, 359.3333" Padding="2,2,0,0,100" Text="Плательщик:">
+          <StylePriority Ref="70" UseTextAlignment="false" />
+        </Item28>
+        <Item29 Ref="71" Name="xrLabel24" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="121.667,37.58334" LocationFloat="10.00001, 401.0833" Padding="2,2,0,0,100" Text="Грузополучатель:">
+          <StylePriority Ref="72" UseTextAlignment="false" />
+        </Item29>
+        <Item30 Ref="73" Name="xrLabel25" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="548.4583,41.74997" LocationFloat="131.667, 359.3333" Font="Times New Roman, 11pt" Padding="5,2,0,0,100">
+          <DataBindings>
+            <Item1 Ref="74" PropertyName="Text" DataMember="Client.FullName" />
+          </DataBindings>
+          <StylePriority Ref="75" UseFont="false" UsePadding="false" UseTextAlignment="false" />
+        </Item30>
+        <Item31 Ref="76" Name="xrLabel26" ControlType="XRLabel" TextAlignment="MiddleLeft" SizeF="548.4583,37.58334" LocationFloat="131.6671, 401.0833" Padding="5,2,0,0,100">
+          <DataBindings>
+            <Item1 Ref="77" PropertyName="Text" DataMember="GruzoInfoViewModel.NaklGruzopol" />
+          </DataBindings>
+          <StylePriority Ref="78" UsePadding="false" UseTextAlignment="false" />
+        </Item31>
+        <Item32 Ref="79" Name="xrTable1" ControlType="XRTable" SizeF="670.1254,25" LocationFloat="10.00001, 486.5416">
+          <Rows>
+            <Item1 Ref="80" Name="xrTableRow1" ControlType="XRTableRow" Weight="1">
+              <Cells>
+                <Item1 Ref="81" Name="xrTableCell4" ControlType="XRTableCell" Font="Times New Roman, 9.75pt, style=Bold" Borders="All" Text="№" TextAlignment="TopCenter" Weight="0.10259255598422165">
+                  <StylePriority Ref="82" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item1>
+                <Item2 Ref="83" Name="xrTableCell1" ControlType="XRTableCell" Font="Times New Roman, 9.75pt, style=Bold" Borders="Top, Right, Bottom" Text="Наименование товара" TextAlignment="TopCenter" Weight="1.356020549998018">
+                  <StylePriority Ref="84" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item2>
+                <Item3 Ref="85" Name="xrTableCell5" ControlType="XRTableCell" Font="Times New Roman, 9.75pt, style=Bold" Borders="Top, Right, Bottom" Text="Единица" TextAlignment="TopCenter" Weight="0.31064815974205912">
+                  <StylePriority Ref="86" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item3>
+                <Item4 Ref="87" Name="xrTableCell2" ControlType="XRTableCell" Font="Times New Roman, 9.75pt, style=Bold" Borders="Top, Right, Bottom" Text="Кол-во" TextAlignment="TopCenter" Weight="0.32651375318778852">
+                  <StylePriority Ref="88" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item4>
+                <Item5 Ref="89" Name="xrTableCell6" ControlType="XRTableCell" Font="Times New Roman, 9.75pt, style=Bold" Borders="Top, Bottom" Text="Цена" TextAlignment="TopCenter" Weight="0.37967834447905457">
+                  <StylePriority Ref="90" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item5>
+                <Item6 Ref="91" Name="xrTableCell3" ControlType="XRTableCell" Font="Times New Roman, 9.75pt, style=Bold" Borders="All" Text="Сумма" TextAlignment="TopCenter" Weight="0.5613676633250082">
+                  <StylePriority Ref="92" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item6>
+              </Cells>
+            </Item1>
+          </Rows>
+        </Item32>
+      </Controls>
+    </Item4>
+    <Item5 Ref="93" ControlType="ReportFooterBand" Name="ReportFooter" HeightF="418.7917">
+      <Controls>
+        <Item1 Ref="94" Name="xrTable3" ControlType="XRTable" SizeF="670.1255,75" LocationFloat="9.999974, 0">
+          <Rows>
+            <Item1 Ref="95" Name="xrTableRow3" ControlType="XRTableRow" Weight="1">
+              <Cells>
+                <Item1 Ref="96" Name="xrTableCell13" ControlType="XRTableCell" Font="Times New Roman, 9.75pt, style=Bold" Padding="0,2,0,0,100" Text="Итого:  " TextAlignment="MiddleRight" Weight="2.6290116622520623">
+                  <StylePriority Ref="97" UseFont="false" UsePadding="false" UseTextAlignment="false" />
+                </Item1>
+                <Item2 Ref="98" Name="xrTableCell15" ControlType="XRTableCell" Font="Times New Roman, 10pt, style=Bold" Padding="0,2,0,0,100" Borders="Left, Right" TextAlignment="MiddleRight" Weight="0.59619132779179784">
+                  <DataBindings>
+                    <Item1 Ref="99" PropertyName="Text" DataMember="SummaWithoutNDS" />
+                  </DataBindings>
+                  <StylePriority Ref="100" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+                  <Summary Ref="101" FormatString="{0:n2}" />
+                </Item2>
+              </Cells>
+            </Item1>
+            <Item2 Ref="102" Name="xrTableRow5" ControlType="XRTableRow" Weight="1">
+              <Cells>
+                <Item1 Ref="103" Name="xrTableCell17" ControlType="XRTableCell" Font="Times New Roman, 9.75pt, style=Bold" Padding="0,2,0,0,100" Text=" НДС (18%):  " TextAlignment="MiddleRight" Weight="2.6290119560041605">
+                  <StylePriority Ref="104" UseFont="false" UsePadding="false" UseTextAlignment="false" />
+                </Item1>
+                <Item2 Ref="105" Name="xrTableCell18" ControlType="XRTableCell" Font="Times New Roman, 10pt, style=Bold" Padding="0,2,0,0,100" Borders="Left, Top, Right" TextAlignment="MiddleRight" Weight="0.59619103403969942">
+                  <DataBindings>
+                    <Item1 Ref="106" PropertyName="Text" DataMember="SummaNDS" />
+                  </DataBindings>
+                  <StylePriority Ref="107" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+                  <Summary Ref="108" FormatString="{0:n2}" />
+                </Item2>
+              </Cells>
+            </Item2>
+            <Item3 Ref="109" Name="xrTableRow4" ControlType="XRTableRow" Weight="1">
+              <Cells>
+                <Item1 Ref="110" Name="xrTableCell14" ControlType="XRTableCell" Font="Times New Roman, 9.75pt, style=Bold" Padding="0,2,0,0,100" Text="Сумма:  " TextAlignment="MiddleRight" Weight="2.6290119560041605">
+                  <StylePriority Ref="111" UseFont="false" UsePadding="false" UseTextAlignment="false" />
+                </Item1>
+                <Item2 Ref="112" Name="xrTableCell16" ControlType="XRTableCell" Font="Times New Roman, 10pt, style=Bold" Padding="0,2,0,0,100" Borders="All" TextAlignment="MiddleRight" Weight="0.59619103403969931">
+                  <DataBindings>
+                    <Item1 Ref="113" PropertyName="Text" DataMember="SummaAll" />
+                  </DataBindings>
+                  <StylePriority Ref="114" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+                  <Summary Ref="115" FormatString="{0:n2}" />
+                </Item2>
+              </Cells>
+            </Item3>
+          </Rows>
+        </Item1>
+        <Item2 Ref="116" Name="xrLabel46" ControlType="XRLabel" TextAlignment="TopCenter" SizeF="59.375,23" LocationFloat="48.33368, 338.5" Font="Times New Roman, 9.75pt, style=Bold" Padding="2,2,0,0,100" Text="М.П.">
+          <StylePriority Ref="117" UseFont="false" UseTextAlignment="false" />
+        </Item2>
+        <Item3 Ref="118" Name="xrLabel43" ControlType="XRLabel" TextAlignment="TopCenter" SizeF="116.9439,23" LocationFloat="409.3752, 279.1667" Padding="2,2,0,0,100" Borders="Bottom">
+          <DataBindings>
+            <Item1 Ref="119" PropertyName="Text" DataMember="ReceiverKontragent.GlavBuh" />
+          </DataBindings>
+          <StylePriority Ref="120" UseBorders="false" UseTextAlignment="false" />
+        </Item3>
+        <Item4 Ref="121" Name="xrLabel44" ControlType="XRLabel" TextAlignment="TopCenter" SizeF="165.625,23" LocationFloat="223.3337, 304.1667" Font="Times New Roman, 9.75pt, style=Italic" Padding="2,2,0,0,100" Text="(подпись)">
+          <StylePriority Ref="122" UseFont="false" UseTextAlignment="false" />
+        </Item4>
+        <Item5 Ref="123" Name="xrLabel45" ControlType="XRLabel" TextAlignment="TopCenter" SizeF="127.9855,23" LocationFloat="398.3337, 304.1667" Font="Times New Roman, 8pt, style=Italic" Padding="2,2,0,0,100" Text="(расшифровка подписи)">
+          <StylePriority Ref="124" UseFont="false" UseTextAlignment="false" />
+        </Item5>
+        <Item6 Ref="125" Name="xrLabel42" ControlType="XRLabel" SizeF="7.291687,23" LocationFloat="526.3191, 279.1667" Padding="2,2,0,0,100" Text=")" />
+        <Item7 Ref="126" Name="xrLabel39" ControlType="XRLabel" SizeF="167.7082,23" LocationFloat="48.33368, 279.1667" Padding="2,2,0,0,100" Text="Главный бухгалтер" />
+        <Item8 Ref="127" Name="xrLabel40" ControlType="XRLabel" SizeF="165.625,23" LocationFloat="223.3337, 279.1667" Padding="2,2,0,0,100" Borders="Bottom">
+          <StylePriority Ref="128" UseBorders="false" />
+        </Item8>
+        <Item9 Ref="129" Name="xrLabel41" ControlType="XRLabel" SizeF="7.291687,23" LocationFloat="398.3337, 279.1667" Padding="2,2,0,0,100" Text="(" />
+        <Item10 Ref="130" Name="xrLabel38" ControlType="XRLabel" TextAlignment="TopCenter" SizeF="122.9858,22.99998" LocationFloat="403.3333, 237.5416" Font="Times New Roman, 8pt, style=Italic" Padding="2,2,0,0,100" Text="(расшифровка подписи)">
+          <StylePriority Ref="131" UseFont="false" UseTextAlignment="false" />
+        </Item10>
+        <Item11 Ref="132" Name="xrLabel37" ControlType="XRLabel" TextAlignment="TopCenter" SizeF="165.625,23" LocationFloat="226.6667, 237.5416" Font="Times New Roman, 9.75pt, style=Italic" Padding="2,2,0,0,100" Text="(подпись)">
+          <StylePriority Ref="133" UseFont="false" UseTextAlignment="false" />
+        </Item11>
+        <Item12 Ref="134" Name="xrLabel36" ControlType="XRLabel" TextAlignment="TopCenter" SizeF="115.6942,23" LocationFloat="410.6249, 214.5417" Padding="2,2,0,0,100" Borders="Bottom">
+          <DataBindings>
+            <Item1 Ref="135" PropertyName="Text" DataMember="ReceiverKontragent.Director" />
+          </DataBindings>
+          <StylePriority Ref="136" UseBorders="false" UseTextAlignment="false" />
+        </Item12>
+        <Item13 Ref="137" Name="xrLabel35" ControlType="XRLabel" SizeF="7.291687,23" LocationFloat="526.3191, 214.5417" Padding="2,2,0,0,100" Text=")" />
+        <Item14 Ref="138" Name="xrLabel34" ControlType="XRLabel" SizeF="7.291687,23" LocationFloat="403.3333, 214.5417" Padding="2,2,0,0,100" Text="(" />
+        <Item15 Ref="139" Name="xrLabel33" ControlType="XRLabel" SizeF="165.625,23" LocationFloat="226.6667, 214.5417" Padding="2,2,0,0,100" Borders="Bottom">
+          <StylePriority Ref="140" UseBorders="false" />
+        </Item15>
+        <Item16 Ref="141" Name="xrLabel32" ControlType="XRLabel" SizeF="167.7082,23" LocationFloat="49.58344, 214.5417" Padding="2,2,0,0,100" Text="Генеральный директор" />
+        <Item17 Ref="142" Name="xrLabel31" ControlType="XRLabel" TextAlignment="TopCenter" SizeF="420.0416,15.70833" LocationFloat="258.9583, 113.625" Font="Times New Roman, 9.75pt, style=Italic" Padding="2,2,0,0,100" Text="(сумма прописью)">
+          <StylePriority Ref="143" UseFont="false" UseTextAlignment="false" />
+        </Item17>
+        <Item18 Ref="144" Name="xrLabel30" ControlType="XRLabel" SizeF="421.1672,23" LocationFloat="258.9583, 90.625" Padding="2,2,0,0,100" Borders="Bottom">
+          <DataBindings>
+            <Item1 Ref="145" PropertyName="Text" DataMember="SummaPropis" />
+          </DataBindings>
+          <StylePriority Ref="146" UseBorders="false" />
+        </Item18>
+        <Item19 Ref="147" Name="xrLabel29" ControlType="XRLabel" SizeF="69.79167,23" LocationFloat="189.1664, 90.625" Padding="2,2,0,0,100" Text=", на сумму" />
+        <Item20 Ref="148" Name="xrLabel27" ControlType="XRLabel" SizeF="138.5417,23" LocationFloat="9.999974, 90.625" Padding="2,2,0,0,100" Text="Всего наименований:" />
+        <Item21 Ref="149" Name="xrLabel28" ControlType="XRLabel" TextAlignment="TopCenter" SizeF="40.62471,23" LocationFloat="148.5416, 90.625" Padding="2,2,0,0,100" Borders="Bottom">
+          <DataBindings>
+            <Item1 Ref="150" PropertyName="Text" DataMember="Rows.SFT_NEMENKL_DC" />
+          </DataBindings>
+          <StylePriority Ref="151" UseBorders="false" UseTextAlignment="false" />
+          <Summary Ref="152" Running="Report" Func="Count" />
+        </Item21>
+      </Controls>
+    </Item5>
+    <Item6 Ref="153" ControlType="DetailReportBand" Name="DetailReport" DataSource="#Ref-0" Level="0">
+      <Bands>
+        <Item1 Ref="154" ControlType="DetailBand" Name="Detail1" HeightF="25">
+          <Controls>
+            <Item1 Ref="155" Name="xrTable2" ControlType="XRTable" SizeF="670.1255,25" LocationFloat="9.999911, 0">
+              <Rows>
+                <Item1 Ref="156" Name="xrTableRow2" ControlType="XRTableRow" Weight="1">
+                  <Cells>
+                    <Item1 Ref="157" Name="xrTableCell7" ControlType="XRTableCell" Font="Times New Roman, 10pt" Borders="All" TextAlignment="MiddleCenter" Weight="0.10895712833739202">
+                      <DataBindings>
+                        <Item1 Ref="158" PropertyName="Text" DataMember="Rows.NumberRow" />
+                      </DataBindings>
+                      <StylePriority Ref="159" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                    </Item1>
+                    <Item2 Ref="160" Name="xrTableCell8" ControlType="XRTableCell" Font="Times New Roman, 10pt" Padding="2,0,0,0,100" Borders="Top, Right, Bottom" TextAlignment="MiddleLeft" Weight="1.4401383352476185">
+                      <DataBindings>
+                        <Item1 Ref="161" PropertyName="Text" DataMember="Rows.Nomenkl.Name" />
+                      </DataBindings>
+                      <StylePriority Ref="162" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+                    </Item2>
+                    <Item3 Ref="163" Name="xrTableCell9" ControlType="XRTableCell" Font="Times New Roman, 10pt" Borders="Top, Right, Bottom" TextAlignment="MiddleCenter" Weight="0.32991851314394144">
+                      <DataBindings>
+                        <Item1 Ref="164" PropertyName="Text" DataMember="Rows.Nomenkl.Unit.Name" />
+                      </DataBindings>
+                      <StylePriority Ref="165" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                    </Item3>
+                    <Item4 Ref="166" Name="xrTableCell10" ControlType="XRTableCell" Font="Times New Roman, 10pt" Padding="0,2,0,0,100" Borders="Top, Right, Bottom" TextAlignment="MiddleRight" Weight="0.34676828533912218">
+                      <DataBindings>
+                        <Item1 Ref="167" PropertyName="Text" DataMember="Rows.SFT_KOL" />
+                      </DataBindings>
+                      <StylePriority Ref="168" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+                    </Item4>
+                    <Item5 Ref="169" Name="xrTableCell11" ControlType="XRTableCell" Font="Times New Roman, 10pt" Padding="0,2,0,0,100" Borders="Top, Bottom" TextAlignment="MiddleRight" Weight="0.40323083340432342">
+                      <DataBindings>
+                        <Item1 Ref="170" PropertyName="Text" DataMember="Rows.SFT_ED_CENA" />
+                      </DataBindings>
+                      <StylePriority Ref="171" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+                    </Item5>
+                    <Item6 Ref="172" Name="xrTableCell12" ControlType="XRTableCell" Font="Times New Roman, 10pt" Padding="0,2,0,0,100" Borders="All" TextAlignment="MiddleRight" Weight="0.596191135734072">
+                      <DataBindings>
+                        <Item1 Ref="173" PropertyName="Text" DataMember="Rows.SFT_SUMMA_K_OPLATE" />
+                      </DataBindings>
+                      <StylePriority Ref="174" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+                    </Item6>
+                  </Cells>
+                </Item1>
+              </Rows>
+            </Item1>
+          </Controls>
+        </Item1>
+      </Bands>
+    </Item6>
+  </Bands>
+  <ComponentStorage>
+    <Item1 Ref="0" ObjectType="DevExpress.DataAccess.ObjectBinding.ObjectDataSource,DevExpress.DataAccess.v14.2" Name="objectDataSource1" Base64="PE9iamVjdERhdGFTb3VyY2U+PE5hbWU+b2JqZWN0RGF0YVNvdXJjZTE8L05hbWU+PERhdGFTb3VyY2UgVHlwZT0iS3Vyc0FNMi5WaWV3TW9kZWwuTG9naXN0aWtzLlNjaGV0RmFjdHVyYUNsaWVudFZpZXdNb2RlbCwgS3Vyc0FNMiwgVmVyc2lvbj0xLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPW51bGwiIC8+PC9PYmplY3REYXRhU291cmNlPg==" />
+  </ComponentStorage>
+</XtraReportsLayoutSerializer>

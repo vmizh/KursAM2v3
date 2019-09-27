@@ -2,10 +2,12 @@
 using System.Data.Entity;
 using System.Data.SQLite;
 using System.Data.SQLite.EF6;
+using System.Diagnostics.CodeAnalysis;
 using SQLite.Base.Entity;
 
 namespace SQLite.Base
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class LocalDbContext : DbContext
     {
 
@@ -68,10 +70,6 @@ namespace SQLite.Base
             var initializer = new LocalDBInitializer(modelBuilder);
             Database.SetInitializer(initializer);
         }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

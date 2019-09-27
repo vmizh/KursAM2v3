@@ -99,6 +99,7 @@ namespace Data
         public string NAKL_GRUZOOTPRAV { get; set; }
         public string NAKL_GRUZOPOLUCH { get; set; }
         public System.Guid Id { get; set; }
+        public Nullable<decimal> PersonalResponsibleDC { get; set; }
     
         public virtual GROZO_REQUISITE GROZO_REQUISITE { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

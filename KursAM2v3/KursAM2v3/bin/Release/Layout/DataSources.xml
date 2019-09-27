@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<DataSources>
+  <DataSource Name="AlfaMedia" ShowName="Альфа-Медиа" Order="1" Server="172.16.1.1" DBName="ALFAMEDIA" />
+  <DataSource Name="RedStar" ShowName="RedStar" Order="2" Server="172.16.1.1" DBName="RedStar" />
+  <DataSource Name="EcoOndol" ShowName="EcoOndol" Order="3" Server="172.16.1.1" DBName="EcoOndol" />
+</DataSources>

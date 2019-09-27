@@ -168,6 +168,7 @@ namespace Data
         public System.Guid Id { get; set; }
         public Nullable<System.Guid> MainId { get; set; }
         public Nullable<System.Guid> StatusId { get; set; }
+        public Nullable<bool> IsUslugaInRent { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AD_27> AD_27 { get; set; }

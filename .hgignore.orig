@@ -1,0 +1,19 @@
+syntax: glob
+*.suo
+*/bin/*
+*/obj/*
+*/_ReSharper.*
+*.DotSettings.user
+*.bak
+*.orig
+Bin/*
+bin/*
+/Bin/*
+/bin/*
+data/*.log
+*.csproj.user
+Artifacts/*
+*/Gen/*
+*.Generated.*
+BinService/*
+*.ide

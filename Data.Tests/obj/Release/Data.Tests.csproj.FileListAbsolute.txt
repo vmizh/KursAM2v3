@@ -1,0 +1,11 @@
+C:\Users\vmizh\WorkProject\KursAM2v3\Data.Tests\bin\Release\Data.Tests.dll
+C:\Users\vmizh\WorkProject\KursAM2v3\Data.Tests\bin\Release\Data.Tests.pdb
+C:\Users\vmizh\WorkProject\KursAM2v3\Data.Tests\bin\Release\Data.dll
+C:\Users\vmizh\WorkProject\KursAM2v3\Data.Tests\bin\Release\EntityFramework.dll
+C:\Users\vmizh\WorkProject\KursAM2v3\Data.Tests\bin\Release\nunit.framework.dll
+C:\Users\vmizh\WorkProject\KursAM2v3\Data.Tests\bin\Release\Data.pdb
+C:\Users\vmizh\WorkProject\KursAM2v3\Data.Tests\bin\Release\EntityFramework.xml
+C:\Users\vmizh\WorkProject\KursAM2v3\Data.Tests\bin\Release\nunit.framework.xml
+C:\Users\vmizh\WorkProject\KursAM2v3\Data.Tests\obj\Release\Data.Tests.csprojResolveAssemblyReference.cache
+C:\Users\vmizh\WorkProject\KursAM2v3\Data.Tests\obj\Release\Data.Tests.dll
+C:\Users\vmizh\WorkProject\KursAM2v3\Data.Tests\obj\Release\Data.Tests.pdb

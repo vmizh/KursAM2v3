@@ -1,0 +1,2281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Vadim\.Rider2018.1\system\resharper-host\local\Transient\ReSharperHost\v12\SolutionCaches\_KursAM2v3.-2136062622.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Vadim\WorkProject\KursAM2v3" t="ExcludeRecursive">
+      <e p="Calculates" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="Calculates.csproj" t="IncludeRecursive" />
+        <e p="Materials" t="Include">
+          <e p="LoaderOperation.cs" t="Include" />
+          <e p="NomenklCalcCostOperation.cs" t="Include" />
+          <e p="NomenklCalculationManager.cs" t="Include" />
+          <e p="NomenklCost.cs" t="Include" />
+          <e p="NomenklCostAndQuantityCalculator.cs" t="Include" />
+          <e p="NomenklCostBase.cs" t="Include" />
+          <e p="NomenklCostCalc.cs" t="Include" />
+          <e p="NomenklCostMediumSliding.cs" t="Include" />
+          <e p="NomenklCostMediumSlidingOnServer.cs" t="Include" />
+          <e p="NomenklCosts.cs" t="Include" />
+          <e p="NomenklMoveOperationType.cs" t="Include" />
+          <e p="NomenklOperation.cs" t="Include" />
+          <e p="NomenklOperationType.cs" t="Include" />
+          <e p="NomenklStoreRemainItem.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+      </e>
+      <e p="Calculates.Tests" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="Calculates.Tests.csproj" t="IncludeRecursive" />
+        <e p="NomenklManagerTests.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+      </e>
+      <e p="Core" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="Control" t="Include">
+          <e p="SearchButtonEditor.xaml" t="Include" />
+          <e p="SearchButtonEditor.xaml.cs" t="Include" />
+          <e p="WindowMenu.xaml" t="Include" />
+          <e p="WindowMenu.xaml.cs" t="Include" />
+        </e>
+        <e p="Core.csproj" t="IncludeRecursive" />
+        <e p="CurrencyRates.cs" t="Include" />
+        <e p="DataSource.cs" t="Include" />
+        <e p="DatePeriod.cs" t="Include" />
+        <e p="DocumentOpenInfo.cs" t="Include" />
+        <e p="DocumentType.cs" t="Include" />
+        <e p="EntityViewModel" t="Include">
+          <e p="BankAndAccounts.cs" t="Include" />
+          <e p="BankOperationsViewModel.cs" t="Include" />
+          <e p="BankPeriodOperations.cs" t="Include" />
+          <e p="BankStatements.cs" t="Include" />
+          <e p="Cash.cs" t="Include" />
+          <e p="CashKontragentType.cs" t="Include" />
+          <e p="CashOut.cs" t="Include" />
+          <e p="CLOSED_DOC_TYPEViewModel.cs" t="Include" />
+          <e p="ContractProvider.cs" t="Include" />
+          <e p="ContractProviderRowViewModel.cs" t="Include" />
+          <e p="ContractType.cs" t="Include" />
+          <e p="CountriesViewModel.cs" t="Include" />
+          <e p="COUNTRYViewModel.cs" t="Include" />
+          <e p="Currency.cs" t="Include" />
+          <e p="DeliveryCondition.cs" t="Include" />
+          <e p="EMP_PAYROLL_TYPEViewModel.cs" t="Include" />
+          <e p="Employee.cs" t="Include" />
+          <e p="EXT_USERSViewModel.cs" t="Include" />
+          <e p="FinanceFormRaschet.cs" t="Include" />
+          <e p="InvoiceClient.cs" t="Include" />
+          <e p="InvoiceClientRow.cs" t="Include" />
+          <e p="InvoiceProvider.cs" t="Include" />
+          <e p="InvoiceProviderRow.cs" t="Include" />
+          <e p="KONTR_BALANS_OPER_ARCViewModel.cs" t="Include" />
+          <e p="KONTRAGENT_REF_OUT_REQUISITEViewModel.cs" t="Include" />
+          <e p="KONTRAGENT_REF_OUTViewModel.cs" t="Include" />
+          <e p="KontragentGroup.cs" t="Include" />
+          <e p="MAIN_DOCUMENT_GROUPViewModel.cs" t="Include" />
+          <e p="MAIN_DOCUMENT_ITEMViewModel.cs" t="Include" />
+          <e p="MaterialDocumentType.cs" t="Include" />
+          <e p="NOM_SKLAD_CURRENCY_PRICEViewModel.cs" t="Include" />
+          <e p="Nomenkl.cs" t="Include" />
+          <e p="NomenklCostResetRowsViewModel.cs" t="Include" />
+          <e p="NomenklCostResetViewModel.cs" t="Include" />
+          <e p="NomenklMainViewModel.cs" t="Include" />
+          <e p="NomenklProductKind.cs" t="Include" />
+          <e p="NomenklProductType.cs" t="Include" />
+          <e p="NomenklTransferRowViewModel.cs" t="Include" />
+          <e p="NomenklTransferViewModel.cs" t="Include" />
+          <e p="Period.cs" t="Include" />
+          <e p="PERIOD_CLOSED_EXCLUDEViewModel.cs" t="Include" />
+          <e p="PERIOD_CLOSEDViewModel.cs" t="Include" />
+          <e p="PERIOD_GROUPS_USERSViewModel.cs" t="Include" />
+          <e p="PERIOD_GROUPSViewModel.cs" t="Include" />
+          <e p="PeriodGroupsExludeViewModel.cs" t="Include" />
+          <e p="ProjectProviderPrihodViewModel.cs" t="Include" />
+          <e p="ProjectsInfoViewModel.cs" t="Include" />
+          <e p="SCHET_FACT_KONTR_OUT_ROWSViewModel.cs" t="Include" />
+          <e p="SCHET_FACT_KONTR_OUTViewModel.cs" t="Include" />
+          <e p="SD_101ViewModel.cs" t="Include" />
+          <e p="SD_111ViewModel.cs" t="Include" />
+          <e p="SD_148ViewModel.cs" t="Include" />
+          <e p="SD_179ViewModel.cs" t="Include" />
+          <e p="SD_23ViewModel.cs" t="Include" />
+          <e p="SD_24ViewModel.cs" t="Include" />
+          <e p="SD_251ViewModel.cs" t="Include" />
+          <e p="SD_27ViewModel.cs" t="Include" />
+          <e p="SD_303ViewModel.cs" t="Include" />
+          <e p="SD_33ViewModel.cs" t="Include" />
+          <e p="SD_375ViewModel.cs" t="Include" />
+          <e p="SD_40ViewModel.cs" t="Include" />
+          <e p="SD_43_GRUZOViewModel.cs" t="Include" />
+          <e p="SD_43ViewModel.cs" t="Include" />
+          <e p="SD_44ViewModel.cs" t="Include" />
+          <e p="SD_77ViewModel.cs" t="Include" />
+          <e p="SD_82ViewModel.cs" t="Include" />
+          <e p="SD_83_TransferViewModel.cs" t="Include" />
+          <e p="SD_99ViewModel.cs" t="Include" />
+          <e p="SD_9ViewModel.cs" t="Include" />
+          <e p="TaxUpdateHistoryViewModel.cs" t="Include" />
+          <e p="TD_22ViewModel.cs" t="Include" />
+          <e p="TD_24ViewModel.cs" t="Include" />
+          <e p="TD_43ViewModel.cs" t="Include" />
+          <e p="TD_9ViewModel.cs" t="Include" />
+          <e p="Unit.cs" t="Include" />
+          <e p="USER_FORMS_RIGHTViewModel.cs" t="Include" />
+          <e p="WarehouseStorageOrderIn.cs" t="Include" />
+          <e p="WarehouseStorageOrderInRow.cs" t="Include" />
+          <e p="WarehouseStorageOrderOut.cs" t="Include" />
+          <e p="WarehouseStorageOrderOutRow.cs" t="Include" />
+        </e>
+        <e p="Errors.cs" t="Include" />
+        <e p="Finance" t="Include">
+          <e p="DocumentTypes.cs" t="Include" />
+        </e>
+        <e p="GlobalOptions.cs" t="Include" />
+        <e p="Helper" t="Include">
+          <e p="DataAnnotationForFluentApiBase.cs" t="Include" />
+        </e>
+        <e p="IMultiCurrency.cs" t="Include" />
+        <e p="IMultiWithPriceCurrency.cs" t="Include" />
+        <e p="IProfitMultiCurrency.cs" t="Include" />
+        <e p="KursMoney.cs" t="Include" />
+        <e p="MainReferences.cs" t="Include" />
+        <e p="Menu" t="Include">
+          <e p="MenuButtonInfo.cs" t="Include" />
+          <e p="MenuGenerator.cs" t="Include" />
+        </e>
+        <e p="MonthYearDayItem.cs" t="Include" />
+        <e p="MultiCurrenciesDatePeriod.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="ShipmentRowViewModel.cs" t="Include" />
+        <e p="ViewModel" t="Include">
+          <e p="Base" t="Include">
+            <e p="Column" t="Include">
+              <e p="ColumnHelper.cs" t="Include" />
+              <e p="ColumnSummary.cs" t="Include" />
+              <e p="GridColumnHelper.cs" t="Include" />
+              <e p="GridColumnTemplateSelector.cs" t="Include" />
+            </e>
+            <e p="Command.cs" t="Include" />
+            <e p="CurrencyCode.cs" t="Include" />
+            <e p="EntityLoadCodition.cs" t="Include" />
+            <e p="IDataUserControl.cs" t="Include" />
+            <e p="IDocument.cs" t="Include" />
+            <e p="IEntity.cs" t="Include" />
+            <e p="ITreeReference.cs" t="Include" />
+            <e p="IViewModel.cs" t="Include" />
+            <e p="KursViewModelBase.cs" t="Include" />
+            <e p="RowStatus.cs" t="Include" />
+            <e p="RSDataErrorWindowInfoViewModelBase.cs" t="Include" />
+            <e p="RSViewModelBase.cs" t="Include" />
+            <e p="RSViewModelData.cs" t="Include" />
+            <e p="RSViewModelDataEntity.cs" t="Include" />
+            <e p="RSViewModelWindow.cs" t="Include" />
+            <e p="RSWindowDataErrorInfoViewModelBase.cs" t="Include" />
+            <e p="RSWindowDialogViewModelBase.cs" t="Include" />
+            <e p="RSWindowSearchViewModelBase.cs" t="Include" />
+            <e p="RSWindowViewModelBase.cs" t="Include" />
+          </e>
+          <e p="Common" t="Include">
+            <e p="Bank.cs" t="Include" />
+            <e p="BankAccount.cs" t="Include" />
+            <e p="CentrOfResponsibility.cs" t="Include" />
+            <e p="COUNTRY.cs" t="Include" />
+            <e p="CountryDialogViewModel.cs" t="Include" />
+            <e p="CrossCurrencyRate.cs" t="Include" />
+            <e p="CurrencyRate.cs" t="Include" />
+            <e p="DatePeriodViewModel.cs" t="Include" />
+            <e p="ICheckViewModel.cs" t="Include" />
+            <e p="IncomeExpenseSchet.cs" t="Include" />
+            <e p="IncomeExpenseStatia.cs" t="Include" />
+            <e p="Kontragent.cs" t="Include" />
+            <e p="KontragentBank.cs" t="Include" />
+            <e p="KontragentCategory.cs" t="Include" />
+            <e p="KontragentGruzoRequisite.cs" t="Include" />
+            <e p="Money.cs" t="Include" />
+            <e p="NomenklMain.cs" t="Include" />
+            <e p="NomenklMoveOnSkladViewModel.cs" t="Include" />
+            <e p="NomenklRemains.cs" t="Include" />
+            <e p="NomenklSkladRemain.cs" t="Include" />
+            <e p="NomenklSkladRemains.cs" t="Include" />
+            <e p="PayCondition.cs" t="Include" />
+            <e p="Persona.cs" t="Include" />
+            <e p="Project.cs" t="Include" />
+            <e p="ProjectsDocsViewModel.cs" t="Include" />
+            <e p="SDRSchet.cs" t="Include" />
+            <e p="SDRState.cs" t="Include" />
+            <e p="Store.cs" t="Include" />
+            <e p="User.cs" t="Include" />
+            <e p="UserDialogViewModel.cs" t="Include" />
+            <e p="UserProfileViewModel.cs" t="Include" />
+            <e p="UserViewModel.cs" t="Include" />
+            <e p="VzaimoraschetType.cs" t="Include" />
+          </e>
+          <e p="KontragentTypeEnum.cs" t="Include" />
+          <e p="MutualAccounting" t="Include">
+            <e p="SD_110ViewModel.cs" t="Include" />
+            <e p="TD_110ViewModel.cs" t="Include" />
+            <e p="UD_110ViewModel.cs" t="Include" />
+          </e>
+          <e p="StateEventArgs.cs" t="Include" />
+        </e>
+        <e p="WindowsManager" t="Include">
+          <e p="IWindowManager.cs" t="Include" />
+          <e p="WindowManager.cs" t="Include" />
+        </e>
+        <e p="КemainderCurrenciesDatePeriod.cs" t="Include" />
+      </e>
+      <e p="Core.Tests" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="Core.Tests.csproj" t="IncludeRecursive" />
+        <e p="CrossCurrencyTests.cs" t="Include" />
+        <e p="CurrencyRatesTests.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="TestBase.cs" t="Include" />
+      </e>
+      <e p="CoreView" t="IncludeRecursive">
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="Common" t="Include">
+          <e p="RangeDateDialogView.xaml" t="Include" />
+          <e p="RangeDateDialogView.xaml.cs" t="Include" />
+          <e p="StandartCardView.xaml" t="Include" />
+          <e p="StandartCardView.xaml.cs" t="Include" />
+          <e p="StandartDialogView.xaml" t="Include" />
+          <e p="StandartDialogView.xaml.cs" t="Include" />
+        </e>
+        <e p="Convertors" t="Include">
+          <e p="ErrorToBrushConverter.cs" t="Include" />
+        </e>
+        <e p="CoreView.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+      </e>
+      <e p="Data" t="IncludeRecursive">
+        <e p="AccountInvoice.cs" t="Include" />
+        <e p="AD_149.cs" t="Include" />
+        <e p="AD_2.cs" t="Include" />
+        <e p="AD_27.cs" t="Include" />
+        <e p="AD_83.cs" t="Include" />
+        <e p="ALFAMEDIA.Context.cs" t="Include" />
+        <e p="ALFAMEDIA.Context.tt" t="Include" />
+        <e p="ALFAMEDIA.cs" t="Include" />
+        <e p="ALFAMEDIA.Designer.cs" t="Include" />
+        <e p="ALFAMEDIA.edmx" t="Include" />
+        <e p="ALFAMEDIA.edmx.diagram" t="Include" />
+        <e p="ALFAMEDIA.tt" t="Include" />
+        <e p="App.config" t="Include" />
+        <e p="BALANS_KONTR_OPER.cs" t="Include" />
+        <e p="BALANS_OPER_CROSS.cs" t="Include" />
+        <e p="BALANS_OPER_TYPE.cs" t="Include" />
+        <e p="BankPeriodsOperations.cs" t="Include" />
+        <e p="BD_149.cs" t="Include" />
+        <e p="BD_2.cs" t="Include" />
+        <e p="BD_83.cs" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="BreakEvenPersent.cs" t="Include" />
+        <e p="BRONIROVANIE.cs" t="Include" />
+        <e p="CASH_CORR.cs" t="Include" />
+        <e p="CD_149.cs" t="Include" />
+        <e p="CD_2.cs" t="Include" />
+        <e p="CLOSED_DOC_TYPE.cs" t="Include" />
+        <e p="COPY_TABLES.cs" t="Include" />
+        <e p="Countries.cs" t="Include" />
+        <e p="COUNTRY.cs" t="Include" />
+        <e p="CROSS_MATER_ANAL.cs" t="Include" />
+        <e p="CROSS_ZH7.cs" t="Include" />
+        <e p="CURRENCY_RATES_CB.cs" t="Include" />
+        <e p="Data.csproj" t="IncludeRecursive" />
+        <e p="DataForRequirement.cs" t="Include" />
+        <e p="DD_2.cs" t="Include" />
+        <e p="DOC_FILES.cs" t="Include" />
+        <e p="dtproperties.cs" t="Include" />
+        <e p="ED_2.cs" t="Include" />
+        <e p="EMP_PAYROLL_TYPE.cs" t="Include" />
+        <e p="EMP_PR_DOC.cs" t="Include" />
+        <e p="EMP_PR_ROWS.cs" t="Include" />
+        <e p="EMP_USER_RIGHTS.cs" t="Include" />
+        <e p="EXEC_CALC_BALANS.cs" t="Include" />
+        <e p="EXT_ANAL_VALUES.cs" t="Include" />
+        <e p="EXT_ANALS.cs" t="Include" />
+        <e p="EXT_ARM_REFRESH.cs" t="Include" />
+        <e p="EXT_ARM_STATION_REFRESH.cs" t="Include" />
+        <e p="EXT_ARMS.cs" t="Include" />
+        <e p="EXT_AUTO_PROC.cs" t="Include" />
+        <e p="EXT_AUTO_PROC_EXEC.cs" t="Include" />
+        <e p="EXT_AUTO_PROC_START.cs" t="Include" />
+        <e p="EXT_BUH_REP_DISCR.cs" t="Include" />
+        <e p="EXT_BUH_REP_DISCR_ROWS.cs" t="Include" />
+        <e p="EXT_BUH_REPS.cs" t="Include" />
+        <e p="EXT_BUH_REPS_ROWS.cs" t="Include" />
+        <e p="EXT_COLS.cs" t="Include" />
+        <e p="EXT_CROSSTBL.cs" t="Include" />
+        <e p="EXT_CUBE.cs" t="Include" />
+        <e p="EXT_CUBE_ATTR_COMBIN_ROWS.cs" t="Include" />
+        <e p="EXT_CUBE_ATTRIBUTES.cs" t="Include" />
+        <e p="EXT_CUBE_PAIRS.cs" t="Include" />
+        <e p="EXT_CUBE_VALUES.cs" t="Include" />
+        <e p="EXT_CUBE_VALUES_ATTR.cs" t="Include" />
+        <e p="EXT_DATABASE.cs" t="Include" />
+        <e p="EXT_DDE_COMMANDS.cs" t="Include" />
+        <e p="EXT_DDE_SERVERS.cs" t="Include" />
+        <e p="EXT_DLG.cs" t="Include" />
+        <e p="EXT_DOC2ANAL.cs" t="Include" />
+        <e p="EXT_DOC2TAB.cs" t="Include" />
+        <e p="EXT_DOCOBJ.cs" t="Include" />
+        <e p="EXT_DOCPAGES.cs" t="Include" />
+        <e p="EXT_FIND.cs" t="Include" />
+        <e p="EXT_FIND_MAIN.cs" t="Include" />
+        <e p="EXT_FINDLEV.cs" t="Include" />
+        <e p="EXT_FUNCDICT.cs" t="Include" />
+        <e p="EXT_GROUPAUTH.cs" t="Include" />
+        <e p="EXT_GROUPS.cs" t="Include" />
+        <e p="EXT_GRP.cs" t="Include" />
+        <e p="EXT_HELPPAGES.cs" t="Include" />
+        <e p="EXT_INHERIT.cs" t="Include" />
+        <e p="EXT_INTEGR.cs" t="Include" />
+        <e p="EXT_INTEGR2DOC.cs" t="Include" />
+        <e p="EXT_IX.cs" t="Include" />
+        <e p="EXT_IXKEYS.cs" t="Include" />
+        <e p="EXT_JOURNAL.cs" t="Include" />
+        <e p="EXT_JOURNAL1.cs" t="Include" />
+        <e p="EXT_KEYS.cs" t="Include" />
+        <e p="EXT_LIBRARIES.cs" t="Include" />
+        <e p="EXT_MESSAGES.cs" t="Include" />
+        <e p="EXT_MESSAGES_NOTES.cs" t="Include" />
+        <e p="EXT_ORDERED_TABLES.cs" t="Include" />
+        <e p="EXT_POKAZ.cs" t="Include" />
+        <e p="EXT_POKAZ_GROUP.cs" t="Include" />
+        <e p="EXT_POKAZ_VALUES.cs" t="Include" />
+        <e p="EXT_PRESENT.cs" t="Include" />
+        <e p="EXT_PRINT.cs" t="Include" />
+        <e p="EXT_PRINT2DOC.cs" t="Include" />
+        <e p="EXT_PRINT_MASS.cs" t="Include" />
+        <e p="EXT_PRINT_PARAMETR.cs" t="Include" />
+        <e p="EXT_PRINT_VERSION.cs" t="Include" />
+        <e p="EXT_PRINTIERARHY.cs" t="Include" />
+        <e p="EXT_PROC.cs" t="Include" />
+        <e p="EXT_PROCCOMMENTS.cs" t="Include" />
+        <e p="EXT_PROCPARS.cs" t="Include" />
+        <e p="EXT_PROFILE.cs" t="Include" />
+        <e p="EXT_REPL.cs" t="Include" />
+        <e p="EXT_REPL_REPORT.cs" t="Include" />
+        <e p="EXT_RUN_SRIPTS.cs" t="Include" />
+        <e p="EXT_SEARCH.cs" t="Include" />
+        <e p="EXT_SEARCH_CONDITION.cs" t="Include" />
+        <e p="EXT_SUBSYSTEMS.cs" t="Include" />
+        <e p="EXT_SUPPORT.cs" t="Include" />
+        <e p="EXT_TABDATA.cs" t="Include" />
+        <e p="EXT_TBLS.cs" t="Include" />
+        <e p="EXT_TYPES_WITH_PROVS.cs" t="Include" />
+        <e p="EXT_USER_CROSS2DOC.cs" t="Include" />
+        <e p="EXT_USER_CROSSTBL.cs" t="Include" />
+        <e p="EXT_USER_OUTLINE.cs" t="Include" />
+        <e p="EXT_USER_PRINT.cs" t="Include" />
+        <e p="EXT_USER_PRINT2DOC.cs" t="Include" />
+        <e p="EXT_USER_PRINT_PARAMETR.cs" t="Include" />
+        <e p="EXT_USER_PROC.cs" t="Include" />
+        <e p="EXT_USER_PROCCOMMENTS.cs" t="Include" />
+        <e p="EXT_USER_PROCPARS.cs" t="Include" />
+        <e p="EXT_USERS.cs" t="Include" />
+        <e p="EXT_VALIDATE.cs" t="Include" />
+        <e p="FK_REFERENCE_VIEW.cs" t="Include" />
+        <e p="GROZO_REQUISITE.cs" t="Include" />
+        <e p="H043_DVIZH_LIC_SCHET_KONTR_TABLE1_Result.cs" t="Include" />
+        <e p="H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result.cs" t="Include" />
+        <e p="H043_GET_BALANS_Result.cs" t="Include" />
+        <e p="H184000_DVIZH_LIC_SCHET_KONTR_TABLE_Result.cs" t="Include" />
+        <e p="H184000_LOAD_Result.cs" t="Include" />
+        <e p="IMP_ARTICLES.cs" t="Include" />
+        <e p="IMP_ARTICLES_SCRIPTS.cs" t="Include" />
+        <e p="IMP_CURRICDETAILS.cs" t="Include" />
+        <e p="IMP_CURRICULUM.cs" t="Include" />
+        <e p="IMP_EVENTS.cs" t="Include" />
+        <e p="IMP_INIT_VARS.cs" t="Include" />
+        <e p="IMP_PARS.cs" t="Include" />
+        <e p="IMP_PUBLICATIONS.cs" t="Include" />
+        <e p="IMP_TURNOFF.cs" t="Include" />
+        <e p="INVOICE_SEARCH_VIEW.cs" t="Include" />
+        <e p="KONTR_BALANS_OPER_ARC.cs" t="Include" />
+        <e p="KONTR_BALANS_OPER_ARC_BAK.cs" t="Include" />
+        <e p="KONTR_BLS_RECALC.cs" t="Include" />
+        <e p="KONTR_FOR_CALC.cs" t="Include" />
+        <e p="KONTR_IS_CALC_EXECUTING.cs" t="Include" />
+        <e p="KONTRAGENT_REF_OUT.cs" t="Include" />
+        <e p="KONTRAGENT_REF_OUT_REQUISITE.cs" t="Include" />
+        <e p="KURS_RAZNICA.cs" t="Include" />
+        <e p="MAIN_DOCUMENT_GROUP.cs" t="Include" />
+        <e p="MAIN_DOCUMENT_ITEM.cs" t="Include" />
+        <e p="ND_114.cs" t="Include" />
+        <e p="ND_22.cs" t="Include" />
+        <e p="ND_27.cs" t="Include" />
+        <e p="ND_303.cs" t="Include" />
+        <e p="ND_43.cs" t="Include" />
+        <e p="NOM_CRS_PRICE.cs" t="Include" />
+        <e p="NOM_PRICE.cs" t="Include" />
+        <e p="NOM_PRICE_ROWS.cs" t="Include" />
+        <e p="NOM_SKLAD_CURRENCY_PRICE.cs" t="Include" />
+        <e p="NOMENKL_MOVE_VIEW.cs" t="Include" />
+        <e p="NOMENKL_MOVES.cs" t="Include" />
+        <e p="NOMENKL_RECALC.cs" t="Include" />
+        <e p="NomenklCostReset.cs" t="Include" />
+        <e p="NomenklCostResetRows.cs" t="Include" />
+        <e p="NomenklMain.cs" t="Include" />
+        <e p="NomenklMoveForCalc.cs" t="Include" />
+        <e p="NomenklMoveForCalcCosts.cs" t="Include" />
+        <e p="NomenklMoveWithPrice.cs" t="Include" />
+        <e p="NomenklStatus.cs" t="Include" />
+        <e p="NomenklTransfer.cs" t="Include" />
+        <e p="NomenklTransferRow.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="OLAP_BALANS_KURS.cs" t="Include" />
+        <e p="packages.config" t="Include" />
+        <e p="PD_114.cs" t="Include" />
+        <e p="PD_116.cs" t="Include" />
+        <e p="PD_2.cs" t="Include" />
+        <e p="PD_22.cs" t="Include" />
+        <e p="PD_27.cs" t="Include" />
+        <e p="PD_270.cs" t="Include" />
+        <e p="PD_43.cs" t="Include" />
+        <e p="PERIOD_CLOSED.cs" t="Include" />
+        <e p="PERIOD_CLOSED_EXCLUDE.cs" t="Include" />
+        <e p="PERIOD_GROUPS.cs" t="Include" />
+        <e p="PERIOD_GROUPS_USERS.cs" t="Include" />
+        <e p="PROFILE.cs" t="Include" />
+        <e p="ProjectCurrencyNomenkl.cs" t="Include" />
+        <e p="ProjectProviderPrihod.cs" t="Include" />
+        <e p="ProjectProviderUslugi.cs" t="Include" />
+        <e p="Projects.cs" t="Include" />
+        <e p="ProjectsDocs.cs" t="Include" />
+        <e p="ProjectsInfo.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="REMAINS.cs" t="Include" />
+        <e p="REMAINS_STATUS.cs" t="Include" />
+        <e p="RequirementForShipping.cs" t="Include" />
+        <e p="RequirementForShippingRows.cs" t="Include" />
+        <e p="SCHET_FACT_KONTR_OUT.cs" t="Include" />
+        <e p="SCHET_FACT_KONTR_OUT_ROWS.cs" t="Include" />
+        <e p="SD_10.cs" t="Include" />
+        <e p="SD_100.cs" t="Include" />
+        <e p="SD_101.cs" t="Include" />
+        <e p="SD_102.cs" t="Include" />
+        <e p="SD_103.cs" t="Include" />
+        <e p="SD_105.cs" t="Include" />
+        <e p="SD_108.cs" t="Include" />
+        <e p="SD_109.cs" t="Include" />
+        <e p="SD_11.cs" t="Include" />
+        <e p="SD_110.cs" t="Include" />
+        <e p="SD_111.cs" t="Include" />
+        <e p="SD_112.cs" t="Include" />
+        <e p="SD_114.cs" t="Include" />
+        <e p="SD_116.cs" t="Include" />
+        <e p="SD_117.cs" t="Include" />
+        <e p="SD_118.cs" t="Include" />
+        <e p="SD_119.cs" t="Include" />
+        <e p="SD_12.cs" t="Include" />
+        <e p="SD_120.cs" t="Include" />
+        <e p="SD_122.cs" t="Include" />
+        <e p="SD_13.cs" t="Include" />
+        <e p="SD_131.cs" t="Include" />
+        <e p="SD_138.cs" t="Include" />
+        <e p="SD_139.cs" t="Include" />
+        <e p="SD_140.cs" t="Include" />
+        <e p="SD_141.cs" t="Include" />
+        <e p="SD_147.cs" t="Include" />
+        <e p="SD_148.cs" t="Include" />
+        <e p="SD_149.cs" t="Include" />
+        <e p="SD_150.cs" t="Include" />
+        <e p="SD_152.cs" t="Include" />
+        <e p="SD_153.cs" t="Include" />
+        <e p="SD_154.cs" t="Include" />
+        <e p="SD_156.cs" t="Include" />
+        <e p="SD_16.cs" t="Include" />
+        <e p="SD_161.cs" t="Include" />
+        <e p="SD_165.cs" t="Include" />
+        <e p="SD_17.cs" t="Include" />
+        <e p="SD_170.cs" t="Include" />
+        <e p="SD_173.cs" t="Include" />
+        <e p="SD_175.cs" t="Include" />
+        <e p="SD_176.cs" t="Include" />
+        <e p="SD_179.cs" t="Include" />
+        <e p="SD_18.cs" t="Include" />
+        <e p="SD_183.cs" t="Include" />
+        <e p="SD_185.cs" t="Include" />
+        <e p="SD_187.cs" t="Include" />
+        <e p="SD_189.cs" t="Include" />
+        <e p="SD_19.cs" t="Include" />
+        <e p="SD_191.cs" t="Include" />
+        <e p="SD_193.cs" t="Include" />
+        <e p="SD_194.cs" t="Include" />
+        <e p="SD_197.cs" t="Include" />
+        <e p="SD_2.cs" t="Include" />
+        <e p="SD_201.cs" t="Include" />
+        <e p="SD_203.cs" t="Include" />
+        <e p="SD_205.cs" t="Include" />
+        <e p="SD_207.cs" t="Include" />
+        <e p="SD_208.cs" t="Include" />
+        <e p="SD_209.cs" t="Include" />
+        <e p="SD_21.cs" t="Include" />
+        <e p="SD_210.cs" t="Include" />
+        <e p="SD_212.cs" t="Include" />
+        <e p="SD_213.cs" t="Include" />
+        <e p="SD_215.cs" t="Include" />
+        <e p="SD_219.cs" t="Include" />
+        <e p="SD_22.cs" t="Include" />
+        <e p="SD_220.cs" t="Include" />
+        <e p="SD_222.cs" t="Include" />
+        <e p="SD_2222.cs" t="Include" />
+        <e p="SD_224.cs" t="Include" />
+        <e p="SD_225.cs" t="Include" />
+        <e p="SD_226.cs" t="Include" />
+        <e p="SD_23.cs" t="Include" />
+        <e p="SD_235.cs" t="Include" />
+        <e p="SD_236.cs" t="Include" />
+        <e p="SD_24.cs" t="Include" />
+        <e p="SD_241.cs" t="Include" />
+        <e p="SD_246.cs" t="Include" />
+        <e p="SD_247.cs" t="Include" />
+        <e p="SD_248.cs" t="Include" />
+        <e p="SD_249.cs" t="Include" />
+        <e p="SD_25.cs" t="Include" />
+        <e p="SD_251.cs" t="Include" />
+        <e p="SD_252.cs" t="Include" />
+        <e p="SD_254.cs" t="Include" />
+        <e p="SD_257.cs" t="Include" />
+        <e p="SD_258.cs" t="Include" />
+        <e p="SD_259.cs" t="Include" />
+        <e p="SD_26.cs" t="Include" />
+        <e p="SD_262.cs" t="Include" />
+        <e p="SD_264.cs" t="Include" />
+        <e p="SD_265.cs" t="Include" />
+        <e p="SD_266.cs" t="Include" />
+        <e p="SD_267.cs" t="Include" />
+        <e p="SD_268.cs" t="Include" />
+        <e p="SD_269.cs" t="Include" />
+        <e p="SD_27.cs" t="Include" />
+        <e p="SD_270.cs" t="Include" />
+        <e p="SD_271.cs" t="Include" />
+        <e p="SD_272.cs" t="Include" />
+        <e p="SD_275.cs" t="Include" />
+        <e p="SD_281.cs" t="Include" />
+        <e p="SD_282.cs" t="Include" />
+        <e p="SD_283.cs" t="Include" />
+        <e p="SD_284.cs" t="Include" />
+        <e p="SD_286.cs" t="Include" />
+        <e p="SD_287.cs" t="Include" />
+        <e p="SD_288.cs" t="Include" />
+        <e p="SD_289.cs" t="Include" />
+        <e p="SD_291.cs" t="Include" />
+        <e p="SD_292.cs" t="Include" />
+        <e p="SD_293.cs" t="Include" />
+        <e p="SD_294.cs" t="Include" />
+        <e p="SD_296.cs" t="Include" />
+        <e p="SD_297.cs" t="Include" />
+        <e p="SD_298.cs" t="Include" />
+        <e p="SD_299.cs" t="Include" />
+        <e p="SD_2_CORR.cs" t="Include" />
+        <e p="SD_2_CORRECT_SUM.cs" t="Include" />
+        <e p="SD_300.cs" t="Include" />
+        <e p="SD_301.cs" t="Include" />
+        <e p="SD_302.cs" t="Include" />
+        <e p="SD_303.cs" t="Include" />
+        <e p="SD_304.cs" t="Include" />
+        <e p="SD_305.cs" t="Include" />
+        <e p="SD_306.cs" t="Include" />
+        <e p="SD_307.cs" t="Include" />
+        <e p="SD_308.cs" t="Include" />
+        <e p="SD_309.cs" t="Include" />
+        <e p="SD_31.cs" t="Include" />
+        <e p="SD_310.cs" t="Include" />
+        <e p="SD_312.cs" t="Include" />
+        <e p="SD_314.cs" t="Include" />
+        <e p="SD_315.cs" t="Include" />
+        <e p="SD_316.cs" t="Include" />
+        <e p="SD_317.cs" t="Include" />
+        <e p="SD_318.cs" t="Include" />
+        <e p="SD_319.cs" t="Include" />
+        <e p="SD_32.cs" t="Include" />
+        <e p="SD_320.cs" t="Include" />
+        <e p="SD_325.cs" t="Include" />
+        <e p="SD_327.cs" t="Include" />
+        <e p="SD_33.cs" t="Include" />
+        <e p="SD_34.cs" t="Include" />
+        <e p="SD_37.cs" t="Include" />
+        <e p="SD_372.cs" t="Include" />
+        <e p="SD_373.cs" t="Include" />
+        <e p="SD_375.cs" t="Include" />
+        <e p="SD_379.cs" t="Include" />
+        <e p="SD_382.cs" t="Include" />
+        <e p="SD_384.cs" t="Include" />
+        <e p="SD_387.cs" t="Include" />
+        <e p="SD_388.cs" t="Include" />
+        <e p="SD_389.cs" t="Include" />
+        <e p="SD_39.cs" t="Include" />
+        <e p="SD_390.cs" t="Include" />
+        <e p="SD_392.cs" t="Include" />
+        <e p="SD_394.cs" t="Include" />
+        <e p="SD_395.cs" t="Include" />
+        <e p="SD_396.cs" t="Include" />
+        <e p="SD_397.cs" t="Include" />
+        <e p="SD_398.cs" t="Include" />
+        <e p="SD_399.cs" t="Include" />
+        <e p="SD_40.cs" t="Include" />
+        <e p="SD_41.cs" t="Include" />
+        <e p="SD_42.cs" t="Include" />
+        <e p="SD_426.cs" t="Include" />
+        <e p="SD_428.cs" t="Include" />
+        <e p="SD_429.cs" t="Include" />
+        <e p="SD_43.cs" t="Include" />
+        <e p="SD_430.cs" t="Include" />
+        <e p="SD_431.cs" t="Include" />
+        <e p="SD_432.cs" t="Include" />
+        <e p="SD_434.cs" t="Include" />
+        <e p="SD_435.cs" t="Include" />
+        <e p="SD_436.cs" t="Include" />
+        <e p="SD_437.cs" t="Include" />
+        <e p="SD_43_1.cs" t="Include" />
+        <e p="SD_43_GRUZO.cs" t="Include" />
+        <e p="SD_43_USER_BLS_NOT_RIGHTS.cs" t="Include" />
+        <e p="SD_44.cs" t="Include" />
+        <e p="SD_46.cs" t="Include" />
+        <e p="SD_47.cs" t="Include" />
+        <e p="SD_48.cs" t="Include" />
+        <e p="SD_5.cs" t="Include" />
+        <e p="SD_50.cs" t="Include" />
+        <e p="SD_51.cs" t="Include" />
+        <e p="SD_53.cs" t="Include" />
+        <e p="SD_54.cs" t="Include" />
+        <e p="SD_56.cs" t="Include" />
+        <e p="SD_57.cs" t="Include" />
+        <e p="SD_58.cs" t="Include" />
+        <e p="SD_6.cs" t="Include" />
+        <e p="SD_60.cs" t="Include" />
+        <e p="SD_61.cs" t="Include" />
+        <e p="SD_63.cs" t="Include" />
+        <e p="SD_7.cs" t="Include" />
+        <e p="SD_71.cs" t="Include" />
+        <e p="SD_73.cs" t="Include" />
+        <e p="SD_76.cs" t="Include" />
+        <e p="SD_77.cs" t="Include" />
+        <e p="SD_80.cs" t="Include" />
+        <e p="SD_800.cs" t="Include" />
+        <e p="SD_82.cs" t="Include" />
+        <e p="SD_83.cs" t="Include" />
+        <e p="SD_83_Transfer.cs" t="Include" />
+        <e p="SD_84.cs" t="Include" />
+        <e p="SD_9.cs" t="Include" />
+        <e p="SD_90.cs" t="Include" />
+        <e p="SD_900.cs" t="Include" />
+        <e p="SD_901.cs" t="Include" />
+        <e p="SD_902.cs" t="Include" />
+        <e p="SD_903.cs" t="Include" />
+        <e p="SD_91.cs" t="Include" />
+        <e p="SD_92.cs" t="Include" />
+        <e p="SD_950.cs" t="Include" />
+        <e p="SD_97.cs" t="Include" />
+        <e p="SD_99.cs" t="Include" />
+        <e p="SHOP_NOMENKL_MOVE_VIEW.cs" t="Include" />
+        <e p="SHOP_OSTATKI_20141101.cs" t="Include" />
+        <e p="SHOP_RENTABELNOST.cs" t="Include" />
+        <e p="SHORT_KONTRAGENT.cs" t="Include" />
+        <e p="SHORT_NOMENKL.cs" t="Include" />
+        <e p="SHORT_PERSONA.cs" t="Include" />
+        <e p="SONY_REPORT.cs" t="Include" />
+        <e p="SONY_REPROT.cs" t="Include" />
+        <e p="STORED_GTD.cs" t="Include" />
+        <e p="TaxUpdateHistory.cs" t="Include" />
+        <e p="TD_100.cs" t="Include" />
+        <e p="TD_101.cs" t="Include" />
+        <e p="TD_108.cs" t="Include" />
+        <e p="TD_109.cs" t="Include" />
+        <e p="TD_11.cs" t="Include" />
+        <e p="TD_110.cs" t="Include" />
+        <e p="TD_112.cs" t="Include" />
+        <e p="TD_116.cs" t="Include" />
+        <e p="TD_117.cs" t="Include" />
+        <e p="TD_118.cs" t="Include" />
+        <e p="TD_12.cs" t="Include" />
+        <e p="TD_120.cs" t="Include" />
+        <e p="TD_122.cs" t="Include" />
+        <e p="TD_13.cs" t="Include" />
+        <e p="TD_138.cs" t="Include" />
+        <e p="TD_140.cs" t="Include" />
+        <e p="TD_141.cs" t="Include" />
+        <e p="TD_148.cs" t="Include" />
+        <e p="TD_149.cs" t="Include" />
+        <e p="TD_150.cs" t="Include" />
+        <e p="TD_152.cs" t="Include" />
+        <e p="TD_153.cs" t="Include" />
+        <e p="TD_156.cs" t="Include" />
+        <e p="TD_16.cs" t="Include" />
+        <e p="TD_165.cs" t="Include" />
+        <e p="TD_17.cs" t="Include" />
+        <e p="TD_173.cs" t="Include" />
+        <e p="TD_175.cs" t="Include" />
+        <e p="TD_18.cs" t="Include" />
+        <e p="TD_183.cs" t="Include" />
+        <e p="TD_19.cs" t="Include" />
+        <e p="TD_191.cs" t="Include" />
+        <e p="TD_193.cs" t="Include" />
+        <e p="TD_194.cs" t="Include" />
+        <e p="TD_197.cs" t="Include" />
+        <e p="TD_2.cs" t="Include" />
+        <e p="TD_201.cs" t="Include" />
+        <e p="TD_203.cs" t="Include" />
+        <e p="TD_205.cs" t="Include" />
+        <e p="TD_207.cs" t="Include" />
+        <e p="TD_209.cs" t="Include" />
+        <e p="TD_210.cs" t="Include" />
+        <e p="TD_212.cs" t="Include" />
+        <e p="TD_215.cs" t="Include" />
+        <e p="TD_219.cs" t="Include" />
+        <e p="TD_22.cs" t="Include" />
+        <e p="TD_222.cs" t="Include" />
+        <e p="TD_226.cs" t="Include" />
+        <e p="TD_23.cs" t="Include" />
+        <e p="TD_235.cs" t="Include" />
+        <e p="TD_236.cs" t="Include" />
+        <e p="TD_24.cs" t="Include" />
+        <e p="TD_246.cs" t="Include" />
+        <e p="TD_247.cs" t="Include" />
+        <e p="TD_249.cs" t="Include" />
+        <e p="TD_24_2.cs" t="Include" />
+        <e p="TD_25.cs" t="Include" />
+        <e p="TD_254.cs" t="Include" />
+        <e p="TD_259.cs" t="Include" />
+        <e p="TD_26.cs" t="Include" />
+        <e p="TD_266.cs" t="Include" />
+        <e p="TD_27.cs" t="Include" />
+        <e p="TD_281.cs" t="Include" />
+        <e p="TD_286.cs" t="Include" />
+        <e p="TD_299.cs" t="Include" />
+        <e p="TD_301.cs" t="Include" />
+        <e p="TD_301N.cs" t="Include" />
+        <e p="TD_302.cs" t="Include" />
+        <e p="TD_306.cs" t="Include" />
+        <e p="TD_307.cs" t="Include" />
+        <e p="TD_309.cs" t="Include" />
+        <e p="TD_31.cs" t="Include" />
+        <e p="TD_32.cs" t="Include" />
+        <e p="TD_327.cs" t="Include" />
+        <e p="TD_372.cs" t="Include" />
+        <e p="TD_373.cs" t="Include" />
+        <e p="TD_379.cs" t="Include" />
+        <e p="TD_384.cs" t="Include" />
+        <e p="TD_387.cs" t="Include" />
+        <e p="TD_389.cs" t="Include" />
+        <e p="TD_392.cs" t="Include" />
+        <e p="TD_394.cs" t="Include" />
+        <e p="TD_395.cs" t="Include" />
+        <e p="TD_397.cs" t="Include" />
+        <e p="TD_399.cs" t="Include" />
+        <e p="TD_426.cs" t="Include" />
+        <e p="TD_43.cs" t="Include" />
+        <e p="TD_432.cs" t="Include" />
+        <e p="TD_435.cs" t="Include" />
+        <e p="TD_436.cs" t="Include" />
+        <e p="TD_437.cs" t="Include" />
+        <e p="TD_46.cs" t="Include" />
+        <e p="TD_47.cs" t="Include" />
+        <e p="TD_48.cs" t="Include" />
+        <e p="TD_5.cs" t="Include" />
+        <e p="TD_56.cs" t="Include" />
+        <e p="TD_60.cs" t="Include" />
+        <e p="TD_61.cs" t="Include" />
+        <e p="TD_63.cs" t="Include" />
+        <e p="TD_71.cs" t="Include" />
+        <e p="TD_73.cs" t="Include" />
+        <e p="TD_800.cs" t="Include" />
+        <e p="TD_83.cs" t="Include" />
+        <e p="TD_84.cs" t="Include" />
+        <e p="TD_84_HISTORY.cs" t="Include" />
+        <e p="TD_9.cs" t="Include" />
+        <e p="TD_901.cs" t="Include" />
+        <e p="TD_903.cs" t="Include" />
+        <e p="TD_950.cs" t="Include" />
+        <e p="tmp_SD_24.cs" t="Include" />
+        <e p="tmp_UD_212.cs" t="Include" />
+        <e p="tmp_UD_83.cs" t="Include" />
+        <e p="TransferNomenkl.cs" t="Include" />
+        <e p="TransferNomenklRow.cs" t="Include" />
+        <e p="TTT.cs" t="Include" />
+        <e p="TYPES.cs" t="Include" />
+        <e p="TYPES_NEW.cs" t="Include" />
+        <e p="UD_101.cs" t="Include" />
+        <e p="UD_108.cs" t="Include" />
+        <e p="UD_109.cs" t="Include" />
+        <e p="UD_11.cs" t="Include" />
+        <e p="UD_110.cs" t="Include" />
+        <e p="UD_112.cs" t="Include" />
+        <e p="UD_116.cs" t="Include" />
+        <e p="UD_118.cs" t="Include" />
+        <e p="UD_122.cs" t="Include" />
+        <e p="UD_13.cs" t="Include" />
+        <e p="UD_138.cs" t="Include" />
+        <e p="UD_149.cs" t="Include" />
+        <e p="UD_152.cs" t="Include" />
+        <e p="UD_165.cs" t="Include" />
+        <e p="UD_17.cs" t="Include" />
+        <e p="UD_18.cs" t="Include" />
+        <e p="UD_193.cs" t="Include" />
+        <e p="UD_197.cs" t="Include" />
+        <e p="UD_2.cs" t="Include" />
+        <e p="UD_201.cs" t="Include" />
+        <e p="UD_203.cs" t="Include" />
+        <e p="UD_207.cs" t="Include" />
+        <e p="UD_212.cs" t="Include" />
+        <e p="UD_215.cs" t="Include" />
+        <e p="UD_219.cs" t="Include" />
+        <e p="UD_22.cs" t="Include" />
+        <e p="UD_226.cs" t="Include" />
+        <e p="UD_235.cs" t="Include" />
+        <e p="UD_24.cs" t="Include" />
+        <e p="UD_259.cs" t="Include" />
+        <e p="UD_26.cs" t="Include" />
+        <e p="UD_266.cs" t="Include" />
+        <e p="UD_27.cs" t="Include" />
+        <e p="UD_270.cs" t="Include" />
+        <e p="UD_281.cs" t="Include" />
+        <e p="UD_286.cs" t="Include" />
+        <e p="UD_301.cs" t="Include" />
+        <e p="UD_306.cs" t="Include" />
+        <e p="UD_373.cs" t="Include" />
+        <e p="UD_379.cs" t="Include" />
+        <e p="UD_43.cs" t="Include" />
+        <e p="UD_432.cs" t="Include" />
+        <e p="UD_436.cs" t="Include" />
+        <e p="UD_46.cs" t="Include" />
+        <e p="UD_48.cs" t="Include" />
+        <e p="UD_5.cs" t="Include" />
+        <e p="UD_56.cs" t="Include" />
+        <e p="UD_60.cs" t="Include" />
+        <e p="UD_61.cs" t="Include" />
+        <e p="UD_800.cs" t="Include" />
+        <e p="UD_83.cs" t="Include" />
+        <e p="UD_83_CORRECT.cs" t="Include" />
+        <e p="UD_83_SKLAD_REMAINS_CORRECT.cs" t="Include" />
+        <e p="UD_84.cs" t="Include" />
+        <e p="UD_9.cs" t="Include" />
+        <e p="UD_903.cs" t="Include" />
+        <e p="UD_950.cs" t="Include" />
+        <e p="UPDATE_KONTR.cs" t="Include" />
+        <e p="USER_FORMS_RIGHT.cs" t="Include" />
+        <e p="UserProfile.cs" t="Include" />
+        <e p="V_101.cs" t="Include" />
+        <e p="V_110.cs" t="Include" />
+        <e p="V_24.cs" t="Include" />
+        <e p="V_NOM_MOVE.cs" t="Include" />
+        <e p="V_PRIKAZPRIEM.cs" t="Include" />
+        <e p="V_RAB_SOTRUDNIKY.cs" t="Include" />
+        <e p="V_RABPERSONAL_CHISL.cs" t="Include" />
+        <e p="V_SD_251.cs" t="Include" />
+        <e p="V_SD_26.cs" t="Include" />
+        <e p="V_SD_266.cs" t="Include" />
+        <e p="V_SD_33.cs" t="Include" />
+        <e p="V_SD_34.cs" t="Include" />
+        <e p="V_SD_43.cs" t="Include" />
+        <e p="V_SD_83.cs" t="Include" />
+        <e p="V_SD_83_2.cs" t="Include" />
+        <e p="V_SD_84.cs" t="Include" />
+        <e p="V_SHTATRASP.cs" t="Include" />
+        <e p="V_SPR_PODR.cs" t="Include" />
+        <e p="V_TD_101.cs" t="Include" />
+        <e p="V_TD_138.cs" t="Include" />
+        <e p="V_TD_24.cs" t="Include" />
+        <e p="V_TD_26.cs" t="Include" />
+        <e p="V_TD_299.cs" t="Include" />
+        <e p="V_TD_32.cs" t="Include" />
+        <e p="V_TD_84.cs" t="Include" />
+        <e p="V_UD_101.cs" t="Include" />
+        <e p="V_UD_43.cs" t="Include" />
+        <e p="V_USLUGI_IN.cs" t="Include" />
+        <e p="V_USLUGI_OUT.cs" t="Include" />
+        <e p="V_UVOLPERSONAL.cs" t="Include" />
+        <e p="V_VNUTSOVM.cs" t="Include" />
+        <e p="V_VNUTSOVM_SHTAT.cs" t="Include" />
+        <e p="VD_108.cs" t="Include" />
+        <e p="VD_11.cs" t="Include" />
+        <e p="VD_112.cs" t="Include" />
+        <e p="VD_116.cs" t="Include" />
+        <e p="VD_13.cs" t="Include" />
+        <e p="VD_138.cs" t="Include" />
+        <e p="vd_149.cs" t="Include" />
+        <e p="VD_152.cs" t="Include" />
+        <e p="VD_165.cs" t="Include" />
+        <e p="VD_17.cs" t="Include" />
+        <e p="VD_193.cs" t="Include" />
+        <e p="VD_197.cs" t="Include" />
+        <e p="VD_2.cs" t="Include" />
+        <e p="VD_203.cs" t="Include" />
+        <e p="VD_24.cs" t="Include" />
+        <e p="VD_27.cs" t="Include" />
+        <e p="VD_379.cs" t="Include" />
+        <e p="VD_40.cs" t="Include" />
+        <e p="VD_43.cs" t="Include" />
+        <e p="VD_432.cs" t="Include" />
+        <e p="VD_46.cs" t="Include" />
+        <e p="VD_48.cs" t="Include" />
+        <e p="VD_5.cs" t="Include" />
+        <e p="VD_60.cs" t="Include" />
+        <e p="VD_83.cs" t="Include" />
+        <e p="VD_84.cs" t="Include" />
+        <e p="VD_9.cs" t="Include" />
+        <e p="VH_SD_102.cs" t="Include" />
+        <e p="VH_SD_114.cs" t="Include" />
+        <e p="VH_SD_17.cs" t="Include" />
+        <e p="VH_SD_201.cs" t="Include" />
+        <e p="VH_SD_213.cs" t="Include" />
+        <e p="VH_SD_22.cs" t="Include" />
+        <e p="VH_SD_257.cs" t="Include" />
+        <e p="VH_SD_264.cs" t="Include" />
+        <e p="VH_SD_27.cs" t="Include" />
+        <e p="VH_SD_270.cs" t="Include" />
+        <e p="VH_SD_27_1.cs" t="Include" />
+        <e p="VH_SD_27_2.cs" t="Include" />
+        <e p="VH_SD_298.cs" t="Include" />
+        <e p="VH_SD_303.cs" t="Include" />
+        <e p="VH_SD_396.cs" t="Include" />
+        <e p="VH_SD_40.cs" t="Include" />
+        <e p="VH_SD_43.cs" t="Include" />
+        <e p="VH_SD_77.cs" t="Include" />
+        <e p="VH_SD_82.cs" t="Include" />
+        <e p="VVD_24.cs" t="Include" />
+        <e p="WD_11.cs" t="Include" />
+        <e p="WD_116.cs" t="Include" />
+        <e p="WD_122.cs" t="Include" />
+        <e p="WD_13.cs" t="Include" />
+        <e p="WD_138.cs" t="Include" />
+        <e p="WD_152.cs" t="Include" />
+        <e p="WD_2.cs" t="Include" />
+        <e p="WD_201.cs" t="Include" />
+        <e p="WD_203.cs" t="Include" />
+        <e p="WD_212.cs" t="Include" />
+        <e p="WD_24.cs" t="Include" />
+        <e p="WD_27.cs" t="Include" />
+        <e p="WD_301.cs" t="Include" />
+        <e p="WD_43.cs" t="Include" />
+        <e p="WD_46.cs" t="Include" />
+        <e p="WD_48.cs" t="Include" />
+        <e p="WD_83.cs" t="Include" />
+        <e p="WD_9.cs" t="Include" />
+        <e p="XD_122.cs" t="Include" />
+        <e p="XD_138.cs" t="Include" />
+        <e p="XD_152.cs" t="Include" />
+        <e p="XD_2.cs" t="Include" />
+        <e p="XD_203.cs" t="Include" />
+        <e p="XD_207.cs" t="Include" />
+        <e p="XD_212.cs" t="Include" />
+        <e p="XD_24.cs" t="Include" />
+        <e p="XD_27.cs" t="Include" />
+        <e p="XD_43.cs" t="Include" />
+        <e p="XD_48.cs" t="Include" />
+        <e p="XD_83.cs" t="Include" />
+        <e p="XD_9.cs" t="Include" />
+        <e p="YD_122.cs" t="Include" />
+        <e p="YD_193.cs" t="Include" />
+        <e p="YD_2.cs" t="Include" />
+        <e p="YD_203.cs" t="Include" />
+        <e p="YD_207.cs" t="Include" />
+        <e p="YD_27.cs" t="Include" />
+        <e p="YD_43.cs" t="Include" />
+        <e p="YD_83.cs" t="Include" />
+        <e p="ZD_184.cs" t="Include" />
+        <e p="ZD_2.cs" t="Include" />
+        <e p="ZD_203.cs" t="Include" />
+        <e p="ZD_27.cs" t="Include" />
+        <e p="ZD_43.cs" t="Include" />
+        <e p="ZD_83.cs" t="Include" />
+        <e p="ZD_9.cs" t="Include" />
+      </e>
+      <e p="DevExpress" t="IncludeRecursive">
+        <e p="App_Data" t="Include" />
+        <e p="App_Start" t="Include">
+          <e p="BundleConfig.cs" t="Include" />
+          <e p="FilterConfig.cs" t="Include" />
+          <e p="RouteConfig.cs" t="Include" />
+        </e>
+        <e p="ApplicationInsights.config" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="Content" t="Include">
+          <e p="css" t="Include">
+            <e p="bootstrap.css" t="Include" />
+            <e p="bootstrap.min.css" t="Include" />
+            <e p="Site.css" t="Include" />
+          </e>
+          <e p="Images" t="Include">
+            <e p="avatar.png" t="Include" />
+            <e p="icons" t="Include">
+              <e p="menu.png" t="Include" />
+              <e p="rubbish-bin.png" t="Include" />
+              <e p="user.png" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Controllers" t="Include">
+          <e p="AccountController.cs" t="Include" />
+          <e p="CashBookController.cs" t="Include" />
+          <e p="HomeController.cs" t="Include" />
+        </e>
+        <e p="DevExpressMVC.csproj" t="IncludeRecursive" />
+        <e p="favicon.ico" t="Include" />
+        <e p="fonts" t="Include">
+          <e p="glyphicons-halflings-regular.eot" t="Include" />
+          <e p="glyphicons-halflings-regular.svg" t="Include" />
+          <e p="glyphicons-halflings-regular.ttf" t="Include" />
+          <e p="glyphicons-halflings-regular.woff" t="Include" />
+        </e>
+        <e p="Global.asax" t="Include" />
+        <e p="Global.asax.cs" t="Include" />
+        <e p="Models" t="Include">
+          <e p="DataModel" t="Include">
+            <e p="Customer.cs" t="Include" />
+            <e p="Emploee.cs" t="Include" />
+            <e p="Link.cs" t="Include" />
+            <e p="LoginModel.cs" t="Include" />
+            <e p="MenuModel.cs" t="Include" />
+          </e>
+          <e p="Globals.cs" t="Include" />
+          <e p="logicModel" t="Include">
+            <e p="MenuSource.cs" t="Include" />
+          </e>
+        </e>
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+          <e p="PublishProfiles" t="Include">
+            <e p="CustomProfile.pubxml" t="Include" />
+            <e p="FolderProfile.pubxml" t="Include" />
+            <e p="FolderProfile1.pubxml" t="Include" />
+          </e>
+        </e>
+        <e p="Providers" t="Include">
+          <e p="ConnectProvider.cs" t="Include" />
+          <e p="CustomeRoleProvider.cs" t="Include" />
+        </e>
+        <e p="Scripts" t="Include">
+          <e p="bootstrap.js" t="Include" />
+          <e p="bootstrap.min.js" t="Include" />
+          <e p="jquery-1.11.1.intellisense.js" t="Include" />
+          <e p="jquery-1.11.1.js" t="Include" />
+          <e p="jquery-1.11.1.min.js" t="Include" />
+          <e p="jquery-1.11.1.min.map" t="Include" />
+          <e p="jquery.validate-vsdoc.js" t="Include" />
+          <e p="jquery.validate.js" t="Include" />
+          <e p="jquery.validate.min.js" t="Include" />
+          <e p="jquery.validate.unobtrusive.js" t="Include" />
+          <e p="jquery.validate.unobtrusive.min.js" t="Include" />
+          <e p="modernizr-2.6.2.js" t="Include" />
+          <e p="respond.js" t="Include" />
+          <e p="respond.min.js" t="Include" />
+        </e>
+        <e p="Views" t="Include">
+          <e p="_ViewStart.cshtml" t="Include" />
+          <e p="Account" t="Include">
+            <e p="Login.cshtml" t="Include" />
+          </e>
+          <e p="CashBook" t="Include">
+            <e p="CashDesksPart.cshtml" t="Include" />
+            <e p="CashGridPart.cshtml" t="Include" />
+            <e p="Index.cshtml" t="Include" />
+            <e p="PeriodsViewPart.cshtml" t="Include" />
+            <e p="SubCashGridPart.cshtml" t="Include" />
+          </e>
+          <e p="Home" t="Include">
+            <e p="Index.cshtml" t="Include" />
+          </e>
+          <e p="Shared" t="Include">
+            <e p="_Layout.cshtml" t="Include" />
+            <e p="_Menu.cshtml" t="Include" />
+            <e p="Error.cshtml" t="Include" />
+          </e>
+          <e p="Web.config" t="Include" />
+        </e>
+        <e p="Web.config" t="Include" />
+        <e p="Web.Debug.config" t="Include" />
+        <e p="Web.Release.config" t="Include" />
+      </e>
+      <e p="FinanceAnalitic" t="IncludeRecursive">
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="CalcProfitItem.cs" t="Include" />
+        <e p="FinanceAnalitic.csproj" t="IncludeRecursive" />
+        <e p="IProfitAndLossesBase.cs" t="Include" />
+        <e p="IProfitCurrencyList.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="TypeProfitAndLossCalc.cs" t="Include" />
+        <e p="TypeProfitItem.cs" t="Include" />
+      </e>
+      <e p="GenerateDataContract" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="Config.xml" t="Include" />
+        <e p="DataBaseContext.cs" t="Include" />
+        <e p="DataBaseManager.cs" t="Include" />
+        <e p="DBStructure.cs" t="Include" />
+        <e p="GenerateConfig.xml" t="Include" />
+        <e p="GenerateDataContract.csproj" t="IncludeRecursive" />
+        <e p="GenerateManager.cs" t="Include" />
+        <e p="GenerateWrapper.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="SqlTable" t="Include">
+          <e p="Column.cs" t="Include" />
+          <e p="ForeignKey.cs" t="Include" />
+          <e p="Table.cs" t="Include" />
+        </e>
+      </e>
+      <e p="GenerateDataContract.Tests" t="IncludeRecursive">
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="DataBaseCoreTests.cs" t="Include" />
+        <e p="DBStructureTests.cs" t="Include" />
+        <e p="GenerateDataContract.Tests.csproj" t="IncludeRecursive" />
+        <e p="GenerateManagerTests.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+      </e>
+      <e p="Helper" t="IncludeRecursive">
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="BindingHelper.cs" t="Include" />
+        <e p="CommitHelper.cs" t="Include" />
+        <e p="CopyFiles.cs" t="Include" />
+        <e p="CustomFormat.cs" t="Include" />
+        <e p="GridControlHelper.cs" t="Include" />
+        <e p="Helper.csproj" t="IncludeRecursive" />
+        <e p="ImageManager.cs" t="Include" />
+        <e p="Interface" t="Include">
+          <e p="ITreeSumCalculate.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="RuDateAndMoneyConverter.cs" t="Include" />
+        <e p="Tiles.cs" t="Include" />
+        <e p="Users.cs" t="Include" />
+        <e p="ViewFluentHelper.cs" t="Include" />
+        <e p="WindowHelper.cs" t="Include" />
+        <e p="WrapperUtility.cs" t="Include" />
+      </e>
+      <e p="KursAM2.Tests" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="Cash" t="Include">
+          <e p="CashInTests.cs" t="Include" />
+        </e>
+        <e p="ConnectionTests.cs" t="Include" />
+        <e p="EntityViewModels" t="Include">
+          <e p="ProjectsTests.cs" t="Include" />
+          <e p="ProjectTests.cs" t="Include" />
+          <e p="SD_110Tests.cs" t="Include" />
+          <e p="SD_111Tests.cs" t="Include" />
+        </e>
+        <e p="KursAM2.Tests.csproj" t="IncludeRecursive" />
+        <e p="MutualAccounting" t="Include">
+          <e p="MutualAccountingTests.cs" t="Include" />
+          <e p="MutualAccountingWindowViewModelTests.cs" t="Include" />
+          <e p="MutualHelperTests.cs" t="Include" />
+        </e>
+        <e p="NomenklTransferTests.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="ObservableCollectionTest.cs" t="Include" />
+        <e p="packages.config" t="Include" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="TestBase.cs" t="Include" />
+      </e>
+      <e p="KursAM2v3" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="App.xaml" t="Include" />
+        <e p="App.xaml.cs" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="Dialogs" t="Include">
+          <e p="StandartDialogs.cs" t="Include" />
+        </e>
+        <e p="Font" t="Include">
+          <e p="LICENSE.txt" t="Include" />
+          <e p="Roboto-Black.ttf" t="Include" />
+          <e p="Roboto-BlackItalic.ttf" t="Include" />
+          <e p="Roboto-Bold.ttf" t="Include" />
+          <e p="Roboto-BoldItalic.ttf" t="Include" />
+          <e p="Roboto-Italic.ttf" t="Include" />
+          <e p="Roboto-Light.ttf" t="Include" />
+          <e p="Roboto-LightItalic.ttf" t="Include" />
+          <e p="Roboto-Medium.ttf" t="Include" />
+          <e p="Roboto-MediumItalic.ttf" t="Include" />
+          <e p="Roboto-Regular.ttf" t="Include" />
+          <e p="Roboto-Thin.ttf" t="Include" />
+          <e p="Roboto-ThinItalic.ttf" t="Include" />
+        </e>
+        <e p="GenViewModel" t="IncludeRecursive">
+          <e p="App.config" t="Include" />
+          <e p="App.xaml" t="Include" />
+          <e p="App.xaml.cs" t="Include" />
+          <e p="Bin" t="ExcludeRecursive" />
+          <e p="GenViewModel.csproj" t="IncludeRecursive" />
+          <e p="MainWindow.xaml" t="Include" />
+          <e p="MainWindow.xaml.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive" />
+          <e p="packages.config" t="Include" />
+          <e p="Properties" t="Include">
+            <e p="AssemblyInfo.cs" t="Include" />
+            <e p="Licenses.licx" t="Include" />
+            <e p="Resources.Designer.cs" t="Include" />
+            <e p="Resources.resx" t="Include" />
+            <e p="Settings.Designer.cs" t="Include" />
+            <e p="Settings.settings" t="Include" />
+          </e>
+        </e>
+        <e p="Images" t="Include">
+          <e p="arrow_right.png" t="Include" />
+          <e p="Box_Blue.png" t="Include" />
+          <e p="Box_Green.png" t="Include" />
+          <e p="Box_Grey.png" t="Include" />
+          <e p="businessman.png" t="Include" />
+          <e p="calculator.png" t="Include" />
+          <e p="Circle_Blue.png" t="Include" />
+          <e p="Circle_Green.png" t="Include" />
+          <e p="Circle_Grey.png" t="Include" />
+          <e p="Close_Box_Red.png" t="Include" />
+          <e p="DeleteRed.png" t="Include" />
+          <e p="disk_blue_big.png" t="Include" />
+          <e p="document.png" t="Include" />
+          <e p="document_add.png" t="Include" />
+          <e p="document_attachment.png" t="Include" />
+          <e p="document_certificate.png" t="Include" />
+          <e p="document_chart.png" t="Include" />
+          <e p="document_check.png" t="Include" />
+          <e p="document_connection.png" t="Include" />
+          <e p="document_cup.png" t="Include" />
+          <e p="document_delete.png" t="Include" />
+          <e p="document_dirty.png" t="Include" />
+          <e p="document_dirty_big.png" t="Include" />
+          <e p="document_down.png" t="Include" />
+          <e p="document_edit.png" t="Include" />
+          <e p="document_error.png" t="Include" />
+          <e p="document_exchange.png" t="Include" />
+          <e p="document_find.png" t="Include" />
+          <e p="document_forbidden.png" t="Include" />
+          <e p="document_gear.png" t="Include" />
+          <e p="document_heart.png" t="Include" />
+          <e p="document_info.png" t="Include" />
+          <e p="document_into.png" t="Include" />
+          <e p="document_lock.png" t="Include" />
+          <e p="document_music.png" t="Include" />
+          <e p="document_new.png" t="Include" />
+          <e p="document_notebook.png" t="Include" />
+          <e p="document_ok.png" t="Include" />
+          <e p="document_out.png" t="Include" />
+          <e p="document_pinned.png" t="Include" />
+          <e p="document_plain.png" t="Include" />
+          <e p="document_plain_green.png" t="Include" />
+          <e p="document_plain_new.png" t="Include" />
+          <e p="document_plain_red.png" t="Include" />
+          <e p="document_plain_yellow.png" t="Include" />
+          <e p="document_preferences.png" t="Include" />
+          <e p="document_pulse.png" t="Include" />
+          <e p="document_refresh.png" t="Include" />
+          <e p="document_stop.png" t="Include" />
+          <e p="document_text.png" t="Include" />
+          <e p="document_time.png" t="Include" />
+          <e p="document_up.png" t="Include" />
+          <e p="document_view.png" t="Include" />
+          <e p="document_warning.png" t="Include" />
+          <e p="document_zoom_in.png" t="Include" />
+          <e p="document_zoom_out.png" t="Include" />
+          <e p="documents.png" t="Include" />
+          <e p="documents_gear.png" t="Include" />
+          <e p="documents_new.png" t="Include" />
+          <e p="documents_preferences.png" t="Include" />
+          <e p="edit_big.png" t="Include" />
+          <e p="edit_s.png" t="Include" />
+          <e p="element_add_big.png" t="Include" />
+          <e p="element_add_s.png" t="Include" />
+          <e p="element_big.png" t="Include" />
+          <e p="element_copy_big.png" t="Include" />
+          <e p="element_copy_s.png" t="Include" />
+          <e p="element_delete_big.png" t="Include" />
+          <e p="element_delete_s.png" t="Include" />
+          <e p="element_down_big.png" t="Include" />
+          <e p="element_down_s.png" t="Include" />
+          <e p="element_find_big.png" t="Include" />
+          <e p="element_find_s.png" t="Include" />
+          <e p="element_into_big.png" t="Include" />
+          <e p="element_into_input_big.png" t="Include" />
+          <e p="element_into_input_s.png" t="Include" />
+          <e p="element_into_s.png" t="Include" />
+          <e p="element_new_after_big.png" t="Include" />
+          <e p="element_new_after_s.png" t="Include" />
+          <e p="element_new_before_big.png" t="Include" />
+          <e p="element_new_before_s.png" t="Include" />
+          <e p="element_new_big.png" t="Include" />
+          <e p="element_new_s.png" t="Include" />
+          <e p="element_next_big.png" t="Include" />
+          <e p="element_next_s.png" t="Include" />
+          <e p="element_ok_big.png" t="Include" />
+          <e p="element_ok_s.png" t="Include" />
+          <e p="element_preferences_big.png" t="Include" />
+          <e p="element_preferences_s.png" t="Include" />
+          <e p="element_previous_big.png" t="Include" />
+          <e p="element_previous_s.png" t="Include" />
+          <e p="element_refresh_big.png" t="Include" />
+          <e p="element_refresh_s.png" t="Include" />
+          <e p="element_replace_big.png" t="Include" />
+          <e p="element_replace_s.png" t="Include" />
+          <e p="element_run_big.png" t="Include" />
+          <e p="element_run_s.png" t="Include" />
+          <e p="element_s.png" t="Include" />
+          <e p="element_selection_big.png" t="Include" />
+          <e p="element_selection_delete_big.png" t="Include" />
+          <e p="element_selection_delete_s.png" t="Include" />
+          <e p="element_selection_s.png" t="Include" />
+          <e p="element_stop_big.png" t="Include" />
+          <e p="element_stop_s.png" t="Include" />
+          <e p="element_time_big.png" t="Include" />
+          <e p="element_time_s.png" t="Include" />
+          <e p="element_up_big.png" t="Include" />
+          <e p="element_up_s.png" t="Include" />
+          <e p="element_view_big.png" t="Include" />
+          <e p="element_view_s.png" t="Include" />
+          <e p="elements1_big.png" t="Include" />
+          <e p="elements1_s.png" t="Include" />
+          <e p="elements2_big.png" t="Include" />
+          <e p="elements2_s.png" t="Include" />
+          <e p="elements_selection_big.png" t="Include" />
+          <e p="elements_selection_s.png" t="Include" />
+          <e p="exit.png" t="Include" />
+          <e p="export1.png" t="Include" />
+          <e p="export2.png" t="Include" />
+          <e p="find.png" t="Include" />
+          <e p="find_text.png" t="Include" />
+          <e p="form_blue_big.png" t="Include" />
+          <e p="Help_Circle_Blue.png" t="Include" />
+          <e p="id_card_big.png" t="Include" />
+          <e p="Info_Box_Blue.png" t="Include" />
+          <e p="information_big.png" t="Include" />
+          <e p="memory.png" t="Include" />
+          <e p="printer2_big.png" t="Include" />
+          <e p="printer2_s.png" t="Include" />
+          <e p="printer_add_big.png" t="Include" />
+          <e p="printer_add_s.png" t="Include" />
+          <e p="printer_big.png" t="Include" />
+          <e p="printer_delete_big.png" t="Include" />
+          <e p="printer_delete_s.png" t="Include" />
+          <e p="printer_error_big.png" t="Include" />
+          <e p="printer_error_s.png" t="Include" />
+          <e p="printer_information_big.png" t="Include" />
+          <e p="printer_information_s.png" t="Include" />
+          <e p="printer_network_big.png" t="Include" />
+          <e p="printer_network_s.png" t="Include" />
+          <e p="printer_new_big.png" t="Include" />
+          <e p="printer_new_s.png" t="Include" />
+          <e p="printer_ok_big.png" t="Include" />
+          <e p="printer_ok_s.png" t="Include" />
+          <e p="printer_preferences_big.png" t="Include" />
+          <e p="printer_preferences_s.png" t="Include" />
+          <e p="printer_s.png" t="Include" />
+          <e p="printer_view_big.png" t="Include" />
+          <e p="printer_view_s.png" t="Include" />
+          <e p="printer_warning_big.png" t="Include" />
+          <e p="printer_warning_s.png" t="Include" />
+          <e p="recycle.png" t="Include" />
+          <e p="recycle_add.png" t="Include" />
+          <e p="recycle_delete.png" t="Include" />
+          <e p="recycle_error.png" t="Include" />
+          <e p="recycle_information.png" t="Include" />
+          <e p="recycle_ok.png" t="Include" />
+          <e p="recycle_preferences.png" t="Include" />
+          <e p="recycle_warning.png" t="Include" />
+          <e p="redo.png" t="Include" />
+          <e p="refresh.png" t="Include" />
+          <e p="replace.png" t="Include" />
+          <e p="replace2.png" t="Include" />
+          <e p="TileControlManagement.png" t="Include" />
+          <e p="TileFinanceUchet.png" t="Include" />
+          <e p="TileMaterialManagment.png" t="Include" />
+          <e p="TilePayroll.png" t="Include" />
+          <e p="TilePersonalControlGroup.png" t="Include" />
+          <e p="TileProjects.png" t="Include" />
+          <e p="User1.png" t="Include" />
+          <e p="Warning.png" t="Include" />
+        </e>
+        <e p="KursAM2.csproj" t="IncludeRecursive" />
+        <e p="Layout" t="Include">
+          <e p="DataSources.xml" t="Include" />
+          <e p="KursAM2.txt" t="Include" />
+        </e>
+        <e p="Managers" t="Include">
+          <e p="AccessRightsManager.cs" t="Include" />
+          <e p="BankOperationsManager.cs" t="Include" />
+          <e p="Base" t="Include">
+            <e p="AttributeHelper.cs" t="Include" />
+            <e p="BaseItemManager.cs" t="Include" />
+            <e p="DocumentCopyType.cs" t="Include" />
+            <e p="DocumentManager.cs" t="Include" />
+            <e p="DocumentWithRowManager.cs" t="Include" />
+            <e p="IItemManager.cs" t="Include" />
+            <e p="ReferenceManager.cs" t="Include" />
+          </e>
+          <e p="CashManager.cs" t="Include" />
+          <e p="DocumentsOpenManager.cs" t="Include" />
+          <e p="InventorySheetManager.cs" t="Include" />
+          <e p="InvoicesManager.cs" t="Include" />
+          <e p="InvoiceSupplierManager.cs" t="Include" />
+          <e p="KontragentManager.cs" t="Include" />
+          <e p="ManagementBalansCompareManager.cs" t="Include" />
+          <e p="MutualAccountingManager.cs" t="Include" />
+          <e p="NomenklMainManager.cs" t="Include" />
+          <e p="NomenklManager.cs" t="Include" />
+          <e p="PeriodGroupsRefenceManager.cs" t="Include" />
+          <e p="ProfitAndLossesManager.cs" t="Include" />
+          <e p="ProjectManager.cs" t="Include" />
+          <e p="ProjectsManager.cs" t="Include" />
+          <e p="SFClientManager.cs" t="Include" />
+          <e p="VersionManager.cs" t="Include" />
+          <e p="WarehouseManager.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+          <e p="Licenses.licx" t="Include" />
+          <e p="Resources.Designer.cs" t="Include" />
+          <e p="Resources.resx" t="Include" />
+          <e p="Settings.Designer.cs" t="Include" />
+          <e p="Settings.settings" t="Include" />
+        </e>
+        <e p="ReportManagers" t="Include">
+          <e p="SFClientAndWayBill" t="Include">
+            <e p="SFClientReportManager.cs" t="Include" />
+            <e p="SFClientZajavkaSkladReport.cs" t="Include" />
+            <e p="SFClientZakazReport.cs" t="Include" />
+            <e p="WaybillReportManager.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Reports" t="Include">
+          <e p="Account.xlsx" t="Include" />
+          <e p="Account2.xlsx" t="Include" />
+          <e p="SFClient.xlsx" t="Include" />
+          <e p="SFClientReport.xlsx" t="Include" />
+          <e p="torg12.xlsx" t="Include" />
+          <e p="Zajavka.xlsx" t="Include" />
+          <e p="Zakaz.xlsx" t="Include" />
+        </e>
+        <e p="Repositories" t="Include" />
+        <e p="Resource" t="Include">
+          <e p="Error.xaml" t="Include" />
+          <e p="Menu.xaml" t="Include" />
+          <e p="StandartButtons.xaml" t="Include" />
+          <e p="StandartIcon.xaml" t="Include" />
+          <e p="ViewControlTemplate.xaml" t="Include" />
+          <e p="Window.xaml" t="Include" />
+        </e>
+        <e p="View" t="Include">
+          <e p="Base" t="Include">
+            <e p="BaseDocumentView.xaml" t="Include" />
+            <e p="BaseDocumentView.xaml.cs" t="Include" />
+            <e p="BaseSearchView.xaml" t="Include" />
+            <e p="BaseSearchView.xaml.cs" t="Include" />
+            <e p="EmptyUI.xaml" t="Include" />
+            <e p="EmptyUI.xaml.cs" t="Include" />
+            <e p="GridAutoWithLayoutContyWithLayoutConrol.xaml" t="Include" />
+            <e p="GridAutoWithLayoutContyWithLayoutConrol.xaml.cs" t="Include" />
+            <e p="GridFormBaseView.xaml" t="Include" />
+            <e p="GridFormBaseView.xaml.cs" t="Include" />
+            <e p="SelectDialogView.xaml" t="Include" />
+            <e p="SelectDialogView.xaml.cs" t="Include" />
+            <e p="TreeListFormBaseView.xaml" t="Include" />
+            <e p="TreeListFormBaseView.xaml.cs" t="Include" />
+          </e>
+          <e p="Behaviors" t="Include">
+            <e p="FrameNavigation.cs" t="Include" />
+            <e p="FrameNavigationBase.cs" t="Include" />
+            <e p="FrameNavigator.cs" t="Include" />
+            <e p="INavigator.cs" t="Include" />
+          </e>
+          <e p="Convertors" t="Include">
+            <e p="ImageSourceToIconConverter.cs" t="Include" />
+          </e>
+          <e p="CustomTreeListCombobox.cs" t="Include" />
+          <e p="DialogUserControl" t="Include">
+            <e p="BankAccountSelectedDialog.cs" t="Include" />
+            <e p="CashRashOrderSelectDialog.cs" t="Include" />
+            <e p="CashSelectedDialog.cs" t="Include" />
+            <e p="CashSetRemainsDialog.cs" t="Include" />
+            <e p="CashSetRemainsUC.xaml" t="Include" />
+            <e p="CashSetRemainsUC.xaml.cs" t="Include" />
+            <e p="InvoiceClientSearchDialog.cs" t="Include" />
+            <e p="KontragentSelectDialog.cs" t="Include" />
+            <e p="KontragentSelectDialogUC.xaml" t="Include" />
+            <e p="KontragentSelectDialogUC.xaml.cs" t="Include" />
+            <e p="NameNameUC.xaml" t="Include" />
+            <e p="NameNameUC.xaml.cs" t="Include" />
+            <e p="NameNoteUC.xaml" t="Include" />
+            <e p="NameNoteUC.xaml.cs" t="Include" />
+            <e p="NameUC.xaml" t="Include" />
+            <e p="NameUC.xaml.cs" t="Include" />
+            <e p="ProjectDocumentSelect.cs" t="Include" />
+            <e p="StandartDialogSelectUC.xaml" t="Include" />
+            <e p="StandartDialogSelectUC.xaml.cs" t="Include" />
+            <e p="ViewModel" t="Include">
+              <e p="NameNoteViewModel.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Finance" t="Include">
+            <e p="BankOperationsView.xaml" t="Include" />
+            <e p="BankOperationsView.xaml.cs" t="Include" />
+            <e p="Cash" t="Include">
+              <e p="CashBookView.xaml" t="Include" />
+              <e p="CashBookView.xaml.cs" t="Include" />
+              <e p="CashCurrencyExchangeView.xaml" t="Include" />
+              <e p="CashCurrencyExchangeView.xaml.cs" t="Include" />
+              <e p="CashInSearchView.xaml" t="Include" />
+              <e p="CashInSearchView.xaml.cs" t="Include" />
+              <e p="CashInView.xaml" t="Include" />
+              <e p="CashInView.xaml.cs" t="Include" />
+              <e p="CashOutSearchView.xaml" t="Include" />
+              <e p="CashOutSearchView.xaml.cs" t="Include" />
+              <e p="CashoutView.xaml" t="Include" />
+              <e p="CashoutView.xaml.cs" t="Include" />
+            </e>
+            <e p="Invoices" t="Include">
+              <e p="InvoiceClientView.xaml" t="Include" />
+              <e p="InvoiceClientView.xaml.cs" t="Include" />
+              <e p="ProviderSearchView.xaml" t="Include" />
+              <e p="ProviderSearchView.xaml.cs" t="Include" />
+              <e p="ProviderView.xaml" t="Include" />
+              <e p="ProviderView.xaml.cs" t="Include" />
+            </e>
+            <e p="KontragentRefOutView.xaml" t="Include" />
+            <e p="KontragentRefOutView.xaml.cs" t="Include" />
+            <e p="MutualAccountingSearchView.xaml" t="Include" />
+            <e p="MutualAccountingSearchView.xaml.cs" t="Include" />
+            <e p="MutualAccountingView.xaml" t="Include" />
+            <e p="MutualAccountingView.xaml.cs" t="Include" />
+            <e p="SaleTaxNomenklView.xaml" t="Include" />
+            <e p="SaleTaxNomenklView.xaml.cs" t="Include" />
+            <e p="SearchSFForClientView.xaml" t="Include" />
+            <e p="SearchSFForClientView.xaml.cs" t="Include" />
+            <e p="UC" t="Include">
+              <e p="BankOperationsComareRowView.xaml" t="Include" />
+              <e p="BankOperationsComareRowView.xaml.cs" t="Include" />
+              <e p="MutualAccountingDataTablesUC.xaml" t="Include" />
+              <e p="MutualAccountingDataTablesUC.xaml.cs" t="Include" />
+              <e p="SchetFacturaProviderSelectUC.xaml" t="Include" />
+              <e p="SchetFacturaProviderSelectUC.xaml.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Helper" t="Include">
+            <e p="GridLayoutHelper.cs" t="Include" />
+          </e>
+          <e p="KontragentGruzoInfoReferenceView.xaml" t="Include" />
+          <e p="KontragentGruzoInfoReferenceView.xaml.cs" t="Include" />
+          <e p="KursReferences" t="Include">
+            <e p="AccessRightsView.xaml" t="Include" />
+            <e p="AccessRightsView.xaml.cs" t="Include" />
+            <e p="BankReferenceWindowView.xaml" t="Include" />
+            <e p="BankReferenceWindowView.xaml.cs" t="Include" />
+            <e p="KontragentControls" t="Include">
+              <e p="KontragentBankUserControl.xaml" t="Include" />
+              <e p="KontragentBankUserControl.xaml.cs" t="Include" />
+              <e p="KontragentCardView.xaml" t="Include" />
+              <e p="KontragentCardView.xaml.cs" t="Include" />
+              <e p="KontragentContactUserControl.xaml" t="Include" />
+              <e p="KontragentContactUserControl.xaml.cs" t="Include" />
+              <e p="KontragentGruzoUserControl.xaml" t="Include" />
+              <e p="KontragentGruzoUserControl.xaml.cs" t="Include" />
+              <e p="KontragentHelperUserControl.xaml" t="Include" />
+              <e p="KontragentHelperUserControl.xaml.cs" t="Include" />
+              <e p="KontragentMainUserControl.xaml" t="Include" />
+              <e p="KontragentMainUserControl.xaml.cs" t="Include" />
+              <e p="KontragentPersonaUserControl.xaml" t="Include" />
+              <e p="KontragentPersonaUserControl.xaml.cs" t="Include" />
+              <e p="KontragentUchetInfoUserControl.xaml" t="Include" />
+              <e p="KontragentUchetInfoUserControl.xaml.cs" t="Include" />
+            </e>
+            <e p="KontragentReference2View.xaml" t="Include" />
+            <e p="KontragentReference2View.xaml.cs" t="Include" />
+            <e p="KontragentReferenceView.xaml" t="Include" />
+            <e p="KontragentReferenceView.xaml.cs" t="Include" />
+            <e p="MUtualAccountingTypeRefView.xaml" t="Include" />
+            <e p="MUtualAccountingTypeRefView.xaml.cs" t="Include" />
+            <e p="NomenklMainCardView.xaml" t="Include" />
+            <e p="NomenklMainCardView.xaml.cs" t="Include" />
+            <e p="NomenklReferenceView.xaml" t="Include" />
+            <e p="NomenklReferenceView.xaml.cs" t="Include" />
+            <e p="ProjectReferenceView.xaml" t="Include" />
+            <e p="ProjectReferenceView.xaml.cs" t="Include" />
+            <e p="StoreReferenceView.xaml" t="Include" />
+            <e p="StoreReferenceView.xaml.cs" t="Include" />
+            <e p="UC" t="Include">
+              <e p="EmployeesUC.xaml" t="Include" />
+              <e p="EmployeesUC.xaml.cs" t="Include" />
+              <e p="PeriodGroupsUC.xaml" t="Include" />
+              <e p="PeriodGroupsUC.xaml.cs" t="Include" />
+              <e p="SelectSimpleObjects.xaml" t="Include" />
+              <e p="SelectSimpleObjects.xaml.cs" t="Include" />
+              <e p="UsersUC.xaml" t="Include" />
+              <e p="UsersUC.xaml.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Logistiks" t="Include">
+            <e p="GruzoRequisiteView.xaml" t="Include" />
+            <e p="GruzoRequisiteView.xaml.cs" t="Include" />
+            <e p="InventorySheetSearchView.xaml" t="Include" />
+            <e p="InventorySheetSearchView.xaml.cs" t="Include" />
+            <e p="InventorySheetView.xaml" t="Include" />
+            <e p="InventorySheetView.xaml.cs" t="Include" />
+            <e p="KontragentGruzoInfoView.xaml" t="Include" />
+            <e p="KontragentGruzoInfoView.xaml.cs" t="Include" />
+            <e p="NomAddNomenklToMoveUC.xaml" t="Include" />
+            <e p="NomAddNomenklToMoveUC.xaml.cs" t="Include" />
+            <e p="NomenklCostCalculator.xaml" t="Include" />
+            <e p="NomenklCostCalculator.xaml.cs" t="Include" />
+            <e p="NomenklCostReset.xaml" t="Include" />
+            <e p="NomenklCostReset.xaml.cs" t="Include" />
+            <e p="NomenklGridControlListUC.xaml" t="Include" />
+            <e p="NomenklGridControlListUC.xaml.cs" t="Include" />
+            <e p="NomenklInnerMove.xaml" t="Include" />
+            <e p="NomenklInnerMove.xaml.cs" t="Include" />
+            <e p="NomenklMove.xaml" t="Include" />
+            <e p="NomenklMove.xaml.cs" t="Include" />
+            <e p="NomenklMoveOnSklad.xaml" t="Include" />
+            <e p="NomenklMoveOnSklad.xaml.cs" t="Include" />
+            <e p="NomenklMovePivotUC.xaml" t="Include" />
+            <e p="NomenklMovePivotUC.xaml.cs" t="Include" />
+            <e p="NomenklTransferSearchView.xaml" t="Include" />
+            <e p="NomenklTransferSearchView.xaml.cs" t="Include" />
+            <e p="NomenklTransferView.xaml" t="Include" />
+            <e p="NomenklTransferView.xaml.cs" t="Include" />
+            <e p="NomTransferAddForSkladUC.xaml" t="Include" />
+            <e p="NomTransferAddForSkladUC.xaml.cs" t="Include" />
+            <e p="PurchaseInvoicesOverheadsView.xaml" t="Include" />
+            <e p="PurchaseInvoicesOverheadsView.xaml.cs" t="Include" />
+            <e p="RemainsOfGoodsInWarehouse.xaml" t="Include" />
+            <e p="RemainsOfGoodsInWarehouse.xaml.cs" t="Include" />
+            <e p="SkladOstatki.xaml" t="Include" />
+            <e p="SkladOstatki.xaml.cs" t="Include" />
+            <e p="UC" t="Include">
+              <e p="AddNomenklUC.xaml" t="Include" />
+              <e p="AddNomenklUC.xaml.cs" t="Include" />
+              <e p="AddNomenklViewModel.cs" t="Include" />
+              <e p="NomenklAddFromNotShippedUC.xaml" t="Include" />
+              <e p="NomenklAddFromNotShippedUC.xaml.cs" t="Include" />
+              <e p="NomenklCardUC.xaml" t="Include" />
+              <e p="NomenklCardUC.xaml.cs" t="Include" />
+              <e p="NomenklMoveWithCalcPriceUC.xaml" t="Include" />
+              <e p="NomenklMoveWithCalcPriceUC.xaml.cs" t="Include" />
+              <e p="SelectNomenkls.xaml" t="Include" />
+              <e p="SelectNomenkls.xaml.cs" t="Include" />
+              <e p="SelectNomenklSimpleUC.xaml" t="Include" />
+              <e p="SelectNomenklSimpleUC.xaml.cs" t="Include" />
+            </e>
+            <e p="WarehouseStorageOrderSearchView.xaml" t="Include" />
+            <e p="WarehouseStorageOrderSearchView.xaml.cs" t="Include" />
+            <e p="WarehouseStorageOrderView.xaml" t="Include" />
+            <e p="WarehouseStorageOrderView.xaml.cs" t="Include" />
+            <e p="WaybillView.xaml" t="Include" />
+            <e p="WaybillView.xaml.cs" t="Include" />
+          </e>
+          <e p="MainWindow.xaml" t="Include" />
+          <e p="MainWindow.xaml.cs" t="Include" />
+          <e p="Management" t="Include">
+            <e p="BreakEvenForm.xaml" t="Include" />
+            <e p="BreakEvenForm.xaml.cs" t="Include" />
+            <e p="BreakEvenTemp.cs" t="Include" />
+            <e p="controls" t="Include">
+              <e p="BalansComareKontragentOperationsUI.xaml" t="Include" />
+              <e p="BalansComareKontragentOperationsUI.xaml.cs" t="Include" />
+              <e p="BalansCompareFinanseUI.xaml" t="Include" />
+              <e p="BalansCompareFinanseUI.xaml.cs" t="Include" />
+              <e p="BalansCompareKontragentUI.xaml" t="Include" />
+              <e p="BalansCompareKontragentUI.xaml.cs" t="Include" />
+              <e p="BalansCompareSalaryUI.xaml" t="Include" />
+              <e p="BalansCompareSalaryUI.xaml.cs" t="Include" />
+              <e p="BalansCompareStoreOperationsUI.xaml" t="Include" />
+              <e p="BalansCompareStoreOperationsUI.xaml.cs" t="Include" />
+              <e p="BalansCompareStoreUI.xaml" t="Include" />
+              <e p="BalansCompareStoreUI.xaml.cs" t="Include" />
+              <e p="IResetCurrencyColumns.cs" t="Include" />
+              <e p="LoadCircleBar.xaml" t="Include" />
+              <e p="LoadCircleBar.xaml.cs" t="Include" />
+              <e p="ManagementBalansCompareMainUI.xaml" t="Include" />
+              <e p="ManagementBalansCompareMainUI.xaml.cs" t="Include" />
+              <e p="ManagementBalansMainUI.xaml" t="Include" />
+              <e p="ManagementBalansMainUI.xaml.cs" t="Include" />
+              <e p="ManagementBalansRowsKontr.xaml" t="Include" />
+              <e p="ManagementBalansRowsKontr.xaml.cs" t="Include" />
+              <e p="ProjectReferenceSelectDialogUI.xaml" t="Include" />
+              <e p="ProjectReferenceSelectDialogUI.xaml.cs" t="Include" />
+              <e p="ProjectSelectDialogUI.xaml" t="Include" />
+              <e p="ProjectSelectDialogUI.xaml.cs" t="Include" />
+              <e p="ValueToAngleConverter.cs" t="Include" />
+            </e>
+            <e p="DebitorCreditorView.xaml" t="Include" />
+            <e p="DebitorCreditorView.xaml.cs" t="Include" />
+            <e p="KontargentDialogSelect.xaml" t="Include" />
+            <e p="KontargentDialogSelect.xaml.cs" t="Include" />
+            <e p="KontragentBalansForm.xaml" t="Include" />
+            <e p="KontragentBalansForm.xaml.cs" t="Include" />
+            <e p="KontragentRightsControl.xaml" t="Include" />
+            <e p="KontragentRightsControl.xaml.cs" t="Include" />
+            <e p="ManagementBalansCompareView.xaml" t="Include" />
+            <e p="ManagementBalansCompareView.xaml.cs" t="Include" />
+            <e p="ManagementBalansView.xaml" t="Include" />
+            <e p="ManagementBalansView.xaml.cs" t="Include" />
+            <e p="MoneyPeriodMove.xaml" t="Include" />
+            <e p="MoneyPeriodMove.xaml.cs" t="Include" />
+            <e p="ProfitAndLosses.xaml" t="Include" />
+            <e p="ProfitAndLosses.xaml.cs" t="Include" />
+            <e p="ProjectProfitAndLossView.xaml" t="Include" />
+            <e p="ProjectProfitAndLossView.xaml.cs" t="Include" />
+            <e p="ProjectProviderPrihodView.xaml" t="Include" />
+            <e p="ProjectProviderPrihodView.xaml.cs" t="Include" />
+            <e p="ProjectsView.xaml" t="Include" />
+            <e p="ProjectsView.xaml.cs" t="Include" />
+            <e p="ShopRentabelnost.xaml" t="Include" />
+            <e p="ShopRentabelnost.xaml.cs" t="Include" />
+          </e>
+          <e p="Period" t="Include">
+            <e p="PeriodCloseManagementView.xaml" t="Include" />
+            <e p="PeriodCloseManagementView.xaml.cs" t="Include" />
+          </e>
+          <e p="Personal" t="Include">
+            <e p="DialogSelectPersona.xaml" t="Include" />
+            <e p="DialogSelectPersona.xaml.cs" t="Include" />
+            <e p="EmploeeSelectUC.xaml" t="Include" />
+            <e p="EmploeeSelectUC.xaml.cs" t="Include" />
+            <e p="PayRollDocSearch.xaml" t="Include" />
+            <e p="PayRollDocSearch.xaml.cs" t="Include" />
+            <e p="PayRollTypeReference.xaml" t="Include" />
+            <e p="PayRollTypeReference.xaml.cs" t="Include" />
+            <e p="PayRollVedomost.xaml" t="Include" />
+            <e p="PayRollVedomost.xaml.cs" t="Include" />
+            <e p="PersonaAddUserRightsUC.xaml" t="Include" />
+            <e p="PersonaAddUserRightsUC.xaml.cs" t="Include" />
+            <e p="PersonalPaysView.xaml" t="Include" />
+            <e p="PersonalPaysView.xaml.cs" t="Include" />
+            <e p="PersonaReference.xaml" t="Include" />
+            <e p="PersonaReference.xaml.cs" t="Include" />
+            <e p="UsersRightToPayRoll.xaml" t="Include" />
+            <e p="UsersRightToPayRoll.xaml.cs" t="Include" />
+          </e>
+          <e p="Reconciliation" t="Include">
+            <e p="ActOfReconciliation.xaml" t="Include" />
+            <e p="ActOfReconciliation.xaml.cs" t="Include" />
+          </e>
+          <e p="Repozit" t="Include">
+            <e p="UsersHorizontalRight.xaml" t="Include" />
+            <e p="UsersHorizontalRight.xaml.cs" t="Include" />
+          </e>
+          <e p="Search" t="Include">
+            <e p="SearchDogovorForClientView.xaml" t="Include" />
+            <e p="SearchDogovorForClientView.xaml.cs" t="Include" />
+            <e p="SearchNakladForClientView.xaml" t="Include" />
+            <e p="SearchNakladForClientView.xaml.cs" t="Include" />
+            <e p="SearchNomenklPriceReset.xaml" t="Include" />
+            <e p="SearchNomenklPriceReset.xaml.cs" t="Include" />
+          </e>
+          <e p="SplashWindow" t="Include">
+            <e p="DebitorCreditorKontrCalcSplashView.xaml" t="Include" />
+            <e p="DebitorCreditorKontrCalcSplashView.xaml.cs" t="Include" />
+          </e>
+          <e p="StartLogin.xaml" t="Include" />
+          <e p="StartLogin.xaml.cs" t="Include" />
+          <e p="WindowStart.xaml" t="Include" />
+          <e p="WindowStart.xaml.cs" t="Include" />
+        </e>
+        <e p="ViewModel" t="Include">
+          <e p="Costing" t="Include">
+            <e p="KontragentRefOut.cs" t="Include" />
+            <e p="KontragentRefOutRow.cs" t="Include" />
+          </e>
+          <e p="Dogovora" t="Include">
+            <e p="DogovorClientHead.cs" t="Include" />
+            <e p="DogovorClientRow.cs" t="Include" />
+          </e>
+          <e p="Fabric" t="Include">
+            <e p="Base" t="Include" />
+          </e>
+          <e p="Finance" t="Include">
+            <e p="BankOperationsWindowViewModel.cs" t="Include" />
+            <e p="Cash" t="Include">
+              <e p="CashBookWindowViewModel.cs" t="Include" />
+              <e p="CashCurrencyExchangeViewModel.cs" t="Include" />
+              <e p="CashInWindowSearchViewModel.cs" t="Include" />
+              <e p="CashInWindowViewModel.cs" t="Include" />
+              <e p="CashOutWindowViewModel.cs" t="Include" />
+            </e>
+            <e p="controls" t="Include">
+              <e p="AddBankOperionUC.cs" t="Include" />
+            </e>
+            <e p="GridControlSummaryItem.cs" t="Include" />
+            <e p="Invoices" t="Include">
+              <e p="ClientWindowViewModel.cs" t="Include" />
+              <e p="InvoiceClientSearchViewModel.cs" t="Include" />
+              <e p="ProviderWindowViewModel.cs" t="Include" />
+              <e p="SchetSupplierSelectViewModel.cs" t="Include" />
+              <e p="SearchInvoiceProviderViewModel.cs" t="Include" />
+              <e p="SFProviderWindiwViewModel.cs" t="Include" />
+            </e>
+            <e p="InvoiceSupplierWindowViewModel.cs" t="Include" />
+            <e p="KontragentPaymentInfo.cs" t="Include" />
+            <e p="KontragentReferenceOutWindowViewModel.cs" t="Include" />
+            <e p="MutualAccountingDebitorCreditors.cs" t="Include" />
+            <e p="MutualAccountingWindowSearchViewModel.cs" t="Include" />
+            <e p="MutualAcountingWindowViewModel.cs" t="Include" />
+            <e p="PurchaseRow.cs" t="Include" />
+            <e p="SaleTaxNomenkl.cs" t="Include" />
+            <e p="SaleTaxNomenklWindowViewModel.cs" t="Include" />
+          </e>
+          <e p="Logistiks" t="Include">
+            <e p="DocumentRowSearchViewModel.cs" t="Include" />
+            <e p="DocumentSearchViewModel.cs" t="Include" />
+            <e p="DocumentsSearchWindowViewModel.cs" t="Include" />
+            <e p="DogovorForClientSearchViewModel.cs" t="Include" />
+            <e p="DogovorForClientViewModel.cs" t="Include" />
+            <e p="GruzoInfoViewModel.cs" t="Include" />
+            <e p="Helper" t="Include" />
+            <e p="InventorySheetRowViewModel.cs" t="Include" />
+            <e p="InventorySheetSearchWindowViewModel.cs" t="Include" />
+            <e p="InventorySheetViewModel.cs" t="Include" />
+            <e p="InventorySheetWindowViewModel.cs" t="Include" />
+            <e p="KontragentGruzoInfoViewModel.cs" t="Include" />
+            <e p="KontragentGruzoInfoWindowViewModel.cs" t="Include" />
+            <e p="NakladRowViewModel.cs" t="Include" />
+            <e p="NomenklAddFromNotShippedRowViewModel.cs" t="Include" />
+            <e p="NomenklAddNomenklForInViewModel.cs" t="Include" />
+            <e p="NomenklCostCalculatorWindowViewModel.cs" t="Include" />
+            <e p="NomenklCostResetSearchWindowViewModel.cs" t="Include" />
+            <e p="NomenklCostResetWindowViewModel.cs" t="Include" />
+            <e p="NomenklInnerMoveWindowViewModel.cs" t="Include" />
+            <e p="NomenklMoveOnSkladWindowViewModel.cs" t="Include" />
+            <e p="NomenklMoveWindowViewModel.cs" t="Include" />
+            <e p="NomenklRemainWithPrice.cs" t="Include" />
+            <e p="NomenklSelectedDialogViewModel.cs" t="Include" />
+            <e p="NomenklSelectedSimpleDialogViewModel.cs" t="Include" />
+            <e p="NomenklTransferRowViewModelExt.cs" t="Include" />
+            <e p="NomenklTransferSearchViewModel.cs" t="Include" />
+            <e p="NomenklTransferViewModelExt.cs" t="Include" />
+            <e p="NomenklTransferWindowViewModel.cs" t="Include" />
+            <e p="NomPriceDocumentViewModel.cs" t="Include" />
+            <e p="NomPriceViewModel.cs" t="Include" />
+            <e p="NomPriceWindowViewModel.cs" t="Include" />
+            <e p="NomTransferAddForSklad.cs" t="Include" />
+            <e p="PostInvoice.cs" t="Include" />
+            <e p="PostInvoiceRow.cs" t="Include" />
+            <e p="ProviderRowWithNakladViewModel.cs" t="Include" />
+            <e p="PurchaseOverheads" t="Include">
+              <e p="InvoiceSupplierNakladRowViewModel.cs" t="Include" />
+            </e>
+            <e p="PurchaseOverheadsWindowViewModel.cs" t="Include" />
+            <e p="SkladOstatkiWindowViewModel.cs" t="Include" />
+            <e p="WarehouseStorageOrderSearchViewModel.cs" t="Include" />
+            <e p="WarehouseStorageOrderWindowViewModel.cs" t="Include" />
+            <e p="Waybill.cs" t="Include" />
+            <e p="WaybillForClientSearchViewModel.cs" t="Include" />
+            <e p="WaybillRow.cs" t="Include" />
+            <e p="WaybillWindowViewModel.cs" t="Include" />
+          </e>
+          <e p="Management" t="Include">
+            <e p="BreakEven" t="Include">
+              <e p="BreakEvenCOrGroupViewModel.cs" t="Include" />
+              <e p="BreakEvenDocumentViewModel.cs" t="Include" />
+              <e p="BreakEvenKontrGroupViewModel.cs" t="Include" />
+              <e p="BreakEvenManagerGroupViewModel.cs" t="Include" />
+              <e p="BreakEvenNomGroupViewModel.cs" t="Include" />
+              <e p="BreakEvenRowViewModel.cs" t="Include" />
+              <e p="BreakEvenWindowViewModel.cs" t="Include" />
+            </e>
+            <e p="Calculations" t="Include">
+              <e p="DebitorCreditorBuilder.cs" t="Include" />
+              <e p="RecalcKontragentBalans.cs" t="Include" />
+            </e>
+            <e p="DebitorCreditor" t="Include">
+              <e p="DebitorCreditorRow.cs" t="Include" />
+              <e p="DebitorCreditorWindowViewModel.cs" t="Include" />
+            </e>
+            <e p="KonragentBalansRowViewModel.cs" t="Include" />
+            <e p="KontragentBalansWindowViewModel.cs" t="Include" />
+            <e p="ManagementBalans" t="Include">
+              <e p="ManagementBalanceExtendRowViewModel.cs" t="Include" />
+              <e p="ManagementBalanceGroupViewModel.cs" t="Include" />
+              <e p="ManagementBalansBuilder.cs" t="Include" />
+              <e p="ManagementBalansCompareWindowViewModel.cs" t="Include" />
+              <e p="ManagementBalansWindowViewModel.cs" t="Include" />
+            </e>
+            <e p="MoneyPeriodRowViewModel.cs" t="Include" />
+            <e p="MoneyPeriodWindowViewModel.cs" t="Include" />
+            <e p="ProfitAndLossesExtendRowViewModel.cs" t="Include" />
+            <e p="ProfitAndLossesMainRowViewModel.cs" t="Include" />
+            <e p="ProfitAndLossesWindowViewModel.cs" t="Include" />
+            <e p="Projects" t="Include">
+              <e p="ProjectDocumentViewModel.cs" t="Include" />
+              <e p="ProjectPrihodDocRow.cs" t="Include" />
+              <e p="ProjectProfitAndLossesWindowViewModel.cs" t="Include" />
+              <e p="ProjectProviderPrihodWindowViewModel.cs" t="Include" />
+              <e p="ProjectResultInfo.cs" t="Include" />
+              <e p="ProjectSelectReferenceWindowViewModel.cs" t="Include" />
+              <e p="ProjectWindowViewModel.cs" t="Include" />
+            </e>
+            <e p="ShopDocumentViewModel.cs" t="Include" />
+            <e p="ShopHeaderViewModel.cs" t="Include" />
+            <e p="ShopNomenklViewModel.cs" t="Include" />
+            <e p="ShopRentabelnostViewModel.cs" t="Include" />
+          </e>
+          <e p="Period" t="Include">
+            <e p="PeriodGroupsReferenceViewModel.cs" t="Include" />
+          </e>
+          <e p="Personal" t="Include">
+            <e p="EmployeePayDocumentViewModel.cs" t="Include" />
+            <e p="EmployeePayMainViewModel.cs" t="Include" />
+            <e p="EmployeePayPeriodViewModel.cs" t="Include" />
+            <e p="EmployeePayWindowViewModel.cs" t="Include" />
+            <e p="NachEmployeeForPeriod.cs" t="Include" />
+            <e p="NachForEmployeeModelOld.cs" t="Include" />
+            <e p="NachForEmployeeRowModelOld.cs" t="Include" />
+            <e p="PayrollSearchWindowViewModel.cs" t="Include" />
+            <e p="PayRollType.cs" t="Include" />
+            <e p="PayrollTypeWindowViewModel.cs" t="Include" />
+            <e p="PayRollVedomostEmployeeRowViewModel.cs" t="Include" />
+            <e p="PayRollVedomostEmployeeViewModel.cs" t="Include" />
+            <e p="PayRollVedomostSearch.cs" t="Include" />
+            <e p="PayRollVedomostSearchViewModel.cs" t="Include" />
+            <e p="PayRollVedomostViewModel.cs" t="Include" />
+            <e p="PayRollVedomostWindowViewModel.cs" t="Include" />
+            <e p="PersonaAddUserForRights.cs" t="Include" />
+            <e p="PersonaDialogSelect.cs" t="Include" />
+            <e p="PersonaDialogSelectViewModel.cs" t="Include" />
+            <e p="PersonalDialogSelectWindowViewModel.cs" t="Include" />
+            <e p="PersonalNachRowViewModel.cs" t="Include" />
+            <e p="PersonalNachViewModel.cs" t="Include" />
+            <e p="PersonaReferenceModelOld.cs" t="Include" />
+            <e p="PersonaReferenceViewModelOld.cs" t="Include" />
+            <e p="PersonaReferenceWindowViewModel.cs" t="Include" />
+            <e p="PREmpEmpRightViewModel.cs" t="Include" />
+            <e p="PREmpUserRight.cs" t="Include" />
+            <e p="PREmpUserRightViewModel.cs" t="Include" />
+          </e>
+          <e p="Reconcilation" t="Include">
+            <e p="ActOfResponsibleShort.cs" t="Include" />
+            <e p="AOFViewModel.cs" t="Include" />
+            <e p="Responsible.cs" t="Include" />
+            <e p="ResponsibleCorporate.cs" t="Include" />
+          </e>
+          <e p="Reference" t="Include">
+            <e p="AccessRightsViewModel.cs" t="Include" />
+            <e p="EmployeesUCViewModel.cs" t="Include" />
+            <e p="KontragentCardWindowViewMode.cs" t="Include" />
+            <e p="KontragentReferenceViewModel.cs" t="Include" />
+            <e p="KontragentReferenceWindowViewModel.cs" t="Include" />
+            <e p="MutualAcountingRefWindowViewModel.cs" t="Include" />
+            <e p="NomenklMainCardWindowViewModel.cs" t="Include" />
+            <e p="NomenklProductKindReferenceWindowViewModel.cs" t="Include" />
+            <e p="NomenklProductTypeReferenceWindowViewModel.cs" t="Include" />
+            <e p="NomenklReferenceWindowViewModel.cs" t="Include" />
+            <e p="PeriodGroupsUCViewModel.cs" t="Include" />
+            <e p="ProjectsReferenceWindowViewModel.cs" t="Include" />
+            <e p="SimpleObjectsSelectWindowViewModel.cs" t="Include" />
+            <e p="StoreReferenceWindowViewModel.cs" t="Include" />
+            <e p="TreeDocument.cs" t="Include" />
+            <e p="UnitReferenceWindowViewModel.cs" t="Include" />
+            <e p="UserUCViewModel.cs" t="Include" />
+          </e>
+          <e p="Repozit" t="Include">
+            <e p="UsersHorizontalRightWindowViewModel.cs" t="Include" />
+          </e>
+          <e p="Splash" t="Include">
+            <e p="DebitorCreditorCalcKontrSplashViewModel.cs" t="Include" />
+            <e p="SplashBaseViewModel.cs" t="Include" />
+          </e>
+          <e p="StartLogin" t="Include">
+            <e p="StartLoginViewModel.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="KursAM2v3.sln" t="IncludeFlat" />
+      <e p="KursStart" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="App.xaml" t="Include" />
+        <e p="App.xaml.cs" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="KursStart.csproj" t="IncludeRecursive" />
+        <e p="MainWindow.xaml" t="Include" />
+        <e p="MainWindow.xaml.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+          <e p="Resources.Designer.cs" t="Include" />
+          <e p="Resources.resx" t="Include" />
+          <e p="Settings.Designer.cs" t="Include" />
+          <e p="Settings.settings" t="Include" />
+        </e>
+      </e>
+      <e p="KursWPFFormTest" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="App.xaml" t="Include" />
+        <e p="App.xaml.cs" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="InvoiceForm.xaml" t="Include" />
+        <e p="InvoiceForm.xaml.cs" t="Include" />
+        <e p="KursWPFFormTest.csproj" t="IncludeRecursive" />
+        <e p="MainWindow.xaml" t="Include" />
+        <e p="MainWindow.xaml.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+          <e p="Resources.Designer.cs" t="Include" />
+          <e p="Resources.resx" t="Include" />
+          <e p="Settings.Designer.cs" t="Include" />
+          <e p="Settings.settings" t="Include" />
+        </e>
+      </e>
+      <e p="LayoutManager" t="IncludeRecursive">
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="ILayout.cs" t="Include" />
+        <e p="LayoutManager.cs" t="Include" />
+        <e p="LayoutManager.csproj" t="IncludeRecursive" />
+        <e p="LayoutManagerBase.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="WindowsScreenState.cs" t="Include" />
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="PeriodManager" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="PeriodManager.csproj" t="IncludeRecursive" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="View" t="Include">
+          <e p="SetPeriodCloseForGroupView.xaml" t="Include" />
+          <e p="SetPeriodCloseForGroupView.xaml.cs" t="Include" />
+        </e>
+        <e p="ViewModel" t="Include">
+          <e p="PeriodClosedExcludeViewModel.cs" t="Include" />
+          <e p="PeriodClosedTypeViewModel.cs" t="Include" />
+          <e p="PeriodClosedViewModel.cs" t="Include" />
+          <e p="PeriodGroupUserViewModel.cs" t="Include" />
+          <e p="PeriodGroupViewModel.cs" t="Include" />
+          <e p="SetPeriodCloseForGroupViewModel.cs" t="Include" />
+          <e p="UserPeriodGroupDialogViewModel.cs" t="Include" />
+        </e>
+      </e>
+      <e p="Reports" t="IncludeRecursive">
+        <e p="Base" t="Include">
+          <e p="BaseReport.cs" t="Include" />
+          <e p="BaseReportManager.cs" t="Include" />
+          <e p="ExportView.xaml" t="Include" />
+          <e p="ExportView.xaml.cs" t="Include" />
+          <e p="KursReportA4PrintOptions.cs" t="Include" />
+          <e p="KursReportLandscapeA4PrintOptions.cs" t="Include" />
+          <e p="KursReportPrintOptions.cs" t="Include" />
+        </e>
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Reports.csproj" t="IncludeRecursive" />
+      </e>
+      <e p="ServerCalculate" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="MaterailCostCalculate.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="ServerCalculate.csproj" t="IncludeRecursive" />
+        <e p="StoredProcedures.cs" t="Include" />
+      </e>
+      <e p="ServerCalculate.Tests" t="IncludeRecursive">
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="ServerCalculate.Tests.csproj" t="IncludeRecursive" />
+        <e p="TestConnection.cs" t="Include" />
+      </e>
+      <e p="SQLite.Base" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="Entity" t="Include">
+          <e p="CustomHistory.cs" t="Include" />
+          <e p="Employee.cs" t="Include" />
+          <e p="IEntity.cs" t="Include" />
+          <e p="KontragentCashes.cs" t="Include" />
+          <e p="LoginStart.cs" t="Include" />
+        </e>
+        <e p="Internal" t="Include">
+          <e p="Builder" t="Include">
+            <e p="ColumnStatementCollectionBuilder.cs" t="Include" />
+            <e p="CompositePrimaryKeyStatementBuilder.cs" t="Include" />
+            <e p="CreateDatabaseStatementBuilder.cs" t="Include" />
+            <e p="CreateIndexStatementBuilder.cs" t="Include" />
+            <e p="CreateTableStatementBuilder.cs" t="Include" />
+            <e p="ForeignKeyStatementBuilder.cs" t="Include" />
+            <e p="IStatementBuilder.cs" t="Include" />
+            <e p="NameCreators" t="Include">
+              <e p="IndexNameCreator.cs" t="Include" />
+              <e p="NameCreator.cs" t="Include" />
+              <e p="SpecialChars.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Convention" t="Include">
+            <e p="SqliteForeignKeyIndexConvention.cs" t="Include" />
+          </e>
+          <e p="Extensions" t="Include">
+            <e p="DbModelBuilderExtensions.cs" t="Include" />
+            <e p="EdmPropertyExtensions.cs" t="Include" />
+            <e p="EntityTypeExtension.cs" t="Include" />
+            <e p="ListExtensions.cs" t="Include" />
+          </e>
+          <e p="Statement" t="Include">
+            <e p="ColumnConstraint" t="Include">
+              <e p="CollateConstraint.cs" t="Include" />
+              <e p="ColumnConstraintCollection.cs" t="Include" />
+              <e p="IColumnConstraint.cs" t="Include" />
+              <e p="IColumnConstraintCollection.cs" t="Include" />
+              <e p="MaxLengthConstraint.cs" t="Include" />
+              <e p="NotNullConstraint.cs" t="Include" />
+              <e p="PrimaryKeyConstraint.cs" t="Include" />
+              <e p="UniqueConstraint.cs" t="Include" />
+            </e>
+            <e p="ColumnStatement.cs" t="Include" />
+            <e p="ColumnStatementCollection.cs" t="Include" />
+            <e p="CompositePrimaryKeyStatement.cs" t="Include" />
+            <e p="CreateDatabaseStatement.cs" t="Include" />
+            <e p="CreateIndexStatement.cs" t="Include" />
+            <e p="CreateIndexStatementCollection.cs" t="Include" />
+            <e p="CreateTableStatement.cs" t="Include" />
+            <e p="ForeignKeyStatement.cs" t="Include" />
+            <e p="IStatement.cs" t="Include" />
+            <e p="IStatementCollection.cs" t="Include" />
+          </e>
+          <e p="Utility" t="Include">
+            <e p="AssociationTypeContainer.cs" t="Include" />
+            <e p="ConnectionStringParser.cs" t="Include" />
+            <e p="HashCreator.cs" t="Include" />
+            <e p="HistoryEntityTypeValidator.cs" t="Include" />
+            <e p="InMemoryAwareFile.cs" t="Include" />
+            <e p="SqliteAssociationType.cs" t="Include" />
+          </e>
+        </e>
+        <e p="LocalDbContext.cs" t="Include" />
+        <e p="LocalDBInitializer.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Public" t="Include">
+          <e p="Attributtes" t="Include">
+            <e p="AutoincrementAttribute.cs" t="Include" />
+            <e p="CollateAttribute.cs" t="Include" />
+            <e p="CollationFunction.cs" t="Include" />
+            <e p="OnConflictAction.cs" t="Include" />
+            <e p="UniqueAttribute.cs" t="Include" />
+          </e>
+          <e p="DbIninitializers" t="Include">
+            <e p="SqliteCreateDatabaseIfNotExists.cs" t="Include" />
+            <e p="SqliteDropCreateDatabaseAlways.cs" t="Include" />
+            <e p="SqliteDropCreateDatabaseWhenModelChanges.cs" t="Include" />
+            <e p="SqliteInitializerBase.cs" t="Include" />
+          </e>
+          <e p="Entities" t="Include">
+            <e p="History.cs" t="Include" />
+            <e p="IHistory.cs" t="Include" />
+          </e>
+          <e p="IDatabaseCreator.cs" t="Include" />
+          <e p="ISqliteSqlGenerator.cs" t="Include" />
+          <e p="Program.cs" t="Include" />
+          <e p="SqliteDatabaseCreator.cs" t="Include" />
+          <e p="SqliteSqlGenerator.cs" t="Include" />
+        </e>
+        <e p="SQLite.Base.csproj" t="IncludeRecursive" />
+      </e>
+      <e p="Updater" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Updater.csproj" t="IncludeRecursive" />
+      </e>
+      <e p="Updater.Tests" t="IncludeRecursive">
+        <e p="Bin" t="ExcludeRecursive" />
+        <e p="DirectoryTest.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Updater.Tests.csproj" t="IncludeRecursive" />
+      </e>
+      <e p="VersionGenerate" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="VersionGenerate.csproj" t="IncludeRecursive" />
+      </e>
+    </e>
+  </component>
+</project>

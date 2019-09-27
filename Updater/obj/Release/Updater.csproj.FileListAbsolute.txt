@@ -1,0 +1,5 @@
+C:\Users\Vadim\WorkProject\KursAM2v3\Updater\bin\Release\Updater.exe.config
+C:\Users\Vadim\WorkProject\KursAM2v3\Updater\bin\Release\Updater.exe
+C:\Users\Vadim\WorkProject\KursAM2v3\Updater\bin\Release\Updater.pdb
+C:\Users\Vadim\WorkProject\KursAM2v3\Updater\obj\Release\Updater.exe
+C:\Users\Vadim\WorkProject\KursAM2v3\Updater\obj\Release\Updater.pdb

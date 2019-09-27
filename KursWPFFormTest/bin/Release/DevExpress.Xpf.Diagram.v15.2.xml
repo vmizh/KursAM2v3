@@ -1,0 +1,1673 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DevExpress.Xpf.Diagram.v15.2</name>
+    </assembly>
+    <members>
+        <member name="T:DevExpress.Xpf.Diagram.DiagramDesignerControl">
+
+            <summary>
+                <para>The Diagram Designer control.
+</para>
+            </summary>
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramDesignerControl.#ctor">
+            <summary>
+                <para>Initializes a new instance of the DiagramDesignerControl class with default settings.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramDesignerControl.Actions">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramDesignerControl.BarItemName(System.Windows.DependencyObject)">
+            <summary>
+                <para>Gets or sets the name of the bar item associated with an object. This is an attached property.
+</para>
+            </summary>
+            <value>A string value that specifies the name of the bar item associated with an object.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramDesignerControl.BarItemNameProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramDesignerControl.GetBarItemName(System.Windows.DependencyObject)">
+            <summary>
+                <para>Gets the value of the <see cref="P:DevExpress.Xpf.Diagram.DiagramDesignerControl.BarItemName"/> attached property from a given object.
+</para>
+            </summary>
+            <param name="d">
+		An object whose <see cref="P:DevExpress.Xpf.Diagram.DiagramDesignerControl.BarItemName"/> property's value is to be returned.
+
+            </param>
+            <returns>A string value that specifies the value of the <see cref="P:DevExpress.Xpf.Diagram.DiagramDesignerControl.BarItemName"/> attached property for the specified object.
+</returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramDesignerControl.OnApplyTemplate">
+            <summary>
+                <para>Called after the template is completely generated and attached to the visual tree.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramDesignerControl.PageOrientation">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramDesignerControl.SetBarItemName(System.Windows.DependencyObject,System.String)">
+            <summary>
+                <para>Sets the value of the <see cref="P:DevExpress.Xpf.Diagram.DiagramDesignerControl.BarItemName"/> attached property for a given object. 
+</para>
+            </summary>
+            <param name="obj">
+		An object for which the <see cref="P:DevExpress.Xpf.Diagram.DiagramDesignerControl.BarItemName"/> attached property is set.
+
+            </param>
+            <param name="value">
+		A string value that specifies the value to be assigned to the <see cref="P:DevExpress.Xpf.Diagram.DiagramDesignerControl.BarItemName"/> property.
+
+            </param>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramDesignerControl.TextHorizontalAlignment">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramDesignerControl.TextVerticalAlignment">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="T:DevExpress.Xpf.Diagram.DiagramControl">
+
+            <summary>
+                <para>The diagram control.
+</para>
+            </summary>
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.#ctor">
+            <summary>
+                <para>Initializes a new instance of the DiagramControl class with default settings.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.ActiveTool">
+            <summary>
+                <para>Specifies the currently selected diagram tool. This is a dependency property.
+</para>
+            </summary>
+            <value>A <see cref="T:DevExpress.Diagram.Core.DiagramTool"/> object.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.ActiveToolProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.AllowDiagramProperties">
+            <summary>
+                <para>Specifies whether the context menu contains the <b>Properties</b> item. This is a dependency property.
+</para>
+            </summary>
+            <value><b>true</b>, to add the <b>Properties</b> item to the context menu; otherwise, <b>false</b>.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.AllowDiagramPropertiesProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.AllowEmptySelection">
+            <summary>
+                <para>Specifies whether to allow selecting the root item. This is a dependency property.
+</para>
+            </summary>
+            <value><b>true</b>, to allow selecting the root item ; otherwise, <b>false</b>.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.AllowEmptySelectionProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.BeginInit">
+            <summary>
+                <para>Starts the runtime initialization. 
+</para>
+            </summary>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.BringIntoViewMargin">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.BringIntoViewMarginProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.CalcHitInfo(System.Func`2)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="getPosition">
+		 
+            </param>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.CalcHitInfo(System.Windows.Point)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="diagramRelativePoint">
+		 
+            </param>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.CalcHitItem(System.Windows.Point)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="diagramRelativePoint">
+		 
+            </param>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.CalcHitItem(System.Func`2)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="getPosition">
+		 
+            </param>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.CanRedo">
+            <summary>
+                <para>Indicates whether there are actions that occurred recently within the control that can be reapplied. This is a dependency property.
+</para>
+            </summary>
+            <value><b>true</b> if there are operations that have been undone that can be reapplied; otherwise, <b>false</b>.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.CanRedoProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.CanUndo">
+            <summary>
+                <para>Indicates whether the user can undo the previous operation. This is a dependency property.
+</para>
+            </summary>
+            <value><b>true</b> if the user can undo the previous opration; otherwise, <b>false</b>.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.CanUndoProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.CanvasSizeMode">
+            <summary>
+                <para>Specifies whether the canvas size is automatically changed to fit the current shapes layout. This is a dependency property.
+</para>
+            </summary>
+            <value>A <see cref="T:DevExpress.Diagram.Core.CanvasSizeMode"/> enumeration value.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.CanvasSizeModeProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.ClearSelection">
+            <summary>
+                <para>Unselects any selected shapes and connectors.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.Commands">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.Controller">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.CreateAdorner(System.Windows.FrameworkElement)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="element">
+		 
+            </param>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.CreateAdornerEx``2(``0)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="control">
+		 
+            </param>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.CreateBackgroundAdorner(System.Windows.FrameworkElement)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="element">
+		 
+            </param>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.CreateHRulerAdorner(System.Windows.FrameworkElement)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="element">
+		 
+            </param>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.CreateVRulerAdorner(System.Windows.FrameworkElement)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="element">
+		 
+            </param>
+            <returns> </returns>
+
+
+        </member>
+        <member name="E:DevExpress.Xpf.Diagram.DiagramControl.CustomLoadDocument">
+            <summary>
+                <para>Fires after an end-user selects a document in the 'Open File' dialog or a document is loaded by setting the <see cref="P:DevExpress.Xpf.Diagram.DiagramControl.DocumentSource"/> property in code.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.CustomLoadDocumentEvent">
+            <summary>
+                <para>Identifies the  routed event.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="E:DevExpress.Xpf.Diagram.DiagramControl.CustomSaveDocument">
+            <summary>
+                <para> </para>
+            </summary>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.CustomSaveDocumentEvent">
+            <summary>
+                <para>Identifies the  routed event.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.DocumentSource">
+            <summary>
+                <para>Specifies a document supplier for the DiagramControl. This is a dependency property.
+</para>
+            </summary>
+            <value>A <see cref="T:System.Object"/> value.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.DocumentSourceProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.EndInit">
+            <summary>
+                <para>Ends the runtime initialization.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="E:DevExpress.Xpf.Diagram.DiagramControl.ExceptionMessage">
+            <summary>
+                <para>Enables you to manually handle the file loading exception.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.ExceptionMessageEvent">
+            <summary>
+                <para>Identifies the  routed event.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.FileDialogFilter">
+            <summary>
+                <para>Gets or sets the filter string that determines which files are displayed in the 'Open File' and 'Save File As' dialog boxes. This is a dependency property.
+</para>
+            </summary>
+            <value>A filter string that determines which files are displayed in the file dialog box.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.FileDialogFilterProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.FitToDrawingMargin">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.FitToDrawingMarginProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.GlueToConnectionPointDistance">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.GlueToConnectionPointDistanceProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.GlueToItemDistance">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.GlueToItemDistanceProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.GridSize">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.GridSizeProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.HasChanges">
+            <summary>
+                <para>Gets whether the current document has unsaved changes. This is a dependency property.
+</para>
+            </summary>
+            <value><b>true</b>, if the document has unsaved changes; otherwise, <b>false</b>.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.HasChangesProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.IsTextEditMode">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.IsTextEditModeProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.Items">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.ItemTypeRegistrator">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.LastShapeStyles">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.LastShapeStylesProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.LoadDocument(System.IO.Stream)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="stream">
+		 
+            </param>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.LoadDocument(System.String)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="fileName">
+		 
+            </param>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.MeasureUnit">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.MeasureUnitProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.MinDragDistance">
+            <summary>
+                <para>Specifies the number of pixels the cursor must move with the mouse down before dragging begins. This is a dependency property.
+
+</para>
+            </summary>
+            <value>A System.Double value that is the number of pixels the cursor must move with the mouse down before dragging begins.
+
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.MinDragDistanceProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.NewDocument">
+            <summary>
+                <para>Discards the current document and creates a new one.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.NewFile">
+            <summary>
+                <para>Closes the current file and creates a new one.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.OnApplyTemplate">
+            <summary>
+                <para>Called after the template is completely generated and attached to the visual tree.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.OpenFile">
+            <summary>
+                <para> </para>
+            </summary>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.PageSize">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.PageSizeProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.PlatformCache">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.PointToControl(System.Windows.Point)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="documentPoint">
+		 
+            </param>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.PointToDocument(System.Windows.Point)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="controlPoint">
+		 
+            </param>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.PrimarySelection">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.PrimarySelectionProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.PropertiesPanelVisibility">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.PropertiesPanelVisibilityProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.ResizingMode">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.ResizingModeProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.RootToolsModel">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.RootToolsModelProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.SaveDocument(System.IO.Stream)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="stream">
+		 
+            </param>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.SaveDocument(System.String)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="fileName">
+		 
+            </param>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.SaveFile">
+            <summary>
+                <para> </para>
+            </summary>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.SaveFileAs">
+            <summary>
+                <para> </para>
+            </summary>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.ScrollMargin">
+            <summary>
+                <para>Gets or sets the outer indents of the diagram. This is a dependency property.
+</para>
+            </summary>
+            <value>A <see cref="T:System.Windows.Thickness"/> value that contains the outer indents of the diagram.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.ScrollMarginProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.SelectAll">
+            <summary>
+                <para>Selects all shapes and connectors within the current document.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.SelectedItems">
+            <summary>
+                <para>Provides access to the collection of currently selected diagram items.
+</para>
+            </summary>
+            <value>A read-only collection of currently selected diagram items.
+</value>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.SelectedStencils">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.SelectedStencilsProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="E:DevExpress.Xpf.Diagram.DiagramControl.SelectionChanged">
+            <summary>
+                <para>Occurs after the selection has been changed.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.SelectionChangedEvent">
+            <summary>
+                <para>Identifies the  routed event.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.SelectionModel">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.SelectionModelProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.SelectionToolsModel">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.SelectionToolsModelProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.SelectItem(DevExpress.Xpf.Diagram.DiagramItem,DevExpress.Diagram.Core.ModifySelectionMode)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="item">
+		 
+            </param>
+            <param name="modifySelectionMode">
+		 
+            </param>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.SelectItems(System.Collections.Generic.IEnumerable`1,DevExpress.Diagram.Core.ModifySelectionMode)">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="items">
+		 
+            </param>
+            <param name="modifySelectionMode">
+		 
+            </param>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.SelectItems(DevExpress.Xpf.Diagram.DiagramItem[])">
+            <summary>
+                <para> </para>
+            </summary>
+            <param name="items">
+		 
+            </param>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.ShowGrid">
+            <summary>
+                <para>Specifies whether to display grid lines on the canvas. This is a dependency property.
+</para>
+            </summary>
+            <value><b>true</b> to display grid lines on the canvas; otherwise, <b>false</b>.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.ShowGridProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="E:DevExpress.Xpf.Diagram.DiagramControl.ShowingEditor">
+            <summary>
+                <para>Enables you to prevent an end-user from activating the editors of individual diagram items.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.ShowingEditorEvent">
+            <summary>
+                <para>Identifies the  routed event.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="E:DevExpress.Xpf.Diagram.DiagramControl.ShowingOpenDialog">
+            <summary>
+                <para>Fires before showing an 'Open File' dialog, and allows it to be customized.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.ShowingOpenDialogEvent">
+            <summary>
+                <para>Identifies the  routed event.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="E:DevExpress.Xpf.Diagram.DiagramControl.ShowingSaveDialog">
+            <summary>
+                <para>Fires before showing a 'Save File As' dialog, and allows it to be customized.
+</para>
+            </summary>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.ShowingSaveDialogEvent">
+            <summary>
+                <para>Identifies the  routed event.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.ShowRulers">
+            <summary>
+                <para>Specifies whether to display rulers on the canvas. This is a dependency property.
+</para>
+            </summary>
+            <value><b>true</b> if rulers are displayed on the canvas; otherwise, <b>false</b>.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.ShowRulersProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.SnapToGrid">
+            <summary>
+                <para>Specifies whether to pull shapes to the grid lines whenever an end-user drags them around the canvas. This is a dependency property.
+
+</para>
+            </summary>
+            <value><b>true</b>, to snap shapes to the grid lines; otherwise, <b>false</b>.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.SnapToGridProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.SnapToItems">
+            <summary>
+                <para>Specifies whether to pull shapes to other shapes whenever an end-user drags them around the canvas. This is a dependency property.
+
+</para>
+            </summary>
+            <value><b>true</b> to snap shapes to other shapes; otherwise, <b>false</b>.
+</value>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.SnapToItemsDistance">
+            <summary>
+                <para>Specifies the snap distance. This is a dependency property.
+</para>
+            </summary>
+            <value>The snap distance in pixels.
+
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.SnapToItemsDistanceProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.SnapToItemsProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.Theme">
+            <summary>
+                <para>Provides access to the current theme. This is a dependency property.
+</para>
+            </summary>
+            <value>A <see cref="T:DevExpress.Diagram.Core.DiagramTheme"/> object.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.ThemeProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.Title">
+            <summary>
+                <para>The document title to which the window title can be bound. This is a dependency property.
+</para>
+            </summary>
+            <value>A string object that represents the document title.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.TitleProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.ToolboxVisibility">
+            <summary>
+                <para>Gets or sets the Shapes panel display mode. This is a dependency property.
+</para>
+            </summary>
+            <value>A <see cref="T:DevExpress.Diagram.Core.ToolboxVisibility"/> enumeration value.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.ToolboxVisibilityProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramControl.UnselectItem(DevExpress.Xpf.Diagram.DiagramItem)">
+            <summary>
+                <para>Unselects the specified diagram item.
+</para>
+            </summary>
+            <param name="item">
+		A <see cref="T:DevExpress.Xpf.Diagram.DiagramItem"/> to unselect.
+
+            </param>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramControl.ZoomFactor">
+            <summary>
+                <para>Specifies the diagram zoom factor. This is a dependency property. 
+</para>
+            </summary>
+            <value>A <see cref="T:System.Double"/> value specifying the document zoom factor.
+</value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramControl.ZoomFactorProperty">
+            <summary>
+                <para>Identifies the  dependency property.
+</para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="T:DevExpress.Xpf.Diagram.DiagramItem">
+
+            <summary>
+                <para> </para>
+            </summary>
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.Anchors">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.AnchorsProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.Angle">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.AngleProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.Background">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.BackgroundId">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.BackgroundIdProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.CanCopy">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.CanCopyProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.CanDelete">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.CanDeleteProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.CanMove">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.CanMoveProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.CanResize">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.CanResizeProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.CanRotate">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.CanRotateProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.CanSelect">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.CanSelectProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.CanSnapToOtherItems">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.CanSnapToOtherItemsProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.CanSnapToThisItem">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.CanSnapToThisItemProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.ConnectionPoints">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.ConnectionPointsProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.Controller">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.CustomStyleId">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.CustomStyleIdProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.Foreground">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.ForegroundId">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.ForegroundIdProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramItem.GetDiagram">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.IsSelected">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.IsSelectedProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.Position">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.PositionProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.SelectionLayer">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.SelectionLayerProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.Stroke">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.StrokeDashArray">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.StrokeDashArrayProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.StrokeId">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.StrokeIdProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.StrokeProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.StrokeThickness">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.StrokeThicknessProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.TextAlignment">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.TextAlignmentProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.TextDecorations">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.TextDecorationsProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.ThemeStyleId">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.ThemeStyleIdProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+        <member name="M:DevExpress.Xpf.Diagram.DiagramItem.ToString">
+            <summary>
+                <para>Returns the textual representation of the DiagramItem.
+</para>
+            </summary>
+            <returns>A <see cref="T:System.String"/> value which is the textual representation of the DiagramItem.
+</returns>
+
+
+        </member>
+        <member name="P:DevExpress.Xpf.Diagram.DiagramItem.Weight">
+            <summary>
+                <para> </para>
+            </summary>
+            <value> </value>
+
+
+        </member>
+        <member name="F:DevExpress.Xpf.Diagram.DiagramItem.WeightProperty">
+            <summary>
+                <para> </para>
+            </summary>
+            <returns> </returns>
+
+
+        </member>
+    </members>
+</doc>

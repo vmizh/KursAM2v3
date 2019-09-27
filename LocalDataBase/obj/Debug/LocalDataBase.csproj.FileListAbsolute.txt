@@ -1,0 +1,2 @@
+C:\Users\Vadim\WorkProject\KursAM2v3\LocalDataBase\obj\Debug\LocalDataBase.csproj.CoreCompileInputs.cache
+C:\Users\Vadim\WorkProject\KursAM2v3\LocalDataBase\obj\Debug\LocalDataBase.csprojResolveAssemblyReference.cache

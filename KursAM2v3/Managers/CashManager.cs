@@ -291,17 +291,32 @@ namespace KursAM2.Managers
             ret.CREATOR = string.IsNullOrEmpty(GlobalOptions.UserInfo.NickName)
                 ? GlobalOptions.UserInfo.FullName
                 : GlobalOptions.UserInfo.NickName;
-            //ret.CRS_KOEF = ret.CRS_KOEF ?? 1;
-            //ret.KONTRAGENT_DC = null;
-            ret.RASH_ORDER_FROM_DC = null;
-            ret.BANK_RASCH_SCHET_DC = null;
-            ret.RaisePropertyChanged("Kontragent");
+            ret.CRS_KOEF = ret.CRS_KOEF ?? 1;
+            switch (ret.KontragentType)
+            {
+                case CashKontragentType.Kontragent:
+                    ret.RASH_ORDER_FROM_DC = null;
+                    ret.BANK_RASCH_SCHET_DC = null;
+                    break;
+                case CashKontragentType.Bank:
+                    ret.KONTRAGENT_DC = null;
+                    ret.RASH_ORDER_FROM_DC = null;
+                    break;
+                case CashKontragentType.Cash:
+                    ret.KONTRAGENT_DC = null;
+                    ret.RASH_ORDER_FROM_DC = null;
+                    ret.BANK_RASCH_SCHET_DC = null;
+                    break;
+            }
+
             ret.SFACT_DC = null;
             ret.SFactName = null;
             ret.RashodOrderFromName = null;
             ret.CRS_KOEF = ret.CRS_KOEF ?? 1;
             ret.State = RowStatus.NewRow;
-            ret.Id = Guid.NewGuid();
+            ret.Id = Guid.NewGuid(); 
+            ret.RaisePropertyChanged("Kontragent");
+            ret.RaisePropertyChanged("State");
             return ret;
         }
 
@@ -322,11 +337,11 @@ namespace KursAM2.Managers
             ret.KONTRAGENT_DC = null;
             ret.RASH_ORDER_FROM_DC = null;
             ret.BANK_RASCH_SCHET_DC = null;
-            ret.RaisePropertyChanged("Kontragent");
             ret.SFACT_DC = null;
             ret.SFactName = null;
             ret.RashodOrderFromName = null;
             ret.State = RowStatus.NewRow;
+            ret.RaisePropertyChanged("Kontragent");
             ret.RaisePropertyChanged("State");
             return ret;
         }
@@ -364,7 +379,7 @@ namespace KursAM2.Managers
                 : GlobalOptions.UserInfo.NickName;
             ret.CRS_KOEF = ret.CRS_KOEF ?? 1;
             //ret.KONTRAGENT_DC = null;
-            ret.CASH_TO_DC = null;
+            //ret.CASH_TO_DC = null;
             ret.BANK_RASCH_SCHET_DC = null;
             ret.SPOST_DC = null;
             ret.SPostName = null;
@@ -372,6 +387,7 @@ namespace KursAM2.Managers
             ret.State = RowStatus.NewRow;
             ret.Id = Guid.NewGuid();
             ret.CRS_KOEF = ret.CRS_KOEF ?? 1;
+            ret.RaisePropertyChanged("State");
             return ret;
         }
 
@@ -857,38 +873,38 @@ namespace KursAM2.Managers
                                     ctx.SD_251.Any(_ => _.CH_DATE.Year == insCrsExch.CH_DATE.Year)
                                         ? ctx.SD_251.Max(_ => _.CH_NUM_ORD) + 1
                                         : 1;
-                                var codecass3 = ctx.SD_39.FirstOrDefault(_ =>
-                                    _.CA_DC == insCrsExch.Cash.DocCode && _.CRS_DC == insCrsExch.CurrencyIn.DocCode
-                                                                       && _.DATE_CASS == insCrsExch.CH_DATE_IN);
-                                if (codecass3 == null)
-                                {
-                                    CreateNewSD_39(insCrsExch.Cash.DocCode, (DateTime) insCrsExch.CH_DATE_IN, ctx);
-                                    ent2.CH_CASH_DATE_IN_DC = ctx.SD_39.FirstOrDefault(_ =>
-                                            _.CA_DC == insCrsExch.Cash.DocCode && _.CRS_DC ==
-                                                                               insCrsExch.CurrencyIn.DocCode
-                                                                               && _.DATE_CASS == insCrsExch.CH_DATE_IN)
-                                        ?.DOC_CODE;
-                                }
-                                else
-                                {
-                                    ent2.CH_CASH_DATE_IN_DC = codecass3.DOC_CODE;
-                                }
-                                var codecass4 = ctx.SD_39.FirstOrDefault(_ =>
-                                    _.CA_DC == insCrsExch.Cash.DocCode && _.CRS_DC == insCrsExch.CurrencyOut.DocCode
-                                                                       && _.DATE_CASS == insCrsExch.CH_DATE_OUT);
-                                if (codecass4 == null)
-                                {
-                                    CreateNewSD_39(insCrsExch.Cash.DocCode, (DateTime) insCrsExch.CH_DATE_OUT, ctx);
-                                    ent2.CH_CASH_DATE_OUT_DC = ctx.SD_39.FirstOrDefault(_ =>
-                                            _.CA_DC == insCrsExch.Cash.DocCode && _.CRS_DC ==
-                                                                               insCrsExch.CurrencyOut.DocCode
-                                                                               && _.DATE_CASS == insCrsExch.CH_DATE_OUT)
-                                        ?.DOC_CODE;
-                                }
-                                else
-                                {
-                                    ent2.CH_CASH_DATE_OUT_DC = codecass4.DOC_CODE;
-                                }
+                                //var codecass3 = ctx.SD_39.FirstOrDefault(_ =>
+                                //    _.CA_DC == insCrsExch.Cash.DocCode && _.CRS_DC == insCrsExch.CurrencyIn.DocCode
+                                //                                       && _.DATE_CASS == insCrsExch.CH_DATE_IN);
+                                //if (codecass3 == null)
+                                //{
+                                //    CreateNewSD_39(insCrsExch.Cash.DocCode, (DateTime) insCrsExch.CH_DATE_IN, ctx);
+                                //    ent2.CH_CASH_DATE_IN_DC = ctx.SD_39.FirstOrDefault(_ =>
+                                //            _.CA_DC == insCrsExch.Cash.DocCode && _.CRS_DC ==
+                                //                                               insCrsExch.CurrencyIn.DocCode
+                                //                                               && _.DATE_CASS == insCrsExch.CH_DATE_IN)
+                                //        ?.DOC_CODE;
+                                //}
+                                //else
+                                //{
+                                //    ent2.CH_CASH_DATE_IN_DC = codecass3.DOC_CODE;
+                                //}
+                                //var codecass4 = ctx.SD_39.FirstOrDefault(_ =>
+                                //    _.CA_DC == insCrsExch.Cash.DocCode && _.CRS_DC == insCrsExch.CurrencyOut.DocCode
+                                //                                       && _.DATE_CASS == insCrsExch.CH_DATE_OUT);
+                                //if (codecass4 == null)
+                                //{
+                                //    CreateNewSD_39(insCrsExch.Cash.DocCode, (DateTime) insCrsExch.CH_DATE_OUT, ctx);
+                                //    ent2.CH_CASH_DATE_OUT_DC = ctx.SD_39.FirstOrDefault(_ =>
+                                //            _.CA_DC == insCrsExch.Cash.DocCode && _.CRS_DC ==
+                                //                                               insCrsExch.CurrencyOut.DocCode
+                                //                                               && _.DATE_CASS == insCrsExch.CH_DATE_OUT)
+                                //        ?.DOC_CODE;
+                                //}
+                                //else
+                                //{
+                                //    ent2.CH_CASH_DATE_OUT_DC = codecass4.DOC_CODE;
+                                //}
                                 ctx.Entry(ent2).State = EntityState.Added;
                                 ctx.SaveChanges();
                                 insCrsExch.DocCode = ent2.DOC_CODE;

@@ -1,0 +1,10 @@
+C:\Users\vmizh\WorkProject\KursAM2v3\AlfaMediaData\bin\Debug\AlfaMediaData.dll.config
+C:\Users\vmizh\WorkProject\KursAM2v3\AlfaMediaData\bin\Debug\AlfaMediaData.dll
+C:\Users\vmizh\WorkProject\KursAM2v3\AlfaMediaData\bin\Debug\AlfaMediaData.pdb
+C:\Users\vmizh\WorkProject\KursAM2v3\AlfaMediaData\bin\Debug\EntityFramework.dll
+C:\Users\vmizh\WorkProject\KursAM2v3\AlfaMediaData\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\vmizh\WorkProject\KursAM2v3\AlfaMediaData\bin\Debug\EntityFramework.xml
+C:\Users\vmizh\WorkProject\KursAM2v3\AlfaMediaData\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\vmizh\WorkProject\KursAM2v3\AlfaMediaData\obj\Debug\AlfaMediaData.dll
+C:\Users\vmizh\WorkProject\KursAM2v3\AlfaMediaData\obj\Debug\AlfaMediaData.pdb
+C:\Users\vmizh\WorkProject\KursAM2v3\AlfaMediaData\obj\Debug\AlfaMediaData.csprojResolveAssemblyReference.cache

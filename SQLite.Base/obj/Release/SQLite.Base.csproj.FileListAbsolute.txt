@@ -1,0 +1,15 @@
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\bin\Release\SQLite.Base.exe.config
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\bin\Release\SQLite.Base.exe
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\bin\Release\SQLite.Base.pdb
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\bin\Release\EntityFramework.dll
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\bin\Release\EntityFramework.SqlServer.dll
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\bin\Release\System.Data.SQLite.dll
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\bin\Release\System.Data.SQLite.EF6.dll
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\bin\Release\EntityFramework.xml
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\bin\Release\EntityFramework.SqlServer.xml
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\bin\Release\System.Data.SQLite.xml
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\bin\Release\System.Data.SQLite.dll.config
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\obj\Release\SQLite.Base.csproj.CopyComplete
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\obj\Release\SQLite.Base.exe
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\obj\Release\SQLite.Base.pdb
+C:\Users\Vadim\WorkProject\KursAM2v3\SQLite.Base\obj\Release\SQLite.Base.csprojAssemblyReference.cache
