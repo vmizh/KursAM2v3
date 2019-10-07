@@ -202,9 +202,22 @@ namespace Core.EntityViewModel
             {
                 if (Entity.SFT_ED_CENA == value) return;
                 Entity.SFT_ED_CENA = value;
-                Entity.SFT_SUMMA_NDS = (SFT_ED_CENA ?? 0) * (decimal?) SFT_KOL * ((100 + NDSPercent) / 100);
-                Entity.SFT_SUMMA_K_OPLATE = (decimal?) (SFT_KOL * (double) (SFT_ED_CENA ?? 0));
-                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
+                if (IsNDSInPrice)
+                {
+                    if (SFT_KOL != 0)
+                    {
+                        Entity.SFT_SUMMA_NDS = (SFT_SUMMA_K_OPLATE ?? 0) - (SFT_SUMMA_K_OPLATE ?? 0) * 100 /
+                                               ((decimal?) SFT_KOL * 100 / (100 + myNDSPercent));
+                    }
+                    else
+                    {
+                        Entity.SFT_SUMMA_NDS = 0;
+                    }
+                    RaisePropertyChanged(nameof(SFT_ED_CENA));
+                    RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
+                }
+                Entity.SFT_SUMMA_K_OPLATE = (decimal?) (SFT_KOL * (double) (SFT_ED_CENA ?? 0))+Entity.SFT_SUMMA_NDS;
+                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE+Entity.SFT_SUMMA_NDS;
                 RaisePropertyChanged(nameof(SFT_SUMMA_K_OPLATE));
                 RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
                 RaisePropertyChanged();
@@ -218,7 +231,21 @@ namespace Core.EntityViewModel
             set
             {
                 if (SFT_ED_CENA == value) return;
-                SFT_ED_CENA = value;
+                Entity.SFT_ED_CENA = value;
+                if (IsNDSInPrice)
+                {
+                    if (SFT_KOL != 0)
+                    {
+                        Entity.SFT_SUMMA_NDS = (SFT_SUMMA_K_OPLATE ?? 0) - (SFT_SUMMA_K_OPLATE ?? 0) * 100 /
+                                               ((decimal?) SFT_KOL * 100 / (100 + myNDSPercent));
+                    }
+                    else
+                    {
+                        Entity.SFT_SUMMA_NDS = 0;
+                    }
+                    RaisePropertyChanged(nameof(SFT_ED_CENA));
+                    RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
+                }
                 RaisePropertyChanged();
             }
         }

@@ -841,7 +841,7 @@ namespace Core
                     " SELECT SD_83.DOC_CODE as DOC_CODE, NOM_NAME, NOM_NOMENKL, NOM_CATEG_DC, " +
                     " SD_175.DOC_CODE as UNIT_DC, SD_175.ED_IZM_NAME AS UNIT_NAME, SD_175.ED_IZM_OKEI_CODE as UNIT_CODE, " +
                     " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
-                    " isnull(sd_83.NOM_PRODUCT_DC,0) as NOM_PRODUCT_DC " +
+                    " isnull(sd_83.NOM_PRODUCT_DC,0) as NOM_PRODUCT_DC, isnull(sd_83.IsUslugaInRent,0) as IsRentabelnost " +
                     " FROM SD_83 " +
                     " INNER JOIN SD_175 ON SD_175.DOC_CODE = SD_83.NOM_ED_IZM_DC " +
                     " and SD_83.DOC_CODE = '" + CustomFormat.DecimalToSqlDecimal(dc) + "'").ToList();
@@ -860,7 +860,8 @@ namespace Core
                         UpdateDate = d.UpdateDate,
                         NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
                         NOM_CATEG_DC = d.NOM_CATEG_DC,
-                        NOM_PRODUCT_DC = d.NOM_PRODUCT_DC
+                        NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
+                        IsUslugaInRent = d.IsRentabelnost
                     },
                     Unit = Units[d.UNIT_DC],
                     Currency = Currencies[d.NOM_SALE_CRS_DC],
@@ -1178,6 +1179,7 @@ namespace Core
         public decimal NOM_CATEG_DC { set; get; }
 
         public decimal NOM_PRODUCT_DC { set; get; }
+        public bool IsRentabelnost { set; get; }
         // ReSharper restore UnusedAutoPropertyAccessor.Global
         // ReSharper restore InconsistentNaming
     }

@@ -53,7 +53,12 @@
                                Margin="5,0,0,0" VerticalAlignment="Center" />
                 <Label DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center">Накл. расход</Label>
                 <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsNakladExpense, Mode=TwoWay}" DockPanel.Dock="Left"
-                               Margin="5,0,0,0" VerticalAlignment="Center" />
+                               Margin="5,0,0,0" VerticalAlignment="Center" 
+                               IsEnabled="{Binding NomenklMain.IsUsluga, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center">Учет в рентабельности</Label>
+                <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsRentabelnost, Mode=TwoWay}" DockPanel.Dock="Left"
+                               Margin="5,0,0,0" VerticalAlignment="Center" 
+                               IsEnabled="{Binding NomenklMain.IsUsluga, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
             <DockPanel Height="40" Margin="0,5,0,5" LastChildFill="False">
                 <StackPanel Orientation="Horizontal">

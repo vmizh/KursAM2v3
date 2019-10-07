@@ -497,7 +497,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand DeleteRowCommand
         {
-            get { return new Command(DeleteRow, param => Document !=null && (Document.PaySumma > 0 && Document.Rows.Count > 1)); }
+            get { return new Command(DeleteRow, param => CurrentRow != null && Document != null && Document.PaySumma == 0); }
         }
 
         private void DeleteRow(object obj)

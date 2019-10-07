@@ -136,6 +136,8 @@
                             <dxg:GridColumn Name="col_1_6" Header="Услуга" FieldName="IsUsluga" ReadOnly="True" />
                             <dxg:GridColumn Name="col_1_7" Header="Накл. расход" FieldName="IsNakladExpense"
                                             ReadOnly="True" />
+                            <dxg:GridColumn Name="col_1_8" Header="Рентабельность" FieldName="IsRentabelnost"
+                                            ReadOnly="True" />
                         </dxg:GridControl.Columns>
                         <dxg:GridControl.View>
                             <dxg:TableView x:Name="tableViewNomenklMain"
@@ -200,6 +202,8 @@
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                             <dxg:GridColumn Name="col_2_5" Header="Примечания" FieldName="Note" />
+                            <dxg:GridColumn Name="col_2_6" Header="Рентабельность" FieldName="IsRentabelnost"
+                                            ReadOnly="True" />
                         </dxg:GridControl.Columns>
                         <dxg:GridControl.View>
                             <dxg:TableView x:Name="tableViewNomenkl"

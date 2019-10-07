@@ -1017,7 +1017,7 @@ namespace KursAM2.Managers.Invoices
                     REGISTER_DATE = DateTime.Today,
                     CREATOR = GlobalOptions.UserInfo.Name,
                     IsAccepted = false,
-                    myState = RowStatus.NewRow
+                    myState = RowStatus.NewRow,
                 };
                 var code = 1;
                 foreach (var row in ret.Rows)
@@ -1046,6 +1046,7 @@ namespace KursAM2.Managers.Invoices
 
                 ret.PaymentDocs.Clear();
                 ret.ShipmentRows.Clear();
+                ret.RaisePropertyChanged("PaySumma");
                 return ret;
             }
         }

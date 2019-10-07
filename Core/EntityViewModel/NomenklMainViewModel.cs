@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Data;
@@ -85,7 +86,45 @@ namespace Core.EntityViewModel
             set
             {
                 if (Entity.IsUsluga == value) return;
-                Entity.IsUsluga = value;
+                if (CheckResetIsUsluga())
+                {
+                    Entity.IsUsluga = value;
+                    if (!value)
+                    {
+                        IsNakladExpense = false;
+                        IsRentabelnost = false;
+                    }
+                    RaisePropertyChanged();
+                } 
+            }
+        }
+
+        private bool CheckResetIsUsluga()
+        {
+            if (State == RowStatus.NewRow) return true;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                if (Entity.IsUsluga)
+                {
+                    if (ctx.TD_26.Any(_ => _.SFT_NEMENKL_DC == DocCode) ||
+                        ctx.TD_84.Any(_ => _.SFT_NEMENKL_DC == DocCode))
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+                if (ctx.TD_24.Any(_ => _.DDT_NOMENKL_DC == DocCode)) return false;
+                return true;
+            }
+        }
+
+        public bool IsRentabelnost
+        {
+            get => Entity.IsRentabelnost ?? false;
+            set
+            {
+                if (Entity.IsRentabelnost == value) return;
+                Entity.IsRentabelnost = value;
                 RaisePropertyChanged();
             }
         }

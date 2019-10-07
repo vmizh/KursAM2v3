@@ -191,7 +191,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                             NomenklNumber = n.NOM_NOMENKL,
                             NameFull = n.NOM_FULL_NAME,
                             Currency = new Currency {DocCode = sd301.DOC_CODE, CRS_SHORTNAME = sd301.CRS_SHORTNAME},
-                            Note = n.NOM_NOTES
+                            Note = n.NOM_NOTES,
+                            IsRentabelnost = (bool) n.IsUslugaInRent
                         }).ToList();
                     foreach (var nom in noms)
                     {
@@ -299,7 +300,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     NOM_1NAKLRASH_0NO = CurrentNomenklMain.IsNakladExpense ? 1 : 0,
                                     NOM_PRODUCT_DC = CurrentNomenklMain.ProductType.DOC_CODE,
                                     Id = nom.Id,
-                                    MainId = nom.MainId
+                                    MainId = nom.MainId,
+                                    IsUslugaInRent = nom.IsRentabelnost
                                 };
                                 ctx.SD_83.Add(newItem);
                                 break;
@@ -359,7 +361,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                         NOM_1NAKLRASH_0NO = CurrentNomenklMain.IsNakladExpense ? 1 : 0,
                                         NOM_PRODUCT_DC = CurrentNomenklMain.ProductType.DOC_CODE,
                                         Id = nom.Id,
-                                        MainId = nom.MainId
+                                        MainId = nom.MainId,
+                                        IsUslugaInRent = CurrentNomenklMain.IsRentabelnost
                                     };
                                     ctx.SD_83.Add(newItem);
                                     break;
@@ -450,6 +453,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 Group = CurrentNomenklMain.NomenklCategory,
                 IsUsluga = CurrentNomenklMain.IsUsluga,
                 IsNaklRashod = CurrentNomenklMain.IsNakladExpense,
+                IsRentabelnost = CurrentNomenklMain.IsRentabelnost,
                 State = RowStatus.NewRow,
                 NOM_PRODUCT_DC = CurrentNomenklMain.ProductType.DOC_CODE
             };
@@ -543,7 +547,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 IsNakladExpense = CurrentNomenklMain.IsNakladExpense,
                 IsUsluga = CurrentNomenklMain.IsUsluga,
                 Unit = CurrentNomenklMain.Unit,
-                ProductType = CurrentNomenklMain.ProductType
+                ProductType = CurrentNomenklMain.ProductType,
+                IsRentabelnost = CurrentNomenklMain.IsRentabelnost
             };
             var ctx = new MainCardWindowViewModel
             {

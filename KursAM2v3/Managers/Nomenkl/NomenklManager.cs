@@ -142,6 +142,15 @@ namespace KursAM2.Managers.Nomenkl
                         ctx.SD_82.Add(newCat);
                         ctx.SaveChanges();
                         tnx.Complete();
+                        if (!MainReferences.NomenklGroups.ContainsKey(newDC))
+                        {
+                            MainReferences.NomenklGroups.Add(newDC,new NomenklGroup
+                            {
+                                DocCode = newDC,
+                                Name = newCat.CAT_NAME,
+                                ParentDC = newCat.CAT_PARENT_DC
+                            });
+                        }
                         // ReSharper disable once InconsistentNaming
                         var newCatVM = new NomenklGroup(newCat)
                         {

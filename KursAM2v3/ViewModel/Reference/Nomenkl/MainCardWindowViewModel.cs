@@ -192,7 +192,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     IsNakladExpense = NomenklMain.IsNakladExpense,
                                     IsUsluga = NomenklMain.IsUsluga,
                                     UnitDC = NomenklMain.UnitDC,
-                                    ProductDC = NomenklMain.ProductType.DOC_CODE
+                                    ProductDC = NomenklMain.ProductType.DOC_CODE,
+                                    IsRentabelnost = NomenklMain.IsRentabelnost
                                 };
                                 ctx.NomenklMain.Add(newItem);
                                 var newNomItem = new SD_83
@@ -211,7 +212,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     NOM_1NAKLRASH_0NO = newItem.IsNakladExpense ? 1 : 0,
                                     NOM_PRODUCT_DC = newItem.ProductDC,
                                     Id = Guid.NewGuid(),
-                                    MainId = newItem.Id
+                                    MainId = newItem.Id,
+                                    IsUslugaInRent = newItem.IsRentabelnost
                                 };
                                 ctx.SD_83.Add(newNomItem);
                                 break;
@@ -230,6 +232,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 old.IsUsluga = NomenklMain.IsUsluga;
                                 old.UnitDC = NomenklMain.UnitDC;
                                 old.ProductDC = NomenklMain.ProductType.DOC_CODE;
+                                old.IsRentabelnost = NomenklMain.IsRentabelnost;
                                 break;
                         }
 

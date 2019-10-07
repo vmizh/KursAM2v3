@@ -84,6 +84,19 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
+        [GridColumnView("Рентабельность", SettingsType.Default)]
+        public bool IsRentabelnost
+        {
+            get => Entity.IsUslugaInRent ?? false;
+            set
+            {
+                if (Entity.IsUslugaInRent == value) return;
+                Entity.IsUslugaInRent = value;
+                RaisePropertyChanged();
+            }
+        }
+
         [GridColumnView("Ном. №", SettingsType.Default)]
         public string NomenklNumber
         {
