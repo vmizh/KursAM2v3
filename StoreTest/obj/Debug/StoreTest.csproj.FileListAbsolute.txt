@@ -1,5 +1,0 @@
-C:\Users\Vadim\WorkProject\KursAM2v3\StoreTest\bin\Debug\StoreTest.dll
-C:\Users\Vadim\WorkProject\KursAM2v3\StoreTest\bin\Debug\StoreTest.pdb
-C:\Users\Vadim\WorkProject\KursAM2v3\StoreTest\obj\Debug\StoreTest.csprojResolveAssemblyReference.cache
-C:\Users\Vadim\WorkProject\KursAM2v3\StoreTest\obj\Debug\StoreTest.dll
-C:\Users\Vadim\WorkProject\KursAM2v3\StoreTest\obj\Debug\StoreTest.pdb

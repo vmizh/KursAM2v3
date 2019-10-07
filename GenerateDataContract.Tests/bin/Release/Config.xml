@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Config>
-  <DataBase Host="DESKTOP-UNS7NM9" DBName="Kurs" User="sa" Password=",juk.,bnyfc" />
-  <Output Directory="default" FileNme="DataContract.cs" />
-</Config>
