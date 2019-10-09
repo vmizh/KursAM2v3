@@ -45,6 +45,7 @@ namespace KursAM2.Managers
                 case DocumentType.StoreOrderIn:
                 case DocumentType.Bank:
                 case DocumentType.Waybill:
+                case DocumentType.NomenklTransfer:
                     return true;
                 default:
                     return false;

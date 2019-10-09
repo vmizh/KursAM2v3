@@ -405,7 +405,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             if (Document.Rows.Any(_ => _.Nomenkl.IsUsluga) && !Document.IsAccepted)
             {
-                var res = WinManager.ShowWinUIMessageBox("В счете имекются услуги. Акцептовать счет?", "Предупреждение",
+                var res = WinManager.ShowWinUIMessageBox("В счете имеются услуги. Акцептовать счет?", "Предупреждение",
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (res == MessageBoxResult.Yes) Document.IsAccepted = true;
             }

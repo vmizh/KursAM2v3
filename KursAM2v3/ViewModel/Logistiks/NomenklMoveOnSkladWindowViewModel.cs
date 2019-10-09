@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using Core;
@@ -314,6 +315,10 @@ namespace KursAM2.ViewModel.Logistiks
         private void LoadDocuments(decimal storeDC)
         {
             DocumentList.Clear();
+            while (!MainReferences.IsReferenceLoadComplete)
+            {
+
+            }
             if (CurrentNomenklMoveItem == null || storeDC == 0) return;
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -688,7 +693,7 @@ namespace KursAM2.ViewModel.Logistiks
                     DocumentsOpenManager.Open(DocumentType.StoreOrderIn, CurrentDocument.DocCode);
                     break;
                 case "Акт валютной конвертации товара":
-                    DocumentsOpenManager.Open(DocumentType.NomenklTransfer, CurrentDocument.DocCode);
+                    DocumentsOpenManager.Open(DocumentType.NomenklTransfer, CurrentDocument.DocCode, CurrentDocument.Id);
                     break;
             }
         }

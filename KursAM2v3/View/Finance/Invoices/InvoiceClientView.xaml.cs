@@ -208,8 +208,30 @@ namespace KursAM2.View.Finance.Invoices
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.MinWidth = 600;
                     break;
+                case nameof(InvoiceClient.PersonaResponsible):
+                    var cb = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.PersonaResponsible, "PersonaResponsible",
+                        MainReferences.Employees.Values.ToList().OrderBy(_ => _.Name));
+                    var delBtn = new ButtonInfo
+                    {
+                        GlyphKind = GlyphKind.Cancel,
+                    };
+                    delBtn.Click += DelBtn_Click;
+                    cb.Buttons.Add(delBtn);
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                    e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
+                    e.Item.MinWidth = 600;
+                    break;
             }
             ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
+        }
+
+        private void DelBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var ctx = DataContext as ClientWindowViewModel;
+            var doc = ctx?.Document;
+            if (doc == null)
+                return;
+            doc.PersonaResponsible = null;
         }
 
         private void DilerBtnCancel_Click(object sender, RoutedEventArgs e)

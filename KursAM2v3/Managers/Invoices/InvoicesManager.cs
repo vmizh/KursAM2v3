@@ -276,7 +276,8 @@ namespace KursAM2.Managers.Invoices
                                 SF_PEREVOZCHIK_DC = doc.SF_PEREVOZCHIK_DC,
                                 SF_PEREVOZCHIK_SUM = doc.SF_PEREVOZCHIK_SUM,
                                 SF_AUTO_CREATE = doc.SF_AUTO_CREATE,
-                                Id = guidId
+                                Id = guidId,
+                                PersonalResponsibleDC = doc.PersonaResponsible?.DocCode
                             });
                             if (doc.Rows.Count > 0)
                             {
@@ -379,6 +380,7 @@ namespace KursAM2.Managers.Invoices
                             old.SF_PEREVOZCHIK_DC = doc.SF_PEREVOZCHIK_DC;
                             old.SF_PEREVOZCHIK_SUM = doc.SF_PEREVOZCHIK_SUM;
                             old.SF_AUTO_CREATE = doc.SF_AUTO_CREATE;
+                            old.PersonalResponsibleDC = doc.PersonaResponsible?.DocCode;
                             foreach (var r in doc.Rows)
                             {
                                 var oldRow = ctx.TD_26.FirstOrDefault(_ =>
@@ -1420,7 +1422,8 @@ namespace KursAM2.Managers.Invoices
                                 SF_FORM_RASCH_DC = doc.SF_FORM_RASCH_DC,
                                 SF_NOTE = doc.SF_NOTE,
                                 SF_RECEIVER_KONTR_DC = doc.SF_RECEIVER_KONTR_DC,
-                                SF_NDS_1INCLUD_0NO = doc.SF_NDS_1INCLUD_0NO
+                                SF_NDS_1INCLUD_0NO = doc.SF_NDS_1INCLUD_0NO,
+                                PersonalResponsibleDC = doc.PersonaResponsible?.DocCode
                             });
                             if (doc.Rows.Count > 0)
                             {
@@ -1461,7 +1464,7 @@ namespace KursAM2.Managers.Invoices
                                         SFT_SUMMA_NDS = items.SFT_SUMMA_NDS,
                                         SFT_TARA_DC = items.SFT_TARA_DC,
                                         SFT_TARA_FLAG = items.SFT_TARA_FLAG,
-                                        SFT_TARA_MEST = items.SFT_TARA_MEST
+                                        SFT_TARA_MEST = items.SFT_TARA_MEST,
                                     });
                                     code += 1;
                                 }
@@ -1505,6 +1508,7 @@ namespace KursAM2.Managers.Invoices
                             item.SF_NOTE = doc.SF_NOTE;
                             item.SF_RECEIVER_KONTR_DC = doc.SF_RECEIVER_KONTR_DC;
                             item.SF_NDS_1INCLUD_0NO = doc.SF_NDS_1INCLUD_0NO;
+                            item.PersonalResponsibleDC = doc.PersonaResponsible?.DocCode;
                             if (doc.Rows.Count > 0)
                             {
                                 var code = doc.Rows.Count > 0 ? doc.Rows.Max(_ => _.Code) : 0;

@@ -95,7 +95,6 @@ namespace KursAM2.Managers.Invoices
                         .Include("TD_24.TD_242")
                         .Include("TD_24.TD_243")
                         .Include("TD_24.TD_244")
-                        .AsNoTracking()
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
                     result = new WarehouseOrderIn(data);
                     foreach (var r in result.Rows)
