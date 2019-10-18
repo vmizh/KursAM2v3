@@ -52,7 +52,7 @@ namespace KursAM2.ViewModel.Personal
         {
             set
             {
-                //if ((myEemployee.DocCode ?? 0) == value.DocCode) return;
+                if (myEemployee == value) return;
                 myEemployee = value;
                 RaisePropertyChanged();
             }
@@ -115,5 +115,7 @@ namespace KursAM2.ViewModel.Personal
             Rows.RemoveAt(id);
             RaisePropertyChanged(nameof(Rows));
         }
+
+        public override decimal DocCode => Employee?.DocCode ?? 0;
     }
 }

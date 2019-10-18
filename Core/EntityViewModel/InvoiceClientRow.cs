@@ -23,7 +23,10 @@ namespace Core.EntityViewModel
         private SDRSchet mySDRSchet;
         private decimal myShipped;
         // ReSharper disable once RedundantDefaultMemberInitializer
-        public bool IsNDSInPrice = false;
+        public bool myIsNDSInPrice = false;
+
+
+
 
         public InvoiceClientRow(bool isNDSInPrice = false)
         {
@@ -97,6 +100,18 @@ namespace Core.EntityViewModel
                 if (Entity.SFT_TEXT == value) return;
                 Entity.SFT_TEXT = value;
                 RaisePropertyChanged();
+            }
+        }
+
+        public bool IsNDSInPrice
+        {
+            get => myIsNDSInPrice;
+            set
+            {
+                if (myIsNDSInPrice == value) return;
+                myIsNDSInPrice  = value;
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(SFT_ED_CENA));
             }
         }
         public override string Note

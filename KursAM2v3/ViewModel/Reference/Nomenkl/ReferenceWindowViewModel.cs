@@ -192,7 +192,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                             NameFull = n.NOM_FULL_NAME,
                             Currency = new Currency {DocCode = sd301.DOC_CODE, CRS_SHORTNAME = sd301.CRS_SHORTNAME},
                             Note = n.NOM_NOTES,
-                            IsRentabelnost = (bool) n.IsUslugaInRent
+                            IsRentabelnost =  n.IsUslugaInRent ?? false
                         }).ToList();
                     foreach (var nom in noms)
                     {

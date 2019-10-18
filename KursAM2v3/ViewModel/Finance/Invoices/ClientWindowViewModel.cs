@@ -188,7 +188,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
-        private void UpdateVisualData()
+        public void UpdateVisualData()
         {
             // ReSharper disable once NotResolvedInText
             Document.RaisePropertyChanged("SF_CRS_SUMMA_K_OPLATE");

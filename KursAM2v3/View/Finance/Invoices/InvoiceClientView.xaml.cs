@@ -221,6 +221,18 @@ namespace KursAM2.View.Finance.Invoices
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
                     e.Item.MinWidth = 600;
                     break;
+                case nameof(InvoiceClient.IsNDSIncludeInPrice):
+                    var edSet = e.Item.Content as CheckEdit;
+                    if (edSet != null)
+                    {
+                        edSet.EditValueChanged += (o, args) =>
+                        {
+                            var ctx1 = DataContext as ClientWindowViewModel;
+                            if (ctx1 == null) return;
+                            ctx1.UpdateVisualData();
+                        };
+                    }
+                    break;
             }
             ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
         }

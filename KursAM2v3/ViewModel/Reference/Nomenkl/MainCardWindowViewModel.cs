@@ -217,7 +217,18 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 };
                                 ctx.SD_83.Add(newNomItem);
                                 break;
-                            case RowStatus.Edited:
+                            case RowStatus.Edited: 
+                                var nomFormMain = ctx.SD_83.Where(_ => _.MainId == NomenklMain.Id).ToList();
+                                
+                                if (nomFormMain.Count > 0)
+                                {
+                                    foreach (var n in nomFormMain)
+                                    {
+                                        n.NOM_0MATER_1USLUGA = NomenklMain.IsUsluga ? 1 : 0;
+                                        n.NOM_1NAKLRASH_0NO = NomenklMain.IsNakladExpense ? 1 : 0;
+                                        n.IsUslugaInRent = NomenklMain.IsRentabelnost;
+                                    }
+                                }
                                 var old = ctx.NomenklMain.SingleOrDefault(_ => _.Id == NomenklMain.Id);
                                 if (old == null) return;
                                 old.Name = NomenklMain.Name;
@@ -233,9 +244,10 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 old.UnitDC = NomenklMain.UnitDC;
                                 old.ProductDC = NomenklMain.ProductType.DOC_CODE;
                                 old.IsRentabelnost = NomenklMain.IsRentabelnost;
+
+                               
                                 break;
                         }
-
                         ctx.SaveChanges();
                         tnx.Commit();
                         NomenklMain.myState = RowStatus.NotEdited;

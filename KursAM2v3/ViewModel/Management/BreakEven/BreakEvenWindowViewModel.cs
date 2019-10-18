@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using Core;
 using Core.Menu;
@@ -8,6 +9,7 @@ using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Xpf.DataAccess.Native;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.View.Management;
@@ -242,6 +244,62 @@ namespace KursAM2.ViewModel.Management.BreakEven
                           "    LEFT OUTER JOIN SD_2 S2 ON S2.TABELNUMBER = EU.TABELNUMBER";
                 try
                 {
+                    var uslugaIn = ent.TD_26
+                        .Include(_ => _.SD_26)
+                        .Include(_ => _.SD_83)
+                        .Where(_ => _.SD_83.IsUslugaInRent == true && _.SD_26.SF_POSTAV_DATE >= start &&
+                                    _.SD_26.SF_POSTAV_DATE <= end).ToList();
+                    var uslugaOut = ent.TD_84
+                        .Include(_ => _.SD_84)
+                        .Include(_ => _.SD_83)
+                        .Where(_ => _.SD_83.IsUslugaInRent == true && _.SD_84.SF_DATE >= start &&
+                                    _.SD_84.SF_DATE <= end).ToList();
+                    var uslugaDCs = new List<decimal>();
+
+                    foreach (var t in uslugaIn)
+                    {
+                        uslugaDCs.Add(t.SFT_NEMENKL_DC);
+                    }
+                    foreach (var t in uslugaOut)
+                    {
+                        uslugaDCs.Add(t.SFT_NEMENKL_DC);
+                    }
+                    if (uslugaDCs.Count > 0)
+                    {
+                        foreach (var dc in uslugaDCs)
+                        {
+                            var sumQuanInStart = ent.TD_26
+                                .Include(_ => _.SD_26).Where(_ =>
+                                    _.SFT_NEMENKL_DC == dc && _.SD_26.SF_POSTAV_DATE < start)
+                                .Sum(_ => _.SFT_KOL);
+                            var sumQuanOutStart = ent.TD_84
+                                .Include(_ => _.SD_84).Where(_ =>
+                                    _.SFT_NEMENKL_DC == dc && _.SD_84.SF_DATE < start)
+                                .Sum(_ => _.SFT_KOL);
+                            var sumQuanStart = (decimal)((double) sumQuanInStart - sumQuanOutStart);
+                            if (sumQuanStart > 0)
+                            {
+                                var summaAllInStart = ent.TD_26
+                                    .Include(_ => _.SD_26).Where(_ =>
+                                        _.SFT_NEMENKL_DC == dc && _.SD_26.SF_POSTAV_DATE < start)
+                                    .Sum(_ => _.SFT_SUMMA_K_OPLATE);
+                                var priceEd = summaAllInStart / sumQuanInStart;
+                                var summaInStart = sumQuanStart * priceEd;
+                                var sumInPeriod = ent.TD_26
+                                    .Include(_ => _.SD_26).Where(_ =>
+                                        _.SFT_NEMENKL_DC == dc && _.SD_26.SF_POSTAV_DATE >= start &&
+                                        _.SD_26.SF_POSTAV_DATE <= end)
+                                    .Sum(_ => _.SFT_SUMMA_K_OPLATE);
+                                var sumQuanInPeriod = ent.TD_26
+                                    .Include(_ => _.SD_26).Where(_ =>
+                                        _.SFT_NEMENKL_DC == dc && _.SD_26.SF_POSTAV_DATE >= start &&
+                                        _.SD_26.SF_POSTAV_DATE <= end)
+                                    .Sum(_ => _.SFT_KOL);
+                            }
+
+                        }
+                    }
+
                     DataAll.Clear();
                     foreach (var d in ent.Database.SqlQuery<BreakEvenTemp>(sql))
                     {

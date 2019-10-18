@@ -21,9 +21,9 @@ namespace KursAM2.View.Finance.Cash
     // ReSharper disable once InheritdocConsiderUsage
     public partial class CashInView : ILayout
     {
+        public ButtonEdit KontrSelectButton;
         public DataLayoutItem NCodeItem;
         public DataLayoutItem SFactNameItem;
-        public ButtonEdit KontrSelectButton;
         public PopupCalcEdit Sumordcont;
 
         public CashInView()
@@ -35,6 +35,7 @@ namespace KursAM2.View.Finance.Cash
             MinWidth = 1000;
         }
 
+        public ComboBoxEdit CurrencyItem { get; set; }
         public LayoutManagerBase LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
 
@@ -105,10 +106,11 @@ namespace KursAM2.View.Finance.Cash
                     {
                         WindowManager.ShowError(ex);
                     }
-                    CurrencyItem = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Currency, "Currency", ctx.CurrencyList, width: 50);
+                    CurrencyItem = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Currency, "Currency", ctx.CurrencyList,
+                        width: 50);
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
                     if (doc.BANK_RASCH_SCHET_DC != null && doc.RASH_ORDER_FROM_DC != null
-                        && doc.SFACT_DC != null && doc.State != RowStatus.NewRow)
+                                                        && doc.SFACT_DC != null && doc.State != RowStatus.NewRow)
                         CurrencyItem.IsEnabled = false;
                     break;
                 case nameof(doc.DATE_ORD):
@@ -166,7 +168,6 @@ namespace KursAM2.View.Finance.Cash
                         TextWrapping = TextWrapping.Wrap,
                         IsTextEditable = false
                     };
-
                     KontrSelectButton.SetBinding(IsEnabledProperty,
                         new Binding {Path = new PropertyPath("IsKontrSelectEnable")});
                     KontrSelectButton.DefaultButtonClick += KontrEdit_DefaultButtonClick;
@@ -215,11 +216,9 @@ namespace KursAM2.View.Finance.Cash
                     break;
                 case nameof(doc.KontragentType):
                     if (e.Item.Content is ComboBoxEdit cbKontragentType)
-                    {
                         //cbKontrType.SetBinding(IsEnabledProperty,
                         //    new Binding { Path = new PropertyPath("IsKontrTypeEnabled") });
                         cbKontragentType.Width = 100;
-                    }
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.VerticalAlignment = VerticalAlignment.Center;
                     break;
@@ -227,15 +226,13 @@ namespace KursAM2.View.Finance.Cash
             ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
         }
 
-        public ComboBoxEdit CurrencyItem { get; set; }
-
         private void Sumordcont1_EditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             if (!(DataContext is CashInWindowViewModel ctx)) return;
             var doc = ctx.Document;
-            if ((decimal)(e.NewValue ?? 0m) < 0)
+            if ((decimal) (e.NewValue ?? 0m) < 0)
             {
-                WindowManager.ShowMessage(this,"Сумма ордера не может быть меньше 0!","Ошибка",
+                WindowManager.ShowMessage(this, "Сумма ордера не может быть меньше 0!", "Ошибка",
                     MessageBoxImage.Stop);
                 doc.SUMM_ORD = 0;
                 return;
@@ -253,8 +250,10 @@ namespace KursAM2.View.Finance.Cash
         {
             if (!(DataContext is CashInWindowViewModel ctx)) return;
             var doc = ctx.Document;
-            if (ctx.Document != null  && ctx.Document.State != RowStatus.NotEdited && ctx.Document.State != RowStatus.NewRow && (ctx.Document.RASH_ORDER_FROM_DC != null || ctx.Document.BANK_RASCH_SCHET_DC != null
-                                                                                 || ctx.Document.SFACT_DC != null))
+            if (ctx.Document != null && ctx.Document.State != RowStatus.NotEdited &&
+                ctx.Document.State != RowStatus.NewRow &&
+                (ctx.Document.RASH_ORDER_FROM_DC != null || ctx.Document.BANK_RASCH_SCHET_DC != null
+                                                         || ctx.Document.SFACT_DC != null))
             {
                 WindowManager.ShowMessage("Ордер уже проведен. Изменить кассу нельзя",
                     "Предупреждение", MessageBoxImage.Information);
@@ -284,7 +283,7 @@ namespace KursAM2.View.Finance.Cash
             var dtx = DataContext as CashInWindowViewModel;
             if (dtx == null) return;
             var doc = dtx.Document;
-            var item = StandartDialogs.SelectInvoiceClient(dtx,true,true);
+            var item = StandartDialogs.SelectInvoiceClient(dtx, true, true);
             if (item == null) return;
             var winManager = new WindowManager();
             if (item.SF_DATE != doc.DATE_ORD)
@@ -293,7 +292,7 @@ namespace KursAM2.View.Finance.Cash
                     $"Дата счета {item.SF_DATE.ToShortDateString()} не совпадает с датой ордера {doc.DATE_ORD}." +
                     "Установить дату ордера равной дате счета?", "Запрос", MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
-                if ( res == MessageBoxResult.Yes)
+                if (res == MessageBoxResult.Yes)
                 {
                     doc.MaxSumma = (decimal) (item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma);
                     doc.KONTRAGENT_DC = item.SF_CLIENT_DC;
@@ -307,7 +306,7 @@ namespace KursAM2.View.Finance.Cash
                 }
                 else
                 {
-                    doc.MaxSumma = (decimal)(item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma);
+                    doc.MaxSumma = (decimal) (item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma);
                     doc.KONTRAGENT_DC = item.SF_CLIENT_DC;
                     doc.SUMM_ORD = item.SF_CRS_SUMMA_K_OPLATE;
                     doc.KONTR_CRS_DC = item.SF_CRS_DC;
@@ -320,7 +319,7 @@ namespace KursAM2.View.Finance.Cash
             }
             else
             {
-                doc.MaxSumma = (decimal)(item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma);
+                doc.MaxSumma = (decimal) (item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma);
                 doc.KONTRAGENT_DC = item.SF_CLIENT_DC;
                 doc.SUMM_ORD = item.SF_CRS_SUMMA_K_OPLATE;
                 doc.KONTR_CRS_DC = item.SF_CRS_DC;
@@ -330,7 +329,6 @@ namespace KursAM2.View.Finance.Cash
                 doc.SFACT_DC = item.DocCode;
                 doc.NOTES_ORD = item.SF_NOTE;
             }
-            
         }
 
         private void KontrEdit_DefaultButtonClick(object sender, RoutedEventArgs e)
@@ -339,8 +337,7 @@ namespace KursAM2.View.Finance.Cash
             var doc = ctx?.Document;
             if (doc == null)
                 return;
-            
-            if (ctx.Document.State != RowStatus.NewRow)
+            if (ctx.Document.State == RowStatus.NewRow)
             {
                 // ReSharper disable once PossibleNullReferenceException
                 switch (ctx.Document.KontragentType)
@@ -388,11 +385,51 @@ namespace KursAM2.View.Finance.Cash
             else
             {
                 if (ctx.Document.RASH_ORDER_FROM_DC != null || ctx.Document.BANK_RASCH_SCHET_DC != null
-                                                              || ctx.Document.SFACT_DC!= null)
-                {
+                                                            || ctx.Document.SFACT_DC != null)
                     WindowManager.ShowMessage("Ордер уже проведен. Изменить контрагента нельзя",
                         "Предупреждение", MessageBoxImage.Information);
-                }
+                else
+                    switch (ctx.Document.KontragentType)
+                    {
+                        case CashKontragentType.Kontragent:
+                            var kontr = StandartDialogs.SelectKontragent(ctx.Document.Currency);
+                            if (kontr == null) return;
+                            ctx.Document.Currency = kontr.BalansCurrency;
+                            ctx.Document.KONTRAGENT_DC = kontr.DocCode;
+                            ctx.Document.NAME_ORD = kontr.Name;
+                            ctx.Document.KONTR_CRS_DC = kontr.BalansCurrency.DocCode;
+                            ctx.Document.SFactName = null;
+                            doc.SFACT_DC = null;
+                            break;
+                        case CashKontragentType.Employee:
+                            var emp = StandartDialogs.SelectEmployee();
+                            if (emp != null) ctx.Document.TABELNUMBER = emp.TabelNumber;
+                            ctx.Document.NAME_ORD = emp?.Name;
+                            ctx.Document.SFactName = null;
+                            doc.SFACT_DC = null;
+                            break;
+                        case CashKontragentType.Bank:
+                            var bank = StandartDialogs.SelectBankAccount();
+                            if (bank != null) ctx.Document.BankAccount = bank;
+                            ctx.Document.NAME_ORD = bank?.Name;
+                            ctx.Document.BankAccount = bank;
+                            ctx.Document.SFactName = null;
+                            doc.SFACT_DC = null;
+                            break;
+                        case CashKontragentType.Cash:
+                            var order = StandartDialogs.SelectCashRashOrderForPrihod(ctx.Document);
+                            if (order == null) return;
+                            ctx.Document.RASH_ORDER_FROM_DC = order.DocCode;
+                            ctx.Document.SUMM_ORD = order.SUMM_ORD;
+                            ctx.Document.Currency = order.Currency;
+                            ctx.Document.SDRSchet = order.SDRSchet;
+                            ctx.Document.RashodOrderFromName = order.Cash.Name;
+                            ctx.Document.OSN_ORD = order.ToString();
+                            ctx.Document.NAME_ORD = order.ToString();
+                            ctx.Document.SFactName = null;
+                            doc.SFACT_DC = null;
+                            break;
+                    }
             }
         }
 
