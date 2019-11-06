@@ -117,6 +117,7 @@ namespace KursAM2.Managers.Invoices
                     };
                     foreach (var p in pDocs) doc.PaymentDocs.Add(p);
                     foreach (var row in doc.Rows) row.myState = RowStatus.NotEdited;
+                    doc.myState = RowStatus.NotEdited;
                 }
             }
             catch (Exception e)
@@ -900,8 +901,8 @@ namespace KursAM2.Managers.Invoices
             document.REGISTER_DATE = DateTime.Today;
             document.DeletedRows = new List<InvoiceClientRow>();
             foreach (var p in pDocs) document.PaymentDocs.Add(p);
-            document.State = RowStatus.NotEdited;
-            foreach (var r in document.Rows) r.myState = RowStatus.NotEdited;
+            foreach (var r in document.Rows) r.myState = RowStatus.NotEdited; 
+            document.myState = RowStatus.NotEdited;
             return document;
         }
 
@@ -1234,6 +1235,7 @@ namespace KursAM2.Managers.Invoices
                                 {
                                     Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
                                 });
+                                newDoc.myState = RowStatus.NotEdited;
                                 ret.Add(newDoc);
                             }
                         }
@@ -1243,6 +1245,7 @@ namespace KursAM2.Managers.Invoices
                             {
                                 Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
                             });
+                            newDoc.myState = RowStatus.NotEdited;
                             ret.Add(newDoc);
                         }
                     }

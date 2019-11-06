@@ -169,7 +169,7 @@ namespace KursAM2.ViewModel.Personal
                         .Where(
                             d =>
                                 d.EMP_PR_DOC.IS_TEMPLATE == 0 && persRight.Any(t => t == d.EMP_DC) &&
-                                d.EMP_PR_DOC.Date <= dt)
+                                d.NachDate <= dt)
                         .ToList()
                         .Select(nach => new EmployeePayDocumentViewModel
                         {
@@ -260,22 +260,22 @@ namespace KursAM2.ViewModel.Personal
                     }
 
                     CurrencyRate.LoadCBrates((DateTime) minDate, (DateTime) maxDate);
-                    foreach (var row in Documents)
-                    {
-                        row.SummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, row.Employee.Currency.DocCode,
-                            row.DocDate,
-                            row.Summa);
-                        if (row.DocDate <= new DateTime(2013, 7, 31)) continue;
-                        row.Rate =
-                            Math.Round(
-                                CurrencyRate.GetRate(row.Crs.DocCode, row.Employee.Currency.DocCode, row.DocDate), 4);
-                        if ((row.Crs.Name == "RUB" || row.Crs.Name == "RUR") && row.Rate != 0)
-                            row.Rate = 1 / row.Rate;
-                        else
-                            row.Rate = row.Rate;
-                        row.PlatSummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, row.Employee.Currency.DocCode,
-                            row.DocDate, row.PlatSumma);
-                    }
+                    //foreach (var row in Documents)
+                    //{
+                    //    row.SummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, row.Employee.Currency.DocCode,
+                    //        row.DocDate,
+                    //        row.Summa);
+                    //    if (row.DocDate <= new DateTime(2013, 7, 31)) continue;
+                    //    row.Rate =
+                    //        Math.Round(
+                    //            CurrencyRate.GetRate(row.Crs.DocCode, row.Employee.Currency.DocCode, row.DocDate), 4);
+                    //    if ((row.Crs.Name == "RUB" || row.Crs.Name == "RUR") && row.Rate != 0)
+                    //        row.Rate = 1 / row.Rate;
+                    //    else
+                    //        row.Rate = row.Rate;
+                    //    row.PlatSummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, row.Employee.Currency.DocCode,
+                    //        row.DocDate, row.PlatSumma);
+                    //}
                 }
                 catch (Exception ex)
                 {

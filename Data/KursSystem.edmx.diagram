@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="1cb860f8bcf74fa4b3b81a6ac9efd58c" Name="Diagram1">
+        <EntityTypeShape EntityType="KursSystemModel.DataSources" Width="1.5" PointX="0.75" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="KursSystemModel.FormLayout" Width="1.5" PointX="5.25" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="KursSystemModel.KontragentCashes" Width="1.5" PointX="8.25" PointY="13.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="KursSystemModel.KursMenuGroup" Width="1.5" PointX="1.5" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="KursSystemModel.KursMenuItem" Width="1.5" PointX="0.75" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="KursSystemModel.UserMenuRight" Width="1.5" PointX="3" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="KursSystemModel.Users" Width="1.5" PointX="3" PointY="18.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="KursSystemModel.Version" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="KursSystemModel.VersionInfo" Width="1.5" PointX="4.75" PointY="2.75" IsExpanded="true" />
+        <AssociationConnector Association="KursSystemModel.FK_FormLayout_DBId" ManuallyRouted="false" />
+        <AssociationConnector Association="KursSystemModel.FK_KontragentCashes_DBId" ManuallyRouted="false" />
+        <AssociationConnector Association="KursSystemModel.FK_UserMenuRight_DBId" ManuallyRouted="false" />
+        <AssociationConnector Association="KursSystemModel.FK_FormLayout_FormId" ManuallyRouted="false" />
+        <AssociationConnector Association="KursSystemModel.FK_FormLayout_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="KursSystemModel.FK_KontragentCashes_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="KursSystemModel.FK_KursMenuGroup_ParentId" ManuallyRouted="false" />
+        <AssociationConnector Association="KursSystemModel.FK_KursMenuItem_GroupId" ManuallyRouted="false" />
+        <AssociationConnector Association="KursSystemModel.FK_UserMenuRight_MenuId" ManuallyRouted="false" />
+        <AssociationConnector Association="KursSystemModel.UsersLinkDB" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="KursSystemModel.Errors" Width="1.5" PointX="5.25" PointY="10" />
+        <AssociationConnector Association="KursSystemModel.FK_Errors_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_Errors_UserId" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

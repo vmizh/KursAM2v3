@@ -71,14 +71,26 @@ namespace KursAM2.ViewModel.Finance.Cash
                         frm.SFactNameItem.IsEnabled = Document.KontragentType == CashKontragentType.Kontragent;
                         if (Document.KontragentType != CashKontragentType.Employee)
                             Document.NCODE = null;
-                        frm.Sumordcont.IsEnabled =
-                            Document.BANK_RASCH_SCHET_DC == null;
+                        //frm.Sumordcont.IsEnabled =
+                        //    Document.BANK_RASCH_SCHET_DC == null;
                         if (Document.CASH_TO_DC != null)
                         {
+                            frm.Sumordcont.IsEnabled = true;
                             var din = GlobalOptions.GetEntities().SD_33
                                 .FirstOrDefault(_ => _.RASH_ORDER_FROM_DC == Document.DocCode);
                             if (din != null)
                                 frm.Sumordcont.IsEnabled = false;
+                            //if (Document.BANK_RASCH_SCHET_DC != null)
+                            //    frm.Sumordcont.IsEnabled = false;
+                        }
+                        if (Document.IsBackCalc)
+                        {
+                            frm.Sumordcont.IsEnabled = false;
+                            frm.SumKontrcont.IsEnabled = true;
+                        }
+                        else
+                        {
+                            frm.SumKontrcont.IsEnabled = false;
                         }
                     }
                 }

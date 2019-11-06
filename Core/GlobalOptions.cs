@@ -16,13 +16,24 @@ namespace Core
         public static string SqlConnectionString;
         public static User UserInfo { set; get; }
 
-        //public static ALFAMEDIAEntities Entities1 { set; get; }
         public static string DataBaseName { set; get; }
         public static Guid DataBaseId { set; get; }
         public static Brush DatabaseColor { set; get; }
         public static SystemProfile SystemProfile { set; get; }
         public static MainReferences MainReferences { set; get; }
         public static string Version { set; get; }
+
+        public static KursSystemEntities KursSystem()
+        {
+            var connString = new SqlConnectionStringBuilder
+            {
+                DataSource = "172.16.0.1",
+                InitialCatalog = "KursSystem",
+                UserID = "sa",
+                Password = "CbvrfFhntvrf65"
+            }.ToString();
+            return new KursSystemEntities(connString);
+        }
 
         public static ALFAMEDIAEntities GetEntities()
         {
@@ -35,8 +46,6 @@ namespace Core
                     Password = "19655691"
                 }.ToString();
             var ret = new ALFAMEDIAEntities(SqlConnectionString);
-            //ret.Database.CommandTimeout = 0;
-            //ret.Database.Connection.ConnectionString = SqlConnectionString;
             return ret;
         }
 

@@ -281,7 +281,6 @@ namespace KursAM2.Managers
         {
             var ctx = new ClientWindowViewModel(docCode);
             var view = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            ctx.ParentForm = ctx;
             ctx.Form = view;
             view.Show();
             view.DataContext = ctx;
@@ -290,7 +289,6 @@ namespace KursAM2.Managers
         private static void OpenSFProvider(decimal docCode)
         {
             var ctx = new ProviderWindowViewModel(docCode);
-            //ctx.RefreshData(docCode);
             var view = new InvoiceProviderView{Owner = Application.Current.MainWindow};
             ctx.Form = view;
             view.Show();

@@ -206,25 +206,7 @@ namespace Core
 
         public static void Refresh()
         {
-            //COList.Clear();
-            //MutualTypes.Clear();
-            //SDRSchets.Clear();
-            //SDRStates.Clear();
-            //PayConditions.Clear();
-            //VzaimoraschetTypes.Clear();
-            //FormRaschets.Clear();
-            //Countries.Clear();
-            //Currencies.Clear();
-            //Units.Clear();
-            //NomenklGroups.Clear();
-            //NomenklTypes.Clear();
-            //Employees.Clear();
-            //Warehouses.Clear();
-            //Projects.Clear();
-            //BankAccounts.Clear();
-            //Cashs.Clear();
-            //Regions.Clear();
-            try
+           try
             {
                 using (var ent = GlobalOptions.GetEntities())
                 {

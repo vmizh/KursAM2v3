@@ -35,6 +35,7 @@ namespace KursAM2.View.Finance.Cash
         public DataLayoutItem SFactNameItem = new DataLayoutItem();
         public ButtonEdit KontrSelectButton = new ButtonEdit();
         public PopupCalcEdit Sumordcont = new PopupCalcEdit();
+        public PopupCalcEdit SumKontrcont = new PopupCalcEdit();
 
         public ObservableCollection<Currency> CurrencyList { set; get; } = new ObservableCollection<Currency>();
         public LayoutManagerBase LayoutManager { get; set; }
@@ -174,23 +175,23 @@ namespace KursAM2.View.Finance.Cash
                         MaskUseAsDisplayFormat = true
                     };
                     Sumordcont.EditValueChanged += Sumordcont1_EditValueChanged;
-                    Sumordcont.SetBinding(IsEnabledProperty,
-                        new Binding {Path = new PropertyPath("IsSummaEnabled")});
+                    //Sumordcont.SetBinding(IsEnabledProperty,
+                    //    new Binding {Path = new PropertyPath("IsSummaEnabled")});
                     BindingHelper.CopyBinding(oldContent, Sumordcont, BaseEdit.EditValueProperty);
                     e.Item.Content = Sumordcont;
                     e.Item.Width = 250;
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     break;
                 case nameof(doc.CRS_SUMMA):
-                    var sumordcont1 = new PopupCalcEdit
+                    SumKontrcont = new PopupCalcEdit
                     {
                         DisplayFormatString = "n2",
                         MaskUseAsDisplayFormat = true
                     };
-                    sumordcont1.SetBinding(IsEnabledProperty,
+                    SumKontrcont.SetBinding(IsEnabledProperty,
                         new Binding {Path = new PropertyPath("IsKontrSummaEnabled")});
-                    BindingHelper.CopyBinding(oldContent, sumordcont1, BaseEdit.EditValueProperty);
-                    e.Item.Content = sumordcont1;
+                    BindingHelper.CopyBinding(oldContent, SumKontrcont, BaseEdit.EditValueProperty);
+                    e.Item.Content = SumKontrcont;
                     e.Item.Width = 250;
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     break;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Data;
 
@@ -13,6 +14,9 @@ namespace Helper
 
         [DataMember]
         public int Id { set; get; }
+
+        [DataMember]
+        public Guid KursId { set; get; }
 
         [DataMember]
         public string NickName { get; set; }

@@ -1,0 +1,847 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="KursSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="DataSources">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="ShowName" Type="varchar" MaxLength="50" />
+          <Property Name="Order" Type="int" />
+          <Property Name="Server" Type="varchar" MaxLength="50" />
+          <Property Name="DBName" Type="varchar" MaxLength="50" />
+          <Property Name="Color" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Errors">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DbId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Host" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ErrorText" Type="varchar(max)" Nullable="false" />
+          <Property Name="Note" Type="varchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="FormLayout">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DBId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="FormName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="ControlName" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="Layout" Type="text" Nullable="false" />
+          <Property Name="FormId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="KontragentCashes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="KontragentDC" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Count" Type="int" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" Nullable="false" />
+          <Property Name="DBId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="KursMenuGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Note" Type="varchar" MaxLength="500" />
+          <Property Name="OrderBy" Type="int" Nullable="false" />
+          <Property Name="Picture" Type="image" />
+          <Property Name="ParentId" Type="int" />
+        </EntityType>
+        <EntityType Name="KursMenuItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="GroupId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Picture" Type="varbinary(max)" />
+          <Property Name="Note" Type="varchar" MaxLength="500" />
+          <Property Name="OrderBy" Type="int" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="UserMenuRight">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DBId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="LoginName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="MenuId" Type="int" Nullable="false" />
+          <Property Name="IsReadOnly" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Note" Type="varchar" MaxLength="200" />
+          <Property Name="IsAdmin" Type="bit" Nullable="false" />
+          <Property Name="IsTester" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="Avatar" Type="image" />
+          <Property Name="FullName" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="UsersLinkDB">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="DBId" />
+          </Key>
+          <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DBId" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Version">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ServerPath" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Major" Type="int" Nullable="false" />
+          <Property Name="Minor" Type="int" Nullable="false" />
+          <Property Name="Version" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="VersionInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Info" Type="varchar(max)" />
+          <Property Name="Major" Type="int" Nullable="false" />
+          <Property Name="Minor" Type="int" Nullable="false" />
+          <Property Name="Version" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Errors_DbId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="Errors" Type="Self.Errors" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Errors">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Errors_UserId">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="Errors" Type="Self.Errors" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Errors">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FormLayout_DBId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FormLayout">
+              <PropertyRef Name="DBId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FormLayout_FormId">
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FormLayout">
+              <PropertyRef Name="FormId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FormLayout_UserId">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FormLayout">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KontragentCashes_DBId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="KontragentCashes" Type="Self.KontragentCashes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="KontragentCashes">
+              <PropertyRef Name="DBId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KontragentCashes_UserId">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="KontragentCashes" Type="Self.KontragentCashes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="KontragentCashes">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KursMenuGroup_ParentId">
+          <End Role="KursMenuGroup" Type="Self.KursMenuGroup" Multiplicity="0..1" />
+          <End Role="KursMenuGroup1" Type="Self.KursMenuGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="KursMenuGroup1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KursMenuItem_GroupId">
+          <End Role="KursMenuGroup" Type="Self.KursMenuGroup" Multiplicity="1" />
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="KursMenuItem">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMenuRight_DBId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="UserMenuRight" Type="Self.UserMenuRight" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuRight">
+              <PropertyRef Name="DBId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMenuRight_MenuId">
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="UserMenuRight" Type="Self.UserMenuRight" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuRight">
+              <PropertyRef Name="MenuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UsersLinkDB_DBId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="UsersLinkDB" Type="Self.UsersLinkDB" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UsersLinkDB">
+              <PropertyRef Name="DBId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UsersLinkDB_UserId">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="UsersLinkDB" Type="Self.UsersLinkDB" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UsersLinkDB">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <!--Errors Found During Generation:
+warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of the key of the table on the primary side of the relationship. The relationship was excluded.
+        <Association Name="FK_VersionInfo" />-->
+        <EntityContainer Name="KursSystemModelStoreContainer">
+          <EntitySet Name="DataSources" EntityType="Self.DataSources" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Errors" EntityType="Self.Errors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FormLayout" EntityType="Self.FormLayout" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="KontragentCashes" EntityType="Self.KontragentCashes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="KursMenuGroup" EntityType="Self.KursMenuGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="KursMenuItem" EntityType="Self.KursMenuItem" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserMenuRight" EntityType="Self.UserMenuRight" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UsersLinkDB" EntityType="Self.UsersLinkDB" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Version" EntityType="Self.Version" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VersionInfo" EntityType="Self.VersionInfo" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Errors_DbId" Association="Self.FK_Errors_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="Errors" EntitySet="Errors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Errors_UserId" Association="Self.FK_Errors_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Errors" EntitySet="Errors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FormLayout_DBId" Association="Self.FK_FormLayout_DBId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="FormLayout" EntitySet="FormLayout" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FormLayout_FormId" Association="Self.FK_FormLayout_FormId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="FormLayout" EntitySet="FormLayout" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FormLayout_UserId" Association="Self.FK_FormLayout_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="FormLayout" EntitySet="FormLayout" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KontragentCashes_DBId" Association="Self.FK_KontragentCashes_DBId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="KontragentCashes" EntitySet="KontragentCashes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KontragentCashes_UserId" Association="Self.FK_KontragentCashes_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="KontragentCashes" EntitySet="KontragentCashes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KursMenuGroup_ParentId" Association="Self.FK_KursMenuGroup_ParentId">
+            <End Role="KursMenuGroup" EntitySet="KursMenuGroup" />
+            <End Role="KursMenuGroup1" EntitySet="KursMenuGroup" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KursMenuItem_GroupId" Association="Self.FK_KursMenuItem_GroupId">
+            <End Role="KursMenuGroup" EntitySet="KursMenuGroup" />
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuRight_DBId" Association="Self.FK_UserMenuRight_DBId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="UserMenuRight" EntitySet="UserMenuRight" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuRight_MenuId" Association="Self.FK_UserMenuRight_MenuId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="UserMenuRight" EntitySet="UserMenuRight" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UsersLinkDB_DBId" Association="Self.FK_UsersLinkDB_DBId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="UsersLinkDB" EntitySet="UsersLinkDB" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UsersLinkDB_UserId" Association="Self.FK_UsersLinkDB_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UsersLinkDB" EntitySet="UsersLinkDB" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="KursSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="DataSources">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ShowName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Order" Type="Int32" />
+          <Property Name="Server" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DBName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Color" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="FormLayout" Relationship="Self.FK_FormLayout_DBId" FromRole="DataSources" ToRole="FormLayout" />
+          <NavigationProperty Name="KontragentCashes" Relationship="Self.FK_KontragentCashes_DBId" FromRole="DataSources" ToRole="KontragentCashes" />
+          <NavigationProperty Name="UserMenuRight" Relationship="Self.FK_UserMenuRight_DBId" FromRole="DataSources" ToRole="UserMenuRight" />
+          <NavigationProperty Name="Users" Relationship="Self.UsersLinkDB" FromRole="DataSources" ToRole="Users" />
+          <NavigationProperty Name="Errors" Relationship="KursSystemModel.FK_Errors_DbId" FromRole="DataSources" ToRole="Errors" />
+        </EntityType>
+        <EntityType Name="FormLayout">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <Property Name="DBId" Type="Guid" Nullable="false" />
+          <Property Name="FormName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ControlName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Layout" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="FormId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="DataSources" Relationship="Self.FK_FormLayout_DBId" FromRole="FormLayout" ToRole="DataSources" />
+          <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_FormLayout_FormId" FromRole="FormLayout" ToRole="KursMenuItem" />
+          <NavigationProperty Name="Users" Relationship="Self.FK_FormLayout_UserId" FromRole="FormLayout" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="KontragentCashes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="KontragentDC" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Count" Type="Int32" Nullable="false" />
+          <Property Name="LastUpdate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DBId" Type="Guid" Nullable="false" />
+          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="DataSources" Relationship="Self.FK_KontragentCashes_DBId" FromRole="KontragentCashes" ToRole="DataSources" />
+          <NavigationProperty Name="Users" Relationship="Self.FK_KontragentCashes_UserId" FromRole="KontragentCashes" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="KursMenuGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="OrderBy" Type="Int32" Nullable="false" />
+          <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="ParentId" Type="Int32" />
+          <NavigationProperty Name="KursMenuGroup1" Relationship="Self.FK_KursMenuGroup_ParentId" FromRole="KursMenuGroup" ToRole="KursMenuGroup1" />
+          <NavigationProperty Name="KursMenuGroup2" Relationship="Self.FK_KursMenuGroup_ParentId" FromRole="KursMenuGroup1" ToRole="KursMenuGroup" />
+          <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_KursMenuItem_GroupId" FromRole="KursMenuGroup" ToRole="KursMenuItem" />
+        </EntityType>
+        <EntityType Name="KursMenuItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="GroupId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="OrderBy" Type="Int32" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="FormLayout" Relationship="Self.FK_FormLayout_FormId" FromRole="KursMenuItem" ToRole="FormLayout" />
+          <NavigationProperty Name="KursMenuGroup" Relationship="Self.FK_KursMenuItem_GroupId" FromRole="KursMenuItem" ToRole="KursMenuGroup" />
+          <NavigationProperty Name="UserMenuRight" Relationship="Self.FK_UserMenuRight_MenuId" FromRole="KursMenuItem" ToRole="UserMenuRight" />
+        </EntityType>
+        <EntityType Name="UserMenuRight">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="DBId" Type="Guid" Nullable="false" />
+          <Property Name="LoginName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="MenuId" Type="Int32" Nullable="false" />
+          <Property Name="IsReadOnly" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="DataSources" Relationship="Self.FK_UserMenuRight_DBId" FromRole="UserMenuRight" ToRole="DataSources" />
+          <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_UserMenuRight_MenuId" FromRole="UserMenuRight" ToRole="KursMenuItem" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Note" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="IsAdmin" Type="Boolean" Nullable="false" />
+          <Property Name="IsTester" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="Avatar" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="FullName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="FormLayout" Relationship="Self.FK_FormLayout_UserId" FromRole="Users" ToRole="FormLayout" />
+          <NavigationProperty Name="KontragentCashes" Relationship="Self.FK_KontragentCashes_UserId" FromRole="Users" ToRole="KontragentCashes" />
+          <NavigationProperty Name="DataSources" Relationship="Self.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
+          <NavigationProperty Name="Errors" Relationship="KursSystemModel.FK_Errors_UserId" FromRole="Users" ToRole="Errors" />
+        </EntityType>
+        <EntityType Name="Version">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="ServerPath" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Major" Type="Int32" Nullable="false" />
+          <Property Name="Minor" Type="Int32" Nullable="false" />
+          <Property Name="Version1" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="VersionInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Info" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Major" Type="Int32" Nullable="false" />
+          <Property Name="Minor" Type="Int32" Nullable="false" />
+          <Property Name="Version" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_FormLayout_DBId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FormLayout">
+              <PropertyRef Name="DBId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KontragentCashes_DBId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="KontragentCashes" Type="Self.KontragentCashes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="KontragentCashes">
+              <PropertyRef Name="DBId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMenuRight_DBId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="UserMenuRight" Type="Self.UserMenuRight" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuRight">
+              <PropertyRef Name="DBId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FormLayout_FormId">
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FormLayout">
+              <PropertyRef Name="FormId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FormLayout_UserId">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FormLayout">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KontragentCashes_UserId">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="KontragentCashes" Type="Self.KontragentCashes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="KontragentCashes">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KursMenuGroup_ParentId">
+          <End Role="KursMenuGroup" Type="Self.KursMenuGroup" Multiplicity="0..1" />
+          <End Role="KursMenuGroup1" Type="Self.KursMenuGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="KursMenuGroup1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KursMenuItem_GroupId">
+          <End Role="KursMenuGroup" Type="Self.KursMenuGroup" Multiplicity="1" />
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="KursMenuItem">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMenuRight_MenuId">
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="UserMenuRight" Type="Self.UserMenuRight" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuRight">
+              <PropertyRef Name="MenuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UsersLinkDB">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="*" />
+          <End Role="Users" Type="Self.Users" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="KursSystemEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="DataSources" EntityType="Self.DataSources" />
+          <EntitySet Name="FormLayout" EntityType="Self.FormLayout" />
+          <EntitySet Name="KontragentCashes" EntityType="Self.KontragentCashes" />
+          <EntitySet Name="KursMenuGroup" EntityType="Self.KursMenuGroup" />
+          <EntitySet Name="KursMenuItem" EntityType="Self.KursMenuItem" />
+          <EntitySet Name="UserMenuRight" EntityType="Self.UserMenuRight" />
+          <EntitySet Name="Users" EntityType="Self.Users" />
+          <EntitySet Name="Version" EntityType="Self.Version" />
+          <EntitySet Name="VersionInfo" EntityType="Self.VersionInfo" />
+          <AssociationSet Name="FK_FormLayout_DBId" Association="Self.FK_FormLayout_DBId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="FormLayout" EntitySet="FormLayout" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KontragentCashes_DBId" Association="Self.FK_KontragentCashes_DBId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="KontragentCashes" EntitySet="KontragentCashes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuRight_DBId" Association="Self.FK_UserMenuRight_DBId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="UserMenuRight" EntitySet="UserMenuRight" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FormLayout_FormId" Association="Self.FK_FormLayout_FormId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="FormLayout" EntitySet="FormLayout" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FormLayout_UserId" Association="Self.FK_FormLayout_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="FormLayout" EntitySet="FormLayout" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KontragentCashes_UserId" Association="Self.FK_KontragentCashes_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="KontragentCashes" EntitySet="KontragentCashes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KursMenuGroup_ParentId" Association="Self.FK_KursMenuGroup_ParentId">
+            <End Role="KursMenuGroup" EntitySet="KursMenuGroup" />
+            <End Role="KursMenuGroup1" EntitySet="KursMenuGroup" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KursMenuItem_GroupId" Association="Self.FK_KursMenuItem_GroupId">
+            <End Role="KursMenuGroup" EntitySet="KursMenuGroup" />
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuRight_MenuId" Association="Self.FK_UserMenuRight_MenuId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="UserMenuRight" EntitySet="UserMenuRight" />
+          </AssociationSet>
+          <AssociationSet Name="UsersLinkDB" Association="Self.UsersLinkDB">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+          <EntitySet Name="Errors" EntityType="KursSystemModel.Errors" />
+          <AssociationSet Name="FK_Errors_DbId" Association="KursSystemModel.FK_Errors_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="Errors" EntitySet="Errors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Errors_UserId" Association="KursSystemModel.FK_Errors_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Errors" EntitySet="Errors" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Errors">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="DbId" Type="Guid" Nullable="false" />
+          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <Property Name="Host" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ErrorText" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_Errors_DbId" FromRole="Errors" ToRole="DataSources" />
+          <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_Errors_UserId" FromRole="Errors" ToRole="Users" />
+        </EntityType>
+        <Association Name="FK_Errors_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.Errors" Role="Errors" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Errors">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Errors_UserId">
+          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
+          <End Type="KursSystemModel.Errors" Role="Errors" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Errors">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="KursSystemModelStoreContainer" CdmEntityContainer="KursSystemEntities">
+          <EntitySetMapping Name="DataSources">
+            <EntityTypeMapping TypeName="KursSystemModel.DataSources">
+              <MappingFragment StoreEntitySet="DataSources">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ShowName" ColumnName="ShowName" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Server" ColumnName="Server" />
+                <ScalarProperty Name="DBName" ColumnName="DBName" />
+                <ScalarProperty Name="Color" ColumnName="Color" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormLayout">
+            <EntityTypeMapping TypeName="KursSystemModel.FormLayout">
+              <MappingFragment StoreEntitySet="FormLayout">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="DBId" ColumnName="DBId" />
+                <ScalarProperty Name="FormName" ColumnName="FormName" />
+                <ScalarProperty Name="ControlName" ColumnName="ControlName" />
+                <ScalarProperty Name="Layout" ColumnName="Layout" />
+                <ScalarProperty Name="FormId" ColumnName="FormId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="KontragentCashes">
+            <EntityTypeMapping TypeName="KursSystemModel.KontragentCashes">
+              <MappingFragment StoreEntitySet="KontragentCashes">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="KontragentDC" ColumnName="KontragentDC" />
+                <ScalarProperty Name="Count" ColumnName="Count" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="DBId" ColumnName="DBId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="KursMenuGroup">
+            <EntityTypeMapping TypeName="KursSystemModel.KursMenuGroup">
+              <MappingFragment StoreEntitySet="KursMenuGroup">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="OrderBy" ColumnName="OrderBy" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="KursMenuItem">
+            <EntityTypeMapping TypeName="KursSystemModel.KursMenuItem">
+              <MappingFragment StoreEntitySet="KursMenuItem">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="OrderBy" ColumnName="OrderBy" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserMenuRight">
+            <EntityTypeMapping TypeName="KursSystemModel.UserMenuRight">
+              <MappingFragment StoreEntitySet="UserMenuRight">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DBId" ColumnName="DBId" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+                <ScalarProperty Name="IsReadOnly" ColumnName="IsReadOnly" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="KursSystemModel.Users">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+                <ScalarProperty Name="IsTester" ColumnName="IsTester" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Avatar" ColumnName="Avatar" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Version">
+            <EntityTypeMapping TypeName="KursSystemModel.Version">
+              <MappingFragment StoreEntitySet="Version">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ServerPath" ColumnName="ServerPath" />
+                <ScalarProperty Name="Major" ColumnName="Major" />
+                <ScalarProperty Name="Minor" ColumnName="Minor" />
+                <ScalarProperty Name="Version1" ColumnName="Version" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VersionInfo">
+            <EntityTypeMapping TypeName="KursSystemModel.VersionInfo">
+              <MappingFragment StoreEntitySet="VersionInfo">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Info" ColumnName="Info" />
+                <ScalarProperty Name="Major" ColumnName="Major" />
+                <ScalarProperty Name="Minor" ColumnName="Minor" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="UsersLinkDB" TypeName="KursSystemModel.UsersLinkDB" StoreEntitySet="UsersLinkDB">
+            <EndProperty Name="DataSources">
+              <ScalarProperty Name="Id" ColumnName="DBId" />
+            </EndProperty>
+            <EndProperty Name="Users">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <EntitySetMapping Name="Errors">
+            <EntityTypeMapping TypeName="KursSystemModel.Errors">
+              <MappingFragment StoreEntitySet="Errors">
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="ErrorText" ColumnName="ErrorText" />
+                <ScalarProperty Name="Host" ColumnName="Host" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="DbId" ColumnName="DbId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

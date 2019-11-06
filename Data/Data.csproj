@@ -148,6 +148,9 @@
     <Compile Include="DataForRequirement.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataSources.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="DD_2.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -174,6 +177,9 @@
     </Compile>
     <Compile Include="ErrorMessages.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Errors.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="EXEC_CALC_BALANS.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
@@ -430,6 +436,9 @@
     <Compile Include="FK_REFERENCE_VIEW.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="FormLayout.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="GROZO_REQUISITE.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -487,6 +496,9 @@
     <Compile Include="INVOICE_SEARCH_VIEW.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="KontragentCashes.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="KontragentGroups.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -510,6 +522,27 @@
     </Compile>
     <Compile Include="KONTR_IS_CALC_EXECUTING.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KursMenuGroup.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KursMenuItem.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KursSystem.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>KursSystem.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KursSystem.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KursSystem.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>KursSystem.edmx</DependentUpon>
     </Compile>
     <Compile Include="KURS_RAZNICA.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
@@ -1901,8 +1934,14 @@
     <Compile Include="UPDATE_KONTR.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="UserMenuRight.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="UserProfile.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Users.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="USER_FORMS_RIGHT.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
@@ -1987,6 +2026,12 @@
     </Compile>
     <Compile Include="VD_9.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Version.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VersionInfo.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="VH_SD_102.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
@@ -2294,6 +2339,13 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <EntityDeploy Include="KursSystem.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>KursSystem.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="KursSystem.edmx.diagram">
+      <DependentUpon>KursSystem.edmx</DependentUpon>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -2309,6 +2361,16 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ALFAMEDIA.edmx</DependentUpon>
       <LastGenOutput>ALFAMEDIA.cs</LastGenOutput>
+    </Content>
+    <Content Include="KursSystem.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>KursSystem.edmx</DependentUpon>
+      <LastGenOutput>KursSystem.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="KursSystem.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>KursSystem.edmx</DependentUpon>
+      <LastGenOutput>KursSystem.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -900,6 +900,7 @@ namespace KursAM2.Managers
                     var nom = MainReferences.GetNomenkl(d.DDT_NOMENKL_DC);
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
+                        Date = d.SD_24.DD_DATE,
                         GroupId = Guid.Parse("{BA628F86-6AE4-4CF3-832B-C6F7388DD01B}"),
                         Name = nom.Name,
                         DocCode = d.TD_84.DOC_CODE,
@@ -947,6 +948,7 @@ namespace KursAM2.Managers
                     {
                         GroupId = Guid.Parse("{BA628F86-6AE4-4CF3-832B-C6F7388DD01B}"),
                         Name = nom.Name,
+                        Date = d.SD_84.SF_DATE,
                         DocCode = d.DOC_CODE,
                         Quantity = (decimal) d.SFT_KOL,
                         Kontragent = kontr.Name,

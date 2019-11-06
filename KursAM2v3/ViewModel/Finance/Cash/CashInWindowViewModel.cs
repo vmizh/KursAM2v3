@@ -149,25 +149,25 @@ namespace KursAM2.ViewModel.Finance.Cash
                 return;
             }
 
-            if (Document.DATE_ORD != oldDate)
-            {
-                Document.State = RowStatus.NewRow;
-                CashManager.DeleteDocument(CashDocumentType.CashIn, Document);
-                CashManager.InsertDocument(CashDocumentType.CashIn, Document);
-                if (BookView?.DataContext is CashBookWindowViewModel ctx)
-                    ctx.RefreshActual(Document);
-                return;
-            }
-
-            if (Document.KONTRAGENT_DC != null)
-                RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC,
-                    (DateTime) (Document.DATE_ORD > oldDate ? oldDate : Document.DATE_ORD));
+            //if (Document.DATE_ORD != oldDate)
+            //{
+            //    Document.State = RowStatus.NewRow;
+            //    CashManager.DeleteDocument(CashDocumentType.CashIn, Document);
+            //    CashManager.InsertDocument(CashDocumentType.CashIn, Document);
+            //    if (BookView?.DataContext is CashBookWindowViewModel ctx)
+            //        ctx.RefreshActual(Document);
+            //    return;
+            //}
+            
             if (Document.State != RowStatus.Edited) return;
             {
                 CashManager.UpdateDocument(CashDocumentType.CashIn, Document, oldDate);
                 if (BookView?.DataContext is CashBookWindowViewModel ctx)
                     ctx.RefreshActual(Document);
             }
+            if (Document.KONTRAGENT_DC != null)
+                RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC,
+                    (DateTime) (Document.DATE_ORD > oldDate ? oldDate : Document.DATE_ORD));
 
             //RaisePropertiesChanged(nameof(Document));
         }

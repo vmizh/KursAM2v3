@@ -57,11 +57,11 @@ namespace Core.EntityViewModel
         //public string COName => CO?.Name;
         public bool IsAccepted
         {
-            get => SF_ACCEPTED == 1;
+            get => Entity.SF_ACCEPTED == 1;
             set
             {
-                if (SF_ACCEPTED == 1 == value) return;
-                SF_ACCEPTED = (short) (value ? 1 : 0);
+                if (Entity.SF_ACCEPTED == 1 == value) return;
+                Entity.SF_ACCEPTED = (short) (value ? 1 : 0);
                 RaisePropertyChanged();
             }
         }

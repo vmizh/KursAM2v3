@@ -324,9 +324,6 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         b.Visible = ExtendRowsActual.Sum(_ => _.SummaSEK) != 0;
                         break;
                 }
-
-            //var rsList = SummaryList.Where(_ => _.Key != null).Select(_ => _.Key).Distinct().ToList();
-            //RaisePropertyChanged(nameof(SummaryList));
         }
 
         private void CalcTotalSummaries(object obj)
@@ -540,10 +537,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
                 foreach (var d in CashIn)
                 {
-                    string kontrName;
                     if (d.RASH_ORDER_FROM_DC != null) continue;
                     if(ent.TD_101.Any(_ => _.VVT_KASS_PRIH_ORDER_DC == d.DOC_CODE && _.SD_101.VV_START_DATE <= CurrentDate)) continue; 
-                    kontrName = MainReferences.BankAccounts[d.BANK_RASCH_SCHET_DC.Value].Name;
+                    var kontrName = MainReferences.BankAccounts[d.BANK_RASCH_SCHET_DC.Value].Name;
                     ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                     {
                         DocCode = d.DOC_CODE,
@@ -686,11 +682,6 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             foreach (
                 var r in nn)
                 BalansStructure.Remove(r);
-            //var sql =
-            //    "SELECT CA_DC as CashDC, CRS_DC as CurrencyDC, isnull(money_stop,0) as Summa FROM SD_39 s " +
-            //    "WHERE DATE_CASS = (SELECT max(t.DATE_CASS) FROM SD_39 t WHERE t.CA_DC = s.CA_DC AND t.CRS_DC = s.CRS_DC " +
-            //    $"AND t.DATE_CASS <= '{CustomFormat.DateToString(CurrentDate)}') AND MONEY_STOP != 0";
-            //var data = GlobalOptions.GetEntities().Database.SqlQuery<ManagementCash>(sql).ToList();
             var data = new List<ManagementCash>();
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -758,22 +749,6 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                                      .Single(t => t.Tag == BalansSection.Bank)
                                                      .Id);
             ch.Summa = 0;
-            //var sql = "SELECT BankDC, CurrencyDC, sum(Summa + tab.StartOstatok) as Summa FROM " +
-            //          "(SELECT s101.VV_ACC_DC AS BankDC, t101.VVT_CRS_DC AS CurrencyDC," +
-            //          "SUM(t101.VVT_VAL_PRIHOD) - SUM(t101.VVT_VAL_RASHOD)  AS Summa, 0 as StartOstatok " +
-            //          "FROM TD_101 t101 " +
-            //          "INNER JOIN SD_101 s101 " +
-            //          $"ON s101.DOC_CODE = t101.DOC_CODE AND s101.VV_STOP_DATE <= '{CustomFormat.DateToString(CurrentDate)}'  " +
-            //          "GROUP BY s101.VV_ACC_DC, t101.VVT_CRS_DC " +
-            //          "UNION " +
-            //          "SELECT s.VV_ACC_DC, u.VVU_CRS_DC,  0,  u.VVU_VAL_SUMMA " +
-            //          "FROM SD_101 s " +
-            //          "INNER JOIN UD_101 u  ON u.DOC_CODE = s.DOC_CODE  AND u.VVU_REST_TYPE = 0  AND u.DOC_CODE = (SELECT  DOC_CODE " +
-            //          "FROM SD_101 s1 " +
-            //          "WHERE s1.VV_ACC_DC = s.VV_ACC_DC   AND s1.VV_STOP_DATE = (SELECT   MIN(s2.VV_STOP_DATE)  FROM SD_101 s2 WHERE s2.VV_ACC_DC = s.VV_ACC_DC" +
-            //          $" AND s2.VV_STOP_DATE <= '{CustomFormat.DateToString(CurrentDate)}'))) tab " +
-            //          "GROUP BY BankDC, CurrencyDC";
-            //var data = GlobalOptions.GetEntities().Database.SqlQuery<Bank>(sql).ToList();
             var nn =
                 BalansStructure.Where(_ => _.ParentId == ch.Id).ToList();
             foreach (
@@ -855,7 +830,6 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                       "  HAVING SUM(kboab.CRS_KONTR_OUT - kboab.CRS_KONTR_IN) != 0";
             var kontrChanged = GlobalOptions.GetEntities().KONTR_BLS_RECALC.ToList();
             foreach (var k in kontrChanged.Select(_ => _.KONTR_DC).Distinct())
-                //var ddMin = kontrChanged.Where(_ => _.KONTR_DC == k);
             {
                 var dMin = kontrChanged.Where(_ => _.KONTR_DC == k).Min(_ => _.DATE_CHANGED);
                 RecalcKontragentBalans.CalcBalans(k, dMin);

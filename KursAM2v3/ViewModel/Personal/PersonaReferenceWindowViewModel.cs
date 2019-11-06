@@ -177,7 +177,13 @@ namespace KursAM2.ViewModel.Personal
                         MainReferences.Refresh();
                         PersonaCollection.Clear();
                         foreach (var s in myCtx.SD_2.Include(_ => _.SD_301).ToList())
-                            PersonaCollection.Add(new Persona(s) {State = RowStatus.NotEdited});
+                        {
+                            if(PersonaCollection.All(_ => _.DocCode != s.DOC_CODE))
+                            {
+                                PersonaCollection.Add(new Persona(s) {State = RowStatus.NotEdited});
+                            }
+                        }
+                        RaisePropertyChanged(nameof(PersonaCollection));
                     }
                     catch (Exception ex)
                     {

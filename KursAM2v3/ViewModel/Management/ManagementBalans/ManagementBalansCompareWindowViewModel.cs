@@ -324,7 +324,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             {
                 EmployeeSalaryList.Add(new EmployeeSalary
                 {
-                    Employee = emp
+                    Employee = emp,
+                    
                 });
             }
         }

@@ -265,8 +265,6 @@ namespace KursAM2.ViewModel.StartLogin
                 MessageBox.Show("StartLoginViewModel SetGlobalProfile  error.\n" + errText);
             }
 
-            //GlobalOptions.MainReferences = new MainReferences();
-            //GlobalOptions.MainReferences.Reset();
         }
 
         private bool CheckAndSetUser(out User newUser)
@@ -300,18 +298,17 @@ namespace KursAM2.ViewModel.StartLogin
                         TabelNumber = usr.TABELNUMBER,
                         Phone = usr.USR_PHONE
                     };
+                    using (var sysctx = GlobalOptions.KursSystem())
+                    {
+                        var u = sysctx.Users.FirstOrDefault(_ => _.Name == usr.USR_NICKNAME);
+                        if (u != null)
+                            newUser.KursId = u.Id;
+                    }
                 }
+
             }
             catch (Exception ex)
             {
-                //HideSplash();
-                //if (ex.Message == "The underlying provider failed on Open.")
-                //    WindowManager.ShowMessage(
-                //        Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
-                //        "Логин или пароль не совпадают.",
-                //        "Ошибка регистрации", MessageBoxImage.Error);
-                //else
-                //    WindowManager.ShowError(ex);
                 var errText = new StringBuilder(ex.Message);
                 while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
 
@@ -339,49 +336,6 @@ namespace KursAM2.ViewModel.StartLogin
             }
         }
 
-//        public void LoadDataSources()
-//        {
-//            var xmlDoc = new XmlDocument();
-//            xmlDoc.Load($"{Environment.CurrentDirectory}\\Layout\\DataSources.xml");
-//            var nodeList = xmlDoc.DocumentElement?.SelectNodes("/DataSources/DataSource");
-//            if (nodeList == null) return;
-//            foreach (XmlNode node in nodeList)
-//            {
-//                var attrs = node.Attributes;
-//                var ds = new DataSource();
-//                if (attrs == null) continue;
-//                foreach (XmlAttribute attr in attrs)
-//                    switch (attr.Name)
-//                    {
-//                        case "Name":
-//                            ds.Name = attr.Value;
-//                            break;
-//                        case "ShowName":
-//                            ds.ShowName = attr.Value;
-//                            break;
-//                        case "Order":
-//                            ds.Order = Convert.ToInt32(attr.Value);
-//                            break;
-//                        case "Server":
-//                            ds.Server = attr.Value;
-//                            break;
-//                        case "DBName":
-//                            ds.DBName = attr.Value;
-//                            break;
-//                        case "Color":
-//                            ds.Color = (SolidColorBrush) new BrushConverter().ConvertFromString(attr.Value);
-//                            break;
-//                    }
-//#if DEBUG
-//                if (ds.Name == "EcoOndol") ds.Server = "VMIZHPC";
-//                ComboBoxItemSource.Add(ds);
-//#else
-//                if (ds.Name == "Gokite.terifa1") continue;
-//                ComboBoxItemSource.Add(ds);
-//#endif
-//            }
-//        }
-
         private void LoadDataSources()
         {
             if (CurrentUser == null) return;
@@ -390,7 +344,6 @@ namespace KursAM2.ViewModel.StartLogin
             {
                 DataSource = "172.16.0.1", InitialCatalog = "KursSystem", UserID = "KursUser", Password = "KursUser"
             };
-            //"Data Source=main8;Initial Catalog=KursSystem;";
             try
             {
                 using (var conn = new SqlConnection(connection.ConnectionString))
@@ -419,6 +372,7 @@ namespace KursAM2.ViewModel.StartLogin
                             });
                     }
                 }
+
             }
             catch (Exception ex)
             {

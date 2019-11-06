@@ -61,6 +61,8 @@ namespace KursAM2.View.DialogUserControl
                     .ToList())
                     ItemsCollection.Add(new CashOut(d));
             }
+            if (ItemsCollection.Count > 0)
+                CurrentItem = ItemsCollection.First();
         }
     }
 }

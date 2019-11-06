@@ -222,13 +222,11 @@ namespace KursAM2.View.Finance.Invoices
                     e.Item.MinWidth = 600;
                     break;
                 case nameof(InvoiceClient.IsNDSIncludeInPrice):
-                    var edSet = e.Item.Content as CheckEdit;
-                    if (edSet != null)
+                    if (e.Item.Content is CheckEdit edSet)
                     {
                         edSet.EditValueChanged += (o, args) =>
                         {
-                            var ctx1 = DataContext as ClientWindowViewModel;
-                            if (ctx1 == null) return;
+                            if (!(DataContext is ClientWindowViewModel ctx1)) return;
                             ctx1.UpdateVisualData();
                         };
                     }

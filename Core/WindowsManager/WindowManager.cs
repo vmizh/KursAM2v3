@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Forms.VisualStyles;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI;
 
@@ -10,10 +9,6 @@ namespace Core.WindowsManager
 {
     public class WindowManager : IWindowManager
     {
-        public MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage image)
-        {
-            return DXMessageBox.Show(messageBoxText, caption, button,image);
-        }
         public MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button)
         {
             return DXMessageBox.Show(messageBoxText, caption, button);
@@ -36,6 +31,12 @@ namespace Core.WindowsManager
                 result, options,
                 FloatingMode.Adorner
             );
+        }
+
+        public MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button,
+            MessageBoxImage image)
+        {
+            return DXMessageBox.Show(messageBoxText, caption, button, image);
         }
 
         public MessageBoxResult ShowWinUIMessageBox(string messageBoxText, string caption,
@@ -102,7 +103,17 @@ namespace Core.WindowsManager
                 errText.Append(inEx.InnerException.Message);
                 inEx = inEx.InnerException;
             }
-           
+            using (var errCtx = GlobalOptions.KursSystem())
+            {
+                errCtx.Errors.Add(new Data.Errors
+                {
+                    Id = Guid.NewGuid(),
+                    DbId = GlobalOptions.DataBaseId,
+                    Host = Environment.MachineName,
+                    UserId = GlobalOptions.UserInfo.KursId,
+                    ErrorText = errText.ToString()
+                });
+            }
             WinUIMessageBox.Show(win ?? Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
                 errText.ToString(),
                 "Ошибка",
@@ -138,7 +149,19 @@ namespace Core.WindowsManager
                 if (ex1.InnerException != null)
                     errText.Append(ex1.InnerException.Message);
             }
-            if(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive) != null)
+            using (var errCtx = GlobalOptions.KursSystem())
+            {
+                errCtx.Errors.Add(new Data.Errors
+                {
+                    Id = Guid.NewGuid(),
+                    DbId = GlobalOptions.DataBaseId,
+                    Host = Environment.MachineName,
+                    UserId = GlobalOptions.UserInfo.KursId,
+                    ErrorText = errText.ToString()
+                });
+                errCtx.SaveChanges();
+            }
+            if (Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive) != null)
                 WinUIMessageBox.Show(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
                     errText.ToString(),
                     "Ошибка",
@@ -147,12 +170,10 @@ namespace Core.WindowsManager
                     MessageBoxResult.None, MessageBoxOptions.None,
                     FloatingMode.Adorner);
             else
-            {
                 MessageBox.Show(errText.ToString(),
                     "Ошибка",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-            }
         }
 
         public static void ShowDBError(Exception ex)

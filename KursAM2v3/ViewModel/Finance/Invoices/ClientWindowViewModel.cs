@@ -24,6 +24,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
     public class ClientWindowViewModel : RSWindowViewModelBase
     {
         private InvoicePaymentDocument myCurrentPaymentDoc;
+
         // ReSharper disable once InconsistentNaming
         public InvoiceClientRow myCurrentRow;
         private ShipmentRowViewModel myCurrentShipmentRow;
@@ -49,9 +50,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Document = dc != null ? InvoicesManager.GetInvoiceClient((decimal) dc) : InvoicesManager.NewClient();
             if (Document.State == RowStatus.NewRow) return;
             foreach (var row in Document.Rows)
-            foreach (var t in row.Entity.TD_24)
-                // ReSharper disable once PossibleNullReferenceException
-                Document.ShipmentRows.Add(new ShipmentRowViewModel(t));
+            {
+                foreach (var t in row.Entity.TD_24)
+                    // ReSharper disable once PossibleNullReferenceException
+                    Document.ShipmentRows.Add(new ShipmentRowViewModel(t));
+            }
             if (Document != null)
                 WindowName = Document.ToString();
             Document.myState = RowStatus.NotEdited;
@@ -69,10 +72,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 RaisePropertyChanged();
             }
         }
-
         public ObservableCollection<ShipmentRowViewModel> SelectedShipmnetRows { set; get; }
             = new ObservableCollection<ShipmentRowViewModel>();
-
         public ShipmentRowViewModel CurrentShipmentRow
         {
             get => myCurrentShipmentRow;
@@ -83,7 +84,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 RaisePropertyChanged();
             }
         }
-
         public InvoiceClientRow CurrentRow
         {
             set
@@ -94,7 +94,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
             get => myCurrentRow;
         }
-
         public decimal Otgruzheno
         {
             get => myOtgruzheno;
@@ -105,7 +104,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 RaisePropertyChanged();
             }
         }
-
         public InvoiceClient Document
         {
             get => myDocument;
@@ -116,7 +114,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 RaisePropertyChanged();
             }
         }
-
+        public override RowStatus State => Document?.State ?? RowStatus.NotEdited;
         public override bool IsCanSaveData
         {
             get
@@ -139,7 +137,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         $"Сумма оплаты {Document.PaySumma:n2} больше суммы счета {Document.SF_CRS_SUMMA_K_OPLATE:n2}";
                     return false;
                 }
-
                 var res = Document.SF_CLIENT_DC > 0 && Document.SF_RECEIVER_KONTR_DC != null
                                                     && Document.SF_CRS_DC > 0 && Document.SF_CENTR_OTV_DC != null
                                                     && Document.PayCondition != null &&
@@ -150,8 +147,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     if (Document.SF_CLIENT_DC == 0)
                         FooterText += "Не выбран контрагент. ";
-                    //if (Document.SF_RECEIVER_KONTR_DC == null)
-                    //    FooterText += "Не выбран получатель. ";
                     if (Document.SF_CRS_DC == 0)
                         FooterText += "Не выбрана валюта документа. ";
                     if (Document.SF_CENTR_OTV_DC == null)
@@ -163,19 +158,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (Document.SF_FORM_RASCH_DC == null)
                         FooterText += "Не выбрана форма расчетов. ";
                 }
-
                 return res;
             }
         }
-
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
-
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow
                                                                   && Document.PaymentDocs?.Count == 0 &&
                                                                   Document?.ShipmentRows.Count == 0;
-
         public override string WindowName => Document?.Name;
-
         public InvoicePaymentDocument CurrentPaymentDoc
         {
             get => myCurrentPaymentDoc;
@@ -210,7 +200,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     var colSumma = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SFT_SUMMA_K_OPLATE");
                     if (colSumma != null) colSumma.ReadOnly = true;
                 }
-
                 frm.gridRows.RefreshData();
                 RaisePropertiesChanged(nameof(Document));
             }
@@ -409,7 +398,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (res == MessageBoxResult.Yes) Document.IsAccepted = true;
             }
-
             var dc = InvoicesManager.SaveClient(Document);
             if (dc > 0)
             {
@@ -424,7 +412,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
-
         #region Справочники
 
         // ReSharper disable UnusedMember.Global
@@ -433,7 +420,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public List<FormPay> FormRaschets => MainReferences.FormRaschets.Values.ToList();
         public List<VzaimoraschetType> VzaimoraschetTypes => MainReferences.VzaimoraschetTypes.Values.ToList();
         public List<UsagePay> PayConditions => MainReferences.PayConditions.Values.ToList();
-
         public List<Country> Countries => MainReferences.Countries.Values.ToList();
         // ReSharper restore UnusedMember.Global
 
@@ -484,7 +470,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             m.VZT_SFACT_DC = null;
                             break;
                     }
-
                     ctx.SaveChanges();
                     Document.PaymentDocs.Remove(CurrentPaymentDoc);
                 }
@@ -497,7 +482,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand DeleteRowCommand
         {
-            get { return new Command(DeleteRow, param => CurrentRow != null && Document != null && Document.PaySumma == 0); }
+            get
+            {
+                return new Command(DeleteRow,
+                    param => CurrentRow != null && Document != null && Document.PaySumma == 0);
+            }
         }
 
         private void DeleteRow(object obj)
@@ -521,7 +510,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Form.Close();
                         return;
                     }
-
                     InvoicesManager.DeleteClient(Document.DocCode);
                     RecalcKontragentBalans.CalcBalans((decimal) Document.SF_CLIENT_DC, Document.SF_DATE);
                     if (Document.SF_DILER_DC != null)
@@ -600,7 +588,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     newCode++;
                 }
             }
-
             UpdateVisualData();
         }
 
@@ -656,7 +643,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     newCode++;
                 }
             }
-
             UpdateVisualData();
         }
 
@@ -665,7 +651,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => Document?.DeletedRows != null && Document?.DeletedRows.Count > 0;
             set => base.IsRedoAllow = value;
         }
-
         public ICommand PrintZajavkaCommand
         {
             get { return new Command(PrintZajavka, param => true); }
@@ -740,7 +725,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             get { return new Command(PrintZakaz, param => true); }
         }
-
         public Command PrintZakazWOManagerCommand
         {
             get { return new Command(PrintZakazWOManager, param => true); }

@@ -495,10 +495,15 @@ namespace Core.EntityViewModel
             {
                 if (Entity.BANK_RASCH_SCHET_DC == value) return;
                 Entity.BANK_RASCH_SCHET_DC = value;
+                myBankAccount = Entity.BANK_RASCH_SCHET_DC != null
+                    ? MainReferences.BankAccounts[Entity.BANK_RASCH_SCHET_DC.Value]
+                    : null;
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(BankAccount));
                 RaisePropertyChanged(nameof(Kontragent));
             }
         }
+
         public BankAccount BankAccount
         {
             get => myBankAccount;
