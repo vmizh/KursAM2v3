@@ -27,6 +27,7 @@
           <Property Name="Host" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="ErrorText" Type="varchar(max)" Nullable="false" />
           <Property Name="Note" Type="varchar" MaxLength="500" />
+          <Property Name="Moment" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="FormLayout">
           <Key>
@@ -34,11 +35,11 @@
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="DBId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="FormName" Type="varchar" MaxLength="200" Nullable="false" />
           <Property Name="ControlName" Type="varchar" MaxLength="500" Nullable="false" />
-          <Property Name="Layout" Type="text" Nullable="false" />
-          <Property Name="FormId" Type="int" Nullable="false" />
+          <Property Name="Layout" Type="varchar(max)" Nullable="false" />
+          <Property Name="FormId" Type="int" />
+          <Property Name="UpdateDate" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="KontragentCashes">
           <Key>
@@ -149,20 +150,8 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_FormLayout_DBId">
-          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
-          <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="FormLayout">
-              <PropertyRef Name="DBId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_FormLayout_FormId">
-          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="0..1" />
           <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="KursMenuItem">
@@ -304,10 +293,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             <End Role="Users" EntitySet="Users" />
             <End Role="Errors" EntitySet="Errors" />
           </AssociationSet>
-          <AssociationSet Name="FK_FormLayout_DBId" Association="Self.FK_FormLayout_DBId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="FormLayout" EntitySet="FormLayout" />
-          </AssociationSet>
           <AssociationSet Name="FK_FormLayout_FormId" Association="Self.FK_FormLayout_FormId">
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
             <End Role="FormLayout" EntitySet="FormLayout" />
@@ -364,26 +349,10 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <Property Name="Server" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DBName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Color" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="FormLayout" Relationship="Self.FK_FormLayout_DBId" FromRole="DataSources" ToRole="FormLayout" />
           <NavigationProperty Name="KontragentCashes" Relationship="Self.FK_KontragentCashes_DBId" FromRole="DataSources" ToRole="KontragentCashes" />
           <NavigationProperty Name="UserMenuRight" Relationship="Self.FK_UserMenuRight_DBId" FromRole="DataSources" ToRole="UserMenuRight" />
           <NavigationProperty Name="Users" Relationship="Self.UsersLinkDB" FromRole="DataSources" ToRole="Users" />
           <NavigationProperty Name="Errors" Relationship="KursSystemModel.FK_Errors_DbId" FromRole="DataSources" ToRole="Errors" />
-        </EntityType>
-        <EntityType Name="FormLayout">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="UserId" Type="Guid" Nullable="false" />
-          <Property Name="DBId" Type="Guid" Nullable="false" />
-          <Property Name="FormName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ControlName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Layout" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="FormId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="DataSources" Relationship="Self.FK_FormLayout_DBId" FromRole="FormLayout" ToRole="DataSources" />
-          <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_FormLayout_FormId" FromRole="FormLayout" ToRole="KursMenuItem" />
-          <NavigationProperty Name="Users" Relationship="Self.FK_FormLayout_UserId" FromRole="FormLayout" ToRole="Users" />
         </EntityType>
         <EntityType Name="KontragentCashes">
           <Key>
@@ -423,9 +392,9 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="OrderBy" Type="Int32" />
           <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="FormLayout" Relationship="Self.FK_FormLayout_FormId" FromRole="KursMenuItem" ToRole="FormLayout" />
           <NavigationProperty Name="KursMenuGroup" Relationship="Self.FK_KursMenuItem_GroupId" FromRole="KursMenuItem" ToRole="KursMenuGroup" />
           <NavigationProperty Name="UserMenuRight" Relationship="Self.FK_UserMenuRight_MenuId" FromRole="KursMenuItem" ToRole="UserMenuRight" />
+          <NavigationProperty Name="FormLayout" Relationship="KursSystemModel.FK_FormLayout_FormId" FromRole="KursMenuItem" ToRole="FormLayout" />
         </EntityType>
         <EntityType Name="UserMenuRight">
           <Key>
@@ -451,10 +420,10 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="Avatar" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="FullName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="FormLayout" Relationship="Self.FK_FormLayout_UserId" FromRole="Users" ToRole="FormLayout" />
           <NavigationProperty Name="KontragentCashes" Relationship="Self.FK_KontragentCashes_UserId" FromRole="Users" ToRole="KontragentCashes" />
           <NavigationProperty Name="DataSources" Relationship="Self.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
           <NavigationProperty Name="Errors" Relationship="KursSystemModel.FK_Errors_UserId" FromRole="Users" ToRole="Errors" />
+          <NavigationProperty Name="FormLayout" Relationship="KursSystemModel.FK_FormLayout_UserId" FromRole="Users" ToRole="FormLayout" />
         </EntityType>
         <EntityType Name="Version">
           <Key>
@@ -476,18 +445,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <Property Name="Minor" Type="Int32" Nullable="false" />
           <Property Name="Version" Type="Int32" Nullable="false" />
         </EntityType>
-        <Association Name="FK_FormLayout_DBId">
-          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
-          <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="FormLayout">
-              <PropertyRef Name="DBId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_KontragentCashes_DBId">
           <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
           <End Role="KontragentCashes" Type="Self.KontragentCashes" Multiplicity="*" />
@@ -509,30 +466,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             </Principal>
             <Dependent Role="UserMenuRight">
               <PropertyRef Name="DBId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_FormLayout_FormId">
-          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
-          <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="KursMenuItem">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="FormLayout">
-              <PropertyRef Name="FormId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_FormLayout_UserId">
-          <End Role="Users" Type="Self.Users" Multiplicity="1" />
-          <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="FormLayout">
-              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -590,7 +523,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
         </Association>
         <EntityContainer Name="KursSystemEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="DataSources" EntityType="Self.DataSources" />
-          <EntitySet Name="FormLayout" EntityType="Self.FormLayout" />
           <EntitySet Name="KontragentCashes" EntityType="Self.KontragentCashes" />
           <EntitySet Name="KursMenuGroup" EntityType="Self.KursMenuGroup" />
           <EntitySet Name="KursMenuItem" EntityType="Self.KursMenuItem" />
@@ -598,10 +530,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <EntitySet Name="Users" EntityType="Self.Users" />
           <EntitySet Name="Version" EntityType="Self.Version" />
           <EntitySet Name="VersionInfo" EntityType="Self.VersionInfo" />
-          <AssociationSet Name="FK_FormLayout_DBId" Association="Self.FK_FormLayout_DBId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="FormLayout" EntitySet="FormLayout" />
-          </AssociationSet>
           <AssociationSet Name="FK_KontragentCashes_DBId" Association="Self.FK_KontragentCashes_DBId">
             <End Role="DataSources" EntitySet="DataSources" />
             <End Role="KontragentCashes" EntitySet="KontragentCashes" />
@@ -609,14 +537,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <AssociationSet Name="FK_UserMenuRight_DBId" Association="Self.FK_UserMenuRight_DBId">
             <End Role="DataSources" EntitySet="DataSources" />
             <End Role="UserMenuRight" EntitySet="UserMenuRight" />
-          </AssociationSet>
-          <AssociationSet Name="FK_FormLayout_FormId" Association="Self.FK_FormLayout_FormId">
-            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
-            <End Role="FormLayout" EntitySet="FormLayout" />
-          </AssociationSet>
-          <AssociationSet Name="FK_FormLayout_UserId" Association="Self.FK_FormLayout_UserId">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="FormLayout" EntitySet="FormLayout" />
           </AssociationSet>
           <AssociationSet Name="FK_KontragentCashes_UserId" Association="Self.FK_KontragentCashes_UserId">
             <End Role="Users" EntitySet="Users" />
@@ -647,7 +567,16 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             <End Role="Users" EntitySet="Users" />
             <End Role="Errors" EntitySet="Errors" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="FormLayout" EntityType="KursSystemModel.FormLayout" />
+          <AssociationSet Name="FK_FormLayout_FormId" Association="KursSystemModel.FK_FormLayout_FormId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="FormLayout" EntitySet="FormLayout" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FormLayout_UserId" Association="KursSystemModel.FK_FormLayout_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="FormLayout" EntitySet="FormLayout" />
+          </AssociationSet>
+          </EntityContainer>
         <EntityType Name="Errors">
           <Key>
             <PropertyRef Name="Id" />
@@ -660,6 +589,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_Errors_DbId" FromRole="Errors" ToRole="DataSources" />
           <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_Errors_UserId" FromRole="Errors" ToRole="Users" />
+          <Property Name="Moment" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <Association Name="FK_Errors_DbId">
           <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
@@ -685,7 +615,45 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        <EntityType Name="FormLayout">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <Property Name="FormName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="ControlName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Layout" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FormId" Type="Int32" />
+          <Property Name="UpdateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_FormLayout_FormId" FromRole="FormLayout" ToRole="KursMenuItem" />
+          <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_FormLayout_UserId" FromRole="FormLayout" ToRole="Users" />
+        </EntityType>
+        <Association Name="FK_FormLayout_FormId">
+          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="0..1" />
+          <End Type="KursSystemModel.FormLayout" Role="FormLayout" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FormLayout">
+              <PropertyRef Name="FormId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FormLayout_UserId">
+          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
+          <End Type="KursSystemModel.FormLayout" Role="FormLayout" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FormLayout">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -701,19 +669,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
                 <ScalarProperty Name="Server" ColumnName="Server" />
                 <ScalarProperty Name="DBName" ColumnName="DBName" />
                 <ScalarProperty Name="Color" ColumnName="Color" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="FormLayout">
-            <EntityTypeMapping TypeName="KursSystemModel.FormLayout">
-              <MappingFragment StoreEntitySet="FormLayout">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="DBId" ColumnName="DBId" />
-                <ScalarProperty Name="FormName" ColumnName="FormName" />
-                <ScalarProperty Name="ControlName" ColumnName="ControlName" />
-                <ScalarProperty Name="Layout" ColumnName="Layout" />
-                <ScalarProperty Name="FormId" ColumnName="FormId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -812,11 +767,25 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <EntitySetMapping Name="Errors">
             <EntityTypeMapping TypeName="KursSystemModel.Errors">
               <MappingFragment StoreEntitySet="Errors">
+                <ScalarProperty Name="Moment" ColumnName="Moment" />
                 <ScalarProperty Name="Note" ColumnName="Note" />
                 <ScalarProperty Name="ErrorText" ColumnName="ErrorText" />
                 <ScalarProperty Name="Host" ColumnName="Host" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="DbId" ColumnName="DbId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormLayout">
+            <EntityTypeMapping TypeName="KursSystemModel.FormLayout">
+              <MappingFragment StoreEntitySet="FormLayout">
+                <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
+                <ScalarProperty Name="FormId" ColumnName="FormId" />
+                <ScalarProperty Name="Layout" ColumnName="Layout" />
+                <ScalarProperty Name="ControlName" ColumnName="ControlName" />
+                <ScalarProperty Name="FormName" ColumnName="FormName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

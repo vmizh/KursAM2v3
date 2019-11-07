@@ -17,8 +17,8 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public KursMenuItem()
         {
-            this.FormLayout = new HashSet<FormLayout>();
             this.UserMenuRight = new HashSet<UserMenuRight>();
+            this.FormLayout = new HashSet<FormLayout>();
         }
     
         public int Id { get; set; }
@@ -29,10 +29,10 @@ namespace Data
         public Nullable<int> OrderBy { get; set; }
         public string Code { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FormLayout> FormLayout { get; set; }
         public virtual KursMenuGroup KursMenuGroup { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserMenuRight> UserMenuRight { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<FormLayout> FormLayout { get; set; }
     }
 }

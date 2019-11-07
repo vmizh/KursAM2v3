@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -7,6 +7,8 @@ using System.Text;
 using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
+using Core;
+using Data;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Core.Serialization;
@@ -31,24 +33,21 @@ namespace LayoutManager
                 return spath;
             }
         }
-
-        [DataMember(IsRequired = false)] public XDocument OptionsData { set; get; }
-
-        [DataMember] public WindowsScreenState WinState { set; get; }
-
-        [DataMember] public MemoryStream LayoutBase { set; get; }
-
-        [DataMember] public string FileName { set; get; }
-
-        [DataMember] public Window Win { set; get; }
-
+        [DataMember(IsRequired = false)]
+        public XDocument OptionsData { set; get; }
+        [DataMember]
+        public WindowsScreenState WinState { set; get; }
+        [DataMember]
+        public MemoryStream LayoutBase { set; get; }
+        [DataMember]
+        public string FileName { set; get; }
+        [DataMember]
+        public Window Win { set; get; }
         /// <summary>
         ///     DevExpress conrol/ Conrol верхнего уровня для сериализации DXSerialize
         /// </summary>
         [DataMember]
         public DependencyObject LayoutControl { set; get; }
-
-
 
         public virtual void Save()
         {
@@ -61,12 +60,60 @@ namespace LayoutManager
                     DXSerializer.Serialize(LayoutControl, ms, "Kurs", null);
                     saveLayout.Layout = ms.ToArray();
                 }
-
-                var writer = new FileStream($"{AppDataPath}\\{FileName}.xml", FileMode.Create);
+                //var writer = new FileStream($"{AppDataPath}\\{FileName}.xml", FileMode.Create);
                 var ser =
                     new DataContractSerializer(typeof(WindowsScreenState));
-                ser.WriteObject(writer, saveLayout);
-                writer.Close();
+                var ser1 =
+                    new DataContractSerializer(typeof(WindowsScreenState));
+                //ser.WriteObject(writer, saveLayout);
+                var sb = new StringBuilder();
+                using (var writer = XmlWriter.Create(sb))
+                {
+                    ser1.WriteObject(writer, saveLayout);
+                    writer.Flush();
+                }
+                //writer.Close();
+                var connString = new SqlConnectionStringBuilder
+                {
+                    DataSource = "172.16.0.1",
+                    InitialCatalog = "KursSystem",
+                    UserID = "sa",
+                    Password = "CbvrfFhntvrf65"
+                }.ToString();
+                using (var ctx = new KursSystemEntities(connString))
+                {
+                    var w = Win != null ? Win.GetType().Name : "Control";
+                    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == GlobalOptions.UserInfo.KursId
+                                                               && _.FormName == w && _.ControlName == FileName);
+                    try
+                    {
+                        if (l == null)
+                        {
+                            ctx.FormLayout.Add(new FormLayout
+                            {
+                                Id = Guid.NewGuid(),
+                                UpdateDate = DateTime.Now,
+                                UserId = GlobalOptions.UserInfo.KursId,
+                                FormName = w,
+                                ControlName = FileName,
+                                Layout = sb.ToString()
+                            });
+                        }
+                        else
+                        {
+                            l.UpdateDate = DateTime.Now;
+                            l.UserId = GlobalOptions.UserInfo.KursId;
+                            l.FormName = w;
+                            l.ControlName = FileName;
+                            l.Layout = sb.ToString();
+                        }
+                        ctx.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка сохранения разметки {w} / {FileName}");
+                    }
+                }
             }
 #pragma warning disable 168
             catch (Exception ex)
@@ -111,7 +158,6 @@ namespace LayoutManager
                         Win.WindowStartupLocation = WinState.FormStartLocation;
                         Win.WindowState = WinState.FormState;
                     }
-
                 if (WinState.Layout == null) return;
                 if (LayoutControl == null) return;
                 var ms = new MemoryStream(WinState.Layout);
@@ -128,7 +174,6 @@ namespace LayoutManager
                     if (ex1.InnerException != null)
                         errText.Append(ex1.InnerException.Message);
                 }
-
                 WinUIMessageBox.Show(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
                     errText.ToString(),
                     "Ошибка",
@@ -146,7 +191,29 @@ namespace LayoutManager
 
         public virtual void Load(bool autoSummary = false)
         {
-            if (!IsLayoutExists()) return;
+            var connString = new SqlConnectionStringBuilder
+            {
+                DataSource = "172.16.0.1",
+                InitialCatalog = "KursSystem",
+                UserID = "sa",
+                Password = "CbvrfFhntvrf65"
+            }.ToString();
+            string layoutData = null;
+            using (var ctx = new KursSystemEntities(connString))
+            {
+                var w = Win != null ? Win.GetType().Name : "Control";
+                try
+                {
+                    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == GlobalOptions.UserInfo.KursId
+                                                               && _.FormName == w && _.ControlName == FileName);
+                    if (l != null) layoutData = l.Layout;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка сохранения разметки {w} / {FileName}");
+                }
+            }
+            if (!IsLayoutExists() && layoutData == null) return;
             try
             {
                 WinState = new WindowsScreenState();
@@ -160,143 +227,142 @@ namespace LayoutManager
                         FormStartLocation = Win.WindowStartupLocation,
                         FormState = Win.WindowState
                     };
-
                 if (LayoutControl != null && !(LayoutControl is DataLayoutControl))
                 {
                     var ms1 = new MemoryStream();
                     DXSerializer.Serialize(LayoutControl, ms1, "Kurs", null);
                     WinState.Layout = ms1.ToArray();
                 }
-
-                if (!File.Exists($"{AppDataPath}\\{FileName}.xml")) return;
-                using (var fs = File.OpenRead($"{AppDataPath}\\{FileName}.xml"))
+                if (!File.Exists($"{AppDataPath}\\{FileName}.xml") && layoutData == null) return;
+                XmlReader r;
+                FileStream fs;
+                if (layoutData != null)
                 {
-                    var r = XmlReader.Create(fs);
-                    if (!(new DataContractSerializer(typeof(WindowsScreenState)).ReadObject(r) is WindowsScreenState p)
-                    ) return;
-                    if (Win != null)
-                    {
-                        Win.WindowStartupLocation = p.FormStartLocation;
-                        Win.WindowState = WindowState.Normal;
-                        Win.Height = p.FormHeight;
-                        Win.Width = p.FormWidth;
-                        Win.Left = p.FormLeft < 0 ? 0 : p.FormLeft;
-                        Win.Top = p.FormTop < 0 ? 0 : p.FormTop;
-                    }
-
-                    if (p.Layout == null) return;
-                    var ms = new MemoryStream(p.Layout);
-                    DXSerializer.Deserialize(LayoutControl, ms, "Kurs", null);
-                    var grids = WindowHelper.GetLogicalChildCollection<GridControl>(LayoutControl);
-                    var trees = WindowHelper.GetLogicalChildCollection<TreeListControl>(LayoutControl);
-                    if(grids != null && grids.Count > 0)
-                        foreach (var ctrl in grids)
-                        {
-                            foreach (var column in ctrl.Columns)
-                            {
-                                if (column.FieldType != typeof(decimal) && column.FieldType != typeof(decimal?)
-                                                                        && column.FieldType != typeof(double) &&
-                                                                        column.FieldType != typeof(double?)
-                                                                        && column.FieldType == typeof(float) &&
-                                                                        column.FieldType == typeof(float?)
-                                                                        && column.FieldType != typeof(DateTime) &&
-                                                                        column.FieldType != typeof(DateTime?))
-                                {
-                                    column.AutoFilterCondition = AutoFilterCondition.Contains;
-                                    column.ColumnFilterMode = ColumnFilterMode.DisplayText;
-                                    column.SortMode = ColumnSortMode.DisplayText;
-                                }
-                            }
-                        }
-                    if (trees != null && trees.Count > 0)
-                        foreach (var ctrl in trees)
-                        {
-                            foreach (var column in ctrl.Columns)
-                            {
-                                if (column.FieldType != typeof(decimal) && column.FieldType != typeof(decimal?)
-                                                                        && column.FieldType != typeof(double) &&
-                                                                        column.FieldType != typeof(double?)
-                                                                        && column.FieldType == typeof(float) &&
-                                                                        column.FieldType == typeof(float?)
-                                                                        && column.FieldType != typeof(DateTime) &&
-                                                                        column.FieldType != typeof(DateTime?))
-                                {
-                                    column.AutoFilterCondition = AutoFilterCondition.Contains;
-                                    column.ColumnFilterMode = ColumnFilterMode.DisplayText;
-                                    column.SortMode = ColumnSortMode.DisplayText;
-                                }
-                            }
-                        }
-
-                    if (autoSummary)
-                    {
-                        if (LayoutControl is GridControl ctrl1)
-                        {
-                            ctrl1.TotalSummary.Clear();
-                            foreach (var column in ctrl1.Columns)
-                                if (column.FieldType == typeof(decimal) || column.FieldType == typeof(decimal?)
-                                                                        || column.FieldType == typeof(double) ||
-                                                                        column.FieldType == typeof(double?)
-                                                                        || column.FieldType == typeof(float) ||
-                                                                        column.FieldType == typeof(float?))
-                                {
-                                    var summary = new GridSummaryItem
-                                    {
-                                        SummaryType = SummaryItemType.Sum,
-                                        ShowInColumn = column.FieldName,
-                                        DisplayFormat = "{0:n2}",
-                                        FieldName = column.FieldName
-                                    };
-                                    ctrl1.TotalSummary.Add(summary);
-                                }
-                                else
-                                {
-                                    if (column.FieldType != typeof(decimal) && column.FieldType != typeof(decimal?)
-                                                                            && column.FieldType != typeof(double) &&
-                                                                            column.FieldType != typeof(double?)
-                                        || column.FieldType == typeof(float) ||
-                                        column.FieldType == typeof(float?))
-                                    {
-                                        column.AutoFilterCondition = AutoFilterCondition.Contains;
-                                        column.ColumnFilterMode = ColumnFilterMode.DisplayText;
-                                        column.SortMode = ColumnSortMode.DisplayText;
-                                    }
-                                }
-                        }
-
-                        if (LayoutControl is TreeListControl ctrl)
-                        {
-                            ctrl.TotalSummary.Clear();
-                            foreach (var column in ctrl.Columns)
-                                if (column.FieldType == typeof(decimal) || column.FieldType == typeof(decimal?)
-                                                                        || column.FieldType == typeof(double) ||
-                                                                        column.FieldType == typeof(double?)
-                                                                        || column.FieldType == typeof(float) ||
-                                                                        column.FieldType == typeof(float?))
-                                {
-                                    var summary = new TreeListSummaryItem
-                                    {
-                                        SummaryType = SummaryItemType.Sum,
-                                        ShowInColumn = column.FieldName,
-                                        DisplayFormat = "{0:n2}",
-                                        FieldName = column.FieldName
-                                    };
-                                    ctrl.TotalSummary.Add(summary);
-                                }
-                                else
-                                {
-                                    foreach (var col in ctrl.Columns)
-                                        if (col.FieldType != typeof(decimal) && col.FieldType != typeof(decimal?)
-                                                                             && col.FieldType != typeof(double) &&
-                                                                             col.FieldType != typeof(double?))
-                                            col.AutoFilterCondition = AutoFilterCondition.Contains;
-                                }
-                        }
-                    }
-                    ms.Close();
+                    var myEncoder = new UnicodeEncoding();
+                    var bytes = myEncoder.GetBytes(layoutData);
+                    var mss = new MemoryStream(bytes);
+                    r = XmlReader.Create(mss);
                 }
+                else
+                {
+                    using (fs = File.OpenRead($"{AppDataPath}\\{FileName}.xml"))
+                    {
+                        r = XmlReader.Create(fs);
+                    }
+                }
+                if (!(new DataContractSerializer(typeof(WindowsScreenState)).ReadObject(r) is WindowsScreenState p)
+                ) return;
+                if (Win != null)
+                {
+                    Win.WindowStartupLocation = p.FormStartLocation;
+                    Win.WindowState = WindowState.Normal;
+                    Win.Height = p.FormHeight;
+                    Win.Width = p.FormWidth;
+                    Win.Left = p.FormLeft < 0 ? 0 : p.FormLeft;
+                    Win.Top = p.FormTop < 0 ? 0 : p.FormTop;
+                }
+                if (p.Layout == null) return;
+                var ms = new MemoryStream(p.Layout);
+                DXSerializer.Deserialize(LayoutControl, ms, "Kurs", null);
+                var grids = WindowHelper.GetLogicalChildCollection<GridControl>(LayoutControl);
+                var trees = WindowHelper.GetLogicalChildCollection<TreeListControl>(LayoutControl);
+                if (grids != null && grids.Count > 0)
+                    foreach (var ctrl in grids)
+                    foreach (var column in ctrl.Columns)
+                        if (column.FieldType != typeof(decimal) && column.FieldType != typeof(decimal?)
+                                                                && column.FieldType != typeof(double) &&
+                                                                column.FieldType != typeof(double?)
+                                                                && column.FieldType == typeof(float) &&
+                                                                column.FieldType == typeof(float?)
+                                                                && column.FieldType != typeof(DateTime) &&
+                                                                column.FieldType != typeof(DateTime?))
+                        {
+                            column.AutoFilterCondition = AutoFilterCondition.Contains;
+                            column.ColumnFilterMode = ColumnFilterMode.DisplayText;
+                            column.SortMode = ColumnSortMode.DisplayText;
+                        }
+                if (trees != null && trees.Count > 0)
+                    foreach (var ctrl in trees)
+                    foreach (var column in ctrl.Columns)
+                        if (column.FieldType != typeof(decimal) && column.FieldType != typeof(decimal?)
+                                                                && column.FieldType != typeof(double) &&
+                                                                column.FieldType != typeof(double?)
+                                                                && column.FieldType == typeof(float) &&
+                                                                column.FieldType == typeof(float?)
+                                                                && column.FieldType != typeof(DateTime) &&
+                                                                column.FieldType != typeof(DateTime?))
+                        {
+                            column.AutoFilterCondition = AutoFilterCondition.Contains;
+                            column.ColumnFilterMode = ColumnFilterMode.DisplayText;
+                            column.SortMode = ColumnSortMode.DisplayText;
+                        }
+                if (autoSummary)
+                {
+                    if (LayoutControl is GridControl ctrl1)
+                    {
+                        ctrl1.TotalSummary.Clear();
+                        foreach (var column in ctrl1.Columns)
+                            if (column.FieldType == typeof(decimal) || column.FieldType == typeof(decimal?)
+                                                                    || column.FieldType == typeof(double) ||
+                                                                    column.FieldType == typeof(double?)
+                                                                    || column.FieldType == typeof(float) ||
+                                                                    column.FieldType == typeof(float?))
+                            {
+                                var summary = new GridSummaryItem
+                                {
+                                    SummaryType = SummaryItemType.Sum,
+                                    ShowInColumn = column.FieldName,
+                                    DisplayFormat = "{0:n2}",
+                                    FieldName = column.FieldName
+                                };
+                                ctrl1.TotalSummary.Add(summary);
+                            }
+                            else
+                            {
+                                if (column.FieldType != typeof(decimal) && column.FieldType != typeof(decimal?)
+                                                                        && column.FieldType != typeof(double) &&
+                                                                        column.FieldType != typeof(double?)
+                                    || column.FieldType == typeof(float) ||
+                                    column.FieldType == typeof(float?))
+                                {
+                                    column.AutoFilterCondition = AutoFilterCondition.Contains;
+                                    column.ColumnFilterMode = ColumnFilterMode.DisplayText;
+                                    column.SortMode = ColumnSortMode.DisplayText;
+                                }
+                            }
+                    }
+                    if (LayoutControl is TreeListControl ctrl)
+                    {
+                        ctrl.TotalSummary.Clear();
+                        foreach (var column in ctrl.Columns)
+                            if (column.FieldType == typeof(decimal) || column.FieldType == typeof(decimal?)
+                                                                    || column.FieldType == typeof(double) ||
+                                                                    column.FieldType == typeof(double?)
+                                                                    || column.FieldType == typeof(float) ||
+                                                                    column.FieldType == typeof(float?))
+                            {
+                                var summary = new TreeListSummaryItem
+                                {
+                                    SummaryType = SummaryItemType.Sum,
+                                    ShowInColumn = column.FieldName,
+                                    DisplayFormat = "{0:n2}",
+                                    FieldName = column.FieldName
+                                };
+                                ctrl.TotalSummary.Add(summary);
+                            }
+                            else
+                            {
+                                foreach (var col in ctrl.Columns)
+                                    if (col.FieldType != typeof(decimal) && col.FieldType != typeof(decimal?)
+                                                                         && col.FieldType != typeof(double) &&
+                                                                         col.FieldType != typeof(double?))
+                                        col.AutoFilterCondition = AutoFilterCondition.Contains;
+                            }
+                    }
+                }
+                ms.Close();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (!File.Exists($"{AppDataPath}\\{FileName}.xml"))
                     File.Delete($"{AppDataPath}\\{FileName}.xml");

@@ -16,13 +16,12 @@ namespace Data
     {
         public System.Guid Id { get; set; }
         public System.Guid UserId { get; set; }
-        public System.Guid DBId { get; set; }
         public string FormName { get; set; }
         public string ControlName { get; set; }
         public string Layout { get; set; }
-        public int FormId { get; set; }
+        public Nullable<int> FormId { get; set; }
+        public System.DateTime UpdateDate { get; set; }
     
-        public virtual DataSources DataSources { get; set; }
         public virtual KursMenuItem KursMenuItem { get; set; }
         public virtual Users Users { get; set; }
     }

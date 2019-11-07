@@ -20,6 +20,7 @@ namespace Data
         public string Host { get; set; }
         public string ErrorText { get; set; }
         public string Note { get; set; }
+        public System.DateTime Moment { get; set; }
     
         public virtual DataSources DataSources { get; set; }
         public virtual Users Users { get; set; }

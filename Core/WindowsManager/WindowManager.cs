@@ -157,7 +157,8 @@ namespace Core.WindowsManager
                     DbId = GlobalOptions.DataBaseId,
                     Host = Environment.MachineName,
                     UserId = GlobalOptions.UserInfo.KursId,
-                    ErrorText = errText.ToString()
+                    ErrorText = errText.ToString(),
+                    Moment = DateTime.Now
                 });
                 errCtx.SaveChanges();
             }

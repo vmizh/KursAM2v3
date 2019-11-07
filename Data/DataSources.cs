@@ -17,7 +17,6 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public DataSources()
         {
-            this.FormLayout = new HashSet<FormLayout>();
             this.KontragentCashes = new HashSet<KontragentCashes>();
             this.UserMenuRight = new HashSet<UserMenuRight>();
             this.Users = new HashSet<Users>();
@@ -32,8 +31,6 @@ namespace Data
         public string DBName { get; set; }
         public string Color { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FormLayout> FormLayout { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<KontragentCashes> KontragentCashes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -45,7 +45,6 @@ namespace Data
         }
     
         public virtual DbSet<DataSources> DataSources { get; set; }
-        public virtual DbSet<FormLayout> FormLayout { get; set; }
         public virtual DbSet<KontragentCashes> KontragentCashes { get; set; }
         public virtual DbSet<KursMenuGroup> KursMenuGroup { get; set; }
         public virtual DbSet<KursMenuItem> KursMenuItem { get; set; }
@@ -54,5 +53,6 @@ namespace Data
         public virtual DbSet<Version> Version { get; set; }
         public virtual DbSet<VersionInfo> VersionInfo { get; set; }
         public virtual DbSet<Errors> Errors { get; set; }
+        public virtual DbSet<FormLayout> FormLayout { get; set; }
     }
 }
