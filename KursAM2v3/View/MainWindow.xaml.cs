@@ -802,5 +802,9 @@ namespace KursAM2.View
         {
             //MainReferences.Refresh();
         }
+
+        private void tileMainGroup_ItemPositionChanged(object sender, ValueChangedEventArgs<int> e)
+        {
+        }
     }
 }

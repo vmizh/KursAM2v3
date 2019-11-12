@@ -303,6 +303,14 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                 foreach (var d in operList)
                                 {
                                     var kontr = MainReferences.GetKontragent(d.SD_84.SF_CLIENT_DC);
+                                    var otvlico = d.SD_84.PersonalResponsibleDC != null
+                                        ? MainReferences.Employees[d.SD_84.PersonalResponsibleDC.Value].Name
+                                        : null;
+                                    if (otvlico == null && kontr.OTVETSTV_LICO != null)
+                                    {
+                                        otvlico = MainReferences.Employees.Values
+                                            .FirstOrDefault(_ => _.TabelNumber == kontr.OTVETSTV_LICO)?.Name;
+                                    }
                                     DataAll.Add(new BreakEvenRow
                                     {
                                         Kontragent = kontr.Name,
@@ -315,11 +323,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                         IsUsluga = true,
                                         KontrSumma = (decimal) d.SFT_SUMMA_K_OPLATE, //Convert.ToDecimal(d.KontrSumma),
                                         KontrSummaCrs = (decimal) d.SFT_SUMMA_K_OPLATE,
-                                        Manager = d.SD_84.PersonalResponsibleDC != null
-                                            ? MainReferences.Employees[d.SD_84.PersonalResponsibleDC.Value].Name
-                                            : kontr.OTVETSTV_LICO != null
-                                                ? MainReferences.Employees[kontr.OTVETSTV_LICO.Value].Name
-                                                : "Менеджер не указан",
+                                        Manager = otvlico != null ? otvlico : "Менеджер не указан",
                                         Naklad = null,
                                         NomenklSumWOReval = 0,
                                         OperCrsName = MainReferences.Currencies[d.SD_84.SF_CRS_DC].Name,

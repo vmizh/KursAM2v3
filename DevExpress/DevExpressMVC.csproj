@@ -298,10 +298,6 @@
       <Project>{f81539f9-9431-4d87-9bf0-7e195911349d}</Project>
       <Name>KursAM2</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SQLite.Base\SQLite.Base.csproj">
-      <Project>{be1eebbe-e696-4b56-b901-0d960cace377}</Project>
-      <Name>SQLite.Base</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

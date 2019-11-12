@@ -7,8 +7,7 @@ using System.Windows;
 using Core;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
-using SQLite.Base;
-using SQLite.Base.Entity;
+using Data;
 
 namespace KursAM2.Managers
 {
@@ -18,13 +17,25 @@ namespace KursAM2.Managers
         {
             try
             {
-                using (var ctx = new LocalDbContext())
+                //using (var ctx = new LocalDbContext())
+                //{
+                //    var dd = ctx.KontragentCashes.Where(_ => _.DBName == GlobalOptions.DataBaseName).ToList();
+                //    if (dd.Count > 0)
+                //        foreach (var d in dd)
+                //        {
+                //            var k = MainReferences.GetKontragent(d.DocCode);
+                //            if (k != null)
+                //                k.OrderCount = d.Count;
+                //        }
+                //}
+                using (var dtx = GlobalOptions.KursSystem())
                 {
-                    var dd = ctx.KontragentCashes.Where(_ => _.DBName == GlobalOptions.DataBaseName).ToList();
+                    var dd = dtx.KontragentCashes.Where(_ => _.UserId == GlobalOptions.UserInfo.KursId
+                                                             && _.DBId == GlobalOptions.DataBaseId).ToList();
                     if (dd.Count > 0)
                         foreach (var d in dd)
                         {
-                            var k = MainReferences.GetKontragent(d.DocCode);
+                            var k = MainReferences.GetKontragent(d.KontragentDC);
                             if (k != null)
                                 k.OrderCount = d.Count;
                         }
@@ -51,13 +62,25 @@ namespace KursAM2.Managers
         {
             try
             {
-                using (var ctx = new LocalDbContext())
+                //using (var ctx = new LocalDbContext())
+                //{
+                //    var dd = ctx.KontragentCashes.Where(_ => _.DBName == GlobalOptions.DataBaseName).ToList();
+                //    if (dd.Count > 0)
+                //        foreach (var d in dd)
+                //        {
+                //            var k = MainReferences.GetKontragent(d.DocCode);
+                //            if (k != null)
+                //                k.OrderCount = d.Count;
+                //        }
+                //}
+                using (var dtx = GlobalOptions.KursSystem())
                 {
-                    var dd = ctx.KontragentCashes.Where(_ => _.DBName == GlobalOptions.DataBaseName).ToList();
+                    var dd = dtx.KontragentCashes.Where(_ => _.UserId == GlobalOptions.UserInfo.KursId
+                                                             && _.DBId == GlobalOptions.DataBaseId).ToList();
                     if (dd.Count > 0)
                         foreach (var d in dd)
                         {
-                            var k = MainReferences.GetKontragent(d.DocCode);
+                            var k = MainReferences.GetKontragent(d.KontragentDC);
                             if (k != null)
                                 k.OrderCount = d.Count;
                         }
@@ -70,10 +93,10 @@ namespace KursAM2.Managers
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
-                var f = File.Create((string)Application.Current.Properties["DataPath"] + "\\dblite3.err");
+                var f = File.Create((string) Application.Current.Properties["DataPath"] + "\\dblite3.err");
                 using (var fs = File.OpenWrite(f.Name))
                 {
-                    var content = new UTF8Encoding(true).GetBytes((string)Application.Current.Properties["DataPath"]);
+                    var content = new UTF8Encoding(true).GetBytes((string) Application.Current.Properties["DataPath"]);
                     fs.Write(content, 0, content.Length);
                 }
             }
@@ -84,10 +107,37 @@ namespace KursAM2.Managers
         {
             try
             {
-                using (var ctx = new LocalDbContext())
+                //using (var ctx = new LocalDbContext())
+                //{
+                //    var k = ctx.KontragentCashes.FirstOrDefault(_ =>
+                //        _.DocCode == dc && _.DBName == GlobalOptions.DataBaseName);
+                //    if (k != null)
+                //    {
+                //        k.Count = k.Count + 1;
+                //        k.LastUpdate = DateTime.Now;
+                //    }
+                //    else
+                //    {
+                //        var newId = 1;
+                //        var d = ctx.KontragentCashes.ToList().Count;
+                //        if (d > 0)
+                //            newId = ctx.KontragentCashes.Max(_ => _.Id) + 1;
+                //        ctx.KontragentCashes.Add(new KontragentCash
+                //        {
+                //            Id = newId,
+                //            DBName = GlobalOptions.DataBaseName,
+                //            DocCode = dc,
+                //            LastUpdate = DateTime.Now,
+                //            Count = 1
+                //        });
+                //    }
+                //    ctx.SaveChanges();
+                //}
+                using (var ctx = GlobalOptions.KursSystem())
                 {
                     var k = ctx.KontragentCashes.FirstOrDefault(_ =>
-                        _.DocCode == dc && _.DBName == GlobalOptions.DataBaseName);
+                        _.KontragentDC == dc && _.DBId == GlobalOptions.DataBaseId
+                                             && _.UserId == GlobalOptions.UserInfo.KursId);
                     if (k != null)
                     {
                         k.Count = k.Count + 1;
@@ -95,17 +145,15 @@ namespace KursAM2.Managers
                     }
                     else
                     {
-                        var newId = 1;
                         var d = ctx.KontragentCashes.ToList().Count;
-                        if (d > 0)
-                            newId = ctx.KontragentCashes.Max(_ => _.Id) + 1;
-                        ctx.KontragentCashes.Add(new KontragentCash
+                        ctx.KontragentCashes.Add(new KontragentCashes
                         {
-                            Id = newId,
-                            DBName = GlobalOptions.DataBaseName,
-                            DocCode = dc,
-                            LastUpdate = DateTime.Now,
-                            Count = 1
+                            Id =  Guid.NewGuid(),
+                            Count = 1,
+                            DBId = GlobalOptions.DataBaseId,
+                            KontragentDC = dc,
+                            UserId = GlobalOptions.UserInfo.KursId,
+                            LastUpdate = DateTime.Now
                         });
                     }
                     ctx.SaveChanges();
@@ -116,9 +164,5 @@ namespace KursAM2.Managers
                 WindowManager.ShowError(ex);
             }
         }
-
-      
-
-
     }
 }

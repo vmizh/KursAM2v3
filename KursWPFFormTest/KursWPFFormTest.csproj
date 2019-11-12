@@ -201,10 +201,6 @@
       <Project>{0ac84fa1-a12e-414a-8d3e-ede48e795908}</Project>
       <Name>LayoutManager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SQLite.Base\SQLite.Base.csproj">
-      <Project>{be1eebbe-e696-4b56-b901-0d960cace377}</Project>
-      <Name>SQLite.Base</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

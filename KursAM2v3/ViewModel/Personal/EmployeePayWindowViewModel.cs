@@ -260,22 +260,6 @@ namespace KursAM2.ViewModel.Personal
                     }
 
                     CurrencyRate.LoadCBrates((DateTime) minDate, (DateTime) maxDate);
-                    //foreach (var row in Documents)
-                    //{
-                    //    row.SummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, row.Employee.Currency.DocCode,
-                    //        row.DocDate,
-                    //        row.Summa);
-                    //    if (row.DocDate <= new DateTime(2013, 7, 31)) continue;
-                    //    row.Rate =
-                    //        Math.Round(
-                    //            CurrencyRate.GetRate(row.Crs.DocCode, row.Employee.Currency.DocCode, row.DocDate), 4);
-                    //    if ((row.Crs.Name == "RUB" || row.Crs.Name == "RUR") && row.Rate != 0)
-                    //        row.Rate = 1 / row.Rate;
-                    //    else
-                    //        row.Rate = row.Rate;
-                    //    row.PlatSummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, row.Employee.Currency.DocCode,
-                    //        row.DocDate, row.PlatSumma);
-                    //}
                 }
                 catch (Exception ex)
                 {
@@ -367,7 +351,8 @@ namespace KursAM2.ViewModel.Personal
                     Start = 0,
                     In = 0,
                     Out = 0,
-                    End = 0
+                    End = 0,
+                    CrsName = item.CrsName
                 })
                 .ToList();
             foreach (var r in datesSource)
@@ -393,6 +378,22 @@ namespace KursAM2.ViewModel.Personal
                         .Sum(
                             s => s.PlatSummaEmp), 2);
                 r.End = r.Start + r.In - r.Out;
+                switch (r.CrsName)
+                {
+                    case CurrencyCode.RUBName:
+                    case CurrencyCode.RURName:
+                        r.StartRUB = r.Start;
+                        r.EndRUB = r.End;
+                        break;
+                    case CurrencyCode.USDName:
+                        r.StartUSD = r.Start;
+                        r.EndUSD = r.End;
+                        break;
+                    case CurrencyCode.EURName:
+                        r.StartEUR = r.Start;
+                        r.EndEUR = r.End;
+                        break;
+                }
                 r.RUB =
                     Math.Round(
                         DocumentsForEmployee.Where(
@@ -426,6 +427,13 @@ namespace KursAM2.ViewModel.Personal
             }
 
             Periods = new ObservableCollection<NachEmployeeForPeriod>(datesSource.OrderByDescending(_ => _.DateStart));
+            var form = Form as PersonalPaysView;
+            if (form == null) return;
+            var periods = form.treePeriods;
+            foreach (var p in periods.Bands.Where(_ => _.Name=="RUB" || _.Name=="USD" || _.Name=="EUR"))
+            {
+                p.Visible = CurrentEmploee.CrsName == p.Name;
+            }
             RaisePropertyChanged(nameof(Periods));
         }
 
@@ -434,17 +442,6 @@ namespace KursAM2.ViewModel.Personal
             mySelEmp = CurrentEmploee;
             var tempMain = new ObservableCollection<EmployeePayMainViewModel>();
             DocumentsLoad(date, true);
-            if (Documents.Any())
-            {
-                var maxDate = Documents.Max(t => t.DocDate);
-                var minDate = Documents.Min(t => t.DocDate);
-                CurrencyRate.LoadCBrates(minDate, maxDate);
-            }
-            else
-            {
-                return;
-            }
-
             foreach (
                 var nach in
                 Documents.Where(
@@ -477,11 +474,6 @@ namespace KursAM2.ViewModel.Personal
             EmployeeMain.Clear();
             foreach (var t in tempMain.Where(_ => _.DolgSumma != 0 || _.PlatSumma != 0 || _.SummaNach != 0))
                 EmployeeMain.Add(t);
-
-            //RaisePropertyChanged(nameof(EmployeeMain));
-            //if (mySelEmp == null) return;
-            //SelectEmployee = EmployeeMain.SingleOrDefault(_ => _.Employee.DocCode == mySelEmp.Employee.DocCode);
-            //CurrentEmploee = EmployeeMain.SingleOrDefault(_ => _.Employee.DocCode == mySelEmp.Employee.DocCode);
         }
 
         public override void RefreshData(object obj)
@@ -490,17 +482,7 @@ namespace KursAM2.ViewModel.Personal
             var tempMain = new ObservableCollection<EmployeePayMainViewModel>();
             var d = obj as DateTime?;
             DocumentsLoad(obj != null ? d : null);
-            if (Documents.Any())
-            {
-                var maxDate = Documents.Max(t => t.DocDate);
-                var minDate = Documents.Min(t => t.DocDate);
-                CurrencyRate.LoadCBrates(minDate, maxDate);
-            }
-            else
-            {
-                return;
-            }
-
+            if (Documents.Count == 0) return;
             foreach (
                 var nach in
                 Documents.Where(
@@ -535,8 +517,6 @@ namespace KursAM2.ViewModel.Personal
                 EmployeeMain.Add(t);
             RaisePropertyChanged(nameof(EmployeeMain));
             if (mySelEmp == null) return;
-            SelectEmployee = EmployeeMain.SingleOrDefault(_ => _.Employee.DocCode == mySelEmp.Employee.DocCode);
-            CurrentEmploee = EmployeeMain.SingleOrDefault(_ => _.Employee.DocCode == mySelEmp.Employee.DocCode);
         }
     }
 }

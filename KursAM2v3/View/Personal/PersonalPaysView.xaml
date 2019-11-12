@@ -83,13 +83,14 @@
                                          AutoGenerateColumns="AddNew"
                                          dx:DXSerializer.SerializationID="PeriodTreeGrid"
                                          dx:DXSerializer.StoreLayoutMode="All"
-                                         dxg:DataControlSerializationOptions.AddNewColumns="False"
-                                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                         dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                          CurrentItemChanged="treePeriods_CurrentItemChanged"
                                          ItemsSource="{Binding Periods, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
                         <dxg:TreeListControl.Bands>
                             <dxg:TreeListControlBand Name="bandt1" Header="В валюте сотрудника">
                                 <dxg:TreeListColumn Name="colt1" FieldName="Name" Header="Период" ReadOnly="True" />
+                                <dxg:TreeListColumn Name="colt1_1" FieldName="CrsName" Header="Валюта" ReadOnly="True" />
                                 <dxg:TreeListColumn Name="colt2" FieldName="DateStart" Header="Дата начало"
                                                     ReadOnly="True" BestFitMode="Smart" SortOrder="Descending"
                                                     SortIndex="0" />
@@ -119,6 +120,12 @@
                             <dxg:TreeListControlBand Name="bandt2" Header="По валютам операций">
                                 <dxg:TreeListControlBand.Bands>
                                     <dxg:TreeListControlBand Header="RUB">
+                                       <dxg:TreeListColumn Name="colt9_1" FieldName="StartRUB" Header="Начало"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="colt9" FieldName="NachRUB" Header="Начислено"
                                                             ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
@@ -131,8 +138,20 @@
                                                 <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
+                                        <dxg:TreeListColumn Name="colt10_1" FieldName="EndRUB" Header="Конец"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
                                     <dxg:TreeListControlBand Name="bandt3" Header="USD">
+                                        <dxg:TreeListColumn Name="colt8_1" FieldName="StartUSD" Header="Начало"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="colt8" FieldName="NachUSD" Header="Начислено"
                                                             ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
@@ -145,8 +164,20 @@
                                                 <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
+                                        <dxg:TreeListColumn Name="colt8_2" FieldName="EndUSD" Header="Конец"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
                                     <dxg:TreeListControlBand Name="bandt4" Header="EUR">
+                                        <dxg:TreeListColumn Name="colt12_1" FieldName="StartEUR" Header="Начало"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="colt12" FieldName="NachEUR" Header="Начислено"
                                                             ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
@@ -154,6 +185,12 @@
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="colt13" FieldName="EUR" Header="Выплачено"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
+                                        <dxg:TreeListColumn Name="colt12_2" FieldName="EndEUR" Header="Конец"
                                                             ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />

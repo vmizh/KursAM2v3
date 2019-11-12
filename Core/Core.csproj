@@ -313,10 +313,6 @@
       <Project>{0AC84FA1-A12E-414A-8D3E-EDE48E795908}</Project>
       <Name>LayoutManager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SQLite.Base\SQLite.Base.csproj">
-      <Project>{BE1EEBBE-E696-4B56-B901-0D960CACE377}</Project>
-      <Name>SQLite.Base</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

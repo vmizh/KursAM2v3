@@ -149,18 +149,20 @@ namespace Core.WindowsManager
                 if (ex1.InnerException != null)
                     errText.Append(ex1.InnerException.Message);
             }
-            using (var errCtx = GlobalOptions.KursSystem())
-            {
-                errCtx.Errors.Add(new Data.Errors
+            if(GlobalOptions.UserInfo != null){
+                using (var errCtx = GlobalOptions.KursSystem())
                 {
-                    Id = Guid.NewGuid(),
-                    DbId = GlobalOptions.DataBaseId,
-                    Host = Environment.MachineName,
-                    UserId = GlobalOptions.UserInfo.KursId,
-                    ErrorText = errText.ToString(),
-                    Moment = DateTime.Now
-                });
-                errCtx.SaveChanges();
+                    errCtx.Errors.Add(new Data.Errors
+                    {
+                        Id = Guid.NewGuid(),
+                        DbId = GlobalOptions.DataBaseId,
+                        Host = Environment.MachineName,
+                        UserId = GlobalOptions.UserInfo.KursId,
+                        ErrorText = errText.ToString(),
+                        Moment = DateTime.Now
+                    });
+                    errCtx.SaveChanges();
+                }
             }
             if (Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive) != null)
                 WinUIMessageBox.Show(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),

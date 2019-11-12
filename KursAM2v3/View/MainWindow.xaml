@@ -5,7 +5,7 @@
              xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              x:Class="KursAM2.View.MainWindow"
-             Title="Курс 2013 Альфа-Медиа Версия 3.0" Height="700" Width="1100" SnapsToDevicePixels="True"
+             Title="Курс 2019" Height="700" Width="1100" SnapsToDevicePixels="True"
              UseLayoutRounding="True"
              Loaded="DXWindow_Loaded"
              Icon="pack://siteoforigin:,,,/Images/memory.png">
@@ -37,7 +37,7 @@
                 </dxb:Bar.DockInfo>
             </dxb:Bar>
         </dxb:BarManager.Bars>
-        <dxd:DockLayoutManager Margin="0" x:Name="dockLayout" AllowCustomization="False">
+        <dxd:DockLayoutManager Margin="0" x:Name="dockLayout" AllowCustomization="True">
             <dxd:DockLayoutManager.LayoutRoot>
                 <dxd:LayoutGroup Name="LayoutGroup" Padding="0" ShowCloseButton="False" ShowControlBox="False"
                                  ShowScrollNextButton="False" ShowScrollPrevButton="False" Margin="0">
@@ -46,7 +46,7 @@
                                      ShowPinButton="False" ShowMaximizeButton="False" ShowCaption="False"
                                      ShowCaptionImage="False">
                         <dxlc:TileLayoutControl x:Name="tileMainGroup" Background="#FFD0D6D3" Margin="0" Padding="12"
-                                                MaximizedElementPosition="Right" TileClick="tileMainGroup_TileClick" />
+                                                MaximizedElementPosition="Right" TileClick="tileMainGroup_TileClick" ItemPositionChanged="tileMainGroup_ItemPositionChanged" />
                     </dxd:LayoutPanel>
                     <dxd:LayoutPanel Caption="Panel2" ShowCloseButton="False" ShowPinButton="False"
                                      ShowMaximizeButton="False" ShowRestoreButton="False" ShowControlBox="False"

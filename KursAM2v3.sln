@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KursAM2", "KursAM2v3\KursAM2.csproj", "{F81539F9-9431-4D87-9BF0-7E195911349D}"
 EndProject
@@ -46,8 +46,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{2B4BDBC7-A64F-44CD-B9CD-18E332965817}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Tests", "Core.Tests\Core.Tests.csproj", "{833108ED-1970-4B4D-98E0-F5FF8984C4BE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLite.Base", "SQLite.Base\SQLite.Base.csproj", "{BE1EEBBE-E696-4B56-B901-0D960CACE377}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevExpressMVC", "DevExpress\DevExpressMVC.csproj", "{3F4AFE62-9A54-460C-BC61-62A7016441BE}"
 EndProject
@@ -192,12 +190,6 @@ Global
 		{833108ED-1970-4B4D-98E0-F5FF8984C4BE}.Development|Any CPU.Build.0 = Debug|Any CPU
 		{833108ED-1970-4B4D-98E0-F5FF8984C4BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{833108ED-1970-4B4D-98E0-F5FF8984C4BE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BE1EEBBE-E696-4B56-B901-0D960CACE377}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE1EEBBE-E696-4B56-B901-0D960CACE377}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BE1EEBBE-E696-4B56-B901-0D960CACE377}.Development|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE1EEBBE-E696-4B56-B901-0D960CACE377}.Development|Any CPU.Build.0 = Debug|Any CPU
-		{BE1EEBBE-E696-4B56-B901-0D960CACE377}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BE1EEBBE-E696-4B56-B901-0D960CACE377}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3F4AFE62-9A54-460C-BC61-62A7016441BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3F4AFE62-9A54-460C-BC61-62A7016441BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F4AFE62-9A54-460C-BC61-62A7016441BE}.Development|Any CPU.ActiveCfg = Debug|Any CPU

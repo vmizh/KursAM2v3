@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -15,11 +16,10 @@ using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
+using DevExpress.XtraExport;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Splash;
-using SQLite.Base;
-using SQLite.Base.Entity;
 using User = Helper.User;
 
 namespace KursAM2.ViewModel.StartLogin
@@ -34,16 +34,14 @@ namespace KursAM2.ViewModel.StartLogin
         public StartLoginViewModel(Window formWindow)
         {
             Form = formWindow;
+            CurrentUser = ConfigurationManager.AppSettings.Get("Login");
             GetDefaultCache();
         }
 
         private ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
-
         public ObservableCollection<DataSource> ComboBoxItemSource { set; get; } =
             new ObservableCollection<DataSource>();
-
         public DataSource SelectedDataSource { set; get; }
-
         public string VersionValue
         {
             set
@@ -54,7 +52,6 @@ namespace KursAM2.ViewModel.StartLogin
             }
             get => myVersionValue;
         }
-
         public string CurrentUser
         {
             set
@@ -63,12 +60,12 @@ namespace KursAM2.ViewModel.StartLogin
                 myCurrentUser = value;
                 if (string.IsNullOrEmpty(myCurrentUser) || string.IsNullOrEmpty(myCurrentUser)) return;
                 LoadDataSources();
+                GetDefaultCache();
                 RaisePropertiesChanged();
                 RaisePropertiesChanged(nameof(ComboBoxItemSource));
             }
             get => myCurrentUser;
         }
-
         public string CurrentBoxItem
         {
             set
@@ -79,7 +76,6 @@ namespace KursAM2.ViewModel.StartLogin
             }
             get => myCurrentBoxItem;
         }
-
         public string CurrentPassword
         {
             set
@@ -101,81 +97,69 @@ namespace KursAM2.ViewModel.StartLogin
 
         private void bnOk_Click(object obj)
         {
-            try
+
+            var view = Form as View.StartLogin;
+            if (string.IsNullOrEmpty(CurrentUser) || CurrentUser.Trim() == string.Empty ||
+                string.IsNullOrEmpty(CurrentPassword)
+                || SelectedDataSource == null)
             {
-                var view = Form as View.StartLogin;
-                if (string.IsNullOrEmpty(CurrentUser) || CurrentUser.Trim() == string.Empty ||
-                    string.IsNullOrEmpty(CurrentPassword)
-                    || SelectedDataSource == null) {
-                    WindowManager.ShowMessage(view, "Имя пользователя и пароль должны быть обязательно заполнены.",
-                        "Ошибка",
-                        MessageBoxImage.Question);
-                    return;
-                }
-                else
-                    SplashLoadBar();
-                User newUser;
-                if (!CheckAndSetUser(out newUser)) return;
-                using (var ctx = GlobalOptions.GetEntities())
+                WindowManager.ShowMessage(view, "Имя пользователя и пароль должны быть обязательно заполнены.",
+                    "Ошибка",
+                    MessageBoxImage.Question);
+                return;
+            }
+            SplashLoadBar();
+            User newUser;
+            if (!CheckAndSetUser(out newUser)) return;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var tileItems = (from item in ctx.MAIN_DOCUMENT_ITEM
+                        join d in ctx.USER_FORMS_RIGHT on item.ID equals
+                            d.FORM_ID
+                        where Equals(d.USER_NAME.ToUpper(), newUser.NickName.ToUpper())
+                        select item).OrderBy(_ => _.ID)
+                    .ToList();
+                var tileGrps = new List<MAIN_DOCUMENT_GROUP>();
+                var titems = tileItems.Where(tile => !tileGrps.Contains(tile.MAIN_DOCUMENT_GROUP)).ToList();
+                tileGrps.AddRange(titems.Select(tile => tile.MAIN_DOCUMENT_GROUP));
+                var tileGroups = new List<TileGroup>();
+                foreach (var grp in tileGrps)
                 {
-                    var tileItems = (from item in ctx.MAIN_DOCUMENT_ITEM
-                            join d in ctx.USER_FORMS_RIGHT on item.ID equals
-                                d.FORM_ID
-                            where Equals(d.USER_NAME.ToUpper(), newUser.NickName.ToUpper())
-                            select item).OrderBy(_ => _.ID)
-                        .ToList();
-                    var tileGrps = new List<MAIN_DOCUMENT_GROUP>();
-                    var titems = tileItems.Where(tile => !tileGrps.Contains(tile.MAIN_DOCUMENT_GROUP)).ToList();
-                    tileGrps.AddRange(titems.Select(tile => tile.MAIN_DOCUMENT_GROUP));
-                    var tileGroups = new List<TileGroup>();
-                    foreach (var grp in tileGrps)
+                    var newGrp = new TileGroup
                     {
-                        var newGrp = new TileGroup
+                        Id = grp.ID,
+                        Name = grp.NAME,
+                        Notes = grp.NOTES,
+                        Picture = ImageManager.ByteToImage(grp.PICTURE)
+                    };
+                    var grp1 = grp;
+                    foreach (var tile in tileItems.Where(t => t.GROUP_ID == grp1.ID))
+                        newGrp.TileItems.Add(new TileItem
                         {
-                            Id = grp.ID,
-                            Name = grp.NAME,
-                            Notes = grp.NOTES,
-                            Picture = ImageManager.ByteToImage(grp.PICTURE)
-                        };
-                        var grp1 = grp;
-                        foreach (var tile in tileItems.Where(t => t.GROUP_ID == grp1.ID))
-                            newGrp.TileItems.Add(new TileItem
-                            {
-                                Id = tile.ID,
-                                Name = tile.NAME,
-                                Notes = tile.NOTES,
-                                Picture = ImageManager.ByteToImage(tile.PICTURE),
-                                GroupId = tile.GROUP_ID
-                            });
-                        if (tileGroups.All(g => g.Id != newGrp.Id))
-                            tileGroups.Add(newGrp);
-                    }
-
-                    newUser.MainTileGroups = tileGroups;
-                    newUser.Groups =
-                        ctx.EXT_GROUPS.Select(
-                                grp => new UserGroup {Id = grp.GR_ID, Name = grp.GR_NAME})
-                            .ToList();
-                    GlobalOptions.UserInfo = newUser;
-                    GlobalOptions.SystemProfile = new SystemProfile();
+                            Id = tile.ID,
+                            Name = tile.NAME,
+                            Notes = tile.NOTES,
+                            Picture = ImageManager.ByteToImage(tile.PICTURE),
+                            GroupId = tile.GROUP_ID
+                        });
+                    if (tileGroups.All(g => g.Id != newGrp.Id))
+                        tileGroups.Add(newGrp);
                 }
-
-                SetUserProfile(newUser.NickName.ToUpper());
-                SetGlobalProfile();
-                // ReSharper disable once PossibleNullReferenceException
-                view.IsConnectSuccess = true;
-                DialogResult = true;
-                SaveСache(view.AvatarObj.Source);
-                view.Close();
+                newUser.MainTileGroups = tileGroups;
+                newUser.Groups =
+                    ctx.EXT_GROUPS.Select(
+                            grp => new UserGroup {Id = grp.GR_ID, Name = grp.GR_NAME})
+                        .ToList();
+                GlobalOptions.UserInfo = newUser;
+                GlobalOptions.SystemProfile = new SystemProfile();
             }
-            catch
-                (Exception ex)
-            {
-                var errText = new StringBuilder(ex.Message);
-                while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
-
-                MessageBox.Show("StartLogionBnOK error.\n" + errText);
-            }
+            SetUserProfile(newUser.NickName.ToUpper());
+            SetGlobalProfile();
+            // ReSharper disable once PossibleNullReferenceException
+            view.IsConnectSuccess = true;
+            DialogResult = true;
+            SaveСache(view.AvatarObj.Source);
+            view.Close();
         }
 
         private static void SetGlobalProfile()
@@ -197,7 +181,6 @@ namespace KursAM2.ViewModel.StartLogin
                     GlobalOptions.SystemProfile.OwnerKontragent =
                         new Kontragent(ownKontr);
                 }
-
                 var mainCrsDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
                     _ => _.SECTION == "CURRENCY" && _.ITEM == "MAIN");
                 if (mainCrsDC != null)
@@ -207,7 +190,6 @@ namespace KursAM2.ViewModel.StartLogin
                         GlobalOptions.GetEntities().SD_301.Single(_ => _.DOC_CODE == dc);
                     GlobalOptions.SystemProfile.MainCurrency = new Currency(mainCrs);
                 }
-
                 var nationalCrsDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
                     _ => _.SECTION == "CURRENCY" && _.ITEM == "ОСНОВНАЯ_В_ГОСУДАРСТВЕ");
                 if (nationalCrsDC != null)
@@ -218,7 +200,6 @@ namespace KursAM2.ViewModel.StartLogin
                     GlobalOptions.SystemProfile.NationalCurrency =
                         new Currency(nationalCrs);
                 }
-
                 var employeeDefaultCurrencyDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
                     _ => _.SECTION == "ЗАРПЛАТА" && _.ITEM == "ВАЛЮТА")?.ITEM_VALUE;
                 if (employeeDefaultCurrencyDC != null)
@@ -232,7 +213,6 @@ namespace KursAM2.ViewModel.StartLogin
                 {
                     GlobalOptions.SystemProfile.EmployeeDefaultCurrency = GlobalOptions.SystemProfile.NationalCurrency;
                 }
-
                 var prTypeDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
                     _ => _.SECTION == "ЗAРПЛАТА" && _.ITEM == "НАЧИСЛЕНИЕ_ПО_УМОЛЧАНИЮ")?.ITEM_VALUE;
                 if (prTypeDC != null)
@@ -261,10 +241,8 @@ namespace KursAM2.ViewModel.StartLogin
             {
                 var errText = new StringBuilder(ex.Message);
                 while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
-
                 MessageBox.Show("StartLoginViewModel SetGlobalProfile  error.\n" + errText);
             }
-
         }
 
         private bool CheckAndSetUser(out User newUser)
@@ -276,6 +254,7 @@ namespace KursAM2.ViewModel.StartLogin
                 GlobalOptions.DatabaseColor = SelectedDataSource.Color;
                 GlobalOptions.SqlConnectionString =
                     SelectedDataSource.GetConnectionString(CurrentUser, CurrentPassword);
+                
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var usr = ctx.EXT_USERS
@@ -287,7 +266,6 @@ namespace KursAM2.ViewModel.StartLogin
                         newUser = null;
                         return false;
                     }
-
                     newUser = new User
                     {
                         Id = Convert.ToInt32(usr.USR_ID),
@@ -305,18 +283,21 @@ namespace KursAM2.ViewModel.StartLogin
                             newUser.KursId = u.Id;
                     }
                 }
-
             }
             catch (Exception ex)
             {
-                var errText = new StringBuilder(ex.Message);
-                while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
+                var exx = ex;
+                var errText = new StringBuilder(exx.Message);
+                while (exx.InnerException != null)
+                {
+                    errText.Append($"\n {exx.InnerException.Message}");
+                    exx = exx.InnerException;
 
+                }
                 MessageBox.Show("CheckAndSetUser error.\n" + errText);
                 newUser = null;
                 return false;
             }
-
             return true;
         }
 
@@ -331,7 +312,6 @@ namespace KursAM2.ViewModel.StartLogin
             {
                 var errText = new StringBuilder(ex.Message);
                 while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
-
                 MessageBox.Show("SetUserProfile error.\n" + errText);
             }
         }
@@ -372,13 +352,11 @@ namespace KursAM2.ViewModel.StartLogin
                             });
                     }
                 }
-
             }
             catch (Exception ex)
             {
                 var errText = new StringBuilder(ex.Message);
                 while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
-
                 MessageBox.Show("LoadDataSource error.\n" + errText);
             }
         }
@@ -400,37 +378,25 @@ namespace KursAM2.ViewModel.StartLogin
         {
             try
             {
-                //Login cache
-                using (var ctx = new LocalDbContext())
+                using (var ctx = GlobalOptions.KursSystem())
                 {
-                    var item = ctx.LoginStarts;
                     var view = Form as View.StartLogin;
-                    if (!item.Any())
-                    {
+                    var user = ctx.Users.FirstOrDefault(_ => _.Name == CurrentUser);
+                    if (user == null)
                         // ReSharper disable once PossibleNullReferenceException
                         view.AvatarObj.Source =
                             new BitmapImage(new Uri("./../Images/businessman.png", UriKind.Relative));
-                    }
                     else
-                    {
-                        var lastData = ctx.LoginStarts.Max(_ => _.LastDataTime);
-                        var firstOrDefault = ctx.LoginStarts.FirstOrDefault(_ => _.LastDataTime == lastData);
-                        if (firstOrDefault != null)
-                        {
-                            // ReSharper disable once PossibleNullReferenceException
-                            view.AvatarObj.Source = ImageManager.ByteToImageSource(
-                                firstOrDefault.Avatar);
-                            CurrentUser = firstOrDefault.Login;
-                        }
-                    }
+                        view.AvatarObj.Source = user.Avatar != null
+                            ? ImageManager.ByteToImageSource(user.Avatar)
+                            : new BitmapImage(new Uri("./../Images/businessman.png", UriKind.Relative));
                 }
             }
             catch (Exception ex)
             {
                 var errText = new StringBuilder(ex.Message);
                 while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
-
-                MessageBox.Show("LocalDbContext error.\n" + errText);
+                MessageBox.Show("KursSystem error.\n" + errText);
             }
 
             //Version cache
@@ -441,43 +407,29 @@ namespace KursAM2.ViewModel.StartLogin
                 GlobalOptions.Version = $"Версия {ver.Major}.{ver.Minor}.{ver.Ver}";
                 VersionValue = $"Версия {ver.Major}.{ver.Minor}.{ver.Ver}";
             }
-
             LoadDataSources();
         }
 
         public void SaveСache(ImageSource data)
         {
-            using (var ctx = new LocalDbContext())
+           
+            using (var ctx = GlobalOptions.KursSystem())
             {
                 try
                 {
-                    var item = ctx.LoginStarts.FirstOrDefault(_ => _.Login.ToUpper() == CurrentUser.ToUpper());
-                    if (item != null)
-                    {
-                        item.Avatar = ImageManager.ImageSourceToBytes(
-                            new PngBitmapEncoder(), data);
-                        item.LastDataTime = DateTime.Now;
-                    }
-                    else
-                    {
-                        var id = ctx.LoginStarts.Any() ? ctx.LoginStarts.Max(_ => _.Id) + 1 : 1;
-                        ctx.LoginStarts.Add(new LoginStart
-                        {
-                            Id = id,
-                            Avatar = ImageManager.ImageSourceToBytes(
-                                new PngBitmapEncoder(), data),
-                            LastDataTime = DateTime.Now,
-                            Login = CurrentUser
-                        });
-                    }
-
+                    
+                    var user = ctx.Users.FirstOrDefault(_ => _.Id == GlobalOptions.UserInfo.KursId);
+                    if (user != null) user.Avatar = ImageManager.ImageSourceToBytes(new PngBitmapEncoder(), data);
                     ctx.SaveChanges();
+
+                    var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                    config.AppSettings.Settings["Login"].Value = CurrentUser;
+                    config.Save();
                 }
                 catch (Exception ex)
                 {
                     var errText = new StringBuilder(ex.Message);
                     while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
-
                     MessageBox.Show("LocalDbContext SaveСache error.\n" + errText);
                 }
             }

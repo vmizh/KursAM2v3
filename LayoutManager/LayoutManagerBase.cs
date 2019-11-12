@@ -82,6 +82,7 @@ namespace LayoutManager
                 }.ToString();
                 using (var ctx = new KursSystemEntities(connString))
                 {
+                    if (GlobalOptions.UserInfo == null) return;
                     var w = Win != null ? Win.GetType().Name : "Control";
                     var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == GlobalOptions.UserInfo.KursId
                                                                && _.FormName == w && _.ControlName == FileName);
@@ -191,6 +192,7 @@ namespace LayoutManager
 
         public virtual void Load(bool autoSummary = false)
         {
+            if (GlobalOptions.UserInfo == null) return;
             var connString = new SqlConnectionStringBuilder
             {
                 DataSource = "172.16.0.1",
