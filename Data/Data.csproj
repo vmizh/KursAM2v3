@@ -1934,6 +1934,9 @@
     <Compile Include="UPDATE_KONTR.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="UserMenuOrder.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="UserMenuRight.cs">
       <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>

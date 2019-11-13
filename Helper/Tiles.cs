@@ -22,6 +22,9 @@ namespace Helper
 
         [DataMember]
         public string Notes { set; get; }
+
+        [DataMember]
+        public int OrderBy { set; get; }
     }
 
     [DataContract]
@@ -44,5 +47,8 @@ namespace Helper
 
         [DataMember]
         public string Notes { set; get; }
+
+        [DataMember]
+        public int OrderBy { set; get; }
     }
 }

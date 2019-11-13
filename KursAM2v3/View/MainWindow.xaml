@@ -43,17 +43,22 @@
                                  ShowScrollNextButton="False" ShowScrollPrevButton="False" Margin="0">
                     <dxd:LayoutPanel Name="LayoutPanel" Caption="" ShowCloseButton="False" Padding="0" Margin="0"
                                      ShowControlBox="False"
-                                     ShowPinButton="False" ShowMaximizeButton="False" ShowCaption="False"
+                                     ShowPinButton="False" 
+                                     ShowMaximizeButton="False" 
+                                     ShowCaption="False"
                                      ShowCaptionImage="False">
                         <dxlc:TileLayoutControl x:Name="tileMainGroup" Background="#FFD0D6D3" Margin="0" Padding="12"
-                                                MaximizedElementPosition="Right" TileClick="tileMainGroup_TileClick" ItemPositionChanged="tileMainGroup_ItemPositionChanged" />
+                                                MaximizedElementPosition="Right" 
+                                                TileClick="tileMainGroup_TileClick" 
+                                                ItemPositionChanged="tileMainGroup_ItemPositionChanged" />
                     </dxd:LayoutPanel>
                     <dxd:LayoutPanel Caption="Panel2" ShowCloseButton="False" ShowPinButton="False"
                                      ShowMaximizeButton="False" ShowRestoreButton="False" ShowControlBox="False"
                                      ShowBorder="False" ShowCaption="False"
                                      Padding="0" Margin="0">
                         <dxlc:TileLayoutControl x:Name="tileDocumentItems" Background="#FFD0D6D3" Padding="10"
-                                                TileClick="tileDocumentItems_TileClick" />
+                                                TileClick="tileDocumentItems_TileClick" 
+                                                ItemPositionChanged="TileDocumentItems_OnItemPositionChanged"/>
 
                     </dxd:LayoutPanel>
                 </dxd:LayoutGroup>

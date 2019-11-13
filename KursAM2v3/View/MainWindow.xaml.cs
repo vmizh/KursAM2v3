@@ -9,6 +9,7 @@ using System.Windows.Media;
 using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using Data;
 using DevExpress.Xpf.Bars;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.LayoutControl;
@@ -42,6 +43,7 @@ using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.Reference.Nomenkl;
 using KursAM2.ViewModel.Repozit;
 using LayoutManager;
+using NomenklCostReset = KursAM2.View.Logistiks.NomenklCostReset;
 
 namespace KursAM2.View
 {
@@ -723,22 +725,23 @@ namespace KursAM2.View
                 MessageBox.Show(s.ToString());
             }
         }
-
+        
+        private int CurrentMainGroupId = 0;
         private void tileMainGroup_TileClick(object sender, TileClickEventArgs tileClickEventArgs)
         {
             tileDocumentItems.Children.Clear();
-            foreach (
-                var tile in
-                GlobalOptions.UserInfo.MainTileGroups.Where(
-                        group => (string) tileClickEventArgs.Tile.Tag == group.Name)
-                    .SelectMany(group => group.TileItems))
+            CurrentMainGroupId = (int) tileClickEventArgs.Tile.Tag;
+            var grp = GlobalOptions.UserInfo.MainTileGroups.FirstOrDefault(
+                _ => (int) tileClickEventArgs.Tile.Tag == _.Id);
+            if (grp == null) return;
+            foreach (var tile in grp.TileItems.OrderBy(_ => _.OrderBy))
             {
-                if (tile == null) return;
                 var newTile = new Tile
                 {
                     Header = tile.Name, 
                     Width = 250,
-                    Height = 100
+                    Height = 100,
+                    Tag = tile.Id
                 };
                 tileDocumentItems.Children.Add(newTile);
             }
@@ -755,9 +758,9 @@ namespace KursAM2.View
                     Close();
                 else
                 {
-                    foreach (var tileGroup in GlobalOptions.UserInfo.MainTileGroups)
+                    foreach (var tileGroup in GlobalOptions.UserInfo.MainTileGroups.OrderBy(_ => _.OrderBy))
                     {
-                        var newTileGroup = new Tile {Tag = tileGroup.Name};
+                        var newTileGroup = new Tile {Tag = tileGroup.Id};
                         if (tileGroup.Picture != null)
                         {
                             newTileGroup.Width = tileGroup.Picture.Source.Width;
@@ -800,11 +803,73 @@ namespace KursAM2.View
 
         private void BarButtonItem2_OnItemClick(object sender, ItemClickEventArgs e)
         {
-            //MainReferences.Refresh();
+            
         }
 
         private void tileMainGroup_ItemPositionChanged(object sender, ValueChangedEventArgs<int> e)
         {
+            var i = 0;
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                foreach (var item in tileMainGroup.Children)
+                {
+                    var t = item as Tile;
+                    if (t == null) continue;
+                    var old = ctx.UserMenuOrder.FirstOrDefault(_ => _.IsGroup && _.TileId == (int)t.Tag);
+                    if (old == null)
+                    {
+                        ctx.UserMenuOrder.Add(new UserMenuOrder
+                        {
+                            Id = Guid.NewGuid(),
+                            IsGroup = true,
+                            UserId = GlobalOptions.UserInfo.KursId,
+                            TileId = (int)t.Tag,
+                            Order = i
+                        });
+                    }
+                    else
+                    {
+                        old.Order = i;
+                    }
+                    ctx.SaveChanges();
+                    i++;
+                }
+            }
+        }
+
+        private void TileDocumentItems_OnItemPositionChanged(object sender, ValueChangedEventArgs<int> e)
+        {
+            var i = 0;
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                foreach (var item in tileDocumentItems.Children)
+                {
+                    var t = item as Tile;
+                    if (t == null) continue;
+                    var menuGroup =
+                        GlobalOptions.UserInfo.MainTileGroups.FirstOrDefault(_ => _.Id == CurrentMainGroupId);
+                    var menuItem = menuGroup?.TileItems.FirstOrDefault(_ => _.Id == (int) t.Tag);
+                    if(menuItem != null) menuItem.OrderBy = i;
+                    var old = ctx.UserMenuOrder.FirstOrDefault(_ => !_.IsGroup && _.TileId == (int)t.Tag);
+                    if (old == null)
+                    {
+                        ctx.UserMenuOrder.Add(new UserMenuOrder
+                        {
+                            Id = Guid.NewGuid(),
+                            IsGroup = false,
+                            UserId = GlobalOptions.UserInfo.KursId,
+                            TileId = (int)t.Tag,
+                            Order = i
+                        });
+                    }
+                    else
+                    {
+                        old.Order = i;
+                    }
+                    ctx.SaveChanges();
+                    i++;
+                }
+            }
         }
     }
 }

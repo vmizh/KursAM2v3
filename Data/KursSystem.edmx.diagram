@@ -26,6 +26,7 @@
         <EntityTypeShape EntityType="KursSystemModel.FormLayout" Width="1.5" PointX="5.25" PointY="13.875" />
         <AssociationConnector Association="KursSystemModel.FK_FormLayout_FormId" />
         <AssociationConnector Association="KursSystemModel.FK_FormLayout_UserId" />
+        <EntityTypeShape EntityType="KursSystemModel.UserMenuOrder" Width="1.5" PointX="5.375" PointY="5.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -75,6 +75,16 @@
           <Property Name="OrderBy" Type="int" />
           <Property Name="Code" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="UserMenuOrder">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="IsGroup" Type="bit" Nullable="false" />
+          <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TileId" Type="int" Nullable="false" />
+          <Property Name="Order" Type="int" />
+        </EntityType>
         <EntityType Name="UserMenuRight">
           <Key>
             <PropertyRef Name="Id" />
@@ -280,6 +290,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <EntitySet Name="KontragentCashes" EntityType="Self.KontragentCashes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KursMenuGroup" EntityType="Self.KursMenuGroup" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KursMenuItem" EntityType="Self.KursMenuItem" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserMenuOrder" EntityType="Self.UserMenuOrder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMenuRight" EntityType="Self.UserMenuRight" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UsersLinkDB" EntityType="Self.UsersLinkDB" Schema="dbo" store:Type="Tables" />
@@ -576,6 +587,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             <End Role="Users" EntitySet="Users" />
             <End Role="FormLayout" EntitySet="FormLayout" />
           </AssociationSet>
+          <EntitySet Name="UserMenuOrder" EntityType="KursSystemModel.UserMenuOrder" />
           </EntityContainer>
         <EntityType Name="Errors">
           <Key>
@@ -653,6 +665,16 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="UserMenuOrder">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="IsGroup" Type="Boolean" Nullable="false" />
+          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <Property Name="TileId" Type="Int32" Nullable="false" />
+          <Property Name="Order" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -786,6 +808,17 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
                 <ScalarProperty Name="ControlName" ColumnName="ControlName" />
                 <ScalarProperty Name="FormName" ColumnName="FormName" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserMenuOrder">
+            <EntityTypeMapping TypeName="KursSystemModel.UserMenuOrder">
+              <MappingFragment StoreEntitySet="UserMenuOrder">
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="TileId" ColumnName="TileId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="IsGroup" ColumnName="IsGroup" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -111,43 +111,52 @@ namespace KursAM2.ViewModel.StartLogin
             SplashLoadBar();
             User newUser;
             if (!CheckAndSetUser(out newUser)) return;
-            using (var ctx = GlobalOptions.GetEntities())
+            using (var ctx = GlobalOptions.KursSystem())
             {
-                var tileItems = (from item in ctx.MAIN_DOCUMENT_ITEM
-                        join d in ctx.USER_FORMS_RIGHT on item.ID equals
-                            d.FORM_ID
-                        where Equals(d.USER_NAME.ToUpper(), newUser.NickName.ToUpper())
-                        select item).OrderBy(_ => _.ID)
-                    .ToList();
-                var tileGrps = new List<MAIN_DOCUMENT_GROUP>();
-                var titems = tileItems.Where(tile => !tileGrps.Contains(tile.MAIN_DOCUMENT_GROUP)).ToList();
-                tileGrps.AddRange(titems.Select(tile => tile.MAIN_DOCUMENT_GROUP));
-                var tileGroups = new List<TileGroup>();
-                foreach (var grp in tileGrps)
+                var tileOrders = GlobalOptions.KursSystem().UserMenuOrder
+                    .Where(_ => _.UserId == newUser.KursId).ToList();
+                var tileItems = ctx.KursMenuGroup.ToList();
+                var tileUsersItems = ctx.UserMenuRight.Where(_ => _.DBId==GlobalOptions.DataBaseId 
+                                                                  && _.LoginName.ToUpper() == newUser.NickName.ToUpper());
+                var tileGroupsTemp = new List<TileGroup>();
+                foreach (var grp in tileItems.OrderBy(_ => _.OrderBy))
                 {
-                    var newGrp = new TileGroup
+                    var grpOrd = tileOrders.FirstOrDefault(_ => _.IsGroup && _.TileId == grp.Id);
+                    if (tileUsersItems.Any(_ => _.MenuId == grp.Id))
                     {
-                        Id = grp.ID,
-                        Name = grp.NAME,
-                        Notes = grp.NOTES,
-                        Picture = ImageManager.ByteToImage(grp.PICTURE)
-                    };
-                    var grp1 = grp;
-                    foreach (var tile in tileItems.Where(t => t.GROUP_ID == grp1.ID))
-                        newGrp.TileItems.Add(new TileItem
+                        var newGrp = new TileGroup
                         {
-                            Id = tile.ID,
-                            Name = tile.NAME,
-                            Notes = tile.NOTES,
-                            Picture = ImageManager.ByteToImage(tile.PICTURE),
-                            GroupId = tile.GROUP_ID
-                        });
-                    if (tileGroups.All(g => g.Id != newGrp.Id))
-                        tileGroups.Add(newGrp);
+                            Id = grp.Id,
+                            Name = grp.Name,
+                            Notes = grp.Note,
+                            Picture = ImageManager.ByteToImage(grp.Picture),
+                            OrderBy = (int) (grpOrd != null ? grpOrd.Order : grp.Id)
+                        };
+                        tileGroupsTemp.Add(newGrp);
+                    }
                 }
-                newUser.MainTileGroups = tileGroups;
+                var tileGroups = new List<TileGroup>(tileGroupsTemp.OrderBy(_ => _.OrderBy));
+                foreach (var grp in tileGroups)
+                {   var tItems = new List<TileItem>();
+                    foreach (var tile in ctx.KursMenuItem.Where(t => t.GroupId == grp.Id).ToList())
+                    {
+                        var ord = tileOrders.FirstOrDefault(_ => !_.IsGroup && _.TileId == tile.Id);
+                        tItems.Add(new TileItem
+                        {
+                            Id = tile.Id,
+                            Name = tile.Name,
+                            Notes = tile.Note,
+                            Picture = ImageManager.ByteToImage(tile.Picture),
+                            GroupId = tile.GroupId,
+                            OrderBy = (int) (ord != null ? ord.Order : tile.Id)
+                        });
+                    }
+                    grp.TileItems = new List<TileItem>(tItems.OrderBy(_ => _.OrderBy));
+                }
+
+                newUser.MainTileGroups = new List<TileGroup>(tileGroups.OrderBy(_ => _.OrderBy));
                 newUser.Groups =
-                    ctx.EXT_GROUPS.Select(
+                    GlobalOptions.GetEntities().EXT_GROUPS.Select(
                             grp => new UserGroup {Id = grp.GR_ID, Name = grp.GR_NAME})
                         .ToList();
                 GlobalOptions.UserInfo = newUser;

@@ -7,10 +7,12 @@
              xmlns:splashWindow="clr-namespace:KursAM2.View.SplashWindow"
              x:Class="KursAM2.View.StartLogin"
              Title="Вход в КурсАМ2"
-             Icon="pack://siteoforigin:,,,/Images/User1.png" WindowStyle="ToolWindow"
+             Icon="pack://siteoforigin:,,,/Images/User1.png" 
+             WindowStyle="SingleBorderWindow"
              WindowStartupLocation="CenterScreen"
-             ResizeMode="NoResize"
-             Width="400" Height="670" VerticalAlignment="Stretch"
+             ResizeMode="CanMinimize"
+             Width="400" Height="670" 
+             VerticalAlignment="Stretch"
              FontFamily="pack://application:,,,/Font/#Roboto Light"
              FontStyle="Normal">
     <dxmvvm:Interaction.Behaviors>

@@ -54,5 +54,6 @@ namespace Data
         public virtual DbSet<VersionInfo> VersionInfo { get; set; }
         public virtual DbSet<Errors> Errors { get; set; }
         public virtual DbSet<FormLayout> FormLayout { get; set; }
+        public virtual DbSet<UserMenuOrder> UserMenuOrder { get; set; }
     }
 }
