@@ -700,13 +700,14 @@ namespace KursAM2.ViewModel.Personal
 
         public ICommand AddNachCommand
         {
-            get { return new Command(AddNach, param => true); }
+            get { return new Command(AddNach, param => CurrentEmployee != null); }
         }
 
         private void AddNach(object obj)
         {
             var newNach = new PayRollVedomostEmployeeRowViewModel
             {
+                
                 Id = CurrentEmployee.Id,
                 RowId = Guid.NewGuid(),
                 Summa = 0,
@@ -722,7 +723,7 @@ namespace KursAM2.ViewModel.Personal
 
         public ICommand DeleteNachCommand
         {
-            get { return new Command(DeleteNach, param => true); }
+            get { return new Command(DeleteNach, param => CurrentNach != null); }
         }
 
         private void DeleteNach(object obj)

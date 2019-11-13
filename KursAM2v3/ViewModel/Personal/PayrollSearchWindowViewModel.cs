@@ -159,6 +159,14 @@ namespace KursAM2.ViewModel.Personal
                         RaisePropertyChanged(nameof(Vedomost));
                     }
                 }
+                if (Vedomost.Count > 0)
+                {
+                    CurrentVedomost = Vedomost.First();
+                }
+                if (Template.Count > 0)
+                {
+                    CurrentTemplate = Template.First();
+                }
             }
             catch (Exception ex)
             {

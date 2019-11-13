@@ -427,14 +427,17 @@ namespace KursAM2.ViewModel.Personal
             }
 
             Periods = new ObservableCollection<NachEmployeeForPeriod>(datesSource.OrderByDescending(_ => _.DateStart));
-            var form = Form as PersonalPaysView;
-            if (form == null) return;
-            var periods = form.treePeriods;
-            foreach (var p in periods.Bands.Where(_ => _.Name=="RUB" || _.Name=="USD" || _.Name=="EUR"))
-            {
-                p.Visible = CurrentEmploee.CrsName == p.Name;
-            }
             RaisePropertyChanged(nameof(Periods));
+            var form = Form as PersonalPaysView;
+            var bands = form?.treePeriods.Bands.FirstOrDefault(_ => _.Name=="bandt2");
+            if (bands == null) return;
+            foreach (var p in bands.Bands)
+            {
+                if ((string) p.Header == "RUB" || (string) p.Header == "USD" || (string) p.Header == "EUR")
+                {
+                    p.Visible = CurrentEmploee.CrsName == (string)p.Header;
+                }
+            }
         }
 
         public void LoadForAll(DateTime date)
