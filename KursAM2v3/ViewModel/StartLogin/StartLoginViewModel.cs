@@ -117,22 +117,26 @@ namespace KursAM2.ViewModel.StartLogin
                     .Where(_ => _.UserId == newUser.KursId).ToList();
                 var tileItems = ctx.KursMenuGroup.ToList();
                 var tileUsersItems = ctx.UserMenuRight.Where(_ => _.DBId==GlobalOptions.DataBaseId 
-                                                                  && _.LoginName.ToUpper() == newUser.NickName.ToUpper());
+                                                                  && _.LoginName.ToUpper() == newUser.NickName.ToUpper())
+                    .ToList();
                 var tileGroupsTemp = new List<TileGroup>();
                 foreach (var grp in tileItems.OrderBy(_ => _.OrderBy))
                 {
                     var grpOrd = tileOrders.FirstOrDefault(_ => _.IsGroup && _.TileId == grp.Id);
-                    if (tileUsersItems.Any(_ => _.MenuId == grp.Id))
+                    foreach (var t in grp.KursMenuItem)
                     {
-                        var newGrp = new TileGroup
+                        if (tileUsersItems.Any(_ => _.MenuId == t.Id) && tileGroupsTemp.All(_ => _.Id != grp.Id))
                         {
-                            Id = grp.Id,
-                            Name = grp.Name,
-                            Notes = grp.Note,
-                            Picture = ImageManager.ByteToImage(grp.Picture),
-                            OrderBy = (int) (grpOrd != null ? grpOrd.Order : grp.Id)
-                        };
-                        tileGroupsTemp.Add(newGrp);
+                            var newGrp = new TileGroup
+                            {
+                                Id = grp.Id,
+                                Name = grp.Name,
+                                Notes = grp.Note,
+                                Picture = ImageManager.ByteToImage(grp.Picture),
+                                OrderBy = (int) (grpOrd != null ? grpOrd.Order : grp.Id)
+                            };
+                            tileGroupsTemp.Add(newGrp);
+                        }
                     }
                 }
                 var tileGroups = new List<TileGroup>(tileGroupsTemp.OrderBy(_ => _.OrderBy));
@@ -140,6 +144,7 @@ namespace KursAM2.ViewModel.StartLogin
                 {   var tItems = new List<TileItem>();
                     foreach (var tile in ctx.KursMenuItem.Where(t => t.GroupId == grp.Id).ToList())
                     {
+                        if (tileUsersItems.All(_ => _.MenuId != tile.Id)) continue;
                         var ord = tileOrders.FirstOrDefault(_ => !_.IsGroup && _.TileId == tile.Id);
                         tItems.Add(new TileItem
                         {
@@ -396,6 +401,7 @@ namespace KursAM2.ViewModel.StartLogin
                         view.AvatarObj.Source =
                             new BitmapImage(new Uri("./../Images/businessman.png", UriKind.Relative));
                     else
+                        // ReSharper disable once PossibleNullReferenceException
                         view.AvatarObj.Source = user.Avatar != null
                             ? ImageManager.ByteToImageSource(user.Avatar)
                             : new BitmapImage(new Uri("./../Images/businessman.png", UriKind.Relative));

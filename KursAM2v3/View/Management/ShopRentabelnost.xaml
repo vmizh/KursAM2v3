@@ -58,7 +58,7 @@
                                     <dxe:TextEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
-                            <dxg:GridColumn Name="col4" Header="Результат" ReadOnly="True" FieldName="Documents">
+                            <dxg:GridColumn Name="col4" Header="Результат" ReadOnly="True" FieldName="Result">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:TextEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
@@ -121,7 +121,7 @@
                                     <dxe:TextEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
-                            <dxg:GridColumn Name="col18" Header="Результат" ReadOnly="True" FieldName="Documents"
+                            <dxg:GridColumn Name="col18" Header="Результат" ReadOnly="True" FieldName="Result"
                                             VisibleIndex="2">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:TextEditSettings DisplayFormat="n2" />
@@ -131,10 +131,10 @@
                         <dxg:GridControl.TotalSummary>
                             <dxg:GridSummaryItem FieldName="Name" SummaryType="Count" />
                             <dxg:GridSummaryItem FieldName="Quantity" SummaryType="Sum"
-                                                 DisplayFormat="n0" />
+                                                 DisplayFormat="n2" />
                             <dxg:GridSummaryItem FieldName="Summa" SummaryType="Sum" DisplayFormat="n2" />
                             <dxg:GridSummaryItem FieldName="Cost" SummaryType="Sum" DisplayFormat="n2" />
-                            <dxg:GridSummaryItem FieldName="Documents" SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem FieldName="Result" SummaryType="Sum" DisplayFormat="n2" />
                         </dxg:GridControl.TotalSummary>
 
                         <dxg:GridControl.View>
