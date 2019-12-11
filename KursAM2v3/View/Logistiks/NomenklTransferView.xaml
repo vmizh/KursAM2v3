@@ -113,7 +113,7 @@
                             <dxg:GridControl.Columns>
                                 <dxg:GridColumn x:Name="col1" Header="Источник" FieldName="NomenklOut" ReadOnly="True" />
                                 <dxg:GridColumn x:Name="col2" Header="Получатель" FieldName="NomenklIn"
-                                                ReadOnly="{Binding IsRowReadOnly}">
+                                                >
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:ButtonEditSettings AllowDefaultButton="False">
                                             <dxe:ButtonEditSettings.Buttons>
@@ -128,7 +128,7 @@
                                 <dxg:GridColumn x:Name="col4" Header="Ном.№ (источник)" FieldName="NomenklNumberOut"
                                                 ReadOnly="True" />
                                 <dxg:GridColumn x:Name="col5" Header="Кол-во" FieldName="Quantity"
-                                                ReadOnly="{Binding IsRowReadOnly}">
+                                                >
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2"
                                                               MaskUseAsDisplayFormat="True"
@@ -144,7 +144,7 @@
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn x:Name="col7" Header="Курс" FieldName="Rate"
-                                                ReadOnly="{Binding IsRowReadOnly}">
+                                                >
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2"
                                                               MaskUseAsDisplayFormat="True"
@@ -152,7 +152,7 @@
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn x:Name="col8" Header="Цена получателя" FieldName="PriceIn"
-                                                ReadOnly="{Binding IsRowReadOnly}">
+                                                >
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2"
                                                               MaskUseAsDisplayFormat="True"
@@ -162,7 +162,7 @@
                                 <dxg:GridColumn x:Name="col9" Header="Валюта получателя" FieldName="CurrencyIn"
                                                 ReadOnly="True" />
                                 <dxg:GridColumn x:Name="col10" Header="Сумма получателя" FieldName="SummaIn"
-                                                ReadOnly="{Binding IsRowReadOnly}">
+                                                >
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2"
                                                               MaskUseAsDisplayFormat="True"
@@ -199,7 +199,7 @@
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn x:Name="col17_1" Header="Курс (накл)" FieldName="NakladRate"
-                                                ReadOnly="{Binding IsRowReadOnly}">
+                                                >
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n4"
                                                               MaskUseAsDisplayFormat="True"
@@ -208,7 +208,7 @@
                                 </dxg:GridColumn>
                                 <dxg:GridColumn x:Name="col18" Header="Накладные расходы (новые)"
                                                 FieldName="NakladNewEdSumma"
-                                                ReadOnly="{Binding IsRowReadOnly}">
+                                                >
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2"
                                                               MaskUseAsDisplayFormat="True"

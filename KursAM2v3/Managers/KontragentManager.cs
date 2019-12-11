@@ -17,17 +17,6 @@ namespace KursAM2.Managers
         {
             try
             {
-                //using (var ctx = new LocalDbContext())
-                //{
-                //    var dd = ctx.KontragentCashes.Where(_ => _.DBName == GlobalOptions.DataBaseName).ToList();
-                //    if (dd.Count > 0)
-                //        foreach (var d in dd)
-                //        {
-                //            var k = MainReferences.GetKontragent(d.DocCode);
-                //            if (k != null)
-                //                k.OrderCount = d.Count;
-                //        }
-                //}
                 using (var dtx = GlobalOptions.KursSystem())
                 {
                     var dd = dtx.KontragentCashes.Where(_ => _.UserId == GlobalOptions.UserInfo.KursId
@@ -107,32 +96,6 @@ namespace KursAM2.Managers
         {
             try
             {
-                //using (var ctx = new LocalDbContext())
-                //{
-                //    var k = ctx.KontragentCashes.FirstOrDefault(_ =>
-                //        _.DocCode == dc && _.DBName == GlobalOptions.DataBaseName);
-                //    if (k != null)
-                //    {
-                //        k.Count = k.Count + 1;
-                //        k.LastUpdate = DateTime.Now;
-                //    }
-                //    else
-                //    {
-                //        var newId = 1;
-                //        var d = ctx.KontragentCashes.ToList().Count;
-                //        if (d > 0)
-                //            newId = ctx.KontragentCashes.Max(_ => _.Id) + 1;
-                //        ctx.KontragentCashes.Add(new KontragentCash
-                //        {
-                //            Id = newId,
-                //            DBName = GlobalOptions.DataBaseName,
-                //            DocCode = dc,
-                //            LastUpdate = DateTime.Now,
-                //            Count = 1
-                //        });
-                //    }
-                //    ctx.SaveChanges();
-                //}
                 using (var ctx = GlobalOptions.KursSystem())
                 {
                     var k = ctx.KontragentCashes.FirstOrDefault(_ =>
@@ -145,7 +108,6 @@ namespace KursAM2.Managers
                     }
                     else
                     {
-                        var d = ctx.KontragentCashes.ToList().Count;
                         ctx.KontragentCashes.Add(new KontragentCashes
                         {
                             Id =  Guid.NewGuid(),

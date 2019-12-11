@@ -39,9 +39,17 @@ namespace KursAM2.View.Logistiks
 
         private void RaiseIsRowReadonly()
         {
-            var ctx = DataContext as NomenklTransferWindowViewModel;
             // ReSharper disable once NotResolvedInText
-            ctx?.RaisePropertyChanged("IsRowReadOnly");
+            if (!(DataContext is NomenklTransferWindowViewModel ctx)) return;
+            //ctx.RaisePropertyChanged("IsRowReadOnly");
+            col2.ReadOnly = !ctx.CurrentRow.IsAccepted;
+            col5.ReadOnly = !ctx.CurrentRow.IsAccepted;
+            col7.ReadOnly = !ctx.CurrentRow.IsAccepted;
+            col8.ReadOnly = !ctx.CurrentRow.IsAccepted;
+            col10.ReadOnly = !ctx.CurrentRow.IsAccepted;
+            col17_1.ReadOnly = !ctx.CurrentRow.IsAccepted;
+            col18.ReadOnly = !ctx.CurrentRow.IsAccepted;
+            tableView.UpdateLayout();
         }
 
         private void GridControl_OnCurrentItemChanged(object sender, CurrentItemChangedEventArgs e)

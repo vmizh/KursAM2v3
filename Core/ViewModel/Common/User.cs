@@ -14,6 +14,7 @@ namespace Core.ViewModel.Common
             Entity = DefaultValue();
         }
 
+        public override decimal DocCode => USR_ID;
         public string NickName
         {
             get => Entity.USR_NICKNAME;

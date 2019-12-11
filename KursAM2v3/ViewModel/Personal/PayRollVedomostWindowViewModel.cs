@@ -200,7 +200,9 @@ namespace KursAM2.ViewModel.Personal
                                 PRType = PayrollTypeCollection.Single(_ =>
                                     _.DocCode == GlobalOptions.SystemProfile.DafaultPayRollType.DocCode),
                                 Summa = 0,
-                                Rate = 0
+                                Rate = 0,
+                                NachDate = Date
+
                             }
                         }
                         : new ObservableCollection<PayRollVedomostEmployeeRowViewModel>()

@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using DevExpress.Xpf.Core;
@@ -139,12 +141,34 @@ namespace Core.WindowsManager
             ShowMessage(null, message, caption, image);
         }
 
-        public static void ShowError(Exception ex)
+        private static string GetCallForExceptionThisMethod(MethodBase methodBase, Exception e)
         {
-            var errText = StringBuilder(ex);
-            if (ex.InnerException != null)
+            StackTrace trace = new StackTrace(e);
+            StackFrame previousFrame = null;
+
+            // ReSharper disable once PossibleNullReferenceException
+            foreach (StackFrame frame in trace.GetFrames())
             {
-                var ex1 = ex.InnerException;
+                if (frame.GetMethod() == methodBase)
+                {
+                    break;
+                }
+
+                previousFrame = frame;
+            }
+
+            return previousFrame?.GetMethod().Name;
+        }
+
+        public static void ShowError(Exception ex, string caption = null)
+        {
+            var winActive = Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive);
+            var methodname = GetCallForExceptionThisMethod(null, ex);
+            var errText = StringBuilder(ex);
+            var ex1 = ex;
+            while (ex1.InnerException != null)
+            {
+                ex1 = ex1.InnerException;
                 errText.Append(ex1.Message + "\n");
                 if (ex1.InnerException != null)
                     errText.Append(ex1.InnerException.Message);
@@ -158,7 +182,7 @@ namespace Core.WindowsManager
                         DbId = GlobalOptions.DataBaseId,
                         Host = Environment.MachineName,
                         UserId = GlobalOptions.UserInfo.KursId,
-                        ErrorText = errText.ToString(),
+                        ErrorText = winActive + "/" + (methodname ?? "Метод не указан") + ": " + errText,
                         Moment = DateTime.Now
                     });
                     errCtx.SaveChanges();
@@ -167,7 +191,7 @@ namespace Core.WindowsManager
             if (Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive) != null)
                 WinUIMessageBox.Show(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
                     errText.ToString(),
-                    "Ошибка",
+                    caption ?? "Ошибка",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error,
                     MessageBoxResult.None, MessageBoxOptions.None,
@@ -191,18 +215,6 @@ namespace Core.WindowsManager
                     FloatingMode.Adorner);
             else
                 ShowDBError(ex.InnerException);
-        }
-
-        public static void ShowError(Exception ex, string caption)
-        {
-            var errText = StringBuilder(ex);
-            WinUIMessageBox.Show(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
-                errText.ToString(),
-                caption,
-                MessageBoxButton.OK,
-                MessageBoxImage.Error,
-                MessageBoxResult.None, MessageBoxOptions.None,
-                FloatingMode.Adorner);
         }
 
         private static StringBuilder StringBuilder(Exception ex)

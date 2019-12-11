@@ -62,7 +62,7 @@ namespace KursAM2.ViewModel.Personal
             get => myCurrentUser;
             set
             {
-                if (myCurrentUser != null && myCurrentUser.Equals(value)) return;
+                if (myCurrentUser == value) return;
                 myCurrentUser = value;
                 RaisePropertyChanged();
             }
@@ -107,7 +107,7 @@ namespace KursAM2.ViewModel.Personal
 
         public override void SaveData(object data)
         {
-            if (CurrentPersona == null || CurrentPersona.State == RowStatus.NotEdited) return;
+            if (PersonaCollection.All(_ => _.State == RowStatus.NotEdited)) return;
             using (var ctxsave = GlobalOptions.GetEntities())
             {
                 using (var tnx = ctxsave.Database.BeginTransaction())
@@ -166,24 +166,21 @@ namespace KursAM2.ViewModel.Personal
                                 ctxsave.EMP_USER_RIGHTS.Remove(udel);
                         }
 
-                        foreach (var u in UserCollection.Where(_ => _.State == RowStatus.NewRow))
+                        foreach (var u in UserCollection)
+                        {
+                            var old = ctxsave.EMP_USER_RIGHTS.FirstOrDefault(_ => _.EMP_DC == CurrentPersona.DocCode
+                                                                                  && _.USER == u.NickName);
+                            if (old != null) continue;
                             ctxsave.EMP_USER_RIGHTS.Add(new EMP_USER_RIGHTS
                             {
                                 EMP_DC = CurrentPersona.DocCode,
                                 USER = u.NickName
                             });
+                        }
                         ctxsave.SaveChanges();
                         tnx.Commit();
                         MainReferences.Refresh();
-                        PersonaCollection.Clear();
-                        foreach (var s in myCtx.SD_2.Include(_ => _.SD_301).ToList())
-                        {
-                            if(PersonaCollection.All(_ => _.DocCode != s.DOC_CODE))
-                            {
-                                PersonaCollection.Add(new Persona(s) {State = RowStatus.NotEdited});
-                            }
-                        }
-                        RaisePropertyChanged(nameof(PersonaCollection));
+                        RefreshData(null);
                     }
                     catch (Exception ex)
                     {
