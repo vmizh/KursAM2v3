@@ -35,6 +35,7 @@ namespace KursAM2.View.Management.Controls
             var ctx = DataContext as ManagementBalansCompareWindowViewModel;
             foreach (var column in gridFinanse.Columns)
             {
+                if (ctx == null) return;
                 GridControlBand b;
                 switch (column.FieldName)
                 {
@@ -43,50 +44,64 @@ namespace KursAM2.View.Management.Controls
                             gridFinanse.Bands.FirstOrDefault(
                                 _ => _.Columns.Any(c => c.FieldName == "SummaEUR"));
                         if (b != null)
-                            b.Visible = ctx == null || ctx.FinanseOperations.Sum(_ => _.SummaEUR) != 0 ||
+                            b.Visible = ctx.FinanseOperations.Sum(_ => _.SummaEUR) != 0 ||
                                         ctx.FinanseOperations.Sum(_ => _.SummaEUR2) != 0;
+                        SetVisibleColumnsForBand(b);
                         break;
                     case "SummaUSD":
                         b =
                             gridFinanse.Bands.FirstOrDefault(
                                 _ => _.Columns.Any(c => c.FieldName == "SummaUSD"));
                         if (b != null)
-                            b.Visible = ctx == null || ctx.FinanseOperations.Sum(_ => _.SummaUSD) != 0 ||
+                            b.Visible = ctx.FinanseOperations.Sum(_ => _.SummaUSD) != 0 ||
                                         ctx.FinanseOperations.Sum(_ => _.SummaUSD2) != 0;
+                        SetVisibleColumnsForBand(b);
                         break;
                     case "SummaRUB":
                         b =
                             gridFinanse.Bands.FirstOrDefault(
                                 _ => _.Columns.Any(c => c.FieldName == "SummaRUB"));
                         if (b != null)
-                            b.Visible = ctx == null || ctx.FinanseOperations.Sum(_ => _.SummaRUB) != 0 ||
+                            b.Visible = ctx.FinanseOperations.Sum(_ => _.SummaRUB) != 0 ||
                                         ctx.FinanseOperations.Sum(_ => _.SummaRUB2) != 0;
+                        SetVisibleColumnsForBand(b);
                         break;
                     case "SummaGBP":
                         b =
                             gridFinanse.Bands.FirstOrDefault(
                                 _ => _.Columns.Any(c => c.FieldName == "SummaGBP"));
                         if (b != null)
-                            b.Visible = ctx == null || ctx.FinanseOperations.Sum(_ => _.SummaGBP) != 0 ||
+                            b.Visible = ctx.FinanseOperations.Sum(_ => _.SummaGBP) != 0 ||
                                         ctx.FinanseOperations.Sum(_ => _.SummaGBP2) != 0;
+                        SetVisibleColumnsForBand(b);
                         break;
                     case "SummaCHF":
                         b =
                             gridFinanse.Bands.FirstOrDefault(
                                 _ => _.Columns.Any(c => c.FieldName == "SummaCHF"));
                         if (b != null)
-                            b.Visible = ctx == null || ctx.FinanseOperations.Sum(_ => _.SummaCHF) != 0 ||
+                            b.Visible = ctx.FinanseOperations.Sum(_ => _.SummaCHF) != 0 ||
                                         ctx.FinanseOperations.Sum(_ => _.SummaCHF2) != 0;
+                        SetVisibleColumnsForBand(b);
                         break;
                     case "SummaSEK":
                         b =
                             gridFinanse.Bands.FirstOrDefault(
                                 _ => _.Columns.Any(c => c.FieldName == "SummaSEK"));
                         if (b != null)
-                            b.Visible = ctx == null || ctx.FinanseOperations.Sum(_ => _.SummaSEK) != 0 ||
+                            b.Visible = ctx.FinanseOperations.Sum(_ => _.SummaSEK) != 0 ||
                                         ctx.FinanseOperations.Sum(_ => _.SummaSEK2) != 0;
+                        SetVisibleColumnsForBand(b);
                         break;
                 }
+            }
+        }
+
+        private void SetVisibleColumnsForBand(GridControlBand band)
+        {
+            foreach (var c in band.Columns)
+            {
+                c.Visible = band.Visible;
             }
         }
 
@@ -97,7 +112,9 @@ namespace KursAM2.View.Management.Controls
 
         private void BalansCompareFinanseUI_Loaded(object sender, RoutedEventArgs e)
         {
+
             LayoutManager.Load(true);
+            ResetCurrencyColumns();
         }
 
         private void OnColumnsGenerated(object sender, RoutedEventArgs e)

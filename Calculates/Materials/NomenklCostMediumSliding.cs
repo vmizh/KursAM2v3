@@ -96,21 +96,7 @@ namespace Calculates.Materials
                                 oper.FinDocumentDC = d.TD_26.SD_26.DOC_CODE;
                                 oper.FinDocument =
                                     $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}";
-                                //if (MainReferences.GetNomenkl(d.DDT_NOMENKL_DC).Currency.DocCode !=
-                                //    GlobalOptions.SystemProfile.MainCurrency.DocCode)
-                                //{
-                                //    var crsRates = new CurrencyRates(d.TD_26.SD_26.SF_POSTAV_DATE, d.TD_26.SD_26.SF_POSTAV_DATE);
-                                //    oper.Naklad = (crsRates.GetRate(GlobalOptions.SystemProfile.MainCurrency.DocCode,
-                                //        MainReferences.GetNomenkl(d.DDT_NOMENKL_DC).Currency.DocCode,
-                                //                      d.TD_26.SD_26.SF_POSTAV_DATE)* d.TD_26.SFT_SUMMA_NAKLAD ?? 0) / d.TD_26.SFT_KOL;
-                                //}
-                                //else
-                                //{
                                     oper.Naklad = (d.TD_26.SFT_SUMMA_NAKLAD ?? 0) / d.TD_26.SFT_KOL;
-                                    
-                                //}
-                                
-                                // ReSharper disable once PossibleInvalidOperationException
                                 oper.DocPrice = (decimal) d.TD_26.SFT_ED_CENA;
                             }
                             if (d.TD_84 != null)

@@ -19,10 +19,10 @@
                                  EnableSmartColumnsGeneration="True"
                                  dx:DXSerializer.StoreLayoutMode="ALL"
                                  dx:DXSerializer.SerializationID="gridPersona"
-                                 dxg:GridSerializationOptions.AddNewColumns="False"
-                                 dxg:GridSerializationOptions.RemoveOldColumns="False"
-                                 ItemsSource="{Binding PersonaCollection}"
-                                 CurrentItem="{Binding CurrentPersona, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 dxg:GridSerializationOptions.AddNewColumns="True"
+                                 dxg:GridSerializationOptions.RemoveOldColumns="True"
+                                 ItemsSource="{Binding PersonaCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                 CurrentItem="{Binding CurrentPersona, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
                                  CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
                     <dxg:GridControl.Columns>
                         <dxg:GridColumn x:Name="col1" Header="Табельный номер" FieldName="TabelNumber" />
@@ -78,8 +78,8 @@
                                  EnableSmartColumnsGeneration="True"
                                  dx:DXSerializer.StoreLayoutMode="ALL"
                                  dx:DXSerializer.SerializationID="gridUser"
-                                 dxg:GridSerializationOptions.AddNewColumns="False"
-                                 dxg:GridSerializationOptions.RemoveOldColumns="False"
+                                 dxg:GridSerializationOptions.AddNewColumns="True"
+                                 dxg:GridSerializationOptions.RemoveOldColumns="True"
                                  ItemsSource="{Binding UserCollection}"
                                  CurrentItem="{Binding CurrentUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <dxg:GridControl.Columns>

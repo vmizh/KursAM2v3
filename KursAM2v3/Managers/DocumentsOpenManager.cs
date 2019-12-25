@@ -13,11 +13,13 @@ using KursAM2.View.Finance.Invoices;
 using KursAM2.View.KursReferences;
 using KursAM2.View.Logistiks;
 using KursAM2.View.Logistiks.Warehouse;
+using KursAM2.View.Personal;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Logistiks.Warehouse;
+using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reference;
 
 namespace KursAM2.Managers
@@ -46,6 +48,7 @@ namespace KursAM2.Managers
                 case DocumentType.Bank:
                 case DocumentType.Waybill:
                 case DocumentType.NomenklTransfer:
+                case DocumentType.PayRollVedomost:
                     return true;
                 default:
                     return false;
@@ -70,7 +73,8 @@ namespace KursAM2.Managers
             return DocumentType.None;
         }
 
-        public static void Open(DocumentType docType, decimal dc, Guid? id = null, object parent = null)
+        public static void Open(DocumentType docType, decimal dc, Guid? id = null,
+            object parent = null)
         {
             if (!IsDocumentOpen(docType)) return;
             switch (docType)
@@ -111,9 +115,20 @@ namespace KursAM2.Managers
                 case DocumentType.Waybill:
                     OpenWayBill(dc);
                     break;
+                case DocumentType.PayRollVedomost:
+                    OpenPayroll(id);
+                    break;
                 default:
                     return;
             }
+        }
+
+        private static void OpenPayroll(Guid? id)
+        {
+            var ctx = new PayRollVedomostWindowViewModel(id.ToString());
+            var form = new PayRollVedomost();
+            form.Show();
+            form.DataContext = ctx;
         }
 
         public static void Open(DocumentType docType, RSWindowViewModelBase vm, object parent = null)

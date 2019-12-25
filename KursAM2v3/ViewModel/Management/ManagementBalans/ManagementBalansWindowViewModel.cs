@@ -1028,8 +1028,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaRUB = per.Employee.crs_dc.Value == CurrencyCode.RUB ? -per.DolgSumma : 0,
                     SummaGBP = per.Employee.crs_dc.Value == CurrencyCode.GBP ? -per.DolgSumma : 0,
                     SummaCHF = per.Employee.crs_dc.Value == CurrencyCode.CHF ? -per.DolgSumma : 0,
-                    SummaSEK = per.Employee.crs_dc.Value == CurrencyCode.SEK ? -per.DolgSumma : 0
-                    //Persona = MainReferences.Employees[per.DocCode]
+                    SummaSEK = per.Employee.crs_dc.Value == CurrencyCode.SEK ? -per.DolgSumma : 0,
+                    Persona = per.Employee
                     // ReSharper restore PossibleInvalidOperationException
                 });
             }

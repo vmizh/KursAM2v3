@@ -248,7 +248,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
             Document.myState = RowStatus.NotEdited;
             // ReSharper disable once PossibleInvalidOperationException
-            OldSumma = (decimal) Document.SUMM_ORD;
+            OldSumma = Document.SUMM_ORD ?? 0;
         }
 
         public override void DocNewEmpty(object form)

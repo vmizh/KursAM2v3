@@ -668,6 +668,11 @@ namespace KursAM2.ViewModel.Management
 
         public override void DocumentOpen(object obj)
         {
+            if (CurrentExtend.DocTypeCode == DocumentType.PayRollVedomost)
+            {
+                DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, 0, Guid.Parse(CurrentExtend.StringId));
+                return;
+            }
             DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, CurrentExtend.DocCode);
         }
 

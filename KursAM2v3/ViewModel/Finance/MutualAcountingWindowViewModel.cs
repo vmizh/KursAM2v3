@@ -317,57 +317,64 @@ namespace KursAM2.ViewModel.Finance
 
         public override void RefreshData(object obj)
         {
-            base.RefreshData(obj);
-            if (Document != null && IsCanSaveData)
+            try
             {
-                var res = MessageBox.Show("В документ были внесены изменения, сохранить?", "Запрос",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question);
-                switch (res)
+                base.RefreshData(obj);
+                if (Document != null && IsCanSaveData)
                 {
-                    case MessageBoxResult.Yes:
-                        SaveData(null);
-                        break;
-                    case MessageBoxResult.No:
-                        break;
-                }
-            }
-
-            if (Document?.DocCode > 0)
-            {
-                Document = Manager.Load(Document.DocCode);
-                RaisePropertyChanged(nameof(Document));
-            }
-            else
-            {
-                if (obj == null) return;
-                var dc = (decimal) obj;
-                Document = Manager.Load(dc);
-                if (Document == null)
-                {
-                    WinManager.ShowWinUIMessageBox($"Не найден документ с кодом {dc}!",
-                        "Ошибка обращения к базе данных", MessageBoxButton.OK, MessageBoxImage.Error,
-                        MessageBoxResult.None, MessageBoxOptions.None);
-                    return;
+                    var res = MessageBox.Show("В документ были внесены изменения, сохранить?", "Запрос",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+                    switch (res)
+                    {
+                        case MessageBoxResult.Yes:
+                            SaveData(null);
+                            break;
+                        case MessageBoxResult.No:
+                            break;
+                    }
                 }
 
-                Document.IsOld = Manager.CheckDocumentForOld(Document.DocCode);
-                RaisePropertyChanged(nameof(Document));
-            }
+                if (Document?.DocCode > 0)
+                {
+                    Document = Manager.Load(Document.DocCode);
+                    RaisePropertyChanged(nameof(Document));
+                }
+                else
+                {
+                    if (obj == null) return;
+                    var dc = (decimal) obj;
+                    Document = Manager.Load(dc);
+                    if (Document == null)
+                    {
+                        WinManager.ShowWinUIMessageBox($"Не найден документ с кодом {dc}!",
+                            "Ошибка обращения к базе данных", MessageBoxButton.OK, MessageBoxImage.Error,
+                            MessageBoxResult.None, MessageBoxOptions.None);
+                        return;
+                    }
 
-            foreach (var r in Document.Rows)
+                    Document.IsOld = Manager.CheckDocumentForOld(Document.DocCode);
+                    RaisePropertyChanged(nameof(Document));
+                }
+
+                foreach (var r in Document.Rows)
+                {
+                    if (r.VZT_SFACT_DC != null)
+                        r.SFClient = InvoicesManager.GetInvoiceClient((decimal) r.VZT_SFACT_DC);
+                    if (r.VZT_SPOST_DC != null)
+                        r.SFProvider = InvoicesManager.GetInvoiceProvider((decimal) r.VZT_SPOST_DC);
+                    r.myState = RowStatus.NotEdited;
+                }
+
+                UpdateDebitorCreditorCollections(null);
+                UpdateCalcSumma(null);
+                Document.myState = RowStatus.NotEdited;
+                RaisePropertiesChanged(nameof(IsCanSaveData));
+            }
+            catch (Exception ex)
             {
-                if (r.VZT_SFACT_DC != null)
-                    r.SFClient = InvoicesManager.GetInvoiceClient((decimal) r.VZT_SFACT_DC);
-                if (r.VZT_SPOST_DC != null)
-                    r.SFProvider = InvoicesManager.GetInvoiceProvider((decimal) r.VZT_SPOST_DC);
-                r.myState = RowStatus.NotEdited;
+                WindowManager.ShowError(ex);
             }
-
-            UpdateDebitorCreditorCollections(null);
-            UpdateCalcSumma(null);
-            Document.myState = RowStatus.NotEdited;
-            RaisePropertiesChanged(nameof(IsCanSaveData));
         }
 
         public override void DocDelete(object form)

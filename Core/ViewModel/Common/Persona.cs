@@ -13,9 +13,19 @@ namespace Core.ViewModel.Common
         public Persona()
         {
             Entity = new SD_2();
-            //if (Entity.crs_dc != null) Currency = MainReferences.Currencies[Entity.crs_dc.Value];
         }
-
+        public override Guid Id
+        {
+            get => Entity.ID == null ? Guid.NewGuid() : Guid.Parse(Entity.ID);
+            set
+            {
+                if (!string.IsNullOrEmpty(Entity.ID) && Guid.Parse(Entity.ID) != value)
+                {
+                    Entity.ID = value.ToString();
+                    RaisePropertyChanged();
+                }
+            }
+        }
         public override Currency Currency
         {
             get => Entity.crs_dc != null ? MainReferences.Currencies[Entity.crs_dc.Value] : null;

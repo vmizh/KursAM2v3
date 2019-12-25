@@ -989,7 +989,7 @@ namespace KursAM2.Managers
                         GroupId = Guid.Parse("{B96B2906-C5AA-4566-B77F-F3E4B912E72E}"),
                         Name = emps.Single(_ => _.TABELNUMBER == d.TabelNumber).NAME,
                         Date = d.Date ?? DateTime.MinValue,
-                        DocTypeCode = (DocumentType) 34,
+                        DocTypeCode = (DocumentType) 903,
                         SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
                         SDRState = d.SDRSchetDC == null
                             ? null
@@ -1059,7 +1059,7 @@ namespace KursAM2.Managers
         {
             using (var ent = GlobalOptions.GetEntities())
             {
-                var dataNach = (from empRows in ent.EMP_PR_ROWS
+                var dataNach = (from empRows in ent.EMP_PR_ROWS.Include(_ => _.EMP_PR_DOC)
                     from sd2 in ent.SD_2
                     from empNachHead in ent.EMP_PR_DOC
                     where empRows.EMP_DC == sd2.DOC_CODE
@@ -1073,7 +1073,8 @@ namespace KursAM2.Managers
                         Name = sd2.NAME,
                         Summa = empRows.SUMMA,
                         OperCrsDC = empRows.CRS_DC,
-                        IsShablon = empNachHead.IS_TEMPLATE
+                        IsShablon = empNachHead.IS_TEMPLATE,
+                        Id = empRows.EMP_PR_DOC.ID
                     }).ToList();
                 var emps = ent.SD_2.ToList();
                 foreach (var d in dataNach)
@@ -1084,7 +1085,8 @@ namespace KursAM2.Managers
                         GroupId = Guid.Parse("{B96B2906-C5AA-4566-B77F-F3E4B912E72E}"),
                         Name = emps.Single(_ => _.TABELNUMBER == d.TabelNumber).NAME,
                         Date = d.NachDate ?? DateTime.Today,
-                        DocTypeCode = (DocumentType) 903
+                        DocTypeCode = (DocumentType) 903,
+                        StringId = d.Id
                     };
                     SetCurrenciesValue(newOp, d.OperCrsDC, 0, d.Summa);
                     ExtendNach.Add(newOp);

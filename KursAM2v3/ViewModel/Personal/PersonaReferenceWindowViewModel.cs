@@ -49,8 +49,9 @@ namespace KursAM2.ViewModel.Personal
             set
             {
                 // ReSharper disable once PossibleUnintendedReferenceComparison
-                if (myCurrentPersona == value) return;
-                SaveData(myCurrentPersona);
+                if(CurrentPersona?.State == RowStatus.Edited)
+                    SaveData(myCurrentPersona);
+                if (myCurrentPersona == value) return; 
                 myCurrentPersona = value;
                 loadUsersForPersona();
                 RaisePropertyChanged();
@@ -206,7 +207,8 @@ namespace KursAM2.ViewModel.Personal
                 IsDeleted = false,
                 CHANGE_DATE = DateTime.Now,
                 Currency = MainReferences.Currencies[GlobalOptions.SystemProfile.EmployeeDefaultCurrency.DocCode],
-                State = RowStatus.NewRow
+                State = RowStatus.NewRow,
+                Id = Guid.NewGuid()
             };
             UserCollection.Clear();
             using (var ctx = GlobalOptions.GetEntities())
@@ -218,8 +220,9 @@ namespace KursAM2.ViewModel.Personal
             }
 
             PersonaCollection.Add(newPersona);
-            CurrentPersona = newPersona;
+            RaisePropertyChanged(nameof(PersonaCollection));
             RaisePropertyChanged(nameof(CurrentPersona));
+            CurrentPersona = newPersona;
         }
 
         public ICommand AddNewUser
