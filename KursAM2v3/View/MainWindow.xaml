@@ -22,7 +22,7 @@
             <dxb:BarButtonItem x:Name="barButtonItem3" Content="Выход" ItemClick="BarButtonItem3_OnItemClick" />
         </dxb:BarManager.Items>
         <dxb:BarManager.Bars>
-            <dxb:Bar Caption="Курс Альфа-Медиа" ShowDragWidget="False" IsMainMenu="True"
+            <dxb:Bar Caption="Курc" ShowDragWidget="False" IsMainMenu="True"
                      AllowQuickCustomization="False" AllowHide="False" AllowDrop="False">
                 <dxb:Bar.DockInfo>
                     <dxb:BarDockInfo ContainerType="Top" />
@@ -37,7 +37,7 @@
                 </dxb:Bar.DockInfo>
             </dxb:Bar>
         </dxb:BarManager.Bars>
-        <dxd:DockLayoutManager Margin="0" x:Name="dockLayout" AllowCustomization="True">
+        <dxd:DockLayoutManager Margin="0" x:Name="dockLayout1" AllowCustomization="True">
             <dxd:DockLayoutManager.LayoutRoot>
                 <dxd:LayoutGroup Name="LayoutGroup" Padding="0" ShowCloseButton="False" ShowControlBox="False"
                                  ShowScrollNextButton="False" ShowScrollPrevButton="False" Margin="0">
@@ -52,13 +52,36 @@
                                                 TileClick="tileMainGroup_TileClick" 
                                                 ItemPositionChanged="tileMainGroup_ItemPositionChanged" />
                     </dxd:LayoutPanel>
-                    <dxd:LayoutPanel Caption="Panel2" ShowCloseButton="False" ShowPinButton="False"
-                                     ShowMaximizeButton="False" ShowRestoreButton="False" ShowControlBox="False"
-                                     ShowBorder="False" ShowCaption="False"
-                                     Padding="0" Margin="0">
+                    <dxd:LayoutPanel ShowCloseButton="False" 
+                                     ShowPinButton="False"
+                                     ShowMaximizeButton="False" 
+                                     ShowRestoreButton="False"
+                                     ShowBorder="False" 
+                                     ShowCaption="True"
+                                     Padding="0" Margin="5,2,2,0"
+                                     Name="DocumentLayoutPanel"
+                                     dx:DXSerializer.SerializationID="DocumentLayoutPanel1"
+                                     dx:DXSerializer.LayoutVersion="1"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     >
+                        <dxd:LayoutPanel.Appearance>
+                            <dxd:Appearance>
+                                <dxd:Appearance.Normal>
+                                    <dxd:AppearanceObject 
+                                        FontSize="20"
+                                        />
+                                </dxd:Appearance.Normal>
+                                <dxd:Appearance.Active>
+                                    <dxd:AppearanceObject 
+                                        FontSize="20"
+                                    />
+                                </dxd:Appearance.Active>
+                            </dxd:Appearance>
+                        </dxd:LayoutPanel.Appearance>
                         <dxlc:TileLayoutControl x:Name="tileDocumentItems" Background="#FFD0D6D3" Padding="10"
                                                 TileClick="tileDocumentItems_TileClick" 
                                                 ItemPositionChanged="TileDocumentItems_OnItemPositionChanged"/>
+                        
 
                     </dxd:LayoutPanel>
                 </dxd:LayoutGroup>

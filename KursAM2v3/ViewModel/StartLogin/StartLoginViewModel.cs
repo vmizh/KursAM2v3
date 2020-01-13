@@ -14,9 +14,7 @@ using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
-using Data;
 using DevExpress.Mvvm;
-using DevExpress.XtraExport;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Splash;
@@ -97,7 +95,6 @@ namespace KursAM2.ViewModel.StartLogin
 
         private void bnOk_Click(object obj)
         {
-
             var view = Form as View.StartLogin;
             if (string.IsNullOrEmpty(CurrentUser) || CurrentUser.Trim() == string.Empty ||
                 string.IsNullOrEmpty(CurrentPassword)
@@ -116,15 +113,15 @@ namespace KursAM2.ViewModel.StartLogin
                 var tileOrders = GlobalOptions.KursSystem().UserMenuOrder
                     .Where(_ => _.UserId == newUser.KursId).ToList();
                 var tileItems = ctx.KursMenuGroup.ToList();
-                var tileUsersItems = ctx.UserMenuRight.Where(_ => _.DBId==GlobalOptions.DataBaseId 
-                                                                  && _.LoginName.ToUpper() == newUser.NickName.ToUpper())
+                var tileUsersItems = ctx.UserMenuRight.Where(_ => _.DBId == GlobalOptions.DataBaseId
+                                                                  && _.LoginName.ToUpper() ==
+                                                                  newUser.NickName.ToUpper())
                     .ToList();
                 var tileGroupsTemp = new List<TileGroup>();
                 foreach (var grp in tileItems.OrderBy(_ => _.OrderBy))
                 {
                     var grpOrd = tileOrders.FirstOrDefault(_ => _.IsGroup && _.TileId == grp.Id);
                     foreach (var t in grp.KursMenuItem)
-                    {
                         if (tileUsersItems.Any(_ => _.MenuId == t.Id) && tileGroupsTemp.All(_ => _.Id != grp.Id))
                         {
                             var newGrp = new TileGroup
@@ -137,11 +134,11 @@ namespace KursAM2.ViewModel.StartLogin
                             };
                             tileGroupsTemp.Add(newGrp);
                         }
-                    }
                 }
                 var tileGroups = new List<TileGroup>(tileGroupsTemp.OrderBy(_ => _.OrderBy));
                 foreach (var grp in tileGroups)
-                {   var tItems = new List<TileItem>();
+                {
+                    var tItems = new List<TileItem>();
                     foreach (var tile in ctx.KursMenuItem.Where(t => t.GroupId == grp.Id).ToList())
                     {
                         if (tileUsersItems.All(_ => _.MenuId != tile.Id)) continue;
@@ -158,7 +155,6 @@ namespace KursAM2.ViewModel.StartLogin
                     }
                     grp.TileItems = new List<TileItem>(tItems.OrderBy(_ => _.OrderBy));
                 }
-
                 newUser.MainTileGroups = new List<TileGroup>(tileGroups.OrderBy(_ => _.OrderBy));
                 newUser.Groups =
                     GlobalOptions.GetEntities().EXT_GROUPS.Select(
@@ -268,7 +264,6 @@ namespace KursAM2.ViewModel.StartLogin
                 GlobalOptions.DatabaseColor = SelectedDataSource.Color;
                 GlobalOptions.SqlConnectionString =
                     SelectedDataSource.GetConnectionString(CurrentUser, CurrentPassword);
-                
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var usr = ctx.EXT_USERS
@@ -306,7 +301,6 @@ namespace KursAM2.ViewModel.StartLogin
                 {
                     errText.Append($"\n {exx.InnerException.Message}");
                     exx = exx.InnerException;
-
                 }
                 MessageBox.Show("CheckAndSetUser error.\n" + errText);
                 newUser = null;
@@ -427,16 +421,13 @@ namespace KursAM2.ViewModel.StartLogin
 
         public void SaveСache(ImageSource data)
         {
-           
             using (var ctx = GlobalOptions.KursSystem())
             {
                 try
                 {
-                    
                     var user = ctx.Users.FirstOrDefault(_ => _.Id == GlobalOptions.UserInfo.KursId);
                     if (user != null) user.Avatar = ImageManager.ImageSourceToBytes(new PngBitmapEncoder(), data);
                     ctx.SaveChanges();
-
                     var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                     config.AppSettings.Settings["Login"].Value = CurrentUser;
                     config.Save();

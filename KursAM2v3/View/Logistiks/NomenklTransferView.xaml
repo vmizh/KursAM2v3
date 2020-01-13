@@ -203,7 +203,7 @@
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n4"
                                                               MaskUseAsDisplayFormat="True"
-                                                              AllowDefaultButton="True" />
+                                                              AllowDefaultButton="False" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn x:Name="col18" Header="Накладные расходы (новые)"
@@ -212,7 +212,7 @@
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2"
                                                               MaskUseAsDisplayFormat="True"
-                                                              AllowDefaultButton="True" />
+                                                              AllowDefaultButton="False" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                             </dxg:GridControl.Columns>

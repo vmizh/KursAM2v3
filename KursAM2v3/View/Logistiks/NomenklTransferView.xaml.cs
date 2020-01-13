@@ -25,6 +25,8 @@ namespace KursAM2.View.Logistiks
         private void NomenklTransferView_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
+            var dtx = DataContext as NomenklTransferWindowViewModel;
+            if (dtx == null) return;
         }
 
         private void NomenklTransferView_Closing(object sender, CancelEventArgs e)
@@ -34,27 +36,31 @@ namespace KursAM2.View.Logistiks
 
         private void tableView_CellValueChanging(object sender, CellValueChangedEventArgs e)
         {
-            RaiseIsRowReadonly();
+            if (e.Column.FieldName == "IsAccepted")
+            {
+                RaiseIsRowReadonly((bool)e.Value);
+            }
         }
 
-        private void RaiseIsRowReadonly()
+        private void RaiseIsRowReadonly(bool isAccepted)
         {
             // ReSharper disable once NotResolvedInText
             if (!(DataContext is NomenklTransferWindowViewModel ctx)) return;
             //ctx.RaisePropertyChanged("IsRowReadOnly");
-            col2.ReadOnly = !ctx.CurrentRow.IsAccepted;
-            col5.ReadOnly = !ctx.CurrentRow.IsAccepted;
-            col7.ReadOnly = !ctx.CurrentRow.IsAccepted;
-            col8.ReadOnly = !ctx.CurrentRow.IsAccepted;
-            col10.ReadOnly = !ctx.CurrentRow.IsAccepted;
-            col17_1.ReadOnly = !ctx.CurrentRow.IsAccepted;
-            col18.ReadOnly = !ctx.CurrentRow.IsAccepted;
+            col2.ReadOnly = isAccepted;
+            col5.ReadOnly = isAccepted;
+            col7.ReadOnly = isAccepted;
+            col8.ReadOnly = isAccepted;
+            col10.ReadOnly = isAccepted;
+            col17_1.ReadOnly = isAccepted;
+            col18.ReadOnly = isAccepted;
             tableView.UpdateLayout();
         }
 
         private void GridControl_OnCurrentItemChanged(object sender, CurrentItemChangedEventArgs e)
         {
-            RaiseIsRowReadonly();
+            if (!(DataContext is NomenklTransferWindowViewModel ctx)) return;
+            RaiseIsRowReadonly(ctx.CurrentRow.IsAccepted);
         }
 
         private void ButtonInfo_Click(object sender, RoutedEventArgs e)

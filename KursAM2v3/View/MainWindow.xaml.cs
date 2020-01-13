@@ -65,9 +65,9 @@ namespace KursAM2.View
                 myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, 1000 * 360 * 3, Timeout.Infinite);
 
 #endif
-                LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, dockLayout);
+                LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, dockLayout1);
+                Loaded += MainWindow_Loaded; 
                 Closing += MainWindow_Closing;
-                Loaded += MainWindow_Loaded;
                 Closed += MainWindow_Closed;
             }
             catch (Exception ex)
@@ -114,6 +114,7 @@ namespace KursAM2.View
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
+            DocumentLayoutPanel.Caption = "";
         }
 
         public void OpenForm(Window win, Window owner, RSWindowViewModelBase datacontext)
@@ -202,16 +203,6 @@ namespace KursAM2.View
                         ctx1.Form = form;
                         form.Show();
                         break;
-                    //case "Прибыль и убытки":
-                    //    var ctx2 = new ProfitAndLossesWindowViewModel();
-                    //    form = new ProfitAndLosses
-                    //    {
-                    //        Owner = Application.Current.MainWindow,
-                    //        DataContext = ctx2
-                    //    };
-                    //    ctx2.Form = form;
-                    //    form.Show();
-                    //    break;
                     case "Прибыли и убытки 2":
                         var ctxpb2 = new ProfitAndLossesWindowViewModel2();
                         form = new ProfitAndLosses2
@@ -729,11 +720,20 @@ namespace KursAM2.View
         private int CurrentMainGroupId = 0;
         private void tileMainGroup_TileClick(object sender, TileClickEventArgs tileClickEventArgs)
         {
+            DocumentLayoutPanel.Caption = tileClickEventArgs.Tile.ToolTip;
             tileDocumentItems.Children.Clear();
             CurrentMainGroupId = (int) tileClickEventArgs.Tile.Tag;
             var grp = GlobalOptions.UserInfo.MainTileGroups.FirstOrDefault(
                 _ => (int) tileClickEventArgs.Tile.Tag == _.Id);
             if (grp == null) return;
+            foreach (var item in tileMainGroup.Children)
+            {
+                if(item is Tile t)
+                    t.BorderThickness = new Thickness(0, 0, 0, 0);
+            }
+            tileClickEventArgs.Tile.BorderThickness = new Thickness(3, 3, 3, 3);
+            tileClickEventArgs.Tile.BorderBrush = Brushes.Orange;
+
             foreach (var tile in grp.TileItems.OrderBy(_ => _.OrderBy))
             {
                 var newTile = new Tile
