@@ -111,9 +111,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (Document == null) return;
             var frm = new OrderInView {Owner = Application.Current.MainWindow};
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                    "WarehouseOrderIn", true))
-                {Form = frm};
-            ctx.Document = orderManager.NewOrderInRecuisite(Document);
+                "WarehouseOrderIn", true)) {Form = frm, Document = orderManager.NewOrderInRecuisite(Document)};
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -138,6 +136,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 Document.DocCode = dc;
                 Document.myState = RowStatus.NotEdited;
+                RaisePropertyChanged(nameof(State));
             }
         }
 
@@ -149,6 +148,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         //TODO написать метод удаления привязки счета, ордера или внутреннего перемещения из приходного ордера
         private void DeleteLinkDocument(object obj)
         {
+            WinManager.ShowMessageBox("lkdfjglkfdjk","test");
         }
 
         public ICommand SetLinkDocumentCommand
@@ -159,6 +159,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         //TODO написать метод привязки счета, ордера или внутреннего перемещения из приходного ордера
         private void SetLinkDocument(object obj)
         {
+            WinManager.ShowMessageBox("lkdfjglkfdjk","test");
         }
 
         public ICommand OpenLinkDocumentCommand
@@ -169,6 +170,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         //TODO написать метод открытия счета, ордера или внутреннего перемещения из приходного ордера
         private void OpenLinkDocument(object obj)
         {
+            WinManager.ShowMessageBox("lkdfjglkfdjk","test");
+
         }
 
         public ICommand AddFromDocumentCommand
@@ -179,6 +182,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         //TODO создать диалог для вставки в приходный ордер строк из счетов фактур,ордеров и внутренних перемещений
         private void AddFromDocument(object obj)
         {
+            WinManager.ShowMessageBox("lkdfjglkfdjk","test");
         }
 
         public ICommand AddNomenklCommand
@@ -266,7 +270,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var frm = form as Window;
             frm?.Close();
         }
-
+        
         #endregion
     }
 }

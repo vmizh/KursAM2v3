@@ -440,7 +440,7 @@ namespace KursAM2.Managers.Invoices
                                 {
                                     ctx.TD_24.Add(new TD_24
                                     {
-
+                                        DOC_CODE = old.DOC_CODE,
                                         CODE = code,
                                         DDT_NOMENKL_DC = r.DDT_NOMENKL_DC,
                                         DDT_KOL_PRIHOD = r.DDT_KOL_PRIHOD,
@@ -527,7 +527,7 @@ namespace KursAM2.Managers.Invoices
                                 }
                                 else
                                 {
-                                    oldrow.DDT_NOMENKL_DC = r.DDT_NOMENKL_DC;
+                                    //oldrow.DDT_NOMENKL_DC = r.DDT_NOMENKL_DC;
                                     oldrow.DDT_KOL_PRIHOD = r.DDT_KOL_PRIHOD;
                                     oldrow.DDT_KOL_ZATREBOVANO = r.DDT_KOL_ZATREBOVANO;
                                     oldrow.DDT_KOL_RASHOD = r.DDT_KOL_RASHOD;

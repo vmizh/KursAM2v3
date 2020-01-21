@@ -11,16 +11,6 @@ namespace KursAM2.ViewModel.Logistiks
             Entity = ent;
         }
 
-        //public string OKPO
-        //{
-        //    get => Entity.OKPO;
-        //    set
-        //    {
-        //        if (Entity.OKPO == value) return;
-        //        Entity.OKPO = value;
-        //        RaisePropertyChanged();
-        //    }
-        //}
         public string GruzoTextForSchetFactura
         {
             get => Entity.GRUZO_TEXT_SF;

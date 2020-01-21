@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Documents;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel;
@@ -13,12 +12,15 @@ namespace KursAM2.View.Logistiks.UC
 {
     public class AddNomenklViewModel : RSWindowViewModelBase
     {
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private Currency currentCrs;
+
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private bool IsUsluga;
         private NomenklGroup myCurrentGroup;
         private Nomenkl myCurrentNomenkl;
         private Nomenkl myCurrentSelectNomenkl;
         private AddNomenklUC myDataUserControl;
-        private Currency currentCrs;
-        private bool IsUsluga;
 
         public AddNomenklViewModel(Currency crs = null, bool isUsluga = false)
         {
@@ -31,19 +33,14 @@ namespace KursAM2.View.Logistiks.UC
 
         public ObservableCollection<NomenklGroup> NomenklGroup { set; get; } =
             new ObservableCollection<NomenklGroup>();
-
         public ObservableCollection<Nomenkl> NomenklItem { set; get; } =
             new ObservableCollection<Nomenkl>();
-
         public ObservableCollection<Nomenkl> NomenklItemCollection { set; get; } =
             new ObservableCollection<Nomenkl>();
-
         public ObservableCollection<Nomenkl> SelectedNomenkl { set; get; } =
             new ObservableCollection<Nomenkl>();
-
         public List<Nomenkl> ListNomenklCollection { set; get; } =
             new List<Nomenkl>();
-
         public NomenklGroup CurrentGroup
         {
             set
@@ -55,7 +52,6 @@ namespace KursAM2.View.Logistiks.UC
             }
             get => myCurrentGroup;
         }
-
         public AddNomenklUC DataUserControl
         {
             set
@@ -66,7 +62,6 @@ namespace KursAM2.View.Logistiks.UC
             }
             get => myDataUserControl;
         }
-
         public Nomenkl CurrentNomenkl
         {
             set
@@ -77,7 +72,6 @@ namespace KursAM2.View.Logistiks.UC
             }
             get => myCurrentNomenkl;
         }
-
         public Nomenkl CurrentSelectNomenkl
         {
             set
@@ -89,7 +83,6 @@ namespace KursAM2.View.Logistiks.UC
             get => myCurrentSelectNomenkl;
         }
 
-       
         public void GetNomenklItem()
         {
             NomenklItem.Clear();
@@ -113,7 +106,6 @@ namespace KursAM2.View.Logistiks.UC
                     foreach (var item in ctx.SD_82.ToList())
                         NomenklGroup.Add(new NomenklGroup(item));
                     foreach (var item in ctx.SD_83.ToList())
-                    {
                         if (IsUsluga)
                         {
                             if (item.NOM_0MATER_1USLUGA == 1)
@@ -121,13 +113,11 @@ namespace KursAM2.View.Logistiks.UC
                         }
                         else
                         {
-                            if(currentCrs == null)
+                            if (currentCrs == null)
                                 NomenklItemCollection.Add(new Nomenkl(item));
-                            else 
-                                if(item.NOM_SALE_CRS_DC == currentCrs.DocCode)
-                                    NomenklItemCollection.Add(new Nomenkl(item));
+                            else if (item.NOM_SALE_CRS_DC == currentCrs.DocCode)
+                                NomenklItemCollection.Add(new Nomenkl(item));
                         }
-                    }
                 }
             }
             catch (Exception e)
@@ -171,8 +161,10 @@ namespace KursAM2.View.Logistiks.UC
             foreach (var item in NomenklItemCollection)
                 // ReSharper disable once RedundantLogicalConditionalExpressionOperand
                 // ReSharper disable once MergeConditionalExpression
-                if (item.NOM_POLNOE_IMIA != null ? item.NOM_POLNOE_IMIA.ToUpper().Contains(SearchText.ToUpper()) : false
-                    || item.NOM_NOMENKL.ToUpper().Contains(SearchText.ToUpper()))
+                if (item.NOM_POLNOE_IMIA != null
+                    ? item.NOM_POLNOE_IMIA.ToUpper().Contains(SearchText.ToUpper())
+                    : false
+                      || item.NOM_NOMENKL.ToUpper().Contains(SearchText.ToUpper()))
                     NomenklItem.Add(item);
         }
 

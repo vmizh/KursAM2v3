@@ -353,21 +353,21 @@ namespace KursAM2.ViewModel.Management.BreakEven
                             : new CentrOfResponsibility {Entity = new SD_40 {DOC_CODE = 0, CENT_NAME = "Не указан"}};
                         var emp = empls.FirstOrDefault(_ => _.DOC_CODE == d.Manager);
                         var crs = MainReferences.Currencies[d.Currency];
-                        var krate = GetRate(rates, d.KontrCrsDC, GlobalOptions.SystemProfile.NationalCurrency.DocCode,
-                            d.DATE);
-                        var nrate = GetRate(rates, d.NomenklCrsDC,
-                            GlobalOptions.SystemProfile.NationalCurrency.DocCode,
-                            d.DATE);
-                        var drate = GetRate(rates, d.Currency, GlobalOptions.SystemProfile.NationalCurrency.DocCode,
-                            d.DATE);
-                        var crsKontrRate = GetRate(rates, d.KontrCrsDC,
-                            GlobalOptions.SystemProfile.NationalCurrency.DocCode /*crs.DocCode*/, d.DATE);
+                        //var krate = GetRate(rates, d.KontrCrsDC, GlobalOptions.SystemProfile.NationalCurrency.DocCode,
+                        //    d.DATE);
+                        //var nrate = GetRate(rates, d.NomenklCrsDC,
+                        //    GlobalOptions.SystemProfile.NationalCurrency.DocCode,
+                        //    d.DATE);
+                        //var drate = GetRate(rates, d.Currency, GlobalOptions.SystemProfile.NationalCurrency.DocCode,
+                        //    d.DATE);
+                        //var crsKontrRate = GetRate(rates, d.KontrCrsDC,
+                        //    GlobalOptions.SystemProfile.NationalCurrency.DocCode /*crs.DocCode*/, d.DATE);
                         // ReSharper disable once PossibleInvalidOperationException
-                        var crsNomenklRate = nom != null
-                            ? GetRate(rates, (decimal) nom.NOM_SALE_CRS_DC,
-                                GlobalOptions.SystemProfile.NationalCurrency.DocCode
-                                /*crs.DocCode*/, d.DATE)
-                            : 0;
+                        //var crsNomenklRate = nom != null
+                        //    ? GetRate(rates, (decimal) nom.NOM_SALE_CRS_DC,
+                        //        GlobalOptions.SystemProfile.NationalCurrency.DocCode
+                        //        /*crs.DocCode*/, d.DATE)
+                        //    : 0;
                         DataAll.Add(new BreakEvenRow
                         {
                             Kontragent = MainReferences.AllKontragents[d.KontragentDC].Name,
@@ -376,10 +376,10 @@ namespace KursAM2.ViewModel.Management.BreakEven
                             CentrOfResponsibility = co,
                             Date = d.DATE,
                             Diler = diler != null ? diler.Name : "",
-                            DilerSumma = Convert.ToDecimal(d.DilerSumma) * drate,
+                            DilerSumma = Convert.ToDecimal(d.DilerSumma),// * drate,
                             IsUsluga = d.IsUsluga == 1,
                             KontrSumma = d.SummaKontrCrs, //Convert.ToDecimal(d.KontrSumma),
-                            KontrSummaCrs = d.SummaKontrCrs * krate - Convert.ToDecimal(d.DilerSumma) * drate,
+                            KontrSummaCrs = d.SummaKontrCrs /* *krate*/ - Convert.ToDecimal(d.DilerSumma), //* drate,
                             //Convert.ToDecimal(d.KontrSummaCrs),
                             Manager = emp != null ? emp.NAME : "Менеджер не указан",
                             //personaInfo != null ? personaInfo.FullName : "",
@@ -387,8 +387,8 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                 $"Накладная №'{d.NAKL_NUM} от {d.DATE.ToShortDateString()} {d.NAKL_NOTES}rdr[15]",
                             //d.Naklad,
                             NomenklSumWOReval =
-                                Convert.ToDecimal(d.NomenklSumWOReval) * nrate +
-                                Convert.ToDecimal(d.DilerSumma) * drate,
+                                Convert.ToDecimal(d.NomenklSumWOReval)+ //* nrate +
+                                Convert.ToDecimal(d.DilerSumma), //* drate,
                             OperCrsName = crs.CRS_SHORTNAME, // crsInfo.Name,
                             OperCurrency = crs,
                             Schet =
@@ -396,17 +396,17 @@ namespace KursAM2.ViewModel.Management.BreakEven
                             //d.Schet,
                             Quantity = Convert.ToDecimal(d.Quantity),
                             SummaNomenkl = d.NomSumm, //Convert.ToDecimal(d.SummaNomenkl),
-                            SummaNomenklCrs = !d.IsSaleTax ? d.NomSumm * nrate : d.Quantity * (d.SaleTaxPrice ?? 0),
+                            SummaNomenklCrs = !d.IsSaleTax ? d.NomSumm /* * nrate */ : d.Quantity * (d.SaleTaxPrice ?? 0),
                             //Convert.ToDecimal(d.SummaNomenklCrs),
                             Price = Convert.ToDecimal(d.Price),
-                            KontrOperSummaCrs = d.SummaKontrCrs * crsKontrRate,
+                            KontrOperSummaCrs = d.SummaKontrCrs, //* crsKontrRate,
                             SummaOperNomenkl =
-                                !d.IsSaleTax ? d.NomSumm * crsNomenklRate : d.Quantity * (d.SaleTaxPrice ?? 0),
+                                !d.IsSaleTax ? d.NomSumm /* * crsNomenklRate */: d.Quantity * (d.SaleTaxPrice ?? 0),
                             SummaOperNomenklCrs =
-                                !d.IsSaleTax ? d.NomSumm * crsNomenklRate : d.Quantity * (d.SaleTaxPrice ?? 0),
+                                !d.IsSaleTax ? d.NomSumm /* * crsNomenklRate */: d.Quantity * (d.SaleTaxPrice ?? 0),
                             NomenklOperSumWOReval =
                                 !d.IsSaleTax
-                                    ? Convert.ToDecimal(d.NomenklSumWOReval) * crsNomenklRate
+                                    ? Convert.ToDecimal(d.NomenklSumWOReval) //19655691* crsNomenklRate
                                     : (d.NomSumm - (d.SaleTaxPrice ?? 0)) * d.Quantity,
                             DocType = DocumentsOpenManager.GetMaterialDocTypeFromDC(d.TypeDC)
                         });
@@ -420,16 +420,16 @@ namespace KursAM2.ViewModel.Management.BreakEven
             }
         }
 
-        private static decimal GetRate(List<CURRENCY_RATES_CB> rates, decimal firstDC, decimal secondDC, DateTime date)
-        {
-            if (firstDC == secondDC) return 1;
-            var date1 = rates.Where(_ => _.RATE_DATE <= date).Max(_ => _.RATE_DATE);
-            var f = rates.SingleOrDefault(_ => _.CRS_DC == firstDC && _.RATE_DATE == date1);
-            var s = rates.SingleOrDefault(_ => _.CRS_DC == secondDC && _.RATE_DATE == date1);
-            if (f != null && s != null && s.RATE != 0)
-                return f.RATE / f.NOMINAL / (s.RATE / s.NOMINAL);
-            return -1;
-        }
+        //private static decimal GetRate(List<CURRENCY_RATES_CB> rates, decimal firstDC, decimal secondDC, DateTime date)
+        //{
+        //    if (firstDC == secondDC) return 1;
+        //    var date1 = rates.Where(_ => _.RATE_DATE <= date).Max(_ => _.RATE_DATE);
+        //    var f = rates.SingleOrDefault(_ => _.CRS_DC == firstDC && _.RATE_DATE == date1);
+        //    var s = rates.SingleOrDefault(_ => _.CRS_DC == secondDC && _.RATE_DATE == date1);
+        //    if (f != null && s != null && s.RATE != 0)
+        //        return f.RATE / f.NOMINAL / (s.RATE / s.NOMINAL);
+        //    return -1;
+        //}
 
         public void SetMain()
         {
