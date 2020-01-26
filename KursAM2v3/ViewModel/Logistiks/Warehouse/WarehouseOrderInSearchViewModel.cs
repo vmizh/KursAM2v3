@@ -9,29 +9,27 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers.Invoices;
-using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Logistiks.Warehouse;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
-    public class WarehouseOrderSearchViewModel : RSWindowSearchViewModelBase
+    public class WarehouseOrderInSearchViewModel : RSWindowSearchViewModelBase
     {
         private readonly WarehouseManager orderManager;
         private WarehouseOrderIn myCurrentDocument;
 
-        public WarehouseOrderSearchViewModel()
+        public WarehouseOrderInSearchViewModel()
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             orderManager =
                 new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),
-                    "WarehouseOrderSearchViewModel"));
+                    "WarehouseOrderInSearchViewModel"));
             WindowName = "Приходные складские ордера";
         }
 
         public ObservableCollection<WarehouseOrderIn> Documents { set; get; } =
             new ObservableCollection<WarehouseOrderIn>();
-
         public WarehouseOrderIn CurrentDocument
         {
             set
@@ -42,7 +40,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
             get => myCurrentDocument;
         }
-
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
         #region Commands
@@ -54,9 +51,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void Delete(object obj)
         {
-            if (CurrentDocument != null)
-                InvoicesManager.DeleteProvider(CurrentDocument.DocCode);
-            RefreshData(null);
         }
 
         public void GetSearchDocument(object obj)
@@ -116,7 +110,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void RefreshData(object data)
         {
-            Documents = new ObservableCollection<WarehouseOrderIn>();
+            Documents.Clear();
+            //Documents = new ObservableCollection<WarehouseOrderIn>();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -125,14 +120,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
                         _.DD_TYPE_DC == 2010000001).ToList(); /*приходный складской ордер*/
                     foreach (var item in d)
-                        Documents.Add(new WarehouseOrderIn(item));
+                        Documents.Add(new WarehouseOrderIn(item){State = RowStatus.NotEdited});
                 }
             }
             catch (Exception e)
             {
                 WindowManager.ShowError(e);
             }
-
             RaisePropertyChanged(nameof(Documents));
             SearchText = "";
         }
@@ -140,14 +134,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocumentOpen(object form)
         {
             if (CurrentDocument == null) return;
-            var frm = new OrderInView {Owner = Application.Current.MainWindow};
+
             var ctx = new OrderInWindowViewModel(
                 new StandartErrorManager(GlobalOptions.GetEntities(), "WarehouseOrderIn", true)
-                , CurrentDocument.DocCode)
+                , CurrentDocument.DocCode);
+            var frm = new OrderInView
             {
-                Form = frm
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
             };
-            frm.DataContext = ctx;
+            ctx.Form = frm;
             frm.Show();
         }
 
@@ -182,12 +178,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             ctx.Document = orderManager.NewOrderInRecuisite(CurrentDocument);
             frm.Show();
             frm.DataContext = ctx;
-        }
-
-        public override void ResetLayout(object form)
-        {
-            var frm = form as SearchInvoiceClientView;
-            frm?.LayoutManager.ResetLayout();
         }
 
         #endregion

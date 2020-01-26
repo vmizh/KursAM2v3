@@ -20,6 +20,7 @@ using KursAM2.View.Finance.Cash;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.KursReferences;
 using KursAM2.View.Logistiks;
+using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.View.Management;
 using KursAM2.View.Period;
 using KursAM2.View.Personal;
@@ -84,8 +85,12 @@ namespace KursAM2.View
         {
             get { return new Command(ProgramClose, _ => true); }
         }
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new NotImplementedException();
+        }
 
         private void ProgramClose(object obj)
         {
@@ -303,13 +308,23 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Приходный складской ордер":
-                        var ctxq = new WarehouseOrderSearchViewModel();
-                        form = new WarehouseStorageOrderSearchView
+                        var ctxq = new WarehouseOrderInSearchViewModel();
+                        form = new WarehouseOrderSearchView ("WarehouseOrderInSearchView")
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = ctxq
                         };
                         ctxq.Form = form;
+                        form.Show();
+                        break;
+                    case "Расходный складской ордер":
+                        var ctxr = new WarehouseOrderOutSearchViewModel();
+                        form = new WarehouseOrderSearchView("WarehouseOrderOutSearchView")
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = ctxr
+                        };
+                        ctxr.Form = form;
                         form.Show();
                         break;
                     case " Акты сверки":
@@ -717,7 +732,7 @@ namespace KursAM2.View
             }
         }
         
-        private int CurrentMainGroupId = 0;
+        private int CurrentMainGroupId;
         private void tileMainGroup_TileClick(object sender, TileClickEventArgs tileClickEventArgs)
         {
             DocumentLayoutPanel.Caption = tileClickEventArgs.Tile.ToolTip;

@@ -99,7 +99,7 @@ namespace ServerCalculate
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var calc = new NomenklCostMediumSliding();
+                var calc = new NomenklCostMediumSliding(ctx);
                 var nomDCs = ctx.NOMENKL_RECALC.Select(_ => _.NOM_DC).Distinct()
                     .ToList();
                 //nomDCs.Clear();

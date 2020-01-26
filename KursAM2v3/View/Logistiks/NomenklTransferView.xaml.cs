@@ -19,15 +19,17 @@ namespace KursAM2.View.Logistiks
             Loaded += NomenklTransferView_Loaded;
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void NomenklTransferView_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
-            var dtx = DataContext as NomenklTransferWindowViewModel;
-            if (dtx == null) return;
-        }
+       }
 
         private void NomenklTransferView_Closing(object sender, CancelEventArgs e)
         {
@@ -44,8 +46,6 @@ namespace KursAM2.View.Logistiks
 
         private void RaiseIsRowReadonly(bool isAccepted)
         {
-            // ReSharper disable once NotResolvedInText
-            if (!(DataContext is NomenklTransferWindowViewModel ctx)) return;
             //ctx.RaisePropertyChanged("IsRowReadOnly");
             col2.ReadOnly = isAccepted;
             col5.ReadOnly = isAccepted;

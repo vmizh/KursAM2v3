@@ -31,11 +31,11 @@
                                      MaxHeight="10000"
                                      MaxWidth="10000"
                                      dx:DXSerializer.SerializationID="gridRows"
-                                     dx:DXSerializer.StoreLayoutMode="None"
-                                     dxg:DataControlSerializationOptions.AddNewColumns="False"
-                                     dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                      SelectionMode="Row"
-                                     ItemsSource="{Binding Document.Rows, NotifyOnSourceUpdated=True}"
+                                     ItemsSource="{Binding Rows, NotifyOnSourceUpdated=True}"
                                      CurrentItem="{Binding CurrentRow, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
                                      SelectedItems="{Binding Document.SelectedRows, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
                                      AutoGeneratingColumn="GridRows_OnAutoGeneratingColumn"
@@ -51,12 +51,10 @@
                                 <MenuItem Header="Добавить номенклатуру" Command="{Binding AddNomenklCommand}" />
                                 <MenuItem Header="Удалить номенклатуру" Command="{Binding DeleteNomenklCommand}" />
                                 <Separator/>
-                            <MenuItem Header="Добавить из счетов (ордеров, внутр.перемещ.)" Command="{Binding AddFromDocumentCommand}" />
-                                <MenuItem Header="Привязать счет (ордер, внутр.перемещ." Command="{Binding SetLinkDocumentCommand}" />
-                                <MenuItem Header="Удалить связку со счетом (ордером, внутр.перемещ." Command="{Binding DeleteLinkDocumentCommand}" />
-                            <MenuItem Header="Открыть связанный документ( счет,ордер)" Command="{Binding OpenLinkDocumentCommand}" />
-                            <Separator/>
-                                
+                                <MenuItem Header="Добавить из счетов или расходных ордеров" Command="{Binding AddFromDocumentCommand}" />
+                                <MenuItem Header="Удалить связку со счетом или ордером" Command="{Binding DeleteLinkDocumentCommand}" />
+                                <MenuItem Header="Открыть связанный документ( счет,ордер)" Command="{Binding OpenLinkDocumentCommand}" />
+                                <Separator/>
                                 <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                                   CommandParameter="{Binding Path=PlacementTarget, 
                            RelativeSource={RelativeSource Mode=FindAncestor,
@@ -80,5 +78,5 @@
                     </dxg:TableView>
                 </dxg:GridControl.View>
             </dxg:GridControl>
-</DockPanel>
+    </DockPanel>
 </dx:DXWindow>

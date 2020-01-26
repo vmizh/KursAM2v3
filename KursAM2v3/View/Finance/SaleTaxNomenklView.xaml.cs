@@ -28,8 +28,12 @@ namespace KursAM2.View.Finance
 
         // ReSharper disable once InconsistentNaming
         private SaleTaxNomenklWindowViewModel dataContext => DataContext as SaleTaxNomenklWindowViewModel;
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new NotImplementedException();
+        }
 
         private void SaleTaxNomenklView_Closing(object sender, CancelEventArgs e)
         {

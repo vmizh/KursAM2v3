@@ -17,8 +17,12 @@ namespace KursAM2.View.Period
             Closing += PeriodCloseManagemen_Closing;
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void PeriodCloseManagemen_Closing(object sender, CancelEventArgs e)
         {

@@ -258,10 +258,13 @@ namespace KursAM2.ViewModel.Logistiks
         private void LoadOperation()
         {
             if (SelectedNomenkl == null) return;
-            var calc = new NomenklCostMediumSliding();
-            Operations = new List<NomenklCalcCostOperation>(calc.GetAllOperations(SelectedNomenkl.DocCode));
-            if (Operations.Count > 0)
-                CurrentOperation = Operations.First();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var calc = new NomenklCostMediumSliding(ctx);
+                Operations = new List<NomenklCalcCostOperation>(calc.GetAllOperations(SelectedNomenkl.DocCode));
+                if (Operations.Count > 0)
+                    CurrentOperation = Operations.First();
+            }
             RaisePropertyChanged(nameof(Operations));
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
@@ -9,8 +10,9 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
-using KursAM2.Managers.Invoices;
+using KursAM2.Managers;
 using KursAM2.View.Logistiks.Warehouse;
+using WarehouseManager = KursAM2.Managers.Invoices.WarehouseManager;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -48,13 +50,20 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 if (myDocument != null && myDocument.Equals(value)) return;
                 myDocument = value;
+                Rows.Clear();
+                foreach (var r in Document.Rows)
+                {
+                    Rows.Add(r);
+                }
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(Rows));
             }
             get => myDocument;
         }
 
-        private WarehouseOrderInRow myCurrentRow;
+        public ObservableCollection<WarehouseOrderInRow> Rows { set; get; } = new ObservableCollection<WarehouseOrderInRow>();
 
+        private WarehouseOrderInRow myCurrentRow;
         public WarehouseOrderInRow CurrentRow
         {
             get => myCurrentRow;
@@ -65,23 +74,20 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 RaisePropertyChanged();
             }
         }
-
         public bool IsCanChangedWarehouseType => Document?.Sender == null;
-
         public override string WindowName =>
             $"Приходный складской ордер №{Document?.DD_IN_NUM}/{Document?.DD_EXT_NUM} от {Document?.DD_DATE}";
-
+        
         #endregion
 
         #region Command
 
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
-        public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
-
+        public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NotEdited;
         public override bool IsCanSaveData => Document != null && (Document.State != RowStatus.NotEdited
                                                                    || Document.Rows.Any(_ =>
-                                                                       _.State != RowStatus.NotEdited));
-
+                                                                       _.State != RowStatus.NotEdited)
+                                                                   || Document.DeletedRows.Count > 0);
         public override RowStatus State => Document?.State ?? RowStatus.NewRow;
 
         public override void DocNewEmpty(object form)
@@ -118,9 +124,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void RefreshData(object obj)
         {
-            var dc = obj as decimal? ?? 0;
-            if (dc != 0)
-                Document = orderManager.GetOrderIn(dc);
+            if (Document != null && Document.DocCode > 0)
+            {
+                Document = orderManager.GetOrderIn(Document.DocCode);
+            }
+            else
+            {
+                var dc = obj as decimal? ?? 0;
+                if (dc != 0)
+                    Document = orderManager.GetOrderIn(dc);
+            }
             RaisePropertyChanged(nameof(Document));
             RaisePropertyChanged(nameof(Document.Sender));
             RaisePropertyChanged(nameof(Document.WarehouseIn));
@@ -134,9 +147,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var dc = orderManager.SaveOrderIn(Document);
             if (dc > 0)
             {
-                Document.DocCode = dc;
-                Document.myState = RowStatus.NotEdited;
-                RaisePropertyChanged(nameof(State));
+                RefreshData(dc);
             }
         }
 
@@ -145,21 +156,19 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get { return new Command(DeleteLinkDocument, _ => CurrentRow != null && CurrentRow.LinkDocument != null); }
         }
 
-        //TODO написать метод удаления привязки счета, ордера или внутреннего перемещения из приходного ордера
         private void DeleteLinkDocument(object obj)
         {
-            WinManager.ShowMessageBox("lkdfjglkfdjk","test");
-        }
-
-        public ICommand SetLinkDocumentCommand
-        {
-            get { return new Command(SetLinkDocument, _ => CurrentRow != null && CurrentRow.LinkDocument != null); }
-        }
-
-        //TODO написать метод привязки счета, ордера или внутреннего перемещения из приходного ордера
-        private void SetLinkDocument(object obj)
-        {
-            WinManager.ShowMessageBox("lkdfjglkfdjk","test");
+            foreach (var r in Document.SelectedRows)
+            {
+                r.LinkInvoice = null;
+                r.LinkOrder = null;
+                r.DDT_SPOST_DC = null;
+                r.DDT_SPOST_ROW_CODE = null;
+                r.InvoiceProvider = null;
+                r.InvoiceProviderRow = null;
+                r.DDT_TAX_EXECUTED = 0;
+                r.DDT_FACT_EXECUTED = 0;
+            }
         }
 
         public ICommand OpenLinkDocumentCommand
@@ -167,11 +176,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get { return new Command(OpenLinkDocument, _ => CurrentRow != null && CurrentRow.LinkDocument != null); }
         }
 
-        //TODO написать метод открытия счета, ордера или внутреннего перемещения из приходного ордера
         private void OpenLinkDocument(object obj)
         {
-            WinManager.ShowMessageBox("lkdfjglkfdjk","test");
-
+            if (CurrentRow.LinkInvoice != null)
+            {
+                DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)CurrentRow.DDT_SPOST_DC);
+            }
         }
 
         public ICommand AddFromDocumentCommand
@@ -182,7 +192,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         //TODO создать диалог для вставки в приходный ордер строк из счетов фактур,ордеров и внутренних перемещений
         private void AddFromDocument(object obj)
         {
-            WinManager.ShowMessageBox("lkdfjglkfdjk","test");
+            
         }
 
         public ICommand AddNomenklCommand
@@ -202,7 +212,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         Nomenkl = n,
                         DDT_KOL_PRIHOD = 1,
                         Unit = n.Unit,
-                        Currency = n.Currency
+                        Currency = n.Currency,
+                        State = RowStatus.NewRow
                     });
         }
 
@@ -260,17 +271,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         return;
                 }
             }
-
             if (Form != null)
             {
                 Form.Close();
                 return;
             }
-
             var frm = form as Window;
             frm?.Close();
         }
-        
+
         #endregion
     }
 }

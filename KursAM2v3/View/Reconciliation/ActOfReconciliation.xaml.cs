@@ -20,8 +20,12 @@ namespace KursAM2.View.Reconciliation
             Loaded += ActOfReconciliation_Loaded;
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void ActOfReconciliation_Loaded(object sender, RoutedEventArgs e)
         {

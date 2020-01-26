@@ -16,8 +16,12 @@ namespace KursAM2.View.Logistiks.UC
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, gridControlNomenkl);
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void ButtonEdit_KeyDown(object sender, KeyEventArgs e)
         {

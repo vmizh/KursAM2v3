@@ -244,7 +244,7 @@ namespace KursAM2.Managers
                         }
                         if (GlobalOptions.SystemProfile.NomenklCalcType == NomenklCalcType.NakladSeparately)
                         {
-                            var calc = new NomenklCostMediumSliding();
+                            var calc = new NomenklCostMediumSliding(ctx);
                             foreach (
                                 var op in
                                 doc.Rows.Where(_ => _.State != RowStatus.NotEdited)

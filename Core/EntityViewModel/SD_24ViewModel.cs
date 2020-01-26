@@ -31,9 +31,12 @@ namespace Core.EntityViewModel
         {
             Entity = entity ?? DefaultValue();
             LoadReferences();
+            DD_OTRPAV_NAME = Sender;
+            DD_POLUCH_NAME = Receiver;
         }
 
         public string Sender => KontragentSender?.Name ?? WarehouseOut?.Name;
+        public string Receiver => KontragentReceiver?.Name ?? WarehouseIn?.Name;
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -128,6 +131,7 @@ namespace Core.EntityViewModel
                 if (myWarehouseOut != null && myWarehouseOut.Equals(value)) return;
                 myWarehouseOut = value;
                 DD_SKLAD_OTPR_DC = myWarehouseOut?.DocCode;
+                DD_OTRPAV_NAME = myWarehouseOut?.Name;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Sender));
             }
@@ -156,8 +160,9 @@ namespace Core.EntityViewModel
                 if (myWarehouseIn != null && myWarehouseIn.Equals(value)) return;
                 myWarehouseIn = value;
                 DD_SKLAD_POL_DC = myWarehouseIn?.DocCode;
+                DD_POLUCH_NAME = myWarehouseIn?.Name;
                 RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Sender));
+                RaisePropertyChanged(nameof(Receiver));
             }
         }
         public decimal? DD_KONTR_OTPR_DC
@@ -181,9 +186,12 @@ namespace Core.EntityViewModel
                 if (myKontragentSender != null && myKontragentSender.Equals(value)) return;
                 myKontragentSender = value;
                 if (myKontragentSender != null)
+                {
                     DD_KONTR_OTPR_DC = myKontragentSender.DocCode;
+                    DD_OTRPAV_NAME = myKontragentSender.Name;
+                }
                 RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Sender));
+                RaisePropertyChanged(nameof(Receiver));
             }
         }
         public decimal? DD_KONTR_POL_DC
@@ -207,7 +215,10 @@ namespace Core.EntityViewModel
                 if (myKontragentReceiver != null && myKontragentReceiver.Equals(value)) return;
                 myKontragentReceiver = value;
                 if (myKontragentReceiver != null)
+                {
                     DD_KONTR_POL_DC = myKontragentReceiver.DocCode;
+                    DD_POLUCH_NAME = myKontragentReceiver.Name;
+                }
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Sender));
             }

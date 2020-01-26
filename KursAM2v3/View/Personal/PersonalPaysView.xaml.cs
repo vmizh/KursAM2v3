@@ -24,8 +24,12 @@ namespace KursAM2.View.Personal
             Closing += PersonalPaysView_Closing;
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void treePeriods_CurrentItemChanged(object sender, CurrentItemChangedEventArgs e)
         {

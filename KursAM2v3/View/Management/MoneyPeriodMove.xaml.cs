@@ -28,8 +28,12 @@ namespace KursAM2.View.Management
             myTimer.Start();
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void DisplayTimeEvent(object sender, ElapsedEventArgs e)
         {

@@ -28,8 +28,12 @@ namespace KursAM2.View.Finance
             debitorCrscomboBoxEdit.ItemsSource = MainReferences.Currencies.Values;
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void MutualAccountingView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {

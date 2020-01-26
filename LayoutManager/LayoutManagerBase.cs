@@ -10,11 +10,9 @@ using System.Xml.Linq;
 using Core;
 using Data;
 using DevExpress.Data;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Core.Serialization;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
-using DevExpress.Xpf.WindowsUI;
 using DevExpress.XtraGrid;
 using Helper;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
@@ -48,31 +46,35 @@ namespace LayoutManager
         /// </summary>
         [DataMember]
         public DependencyObject LayoutControl { set; get; }
+        [DataMember]
+        public bool IsWindowOnly { set; get; }
 
         public virtual void Save()
         {
             try
             {
                 var saveLayout = WindowSave();
-                var ms = new MemoryStream();
-                if (LayoutControl != null && !(LayoutControl is DataLayoutControl))
-                {
-                    DXSerializer.Serialize(LayoutControl, ms, "Kurs", null);
-                    saveLayout.Layout = ms.ToArray();
-                }
-                //var writer = new FileStream($"{AppDataPath}\\{FileName}.xml", FileMode.Create);
-                var ser =
-                    new DataContractSerializer(typeof(WindowsScreenState));
-                var ser1 =
-                    new DataContractSerializer(typeof(WindowsScreenState));
-                //ser.WriteObject(writer, saveLayout);
                 var sb = new StringBuilder();
-                using (var writer = XmlWriter.Create(sb))
+                if (!IsWindowOnly)
                 {
-                    ser1.WriteObject(writer, saveLayout);
-                    writer.Flush();
+                    var ms = new MemoryStream();
+                    if (LayoutControl != null && !(LayoutControl is DataLayoutControl))
+                    {
+                        DXSerializer.Serialize(LayoutControl, ms, "Kurs", null);
+                        saveLayout.Layout = ms.ToArray();
+                    }
+                    //var writer = new FileStream($"{AppDataPath}\\{FileName}.xml", FileMode.Create);
+                    //var ser =
+                    //    new DataContractSerializer(typeof(WindowsScreenState));
+                    var ser1 =
+                        new DataContractSerializer(typeof(WindowsScreenState));
+                    //ser.WriteObject(writer, saveLayout);
+                    using (var writer = XmlWriter.Create(sb))
+                    {
+                        ser1.WriteObject(writer, saveLayout);
+                        writer.Flush();
+                    }
                 }
-                //writer.Close();
                 var connString = new SqlConnectionStringBuilder
                 {
                     DataSource = "172.16.0.1",
@@ -112,7 +114,7 @@ namespace LayoutManager
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Ошибка сохранения разметки {w} / {FileName}");
+                        MessageBox.Show($"Ошибка сохранения разметки {w} / {FileName}" + $"{ex}");
                     }
                 }
             }
@@ -144,45 +146,45 @@ namespace LayoutManager
             return saveLayout;
         }
 
-        public virtual void ResetLayout(bool controlOnly = true)
+        public virtual void ResetLayout()
         {
-            try
-            {
-                if (WinState == null) return;
-                if (!controlOnly)
-                    if (Win != null)
-                    {
-                        Win.Height = WinState.FormHeight;
-                        Win.Width = WinState.FormWidth;
-                        Win.Left = WinState.FormLeft;
-                        Win.Top = WinState.FormTop;
-                        Win.WindowStartupLocation = WinState.FormStartLocation;
-                        Win.WindowState = WinState.FormState;
-                    }
-                if (WinState.Layout == null) return;
-                if (LayoutControl == null) return;
-                var ms = new MemoryStream(WinState.Layout);
-                DXSerializer.Deserialize(LayoutControl, ms, "Kurs", null);
-                ms.Close();
-            }
-            catch (Exception ex)
-            {
-                var errText = new StringBuilder(ex.Message);
-                if (ex.InnerException != null)
-                {
-                    var ex1 = ex.InnerException;
-                    errText.Append(ex1.Message + "\n");
-                    if (ex1.InnerException != null)
-                        errText.Append(ex1.InnerException.Message);
-                }
-                WinUIMessageBox.Show(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
-                    errText.ToString(),
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error,
-                    MessageBoxResult.None, MessageBoxOptions.None,
-                    FloatingMode.Adorner);
-            }
+            //try
+            //{
+            //    if (WinState == null) return;
+            //    if (!controlOnly)
+            //        if (Win != null)
+            //        {
+            //            Win.Height = WinState.FormHeight;
+            //            Win.Width = WinState.FormWidth;
+            //            Win.Left = WinState.FormLeft;
+            //            Win.Top = WinState.FormTop;
+            //            Win.WindowStartupLocation = WinState.FormStartLocation;
+            //            Win.WindowState = WinState.FormState;
+            //        }
+            //    if (WinState.Layout == null) return;
+            //    if (LayoutControl == null) return;
+            //    var ms = new MemoryStream(WinState.Layout);
+            //    DXSerializer.Deserialize(LayoutControl, ms, "Kurs", null);
+            //    ms.Close();
+            //}
+            //catch (Exception ex)
+            //{
+            //    var errText = new StringBuilder(ex.Message);
+            //    if (ex.InnerException != null)
+            //    {
+            //        var ex1 = ex.InnerException;
+            //        errText.Append(ex1.Message + "\n");
+            //        if (ex1.InnerException != null)
+            //            errText.Append(ex1.InnerException.Message);
+            //    }
+            //    WinUIMessageBox.Show(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
+            //        errText.ToString(),
+            //        "Ошибка",
+            //        MessageBoxButton.OK,
+            //        MessageBoxImage.Error,
+            //        MessageBoxResult.None, MessageBoxOptions.None,
+            //        FloatingMode.Adorner);
+            //}
         }
 
         public bool IsLayoutExists()
@@ -212,7 +214,7 @@ namespace LayoutManager
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка сохранения разметки {w} / {FileName}");
+                    MessageBox.Show($"Ошибка загрузки разметки {w} " + ex.Message);
                 }
             }
             if (!IsLayoutExists() && layoutData == null) return;
@@ -263,8 +265,9 @@ namespace LayoutManager
                     Win.Left = p.FormLeft < 0 ? 0 : p.FormLeft;
                     Win.Top = p.FormTop < 0 ? 0 : p.FormTop;
                 }
-                if (p.Layout == null) return;
+                if (p.Layout == null || IsWindowOnly) return;
                 var ms = new MemoryStream(p.Layout);
+                //var doc = XDocument.Load(ms);
                 DXSerializer.Deserialize(LayoutControl, ms, "Kurs", null);
                 var grids = WindowHelper.GetLogicalChildCollection<GridControl>(LayoutControl);
                 var trees = WindowHelper.GetLogicalChildCollection<TreeListControl>(LayoutControl);
@@ -364,7 +367,7 @@ namespace LayoutManager
                 }
                 ms.Close();
             }
-            catch (Exception ex)
+            catch 
             {
                 if (!File.Exists($"{AppDataPath}\\{FileName}.xml"))
                     File.Delete($"{AppDataPath}\\{FileName}.xml");

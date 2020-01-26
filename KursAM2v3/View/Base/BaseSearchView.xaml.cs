@@ -20,8 +20,12 @@ namespace KursAM2.View.Base
             Closing += ProviderSearchView_Closing;
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void ProviderSearchView_Closing(object sender, CancelEventArgs e)
         {

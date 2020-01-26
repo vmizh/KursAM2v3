@@ -275,7 +275,7 @@ namespace KursAM2.ViewModel.Logistiks
                     .Distinct()
                     .ToList();
                 myFilterNomenkls.Clear();
-                var clc = new NomenklCostMediumSliding();
+                var clc = new NomenklCostMediumSliding(ctx);
                 foreach (var n in nomDCs)
                 {
                     var ops =

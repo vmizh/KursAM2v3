@@ -18,7 +18,6 @@ namespace Core.EntityViewModel
     public class Waybill : SD_24ViewModel, IDocument<Waybill>
     {
         private Kontragent myClient;
-        private string myReceiver;
 
         /// <summary>
         ///     —чет-фактура, св€занный с данной накладной
@@ -71,16 +70,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-        public string Receiver
-        {
-            get => myReceiver;
-            set
-            {
-                if (myReceiver == value) return;
-                myReceiver = value;
-                RaisePropertyChanged();
-            }
-        }
+        
         public ObservableCollection<WaybillRow> Rows { set; get; }
         public List<WaybillRow> DeletedRows { set; get; }
         public override decimal DocCode

@@ -24,8 +24,12 @@ namespace KursAM2.View.Management
             Closing += ProjectProviderPrihodView_Closing;
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void ProjectProviderPrihodView_Closing(object sender, CancelEventArgs e)
         {

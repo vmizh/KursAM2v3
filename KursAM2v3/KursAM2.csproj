@@ -307,7 +307,8 @@
     <Compile Include="ViewModel\Logistiks\NomenklInnerMoveWindowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\WarehouseSelectDialogViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\Warehouse\OrderOutWindowViewModel.cs" />
-    <Compile Include="ViewModel\Logistiks\Warehouse\WarehouseOrderSearchViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\Warehouse\WarehouseOrderOutSearchViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\Warehouse\WarehouseOrderInSearchViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\Warehouse\OrderInWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\FormPayReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\KontragentCategoryRefWindowViewModel.cs" />
@@ -706,11 +707,8 @@
     <Compile Include="View\Logistiks\UC\SelectNomenklSimpleUC.xaml.cs">
       <DependentUpon>SelectNomenklSimpleUC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Logistiks\WarehouseStorageOrderSearchView.xaml.cs">
-      <DependentUpon>WarehouseStorageOrderSearchView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Logistiks\WarehouseStorageOrderView.xaml.cs">
-      <DependentUpon>WarehouseStorageOrderView.xaml</DependentUpon>
+    <Compile Include="View\Logistiks\Warehouse\WarehouseOrderSearchView.xaml.cs">
+      <DependentUpon>WarehouseOrderSearchView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\Warehouse\OrderInView.xaml.cs">
       <DependentUpon>OrderInView.xaml</DependentUpon>
@@ -1286,11 +1284,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\Logistiks\WarehouseStorageOrderSearchView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Logistiks\WarehouseStorageOrderView.xaml">
+    <Page Include="View\Logistiks\Warehouse\WarehouseOrderSearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

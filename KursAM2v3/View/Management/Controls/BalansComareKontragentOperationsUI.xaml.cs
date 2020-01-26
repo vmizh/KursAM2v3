@@ -29,8 +29,12 @@ namespace KursAM2.View.Management.Controls
                 gridControlKontrOperations);
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void BalansComareKontragentOperationsUI_Unloaded(object sender, RoutedEventArgs e)
         {

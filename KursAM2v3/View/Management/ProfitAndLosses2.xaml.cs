@@ -100,7 +100,11 @@ namespace KursAM2.View.Management
             //col124.Visible = item.Name == "Финансовые операции";
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

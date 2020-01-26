@@ -39,8 +39,12 @@ namespace KursAM2.View.Management
 
         private Style FilteredColumnStyle { get; }
         private Style UnFilteredColumnStyle { get; }
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new NotImplementedException();
+        }
 
         private void DebitorCreditorView_Loaded(object sender, RoutedEventArgs e)
         {

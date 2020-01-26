@@ -22,8 +22,12 @@ namespace KursAM2.View.Management
             DataContextChanged += ManagementBalansView_DataContextChanged;
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new NotImplementedException();
+        }
 
         private void ManagementBalansView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {

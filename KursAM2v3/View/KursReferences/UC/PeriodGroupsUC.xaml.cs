@@ -16,8 +16,12 @@ namespace KursAM2.View.KursReferences.UC
             Unloaded += UserControl_Unloaded;
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {

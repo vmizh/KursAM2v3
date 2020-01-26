@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
                Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
-        <ContentControl Grid.Row="0" Content="{Binding DataUserControl}" />
+        <ContentControl Grid.Row="0" Content="{Binding DataUserControl}" Name="contentControl" />
         <DockPanel Grid.Row="1" LastChildFill="False">
             <Button DockPanel.Dock="Left"
                     Content="Разметка" Margin="10,0,0,0"

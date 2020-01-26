@@ -81,6 +81,7 @@ namespace KursAM2.View.DialogUserControl
             }
         }
         public DependencyObject LayoutControl { get; }
+
         public override void RefreshData(object obj)
         {
             base.RefreshData(obj);

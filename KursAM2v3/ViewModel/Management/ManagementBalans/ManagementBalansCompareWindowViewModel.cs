@@ -254,38 +254,41 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private void LoadOperation()
         {
             if (NomenklCurrent == null) return;
-            var calc = new NomenklCostMediumSliding();
-            var Operations = new List<NomenklCalcCostOperation>(calc.GetAllOperations(NomenklCurrent.NomenklDC));
-            NomenklCurrent.NomenklOperations.Clear();
-            foreach (var op in Operations.Where(_ => _.DocDate >= FirstDate && _.DocDate <= SecondDate))
+            using (var ctx = GlobalOptions.GetEntities())
             {
-                NomenklCurrent.NomenklOperations.Add(new NomenklCompareBalansOperation
+                var calc = new NomenklCostMediumSliding(ctx);
+                var Operations = new List<NomenklCalcCostOperation>(calc.GetAllOperations(NomenklCurrent.NomenklDC));
+                NomenklCurrent.NomenklOperations.Clear();
+                foreach (var op in Operations.Where(_ => _.DocDate >= FirstDate && _.DocDate <= SecondDate))
                 {
-                    CalcPrice = op.CalcPrice,
-                    CalcPriceNaklad = op.CalcPriceNaklad,
-                    DocDate = op.DocDate,
-                    DocPrice = op.DocPrice,
-                    FinDocument = op.FinDocument,
-                    FinDocumentDC = op.FinDocumentDC,
-                    KontragentIn = op.KontragentIn,
-                    KontragentOut = op.KontragentOut,
-                    Naklad = op.Naklad,
-                    NomenklDC = op.NomenklDC,
-                    Note = op.Note,
-                    OperCode = op.OperCode,
-                    OperationName = op.OperationName,
-                    QuantityIn = op.QuantityIn,
-                    QuantityNakopit = op.QuantityNakopit,
-                    QuantityOut = op.QuantityOut,
-                    SkladIn = op.SkladIn,
-                    SkladOut = op.SkladOut,
-                    SummaIn = op.SummaIn,
-                    SummaOut = op.SummaOut,
-                    SummaInWithNaklad = op.SummaInWithNaklad,
-                    SummaOutWithNaklad = op.SummaOutWithNaklad,
-                    TovarDocDC = op.TovarDocDC,
-                    TovarDocument = op.TovarDocument,
-                });
+                    NomenklCurrent.NomenklOperations.Add(new NomenklCompareBalansOperation
+                    {
+                        CalcPrice = op.CalcPrice,
+                        CalcPriceNaklad = op.CalcPriceNaklad,
+                        DocDate = op.DocDate,
+                        DocPrice = op.DocPrice,
+                        FinDocument = op.FinDocument,
+                        FinDocumentDC = op.FinDocumentDC,
+                        KontragentIn = op.KontragentIn,
+                        KontragentOut = op.KontragentOut,
+                        Naklad = op.Naklad,
+                        NomenklDC = op.NomenklDC,
+                        Note = op.Note,
+                        OperCode = op.OperCode,
+                        OperationName = op.OperationName,
+                        QuantityIn = op.QuantityIn,
+                        QuantityNakopit = op.QuantityNakopit,
+                        QuantityOut = op.QuantityOut,
+                        SkladIn = op.SkladIn,
+                        SkladOut = op.SkladOut,
+                        SummaIn = op.SummaIn,
+                        SummaOut = op.SummaOut,
+                        SummaInWithNaklad = op.SummaInWithNaklad,
+                        SummaOutWithNaklad = op.SummaOutWithNaklad,
+                        TovarDocDC = op.TovarDocDC,
+                        TovarDocument = op.TovarDocument,
+                    });
+                }
             }
         }
 

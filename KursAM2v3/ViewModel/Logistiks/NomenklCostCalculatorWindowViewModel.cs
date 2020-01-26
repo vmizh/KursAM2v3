@@ -39,14 +39,16 @@ namespace KursAM2.ViewModel.Logistiks
                 mySelectedNomenkl = value;
                 if (mySelectedNomenkl != null)
                 {
-                    var clc = new NomenklCostMediumSliding();
-                    myNomenklCost = new NomenklCost
+                    using (var ctx = GlobalOptions.GetEntities())
                     {
-                        Nomenkl = mySelectedNomenkl,
-                        Operations = clc.GetOperations(mySelectedNomenkl.DocCode)
-                    };
+                        var clc = new NomenklCostMediumSliding(ctx);
+                        myNomenklCost = new NomenklCost
+                        {
+                            Nomenkl = mySelectedNomenkl,
+                            Operations = clc.GetOperations(mySelectedNomenkl.DocCode)
+                        };
+                    }
                 }
-
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Operations));
             }

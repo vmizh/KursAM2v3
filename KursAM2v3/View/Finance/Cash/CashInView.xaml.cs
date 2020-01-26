@@ -36,8 +36,12 @@ namespace KursAM2.View.Finance.Cash
         }
 
         public ComboBoxEdit CurrencyItem { get; set; }
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new NotImplementedException();
+        }
 
         private void CashInView_Unloaded(object sender, RoutedEventArgs e)
         {

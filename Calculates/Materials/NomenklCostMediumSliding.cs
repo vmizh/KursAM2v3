@@ -14,10 +14,16 @@ namespace Calculates.Materials
     [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
     public class NomenklCostMediumSliding : NomenklCostBase
     {
+        public ALFAMEDIAEntities context;
+
+        public NomenklCostMediumSliding(ALFAMEDIAEntities ctx)
+        {
+            context = ctx;
+        }
+
         public override ObservableCollection<NomenklCalcCostOperation> GetOperations(decimal nomDC)
         {
             var currentRowNumber = 0;
-
             var ret = new NomenklCost
             {
                 Nomenkl = MainReferences.GetNomenkl(nomDC)
@@ -25,130 +31,160 @@ namespace Calculates.Materials
             if (ret.Nomenkl.IsUsluga) return null;
             try
             {
-                using (var ctx = GlobalOptions.GetEntities())
+                var dataTemp = context.TD_24
+                    .Include(_ => _.SD_24)
+                    .Include(_ => _.SD_24.SD_201)
+                    .Include(_ => _.TD_26)
+                    .Include(_ => _.TD_26.SD_26)
+                    .Include(_ => _.TD_84)
+                    .Include(_ => _.TD_84.SD_84)
+                    .Where(_ => _.SD_24.DD_TYPE_DC != 2010000014 && _.DDT_NOMENKL_DC == nomDC).ToList();
+                if (dataTemp.Count != 0)
                 {
-                    var dataTemp = ctx.TD_24
-                        .Include(_ => _.SD_24)
-                        .Include(_ => _.SD_24.SD_201)
-                        .Include(_ => _.TD_26)
-                        .Include(_ => _.TD_26.SD_26)
-                        .Include(_ => _.TD_84)
-                        .Include(_ => _.TD_84.SD_84)
-                        .Where(_ => _.SD_24.DD_TYPE_DC != 2010000014 && _.DDT_NOMENKL_DC == nomDC).ToList();
-
-                    if (dataTemp.Count != 0)
-                    {
-                        var data =
-                            dataTemp.OrderBy(_ => _.DDT_NOMENKL_DC)
-                                .ThenBy(_ => _.SD_24.DD_DATE)
-                                .ThenBy(_ => _.DDT_KOL_RASHOD);
-                        foreach (var d in data)
-                        {
-                            currentRowNumber++;
-                            var oper = new NomenklCalcCostOperation
-                            {
-                                RowNumber = currentRowNumber,
-                                NomenklDC = nomDC,
-                                Note = d.SD_24.DD_NOTES + " " + d.TD_26?.SFT_TEXT + d.TD_84?.SFT_TEXT,
-                                CalcPrice = 0,
-                                CalcPriceNaklad = 0,
-                                DocDate = d.SD_24.DD_DATE,
-                                KontragentIn = MainReferences.GetKontragent(d.SD_24.DD_KONTR_POL_DC),
-                                KontragentOut = MainReferences.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC),
-                                OperationName = d.SD_24.SD_201.D_NAME,
-                                OperCode = (d.SD_24.DD_VOZVRAT ?? 0) == 1 ? 25 : d.SD_24.SD_201.D_OP_CODE,
-                                QuantityIn = d.DDT_KOL_PRIHOD,
-                                QuantityOut = d.DDT_KOL_RASHOD,
-                                // ReSharper disable once PossibleInvalidOperationException
-                                DocPrice = (decimal) (d.SD_24.DD_TYPE_DC == 2010000005 ? d.DDT_TAX_CENA : 0),
-                                Naklad = 0,
-                                SkladIn =
-                                    d.SD_24.DD_SKLAD_POL_DC != null
-                                        ? MainReferences.Warehouses[d.SD_24.DD_SKLAD_POL_DC.Value]
-                                        : null,
-                                SkladOut =
-                                    d.SD_24.DD_SKLAD_OTPR_DC != null
-                                        ? MainReferences.Warehouses[d.SD_24.DD_SKLAD_OTPR_DC.Value]
-                                        : null,
-                                SummaIn =
-                                    (d.SD_24.DD_VOZVRAT ?? 0) == 1
-                                        ? (d.DDT_TAX_CRS_CENA ?? 0)
-                                        : d.TD_26 != null ? (decimal)
-                                        (d.SD_24.DD_TYPE_DC == 2010000005
-                                            ? d.DDT_TAX_CENA * d.DDT_KOL_PRIHOD
-                                            : d.TD_26.SFT_SUMMA_K_OPLATE /
-                                              (d.TD_26.SFT_KOL == 0 ? 1 : d.TD_26.SFT_KOL) * d.DDT_KOL_PRIHOD) : 0,
-                                SummaInWithNaklad =
-                                    (d.SD_24.DD_VOZVRAT ?? 0) == 1
-                                        ? d.DDT_TAX_CRS_CENA ?? 0
-                                        : d.TD_26 != null ? (decimal) (d.SD_24.DD_TYPE_DC == 2010000005
-                                            ? d.DDT_TAX_CENA * d.DDT_KOL_PRIHOD
-                                            : (d.TD_26.SFT_SUMMA_K_OPLATE + d.TD_26?.SFT_SUMMA_NAKLAD/
-                                               (d.TD_26.SFT_KOL == 0 ? 1 : d.TD_26.SFT_KOL)) * d.DDT_KOL_PRIHOD) : 0,
-                                SummaOut = 0,
-                                SummaOutWithNaklad = 0,
-                                QuantityNakopit = 0,
-                                TovarDocDC = d.DOC_CODE
-                            };
-
-                            if (d.TD_26 != null)
-                            {
-                                oper.FinDocumentDC = d.TD_26.SD_26.DOC_CODE;
-                                oper.FinDocument =
-                                    $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}";
-                                    oper.Naklad = (d.TD_26.SFT_SUMMA_NAKLAD ?? 0) / d.TD_26.SFT_KOL;
-                                oper.DocPrice = (decimal) d.TD_26.SFT_ED_CENA;
-                            }
-                            if (d.TD_84 != null)
-                            {
-                                oper.FinDocumentDC = d.TD_84.SD_84.DOC_CODE;
-                                oper.FinDocument =
-                                    $"С/ф клиенту №{d.TD_84.SD_84.SF_IN_NUM}/{d.TD_84.SD_84.SF_OUT_NUM} от {d.TD_84.SD_84.SF_DATE.ToShortDateString()}";
-                            }
-                            switch (oper.OperCode)
-                            {
-                                case 1:
-                                    oper.TovarDocument = "Приходный складской ордер ";
-                                    break;
-                                case 2:
-                                    oper.TovarDocument = "Расходный складской ордер ";
-                                    break;
-                                case 5:
-                                    oper.TovarDocument = "Инвентаризационная ведомость ";
-                                    break;
-                                case 7:
-                                    oper.TovarDocument = "Акт приемки готовой продукции ";
-                                    break;
-                                case 8:
-                                    oper.TovarDocument = "Акт разукомплектации готовой продукции ";
-                                    break;
-                                case 9:
-                                    oper.TovarDocument = "Акт списания материалов ";
-                                    break;
-                                case 12:
-                                    oper.TovarDocument = "Расходная накладная (без требования) ";
-                                    break;
-                                case 13:
-                                    oper.TovarDocument = "Накладная на внутренее перемещение ";
-                                    break;
-                                case 18:
-                                    oper.TovarDocument = "Продажа за наличный расчет ";
-                                    break;
-                                case 25:
-                                    oper.TovarDocument = "Возврат товара ";
-                                    break;
-                            }
-                            oper.TovarDocument +=
-                                $"№{d.SD_24.DD_IN_NUM}/{d.SD_24.DD_EXT_NUM} от {d.SD_24.DD_DATE.ToShortDateString()}";
-                            ret.Operations.Add(oper);
-                        }
-                    }
-                    var dataTransfer = ctx.NomenklTransferRow.Include(_ => _.NomenklTransfer)
-                        .Where(_ => (_.NomenklInDC == nomDC || _.NomenklOutDC == nomDC) && _.IsAccepted).ToList();
-                    foreach (var d in dataTransfer)
+                    var data =
+                        dataTemp.OrderBy(_ => _.DDT_NOMENKL_DC)
+                            .ThenBy(_ => _.SD_24.DD_DATE)
+                            .ThenBy(_ => _.DDT_KOL_RASHOD);
+                    foreach (var d in data)
                     {
                         currentRowNumber++;
-                        if (d.NomenklInDC == d.NomenklOutDC)
+                        var oper = new NomenklCalcCostOperation
+                        {
+                            RowNumber = currentRowNumber,
+                            NomenklDC = nomDC,
+                            Note = d.SD_24.DD_NOTES + " " + d.TD_26?.SFT_TEXT + d.TD_84?.SFT_TEXT,
+                            CalcPrice = 0,
+                            CalcPriceNaklad = 0,
+                            DocDate = d.SD_24.DD_DATE,
+                            KontragentIn = MainReferences.GetKontragent(d.SD_24.DD_KONTR_POL_DC),
+                            KontragentOut = MainReferences.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC),
+                            OperationName = d.SD_24.SD_201.D_NAME,
+                            OperCode = (d.SD_24.DD_VOZVRAT ?? 0) == 1 ? 25 : d.SD_24.SD_201.D_OP_CODE,
+                            QuantityIn = d.DDT_KOL_PRIHOD,
+                            QuantityOut = d.DDT_KOL_RASHOD,
+                            // ReSharper disable once PossibleInvalidOperationException
+                            DocPrice = (decimal) (d.SD_24.DD_TYPE_DC == 2010000005 ? d.DDT_TAX_CENA : 0),
+                            Naklad = 0,
+                            SkladIn =
+                                d.SD_24.DD_SKLAD_POL_DC != null
+                                    ? MainReferences.Warehouses[d.SD_24.DD_SKLAD_POL_DC.Value]
+                                    : null,
+                            SkladOut =
+                                d.SD_24.DD_SKLAD_OTPR_DC != null
+                                    ? MainReferences.Warehouses[d.SD_24.DD_SKLAD_OTPR_DC.Value]
+                                    : null,
+                            SummaIn =
+                                (decimal) ((d.SD_24.DD_VOZVRAT ?? 0) == 1
+                                    ? d.DDT_TAX_CRS_CENA ?? 0
+                                    : d.TD_26 != null
+                                        ? d.SD_24.DD_TYPE_DC == 2010000005
+                                            ? d.DDT_TAX_CENA * d.DDT_KOL_PRIHOD
+                                            : d.TD_26.SFT_SUMMA_K_OPLATE /
+                                              (d.TD_26.SFT_KOL == 0 ? 1 : d.TD_26.SFT_KOL) * d.DDT_KOL_PRIHOD
+                                        : 0),
+                            SummaInWithNaklad =
+                                (decimal) ((d.SD_24.DD_VOZVRAT ?? 0) == 1
+                                    ? d.DDT_TAX_CRS_CENA ?? 0
+                                    : d.TD_26 != null
+                                        ? d.SD_24.DD_TYPE_DC == 2010000005
+                                            ? d.DDT_TAX_CENA * d.DDT_KOL_PRIHOD
+                                            : (d.TD_26.SFT_SUMMA_K_OPLATE + d.TD_26?.SFT_SUMMA_NAKLAD /
+                                               (d.TD_26.SFT_KOL == 0 ? 1 : d.TD_26.SFT_KOL)) * d.DDT_KOL_PRIHOD
+                                        : 0),
+                            SummaOut = 0,
+                            SummaOutWithNaklad = 0,
+                            QuantityNakopit = 0,
+                            TovarDocDC = d.DOC_CODE
+                        };
+                        if (d.TD_26 != null)
+                        {
+                            oper.FinDocumentDC = d.TD_26.SD_26.DOC_CODE;
+                            oper.FinDocument =
+                                $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}";
+                            oper.Naklad = (d.TD_26.SFT_SUMMA_NAKLAD ?? 0) / d.TD_26.SFT_KOL;
+                            oper.DocPrice = (decimal) d.TD_26.SFT_ED_CENA;
+                        }
+                        if (d.TD_84 != null)
+                        {
+                            oper.FinDocumentDC = d.TD_84.SD_84.DOC_CODE;
+                            oper.FinDocument =
+                                $"С/ф клиенту №{d.TD_84.SD_84.SF_IN_NUM}/{d.TD_84.SD_84.SF_OUT_NUM} от {d.TD_84.SD_84.SF_DATE.ToShortDateString()}";
+                        }
+                        switch (oper.OperCode)
+                        {
+                            case 1:
+                                oper.TovarDocument = "Приходный складской ордер ";
+                                break;
+                            case 2:
+                                oper.TovarDocument = "Расходный складской ордер ";
+                                break;
+                            case 5:
+                                oper.TovarDocument = "Инвентаризационная ведомость ";
+                                break;
+                            case 7:
+                                oper.TovarDocument = "Акт приемки готовой продукции ";
+                                break;
+                            case 8:
+                                oper.TovarDocument = "Акт разукомплектации готовой продукции ";
+                                break;
+                            case 9:
+                                oper.TovarDocument = "Акт списания материалов ";
+                                break;
+                            case 12:
+                                oper.TovarDocument = "Расходная накладная (без требования) ";
+                                break;
+                            case 13:
+                                oper.TovarDocument = "Накладная на внутренее перемещение ";
+                                break;
+                            case 18:
+                                oper.TovarDocument = "Продажа за наличный расчет ";
+                                break;
+                            case 25:
+                                oper.TovarDocument = "Возврат товара ";
+                                break;
+                        }
+                        oper.TovarDocument +=
+                            $"№{d.SD_24.DD_IN_NUM}/{d.SD_24.DD_EXT_NUM} от {d.SD_24.DD_DATE.ToShortDateString()}";
+                        ret.Operations.Add(oper);
+                    }
+                }
+                var dataTransfer = context.NomenklTransferRow.Include(_ => _.NomenklTransfer)
+                    .Where(_ => (_.NomenklInDC == nomDC || _.NomenklOutDC == nomDC) && _.IsAccepted).ToList();
+                foreach (var d in dataTransfer)
+                {
+                    currentRowNumber++;
+                    if (d.NomenklInDC == d.NomenklOutDC)
+                    {
+                        var newTransOper = new NomenklCalcCostOperation
+                        {
+                            RowNumber = currentRowNumber,
+                            Note = d.Note,
+                            CalcPrice = 0,
+                            CalcPriceNaklad = 0,
+                            DocDate = d.NomenklTransfer.Date,
+                            KontragentIn = null,
+                            KontragentOut = null,
+                            OperationName = "Валютный перевод товара",
+                            OperCode = 19,
+                            QuantityIn = d.Quantity,
+                            QuantityOut = d.Quantity,
+                            DocPrice = 0,
+                            Naklad = 0,
+                            SkladIn = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
+                            SkladOut = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
+                            SummaIn = d.PriceIn * d.Quantity,
+                            SummaInWithNaklad = (d.PriceIn + (d.NakladNewEdSumma ?? 0)) * d.Quantity,
+                            SummaOut = d.PriceOut * d.Quantity,
+                            SummaOutWithNaklad = d.PriceOut * d.Quantity,
+                            QuantityNakopit = 0,
+                            TovarDocDC = -1,
+                            NomenklDC = nomDC
+                        };
+                        ret.Operations.Add(newTransOper);
+                    }
+                    else
+                    {
+                        if (d.NomenklInDC == nomDC)
                         {
                             var newTransOper = new NomenklCalcCostOperation
                             {
@@ -162,86 +198,53 @@ namespace Calculates.Materials
                                 OperationName = "Валютный перевод товара",
                                 OperCode = 19,
                                 QuantityIn = d.Quantity,
-                                QuantityOut = d.Quantity,
-                                DocPrice = 0,
+                                QuantityOut = 0,
+                                DocPrice = d.PriceIn,
                                 Naklad = 0,
                                 SkladIn = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
                                 SkladOut = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
                                 SummaIn = d.PriceIn * d.Quantity,
                                 SummaInWithNaklad = (d.PriceIn + (d.NakladNewEdSumma ?? 0)) * d.Quantity,
+                                SummaOut = 0,
+                                SummaOutWithNaklad = 0,
+                                QuantityNakopit = 0,
+                                TovarDocDC = -1,
+                                NomenklDC = d.NomenklInDC
+                            };
+                            ret.Operations.Add(newTransOper);
+                        }
+                        if (d.NomenklOutDC == nomDC)
+                        {
+                            var newTransOper = new NomenklCalcCostOperation
+                            {
+                                RowNumber = currentRowNumber,
+                                Note = d.Note,
+                                CalcPrice = 0,
+                                CalcPriceNaklad = 0,
+                                DocDate = d.NomenklTransfer.Date,
+                                KontragentIn = null,
+                                KontragentOut = null,
+                                OperationName = "Валютный перевод товара",
+                                OperCode = 19,
+                                QuantityIn = 0,
+                                QuantityOut = d.Quantity,
+                                DocPrice = 0,
+                                Naklad = 0,
+                                SkladIn = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
+                                SkladOut = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
+                                SummaIn = 0,
+                                SummaInWithNaklad = 0,
                                 SummaOut = d.PriceOut * d.Quantity,
                                 SummaOutWithNaklad = d.PriceOut * d.Quantity,
                                 QuantityNakopit = 0,
                                 TovarDocDC = -1,
-                                NomenklDC = nomDC
+                                NomenklDC = d.NomenklOutDC
                             };
                             ret.Operations.Add(newTransOper);
-                        }
-                        else
-                        {
-                            if (d.NomenklInDC == nomDC)
-                            {
-                                var newTransOper = new NomenklCalcCostOperation
-                                {
-                                    RowNumber = currentRowNumber,
-                                    Note = d.Note,
-                                    CalcPrice = 0,
-                                    CalcPriceNaklad = 0,
-                                    DocDate = d.NomenklTransfer.Date,
-                                    KontragentIn = null,
-                                    KontragentOut = null,
-                                    OperationName = "Валютный перевод товара",
-                                    OperCode = 19,
-                                    QuantityIn = d.Quantity,
-                                    QuantityOut = 0,
-                                    DocPrice = d.PriceIn,
-                                    Naklad = 0,
-                                    SkladIn = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
-                                    SkladOut = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
-                                    SummaIn = d.PriceIn * d.Quantity,
-                                    SummaInWithNaklad = (d.PriceIn + (d.NakladNewEdSumma ?? 0)) * d.Quantity,
-                                    SummaOut = 0,
-                                    SummaOutWithNaklad = 0,
-                                    QuantityNakopit = 0,
-                                    TovarDocDC = -1,
-                                    NomenklDC = d.NomenklInDC
-                                };
-                                ret.Operations.Add(newTransOper);
-                            }
-                            if (d.NomenklOutDC == nomDC)
-                            {
-                                var newTransOper = new NomenklCalcCostOperation
-                                {
-                                    RowNumber = currentRowNumber,
-                                    Note = d.Note,
-                                    CalcPrice = 0,
-                                    CalcPriceNaklad = 0,
-                                    DocDate = d.NomenklTransfer.Date,
-                                    KontragentIn = null,
-                                    KontragentOut = null,
-                                    OperationName = "Валютный перевод товара",
-                                    OperCode = 19,
-                                    QuantityIn = 0,
-                                    QuantityOut = d.Quantity,
-                                    DocPrice = 0,
-                                    Naklad = 0,
-                                    SkladIn = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
-                                    SkladOut = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
-                                    SummaIn = 0,
-                                    SummaInWithNaklad = 0,
-                                    SummaOut = d.PriceOut * d.Quantity,
-                                    SummaOutWithNaklad = d.PriceOut * d.Quantity,
-                                    QuantityNakopit = 0,
-                                    TovarDocDC = -1,
-                                    NomenklDC = d.NomenklOutDC
-                                };
-                                ret.Operations.Add(newTransOper);
-                            }
                         }
                     }
                 }
                 var calc = Calc(ret.Operations);
-
                 return new ObservableCollection<NomenklCalcCostOperation>(calc);
             }
             catch (Exception ex)
@@ -250,7 +253,6 @@ namespace Calculates.Materials
                 if (ex.InnerException != null)
                     Console.WriteLine(ex.InnerException.Message);
             }
-
             return null;
         }
 
@@ -298,13 +300,11 @@ namespace Calculates.Materials
                         _ =>
                             _.OperCode == 19 && _.DocDate == d.DocDate &&
                             (d.QuantityIn > 0 || d.QuantityOut > 0));
-
                 if (d.QuantityIn > 0 && d.QuantityOut > 0 && !isVozvrat && !isNomenklTransfer)
                 {
                     startPrice = (startPrice * quantityNakopit + d.SummaIn) / (quantityNakopit + d.QuantityIn);
                     startPriceWithNaklad = (startPriceWithNaklad * quantityNakopit + d.SummaIn + d.Naklad) /
                                            (quantityNakopit + d.QuantityIn);
-
                     d.SummaOut = startPrice * d.QuantityIn;
                     d.SummaOutWithNaklad = startPrice * d.QuantityIn + d.Naklad;
                     d.CalcPrice = startPrice;
@@ -403,78 +403,60 @@ namespace Calculates.Materials
 
         public override void Save(IEnumerable<NomenklCalcCostOperation> operList)
         {
-            using (var ctx = GlobalOptions.GetEntities())
+
+            decimal nomDC = 0;
+            //var pdata = ctx.NOM_PRICE.Where(operList.Select(_ => _.NomenklDC).Contains(d => d.NOM_DC).ToList();
+            foreach (var pn in context.NOM_PRICE)
+                if (operList.Select(_ => _.NomenklDC).Contains(pn.NOM_DC))
+                    context.NOM_PRICE.Remove(pn);
+            SaveNomPrice.Clear();
+            var dates = new List<DateTime>();
+            // ReSharper disable once PossibleMultipleEnumeration
+            dates.AddRange(operList.Select(_ => _.DocDate).Distinct());
+            foreach (var dt in dates)
             {
-                using (var tnx = ctx.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        decimal nomDC = 0;
-                        //var pdata = ctx.NOM_PRICE.Where(operList.Select(_ => _.NomenklDC).Contains(d => d.NOM_DC).ToList();
-                        foreach (var pn in ctx.NOM_PRICE)
-                            if (operList.Select(_ => _.NomenklDC).Contains(pn.NOM_DC))
-                                ctx.NOM_PRICE.Remove(pn);
-                        SaveNomPrice.Clear();
-                        var dates = new List<DateTime>();
-                        // ReSharper disable once PossibleMultipleEnumeration
-                        dates.AddRange(operList.Select(_ => _.DocDate).Distinct());
-                        foreach (var dt in dates)
-                        {
-                            // ReSharper disable once PossibleMultipleEnumeration
-                            var rn = operList.Where(_ => _.DocDate == dt).Select(_ => _.RowNumber).Max();
-                            // ReSharper disable once PossibleMultipleEnumeration
-                            SaveNomPrice.Add(dt, operList.Single(_ => _.DocDate == dt && _.RowNumber == rn));
-                        }
-                        foreach (var d in SaveNomPrice.Values)
-                        {
-                            nomDC = d.NomenklDC;
-                            ctx.NOM_PRICE.Add(new NOM_PRICE
-                            {
-                                ID = Guid.NewGuid().ToString().Replace("-", string.Empty).ToUpper(),
-                                NOM_DC = d.NomenklDC,
-                                DATE = d.DocDate,
-                                CALC_INFO = DateTime.Now.ToString(CultureInfo.CurrentCulture),
-                                AVG = 0,
-                                FIFO = 0,
-                                LIFO = 0,
-                                PRICE = d.CalcPriceNaklad,
-                                KOL_IN = d.QuantityIn,
-                                KOL_OUT = d.QuantityOut,
-                                NAKOPIT = d.QuantityNakopit,
-                                PRICE_WO_NAKLAD = d.CalcPrice,
-                                SUM_IN = d.SummaInWithNaklad,
-                                SUM_OUT = d.SummaInWithNaklad,
-                                SUM_IN_WO_NAKLAD = d.SummaIn,
-                                SUM_OUT_WO_NAKLAD = d.SummaOut
-                            });
-                        }
-                        var s = $"DELETE FROM NOMENKL_RECALC WHERE NOM_DC={nomDC}";
-                        ctx.Database.ExecuteSqlCommand(s);
-                        //Console.WriteLine($"Сохранение для {nomDC}");
-                        ctx.SaveChanges();
-                        ctx.Database.ExecuteSqlCommand("delete FROM WD_27 " +
-                                                       " INSERT INTO dbo.WD_27 (DOC_CODE, SKLW_NOMENKL_DC, SKLW_DATE, SKLW_KOLICH) " +
-                                                       " SELECT n.StoreDC, n.nomdc, n.Date, SUM(n.prihod) - SUM(n.rashod) " +
-                                                       " FROM NomenklMoveWithPrice n " +
-                                                       " WHERE n.date = (SELECT MAX(n1.date) FROM NomenklMoveWithPrice n1 " +
-                                                       " WHERE n1.nomdc = n.nomdc AND n.storedc = n1.storedc)" +
-                                                       " GROUP BY n.nomdc,n.StoreDc, n.Date " +
-                                                       " HAVING SUM(n.prihod) - SUM(n.rashod) > 0");
-                        tnx.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        tnx.Rollback();
-                        var errText = new StringBuilder(ex.Message);
-                        if (ex.InnerException != null)
-                        {
-                            errText.Append("\n Внутрення ошибка:\n");
-                            errText.Append(ex.InnerException.Message);
-                        }
-                        Console.WriteLine(errText);
-                    }
-                }
+                // ReSharper disable once PossibleMultipleEnumeration
+                var rn = operList.Where(_ => _.DocDate == dt).Select(_ => _.RowNumber).Max();
+                // ReSharper disable once PossibleMultipleEnumeration
+                SaveNomPrice.Add(dt, operList.Single(_ => _.DocDate == dt && _.RowNumber == rn));
             }
+            foreach (var d in SaveNomPrice.Values)
+            {
+                nomDC = d.NomenklDC;
+                context.NOM_PRICE.Add(new NOM_PRICE
+                {
+                    ID = Guid.NewGuid().ToString().Replace("-", string.Empty).ToUpper(),
+                    NOM_DC = d.NomenklDC,
+                    DATE = d.DocDate,
+                    CALC_INFO = DateTime.Now.ToString(CultureInfo.CurrentCulture),
+                    AVG = 0,
+                    FIFO = 0,
+                    LIFO = 0,
+                    PRICE = d.CalcPriceNaklad,
+                    KOL_IN = d.QuantityIn,
+                    KOL_OUT = d.QuantityOut,
+                    NAKOPIT = d.QuantityNakopit,
+                    PRICE_WO_NAKLAD = d.CalcPrice,
+                    SUM_IN = d.SummaInWithNaklad,
+                    SUM_OUT = d.SummaInWithNaklad,
+                    SUM_IN_WO_NAKLAD = d.SummaIn,
+                    SUM_OUT_WO_NAKLAD = d.SummaOut
+                });
+            }
+            var s = $"DELETE FROM NOMENKL_RECALC WHERE NOM_DC={nomDC}";
+            context.Database.ExecuteSqlCommand(s);
+            //Console.WriteLine($"Сохранение для {nomDC}");
+            context.SaveChanges();
+            context.Database.ExecuteSqlCommand("delete FROM WD_27 " +
+                                               " INSERT INTO dbo.WD_27 (DOC_CODE, SKLW_NOMENKL_DC, SKLW_DATE, SKLW_KOLICH) " +
+                                               " SELECT n.StoreDC, n.nomdc, n.Date, SUM(n.prihod) - SUM(n.rashod) " +
+                                               " FROM NomenklMoveWithPrice n " +
+                                               " WHERE n.date = (SELECT MAX(n1.date) FROM NomenklMoveWithPrice n1 " +
+                                               " WHERE n1.nomdc = n.nomdc AND n.storedc = n1.storedc)" +
+                                               " GROUP BY n.nomdc,n.StoreDc, n.Date " +
+                                               " HAVING SUM(n.prihod) - SUM(n.rashod) > 0");
         }
+
     }
 }
+

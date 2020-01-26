@@ -259,7 +259,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                             decimal sumInPeriod = 0;
                             decimal summaInStart = 0;
                             decimal sumQuanInPeriod = 0;
-                            decimal sumQuanStart = 0;
+                            decimal sumQuanStart;
                             var td26 = ent.TD_26
                                 .Include(_ => _.SD_26).Where(_ =>
                                     _.SFT_NEMENKL_DC == dc && _.SD_26.SF_POSTAV_DATE < start);

@@ -23,7 +23,6 @@ namespace KursAM2.ViewModel.Personal
         private EmployeePayMainViewModel myCurrentEmploee;
         private EmployeePayDocumentViewModel myCurrentPayDocument;
         private EmployeePayMainViewModel mySelectEmployee;
-        private EmployeePayMainViewModel mySelEmp;
 
         public EmployeePayWindowViewModel()
         {
@@ -442,7 +441,6 @@ namespace KursAM2.ViewModel.Personal
 
         public void LoadForAll(DateTime date)
         {
-            mySelEmp = CurrentEmploee;
             var tempMain = new ObservableCollection<EmployeePayMainViewModel>();
             DocumentsLoad(date, true);
             foreach (
@@ -481,7 +479,6 @@ namespace KursAM2.ViewModel.Personal
 
         public override void RefreshData(object obj)
         {
-            mySelEmp = CurrentEmploee;
             var tempMain = new ObservableCollection<EmployeePayMainViewModel>();
             var d = obj as DateTime?;
             DocumentsLoad(obj != null ? d : null);
@@ -519,7 +516,7 @@ namespace KursAM2.ViewModel.Personal
             foreach (var t in tempMain)
                 EmployeeMain.Add(t);
             RaisePropertyChanged(nameof(EmployeeMain));
-            if (mySelEmp == null) return;
+            //if (mySelEmp == null) return;
         }
     }
 }

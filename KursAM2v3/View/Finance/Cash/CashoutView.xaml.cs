@@ -38,8 +38,12 @@ namespace KursAM2.View.Finance.Cash
         public PopupCalcEdit SumKontrcont = new PopupCalcEdit();
 
         public ObservableCollection<Currency> CurrencyList { set; get; } = new ObservableCollection<Currency>();
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new NotImplementedException();
+        }
 
         private void CashoutView_Unloaded(object sender, RoutedEventArgs e)
         {

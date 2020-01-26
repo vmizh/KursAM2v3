@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using Core.ViewModel.Base;
+using DevExpress.Xpf.Grid;
 using LayoutManager;
 
 namespace KursAM2.View.Base
@@ -17,8 +19,12 @@ namespace KursAM2.View.Base
             Closing += SelectDialogView_Closing;
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void SelectDialogView_Closing(object sender, CancelEventArgs e)
         {
@@ -65,7 +71,9 @@ namespace KursAM2.View.Base
 
         private void Reset_OnClick(object sender, RoutedEventArgs e)
         {
-            LayoutManager.ResetLayout();
+            var ctrl = DataContext as IDataUserControl;
+            var layout = ctrl?.LayoutControl as ILayout;
+            layout?.LayoutManager.ResetLayout();
         }
     }
 }

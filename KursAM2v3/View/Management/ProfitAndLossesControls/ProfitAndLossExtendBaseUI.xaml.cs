@@ -28,7 +28,11 @@ namespace KursAM2.View.Management.ProfitAndLossesControls
             LayoutManager.Load(true);
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

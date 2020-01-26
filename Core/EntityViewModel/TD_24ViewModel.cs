@@ -82,7 +82,11 @@ namespace Core.EntityViewModel
                 if (myNomenkl != null && myNomenkl.Equals(value)) return;
                 myNomenkl = value;
                 if (myNomenkl != null)
+                {
                     DDT_NOMENKL_DC = myNomenkl.DocCode;
+                    DDT_ED_IZM_DC = myNomenkl.Unit.DocCode;
+                    DDT_POST_ED_IZM_DC = myNomenkl.Unit.DocCode;
+                }
                 RaisePropertyChanged();
             }
         }
@@ -107,7 +111,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-        public decimal DDT_KOL_RASHOD
+        public virtual decimal DDT_KOL_RASHOD
         {
             get => Entity.DDT_KOL_RASHOD;
             set

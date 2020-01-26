@@ -17,8 +17,12 @@ namespace KursAM2.View.Personal
             Closing += PersonaReference_Closing;
         }
 
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void PersonaReference_Closing(object sender, CancelEventArgs e)
         {

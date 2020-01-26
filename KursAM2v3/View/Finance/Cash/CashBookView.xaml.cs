@@ -26,8 +26,12 @@ namespace KursAM2.View.Finance.Cash
             Closing += CashBookView_Closing;
         }
         
-        public LayoutManagerBase LayoutManager { get; set; }
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void ResetLayot()
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void CashBookView_Closing(object sender, CancelEventArgs e)
         {
