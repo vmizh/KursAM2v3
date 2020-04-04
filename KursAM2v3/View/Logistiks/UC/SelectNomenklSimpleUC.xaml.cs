@@ -18,11 +18,7 @@ namespace KursAM2.View.Logistiks.UC
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
-
+ 
         private void ButtonEdit_KeyDown(object sender, KeyEventArgs e)
         {
             var ctx = DataContext as NomenklSelectedSimpleDialogViewModel;

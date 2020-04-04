@@ -12,7 +12,7 @@ using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.View.Logistiks.Warehouse;
-using WarehouseManager = KursAM2.Managers.Invoices.WarehouseManager;
+using WarehouseManager = KursAM2.Managers.WarehouseManager;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {

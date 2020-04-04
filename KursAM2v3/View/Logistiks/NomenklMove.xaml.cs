@@ -18,10 +18,6 @@ namespace KursAM2.View.Logistiks
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
 
         private void NomenklMove_Closing(object sender, CancelEventArgs e)
         {

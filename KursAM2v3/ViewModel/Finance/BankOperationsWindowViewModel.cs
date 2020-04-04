@@ -263,7 +263,7 @@ namespace KursAM2.ViewModel.Finance
             else
                 treePeriods.Bands.FirstOrDefault(_ => (string) _.Header == "CHF").Visible = true;
         }
-
+         
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private void GetPeriods()
         {
@@ -278,10 +278,9 @@ namespace KursAM2.ViewModel.Finance
             //    .GenerateIerarhy(BankPeriodOperationsCollection.Select(_ => _.Date).Distinct(),
             //        PeriodIerarhy.YearMonthDay).Select(d => new RemainderCurrenciesDatePeriod(d)).ToList()
             //    .OrderByDescending(_ => _.DateEnd);
-
             Periods = new ObservableCollection<RemainderCurrenciesDatePeriod>(Manager.GetRemains(
-                CurrentBankAccount.BankDC, BankPeriodOperationsCollection.Min(_ => _.Date).AddDays(-1),
-                BankPeriodOperationsCollection.Max(_ => _.Date)));
+                CurrentBankAccount.BankDC, BankPeriodOperationsCollection?.Min(_ => _.Date).AddDays(-1) ?? DateTime.MinValue,
+                BankPeriodOperationsCollection?.Max(_ => _.Date) ?? DateTime.MaxValue));
 
             RaisePropertyChanged(nameof(Periods));
             SetVisiblePeriodsBands();

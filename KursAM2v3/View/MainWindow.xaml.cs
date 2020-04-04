@@ -242,10 +242,14 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Расходные накладные для клиентов":
-                        form = new WaybillSearchView {Owner = Application.Current.MainWindow};
-                        var ctxNaklad = new WaybillSearchViewModel(form);
+                        
+                        var ctxNaklad = new WaybillSearchViewModel();
+                        form = new WaybillSearchView
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = ctxNaklad
+                        };
                         form.Show();
-                        form.DataContext = ctxNaklad;
                         break;
                     case "Справочник сотрудников":
                         form = new PersonaReference {Owner = Application.Current.MainWindow};

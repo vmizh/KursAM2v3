@@ -19,10 +19,6 @@ namespace KursAM2.View.KursReferences
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
 
         private void Layout_Loaded(object sender, RoutedEventArgs e)
         {

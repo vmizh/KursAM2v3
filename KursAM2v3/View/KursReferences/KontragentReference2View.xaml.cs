@@ -30,10 +30,6 @@ namespace KursAM2.View.KursReferences
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
 
         private void GridControlKontragent_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {

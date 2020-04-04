@@ -16,9 +16,10 @@ using KursAM2.ViewModel.Management.Calculations;
 
 namespace KursAM2.Managers.Invoices
 {
-   public class InvoicesManager
+    public class InvoicesManager
     {
         private static readonly WindowManager winManager = new WindowManager();
+
         /// <summary>
         ///     Оплата по счетам
         /// </summary>
@@ -124,7 +125,6 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(e);
             }
-
             return doc;
         }
 
@@ -163,7 +163,6 @@ namespace KursAM2.Managers.Invoices
                 row.myState = RowStatus.NewRow;
                 code++;
             }
-
             ret.DeletedRows.Clear();
             ret.PaymentDocs.Clear();
             ret.Facts.Clear();
@@ -191,7 +190,6 @@ namespace KursAM2.Managers.Invoices
                 row.myState = RowStatus.NewRow;
                 code++;
             }
-
             newCopy.DeletedRows.Clear();
             newCopy.PaymentDocs.Clear();
             newCopy.Facts.Clear();
@@ -223,7 +221,6 @@ namespace KursAM2.Managers.Invoices
                             if (oldrow == null) continue;
                             ctx.TD_26.Remove(oldrow);
                         }
-
                         if (doc.DocCode == -1)
                         {
                             var guidId = Guid.NewGuid();
@@ -473,7 +470,6 @@ namespace KursAM2.Managers.Invoices
                                 }
                             }
                         }
-
                         ctx.SaveChanges();
                         transaction.Commit();
                         RecalcKontragentBalans.CalcBalans(doc.SF_POST_DC, doc.SF_POSTAV_DATE);
@@ -495,7 +491,6 @@ namespace KursAM2.Managers.Invoices
                     }
                 }
             }
-
             return newDC;
         }
 
@@ -665,7 +660,6 @@ namespace KursAM2.Managers.Invoices
                                       || td26.SD_43.NAME.Contains(searchText)
                                 select sd26).ToList();
                     }
-
                     var sql =
                         "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                         "FROM sd_26 s26 " +
@@ -686,7 +680,6 @@ namespace KursAM2.Managers.Invoices
                                 ret.Add(newDoc);
                                 continue;
                             }
-
                             if (newDoc.SF_CRS_SUMMA > pd.PaySumma)
                             {
                                 newDoc.PaymentDocs.Add(new InvoicePaymentDocument
@@ -711,7 +704,6 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
-
             return ret;
         }
 
@@ -780,7 +772,6 @@ namespace KursAM2.Managers.Invoices
                                 ret.Add(newDoc);
                                 continue;
                             }
-
                             if (newDoc.SF_CRS_SUMMA > pd.PaySumma)
                             {
                                 newDoc.PaymentDocs.Add(new InvoicePaymentDocument
@@ -805,7 +796,6 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
-
             return ret;
         }
 
@@ -880,7 +870,6 @@ namespace KursAM2.Managers.Invoices
                         Note = c.VZT_DOC_NOTES
                     });
             }
-
             var document = new InvoiceClient(data);
             foreach (var item in document.Rows)
             {
@@ -889,19 +878,16 @@ namespace KursAM2.Managers.Invoices
                                       _.DDT_SFACT_ROW_CODE == item.Code)
                     .ToList();
                 item.Shipped = r.Sum(_ => _.DDT_KOL_RASHOD);
-                
-
                 item.State = RowStatus.NotEdited;
                 //var bilingItems = GlobalOptions.GetEntities()
                 //    .TD_24.Where(_ => _.DDT_SFACT_DC == item.DOC_CODE && _.DDT_SFACT_ROW_CODE == item.Code);
                 foreach (var i in r)
                     document.ShipmentRows.Add(new ShipmentRowViewModel(i));
             }
-
             document.REGISTER_DATE = DateTime.Today;
             document.DeletedRows = new List<InvoiceClientRow>();
             foreach (var p in pDocs) document.PaymentDocs.Add(p);
-            foreach (var r in document.Rows) r.myState = RowStatus.NotEdited; 
+            foreach (var r in document.Rows) r.myState = RowStatus.NotEdited;
             document.myState = RowStatus.NotEdited;
             return document;
         }
@@ -976,11 +962,9 @@ namespace KursAM2.Managers.Invoices
                             firstOrDefault.NAKOPIT;
                         item.CurrentRemains = quan;
                     }
-
                     item.State = RowStatus.NewRow;
                     newCode++;
                 }
-
                 document.REGISTER_DATE = DateTime.Today;
                 document.DeletedRows = new List<InvoiceClientRow>();
                 document.State = RowStatus.NewRow;
@@ -988,7 +972,6 @@ namespace KursAM2.Managers.Invoices
                 document.PaymentDocs.Clear();
                 document.ShipmentRows.Clear();
             }
-
             return document;
         }
 
@@ -1020,7 +1003,7 @@ namespace KursAM2.Managers.Invoices
                     REGISTER_DATE = DateTime.Today,
                     CREATOR = GlobalOptions.UserInfo.Name,
                     IsAccepted = false,
-                    myState = RowStatus.NewRow,
+                    myState = RowStatus.NewRow
                 };
                 var code = 1;
                 foreach (var row in ret.Rows)
@@ -1043,10 +1026,8 @@ namespace KursAM2.Managers.Invoices
                             firstOrDefault.NAKOPIT;
                         row.CurrentRemains = quan;
                     }
-
                     code++;
                 }
-
                 ret.PaymentDocs.Clear();
                 ret.ShipmentRows.Clear();
                 ret.RaisePropertyChanged("PaySumma");
@@ -1228,7 +1209,6 @@ namespace KursAM2.Managers.Invoices
                                 ret.Add(newDoc);
                                 continue;
                             }
-
                             if (newDoc.SF_CRS_SUMMA_K_OPLATE > pd.PaySumma)
                             {
                                 newDoc.PaymentDocs.Add(new InvoicePaymentDocument
@@ -1255,7 +1235,59 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
+            return ret;
+        }
 
+        public static List<InvoiceClient> GetInvoicesClient(Waybill waybill)
+        {
+            //MainReferences.CheckUpdateKontragentAndLoad();
+            var ret = new List<InvoiceClient>();
+            try
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    var sql = waybill.Client == null
+                        ? "SELECT t84.doc_code, t84.code, cast(sft_kol as numeric(18,4)), SUM(t24.DDT_KOL_RASHOD) Shipped FROM td_84 t84 " +
+                          "INNER JOIN sd_84 s84 ON t84.DOC_CODE = s84.DOC_CODE " +
+                          "LEFT OUTER JOIN td_24 t24 ON t84.DOC_CODE = T24.DDT_SFACT_DC AND t84.CODE = T24.DDT_SFACT_ROW_CODE " +
+                          "GROUP BY t84.doc_code, t84.code, sft_kol " +
+                          "HAVING sft_kol - SUM(t24.DDT_KOL_RASHOD) > 0"
+                        : "SELECT t84.doc_code, t84.code, cast(sft_kol as numeric(18,4)), SUM(t24.DDT_KOL_RASHOD) Shipped FROM td_84 t84 " +
+                          $"INNER JOIN sd_84 s84 ON t84.DOC_CODE = s84.DOC_CODE AND S84.SF_CLIENT_DC = {CustomFormat.DecimalToSqlDecimal(waybill.Client.DocCode)} " +
+                          "LEFT OUTER JOIN td_24 t24 ON t84.DOC_CODE = T24.DDT_SFACT_DC AND t84.CODE = T24.DDT_SFACT_ROW_CODE " +
+                          "GROUP BY t84.doc_code, t84.code, sft_kol " +
+                          "HAVING sft_kol - SUM(t24.DDT_KOL_RASHOD) > 0";
+                    var data = ctx.Database.SqlQuery<SelectedTemp>(sql).ToList();
+                    foreach (var dc in data.Select(_ => _.DOC_CODE).Distinct())
+                    {
+                        var inv = GetInvoiceClient(dc);
+                        var dcs = data.Where(_ => _.DOC_CODE == dc).ToList();
+                        var deldcs = new List<int>();
+                        foreach (var r in dcs.Where(_ => _.DOC_CODE == dc))
+                        {
+                            var item = inv.Rows.FirstOrDefault(_ => _.Code == r.CODE);
+                            if (item != null)
+                            {
+                                item.Shipped = (decimal) r.Shipped;
+                                continue;
+                            }
+                            deldcs.Add(r.CODE);
+                        }
+                        foreach (var code in deldcs)
+                        {
+                            var r = inv.Rows.FirstOrDefault(_ => _.Code == code);
+                            if (r != null)
+                                inv.Rows.Remove(r);
+                        }
+                        ret.Add(inv);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+                return null;
+            }
             return ret;
         }
 
@@ -1310,7 +1342,6 @@ namespace KursAM2.Managers.Invoices
                         "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SFACT_DC = s84.DOC_CODE " +
                         $"WHERE s84.SF_DATE >= '{CustomFormat.DateToString(dateStart)}' AND s84.SF_DATE <= '{CustomFormat.DateToString(dateEnd)}'" +
                         "GROUP BY s84.doc_code, s84.SF_CRS_SUMMA_K_OPLATE ";
-
                     var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_DATE))
                     {
@@ -1319,8 +1350,6 @@ namespace KursAM2.Managers.Invoices
                         {
                             State = RowStatus.NotEdited
                         };
-
-
                         if (isUsePayment)
                         {
                             var pd = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode);
@@ -1329,7 +1358,6 @@ namespace KursAM2.Managers.Invoices
                                 ret.Add(newDoc);
                                 continue;
                             }
-
                             if (newDoc.SF_CRS_SUMMA_K_OPLATE > pd.PaySumma)
                             {
                                 newDoc.PaymentDocs.Add(new InvoicePaymentDocument
@@ -1354,7 +1382,6 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
-
             return ret;
         }
 
@@ -1467,12 +1494,11 @@ namespace KursAM2.Managers.Invoices
                                         SFT_SUMMA_NDS = items.SFT_SUMMA_NDS,
                                         SFT_TARA_DC = items.SFT_TARA_DC,
                                         SFT_TARA_FLAG = items.SFT_TARA_FLAG,
-                                        SFT_TARA_MEST = items.SFT_TARA_MEST,
+                                        SFT_TARA_MEST = items.SFT_TARA_MEST
                                     });
                                     code += 1;
                                 }
                             }
-
                             if (doc.DeletedRows.Count > 0)
                                 foreach (var item in doc.DeletedRows)
                                 {
@@ -1596,7 +1622,6 @@ namespace KursAM2.Managers.Invoices
                                     }
                                 }
                             }
-
                             if (doc.DeletedRows.Count > 0)
                                 foreach (var i in doc.DeletedRows)
                                 {
@@ -1606,7 +1631,6 @@ namespace KursAM2.Managers.Invoices
                                         ctx.TD_84.Remove(deletedItem);
                                 }
                         }
-
                         ctx.SaveChanges();
                         dtx.Commit();
                         foreach (var r in doc.Rows) r.myState = RowStatus.NotEdited;
@@ -1620,7 +1644,6 @@ namespace KursAM2.Managers.Invoices
                     }
                 }
             }
-
             return dc;
         }
 

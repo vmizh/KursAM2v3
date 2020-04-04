@@ -19,10 +19,6 @@ namespace KursAM2.View.Search
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
 
         private void SearchBaseView_Closing(object sender, CancelEventArgs e)
         {

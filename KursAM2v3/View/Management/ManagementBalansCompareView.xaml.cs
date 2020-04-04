@@ -26,10 +26,6 @@ namespace KursAM2.View.Management
         public object CurrentDetailView { set; get; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new NotImplementedException();
-        }
 
         private void ManagementBalansCompareView_Loaded(object sender, RoutedEventArgs e)
         {

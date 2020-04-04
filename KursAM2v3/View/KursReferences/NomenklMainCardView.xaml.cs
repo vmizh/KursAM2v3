@@ -23,11 +23,7 @@ namespace KursAM2.View.KursReferences
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
-
+ 
         private void NomenklMainCardView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             //var ctx = DataContext as MainCardWindowViewModel;

@@ -3,6 +3,7 @@ using System.Windows.Input;
 using Core;
 using Core.Menu;
 using Core.ViewModel.Base;
+using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.View.Logistiks.UC;
 

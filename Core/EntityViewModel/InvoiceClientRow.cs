@@ -25,10 +25,7 @@ namespace Core.EntityViewModel
         private decimal myShipped;
         // ReSharper disable once RedundantDefaultMemberInitializer
         public bool myIsNDSInPrice = false;
-
-
-
-
+        
         public InvoiceClientRow(bool isNDSInPrice = false)
         {
             Entity = DefaultValue();

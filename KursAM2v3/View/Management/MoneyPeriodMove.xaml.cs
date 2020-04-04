@@ -30,11 +30,7 @@ namespace KursAM2.View.Management
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
-
+ 
         private void DisplayTimeEvent(object sender, ElapsedEventArgs e)
         {
         }

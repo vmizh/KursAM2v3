@@ -28,10 +28,6 @@ namespace KursAM2.View.Personal
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new NotImplementedException();
-        }
 
         private void PayRollDocSearch_Closing(object sender, CancelEventArgs e)
         {

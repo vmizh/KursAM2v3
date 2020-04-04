@@ -8,7 +8,7 @@ using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using KursAM2.Managers.Invoices;
+using KursAM2.Managers;
 using KursAM2.View.Logistiks.Warehouse;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse

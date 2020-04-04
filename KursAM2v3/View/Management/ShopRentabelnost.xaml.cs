@@ -24,10 +24,6 @@ namespace KursAM2.View.Management
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new NotImplementedException();
-        }
 
         private void ShopRentabelnost_Loaded(object sender, RoutedEventArgs e)
         {

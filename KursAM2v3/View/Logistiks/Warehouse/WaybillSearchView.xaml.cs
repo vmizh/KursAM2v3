@@ -3,7 +3,7 @@ using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using LayoutManager;
 
-namespace KursAM2.View.Logistiks
+namespace KursAM2.View.Logistiks.Warehouse
 {
     /// <summary>
     ///     Interaction logic for WaybillSearchView.xaml
@@ -13,9 +13,13 @@ namespace KursAM2.View.Logistiks
         public WaybillSearchView()
         {
             InitializeComponent();
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            
             Closing += (o, e) => { LayoutManager.Save(); };
-            Loaded += (operGridControl, e) => { LayoutManager.Load(); };
+            Loaded += (operGridControl, e) =>
+            {
+                LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+                LayoutManager.Load();
+            };
         }
 
         private void GridControlSearch_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
@@ -33,25 +37,9 @@ namespace KursAM2.View.Logistiks
                         AllowDefaultButton = false,
                         DisplayFormat = "n2"
                     };
-            //switch (col.FieldName)
-            //{
-            //    case "NOTES_ORD":
-            //    case "OSN_ORD":
-            //    case "NAME_ORD":
-            //    case "SFactName":
-            //        col.EditSettings = new MemoEditSettings
-            //        {
-            //            ShowIcon = false
-            //        };
-            //        break;
-            //}
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
-    }
+     }
 }

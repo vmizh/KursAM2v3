@@ -12,7 +12,7 @@ using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
-using KursAM2.Managers.Invoices;
+using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks.Warehouse;
 
@@ -21,9 +21,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
     public class OrderOutWindowViewModel : RSWindowViewModelBase
     {
         private readonly WarehouseManager orderManager;
-        private WarehouseOrderOut myDocument;
-        private NomenklManager nomManager = new NomenklManager();
         private WarehouseOrderOutRow myCurrentRow;
+        private WarehouseOrderOut myDocument;
+        private readonly NomenklManager nomManager = new NomenklManager();
 
         [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         public OrderOutWindowViewModel(StandartErrorManager errManager)
@@ -55,16 +55,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 if (myDocument != null && myDocument.Equals(value)) return;
                 myDocument = value;
                 Rows.Clear();
-                foreach (var r in Document.Rows)
-                {
-                    Rows.Add(r);
-                }
+                foreach (var r in Document.Rows) Rows.Add(r);
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Rows));
             }
             get => myDocument;
         }
-
         public WarehouseOrderOutRow CurrentRow
         {
             set
@@ -75,9 +71,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
             get => myCurrentRow;
         }
-        public ObservableCollection<WarehouseOrderOutRow> Rows { set; get; } = new ObservableCollection<WarehouseOrderOutRow>();
-
-
+        public ObservableCollection<WarehouseOrderOutRow> Rows { set; get; } =
+            new ObservableCollection<WarehouseOrderOutRow>();
 
         #region Справочники
 
@@ -147,12 +142,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 foreach (var r in Document.Rows)
                 {
                     r.MaxQuantity = nomManager.GetNomenklCount(Document.DD_DATE, r.DDT_NOMENKL_DC,
-                        Document.WarehouseOut.DOC_CODE) + r.DDT_KOL_RASHOD;
+                                        Document.WarehouseOut.DOC_CODE) + r.DDT_KOL_RASHOD;
                     r.myState = RowStatus.NotEdited;
                 }
                 Document.myState = RowStatus.NotEdited;
             }
-            
             RaisePropertyChanged(nameof(Document));
             Document.RaisePropertyChanged("State");
             RaisePropertyChanged(nameof(Document.Sender));
@@ -166,10 +160,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             //Document.DD_OTRPAV_NAME = Document.Sender;
             //Document.DD_TYPE_DC = 2010000003;
             var dc = orderManager.SaveOrderOut(Document);
-            if (dc > 0)
-            {
-                RefreshData(dc);
-            }
+            if (dc > 0) RefreshData(dc);
         }
 
         public ICommand AddNomenklCommand
@@ -182,7 +173,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var nomenkls = StandartDialogs.SelectNomenkls();
             if (nomenkls == null || nomenkls.Count <= 0) return;
             foreach (var n in nomenkls)
-                if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode))
+                if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode && !n.IsUsluga))
                 {
                     var m = nomManager.GetNomenklCount(Document.DD_DATE, n.DocCode,
                         Document.WarehouseOut.DOC_CODE);
@@ -190,7 +181,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     {
                         DocCode = -1,
                         Nomenkl = n,
-                        DDT_KOL_RASHOD = Math.Min(1,m),
+                        DDT_KOL_RASHOD = Math.Min(1, m),
                         Unit = n.Unit,
                         Currency = n.Currency,
                         MaxQuantity = m,

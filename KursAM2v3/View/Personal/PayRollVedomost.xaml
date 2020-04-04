@@ -37,11 +37,14 @@
                                       DateTime="{Binding Date, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
                         <Button Width="100" 
                                 Background="White"
-                                Visibility="{Binding IsCanDateChange}">
+                                Visibility="{Binding IsCanDateChange}"
+                                Command="{Binding DateChangeCommand}">
                             <TextBox Text="Установить дату для всех" 
                                      TextAlignment="Center" 
                                      TextWrapping="Wrap"
-                                     IsReadOnly="True" BorderBrush="{x:Null}"
+                                     IsReadOnly="True"
+                                     IsEnabled="False"
+                                     BorderBrush="{x:Null}"
                                      />
                         </Button>
                         <Label VerticalAlignment="Center" 

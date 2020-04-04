@@ -40,11 +40,6 @@ namespace KursAM2.View.Finance.Cash
         public ObservableCollection<Currency> CurrencyList { set; get; } = new ObservableCollection<Currency>();
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new NotImplementedException();
-        }
-
         private void CashoutView_Unloaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Save();

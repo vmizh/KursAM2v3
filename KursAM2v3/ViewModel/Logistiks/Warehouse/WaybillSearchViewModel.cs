@@ -8,14 +8,18 @@ using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using KursAM2.Managers;
 using KursAM2.View.Logistiks;
+using KursAM2.View.Logistiks.Warehouse;
 using Reports.Base;
 
-namespace KursAM2.ViewModel.Logistiks
+namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public class WaybillSearchViewModel : RSWindowSearchViewModelBase
     {
         private Waybill myCurrentDocument;
+        private readonly WarehouseManager DocManager = new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),
+            "WaybillViewModel"));
 
         public WaybillSearchViewModel()
         {
@@ -146,8 +150,38 @@ namespace KursAM2.ViewModel.Logistiks
         public override void DocumentOpen(object form)
         {
             if (CurrentDocument == null) return;
-            var frm = new WaybillView {Owner = Application.Current.MainWindow};
             var ctx = new WaybillWindowViewModel(CurrentDocument.DocCode);
+            var frm = new WaybillView {Owner = Application.Current.MainWindow, DataContext = ctx};
+            frm.Show();
+        }
+
+        public override void DocNewEmpty(object form)
+        {
+            var frm = new WaybillView {Owner = Application.Current.MainWindow};
+            var ctx = new WaybillWindowViewModel {Form = frm};
+            frm.Show();
+            frm.DataContext = ctx;
+        }
+
+        public override void DocNewCopy(object obj)
+        {
+            if (CurrentDocument == null) return;
+            var frm = new WaybillView {Owner = Application.Current.MainWindow};
+            var ctx = new WaybillWindowViewModel
+            {
+                Form = frm, Document = DocManager.NewWaybillCopy(CurrentDocument.DocCode)
+            };
+            frm.Show();
+            frm.DataContext = ctx;
+        }
+
+        public override void DocNewCopyRequisite(object obj)
+        {
+            if (CurrentDocument == null) return;
+            var frm = new WaybillView {Owner = Application.Current.MainWindow};
+            var ctx = new WaybillWindowViewModel
+                {Form = frm};
+            ctx.Document = DocManager.NewWaybillRecuisite(CurrentDocument.DocCode);
             frm.Show();
             frm.DataContext = ctx;
         }

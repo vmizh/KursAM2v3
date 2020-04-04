@@ -29,10 +29,6 @@ namespace KursAM2.View.KursReferences
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new NotImplementedException();
-        }
 
         private void MutualAccountingSearchView_Unloaded(object sender, RoutedEventArgs e)
         {

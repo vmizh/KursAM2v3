@@ -24,11 +24,7 @@ namespace KursAM2.Tests
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         private void GridProjects_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
         }

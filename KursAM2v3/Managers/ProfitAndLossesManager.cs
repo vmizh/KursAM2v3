@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Calculates.Materials;
 using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -24,6 +25,7 @@ namespace KursAM2.Managers
         public DateTime DateEnd;
         public DateTime DateStart;
         private Project myProject;
+        private Guid spisanieTovara;
         public List<CURRENCY_RATES_CB> MyRates = new List<CURRENCY_RATES_CB>();
 
         public ProfitAndLossesManager(ProfitAndLossesWindowViewModel vm)
@@ -485,7 +487,7 @@ namespace KursAM2.Managers
                             _.SD_24.DD_DATE >= DateStart && _.SD_24.DD_DATE <= DateEnd &&
                             _.SD_24.DD_TYPE_DC == 2010000005);
                 var newPrihodId = Guid.NewGuid();
-                var newPrihodId2 = Guid.NewGuid();
+                spisanieTovara = Guid.NewGuid();
                 foreach (var d in nomPrihod)
                 {
                     var nom = MainReferences.GetNomenkl(d.DDT_NOMENKL_DC);
@@ -537,7 +539,7 @@ namespace KursAM2.Managers
                     {
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
-                            GroupId = newPrihodId2,
+                            GroupId = spisanieTovara,
                             Name = e.Name,
                             Note = e.Note,
                             DocCode = e.DocCode,
@@ -587,28 +589,28 @@ namespace KursAM2.Managers
                     MainNach.Add(newPrih);
                     newPrih = new ProfitAndLossesMainRowViewModel
                     {
-                        Id = newPrihodId2,
+                        Id = spisanieTovara,
                         ParentId = Guid.Parse("{D89B1E18-074E-4A7D-A0EE-9537DC1585D8}"),
                         Name = "Списание товара (инвентаризация)",
                         CalcType = TypeProfitAndLossCalc.IsLoss,
-                        LossRUB = Extend.Where(_ => _.GroupId == newPrihodId2).Sum(_ => _.LossRUB),
+                        LossRUB = Extend.Where(_ => _.GroupId == spisanieTovara).Sum(_ => _.LossRUB),
                         ProfitRUB = 0,
-                        ResultRUB = -Extend.Where(_ => _.GroupId == newPrihodId2).Sum(_ => _.LossRUB),
-                        LossUSD = Extend.Where(_ => _.GroupId == newPrihodId2).Sum(_ => _.LossUSD),
+                        ResultRUB = -Extend.Where(_ => _.GroupId == spisanieTovara).Sum(_ => _.LossRUB),
+                        LossUSD = Extend.Where(_ => _.GroupId == spisanieTovara).Sum(_ => _.LossUSD),
                         ProfitUSD = 0,
-                        ResultUSD = -Extend.Where(_ => _.GroupId == newPrihodId2).Sum(_ => _.LossUSD),
-                        LossEUR = Extend.Where(_ => _.GroupId == newPrihodId2).Sum(_ => _.LossEUR),
+                        ResultUSD = -Extend.Where(_ => _.GroupId == spisanieTovara).Sum(_ => _.LossUSD),
+                        LossEUR = Extend.Where(_ => _.GroupId == spisanieTovara).Sum(_ => _.LossEUR),
                         ProfitEUR = 0,
-                        ResultEUR = -Extend.Where(_ => _.GroupId == newPrihodId2).Sum(_ => _.LossUSD),
-                        LossGBP = Extend.Where(_ => _.GroupId == newPrihodId2).Sum(_ => _.LossGBP),
+                        ResultEUR = -Extend.Where(_ => _.GroupId == spisanieTovara).Sum(_ => _.LossUSD),
+                        LossGBP = Extend.Where(_ => _.GroupId == spisanieTovara).Sum(_ => _.LossGBP),
                         ProfitGBP = 0,
-                        ResultGBP = -Extend.Where(_ => _.GroupId == newPrihodId2).Sum(_ => _.LossUSD),
-                        LossCHF = Extend.Where(_ => _.GroupId == newPrihodId2).Sum(_ => _.LossCHF),
+                        ResultGBP = -Extend.Where(_ => _.GroupId == spisanieTovara).Sum(_ => _.LossUSD),
+                        LossCHF = Extend.Where(_ => _.GroupId == spisanieTovara).Sum(_ => _.LossCHF),
                         ProfitCHF = 0,
-                        ResultCHF = -Extend.Where(_ => _.GroupId == newPrihodId2).Sum(_ => _.LossUSD),
-                        LossSEK = Extend.Where(_ => _.GroupId == newPrihodId2).Sum(_ => _.LossSEK),
+                        ResultCHF = -Extend.Where(_ => _.GroupId == spisanieTovara).Sum(_ => _.LossUSD),
+                        LossSEK = Extend.Where(_ => _.GroupId == spisanieTovara).Sum(_ => _.LossSEK),
                         ProfitSEK = 0,
-                        ResultSEK = -Extend.Where(_ => _.GroupId == newPrihodId2).Sum(_ => _.LossUSD)
+                        ResultSEK = -Extend.Where(_ => _.GroupId == spisanieTovara).Sum(_ => _.LossUSD)
                     };
                     Main.Add(newPrih);
                     MainNach.Add(newPrih);
@@ -799,7 +801,7 @@ namespace KursAM2.Managers
                     var nom = MainReferences.GetNomenkl(d.DDT_NOMENKL_DC);
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
-                        GroupId = Guid.Parse("{66E0F763-7362-488D-B367-50AC84A72AD4}"),
+                        GroupId = spisanieTovara,
                         Name = nom.Name,
                         DocCode = nom.DocCode,
                         Quantity = d.DDT_KOL_PRIHOD,
@@ -820,7 +822,7 @@ namespace KursAM2.Managers
         }
 
         public void CalcVozvrat()
-        {
+        { //Id = Guid.Parse("{C5C36299-FDEF-4251-B525-3DF10C0E8CB9}"), вщзврат от клиента
             using (var ent = GlobalOptions.GetEntities())
             {
                 var vozvratTovara = ent.TD_24.Include(_ => _.SD_24)
@@ -830,7 +832,7 @@ namespace KursAM2.Managers
                     .ToList();
                 //{C5C36299-FDEF-4251-B525-3DF10C0E8CB9}
                 //{04A7B6BB-7B3C-49F1-8E10-F1AE5F5582E4}
-                foreach (var d in vozvratTovara.Where(_ => ProjectDocDC.Contains(_.DOC_CODE)))
+                foreach (var d in vozvratTovara)
                 {
                     var kontr = MainReferences.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC);
                     var nom = MainReferences.GetNomenkl(d.DDT_NOMENKL_DC);
@@ -846,9 +848,7 @@ namespace KursAM2.Managers
                         Nomenkl = nom,
                         DocTypeCode = (DocumentType) 357
                     };
-                    SetCurrenciesValue(newOp, nom.Currency.DocCode, d.DDT_TAX_CRS_CENA * d.DDT_KOL_PRIHOD, d.DDT_KONTR_CRS_SUMMA *
-                                                                                                           GetRate(MyRates, kontr.BalansCurrency.DocCode,
-                                                                                                               nom.Currency.DocCode, d.SD_24.DD_DATE));
+                    SetCurrenciesValue(newOp, nom.Currency.DocCode, 0, d.DDT_KONTR_CRS_SUMMA);
                     
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
@@ -864,9 +864,8 @@ namespace KursAM2.Managers
                         Nomenkl = nom,
                         DocTypeCode = (DocumentType) 357
                     };
-                    SetCurrenciesValue(newOp, nom.Currency.DocCode, d.DDT_TAX_CRS_CENA * d.DDT_KOL_PRIHOD,
-                        d.DDT_KONTR_CRS_SUMMA * GetRate(MyRates, kontr.BalansCurrency.DocCode,
-                            nom.Currency.DocCode, d.SD_24.DD_DATE));
+                    var p = NomenklCalculationManager.NomenklPrice(d.SD_24.DD_DATE, nom.DocCode);
+                    SetCurrenciesValue(newOp1, nom.Currency.DocCode,  p.Item1 * d.DDT_KOL_PRIHOD, 0);
                     
                     Extend.Add(newOp1);
                     ExtendNach.Add(newOp1);

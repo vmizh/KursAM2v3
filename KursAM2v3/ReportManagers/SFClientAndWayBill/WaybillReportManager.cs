@@ -3,7 +3,7 @@ using System.Linq;
 using Core.EntityViewModel;
 using DevExpress.Spreadsheet;
 using Helper;
-using KursAM2.ViewModel.Logistiks;
+using KursAM2.ViewModel.Logistiks.Warehouse;
 using Reports.Base;
 
 namespace KursAM2.ReportManagers.SFClientAndWayBill
@@ -65,15 +65,15 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             var vm = ViewModel as WaybillWindowViewModel;
             if (vm == null) return;
             var document = vm.Document;
-            sheet.Cells["A4"].Value = vm.Document.Schet.Receiver.GruzoRequisiteForWaybill;
+            sheet.Cells["A4"].Value = vm.Document.InvoiceClient.Receiver.GruzoRequisiteForWaybill;
             sheet.Cells["K12"].Value = vm.Document.KontragentReceiver.GruzoRequisiteForWaybill;
-            sheet.Cells["K19"].Value = vm.Document.Schet.Receiver.GruzoRequisiteForWaybill;
+            sheet.Cells["K19"].Value = vm.Document.InvoiceClient.Receiver.GruzoRequisiteForWaybill;
             sheet.Cells["K24"].Value = vm.Document.KontragentReceiver.GruzoRequisiteForWaybill;
             sheet["AE33"].Value = vm.Document.DD_EXT_NUM ?? vm.Document.DD_IN_NUM.ToString();
             sheet["AR33"].Value = vm.Document.DD_DATE.ToShortDateString();
-            sheet["BX5"].Value = vm.Document.Schet.Receiver.OKPO;
+            sheet["BX5"].Value = vm.Document.InvoiceClient.Receiver.OKPO;
             sheet["BX14"].Value = vm.Document.KontragentReceiver.OKPO;
-            sheet["BX17"].Value = vm.Document.Schet.Receiver.OKPO;
+            sheet["BX17"].Value = vm.Document.InvoiceClient.Receiver.OKPO;
             sheet["BX22"].Value = vm.Document.KontragentReceiver.OKPO;
             //sheet["P79"].Value = vm.Document.DD_DATE.ToLongDateString();
             //sheet["AZ79"].Value = vm.Document.DD_DATE.ToLongDateString();
@@ -116,14 +116,14 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     document.Rows.Sum(_ => _.SchetLinkedRow.SFT_SUMMA_K_OPLATE *
                                            (_.DDT_KOL_RASHOD / (decimal) _.SchetLinkedRow.SFT_KOL))), 2);
             sheet.Cells[$"AB{document.Rows.Count + startTableRow + 4}"].Value = vm.Document.Rows.Count;
-            sheet.Cells[$"O{document.Rows.Count + startTableRow + 30}"].Value = vm.Document.Schet.Receiver.GlavBuh;
+            sheet.Cells[$"O{document.Rows.Count + startTableRow + 30}"].Value = vm.Document.InvoiceClient.Receiver.GlavBuh;
             sheet.Cells[$"J{document.Rows.Count + startTableRow + 9}"].Value =
                 RuDateAndMoneyConverter.NumeralsDoubleToTxt(Convert.ToDouble(document.Rows.Count), 0,
                     TextCase.Accusative, true);
             sheet.Cells[$"M{document.Rows.Count + startTableRow + 9}"].Value =
                 RuDateAndMoneyConverter.CurrencyToTxt(
                     sheet.Cells[$"BV{document.Rows.Count + startTableRow + 1}"].Value.NumericValue,
-                    document.Schet.Currency.Name,
+                    document.InvoiceClient.Currency.Name,
                     true);
         }
     }

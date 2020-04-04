@@ -11,9 +11,7 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
-using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
-using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.Managers.Nomenkl;
 
@@ -161,14 +159,14 @@ namespace KursAM2.View.Logistiks.UC
 
         #endregion
     }
+}
 
-    public class SelectedTemp
-    {
-        public decimal DOC_CODE { set; get; }
-        public int CODE { set; get; }
-        public decimal SFT_KOL { set; get; }
-        public decimal? Shipped { set; get; }
-    }
+public class SelectedTemp
+{
+    public decimal DOC_CODE { set; get; }
+    public int CODE { set; get; }
+    public decimal SFT_KOL { set; get; }
+    public decimal? Shipped { set; get; }
 }
 
 [MetadataType(typeof(DataAnnotationsInvoiceShortRow))]

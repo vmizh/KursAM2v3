@@ -30,6 +30,7 @@ namespace KursAM2.ViewModel.Personal
         private DateTime myDate;
         private bool myIsTemplate;
         private PayrollType myMyCurrentPayrollType;
+        private Visibility myIsCanDateChange;
 
         public PayRollVedomostWindowViewModel()
         {
@@ -143,6 +144,7 @@ namespace KursAM2.ViewModel.Personal
                 if (myDate == value) return;
                 myDate = value;
                 isChange = true;
+                IsCanDateChange = Visibility.Visible;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(IsCanSaveData));
             }
@@ -161,7 +163,19 @@ namespace KursAM2.ViewModel.Personal
             get => myIsTemplate;
         }
 
-        public Visibility IsCanDateChange => State == RowStatus.NewRow ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility IsCanDateChange
+        {
+            set
+            {
+                if (myIsCanDateChange == value) return;
+                myIsCanDateChange = value;
+                isChange = true;
+                RaisePropertyChanged();
+            }
+            get => myIsCanDateChange;
+        }
+
+        //public Visibility IsCanDateChange => State == RowStatus.NewRow ? Visibility.Visible : Visibility.Collapsed;
 
         private void AddNewEmployee()
         {
@@ -235,7 +249,12 @@ namespace KursAM2.ViewModel.Personal
 
         public static PayRollVedomostWindowViewModel CreateNew()
         {
-            var newVed = new PayRollVedomostWindowViewModel {Id = Guid.NewGuid(), Date = DateTime.Today};
+            var newVed = new PayRollVedomostWindowViewModel
+            {
+                Id = Guid.NewGuid(), Date = DateTime.Today,
+                State = RowStatus.NewRow,
+                IsCanDateChange = Visibility.Visible
+            };
             return newVed;
         }
 
@@ -245,7 +264,9 @@ namespace KursAM2.ViewModel.Personal
             {
                 Id = Guid.NewGuid(),
                 Date = DateTime.Today,
-                Name = string.Empty
+                Name = string.Empty,
+                State = RowStatus.NewRow,
+                IsCanDateChange = Visibility.Visible
             };
             newVed.RemoveEmployees.Clear();
             foreach (var emp in newVed.Employees)
@@ -402,7 +423,7 @@ namespace KursAM2.ViewModel.Personal
             }
         }
 
-        public ICommand IsCanDateChangeCommand
+        public ICommand DateChangeCommand
         {
             get { return new Command(SetDate, _ => true); }
         }
@@ -515,6 +536,7 @@ namespace KursAM2.ViewModel.Personal
 
             State = RowStatus.NotEdited;
             isChange = false;
+            IsCanDateChange = Visibility.Collapsed;
             //RaisePropertyChanged(nameof(Employees));
             //RaisePropertyChanged(nameof(IsCanSaveData));
         }

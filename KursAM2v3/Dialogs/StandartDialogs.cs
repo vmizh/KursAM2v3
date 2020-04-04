@@ -255,6 +255,16 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
+        public static InvoiceClient SelectInvoiceClient(Waybill waybill)
+        {
+            if (waybill == null) return null;
+            var ctx = new InvoiceClientSearchDialog(waybill);
+            var dlg = new SelectDialogView {DataContext = ctx};
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentItem;
+        }
+
         public static InvoiceClient SelectInvoiceClient(bool isUsePayment, bool isUseAccepted)
         {
             var ctx = new InvoiceClientSearchDialog(isUsePayment,isUseAccepted);
@@ -272,7 +282,6 @@ namespace KursAM2.Dialogs
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
-
 
         public static RSViewModelBase SelectAllInvoiceClient(decimal kontrDc, bool isUsePayment, bool isUseAccepted)
         {

@@ -8,7 +8,7 @@ using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using KursAM2.Managers.Invoices;
+using KursAM2.Managers;
 using KursAM2.View.Logistiks.Warehouse;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
@@ -120,7 +120,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
                         _.DD_TYPE_DC == 2010000003).ToList(); /*приходный складской ордер*/
                     foreach (var item in d)
-                        Documents.Add(new WarehouseOrderOut(item){State = RowStatus.NotEdited});
+                        Documents.Add(new WarehouseOrderOut(item) {State = RowStatus.NotEdited});
                 }
             }
             catch (Exception e)
@@ -134,7 +134,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocumentOpen(object form)
         {
             if (CurrentDocument == null) return;
-
             var ctx = new OrderOutWindowViewModel(
                 new StandartErrorManager(GlobalOptions.GetEntities(), "WarehouseOrderIn", true)
                 , CurrentDocument.DocCode);

@@ -222,7 +222,7 @@
     <Compile Include="Managers\AccessRightsManager.cs" />
     <Compile Include="Managers\CashDocumentType.cs" />
     <Compile Include="Managers\CashManager.cs" />
-    <Compile Include="Managers\Invoices\WarehouseManager.cs" />
+    <Compile Include="Managers\WarehouseManager.cs" />
     <Compile Include="Managers\OffBalansOperationManagers\OffBalansInManager.cs" />
     <Compile Include="Managers\OffBalansOperationManagers\OffBalansOutManager.cs" />
     <Compile Include="Managers\StoreManager.cs" />
@@ -243,7 +243,6 @@
     <Compile Include="Managers\Nomenkl\NomenklMainManager.cs" />
     <Compile Include="Managers\InventorySheetManager.cs" />
     <Compile Include="Managers\Nomenkl\NomenklManager.cs" />
-    <Compile Include="Managers\WarehouseManager.cs" />
     <Compile Include="ReportManagers\SFClientAndWayBill\SFClientZajavkaSkladReport.cs" />
     <Compile Include="ReportManagers\SFClientAndWayBill\SFClientReportManager.cs" />
     <Compile Include="ReportManagers\SFClientAndWayBill\SFClientZakazReport.cs" />
@@ -319,6 +318,9 @@
     <Compile Include="ViewModel\Reference\SDRReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\UsagePayReferenceWindowViewModel.cs" />
     <Compile Include="View\Base\IOnAutoGeneratingColumn.cs" />
+    <Compile Include="View\DialogUserControl\AddNomenklFromInvoiceClientUC.xaml.cs">
+      <DependentUpon>AddNomenklFromInvoiceClientUC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\DialogUserControl\AllInvocesDialogSelectUC.xaml.cs">
       <DependentUpon>AllInvocesDialogSelectUC.xaml</DependentUpon>
     </Compile>
@@ -524,7 +526,7 @@
     <Compile Include="View\Logistiks\UC\SelectNomenkls.xaml.cs">
       <DependentUpon>SelectNomenkls.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\Logistiks\WaybillSearchViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\Warehouse\WaybillSearchViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\PostInvoiceRow.cs" />
     <Compile Include="ViewModel\Logistiks\DogovorForClientViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\DogovorForClientSearchViewModel.cs" />
@@ -537,7 +539,7 @@
     <Compile Include="ViewModel\Logistiks\KontragentGruzoInfoViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\KontragentGruzoInfoWindowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\NakladRowViewModel.cs" />
-    <Compile Include="ViewModel\Logistiks\WaybillWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\Warehouse\WaybillWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\BreakEven\BreakEvenCOrGroupViewModel.cs" />
     <Compile Include="ViewModel\Management\BreakEven\BreakEvenDocumentViewModel.cs" />
     <Compile Include="ViewModel\Management\BreakEven\BreakEvenKontrGroupViewModel.cs" />
@@ -716,10 +718,10 @@
     <Compile Include="View\Logistiks\Warehouse\OrderOutView.xaml.cs">
       <DependentUpon>OrderOutView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Logistiks\WaybillSearchView.xaml.cs">
+    <Compile Include="View\Logistiks\Warehouse\WaybillSearchView.xaml.cs">
       <DependentUpon>WaybillSearchView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Logistiks\WaybillView.xaml.cs">
+    <Compile Include="View\Logistiks\Warehouse\WaybillView.xaml.cs">
       <DependentUpon>WaybillView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\NomenklMove.xaml.cs">
@@ -939,6 +941,10 @@
     <Page Include="Tests\TreeControlFluentTests.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\AddNomenklFromInvoiceClientUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\DialogUserControl\AllInvocesDialogSelectUC.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1296,11 +1302,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\Logistiks\WaybillSearchView.xaml">
+    <Page Include="View\Logistiks\Warehouse\WaybillSearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\Logistiks\WaybillView.xaml">
+    <Page Include="View\Logistiks\Warehouse\WaybillView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

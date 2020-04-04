@@ -22,11 +22,7 @@ namespace KursAM2.View.KursReferences
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         private void ContryView_Unloaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Save();

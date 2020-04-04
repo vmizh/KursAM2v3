@@ -19,10 +19,6 @@ namespace KursAM2.View.Period
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
 
         private void PeriodCloseManagemen_Closing(object sender, CancelEventArgs e)
         {

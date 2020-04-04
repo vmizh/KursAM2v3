@@ -4,6 +4,7 @@ using System.Windows;
 using Core;
 using Core.WindowsManager;
 using Data;
+using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks.Warehouse;

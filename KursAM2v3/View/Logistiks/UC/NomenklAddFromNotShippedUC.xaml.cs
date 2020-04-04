@@ -16,10 +16,6 @@ namespace KursAM2.View.Logistiks.UC
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {

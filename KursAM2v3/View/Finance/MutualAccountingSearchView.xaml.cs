@@ -20,11 +20,7 @@ namespace KursAM2.View.Finance
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
-
+ 
         private void MutualAccountingSearchView_Unloaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Save();

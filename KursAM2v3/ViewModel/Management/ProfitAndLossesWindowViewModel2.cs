@@ -225,8 +225,7 @@ namespace KursAM2.ViewModel.Management
                         frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
                 }
 
-                // ReSharper disable once PossibleNullReferenceException
-                UpdateExtend2(myBalansCalc.Id);
+                // ReSharper disable once PossibleNullReferenceException1965569UpdateExtend2(myBalansCalc.Id);
                 RaisePropertyChanged();
             }
         }

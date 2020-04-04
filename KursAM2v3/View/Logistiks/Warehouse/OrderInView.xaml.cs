@@ -307,6 +307,25 @@ namespace KursAM2.View.Logistiks.Warehouse
         {
             var dtx = DataContext as OrderInWindowViewModel;
             if (dtx == null) return;
+            switch (dtx.Document.WarehouseSenderType)
+            {
+                case WarehouseSenderType.Kontragent:
+                    SelectSchet();
+                    break;
+                case WarehouseSenderType.Store:
+                    SelectRashOrder();
+                    break;
+            }
+        }
+
+        private void SelectRashOrder()
+        {
+        }
+
+        private void SelectSchet()
+        {
+            var dtx = DataContext as OrderInWindowViewModel;
+            if (dtx == null) return;
             if (dtx.Document.WarehouseIn == null)
             {
                 winManager.ShowWinUIMessageBox(this, "Не выбран склад.", "Ошибка", MessageBoxButton.OK,

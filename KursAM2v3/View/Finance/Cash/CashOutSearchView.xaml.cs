@@ -40,9 +40,5 @@ namespace KursAM2.View.Finance.Cash
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

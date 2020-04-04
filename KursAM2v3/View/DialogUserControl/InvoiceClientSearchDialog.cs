@@ -5,6 +5,7 @@ using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using JetBrains.Annotations;
 using KursAM2.Managers.Invoices;
 
 namespace KursAM2.View.DialogUserControl
@@ -16,6 +17,7 @@ namespace KursAM2.View.DialogUserControl
         private readonly decimal KontragentDC;
         private InvoiceClient myCurrentItem;
         private StandartDialogSelectUC myDataUserControl;
+        private readonly Waybill Waybill;
 
         public InvoiceClientSearchDialog(bool isPaymentUse, bool isUseAcepted)
         {
@@ -35,11 +37,22 @@ namespace KursAM2.View.DialogUserControl
             KontragentDC = kontragentDC;
             IsPaymentUse = isPaymentUse;
             isAccepted = isUseAcepted;
+            Waybill = null;
             RefreshData(null);
+        }
+
+        public InvoiceClientSearchDialog([NotNull]Waybill waybill)
+        {
+            Waybill = waybill;
+            LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
+            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            WindowName = "Выбор счета";
+            RefreshData(waybill);
         }
 
         public ObservableCollection<InvoiceClient> ItemsCollection { set; get; } =
             new ObservableCollection<InvoiceClient>();
+        
         public InvoiceClient CurrentItem
         {
             get => myCurrentItem;
@@ -66,8 +79,9 @@ namespace KursAM2.View.DialogUserControl
         public override void RefreshData(object obj)
         {
             base.RefreshData(obj);
-            SearchClear(null);
-            Search(null);
+            
+                SearchClear(null);
+                Search(null);
         }
 
         public override void ResetLayout(object form)
@@ -80,16 +94,24 @@ namespace KursAM2.View.DialogUserControl
         public override void Search(object obj)
         {
             try
-            {
-                ItemsCollection.Clear();
-                if (KontragentDC > 0)
-                    foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000, 1, 1), DateTime.Today,
-                        IsPaymentUse, KontragentDC, isAccepted))
-                        ItemsCollection.Add(d);
+            {  ItemsCollection.Clear();
+                if (Waybill == null)
+                {
+
+                    if (KontragentDC > 0)
+                        foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000, 1, 1), DateTime.Today,
+                            IsPaymentUse, KontragentDC, isAccepted))
+                            ItemsCollection.Add(d);
+                    else
+                        foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000, 1, 1), DateTime.Today,
+                            IsPaymentUse, SearchText, isAccepted))
+                            ItemsCollection.Add(d);
+                }
                 else
-                    foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000, 1, 1), DateTime.Today,
-                        IsPaymentUse, SearchText, isAccepted))
-                        ItemsCollection.Add(d);
+                {
+                    foreach (var d in InvoicesManager.GetInvoicesClient(Waybill))
+                            ItemsCollection.Add(d);
+                }
             }
             catch (Exception ex)
             {
