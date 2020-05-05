@@ -30,5 +30,11 @@ namespace Data
         public int RowCode { get; set; }
         public Nullable<System.Guid> DocId { get; set; }
         public Nullable<System.Guid> RowId { get; set; }
+        public string DocNum { get; set; }
+        public string FromType { get; set; }
+        public Nullable<decimal> From { get; set; }
+        public string ToType { get; set; }
+        public Nullable<decimal> To { get; set; }
+        public string Note { get; set; }
     }
 }

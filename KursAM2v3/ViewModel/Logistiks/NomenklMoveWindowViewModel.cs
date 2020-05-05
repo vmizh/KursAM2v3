@@ -29,7 +29,7 @@ namespace KursAM2.ViewModel.Logistiks
             Operations = new List<NomenklCalcCostOperation>();
         }
 
-        public NomenklMoveWindowViewModel(NomenklMove form) : base(form)
+        public NomenklMoveWindowViewModel(NomenklMove form)  
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);

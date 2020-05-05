@@ -108,6 +108,8 @@ namespace Data
             this.VD_193 = new HashSet<VD_193>();
             this.SD_43 = new HashSet<SD_43>();
             this.SD_114_StartRemain = new HashSet<SD_114_StartRemain>();
+            this.BankCurrencyChange = new HashSet<BankCurrencyChange>();
+            this.BankCurrencyChange1 = new HashSet<BankCurrencyChange>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -304,5 +306,9 @@ namespace Data
         public virtual ICollection<SD_43> SD_43 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_114_StartRemain> SD_114_StartRemain { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BankCurrencyChange> BankCurrencyChange { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BankCurrencyChange> BankCurrencyChange1 { get; set; }
     }
 }

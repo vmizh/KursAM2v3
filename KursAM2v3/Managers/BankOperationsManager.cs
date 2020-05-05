@@ -773,5 +773,55 @@ namespace KursAM2.Managers
             to.SummaOutSEK = from.SummaOutSEK;
             to.SummaOutUSD = from.SummaOutUSD;
         }
+
+        public BankCurrencyChangeViewModel NewBankCurrencyChange()
+        {
+            return new BankCurrencyChangeViewModel
+            {
+                Id = Guid.NewGuid(),
+                DocDate = DateTime.Today,
+                DocNum = -1,
+                State = RowStatus.NewRow
+            };
+        }
+
+        public BankCurrencyChangeViewModel NewCopyBankCurrencyChange(BankCurrencyChangeViewModel doc)
+        {
+            var newItem = new BankCurrencyChangeViewModel
+            {
+                Id = Guid.NewGuid(),
+                DocDate = DateTime.Today,
+                DocNum = -1,
+                BankFromDC = doc.BankFromDC,
+                BankToDC = doc.BankToDC,
+                CrsFromDC = doc.CrsFromDC,
+                CrsToDC = doc.CrsToDC,
+                DocFromDC = 0,
+                DocRowFromCode = 0,
+                DocRowToCode = 0,
+                DocToDC = 0,
+                Note = "",
+                Rate = doc.Rate
+            };
+            return newItem;
+        }
+
+        public BankCurrencyChangeViewModel LoadBankCurrencyChange(Guid id)
+        {
+            BankCurrencyChangeViewModel document = null;
+            try
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    var doc = ctx.BankCurrencyChange.FirstOrDefault(_ => _.Id == id);
+                    document = new BankCurrencyChangeViewModel(doc);
+                }
+            }
+            catch (Exception e)
+            {
+                WindowManager.ShowError(e);
+            }
+            return document;
+        }
     }
 }

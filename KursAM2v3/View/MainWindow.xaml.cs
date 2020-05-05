@@ -87,11 +87,7 @@ namespace KursAM2.View
         }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         private void ProgramClose(object obj)
         {
             Close();
@@ -136,7 +132,7 @@ namespace KursAM2.View
                 {
                     case "  Дебиторы / Кредиторы":
                         var dbctx = new DebitorCreditorWindowViewModel();
-                        form = new DebitorCreditorView {Owner = Application.Current.MainWindow};
+                        form = new DebitorCreditorView {Owner = Application.Current.MainWindow };
                         form.DataContext = dbctx;
                         dbctx.Form = form;
                         form.Show();
@@ -270,10 +266,6 @@ namespace KursAM2.View
                         form.DataContext = ctxRef;
                         break;
                     case "Справочник складов":
-                        //form = new StoreReferenceView {Owner = Application.Current.MainWindow};
-                        //var ctxRef1 = new StoreReferenceWindowViewModel();
-                        //form.Show();
-                        //form.DataContext = ctxRef1;
                         var frm = new TreeListFormBaseView
                         {
                             LayoutManagerName = "NomenklStore",
@@ -286,10 +278,6 @@ namespace KursAM2.View
                         frm.Show();
                         break;
                     case "Справочник регионов":
-                        //form = new StoreReferenceView {Owner = Application.Current.MainWindow};
-                        //var ctxRef1 = new StoreReferenceWindowViewModel();
-                        //form.Show();
-                        //form.DataContext = ctxRef1;
                         var frm1 = new TreeListFormBaseView
                         {
                             LayoutManagerName = "RegionReference",
@@ -889,6 +877,11 @@ namespace KursAM2.View
                     i++;
                 }
             }
+        }
+
+        private void BarButtonItem4_OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            LayoutManager.ResetLayout();
         }
     }
 }

@@ -703,7 +703,6 @@ namespace Data
         public virtual DbSet<NOMENKL_MOVE_VIEW> NOMENKL_MOVE_VIEW { get; set; }
         public virtual DbSet<NomenklMoveForCalc> NomenklMoveForCalc { get; set; }
         public virtual DbSet<NomenklMoveForCalcCosts> NomenklMoveForCalcCosts { get; set; }
-        public virtual DbSet<NomenklMoveWithPrice> NomenklMoveWithPrice { get; set; }
         public virtual DbSet<ProjectsInfo> ProjectsInfo { get; set; }
         public virtual DbSet<SD_2_CORR> SD_2_CORR { get; set; }
         public virtual DbSet<SHOP_NOMENKL_MOVE_VIEW> SHOP_NOMENKL_MOVE_VIEW { get; set; }
@@ -771,6 +770,8 @@ namespace Data
         public virtual DbSet<OffBalanceSheetOutDoc> OffBalanceSheetOutDoc { get; set; }
         public virtual DbSet<OffBalanceSheetOutRow> OffBalanceSheetOutRow { get; set; }
         public virtual DbSet<SD_114_StartRemain> SD_114_StartRemain { get; set; }
+        public virtual DbSet<BankCurrencyChange> BankCurrencyChange { get; set; }
+        public virtual DbSet<NomenklMoveWithPrice> NomenklMoveWithPrice { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

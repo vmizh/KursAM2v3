@@ -97,6 +97,9 @@
     <Compile Include="BALANS_OPER_TYPE.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="BankCurrencyChange.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="BankPeriodsOperations.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

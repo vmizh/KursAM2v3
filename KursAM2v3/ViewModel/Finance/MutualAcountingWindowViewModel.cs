@@ -216,7 +216,7 @@ namespace KursAM2.ViewModel.Finance
             if (CurrentDebitor != null)
             {
                 var item = CurrentDebitor.VZT_KONTR_DC > 0
-                    ? StandartDialogs.SelectInvoiceClient(CurrentCreditor.VZT_KONTR_DC, true, true)
+                    ? StandartDialogs.SelectInvoiceClient(CurrentDebitor.VZT_KONTR_DC, true, true)
                     : StandartDialogs.SelectInvoiceClient(true, true);
                 if (item == null) return;
                 CurrentDebitor.VZT_DOC_NUM = (Document.Rows.Count + 1).ToString();
@@ -277,11 +277,11 @@ namespace KursAM2.ViewModel.Finance
         {
             decimal sumLeft = 0, sumRight = 0;
             foreach (var l in Document.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0))
-                if (l.Kontragent.IsBalans)
+                if (l.Kontragent?.IsBalans == true)
                     // ReSharper disable once PossibleInvalidOperationException
                     sumLeft += Math.Abs((decimal) l.VZT_KONTR_CRS_SUMMA);
             foreach (var l in Document.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1))
-                if (l.Kontragent.IsBalans)
+                if (l.Kontragent?.IsBalans == true)
                     // ReSharper disable once PossibleInvalidOperationException
                     sumRight += (decimal) l.VZT_KONTR_CRS_SUMMA;
             return sumRight - sumLeft;

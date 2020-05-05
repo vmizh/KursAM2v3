@@ -262,6 +262,7 @@
     <Compile Include="ViewModel\Finance\Cash\CashInWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\Cash\CashOutWindowSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\Cash\CashOutWindowViewModel.cs" />
+    <Compile Include="ViewModel\Finance\BankCurrencyChangeWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\controls\AddBankOperionUC.cs" />
     <Compile Include="ViewModel\Finance\GridControlSummaryItem.cs" />
     <Compile Include="ViewModel\Finance\Invoices\ProviderWindowViewModel.cs" />
@@ -323,6 +324,9 @@
     </Compile>
     <Compile Include="View\DialogUserControl\AllInvocesDialogSelectUC.xaml.cs">
       <DependentUpon>AllInvocesDialogSelectUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\BankCurrencyChangeView.xaml.cs">
+      <DependentUpon>BankCurrencyChangeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\KursReferences\KontragentCategoryReferenceView.xaml.cs">
       <DependentUpon>KontragentCategoryReferenceView.xaml</DependentUpon>
@@ -949,6 +953,10 @@
     <Page Include="View\DialogUserControl\AllInvocesDialogSelectUC.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Finance\BankCurrencyChangeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\KursReferences\KontragentCategoryReferenceView.xaml">
       <Generator>MSBuild:Compile</Generator>

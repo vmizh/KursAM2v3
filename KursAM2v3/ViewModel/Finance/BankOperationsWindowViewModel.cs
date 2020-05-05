@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
@@ -10,6 +11,7 @@ using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
+using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.View.Finance;
@@ -214,6 +216,40 @@ namespace KursAM2.ViewModel.Finance
         }
 
         public ICommand RemoveCommand => new Command(DocDelete, _ => CurrentBankOperations != null);
+
+        public ICommand AddCurrencyChangedCommand => new Command(AddCurrencyChanged, _ => true);
+
+        private void AddCurrencyChanged(object obj)
+        {
+            var ctx = new BankCurrencyChangeWindowViewModel(Guid.Empty)
+            {
+                Document = {BankFrom = MainReferences.BankAccounts[CurrentBankAccount.BankDC]}
+            };
+            using (var dbctx = GlobalOptions.GetEntities())
+            {
+                try
+                {
+                    var data = dbctx.TD_101
+                        .Include(_ => _.SD_101)
+                        .Where(_ => _.SD_101.VV_ACC_DC == CurrentBankAccount.BankDC).Select(_ => _.VVT_CRS_DC).Distinct().ToList();
+                    if (data.Count > 0)
+                    {
+                        ctx.Document.CurrencyFrom = MainReferences.Currencies[data.First()];
+                    }
+                }
+                catch (Exception e)
+                {
+                    WindowManager.ShowError(e);
+                }
+            }
+            var form = new BankCurrencyChangeView()
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = form;
+            form.Show();
+        }
 
         public override void DocDelete(object obj)
         {

@@ -25,6 +25,6 @@ namespace Data
         public decimal Rashod { get; set; }
         public decimal PRICE { get; set; }
         public decimal PRICE_WO_NAKLAD { get; set; }
-        public decimal Nakopit { get; set; }
+        public Nullable<decimal> Nakopit { get; set; }
     }
 }

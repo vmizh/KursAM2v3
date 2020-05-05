@@ -138,10 +138,13 @@
                                 <ContextMenu>
                                     <MenuItem Header="Добавить"
                                               Command="{Binding DocNewEmptyCommand}" />
+                                    <MenuItem Header="Добавить обмен валюты"
+                                              Command="{Binding AddCurrencyChangedCommand}" />
                                     <MenuItem Header="Копировать"
                                               Command="{Binding DocNewCopyCommand}" />
                                     <MenuItem Header="Удалить"
                                               Command="{Binding RemoveCommand}" />
+                                    <Separator/>
                                     <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                               CommandParameter="{Binding Path=PlacementTarget, 
                            RelativeSource={RelativeSource Mode=FindAncestor,

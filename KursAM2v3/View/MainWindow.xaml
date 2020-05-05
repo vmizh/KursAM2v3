@@ -14,11 +14,14 @@
             <dxb:BarSubItem x:Name="barSubItem1" Content="Система">
                 <dxb:BarButtonItemLink BarItemName="barButtonItem1" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem2" />
+                <dxb:BarButtonItemLink BarItemName="barButtonItem4" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem3" />
             </dxb:BarSubItem>
             <dxb:BarButtonItem x:Name="barButtonItem1" Content="Настройки пользователя" />
             <dxb:BarButtonItem x:Name="barButtonItem2" Content="Обновить справочники"
                                ItemClick="BarButtonItem2_OnItemClick" />
+            <dxb:BarButtonItem x:Name="barButtonItem4" Content="Сбросить разметку"
+                               ItemClick="BarButtonItem4_OnItemClick" />
             <dxb:BarButtonItem x:Name="barButtonItem3" Content="Выход" ItemClick="BarButtonItem3_OnItemClick" />
         </dxb:BarManager.Items>
         <dxb:BarManager.Bars>

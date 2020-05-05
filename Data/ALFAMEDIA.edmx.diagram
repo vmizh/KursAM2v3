@@ -663,7 +663,6 @@
         <EntityTypeShape EntityType="ALFAMEDIAModel.NOMENKL_MOVE_VIEW" Width="1.5" PointX="14.75" PointY="35.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveForCalc" Width="1.5" PointX="34.75" PointY="19.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveForCalcCosts" Width="1.5" PointX="22.75" PointY="35.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveWithPrice" Width="1.5" PointX="34.75" PointY="24.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.ProjectsInfo" Width="1.5" PointX="24.75" PointY="35.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.SD_2_CORR" Width="1.5" PointX="26.75" PointY="35.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.SHOP_NOMENKL_MOVE_VIEW" Width="1.5" PointX="34.75" PointY="28.75" IsExpanded="true" />
@@ -2015,6 +2014,12 @@
         <EntityTypeShape EntityType="ALFAMEDIAModel.SD_114_StartRemain" Width="1.5" PointX="55" PointY="664" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_114_StartRemain_AccountDC" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_114_StartRemain_CrsDC" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.BankCurrencyChange" Width="1.5" PointX="58" PointY="662" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_BankCurrencyChange_BankFromDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_BankCurrencyChange_BankToDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_BankCurrencyChange_CrsFromDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_BankCurrencyChange_CrsToDC" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveWithPrice" Width="1.5" PointX="39.375" PointY="46.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
