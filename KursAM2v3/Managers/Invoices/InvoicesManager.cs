@@ -12,6 +12,7 @@ using Core.WindowsManager;
 using Data;
 using Helper;
 using KursAM2.View.Finance.Invoices;
+using KursAM2.View.Logistiks.UC;
 using KursAM2.ViewModel.Management.Calculations;
 
 namespace KursAM2.Managers.Invoices
@@ -117,7 +118,22 @@ namespace KursAM2.Managers.Invoices
                         myState = RowStatus.NotEdited
                     };
                     foreach (var p in pDocs) doc.PaymentDocs.Add(p);
-                    foreach (var row in doc.Rows) row.myState = RowStatus.NotEdited;
+                    foreach (var row in doc.Rows)
+                    {
+                        row.Parent = doc;
+                        row.myState = RowStatus.NotEdited;
+                    }
+                    doc.Facts = new ObservableCollection<WarehouseOrderInRow>();
+                    if (doc.Entity?.TD_26 != null)
+                    {
+                        foreach (var r in doc.Entity.TD_26)
+                        {
+                            foreach (var r2 in r.TD_24)
+                            {
+                                doc.Facts.Add(new WarehouseOrderInRow(r2));
+                            }
+                        }
+                    }
                     doc.myState = RowStatus.NotEdited;
                 }
             }
@@ -219,6 +235,16 @@ namespace KursAM2.Managers.Invoices
                         {
                             var oldrow = ctx.TD_26.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode && _.CODE == d.Code);
                             if (oldrow == null) continue;
+                            var oldOrdRows = ctx.TD_24.Where(_ => _.DDT_SPOST_DC == d.DocCode
+                                                                  && _.DDT_SPOST_ROW_CODE == d.Code);
+                            if (oldOrdRows.Any())
+                            {
+                                foreach (var r in oldOrdRows)
+                                {
+                                    r.DDT_SPOST_DC = null;
+                                    r.DDT_SPOST_ROW_CODE = null;
+                                }
+                            }
                             ctx.TD_26.Remove(oldrow);
                         }
                         if (doc.DocCode == -1)
@@ -470,6 +496,18 @@ namespace KursAM2.Managers.Invoices
                                 }
                             }
                         }
+
+                        foreach (var f in doc.Facts.Where(_ => _.State == RowStatus.NewRow))
+                        {
+                            var old = ctx.TD_24.FirstOrDefault(_ => _.DOC_CODE == f.DOC_CODE
+                                                                    && _.CODE == f.Code);
+                            if (old != null)
+                            {
+                                old.DDT_SPOST_DC = f.DDT_SPOST_DC;
+                                old.DDT_SPOST_ROW_CODE = f.DDT_SPOST_ROW_CODE;
+                            }
+                        }
+
                         ctx.SaveChanges();
                         transaction.Commit();
                         RecalcKontragentBalans.CalcBalans(doc.SF_POST_DC, doc.SF_POSTAV_DATE);
@@ -1247,16 +1285,18 @@ namespace KursAM2.Managers.Invoices
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var sql = waybill.Client == null
-                        ? "SELECT t84.doc_code, t84.code, cast(sft_kol as numeric(18,4)), SUM(t24.DDT_KOL_RASHOD) Shipped FROM td_84 t84 " +
+                        ? "SELECT t84.doc_code, t84.code, cast(sft_kol as numeric(18,4)), " +
+                          "SUM(isnull(t24.DDT_KOL_RASHOD,0)) Shipped FROM td_84 t84 " +
                           "INNER JOIN sd_84 s84 ON t84.DOC_CODE = s84.DOC_CODE " +
                           "LEFT OUTER JOIN td_24 t24 ON t84.DOC_CODE = T24.DDT_SFACT_DC AND t84.CODE = T24.DDT_SFACT_ROW_CODE " +
                           "GROUP BY t84.doc_code, t84.code, sft_kol " +
-                          "HAVING sft_kol - SUM(t24.DDT_KOL_RASHOD) > 0"
-                        : "SELECT t84.doc_code, t84.code, cast(sft_kol as numeric(18,4)), SUM(t24.DDT_KOL_RASHOD) Shipped FROM td_84 t84 " +
+                          "HAVING sft_kol - SUM(isnull(t24.DDT_KOL_RASHOD,0)) > 0"
+                        : "SELECT t84.doc_code, t84.code, cast(sft_kol as numeric(18,4)), " +
+                          "SUM(isnull(t24.DDT_KOL_RASHOD,0)) Shipped FROM td_84 t84 " +
                           $"INNER JOIN sd_84 s84 ON t84.DOC_CODE = s84.DOC_CODE AND S84.SF_CLIENT_DC = {CustomFormat.DecimalToSqlDecimal(waybill.Client.DocCode)} " +
                           "LEFT OUTER JOIN td_24 t24 ON t84.DOC_CODE = T24.DDT_SFACT_DC AND t84.CODE = T24.DDT_SFACT_ROW_CODE " +
                           "GROUP BY t84.doc_code, t84.code, sft_kol " +
-                          "HAVING sft_kol - SUM(t24.DDT_KOL_RASHOD) > 0";
+                          "HAVING sft_kol - SUM(isnull(t24.DDT_KOL_RASHOD,0)) > 0";
                     var data = ctx.Database.SqlQuery<SelectedTemp>(sql).ToList();
                     foreach (var dc in data.Select(_ => _.DOC_CODE).Distinct())
                     {

@@ -104,7 +104,7 @@ namespace KursAM2.ViewModel.Finance
             {
                 if (myCurrentBankOperations != null && myCurrentBankOperations.Equals(value)) return;
                 if (myCurrentBankOperations != null && myCurrentBankOperations.State == RowStatus.Edited
-                                                    && CurrentBankAccount != null)
+                                                    && CurrentBankAccount != null && myCurrentBankOperations.IsCurrencyChange == false)
                 {
                     var delta = Convert.ToDecimal(myCurrentBankOperations.DeltaPrihod -
                                                   myCurrentBankOperations.DeltaRashod);
@@ -196,8 +196,8 @@ namespace KursAM2.ViewModel.Finance
             }
         }
 
-        public override bool IsDocNewCopyAllow => CurrentBankOperations != null;
-        public override bool IsDocDeleteAllow => CurrentBankOperations != null;
+        public override bool IsDocNewCopyAllow => CurrentBankOperations != null && !CurrentBankOperations.IsCurrencyChange;
+        public override bool IsDocDeleteAllow => CurrentBankOperations != null && !CurrentBankOperations.IsCurrencyChange;
 
         private void GetBankOperation()
         {
@@ -215,9 +215,44 @@ namespace KursAM2.ViewModel.Finance
             SetVisiblePeriodsBands();
         }
 
-        public ICommand RemoveCommand => new Command(DocDelete, _ => CurrentBankOperations != null);
+        public ICommand RemoveCommand => new Command(DocDelete, _ => CurrentBankOperations != null
+                                                                     && !CurrentBankOperations.IsCurrencyChange);
 
         public ICommand AddCurrencyChangedCommand => new Command(AddCurrencyChanged, _ => true);
+
+        public ICommand UpdateCurrencyChangedCommand => new Command(UpdateCurrencyChanged, _ => CurrentBankOperations != null && CurrentBankOperations.IsCurrencyChange);
+
+        private void UpdateCurrencyChanged(object obj)
+        {
+            Guid id = Guid.Empty;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                if (CurrentBankOperations.VVT_VAL_PRIHOD > 0)
+                {
+                    var i = ctx.BankCurrencyChange
+                        .FirstOrDefault(_ => _.DocToDC == CurrentBankOperations.DOC_CODE
+                        && _.DocRowToCode == CurrentBankOperations.Code);
+                    if (i != null)
+                        id = i.Id;
+                }
+                else
+                {
+                    var i = ctx.BankCurrencyChange
+                        .FirstOrDefault(_ => _.DocFromDC == CurrentBankOperations.DOC_CODE
+                                             && _.DocRowFromCode == CurrentBankOperations.Code);
+                    if (i != null)
+                        id = i.Id;
+                }
+            }
+            var dtx = new BankCurrencyChangeWindowViewModel(id);
+            var form = new BankCurrencyChangeView()
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = dtx
+            };
+            dtx.Form = form;
+            form.Show();
+        }
 
         private void AddCurrencyChanged(object obj)
         {

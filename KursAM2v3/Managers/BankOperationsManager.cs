@@ -386,9 +386,6 @@ namespace KursAM2.Managers
                         VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC
                     });
                     item.DOC_CODE = thisDate.DOC_CODE;
-                    //var delta = Convert.ToDecimal(item.VVT_VAL_PRIHOD) - Convert.ToDecimal(item.VVT_VAL_RASHOD);
-                    ctx.SaveChanges();
-                    //RecalRemainder(item, ctx, delta, bankDc);
                     ctx.SaveChanges();
                     item.myState = RowStatus.NotEdited;
                 }
@@ -429,13 +426,93 @@ namespace KursAM2.Managers
                         VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
                         VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC
                     });
-                    //var delta = Convert.ToDecimal(item.VVT_VAL_PRIHOD) - Convert.ToDecimal(item.VVT_VAL_RASHOD);
-                    ctx.SaveChanges();
-                    //RecalRemainder(item, ctx, delta, bankDc);
                     ctx.SaveChanges();
                     item.myState = RowStatus.NotEdited;
                 }
             }
+        }
+
+        private Tuple<decimal,int> AddBankOperation2(ALFAMEDIAEntities ctx, BankOperationsViewModel item, decimal bankDc)
+        {
+            var thisDate = ctx.SD_101.FirstOrDefault(_ => _.VV_START_DATE == item.Date && _.VV_ACC_DC == bankDc);
+            var code = 0;
+            if (ctx.TD_101.Any())
+                code = ctx.TD_101.Max(_ => _.CODE) + 1;
+            if (thisDate != null && item.State == RowStatus.NewRow)
+            {
+                ctx.TD_101.Add(new TD_101
+                {
+                    DOC_CODE = thisDate.DOC_CODE,
+                    CODE = code,
+                    VVT_DOC_NUM = item.VVT_DOC_NUM,
+                    VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
+                    VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
+                    VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
+                    BankAccountDC = item.BankAccountIn?.BankDC,
+                    BankFromTransactionCode = item.BankFromTransactionCode,
+                    VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
+                    VVT_CRS_DC = item.Currency.DOC_CODE,
+                    VVT_KONTR_CRS_DC = item.Currency.DOC_CODE,
+                    VVT_KONTR_CRS_RATE = 1,
+                    VVT_KONTR_CRS_SUMMA = item.VVT_VAL_PRIHOD + item.VVT_VAL_RASHOD,
+                    VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DOC_CODE,
+                    VVT_UCHET_VALUTA_RATE = 1,
+                    VVT_SUMMA_V_UCHET_VALUTE =
+                        Convert.ToDecimal(item.VVT_VAL_PRIHOD) - Convert.ToDecimal(item.VVT_VAL_RASHOD),
+                    VVT_SF_OPLACHENO = 0,
+                    VVT_SHPZ_DC = item.VVT_SHPZ_DC,
+                    VVT_RASH_KASS_ORDER_DC = item.CashOut?.DocCode,
+                    VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode,
+                    VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
+                    VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
+                    IsCurrencyChange = true
+                });
+                item.DOC_CODE = thisDate.DOC_CODE;
+                ctx.SaveChanges();
+                item.myState = RowStatus.NotEdited;
+            }
+            if (thisDate == null && item.State == RowStatus.NewRow)
+            {
+                item.DOC_CODE = ctx.SD_101.ToList().Any() ? ctx.SD_101.Max(_ => _.DOC_CODE) + 1 : 11010000001;
+                ctx.SD_101.Add(new SD_101
+                {
+                    DOC_CODE = item.DOC_CODE,
+                    VV_START_DATE = item.Date,
+                    VV_STOP_DATE = item.Date,
+                    VV_ACC_DC = bankDc,
+                    VV_RUB_MONEY_START = 0,
+                    VV_RUB_MONEY_STOP = 0
+                });
+                ctx.TD_101.Add(new TD_101
+                {
+                    DOC_CODE = item.DOC_CODE,
+                    CODE = code,
+                    VVT_DOC_NUM = item.VVT_DOC_NUM,
+                    VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
+                    VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
+                    VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
+                    BankAccountDC = item.BankAccountIn?.BankDC,
+                    BankFromTransactionCode = item.BankFromTransactionCode,
+                    VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
+                    VVT_CRS_DC = item.Currency.DOC_CODE,
+                    VVT_KONTR_CRS_DC = item.Currency.DOC_CODE,
+                    VVT_KONTR_CRS_RATE = 1,
+                    VVT_KONTR_CRS_SUMMA = item.VVT_VAL_PRIHOD + item.VVT_VAL_RASHOD,
+                    VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DOC_CODE,
+                    VVT_UCHET_VALUTA_RATE = 1,
+                    VVT_SUMMA_V_UCHET_VALUTE = item.VVT_VAL_PRIHOD - item.VVT_VAL_RASHOD,
+                    VVT_SF_OPLACHENO = 0,
+                    VVT_SHPZ_DC = item.VVT_SHPZ_DC,
+                    VVT_RASH_KASS_ORDER_DC = item.CashOut?.DocCode,
+                    VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode,
+                    VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
+                    VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
+                    IsCurrencyChange = true
+                });
+                ctx.SaveChanges();
+                item.myState = RowStatus.NotEdited;
+            } 
+            return new Tuple<decimal, int>(item.DOC_CODE, code); 
         }
 
         public void DeleteBankOperations(BankOperationsViewModel item, decimal bankDc)
@@ -781,7 +858,8 @@ namespace KursAM2.Managers
                 Id = Guid.NewGuid(),
                 DocDate = DateTime.Today,
                 DocNum = -1,
-                State = RowStatus.NewRow
+                State = RowStatus.NewRow,
+                CREATOR = GlobalOptions.UserInfo.NickName
             };
         }
 
@@ -801,7 +879,9 @@ namespace KursAM2.Managers
                 DocRowToCode = 0,
                 DocToDC = 0,
                 Note = "",
-                Rate = doc.Rate
+                Rate = doc.Rate,
+                CREATOR = GlobalOptions.UserInfo.NickName,
+                State = RowStatus.NewRow
             };
             return newItem;
         }
@@ -822,6 +902,154 @@ namespace KursAM2.Managers
                 WindowManager.ShowError(e);
             }
             return document;
+        }
+
+        public void AddBankCurrencyChange(BankCurrencyChangeViewModel item)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var tran = ctx.Database.BeginTransaction();
+                try
+                {
+                    var bankItemFrom = new BankOperationsViewModel
+                    {
+                        Date = item.DocDate,
+                        VVT_DOC_NUM = "Обмен валюты",
+                        VVT_VAL_PRIHOD = 0,
+                        VVT_VAL_RASHOD = item.SummaFrom,
+                        Kontragent = null,
+                        BankAccountIn = item.BankTo,
+                        BankFromTransactionCode = null,
+                        Payment = null,
+                        Currency = item.CurrencyFrom,
+                        VVT_SHPZ_DC = null,
+                        CashIn = null,
+                        CashOut = null,
+                        VVT_SFACT_CLIENT_DC = null,
+                        VVT_SFACT_POSTAV_DC = null,
+                        State = RowStatus.NewRow
+                    };
+                    
+                    var d = AddBankOperation2(ctx,bankItemFrom,item.BankFromDC);
+
+                    var bankItemTo = new BankOperationsViewModel
+                    {
+                        Date = item.DocDate,
+                        VVT_DOC_NUM = "Обмен валюты",
+                        VVT_VAL_PRIHOD = item.SummaTo,
+                        VVT_VAL_RASHOD = 0,
+                        Kontragent = null,
+                        BankAccountIn = null,
+                        BankFromTransactionCode = d.Item2,
+                        Payment = null,
+                        Currency = item.CurrencyTo,
+                        VVT_SHPZ_DC = null,
+                        CashIn = null,
+                        CashOut = null,
+                        VVT_SFACT_CLIENT_DC = null,
+                        VVT_SFACT_POSTAV_DC = null,
+                        State = RowStatus.NewRow
+                    };
+
+                    var d2 = AddBankOperation2(ctx,bankItemTo,item.BankToDC);
+                    var num = ctx.BankCurrencyChange.ToList().Any() ? ctx.BankCurrencyChange.Max(_ => _.DocNum) + 1 : 1;
+                    ctx.BankCurrencyChange.Add(new BankCurrencyChange
+                    {
+                        DocDate = item.DocDate,
+                        SummaFrom = item.SummaFrom,
+                        Id = Guid.NewGuid(),
+                        CrsToDC = item.CrsToDC,
+                        Note = item.Note,
+                        Rate = item.Rate,
+                        BankFromDC = item.BankFromDC,
+                        CrsFromDC = item.CrsFromDC,
+                        BankToDC = item.BankToDC,
+                        CREATOR = item.CREATOR,
+                        DocRowFromCode = d.Item2,
+                        DocRowToCode = d2.Item2,
+                        DocFromDC = d.Item1,
+                        SummaTo = item.SummaTo,
+                        DocNum = num,
+                        DocToDC = d2.Item1
+                    });
+                    ctx.SaveChanges();
+                    tran.Commit();
+                    item.myState = RowStatus.NotEdited;
+                }
+                catch (Exception ex)
+                {
+                    if (tran.UnderlyingTransaction.Connection != null)
+                        tran.Rollback();
+                    WindowManager.ShowError(ex);
+                }
+            }
+
+        }
+
+        public void SaveBankCurrencyChange(BankCurrencyChangeViewModel item)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var tran = ctx.Database.BeginTransaction();
+                try
+                {
+                    var bc = ctx.BankCurrencyChange.FirstOrDefault(_ => _.Id == item.Id);
+                    if (bc == null) return;
+                    //bc.DocDate = item.DocDate;
+                    bc.SummaFrom = item.SummaFrom;
+                    bc.SummaTo = item.SummaTo;
+                    bc.Rate = item.Rate;
+                    bc.Note = item.Note;
+                    var bankto =
+                        ctx.TD_101.FirstOrDefault(_ => _.DOC_CODE == item.DocToDC && _.CODE == item.DocRowToCode); 
+                    if (bankto == null) return;
+                    bankto.VVT_VAL_PRIHOD = item.SummaTo;
+                    bankto.VVT_VAL_RASHOD = 0;
+                    var bankfrom =
+                        ctx.TD_101.FirstOrDefault(_ => _.DOC_CODE == item.DocFromDC && _.CODE == item.DocRowFromCode);
+                    if (bankfrom == null) return;
+                    bankfrom.VVT_VAL_RASHOD = item.SummaFrom;
+                    bankfrom.VVT_VAL_PRIHOD = 0;
+                    ctx.SaveChanges();
+                    tran.Commit();
+                    item.myState = RowStatus.NotEdited;
+                }
+                catch (Exception ex)
+                {
+                    if (tran.UnderlyingTransaction.Connection != null)
+                        tran.Rollback();
+                    WindowManager.ShowError(ex);
+                }
+            }
+        }
+
+        public bool DeleteBankCurrencyChange(BankCurrencyChangeViewModel item)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var tran = ctx.Database.BeginTransaction();
+                try
+                {
+                    var d1 = ctx.TD_101.FirstOrDefault(_ => _.CODE == item.DocRowToCode);
+                    var d2 = ctx.TD_101.FirstOrDefault(_ => _.CODE == item.DocRowFromCode);
+                    var doc = ctx.BankCurrencyChange.FirstOrDefault(_ => _.Id == item.Id);
+                    if (d1 == null || d2 == null || doc == null)
+                        return false;
+                    ctx.TD_101.Remove(d2);
+                    ctx.TD_101.Remove(d1);
+                    ctx.BankCurrencyChange.Remove(doc);
+                    ctx.SaveChanges();
+                    tran.Commit();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    if (tran.UnderlyingTransaction.Connection != null)
+                        tran.Rollback();
+                    WindowManager.ShowError(ex);
+                    return false;
+                }
+            }
         }
     }
 }

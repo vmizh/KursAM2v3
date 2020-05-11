@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Windows;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
+using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 
@@ -197,6 +200,17 @@ namespace Core.EntityViewModel
             set
             {
                 if (Entity.SFT_KOL == value) return;
+                if (Parent is InvoiceProvider p && p.Facts.Count > 0)
+                {
+                    var s = p.Facts.Where(_ => _.DDT_SPOST_DC == DOC_CODE
+                                               && _.DDT_SPOST_ROW_CODE == Code).Sum(_ => _.DDT_KOL_PRIHOD);
+                    if (value < s)
+                    {
+                        WindowManager.ShowMessage($"Новая сумма {value} меньше отфактурированной {s}",
+                            "Предупреждение",MessageBoxImage.Stop);
+                        return;
+                    }
+                }
                 Entity.SFT_KOL = value;
                 Calc();
                 RaisePropertyChanged();

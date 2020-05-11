@@ -53,6 +53,7 @@ namespace Data
         public byte[] TSTAMP { get; set; }
         public Nullable<decimal> BankAccountDC { get; set; }
         public Nullable<int> BankFromTransactionCode { get; set; }
+        public Nullable<bool> IsCurrencyChange { get; set; }
     
         public virtual SD_101 SD_101 { get; set; }
         public virtual SD_26 SD_26 { get; set; }

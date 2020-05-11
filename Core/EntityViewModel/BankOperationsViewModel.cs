@@ -99,7 +99,8 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-        
+
+        public bool IsCurrencyChange => Entity.IsCurrencyChange ?? false;
         private int? myBankFromTransactionCode;
         public int? BankFromTransactionCode
         {
@@ -161,7 +162,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-
+        
         public ICommand SFNameRemoveCommand
         {
             get { return new Command(SFNameRemove, _ => !string.IsNullOrEmpty(SFName)); }

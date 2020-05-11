@@ -150,6 +150,8 @@ namespace KursAM2.View.Logistiks.UC
                 SelectedNomenkl.Remove(CurrentSelectNomenkl);
         }
 
+        public override bool IsCanSearch => SearchText != null;
+
         public override void Search(object obj)
         {
             SearchNomenkl(null);
@@ -158,19 +160,36 @@ namespace KursAM2.View.Logistiks.UC
         public void SearchNomenkl(object obj)
         {
             NomenklItem.Clear();
-            foreach (var item in NomenklItemCollection)
-                // ReSharper disable once RedundantLogicalConditionalExpressionOperand
-                // ReSharper disable once MergeConditionalExpression
-                if (item.NOM_POLNOE_IMIA != null
-                    ? item.NOM_POLNOE_IMIA.ToUpper().Contains(SearchText.ToUpper())
-                    : false
-                      || item.NOM_NOMENKL.ToUpper().Contains(SearchText.ToUpper()))
-                    NomenklItem.Add(item);
+            foreach (var n in MainReferences.ALLNomenkls.Values)
+            {
+                var srch = SearchText.ToUpper();
+                if (n.NOM_NAME.ToUpper().Contains(srch) || (n.NOM_FULL_NAME?.ToUpper().Contains(srch) ?? false)
+                                                        || (n.NOM_POLNOE_IMIA?.ToUpper().Contains(srch) ?? false) 
+                                                        || n.NOM_NOMENKL.ToUpper().Contains(srch)
+                                                        || (n.NOM_NOTES?.ToUpper().Contains(srch) ?? false))
+                {
+                    NomenklItem.Add(n);
+                }
+                if (NomenklItem.Count > 0)
+                {
+                    myDataUserControl.treeListPermissionStruct.IsEnabled = false;
+                }
+            }
+            //foreach (var item in NomenklItemCollection)
+            //    // ReSharper disable once RedundantLogicalConditionalExpressionOperand
+            //    // ReSharper disable once MergeConditionalExpression
+            //    if (item.NOM_POLNOE_IMIA != null
+            //        ? item.NOM_POLNOE_IMIA.ToUpper().Contains(SearchText.ToUpper())
+            //        : false
+            //          || item.NOM_NOMENKL.ToUpper().Contains(SearchText.ToUpper()))
+            //        NomenklItem.Add(item);
         }
 
         public override void SearchClear(object obj)
         {
             SearchText = null;
+            myDataUserControl.treeListPermissionStruct.IsEnabled = true;
+            NomenklItem.Clear();
             RefreshData(null);
         }
 

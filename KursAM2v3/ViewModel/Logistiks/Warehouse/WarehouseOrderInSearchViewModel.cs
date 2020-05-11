@@ -41,6 +41,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get => myCurrentDocument;
         }
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
 
         #region Commands
 

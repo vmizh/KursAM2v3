@@ -44,7 +44,7 @@ namespace Data
         {
             throw new UnintentionalCodeFirstException();
         }
-    
+
         public virtual DbSet<AccountInvoice> AccountInvoice { get; set; }
         public virtual DbSet<AD_149> AD_149 { get; set; }
         public virtual DbSet<AD_2> AD_2 { get; set; }

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
@@ -11,8 +11,9 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.View.Base;
+using KursAM2.View.Logistiks.UC;
 using KursAM2.View.Logistiks.Warehouse;
-using WarehouseManager = KursAM2.Managers.WarehouseManager;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -50,19 +51,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 if (myDocument != null && myDocument.Equals(value)) return;
                 myDocument = value;
-                Rows.Clear();
-                foreach (var r in Document.Rows)
-                {
-                    Rows.Add(r);
-                }
                 RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Rows));
             }
             get => myDocument;
         }
 
-        public ObservableCollection<WarehouseOrderInRow> Rows { set; get; } = new ObservableCollection<WarehouseOrderInRow>();
-
+        //public ObservableCollection<WarehouseOrderInRow> Rows { set; get; } = new ObservableCollection<WarehouseOrderInRow>();
         private WarehouseOrderInRow myCurrentRow;
         public WarehouseOrderInRow CurrentRow
         {
@@ -77,7 +71,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public bool IsCanChangedWarehouseType => Document?.Sender == null;
         public override string WindowName =>
             $"Приходный складской ордер №{Document?.DD_IN_NUM}/{Document?.DD_EXT_NUM} от {Document?.DD_DATE}";
-        
+
         #endregion
 
         #region Command
@@ -145,10 +139,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             Document.DD_OTRPAV_NAME = Document.Sender;
             Document.DD_TYPE_DC = 2010000001;
             var dc = orderManager.SaveOrderIn(Document);
-            if (dc > 0)
-            {
-                RefreshData(dc);
-            }
+            if (dc > 0) RefreshData(dc);
         }
 
         public ICommand DeleteLinkDocumentCommand
@@ -179,20 +170,61 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private void OpenLinkDocument(object obj)
         {
             if (CurrentRow.LinkInvoice != null)
-            {
-                DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)CurrentRow.DDT_SPOST_DC);
-            }
+                DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal) CurrentRow.DDT_SPOST_DC);
         }
 
         public ICommand AddFromDocumentCommand
         {
-            get { return new Command(AddFromDocument, _ => true); }
+            get
+            {
+                return new Command(AddFromDocument, _ => Document?.WarehouseIn != null &&
+                                                         Document?.KontragentSender != null);
+            }
         }
 
-        //TODO создать диалог для вставки в приходный ордер строк из счетов фактур,ордеров и внутренних перемещений
         private void AddFromDocument(object obj)
         {
-            
+            var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
+            var ctx = new AddNomenklFromInvoiceProviderRowViewModel(Document.WarehouseIn,
+                Document.KontragentSender);
+            var dlg = new SelectDialogView {DataContext = ctx};
+            ctx.Form = dlg;
+            if (dlg.ShowDialog() == false) return;
+            using (var dbctx = GlobalOptions.GetEntities())
+            {
+                foreach (var r in ctx.Nomenkls.Where(_ => _.IsChecked))
+                {
+                    var old = Document.Rows.FirstOrDefault(_ => _.Nomenkl.DocCode == r.Nomenkl.DocCode);
+                    if (old != null && old.LinkInvoice == null)
+                    {
+                        var invRow = dbctx.TD_26
+                            .Include(_ => _.SD_26)
+                            .FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.Code);
+                        var schetRow = invRow != null ? new InvoiceProviderRow(invRow) : null;
+                        old.LinkInvoice = schetRow;
+                    }
+                    if (old == null)
+                    {
+                        var invRow = dbctx.TD_26
+                            .Include(_ => _.SD_26)
+                            .FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.Code);
+                        var schetRow = invRow != null ? new InvoiceProviderRow(invRow) : null;
+                        Document.Rows.Add(new WarehouseOrderInRow
+                        {
+                            DocCode = Document.DocCode,
+                            Code = newCode,
+                            Nomenkl = r.Nomenkl,
+                            DDT_KOL_PRIHOD = r.Quantity,
+                            Unit = r.Nomenkl.Unit,
+                            DDT_SPOST_DC = r.DocCode,
+                            LinkInvoice = schetRow,
+                            DDT_SPOST_ROW_CODE = r.Code,
+                            DDT_CRS_DC = r.Nomenkl.Currency.DocCode,
+                            State = RowStatus.NewRow
+                        });
+                    }
+                }
+            }
         }
 
         public ICommand AddNomenklCommand
@@ -202,19 +234,22 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void AddNomenkl(object obj)
         {
+            var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             var nomenkls = StandartDialogs.SelectNomenkls();
             if (nomenkls == null || nomenkls.Count <= 0) return;
             foreach (var n in nomenkls)
                 if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode))
                     Document.Rows.Add(new WarehouseOrderInRow
                     {
-                        DocCode = -1,
+                        DocCode = Document.DocCode,
+                        Code = newCode,
                         Nomenkl = n,
                         DDT_KOL_PRIHOD = 1,
                         Unit = n.Unit,
                         Currency = n.Currency,
                         State = RowStatus.NewRow
                     });
+            RaisePropertyChanged(nameof(Document));
         }
 
         public ICommand DeleteNomenklCommand

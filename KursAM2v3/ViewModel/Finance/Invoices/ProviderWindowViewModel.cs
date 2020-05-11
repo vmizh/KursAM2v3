@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -8,15 +9,31 @@ using Core.EntityViewModel;
 using Core.Finance;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Core.WindowsManager;
+using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
+using KursAM2.View.Base;
 using KursAM2.View.Finance.Invoices;
+using KursAM2.View.Logistiks.UC;
+using KursAM2.View.Logistiks.Warehouse;
+using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management.Calculations;
 using Reports.Base;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
+    /// <summary>
+    /// Вспомогательный класс для загрузки 
+    /// </summary>
+    public class InvoiceProviderStoreLinkTemp
+    {
+        public decimal DocCode { set; get; }
+        public int Code { set; get; }
+        public decimal SFQuantity { set; get; }
+        public decimal QuantityIn { set; get; }
+    }
     /// <summary>
     ///     Сфчет-фактура поставщика
     /// </summary>
@@ -130,9 +147,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             Document = dc != null ? InvoicesManager.GetInvoiceProvider(dc.Value) : InvoicesManager.NewProvider();
             if (Document == null || Document.Rows == null) return;
-            foreach (var row in Document.Rows)
-            foreach (var t in row.Entity.TD_24)
-                Facts.Add(new InvoiceProviderWarehouseReceipt(t));
             if (Document != null)
                 WindowName = Document.ToString();
         }
@@ -169,8 +183,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ObservableCollection<InvoiceProviderRow> SelectedRows { set; get; }
 
-        public ObservableCollection<InvoiceProviderWarehouseReceipt> Facts { set; get; } =
-            new ObservableCollection<InvoiceProviderWarehouseReceipt>();
+ 
+        public ObservableCollection<WarehouseOrderInRow> SelectedFacts { set; get; } =
+            new ObservableCollection<WarehouseOrderInRow>();
+        
+        private WarehouseOrderInRow myCurrentFact;
+        public WarehouseOrderInRow CurrentFact
+        {
+            get => myCurrentFact;
+            set
+            {
+                if (myCurrentFact == value) return;
+                myCurrentFact = value;
+                RaisePropertyChanged();
+            }
+        }
 
         #endregion
 
@@ -195,7 +222,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     UpdateCalcRowSumma(null);
                 }
 
-                Document.RaisePropertyChanged("State");
+                Document.RaisePropertyChanged(nameof(State));
                 if (Document.State == RowStatus.NotEdited) return false;
                 if (Document.PaySumma > Document.SF_CRS_SUMMA)
                 {
@@ -247,6 +274,157 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => myCurrentPaymentDoc;
         }
 
+        public ICommand AddStoreLinkCommand
+        {
+            get { return new Command(AddStoreLink, _ => true); }
+        }
+
+        private void AddStoreLink(object obj)
+        {
+            var ctx = new AddNomenklFromOrderInViewModel(Document.Kontragent);
+            var dlg = new SelectDialogView {DataContext = ctx};
+            ctx.Form = dlg;
+            if (dlg.ShowDialog() == false) return;
+            using (var dbctx = GlobalOptions.GetEntities())
+            {
+                  var defaultNDS = Convert.ToDecimal(dbctx.PROFILE
+                        .FirstOrDefault(_ => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")?.ITEM_VALUE);
+                foreach (var item in ctx.Nomenkls.Where(_ => _.IsChecked))
+                {
+                    var old = Document.Facts.FirstOrDefault(_ => _.DocCode == item.DocCode
+                                                                 && _.Code == item.Code);
+                    if (old != null)
+                    {
+                        old.DDT_KOL_PRIHOD += item.Quantity;
+                        var srow = Document.Rows.FirstOrDefault(_ => _.Nomenkl.DocCode == old.Nomenkl.DocCode);
+                        if (srow != null && old.DDT_KOL_PRIHOD > srow.SFT_KOL)
+                        {
+                            srow.SFT_KOL = old.DDT_KOL_PRIHOD;
+                        }
+                    }
+                    else
+                    {
+                        var srow = Document.Rows.FirstOrDefault(_ => _.Nomenkl.DocCode == item.Nomenkl.DocCode);
+                        if (srow == null)
+                        {   var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
+                            Document.Rows.Add(new InvoiceProviderRow
+                            {
+                                DocCode = Document.DocCode,
+                                Code = newCode,
+                                Id = Guid.NewGuid(),
+                                DocId = Document.Id,
+                                Nomenkl = item.Nomenkl,
+                                SFT_KOL = item.Quantity,
+                                SFT_ED_CENA = 0,
+                                SFT_NDS_PERCENT = item.Nomenkl.NDSPercent ?? defaultNDS,
+                                SFT_POST_ED_IZM_DC = item.Nomenkl.Unit.DocCode,
+                                PostUnit = item.Nomenkl.Unit,
+                                UchUnit = item.Nomenkl.Unit,
+                                State = RowStatus.NewRow
+                            });
+                            var oldOrdRow = dbctx.TD_24.FirstOrDefault(_ => _.DOC_CODE == item.DocCode
+                                                                            && _.CODE == item.Code);
+                            Document.Facts.Add(new WarehouseOrderInRow(oldOrdRow)
+                            {
+                                DDT_SPOST_DC = Document.DocCode,
+                                DDT_SPOST_ROW_CODE = newCode,
+                                State = RowStatus.NewRow
+                            });
+
+                        }
+                        else
+                        {
+                            var oldOrdRow = dbctx.TD_24.FirstOrDefault(_ => _.DOC_CODE == item.DocCode
+                                                                            && _.CODE == item.Code);
+                            Document.Facts.Add(new WarehouseOrderInRow(oldOrdRow)
+                            {
+                                State = RowStatus.NewRow
+                            });
+                            if (oldOrdRow != null)
+                            {
+                                oldOrdRow.DDT_SPOST_DC = srow.DocCode;
+                                oldOrdRow.DDT_SPOST_ROW_CODE = srow.Code;
+                                dbctx.SaveChanges();
+                            }
+                            if (srow.SFT_KOL < item.Quantity)
+                                srow.SFT_KOL = item.Quantity;
+                        }
+                    }
+                }
+            }
+        }
+
+        public ICommand DeleteStoreLinkCommand
+        {
+            get { return new Command(DeleteStoreLink, _ => CurrentFact != null); }
+        }
+
+        private void DeleteStoreLink(object obj)
+        {
+            List<Tuple<decimal,int>> rowForRemove = new List<Tuple<decimal, int>>();
+            var res = WinManager.ShowWinUIMessageBox("Действительно хотите удалить связь с приходными ордерами?", "Запрос",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+            switch (res)
+            {
+                case MessageBoxResult.Yes:
+                    using (var ctx = GlobalOptions.GetEntities())
+                    {
+                        var tran = ctx.Database.BeginTransaction();
+                        try
+                        {
+                            foreach (var item in SelectedFacts)
+                            {
+                                var ordRows = ctx.TD_24.Where(_ => _.DDT_SPOST_DC == item.DDT_SPOST_DC
+                                                                   && _.DDT_SPOST_ROW_CODE == item.DDT_SPOST_ROW_CODE);
+                                foreach (var row in ordRows)
+                                {
+                                    row.DDT_SPOST_DC = null;
+                                    row.DDT_SPOST_ROW_CODE = null;
+                                }
+                                rowForRemove.Add(new Tuple<decimal, int>(item.DOC_CODE,item.Code));
+                            }
+                            ctx.SaveChanges();
+                            tran.Commit();
+                            foreach (var rem in rowForRemove)
+                            {
+                                var old = Document.Facts.FirstOrDefault(_ => _.DOC_CODE == rem.Item1
+                                                                             && _.Code == rem.Item2);
+                                if (old != null)
+                                    Document.Facts.Remove(old);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            tran.Rollback();
+                            WindowManager.ShowError(ex);
+                        }
+                    }
+                    return;
+                case MessageBoxResult.No:
+                    return;
+            }
+        }
+
+        public ICommand OpenStoreLinkDocumentCommand
+        {
+            get {return new Command(OpenStoreLinkDocument, _ => CurrentFact != null);}
+        }
+
+        private void OpenStoreLinkDocument(object obj)
+        {
+            var ctx = new OrderInWindowViewModel(
+                new StandartErrorManager(GlobalOptions.GetEntities(), "WarehouseOrderIn", true)
+                , CurrentFact.DocCode);
+            var frm = new OrderInView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
+        }
+
         public ICommand OpenPayDocumentCommand
         {
             get { return new Command(OpenPayDocument, _ => CurrentPaymentDoc != null); }
@@ -293,8 +471,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.WindowViewModel = this;
             }
         }
-
-
+        
         public ICommand PrintZajavkaCommand
         {
             get { return new Command(PrintZajavka, param => true); }
@@ -460,7 +637,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private void DeleteRow(object obj)
         {
             if (CurrentRow != null && CurrentRow.State != RowStatus.NewRow)
+            {
                 Document.DeletedRows.Add(CurrentRow);
+            }
+            var f = Document.Facts.FirstOrDefault(_ => _.DDT_SPOST_DC == CurrentRow.DocCode
+                                                       && _.DDT_SPOST_ROW_CODE == CurrentRow.Code);
+            if (f != null)
+            {
+                Document.Facts.Remove(f);
+            }
             Document.Rows.Remove(CurrentRow);
             UpdateVisualData();
         }
@@ -563,7 +748,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Document.DocCode = dc;
                 RecalcKontragentBalans.CalcBalans(Document.SF_POST_DC, Document.SF_POSTAV_DATE);
                 Document.myState = RowStatus.NotEdited;
-                Document.RaisePropertyChanged("State");
+                Document.RaisePropertyChanged(nameof(State));
                 RefreshData(null);
             }
         }

@@ -23,8 +23,8 @@
                               Height="25"
                               EditValue="{Binding Currency, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                               DisplayMember="Name"
-                              
-                              Margin="0 0 0 5" />
+                              Margin="0 0 0 5" 
+                              IsEnabled="{Binding IsNotCurrencyChange}"/>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Тип контрагента">
                     <dxe:ComboBoxEdit HorizontalAlignment="Stretch"
@@ -51,6 +51,7 @@
                                     HorizontalAlignment="Stretch"
                                     Height="25"
                                     IsReadOnly="True"
+                                    IsEnabled="{Binding IsNotCurrencyChange}"
                                     EditValue="{Binding Payment, NotifyOnSourceUpdated=True,  NotifyOnTargetUpdated=True}"
                                     Margin="0 0 0 5"
                                     DefaultButtonClick="Payment_OnDefaultButtonClick">
@@ -87,6 +88,7 @@
                 <dxlc:LayoutItem Label="Счет доходов/расходов">
                      <ComboBox HorizontalAlignment="Stretch"
                               ItemsSource="{Binding SHPZList}"
+                              IsEnabled="{Binding IsNotCurrencyChange}"
                               Height="25"
                               SelectedItem="{Binding SHPZ, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                               DisplayMemberPath="Name"
@@ -97,6 +99,7 @@
                                     HorizontalAlignment="Stretch"
                                     Height="25"
                                     IsReadOnly="True"
+                                    IsEnabled="{Binding IsNotCurrencyChange}"
                                     EditValue="{Binding SFName, NotifyOnSourceUpdated=True,  NotifyOnTargetUpdated=True}"
                                     IsTextEditable="False"
                                     Margin="0 0 0 5"
@@ -113,6 +116,7 @@
                     <dxe:MemoEdit EditValue="{Binding VVT_DOC_NUM, Mode=TwoWay}"
                                   ShowIcon="False"
                                     Height="55"
+                                  IsEnabled="{Binding IsNotCurrencyChange}"
                              Margin="0 0 0 5" />
                 </dxlc:LayoutItem>
             </dxlc:LayoutGroup>

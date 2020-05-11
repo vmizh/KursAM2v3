@@ -127,17 +127,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 }
 
                 DocumentCollection.Clear();
-                var query = GlobalOptions.GetEntities()
-                    .SD_24
-                    .Include(_ => _.SD_43)
-                    .Include(_ => _.SD_431)
-                    .Include(_ => _.SD_432)
-                    .Include(_ => _.SD_301)
-                    .Include(_ => _.TD_24)
-                    .Include(_ => _.SD_27)
-                    .Where(_ => _.DD_DATE >= StartDate && _.DD_DATE <= EndDate && _.DD_TYPE_DC == 2010000012);
-                foreach (var item in query.ToList())
-                    DocumentCollection.Add(new Waybill(item));
+
+                var d = DocManager.GetWaybills(StartDate, EndDate);
+                foreach (var item in d)
+                    DocumentCollection.Add(item);
             }
             catch (Exception ex)
             {

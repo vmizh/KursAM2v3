@@ -14,6 +14,7 @@ namespace KursAM2.ViewModel.Finance
         
         private BankCurrencyChangeViewModel myDocument;
         private readonly BankOperationsManager manager = new BankOperationsManager();
+        private DateTime oldDate;
 
         #endregion
 
@@ -38,7 +39,9 @@ namespace KursAM2.ViewModel.Finance
 
         #region Properties
 
-        public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited;
+        public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited 
+                                            && Document.CurrencyTo != null && Document.CurrencyFrom != null
+                                            && Document.CrsToDC != Document.CrsFromDC;
 
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
        
@@ -83,11 +86,6 @@ namespace KursAM2.ViewModel.Finance
 
             if (Document?.Id != Guid.Empty)
             {
-                Document = manager.NewBankCurrencyChange();
-                RaisePropertyChanged(nameof(Document));
-            }
-            else
-            {
                 Document = manager.LoadBankCurrencyChange(Id);
                 if (Document == null)
                 {
@@ -96,11 +94,36 @@ namespace KursAM2.ViewModel.Finance
                         MessageBoxResult.None, MessageBoxOptions.None);
                     return;
                 }
-
-                RaisePropertyChanged(nameof(Document));
+                oldDate = Document.DocDate;
             }
-
+            RaisePropertyChanged(nameof(Document));
             Document.myState = RowStatus.NotEdited;
+        }
+
+        public override void SaveData(object data)
+        {
+            if (Document.State == RowStatus.NewRow)
+            {
+                manager.AddBankCurrencyChange(Document);
+            }
+            else
+            {
+                if (Document.DocDate == oldDate)
+                {
+                    manager.SaveBankCurrencyChange(Document);
+                }
+                else
+                {
+                    manager.DeleteBankCurrencyChange(Document);
+                    manager.AddBankCurrencyChange(Document);
+                }
+            }
+        }
+
+        public override void DocDelete(object form)
+        {
+            if (manager.DeleteBankCurrencyChange(Document))
+                Form.Close();
         }
 
         #endregion

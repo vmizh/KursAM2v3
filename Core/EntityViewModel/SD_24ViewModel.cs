@@ -191,7 +191,7 @@ namespace Core.EntityViewModel
                     DD_OTRPAV_NAME = myKontragentSender.Name;
                 }
                 RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Receiver));
+                RaisePropertyChanged(nameof(Sender));
             }
         }
         public decimal? DD_KONTR_POL_DC

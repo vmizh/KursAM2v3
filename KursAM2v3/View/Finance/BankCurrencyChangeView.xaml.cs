@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
@@ -32,6 +33,7 @@ namespace KursAM2.View.Finance
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public PopupCalcEdit Sumordcont = new PopupCalcEdit();
 
         private void BankCurrencyChangeView_Unloaded(object sender, RoutedEventArgs e)
         {
@@ -70,21 +72,58 @@ namespace KursAM2.View.Finance
             }
             switch (e.PropertyName)
             {
+                case nameof(doc.SummaFrom):
+                    e.Item.Width = 300;
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                    break;
+                case nameof(doc.CurrencyFrom):
+                    e.Item.Width = 50;
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                    break;
+                case nameof(doc.SummaTo):
+                    e.Item.Width = 300;
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                    break;
+                case nameof(doc.CurrencyTo):
+                    e.Item.Width = 50;
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                    break;
                 case nameof(doc.BankFrom):
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
+                    e.Item.Width = 800;
+                    break;
+                case nameof(doc.Rate):
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                    e.Item.Width = 300;
                     break;
                 case nameof(doc.BankTo):
-                    var cb1 = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.BankTo, "Bank",
+                    if (doc.State == RowStatus.NewRow)
+                    {
+                        var cb1 = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.BankTo, "BankTo",
                         MainReferences.BankAccounts.Values.Where(_ => _.DocCode != doc.BankFromDC).ToList());
+                        cb1.EditValueChanged += Cb_BankToValueChanged;
+                    }
+                    else
+                    {
+                        var cb1 = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.BankTo, "BankTo",
+                            new List<BankAccount>{MainReferences.BankAccounts[doc.BankToDC]});
+                        cb1.EditValueChanged += Cb_BankToValueChanged;
+                    }
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
-                    cb1.EditValueChanged += Cb_BankToValueChanged;
+                    e.Item.Width = 800;
                     break;
                 case nameof(doc.CREATOR):
                     e.Item.IsReadOnly = true;
                     e.Item.HorizontalAlignment = HorizontalAlignment.Right;
-                    e.Item.Width = 50;
+                    e.Item.Width = 200;
+                    break;
+                case nameof(doc.State):
+                    e.Item.IsReadOnly = true;
+                    e.Item.IsEnabled = false;
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Right;
+                    e.Item.Width = 200;
                     break;
                 case nameof(doc.DocDate):
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
@@ -99,6 +138,7 @@ namespace KursAM2.View.Finance
         private void Cb_BankToValueChanged(object sender, EditValueChangedEventArgs e)
         {
             if (!(DataContext is BankCurrencyChangeWindowViewModel ctx)) return;
+            if (ctx.Document?.State == RowStatus.NotEdited) return;
             // ReSharper disable once UnusedVariable
             var doc = ctx.Document;
             if (ctx.Document != null && ctx.Document.State != RowStatus.NewRow)
@@ -119,12 +159,12 @@ namespace KursAM2.View.Finance
                         if (ctx.Document != null)
                         {
                             ctx.Document.CurrencyTo = MainReferences.Currencies[data.First()];
-                            var rates = CurrencyRate.GetRate(doc.DocDate);
+                            var rates = CurrencyRate.GetRate(ctx.Document.DocDate);
                             if (ctx.Document.CurrencyFrom != null && ctx.Document.CurrencyTo != null)
-                                ctx.Document.Rate = CurrencyRate.GetCBSummaRate(doc.CurrencyFrom,
-                                    doc.CurrencyTo, rates);
+                                ctx.Document.Rate = CurrencyRate.GetCBSummaRate(ctx.Document.CurrencyFrom,
+                                    ctx.Document.CurrencyTo, rates);
                             else
-                                doc.Rate = 1;
+                                ctx.Document.Rate = 1;
 
                             if (ctx.Document.CrsToDC == GlobalOptions.SystemProfile.NationalCurrency.DocCode)
                                 ctx.Document.SummaTo =

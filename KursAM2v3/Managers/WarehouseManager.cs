@@ -95,9 +95,6 @@ namespace KursAM2.Managers
                         .Include("TD_24.TD_84")
                         .Include("TD_24.TD_26")
                         .Include("TD_24.TD_241")
-                        //.Include("TD_24.TD_242")
-                        //.Include("TD_24.TD_243")
-                        //.Include("TD_24.TD_244")
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
                     result = new WarehouseOrderIn(data);
                     foreach (var r in result.Rows) r.myState = RowStatus.NotEdited;
@@ -1401,7 +1398,9 @@ namespace KursAM2.Managers
                         .Include("TD_24.TD_26")
                         .Include("TD_24.TD_241")
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
-                    result = new Waybill(data);
+                    result = new Waybill(data) {myState = RowStatus.NotEdited};
+                    foreach (var r in result.Rows)
+                        r.myState = RowStatus.NotEdited;
                 }
             }
             catch (Exception e)
@@ -1940,7 +1939,7 @@ namespace KursAM2.Managers
                                 transaction.Rollback();
                                 var nom = MainReferences.GetNomenkl(n);
                                 WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
-                                                          $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_POL_DC]} в кол-ве {c.Remain} ",
+                                                          $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_OTPR_DC]} в кол-ве {c.Remain} ",
                                     "Отрицательные остатки", MessageBoxImage.Error);
                                 return -1;
                             }
@@ -2003,7 +2002,45 @@ namespace KursAM2.Managers
         public List<Waybill> GetWaybills(DateTime dateStart, DateTime dateEnd,
             string searchText = null)
         {
-            return new List<Waybill>();
+            var res = new List<Waybill>();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var data =ctx.SD_24
+                    .Include(_ => _.TD_24)
+                    .Include("TD_24.TD_26")
+                    .Include("TD_24.TD_26.SD_26")
+                    .Include("TD_24.SD_175")
+                    .Include("TD_24.SD_301")
+                    .Include("TD_24.SD_122")
+                    .Include("TD_24.SD_170")
+                    .Include("TD_24.SD_175")
+                    .Include("TD_24.SD_1751")
+                    .Include("TD_24.SD_2")
+                    .Include("TD_24.SD_254")
+                    .Include("TD_24.SD_27")
+                    .Include("TD_24.SD_301")
+                    .Include("TD_24.SD_3011")
+                    .Include("TD_24.SD_3012")
+                    .Include("TD_24.SD_303")
+                    .Include("TD_24.SD_384")
+                    .Include("TD_24.SD_43")
+                    .Include("TD_24.SD_83")
+                    .Include("TD_24.SD_831")
+                    .Include("TD_24.SD_832")
+                    .Include("TD_24.SD_84")
+                    .Include("TD_24.TD_73")
+                    .Include("TD_24.TD_9")
+                    .Include("TD_24.TD_84")
+                    .Include("TD_24.TD_26")
+                    .Include("TD_24.TD_241")
+                    .Where(_ => _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd && _.DD_TYPE_DC == 2010000012).ToList();
+                foreach (var d in data)
+                {
+                    res.Add(new Waybill(d));
+                }
+            }
+
+            return res;
         }
 
         #endregion`

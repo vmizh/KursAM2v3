@@ -69,15 +69,19 @@ namespace KursAM2.ViewModel.Finance.controls
             }
         }
 
-        public bool NotAllowSummaPrihodChanged => BankOperationType == BankOperationType.BankIn ||
+        public bool NotAllowSummaPrihodChanged => (BankOperationType == BankOperationType.BankIn ||
                                                   BankOperationType == BankOperationType.CashIn
-                                                  && CurrentBankOperations?.VVT_SFACT_POSTAV_DC != null;
+                                                  && CurrentBankOperations?.VVT_SFACT_POSTAV_DC != null)
+                                                    || IsNotCurrencyChange;
 
-        public bool NotAllowSummaRashodChanged => BankOperationType == BankOperationType.BankOut ||
+        public bool NotAllowSummaRashodChanged => (BankOperationType == BankOperationType.BankOut ||
                                                   BankOperationType == BankOperationType.CashOut
-                                                  && CurrentBankOperations?.VVT_SFACT_CLIENT_DC != null;
+                                                  && CurrentBankOperations?.VVT_SFACT_CLIENT_DC != null)
+                                                    || IsNotCurrencyChange;
 
         public string KontragentName => CurrentBankOperations?.KontragentName;
+        
+        public bool IsNotCurrencyChange => CurrentBankOperations?.IsCurrencyChange == true;
 
         public ICommand SFNameRemoveCommand
         {
@@ -117,6 +121,9 @@ namespace KursAM2.ViewModel.Finance.controls
                         break;
                     case "Банк отправитель":
                         myBankOperationType = BankOperationType.BankOut;
+                        break;
+                    case "Обмен валюты":
+                        myBankOperationType = BankOperationType.CurrencyChange;
                         break;
                     default:
                         myBankOperationType = BankOperationType.NotChoice;

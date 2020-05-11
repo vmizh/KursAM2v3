@@ -35,7 +35,7 @@
                                      dxg:DataControlSerializationOptions.AddNewColumns="True"
                                      dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                      SelectionMode="Row"
-                                     ItemsSource="{Binding Rows, NotifyOnSourceUpdated=True}"
+                                     ItemsSource="{Binding Document.Rows, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"
                                      CurrentItem="{Binding CurrentRow, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
                                      SelectedItems="{Binding Document.SelectedRows, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
                                      AutoGeneratingColumn="GridRows_OnAutoGeneratingColumn"
