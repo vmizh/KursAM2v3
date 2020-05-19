@@ -5,6 +5,11 @@ using Data;
 
 namespace Helper
 {
+    public class CurrentUser
+    {
+        public static User UserInfo { set; get; }
+    }
+
     [DataContract]
     public class User
     {

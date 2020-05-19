@@ -7,7 +7,6 @@ using System.Text;
 using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
-using Core;
 using Data;
 using DevExpress.Data;
 using DevExpress.Xpf.Core.Serialization;
@@ -84,9 +83,9 @@ namespace LayoutManager
                 }.ToString();
                 using (var ctx = new KursSystemEntities(connString))
                 {
-                    if (GlobalOptions.UserInfo == null) return;
+                    if (Helper.CurrentUser.UserInfo == null) return;
                     var w = Win != null ? Win.GetType().Name : "Control";
-                    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == GlobalOptions.UserInfo.KursId
+                    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == Helper.CurrentUser.UserInfo.KursId
                                                                && _.FormName == w && _.ControlName == FileName);
                     try
                     {
@@ -96,7 +95,7 @@ namespace LayoutManager
                             {
                                 Id = Guid.NewGuid(),
                                 UpdateDate = DateTime.Now,
-                                UserId = GlobalOptions.UserInfo.KursId,
+                                UserId = Helper.CurrentUser.UserInfo.KursId,
                                 FormName = w,
                                 ControlName = FileName,
                                 Layout = sb.ToString()
@@ -105,7 +104,7 @@ namespace LayoutManager
                         else
                         {
                             l.UpdateDate = DateTime.Now;
-                            l.UserId = GlobalOptions.UserInfo.KursId;
+                            l.UserId = Helper.CurrentUser.UserInfo.KursId;
                             l.FormName = w;
                             l.ControlName = FileName;
                             l.Layout = sb.ToString();
@@ -194,7 +193,7 @@ namespace LayoutManager
 
         public virtual void Load(bool autoSummary = false)
         {
-            if (GlobalOptions.UserInfo == null) return;
+            if (Helper.CurrentUser.UserInfo == null) return;
             var connString = new SqlConnectionStringBuilder
             {
                 DataSource = "172.16.0.1",
@@ -208,7 +207,7 @@ namespace LayoutManager
                 var w = Win != null ? Win.GetType().Name : "Control";
                 try
                 {
-                    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == GlobalOptions.UserInfo.KursId
+                    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == Helper.CurrentUser.UserInfo.KursId
                                                                && _.FormName == w && _.ControlName == FileName);
                     if (l != null) layoutData = l.Layout;
                 }
@@ -367,7 +366,7 @@ namespace LayoutManager
                 }
                 ms.Close();
             }
-            catch 
+            catch
             {
                 if (!File.Exists($"{AppDataPath}\\{FileName}.xml"))
                     File.Delete($"{AppDataPath}\\{FileName}.xml");

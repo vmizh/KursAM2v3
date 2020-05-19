@@ -27,6 +27,7 @@ namespace KursAM2.View.KursReferences.KontragentControls
         public LayoutManagerBase LayoutManager { get; set; }
         public bool Visible { get; }
         public Rect Bounds { get; }
+        public Rect[] ClipRects { get; }
         public Rect ClipBounds { get; }
         public Size Size { get; }
         public Point Location { get; }

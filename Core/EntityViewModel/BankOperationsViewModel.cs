@@ -54,6 +54,7 @@ namespace Core.EntityViewModel
         public bool NotAllowSummaRashodChanged => BankOperationType == BankOperationType.BankOut ||
                                                   BankOperationType == BankOperationType.CashOut;
         public bool IsChangeTypeEnable => State == RowStatus.NewRow;
+        public bool IsNotCurrencyChange => Entity.IsCurrencyChange == false;
 
         public BankOperationType BankOperationType
         {

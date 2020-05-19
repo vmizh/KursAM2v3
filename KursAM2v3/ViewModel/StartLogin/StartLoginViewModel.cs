@@ -161,6 +161,7 @@ namespace KursAM2.ViewModel.StartLogin
                             grp => new UserGroup {Id = grp.GR_ID, Name = grp.GR_NAME})
                         .ToList();
                 GlobalOptions.UserInfo = newUser;
+                Helper.CurrentUser.UserInfo = newUser;
                 GlobalOptions.SystemProfile = new SystemProfile();
             }
             SetUserProfile(newUser.NickName.ToUpper());

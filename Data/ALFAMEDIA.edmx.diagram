@@ -2020,6 +2020,10 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_BankCurrencyChange_CrsFromDC" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_BankCurrencyChange_CrsToDC" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveWithPrice" Width="1.5" PointX="39.375" PointY="46.75" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.SD_114_Remains" Width="1.5" PointX="41.75" PointY="46.75" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.BankOperationList" Width="1.5" PointX="47.75" PointY="0.75" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.BankOperations" Width="1.5" PointX="0.75" PointY="47.75" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_114_CurrencyDC" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -81,7 +81,7 @@ namespace KursAM2.ViewModel.Finance.controls
 
         public string KontragentName => CurrentBankOperations?.KontragentName;
         
-        public bool IsNotCurrencyChange => CurrentBankOperations?.IsCurrencyChange == true;
+        public bool IsNotCurrencyChange => CurrentBankOperations?.IsCurrencyChange == false;
 
         public ICommand SFNameRemoveCommand
         {

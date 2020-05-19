@@ -349,9 +349,21 @@ namespace KursAM2.ViewModel.Finance
             //    .GenerateIerarhy(BankPeriodOperationsCollection.Select(_ => _.Date).Distinct(),
             //        PeriodIerarhy.YearMonthDay).Select(d => new RemainderCurrenciesDatePeriod(d)).ToList()
             //    .OrderByDescending(_ => _.DateEnd);
-            Periods = new ObservableCollection<RemainderCurrenciesDatePeriod>(Manager.GetRemains(
-                CurrentBankAccount.BankDC, BankPeriodOperationsCollection?.Min(_ => _.Date).AddDays(-1) ?? DateTime.MinValue,
-                BankPeriodOperationsCollection?.Max(_ => _.Date) ?? DateTime.MaxValue));
+            var p = Manager.GetRemains(
+                CurrentBankAccount.BankDC,
+                BankPeriodOperationsCollection?.Min(_ => _.Date).AddDays(-1) ?? DateTime.MinValue,
+                BankPeriodOperationsCollection?.Max(_ => _.Date) ?? DateTime.MaxValue);
+            if (p != null && p.Count > 0)
+            {
+                Periods = new ObservableCollection<RemainderCurrenciesDatePeriod>(Manager.GetRemains(
+                    CurrentBankAccount.BankDC,
+                    BankPeriodOperationsCollection?.Min(_ => _.Date).AddDays(-1) ?? DateTime.MinValue,
+                    BankPeriodOperationsCollection?.Max(_ => _.Date) ?? DateTime.MaxValue));
+            }
+            else
+            {
+                Periods = new ObservableCollection<RemainderCurrenciesDatePeriod>();
+            }
 
             RaisePropertyChanged(nameof(Periods));
             SetVisiblePeriodsBands();

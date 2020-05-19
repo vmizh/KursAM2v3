@@ -96,7 +96,7 @@ namespace KursAM2.View
 
         public override bool ProcessKeyDownInternal(KeyEventArgs e)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public override object GetSelectedItem()

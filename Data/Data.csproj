@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Data</RootNamespace>
     <AssemblyName>Data</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -98,6 +98,12 @@
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="BankCurrencyChange.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BankOperationList.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BankOperations.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="BankPeriodsOperations.cs">
@@ -756,6 +762,9 @@
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="SD_114.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SD_114_Remains.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="SD_114_StartRemain.cs">

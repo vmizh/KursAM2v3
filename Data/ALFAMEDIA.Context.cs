@@ -44,7 +44,7 @@ namespace Data
         {
             throw new UnintentionalCodeFirstException();
         }
-
+    
         public virtual DbSet<AccountInvoice> AccountInvoice { get; set; }
         public virtual DbSet<AD_149> AD_149 { get; set; }
         public virtual DbSet<AD_2> AD_2 { get; set; }
@@ -772,6 +772,9 @@ namespace Data
         public virtual DbSet<SD_114_StartRemain> SD_114_StartRemain { get; set; }
         public virtual DbSet<BankCurrencyChange> BankCurrencyChange { get; set; }
         public virtual DbSet<NomenklMoveWithPrice> NomenklMoveWithPrice { get; set; }
+        public virtual DbSet<SD_114_Remains> SD_114_Remains { get; set; }
+        public virtual DbSet<BankOperationList> BankOperationList { get; set; }
+        public virtual DbSet<BankOperations> BankOperations { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

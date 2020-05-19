@@ -43,6 +43,10 @@ namespace Data
         public Nullable<short> BA_BANK_ACCOUNT { get; set; }
         public string BA_ACC_SHORTNAME { get; set; }
         public Nullable<decimal> BA_CENTR_OTV_DC { get; set; }
+        public Nullable<decimal> CurrencyDC { get; set; }
+        public Nullable<System.DateTime> StartDate { get; set; }
+        public Nullable<decimal> StartSumma { get; set; }
+        public Nullable<bool> IsDeleted { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ND_114> ND_114 { get; set; }
@@ -71,5 +75,6 @@ namespace Data
         public virtual ICollection<BankCurrencyChange> BankCurrencyChange { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BankCurrencyChange> BankCurrencyChange1 { get; set; }
+        public virtual SD_301 SD_301 { get; set; }
     }
 }

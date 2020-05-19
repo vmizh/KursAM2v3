@@ -67,8 +67,7 @@
                                      Command="{TemplateBinding ActualBackCommand}" Margin="0,0,10,0">
                     <internal:BackButton.Template>
                         <ControlTemplate>
-                            <Grid
-                                Background="{helpers:SelectBinding Binding={Binding IsMouseOver, RelativeSource={RelativeSource TemplatedParent}}, Converter={StaticResource BackButtonPaddingConverter}}">
+                            <Grid Background="{helpers:SelectBinding Binding={Binding IsMouseOver, RelativeSource={RelativeSource TemplatedParent}}, Converter={StaticResource BackButtonPaddingConverter}}">
                                 <Image Source="../../../Images/Box_Blue.png" HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
                                        Width="25" Height="25" />
