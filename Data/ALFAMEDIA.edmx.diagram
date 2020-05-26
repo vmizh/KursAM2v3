@@ -2024,6 +2024,8 @@
         <EntityTypeShape EntityType="ALFAMEDIAModel.BankOperationList" Width="1.5" PointX="47.75" PointY="0.75" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.BankOperations" Width="1.5" PointX="0.75" PointY="47.75" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_114_CurrencyDC" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMove" Width="1.5" PointX="47.375" PointY="3.75" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveStore" Width="1.5" PointX="47.375" PointY="7.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

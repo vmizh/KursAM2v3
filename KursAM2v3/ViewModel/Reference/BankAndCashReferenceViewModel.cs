@@ -179,8 +179,10 @@ namespace KursAM2.ViewModel.Reference
             {
                 Cashs.Clear();
                 Banks.Clear();
-                var cashs = ctx.SD_22.Include(_ => _.TD_22).Include(_ => _.SD_40).AsNoTracking().ToList();
-                var banks = ctx.SD_114.Include(_ => _.SD_44).Include(_ => _.TD_43).Include(_ => _.SD_40).AsNoTracking()
+                var cashs = ctx.SD_22.Include(_ => _.TD_22)
+                    .Include(_ => _.SD_40).AsNoTracking().ToList();
+                var banks = ctx.SD_114.Include(_ => _.SD_44)
+                    .Include(_ => _.TD_43).Include(_ => _.SD_40).AsNoTracking()
                     .ToList();
                 foreach (var c in cashs)
                     Cashs.Add(new CashReference(c)
@@ -518,6 +520,10 @@ namespace KursAM2.ViewModel.Reference
             old.BA_RASH_ACC = bAcc.BA_RASH_ACC;
             old.BA_RASH_ACC_CODE = bAcc.BA_RASH_ACC_CODE;
             old.BA_TRANSIT = bAcc.BA_TRANSIT;
+            old.CurrencyDC = bAcc.Currency?.DocCode;
+            old.StartSumma = bAcc.StartSumma;
+            old.StartDate = bAcc.StartDate;
+            old.IsDeleted = bAcc.IsDeleted;
         }
 
         private void addNewBank(ALFAMEDIAEntities ctx, BankAccountReference bAcc, int newKontrAccCode, decimal newDC)
@@ -544,7 +550,11 @@ namespace KursAM2.ViewModel.Reference
                 BA_NEGATIVE_RESTS = bAcc.BA_NEGATIVE_RESTS,
                 BA_BANK_AS_KONTRAGENT_DC = bAcc.BA_BANK_AS_KONTRAGENT_DC,
                 BA_RASH_ACC = bAcc.BA_RASH_ACC,
-                BA_TRANSIT = bAcc.BA_TRANSIT
+                BA_TRANSIT = bAcc.BA_TRANSIT,
+                IsDeleted = bAcc.IsDeleted,
+                CurrencyDC = bAcc.Currency?.DocCode,
+                StartSumma = bAcc.StartSumma,
+                StartDate = bAcc.StartDate
             });
             bAcc.DocCode = newDC;
             bAcc.Code = newKontrAccCode;

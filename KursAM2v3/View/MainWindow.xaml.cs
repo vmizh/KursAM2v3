@@ -541,11 +541,11 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Банковские операции":
-                        form = new BankOperationsView
+                        form = new BankOperationsView2
                         {
                             Owner = Application.Current.MainWindow
                         };
-                        form.DataContext = new BankOperationsWindowViewModel(form);
+                        form.DataContext = new BankOperationsWindowViewModel2(form);
                         form.Show();
                         break;
                     case "Приходный кассовый ордер":

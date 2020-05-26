@@ -775,6 +775,8 @@ namespace Data
         public virtual DbSet<SD_114_Remains> SD_114_Remains { get; set; }
         public virtual DbSet<BankOperationList> BankOperationList { get; set; }
         public virtual DbSet<BankOperations> BankOperations { get; set; }
+        public virtual DbSet<NomenklMove> NomenklMove { get; set; }
+        public virtual DbSet<NomenklMoveStore> NomenklMoveStore { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

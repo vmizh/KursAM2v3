@@ -18,6 +18,9 @@ namespace Core.EntityViewModel
         public decimal? DeltaPrihod = 0;
         public decimal? DeltaRashod = 0;
         private BankAccount myBankAccount;
+        public BankAccount myBankAccountIn;
+        public BankAccount myBankAccountOut;
+        private int? myBankFromTransactionCode;
         private BankOperationType myBankOperationType;
         private CashOrder myCashIn;
         private CashOrder myCashOut;
@@ -25,9 +28,8 @@ namespace Core.EntityViewModel
         private TD_101 myEntity;
         private Kontragent myKontragent;
         private Kontragent myPayment;
+        private string mySFName;
         private SDRSchet mySHPZ;
-        public BankAccount myBankAccountOut;
-        public BankAccount myBankAccountIn;
 
         public BankOperationsViewModel()
         {
@@ -55,7 +57,6 @@ namespace Core.EntityViewModel
                                                   BankOperationType == BankOperationType.CashOut;
         public bool IsChangeTypeEnable => State == RowStatus.NewRow;
         public bool IsNotCurrencyChange => Entity.IsCurrencyChange == false;
-
         public BankOperationType BankOperationType
         {
             get => myBankOperationType;
@@ -76,7 +77,6 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-
         public BankAccount BankAccountOut
         {
             get => myBankAccountOut;
@@ -87,7 +87,6 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-
         public BankAccount BankAccountIn
         {
             get => myBankAccountIn;
@@ -100,9 +99,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-
         public bool IsCurrencyChange => Entity.IsCurrencyChange ?? false;
-        private int? myBankFromTransactionCode;
         public int? BankFromTransactionCode
         {
             get => myBankFromTransactionCode;
@@ -163,35 +160,11 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-        
         public ICommand SFNameRemoveCommand
         {
             get { return new Command(SFNameRemove, _ => !string.IsNullOrEmpty(SFName)); }
         }
-
-        private void SFNameRemove(object obj)
-        {
-            Entity.VVT_SFACT_CLIENT_DC = null;
-            Entity.VVT_SFACT_POSTAV_DC = null;
-            SFName = null;
-        }
-
         public string KontragentName => name();
-            //CashIn != null ? CashIn.Cash.Name :
-            //CashOut != null ? CashOut.Name :
-            //BankAccountIn != null ? BankAccountIn.BankName + " " + BankAccountIn.Account :
-            //BankAccountOut != null ? BankAccountOut.BankName + " " + BankAccountOut.Account : null;
-
-        private string name()
-        {
-            if (Kontragent != null) return Kontragent.Name;
-            if (CashIn != null) return CashIn.Cash.Name;
-            if (CashOut != null) return CashOut.ToString();
-            if (BankAccountIn != null) return BankAccountIn.BankName + " " + BankAccountIn.Account;
-            if (BankAccountOut != null) return BankAccountOut.BankName + " " + BankAccountOut.Account;
-            return null;
-        }
-
         public TD_101 Entity
         {
             get => myEntity;
@@ -425,7 +398,6 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-
         public decimal? VVT_SF_OPLACHENO
         {
             get => Entity.VVT_SF_OPLACHENO;
@@ -502,9 +474,6 @@ namespace Core.EntityViewModel
                 RaisePropertiesChanged(nameof(KontragentName));
             }
         }
-
-        
-
         public decimal? VVT_DOG_OTGR_DC
         {
             get => Entity.VVT_DOG_OTGR_DC;
@@ -669,7 +638,6 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-        private string mySFName;
         public string SFName
         {
             get => mySFName;
@@ -689,6 +657,27 @@ namespace Core.EntityViewModel
 
         public bool IsAccessRight { get; set; }
 
+        private void SFNameRemove(object obj)
+        {
+            Entity.VVT_SFACT_CLIENT_DC = null;
+            Entity.VVT_SFACT_POSTAV_DC = null;
+            SFName = null;
+        }
+        //CashIn != null ? CashIn.Cash.Name :
+        //CashOut != null ? CashOut.Name :
+        //BankAccountIn != null ? BankAccountIn.BankName + " " + BankAccountIn.Account :
+        //BankAccountOut != null ? BankAccountOut.BankName + " " + BankAccountOut.Account : null;
+
+        private string name()
+        {
+            if (Kontragent != null) return Kontragent.Name;
+            if (CashIn != null) return CashIn.Cash.Name;
+            if (CashOut != null) return CashOut.ToString();
+            if (BankAccountIn != null) return BankAccountIn.BankName + " " + BankAccountIn.Account;
+            if (BankAccountOut != null) return BankAccountOut.BankName + " " + BankAccountOut.Account;
+            return null;
+        }
+
         private void updateReferences()
         {
             if (Entity.SD_34 != null)
@@ -706,25 +695,19 @@ namespace Core.EntityViewModel
             if (MainReferences.Currencies.ContainsKey(Entity.VVT_CRS_DC))
                 myCurrency = MainReferences.Currencies[Entity.VVT_CRS_DC];
             if (Entity.VVT_SFACT_CLIENT_DC != null)
-            {
                 if (Entity.SD_84 != null)
-                {
                     SFName =
                         $"С/ф №{Entity.SD_84.SF_IN_NUM}/{Entity.SD_84.SF_OUT_NUM} от {Entity.SD_84.SF_DATE} на {Entity.SD_84.SF_CRS_SUMMA_K_OPLATE} {MainReferences.Currencies[Entity.SD_84.SF_CRS_DC]}";
-                }
-            }
             if (Entity.VVT_SFACT_POSTAV_DC != null)
-            {
                 SFName =
                     $"С/ф №{Entity.SD_26.SF_IN_NUM}/{Entity.SD_26.SF_POSTAV_NUM} от {Entity.SD_26.SF_POSTAV_DATE} на {Entity.SD_26.SF_CRS_SUMMA} {MainReferences.Currencies[(decimal) Entity.SD_26.SF_CRS_DC]}";
-
-            }
             updateBankInfo();
             BankOperationType = Kontragent != null ? BankOperationType.Kontragent :
                 CashIn != null ? BankOperationType.CashIn :
-                CashOut != null ? BankOperationType.CashOut : BankAccountIn != null ? BankOperationType.BankIn :
+                CashOut != null ? BankOperationType.CashOut :
+                BankAccountIn != null ? BankOperationType.BankIn :
                 BankAccountOut != null ? BankOperationType.BankOut :
-
+                IsCurrencyChange ? BankOperationType.CurrencyChange :
                 BankOperationType.NotChoice;
         }
 
@@ -733,14 +716,13 @@ namespace Core.EntityViewModel
             if (Entity.BankAccountDC != null)
                 BankAccountIn = MainReferences.BankAccounts[Entity.BankAccountDC.Value];
             if (Entity.BankFromTransactionCode != null)
-            {
                 using (var dtx = GlobalOptions.GetEntities())
                 {
-                    var row = dtx.TD_101.Include(_ => _.SD_101).FirstOrDefault(_ => _.CODE == Entity.BankFromTransactionCode);
+                    var row = dtx.TD_101.Include(_ => _.SD_101)
+                        .FirstOrDefault(_ => _.CODE == Entity.BankFromTransactionCode);
                     if (row == null) return;
                     BankAccountOut = MainReferences.BankAccounts[row.SD_101.VV_ACC_DC];
                 }
-            }
         }
 
         public TD_101 Load(decimal dc)
@@ -880,6 +862,7 @@ namespace Core.EntityViewModel
         void IMetadataProvider<BankOperationsViewModel>.BuildMetadata(MetadataBuilder<BankOperationsViewModel> builder)
         {
             SetNotAutoGenerated(builder);
+            builder.Property(_ => _.SFNameRemoveCommand).NotAutoGenerated();
             builder.Property(_ => _.CashIn).NotAutoGenerated();
             builder.Property(_ => _.CashOut).NotAutoGenerated();
             builder.Property(_ => _.BankAccount).NotAutoGenerated();

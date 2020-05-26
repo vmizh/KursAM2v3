@@ -12,6 +12,7 @@ using Data;
 using Helper;
 using KursAM2.Managers.Invoices;
 using KursAM2.ViewModel.Management.Calculations;
+using KursAM2.ViewModel.Management.ManagementBalans;
 
 namespace KursAM2.Managers
 {
@@ -820,6 +821,47 @@ namespace KursAM2.Managers
                     }
                 }
                 return new List<RemainderCurrenciesDatePeriod>(PeriodAdapter);
+            }
+        }
+
+        public List<ReminderDatePeriod> GetRemains2(decimal bankDC)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var sql = "SELECT  AccountDC ,Date ,Start ," +
+                          "SummaIn ,SummaOut ,[End] " +
+                          $"FROM dbo.BankOperations WHERE AccountDC = {CustomFormat.DecimalToSqlDecimal(bankDC)} " +
+                          $" order by 2";
+                var data = ctx.Database.SqlQuery<BankOperations>(sql).ToList();
+                var PeriodAdapter = DatePeriod
+                    .GenerateIerarhy(data.Select(_ => (DateTime)_.Date).ToList(),
+                        PeriodIerarhy.YearMonthDay).Select(d => new ReminderDatePeriod(d)).ToList()
+                    .OrderByDescending(_ => _.DateEnd);
+                foreach (var p in PeriodAdapter)
+                {
+                    var dstart = data.FirstOrDefault(_ => _.Date == p.DateStart);
+                    var dob = data.Where(_ => _.Date >= p.DateStart && _.Date <= p.DateEnd);
+                    // ReSharper disable PossibleNullReferenceException
+                    if (p.PeriodType == PeriodType.Day)
+                    {
+                        p.SummaStart = dstart?.Start ?? 0;
+                    }
+                    else
+                    {
+                        var sd = data.Where(_ => _.Date <= p.DateStart);
+                        if (sd.Any())
+                        {
+                            var dt = sd.Max(_ => _.Date);
+                            var x = data.FirstOrDefault(_ => _.Date == dt);
+                            p.SummaStart = x != null ? x.End : 0;
+                        }
+                    }
+                    p.SummaIn = dob.Sum(_ => _.SummaIn);
+                    p.SummaOut = dob.Sum(_ => _.SummaOut);
+                    p.SummaEnd = p.SummaStart + p.SummaIn - p.SummaOut;
+                    // ReSharper restore PossibleNullReferenceException
+                }
+                return new List<ReminderDatePeriod>(PeriodAdapter);
             }
         }
 

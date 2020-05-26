@@ -47,6 +47,7 @@ namespace Data
         public Nullable<System.DateTime> StartDate { get; set; }
         public Nullable<decimal> StartSumma { get; set; }
         public Nullable<bool> IsDeleted { get; set; }
+        public Nullable<System.DateTime> DateNonZero { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ND_114> ND_114 { get; set; }

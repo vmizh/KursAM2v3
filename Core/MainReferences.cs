@@ -19,6 +19,7 @@ namespace Core
     {
         private static bool myIsNomComplete;
         private static bool myIsKontrComplete;
+        private Timer myUpdateTimer;
 
         public MainReferences()
         {
@@ -76,7 +77,6 @@ namespace Core
         public static Dictionary<decimal, Kontragent> ActiveKontragents { set; get; }
         public static Dictionary<decimal, Nomenkl> ActiveNomenkls { set; get; }
         public static Dictionary<decimal, Warehouse> Warehouses { set; get; }
-
         public static bool IsReferenceLoadComplete
         {
             get => myIsNomComplete && myIsKontrComplete;
@@ -95,14 +95,12 @@ namespace Core
                 if (isUpdateCheck) UpdateNomenkl();
                 return ALLNomenkls[dc];
             }
-
             LoadNomenkl(dc);
             if (!ALLNomenkls.ContainsKey(dc))
             {
                 WindowManager.ShowMessage($"Номенклатура с кодом {dc} отсутствует.", "Ошибка", MessageBoxImage.Error);
                 return null;
             }
-
             return ALLNomenkls[dc];
         }
 
@@ -116,7 +114,6 @@ namespace Core
                 WindowManager.ShowMessage($"Номенклатура с кодом {dc} отсутствует.", "Ошибка", MessageBoxImage.Error);
                 return null;
             }
-
             return ALLNomenkls[dc];
         }
 
@@ -206,7 +203,7 @@ namespace Core
 
         public static void Refresh()
         {
-           try
+            try
             {
                 using (var ent = GlobalOptions.GetEntities())
                 {
@@ -214,16 +211,16 @@ namespace Core
 
                     var s40 = ent.SD_40.Include(_ => _.SD_402).AsNoTracking().ToList();
                     foreach (var item in s40)
-                    {   if(COList.ContainsKey(item.DOC_CODE))
+                        if (COList.ContainsKey(item.DOC_CODE))
                         {
-                            var d =  COList[item.DOC_CODE];
+                            var d = COList[item.DOC_CODE];
                             d.UpdateFrom(item);
                             d.myState = RowStatus.NotEdited;
                         }
-                        else {
+                        else
+                        {
                             COList.Add(item.DOC_CODE, new CentrOfResponsibility(item) {myState = RowStatus.NotEdited});
                         }
-                    }
                     foreach (var k in COList.Keys)
                     {
                         if (s40.Any(_ => _.DOC_CODE == k)) continue;
@@ -232,10 +229,10 @@ namespace Core
 
                     #endregion
 
-                    #region  тип актов взаимозачета
+                    #region тип актов взаимозачета
+
                     var s111 = ent.SD_111.AsNoTracking().ToList();
                     foreach (var item in s111)
-                    {
                         if (MutualTypes.ContainsKey(item.DOC_CODE))
                         {
                             var d = MutualTypes[item.DOC_CODE];
@@ -246,21 +243,19 @@ namespace Core
                         {
                             MutualTypes.Add(item.DOC_CODE, new SD_111ViewModel(item) {myState = RowStatus.NotEdited});
                         }
-                       
-                    }
-
                     var keys = MutualTypes.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s111.Any(_ => _.DOC_CODE == k)) continue;
                         MutualTypes.Remove(k);
                     }
+
                     #endregion
 
                     #region Счет доходов/расходов sd_303
+
                     var s303 = ent.SD_303.Include(_ => _.SD_99).Include(_ => _.SD_97).AsNoTracking().ToList();
                     foreach (var l in s303)
-                    {
                         if (SDRSchets.ContainsKey(l.DOC_CODE))
                         {
                             var d = SDRSchets[l.DOC_CODE];
@@ -271,20 +266,19 @@ namespace Core
                         {
                             SDRSchets.Add(l.DOC_CODE, new SDRSchet(l) {myState = RowStatus.NotEdited});
                         }
-                    }
-
                     keys = SDRSchets.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s303.Any(_ => _.DOC_CODE == k)) continue;
                         SDRSchets.Remove(k);
                     }
+
                     #endregion
 
                     #region статьи доходов SD_99
+
                     var s99 = ent.SD_99.Include(_ => _.SD_992).AsNoTracking().ToList();
                     foreach (var item in s99)
-                    {
                         if (SDRStates.ContainsKey(item.DOC_CODE))
                         {
                             var d = SDRStates[item.DOC_CODE];
@@ -295,21 +289,19 @@ namespace Core
                         {
                             SDRStates.Add(item.DOC_CODE, new SDRState(item) {myState = RowStatus.NotEdited});
                         }
-                    }
-
                     keys = SDRStates.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s99.Any(_ => _.DOC_CODE == k)) continue;
                         SDRStates.Remove(k);
                     }
+
                     #endregion
 
                     #region Условия оплаты SD_179
 
                     var s179 = ent.SD_179.AsNoTracking().ToList();
                     foreach (var item in s179)
-                    {
                         if (PayConditions.ContainsKey(item.DOC_CODE))
                         {
                             var d = PayConditions[item.DOC_CODE];
@@ -320,21 +312,19 @@ namespace Core
                         {
                             PayConditions.Add(item.DOC_CODE, new UsagePay(item) {myState = RowStatus.NotEdited});
                         }
-                    }
-
                     keys = PayConditions.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s179.Any(_ => _.DOC_CODE == k)) continue;
                         PayConditions.Remove(k);
                     }
+
                     #endregion
 
                     #region Тип взаиморасчетов SD_77
 
                     var s77 = ent.SD_77.AsNoTracking().ToList();
                     foreach (var item in s77)
-                    {
                         if (VzaimoraschetTypes.ContainsKey(item.DOC_CODE))
                         {
                             var d = VzaimoraschetTypes[item.DOC_CODE];
@@ -346,21 +336,19 @@ namespace Core
                             VzaimoraschetTypes.Add(item.DOC_CODE,
                                 new VzaimoraschetType(item) {myState = RowStatus.NotEdited});
                         }
-                    }
-
                     keys = VzaimoraschetTypes.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s77.Any(_ => _.DOC_CODE == k)) continue;
                         VzaimoraschetTypes.Remove(k);
                     }
+
                     #endregion
 
                     #region Форма расчетов
 
                     var s189 = ent.SD_189.Include(_ => _.SD_179).AsNoTracking().ToList();
                     foreach (var item in s189)
-                    {
                         if (FormRaschets.ContainsKey(item.DOC_CODE))
                         {
                             var d = FormRaschets[item.DOC_CODE];
@@ -371,20 +359,19 @@ namespace Core
                         {
                             FormRaschets.Add(item.DOC_CODE, new FormPay(item) {myState = RowStatus.NotEdited});
                         }
-                    }
-
                     keys = FormRaschets.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s189.Any(_ => _.DOC_CODE == k)) continue;
                         FormRaschets.Remove(k);
                     }
+
                     #endregion
 
                     #region Страны countries
+
                     var countries = ent.Countries.AsNoTracking().OrderBy(_ => _.Name).AsNoTracking().ToList();
                     foreach (var item in countries)
-                    {
                         if (Countries.ContainsKey(item.Iso))
                         {
                             var d = Countries[item.Iso];
@@ -395,21 +382,19 @@ namespace Core
                         {
                             Countries.Add(item.Iso, new Country(item) {myState = RowStatus.NotEdited});
                         }
-                    }
-
                     keys = Countries.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (countries.Any(_ => _.Iso == k)) continue;
                         Countries.Remove(k);
                     }
+
                     #endregion
 
                     #region Валюты sd_301
 
                     var s301 = ent.SD_301.AsNoTracking().ToList();
                     foreach (var item in s301)
-                    {
                         if (Currencies.ContainsKey(item.DOC_CODE))
                         {
                             var d = Currencies[item.DOC_CODE];
@@ -420,28 +405,26 @@ namespace Core
                         {
                             Currencies.Add(item.DOC_CODE, new Currency(item) {myState = RowStatus.NotEdited});
                         }
-                    }
-                    Currencies.Add(0m,new Currency
+                    Currencies.Add(0m, new Currency
                     {
                         DocCode = 0m,
                         CRS_NAME = "Валюта не указана",
                         CRS_SHORTNAME = "Валюта не указана",
                         myState = RowStatus.NotEdited
                     });
-
                     keys = Currencies.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s301.Any(_ => _.DOC_CODE == k)) continue;
                         Currencies.Remove(k);
                     }
+
                     #endregion
 
                     #region Единицы измерения SD_175
 
                     var s175 = ent.SD_175.AsNoTracking().ToList();
                     foreach (var item in s175)
-                    {
                         if (Units.ContainsKey(item.DOC_CODE))
                         {
                             var d = Units[item.DOC_CODE];
@@ -452,21 +435,19 @@ namespace Core
                         {
                             Units.Add(item.DOC_CODE, new Unit(item) {myState = RowStatus.NotEdited});
                         }
-                    }
-
                     keys = Units.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s175.Any(_ => _.DOC_CODE == k)) continue;
                         Units.Remove(k);
                     }
+
                     #endregion
 
                     #region группы номенклатур sd_82
 
                     var s82 = ent.SD_82.Include(_ => _.SD_822).AsNoTracking().ToList();
                     foreach (var item in s82)
-                    {
                         if (NomenklGroups.ContainsKey(item.DOC_CODE))
                         {
                             var d = NomenklGroups[item.DOC_CODE];
@@ -477,21 +458,19 @@ namespace Core
                         {
                             NomenklGroups.Add(item.DOC_CODE, new NomenklGroup(item) {myState = RowStatus.NotEdited});
                         }
-                    }
-
                     keys = NomenklGroups.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s82.Any(_ => _.DOC_CODE == k)) continue;
                         NomenklGroups.Remove(k);
                     }
+
                     #endregion
 
                     #region тип номенклатур sd_119
 
                     var s119 = ent.SD_119.AsNoTracking().ToList();
                     foreach (var item in s119)
-                    {
                         if (NomenklTypes.ContainsKey(item.DOC_CODE))
                         {
                             var d = NomenklTypes[item.DOC_CODE];
@@ -503,19 +482,19 @@ namespace Core
                             NomenklTypes.Add(item.DOC_CODE,
                                 new NomenklProductType(item) {myState = RowStatus.NotEdited});
                         }
-                    }
                     keys = NomenklTypes.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s119.Any(_ => _.DOC_CODE == k)) continue;
                         NomenklTypes.Remove(k);
                     }
+
                     #endregion
 
                     #region персонал sd_2
+
                     var s2 = ent.SD_2.Include(_ => _.SD_301).Include(_ => _.SD_269).AsNoTracking().ToList();
                     foreach (var item in s2)
-                    {
                         if (Employees.ContainsKey(item.DOC_CODE))
                         {
                             var d = Employees[item.DOC_CODE];
@@ -526,20 +505,19 @@ namespace Core
                         {
                             Employees.Add(item.DOC_CODE, new Employee(item) {myState = RowStatus.NotEdited});
                         }
-                    }
                     keys = Employees.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s2.Any(_ => _.DOC_CODE == k)) continue;
                         Employees.Remove(k);
                     }
+
                     #endregion
 
                     #region склады sd_27
 
                     var s27 = ent.SD_27.AsNoTracking().ToList();
                     foreach (var item in s27)
-                    {
                         if (Warehouses.ContainsKey(item.DOC_CODE))
                         {
                             var d = Warehouses[item.DOC_CODE];
@@ -550,13 +528,13 @@ namespace Core
                         {
                             Warehouses.Add(item.DOC_CODE, new Warehouse(item) {myState = RowStatus.NotEdited});
                         }
-                    }
                     keys = Warehouses.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s27.Any(_ => _.DOC_CODE == k)) continue;
                         Warehouses.Remove(k);
                     }
+
                     #endregion
 
                     #region Проекты Projects
@@ -564,7 +542,6 @@ namespace Core
                     // ReSharper disable once IdentifierTypo
                     var prjs = ent.Projects.Include(_ => _.ProjectsDocs).AsNoTracking().ToList();
                     foreach (var item in prjs)
-                    {
                         if (Projects.ContainsKey(item.Id))
                         {
                             var d = Projects[item.Id];
@@ -575,20 +552,19 @@ namespace Core
                         {
                             Projects.Add(item.Id, new Project(item) {myState = RowStatus.NotEdited});
                         }
-                    }
                     var keys1 = Projects.Keys.ToList();
                     foreach (var i in keys1)
                     {
                         if (prjs.Any(_ => _.Id == i)) continue;
                         Projects.Remove(i);
                     }
+
                     #endregion
 
                     #region Банковские счета sd_114
 
                     var s114 = ent.SD_114.AsNoTracking().Include(_ => _.SD_44).AsNoTracking().ToList();
                     foreach (var item in s114)
-                    {
                         if (BankAccounts.ContainsKey(item.DOC_CODE))
                         {
                             var d = BankAccounts[item.DOC_CODE];
@@ -598,6 +574,7 @@ namespace Core
                             d.CorrAccount = item.SD_44.CORRESP_ACC;
                             d.BankName = item.BA_BANK_NAME;
                             d.myState = RowStatus.NotEdited;
+                            d.Currency = item.CurrencyDC != null ? Currencies[(decimal) item.CurrencyDC] : null;
                         }
                         else
                         {
@@ -610,16 +587,18 @@ namespace Core
                                 Account = item.BA_RASH_ACC,
                                 CorrAccount = item.SD_44.CORRESP_ACC,
                                 BankName = item.BA_BANK_NAME,
-                                myState = RowStatus.NotEdited
+                                myState = RowStatus.NotEdited,
+                                Currency = item.CurrencyDC != null ? 
+                                    Currencies[(decimal) item.CurrencyDC] : null
                             });
                         }
-                    }
                     keys = BankAccounts.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s114.Any(_ => _.DOC_CODE == k)) continue;
                         BankAccounts.Remove(k);
                     }
+
                     #endregion
 
                     #region Кассы SD_22
@@ -629,7 +608,6 @@ namespace Core
                             $"SELECT DOC_CODE AS DocCode, USR_ID as UserId FROM HD_22 WHERE USR_ID = {GlobalOptions.UserInfo.Id}")
                         .ToList();
                     foreach (var item in s22)
-                    {
                         if (Cashs.ContainsKey(item.DOC_CODE))
                         {
                             var d = Cashs[item.DOC_CODE];
@@ -645,20 +623,19 @@ namespace Core
                                     myState = RowStatus.Deleted
                                 });
                         }
-                    }
                     keys = Cashs.Keys.ToList();
                     foreach (var k in keys)
                     {
                         if (s22.Any(_ => _.DOC_CODE == k) && cashAcc.Any(_ => _.DocCode == k)) continue;
                         Cashs.Remove(k);
                     }
+
                     #endregion
 
                     #region Регионы SD_23
 
                     var s23 = ent.SD_23.Include(_ => _.SD_232).Include(_ => _.SD_434).AsNoTracking().ToList();
                     foreach (var item in s23)
-                    {
                         if (Regions.ContainsKey(item.DOC_CODE))
                         {
                             var d = Regions[item.DOC_CODE];
@@ -669,7 +646,6 @@ namespace Core
                         {
                             Regions.Add(item.DOC_CODE, new Region(item) {myState = RowStatus.NotEdited});
                         }
-                    }
                     keys = Regions.Keys.ToList();
                     foreach (var k in keys)
                     {
@@ -733,7 +709,8 @@ namespace Core
                             Account = item.BA_RASH_ACC,
                             CorrAccount = item.SD_44.CORRESP_ACC,
                             BankName = item.BA_BANK_NAME,
-                            myState = RowStatus.NotEdited
+                            myState = RowStatus.NotEdited,
+                            Currency = item.CurrencyDC != null ? Currencies[(decimal) item.CurrencyDC] : null
                         });
                     var cashAcc = ent.Database.SqlQuery<AccessRight>(
                             $"SELECT DOC_CODE AS DocCode, USR_ID as UserId FROM HD_22 WHERE USR_ID = {GlobalOptions.UserInfo.Id}")
@@ -810,7 +787,6 @@ namespace Core
                             Group = NomenklGroups[d.NOM_CATEG_DC]
                         });
                     }
-
                 NomenklLastUpdate = data.Max(_ => _.UpdateDate);
             }
         }
@@ -896,7 +872,6 @@ namespace Core
             {
                 WindowManager.ShowError(null, ex);
             }
-
             var dm = ALLNomenkls.Values.Select(_ => _.UpdateDate);
             var dateTimes = dm as IList<DateTime?> ?? dm.ToList();
             if (dateTimes.Any())
@@ -961,35 +936,28 @@ namespace Core
             }
         }
 
-        private Timer myUpdateTimer;
-
         private void SetNomComplete()
         {
             myIsNomComplete = true;
             if (myIsKontrComplete && myUpdateTimer == null)
-            {
-
-                myUpdateTimer = new Timer(_ =>
-                    {
-                        //Refresh();
-                        UpdateNomenkl();
-                        CheckUpdateKontragentAndLoad();
-                    }, null, 1000 * 60, Timeout.Infinite);
-            }
-        }
-
-        private void SetKontrComplete()
-        {
-            myIsKontrComplete = true;
-            if (myIsNomComplete && myUpdateTimer == null)
-            {
                 myUpdateTimer = new Timer(_ =>
                 {
                     //Refresh();
                     UpdateNomenkl();
                     CheckUpdateKontragentAndLoad();
                 }, null, 1000 * 60, Timeout.Infinite);
-            }
+        }
+
+        private void SetKontrComplete()
+        {
+            myIsKontrComplete = true;
+            if (myIsNomComplete && myUpdateTimer == null)
+                myUpdateTimer = new Timer(_ =>
+                {
+                    //Refresh();
+                    UpdateNomenkl();
+                    CheckUpdateKontragentAndLoad();
+                }, null, 1000 * 60, Timeout.Infinite);
         }
 
         public static Dictionary<decimal, Kontragent> GetAllKontragents()
@@ -1054,7 +1022,6 @@ namespace Core
                     WindowManager.ShowError(null, ex);
                 }
             }
-
             return AllKontragents;
         }
 
@@ -1123,7 +1090,6 @@ namespace Core
                     WindowManager.ShowError(null, ex);
                 }
             }
-
             return ALLNomenkls;
         }
 
@@ -1159,7 +1125,6 @@ namespace Core
         public Guid? MainId { set; get; }
         public int NOM_0MATER_1USLUGA { set; get; }
         public decimal NOM_CATEG_DC { set; get; }
-
         public decimal NOM_PRODUCT_DC { set; get; }
         public bool IsRentabelnost { set; get; }
         // ReSharper restore UnusedAutoPropertyAccessor.Global

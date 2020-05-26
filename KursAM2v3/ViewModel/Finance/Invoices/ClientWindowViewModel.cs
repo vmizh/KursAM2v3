@@ -49,12 +49,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             // ReSharper disable once ObjectCreationAsStatement
             Document = dc != null ? InvoicesManager.GetInvoiceClient((decimal) dc) : InvoicesManager.NewClient();
             if (Document.State == RowStatus.NewRow) return;
-            foreach (var row in Document.Rows)
-            {
-                foreach (var t in row.Entity.TD_24)
-                    // ReSharper disable once PossibleNullReferenceException
-                    Document.ShipmentRows.Add(new ShipmentRowViewModel(t));
-            }
             if (Document != null)
                 WindowName = Document.ToString();
             Document.myState = RowStatus.NotEdited;

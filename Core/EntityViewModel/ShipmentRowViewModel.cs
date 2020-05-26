@@ -17,10 +17,10 @@ namespace Core.EntityViewModel
             Entity = DefaultValue();
         }
 
-        public ShipmentRowViewModel(TD_24 entity)
+        public ShipmentRowViewModel(TD_24 entity, bool isParentInclude = false)
         {
             Entity = entity ?? DefaultValue();
-            if(Entity.SD_24 != null)
+            if (isParentInclude && Entity.SD_24 != null)
                 Waybill = new Waybill(Entity.SD_24);
         }
 

@@ -850,83 +850,96 @@ namespace KursAM2.Managers.Invoices
             dc = docCode;
             SD_84 data;
             var pDocs = new List<InvoicePaymentDocument>();
-            using (var ctx = GlobalOptions.GetEntities())
+            InvoiceClient document = null;
+            try
             {
-                data = ctx.SD_84
-                    .Include(_ => _.SD_431)
-                    .Include(_ => _.SD_432)
-                    .Include(_ => _.TD_84)
-                    .Include("TD_84.SD_83")
-                    .Include("TD_84.SD_83.SD_175")
-                    .Include(_ => _.SD_24)
-                    .Include(_ => _.SD_179)
-                    .Include(_ => _.SD_77)
-                    .Include(_ => _.SD_189)
-                    .Include("TD_84.TD_24")
-                    .Include("TD_84.SD_303")
-                    .AsNoTracking()
-                    .SingleOrDefault(_ => _.DOC_CODE == dc);
-                foreach (var c in ctx.SD_33.Where(_ => _.SFACT_DC == dc).ToList())
-                    pDocs.Add(new InvoicePaymentDocument
-                    {
-                        DocCode = c.DOC_CODE,
-                        Code = 0,
-                        DocumentType = DocumentType.CashIn,
-                        // ReSharper disable once PossibleInvalidOperationException
-                        DocumentName =
-                            $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
-                        // ReSharper disable once PossibleInvalidOperationException
-                        Summa = (decimal) c.SUMM_ORD,
-                        Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
-                        Note = c.NOTES_ORD
-                    });
-                foreach (var c in ctx.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_CLIENT_DC == dc).ToList())
-                    pDocs.Add(new InvoicePaymentDocument
-                    {
-                        DocCode = c.DOC_CODE,
-                        Code = c.CODE,
-                        DocumentType = DocumentType.Bank,
-                        DocumentName =
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    data = ctx.SD_84
+                        .Include(_ => _.SD_431)
+                        .Include(_ => _.SD_432)
+                        .Include(_ => _.TD_84)
+                        .Include("TD_84.SD_83")
+                        .Include("TD_84.SD_83.SD_175")
+                        .Include(_ => _.SD_24)
+                        .Include(_ => _.SD_179)
+                        .Include(_ => _.SD_77)
+                        .Include(_ => _.SD_189)
+                        .Include("TD_84.TD_24")
+                        .Include("TD_84.TD_24.SD_24")
+                        .Include("TD_84.TD_24.SD_24.SD_201")
+                        .Include("TD_84.SD_303")
+                        .AsNoTracking()
+                        .SingleOrDefault(_ => _.DOC_CODE == dc);
+                    foreach (var c in ctx.SD_33.Where(_ => _.SFACT_DC == dc).ToList())
+                        pDocs.Add(new InvoicePaymentDocument
+                        {
+                            DocCode = c.DOC_CODE,
+                            Code = 0,
+                            DocumentType = DocumentType.CashIn,
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_101.VV_START_DATE} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
-                        Summa = (decimal) c.VVT_VAL_PRIHOD,
-                        Currency = MainReferences.Currencies[c.VVT_CRS_DC],
-                        Note = c.VVT_DOC_NUM
-                    });
-                foreach (var c in ctx.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SFACT_DC == dc).ToList())
-                    pDocs.Add(new InvoicePaymentDocument
-                    {
-                        DocCode = c.DOC_CODE,
-                        Code = c.CODE,
-                        DocumentType = DocumentType.MutualAccounting,
-                        DocumentName =
+                            DocumentName =
+                                $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE} на {c.VZT_CRS_SUMMA}",
-                        // ReSharper disable once PossibleInvalidOperationException
-                        Summa = (decimal) c.VZT_CRS_SUMMA,
-                        Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
-                        Note = c.VZT_DOC_NOTES
-                    });
+                            Summa = (decimal) c.SUMM_ORD,
+                            Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                            Note = c.NOTES_ORD
+                        });
+                    foreach (var c in ctx.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_CLIENT_DC == dc)
+                        .ToList())
+                        pDocs.Add(new InvoicePaymentDocument
+                        {
+                            DocCode = c.DOC_CODE,
+                            Code = c.CODE,
+                            DocumentType = DocumentType.Bank,
+                            DocumentName =
+                                // ReSharper disable once PossibleInvalidOperationException
+                                $"{c.SD_101.VV_START_DATE} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                            Summa = (decimal) c.VVT_VAL_PRIHOD,
+                            Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                            Note = c.VVT_DOC_NUM
+                        });
+                    foreach (var c in ctx.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SFACT_DC == dc).ToList())
+                        pDocs.Add(new InvoicePaymentDocument
+                        {
+                            DocCode = c.DOC_CODE,
+                            Code = c.CODE,
+                            DocumentType = DocumentType.MutualAccounting,
+                            DocumentName =
+                                // ReSharper disable once PossibleInvalidOperationException
+                                $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE} на {c.VZT_CRS_SUMMA}",
+                            // ReSharper disable once PossibleInvalidOperationException
+                            Summa = (decimal) c.VZT_CRS_SUMMA,
+                            Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
+                            Note = c.VZT_DOC_NOTES
+                        });
+                }
+                document = new InvoiceClient(data);
+                foreach (var item in document.Rows)
+                {
+                    var r = GlobalOptions.GetEntities()
+                        .TD_24.Where(_ => _.DDT_SFACT_DC == item.DOC_CODE &&
+                                          _.DDT_SFACT_ROW_CODE == item.Code)
+                        .ToList();
+                    item.Shipped = r.Sum(_ => _.DDT_KOL_RASHOD);
+                    item.State = RowStatus.NotEdited;
+                    //var bilingItems = GlobalOptions.GetEntities()
+                    //    .TD_24.Where(_ => _.DDT_SFACT_DC == item.DOC_CODE && _.DDT_SFACT_ROW_CODE == item.Code);
+                    foreach (var i in r)
+                    {
+                        document.ShipmentRows.Add(new ShipmentRowViewModel(i));
+                    }
+                }
+                //document.REGISTER_DATE = DateTime.Today;
+                document.DeletedRows = new List<InvoiceClientRow>();
+                foreach (var p in pDocs) document.PaymentDocs.Add(p);
+                foreach (var r in document.Rows) r.myState = RowStatus.NotEdited;
+                document.myState = RowStatus.NotEdited;
             }
-            var document = new InvoiceClient(data);
-            foreach (var item in document.Rows)
+            catch (Exception ex)
             {
-                var r = GlobalOptions.GetEntities()
-                    .TD_24.Where(_ => _.DDT_SFACT_DC == item.DOC_CODE &&
-                                      _.DDT_SFACT_ROW_CODE == item.Code)
-                    .ToList();
-                item.Shipped = r.Sum(_ => _.DDT_KOL_RASHOD);
-                item.State = RowStatus.NotEdited;
-                //var bilingItems = GlobalOptions.GetEntities()
-                //    .TD_24.Where(_ => _.DDT_SFACT_DC == item.DOC_CODE && _.DDT_SFACT_ROW_CODE == item.Code);
-                foreach (var i in r)
-                    document.ShipmentRows.Add(new ShipmentRowViewModel(i));
+                WindowManager.ShowError(ex);
             }
-            document.REGISTER_DATE = DateTime.Today;
-            document.DeletedRows = new List<InvoiceClientRow>();
-            foreach (var p in pDocs) document.PaymentDocs.Add(p);
-            foreach (var r in document.Rows) r.myState = RowStatus.NotEdited;
-            document.myState = RowStatus.NotEdited;
             return document;
         }
 

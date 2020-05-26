@@ -62,12 +62,8 @@ namespace LayoutManager
                         DXSerializer.Serialize(LayoutControl, ms, "Kurs", null);
                         saveLayout.Layout = ms.ToArray();
                     }
-                    //var writer = new FileStream($"{AppDataPath}\\{FileName}.xml", FileMode.Create);
-                    //var ser =
-                    //    new DataContractSerializer(typeof(WindowsScreenState));
                     var ser1 =
                         new DataContractSerializer(typeof(WindowsScreenState));
-                    //ser.WriteObject(writer, saveLayout);
                     using (var writer = XmlWriter.Create(sb))
                     {
                         ser1.WriteObject(writer, saveLayout);

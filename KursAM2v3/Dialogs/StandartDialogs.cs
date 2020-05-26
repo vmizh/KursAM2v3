@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Core;
+using System.Collections.ObjectModel;
 using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -7,8 +7,8 @@ using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
 using KursAM2.View.Finance.UC;
 using KursAM2.View.Logistiks.UC;
-using KursAM2.ViewModel.Finance.controls;
 using KursAM2.ViewModel.Finance.Cash;
+using KursAM2.ViewModel.Finance.controls;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Management.Projects;
 using KursAM2.ViewModel.Reference;
@@ -36,12 +36,11 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentKontragent;
         }
 
-        
         public static List<CashOrder> SelectCashOrders(BankAccount bankAcc, SelectCashOrdersDelegate selectMethod)
         {
             var ret = new List<CashOrder>();
             var ctx = new CashOrdersForBankSelectDialog(bankAcc, selectMethod);
-            var dlg = new SelectDialogView { DataContext = ctx};
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;
@@ -54,7 +53,7 @@ namespace KursAM2.Dialogs
         {
             var ret = new List<BankAccount>();
             var ctx = new BankAccountSelectDialog();
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;
@@ -62,7 +61,6 @@ namespace KursAM2.Dialogs
             //    ret.Add(d);
             return ret;
         }
-
 
         public static List<Nomenkl> SelectNomenkls(Currency crs = null, bool isUsluga = false)
         {
@@ -114,7 +112,8 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.ListSelectedUsers;
         }
 
-        public static BankOperationsViewModel AddNewBankOperation(decimal docCode, BankOperationsViewModel row, BankAccount bankAcc)
+        public static BankOperationsViewModel AddNewBankOperation(decimal docCode, BankOperationsViewModel row,
+            BankAccount bankAcc)
         {
             var ctx = new AddBankOperionUC(docCode, row, bankAcc);
             var dlg = new SelectDialogView {DataContext = ctx};
@@ -140,10 +139,24 @@ namespace KursAM2.Dialogs
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
+
+        /// <summary>
+        ///     Новый иерархический выбор счета с учетом валюты
+        /// </summary>
+        /// <returns></returns>
+        public static BankAccountSelect SelectBankAccount2()
+        {
+            var ctx = new BankAccountSelectedDialog2();
+            var dlg = new SelectDialogView {DataContext = ctx};
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentChildItem;
+        }
+
         public static BankAccount SelectBankAccount(decimal dcOut)
         {
             var ctx = new BankAccountSelectedDialog(dcOut);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -152,7 +165,7 @@ namespace KursAM2.Dialogs
         public static BankOperationForSelectDialog SelectBankStatement(decimal dcOut)
         {
             var ctx = new BankAccountOperationSelectedDialog(dcOut);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -189,7 +202,7 @@ namespace KursAM2.Dialogs
         public static CashOut SelectCashOrders(CashIn ord)
         {
             var ctx = new CashRashOrderSelectDialog(ord);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -206,12 +219,14 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ret;
         }
 
-        public static InvoiceProvider SelectInvoiceProvider(CashOutWindowViewModel cashOut, bool isUsePayment, bool isUseAccepted)
+        public static InvoiceProvider SelectInvoiceProvider(CashOutWindowViewModel cashOut, bool isUsePayment,
+            bool isUseAccepted)
         {
             if (cashOut == null) return null;
             if (cashOut.Document.KONTRAGENT_DC != null)
             {
-                var ctx = new InvoiceProviderSearchDialog((decimal) cashOut.Document.KONTRAGENT_DC,isUsePayment, isUseAccepted);
+                var ctx = new InvoiceProviderSearchDialog((decimal) cashOut.Document.KONTRAGENT_DC, isUsePayment,
+                    isUseAccepted);
                 var dlg = new SelectDialogView {DataContext = ctx};
                 ctx.Form = dlg;
                 dlg.ShowDialog();
@@ -220,7 +235,7 @@ namespace KursAM2.Dialogs
             else
             {
                 var ctx = new InvoiceProviderSearchDialog(isUsePayment, isUseAccepted);
-                var dlg = new SelectDialogView { DataContext = ctx };
+                var dlg = new SelectDialogView {DataContext = ctx};
                 ctx.Form = dlg;
                 dlg.ShowDialog();
                 return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -239,13 +254,14 @@ namespace KursAM2.Dialogs
         public static InvoiceProvider SelectInvoiceProvider(decimal kontrDC, bool isUsePayment, bool isUseAccepted)
         {
             var ctx = new InvoiceProviderSearchDialog(kontrDC, isUsePayment, isUseAccepted);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
-        public static InvoiceClient SelectInvoiceClient(CashInWindowViewModel cashIn, bool isUsePayment, bool isUseAccepted)
+        public static InvoiceClient SelectInvoiceClient(CashInWindowViewModel cashIn, bool isUsePayment,
+            bool isUseAccepted)
         {
             if (cashIn == null) return null;
             var ctx = new InvoiceClientSearchDialog(cashIn.Document.KONTRAGENT_DC ?? 0, isUsePayment, isUseAccepted);
@@ -267,7 +283,7 @@ namespace KursAM2.Dialogs
 
         public static InvoiceClient SelectInvoiceClient(bool isUsePayment, bool isUseAccepted)
         {
-            var ctx = new InvoiceClientSearchDialog(isUsePayment,isUseAccepted);
+            var ctx = new InvoiceClientSearchDialog(isUsePayment, isUseAccepted);
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
@@ -277,7 +293,7 @@ namespace KursAM2.Dialogs
         public static InvoiceClient SelectInvoiceClient(decimal kontrDC, bool isUsePayment, bool isUseAccepted)
         {
             var ctx = new InvoiceClientSearchDialog(kontrDC, isUsePayment, isUseAccepted);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -285,8 +301,8 @@ namespace KursAM2.Dialogs
 
         public static RSViewModelBase SelectAllInvoiceClient(decimal kontrDc, bool isUsePayment, bool isUseAccepted)
         {
-            var ctx = new InvoiceAllSearchDialog(kontrDc, isUsePayment,isUseAccepted);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var ctx = new InvoiceAllSearchDialog(kontrDc, isUsePayment, isUseAccepted);
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : (RSViewModelBase) ctx.CurrentClientItem ?? ctx.CurrentProviderItem;
@@ -295,10 +311,10 @@ namespace KursAM2.Dialogs
         public static RSViewModelBase SelectAllInvoiceClient(bool isUsePayment, bool isUseAccepted)
         {
             var ctx = new InvoiceAllSearchDialog(isUsePayment, isUseAccepted);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
-            return !ctx.DialogResult ? null : (RSViewModelBase)ctx.CurrentClientItem ?? ctx.CurrentProviderItem;
+            return !ctx.DialogResult ? null : (RSViewModelBase) ctx.CurrentClientItem ?? ctx.CurrentProviderItem;
         }
 
         public static List<Nomenkl> SelectNomenklsDialog()
@@ -323,7 +339,7 @@ namespace KursAM2.Dialogs
         public static Currency SelectCurrency(IEnumerable<Currency> withoutCrs = null)
         {
             var ctx = new CurrencySelectDialogViewModel(withoutCrs);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;
             return ctx.CurrentItem;
@@ -332,11 +348,31 @@ namespace KursAM2.Dialogs
         public static Bank SelectBank()
         {
             var ctx = new BankSelectDialogViewModel();
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;
             return ctx.CurrentItem;
         }
+
+        #region Temp class для иерархического выбора банковских счетов
+
+        public class BankSelect
+        {
+            // ReSharper disable once FieldCanBeMadeReadOnly.Global
+            public ObservableCollection<BankAccountSelect> AccountList = new ObservableCollection<BankAccountSelect>();
+            public decimal DocCode { set; get; }
+            public string Name { set; get; }
+        }
+
+        public class BankAccountSelect
+        {
+            public decimal DocCode { set; get; }
+            public string Name { set; get; }
+            public Currency Currency { set; get; }
+            public string Account { set; get; }
+        }
+
+        #endregion
     }
 }

@@ -3,7 +3,6 @@ using System.Windows;
 using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Data;
 using KursAM2.Managers;
 
 namespace KursAM2.ViewModel.Finance
@@ -11,7 +10,7 @@ namespace KursAM2.ViewModel.Finance
     public class BankCurrencyChangeWindowViewModel : RSWindowViewModelBase
     {
         #region Fields
-        
+
         private BankCurrencyChangeViewModel myDocument;
         private readonly BankOperationsManager manager = new BankOperationsManager();
         private DateTime oldDate;
@@ -39,12 +38,11 @@ namespace KursAM2.ViewModel.Finance
 
         #region Properties
 
-        public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited 
-                                            && Document.CurrencyTo != null && Document.CurrencyFrom != null
-                                            && Document.CrsToDC != Document.CrsFromDC;
-
+        public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited
+                                                               && Document.CurrencyTo != null &&
+                                                               Document.CurrencyFrom != null
+                                                               && Document.CrsToDC != Document.CrsFromDC;
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
-       
         public BankCurrencyChangeViewModel Document
         {
             get => myDocument;
@@ -83,7 +81,6 @@ namespace KursAM2.ViewModel.Finance
                         break;
                 }
             }
-
             if (Document?.Id != Guid.Empty)
             {
                 Document = manager.LoadBankCurrencyChange(Id);

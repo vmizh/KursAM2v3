@@ -201,15 +201,15 @@ namespace Core.Menu
                 Image = Application.Current.Resources["imageDocumentNewCopy"] as DrawingImage,
                 Command = vm.DocNewCopyCommand
             });
-            var docDelete = new MenuButtonInfo
-            {
-                Name = "Delete",
-                Alignment = Dock.Right,
-                HAlignment = HorizontalAlignment.Right,
-                Content = Application.Current.Resources["menuDocDelete"] as ControlTemplate,
-                ToolTip = "Удалить документ",
-                Command = vm.DoсDeleteCommand
-            };
+            //var docDelete = new MenuButtonInfo
+            //{
+            //    Name = "Delete",
+            //    Alignment = Dock.Right,
+            //    HAlignment = HorizontalAlignment.Right,
+            //    Content = Application.Current.Resources["menuDocDelete"] as ControlTemplate,
+            //    ToolTip = "Удалить документ",
+            //    Command = vm.DoсDeleteCommand
+            //};
             var ret = new ObservableCollection<MenuButtonInfo>
             {
                 new MenuButtonInfo
@@ -221,7 +221,6 @@ namespace Core.Menu
                     Command = vm.RefreshDataCommand
                 },
                 docNew,
-                docDelete,
                 new MenuButtonInfo
                 {
                     Alignment = Dock.Right,

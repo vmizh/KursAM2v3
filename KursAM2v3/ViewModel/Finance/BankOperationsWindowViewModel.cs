@@ -343,12 +343,7 @@ namespace KursAM2.ViewModel.Finance
             BankPeriodOperationsCollection.Clear();
             if (CurrentBankAccount == null) return;
 
-            //Periods = new ObservableCollection<RemainderCurrenciesDatePeriod>();
             BankPeriodOperationsCollection = Manager.GetBankPeriodOperations(CurrentBankAccount.BankDC);
-            //var PeriodAdapter = DatePeriod
-            //    .GenerateIerarhy(BankPeriodOperationsCollection.Select(_ => _.Date).Distinct(),
-            //        PeriodIerarhy.YearMonthDay).Select(d => new RemainderCurrenciesDatePeriod(d)).ToList()
-            //    .OrderByDescending(_ => _.DateEnd);
             var p = Manager.GetRemains(
                 CurrentBankAccount.BankDC,
                 BankPeriodOperationsCollection?.Min(_ => _.Date).AddDays(-1) ?? DateTime.MinValue,

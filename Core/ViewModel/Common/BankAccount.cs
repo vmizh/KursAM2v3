@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
 
@@ -74,6 +75,7 @@ namespace Core.ViewModel.Common
             }
         }
         public bool IsAccessRight { get; set; }
+        public Currency Currency { get; set; }
 
         public List<SD_114> LoadList()
         {
