@@ -510,7 +510,7 @@ namespace Core.ViewModel.Base
         public bool IsCanSave { get; set; }
         public void RefreshData()
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         public void Save()

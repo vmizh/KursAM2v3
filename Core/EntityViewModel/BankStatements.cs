@@ -9,6 +9,9 @@ namespace Core.EntityViewModel
     [MetadataType(typeof(DataAnnotationsBankStatements))]
     public class BankStatements : RSViewModelBase
     {
+        private string myAccount;
+        private Bank myBank;
+        private Currency myCurrency;
         private DateTime myDate;
         private decimal myDC114;
 
@@ -28,6 +31,26 @@ namespace Core.EntityViewModel
             }
             get => myDC114;
         }
+        public Bank Bank
+        {
+            get => myBank;
+            set
+            {
+                if (myBank == value) return;
+                myBank = value;
+                RaisePropertyChanged();
+            }
+        }
+        public string Account
+        {
+            get => myAccount;
+            set
+            {
+                if (myAccount == value) return;
+                myAccount = value;
+                RaisePropertyChanged();
+            }
+        }
         public DateTime Date
         {
             set
@@ -38,6 +61,17 @@ namespace Core.EntityViewModel
             }
             get => myDate;
         }
+        public Currency Currency
+        {
+            get => myCurrency;
+            set
+            {
+                if (myCurrency == value) return;
+                myCurrency = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private void DefailtValue()
         {
             RemainderCHF = 0;
@@ -46,6 +80,13 @@ namespace Core.EntityViewModel
             RemainderRUB = 0;
             RemainderUSD = 0;
             RemainderSEK = 0;
+        }
+
+        public override string Name => $"{Bank?.Name} {Account} {Currency}";
+
+        public override string ToString()
+        {
+            return $"{Bank.Name} {Account} {Currency}";
         }
 
         #region Currency
@@ -118,7 +159,6 @@ namespace Core.EntityViewModel
         }
 
         #endregion
-        
     }
 
     public class DataAnnotationsBankStatements : DataAnnotationForFluentApiBase, IMetadataProvider<BankStatements>

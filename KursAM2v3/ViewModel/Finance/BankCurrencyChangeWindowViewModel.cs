@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
+using Core;
 using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
+using KursAM2.View.Finance;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -43,6 +46,7 @@ namespace KursAM2.ViewModel.Finance
                                                                Document.CurrencyFrom != null
                                                                && Document.CrsToDC != Document.CrsFromDC;
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
+        public override bool IsDocNewCopyAllow => Document != null && Document.State != RowStatus.NewRow;
         public BankCurrencyChangeViewModel Document
         {
             get => myDocument;
@@ -53,10 +57,25 @@ namespace KursAM2.ViewModel.Finance
                 RaisePropertyChanged();
             }
         }
-
+        public BankOperationsWindowViewModel2 ParentForm { set; get; }
         #endregion
 
         #region Commands
+
+        public override void DocNewCopy(object form)
+        {
+            var ctx = new BankCurrencyChangeWindowViewModel(Guid.Empty)
+            {
+                Document = manager.NewCopyBankCurrencyChange(Document)
+            };
+            var frm = new BankCurrencyChangeView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
+        }
 
         public override void RefreshData(object obj)
         {
@@ -114,6 +133,19 @@ namespace KursAM2.ViewModel.Finance
                     manager.DeleteBankCurrencyChange(Document);
                     manager.AddBankCurrencyChange(Document);
                 }
+            }
+            if (ParentForm != null)
+            {
+                var date = ParentForm.CurrentBankOperations.Date;
+                ParentForm.UpdateValueInWindow(ParentForm.CurrentBankOperations);
+                var dd = ParentForm.Periods.Where(_ => _.DateStart <= date 
+                                                       && _.PeriodType == PeriodType.Day)
+                    .Max(_ => _.DateStart);
+                var p = ParentForm.Periods.FirstOrDefault(_ => _.DateStart == dd 
+                                                               && _.DateEnd == dd 
+                                                               && _.PeriodType == PeriodType.Day);
+                if (p != null)
+                    ParentForm.CurrentPeriods = p;
             }
         }
 

@@ -344,7 +344,9 @@ namespace KursAM2.ViewModel.Finance
             if (CurrentBankAccount == null) return;
 
             BankPeriodOperationsCollection = Manager.GetBankPeriodOperations(CurrentBankAccount.BankDC);
+#pragma warning disable 612
             var p = Manager.GetRemains(
+
                 CurrentBankAccount.BankDC,
                 BankPeriodOperationsCollection?.Min(_ => _.Date).AddDays(-1) ?? DateTime.MinValue,
                 BankPeriodOperationsCollection?.Max(_ => _.Date) ?? DateTime.MaxValue);
@@ -355,6 +357,7 @@ namespace KursAM2.ViewModel.Finance
                     BankPeriodOperationsCollection?.Min(_ => _.Date).AddDays(-1) ?? DateTime.MinValue,
                     BankPeriodOperationsCollection?.Max(_ => _.Date) ?? DateTime.MaxValue));
             }
+#pragma warning restore 612
             else
             {
                 Periods = new ObservableCollection<RemainderCurrenciesDatePeriod>();

@@ -5,15 +5,29 @@ using Data;
 
 namespace Core.ViewModel.Common
 {
-    public class BankAccount : RSViewModelData, IEntity<SD_114>
+    public class BankAccount : RSViewModelBase, IEntity<SD_114>
     {
         private string myAccount;
+        private Bank myBank;
         private decimal myBankDC;
         private string myBankName;
         private string myBIK;
         private string myCorrAccount;
         private int myKontrBankCode;
-        public string FullName => $"Сч.№ {Account} в {BankName} К/сч. {CorrAccount} ";
+
+        public BankAccount()
+        {
+        }
+
+        public BankAccount(SD_114 entity)
+        {
+            if (entity.SD_44 != null)
+                Bank = new Bank(entity.SD_44);
+            Name = $"{Bank?.Name} Сч.№ {entity.BA_RASH_ACC} " +
+                   $"{MainReferences.Currencies[(decimal) entity.CurrencyDC]}";
+        }
+
+        public string FullName => $"{Bank?.Name} Сч.№ {Account} {Currency} ";
         public decimal BankDC
         {
             get => myBankDC;
@@ -21,6 +35,16 @@ namespace Core.ViewModel.Common
             {
                 if (myBankDC == value) return;
                 myBankDC = value;
+                RaisePropertyChanged();
+            }
+        }
+        public Bank Bank
+        {
+            get => myBank;
+            set
+            {
+                if (myBank == value) return;
+                myBank = value;
                 RaisePropertyChanged();
             }
         }
@@ -74,12 +98,20 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
-        public bool IsAccessRight { get; set; }
         public Currency Currency { get; set; }
+        public bool IsAccessRight { get; set; }
 
         public List<SD_114> LoadList()
         {
             return null;
+        }
+
+        public SD_114 DefaultValue()
+        {
+            return new SD_114
+            {
+                DOC_CODE = -1
+            };
         }
 
         public override string ToString()

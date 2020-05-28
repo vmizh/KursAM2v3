@@ -524,6 +524,7 @@ namespace KursAM2.ViewModel.Reference
             old.StartSumma = bAcc.StartSumma;
             old.StartDate = bAcc.StartDate;
             old.IsDeleted = bAcc.IsDeleted;
+            old.DateNonZero = bAcc.DateNonZero;
         }
 
         private void addNewBank(ALFAMEDIAEntities ctx, BankAccountReference bAcc, int newKontrAccCode, decimal newDC)
@@ -554,7 +555,9 @@ namespace KursAM2.ViewModel.Reference
                 IsDeleted = bAcc.IsDeleted,
                 CurrencyDC = bAcc.Currency?.DocCode,
                 StartSumma = bAcc.StartSumma,
-                StartDate = bAcc.StartDate
+                StartDate = bAcc.StartDate,
+                DateNonZero = bAcc.DateNonZero
+                
             });
             bAcc.DocCode = newDC;
             bAcc.Code = newKontrAccCode;

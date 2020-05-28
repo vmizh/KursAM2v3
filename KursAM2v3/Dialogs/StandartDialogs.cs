@@ -115,7 +115,17 @@ namespace KursAM2.Dialogs
         public static BankOperationsViewModel AddNewBankOperation(decimal docCode, BankOperationsViewModel row,
             BankAccount bankAcc)
         {
-            var ctx = new AddBankOperionUC(docCode, row, bankAcc);
+            var ctx = new AddBankOperionUC(docCode, row, bankAcc, true);
+            var dlg = new SelectDialogView {DataContext = ctx};
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentBankOperations;
+        }
+
+        public static BankOperationsViewModel OpenBankOperation(decimal docCode, BankOperationsViewModel row,
+            BankAccount bankAcc)
+        {
+            var ctx = new AddBankOperionUC(docCode, row, bankAcc, false);
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();

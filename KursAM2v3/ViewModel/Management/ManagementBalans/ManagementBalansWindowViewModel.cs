@@ -755,27 +755,31 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 var r in nn)
                 BalansStructure.Remove(r);
             var bankManager = new BankOperationsManager();
-            foreach (var d in MainReferences.BankAccounts.Values.Select(_ => _.BankDC).Distinct())
+            foreach (var d in MainReferences.BankAccounts.Values.Select(_ => _.DocCode).Distinct())
             {
-                var rem = bankManager.GetRemain(d, CurrentDate, CurrentDate);
-                BalansStructure.Add(new ManagementBalanceGroupViewModel
+                var bank = MainReferences.BankAccounts[d];
+                var rem = bankManager.GetRemains2(d, CurrentDate, CurrentDate);
+                if (rem.SummaEnd != 0)
                 {
-                    Id = Guid.NewGuid(),
-                    ParentId = ch.Id,
-                    Name =
-                        myBanks.Single(_ => _.DOC_CODE == d).BA_BANK_NAME + " / " +
-                        myBanks.Single(_ => _.DOC_CODE == d).BA_RASH_ACC,
-                    Order = 1,
-                    // ReSharper disable PossibleMultipleEnumeration
-                    SummaEUR = (decimal) rem.SummaEndEUR,
-                    SummaUSD = (decimal) rem.SummaEndUSD,
-                    SummaRUB = (decimal) rem.SummaEndRUB,
-                    SummaGBP = (decimal) rem.SummaEndGBP,
-                    SummaCHF = (decimal) rem.SummaEndCHF,
-                    SummaSEK = (decimal) rem.SummaEndSEK,
-                    ObjectDC = d
-                    // ReSharper restore PossibleMultipleEnumeration
-                });
+                    BalansStructure.Add(new ManagementBalanceGroupViewModel
+                    {
+                        Id = Guid.NewGuid(),
+                        ParentId = ch.Id,
+                        Name =
+                            myBanks.Single(_ => _.DOC_CODE == d).BA_BANK_NAME + " / " +
+                            myBanks.Single(_ => _.DOC_CODE == d).BA_RASH_ACC,
+                        Order = 1,
+                        // ReSharper disable PossibleMultipleEnumeration
+                        SummaEUR = bank.Currency.DocCode == CurrencyCode.EUR ? (decimal) rem.SummaEnd : 0,
+                        SummaUSD = bank.Currency.DocCode == CurrencyCode.USD ? (decimal) rem.SummaEnd : 0,
+                        SummaRUB = bank.Currency.DocCode == CurrencyCode.RUB ? (decimal) rem.SummaEnd : 0,
+                        SummaGBP = bank.Currency.DocCode == CurrencyCode.GBP ? (decimal) rem.SummaEnd : 0,
+                        SummaCHF = bank.Currency.DocCode == CurrencyCode.CHF ? (decimal) rem.SummaEnd : 0,
+                        SummaSEK = bank.Currency.DocCode == CurrencyCode.SEK ? (decimal) rem.SummaEnd : 0,
+                        ObjectDC = d
+                        // ReSharper restore PossibleMultipleEnumeration
+                    });
+                }
             }
 
             ch.SummaEUR =

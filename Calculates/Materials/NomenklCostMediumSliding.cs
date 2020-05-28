@@ -5,7 +5,6 @@ using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using Core;
 using Data;
 
@@ -21,7 +20,7 @@ namespace Calculates.Materials
             context = ctx;
         }
 
-        public override ObservableCollection<NomenklCalcCostOperation> GetOperations(decimal nomDC)
+        public override ObservableCollection<NomenklCalcCostOperation> GetOperations(decimal nomDC, bool isCalOnly = true)
         {
             var currentRowNumber = 0;
             var ret = new NomenklCost
@@ -244,8 +243,15 @@ namespace Calculates.Materials
                         }
                     }
                 }
-                var calc = Calc(ret.Operations);
-                return new ObservableCollection<NomenklCalcCostOperation>(calc);
+                if (isCalOnly)
+                {
+                    var calc = Calc(ret.Operations);
+                    return new ObservableCollection<NomenklCalcCostOperation>(calc);
+                }
+                else
+                {
+                    return ret.Operations;
+                }
             }
             catch (Exception ex)
             {

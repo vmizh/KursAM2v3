@@ -16,7 +16,7 @@ namespace Calculates.Materials
 
         protected List<Nomenkl> NomenklsForCalc = new List<Nomenkl>();
         public bool IsSave { set; get; } = false;
-        public abstract ObservableCollection<NomenklCalcCostOperation> GetOperations(decimal nomDC);
+        public abstract ObservableCollection<NomenklCalcCostOperation> GetOperations(decimal nomDC, bool isCalcOnly = true);
         public abstract List<NomenklCalcCostOperation> Calc(ObservableCollection<NomenklCalcCostOperation> operList);
         public abstract void Save(IEnumerable<NomenklCalcCostOperation> operList);
 

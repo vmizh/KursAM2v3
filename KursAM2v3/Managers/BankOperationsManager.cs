@@ -12,7 +12,6 @@ using Data;
 using Helper;
 using KursAM2.Managers.Invoices;
 using KursAM2.ViewModel.Management.Calculations;
-using KursAM2.ViewModel.Management.ManagementBalans;
 
 namespace KursAM2.Managers
 {
@@ -27,7 +26,7 @@ namespace KursAM2.Managers
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    var data = ctx.SD_114.ToList();
+                    var data = ctx.SD_114.Where(_ => (_.IsDeleted ?? false) == false).ToList();
                     var bankAcc = ctx.Database.SqlQuery<MainReferences.AccessRight>(
                             $"SELECT DOC_CODE AS DocCode, USR_ID as UserId FROM HD_114 WHERE USR_ID = {GlobalOptions.UserInfo.Id}")
                         .ToList();
@@ -35,8 +34,11 @@ namespace KursAM2.Managers
                     {
                         var newItem = new BankStatements
                         {
-                            BankDC = item.DOC_CODE,
+                            BankDC = MainReferences.BankAccounts[item.DOC_CODE].Bank.DocCode,
+                            Bank = MainReferences.BankAccounts[item.DOC_CODE].Bank,
+                            Currency = MainReferences.Currencies[(decimal) item.CurrencyDC],
                             Name = item.BA_ACC_SHORTNAME?.Trim() + " " + item.BA_RASH_ACC.Trim(),
+                            Account = item.BA_RASH_ACC,
                             DocCode = item.DOC_CODE,
                             RemainderCHF = 0,
                             RemainderRUB = 0,
@@ -45,18 +47,7 @@ namespace KursAM2.Managers
                             RemainderGBP = 0,
                             RemainderEUR = 0
                         };
-                        result.Add(new BankStatements
-                        {
-                            BankDC = newItem.BankDC,
-                            Name = newItem.Name,
-                            DocCode = newItem.BankDC,
-                            RemainderCHF = newItem.RemainderCHF,
-                            RemainderEUR = newItem.RemainderEUR,
-                            RemainderUSD = newItem.RemainderUSD,
-                            RemainderGBP = newItem.RemainderGBP,
-                            RemainderSEK = newItem.RemainderSEK,
-                            RemainderRUB = newItem.RemainderRUB
-                        });
+                        result.Add(newItem);
                     }
                 }
             }
@@ -145,7 +136,7 @@ namespace KursAM2.Managers
                     if (thisDate.Count != 0)
                     {
                         var startRemainder = previosRemainders.FirstOrDefault(_ => _.VVU_CRS_DC == item.VVT_CRS_DC)
-                                                 ?.VVU_VAL_SUMMA ?? 0;
+                            ?.VVU_VAL_SUMMA ?? 0;
                         var endRemainder = thisDate.First(_ => _.VVU_REST_TYPE == 1).VVU_VAL_SUMMA;
                         AddItemInLocalRemaindedCol(item.VVT_CRS_DC, startRemainder,
                             Convert.ToDecimal(endRemainder + delta), item.DOC_CODE);
@@ -433,7 +424,8 @@ namespace KursAM2.Managers
             }
         }
 
-        private Tuple<decimal,int> AddBankOperation2(ALFAMEDIAEntities ctx, BankOperationsViewModel item, decimal bankDc)
+        private Tuple<decimal, int> AddBankOperation2(ALFAMEDIAEntities ctx, BankOperationsViewModel item,
+            decimal bankDc)
         {
             var thisDate = ctx.SD_101.FirstOrDefault(_ => _.VV_START_DATE == item.Date && _.VV_ACC_DC == bankDc);
             var code = 0;
@@ -449,7 +441,7 @@ namespace KursAM2.Managers
                     VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
                     VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
                     VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
-                    BankAccountDC = item.BankAccountIn?.BankDC,
+                    BankAccountDC = item.BankAccountIn?.DocCode,
                     BankFromTransactionCode = item.BankFromTransactionCode,
                     VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
                     VVT_CRS_DC = item.Currency.DOC_CODE,
@@ -492,7 +484,7 @@ namespace KursAM2.Managers
                     VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
                     VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
                     VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
-                    BankAccountDC = item.BankAccountIn?.BankDC,
+                    BankAccountDC = item.BankAccountIn?.DocCode,
                     BankFromTransactionCode = item.BankFromTransactionCode,
                     VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
                     VVT_CRS_DC = item.Currency.DOC_CODE,
@@ -512,8 +504,8 @@ namespace KursAM2.Managers
                 });
                 ctx.SaveChanges();
                 item.myState = RowStatus.NotEdited;
-            } 
-            return new Tuple<decimal, int>(item.DOC_CODE, code); 
+            }
+            return new Tuple<decimal, int>(item.DOC_CODE, code);
         }
 
         public void DeleteBankOperations(BankOperationsViewModel item, decimal bankDc)
@@ -553,6 +545,7 @@ namespace KursAM2.Managers
             }
         }
 
+        [Obsolete]
         public RemainderCurrenciesDatePeriod GetRemain(decimal bankDC, DateTime datestart, DateTime dateend)
         {
             var ret = new RemainderCurrenciesDatePeriod
@@ -563,7 +556,7 @@ namespace KursAM2.Managers
             };
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var startRemain = ctx.SD_114_StartRemain.Where(_ => _.AccountDC == bankDC).ToList(); 
+                var startRemain = ctx.SD_114_StartRemain.Where(_ => _.AccountDC == bankDC).ToList();
                 var datastart = ctx.TD_101.Include(_ => _.SD_101).Where(_ =>
                     _.SD_101.VV_ACC_DC == bankDC &&
                     _.SD_101.VV_START_DATE <= datestart).ToList();
@@ -576,26 +569,27 @@ namespace KursAM2.Managers
                 ret.SummaStartCHF = (datastart.Where(_ => _.VVT_CRS_DC == CurrencyCode.CHF)
                                         .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                     + (startRemain.FirstOrDefault(_ =>
-                                           _.AccountDC == bankDC && _.CrsDC == CurrencyCode.CHF)?.Summa ?? 0);
+                                        _.AccountDC == bankDC && _.CrsDC == CurrencyCode.CHF)?.Summa ?? 0);
                 ret.SummaStartEUR = (datastart.Where(_ => _.VVT_CRS_DC == CurrencyCode.EUR)
                                         .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                     + (startRemain.FirstOrDefault(_ =>
-                                           _.AccountDC == bankDC && _.CrsDC == CurrencyCode.EUR)?.Summa ?? 0);
+                                        _.AccountDC == bankDC && _.CrsDC == CurrencyCode.EUR)?.Summa ?? 0);
                 ret.SummaStartRUB = (datastart.Where(_ => _.VVT_CRS_DC == CurrencyCode.RUB)
                                         .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                     + (startRemain.FirstOrDefault(_ =>
-                                           _.AccountDC == bankDC && _.CrsDC == CurrencyCode.RUB)?.Summa ?? 0);
+                                        _.AccountDC == bankDC && _.CrsDC == CurrencyCode.RUB)?.Summa ?? 0);
                 ret.SummaStartUSD = (datastart.Where(_ => _.VVT_CRS_DC == CurrencyCode.USD)
-                                        .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0) 
-                                    + (startRemain.FirstOrDefault(_ =>_.AccountDC == bankDC && _.CrsDC == CurrencyCode.USD)?.Summa ?? 0);
+                                        .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
+                                    + (startRemain.FirstOrDefault(_ =>
+                                        _.AccountDC == bankDC && _.CrsDC == CurrencyCode.USD)?.Summa ?? 0);
                 ret.SummaStartGBP = (datastart.Where(_ => _.VVT_CRS_DC == CurrencyCode.GBP)
                                         .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                     + (startRemain.FirstOrDefault(_ =>
-                                           _.AccountDC == bankDC && _.CrsDC == CurrencyCode.GBP)?.Summa ?? 0);
+                                        _.AccountDC == bankDC && _.CrsDC == CurrencyCode.GBP)?.Summa ?? 0);
                 ret.SummaStartSEK = (datastart.Where(_ => _.VVT_CRS_DC == CurrencyCode.SEK)
                                         .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                     + (startRemain.FirstOrDefault(_ =>
-                                           _.AccountDC == bankDC && _.CrsDC == CurrencyCode.SEK)?.Summa ?? 0);
+                                        _.AccountDC == bankDC && _.CrsDC == CurrencyCode.SEK)?.Summa ?? 0);
                 if (datestart == dateend)
                 {
                     ret.SummaEndCHF = ret.SummaStartCHF;
@@ -610,27 +604,27 @@ namespace KursAM2.Managers
                     ret.SummaEndCHF = (dataend.Where(_ => _.VVT_CRS_DC == CurrencyCode.CHF)
                                           .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                       + (startRemain.FirstOrDefault(_ =>
-                                             _.AccountDC == bankDC && _.CrsDC == CurrencyCode.CHF)?.Summa ?? 0);
+                                          _.AccountDC == bankDC && _.CrsDC == CurrencyCode.CHF)?.Summa ?? 0);
                     ret.SummaEndEUR = (dataend.Where(_ => _.VVT_CRS_DC == CurrencyCode.EUR)
                                           .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                       + (startRemain.FirstOrDefault(_ =>
-                                             _.AccountDC == bankDC && _.CrsDC == CurrencyCode.EUR)?.Summa ?? 0);
+                                          _.AccountDC == bankDC && _.CrsDC == CurrencyCode.EUR)?.Summa ?? 0);
                     ret.SummaEndRUB = (dataend.Where(_ => _.VVT_CRS_DC == CurrencyCode.RUB)
                                           .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                       + (startRemain.FirstOrDefault(_ =>
-                                             _.AccountDC == bankDC && _.CrsDC == CurrencyCode.RUB)?.Summa ?? 0);
+                                          _.AccountDC == bankDC && _.CrsDC == CurrencyCode.RUB)?.Summa ?? 0);
                     ret.SummaEndUSD = (dataend.Where(_ => _.VVT_CRS_DC == CurrencyCode.USD)
                                           .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                       + (startRemain.FirstOrDefault(_ =>
-                                             _.AccountDC == bankDC && _.CrsDC == CurrencyCode.USD)?.Summa ?? 0);
+                                          _.AccountDC == bankDC && _.CrsDC == CurrencyCode.USD)?.Summa ?? 0);
                     ret.SummaEndGBP = (dataend.Where(_ => _.VVT_CRS_DC == CurrencyCode.GBP)
                                           .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                       + (startRemain.FirstOrDefault(_ =>
-                                             _.AccountDC == bankDC && _.CrsDC == CurrencyCode.GBP)?.Summa ?? 0);
+                                          _.AccountDC == bankDC && _.CrsDC == CurrencyCode.GBP)?.Summa ?? 0);
                     ret.SummaEndSEK = (dataend.Where(_ => _.VVT_CRS_DC == CurrencyCode.SEK)
                                           .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                       + (startRemain.FirstOrDefault(_ =>
-                                             _.AccountDC == bankDC && _.CrsDC == CurrencyCode.SEK)?.Summa ?? 0);
+                                          _.AccountDC == bankDC && _.CrsDC == CurrencyCode.SEK)?.Summa ?? 0);
                 }
                 // ReSharper disable once InconsistentNaming
                 if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.CHF))
@@ -678,7 +672,7 @@ namespace KursAM2.Managers
                 return ret;
             }
         }
-
+        [Obsolete]
         public List<RemainderCurrenciesDatePeriod> GetRemains(decimal bankDC, DateTime datestart, DateTime dateend)
         {
             using (var ctx = GlobalOptions.GetEntities())
@@ -694,63 +688,63 @@ namespace KursAM2.Managers
                 foreach (var d in PeriodAdapter)
                 {
                     d.SummaStartCHF = (dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.CHF
-                                                            && _.SD_101.VV_START_DATE < d.DateStart)
+                                                             && _.SD_101.VV_START_DATE < d.DateStart)
                                           .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                       + (startRemain.FirstOrDefault(_ =>
-                                             _.AccountDC == bankDC && _.CrsDC == CurrencyCode.CHF)?.Summa ?? 0);
+                                          _.AccountDC == bankDC && _.CrsDC == CurrencyCode.CHF)?.Summa ?? 0);
                     d.SummaStartEUR = (dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.EUR
-                                                            && _.SD_101.VV_START_DATE < d.DateStart)
+                                                             && _.SD_101.VV_START_DATE < d.DateStart)
                                           .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                       + (startRemain.FirstOrDefault(_ =>
-                                             _.AccountDC == bankDC && _.CrsDC == CurrencyCode.EUR)?.Summa ?? 0);
+                                          _.AccountDC == bankDC && _.CrsDC == CurrencyCode.EUR)?.Summa ?? 0);
                     d.SummaStartRUB = (dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.RUB
-                                                            && _.SD_101.VV_START_DATE < d.DateStart)
+                                                             && _.SD_101.VV_START_DATE < d.DateStart)
                                           .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                       + (startRemain.FirstOrDefault(_ =>
-                                             _.AccountDC == bankDC && _.CrsDC == CurrencyCode.RUB)?.Summa ?? 0);
+                                          _.AccountDC == bankDC && _.CrsDC == CurrencyCode.RUB)?.Summa ?? 0);
                     d.SummaStartUSD = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.USD
                                                             && _.SD_101.VV_START_DATE < d.DateStart)
-                                          .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0;
+                        .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0;
                     d.SummaStartGBP = (dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.GBP
-                                                            && _.SD_101.VV_START_DATE < d.DateStart)
+                                                             && _.SD_101.VV_START_DATE < d.DateStart)
                                           .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                       + (startRemain.FirstOrDefault(_ =>
-                                             _.AccountDC == bankDC && _.CrsDC == CurrencyCode.GBP)?.Summa ?? 0);
+                                          _.AccountDC == bankDC && _.CrsDC == CurrencyCode.GBP)?.Summa ?? 0);
                     d.SummaStartSEK = (dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.SEK
-                                                            && _.SD_101.VV_START_DATE < d.DateStart)
+                                                             && _.SD_101.VV_START_DATE < d.DateStart)
                                           .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
-                         + (startRemain.FirstOrDefault(_ =>
-                               _.AccountDC == bankDC && _.CrsDC == CurrencyCode.SEK)?.Summa ?? 0);
+                                      + (startRemain.FirstOrDefault(_ =>
+                                          _.AccountDC == bankDC && _.CrsDC == CurrencyCode.SEK)?.Summa ?? 0);
                     d.SummaEndCHF = (dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.CHF
-                                                          && _.SD_101.VV_START_DATE <= d.DateEnd)
+                                                           && _.SD_101.VV_START_DATE <= d.DateEnd)
                                         .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                     + (startRemain.FirstOrDefault(_ =>
-                                           _.AccountDC == bankDC && _.CrsDC == CurrencyCode.SEK)?.Summa ?? 0);
+                                        _.AccountDC == bankDC && _.CrsDC == CurrencyCode.SEK)?.Summa ?? 0);
                     d.SummaEndEUR = (dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.EUR
-                                                          && _.SD_101.VV_START_DATE <= d.DateEnd)
+                                                           && _.SD_101.VV_START_DATE <= d.DateEnd)
                                         .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                     + (startRemain.FirstOrDefault(_ =>
-                                           _.AccountDC == bankDC && _.CrsDC == CurrencyCode.EUR)?.Summa ?? 0);
+                                        _.AccountDC == bankDC && _.CrsDC == CurrencyCode.EUR)?.Summa ?? 0);
                     d.SummaEndRUB = (dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.RUB
-                                                          && _.SD_101.VV_START_DATE <= d.DateEnd)
+                                                           && _.SD_101.VV_START_DATE <= d.DateEnd)
                                         .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                     + (startRemain.FirstOrDefault(_ =>
-                                           _.AccountDC == bankDC && _.CrsDC == CurrencyCode.RUB)?.Summa ?? 0);
+                                        _.AccountDC == bankDC && _.CrsDC == CurrencyCode.RUB)?.Summa ?? 0);
                     d.SummaEndUSD = (dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.USD
-                                                          && _.SD_101.VV_START_DATE <= d.DateEnd)
+                                                           && _.SD_101.VV_START_DATE <= d.DateEnd)
                                         .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                     + (startRemain.FirstOrDefault(_ =>
-                                           _.AccountDC == bankDC && _.CrsDC == CurrencyCode.USD)?.Summa ?? 0);
+                                        _.AccountDC == bankDC && _.CrsDC == CurrencyCode.USD)?.Summa ?? 0);
                     d.SummaEndGBP = (dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.GBP
-                                                          && _.SD_101.VV_START_DATE <= d.DateEnd)
+                                                           && _.SD_101.VV_START_DATE <= d.DateEnd)
                                         .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                     + (startRemain.FirstOrDefault(_ =>
-                                           _.AccountDC == bankDC && _.CrsDC == CurrencyCode.GBP)?.Summa ?? 0);
+                                        _.AccountDC == bankDC && _.CrsDC == CurrencyCode.GBP)?.Summa ?? 0);
                     d.SummaEndSEK = (dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.SEK
-                                                          && _.SD_101.VV_START_DATE <= d.DateEnd)
+                                                           && _.SD_101.VV_START_DATE <= d.DateEnd)
                                         .Sum(_ => _.VVT_VAL_PRIHOD - _.VVT_VAL_RASHOD) ?? 0)
                                     + (startRemain.FirstOrDefault(_ =>
-                                           _.AccountDC == bankDC && _.CrsDC == CurrencyCode.SEK)?.Summa ?? 0);
+                                        _.AccountDC == bankDC && _.CrsDC == CurrencyCode.SEK)?.Summa ?? 0);
 
                     // ReSharper disable once InconsistentNaming
                     if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.CHF))
@@ -831,10 +825,10 @@ namespace KursAM2.Managers
                 var sql = "SELECT  AccountDC ,Date ,Start ," +
                           "SummaIn ,SummaOut ,[End] " +
                           $"FROM dbo.BankOperations WHERE AccountDC = {CustomFormat.DecimalToSqlDecimal(bankDC)} " +
-                          $" order by 2";
+                          " order by 2";
                 var data = ctx.Database.SqlQuery<BankOperations>(sql).ToList();
                 var PeriodAdapter = DatePeriod
-                    .GenerateIerarhy(data.Select(_ => (DateTime)_.Date).ToList(),
+                    .GenerateIerarhy(data.Select(_ => (DateTime) _.Date).ToList(),
                         PeriodIerarhy.YearMonthDay).Select(d => new ReminderDatePeriod(d)).ToList()
                     .OrderByDescending(_ => _.DateEnd);
                 foreach (var p in PeriodAdapter)
@@ -862,6 +856,69 @@ namespace KursAM2.Managers
                     // ReSharper restore PossibleNullReferenceException
                 }
                 return new List<ReminderDatePeriod>(PeriodAdapter);
+            }
+        }
+
+        public ReminderDatePeriod GetRemains2(decimal bankDC, DateTime DateStart, DateTime DateEnd)
+        {
+            if (DateStart > DateEnd)
+            {
+                return new ReminderDatePeriod()
+                {
+                    DateEnd = DateStart,
+                    DateStart = DateEnd,
+                    SummaStart = 0,
+                    SummaEnd = 0,
+                    SummaIn = 0,
+                    SummaOut = 0,
+                    Currency = MainReferences.BankAccounts[bankDC].Currency
+                };
+            }
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var sql = "SELECT  AccountDC ,Date ,Start ," +
+                          "SummaIn ,SummaOut ,[End] " +
+                          $"FROM dbo.BankOperations WHERE AccountDC = {CustomFormat.DecimalToSqlDecimal(bankDC)} " +
+                          " order by 2";
+                var data = ctx.Database.SqlQuery<BankOperations>(sql).ToList();
+                if (data.Count == 0)
+                {
+                    return new ReminderDatePeriod()
+                    {
+                        DateEnd = DateEnd,
+                        DateStart = DateStart,
+                        SummaStart = 0,
+                        SummaEnd = 0,
+                        SummaIn = 0,
+                        SummaOut = 0,
+                        Currency = MainReferences.BankAccounts[bankDC].Currency
+                    };
+                }
+                var startDate = data.Where(_ => _.Date <= DateStart).Max(_ => _.Date);
+                var endDate = data.Where(_ => _.Date <= DateEnd).Max(_ => _.Date);
+                if (startDate == null || endDate == null)
+                {
+                    return new ReminderDatePeriod()
+                    {
+                        DateEnd = DateStart,
+                        DateStart = DateEnd,
+                        SummaStart = 0,
+                        SummaEnd = 0,
+                        SummaIn = 0,
+                        SummaOut = 0,
+                        Currency = MainReferences.BankAccounts[bankDC].Currency
+                    };
+                }
+                return new ReminderDatePeriod()
+                {
+                    DateEnd = DateEnd,
+                    DateStart = DateStart,
+                    SummaStart = data.First(_ => _.Date == startDate).Start,
+                    SummaEnd = data.First(_ => _.Date == endDate).End,
+                    SummaIn = data.Where(_ => _.Date >= DateStart && _.Date <= DateEnd).Sum(_ => _.SummaIn),
+                    SummaOut = data.Where(_ => _.Date >= DateStart && _.Date <= DateEnd).Sum(_ => _.SummaOut),
+                    Currency = MainReferences.BankAccounts[bankDC].Currency
+                };
             }
         }
 
@@ -971,9 +1028,7 @@ namespace KursAM2.Managers
                         VVT_SFACT_POSTAV_DC = null,
                         State = RowStatus.NewRow
                     };
-                    
-                    var d = AddBankOperation2(ctx,bankItemFrom,item.BankFromDC);
-
+                    var d = AddBankOperation2(ctx, bankItemFrom, item.BankFromDC);
                     var bankItemTo = new BankOperationsViewModel
                     {
                         Date = item.DocDate,
@@ -992,8 +1047,7 @@ namespace KursAM2.Managers
                         VVT_SFACT_POSTAV_DC = null,
                         State = RowStatus.NewRow
                     };
-
-                    var d2 = AddBankOperation2(ctx,bankItemTo,item.BankToDC);
+                    var d2 = AddBankOperation2(ctx, bankItemTo, item.BankToDC);
                     var num = ctx.BankCurrencyChange.ToList().Any() ? ctx.BankCurrencyChange.Max(_ => _.DocNum) + 1 : 1;
                     ctx.BankCurrencyChange.Add(new BankCurrencyChange
                     {
@@ -1025,7 +1079,6 @@ namespace KursAM2.Managers
                     WindowManager.ShowError(ex);
                 }
             }
-
         }
 
         public void SaveBankCurrencyChange(BankCurrencyChangeViewModel item)
@@ -1043,7 +1096,7 @@ namespace KursAM2.Managers
                     bc.Rate = item.Rate;
                     bc.Note = item.Note;
                     var bankto =
-                        ctx.TD_101.FirstOrDefault(_ => _.DOC_CODE == item.DocToDC && _.CODE == item.DocRowToCode); 
+                        ctx.TD_101.FirstOrDefault(_ => _.DOC_CODE == item.DocToDC && _.CODE == item.DocRowToCode);
                     if (bankto == null) return;
                     bankto.VVT_VAL_PRIHOD = item.SummaTo;
                     bankto.VVT_VAL_RASHOD = 0;

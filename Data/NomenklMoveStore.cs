@@ -26,5 +26,6 @@ namespace Data
         public Nullable<decimal> SummaNakladOut { get; set; }
         public decimal Price { get; set; }
         public decimal PriceWithNaklad { get; set; }
+        public Nullable<decimal> Start { get; set; }
     }
 }

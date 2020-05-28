@@ -154,61 +154,64 @@ namespace KursAM2.ViewModel.Management
             var bankManager = new BankOperationsManager();
             foreach (var b in MainReferences.BankAccounts.Values)
             {
-                var rem = bankManager.GetRemain(b.BankDC, StartDate, EndDate);
-                if (rem.SummaEndCHF != 0 || rem.SummaStartCHF != 0)
-                    Remains.Add(new MoneyRemainsRow
-                    {
-                        Name = b.BankName + " / " + b.Account,
-                        RemainsType = "Банк",
-                        StartSumma = (decimal) rem.SummaStartCHF,
-                        EndSumma = (decimal) rem.SummaEndCHF,
-                        Currency = MainReferences.Currencies[CurrencyCode.CHF]
-                    });
-                if (rem.SummaEndUSD != 0 || rem.SummaStartUSD != 0)
-                    Remains.Add(new MoneyRemainsRow
-                    {
-                        Name = b.BankName + " / " + b.Account,
-                        RemainsType = "Банк",
-                        StartSumma = (decimal) rem.SummaStartUSD,
-                        EndSumma = (decimal) rem.SummaEndUSD,
-                        Currency = MainReferences.Currencies[CurrencyCode.USD]
-                    });
-                if (rem.SummaEndEUR != 0 || rem.SummaStartEUR != 0)
-                    Remains.Add(new MoneyRemainsRow
-                    {
-                        Name = b.BankName + " / " + b.Account,
-                        RemainsType = "Банк",
-                        StartSumma = (decimal) rem.SummaStartEUR,
-                        EndSumma = (decimal) rem.SummaEndEUR,
-                        Currency = MainReferences.Currencies[CurrencyCode.EUR]
-                    });
-                if (rem.SummaEndRUB != 0 || rem.SummaStartRUB != 0)
-                    Remains.Add(new MoneyRemainsRow
-                    {
-                        Name = b.BankName + " / " + b.Account,
-                        RemainsType = "Банк",
-                        StartSumma = (decimal) rem.SummaStartRUB,
-                        EndSumma = (decimal) rem.SummaEndRUB,
-                        Currency = MainReferences.Currencies[CurrencyCode.RUB]
-                    });
-                if (rem.SummaEndGBP != 0 || rem.SummaStartGBP != 0)
-                    Remains.Add(new MoneyRemainsRow
-                    {
-                        Name = b.BankName + " / " + b.Account,
-                        RemainsType = "Банк",
-                        StartSumma = (decimal) rem.SummaStartGBP,
-                        EndSumma = (decimal) rem.SummaEndGBP,
-                        Currency = MainReferences.Currencies[CurrencyCode.GBP]
-                    });
-                if (rem.SummaEndGBP != 0 || rem.SummaStartGBP != 0)
-                    Remains.Add(new MoneyRemainsRow
-                    {
-                        Name = b.BankName + " / " + b.Account,
-                        RemainsType = "Банк",
-                        StartSumma = (decimal) rem.SummaStartSEK,
-                        EndSumma = (decimal) rem.SummaEndSEK,
-                        Currency = MainReferences.Currencies[CurrencyCode.SEK]
-                    });
+                var rem = bankManager.GetRemains2(b.BankDC, StartDate, EndDate);
+                if (rem.SummaStart != 0 || rem.SummaEnd != 0)
+                {
+                    if (rem.Currency.DocCode == CurrencyCode.CHF)
+                        Remains.Add(new MoneyRemainsRow
+                        {
+                            Name = b.BankName + " / " + b.Account,
+                            RemainsType = "Банк",
+                            StartSumma = (decimal) rem.SummaStart,
+                            EndSumma = (decimal) rem.SummaEnd,
+                            Currency = MainReferences.Currencies[CurrencyCode.CHF]
+                        });
+                    if (rem.Currency.DocCode == CurrencyCode.USD)
+                        Remains.Add(new MoneyRemainsRow
+                        {
+                            Name = b.BankName + " / " + b.Account,
+                            RemainsType = "Банк",
+                            StartSumma = (decimal) rem.SummaStart,
+                            EndSumma = (decimal) rem.SummaEnd,
+                            Currency = MainReferences.Currencies[CurrencyCode.USD]
+                        });
+                    if (rem.Currency.DocCode == CurrencyCode.EUR)
+                        Remains.Add(new MoneyRemainsRow
+                        {
+                            Name = b.BankName + " / " + b.Account,
+                            RemainsType = "Банк",
+                            StartSumma = (decimal) rem.SummaStart,
+                            EndSumma = (decimal) rem.SummaEnd,
+                            Currency = MainReferences.Currencies[CurrencyCode.EUR]
+                        });
+                    if (rem.Currency.DocCode == CurrencyCode.RUB)
+                        Remains.Add(new MoneyRemainsRow
+                        {
+                            Name = b.BankName + " / " + b.Account,
+                            RemainsType = "Банк",
+                            StartSumma = (decimal) rem.SummaStart,
+                            EndSumma = (decimal) rem.SummaEnd,
+                            Currency = MainReferences.Currencies[CurrencyCode.RUB]
+                        });
+                    if (rem.Currency.DocCode == CurrencyCode.GBP)
+                        Remains.Add(new MoneyRemainsRow
+                        {
+                            Name = b.BankName + " / " + b.Account,
+                            RemainsType = "Банк",
+                            StartSumma = (decimal) rem.SummaStart,
+                            EndSumma = (decimal) rem.SummaEnd,
+                            Currency = MainReferences.Currencies[CurrencyCode.GBP]
+                        });
+                    if (rem.Currency.DocCode == CurrencyCode.SEK)
+                        Remains.Add(new MoneyRemainsRow
+                        {
+                            Name = b.BankName + " / " + b.Account,
+                            RemainsType = "Банк",
+                            StartSumma = (decimal) rem.SummaStart,
+                            EndSumma = (decimal) rem.SummaEnd,
+                            Currency = MainReferences.Currencies[CurrencyCode.SEK]
+                        });
+                }
             }
         }
 

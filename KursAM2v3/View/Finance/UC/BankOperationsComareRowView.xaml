@@ -18,13 +18,11 @@
                         DateTime="{Binding Date, Mode=TwoWay}" />
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Валюта">
-                    <dxe:ComboBoxEdit HorizontalAlignment="Stretch"
-                              ItemsSource="{Binding CurrencysCompendium}"
+                    <dxe:TextEdit HorizontalAlignment="Stretch"
                               Height="25"
                               EditValue="{Binding Currency, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                              DisplayMember="Name"
                               Margin="0 0 0 5" 
-                              IsEnabled="{Binding IsNotCurrencyChange}"/>
+                              IsEnabled="False" />
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Тип контрагента">
                     <dxe:ComboBoxEdit HorizontalAlignment="Stretch"

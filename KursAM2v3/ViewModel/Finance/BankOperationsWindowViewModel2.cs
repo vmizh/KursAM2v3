@@ -10,7 +10,6 @@ using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using DevExpress.XtraSpreadsheet.Model.History;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.View.Finance;
@@ -26,6 +25,83 @@ namespace KursAM2.ViewModel.Finance
         #endregion
 
         #region Commands
+
+        public override bool IsDocumentOpenAllow => CurrentBankAccount != null && CurrentBankOperations != null;
+
+        public override void DocumentOpen(object obj)
+        {
+            if (CurrentBankOperations.IsCurrencyChange)
+            {
+                var id = Guid.Empty;
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    if (CurrentBankOperations.VVT_VAL_PRIHOD > 0)
+                    {
+                        var i = ctx.BankCurrencyChange
+                            .FirstOrDefault(_ => _.DocToDC == CurrentBankOperations.DOC_CODE
+                                                 && _.DocRowToCode == CurrentBankOperations.Code);
+                        if (i != null)
+                            id = i.Id;
+                    }
+                    else
+                    {
+                        var i = ctx.BankCurrencyChange
+                            .FirstOrDefault(_ => _.DocFromDC == CurrentBankOperations.DOC_CODE
+                                                 && _.DocRowFromCode == CurrentBankOperations.Code);
+                        if (i != null)
+                            id = i.Id;
+                    }
+                }
+                var dtx = new BankCurrencyChangeWindowViewModel(id)
+                {
+                    ParentForm = this
+                };
+                var form = new BankCurrencyChangeView
+                {
+                    Owner = Form,
+                    DataContext = dtx
+                };
+                dtx.Form = form;
+                form.Show();
+            }
+            else
+            {
+                var k = StandartDialogs.OpenBankOperation(CurrentBankAccount.DocCode,
+                    CurrentBankOperations,
+                    MainReferences.BankAccounts[CurrentBankAccount.BankDC]);
+                if (k != null)
+                {
+                    k.State = RowStatus.Edited;
+                    Manager.SaveBankOperations(k, CurrentBankAccount.BankDC, 0);
+                    BankOperationsCollection.Add(k);
+                    BankOperationsCollection.First(_ => _.DOC_CODE == k.DOC_CODE && _.Code == k.Code).State =
+                        RowStatus.NotEdited;
+                    UpdateValueInWindow(k);
+                    CurrentPeriods = Periods.FirstOrDefault(_ => _.DateStart == k.Date && _.DateEnd == k.Date);
+                    CurrentBankOperations = k;
+                }
+            }
+        }
+
+        public override void DocNewEmpty(object form)
+        {
+            if (CurrentBankAccount != null)
+            {
+                var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode, new BankOperationsViewModel(),
+                    MainReferences.BankAccounts[CurrentBankAccount.BankDC]);
+                if (k != null)
+                {
+                    k.State = RowStatus.NewRow;
+                    Manager.SaveBankOperations(k, CurrentBankAccount.BankDC, 0);
+                    BankOperationsCollection.Add(k);
+                    BankOperationsCollection.First(_ => _.DOC_CODE == k.DOC_CODE && _.Code == k.Code).State =
+                        RowStatus.NotEdited;
+                    UpdateValueInWindow(k);
+                    CurrentPeriods = Periods.FirstOrDefault(_ => _.DateStart == k.Date && _.DateEnd == k.Date);
+                    CurrentBankOperations = k;
+                }
+            }
+        }
 
         public override void RefreshData(object obj)
         {
@@ -72,7 +148,7 @@ namespace KursAM2.ViewModel.Finance
             var dtx = new BankCurrencyChangeWindowViewModel(id);
             var form = new BankCurrencyChangeView
             {
-                Owner = Application.Current.MainWindow,
+                Owner = Form,
                 DataContext = dtx
             };
             dtx.Form = form;
@@ -83,7 +159,11 @@ namespace KursAM2.ViewModel.Finance
         {
             var ctx = new BankCurrencyChangeWindowViewModel(Guid.Empty)
             {
-                Document = {BankFrom = MainReferences.BankAccounts[CurrentBankAccount.BankDC]}
+                Document =
+                {
+                    BankFrom = MainReferences.BankAccounts[CurrentBankAccount.BankDC]
+                },
+                ParentForm = this
             };
             using (var dbctx = GlobalOptions.GetEntities())
             {
@@ -102,7 +182,7 @@ namespace KursAM2.ViewModel.Finance
             }
             var form = new BankCurrencyChangeView
             {
-                Owner = Application.Current.MainWindow,
+                Owner = Form,
                 DataContext = ctx
             };
             ctx.Form = form;
@@ -190,7 +270,7 @@ namespace KursAM2.ViewModel.Finance
                 myCurrentBankAccount = value;
                 if (myCurrentBankAccount != null)
                 {
-                    Currency = MainReferences.BankAccounts[myCurrentBankAccount.BankDC].Currency;
+                    Currency = MainReferences.BankAccounts[myCurrentBankAccount.DocCode].Currency;
                     GetPeriods();
                 }
                 RaisePropertyChanged();
@@ -254,19 +334,19 @@ namespace KursAM2.ViewModel.Finance
             BankPeriodOperationsCollection.Clear();
             if (CurrentBankAccount == null) return;
             foreach (var per in
-                Manager.GetBankPeriodOperations(CurrentBankAccount.BankDC))
+                Manager.GetBankPeriodOperations(CurrentBankAccount.DocCode))
                 BankPeriodOperationsCollection.Add(per);
-            Periods.AddRange(Manager.GetRemains2(CurrentBankAccount.BankDC));
+            Periods.AddRange(Manager.GetRemains2(CurrentBankAccount.DocCode));
             RaisePropertyChanged(nameof(Periods));
             if (Form is BankOperationsView2 form) form.TreePeriods.RefreshData();
         }
 
         private void GetBankOperation()
         {
-            if (CurrentBankAccount?.BankDC == null) return;
+            if (CurrentBankAccount?.DocCode == null) return;
             BankOperationsCollection.Clear();
             var opers = Manager.GetBankOperations(CurrentPeriods.DateStart, CurrentPeriods.DateEnd,
-                CurrentBankAccount.BankDC);
+                CurrentBankAccount.DocCode);
             foreach (var op in opers)
             {
                 op.State = RowStatus.NotEdited;
@@ -274,7 +354,7 @@ namespace KursAM2.ViewModel.Finance
             }
         }
 
-        private void UpdateValueInWindow(BankOperationsViewModel k)
+        public void UpdateValueInWindow(BankOperationsViewModel k)
         {
             var bankDc = CurrentBankAccount.BankDC;
             RefreshData(null);
@@ -282,20 +362,7 @@ namespace KursAM2.ViewModel.Finance
             CurrentPeriods = Periods.FirstOrDefault(_ => _.DateStart <= k.Date && _.DateEnd >= k.Date);
             RaisePropertyChanged(nameof(Periods));
         }
-        /*<MenuItem Header="Открыть" Command="{Binding DocOpenCommand}"/>
-                                    <MenuItem Header="Добавить">
-                                        <MenuItem Header="Добавить приход/расход"
-                                                  Command="{Binding DocNewEmptyCommand}"/>
-                                        <MenuItem Header="Добавить обмен валюты"
-                                                  Command="{Binding AddCurrencyChangedCommand}" />
-                                    </MenuItem>
-                                    <MenuItem Header="Изменить документ"
-                                              Command="{Binding UpdateCurrencyChangedCommand}" />
-                                    <MenuItem Header="Копировать"
-                                              Command="{Binding DocNewCopyCommand}" />
-                                    <MenuItem Header="Удалить"
-                                              Command="{Binding RemoveCommand}" />*/
-
+  
         #endregion
     }
 }

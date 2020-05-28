@@ -75,12 +75,14 @@ namespace LayoutManager
         {
             try
             {
+                if (BaseWin == null) return;
                 Win.Height = BaseWin.FormHeight;
                 Win.Width = BaseWin.FormWidth;
                 Win.Left = BaseWin.FormLeft;
                 Win.Top = BaseWin.FormTop;
                 Win.WindowStartupLocation = BaseWin.FormStartLocation;
                 Win.WindowState = BaseWin.FormState;
+                BaseLayout.Position = 0;
                 if (LayoutControl != null) DXSerializer.Deserialize(LayoutControl, BaseLayout, "Kurs", null);
                 BaseLayout.Position = 0;
                 if (BaseControlLayouts.Count > 0)

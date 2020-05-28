@@ -24,7 +24,8 @@
                 <dxe:DateEdit EditValue="{Binding PeriodDateEnd}" Width="100" />
             </StackPanel>
         </StackPanel>
-        <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Vertical" Padding="0">
+        <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Vertical" Padding="0"
+                            dx:DXSerializer.StoreLayoutMode="All">
             <dxlc:LayoutGroup View="Tabs" Padding="0">
                 <dxlc:LayoutGroup Header="По складам" Padding="0" Margin="-6">
                     <dxlc:LayoutGroup View="GroupBox" Header="Склады" Padding="0"
@@ -46,59 +47,74 @@
                                              dx:DXSerializer.StoreLayoutMode="All"
                                              dxg:DataControlSerializationOptions.AddNewColumns="True"
                                              dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                                             ItemsSource="{Binding NomenklsForSklad, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
-                                             CurrentItem="{Binding CurrentNomenklStore, Mode=TwoWay}"
+                                             ItemsSource="{Binding NomenklsForSklad, UpdateSourceTrigger=PropertyChanged}"
+                                             CurrentItem="{Binding CurrentNomenklStore, UpdateSourceTrigger=PropertyChanged}"
                                              SelectionMode="Row"
                                              EnableSmartColumnsGeneration="True"
-                                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                             HorizontalAlignment="Stretch" 
+                                             VerticalAlignment="Stretch">
 
                                 <dxg:GridControl.Columns>
-                                    <dxg:GridColumn Header="Ном. №" FieldName="NomenklNumber" Name="tbl1_col1" />
-                                    <dxg:GridColumn Header="Наименование" FieldName="Name" Name="tbl1_col2" />
-                                    <dxg:GridColumn Header="Приход" FieldName="Prihod" Name="tbl1_col3">
+                                    <dxg:GridColumn Header="Ном. №" FieldName="NomenklNumber" Name="tbl1_col1" ReadOnly="True"/>
+                                    <dxg:GridColumn Header="Наименование" FieldName="Name" Name="tbl1_col2"  ReadOnly="True"/>
+                                    <dxg:GridColumn Header="Приход" FieldName="Prihod" Name="tbl1_col3"  ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
                                             <dxe:CalcEditSettings DisplayFormat="n2"
                                                                   MaskUseAsDisplayFormat="True"
-                                                                  AllowDefaultButton="False" />
+                                                                  AllowDefaultButton="False" IsTextEditable="False"/>
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
-                                    <dxg:GridColumn Header="Расход" FieldName="Rashod" Name="tbl1_col4">
+                                    <dxg:GridColumn Header="Расход" FieldName="Rashod" Name="tbl1_col4" ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
                                             <dxe:CalcEditSettings DisplayFormat="n2"
                                                                   MaskUseAsDisplayFormat="True"
-                                                                  AllowDefaultButton="False" />
+                                                                  AllowDefaultButton="False" 
+                                                                  IsTextEditable="False"/>
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
-                                    <dxg:GridColumn Header="Остаток" FieldName="Quantity" Name="tbl1_col6">
+                                    <dxg:GridColumn Header="Остаток" FieldName="Quantity" Name="tbl1_col6"  ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
                                             <dxe:CalcEditSettings DisplayFormat="n2"
                                                                   MaskUseAsDisplayFormat="True"
-                                                                  AllowDefaultButton="False" />
+                                                                  AllowDefaultButton="False" 
+                                                                  IsTextEditable="False"/>
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
-                                    <dxg:GridColumn Header="Валюта" FieldName="CurrencyName" Name="tbl1_col" />
+                                    <dxg:GridColumn Header="Валюта" FieldName="CurrencyName" Name="tbl1_col"  ReadOnly="True"/>
                                     <dxg:GridColumn Name="cols_3" Header="Цена (б/н)" FieldName="PriceWONaklad"
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
+                                            <dxe:CalcEditSettings DisplayFormat="n2"
+                                                                  MaskUseAsDisplayFormat="True"
+                                                                  AllowDefaultButton="False" 
+                                                                  IsTextEditable="False"/>
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
                                     <dxg:GridColumn Name="cols_4" Header="Сумма  (б/н)" FieldName="SummaWONaklad"
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
+                                            <dxe:CalcEditSettings DisplayFormat="n2"
+                                                                  MaskUseAsDisplayFormat="True"
+                                                                  AllowDefaultButton="False" 
+                                                                  IsTextEditable="False"/>
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
                                     <dxg:GridColumn Name="cols_5" Header="Цена" FieldName="Price"
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
+                                            <dxe:CalcEditSettings DisplayFormat="n2"
+                                                                  MaskUseAsDisplayFormat="True"
+                                                                  AllowDefaultButton="False" 
+                                                                  IsTextEditable="False"/>
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
                                     <dxg:GridColumn Name="cols_6" Header="Сумма" FieldName="Summa"
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
+                                            <dxe:CalcEditSettings DisplayFormat="n2"
+                                                                  MaskUseAsDisplayFormat="True"
+                                                                  AllowDefaultButton="False" 
+                                                                  IsTextEditable="False"/>
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
 
@@ -107,51 +123,49 @@
                                                     FieldName="StartQuantity"
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
+                                            <dxe:CalcEditSettings DisplayFormat="n2"
+                                                                  MaskUseAsDisplayFormat="True"
+                                                                  AllowDefaultButton="False" 
+                                                                  IsTextEditable="False"/>
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
                                     <dxg:GridColumn Name="pcols_3" Header="Сумма прихода(б/н)"
                                                     FieldName="SummaInWONaklad"
                                                     ReadOnly="True"
-                                                    Visible="{Binding IsPeriodSet, Mode=TwoWay}">
+                                                    >
                                         <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
+                                            <dxe:CalcEditSettings DisplayFormat="n2"
+                                                                  MaskUseAsDisplayFormat="True"
+                                                                  AllowDefaultButton="False" 
+                                                                  IsTextEditable="False"/>
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
                                     <dxg:GridColumn Name="pcols_4" Header="Сумма прихода" FieldName="SummaIn"
-                                                    Visible="{Binding IsPeriodSet, Mode=TwoWay}"
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
+                                            <dxe:CalcEditSettings DisplayFormat="n2"
+                                                                  MaskUseAsDisplayFormat="True"
+                                                                  AllowDefaultButton="False" 
+                                                                  IsTextEditable="False"/>
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
                                     <dxg:GridColumn Name="pcols_5" Header="Сумма расхода" FieldName="SummaOut"
-                                                    Visible="{Binding IsPeriodSet, Mode=TwoWay}"
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
+                                            <dxe:CalcEditSettings DisplayFormat="n2"
+                                                                  MaskUseAsDisplayFormat="True"
+                                                                  AllowDefaultButton="False" 
+                                                                  IsTextEditable="False"/>
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
                                     <dxg:GridColumn Name="pcols_6" Header="Сумма расхода(б/н)"
                                                     FieldName="SummaOutWONaklad"
-                                                    Visible="{Binding IsPeriodSet, Mode=TwoWay}"
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="pcols_7" Header="Итого" FieldName="Documents"
-                                                    Visible="{Binding IsPeriodSet, Mode=TwoWay}"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="pcols_8" Header="Итого(б/н)" FieldName="DocumentsWONaklad"
-                                                    Visible="{Binding IsPeriodSet, Mode=TwoWay}"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
+                                            <dxe:CalcEditSettings DisplayFormat="n2"
+                                                                  MaskUseAsDisplayFormat="True"
+                                                                  AllowDefaultButton="False" 
+                                                                  IsTextEditable="False"/>
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
                                 </dxg:GridControl.Columns>
@@ -178,10 +192,6 @@
                                                          DisplayFormat="n2" />
                                     <dxg:GridSummaryItem FieldName="SummaOutWONaklad" SummaryType="Sum"
                                                          DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="Documents" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="DocumentsWONaklad" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
                                 </dxg:GridControl.TotalSummary>
                                 <dxg:GridControl.View>
                                     <dxg:TableView x:Name="tableOstatkiView" 
@@ -193,6 +203,8 @@
                                                    RowStyle="{StaticResource FocusedRowStyle}">
                                         <dxg:TableView.ContextMenu>
                                             <ContextMenu>
+                                                <MenuItem Header="Открыть калькуляцию" Command="{Binding NomenklCalcOpenCommand}"/>
+                                                <Separator/>
                                                 <MenuItem Header="Экспорт"
                                                           Command="{Binding VisualControlExportCommand}"
                                                           CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
@@ -217,7 +229,8 @@
                                              dx:DXSerializer.StoreLayoutMode="All"
                                              dxg:DataControlSerializationOptions.AddNewColumns="True"
                                              dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                                             ItemsSource="{Binding NomenklOperations, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                             ItemsSource="{Binding NomenklOperations, UpdateSourceTrigger=PropertyChanged}"
+                                             CurrentItem="{Binding CurrentOperation, UpdateSourceTrigger=PropertyChanged}"
                                              SelectionMode="Row"
                                              EnableSmartColumnsGeneration="True"
                                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

@@ -567,9 +567,12 @@ namespace Core
                     foreach (var item in s114)
                         if (BankAccounts.ContainsKey(item.DOC_CODE))
                         {
+                            var bank = new Bank(item.SD_44);
                             var d = BankAccounts[item.DOC_CODE];
-                            d.Name = item.BA_ACC_SHORTNAME;
+                            d.Name = $"{bank.Name} Cч.№{item.BA_RASH_ACC} {MainReferences.Currencies[(decimal)item.CurrencyDC]}";
                             d.BIK = item.SD_44.POST_CODE;
+                            d.BankDC = item.BA_BANKDC;
+                            d.Bank = bank;
                             d.Account = item.BA_RASH_ACC;
                             d.CorrAccount = item.SD_44.CORRESP_ACC;
                             d.BankName = item.BA_BANK_NAME;
@@ -578,11 +581,13 @@ namespace Core
                         }
                         else
                         {
+                            var bank = new Bank(item.SD_44);
                             BankAccounts.Add(item.DOC_CODE, new BankAccount
                             {
                                 DocCode = item.DOC_CODE,
-                                BankDC = item.DOC_CODE,
-                                Name = item.BA_ACC_SHORTNAME,
+                                BankDC = item.BA_BANKDC,
+                                Bank = bank,
+                                Name = $"{bank.Name} Cч.№{item.BA_RASH_ACC} {MainReferences.Currencies[(decimal)item.CurrencyDC]}",
                                 BIK = item.SD_44.POST_CODE,
                                 Account = item.BA_RASH_ACC,
                                 CorrAccount = item.SD_44.CORRESP_ACC,
@@ -703,7 +708,8 @@ namespace Core
                         BankAccounts.Add(item.DOC_CODE, new BankAccount
                         {
                             DocCode = item.DOC_CODE,
-                            BankDC = item.DOC_CODE,
+                            BankDC = item.BA_BANKDC,
+                            Bank = new Bank(item.SD_44),
                             Name = item.BA_ACC_SHORTNAME,
                             BIK = item.SD_44.POST_CODE,
                             Account = item.BA_RASH_ACC,

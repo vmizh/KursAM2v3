@@ -14,8 +14,14 @@ namespace KursAM2.View.Logistiks
         {
             InitializeComponent();
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
-            Closing += (o, e) => { LayoutManager.Save(); };
-            Loaded += (operGridControl, e) => { LayoutManager.Load(); };
+            Closing += (o, e) =>
+            {
+                LayoutManager.Save();
+            };
+            Loaded += (operGridControl, e) =>
+            {
+                LayoutManager.Load();
+            };
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

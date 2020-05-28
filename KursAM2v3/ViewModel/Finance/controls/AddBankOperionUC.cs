@@ -37,21 +37,22 @@ namespace KursAM2.ViewModel.Finance.controls
         }
 
         // ReSharper disable once UnusedParameter.Local
-        public AddBankOperionUC(decimal docCode, BankOperationsViewModel row, BankAccount bankAcc) : this()
+        public AddBankOperionUC(decimal docCode, BankOperationsViewModel row, BankAccount bankAcc, bool isNew) : this()
         {
             BankAccount = bankAcc;
             CurrentBankOperations = new BankOperationsViewModel
             {
                 Date = DateTime.Today,
-                Currency = row.Currency ?? GlobalOptions.SystemProfile.MainCurrency,
+                Currency = bankAcc.Currency,
                 Kontragent = row.Kontragent,
+                BankOperationType = row.BankOperationType,
                 Payment = row.Payment,
                 VVT_VAL_RASHOD = row.VVT_VAL_RASHOD,
                 VVT_VAL_PRIHOD = row.VVT_VAL_PRIHOD,
                 SHPZ = row.SHPZ,
-                State = RowStatus.NewRow
+                State = isNew ? RowStatus.NewRow : RowStatus.NotEdited
             };
-            BankOperationType = BankOperationType.NotChoice;
+            //BankOperationType = BankOperationType.NotChoice;
 
             //RefreshData(docCode);
         }

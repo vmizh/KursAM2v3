@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using Core;
@@ -11,6 +10,8 @@ using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
+using Data;
+using Helper;
 using KursAM2.Managers;
 using KursAM2.View.Base;
 
@@ -50,15 +51,11 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
             }
         }
-
         public ObservableCollection<NomenklMoveOnSkladViewModel> NomenklMoveList { set; get; } =
             new ObservableCollection<NomenklMoveOnSkladViewModel>();
-
         public ObservableCollection<NomPriceDocumentViewModel> DocumentList { get; set; } =
             new ObservableCollection<NomPriceDocumentViewModel>();
-
         public List<Core.EntityViewModel.Warehouse> Sklads { set; get; } = new List<Core.EntityViewModel.Warehouse>();
-
         public NomenklMoveOnSkladViewModel CurrentNomenklMoveItem
         {
             get => myCurrentNomenklMoveItem;
@@ -74,7 +71,6 @@ namespace KursAM2.ViewModel.Logistiks
                     LoadDocuments(CurrentSklad.DocCode);
             }
         }
-
         public bool IsShowAll
         {
             get => myIsShowAll;
@@ -87,7 +83,6 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
             }
         }
-
         public Core.EntityViewModel.Warehouse CurrentSklad
         {
             get => myCurrentSklad;
@@ -99,12 +94,10 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
             }
         }
-
         public ICommand NomenklCalcOpenCommand
         {
             get { return new Command(NomenklCalcOpen, _ => CurrentNomenklMoveItem != null); }
         }
-
         public DateTime StartDate
         {
             set
@@ -122,7 +115,6 @@ namespace KursAM2.ViewModel.Logistiks
                 return myStartDate;
             }
         }
-
         public DateTime EndDate
         {
             set
@@ -140,12 +132,10 @@ namespace KursAM2.ViewModel.Logistiks
                 return myEndDate;
             }
         }
-
         public new Command DocumentOpenCommand
         {
             get { return new Command(DocumentOpen, param => IsDocumentOpenAllow); }
         }
-
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
         private void LoadDocuments()
@@ -229,10 +219,8 @@ namespace KursAM2.ViewModel.Logistiks
                                              doc.DDT_KOL_PRIHOD;
                         newItem.Note = doc.SD_24.DD_NOTES;
                     }
-
                     DocumentList.Add(newItem);
                 }
-
                 docs = ctx.TD_24
                     .Include(_ => _.SD_24)
                     .Include(_ => _.SD_24.SD_201)
@@ -317,7 +305,6 @@ namespace KursAM2.ViewModel.Logistiks
             DocumentList.Clear();
             while (!MainReferences.IsReferenceLoadComplete)
             {
-
             }
             if (CurrentNomenklMoveItem == null || storeDC == 0) return;
             using (var ctx = GlobalOptions.GetEntities())
@@ -400,10 +387,8 @@ namespace KursAM2.ViewModel.Logistiks
                                              doc.DDT_KOL_PRIHOD;
                         newItem.Note = doc.SD_24.DD_NOTES;
                     }
-
                     DocumentList.Add(newItem);
                 }
-
                 docs = ctx.TD_24
                     .Include(_ => _.SD_24)
                     .Include(_ => _.SD_24.SD_201)
@@ -492,182 +477,221 @@ namespace KursAM2.ViewModel.Logistiks
             dlg.ShowDialog();
         }
 
-        private void LoadForCurrentSklad()
+        private void LoadForCurrentSklad2()
         {
-            List<decimal> NomDCs;
             NomenklMoveList.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var dd = StartDate.AddDays(-1);
-                var prcData = ctx.NOM_PRICE.ToList();
-                var data = ctx.NomenklMoveForCalc.Where(_ => _.StoreDC == CurrentSklad.DocCode).ToList();
-                NomDCs = data.Select(_ => _.NomDC).Distinct().ToList();
-                foreach (var dc in NomDCs)
+                var sql1 = "SELECT  NomDC ,Date ,StoreDC ,Start ,Prihod ,Rashod ,Nakopit ," +
+                           "SummaIn ,SummaNakladIn ,SummaOut ,SummaNakladOut ,Price ," +
+                           "PriceWithNaklad " +
+                           "FROM dbo.NomenklMoveStore n1 " +
+                           $"WHERE StoreDC = {CustomFormat.DecimalToSqlDecimal(CurrentSklad.DOC_CODE)} " +
+                           "AND n1.Date = (SELECT MAX(n2.Date) FROM NomenklMoveForCalc n2  " +
+                           "WHERE n1.NomDC = n2.NomDC  AND n1.StoreDC = n2.StoreDC  " +
+                           $"AND n2.Date <= '{CustomFormat.DateToString(StartDate)}') " +
+                           "AND n1.Nakopit != 0 " +
+                           "UNION " +
+                           "SELECT  NomDC ,Date ,StoreDC ,Start ,Prihod ,Rashod ," +
+                           "Nakopit ,SummaIn ,SummaNakladIn ," +
+                           "SummaOut ,SummaNakladOut ,Price ,PriceWithNaklad " +
+                           "FROM NomenklMoveStore " +
+                           $"WHERE StoreDC = {CustomFormat.DecimalToSqlDecimal(CurrentSklad.DOC_CODE)} " +
+                           $"AND Date >= '{CustomFormat.DateToString(StartDate)}' " +
+                           $"AND Date <= '{CustomFormat.DateToString(EndDate)}'";
+                var data = ctx.Database.SqlQuery<NomenklMoveStore>(sql1).ToList();
+                var nomList = data.Select(_ => _.NomDC).Distinct().ToList();
+                foreach (var dc in nomList)
                 {
-                    var dsstart = prcData.Where(_ => _.NOM_DC == dc && _.DATE <= dd);
-                    var dstart = dsstart.Any() ? dsstart.Max(_ => _.DATE) : new DateTime(2000, 1, 1);
-                    var dsend = prcData.Where(_ => _.NOM_DC == dc && _.DATE <= EndDate);
-                    var dend = dsend.Any() ? dsend.Max(_ => _.DATE) : new DateTime(2000, 1, 1);
-                    var dstart1 = dstart;
-                    var prcstart = prcData.FirstOrDefault(_ => _.NOM_DC == dc && _.DATE == dstart1);
-                    var dend1 = dend;
-                    var prcend = prcData.FirstOrDefault(_ => _.NOM_DC == dc && _.DATE == dend1);
-                    var prcsum =
-                        data.Where(_ => _.NomDC == dc && _.Date >= StartDate && _.Date <= EndDate)
-                            .ToList();
-                    var nomStart = data.Where(_ => _.NomDC == dc && _.Date < StartDate).Sum(s => s.Prihod - s.Rashod);
-                    var nomEnd = data.Where(_ => _.NomDC == dc && _.Date <= EndDate).Sum(s => s.Prihod - s.Rashod);
-                    var nomIn = data.Where(_ => _.NomDC == dc && _.Date >= StartDate && _.Date <= EndDate)
-                        .Sum(s => s.Prihod);
-                    var nomOut = data.Where(_ => _.NomDC == dc && _.Date >= StartDate && _.Date <= EndDate)
-                        .Sum(s => s.Rashod);
+                    //if (dc == 10830000587)
+                    //{
+                    //    var i = 1;
+                    //}
+                    var dtemp = data.Where(_ => _.NomDC == dc).ToList();
+                    var kolIn = (decimal) dtemp.Where(_ => _.Date >= StartDate && _.Date <= EndDate).Sum(_ => _.Prihod);
+                    var kolOut = (decimal) dtemp.Where(_ => _.Date >= StartDate && _.Date <= EndDate)
+                        .Sum(_ => _.Rashod);
+                    var dStartrows = dtemp.Where(_ => _.Date <= StartDate);
+                    var dEnd = dtemp.Where(_ => _.Date <= EndDate).Max(_ => _.Date);
+                    var datarow = dtemp.First(_ => _.Date == dEnd);
+                    decimal start, pricestart = 0;
+                    if (dStartrows.Any())
+                    {
+                        var dt = dStartrows.Max(d => d.Date);
+                        if (dt < StartDate)
+                        {
+                            start = (decimal) dtemp.First(_ => _.Date == dt).Nakopit;
+                            pricestart = dtemp.First(_ => _.Date == dt).Price;
+                        }
+                        else
+                        {
+                            start = (decimal) dtemp.First(_ => _.Date == dt).Start;
+                        }
+                    }
+                    else
+                    {
+                        start = 0;
+                    }
+                    var summaIn = (decimal) dtemp.Where(_ => _.Date >= StartDate && _.Date <= EndDate)
+                        .Sum(_ => _.SummaIn);
+                    var summaOut = (decimal) dtemp.Where(_ => _.Date >= StartDate && _.Date <= EndDate)
+                        .Sum(_ => _.SummaOut);
+                    
+                    if (start == 0 && kolIn == 0 && kolOut == 0 && datarow.Nakopit == 0) continue;
                     var newitem = new NomenklMoveOnSkladViewModel
                     {
                         Nomenkl = MainReferences.GetNomenkl(dc),
-                        PriceStart = prcstart?.PRICE_WO_NAKLAD ?? 0,
-                        PriceEnd = prcend?.PRICE_WO_NAKLAD ?? 0,
-                        QuantityEnd = nomEnd,
-                        QuantityStart = nomStart,
-                        QuantityIn = nomIn,
-                        QuantityOut = nomOut
+                        PriceStart = pricestart,
+                        PriceEnd = datarow.Price,
+                        QuantityEnd = (decimal) datarow.Nakopit,
+                        QuantityStart = start,
+                        QuantityIn = kolIn,
+                        QuantityOut = kolOut
                     };
-                    if (newitem.QuantityStart == 0 && newitem.QuantityEnd == 0 && newitem.QuantityIn == 0 &&
-                        newitem.QuantityOut == 0) continue;
                     if (newitem.CurrencyName == "RUR" || newitem.CurrencyName == "RUB")
                     {
                         newitem.SummaRUBStart = newitem.PriceStart * newitem.QuantityStart;
                         newitem.SummaRUBEnd = newitem.PriceEnd * newitem.QuantityEnd;
-                        newitem.SummaRUBIn = prcsum.Where(_ => _.OperType == "InnerMove")
-                                                 .Sum(_ => _.Prihod * newitem.PriceEnd)
-                                             + prcsum.Where(_ => _.OperType == "Prihod")
-                                                 .Sum(_ => _.Prihod * newitem.PriceEnd);
-                        newitem.SummaRUBOut = prcsum.Sum(_ => _.Prihod * newitem.PriceEnd);
+                        newitem.SummaRUBIn = summaIn;
+                        newitem.SummaRUBOut = summaOut;
                     }
-
                     if (newitem.CurrencyName == "USD")
                     {
                         newitem.SummaUSDStart = newitem.PriceStart * newitem.QuantityStart;
                         newitem.SummaUSDEnd = newitem.PriceEnd * newitem.QuantityEnd;
-                        newitem.SummaUSDIn = prcsum.Where(_ => _.OperType == "InnerMove")
-                                                 .Sum(_ => _.Prihod * newitem.PriceEnd)
-                                             + prcsum.Where(_ => _.OperType == "Prihod")
-                                                 .Sum(_ => _.Prihod * newitem.PriceEnd);
-                        newitem.SummaUSDOut = prcsum.Sum(_ => _.Prihod * newitem.PriceEnd);
+                        newitem.SummaUSDIn = summaIn;
+                        newitem.SummaUSDOut = summaOut;
                     }
-
                     if (newitem.CurrencyName == "EUR")
                     {
                         newitem.SummaEURStart = newitem.PriceStart * newitem.QuantityStart;
                         newitem.SummaEUREnd = newitem.PriceEnd * newitem.QuantityEnd;
-                        newitem.SummaEURIn = prcsum.Where(_ => _.OperType == "InnerMove")
-                                                 .Sum(_ => _.Prihod * newitem.PriceEnd)
-                                             + prcsum.Where(_ => _.OperType == "Prihod")
-                                                 .Sum(_ => _.Prihod * newitem.PriceEnd);
-                        newitem.SummaEUROut = prcsum.Sum(_ => _.Prihod * newitem.PriceEnd);
+                        newitem.SummaEURIn = summaIn;
+                        newitem.SummaEUROut = summaOut;
                     }
-
                     if (newitem.CurrencyName != "RUR" && newitem.CurrencyName != "RUB" &&
                         newitem.CurrencyName != "USD" &&
                         newitem.CurrencyName != "EUR")
                     {
                         newitem.SummaAllStart = newitem.PriceStart * newitem.QuantityStart;
                         newitem.SummaAllEnd = newitem.PriceEnd * newitem.QuantityEnd;
-                        newitem.SummaAllIn = prcsum.Where(_ => _.OperType == "InnerMove")
-                                                 .Sum(_ => _.Prihod * newitem.PriceEnd)
-                                             + prcsum.Where(_ => _.OperType == "Prihod")
-                                                 .Sum(_ => _.Prihod * newitem.PriceEnd);
-                        newitem.SummaAllOut = prcsum.Sum(_ => _.Prihod * newitem.PriceEnd);
+                        newitem.SummaAllIn = summaIn;
+                        newitem.SummaAllOut = summaOut;
                     }
-
                     NomenklMoveList.Add(newitem);
                 }
             }
         }
 
-        private void LoadForAllSklads()
+        private void LoadForAllSklads2()
         {
             NomenklMoveList.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var dd = StartDate.AddDays(-1);
-                var prcData = ctx.NOM_PRICE.ToList();
-                var NomDCs = prcData.Select(_ => _.NOM_DC).Distinct().ToList();
-                foreach (var dc in NomDCs)
+                var sql = "SELECT  NomDC ,Date ,Start ,Prihod ,Rashod ,Nakopit ,SummaIn ," +
+                          "SummaNakladIn ,SummaOut ,SummaNakladOut ,Price ," +
+                          "PriceWithNaklad " +
+                          "FROM dbo.NomenklMove n1 " +
+                          "WHERE n1.Date = (SELECT MAX(n2.Date)  " +
+                          "FROM NomenklMoveForCalc n2  " +
+                          $"WHERE n1.NomDC = n2.NomDC  AND n2.Date <= '{CustomFormat.DateToString(StartDate)}') " +
+                          "AND n1.Nakopit != 0 " +
+                          "UNION " +
+                          "SELECT  NomDC ,Date ,Start ,Prihod ,Rashod ,Nakopit ," +
+                          "SummaIn ,SummaNakladIn ,SummaOut ,SummaNakladOut ,Price , PriceWithNaklad " +
+                          "FROM NomenklMove " +
+                          $"WHERE Date >= '{CustomFormat.DateToString(StartDate)}' " +
+                          $"AND Date <= '{CustomFormat.DateToString(EndDate)}'";
+                var data = ctx.Database.SqlQuery<NomenklMove>(sql).ToList();
+                var nomList = data.Select(_ => _.NomDC).Distinct().ToList();
+                foreach (var dc in nomList)
                 {
-                    var dsstart = prcData.Where(_ => _.NOM_DC == dc && _.DATE <= dd);
-                    var dstart = dsstart.Any() ? dsstart.Max(_ => _.DATE) : new DateTime(2000, 1, 1);
-                    var dsend = prcData.Where(_ => _.NOM_DC == dc && _.DATE <= EndDate);
-                    var dend = dsend.Any() ? dsend.Max(_ => _.DATE) : new DateTime(2000, 1, 1);
-                    var dstart1 = dstart;
-                    var prcstart = prcData.FirstOrDefault(_ => _.NOM_DC == dc && _.DATE == dstart1);
-                    var dend1 = dend;
-                    var prcend = prcData.FirstOrDefault(_ => _.NOM_DC == dc && _.DATE == dend1);
-                    var prcsum =
-                        prcData.Where(_ => _.NOM_DC == dc && _.DATE >= StartDate && _.DATE <= EndDate)
-                            .ToList();
+                    var dtemp = data.Where(_ => _.NomDC == dc).ToList();
+                    var kolIn = (decimal) dtemp.Where(_ => _.Date >= StartDate && _.Date <= EndDate).Sum(_ => _.Prihod);
+                    var kolOut = (decimal) dtemp.Where(_ => _.Date >= StartDate && _.Date <= EndDate)
+                        .Sum(_ => _.Rashod);
+                    var dStartrows = dtemp.Where(_ => _.Date <= StartDate);
+                    var dEnd = dtemp.Where(_ => _.Date <= EndDate).Max(_ => _.Date);
+                    var datarow = dtemp.First(_ => _.Date == dEnd);
+                    decimal start, pricestart = 0;
+                    if (dStartrows.Any())
+                    {
+                        var dt = dStartrows.Max(d => d.Date);
+                        if (dt < StartDate)
+                        {
+                            start = (decimal) dtemp.First(_ => _.Date == dt).Nakopit;
+                            pricestart = dtemp.First(_ => _.Date == dt).Price;
+                        }
+                        else
+                        {
+                            start = (decimal) dtemp.First(_ => _.Date == dt).Start;
+                        }
+                    }
+                    else
+                    {
+                        start = 0;
+                    }
+                    var summaIn = (decimal) dtemp.Where(_ => _.Date >= StartDate && _.Date <= EndDate)
+                        .Sum(_ => _.SummaIn);
+                    var summaOut = (decimal) dtemp.Where(_ => _.Date >= StartDate && _.Date <= EndDate)
+                        .Sum(_ => _.SummaOut);
+                    if (start == 0 && kolIn == 0 && kolOut == 0 && datarow.Nakopit == 0) continue;
                     var newitem = new NomenklMoveOnSkladViewModel
                     {
                         Nomenkl = MainReferences.GetNomenkl(dc),
-                        PriceStart = prcstart?.PRICE_WO_NAKLAD ?? 0,
-                        PriceEnd = prcend?.PRICE_WO_NAKLAD ?? 0,
-                        QuantityEnd = prcend?.NAKOPIT ?? 0,
-                        QuantityStart = prcstart?.NAKOPIT ?? 0,
-                        QuantityIn = prcsum.Sum(_ => _.KOL_IN),
-                        QuantityOut = prcsum.Sum(_ => _.KOL_OUT)
+                        PriceStart = pricestart,
+                        PriceEnd = datarow.Price,
+                        QuantityEnd = (decimal) datarow.Nakopit,
+                        QuantityStart = start,
+                        QuantityIn = kolIn,
+                        QuantityOut = kolOut
                     };
-                    if (newitem.QuantityStart == 0 && newitem.QuantityEnd == 0 && newitem.QuantityIn == 0 &&
-                        newitem.QuantityOut == 0) continue;
                     if (newitem.CurrencyName == "RUR" || newitem.CurrencyName == "RUB")
                     {
                         newitem.SummaRUBStart = newitem.PriceStart * newitem.QuantityStart;
                         newitem.SummaRUBEnd = newitem.PriceEnd * newitem.QuantityEnd;
-                        newitem.SummaRUBIn = prcsum.Sum(_ => _.SUM_IN_WO_NAKLAD);
-                        newitem.SummaRUBOut = prcsum.Sum(_ => _.SUM_OUT_WO_NAKLAD);
+                        newitem.SummaRUBIn = summaIn;
+                        newitem.SummaRUBOut = summaOut;
                     }
-
                     if (newitem.CurrencyName == "USD")
                     {
                         newitem.SummaUSDStart = newitem.PriceStart * newitem.QuantityStart;
                         newitem.SummaUSDEnd = newitem.PriceEnd * newitem.QuantityEnd;
-                        newitem.SummaUSDIn = prcsum.Sum(_ => _.SUM_IN_WO_NAKLAD);
-                        newitem.SummaUSDOut = prcsum.Sum(_ => _.SUM_OUT_WO_NAKLAD);
+                        newitem.SummaUSDIn = summaIn;
+                        newitem.SummaUSDOut = summaOut;
                     }
-
                     if (newitem.CurrencyName == "EUR")
                     {
                         newitem.SummaEURStart = newitem.PriceStart * newitem.QuantityStart;
                         newitem.SummaEUREnd = newitem.PriceEnd * newitem.QuantityEnd;
-                        newitem.SummaEURIn = prcsum.Sum(_ => _.SUM_IN_WO_NAKLAD);
-                        newitem.SummaEUROut = prcsum.Sum(_ => _.SUM_OUT_WO_NAKLAD);
+                        newitem.SummaEURIn = summaIn;
+                        newitem.SummaEUROut = summaOut;
                     }
-
                     if (newitem.CurrencyName != "RUR" && newitem.CurrencyName != "RUB" &&
                         newitem.CurrencyName != "USD" &&
                         newitem.CurrencyName != "EUR")
                     {
                         newitem.SummaAllStart = newitem.PriceStart * newitem.QuantityStart;
                         newitem.SummaAllEnd = newitem.PriceEnd * newitem.QuantityEnd;
-                        newitem.SummaAllIn = prcsum.Sum(_ => _.SUM_IN_WO_NAKLAD);
-                        newitem.SummaAllOut = prcsum.Sum(_ => _.SUM_OUT_WO_NAKLAD);
+                        newitem.SummaAllIn = summaIn;
+                        newitem.SummaAllOut = summaOut;
                     }
-
-                    if (IsShowAll)
-                        NomenklMoveList.Add(newitem);
-                    else if (newitem.QuantityStart != 0 || newitem.QuantityEnd != 0)
-                        NomenklMoveList.Add(newitem);
+                    NomenklMoveList.Add(newitem);
                 }
             }
         }
 
         private void LoadReferences()
         {
-            Sklads.Add(new Core.EntityViewModel.Warehouse
+            using (var ctx = GlobalOptions.GetEntities())
             {
-                DOC_CODE = 0,
-                Name = "Все склады"
-            });
-            foreach (var s in MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList())
-                Sklads.Add(s);
+                var sql = "SELECT DISTINCT storeDC FROM NomenklMoveForCalc nmfc " +
+                          "INNER JOIN HD_27 h ON h.DOC_CODE = nmfc.StoreDC " +
+                          "INNER JOIN  EXT_USERS U ON U.USR_ID = H.USR_ID " +
+                          $"AND UPPER(U.USR_NICKNAME) = UPPER('{GlobalOptions.UserInfo.NickName}')";
+                var skls = ctx.Database.SqlQuery<decimal>(sql);
+                foreach (var s in skls) Sklads.Add(MainReferences.Warehouses[s]);
+            }
             RaisePropertiesChanged(nameof(Sklads));
         }
 
@@ -675,11 +699,10 @@ namespace KursAM2.ViewModel.Logistiks
         {
             DocumentList.Clear();
             NomenklMoveList.Clear();
-            if (CurrentSklad == null) return;
-            if (CurrentSklad.DocCode == 0)
-                LoadForAllSklads();
+            if (CurrentSklad == null || CurrentSklad.DocCode == 0)
+                LoadForAllSklads2();
             else
-                LoadForCurrentSklad();
+                LoadForCurrentSklad2();
         }
 
         public override void DocumentOpen(object obj)
@@ -693,7 +716,8 @@ namespace KursAM2.ViewModel.Logistiks
                     DocumentsOpenManager.Open(DocumentType.StoreOrderIn, CurrentDocument.DocCode);
                     break;
                 case "Акт валютной конвертации товара":
-                    DocumentsOpenManager.Open(DocumentType.NomenklTransfer, CurrentDocument.DocCode, CurrentDocument.Id);
+                    DocumentsOpenManager.Open(DocumentType.NomenklTransfer, CurrentDocument.DocCode,
+                        CurrentDocument.Id);
                     break;
             }
         }

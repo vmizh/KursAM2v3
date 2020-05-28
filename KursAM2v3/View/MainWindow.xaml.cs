@@ -346,7 +346,7 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Калькуляция себестоимости":
-                        var ctxost1 = new NomenklCostCalculatorWindowViewModel();
+                        var ctxost1 = new NomenklCostCalculatorWindowViewModel(null);
                         form = new NomenklCostCalculator
                         {
                             Owner = Application.Current.MainWindow,

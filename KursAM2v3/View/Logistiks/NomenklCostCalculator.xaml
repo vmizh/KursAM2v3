@@ -21,7 +21,7 @@
                         AutoPopulateColumns="False"
                         DisplayMember="Name"
                         ValueMember="DocCode"
-                        ItemsSource="{Binding Nomenkls}"
+                        ItemsSource="{Binding Nomenkls,UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding SelectedNomenkl, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Left"
@@ -59,9 +59,16 @@
                 </StackPanel>
             </dxlc:LayoutItem>
         </StackPanel>
-        <dxlc:LayoutControl Name="mainLayoutControl" Orientation="Vertical" Padding="0">
-            <dxlc:LayoutGroup Orientation="Vertical">
-                <dxlc:LayoutGroup Header="Операции" View="GroupBox" dxlc:LayoutControl.AllowVerticalSizing="True">
+        <dxlc:LayoutControl Name="mainLayoutControl" 
+                            Orientation="Vertical" 
+                            Padding="0"
+                            dx:DXSerializer.StoreLayoutMode="All">
+            <dxlc:LayoutGroup Orientation="Vertical"
+                              Name="LayoutGroupMain">
+                <dxlc:LayoutGroup Header="Операции" 
+                                  View="GroupBox" 
+                                  Name="LayoutGroup1"
+                                  dxlc:LayoutControl.AllowVerticalSizing="True">
                     <dxg:GridControl Name="operGridControl"
                                      Margin="-8"
                                      AutoGenerateColumns="None"
@@ -193,7 +200,9 @@
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>
-                <dxlc:LayoutGroup Header="Остатки по складам" View="GroupBox"
+                <dxlc:LayoutGroup Header="Остатки по складам" 
+                                  View="GroupBox"
+                                  Name="LayoutGroup2"
                                   dxlc:LayoutControl.AllowHorizontalSizing="True">
                     <dxg:GridControl
                         Name="skladGridControl"
@@ -201,17 +210,17 @@
                         MaxHeight="10000"
                         MaxWidth="10000"
                         Margin="-8"
-                        dx:DXSerializer.SerializationID="gridSklad"
+                        dx:DXSerializer.SerializationID="gridSklad1"
                         dx:DXSerializer.StoreLayoutMode="All"
                         dxg:DataControlSerializationOptions.AddNewColumns="True"
                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                        ItemsSource="{Binding SkladOstatki, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                        ItemsSource="{Binding SkladOstatki, UpdateSourceTrigger=PropertyChanged}"
                         SelectionMode="Row"
                         EnableSmartColumnsGeneration="True"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch">
                         <dxg:GridControl.Columns>
-                            <dxg:GridColumn Name="cols_1_1" Header="Склад" FieldName="WarehouseInName" ReadOnly="True" />
+                            <dxg:GridColumn Name="cols_1_1" Header="Склад" FieldName="StoreName" ReadOnly="True" />
                             <dxg:GridColumn Name="cols_2" Header="Кол-во" FieldName="Quantity" ReadOnly="True">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:TextEditSettings DisplayFormat="n2" />
