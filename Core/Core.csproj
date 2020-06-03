@@ -148,6 +148,7 @@
     <Compile Include="Finance\InvoicePaymentDocument.cs" />
     <Compile Include="Helper\TypeProfitAndLossCalc.cs" />
     <Compile Include="Helper\MultyCurrencyHelper.cs" />
+    <Compile Include="ViewModel\Common\BankAccount.cs" />
     <Compile Include="ViewModel\KursButton.cs" />
     <Compile Include="ViewModel\Common\ICheckViewModel.cs" />
     <Compile Include="ViewModel\Common\Money.cs" />
@@ -189,7 +190,7 @@
     <Compile Include="ViewModel\Base\CurrencyCode.cs" />
     <Compile Include="ViewModel\Base\EntityLoadCodition.cs" />
     <Compile Include="ViewModel\Base\IDataUserControl.cs" />
-    <Compile Include="ViewModel\Common\BankAccount.cs" />
+    <Compile Include="ViewModel\Common\BankAccount2.cs" />
     <Compile Include="ViewModel\Common\CrossCurrencyRate.cs" />
     <Compile Include="Helper\DataAnnotationForFluentApiBase.cs" />
     <Compile Include="ViewModel\Common\Kontragent.cs" />

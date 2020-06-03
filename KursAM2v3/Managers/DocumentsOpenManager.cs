@@ -183,11 +183,11 @@ namespace KursAM2.Managers
 
         private static void OpenBank(RSWindowViewModelBase vm)
         {
-            var form = new BankOperationsView
+            var form = new BankOperationsView2
             {
                 Owner = Application.Current.MainWindow
             };
-            var dtx = new BankOperationsWindowViewModel(form);
+            var dtx = new BankOperationsWindowViewModel2(form);
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var d = ctx.TD_101.Include(_ => _.SD_101).FirstOrDefault(_ => _.CODE == vm.Code);
@@ -210,11 +210,11 @@ namespace KursAM2.Managers
 
         private static void OpenBank(decimal dc)
         {
-            var form = new BankOperationsView
+            var form = new BankOperationsView2
             {
                 Owner = Application.Current.MainWindow
             };
-            var dtx = new BankOperationsWindowViewModel(form);
+            var dtx = new BankOperationsWindowViewModel2(form);
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var d = ctx.TD_101.Include(_ => _.SD_101).FirstOrDefault(_ => _.CODE == dc);

@@ -9,6 +9,7 @@ using Core;
 using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Core.ViewModel.Common;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -68,11 +69,11 @@ namespace KursAM2.ViewModel.Finance
             {
                 var k = StandartDialogs.OpenBankOperation(CurrentBankAccount.DocCode,
                     CurrentBankOperations,
-                    MainReferences.BankAccounts[CurrentBankAccount.BankDC]);
+                    MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
                 if (k != null)
                 {
                     k.State = RowStatus.Edited;
-                    Manager.SaveBankOperations(k, CurrentBankAccount.BankDC, 0);
+                    Manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
                     BankOperationsCollection.Add(k);
                     BankOperationsCollection.First(_ => _.DOC_CODE == k.DOC_CODE && _.Code == k.Code).State =
                         RowStatus.NotEdited;
@@ -88,11 +89,11 @@ namespace KursAM2.ViewModel.Finance
             if (CurrentBankAccount != null)
             {
                 var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode, new BankOperationsViewModel(),
-                    MainReferences.BankAccounts[CurrentBankAccount.BankDC]);
+                    MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
                 if (k != null)
                 {
                     k.State = RowStatus.NewRow;
-                    Manager.SaveBankOperations(k, CurrentBankAccount.BankDC, 0);
+                    Manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
                     BankOperationsCollection.Add(k);
                     BankOperationsCollection.First(_ => _.DOC_CODE == k.DOC_CODE && _.Code == k.Code).State =
                         RowStatus.NotEdited;
@@ -110,7 +111,17 @@ namespace KursAM2.ViewModel.Finance
             if (CurrentBankAccount != null)
                 bs = CurrentBankAccount.DocCode;
             BankOperationsCollection.Clear();
-            BankAccountCollection = new ObservableCollection<BankStatements>(Manager.GetBankStatements());
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var cashAcc = ctx.Database.SqlQuery<MainReferences.AccessRight>(
+                        $"SELECT DOC_CODE AS DocCode, USR_ID as UserId FROM HD_114 WHERE USR_ID = {GlobalOptions.UserInfo.Id}")
+                    .ToList();
+                foreach (var b in MainReferences.BankAccounts.Values)
+                {
+                    if(cashAcc.Any(_ => _.DocCode == b.DocCode))
+                        BankAccountCollection.Add(b);
+                }
+            }
             RaisePropertiesChanged(nameof(BankAccountCollection));
             CurrentBankAccount = BankAccountCollection.FirstOrDefault(_ => _.DocCode == bs);
             if (CurrentBankAccount != null)
@@ -161,7 +172,7 @@ namespace KursAM2.ViewModel.Finance
             {
                 Document =
                 {
-                    BankFrom = MainReferences.BankAccounts[CurrentBankAccount.BankDC]
+                    BankFrom = MainReferences.BankAccounts[CurrentBankAccount.DocCode]
                 },
                 ParentForm = this
             };
@@ -171,7 +182,7 @@ namespace KursAM2.ViewModel.Finance
                 {
                     var data = dbctx.TD_101
                         .Include(_ => _.SD_101)
-                        .Where(_ => _.SD_101.VV_ACC_DC == CurrentBankAccount.BankDC).Select(_ => _.VVT_CRS_DC)
+                        .Where(_ => _.SD_101.VV_ACC_DC == CurrentBankAccount.DocCode).Select(_ => _.VVT_CRS_DC)
                         .Distinct().ToList();
                     if (data.Count > 0) ctx.Document.CurrencyFrom = MainReferences.Currencies[data.First()];
                 }
@@ -192,7 +203,7 @@ namespace KursAM2.ViewModel.Finance
         public override void DocDelete(object obj)
         {
             var date = CurrentBankOperations.Date;
-            Manager.DeleteBankOperations(CurrentBankOperations, CurrentBankAccount.BankDC);
+            Manager.DeleteBankOperations(CurrentBankOperations, CurrentBankAccount.DocCode);
             UpdateValueInWindow(CurrentBankOperations);
             var dd = Periods.Where(_ => _.DateStart <= date && _.PeriodType == PeriodType.Day)
                 .Max(_ => _.DateStart);
@@ -206,11 +217,11 @@ namespace KursAM2.ViewModel.Finance
             if (CurrentBankAccount != null)
             {
                 var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode, CurrentBankOperations,
-                    MainReferences.BankAccounts[CurrentBankAccount.BankDC]);
+                    MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
                 if (k != null)
                 {
                     k.State = RowStatus.NewRow;
-                    Manager.SaveBankOperations(k, CurrentBankAccount.BankDC, 0);
+                    Manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
                     BankOperationsCollection.Add(k);
                     BankOperationsCollection.First(_ => _.DOC_CODE == k.DOC_CODE && _.Code == k.Code).State =
                         RowStatus.NotEdited;
@@ -250,8 +261,8 @@ namespace KursAM2.ViewModel.Finance
 
         public List<ReminderDatePeriod> Periods { set; get; } =
             new List<ReminderDatePeriod>();
-        public ObservableCollection<BankStatements> BankAccountCollection { set; get; } =
-            new ObservableCollection<BankStatements>();
+        public ObservableCollection<BankAccount> BankAccountCollection { set; get; } =
+            new ObservableCollection<BankAccount>();
         public ObservableCollection<BankOperationsViewModel> BankOperationsCollection { set; get; } =
             new ObservableCollection<BankOperationsViewModel>();
         public ObservableCollection<BankPeriodsOperationsViewModel> BankPeriodOperationsCollection { set; get; } =
@@ -260,8 +271,8 @@ namespace KursAM2.ViewModel.Finance
             CurrentBankOperations != null && !CurrentBankOperations.IsCurrencyChange;
         public override bool IsDocDeleteAllow =>
             CurrentBankOperations != null && !CurrentBankOperations.IsCurrencyChange;
-        private BankStatements myCurrentBankAccount;
-        public BankStatements CurrentBankAccount
+        private BankAccount myCurrentBankAccount;
+        public BankAccount CurrentBankAccount
         {
             set
             {
@@ -303,7 +314,7 @@ namespace KursAM2.ViewModel.Finance
                 {
                     var delta = Convert.ToDecimal(myCurrentBankOperations.DeltaPrihod -
                                                   myCurrentBankOperations.DeltaRashod);
-                    Manager.SaveBankOperations(myCurrentBankOperations, CurrentBankAccount.BankDC, delta);
+                    Manager.SaveBankOperations(myCurrentBankOperations, CurrentBankAccount.DocCode, delta);
                     myCurrentBankOperations.State = RowStatus.NotEdited;
                 }
                 myCurrentBankOperations = value;
@@ -333,9 +344,9 @@ namespace KursAM2.ViewModel.Finance
             BankOperationsCollection.Clear();
             BankPeriodOperationsCollection.Clear();
             if (CurrentBankAccount == null) return;
-            foreach (var per in
-                Manager.GetBankPeriodOperations(CurrentBankAccount.DocCode))
-                BankPeriodOperationsCollection.Add(per);
+            //foreach (var per in
+            //    Manager.GetBankPeriodOperations(CurrentBankAccount.DocCode))
+            //    BankPeriodOperationsCollection.Add(per);
             Periods.AddRange(Manager.GetRemains2(CurrentBankAccount.DocCode));
             RaisePropertyChanged(nameof(Periods));
             if (Form is BankOperationsView2 form) form.TreePeriods.RefreshData();
@@ -356,9 +367,9 @@ namespace KursAM2.ViewModel.Finance
 
         public void UpdateValueInWindow(BankOperationsViewModel k)
         {
-            var bankDc = CurrentBankAccount.BankDC;
+            var bankDc = CurrentBankAccount.DocCode;
             RefreshData(null);
-            CurrentBankAccount = BankAccountCollection.FirstOrDefault(_ => _.BankDC == bankDc);
+            CurrentBankAccount = BankAccountCollection.FirstOrDefault(_ => _.DocCode == bankDc);
             CurrentPeriods = Periods.FirstOrDefault(_ => _.DateStart <= k.Date && _.DateEnd >= k.Date);
             RaisePropertyChanged(nameof(Periods));
         }

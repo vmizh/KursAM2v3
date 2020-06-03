@@ -6,6 +6,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
+using JetBrains.Annotations;
 using KursAM2.ViewModel.Reference.Dialogs;
 using LayoutManager;
 
@@ -16,7 +17,7 @@ namespace KursAM2.View.DialogUserControl
     /// </summary>
     public partial class StandartDialogSelectTwoTableUC : IDataUserControl, ILayout
     {
-        public StandartDialogSelectTwoTableUC(string layoutName)
+        public StandartDialogSelectTwoTableUC([NotNull]string layoutName)
         {
             LayoutName = layoutName;
             InitializeComponent();
@@ -32,7 +33,7 @@ namespace KursAM2.View.DialogUserControl
         public string LayoutManagerName { get; set; }
         public void ResetLayot()
         {
-            throw new NotImplementedException();
+            LayoutManager.ResetLayout();
         }
 
         private void CashSelectDialogUC_Unloaded(object sender, RoutedEventArgs e)

@@ -55,8 +55,12 @@ namespace KursAM2.ViewModel.Reference
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    foreach (var c in ctx.SD_27)
-                        ObjectCollection.Add(new Warehouse(c));
+                    var sql = "SELECT DISTINCT storeDC FROM NomenklMoveForCalc nmfc " +
+                              "INNER JOIN HD_27 h ON h.DOC_CODE = nmfc.StoreDC " +
+                              "INNER JOIN  EXT_USERS U ON U.USR_ID = H.USR_ID " +
+                              $"AND UPPER(U.USR_NICKNAME) = UPPER('{GlobalOptions.UserInfo.NickName}')";
+                    var skls = ctx.Database.SqlQuery<decimal>(sql);
+                    foreach (var s in skls) ObjectCollection.Add(MainReferences.Warehouses[s]);
                 }
             }
             catch (Exception ex)

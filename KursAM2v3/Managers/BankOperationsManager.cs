@@ -88,27 +88,6 @@ namespace KursAM2.Managers
             return result;
         }
 
-        public ObservableCollection<BankPeriodsOperationsViewModel> GetBankPeriodOperations(decimal bankDc)
-        {
-            var result = new ObservableCollection<BankPeriodsOperationsViewModel>();
-            try
-            {
-                using (var ctx = GlobalOptions.GetEntities())
-                {
-                    var data = (from bp in ctx.BankPeriodsOperations
-                        where bp.BankDC == bankDc
-                        select bp).ToList();
-                    foreach (var item in data)
-                        result.Add(new BankPeriodsOperationsViewModel(item));
-                }
-            }
-            catch (Exception e)
-            {
-                WindowManager.ShowError(e);
-            }
-            return result;
-        }
-
         [Obsolete]
         // ReSharper disable once IdentifierTypo
         // ReSharper disable once UnusedMember.Local
@@ -300,7 +279,7 @@ namespace KursAM2.Managers
                             oldDC = new SD_101
                             {
                                 DOC_CODE = dc,
-                                VV_ACC_DC = item.BankAccount.BankDC,
+                                VV_ACC_DC = item.BankAccount.DocCode,
                                 VV_START_DATE = item.Date,
                                 VV_STOP_DATE = item.Date
                             };
@@ -311,7 +290,7 @@ namespace KursAM2.Managers
                         oldItem.VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD;
                         oldItem.VVT_VAL_RASHOD = item.VVT_VAL_RASHOD;
                         oldItem.VVT_KONTRAGENT = item.Kontragent?.DOC_CODE;
-                        oldItem.BankAccountDC = item.BankAccountIn?.BankDC;
+                        oldItem.BankAccountDC = item.BankAccountIn?.DocCode;
                         oldItem.BankFromTransactionCode = item.BankFromTransactionCode;
                         oldItem.VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE;
                         oldItem.VVT_CRS_DC = item.Currency.DOC_CODE;
@@ -359,7 +338,7 @@ namespace KursAM2.Managers
                         VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
                         VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
                         VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
-                        BankAccountDC = item.BankAccountIn?.BankDC,
+                        BankAccountDC = item.BankAccountIn?.DocCode,
                         BankFromTransactionCode = item.BankFromTransactionCode,
                         VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
                         VVT_CRS_DC = item.Currency.DOC_CODE,
@@ -401,7 +380,7 @@ namespace KursAM2.Managers
                         VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
                         VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
                         VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
-                        BankAccountDC = item.BankAccountIn?.BankDC,
+                        BankAccountDC = item.BankAccountIn?.DocCode,
                         BankFromTransactionCode = item.BankFromTransactionCode,
                         VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
                         VVT_CRS_DC = item.Currency.DOC_CODE,
@@ -842,13 +821,9 @@ namespace KursAM2.Managers
                     }
                     else
                     {
-                        var sd = data.Where(_ => _.Date <= p.DateStart);
-                        if (sd.Any())
-                        {
-                            var dt = sd.Max(_ => _.Date);
-                            var x = data.FirstOrDefault(_ => _.Date == dt);
-                            p.SummaStart = x != null ? x.End : 0;
-                        }
+                        var dtstart = dob.Min(_ => _.Date);
+                        var ds = dob.Single(_ => _.Date == dtstart);
+                        p.SummaStart = ds.Start ?? 0;
                     }
                     p.SummaIn = dob.Sum(_ => _.SummaIn);
                     p.SummaOut = dob.Sum(_ => _.SummaOut);

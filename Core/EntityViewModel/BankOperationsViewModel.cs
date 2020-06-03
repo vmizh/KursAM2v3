@@ -95,7 +95,7 @@ namespace Core.EntityViewModel
                 if (myBankAccountIn != null && myBankAccountIn.Equals(value)) return;
                 myBankAccountIn = value;
                 if (myBankAccountIn != null)
-                    Entity.BankAccountDC = myBankAccountIn.BankDC;
+                    Entity.BankAccountDC = myBankAccountIn.DocCode;
                 RaisePropertyChanged();
             }
         }

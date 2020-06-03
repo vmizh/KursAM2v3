@@ -250,7 +250,7 @@ namespace KursAM2.ViewModel.Logistiks
                                     ? null
                                     : new BankAccount
                                     {
-                                        BankDC = (decimal) sd84.GROZO_REQUISITE.BANK_DC
+                                        DocCode = (decimal) sd84.GROZO_REQUISITE.BANK_DC
                                     },
                                 NaklGruzoOtprav = sd84.GROZO_REQUISITE.NAKL_GRUZOOTPRAV,
                                 NaklGruzoOtpravOKPO = sd84.GROZO_REQUISITE.NAKL_GRUOOTPRAV_OKPO,
@@ -406,10 +406,7 @@ namespace KursAM2.ViewModel.Logistiks
                     {
                         DocCode = b.DocCode,
                         KontrBankCode = b.Code,
-                        BankName = b.BankName,
                         Account = b.Account,
-                        CorrAccount = b.CorrAccount,
-                        BIK = b.BIK,
                         BankDC = b.BankDC
                     });
                 myDefaultBank = BankAll.SingleOrDefault(_ => _.KontrBankCode == defBankCode);

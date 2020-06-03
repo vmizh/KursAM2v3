@@ -110,9 +110,10 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 var ctx = dbContext as ALFAMEDIAEntities;
                 var d =
-                    ctx?.NomenklTransfer.AsNoTracking()
+                    ctx?.NomenklTransfer
                         .Include(_ => _.NomenklTransferRow)
                         .Include(_ => _.SD_27)
+                        .AsNoTracking()
                         .SingleOrDefault(_ => _.Id == id);
                 return d == null
                     ? null

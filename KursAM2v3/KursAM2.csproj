@@ -254,7 +254,6 @@
     <Compile Include="ViewModel\Dogovora\DogovorClientHead.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorClientRow.cs" />
     <Compile Include="Managers\Base\MutualAccountingManager.cs" />
-    <Compile Include="ViewModel\Finance\BankOperationsWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\BankOperationsWindowViewModel2.cs" />
     <Compile Include="ViewModel\Finance\Cash\CashBookWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\Cash\CashCurrencyExchangeViewModel.cs" />
@@ -447,9 +446,6 @@
       <DependentUpon>KontragentSelectDialogUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\DialogUserControl\ProjectDocumentSelect.cs" />
-    <Compile Include="View\Finance\BankOperationsView.xaml.cs">
-      <DependentUpon>BankOperationsView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\Finance\Cash\CashBookView.xaml.cs">
       <DependentUpon>CashBookView.xaml</DependentUpon>
     </Compile>
@@ -1061,10 +1057,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\DialogUserControl\KontragentSelectDialogUC.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Finance\BankOperationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -147,7 +147,7 @@ namespace KursAM2.Dialogs
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
-            return !ctx.DialogResult ? null : ctx.CurrentItem;
+            return !ctx.DialogResult ? null : ctx.CurrentChildItem;
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace KursAM2.Dialogs
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
-            return !ctx.DialogResult ? null : ctx.CurrentItem;
+            return !ctx.DialogResult ? null : ctx.CurrentChildItem;
         }
 
         public static BankOperationForSelectDialog SelectBankStatement(decimal dcOut)

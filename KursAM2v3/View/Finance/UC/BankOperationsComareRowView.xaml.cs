@@ -196,7 +196,7 @@ namespace KursAM2.View.Finance.UC
                         Payment.Text = dtx.Payment.Name;
                         break;
                     case BankOperationType.BankIn:
-                        var bb = StandartDialogs.SelectBankAccount(dtx.BankAccount.BankDC);
+                        var bb = StandartDialogs.SelectBankAccount(dtx.BankAccount.DocCode);
                         if (bb == null) return;
                         dtx.VVT_VAL_RASHOD = 0;
                         dtx.VVT_DOC_NUM = bb.BankName + " " + bb.Account;
@@ -204,7 +204,7 @@ namespace KursAM2.View.Finance.UC
                         Payment.Text = dtx.Payment.Name;
                         break;
                     case BankOperationType.BankOut:
-                        var bb2 = StandartDialogs.SelectBankStatement(dtx.BankAccount.BankDC);
+                        var bb2 = StandartDialogs.SelectBankStatement(dtx.BankAccount.DocCode);
                         if (bb2 == null) return;
                         dtx.VVT_VAL_PRIHOD = bb2.Summa;
                         dtx.VVT_DOC_NUM = bb2.Bank.BankName + " " + bb2.Bank.Account;
@@ -276,7 +276,7 @@ namespace KursAM2.View.Finance.UC
                         Payment.Text = dtc.Payment.Name;
                         break;
                     case BankOperationType.BankIn:
-                        var bb = StandartDialogs.SelectBankAccount(dtc.BankAccount.BankDC);
+                        var bb = StandartDialogs.SelectBankAccount(dtc.BankAccount.DocCode);
                         if (bb == null) return;
                         dtc.VVT_VAL_RASHOD = 0;
                         dtc.VVT_DOC_NUM = bb.BankName + " " + bb.Account;
@@ -285,7 +285,7 @@ namespace KursAM2.View.Finance.UC
                         Payment.Text = dtc.Payment.Name;
                         break;
                     case BankOperationType.BankOut:
-                        var bb2 = StandartDialogs.SelectBankStatement(dtc.BankAccount.BankDC);
+                        var bb2 = StandartDialogs.SelectBankStatement(dtc.BankAccount.DocCode);
                         if (bb2 == null) return;
                         dtc.VVT_VAL_PRIHOD = bb2.Summa;
                         dtc.VVT_DOC_NUM = bb2.Bank.BankName + " " + bb2.Bank.Account;

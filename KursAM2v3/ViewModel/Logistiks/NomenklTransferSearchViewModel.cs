@@ -96,7 +96,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentRow;
             set
             {
-                if (myCurrentRow != null && myCurrentRow.Equals(value)) return;
+                if (myCurrentRow == value) return;
                 myCurrentRow = value;
                 RaisePropertyChanged();
             }

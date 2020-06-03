@@ -266,7 +266,7 @@ namespace KursAM2.ViewModel.Logistiks
                             Price = (decimal) dd.DDT_TAX_CRS_CENA,
                             PriceWithNaklad = Math.Round((decimal) dd.DDT_TAX_CRS_CENA, 2),
                             Currency =
-                                MainReferences.Currencies[MainReferences.GetNomenkl(nomDC).Currency.DocCode].Name,
+                                MainReferences.GetNomenkl(nomDC).Currency.Name,
                             UnitNaklad = 0,
                             SummaIn = Math.Round((decimal) dd.DDT_TAX_CRS_CENA * dd.DDT_KOL_PRIHOD, 2),
                             SummaNaklad = 0,
@@ -540,36 +540,26 @@ namespace KursAM2.ViewModel.Logistiks
 
         public override void SaveData(object data)
         {
-            foreach (var r in Document.Rows)
+            try
             {
-                r.LastUpdate = DateTime.Now;
-                r.LastUpdater = GlobalOptions.UserInfo.NickName;
-            }
+                foreach (var r in Document.Rows)
+                {
+                    r.LastUpdate = DateTime.Now;
+                    r.LastUpdater = GlobalOptions.UserInfo.NickName;
+                }
 
-            Document.LastUpdate = DateTime.Now;
-            Document.LastUpdater = GlobalOptions.UserInfo.NickName;
-            Document.Save();
-            var calc = new NomenklCostMediumSlidingOnServer();
-            calc.Calc(null);
-            //var nomDCs = Document.Rows.Select(_ => _.NomenklIn.DocCode).Distinct()
-            //    .ToList();
-            //var nomDCs2 = Document.Rows.Select(_ => _.NomenklOut.DocCode).Distinct()
-            //    .ToList();
-            //var dnomDCs = Document.Rows.Select(_ => _.NomenklIn.DocCode).Distinct()
-            //    .ToList();
-            //var dnomDCs2 = Document.Rows.Select(_ => _.NomenklOut.DocCode).Distinct()
-            //    .ToList();
-            //var noms = nomDCs.Union(nomDCs2).Union(dnomDCs).Union(dnomDCs2);
-            //var oops = new ObservableCollection<NomenklCalcCostOperation>();
-            //foreach (var op in noms.Distinct())
-            //{
-            //   var ops = calc.GetOperations(op);
-            //    foreach(var o in ops)
-            //        oops.Add(o);
-            //}
-            //calc.Save(oops);
-            Refresh();
-            RaisePropertyChanged(nameof(Document));
+                Document.LastUpdate = DateTime.Now;
+                Document.LastUpdater = GlobalOptions.UserInfo.NickName;
+                Document.Save();
+                var calc = new NomenklCostMediumSlidingOnServer();
+                calc.Calc(null);
+                Refresh();
+                RaisePropertyChanged(nameof(Document));
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowDBError(ex);
+            }
         }
 
         private void DeleteRow(object obj)

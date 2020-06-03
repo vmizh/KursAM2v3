@@ -570,12 +570,9 @@ namespace Core
                             var bank = new Bank(item.SD_44);
                             var d = BankAccounts[item.DOC_CODE];
                             d.Name = $"{bank.Name} Cч.№{item.BA_RASH_ACC} {MainReferences.Currencies[(decimal)item.CurrencyDC]}";
-                            d.BIK = item.SD_44.POST_CODE;
                             d.BankDC = item.BA_BANKDC;
                             d.Bank = bank;
                             d.Account = item.BA_RASH_ACC;
-                            d.CorrAccount = item.SD_44.CORRESP_ACC;
-                            d.BankName = item.BA_BANK_NAME;
                             d.myState = RowStatus.NotEdited;
                             d.Currency = item.CurrencyDC != null ? Currencies[(decimal) item.CurrencyDC] : null;
                         }
@@ -588,10 +585,7 @@ namespace Core
                                 BankDC = item.BA_BANKDC,
                                 Bank = bank,
                                 Name = $"{bank.Name} Cч.№{item.BA_RASH_ACC} {MainReferences.Currencies[(decimal)item.CurrencyDC]}",
-                                BIK = item.SD_44.POST_CODE,
                                 Account = item.BA_RASH_ACC,
-                                CorrAccount = item.SD_44.CORRESP_ACC,
-                                BankName = item.BA_BANK_NAME,
                                 myState = RowStatus.NotEdited,
                                 Currency = item.CurrencyDC != null ? 
                                     Currencies[(decimal) item.CurrencyDC] : null
@@ -711,10 +705,7 @@ namespace Core
                             BankDC = item.BA_BANKDC,
                             Bank = new Bank(item.SD_44),
                             Name = item.BA_ACC_SHORTNAME,
-                            BIK = item.SD_44.POST_CODE,
                             Account = item.BA_RASH_ACC,
-                            CorrAccount = item.SD_44.CORRESP_ACC,
-                            BankName = item.BA_BANK_NAME,
                             myState = RowStatus.NotEdited,
                             Currency = item.CurrencyDC != null ? Currencies[(decimal) item.CurrencyDC] : null
                         });

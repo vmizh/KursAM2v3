@@ -427,14 +427,21 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Акт валютной таксировки номенклатур":
-                        var taxCtx = new NomenklTransferSearchViewModel();
-                        form = new NomenklTransferSearchView
+                        try
                         {
-                            Owner = Application.Current.MainWindow,
-                            DataContext = taxCtx
-                        };
-                        taxCtx.Form = form;
-                        form.Show();
+                            var taxCtx = new NomenklTransferSearchViewModel();
+                            form = new NomenklTransferSearchView
+                            {
+                                Owner = Application.Current.MainWindow,
+                                DataContext = taxCtx
+                            };
+                            taxCtx.Form = form;
+                            form.Show();
+                        }
+                        catch (Exception ex)
+                        {
+                           WindowManager.ShowError(ex);
+                        } 
                         break;
                     case "Справочник проектов":
                         var prjCtx = new ProjectReferenceWindowViewModel();
