@@ -348,7 +348,7 @@ namespace KursAM2.View.Finance.Invoices
         private void Nomenkl_DefaultButtonClick(object sender, RoutedEventArgs e)
         {
             var ctx = DataContext as ClientWindowViewModel;
-            if (ctx == null) return;
+            if (ctx?.CurrentRow == null) return;
             if (ctx.CurrentRow.Shipped > 0)
             {
                 WindowManager.ShowMessage(this,

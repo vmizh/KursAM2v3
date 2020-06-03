@@ -22,19 +22,23 @@
             <dxlc:LayoutGroup Header="LayoutGroup" Orientation="Vertical">
                 <dxlc:LayoutGroup>
                     <dxlc:LayoutItem Label="Контрагент">
-                        <dxg:LookUpEdit
+                        <dxg:LookUpEdit 
                             Name="searchLookUpEditKontragent"
                             AutoPopulateColumns="False"
                             DisplayMember="Name"
                             ValueMember="DocCode"
                             VerticalAlignment="Top"
                             HorizontalAlignment="Stretch"
+                            ImmediatePopup="True"
                             ItemsSource="{Binding Kontragents}"
                             PopupMinWidth="600"
                             SelectedItem="{Binding Kontragent, UpdateSourceTrigger=PropertyChanged}"
-                            Height="30">
+                            AutoComplete="True"
+                            IsTextEditable="True"
+                            Height="30" 
+                            >
                             <dxg:LookUpEdit.StyleSettings>
-                                <dxg:SearchLookUpEditStyleSettings />
+                                <dxg:LookUpEditStyleSettings />
                             </dxg:LookUpEdit.StyleSettings>
                             <dxg:LookUpEdit.PopupContentTemplate>
                                 <ControlTemplate>
@@ -84,6 +88,9 @@
                                     </dxg:GridControl>
                                 </ControlTemplate>
                             </dxg:LookUpEdit.PopupContentTemplate>
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:FocusBehavior/>
+                            </dxmvvm:Interaction.Behaviors>
                         </dxg:LookUpEdit>
                     </dxlc:LayoutItem>
                     <dxlc:LayoutItem Label="Валюта" Width="100">

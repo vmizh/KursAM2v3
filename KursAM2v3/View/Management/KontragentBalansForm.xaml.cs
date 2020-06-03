@@ -3,9 +3,14 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
+using System.Windows.Input;
+using WindowsInput;
+using DevExpress.Data.Filtering;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management;
 using LayoutManager;
+using Application = System.Windows.Application;
 
 namespace KursAM2.View.Management
 {
@@ -35,6 +40,7 @@ namespace KursAM2.View.Management
             var ctx = DataContext as KontragentBalansWindowViewModel;
             if (ctx?.StartKontragent != null)
                 ctx.Kontragent = ctx.Kontragents.Single(_ => _.DOC_CODE == ctx.StartKontragent.DOC_CODE);
+            searchLookUpEditKontragent.IsPopupOpen = true;
         }
 
         private void KontragentBalansForm_Closing(object sender, CancelEventArgs e)
