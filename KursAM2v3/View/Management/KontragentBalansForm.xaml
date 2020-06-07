@@ -31,6 +31,7 @@
                             HorizontalAlignment="Stretch"
                             ImmediatePopup="True"
                             ItemsSource="{Binding Kontragents}"
+                            FilterCondition="Contains"
                             PopupMinWidth="600"
                             SelectedItem="{Binding Kontragent, UpdateSourceTrigger=PropertyChanged}"
                             AutoComplete="True"
