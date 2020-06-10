@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using Core;
 using Core.EntityViewModel;
@@ -17,7 +15,6 @@ using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.Managers;
-using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using LayoutManager;
 
@@ -29,8 +26,8 @@ namespace KursAM2.View.Logistiks.Warehouse
     public partial class WaybillView : ILayout
     {
         private readonly LayoutManagerGridAutoGenerationColumns gridRowsLayout;
-        public ButtonEdit schetEdit;
         private readonly WindowManager winManager = new WindowManager();
+        public ButtonEdit SchetEdit;
 
         public WaybillView()
         {
@@ -46,7 +43,7 @@ namespace KursAM2.View.Logistiks.Warehouse
 
         private void WaybillClientView_Closing(object sender, CancelEventArgs e)
         {
-           LayoutManager.Save();
+            LayoutManager.Save();
         }
 
         private void WaybillClientView_Loaded(object sender, RoutedEventArgs e)
@@ -82,7 +79,6 @@ namespace KursAM2.View.Logistiks.Warehouse
         {
             gridRows.TotalSummary.Clear();
             foreach (var col in gridRows.Columns)
-            {
                 if (col.FieldType == typeof(decimal) || col.FieldType == typeof(decimal?))
                 {
                     col.EditSettings = new CalcEditSettings
@@ -99,7 +95,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     };
                     gridRows.TotalSummary.Add(summary);
                 }
-            }
+
             var columnsInfo = gridRowsLayout.Load();
             gridRows.TotalSummary.Clear();
             foreach (var col in gridRows.Columns)
@@ -123,6 +119,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                 BindingHelper.CopyBinding(oldContent, newContent, BaseEdit.EditValueProperty);
                 e.Item.Content = newContent;
             }
+
             switch (e.PropertyName)
             {
                 case nameof(doc.Client):
@@ -144,7 +141,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     break;
                 case nameof(doc.DD_DATE):
                     e.Item.Width = 150;
-                    break; 
+                    break;
                 case nameof(doc.CREATOR):
                     e.Item.IsReadOnly = true;
                     e.Item.HorizontalAlignment = HorizontalAlignment.Right;
@@ -155,7 +152,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     e.Item.HorizontalAlignment = HorizontalAlignment.Right;
                     break;
                 case nameof(doc.InvoiceClient):
-                    schetEdit = new ButtonEdit
+                    SchetEdit = new ButtonEdit
                     {
                         TextWrapping = TextWrapping.Wrap,
                         IsTextEditable = false,
@@ -188,11 +185,11 @@ namespace KursAM2.View.Logistiks.Warehouse
                     if (ctx.Document.DD_SFACT_DC == null)
                         openSchet.IsEnabled = false;
                     openSchet.Click += OpenSchet_Click;
-                    schetEdit.Buttons.Add(addSchet);
-                    schetEdit.Buttons.Add(delSchet);
-                    schetEdit.Buttons.Add(openSchet);
-                    BindingHelper.CopyBinding(oldContent, schetEdit, BaseEdit.EditValueProperty);
-                    e.Item.Content = schetEdit;
+                    SchetEdit.Buttons.Add(addSchet);
+                    SchetEdit.Buttons.Add(delSchet);
+                    SchetEdit.Buttons.Add(openSchet);
+                    BindingHelper.CopyBinding(oldContent, SchetEdit, BaseEdit.EditValueProperty);
+                    e.Item.Content = SchetEdit;
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.MinWidth = 600;
                     break;
@@ -211,15 +208,16 @@ namespace KursAM2.View.Logistiks.Warehouse
                     var cbp = new ComboBoxEdit
                     {
                         EditValue = doc.DD_KOMU_PEREDANO,
-                        ItemsSource = ctx.ByWhomLicoList,
+                        ItemsSource = ctx.ByWhomLicoList
                     };
                     cbp.SetBinding(LookUpEditBase.SelectedItemProperty,
-                        new Binding { Path = new PropertyPath("DD_KOMU_PEREDANO") });
+                        new Binding {Path = new PropertyPath("DD_KOMU_PEREDANO")});
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
                     e.Item.Content = cbp;
                     break;
             }
+
             ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
         }
 
@@ -244,7 +242,7 @@ namespace KursAM2.View.Logistiks.Warehouse
 
         private void DelSchet_Click(object sender, RoutedEventArgs e)
         {
-            if (winManager.ShowWinUIMessageBox(this, 
+            if (winManager.ShowWinUIMessageBox(this,
                 "Вы хотите удалить счет и связанные с ним строки?",
                 "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
             var dtx = DataContext as WaybillWindowViewModel;
@@ -256,21 +254,25 @@ namespace KursAM2.View.Logistiks.Warehouse
                 if (r.State != RowStatus.NewRow) dtx.Document.DeletedRows.Add(r);
                 dtx.Document.Rows.Remove(r);
             }
+
             dtx.Document.DD_SFACT_DC = null;
             dtx.Document.DD_SCHET = null;
-            var delBtn = schetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Del");
+            var delBtn = SchetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Del");
             if (delBtn != null) delBtn.IsEnabled = false;
-            var addBtn = schetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Add");
+            var addBtn = SchetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Add");
             if (addBtn != null) addBtn.IsEnabled = true;
-            var openBtn = schetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Open");
+            var openBtn = SchetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Open");
             if (openBtn != null) openBtn.IsEnabled = false;
         }
 
         private void OpenSchet_Click(object sender, RoutedEventArgs e)
         {
-            var dtx = DataContext as OrderInWindowViewModel;
-            if (dtx == null || dtx.Document == null || dtx.Document.DD_SFACT_DC == null) return;
-            DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal)dtx.Document.DD_SFACT_DC);
+            var dtx = DataContext as WaybillWindowViewModel;
+            if (dtx?.Document != null && dtx.Document.DD_SFACT_DC != null)
+            {
+                // ReSharper disable once PossibleInvalidOperationException
+                DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal) dtx.Document.DD_SFACT_DC);
+            }
         }
     }
 }

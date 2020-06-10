@@ -15,6 +15,7 @@ namespace KursAM2.ViewModel.Reference
         public EmployeesUCViewModel()
         {
             myDataUserControl = new StandartDialogSelectUC(GetType().Name);
+            // ReSharper disable once VirtualMemberCallInConstructor
             RefreshData(null);
         }
 

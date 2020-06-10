@@ -13,27 +13,34 @@ namespace KursAM2.View.DialogUserControl
 {
     public class KontragentSelectDialog : RSWindowViewModelBase, IDataUserControl
     {
+        private readonly bool isDateCheck;
+        private readonly decimal kontrDC;
         private Currency myCurrency;
         private Kontragent myCurrentKontragent;
         private KontragentSelectDialogUC myDataUserControl;
 
         public KontragentSelectDialog(Currency crs, bool isDateCheck = false)
         {
+            this.isDateCheck = isDateCheck;
             Currency = crs;
             LayoutControl =
                 myDataUserControl = new KontragentSelectDialogUC();
             while (!MainReferences.IsReferenceLoadComplete)
             {
             }
+            // ReSharper disable once VirtualMemberCallInConstructor
             WindowName = "Выбор контрагента";
             LoadKontragentFromReference();
         }
-        public KontragentSelectDialog(decimal KontrDC)
-        {            LayoutControl =
+        public KontragentSelectDialog(decimal kontrDC)
+        {
+            this.kontrDC = kontrDC;
+            LayoutControl =
                 myDataUserControl = new KontragentSelectDialogUC();
             while (!MainReferences.IsReferenceLoadComplete)
             {
             }
+            // ReSharper disable once VirtualMemberCallInConstructor
             WindowName = "Выбор контрагента";
             LoadKontragentFromReference();
         }

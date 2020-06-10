@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -10,7 +12,7 @@ using Core.Finance;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using Helper;
+using Data;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
@@ -25,7 +27,7 @@ using Reports.Base;
 namespace KursAM2.ViewModel.Finance.Invoices
 {
     /// <summary>
-    /// Вспомогательный класс для загрузки 
+    ///     Вспомогательный класс для загрузки
     /// </summary>
     public class InvoiceProviderStoreLinkTemp
     {
@@ -34,9 +36,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public decimal SFQuantity { set; get; }
         public decimal QuantityIn { set; get; }
     }
+
     /// <summary>
     ///     Сфчет-фактура поставщика
     /// </summary>
+    [SuppressMessage("ReSharper", "PossibleUnintendedReferenceComparison")]
     public sealed class ProviderWindowViewModel : RSWindowViewModelBase
     {
         #region Methods
@@ -122,9 +126,58 @@ namespace KursAM2.ViewModel.Finance.Invoices
             });
         }
 
+        private void UpdatePayDocuments(ALFAMEDIAEntities ctx)
+        {
+            Document.PaymentDocs.Clear();
+            foreach (var c in ctx.SD_34.Where(_ => _.SPOST_DC == Document.DocCode).ToList())
+                Document.PaymentDocs.Add(new InvoicePaymentDocument
+                {
+                    DocCode = c.DOC_CODE,
+                    Code = 0,
+                    DocumentType = DocumentType.CashOut,
+                    // ReSharper disable once PossibleInvalidOperationException
+                    DocumentName =
+                        $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                    // ReSharper disable once PossibleInvalidOperationException
+                    Summa = (decimal) c.SUMM_ORD,
+                    Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                    Note = c.NOTES_ORD
+                });
+            foreach (var c in ctx.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_POSTAV_DC == Document.DocCode)
+                .ToList())
+                Document.PaymentDocs.Add(new InvoicePaymentDocument
+                {
+                    DocCode = c.DOC_CODE,
+                    Code = c.CODE,
+                    DocumentType = DocumentType.Bank,
+                    DocumentName =
+                        // ReSharper disable once PossibleInvalidOperationException
+                        $"{c.SD_101.VV_START_DATE} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                    // ReSharper disable once PossibleInvalidOperationException
+                    Summa = (decimal) c.VVT_VAL_RASHOD,
+                    Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                    Note = c.VVT_DOC_NUM
+                });
+            foreach (var c in ctx.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SPOST_DC == Document.DocCode).ToList())
+                Document.PaymentDocs.Add(new InvoicePaymentDocument
+                {
+                    DocCode = c.DOC_CODE,
+                    Code = c.CODE,
+                    DocumentType = DocumentType.MutualAccounting,
+                    DocumentName =
+                        // ReSharper disable once PossibleInvalidOperationException
+                        $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE} на {c.VZT_CRS_SUMMA}",
+                    // ReSharper disable once PossibleInvalidOperationException
+                    Summa = (decimal) c.VZT_CRS_SUMMA,
+                    Currency = MainReferences.Currencies[c.SD_110.CurrencyToDC],
+                    Note = c.VZT_DOC_NOTES
+                });
+        }
+
+
         #endregion
 
-        #region Fields  
+        #region Fields
 
         private InvoiceProvider myDocument;
         private InvoiceProviderRow myCurrentRow;
@@ -151,6 +204,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 WindowName = Document.ToString();
         }
 
+        // ReSharper disable once UnusedMember.Global
+        // ReSharper disable once UnusedParameter.Local
         public ProviderWindowViewModel(Guid? id) : this()
         {
         }
@@ -183,11 +238,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ObservableCollection<InvoiceProviderRow> SelectedRows { set; get; }
 
- 
+
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<WarehouseOrderInRow> SelectedFacts { set; get; } =
             new ObservableCollection<WarehouseOrderInRow>();
-        
+
         private WarehouseOrderInRow myCurrentFact;
+
         public WarehouseOrderInRow CurrentFact
         {
             get => myCurrentFact;
@@ -232,11 +289,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 }
 
                 var res = Document.SF_POST_DC > 0 //&& Document.SF_POLUCH_KONTR_DC != null
-                                                  && Document.SF_CRS_DC != null && Document.SF_CENTR_OTV_DC != null
-                                                  && Document.PayCondition != null &&
-                                                  Document.SF_VZAIMOR_TYPE_DC != null
-                                                  && Document.SF_FORM_RASCH_DC != null &&
-                                                  Document.State != RowStatus.NotEdited ||
+                          && Document.SF_CRS_DC != null && Document.SF_CENTR_OTV_DC != null
+                          && Document.PayCondition != null &&
+                          Document.SF_VZAIMOR_TYPE_DC != null
+                          && Document.SF_FORM_RASCH_DC != null &&
+                          Document.State != RowStatus.NotEdited ||
                           Document.DeletedRows.Count > 0 || Document.Rows.Any(_ => _.State != RowStatus.NotEdited);
                 if (!res)
                 {
@@ -287,8 +344,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (dlg.ShowDialog() == false) return;
             using (var dbctx = GlobalOptions.GetEntities())
             {
-                  var defaultNDS = Convert.ToDecimal(dbctx.PROFILE
-                        .FirstOrDefault(_ => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")?.ITEM_VALUE);
+                var defaultNDS = Convert.ToDecimal(dbctx.PROFILE
+                    .FirstOrDefault(_ => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")?.ITEM_VALUE);
                 foreach (var item in ctx.Nomenkls.Where(_ => _.IsChecked))
                 {
                     var old = Document.Facts.FirstOrDefault(_ => _.DocCode == item.DocCode
@@ -297,16 +354,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     {
                         old.DDT_KOL_PRIHOD += item.Quantity;
                         var srow = Document.Rows.FirstOrDefault(_ => _.Nomenkl.DocCode == old.Nomenkl.DocCode);
-                        if (srow != null && old.DDT_KOL_PRIHOD > srow.SFT_KOL)
-                        {
-                            srow.SFT_KOL = old.DDT_KOL_PRIHOD;
-                        }
+                        if (srow != null && old.DDT_KOL_PRIHOD > srow.SFT_KOL) srow.SFT_KOL = old.DDT_KOL_PRIHOD;
                     }
                     else
                     {
                         var srow = Document.Rows.FirstOrDefault(_ => _.Nomenkl.DocCode == item.Nomenkl.DocCode);
                         if (srow == null)
-                        {   var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
+                        {
+                            var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                             Document.Rows.Add(new InvoiceProviderRow
                             {
                                 DocCode = Document.DocCode,
@@ -330,7 +385,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                 DDT_SPOST_ROW_CODE = newCode,
                                 State = RowStatus.NewRow
                             });
-
                         }
                         else
                         {
@@ -346,6 +400,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                 oldOrdRow.DDT_SPOST_ROW_CODE = srow.Code;
                                 dbctx.SaveChanges();
                             }
+
                             if (srow.SFT_KOL < item.Quantity)
                                 srow.SFT_KOL = item.Quantity;
                         }
@@ -361,8 +416,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void DeleteStoreLink(object obj)
         {
-            List<Tuple<decimal,int>> rowForRemove = new List<Tuple<decimal, int>>();
-            var res = WinManager.ShowWinUIMessageBox("Действительно хотите удалить связь с приходными ордерами?", "Запрос",
+            var rowForRemove = new List<Tuple<decimal, int>>();
+            var res = WinManager.ShowWinUIMessageBox("Действительно хотите удалить связь с приходными ордерами?",
+                "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             switch (res)
@@ -382,8 +438,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                     row.DDT_SPOST_DC = null;
                                     row.DDT_SPOST_ROW_CODE = null;
                                 }
-                                rowForRemove.Add(new Tuple<decimal, int>(item.DOC_CODE,item.Code));
+
+                                rowForRemove.Add(new Tuple<decimal, int>(item.DOC_CODE, item.Code));
                             }
+
                             ctx.SaveChanges();
                             tran.Commit();
                             foreach (var rem in rowForRemove)
@@ -400,6 +458,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             WindowManager.ShowError(ex);
                         }
                     }
+
                     return;
                 case MessageBoxResult.No:
                     return;
@@ -408,7 +467,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand OpenStoreLinkDocumentCommand
         {
-            get {return new Command(OpenStoreLinkDocument, _ => CurrentFact != null);}
+            get { return new Command(OpenStoreLinkDocument, _ => CurrentFact != null); }
         }
 
         private void OpenStoreLinkDocument(object obj)
@@ -471,7 +530,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.WindowViewModel = this;
             }
         }
-        
+
         public ICommand PrintZajavkaCommand
         {
             get { return new Command(PrintZajavka, param => true); }
@@ -584,16 +643,16 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var item in k)
                 {
                     if (Document.Rows.Any(_ => _.SFT_NEMENKL_DC == item.DocCode)) continue;
-                    decimal NDS;
+                    decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
-                        NDS = 0;
+                        nds = 0;
                     else
-                        NDS = (decimal) item.NOM_NDS_PERCENT;
+                        nds = (decimal) item.NOM_NDS_PERCENT;
                     Document.Rows.Add(new InvoiceProviderRow
                     {
                         DOC_CODE = -1,
                         SFT_NEMENKL_DC = item.DOC_CODE,
-                        SFT_NDS_PERCENT = NDS,
+                        SFT_NDS_PERCENT = nds,
                         SFT_KOL = 1,
                         SFT_ED_CENA = 0
                     });
@@ -610,20 +669,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Document.RaisePropertyChanged("SF_KONTR_CRS_SUMMA");
             if (Form is InvoiceClientView frm)
             {
-                //if (Document.IsNDSIncludeInPrice)
-                //{
-                //    var colPrice = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SFT_ED_CENA");
-                //    if (colPrice != null) colPrice.ReadOnly = true;
-                //    var colSumma = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SFT_SUMMA_K_OPLATE");
-                //    if (colSumma != null) colSumma.ReadOnly = false;
-                //}
-                //else
-                //{
-                //    var colPrice = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SFT_ED_CENA");
-                //    if (colPrice != null) colPrice.ReadOnly = false;
-                //    var colSumma = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SFT_SUMMA_K_OPLATE");
-                //    if (colSumma != null) colSumma.ReadOnly = true;
-                //}
                 frm.gridRows.RefreshData();
                 RaisePropertiesChanged(nameof(Document));
             }
@@ -636,16 +681,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void DeleteRow(object obj)
         {
-            if (CurrentRow != null && CurrentRow.State != RowStatus.NewRow)
-            {
-                Document.DeletedRows.Add(CurrentRow);
-            }
+            if (CurrentRow != null && CurrentRow.State != RowStatus.NewRow) Document.DeletedRows.Add(CurrentRow);
             var f = Document.Facts.FirstOrDefault(_ => _.DDT_SPOST_DC == CurrentRow.DocCode
                                                        && _.DDT_SPOST_ROW_CODE == CurrentRow.Code);
-            if (f != null)
-            {
-                Document.Facts.Remove(f);
-            }
+            if (f != null) Document.Facts.Remove(f);
             Document.Rows.Remove(CurrentRow);
             UpdateVisualData();
         }
@@ -702,11 +741,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var item in k)
                 {
                     if (Document.Rows.Any(_ => _.SFT_NEMENKL_DC == item.DocCode)) continue;
-                    decimal NDS;
+                    decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
-                        NDS = 0;
+                        nds = 0;
                     else
-                        NDS = (decimal) item.NOM_NDS_PERCENT;
+                        nds = (decimal) item.NOM_NDS_PERCENT;
                     Document.Rows.Add(new InvoiceProviderRow
                     {
                         DocCode = Document.DocCode,
@@ -714,7 +753,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Id = Guid.NewGuid(),
                         DocId = Document.Id,
                         SFT_NEMENKL_DC = item.DOC_CODE,
-                        SFT_NDS_PERCENT = NDS,
+                        SFT_NDS_PERCENT = nds,
                         SFT_KOL = 1,
                         SFT_ED_CENA = 0,
                         SFT_POST_ED_IZM_DC = item.Unit.DocCode,
@@ -816,6 +855,79 @@ namespace KursAM2.ViewModel.Finance.Invoices
             };
             view.Show();
             view.DataContext = ctx;
+        }
+
+        public ICommand AddPaymentFromBankCommand
+        {
+            get
+            {
+                return new Command(AddPaymentFromBank,
+                    _ => Document?.Kontragent != null && Document.PaySumma < Document.SF_CRS_SUMMA);
+            }
+        }
+
+        private void AddPaymentFromBank(object obj)
+        {
+            var oper = StandartDialogs.SelectBankOperationForProviderInvoice(Document.Kontragent.DocCode);
+            if (oper == null) return;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var old = ctx.TD_101.Single(_ => _.CODE == oper.Code);
+                if (old != null) old.VVT_SFACT_POSTAV_DC = Document.DocCode;
+
+                ctx.SaveChanges();
+                UpdatePayDocuments(ctx);
+            }
+        }
+
+        public ICommand AddPaymentFromCashCommand
+        {
+            get
+            {
+                return new Command(AddPaymentFromCash,
+                    _ => Document?.Kontragent != null && Document.PaySumma < Document.SF_CRS_SUMMA);
+            }
+        }
+
+        private void AddPaymentFromCash(object obj)
+        {
+            var oper = StandartDialogs.SelectCashOperationForProviderInvoice(Document.Kontragent.DocCode);
+            if (oper == null) return;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var old = ctx.SD_34.Single(_ => _.DOC_CODE == oper.DocCode);
+                if (old != null)
+                {
+                    old.SPOST_DC = Document.DocCode;
+                    old.SPOST_CRS_DC = Document.Currency.DocCode;
+                    old.SPOST_CRS_RATE = 1;
+                }
+
+                ctx.SaveChanges();
+                UpdatePayDocuments(ctx);
+            }
+        }
+
+        public ICommand AddPaymentFromVZCommand
+        {
+            get
+            {
+                return new Command(AddPaymentFromVZ,
+                    _ => Document?.Kontragent != null && Document.PaySumma < Document.SF_CRS_SUMMA);
+            }
+        }
+
+        private void AddPaymentFromVZ(object obj)
+        {
+            var oper = StandartDialogs.SelectVZOperationForProviderInvoice(Document.Kontragent.DocCode);
+            if (oper == null) return;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var old = ctx.TD_110.Single(_ => _.DOC_CODE == oper.DocCode && _.CODE == oper.Code);
+                if (old != null) old.VZT_SPOST_DC = Document.DocCode;
+                ctx.SaveChanges();
+                UpdatePayDocuments(ctx);
+            }
         }
 
         #endregion

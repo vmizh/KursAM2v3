@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Controls;
 using Core.Finance;
@@ -14,6 +15,8 @@ using DevExpress.Mvvm.DataAnnotations;
 namespace Core.EntityViewModel
 {
     [MetadataType(typeof(DataAnnotationsSFClientViewModel))]
+    [SuppressMessage("ReSharper", "MemberInitializerValueIgnored")]
+    [SuppressMessage("ReSharper", "MethodOverloadWithOptionalParameter")]
     public class InvoiceClient : RSViewModelBase, IEntity<SD_84>
     {
         private Kontragent myClient;
@@ -47,7 +50,11 @@ namespace Core.EntityViewModel
             if (Entity.TD_84 == null || Entity.TD_84.Count <= 0) return;
             foreach (var row in Entity.TD_84)
             {
-                var newRow = new InvoiceClientRow(row) {Parent = this};
+                var newRow = new InvoiceClientRow(row)
+                {
+                    Parent = this,
+                    IsNDSInPrice = this.IsNDSIncludeInPrice
+                };
                 Rows.Add(newRow);
             }
         }
@@ -65,6 +72,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override Guid Id
         {
             set
@@ -75,6 +83,7 @@ namespace Core.EntityViewModel
             }
             get => Entity.Id;
         }
+
         public Kontragent Diler
         {
             get
@@ -95,16 +104,22 @@ namespace Core.EntityViewModel
                     if (Entity.SF_DILER_DC == value.DOC_CODE) return;
                     Entity.SF_DILER_DC = value.DOC_CODE;
                 }
+
                 RaisePropertyChanged();
             }
         }
+
         public List<InvoiceClientRow> DeletedRows { set; get; } = new List<InvoiceClientRow>();
+
         public ObservableCollection<InvoiceClientRow> Rows { set; get; } =
             new ObservableCollection<InvoiceClientRow>();
+
         public ObservableCollection<ShipmentRowViewModel> ShipmentRows { set; get; } =
             new ObservableCollection<ShipmentRowViewModel>();
+
         public ObservableCollection<InvoicePaymentDocument> PaymentDocs { set; get; } =
             new ObservableCollection<InvoicePaymentDocument>();
+
         public Kontragent Receiver
         {
             //SF_RECEIVER_KONTR_DC
@@ -117,6 +132,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Kontragent Client
         {
             get => myClient;
@@ -129,6 +145,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         /// <summary>
         ///     Ответственный
         /// </summary>
@@ -143,6 +160,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public CentrOfResponsibility CO
         {
             get => myCO;
@@ -154,6 +172,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public VzaimoraschetType VzaimoraschetType
         {
             get => myVzaimoraschetType;
@@ -165,6 +184,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public FormPay FormRaschet
         {
             get => myFormRaschet;
@@ -176,6 +196,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public UsagePay PayCondition
         {
             get => myPyCondition;
@@ -188,6 +209,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaOtgruz
         {
             get => mySummaOtgruz;
@@ -198,6 +220,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Currency Currency
         {
             get => myCurrency;
@@ -217,10 +240,13 @@ namespace Core.EntityViewModel
                     Entity.SF_CRS_DC = myCurrency.DocCode;
                     Entity.SF_KONTR_CRS_DC = myCurrency.DocCode;
                 }
+
                 RaisePropertyChanged();
             }
         }
-        public decimal PaySumma => (decimal) PaymentDocs?.Sum(_ => _.Summa);
+
+        public decimal PaySumma => PaymentDocs?.Sum(_ => _.Summa) ?? 0;
+
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -231,9 +257,11 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
             =>
                 $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} от {Entity.SF_DATE.ToShortDateString()} {SF_CRS_SUMMA_K_OPLATE} {Currency} {Note}";
+
         public int SF_IN_NUM
         {
             get => Entity.SF_IN_NUM;
@@ -244,6 +272,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SF_OUT_NUM
         {
             get => Entity.SF_OUT_NUM;
@@ -254,6 +283,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime SF_DATE
         {
             get => Entity.SF_DATE;
@@ -264,6 +294,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_CLIENT_DC
         {
             get => Entity.SF_CLIENT_DC;
@@ -274,6 +305,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SF_CLIENT_NAME
         {
             get => Entity.SF_CLIENT_NAME;
@@ -284,6 +316,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? SF_CLIENT_RS_CODE
         {
             get => Entity.SF_CLIENT_RS_CODE;
@@ -294,6 +327,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal SF_CRS_DC
         {
             get => Entity.SF_CRS_DC;
@@ -304,8 +338,10 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_CRS_SUMMA_K_OPLATE =>
             Rows == null || Rows.Count == 0 ? 0 : Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE);
+
         public double SF_CRS_RATE
         {
             get => Entity.SF_CRS_RATE;
@@ -316,6 +352,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_RUB_SUMMA_K_OPLATE
         {
             get => Entity.SF_RUB_SUMMA_K_OPLATE;
@@ -326,6 +363,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal SF_PAY_COND_DC
         {
             get => Entity.SF_PAY_COND_DC;
@@ -336,6 +374,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CREATOR
         {
             get => Entity.CREATOR;
@@ -346,6 +385,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short SF_ACCEPTED
         {
             get => Entity.SF_ACCEPTED;
@@ -356,6 +396,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SF_GROZOOTPRAVITEL
         {
             get => Entity.SF_GROZOOTPRAVITEL;
@@ -366,6 +407,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SF_GRUZOPOLUCHATEL
         {
             get => Entity.SF_GRUZOPOLUCHATEL;
@@ -376,6 +418,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SF_PAYDOC_TEXT
         {
             get => Entity.SF_PAYDOC_TEXT;
@@ -386,6 +429,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_BASE_DC
         {
             get => Entity.SF_BASE_DC;
@@ -396,6 +440,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SF_DOPOLN
         {
             get => Entity.SF_DOPOLN;
@@ -406,6 +451,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SF_SCHET_FLAG
         {
             get => Entity.SF_SCHET_FLAG;
@@ -416,6 +462,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SF_SCHET_FACT_FLAG
         {
             get => Entity.SF_SCHET_FACT_FLAG;
@@ -426,6 +473,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_VZAIMOR_TYPE_DC
         {
             get => Entity.SF_VZAIMOR_TYPE_DC;
@@ -436,6 +484,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_FACT_SUMMA
         {
             get => Entity.SF_FACT_SUMMA;
@@ -446,6 +495,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SF_PAY_FLAG
         {
             get => Entity.SF_PAY_FLAG;
@@ -456,6 +506,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_CENTR_OTV_DC
         {
             get => Entity.SF_CENTR_OTV_DC;
@@ -466,6 +517,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_RECEIVER_KONTR_DC
         {
             get => Entity.SF_RECEIVER_KONTR_DC;
@@ -476,6 +528,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? SF_RECEIVER_RS_CODE
         {
             get => Entity.SF_RECEIVER_RS_CODE;
@@ -486,6 +539,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SF_TRANZIT
         {
             get => Entity.SF_TRANZIT;
@@ -496,6 +550,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_TRANZIT_SPOST_DC
         {
             get => Entity.SF_TRANZIT_SPOST_DC;
@@ -506,16 +561,19 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? SF_TRANZIT_NACEN_PERC
         {
             get => Entity.SF_TRANZIT_NACEN_PERC;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.SF_TRANZIT_NACEN_PERC == value) return;
                 Entity.SF_TRANZIT_NACEN_PERC = value;
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_KONTR_CRS_DC
         {
             get => Entity.SF_KONTR_CRS_DC;
@@ -526,6 +584,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_KONTR_CRS_SUMMA
         {
             get => Entity.SF_KONTR_CRS_SUMMA;
@@ -536,16 +595,19 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? SF_KONTR_CRS_RATE
         {
             get => Entity.SF_KONTR_CRS_RATE;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.SF_KONTR_CRS_RATE == value) return;
                 Entity.SF_KONTR_CRS_RATE = value;
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_UCHET_VALUTA_DC
         {
             get => Entity.SF_UCHET_VALUTA_DC;
@@ -556,16 +618,19 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? SF_UCHET_VALUTA_RATE
         {
             get => Entity.SF_UCHET_VALUTA_RATE;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.SF_UCHET_VALUTA_RATE == value) return;
                 Entity.SF_UCHET_VALUTA_RATE = value;
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_SUMMA_V_UCHET_VALUTE
         {
             get => Entity.SF_SUMMA_V_UCHET_VALUTE;
@@ -576,6 +641,8 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
+        // ReSharper disable once InconsistentNaming
         public short? SF_NDS_1INCLUD_0NO
         {
             get => Entity.SF_NDS_1INCLUD_0NO;
@@ -586,6 +653,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsNDSIncludeInPrice
         {
             get => (SF_NDS_1INCLUD_0NO ?? 0) == 1;
@@ -597,6 +665,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_FORM_RASCH_DC
         {
             get => Entity.SF_FORM_RASCH_DC;
@@ -607,16 +676,19 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? SF_NALOG_NA_PROD_PROC
         {
             get => Entity.SF_NALOG_NA_PROD_PROC;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.SF_NALOG_NA_PROD_PROC == value) return;
                 Entity.SF_NALOG_NA_PROD_PROC = value;
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_DILER_DC
         {
             get => Entity.SF_DILER_DC;
@@ -627,6 +699,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_DILER_SUMMA
         {
             get => Entity.SF_DILER_SUMMA;
@@ -637,6 +710,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_DILER_CRS_DC
         {
             get => Entity.SF_DILER_CRS_DC;
@@ -647,16 +721,20 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? SF_DILER_RATE
         {
             get => Entity.SF_DILER_RATE;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.SF_DILER_RATE == value) return;
                 Entity.SF_DILER_RATE = value;
                 RaisePropertyChanged();
             }
         }
+
+        // ReSharper disable once InconsistentNaming
         public short? SF_1INCLUD_NAL_S_PROD_0NO
         {
             get => Entity.SF_1INCLUD_NAL_S_PROD_0NO;
@@ -667,6 +745,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SF_DOP_USL_DC
         {
             get => Entity.SF_DOP_USL_DC;
@@ -677,6 +756,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SF_AUTOMAT_CREATE
         {
             get => Entity.SF_AUTOMAT_CREATE;
@@ -687,6 +767,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SF_NOTE
         {
             get => Entity.SF_NOTE;
@@ -697,6 +778,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? SF_SOTRUDNIK_TN
         {
             get => Entity.SF_SOTRUDNIK_TN;
@@ -707,6 +789,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public byte[] TSTAMP
         {
             get => Entity.TSTAMP;
@@ -717,6 +800,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SF_CORRECT_NUM
         {
             get => Entity.SF_CORRECT_NUM;
@@ -727,6 +811,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? SF_CORRECT_DATE
         {
             get => Entity.SF_CORRECT_DATE;
@@ -737,6 +822,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SF_CRS_CODE
         {
             get => Entity.SF_CRS_CODE;
@@ -747,6 +833,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CORRECTION_NUM
         {
             get => Entity.CORRECTION_NUM;
@@ -757,6 +844,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CORRECTION_DATE
         {
             get => Entity.CORRECTION_DATE;
@@ -767,6 +855,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string COUNTRY_NAME
         {
             get => Entity.COUNTRY_NAME;
@@ -777,6 +866,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string COUNTRY_CODE
         {
             get => Entity.COUNTRY_CODE;
@@ -787,6 +877,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string KPP
         {
             get => Entity.KPP;
@@ -797,6 +888,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid? GUID_ID
         {
             get => Entity.GUID_ID;
@@ -807,6 +899,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid? GRUZO_INFO_ID
         {
             get => Entity.GRUZO_INFO_ID;
@@ -817,6 +910,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? REGISTER_DATE
         {
             get => Entity.REGISTER_DATE;
@@ -827,6 +921,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? BUH_CLIENT_DC
         {
             get => Entity.BUH_CLIENT_DC;
@@ -837,6 +932,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? BUH_RECEIVER_DC
         {
             get => Entity.BUH_RECEIVER_DC;
@@ -847,6 +943,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NAKL_GRUZOOTPRAV
         {
             get => Entity.NAKL_GRUZOOTPRAV;
@@ -857,6 +954,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NAKL_GRUZOPOLUCH
         {
             get => Entity.NAKL_GRUZOPOLUCH;
@@ -867,6 +965,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public GROZO_REQUISITE GROZO_REQUISITE
         {
             get => Entity.GROZO_REQUISITE;
@@ -877,6 +976,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_179 SD_179
         {
             get => Entity.SD_179;
@@ -887,6 +987,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_189 SD_189
         {
             get => Entity.SD_189;
@@ -897,6 +998,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_301
         {
             get => Entity.SD_301;
@@ -907,6 +1009,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_3011
         {
             get => Entity.SD_3011;
@@ -917,6 +1020,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_40 SD_40
         {
             get => Entity.SD_40;
@@ -927,6 +1031,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_43
         {
             get => Entity.SD_43;
@@ -937,6 +1042,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_431
         {
             get => Entity.SD_431;
@@ -947,6 +1053,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_432
         {
             get => Entity.SD_432;
@@ -957,6 +1064,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_433
         {
             get => Entity.SD_433;
@@ -967,6 +1075,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_434
         {
             get => Entity.SD_434;
@@ -977,6 +1086,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_77 SD_77
         {
             get => Entity.SD_77;
@@ -987,6 +1097,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_84 Entity
         {
             get => myEntity;
@@ -997,6 +1108,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_84> LoadList()

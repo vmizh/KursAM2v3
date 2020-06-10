@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Core;
 using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -9,6 +10,7 @@ using KursAM2.View.Finance.UC;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Finance.controls;
+using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Management.Projects;
 using KursAM2.ViewModel.Reference;
@@ -130,6 +132,78 @@ namespace KursAM2.Dialogs
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentBankOperations;
+        }
+
+        public static BankPaymentRow SelectBankOperationForClientInvoice(decimal kontrDC)
+        {
+            var ctx = new AddPaymentBankClientInvoice(kontrDC)
+            {
+                WindowName = $"Выбор банковского платежа для {MainReferences.GetKontragent(kontrDC).Name}"
+            };
+            var dlg = new SelectDialogView { DataContext = ctx };
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentItem;
+        }
+
+        public static CashPaymentRow SelectCashOperationForClientInvoice(decimal kontrDC)
+        {
+            var ctx = new AddPaymentCashClientInvoice(kontrDC)
+            {
+                WindowName = $"Выбор кассового прихода для {MainReferences.GetKontragent(kontrDC).Name}"
+            };
+            var dlg = new SelectDialogView { DataContext = ctx };
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentItem;
+        }
+
+        public static VZPaymentRow SelectVZOperationForClientInvoice(decimal kontrDC)
+        {
+            var ctx = new AddPaymentVZClientInvoice(kontrDC)
+            {
+                WindowName = $"Выбор проводки акта вазимозачета для {MainReferences.GetKontragent(kontrDC).Name}"
+            };
+            var dlg = new SelectDialogView { DataContext = ctx };
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentItem;
+        }
+
+        public static BankPaymentRow SelectBankOperationForProviderInvoice(decimal kontrDC)
+        {
+            var ctx = new AddPaymentBankClientInvoice(kontrDC)
+            {
+                WindowName = $"Выбор банковского платежа для {MainReferences.GetKontragent(kontrDC).Name}"
+            };
+            var dlg = new SelectDialogView { DataContext = ctx };
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentItem;
+        }
+
+        public static CashPaymentRow SelectCashOperationForProviderInvoice(decimal kontrDC)
+        {
+            var ctx = new AddPaymentCashClientInvoice(kontrDC)
+            {
+                WindowName = $"Выбор кассового расхода для {MainReferences.GetKontragent(kontrDC).Name}"
+            };
+            var dlg = new SelectDialogView { DataContext = ctx };
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentItem;
+        }
+
+        public static VZPaymentRow SelectVZOperationForProviderInvoice(decimal kontrDC)
+        {
+            var ctx = new AddPaymentVZClientInvoice(kontrDC)
+            {
+                WindowName = $"Выбор проводки акта вазимозачета для {MainReferences.GetKontragent(kontrDC).Name}"
+            };
+            var dlg = new SelectDialogView { DataContext = ctx };
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
         public static Project SelectProject()

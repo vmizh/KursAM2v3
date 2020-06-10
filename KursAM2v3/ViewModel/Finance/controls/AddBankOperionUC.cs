@@ -1,18 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Core;
 using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
+using KursAM2.View.Base;
 using KursAM2.View.Finance.UC;
 
 namespace KursAM2.ViewModel.Finance.controls
 {
     // ReSharper disable once InconsistentNaming
-    public class AddBankOperionUC : RSWindowViewModelBase
+    public sealed class AddBankOperionUC : RSWindowViewModelBase
     {
+        private readonly Brush ColorCanEdit = new SolidColorBrush(Colors.Blue);
+        private readonly Brush colorCanEditButZero = new SolidColorBrush(Colors.Orange);
+        private readonly Brush colorNon = new SolidColorBrush(Colors.Gray);
+        private readonly Brush colorNonCanEdit = new SolidColorBrush(Colors.LightGray);
         private BankAccount myBankAccount;
 #pragma warning disable 414
         private BankOperationType myBankOperationType = BankOperationType.NotChoice;
@@ -20,6 +27,7 @@ namespace KursAM2.ViewModel.Finance.controls
         private BankOperationsViewModel myCurrentBankOperations;
         private BankOperationsComareRowView myDataUserControl;
         private string myOperType;
+
 
         public AddBankOperionUC()
         {
@@ -42,7 +50,9 @@ namespace KursAM2.ViewModel.Finance.controls
             BankAccount = bankAcc;
             CurrentBankOperations = new BankOperationsViewModel
             {
-                Date = DateTime.Today,
+                DocCode = row.DOC_CODE,
+                Code = row.Code,
+                Date = isNew ? DateTime.Today : row.Date,
                 Currency = bankAcc.Currency,
                 Kontragent = row.Kontragent,
                 BankOperationType = row.BankOperationType,
@@ -50,11 +60,12 @@ namespace KursAM2.ViewModel.Finance.controls
                 VVT_VAL_RASHOD = row.VVT_VAL_RASHOD,
                 VVT_VAL_PRIHOD = row.VVT_VAL_PRIHOD,
                 SHPZ = row.SHPZ,
+                VVT_SFACT_CLIENT_DC = row.VVT_SFACT_CLIENT_DC,
+                VVT_SFACT_POSTAV_DC = row.VVT_SFACT_POSTAV_DC,
+                SFName = row.SFName,
+                VVT_DOC_NUM = row.VVT_DOC_NUM,
                 State = isNew ? RowStatus.NewRow : RowStatus.NotEdited
             };
-            //BankOperationType = BankOperationType.NotChoice;
-
-            //RefreshData(docCode);
         }
 
         public bool IsChangeTypeEnable => CurrentBankOperations?.State == RowStatus.NewRow;
@@ -70,18 +81,18 @@ namespace KursAM2.ViewModel.Finance.controls
             }
         }
 
-        public bool NotAllowSummaPrihodChanged => (BankOperationType == BankOperationType.BankIn ||
+        public bool NotAllowSummaPrihodChanged => BankOperationType == BankOperationType.BankIn ||
                                                   BankOperationType == BankOperationType.CashIn
-                                                  && CurrentBankOperations?.VVT_SFACT_POSTAV_DC != null)
-                                                    || IsNotCurrencyChange;
+                                                  && CurrentBankOperations?.VVT_SFACT_POSTAV_DC != null
+                                                  || IsNotCurrencyChange;
 
-        public bool NotAllowSummaRashodChanged => (BankOperationType == BankOperationType.BankOut ||
+        public bool NotAllowSummaRashodChanged => BankOperationType == BankOperationType.BankOut ||
                                                   BankOperationType == BankOperationType.CashOut
-                                                  && CurrentBankOperations?.VVT_SFACT_CLIENT_DC != null)
-                                                    || IsNotCurrencyChange;
+                                                  && CurrentBankOperations?.VVT_SFACT_CLIENT_DC != null
+                                                  || IsNotCurrencyChange;
 
         public string KontragentName => CurrentBankOperations?.KontragentName;
-        
+
         public bool IsNotCurrencyChange => CurrentBankOperations?.IsCurrencyChange == false;
 
         public ICommand SFNameRemoveCommand
@@ -132,10 +143,10 @@ namespace KursAM2.ViewModel.Finance.controls
                 }
 
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(KontragentName));
+                RaisePropertyChanged(nameof(KontragentName));
                 DataUserControl.Kontragent.Text = null;
-                RaisePropertiesChanged(nameof(NotAllowSummaPrihodChanged));
-                RaisePropertiesChanged(nameof(NotAllowSummaRashodChanged));
+                RaisePropertyChanged(nameof(NotAllowSummaPrihodChanged));
+                RaisePropertyChanged(nameof(NotAllowSummaRashodChanged));
             }
         }
 
@@ -151,12 +162,17 @@ namespace KursAM2.ViewModel.Finance.controls
                 CurrentBankOperations.CashIn = null;
                 CurrentBankOperations.CashOut = null;
                 CurrentBankOperations.BankOperationType = value;
-                if (BankOperationType == BankOperationType.BankIn || BankOperationType == BankOperationType.BankOut)
-                    Payment = GlobalOptions.SystemProfile.OwnerKontragent;
+
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(NotAllowSummaPrihodChanged));
-                RaisePropertiesChanged(nameof(NotAllowSummaRashodChanged));
-                RaisePropertiesChanged(nameof(KontragentName));
+                RaisePropertyChanged(nameof(IsPrihodSummaEnabled));
+                RaisePropertyChanged(nameof(IsRashodSummaEnabled));
+                RaisePropertyChanged(nameof(NotAllowSummaPrihodChanged));
+                RaisePropertyChanged(nameof(NotAllowSummaRashodChanged));
+                RaisePropertyChanged(nameof(KontragentName));
+                RaisePropertyChanged(nameof(PrihodEditMode));
+                RaisePropertyChanged(nameof(RashodEditMode));
+
+                SetBrushForPrihodRashod();
             }
             get => myCurrentBankOperations.BankOperationType;
         }
@@ -216,7 +232,7 @@ namespace KursAM2.ViewModel.Finance.controls
             {
                 if (Equals(myDataUserControl, value)) return;
                 myDataUserControl = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myDataUserControl;
         }
@@ -313,19 +329,110 @@ namespace KursAM2.ViewModel.Finance.controls
 
         // ReSharper disable once IdentifierTypo
         public List<Currency> CurrencysCompendium => MainReferences.Currencies.Values.ToList();
+
         // ReSharper disable once InconsistentNaming
         public List<SDRSchet> SHPZList => MainReferences.SDRSchets.Values.ToList();
 
-        public bool IsRashodSummaEnabled => CurrentBankOperations.VVT_SFACT_CLIENT_DC == null &&
-                                            CurrentBankOperations.VVT_RASH_KASS_ORDER_DC == null;
+        public bool IsPrihodSummaEnabled => CurrentBankOperations.BankOperationType == BankOperationType.BankOut
+                                            || CurrentBankOperations.BankOperationType == BankOperationType.CashOut
+                                            || CurrentBankOperations.BankOperationType == BankOperationType.Kontragent;
 
-        public bool IsPrihodSummaEnabled => CurrentBankOperations.VVT_SFACT_POSTAV_DC == null &&
-                                            CurrentBankOperations.VVT_KASS_PRIH_ORDER_DC == null;
+        public bool IsRashodSummaEnabled => CurrentBankOperations.BankOperationType == BankOperationType.BankIn
+                                            || CurrentBankOperations.BankOperationType == BankOperationType.CashIn
+                                            || CurrentBankOperations.BankOperationType == BankOperationType.Kontragent;
+
 
         public bool IsKontragentEnabled => CurrentBankOperations.VVT_SFACT_CLIENT_DC == null &&
                                            CurrentBankOperations.VVT_RASH_KASS_ORDER_DC == null
                                            && CurrentBankOperations.VVT_SFACT_POSTAV_DC == null &&
                                            CurrentBankOperations.VVT_KASS_PRIH_ORDER_DC == null;
+
+        public EditModeEnum PrihodEditMode
+        {
+            get
+            {
+                switch (BankOperationType)
+                {
+                    case BankOperationType.BankIn:
+                    case BankOperationType.CashIn:
+                        return EditModeEnum.NotCanEdit;
+                    case BankOperationType.Kontragent:
+                        if (VVT_VAL_RASHOD > 0)
+                            return EditModeEnum.CanEditButZero;
+                        else
+                            return EditModeEnum.CanEdit;
+                    case BankOperationType.BankOut:
+                    case BankOperationType.CashOut:
+                        return EditModeEnum.CanEdit;
+                }
+
+                return EditModeEnum.None;
+            }
+        }
+
+        public EditModeEnum RashodEditMode
+        {
+            get
+            {
+                switch (BankOperationType)
+                {
+                    case BankOperationType.BankIn:
+                    case BankOperationType.CashIn:
+                        return EditModeEnum.CanEdit;
+                    case BankOperationType.Kontragent:
+                        if (VVT_VAL_PRIHOD > 0)
+                            return EditModeEnum.CanEditButZero;
+                        else
+                            return EditModeEnum.CanEdit;
+                    case BankOperationType.BankOut:
+                    case BankOperationType.CashOut:
+                        return EditModeEnum.NotCanEdit;
+                }
+
+                return EditModeEnum.None;
+            }
+        }
+
+        private void SetBrushForPrihodRashod()
+        {
+            if (Form is SelectDialogView frm)
+                if (frm.contentControl.Content is BankOperationsComareRowView ctrl)
+                {
+                    var prih = ctrl.Incoming;
+                    var rash = ctrl.Consumption;
+                    switch (PrihodEditMode)
+                    {
+                        case EditModeEnum.CanEdit:
+                            prih.BorderBrush = ColorCanEdit;
+                            break;
+                        case EditModeEnum.None:
+                            prih.BorderBrush = colorNon;
+                            break;
+                        case EditModeEnum.NotCanEdit:
+                            prih.BorderBrush = colorNonCanEdit;
+                            break;
+                        case EditModeEnum.CanEditButZero:
+                            prih.BorderBrush = colorCanEditButZero;
+                            break;
+                    }
+
+                    switch (RashodEditMode)
+                    {
+                        case EditModeEnum.CanEdit:
+                            rash.BorderBrush = ColorCanEdit;
+                            break;
+                        case EditModeEnum.None:
+                            rash.BorderBrush = colorNon;
+                            break;
+                        case EditModeEnum.NotCanEdit:
+                            rash.BorderBrush = colorNonCanEdit;
+                            break;
+                        case EditModeEnum.CanEditButZero:
+                            rash.BorderBrush = colorCanEditButZero;
+                            break;
+                    }
+                }
+        }
 
         private void SFNameRemove(object obj)
         {
@@ -349,5 +456,14 @@ namespace KursAM2.ViewModel.Finance.controls
                    CurrentBankOperations.Currency != null
                    && BankOperationType != BankOperationType.NotChoice;
         }
+    }
+
+
+    public enum EditModeEnum
+    {
+        CanEdit = 1,
+        NotCanEdit = 2,
+        CanEditButZero = 3,
+        None = 0
     }
 }

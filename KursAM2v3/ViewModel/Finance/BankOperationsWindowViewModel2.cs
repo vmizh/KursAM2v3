@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -17,11 +18,12 @@ using KursAM2.View.Finance;
 
 namespace KursAM2.ViewModel.Finance
 {
-    public class BankOperationsWindowViewModel2 : RSWindowViewModelBase
+    [SuppressMessage("ReSharper", "PossibleUnintendedReferenceComparison")]
+    public sealed class BankOperationsWindowViewModel2 : RSWindowViewModelBase
     {
         #region Fields
 
-        private readonly BankOperationsManager Manager = new BankOperationsManager();
+        private readonly BankOperationsManager manager = new BankOperationsManager();
 
         #endregion
 
@@ -73,7 +75,7 @@ namespace KursAM2.ViewModel.Finance
                 if (k != null)
                 {
                     k.State = RowStatus.Edited;
-                    Manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
+                    manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
                     BankOperationsCollection.Add(k);
                     BankOperationsCollection.First(_ => _.DOC_CODE == k.DOC_CODE && _.Code == k.Code).State =
                         RowStatus.NotEdited;
@@ -93,7 +95,7 @@ namespace KursAM2.ViewModel.Finance
                 if (k != null)
                 {
                     k.State = RowStatus.NewRow;
-                    Manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
+                    manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
                     BankOperationsCollection.Add(k);
                     BankOperationsCollection.First(_ => _.DOC_CODE == k.DOC_CODE && _.Code == k.Code).State =
                         RowStatus.NotEdited;
@@ -203,7 +205,7 @@ namespace KursAM2.ViewModel.Finance
         public override void DocDelete(object obj)
         {
             var date = CurrentBankOperations.Date;
-            Manager.DeleteBankOperations(CurrentBankOperations, CurrentBankAccount.DocCode);
+            manager.DeleteBankOperations(CurrentBankOperations, CurrentBankAccount.DocCode);
             UpdateValueInWindow(CurrentBankOperations);
             var dd = Periods.Where(_ => _.DateStart <= date && _.PeriodType == PeriodType.Day)
                 .Max(_ => _.DateStart);
@@ -221,7 +223,7 @@ namespace KursAM2.ViewModel.Finance
                 if (k != null)
                 {
                     k.State = RowStatus.NewRow;
-                    Manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
+                    manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
                     BankOperationsCollection.Add(k);
                     BankOperationsCollection.First(_ => _.DOC_CODE == k.DOC_CODE && _.Code == k.Code).State =
                         RowStatus.NotEdited;
@@ -265,6 +267,7 @@ namespace KursAM2.ViewModel.Finance
             new ObservableCollection<BankAccount>();
         public ObservableCollection<BankOperationsViewModel> BankOperationsCollection { set; get; } =
             new ObservableCollection<BankOperationsViewModel>();
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<BankPeriodsOperationsViewModel> BankPeriodOperationsCollection { set; get; } =
             new ObservableCollection<BankPeriodsOperationsViewModel>();
         public override bool IsDocNewCopyAllow =>
@@ -314,7 +317,7 @@ namespace KursAM2.ViewModel.Finance
                 {
                     var delta = Convert.ToDecimal(myCurrentBankOperations.DeltaPrihod -
                                                   myCurrentBankOperations.DeltaRashod);
-                    Manager.SaveBankOperations(myCurrentBankOperations, CurrentBankAccount.DocCode, delta);
+                    manager.SaveBankOperations(myCurrentBankOperations, CurrentBankAccount.DocCode, delta);
                     myCurrentBankOperations.State = RowStatus.NotEdited;
                 }
                 myCurrentBankOperations = value;
@@ -347,7 +350,7 @@ namespace KursAM2.ViewModel.Finance
             //foreach (var per in
             //    Manager.GetBankPeriodOperations(CurrentBankAccount.DocCode))
             //    BankPeriodOperationsCollection.Add(per);
-            Periods.AddRange(Manager.GetRemains2(CurrentBankAccount.DocCode));
+            Periods.AddRange(manager.GetRemains2(CurrentBankAccount.DocCode));
             RaisePropertyChanged(nameof(Periods));
             if (Form is BankOperationsView2 form) form.TreePeriods.RefreshData();
         }
@@ -356,7 +359,7 @@ namespace KursAM2.ViewModel.Finance
         {
             if (CurrentBankAccount?.DocCode == null) return;
             BankOperationsCollection.Clear();
-            var opers = Manager.GetBankOperations(CurrentPeriods.DateStart, CurrentPeriods.DateEnd,
+            var opers = manager.GetBankOperations(CurrentPeriods.DateStart, CurrentPeriods.DateEnd,
                 CurrentBankAccount.DocCode);
             foreach (var op in opers)
             {

@@ -3,14 +3,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Input;
-using WindowsInput;
-using DevExpress.Data.Filtering;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management;
-using LayoutManager;
-using Application = System.Windows.Application;
+using LayoutManager; //using WindowsInput;
 
 namespace KursAM2.View.Management
 {

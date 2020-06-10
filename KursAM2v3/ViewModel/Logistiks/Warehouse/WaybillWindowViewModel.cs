@@ -17,7 +17,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public class WaybillWindowViewModel : RSWindowViewModelBase
     {
-        private readonly WarehouseManager DocManager = new WarehouseManager(new StandartErrorManager(
+        private readonly WarehouseManager docManager = new WarehouseManager(new StandartErrorManager(
             GlobalOptions.GetEntities(),
             "WaybillViewModel"));
 
@@ -45,7 +45,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Command = ExportCommand
                 });
             }
-            Document = DocManager.NewWaybill();
+            Document = docManager.NewWaybill();
         }
 
         public WaybillWindowViewModel(decimal dc)
@@ -69,6 +69,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Command = ExportCommand
                 });
             }
+            // ReSharper disable once VirtualMemberCallInConstructor
             RefreshData(dc);
         }
 
@@ -103,7 +104,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
         }
 
-        public ObservableCollection<WaybillRow> SelectedRows { set; get; } = new ObservableCollection<WaybillRow>();
+        // ReSharper disable once CollectionNeverUpdated.Global
+        public ObservableCollection<WaybillRow> SelectedRows { set; get; } 
+            = new ObservableCollection<WaybillRow>();
 
         private void CreateReports()
         {
@@ -134,13 +137,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 ByWhomLicoList.Add(item);
             }
-        }
-
-        private void Refresh(decimal dc)
-        {
-            LoadByWhom();
-            var d = DocManager.GetWaybill(dc);
-            Document = d ?? DocManager.NewWaybill();
         }
 
         #region Command
@@ -227,20 +223,22 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void OpenSchet(object obj)
         {
+            // ReSharper disable once PossibleInvalidOperationException
+            DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal) CurrentNomenklRow.DDT_SFACT_DC);
         }
 
         public override void RefreshData(object obj)
         {
             if (Document != null && Document.DocCode > 0)
             {
-                var d = DocManager.GetWaybill(Document.DocCode);
-                Document = d ?? DocManager.NewWaybill();
+                var d = docManager.GetWaybill(Document.DocCode);
+                Document = d ?? docManager.NewWaybill();
             }
             else
             {
                 var dc = obj as decimal? ?? 0;
                 if (dc != 0)
-                    Document = DocManager.GetWaybill(dc);
+                    Document = docManager.GetWaybill(dc);
             }
             if (Document != null && Document.State == RowStatus.NewRow)
                 WindowName = Document.ToString();
@@ -364,7 +362,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             Document.DD_POLUCH_NAME = Document.Client.Name;
             Document.DD_OTRPAV_NAME = Document.WarehouseOut.Name;
             Document.DD_TYPE_DC = 2010000012;
-            var dc = DocManager.SaveWaybill(Document);
+            var dc = docManager.SaveWaybill(Document);
             if (dc > 0) RefreshData(dc);
         }
 
@@ -374,6 +372,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
     public class ListString
     {
         public decimal DocCode { set; get; }
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Name { set; get; }
         public override string ToString()
         {

@@ -219,7 +219,7 @@ namespace KursAM2.Managers
             {
                 var d = ctx.TD_101.Include(_ => _.SD_101).FirstOrDefault(_ => _.CODE == dc);
                 if (d == null) return;
-                dtx.CurrentBankAccount = dtx.BankAccountCollection.FirstOrDefault(_ => _.BankDC == d.SD_101.VV_ACC_DC);
+                dtx.CurrentBankAccount = dtx.BankAccountCollection.FirstOrDefault(_ => _.DocCode == d.SD_101.VV_ACC_DC);
                 dtx.CurrentPeriods = dtx.Periods.FirstOrDefault(_ =>
                     _.DateStart.Year == d.SD_101.VV_START_DATE.Year && _.PeriodType == PeriodType.Year);
                 dtx.CurrentBankOperations = dtx.BankOperationsCollection.FirstOrDefault(_ => _.Code == dc);
@@ -294,8 +294,8 @@ namespace KursAM2.Managers
 
         private static void OpenSFClient(decimal docCode)
         {
-            var ctx = new ClientWindowViewModel(docCode);
             var view = new InvoiceClientView {Owner = Application.Current.MainWindow};
+            var ctx = new ClientWindowViewModel(docCode);
             ctx.Form = view;
             view.Show();
             view.DataContext = ctx;

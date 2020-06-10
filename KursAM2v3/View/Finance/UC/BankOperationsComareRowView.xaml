@@ -6,9 +6,40 @@
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:entityViewModel="clr-namespace:Core.EntityViewModel;assembly=Core"
+             xmlns:my="clr-namespace:KursAM2.ViewModel.Finance.controls"
+             xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
              mc:Ignorable="d"
              d:DesignHeight="250" d:DesignWidth="500"
              >
+    <UserControl.Resources>
+        <ControlTemplate x:Key="SummaTemplate" TargetType="dxe:PopupCalcEdit">
+            <Border x:Name="TextBoreder" >
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsEnabled" Value="true">
+                    <Setter TargetName="TextBoreder" Property="BorderBrush" Value="Blue"/>
+                    <Setter TargetName="TextBoreder" Property="BorderThickness" Value="2"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter TargetName="TextBoreder" Property="BorderBrush" Value="Gainsboro"/>
+                    <Setter TargetName="TextBoreder" Property="BorderThickness" Value="1"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <Style x:Key="SummaStyle" TargetType="{x:Type dxe:PopupCalcEdit}">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="BorderBrush" Value="Blue" />
+                    <Setter Property="BorderThickness" Value="4"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="BorderBrush" Value="Gainsboro" />
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Trigger>
+                
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <DockPanel>
         <dxlc:LayoutControl Orientation="Horizontal" VerticalAlignment="Center">
             <dxlc:LayoutGroup Orientation="Vertical" Margin="0 0 15 0">
@@ -54,7 +85,7 @@
                                     Margin="0 0 0 5"
                                     DefaultButtonClick="Payment_OnDefaultButtonClick">
                         <dxe:ButtonEdit.Buttons>
-                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Undo" Click="ButtonInfo_OnClick"/>
+                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Cancel" Click="PaymentCancel_OnClick"/>
                         </dxe:ButtonEdit.Buttons>
                     </dxe:ButtonEdit>
                 </dxlc:LayoutItem>
@@ -69,27 +100,27 @@
                                        DisplayFormatString="n2"
                                        EditValueChanged="Incoming_OnEditValueChanged"
                                        Value="{Binding VVT_VAL_PRIHOD, Mode=TwoWay}" 
-                                       IsEnabled="{Binding IsPrihodSummaEnabled,   NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                                       />
+                                       IsEnabled="{Binding IsPrihodSummaEnabled, UpdateSourceTrigger=PropertyChanged}">
+                    </dxe:PopupCalcEdit>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Расход">
-                    <dxe:PopupCalcEdit
-                        x:Name="Consumption"
-                        Height="25"
-                        DisplayFormatString="n2"
-                        EditValueChanged="Consumption_OnEditValueChanged"
-                        Value="{Binding VVT_VAL_RASHOD, Mode=TwoWay}"
-                        IsEnabled="{Binding IsRashodSummaEnabled,   NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-
-                        Margin="0 0 0 5" />
+                     <dxe:PopupCalcEdit
+                            x:Name="Consumption"
+                            Height="25"
+                            DisplayFormatString="n2"
+                            EditValueChanged="Consumption_OnEditValueChanged"
+                            Value="{Binding VVT_VAL_RASHOD, Mode=TwoWay}"
+                            IsEnabled="{Binding IsRashodSummaEnabled,  UpdateSourceTrigger=PropertyChanged}"
+                            Margin="0 0 0 5">
+                        </dxe:PopupCalcEdit>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Счет доходов/расходов">
-                     <ComboBox HorizontalAlignment="Stretch"
+                     <dxe:ComboBoxEdit HorizontalAlignment="Stretch"
                               ItemsSource="{Binding SHPZList}"
                               IsEnabled="{Binding IsNotCurrencyChange}"
                               Height="25"
                               SelectedItem="{Binding SHPZ, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                              DisplayMemberPath="Name"
+                              DisplayMember="Name"
                               Margin="0 0 0 5" />
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Счет фактура">

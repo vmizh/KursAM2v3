@@ -72,9 +72,7 @@
     <Reference Include="DevExpress.Diagram.v15.2.Core, Version=15.2.20.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Images.v15.2, Version=15.2.20.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Map.v15.2.Core, Version=15.2.20.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Mvvm.v15.2, Version=15.2.20.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="DevExpress.Mvvm.v15.2, Version=15.2.20.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Office.v15.2.Core, Version=15.2.20.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -196,9 +194,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WindowsInput, Version=1.0.4.0, Culture=neutral, PublicKeyToken=9b287f7dc5073cad, processorArchitecture=MSIL">
-      <HintPath>..\packages\InputSimulator.1.0.4.0\lib\net20\WindowsInput.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -264,6 +259,8 @@
     <Compile Include="ViewModel\Finance\BankCurrencyChangeWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\controls\AddBankOperionUC.cs" />
     <Compile Include="ViewModel\Finance\GridControlSummaryItem.cs" />
+    <Compile Include="ViewModel\Finance\Invoices\AddPaymentClientInvoice.cs" />
+    <Compile Include="ViewModel\Finance\Invoices\AddPaymentProviderInvoice.cs" />
     <Compile Include="ViewModel\Finance\Invoices\ProviderWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\MoneyInPathItem.cs" />
     <Compile Include="ViewModel\Finance\MutualAccountingDebitorCreditors.cs" />

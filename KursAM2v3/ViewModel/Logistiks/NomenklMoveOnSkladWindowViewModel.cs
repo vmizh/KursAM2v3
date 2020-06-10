@@ -719,6 +719,10 @@ namespace KursAM2.ViewModel.Logistiks
                     DocumentsOpenManager.Open(DocumentType.NomenklTransfer, CurrentDocument.DocCode,
                         CurrentDocument.Id);
                     break;
+                case "Расходная накладная (без требования)":
+                    DocumentsOpenManager.Open(DocumentType.Waybill, CurrentDocument.DocCode,
+                        CurrentDocument.Id);
+                    break;
             }
         }
     }

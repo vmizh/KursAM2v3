@@ -19,8 +19,6 @@ namespace KursAM2.Managers.Invoices
 {
     public class InvoicesManager
     {
-        private static readonly WindowManager winManager = new WindowManager();
-
         /// <summary>
         ///     Оплата по счетам
         /// </summary>
@@ -859,6 +857,7 @@ namespace KursAM2.Managers.Invoices
                         .Include(_ => _.SD_431)
                         .Include(_ => _.SD_432)
                         .Include(_ => _.TD_84)
+                        .Include("TD_84.SD_175")
                         .Include("TD_84.SD_83")
                         .Include("TD_84.SD_83.SD_175")
                         .Include(_ => _.SD_24)
@@ -879,7 +878,9 @@ namespace KursAM2.Managers.Invoices
                             DocumentType = DocumentType.CashIn,
                             // ReSharper disable once PossibleInvalidOperationException
                             DocumentName =
-                                $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                                $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
+                                // ReSharper disable once PossibleInvalidOperationException
+                                $"{MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
                             // ReSharper disable once PossibleInvalidOperationException
                             Summa = (decimal) c.SUMM_ORD,
                             Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
@@ -894,7 +895,7 @@ namespace KursAM2.Managers.Invoices
                             DocumentType = DocumentType.Bank,
                             DocumentName =
                                 // ReSharper disable once PossibleInvalidOperationException
-                                $"{c.SD_101.VV_START_DATE} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                                $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
                             Summa = (decimal) c.VVT_VAL_PRIHOD,
                             Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                             Note = c.VVT_DOC_NUM
@@ -907,7 +908,7 @@ namespace KursAM2.Managers.Invoices
                             DocumentType = DocumentType.MutualAccounting,
                             DocumentName =
                                 // ReSharper disable once PossibleInvalidOperationException
-                                $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE} на {c.VZT_CRS_SUMMA}",
+                                $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
                             // ReSharper disable once PossibleInvalidOperationException
                             Summa = (decimal) c.VZT_CRS_SUMMA,
                             Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
@@ -1321,7 +1322,7 @@ namespace KursAM2.Managers.Invoices
                             var item = inv.Rows.FirstOrDefault(_ => _.Code == r.CODE);
                             if (item != null)
                             {
-                                item.Shipped = (decimal) r.Shipped;
+                                item.Shipped = r.Shipped ?? 0;
                                 continue;
                             }
                             deldcs.Add(r.CODE);

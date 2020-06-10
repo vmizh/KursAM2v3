@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -11,6 +12,7 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
+using Data;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
@@ -23,21 +25,30 @@ namespace KursAM2.ViewModel.Finance.Invoices
 {
     public class ClientWindowViewModel : RSWindowViewModelBase
     {
+
+        #region Fields
+
         private InvoicePaymentDocument myCurrentPaymentDoc;
 
         // ReSharper disable once InconsistentNaming
-        public InvoiceClientRow myCurrentRow;
+        private InvoiceClientRow myCurrentRow;
         private ShipmentRowViewModel myCurrentShipmentRow;
         private InvoiceClient myDocument;
         private decimal myOtgruzheno;
         private RSWindowViewModelBase myParentForm;
+
+        #endregion
+
+        #region Constructors
 
         public ClientWindowViewModel()
         {
             // ReSharper disable once ObjectCreationAsStatement
             new ReportManager();
             CreateReports();
+            // ReSharper disable once VirtualMemberCallInConstructor
             IsDocNewCopyAllow = true;
+            // ReSharper disable once VirtualMemberCallInConstructor
             IsDocNewCopyRequisiteAllow = true;
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
@@ -46,14 +57,18 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ClientWindowViewModel(decimal? dc) : this()
         {
-            // ReSharper disable once ObjectCreationAsStatement
-            Document = dc != null ? InvoicesManager.GetInvoiceClient((decimal) dc) : InvoicesManager.NewClient();
-            if (Document.State == RowStatus.NewRow) return;
-            if (Document != null)
-                WindowName = Document.ToString();
-            Document.myState = RowStatus.NotEdited;
-            Document.RaisePropertyChanged("State");
+            if (dc != null)
+            {
+                // ReSharper disable once VirtualMemberCallInConstructor
+                RefreshData(dc);
+            }
+            // ReSharper disable once VirtualMemberCallInConstructor
+            WindowName = Document.ToString();
         }
+
+        #endregion
+
+        #region Properties
 
         public RSWindowViewModelBase ParentForm
         {
@@ -172,6 +187,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
+        #endregion
+
+        #region Methods
+
         public void UpdateVisualData()
         {
             // ReSharper disable once NotResolvedInText
@@ -199,6 +218,28 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
+        private void SetVisualOnStart()
+        {
+            var frm = Form as InvoiceClientView;
+            if (frm != null)
+            {
+                if (Document.IsNDSIncludeInPrice)
+                {
+                    var colPrice = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SFT_ED_CENA");
+                    if (colPrice != null) colPrice.ReadOnly = true;
+                    var colSumma = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SFT_SUMMA_K_OPLATE");
+                    if (colSumma != null) colSumma.ReadOnly = false;
+                }
+                else
+                {
+                    var colPrice = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SFT_ED_CENA");
+                    if (colPrice != null) colPrice.ReadOnly = false;
+                    var colSumma = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SFT_SUMMA_K_OPLATE");
+                    if (colSumma != null) colSumma.ReadOnly = true;
+                }
+            }
+        }
+        
         public void GetDefaultValue()
         {
             Document.State = RowStatus.NotEdited;
@@ -351,60 +392,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             });
         }
 
-        /*ItemsSource="{Binding Document.PaymentDocs, NotifyOnSourceUpdated=True}"
-                                     CurrentItem="{Binding CurrentPaymentDoc, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
-                                     SelectedItems="{Binding SelectedDocs, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"*/
-
-        public override void RefreshData(object obj)
-        {
-            base.RefreshData(obj);
-            if (IsCanSaveData)
-            {
-                var res = WinManager.ShowWinUIMessageBox("В документ внесены изменения, сохранить?", "Запрос",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question);
-                switch (res)
-                {
-                    case MessageBoxResult.Yes:
-                        InvoicesManager.SaveClient(Document);
-                        Document = InvoicesManager.GetInvoiceClient(Document.DocCode);
-                        Document.WindowViewModel = this;
-                        return;
-                    case MessageBoxResult.No:
-                        Document = InvoicesManager.GetInvoiceClient(Document.DocCode);
-                        Document.WindowViewModel = this;
-                        RaisePropertiesChanged(nameof(Document));
-                        return;
-                }
-            }
-            else
-            {
-                Document = InvoicesManager.GetInvoiceClient(Document.DocCode);
-                Document.WindowViewModel = this;
-            }
-        }
-
-        public override void SaveData(object data)
-        {
-            if (Document.Rows.Any(_ => _.Nomenkl.IsUsluga) && !Document.IsAccepted)
-            {
-                var res = WinManager.ShowWinUIMessageBox("В счете имеются услуги. Акцептовать счет?", "Предупреждение",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (res == MessageBoxResult.Yes) Document.IsAccepted = true;
-            }
-            var dc = InvoicesManager.SaveClient(Document);
-            if (dc > 0)
-            {
-                if (Document.SF_CLIENT_DC != null)
-                    RecalcKontragentBalans.CalcBalans((decimal) Document.SF_CLIENT_DC, Document.SF_DATE);
-                if (Document.SF_DILER_DC != null)
-                    RecalcKontragentBalans.CalcBalans((decimal) Document.SF_DILER_DC, Document.SF_DATE);
-                Document.DocCode = dc;
-                Document.myState = RowStatus.NotEdited;
-                Document.RaisePropertyChanged("State");
-                RefreshData(null);
-            }
-        }
+        #endregion
 
         #region Справочники
 
@@ -420,7 +408,67 @@ namespace KursAM2.ViewModel.Finance.Invoices
         #endregion
 
         #region Command
+        public override void RefreshData(object obj)
+        {
+            base.RefreshData(obj);
+            if (obj is decimal dc)
+            {
+                Document = InvoicesManager.GetInvoiceClient(dc);
+                Document.WindowViewModel = this;
+                SetVisualOnStart();
+                return;
+            }
 
+            if (IsCanSaveData)
+            {
+                var res = WinManager.ShowWinUIMessageBox("В документ внесены изменения, сохранить?", "Запрос",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+                switch (res)
+                {
+                    case MessageBoxResult.Yes:
+                        InvoicesManager.SaveClient(Document);
+                        Document = InvoicesManager.GetInvoiceClient(Document.DocCode);
+                        Document.WindowViewModel = this;
+                        SetVisualOnStart();
+                        return;
+                    case MessageBoxResult.No:
+                        Document = InvoicesManager.GetInvoiceClient(Document.DocCode);
+                        Document.WindowViewModel = this;
+                        SetVisualOnStart();
+                        RaisePropertiesChanged(nameof(Document));
+                        return;
+                }
+            }
+            else
+            {
+                Document = InvoicesManager.GetInvoiceClient(Document.DocCode);
+                Document.WindowViewModel = this;
+                SetVisualOnStart();
+            }
+        }
+
+        public override void SaveData(object data)
+        {
+            if (Document.Rows.Any(_ => _.Nomenkl.IsUsluga) && !Document.IsAccepted)
+            {
+                var res = WinManager.ShowWinUIMessageBox("В счете имеются услуги. Акцептовать счет?", "Предупреждение",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (res == MessageBoxResult.Yes) Document.IsAccepted = true;
+            }
+            var dc = InvoicesManager.SaveClient(Document);
+            if (dc > 0)
+            {
+                if (Document.SF_CLIENT_DC != null)
+                    RecalcKontragentBalans.CalcBalans((decimal)Document.SF_CLIENT_DC, Document.SF_DATE);
+                if (Document.SF_DILER_DC != null)
+                    RecalcKontragentBalans.CalcBalans((decimal)Document.SF_DILER_DC, Document.SF_DATE);
+                Document.DocCode = dc;
+                Document.myState = RowStatus.NotEdited;
+                Document.RaisePropertyChanged("State");
+                RefreshData(null);
+            }
+        }
         public ICommand OpenStoreLinkDocumentCommand
         {
             get { return new Command(OpenStoreLinkDocument, _ => CurrentShipmentRow != null); }
@@ -493,6 +541,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocDelete(object obj)
         {
+            if (Document == null) return;
             var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?", "Запрос",
                 MessageBoxButton.YesNoCancel,
                 MessageBoxImage.Question);
@@ -505,6 +554,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         return;
                     }
                     InvoicesManager.DeleteClient(Document.DocCode);
+                    // ReSharper disable once PossibleInvalidOperationException
                     RecalcKontragentBalans.CalcBalans((decimal) Document.SF_CLIENT_DC, Document.SF_DATE);
                     if (Document.SF_DILER_DC != null)
                         RecalcKontragentBalans.CalcBalans((decimal) Document.SF_DILER_DC, Document.SF_DATE);
@@ -565,17 +615,17 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     // ReSharper disable once PossibleNullReferenceException
                     if (Document.Rows.Any(_ => _.SFT_NEMENKL_DC == item.DocCode)) continue;
-                    decimal NDS;
+                    decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
-                        NDS = 0;
+                        nds = 0;
                     else
-                        NDS = (decimal) item.NOM_NDS_PERCENT;
+                        nds = (decimal) item.NOM_NDS_PERCENT;
                     Document.Rows.Add(new InvoiceClientRow
                     {
                         DOC_CODE = Document.DocCode,
                         Code = newCode,
                         SFT_NEMENKL_DC = item.DOC_CODE,
-                        SFT_NDS_PERCENT = (double) NDS,
+                        SFT_NDS_PERCENT = (double) nds,
                         SFT_KOL = 1,
                         SFT_ED_CENA = 0
                     });
@@ -620,17 +670,17 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var item in k)
                 {
                     if (Document != null && Document.Rows.Any(_ => _.SFT_NEMENKL_DC == item.DocCode)) continue;
-                    decimal NDS;
+                    decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
-                        NDS = 0;
+                        nds = 0;
                     else
-                        NDS = (decimal) item.NOM_NDS_PERCENT;
+                        nds = (decimal) item.NOM_NDS_PERCENT;
                     Document?.Rows.Add(new InvoiceClientRow
                     {
                         DOC_CODE = Document.DocCode,
                         Code = newCode,
                         SFT_NEMENKL_DC = item.DOC_CODE,
-                        SFT_NDS_PERCENT = (double) NDS,
+                        SFT_NDS_PERCENT = (double) nds,
                         SFT_KOL = 1,
                         SFT_ED_CENA = 0
                     });
@@ -744,17 +794,133 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ReportManager.Reports["Счет-фактура"].Show();
         }
 
-        public override void ResetLayout(object form)
-        {
-            var frm = form as InvoiceClientView;
-            frm?.LayoutManager.ResetLayout();
-        }
-
         public override void UpdatePropertyChangies()
         {
             RaisePropertyChanged(nameof(Document));
             // ReSharper disable once NotResolvedInText
             Document.RaisePropertyChanged("Rows");
+        }
+
+        private void UpdatePayDocuments(ALFAMEDIAEntities ctx)
+        {
+            Document.PaymentDocs.Clear();
+            foreach (var c in ctx.SD_33.Where(_ => _.SFACT_DC == Document.DocCode).ToList())
+                Document.PaymentDocs.Add(new InvoicePaymentDocument
+                {
+                    DocCode = c.DOC_CODE,
+                    Code = 0,
+                    DocumentType = DocumentType.CashIn,
+                    // ReSharper disable once PossibleInvalidOperationException
+                    DocumentName =
+                        $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
+                        // ReSharper disable once PossibleInvalidOperationException
+                        $"{MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
+                    // ReSharper disable once PossibleInvalidOperationException
+                    Summa = (decimal)c.SUMM_ORD,
+                    Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
+                    Note = c.NOTES_ORD
+                });
+            foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
+                .Where(_ => _.VVT_SFACT_CLIENT_DC == Document.DocCode)
+                .ToList())
+                Document.PaymentDocs.Add(new InvoicePaymentDocument
+                {
+                    DocCode = c.DOC_CODE,
+                    Code = c.CODE,
+                    DocumentType = DocumentType.Bank,
+                    DocumentName =
+                        // ReSharper disable once PossibleInvalidOperationException
+                        $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                    Summa = (decimal)c.VVT_VAL_PRIHOD,
+                    Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                    Note = c.VVT_DOC_NUM
+                });
+            foreach (var c in ctx.TD_110.Include(_ => _.SD_110)
+                .Where(_ => _.VZT_SFACT_DC == Document.DocCode).ToList())
+                Document.PaymentDocs.Add(new InvoicePaymentDocument
+                {
+                    DocCode = c.DOC_CODE,
+                    Code = c.CODE,
+                    DocumentType = DocumentType.MutualAccounting,
+                    DocumentName =
+                        // ReSharper disable once PossibleInvalidOperationException
+                        $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
+                    // ReSharper disable once PossibleInvalidOperationException
+                    Summa = (decimal)c.VZT_CRS_SUMMA,
+                    Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
+                    Note = c.VZT_DOC_NOTES
+                });
+        }
+
+        public ICommand AddPaymentFromBankCommand
+        {
+            get {return new Command(AddPaymentFromBank, 
+                _ => Document?.Client != null && Document.PaySumma < Document.SF_CRS_SUMMA_K_OPLATE);}
+        }
+
+        private void AddPaymentFromBank(object obj)
+        {
+            var oper = StandartDialogs.SelectBankOperationForClientInvoice(Document.Client.DocCode);
+            if (oper == null) return;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var old = ctx.TD_101.Single(_ => _.CODE == oper.Code);
+                if (old != null)
+                {
+                    old.VVT_SFACT_CLIENT_DC = Document.DocCode;
+                }
+
+                ctx.SaveChanges();
+                UpdatePayDocuments(ctx);
+            }
+
+        }
+        public ICommand AddPaymentFromCashCommand
+        {
+            get { return new Command(AddPaymentFromCash, 
+                _ => Document?.Client != null && Document.PaySumma < Document.SF_CRS_SUMMA_K_OPLATE); }
+        }
+
+        private void AddPaymentFromCash(object obj)
+        {
+            var oper = StandartDialogs.SelectCashOperationForClientInvoice(Document.Client.DocCode);
+            if (oper == null) return;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var old = ctx.SD_33.Single(_ => _.DOC_CODE == oper.DocCode);
+                if (old != null)
+                {
+                    old.SFACT_DC = Document.DocCode;
+                    old.SFACT_CRS_DC = Document.Currency.DocCode;
+                    old.SFACT_CRS_RATE = 1;
+                }
+                ctx.SaveChanges();
+                UpdatePayDocuments(ctx);
+            }
+
+        }
+
+        public ICommand AddPaymentFromVZCommand
+        {
+            get { return new Command(AddPaymentFromVZ, 
+                _ => Document?.Client != null && Document.PaySumma < Document.SF_CRS_SUMMA_K_OPLATE); }
+        }
+
+        private void AddPaymentFromVZ(object obj)
+        {
+            var oper = StandartDialogs.SelectVZOperationForClientInvoice(Document.Client.DocCode);
+            if (oper == null) return;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var old = ctx.TD_110.Single(_ => _.DOC_CODE == oper.DocCode && _.CODE == oper.Code);
+                if (old != null)
+                {
+                    old.VZT_SFACT_DC = Document.DocCode;
+                }
+                ctx.SaveChanges();
+                UpdatePayDocuments(ctx);
+            }
+
         }
 
         #endregion

@@ -16,7 +16,7 @@ using Reports.Base;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
-    public class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
+    public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
     {
         private InvoiceClient myCurrentDocument;
 

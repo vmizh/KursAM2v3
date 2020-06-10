@@ -67,6 +67,18 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
+        public override decimal DocCode
+        {
+            get => Entity.DOC_CODE;
+            set
+            {
+                if (Entity.DOC_CODE == value) return;
+                Entity.DOC_CODE = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public BankAccount BankAccount
         {
             get => myBankAccount;

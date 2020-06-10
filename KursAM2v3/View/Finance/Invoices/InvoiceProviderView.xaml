@@ -196,7 +196,12 @@
                                            ShowAutoFilterRow="True">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Открыть документ" Command="{Binding OpenPayDocumentCommand}" />
+                                        <MenuItem Header="Добавить оплату">
+                                            <MenuItem Header="Банк" Command="{Binding AddPaymentFromBankCommand}"/>
+                                            <MenuItem Header="Касса"  Command="{Binding AddPaymentFromCashCommand}"/>
+                                            <MenuItem Header="Акт взаимозачета"  Command="{Binding AddPaymentFromVZCommand}"/>
+                                        </MenuItem>
+                                                <MenuItem Header="Открыть документ" Command="{Binding OpenPayDocumentCommand}" />
                                         <Separator />
                                         <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                                   CommandParameter="{Binding Path=PlacementTarget, 
