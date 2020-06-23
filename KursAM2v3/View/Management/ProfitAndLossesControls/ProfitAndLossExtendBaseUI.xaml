@@ -224,8 +224,8 @@
                                        UseIndicatorForSelection="True"
                                        AllowPerPixelScrolling="True"
                                        ShowTotalSummary="True"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}"
+                                       
+                                       
                                        >
                     <dxg:TableView.FormatConditions>
                         <dxg:FormatCondition ApplyToRow="True" Expression="[AktZachet]='red'">

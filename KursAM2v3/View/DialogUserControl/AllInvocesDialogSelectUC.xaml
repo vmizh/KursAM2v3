@@ -59,8 +59,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView x:Name="gridViewClient"
                                ShowAutoFilterRow="True"
-                               CellStyle="{StaticResource FocusedCellStyle}" 
-                               RowStyle="{StaticResource FocusedRowStyle}"
+                               
+                               
                                RowDoubleClick="gridViewClient_OnRowDoubleClick">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
@@ -100,8 +100,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView x:Name="gridViewProvider"
                                ShowAutoFilterRow="True"
-                               CellStyle="{StaticResource FocusedCellStyle}" 
-                               RowStyle="{StaticResource FocusedRowStyle}"
+                               
+                               
                                RowDoubleClick="gridViewProvider_OnRowDoubleClick">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>

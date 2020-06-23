@@ -35,8 +35,9 @@ namespace Helper
 
         public static void SetModeUpdateProperties(object Document, DataLayoutItem item, string propertyName)
         {
-            if (!(bool)Document.GetType().GetProperties().FirstOrDefault(_ => _.Name == propertyName)
-                ?.CanWrite) return;
+            var canWrite = Document.GetType().GetProperties().FirstOrDefault(_ => _.Name == propertyName)
+                ?.CanWrite;
+            if (canWrite == null || !(bool) canWrite) return;
             {
                 if (!(item.Content is BaseEdit editor)) return;
                 // ReSharper disable once PossibleNullReferenceException
@@ -56,8 +57,9 @@ namespace Helper
 
         public static void SetModeUpdateProperties(object Document, ColumnBase item, string propertyName)
         {
-            if (!(bool)Document.GetType().GetProperties().FirstOrDefault(_ => _.Name == propertyName)
-                ?.CanWrite) return;
+            var canWrite = Document.GetType().GetProperties().FirstOrDefault(_ => _.Name == propertyName)
+                ?.CanWrite;
+            if (canWrite == null || !(bool) canWrite) return;
             {
                 if (!(item.EditSettings is BaseEditSettings editor)) return;
                 // ReSharper disable once PossibleNullReferenceException

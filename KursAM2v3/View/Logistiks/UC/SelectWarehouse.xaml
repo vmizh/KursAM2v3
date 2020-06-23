@@ -58,8 +58,8 @@
                                ShowAutoFilterRow="True"
                             KeyFieldName="Id"
                                   ParentFieldName="ParentId"
-                               CellStyle="{StaticResource FocusedCellStyle}" 
-                               RowStyle="{StaticResource FocusedRowStyle}"/>
+                               
+                               />
             </dxg:TreeListControl.View>
         </dxg:TreeListControl>
     </DockPanel>

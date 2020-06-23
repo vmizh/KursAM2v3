@@ -73,8 +73,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView x:Name="tableView"
                                                NavigationStyle="Row"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               
+                                               
                                                AllowPerPixelScrolling="True"
                                                ShowTotalSummary="True"
                                                ShowAutoFilterRow="True"
@@ -150,8 +150,8 @@
                                 <dxg:TableView AllowPerPixelScrolling="True"
                                                ShowTotalSummary="True"
                                                ShowGroupPanel="False" 
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"/>
+                                               
+                                               />
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </dxlc:LayoutGroup>
@@ -213,8 +213,8 @@
                                 <dxg:TableView AllowPerPixelScrolling="True"
                                                ShowTotalSummary="True"
                                                ShowGroupPanel="False"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}">
+                                               
+                                               >
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Добавить накладной расход"
@@ -274,8 +274,8 @@
                                     <dxg:TableView AllowPerPixelScrolling="True"
                                                    ShowTotalSummary="True"
                                                    ShowGroupPanel="False" 
-                                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                                   RowStyle="{StaticResource FocusedRowStyle}"/>
+                                                   
+                                                   />
                                 </dxg:GridControl.View>
                             </dxg:GridControl>
                         </dxlc:LayoutGroup>
@@ -307,8 +307,8 @@
                                     <dxg:TableView AllowPerPixelScrolling="True"
                                                    ShowTotalSummary="True"
                                                    ShowGroupPanel="False" 
-                                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                                   RowStyle="{StaticResource FocusedRowStyle}"/>
+                                                   
+                                                   />
                                 </dxg:GridControl.View>
                             </dxg:GridControl>
                         </dxlc:LayoutGroup>

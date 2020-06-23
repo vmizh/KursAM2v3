@@ -3,7 +3,7 @@ using Core.ViewModel.Base;
 
 namespace Core.ViewModel.Common
 {
-    public class DatePeriodViewModel : KursViewModelBase
+    public class DatePeriodViewModel : RSViewModelBase
     {
         private DateTime myFirstDate;
         private string myHeader;
@@ -22,7 +22,7 @@ namespace Core.ViewModel.Common
             {
                 if (value == myFirstDate) return;
                 myFirstDate = value;
-                OnPropertyChanged(nameof(FirstDate));
+                RaisePropertyChanged();
             }
         }
         public string Header
@@ -32,7 +32,7 @@ namespace Core.ViewModel.Common
             {
                 if (value == myHeader) return;
                 myHeader = value;
-                OnPropertyChanged(nameof(Header));
+                RaisePropertyChanged();
             }
         }
         public DateTime SecondDate
@@ -42,7 +42,7 @@ namespace Core.ViewModel.Common
             {
                 if (value == mySecondDate) return;
                 mySecondDate = value;
-                OnPropertyChanged(nameof(SecondDate));
+                RaisePropertyChanged();
             }
         }
     }

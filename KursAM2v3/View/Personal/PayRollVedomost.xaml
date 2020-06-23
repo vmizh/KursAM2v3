@@ -104,8 +104,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView
                                     Name="tableViewEmp"
-                                    CellStyle="{StaticResource FocusedCellStyle}" 
-                                    RowStyle="{StaticResource FocusedRowStyle}"
+                                    
+                                    
                                     ShowGroupPanel="False"
                                     NavigationStyle="Row"
                                     AllowPerPixelScrolling="True"
@@ -206,8 +206,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView
                                     Name="tableViewNach"
-                                    CellStyle="{StaticResource FocusedCellStyle}" 
-                                    RowStyle="{StaticResource FocusedRowStyle}"
+                                    
+                                    
                                     ShowGroupPanel="False"
                                     NavigationStyle="Cell"
                                     AllowPerPixelScrolling="True"

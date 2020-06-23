@@ -70,8 +70,8 @@
                             <dxg:TableView x:Name="tableViewNomenkl"
                                            AllowPerPixelScrolling="True"
                                            ShowTotalSummary="False"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+                                           
+                                           >
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Создать номенклатуру" Command="{Binding NomenklAddCommand}" />

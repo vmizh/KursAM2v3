@@ -2,18 +2,18 @@
 
 namespace PeriodManager.ViewModel
 {
-    public class PeriodClosedTypeViewModel : KursViewModelBase
+    public class PeriodClosedTypeViewModel : RSViewModelBase
     {
         private bool myIsSelected;
 
         public bool IsSelected
         {
-            get { return myIsSelected; }
+            get => myIsSelected;
             set
             {
                 if (myIsSelected == value) return;
                 myIsSelected = value;
-                OnPropertyChanged(nameof(IsSelected));
+                RaisePropertyChanged();
             }
         }
     }

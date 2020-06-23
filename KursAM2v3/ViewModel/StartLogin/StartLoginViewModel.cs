@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -130,6 +131,7 @@ namespace KursAM2.ViewModel.StartLogin
                                 Name = grp.Name,
                                 Notes = grp.Note,
                                 Picture = ImageManager.ByteToImage(grp.Picture),
+                                // ReSharper disable once PossibleInvalidOperationException
                                 OrderBy = (int) (grpOrd != null ? grpOrd.Order : grp.Id)
                             };
                             tileGroupsTemp.Add(newGrp);
@@ -150,6 +152,7 @@ namespace KursAM2.ViewModel.StartLogin
                             Notes = tile.Note,
                             Picture = ImageManager.ByteToImage(tile.Picture),
                             GroupId = tile.GroupId,
+                            // ReSharper disable once PossibleInvalidOperationException
                             OrderBy = (int) (ord != null ? ord.Order : tile.Id)
                         });
                     }
@@ -260,6 +263,38 @@ namespace KursAM2.ViewModel.StartLogin
         {
             try
             {
+                using (var kursSystemCtx = GlobalOptions.KursSystem())
+                {
+                    var u = kursSystemCtx.Users.Include(_ => _.DataSources).FirstOrDefault(_ => _.Name == CurrentUser);
+                    if (u == null)
+                    {
+                        WinManager.ShowMessageBox($"Пользователь {CurrentUser} в системе не зарегистрирован",
+                            "Ошибка входа");
+                        newUser = null;
+                        return false;
+                    }
+                    else
+                    {
+                        if (u.IsDeleted)
+                        {
+                            WinManager.ShowMessageBox(
+                                $"Пользователю {CurrentUser} запрещен вход в систему.Обратитесь к администратору.",
+                                "Ошибка входа");
+                            newUser = null;
+                            return false;
+                        }
+                        if (u.IsDeleted)
+                        {
+                            WinManager.ShowMessageBox(
+                                $"Пользователю {CurrentUser} не назначен доступ ни к одной базе данных. " +
+                                "Обратитесь к администратору.",
+                                "Ошибка входа");
+                            newUser = null;
+                            return false;
+                        }
+                    }
+
+                }
                 GlobalOptions.DataBaseName = SelectedDataSource.ShowName;
                 GlobalOptions.DataBaseId = SelectedDataSource.Id;
                 GlobalOptions.DatabaseColor = SelectedDataSource.Color;
@@ -338,13 +373,16 @@ namespace KursAM2.ViewModel.StartLogin
                 using (var conn = new SqlConnection(connection.ConnectionString))
                 {
                     conn.Open();
-                    var command = new SqlCommand();
-                    command.CommandText =
-                        "SELECT d.Name AS Name, d.ShowName AS ShowName, d.[Order] AS 'Order', d.Server as 'Server', " +
-                        "d.DBName AS 'DBName', d.Color AS 'Color', d.Id as 'Id'  FROM DataSources d " +
-                        "INNER JOIN  UsersLinkDB link ON link.DBId = d.Id " +
-                        $"INNER JOIN  Users u ON u.Id = link.UserId AND UPPER(u.Name) = '{CurrentUser.ToUpper()}'";
-                    command.Connection = conn;
+                    var command = new SqlCommand
+                    {
+                        CommandText =
+                            "SELECT d.Name AS Name, d.ShowName AS ShowName, d.[Order] AS 'Order', d.Server as 'Server', " +
+                            "d.DBName AS 'DBName', d.Color AS 'Color', d.Id as 'Id'  FROM DataSources d " +
+                            "INNER JOIN  UsersLinkDB link ON link.DBId = d.Id " +
+                            $"INNER JOIN  Users u ON u.Id = link.UserId AND UPPER(u.Name) = '{CurrentUser.ToUpper()}' " +
+                            "ORDER BY 3",
+                        Connection = conn
+                    };
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())

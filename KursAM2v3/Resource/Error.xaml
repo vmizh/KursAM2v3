@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                     xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
-                    xmlns:convertors="clr-namespace:CoreView.Convertors;assembly=CoreView">
+                    xmlns:convertors="clr-namespace:CoreView.Convertors;assembly=CoreView"
+                    xmlns:resource="clr-namespace:KursAM2.Resource">
     <SolidColorBrush x:Key="TextEdit.Background" Color="#FFFFFFFF" />
     <LinearGradientBrush x:Key="TextEdit.BorderBrush" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="#FF9DA0AA" Offset="0" />
@@ -38,7 +39,7 @@
             <!--BorderBrush="{StaticResource TextEdit.BorderBrush}" BorderThickness="1"-->
             <Border Background="{StaticResource TextEdit.Background}" BorderThickness="1" CornerRadius="1">
                 <Border.BorderBrush>
-                    <MultiBinding Converter="{convertors:ErrorToBrushConverter}">
+                    <MultiBinding Converter="{resource:ErrorToBrushConverter}">
                         <Binding Path="(dxe:BaseEdit.OwnerEdit).HasValidationError"
                                  RelativeSource="{RelativeSource Self}" />
                         <Binding Source="{StaticResource TextEdit.BorderBrush}" />

@@ -2026,6 +2026,13 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_114_CurrencyDC" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMove" Width="1.5" PointX="47.375" PointY="3.75" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveStore" Width="1.5" PointX="47.375" PointY="7.75" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.DistributeNaklad" Width="1.5" PointX="3" PointY="652" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.DistributeNakladInfo" Width="1.5" PointX="7.5" PointY="649.625" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.DistributeNakladRow" Width="1.5" PointX="5.25" PointY="652.25" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DistributeNaklad_Currency" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DistributeNakladRow_DocId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DistributeNakladInfo_InvoiceCrsDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DistributeNakladInfo_RowId" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

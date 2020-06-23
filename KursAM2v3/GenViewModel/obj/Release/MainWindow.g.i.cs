@@ -9,6 +9,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using DevExpress.Xpf.DXBinding;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.DataPager;
 using DevExpress.Xpf.Editors.DateNavigator;
@@ -23,6 +24,7 @@ using DevExpress.Xpf.Editors.Settings.Extension;
 using DevExpress.Xpf.Editors.Validation;
 using DevExpress.Xpf.Office.UI;
 using DevExpress.Xpf.RichEdit;
+using DevExpress.Xpf.RichEdit.Menu;
 using DevExpress.Xpf.RichEdit.UI;
 using DevExpress.XtraRichEdit;
 using DevExpress.XtraRichEdit.Menu;

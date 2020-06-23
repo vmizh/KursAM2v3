@@ -40,7 +40,10 @@
                 </dxe:ButtonEdit>
             </dxlc:LayoutItem>
         </DockPanel>
-        <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Horizontal" Padding="0">
+        <dxlc:LayoutControl x:Name="mainLayoutControl" 
+                            Orientation="Horizontal" Padding="0"
+                            dx:DXSerializer.SerializationID="mainLayoutControl"
+                            dx:DXSerializer.StoreLayoutMode="All">
             <dxlc:LayoutGroup View="Group"
 				dxlc:LayoutControl.AllowHorizontalSizing="True"
                 dx:DXSerializer.SerializationID="Group"
@@ -108,15 +111,15 @@
 				Orientation="Vertical"
 				View="Group"
 				dxlc:LayoutControl.AllowHorizontalSizing="True"
-                              VerticalAlignment="Top"
+                              VerticalAlignment="Stretch"
                               HorizontalAlignment="Stretch">
                 <dxlc:LayoutGroup x:Name="layoutGroup4"
 					View="Group"
-                                  VerticalAlignment="Top"
+                                  VerticalAlignment="Stretch"
                                   HorizontalAlignment="Stretch"
 					dxlc:LayoutControl.AllowVerticalSizing="True">
                     <dxg:GridControl x:Name="gridControlKontragent"
-						AutoGenerateColumns="None"
+						AutoGenerateColumns="AddNew"
 						EnableSmartColumnsGeneration="True"
 						VerticalAlignment="Stretch"
 						HorizontalAlignment="Stretch"
@@ -142,9 +145,7 @@
                         <dxg:GridControl.View>
                             <dxg:TableView x:Name="tableControlKontragent"
 								AllowPerPixelScrolling="True"
-								ShowTotalSummary="False"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+								ShowTotalSummary="False">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть карточку контрагента"
@@ -175,7 +176,9 @@
                 <dxlc:LayoutGroup View="Tabs" 
                                   x:Name="layoutGroup6"
                                   VerticalAlignment="Stretch"
-                                  HorizontalAlignment="Stretch">
+                                  HorizontalAlignment="Stretch"
+                                  dxlc:LayoutControl.AllowVerticalSizing="True"
+                                  >
                     <dxlc:LayoutGroup x:Name="layoutGroupMain" Header="Основные данные"
                                       VerticalAlignment="Stretch"
                                       HorizontalAlignment="Stretch">

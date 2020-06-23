@@ -153,7 +153,7 @@ namespace LayoutManager
             switch (LayoutControl)
             {
                 case GridControl ctrl:
-                    if (ColumnFieldTypeCheckDecimal(col.FieldType))
+                    if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
                     {
                         if (IsSummaryGenerate)
                         {
@@ -185,7 +185,7 @@ namespace LayoutManager
                     }
                     break;
                 case TreeListControl ctrl1:
-                    if (ColumnFieldTypeCheckDecimal(col.FieldType))
+                    if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
                         if (IsSummaryGenerate)
                         {
                             var summary = new TreeListSummaryItem

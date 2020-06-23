@@ -82,6 +82,8 @@ namespace Data
         public byte[] TSTAMP { get; set; }
         public System.Guid Id { get; set; }
         public Nullable<decimal> PersonalResponsibleDC { get; set; }
+        public Nullable<bool> IsInvoiceNakald { get; set; }
+        public Nullable<decimal> NakladDistributedSumma { get; set; }
     
         public virtual SD_112 SD_112 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -5,7 +5,7 @@ using Core.ViewModel.Base.Column;
 
 namespace KursAM2.ViewModel.Personal
 {
-    public class PersonalNachViewModel : KursViewModelBase, IViewModel<NachForEmployeeModelOld>
+    public class PersonalNachViewModel : RSViewModelBase, IViewModel<NachForEmployeeModelOld>
     {
         public PersonalNachViewModel()
         {
@@ -14,6 +14,8 @@ namespace KursAM2.ViewModel.Personal
             Source = new ObservableCollection<NachForEmployeeModelOld>();
             DeletedItems = new List<NachForEmployeeModelOld>();
         }
+
+        public GridTableViewInfo TableViewInfo { get; set; }
 
         #region IViewModel<NachForEmployeeModelOld> Members
 

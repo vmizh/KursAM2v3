@@ -1,46 +1,48 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 
 namespace PeriodManager.ViewModel
 {
-    public class PeriodGroupUserViewModel : KursViewModelBase
+    [SuppressMessage("ReSharper", "PossibleUnintendedReferenceComparison")]
+    public class PeriodGroupUserViewModel : RSViewModelBase
     {
         private UserViewModel myUser;
 
         [Display(Name = "Пользователь")]
         public UserViewModel User
         {
-            get { return myUser; }
+            get => myUser;
             set
             {
                 if (value == myUser) return;
                 myUser = value;
-                OnPropertyChanged(nameof(User));
+                RaisePropertyChanged();
             }
         }
 
         [Display(AutoGenerateField = false)]
         public override string Name
         {
-            get { return myName; }
+            get => myName;
             set
             {
                 if (value == myName) return;
                 myName = value;
-                OnPropertyChanged(nameof(Name));
+                RaisePropertyChanged();
             }
         }
 
         [Display(AutoGenerateField = false)]
         public override string Note
         {
-            get { return myNote; }
+            get => myNote;
             set
             {
                 if (value == myNote) return;
                 myNote = value;
-                OnPropertyChanged(nameof(Note));
+                RaisePropertyChanged();
             }
         }
     }

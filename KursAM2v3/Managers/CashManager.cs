@@ -873,38 +873,6 @@ namespace KursAM2.Managers
                                     ctx.SD_251.Any(_ => _.CH_DATE.Year == insCrsExch.CH_DATE.Year)
                                         ? ctx.SD_251.Max(_ => _.CH_NUM_ORD) + 1
                                         : 1;
-                                //var codecass3 = ctx.SD_39.FirstOrDefault(_ =>
-                                //    _.CA_DC == insCrsExch.Cash.DocCode && _.CRS_DC == insCrsExch.CurrencyIn.DocCode
-                                //                                       && _.DATE_CASS == insCrsExch.CH_DATE_IN);
-                                //if (codecass3 == null)
-                                //{
-                                //    CreateNewSD_39(insCrsExch.Cash.DocCode, (DateTime) insCrsExch.CH_DATE_IN, ctx);
-                                //    ent2.CH_CASH_DATE_IN_DC = ctx.SD_39.FirstOrDefault(_ =>
-                                //            _.CA_DC == insCrsExch.Cash.DocCode && _.CRS_DC ==
-                                //                                               insCrsExch.CurrencyIn.DocCode
-                                //                                               && _.DATE_CASS == insCrsExch.CH_DATE_IN)
-                                //        ?.DOC_CODE;
-                                //}
-                                //else
-                                //{
-                                //    ent2.CH_CASH_DATE_IN_DC = codecass3.DOC_CODE;
-                                //}
-                                //var codecass4 = ctx.SD_39.FirstOrDefault(_ =>
-                                //    _.CA_DC == insCrsExch.Cash.DocCode && _.CRS_DC == insCrsExch.CurrencyOut.DocCode
-                                //                                       && _.DATE_CASS == insCrsExch.CH_DATE_OUT);
-                                //if (codecass4 == null)
-                                //{
-                                //    CreateNewSD_39(insCrsExch.Cash.DocCode, (DateTime) insCrsExch.CH_DATE_OUT, ctx);
-                                //    ent2.CH_CASH_DATE_OUT_DC = ctx.SD_39.FirstOrDefault(_ =>
-                                //            _.CA_DC == insCrsExch.Cash.DocCode && _.CRS_DC ==
-                                //                                               insCrsExch.CurrencyOut.DocCode
-                                //                                               && _.DATE_CASS == insCrsExch.CH_DATE_OUT)
-                                //        ?.DOC_CODE;
-                                //}
-                                //else
-                                //{
-                                //    ent2.CH_CASH_DATE_OUT_DC = codecass4.DOC_CODE;
-                                //}
                                 ctx.Entry(ent2).State = EntityState.Added;
                                 ctx.SaveChanges();
                                 insCrsExch.DocCode = ent2.DOC_CODE;

@@ -162,7 +162,7 @@
                         <dxg:TableView ShowTotalSummary="True"
                                        x:Name="nomTableView"
                                        ShowAutoFilterRow="True"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
+                                       
                                        ShowGroupPanel="False"
                                        AllowEditing="True"
                                        AllowConditionalFormattingManager="True"
@@ -254,8 +254,6 @@
                         <dxg:GridControl.View>
                             <dxg:TableView ShowTotalSummary="True"
                                            x:Name="nomTableDocumentView"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"
                                            ShowAutoFilterRow="True"
                                            ShowGroupPanel="False"
                                            AllowEditing="True"
@@ -348,8 +346,6 @@
                         <dxg:GridControl.View>
                             <dxg:TableView ShowTotalSummary="True"
                                            x:Name="nomTablePaymentDocumentView"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"
                                            ShowAutoFilterRow="True"
                                            ShowGroupPanel="False"
                                            AllowEditing="True"

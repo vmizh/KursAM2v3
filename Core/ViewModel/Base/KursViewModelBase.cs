@@ -10,6 +10,7 @@ using JetBrains.Annotations;
 
 namespace Core.ViewModel.Base
 {
+    [Obsolete("Используйте класс KursBaseViewModel")]
     public abstract class KursViewModelBase
     {
         private bool myDeleted;
@@ -150,7 +151,7 @@ namespace Core.ViewModel.Base
         {
         }
 
-        protected void SetNonModified(List<KursViewModelBase> docs)
+        protected void SetNonModified(List<RSViewModelBase> docs)
         {
             foreach (var d in docs)
                 d.State = RowStatus.NotEdited;

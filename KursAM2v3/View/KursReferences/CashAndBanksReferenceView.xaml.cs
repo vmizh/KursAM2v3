@@ -52,7 +52,7 @@ namespace KursAM2.View.KursReferences
         private void GridCash_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
             e.Column.Name = e.Column.FieldName;
-            if (LayoutManagerBase.ColumnFieldTypeCheckDecimal(e.Column.FieldType))
+            if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(e.Column.FieldType))
                 e.Column.EditSettings = new CalcEditSettings
                 {
                     DisplayFormat = "n2",
@@ -94,7 +94,7 @@ namespace KursAM2.View.KursReferences
         private void GridBank_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
             e.Column.Name = e.Column.FieldName;
-            if (LayoutManagerBase.ColumnFieldTypeCheckDecimal(e.Column.FieldType))
+            if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(e.Column.FieldType))
                 e.Column.EditSettings = new CalcEditSettings
                 {
                     DisplayFormat = "n2",

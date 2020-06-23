@@ -80,8 +80,8 @@
                                        ShowGroupPanel="False"
                                        ShowIndicator="False" 
                                        VerticalScrollbarVisibility="Disabled"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}"/>
+                                       
+                                       />
                     </dxg:GridControl.View>
                 </dxg:GridControl>
             </StackPanel>
@@ -761,8 +761,8 @@
                                        UseIndicatorForSelection="True"
                                        AllowPerPixelScrolling="True"
                                        ShowTotalSummary="True"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}"
+                                       
+                                       
                                        >
                             <dxg:TableView.FormatConditions>
                                 <dxg:FormatCondition ApplyToRow="True" Expression="[AktZachet]='red'">

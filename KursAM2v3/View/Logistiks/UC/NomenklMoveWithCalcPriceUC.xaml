@@ -112,8 +112,8 @@
                         <dxg:GridControl.View>
                             <dxg:TableView AllowPerPixelScrolling="True"
                                            ShowTotalSummary="True"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"/>
+                                           
+                                           />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
 
@@ -175,8 +175,8 @@
                         </dxg:GridControl.Columns>
                         <dxg:GridControl.View>
                             <dxg:TableView AllowPerPixelScrolling="True" ShowTotalSummary="True" 
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"/>
+                                           
+                                           />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>

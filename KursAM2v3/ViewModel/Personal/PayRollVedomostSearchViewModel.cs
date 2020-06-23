@@ -10,7 +10,7 @@ using Core.WindowsManager;
 
 namespace KursAM2.ViewModel.Personal
 {
-    public class PayRollVedomostSearchViewModel : KursViewModelBase, IViewModel<PayRollVedomostSearch>
+    public class PayRollVedomostSearchViewModel : RSViewModelBase, IViewModel<PayRollVedomostSearch>
     {
         public PayRollVedomostSearchViewModel()
         {
@@ -100,6 +100,8 @@ namespace KursAM2.ViewModel.Personal
                 }
             }
         }
+
+        public GridTableViewInfo TableViewInfo { get; set; }
 
         #region IViewModel<PayRollVedomostSearch> Members
 

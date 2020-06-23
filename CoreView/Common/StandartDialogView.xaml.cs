@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 
+
 namespace CoreView.Common
 {
     /// <summary>
@@ -24,7 +25,7 @@ namespace CoreView.Common
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (gridDocs.SelectedItem != null)
+            if (gridDocs.CurrentItem != null)
                 DialogResult = true;
         }
 

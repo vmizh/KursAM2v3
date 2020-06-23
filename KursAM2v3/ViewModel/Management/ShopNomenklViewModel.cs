@@ -4,7 +4,7 @@ using Core.ViewModel.Base;
 
 namespace KursAM2.ViewModel.Management
 {
-    public class ShopNomenklViewModel : KursViewModelBase
+    public class ShopNomenklViewModel : RSViewModelBase
     {
         public ShopNomenklViewModel()
         {

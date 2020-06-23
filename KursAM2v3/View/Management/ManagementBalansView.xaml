@@ -64,8 +64,8 @@
                                            ShowAutoFilterRow="False"
                                            ShowGroupPanel="False"
                                            ShowIndicator="False" 
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           
+                                           
                                            />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
@@ -216,8 +216,8 @@
                     </dxg:GridControl.TotalSummary>
                     <dxg:GridControl.View>
                         <dxg:TableView x:Name="gridViewExtend" 
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}"
+                                       
+                                       
                                        AllowPerPixelScrolling="True"
                                        ShowTotalSummary="True">
                             <dxg:TableView.ContextMenu>

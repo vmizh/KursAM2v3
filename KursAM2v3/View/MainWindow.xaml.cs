@@ -29,6 +29,7 @@ using KursAM2.View.Repozit;
 using KursAM2.View.Search;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.Cash;
+using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Logistiks.Warehouse;
@@ -54,7 +55,10 @@ namespace KursAM2.View
     /// </summary>
     public partial class MainWindow : ILayout
     {
+        private int currentMainGroupId;
+
         //private readonly string myLayoutFileName = $"{Environment.CurrentDirectory}\\Layout\\{"MainWindow"}.xml";
+
         private Timer myVersionUpdateTimer;
 
         public MainWindow()
@@ -67,7 +71,7 @@ namespace KursAM2.View
 
 #endif
                 LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, dockLayout1);
-                Loaded += MainWindow_Loaded; 
+                Loaded += MainWindow_Loaded;
                 Closing += MainWindow_Closing;
                 Closed += MainWindow_Closed;
             }
@@ -80,25 +84,24 @@ namespace KursAM2.View
                 MessageBox.Show(s.ToString());
             }
         }
-
-        public ICommand ProgramCloseCommnd
-        {
-            get { return new Command(ProgramClose, _ => true); }
-        }
-        public LayoutManager.LayoutManager LayoutManager { get; set; }
-        public string LayoutManagerName { get; set; }
-        
-        private void ProgramClose(object obj)
-        {
-            Close();
-        }
-
         private void CheckUpdateVersion()
         {
             myVersionUpdateTimer.Dispose();
             var ver = new VersionManager();
             ver.CheckVersion();
             myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, 1000 * 60, Timeout.Infinite);
+        }
+        public ICommand ProgramCloseCommnd
+        {
+            get { return new Command(ProgramClose, _ => true); }
+        }
+
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
+        public string LayoutManagerName { get; set; }
+
+        private void ProgramClose(object obj)
+        {
+            Close();
         }
 
         private void MainWindow_Closed(object sender, EventArgs e)
@@ -132,7 +135,7 @@ namespace KursAM2.View
                 {
                     case "  Дебиторы / Кредиторы":
                         var dbctx = new DebitorCreditorWindowViewModel();
-                        form = new DebitorCreditorView {Owner = Application.Current.MainWindow };
+                        form = new DebitorCreditorView {Owner = Application.Current.MainWindow};
                         form.DataContext = dbctx;
                         dbctx.Form = form;
                         form.Show();
@@ -238,7 +241,7 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Расходные накладные для клиентов":
-                        
+
                         var ctxNaklad = new WaybillSearchViewModel();
                         form = new WaybillSearchView
                         {
@@ -301,7 +304,7 @@ namespace KursAM2.View
                         break;
                     case "Приходный складской ордер":
                         var ctxq = new WarehouseOrderInSearchViewModel();
-                        form = new WarehouseOrderSearchView ("WarehouseOrderInSearchView")
+                        form = new WarehouseOrderSearchView("WarehouseOrderInSearchView")
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = ctxq
@@ -320,19 +323,19 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case " Акты сверки":
-                        var AORCtx = new AOFViewModel();
-                        form = new ActOfReconciliation {Owner = Application.Current.MainWindow, DataContext = AORCtx};
-                        AORCtx.Form = form;
+                        var aorCtx = new AOFViewModel();
+                        form = new ActOfReconciliation {Owner = Application.Current.MainWindow, DataContext = aorCtx};
+                        aorCtx.Form = form;
                         form.Show();
                         break;
                     case " Рентабельность ШОП":
-                        var ShopCtx = new ShopRentabelnostViewModel();
+                        var shopCtx = new ShopRentabelnostViewModel();
                         form = new ShopRentabelnost
                         {
                             Owner = Application.Current.MainWindow,
-                            DataContext = ShopCtx
+                            DataContext = shopCtx
                         };
-                        ShopCtx.Form = form;
+                        shopCtx.Form = form;
                         form.Show();
                         break;
                     case "Остатки товаров на складах":
@@ -440,8 +443,9 @@ namespace KursAM2.View
                         }
                         catch (Exception ex)
                         {
-                           WindowManager.ShowError(ex);
-                        } 
+                            WindowManager.ShowError(ex);
+                        }
+
                         break;
                     case "Справочник проектов":
                         var prjCtx = new ProjectReferenceWindowViewModel();
@@ -474,15 +478,24 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Распределение накладных расходов":
-                        var purCtx = new PurchaseOverheadsWindowViewModel();
-                        form = new PurchaseInvoicesOverheadsView
+                        //var purCtx = new PurchaseOverheadsWindowViewModel();
+                        //form = new PurchaseInvoicesOverheadsView
+                        //{
+                        //    Owner = Application.Current.MainWindow,
+                        //    DataContext = purCtx
+                        //};
+                        //purCtx.Form = form;
+                        //form.Show();
+                        var dnakForm = new KursBaseSearchWindow
                         {
                             Owner = Application.Current.MainWindow,
-                            DataContext = purCtx
+                            LayoutManagerName = "DistributeNakladSearch"
                         };
-                        purCtx.Form = form;
-                        form.Show();
+                        var dnakCtx = new DistributeNakladSearchViewModel(dnakForm);
+                        dnakForm.DataContext = dnakCtx;
+                        dnakForm.Show();
                         break;
+                        
                     case "Сравнение балансов":
                         form = new ManagementBalansCompareView
                         {
@@ -730,21 +743,18 @@ namespace KursAM2.View
                 MessageBox.Show(s.ToString());
             }
         }
-        
-        private int CurrentMainGroupId;
+
         private void tileMainGroup_TileClick(object sender, TileClickEventArgs tileClickEventArgs)
         {
             DocumentLayoutPanel.Caption = tileClickEventArgs.Tile.ToolTip;
             tileDocumentItems.Children.Clear();
-            CurrentMainGroupId = (int) tileClickEventArgs.Tile.Tag;
+            currentMainGroupId = (int) tileClickEventArgs.Tile.Tag;
             var grp = GlobalOptions.UserInfo.MainTileGroups.FirstOrDefault(
                 _ => (int) tileClickEventArgs.Tile.Tag == _.Id);
             if (grp == null) return;
             foreach (var item in tileMainGroup.Children)
-            {
-                if(item is Tile t)
+                if (item is Tile t)
                     t.BorderThickness = new Thickness(0, 0, 0, 0);
-            }
             tileClickEventArgs.Tile.BorderThickness = new Thickness(3, 3, 3, 3);
             tileClickEventArgs.Tile.BorderBrush = Brushes.Orange;
 
@@ -752,7 +762,7 @@ namespace KursAM2.View
             {
                 var newTile = new Tile
                 {
-                    Header = tile.Name, 
+                    Header = tile.Name,
                     Width = 250,
                     Height = 100,
                     Tag = tile.Id
@@ -767,9 +777,11 @@ namespace KursAM2.View
             {
                 var login = new StartLogin {Topmost = true};
                 login.ShowDialog();
-               
+
                 if (!login.IsConnectSuccess)
+                {
                     Close();
+                }
                 else
                 {
                     foreach (var tileGroup in GlobalOptions.UserInfo.MainTileGroups.OrderBy(_ => _.OrderBy))
@@ -792,8 +804,10 @@ namespace KursAM2.View
                                 newTileGroup.ToolTip = tileGroup.Notes;
                             }
                         }
+
                         tileMainGroup.Children.Add(newTileGroup);
                     }
+
                     Title = $"Курс АМ2. {GlobalOptions.DataBaseName} Версия {GlobalOptions.Version}";
                     GlobalOptions.MainReferences = new MainReferences();
                     GlobalOptions.MainReferences.Reset();
@@ -817,7 +831,6 @@ namespace KursAM2.View
 
         private void BarButtonItem2_OnItemClick(object sender, ItemClickEventArgs e)
         {
-            
         }
 
         private void tileMainGroup_ItemPositionChanged(object sender, ValueChangedEventArgs<int> e)
@@ -829,22 +842,18 @@ namespace KursAM2.View
                 {
                     var t = item as Tile;
                     if (t == null) continue;
-                    var old = ctx.UserMenuOrder.FirstOrDefault(_ => _.IsGroup && _.TileId == (int)t.Tag);
+                    var old = ctx.UserMenuOrder.FirstOrDefault(_ => _.IsGroup && _.TileId == (int) t.Tag);
                     if (old == null)
-                    {
                         ctx.UserMenuOrder.Add(new UserMenuOrder
                         {
                             Id = Guid.NewGuid(),
                             IsGroup = true,
                             UserId = GlobalOptions.UserInfo.KursId,
-                            TileId = (int)t.Tag,
+                            TileId = (int) t.Tag,
                             Order = i
                         });
-                    }
                     else
-                    {
                         old.Order = i;
-                    }
                     ctx.SaveChanges();
                     i++;
                 }
@@ -861,25 +870,21 @@ namespace KursAM2.View
                     var t = item as Tile;
                     if (t == null) continue;
                     var menuGroup =
-                        GlobalOptions.UserInfo.MainTileGroups.FirstOrDefault(_ => _.Id == CurrentMainGroupId);
+                        GlobalOptions.UserInfo.MainTileGroups.FirstOrDefault(_ => _.Id == currentMainGroupId);
                     var menuItem = menuGroup?.TileItems.FirstOrDefault(_ => _.Id == (int) t.Tag);
-                    if(menuItem != null) menuItem.OrderBy = i;
-                    var old = ctx.UserMenuOrder.FirstOrDefault(_ => !_.IsGroup && _.TileId == (int)t.Tag);
+                    if (menuItem != null) menuItem.OrderBy = i;
+                    var old = ctx.UserMenuOrder.FirstOrDefault(_ => !_.IsGroup && _.TileId == (int) t.Tag);
                     if (old == null)
-                    {
                         ctx.UserMenuOrder.Add(new UserMenuOrder
                         {
                             Id = Guid.NewGuid(),
                             IsGroup = false,
                             UserId = GlobalOptions.UserInfo.KursId,
-                            TileId = (int)t.Tag,
+                            TileId = (int) t.Tag,
                             Order = i
                         });
-                    }
                     else
-                    {
                         old.Order = i;
-                    }
                     ctx.SaveChanges();
                     i++;
                 }

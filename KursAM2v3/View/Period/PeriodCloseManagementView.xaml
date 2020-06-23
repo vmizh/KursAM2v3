@@ -29,8 +29,8 @@
                                 <dxg:TableView ShowTotalSummary="True"
                                                EnableImmediatePosting="True"
                                                x:Name="closedTypeGridControlView5"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               
+                                               
                                                ShowAutoFilterRow="True"
                                                ShowGroupPanel="False"
                                                AllowEditing="True">
@@ -65,8 +65,8 @@
                                 <dxg:TableView ShowTotalSummary="True"
                                                EnableImmediatePosting="True"
                                                x:Name="closedTypeGridControlView6"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               
+                                               
                                                ShowAutoFilterRow="True"
                                                ShowGroupPanel="False"
                                                AllowEditing="True">
@@ -102,8 +102,8 @@
                             <dxg:TableView ShowTotalSummary="True"
                                            EnableImmediatePosting="True"
                                            x:Name="closedTypeGridControlView2"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           
+                                           
                                            ShowAutoFilterRow="True"
                                            ShowGroupPanel="False"
                                            AllowEditing="True" />
@@ -133,8 +133,8 @@
                                 <dxg:TableView ShowTotalSummary="True"
                                                EnableImmediatePosting="True"
                                                x:Name="closedTypeGridControlView3"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               
+                                               
                                                ShowAutoFilterRow="True"
                                                ShowGroupPanel="False"
                                                AllowEditing="True" />

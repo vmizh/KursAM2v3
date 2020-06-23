@@ -68,8 +68,8 @@
                     <dxg:GridControl.View>
                         <dxg:TableView ShowTotalSummary="True"
                                        Name="tableViewEmployee"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}"
+                                       
+                                       
                                        ShowAutoFilterRow="True"
                                        AllowEditing="False" />
                     </dxg:GridControl.View>
@@ -308,8 +308,8 @@
                                            Name="tableViewDocuments"
                                            ShowAutoFilterRow="True"
                                            AllowEditing="False"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"/>
+                                           
+                                           />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>

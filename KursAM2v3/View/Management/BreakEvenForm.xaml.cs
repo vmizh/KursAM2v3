@@ -11,6 +11,7 @@ using Core;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
+using Helper;
 using KursAM2.ViewModel.Management.BreakEven;
 using LayoutManager;
 
@@ -41,7 +42,7 @@ namespace KursAM2.View.Management
             gridDocument.TotalSummary.Clear();
             foreach (var col in gridDocument.Columns)
             {
-                if (!LayoutManagerBase.ColumnFieldTypeCheckDecimal(col.FieldType)) continue;
+                if (!KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType)) continue;
                 var summary = new GridSummaryItem
                 {
                     SummaryType = SummaryItemType.Sum,
@@ -54,7 +55,7 @@ namespace KursAM2.View.Management
             gridNomenkl.TotalSummary.Clear();
             foreach (var col in gridNomenkl.Columns)
             {
-                if (!LayoutManagerBase.ColumnFieldTypeCheckDecimal(col.FieldType)) continue;
+                if (!KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType)) continue;
                 var summary = new GridSummaryItem
                 {
                     SummaryType = SummaryItemType.Sum,
@@ -67,7 +68,7 @@ namespace KursAM2.View.Management
             gridKontr.TotalSummary.Clear();
             foreach (var col in gridKontr.Columns)
             {
-                if (!LayoutManagerBase.ColumnFieldTypeCheckDecimal(col.FieldType)) continue;
+                if (!KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType)) continue;
                 var summary = new GridSummaryItem
                 {
                     SummaryType = SummaryItemType.Sum,
@@ -80,7 +81,7 @@ namespace KursAM2.View.Management
             gridCO.TotalSummary.Clear();
             foreach (var col in gridCO.Columns)
             {
-                if (!LayoutManagerBase.ColumnFieldTypeCheckDecimal(col.FieldType)) continue;
+                if (!KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType)) continue;
                 var summary = new GridSummaryItem
                 {
                     SummaryType = SummaryItemType.Sum,
@@ -93,7 +94,7 @@ namespace KursAM2.View.Management
             gridManager.TotalSummary.Clear();
             foreach (var col in gridManager.Columns)
             {
-                if (!LayoutManagerBase.ColumnFieldTypeCheckDecimal(col.FieldType)) continue;
+                if (!KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType)) continue;
                 var summary = new GridSummaryItem
                 {
                     SummaryType = SummaryItemType.Sum,

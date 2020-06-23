@@ -56,8 +56,8 @@
             <dxg:GridControl.View>
                 <dxg:TableView x:Name="gridViewDocument"
                                ShowAutoFilterRow="True"
-                               CellStyle="{StaticResource FocusedCellStyle}" 
-                               RowStyle="{StaticResource FocusedRowStyle}"
+                               
+                               
                                RowDoubleClick="GridViewDocument_OnRowDoubleClick">
                     <dxg:TableView.ContextMenu>
                         <ContextMenu>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core;
@@ -67,8 +66,6 @@ namespace KursAM2.ViewModel.Finance.controls
                 State = isNew ? RowStatus.NewRow : RowStatus.NotEdited
             };
         }
-
-        public bool IsChangeTypeEnable => CurrentBankOperations?.State == RowStatus.NewRow;
 
         public BankAccount BankAccount
         {
@@ -207,6 +204,7 @@ namespace KursAM2.ViewModel.Finance.controls
             {
                 if (myCurrentBankOperations.SFName == value) return;
                 myCurrentBankOperations.SFName = value;
+                SetBrushForPrihodRashod();
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(IsPrihodSummaEnabled));
                 RaisePropertyChanged(nameof(IsRashodSummaEnabled));
@@ -300,6 +298,7 @@ namespace KursAM2.ViewModel.Finance.controls
             {
                 if (CurrentBankOperations.VVT_VAL_RASHOD == value) return;
                 CurrentBankOperations.VVT_VAL_RASHOD = value;
+                SetBrushForPrihodRashod();
                 RaisePropertyChanged();
             }
             get => Convert.ToDecimal(CurrentBankOperations.VVT_VAL_RASHOD);
@@ -311,6 +310,7 @@ namespace KursAM2.ViewModel.Finance.controls
             {
                 if (CurrentBankOperations.VVT_VAL_PRIHOD == value) return;
                 CurrentBankOperations.VVT_VAL_PRIHOD = value;
+                SetBrushForPrihodRashod();
                 RaisePropertyChanged();
             }
             get => Convert.ToDecimal(CurrentBankOperations.VVT_VAL_PRIHOD);
@@ -331,7 +331,6 @@ namespace KursAM2.ViewModel.Finance.controls
         public List<Currency> CurrencysCompendium => MainReferences.Currencies.Values.ToList();
 
         // ReSharper disable once InconsistentNaming
-        public List<SDRSchet> SHPZList => MainReferences.SDRSchets.Values.ToList();
 
         public bool IsPrihodSummaEnabled => CurrentBankOperations.BankOperationType == BankOperationType.BankOut
                                             || CurrentBankOperations.BankOperationType == BankOperationType.CashOut
@@ -393,42 +392,42 @@ namespace KursAM2.ViewModel.Finance.controls
             }
         }
 
-        private void SetBrushForPrihodRashod()
+        public void SetBrushForPrihodRashod()
         {
             if (Form is SelectDialogView frm)
                 if (frm.contentControl.Content is BankOperationsComareRowView ctrl)
                 {
-                    var prih = ctrl.Incoming;
-                    var rash = ctrl.Consumption;
+                    var bInc = ctrl.borderIncoming;
+                    var bCons = ctrl.borderIConsumption;
                     switch (PrihodEditMode)
                     {
                         case EditModeEnum.CanEdit:
-                            prih.BorderBrush = ColorCanEdit;
+                            bInc.BorderBrush = ColorCanEdit;
                             break;
                         case EditModeEnum.None:
-                            prih.BorderBrush = colorNon;
+                            bInc.BorderBrush = colorNon;
                             break;
                         case EditModeEnum.NotCanEdit:
-                            prih.BorderBrush = colorNonCanEdit;
+                            bInc.BorderBrush = colorNonCanEdit;
                             break;
                         case EditModeEnum.CanEditButZero:
-                            prih.BorderBrush = colorCanEditButZero;
+                            bInc.BorderBrush = colorCanEditButZero;
                             break;
                     }
 
                     switch (RashodEditMode)
                     {
                         case EditModeEnum.CanEdit:
-                            rash.BorderBrush = ColorCanEdit;
+                            bCons.BorderBrush = ColorCanEdit;
                             break;
                         case EditModeEnum.None:
-                            rash.BorderBrush = colorNon;
+                            bCons.BorderBrush = colorNon;
                             break;
                         case EditModeEnum.NotCanEdit:
-                            rash.BorderBrush = colorNonCanEdit;
+                            bCons.BorderBrush = colorNonCanEdit;
                             break;
                         case EditModeEnum.CanEditButZero:
-                            rash.BorderBrush = colorCanEditButZero;
+                            bCons.BorderBrush = colorCanEditButZero;
                             break;
                     }
                 }

@@ -4,7 +4,6 @@
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
              xmlns:internal="http://schemas.devexpress.com/winfx/2008/xaml/windowsui/internal"
-             xmlns:helpers="clr-namespace:DevExpress.DemoData.Helpers;assembly=DevExpress.DemoData.v15.2.Core"
              xmlns:dxnav="http://schemas.devexpress.com/winfx/2008/xaml/navigation"
              xmlns:control="clr-namespace:Core.Control;assembly=Core"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
@@ -42,17 +41,7 @@
             </Setter>
         </Style>
 
-        <helpers:SelectConverter x:Key="BackButtonPaddingConverter">
-            <helpers:SelectState Key="False" Value="{helpers:BrushValue S=#FF3D3D3D}" />
-            <helpers:SelectState Key="True" Value="{helpers:BrushValue S=#FFF7941E}" />
-        </helpers:SelectConverter>
-        <!-- ReSharper disable once Xaml.RedundantResource -->
-        <helpers:SelectConverter x:Key="BackButtonContentOpacityConverter">
-            <helpers:SelectState Key="Normal" Value="{helpers:DoubleValue S=1}" />
-            <helpers:SelectState Key="MouseOver" Value="{helpers:DoubleValue S=1}" />
-            <helpers:SelectState Key="Pressed" Value="{helpers:DoubleValue S=0.35}" />
-            <helpers:SelectState Key="Disabled" Value="{helpers:DoubleValue S=0.25}" />
-        </helpers:SelectConverter>
+       
         <Style x:Key="BackDemoButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Width" Value="41" />
             <Setter Property="Height" Value="47" />
@@ -67,7 +56,7 @@
                                      Command="{TemplateBinding ActualBackCommand}" Margin="0,0,10,0">
                     <internal:BackButton.Template>
                         <ControlTemplate>
-                            <Grid Background="{helpers:SelectBinding Binding={Binding IsMouseOver, RelativeSource={RelativeSource TemplatedParent}}, Converter={StaticResource BackButtonPaddingConverter}}">
+                            <Grid>
                                 <Image Source="../../../Images/Box_Blue.png" HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
                                        Width="25" Height="25" />

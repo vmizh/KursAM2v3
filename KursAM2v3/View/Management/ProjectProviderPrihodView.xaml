@@ -268,8 +268,8 @@
                                                    Name="tableViewDistDocuments"
                                                    ShowAutoFilterRow="True"
                                                    EditorButtonShowMode="ShowForFocusedRow"
-                                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                                   RowStyle="{StaticResource FocusedRowStyle}">
+                                                   
+                                                   >
                                         <dxmvvm:Interaction.Behaviors>
                                             <dxmvvm:EventToCommand EventName="CellValueChanged"
                                                                    Command="{Binding DistributeRowChanged}"

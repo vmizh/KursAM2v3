@@ -147,7 +147,7 @@
                                        ShowAutoFilterRow="True"
                                        ShowTotalSummary="True"
                                        IsSynchronizedWithCurrentItem="True"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
+                                       
                                        >
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
@@ -206,7 +206,7 @@
                                        ShowAutoFilterRow="True"
                                        ShowTotalSummary="True"
                                        IsSynchronizedWithCurrentItem="True"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
+                                       
                                        >
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>

@@ -130,6 +130,7 @@ namespace KursAM2.Dialogs
             var ctx = new AddBankOperionUC(docCode, row, bankAcc, false);
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
+            ctx.SetBrushForPrihodRashod();
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentBankOperations;
         }
@@ -140,7 +141,7 @@ namespace KursAM2.Dialogs
             {
                 WindowName = $"Выбор банковского платежа для {MainReferences.GetKontragent(kontrDC).Name}"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -152,7 +153,7 @@ namespace KursAM2.Dialogs
             {
                 WindowName = $"Выбор кассового прихода для {MainReferences.GetKontragent(kontrDC).Name}"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -164,7 +165,7 @@ namespace KursAM2.Dialogs
             {
                 WindowName = $"Выбор проводки акта вазимозачета для {MainReferences.GetKontragent(kontrDC).Name}"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -176,7 +177,7 @@ namespace KursAM2.Dialogs
             {
                 WindowName = $"Выбор банковского платежа для {MainReferences.GetKontragent(kontrDC).Name}"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -188,7 +189,7 @@ namespace KursAM2.Dialogs
             {
                 WindowName = $"Выбор кассового расхода для {MainReferences.GetKontragent(kontrDC).Name}"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -200,7 +201,7 @@ namespace KursAM2.Dialogs
             {
                 WindowName = $"Выбор проводки акта вазимозачета для {MainReferences.GetKontragent(kontrDC).Name}"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;

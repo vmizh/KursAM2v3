@@ -1,0 +1,58 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                    xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
+                    xmlns:convertors="clr-namespace:KursRepozit.Auxiliary">
+    <SolidColorBrush x:Key="TextEdit.Background" Color="#FFFFFFFF" />
+    <LinearGradientBrush x:Key="TextEdit.BorderBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FF9DA0AA" Offset="0" />
+        <GradientStop Color="#FFD9DAE0" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="TextEdit.HoverState.BorderBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FF7E8FBB" Offset="0" />
+        <GradientStop Color="#FFAEBDE6" Offset="1" />
+    </LinearGradientBrush>
+    <Style x:Key="TextEditFocusTemplate" TargetType="{x:Type Rectangle}">
+        <Setter Property="Stroke" Value="#FF6699FF" />
+        <Setter Property="StrokeThickness" Value="2" />
+        <Setter Property="Margin" Value="-1" />
+        <Setter Property="RadiusX" Value="1" />
+        <Setter Property="RadiusY" Value="1" />
+        <Setter Property="Opacity" Value="0.25" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+    <ControlTemplate x:Key="{themes:TextEditThemeKey ResourceKey=BorderTemplate, IsThemeIndependent=True}"
+                     TargetType="{x:Type ContentControl}">
+        <Grid>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="InternalFocusStates">
+                    <VisualState x:Name="InternalFocused">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="FocusElement" Storyboard.TargetProperty="Opacity"
+                                             Duration="0" To="1" />
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="InternalUnfocused" />
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <!--BorderBrush="{StaticResource TextEdit.BorderBrush}" BorderThickness="1"-->
+            <Border Background="{StaticResource TextEdit.Background}" BorderThickness="1" CornerRadius="1">
+                <Border.BorderBrush>
+                    <MultiBinding Converter="{convertors:ErrorToBrushConverter}">
+                        <Binding Path="(dxe:BaseEdit.OwnerEdit).HasValidationError"
+                                 RelativeSource="{RelativeSource Self}" />
+                        <Binding Source="{StaticResource TextEdit.BorderBrush}" />
+                    </MultiBinding>
+                </Border.BorderBrush>
+            </Border>
+            <Grid x:Name="FocusElement" Opacity="1">
+                <Rectangle Style="{StaticResource TextEditFocusTemplate}" />
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{StaticResource TextEdit.HoverState.BorderBrush}" BorderThickness="1"
+                        CornerRadius="1" Opacity="0" />
+            </Grid>
+            <ContentPresenter />
+        </Grid>
+    </ControlTemplate>
+
+</ResourceDictionary>

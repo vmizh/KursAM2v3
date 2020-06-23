@@ -2,73 +2,76 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Core.ViewModel.Base;
 
 namespace PeriodManager.ViewModel
 {
-    public class PeriodClosedViewModel : KursViewModelBase
+    [SuppressMessage("ReSharper", "PossibleUnintendedReferenceComparison")]
+    public class PeriodClosedViewModel : RSViewModelBase
     {
         private DateTime myDateClosed;
-        private ObservableCollection<global::PeriodManager.ViewModel.PeriodClosedExcludeViewModel> myExcludeUserGroups;
+        private ObservableCollection<PeriodClosedExcludeViewModel> myExcludeUserGroups;
         private PeriodClosedTypeViewModel myTypeClosed;
 
-        [Display(Name = "Тип операций"), ReadOnly(true)]
+        [Display(Name = "Тип операций")]
+        [ReadOnly(true)]
         public PeriodClosedTypeViewModel TypeClosed
         {
-            get { return myTypeClosed; }
+            get => myTypeClosed;
             set
             {
                 if (value == myTypeClosed) return;
                 myTypeClosed = value;
-                OnPropertyChanged(nameof(TypeClosed));
+                RaisePropertyChanged(nameof(TypeClosed));
             }
         }
 
         [Display(Name = "Дата закрытия")]
         public DateTime DateClosed
         {
-            get { return myDateClosed; }
+            get => myDateClosed;
             set
             {
                 if (value == myDateClosed) return;
                 myDateClosed = value;
-                OnPropertyChanged(nameof(DateClosed));
+                RaisePropertyChanged(nameof(DateClosed));
             }
         }
 
         [Display(AutoGenerateField = false)]
         public override string Name
         {
-            get { return myName; }
+            get => myName;
             set
             {
                 if (value == myName) return;
                 myName = value;
-                OnPropertyChanged(nameof(Name));
+                RaisePropertyChanged(nameof(Name));
             }
         }
 
         [Display(AutoGenerateField = false)]
         public override string Note
         {
-            get { return myNote; }
+            get => myNote;
             set
             {
                 if (value == myNote) return;
                 myNote = value;
-                OnPropertyChanged(nameof(Note));
+                RaisePropertyChanged(nameof(Note));
             }
         }
 
         [Display(AutoGenerateField = false)]
-        public ObservableCollection<global::PeriodManager.ViewModel.PeriodClosedExcludeViewModel> ExcludeUserGroups
+        public ObservableCollection<PeriodClosedExcludeViewModel> ExcludeUserGroups
         {
-            get { return myExcludeUserGroups; }
+            get => myExcludeUserGroups;
             set
             {
                 if (value == myExcludeUserGroups) return;
                 myExcludeUserGroups = value;
-                OnPropertyChanged(nameof(ExcludeUserGroups));
+                RaisePropertyChanged(nameof(ExcludeUserGroups));
             }
         }
     }

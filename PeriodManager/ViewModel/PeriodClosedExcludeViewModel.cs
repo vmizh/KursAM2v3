@@ -5,46 +5,46 @@ using Core.ViewModel.Base;
 
 namespace PeriodManager.ViewModel
 {
-    public class PeriodClosedExcludeViewModel : KursViewModelBase
+    public class PeriodClosedExcludeViewModel : RSViewModelBase
     {
         private DateTime myDateClosed;
         private DateTime myDateFrom;
         private PeriodGroupViewModel myUserGroup;
 
-        [Display(Name = "Группа пользователей"), ReadOnly(true)]
+        [Display(Name = "Группа пользователей")]
+        [ReadOnly(true)]
         public PeriodGroupViewModel UserGroup
         {
-            get { return myUserGroup; }
+            get => myUserGroup;
             set
             {
                 if (value == myUserGroup) return;
                 myUserGroup = value;
-                OnPropertyChanged(nameof(UserGroup));
+                RaisePropertyChanged();
             }
         }
 
         [Display(Name = "Действует до")]
         public DateTime DateOut
         {
-            get { return myDateClosed; }
+            get => myDateClosed;
             set
             {
                 if (value == myDateClosed) return;
                 myDateClosed = value;
-                OnPropertyChanged(nameof(DateOut));
+                RaisePropertyChanged();
             }
         }
 
         [Display(Name = "Разрешено от")]
-        //[Display(AutoGenerateField = false)]
         public DateTime DateFrom
         {
-            get { return myDateFrom; }
+            get => myDateFrom;
             set
             {
                 if (value == myDateFrom) return;
                 myDateFrom = value;
-                OnPropertyChanged(nameof(DateFrom));
+                RaisePropertyChanged();
             }
         }
     }

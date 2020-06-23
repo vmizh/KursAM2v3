@@ -85,8 +85,8 @@
                                        ShowAutoFilterRow="True"
                                        AllowPerPixelScrolling="True"
                                        ShowTotalSummary="True"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}"
+                                       
+                                       
                                        MouseDoubleClick="GridViewProject_OnMouseDoubleClick">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>

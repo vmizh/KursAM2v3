@@ -3,6 +3,7 @@ using System.Windows;
 using DevExpress.Data;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
+using Helper;
 using LayoutManager;
 
 namespace KursAM2.View.Logistiks.Warehouse
@@ -37,7 +38,7 @@ namespace KursAM2.View.Logistiks.Warehouse
         {
             e.Column.Name = e.Column.FieldName;
             e.Column.ReadOnly = true;
-            if (LayoutManagerBase.ColumnFieldTypeCheckDecimal(e.Column.FieldType))
+            if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(e.Column.FieldType))
                 e.Column.EditSettings = new CalcEditSettings
                 {
                     DisplayFormat = "n2",
@@ -60,7 +61,7 @@ namespace KursAM2.View.Logistiks.Warehouse
             resultGridControl.TotalSummary.Clear();
             foreach (var col in resultGridControl.Columns)
             {
-                if (LayoutManagerBase.ColumnFieldTypeCheckDecimal(col.FieldType))
+                if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
                 {
                     var summary = new GridSummaryItem
                     {

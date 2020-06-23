@@ -51,8 +51,7 @@
                         <dxg:TableView ShowTotalSummary="True"
                                            Name="tableViewRows"
                                            ShowAutoFilterRow="True"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+                                           >
                         </dxg:TableView>
                     </dxg:GridControl.View>
                 </dxg:GridControl>
@@ -84,8 +83,6 @@
                         <dxg:TableView ShowTotalSummary="True"
                                            Name="tableViewDocs"
                                            ShowAutoFilterRow="True"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"
                                            >
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>

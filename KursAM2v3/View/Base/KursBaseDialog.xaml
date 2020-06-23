@@ -1,0 +1,36 @@
+﻿<dx:ThemedWindow
+    x:Class="KursRepozit.Views.Base.KursBaseDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    Title="{Binding WindowName}" Height="400" Width="1000"
+    >
+    <Grid Name="grid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="239*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <ContentControl 
+            Grid.Row="0"
+            Content="{Binding ModelView}" 
+            Name="modelViewControl" 
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"/>
+        <DockPanel Grid.Row="1" 
+                   LastChildFill="False"
+                   DockPanel.Dock="Bottom"
+                   Margin="50,10,50,10">
+            <Button Content="Cancel" 
+                    Width="200"  
+                    DockPanel.Dock="Right"
+                    Command="{Binding CancelCommand}"
+                    Click="Cancel_OnClick"/>
+            <Button Content="Ok" 
+                    Width="200"  
+                    Margin="0,0,50,0" 
+                    DockPanel.Dock="Right"
+                    Command="{Binding OkCommand}"
+                    Click="Ok_OnClick"/>
+        </DockPanel>
+    </Grid>
+</dx:ThemedWindow>

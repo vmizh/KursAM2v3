@@ -72,8 +72,8 @@
                                                    EnableImmediatePosting="True"
                                                    AllowPerPixelScrolling="True"
                                                    ShowTotalSummary="False"
-                                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                                   RowStyle="{StaticResource FocusedRowStyle}">
+                                                   
+                                                   >
                                         <dxg:TableView.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem Header="Добавить"
@@ -109,8 +109,8 @@
                                            EnableImmediatePosting="True"
                                            AllowPerPixelScrolling="True"
                                            ShowTotalSummary="False"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+                                           
+                                           >
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Удалить" Command="{Binding DeletedNomenklInSelecktCommand}" />

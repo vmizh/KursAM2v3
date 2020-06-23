@@ -40,8 +40,8 @@
                                ShowTotalSummary="True"
                                ShowAutoFilterRow="True"
                                RowDoubleClick="GridViewDocument_OnRowDoubleClick"
-                               CellStyle="{StaticResource FocusedCellStyle}" 
-                               RowStyle="{StaticResource FocusedRowStyle}">
+                               
+                               >
                     <dxg:TableView.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Добавить новую валюту"

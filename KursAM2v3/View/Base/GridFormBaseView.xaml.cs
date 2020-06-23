@@ -33,6 +33,13 @@ namespace KursAM2.View.Base
 
         private void GridDocuments_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
+            foreach (var c in gridDocuments.Columns)
+            {
+                if(c.EditSettings == null) c.EditSettings = new TextEditSettings
+                {
+                    SelectAllOnMouseUp = true
+                };
+            }
             e.Column.Name = e.Column.FieldName;
             var dtx = DataContext as IOnAutoGeneratingColumn;
             dtx?.OnAutoGeneratingColumn(this,e);

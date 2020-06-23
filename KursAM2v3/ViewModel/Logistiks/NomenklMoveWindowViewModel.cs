@@ -36,7 +36,7 @@ namespace KursAM2.ViewModel.Logistiks
             LoadReference();
             DateForSklad = DateTime.Today;
             Operations = new List<NomenklCalcCostOperation>();
-            //var gridHelp = new GridControlHelper(form.sklad);
+            //var gridHelp = new KursGridControlHelper(form.sklad);
             //foreach (var skl in StoreCollection)
             //{
             //    gridHelp.GenerateNumericColumn("col" + skl.DocCode.ToString(CultureInfo.InvariantCulture), skl.Name, "sklad" + skl.DocCode, true, 2);

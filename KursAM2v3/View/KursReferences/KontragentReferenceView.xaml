@@ -47,9 +47,7 @@
                             <dxg:TreeListView CellValueChanged="TreeListView_OnCellValueChanged"
                                               ParentFieldName="EG_PARENT_ID"
                                               KeyFieldName="EG_ID"
-                                              ShowTotalSummary="False"
-                                              CellStyle="{StaticResource FocusedCellStyle}" 
-                                              RowStyle="{StaticResource FocusedRowStyle}"/>
+                                              ShowTotalSummary="False"/>
                         </dxg:TreeListControl.View>
                     </dxg:TreeListControl>
                 </dxlc:LayoutGroup>

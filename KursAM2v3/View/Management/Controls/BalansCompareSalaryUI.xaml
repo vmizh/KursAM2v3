@@ -36,8 +36,8 @@
             </dxg:GridControl.DetailDescriptor>-->
             <dxg:GridControl.View>
                 <dxg:TableView x:Name="gridViewSalary" 
-                               CellStyle="{StaticResource FocusedCellStyle}" 
-                               RowStyle="{StaticResource FocusedRowStyle}"
+                               
+                               
                                AllowPerPixelScrolling="True"
                                ShowTotalSummary="True">
                     <dxg:TableView.ContextMenu>

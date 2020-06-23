@@ -55,8 +55,8 @@
                                ShowTotalSummary="False"
                                ShowAutoFilterRow="True"
                                ShowGroupPanel="False" 
-                               CellStyle="{StaticResource FocusedCellStyle}" 
-                               RowStyle="{StaticResource FocusedRowStyle}"/>
+                               
+                               />
             </dxg:GridControl.View>
         </dxg:GridControl>
     </DockPanel>

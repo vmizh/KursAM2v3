@@ -41,7 +41,9 @@
                                 DockPanel.Dock="Top"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                dx:DXSerializer.SerializationID="mainLayoutControl"
+                                dx:DXSerializer.StoreLayoutMode="All">
                 <dxlc:LayoutGroup x:Name="layoutGroup1" 
                                   Orientation="Vertical" 
                                   dxlc:LayoutControl.AllowVerticalSizing="True"
@@ -66,8 +68,8 @@
             <dxg:GridControl.View>
                 <dxg:TableView x:Name="gridViewDocument"
                                ShowAutoFilterRow="True"
-                               CellStyle="{StaticResource FocusedCellStyle}" 
-                               RowStyle="{StaticResource FocusedRowStyle}">
+                               
+                               >
                 </dxg:TableView>
             </dxg:GridControl.View>
         </dxg:GridControl>
@@ -96,8 +98,8 @@
             <dxg:GridControl.View>
                 <dxg:TableView x:Name="gridViewChild"
                                ShowAutoFilterRow="True"
-                               CellStyle="{StaticResource FocusedCellStyle}" 
-                               RowStyle="{StaticResource FocusedRowStyle}"
+                               
+                               
                                RowDoubleClick="GridViewChild_OnRowDoubleClick"
                                CellValueChanged="GridViewChild_OnCellValueChanged">
                 </dxg:TableView>

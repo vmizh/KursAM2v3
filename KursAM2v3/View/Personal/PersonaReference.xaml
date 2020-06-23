@@ -46,8 +46,8 @@
                                        EnableImmediatePosting="True"
                                        AllowPerPixelScrolling="True"
                                        ShowTotalSummary="False"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}">
+                                       
+                                       >
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Добавить нового сотрудника" Command="{Binding AddNewPersona}" />
@@ -99,8 +99,8 @@
                                        EnableImmediatePosting="True"
                                        AllowPerPixelScrolling="True"
                                        ShowTotalSummary="False"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}"/>
+                                       
+                                       />
                     </dxg:GridControl.View>
                 </dxg:GridControl>
             </dxlc:LayoutGroup>

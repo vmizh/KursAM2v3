@@ -90,8 +90,8 @@
                                         </dxg:GridControl.Columns>
                                         <dxg:GridControl.View>
                                             <dxg:TableView AutoWidth="True"
-                                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                                           RowStyle="{StaticResource FocusedRowStyle}"/>
+                                                           
+                                                           />
                                         </dxg:GridControl.View>
                                     </dxg:GridControl>
                                 </ControlTemplate>
@@ -200,8 +200,8 @@
                                        ShowTotalSummary="True"
                                        ShowAutoFilterRow="True"
                                        EnableImmediatePosting="True"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}">
+                                       
+                                       >
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}" />

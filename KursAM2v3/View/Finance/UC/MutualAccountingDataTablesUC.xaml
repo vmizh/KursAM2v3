@@ -30,8 +30,6 @@
                     <dxg:TableView x:Name="gridViewDebitor"
                                    EnableImmediatePosting="True"
                                    AllowPerPixelScrolling="True"
-                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                   RowStyle="{StaticResource FocusedRowStyle}"
                                    ShowAutoFilterRow="True"
                                    ShowTotalSummary="True">
                         <dxg:TableView.ContextMenu>
@@ -76,8 +74,6 @@
                     <dxg:TableView x:Name="gridViewCreditor"
                                    EnableImmediatePosting="True"
                                    AllowPerPixelScrolling="True"
-                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                   RowStyle="{StaticResource FocusedRowStyle}"
                                    ShowAutoFilterRow="True"
                                    ShowTotalSummary="True">
                         <dxg:TableView.ContextMenu>

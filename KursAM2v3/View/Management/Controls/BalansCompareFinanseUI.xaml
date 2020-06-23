@@ -28,8 +28,8 @@
                 <dxg:TableView x:Name="gridViewFinanse"
                                AllowPerPixelScrolling="True"
                                ShowTotalSummary="True"
-                               CellStyle="{StaticResource FocusedCellStyle}" 
-                               RowStyle="{StaticResource FocusedRowStyle}">
+                               
+                               >
                     <dxg:TableView.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Экспорт"

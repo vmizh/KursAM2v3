@@ -15,7 +15,7 @@ namespace Calculates.Materials
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                ctx.Database.ExecuteSqlCommand("exec NomenklCalculateCostsForAll",new object[0]);
+                //ctx.Database.ExecuteSqlCommand("exec NomenklCalculateCostsForAll",new object[0]);
             }
             return new List<NomenklCalcCostOperation>();
         }

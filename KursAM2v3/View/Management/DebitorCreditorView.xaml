@@ -186,8 +186,8 @@
                                                ShowGroupPanel="False"
                                                AllowEditing="True"
                                                UseIndicatorForSelection="True"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}">
+                                               
+                                               >
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Открыть лицевой счет"
@@ -321,8 +321,8 @@
                                                x:Name="CreditorTableView"
                                                ShowAutoFilterRow="True"
                                                AllowEditing="True"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}">
+                                               
+                                               >
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Открыть лицевой счет"
@@ -456,8 +456,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True" 
                                                x:Name="DebitorCreditorTableView"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               
+                                               
                                                ShowAutoFilterRow="True"
                                                AllowEditing="True">
                                     <dxg:TableView.ContextMenu>
@@ -585,8 +585,8 @@
                     <dxg:GridControl.View>
                         <dxg:TableView ShowTotalSummary="True"
                                        x:Name="KontrOperTableView"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}"
+                                       
+                                       
                                        UseIndicatorForSelection="True"
                                        EditorButtonShowMode="ShowForFocusedRow"
                                        ShowAutoFilterRow="True"

@@ -28,8 +28,8 @@
                            AllowPerPixelScrolling="False"
                            ShowTotalSummary="True"
                            ShowGroupPanel="False"
-                           CellStyle="{StaticResource FocusedCellStyle}" 
-                           RowStyle="{StaticResource FocusedRowStyle}">
+                           
+                           >
                 <dxg:TableView.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Экспорт"

@@ -79,8 +79,8 @@
                                               ParentFieldName="ParentId" 
                                               KeyFieldName="Id"
                                               ShowTotalSummary="False"
-                                              CellStyle="{StaticResource FocusedCellStyle}" 
-                                              RowStyle="{StaticResource FocusedRowStyle}"
+                                              
+                                              
                                               AllowSorting="False">
                                 <dxg:TreeListView.ContextMenu>
                                     <ContextMenu>
@@ -102,7 +102,7 @@
             </dxlc:LayoutGroup>
             <dxlc:LayoutGroup dxlc:LayoutControl.AllowHorizontalSizing="True" Orientation="Horizontal" Name="Group4">
                 <dxg:GridControl Name="GridDocuments"
-                                 AutoGenerateColumns="KeepOld"
+                                 AutoGenerateColumns="AddNew"
                                  EnableSmartColumnsGeneration="True"
                                  HorizontalAlignment="Stretch"
                                  MaxHeight="1000"
@@ -122,8 +122,7 @@
                         <dxg:TableView ShowTotalSummary="True"
                                        Name="TableViewDocuments"
                                        ShowAutoFilterRow="True"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}"
+                                       EditorShowMode="MouseDownFocused"
                                        >
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>

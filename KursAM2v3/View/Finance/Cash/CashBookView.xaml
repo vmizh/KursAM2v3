@@ -129,8 +129,8 @@
                             <dxg:TableView ShowTotalSummary="True"
                                            Name="tableViewDocuments"
                                            ShowAutoFilterRow="True"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+                                           
+                                           >
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}" />
@@ -191,8 +191,8 @@
                             <dxg:TableView ShowTotalSummary="False"
                                            Name="tableViewRemains"
                                            ShowAutoFilterRow="True"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+                                           
+                                           >
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"

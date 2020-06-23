@@ -66,8 +66,8 @@
                                                 </dxg:GridControl.Columns>
                                                 <dxg:GridControl.View>
                                                     <dxg:TableView AutoWidth="True" 
-                                                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                                                   RowStyle="{StaticResource FocusedRowStyle}"/>
+                                                                   
+                                                                   />
                                                 </dxg:GridControl.View>
                                             </dxg:GridControl>
                                         </ControlTemplate>
@@ -107,8 +107,8 @@
                                            ShowGroupPanel="False"
                                            ShowTotalSummary="True"
                                            ShowAutoFilterRow="True" 
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"/>
+                                           
+                                           />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>

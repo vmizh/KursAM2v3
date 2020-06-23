@@ -3,7 +3,7 @@ using Core.ViewModel.Base;
 
 namespace Core.ViewModel.Common
 {
-    public class UserViewModel : KursViewModelBase
+    public class UserViewModel : RSViewModelBase
     {
         [Display(Name = "Полное имя")] private string myFullName;
         private int myTabelNumber;
@@ -16,7 +16,7 @@ namespace Core.ViewModel.Common
             {
                 if (value == myUserId) return;
                 myUserId = value;
-                OnPropertyChanged(nameof(UserId));
+                RaisePropertyChanged();
             }
         }
         public string FullName
@@ -26,7 +26,7 @@ namespace Core.ViewModel.Common
             {
                 if (value == myFullName) return;
                 myFullName = value;
-                OnPropertyChanged(nameof(FullName));
+                RaisePropertyChanged();
             }
         }
         [Display(Name = "Табельный номер")]
@@ -37,7 +37,7 @@ namespace Core.ViewModel.Common
             {
                 if (value == myTabelNumber) return;
                 myTabelNumber = value;
-                OnPropertyChanged(nameof(TabelNumber));
+                RaisePropertyChanged();
             }
         }
 

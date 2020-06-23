@@ -68,8 +68,8 @@
                             <dxg:TableView NavigationStyle="Row" 
                                            AllowPerPixelScrolling="True" 
                                            ShowTotalSummary="True"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"/>
+                                           
+                                           />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>
@@ -139,8 +139,8 @@
 
                         <dxg:GridControl.View>
                             <dxg:TableView x:Name="gridNomenklView"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           
+                                           
                                            NavigationStyle="Row"
                                            ShowAutoFilterRow="True"
                                            AllowPerPixelScrolling="True"

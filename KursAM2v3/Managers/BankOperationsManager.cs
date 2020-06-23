@@ -197,6 +197,32 @@ namespace KursAM2.Managers
             }
         }
 
+        public string CheckForNonzero(decimal bankDC, ALFAMEDIAEntities ctx)
+        {
+            var sql = "SELECT  AccountDC ,Date ,Start ," +
+                      "SummaIn ,SummaOut ,[End] " +
+                      $"FROM dbo.BankOperations (nolock) WHERE AccountDC = {CustomFormat.DecimalToSqlDecimal(bankDC)} " +
+                      " order by 2";
+            var data = ctx.Database.SqlQuery<BankOperations>(sql).ToList();
+            var accountInfo = ctx.SD_114.SingleOrDefault(_ => _.DOC_CODE == bankDC);
+            if (accountInfo == null) return $"Нет счета с кодом {bankDC}";
+            if (accountInfo.BA_NEGATIVE_RESTS == 1)
+            {
+                var d = accountInfo.DateNonZero ?? DateTime.MinValue;
+                var firstZero = data.FirstOrDefault(_ => _.Date >= accountInfo.DateNonZero
+                                                         && _.End < 0);
+                if (firstZero != null)
+                {
+                    // ReSharper disable once PossibleInvalidOperationException
+                    return $"Возникли отрицательные остатки на {firstZero.Date.Value.ToShortDateString()}" +
+                           $" в размере {firstZero.End}";
+                }
+            }
+
+
+            return null;
+        }
+
         public void SaveBankOperations(BankOperationsViewModel item, decimal bankDc, decimal insertDelta)
         {
             if (item.State == RowStatus.NewRow)
@@ -214,10 +240,13 @@ namespace KursAM2.Managers
                             if (item.VVT_SFACT_POSTAV_DC != null)
                             {
                                 var sql =
-                                    "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
+                                    "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, " +
+                                    "SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) " +
+                                    "+ ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                     "FROM sd_26 s26 " +
                                     "LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DOC_CODE " +
-                                    $"LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_POSTAV_DC = s26.DOC_CODE AND t101.CODE != {item.Code} " +
+                                    "LEFT OUTER JOIN td_101 t101 " +
+                                    $"ON t101.VVT_SFACT_POSTAV_DC = s26.DOC_CODE AND t101.CODE != {item.Code} " +
                                     "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SPOST_DC = s26.DOC_CODE " +
                                     $"WHERE s26.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(item.VVT_SFACT_POSTAV_DC)} " +
                                     "GROUP BY s26.doc_code, s26.SF_CRS_SUMMA ";
@@ -243,10 +272,13 @@ namespace KursAM2.Managers
                             else
                             {
                                 var sql =
-                                    "SELECT s84.doc_code as DocCode, s84.SF_CRS_SUMMA_K_OPLATE as Summa, SUM(ISNULL(s33.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_PRIHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
+                                    "SELECT s84.doc_code as DocCode, s84.SF_CRS_SUMMA_K_OPLATE as Summa, " +
+                                    "SUM(ISNULL(s33.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_PRIHOD,0) " +
+                                    "+ ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                     "FROM sd_84 s84 " +
                                     "LEFT OUTER JOIN sd_33 s33 ON s33.SFACT_DC = s84.DOC_CODE " +
-                                    "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_CLIENT_DC = s84.DOC_CODE  AND t101.CODE != {item.Code} " +
+                                    "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_CLIENT_DC = s84.DOC_CODE  " +
+                                    "AND t101.CODE != {item.Code} " +
                                     "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SFACT_DC = s84.DOC_CODE " +
                                     $"WHERE s84.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(item.VVT_SFACT_CLIENT_DC)} " +
                                     "GROUP BY s84.doc_code, s84.SF_CRS_SUMMA_K_OPLATE ";
@@ -307,12 +339,22 @@ namespace KursAM2.Managers
                         oldItem.VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC;
                         oldItem.VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC;
                         ctx.SaveChanges();
+                        var err = CheckForNonzero(bankDc, ctx);
+                        if (!string.IsNullOrEmpty(err))
+                        {
+                            if (tran.UnderlyingTransaction?.Connection != null)
+                                tran.Rollback();
+                            winManager.ShowWinUIMessageBox(err, "Ошибка", MessageBoxButton.OK, 
+                                MessageBoxImage.Error);
+                            return;
+                        }
                         tran.Commit();
                         item.State = RowStatus.NotEdited;
                     }
                     catch (Exception ex)
                     {
-                        tran.Rollback();
+                        if(tran.UnderlyingTransaction?.Connection != null)
+                            tran.Rollback();
                         WindowManager.ShowError(ex);
                     }
                     if (item.VVT_KONTRAGENT != null)
@@ -324,83 +366,107 @@ namespace KursAM2.Managers
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var thisDate = ctx.SD_101.FirstOrDefault(_ => _.VV_START_DATE == item.Date && _.VV_ACC_DC == bankDc);
-                var code = 0;
-                if (ctx.TD_101.Any())
-                    code = ctx.TD_101.Max(_ => _.CODE) + 1;
-                if (thisDate != null && item.State == RowStatus.NewRow)
+                var tran = ctx.Database.BeginTransaction();
+                try
                 {
-                    ctx.TD_101.Add(new TD_101
+                    var thisDate =
+                        ctx.SD_101.FirstOrDefault(_ => _.VV_START_DATE == item.Date && _.VV_ACC_DC == bankDc);
+                    var code = 0;
+                    if (ctx.TD_101.Any())
+                        code = ctx.TD_101.Max(_ => _.CODE) + 1;
+                    if (thisDate != null && item.State == RowStatus.NewRow)
                     {
-                        DOC_CODE = thisDate.DOC_CODE,
-                        CODE = code,
-                        VVT_DOC_NUM = item.VVT_DOC_NUM,
-                        VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
-                        VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
-                        VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
-                        BankAccountDC = item.BankAccountIn?.DocCode,
-                        BankFromTransactionCode = item.BankFromTransactionCode,
-                        VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
-                        VVT_CRS_DC = item.Currency.DOC_CODE,
-                        VVT_KONTR_CRS_DC = item.Currency.DOC_CODE,
-                        VVT_KONTR_CRS_RATE = 1,
-                        VVT_KONTR_CRS_SUMMA = item.VVT_VAL_PRIHOD + item.VVT_VAL_RASHOD,
-                        VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DOC_CODE,
-                        VVT_UCHET_VALUTA_RATE = 1,
-                        VVT_SUMMA_V_UCHET_VALUTE =
-                            Convert.ToDecimal(item.VVT_VAL_PRIHOD) - Convert.ToDecimal(item.VVT_VAL_RASHOD),
-                        VVT_SF_OPLACHENO = 0,
-                        VVT_SHPZ_DC = item.VVT_SHPZ_DC,
-                        VVT_RASH_KASS_ORDER_DC = item.CashOut?.DocCode,
-                        VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode,
-                        VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
-                        VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC
-                    });
-                    item.DOC_CODE = thisDate.DOC_CODE;
+                        ctx.TD_101.Add(new TD_101
+                        {
+                            DOC_CODE = thisDate.DOC_CODE,
+                            CODE = code,
+                            VVT_DOC_NUM = item.VVT_DOC_NUM,
+                            VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
+                            VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
+                            VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
+                            BankAccountDC = item.BankAccountIn?.DocCode,
+                            BankFromTransactionCode = item.BankFromTransactionCode,
+                            VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
+                            VVT_CRS_DC = item.Currency.DOC_CODE,
+                            VVT_KONTR_CRS_DC = item.Currency.DOC_CODE,
+                            VVT_KONTR_CRS_RATE = 1,
+                            VVT_KONTR_CRS_SUMMA = item.VVT_VAL_PRIHOD + item.VVT_VAL_RASHOD,
+                            VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DOC_CODE,
+                            VVT_UCHET_VALUTA_RATE = 1,
+                            VVT_SUMMA_V_UCHET_VALUTE =
+                                Convert.ToDecimal(item.VVT_VAL_PRIHOD) - Convert.ToDecimal(item.VVT_VAL_RASHOD),
+                            VVT_SF_OPLACHENO = 0,
+                            VVT_SHPZ_DC = item.VVT_SHPZ_DC,
+                            VVT_RASH_KASS_ORDER_DC = item.CashOut?.DocCode,
+                            VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode,
+                            VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
+                            VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC
+                        });
+                        item.DOC_CODE = thisDate.DOC_CODE;
+                        item.myState = RowStatus.NotEdited;
+                    }
+
+                    if (thisDate == null && item.State == RowStatus.NewRow)
+                    {
+                        item.DOC_CODE = ctx.SD_101.ToList().Any() ? ctx.SD_101.Max(_ => _.DOC_CODE) + 1 : 11010000001;
+                        ctx.SD_101.Add(new SD_101
+                        {
+                            DOC_CODE = item.DOC_CODE,
+                            VV_START_DATE = item.Date,
+                            VV_STOP_DATE = item.Date,
+                            VV_ACC_DC = bankDc,
+                            VV_RUB_MONEY_START = 0,
+                            VV_RUB_MONEY_STOP = 0
+                        });
+                        ctx.TD_101.Add(new TD_101
+                        {
+                            DOC_CODE = item.DOC_CODE,
+                            CODE = code,
+                            VVT_DOC_NUM = item.VVT_DOC_NUM,
+                            VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
+                            VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
+                            VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
+                            BankAccountDC = item.BankAccountIn?.DocCode,
+                            BankFromTransactionCode = item.BankFromTransactionCode,
+                            VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
+                            VVT_CRS_DC = item.Currency.DOC_CODE,
+                            VVT_KONTR_CRS_DC = item.Currency.DOC_CODE,
+                            VVT_KONTR_CRS_RATE = 1,
+                            VVT_KONTR_CRS_SUMMA = item.VVT_VAL_PRIHOD + item.VVT_VAL_RASHOD,
+                            VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DOC_CODE,
+                            VVT_UCHET_VALUTA_RATE = 1,
+                            VVT_SUMMA_V_UCHET_VALUTE = item.VVT_VAL_PRIHOD - item.VVT_VAL_RASHOD,
+                            VVT_SF_OPLACHENO = 0,
+                            VVT_SHPZ_DC = item.VVT_SHPZ_DC,
+                            VVT_RASH_KASS_ORDER_DC = item.CashOut?.DocCode,
+                            VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode,
+                            VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
+                            VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC
+                        });
+                    } 
                     ctx.SaveChanges();
+                    var err = CheckForNonzero(bankDc, ctx);
+                    if (!string.IsNullOrEmpty(err))
+                    {
+                        if (tran.UnderlyingTransaction?.Connection != null)
+                            tran.Rollback();
+                        winManager.ShowWinUIMessageBox(err, "Ошибка", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        return;
+                    }
+                    tran.Commit();
                     item.myState = RowStatus.NotEdited;
                 }
-                if (thisDate == null && item.State == RowStatus.NewRow)
+                catch (Exception ex)
                 {
-                    item.DOC_CODE = ctx.SD_101.ToList().Any() ? ctx.SD_101.Max(_ => _.DOC_CODE) + 1 : 11010000001;
-                    ctx.SD_101.Add(new SD_101
-                    {
-                        DOC_CODE = item.DOC_CODE,
-                        VV_START_DATE = item.Date,
-                        VV_STOP_DATE = item.Date,
-                        VV_ACC_DC = bankDc,
-                        VV_RUB_MONEY_START = 0,
-                        VV_RUB_MONEY_STOP = 0
-                    });
-                    ctx.TD_101.Add(new TD_101
-                    {
-                        DOC_CODE = item.DOC_CODE,
-                        CODE = code,
-                        VVT_DOC_NUM = item.VVT_DOC_NUM,
-                        VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
-                        VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
-                        VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
-                        BankAccountDC = item.BankAccountIn?.DocCode,
-                        BankFromTransactionCode = item.BankFromTransactionCode,
-                        VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
-                        VVT_CRS_DC = item.Currency.DOC_CODE,
-                        VVT_KONTR_CRS_DC = item.Currency.DOC_CODE,
-                        VVT_KONTR_CRS_RATE = 1,
-                        VVT_KONTR_CRS_SUMMA = item.VVT_VAL_PRIHOD + item.VVT_VAL_RASHOD,
-                        VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DOC_CODE,
-                        VVT_UCHET_VALUTA_RATE = 1,
-                        VVT_SUMMA_V_UCHET_VALUTE = item.VVT_VAL_PRIHOD - item.VVT_VAL_RASHOD,
-                        VVT_SF_OPLACHENO = 0,
-                        VVT_SHPZ_DC = item.VVT_SHPZ_DC,
-                        VVT_RASH_KASS_ORDER_DC = item.CashOut?.DocCode,
-                        VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode,
-                        VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
-                        VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC
-                    });
-                    ctx.SaveChanges();
-                    item.myState = RowStatus.NotEdited;
+                    if (tran.UnderlyingTransaction?.Connection != null)
+                        tran.Rollback();
+                    WindowManager.ShowError(ex);
                 }
             }
+
+            if (item.VVT_KONTRAGENT != null)
+                    RecalcKontragentBalans.CalcBalans((decimal)item.VVT_KONTRAGENT, item.Date);
         }
 
         private Tuple<decimal, int> AddBankOperation2(ALFAMEDIAEntities ctx, BankOperationsViewModel item,
@@ -489,9 +555,13 @@ namespace KursAM2.Managers
 
         public void DeleteBankOperations(BankOperationsViewModel item, decimal bankDc)
         {
-            try
+            if (winManager.ShowWinUIMessageBox("Вы уверенны, что хотите удалить транзакцию?",
+                "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                return;
+            using (var ctx = GlobalOptions.GetEntities())
             {
-                using (var ctx = GlobalOptions.GetEntities())
+                var tran = ctx.Database.BeginTransaction();
+                try
                 {
                     var delItem = ctx.TD_101.FirstOrDefault(_ => _.CODE == item.Code && _.DOC_CODE == item.DOC_CODE);
                     if (delItem != null)
@@ -515,12 +585,25 @@ namespace KursAM2.Managers
                         foreach (var d in delUdCol)
                             ctx.UD_101.Remove(d);
                     }
+
                     ctx.SaveChanges();
+                    var err = CheckForNonzero(bankDc, ctx);
+                    if (!string.IsNullOrEmpty(err))
+                    {
+                        if (tran.UnderlyingTransaction?.Connection != null)
+                            tran.Rollback();
+                        winManager.ShowWinUIMessageBox(err, "Ошибка", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        return;
+                    }
+                    tran.Commit();
                 }
-            }
-            catch (Exception e)
-            {
-                WindowManager.ShowError(e);
+                catch (Exception e)
+                {
+                    if (tran.UnderlyingTransaction?.Connection != null)
+                        tran.Rollback();
+                    WindowManager.ShowError(e);
+                }
             }
         }
 
@@ -1044,12 +1127,30 @@ namespace KursAM2.Managers
                         DocToDC = d2.Item1
                     });
                     ctx.SaveChanges();
+                    var err = CheckForNonzero(item.BankToDC, ctx);
+                    if (!string.IsNullOrEmpty(err))
+                    {
+                        if (tran.UnderlyingTransaction?.Connection != null)
+                            tran.Rollback();
+                        winManager.ShowWinUIMessageBox(err, "Ошибка", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        return;
+                    }
+                    var err2 = CheckForNonzero(item.BankToDC, ctx);
+                    if (!string.IsNullOrEmpty(err))
+                    {
+                        if (tran.UnderlyingTransaction?.Connection != null)
+                            tran.Rollback();
+                        winManager.ShowWinUIMessageBox(err2, "Ошибка", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        return;
+                    }
                     tran.Commit();
                     item.myState = RowStatus.NotEdited;
                 }
                 catch (Exception ex)
                 {
-                    if (tran.UnderlyingTransaction.Connection != null)
+                    if (tran.UnderlyingTransaction?.Connection != null)
                         tran.Rollback();
                     WindowManager.ShowError(ex);
                 }

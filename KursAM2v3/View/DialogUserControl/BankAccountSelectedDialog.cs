@@ -14,11 +14,11 @@ using KursAM2.Dialogs;
 
 namespace KursAM2.View.DialogUserControl
 {
-    public class BankAccountSelectedDialog : RSWindowViewModelBase, IDataUserControl
+    public sealed class BankAccountSelectedDialog : RSWindowViewModelBase, IDataUserControl
     {
         private Bank myCurrentItem;
         private StandartDialogSelectTwoTableUC myDataUserControl;
-        private readonly decimal? ExcludeAccountDC;
+        private readonly decimal? excludeAccountDC;
         private BankAccount myCurrentChildItem;
 
         public BankAccountSelectedDialog()
@@ -38,7 +38,7 @@ namespace KursAM2.View.DialogUserControl
 
         public BankAccountSelectedDialog(decimal dcOut)
         {
-            ExcludeAccountDC = dcOut;
+            excludeAccountDC = dcOut;
             LayoutControl = myDataUserControl = new StandartDialogSelectTwoTableUC(GetType().Name);
             WindowName = "Выбор банковского счета"; 
             ItemsCollection = new ObservableCollection<Bank>();
@@ -49,12 +49,15 @@ namespace KursAM2.View.DialogUserControl
                     ItemsCollection.Add(b.Bank);
                 }
             }
+
+            CurrentItem = null;
         }
 
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public ObservableCollection<BankAccount> ChildItemsCollection { set; get; } 
             = new ObservableCollection<BankAccount>();
+        // ReSharper disable once MemberInitializerValueIgnored
         public  ObservableCollection<Bank> ItemsCollection { set; get; } = new ObservableCollection<Bank>();
         public Bank CurrentItem
         {
@@ -64,10 +67,11 @@ namespace KursAM2.View.DialogUserControl
                 if (myCurrentItem != null && myCurrentItem.Equals(value)) return;
                 myCurrentItem = value;
                 ChildItemsCollection.Clear();
-                if (ExcludeAccountDC != null)
+                if (myCurrentItem == null) return;
+                if (excludeAccountDC != null)
                 {
-                    foreach (var acc in MainReferences.BankAccounts.Values.Where(_ => _.BankDC == myCurrentItem.DocCode 
-                    && _.DocCode != ExcludeAccountDC))
+                    foreach (var acc in MainReferences.BankAccounts.Values.Where(_ => _.BankDC == myCurrentItem?.DocCode 
+                    && _.DocCode != excludeAccountDC))
                     {
                         ChildItemsCollection.Add(acc);
                     }
@@ -88,7 +92,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentChildItem;
             set
             {
-                if (myCurrentChildItem != null && myCurrentItem.Equals(value)) return;
+                if (myCurrentChildItem != null && myCurrentChildItem.Equals(value)) return;
                 myCurrentChildItem = value;
                 RaisePropertyChanged();
             }
@@ -106,7 +110,7 @@ namespace KursAM2.View.DialogUserControl
         public DependencyObject LayoutControl { get; }
     }
 
-    public class BankAccountSelectedDialog2 : RSWindowViewModelBase, IDataUserControl
+    public sealed class BankAccountSelectedDialog2 : RSWindowViewModelBase, IDataUserControl
     {
         private StandartDialogs.BankAccountSelect myCurrentChildItem;
         private StandartDialogs.BankSelect myCurrentItem;

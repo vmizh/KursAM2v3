@@ -271,12 +271,14 @@ mCalculates/Materials
 rCore
 mCore.Tests
 mCore/EntityViewModel
+mCore/Finance
 mCore/Managers
 mCore/Menu
 mCore/ViewModel/Base
-mCore/ViewModel/Common
+rCore/ViewModel/Common
 mCore/WindowsManager
 mCoreView
+mCoreView/Common
 mData
 mDevExpress
 mDevExpress/Content
@@ -1282,7 +1284,7 @@ rKursAM2C/scss
 rKursAM2C/scss/block
 rKursAM2C/scss/component
 rKursAM2C/scss/page
-mKursAM2v3
+rKursAM2v3
 mKursAM2v3/Dialogs
 mKursAM2v3/GenViewModel
 mKursAM2v3/GenViewModel/Properties
@@ -1291,6 +1293,7 @@ rKursAM2v3/Managers/Invoices
 mKursAM2v3/Managers/Nomenkl
 mKursAM2v3/Properties
 mKursAM2v3/ReportManagers/SFClientAndWayBill
+mKursAM2v3/Resource
 mKursAM2v3/Tests
 mKursAM2v3/View
 mKursAM2v3/View/Base
@@ -1312,6 +1315,7 @@ mKursAM2v3/View/Management/ProfitAndLossesControls
 mKursAM2v3/View/Period
 mKursAM2v3/View/Personal
 mKursAM2v3/View/Reconciliation
+mKursAM2v3/View/Repozit
 mKursAM2v3/View/Search
 rKursAM2v3/ViewModel/Finance
 mKursAM2v3/ViewModel/Finance/Cash
@@ -1320,9 +1324,10 @@ mKursAM2v3/ViewModel/Finance/controls
 rKursAM2v3/ViewModel/Logistiks
 rKursAM2v3/ViewModel/Logistiks/Warehouse
 mKursAM2v3/ViewModel/Management
-mKursAM2v3/ViewModel/Management/BreakEven
+rKursAM2v3/ViewModel/Management/BreakEven
 mKursAM2v3/ViewModel/Management/ManagementBalans
-mKursAM2v3/ViewModel/Personal
+rKursAM2v3/ViewModel/Personal
+mKursAM2v3/ViewModel/Reconcilation
 mKursAM2v3/ViewModel/Reference
 mKursAM2v3/ViewModel/Reference/Nomenkl
 mKursAM2v3/ViewModel/StartLogin
@@ -1346,6 +1351,7 @@ rMVC5DevExpressTest/Views/Shared
 rMVC5DevExpressTest/fonts
 mPeriodManager
 mPeriodManager/View
+rPeriodManager/ViewModel
 mReports
 mSQLite.Base
 mSQLite.Base/Internal/Builder

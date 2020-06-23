@@ -28,8 +28,8 @@
                            ShowAutoFilterRow="True"
                            AllowPerPixelScrolling="True"
                            ShowTotalSummary="False" 
-                           CellStyle="{StaticResource FocusedCellStyle}" 
-                           RowStyle="{StaticResource FocusedRowStyle}"/>
+                           
+                           />
         </dxg:GridControl.View>
     </dxg:GridControl>
 </UserControl>

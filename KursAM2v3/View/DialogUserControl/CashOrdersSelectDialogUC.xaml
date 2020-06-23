@@ -42,8 +42,8 @@
                                ShowTotalSummary="True"
                                ShowAutoFilterRow="True"
                                RowDoubleClick="gridViewDocument_RowDoubleClick"
-                               CellStyle="{StaticResource FocusedCellStyle}" 
-                               RowStyle="{StaticResource FocusedRowStyle}">
+                               
+                               >
                     <dxg:TableView.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Экспорт"

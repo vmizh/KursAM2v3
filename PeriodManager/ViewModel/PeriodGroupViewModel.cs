@@ -3,7 +3,7 @@ using Core.ViewModel.Base;
 
 namespace PeriodManager.ViewModel
 {
-    public class PeriodGroupViewModel : KursViewModelBase
+    public class PeriodGroupViewModel : RSViewModelBase
     {
         public PeriodGroupViewModel()
         {

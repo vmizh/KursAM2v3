@@ -105,8 +105,8 @@
                                                    ShowTotalSummary="False"
                                                    ShowAutoFilterRow="True"
                                                    ShowGroupPanel="False"
-                                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                                   RowStyle="{StaticResource FocusedRowStyle}">
+                                                   
+                                                   >
                                         <dxmvvm:Interaction.Behaviors>
                                             <dxmvvm:EventToCommand EventName="RowDoubleClick"
                                                                    Command="{Binding AddCurrentCommand}" />
@@ -158,8 +158,8 @@
                                                    AllowPerPixelScrolling="True"
                                                    ShowTotalSummary="False"
                                                    ShowGroupPanel="False"
-                                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                                   RowStyle="{StaticResource FocusedRowStyle}">
+                                                   
+                                                   >
                                         <dxmvvm:Interaction.Behaviors>
                                             <dxmvvm:EventToCommand EventName="RowDoubleClick"
                                                                    Command="{Binding RemoveCurrentCommand}" />

@@ -37,8 +37,8 @@
                                                    EnableImmediatePosting="True"
                                                    AllowPerPixelScrolling="True"
                                                    ShowTotalSummary="False"
-                                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                                   RowStyle="{StaticResource FocusedRowStyle}">
+                                                   
+                                                   >
                                     </dxg:TableView>
                                 </dxg:GridControl.View>
                             </dxg:GridControl>

@@ -70,8 +70,6 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="False"
                                                ShowGroupPanel="False"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"
                                                x:Name="tableViewKontr"
                                                ShowAutoFilterRow="True"
                                                AllowEditing="False" />
@@ -110,8 +108,6 @@
                                     <dxg:TableView ShowTotalSummary="False"
                                                    ShowGroupPanel="False"
                                                    x:Name="tableViewGruzo"
-                                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                                   RowStyle="{StaticResource FocusedRowStyle}"
                                                    ShowAutoFilterRow="True"
                                                    AllowEditing="True" />
                                 </dxg:GridControl.View>
@@ -133,8 +129,6 @@
                                 <dxg:GridControl.View>
                                     <dxg:TableView ShowTotalSummary="False"
                                                    ShowGroupPanel="False"
-                                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                                   RowStyle="{StaticResource FocusedRowStyle}"
                                                    x:Name="tableViewBank"
                                                    ShowAutoFilterRow="True"
                                                    AllowEditing="True" />

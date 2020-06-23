@@ -1,0 +1,129 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using Core.EntityViewModel;
+using Core.Menu;
+using Core.ViewModel.Base;
+using JetBrains.Annotations;
+using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.View.DialogUserControl;
+using KursRepozit.Views.Base;
+
+namespace KursAM2.Dialogs
+{
+    public class InvoiceProviderDialogs : KursBaseControlViewModel
+    {
+        #region Fields
+
+        private readonly IInvoiceProviderRepository invoiceProviderRepository;
+
+        #endregion
+
+        #region Constructors
+
+        public InvoiceProviderDialogs()
+        {
+            ModelView = new StandartDialogSelectWithDateUC(GetType().Name);
+            RightMenuBar = MenuGenerator.RefreshOnlyRightBar(this);
+        }
+
+        public InvoiceProviderDialogs(IInvoiceProviderRepository repos) : this()
+        {
+            invoiceProviderRepository = repos;
+        }
+
+        public ObservableCollection<InvoiceProvider> ItemsCollection { set; get; }
+            = new ObservableCollection<InvoiceProvider>();
+
+        public InvoiceProviderDialogs(IInvoiceProviderRepository repos, [NotNull] Currency crs,
+            DateTime? dateStart = null, DateTime? dateEnd = null) : this(repos)
+        {
+            Currency = crs;
+            StartDate = dateStart;
+            EndDate = dateEnd;
+            RightMenuBar = MenuGenerator.StandartDialogRightBar(this);
+            WindowName = "Выбор счета";
+            ItemsCollection.Clear();
+        }
+
+        #endregion
+
+        #region Properties
+
+        public InvoiceProvider CurrentItem
+        {
+            set => SetValue(value);
+            get => GetValue<InvoiceProvider>();
+        }
+
+        public ObservableCollection<InvoiceProvider> SelectedItems { set; get; }
+            = new ObservableCollection<InvoiceProvider>();
+
+
+        public Currency Currency
+        {
+            get => GetValue<Currency>();
+            set => SetValue(value);
+        }
+
+        public DateTime? StartDate
+        {
+            get => GetValue<DateTime?>();
+            set => SetValue(value, () =>
+            {
+                if (EndDate == null)
+                {
+                    EndDate = DateTime.Today;
+                }
+            });
+        }
+
+        public DateTime? EndDate
+        {
+            get => GetValue<DateTime?>();
+            set => SetValue(value);
+        }
+
+        #endregion
+
+        #region Methods
+
+        #endregion
+
+        #region Commands
+
+        public override void Load()
+        {
+            ItemsCollection.Clear();
+            foreach (var d in invoiceProviderRepository.GetAllForNakladDistribute(Currency,
+                StartDate, EndDate).OrderByDescending(_ => _.SF_POSTAV_DATE))
+                ItemsCollection.Add(d);
+        }
+
+        public bool? ShowDialog()
+        {
+            var dsForm = new KursBaseDialog
+            {
+                Owner = Application.Current.MainWindow
+            };
+            Form = dsForm;
+            dsForm.DataContext = this;
+            return dsForm.ShowDialog();
+        }
+
+        public bool? ShowDialog(Currency crs)
+        {
+            Currency = crs;
+            var dsForm = new KursBaseDialog
+            {
+                Owner = Application.Current.MainWindow
+            };
+            Form = dsForm;
+            dsForm.DataContext = this;
+            return dsForm.ShowDialog();
+        }
+
+        #endregion
+    }
+}

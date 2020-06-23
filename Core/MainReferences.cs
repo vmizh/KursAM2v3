@@ -123,6 +123,18 @@ namespace Core
             return GetNomenkl(dc.Value);
         }
 
+        public static Currency GetCurrency(decimal? dc)
+        {
+            if (dc == null) return null;
+            return GetCurrency(dc.Value);
+        }
+
+        public static Currency GetCurrency(decimal dc)
+        {
+            if(Currencies.ContainsKey(dc)) return Currencies[dc];
+            return null;
+        }
+
         private static void CheckUpdateKontragentAndLoad()
         {
             try
@@ -209,7 +221,7 @@ namespace Core
                 {
                     #region центр ответственности SD_40
 
-                    var s40 = ent.SD_40.Include(_ => _.SD_402).AsNoTracking().ToList();
+                    var s40 = ent.Set<SD_40>().ToList();
                     foreach (var item in s40)
                         if (COList.ContainsKey(item.DOC_CODE))
                         {
@@ -653,79 +665,6 @@ namespace Core
                     }
 
                     #endregion
-                }
-            }
-            catch (Exception ex)
-            {
-                WindowManager.ShowError(null, ex);
-            }
-        }
-
-        private void LoadReference()
-        {
-            try
-            {
-                using (var ent = GlobalOptions.GetEntities())
-                {
-                    foreach (var item in ent.SD_40.AsNoTracking().ToList())
-                        COList.Add(item.DOC_CODE, new CentrOfResponsibility(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_111.AsNoTracking().ToList())
-                        MutualTypes.Add(item.DOC_CODE, new SD_111ViewModel(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_303.AsNoTracking().ToList())
-                        SDRSchets.Add(item.DOC_CODE, new SDRSchet(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_99.AsNoTracking().ToList())
-                        SDRStates.Add(item.DOC_CODE, new SDRState(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_179.AsNoTracking().ToList())
-                        PayConditions.Add(item.DOC_CODE, new UsagePay(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_77.AsNoTracking().ToList())
-                        VzaimoraschetTypes.Add(item.DOC_CODE,
-                            new VzaimoraschetType(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_189.AsNoTracking().ToList())
-                        FormRaschets.Add(item.DOC_CODE, new FormPay(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.Countries.AsNoTracking().OrderBy(_ => _.Name).AsNoTracking().ToList())
-                        Countries.Add(item.Iso, new Country(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_301.AsNoTracking().ToList())
-                        Currencies.Add(item.DOC_CODE, new Currency(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_175.AsNoTracking().ToList())
-                        Units.Add(item.DOC_CODE, new Unit(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_82.AsNoTracking().ToList())
-                        NomenklGroups.Add(item.DOC_CODE, new NomenklGroup(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_119.AsNoTracking().ToList())
-                        NomenklTypes.Add(item.DOC_CODE, new NomenklProductType(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_2.AsNoTracking().ToList())
-                        Employees.Add(item.DOC_CODE, new Employee(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_27.AsNoTracking().ToList())
-                        Warehouses.Add(item.DOC_CODE, new Warehouse(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.Projects.AsNoTracking().ToList())
-                        Projects.Add(item.Id, new Project(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_114.AsNoTracking().Include(_ => _.SD_44).AsNoTracking())
-                        BankAccounts.Add(item.DOC_CODE, new BankAccount
-                        {
-                            DocCode = item.DOC_CODE,
-                            BankDC = item.BA_BANKDC,
-                            Bank = new Bank(item.SD_44),
-                            Name = item.BA_ACC_SHORTNAME,
-                            Account = item.BA_RASH_ACC,
-                            myState = RowStatus.NotEdited,
-                            Currency = item.CurrencyDC != null ? Currencies[(decimal) item.CurrencyDC] : null
-                        });
-                    var cashAcc = ent.Database.SqlQuery<AccessRight>(
-                            $"SELECT DOC_CODE AS DocCode, USR_ID as UserId FROM HD_22 WHERE USR_ID = {GlobalOptions.UserInfo.Id}")
-                        .ToList();
-                    foreach (var item in ent.SD_22)
-                        Cashs.Add(item.DOC_CODE,
-                            new Cash(item)
-                            {
-                                IsAccessRight = cashAcc.Any(_ => item.DOC_CODE == _.DocCode),
-                                myState = RowStatus.NotEdited
-                            });
-                    foreach (var item in ent.SD_102)
-                        ContractTypes.Add(item.DOC_CODE, new ContractType(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_103)
-                        DeliveryConditions.Add(item.DOC_CODE,
-                            new DeliveryCondition(item) {myState = RowStatus.NotEdited});
-                    foreach (var item in ent.SD_23.AsNoTracking().ToList())
-                        Regions.Add(item.DOC_CODE, new Region(item) {myState = RowStatus.NotEdited});
                 }
             }
             catch (Exception ex)

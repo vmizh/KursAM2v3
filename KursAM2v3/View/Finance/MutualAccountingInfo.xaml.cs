@@ -3,6 +3,7 @@ using System.Windows;
 using DevExpress.Data;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
+using Helper;
 using KursAM2.ViewModel.Finance;
 using LayoutManager;
 
@@ -126,7 +127,7 @@ namespace KursAM2.View.Finance
         {
             gridDocs.TotalSummary.Clear();
             foreach (var col in gridDocs.Columns)
-                if (LayoutManagerBase.ColumnFieldTypeCheckDecimal(col.FieldType))
+                if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
                 {
                     col.EditSettings = new CalcEditSettings
                     {

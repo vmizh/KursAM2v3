@@ -3,7 +3,7 @@ using Core.ViewModel.Base;
 
 namespace KursAM2.ViewModel.Reconcilation
 {
-    public class Responsible : KursViewModelBase
+    public class Responsible : RSViewModelBase
     {
         public Responsible()
         {

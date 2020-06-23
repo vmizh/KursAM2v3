@@ -28,9 +28,7 @@
                 <dxg:TableView x:Name="tableView"
                                EnableImmediatePosting="True"
                                AllowPerPixelScrolling="True"
-                               ShowTotalSummary="False"
-                               CellStyle="{StaticResource FocusedCellStyle}" 
-                               RowStyle="{StaticResource FocusedRowStyle}">
+                               ShowTotalSummary="False">
                     <dxg:TableView.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Добавить новый склад" Command="{Binding AddNewStore}" />

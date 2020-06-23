@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI;
+using KursRepozit.Logger;
 
 namespace Core.WindowsManager
 {
@@ -116,6 +117,7 @@ namespace Core.WindowsManager
                     ErrorText = errText.ToString()
                 });
             }
+            LoggerHelper.WriteError(ex);
             WinUIMessageBox.Show(win ?? Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
                 errText.ToString(),
                 "Ошибка",

@@ -48,8 +48,8 @@
                                     </dxg:GridControl.Columns>
                                     <dxg:GridControl.View>
                                         <dxg:TableView AutoWidth="True"
-                                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                                       RowStyle="{StaticResource FocusedRowStyle}"/>
+                                                       
+                                                       />
                                     </dxg:GridControl.View>
                                 </dxg:GridControl>
                             </ControlTemplate>
@@ -168,8 +168,8 @@
                                            AllowPerPixelScrolling="True"
                                            ShowTotalSummary="True"
                                            ShowAutoFilterRow="True"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           
+                                           
                                            NavigationStyle="Row"
                                            ScrollingMode="Normal"
                                            ShowGroupPanel="False">
@@ -255,8 +255,8 @@
                                            NavigationStyle="Row"
                                            ScrollingMode="Normal"
                                            ShowGroupPanel="False" 
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"/>
+                                           
+                                           />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>

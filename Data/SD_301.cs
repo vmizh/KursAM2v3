@@ -111,6 +111,8 @@ namespace Data
             this.BankCurrencyChange = new HashSet<BankCurrencyChange>();
             this.BankCurrencyChange1 = new HashSet<BankCurrencyChange>();
             this.SD_114 = new HashSet<SD_114>();
+            this.DistributeNaklad = new HashSet<DistributeNaklad>();
+            this.DistributeNakladInfo = new HashSet<DistributeNakladInfo>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -313,5 +315,9 @@ namespace Data
         public virtual ICollection<BankCurrencyChange> BankCurrencyChange1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_114> SD_114 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DistributeNaklad> DistributeNaklad { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DistributeNakladInfo> DistributeNakladInfo { get; set; }
     }
 }

@@ -28,6 +28,8 @@ namespace KursAM2.View.Finance.UC
 
         private void BankOperationsView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
+            if(DataContext is AddBankOperionUC dtx)
+                dtx.SetBrushForPrihodRashod();
         }
 
         private void Payment_OnDefaultButtonClick(object sender, RoutedEventArgs e)
@@ -253,8 +255,6 @@ namespace KursAM2.View.Finance.UC
                         dtc.CurrentBankOperations.CashOut = c.First();
                         dtc.VVT_VAL_PRIHOD = c.First().SummaOrder;
                         dtc.VVT_DOC_NUM = c.First().ToString();
-                        dtc.Payment = GlobalOptions.SystemProfile.OwnerKontragent;
-                        Payment.Text = dtc.Payment.Name;
                         break;
                     case BankOperationType.CashIn:
                         var c1 = StandartDialogs.SelectCashOrders(dtc.BankAccount, SelectCashIn);
@@ -264,8 +264,6 @@ namespace KursAM2.View.Finance.UC
                         dtc.CurrentBankOperations.VVT_VAL_RASHOD = c1.First().SummaOrder;
                         dtc.VVT_DOC_NUM = c1.First().ToString();
                         dtc.CurrentBankOperations.VVT_DOC_NUM = c1.First().ToString();
-                        dtc.Payment = GlobalOptions.SystemProfile.OwnerKontragent;
-                        Payment.Text = dtc.Payment.Name;
                         break;
                     case BankOperationType.BankIn:
                         var bb = StandartDialogs.SelectBankAccount(dtc.BankAccount.DocCode);
@@ -273,8 +271,6 @@ namespace KursAM2.View.Finance.UC
                         dtc.VVT_VAL_RASHOD = 0;
                         dtc.VVT_DOC_NUM = bb.BankName + " " + bb.Account;
                         dtc.BankAccountIn = bb;
-                        dtc.Payment = GlobalOptions.SystemProfile.OwnerKontragent;
-                        Payment.Text = dtc.Payment.Name;
                         break;
                     case BankOperationType.BankOut:
                         var bb2 = StandartDialogs.SelectBankStatement(dtc.BankAccount.DocCode);
@@ -285,8 +281,6 @@ namespace KursAM2.View.Finance.UC
                         dtc.SHPZ = bb2.SHPZ;
                         dtc.BankAccountOut = bb2.Bank;
                         dtc.CurrentBankOperations.BankFromTransactionCode = bb2.Code;
-                        dtc.Payment = GlobalOptions.SystemProfile.OwnerKontragent;
-                        Payment.Text = dtc.Payment.Name;
                         break;
                 }
                 Kontragent.Text = dtc.KontragentName;

@@ -96,8 +96,8 @@
                                                UseIndicatorForSelection="True"
                                                ShowAutoFilterRow="True"
                                                AllowEditing="False"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}">
+                                               
+                                               >
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Экспорт"
@@ -187,8 +187,8 @@
                                 <dxg:TableView ShowTotalSummary="True"
                                                UseIndicatorForSelection="True"
                                                Name="KontrTableView"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               
+                                               
                                                ShowAutoFilterRow="True"
                                                AllowEditing="False">
                                     <dxg:TableView.ContextMenu>
@@ -267,8 +267,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
                                                Name="COTableView"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               
+                                               
                                                UseIndicatorForSelection="True"
                                                ShowAutoFilterRow="True"
                                                AllowEditing="False">
@@ -350,8 +350,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
                                                Name="managerTableView"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               
+                                               
                                                UseIndicatorForSelection="True"
                                                ShowAutoFilterRow="True"
                                                AllowEditing="False">
@@ -454,8 +454,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
                                                Name="documentTableView"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               
+                                               
                                                UseIndicatorForSelection="True"
                                                ShowAutoFilterRow="True"
                                                AllowEditing="False">
@@ -586,8 +586,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
                                                Name="documentCurrencyTableView"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               
+                                               
                                                UseIndicatorForSelection="True"
                                                ShowAutoFilterRow="True"
                                                AllowEditing="False">

@@ -7,6 +7,7 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:control1="clr-namespace:Core.Control;assembly=Core"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
     x:Class="KursAM2.View.Finance.Invoices.SearchInvoiceClientView"
     Icon="{Binding Source={StaticResource imageStandartSearch},
     Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
@@ -87,8 +88,8 @@
                                            ShowGroupPanel="False"
                                            ShowTotalSummary="True"
                                            ShowAutoFilterRow="True"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+                                           MouseMove="TableView_MouseMove"
+                                           >
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}" />
@@ -113,7 +114,8 @@
                                 <dxmvvm:Interaction.Behaviors>
                                     <dxmvvm:KeyToCommand Command="{Binding DocumentOpenCommand}"
                                                          KeyGesture="Enter" />
-                                    <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding DocumentOpenCommand}"/>
+                                    <dxmvvm:EventToCommand EventName="MouseDoubleClick" 
+                                                           Command="{Binding DocumentOpenCommand}"/>
                                 </dxmvvm:Interaction.Behaviors>
                             </dxg:TableView>
                         </dxg:GridControl.View>

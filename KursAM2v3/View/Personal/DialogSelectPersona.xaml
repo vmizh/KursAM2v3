@@ -69,8 +69,8 @@
                             <dxg:TableView ShowTotalSummary="False"
                                            ShowGroupPanel="False"
                                            Name="tableViewEmployee"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           
+                                           
                                            ShowAutoFilterRow="True"
                                            AllowEditing="False" MouseDoubleClick="tableViewEmployee_MouseDoubleClick" />
                         </dxg:GridControl.View>
@@ -107,8 +107,8 @@
                             <dxg:TableView ShowTotalSummary="False"
                                            ShowGroupPanel="False"
                                            Name="tableViewSelected"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                           
+                                           
                                            ShowAutoFilterRow="True"
                                            AllowEditing="False" MouseDoubleClick="tableViewSelected_MouseDoubleClick" />
                         </dxg:GridControl.View>

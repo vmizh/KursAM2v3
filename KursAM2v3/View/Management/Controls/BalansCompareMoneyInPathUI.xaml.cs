@@ -2,6 +2,7 @@
 using DevExpress.Data;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
+using Helper;
 using LayoutManager;
 
 namespace KursAM2.View.Management.Controls
@@ -44,7 +45,7 @@ namespace KursAM2.View.Management.Controls
             gridMoneyInPath.TotalSummary.Clear();
             foreach (var col in gridMoneyInPath.Columns)
             {
-                if (LayoutManagerBase.ColumnFieldTypeCheckDecimal(col.FieldType))
+                if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
                 {
                     var summary = new GridSummaryItem
                     {

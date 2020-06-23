@@ -94,7 +94,12 @@ namespace KursAM2.View
             return LayoutHelper.FindElementByName(LookUpEditHelper.GetPopupContentOwner(Editor).Child, "PART_Content");
         }
 
-        public override bool ProcessKeyDownInternal(KeyEventArgs e)
+        protected override bool ProcessPreviewKeyDownInternal(KeyEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override bool ProcessKeyDownInternal(KeyEventArgs e)
         {
             return true;
         }

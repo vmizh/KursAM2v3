@@ -113,8 +113,8 @@
                                            x:Name="gridprihodViewRows"
                                            ShowAutoFilterRow="True"
                                            ShowGroupPanel="False"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+                                           
+                                           >
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть документ"
@@ -193,8 +193,8 @@
                                            ShowAutoFilterRow="True"
                                            ShowGroupPanel="False"
                                            AllowEditing="True"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+                                           
+                                           >
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть документ"
@@ -282,8 +282,8 @@
                                            ShowAutoFilterRow="True"
                                            ShowGroupPanel="False"
                                            AllowEditing="True"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+                                           
+                                           >
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть документ"
@@ -361,8 +361,8 @@
                                            ShowAutoFilterRow="True"
                                            ShowGroupPanel="False"
                                            AllowEditing="True"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+                                           
+                                           >
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть документ"

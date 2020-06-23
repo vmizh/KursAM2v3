@@ -11,7 +11,7 @@ using Core.WindowsManager;
 
 namespace KursAM2.ViewModel.Personal
 {
-    public class PersonalNachRowViewModel : KursViewModelBase, IViewModel<NachForEmployeeRowModelOld>
+    public class PersonalNachRowViewModel : RSViewModelBase, IViewModel<NachForEmployeeRowModelOld>
     {
         public PersonalNachRowViewModel()
         {
@@ -21,6 +21,8 @@ namespace KursAM2.ViewModel.Personal
             SourceAll = new ObservableCollection<NachForEmployeeRowModelOld>();
             DeletedItems = new List<NachForEmployeeRowModelOld>();
         }
+
+        public GridTableViewInfo TableViewInfo { get; set; }
 
         private decimal CalcSummaWithRate(decimal dcDest, decimal dcSrc, decimal summa, decimal rate)
         {

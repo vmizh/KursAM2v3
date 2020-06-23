@@ -64,8 +64,8 @@
                         <dxg:TableView x:Name="gridViewDocument"
                                        EnableImmediatePosting="True"
                                        AllowPerPixelScrolling="True"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}"
+                                       
+                                       
                                        ShowTotalSummary="True"
                                        ShowAutoFilterRow="True">
                             <dxg:TableView.ContextMenu>

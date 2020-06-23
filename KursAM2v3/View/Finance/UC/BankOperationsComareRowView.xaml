@@ -6,8 +6,6 @@
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:entityViewModel="clr-namespace:Core.EntityViewModel;assembly=Core"
-             xmlns:my="clr-namespace:KursAM2.ViewModel.Finance.controls"
-             xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
              mc:Ignorable="d"
              d:DesignHeight="250" d:DesignWidth="500"
              >
@@ -94,25 +92,37 @@
             <dxlc:LayoutGroup Orientation="Vertical" Margin="0 0 0 0">
 
                 <dxlc:LayoutItem Label="Приход">
+                    <Border
+                        BorderBrush="Orange"
+                        BorderThickness="1"
+                        x:Name="borderIncoming">
                     <dxe:PopupCalcEdit x:Name="Incoming"
                                        Height="25"
                                        Margin="0 0 0 5"
                                        DisplayFormatString="n2"
                                        EditValueChanged="Incoming_OnEditValueChanged"
+                                       ShowBorder="False"
                                        Value="{Binding VVT_VAL_PRIHOD, Mode=TwoWay}" 
                                        IsEnabled="{Binding IsPrihodSummaEnabled, UpdateSourceTrigger=PropertyChanged}">
                     </dxe:PopupCalcEdit>
+                    </Border>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Расход">
-                     <dxe:PopupCalcEdit
+                    <Border
+                        BorderBrush="Orange"
+                        BorderThickness="1"
+                        x:Name="borderIConsumption">
+                        <dxe:PopupCalcEdit
                             x:Name="Consumption"
                             Height="25"
                             DisplayFormatString="n2"
                             EditValueChanged="Consumption_OnEditValueChanged"
                             Value="{Binding VVT_VAL_RASHOD, Mode=TwoWay}"
                             IsEnabled="{Binding IsRashodSummaEnabled,  UpdateSourceTrigger=PropertyChanged}"
+                            ShowBorder="False"
                             Margin="0 0 0 5">
                         </dxe:PopupCalcEdit>
+                        </Border>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Счет доходов/расходов">
                      <dxe:ComboBoxEdit HorizontalAlignment="Stretch"

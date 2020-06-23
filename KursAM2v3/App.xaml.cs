@@ -32,7 +32,7 @@ namespace KursAM2
 
         private static void Start(Action baseStart)
         {
-            ThemeManager.ApplicationThemeName = "MetropolisLight";
+            ApplicationThemeHelper.ApplicationThemeName = "MetropolisLight";
             ToolTipService.ShowOnDisabledProperty.OverrideMetadata(
                 typeof(Control),
                 new FrameworkPropertyMetadata(true));

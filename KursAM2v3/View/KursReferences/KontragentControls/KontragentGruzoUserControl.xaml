@@ -56,9 +56,7 @@
                     <dxg:TableView AllowPerPixelScrolling="False"
                                    ShowGroupPanel="False"
                                    ShowTotalSummary="False"
-                                   ShowAutoFilterRow="True" 
-                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                   RowStyle="{StaticResource FocusedRowStyle}"/>
+                                   ShowAutoFilterRow="True"/>
                 </dxg:GridControl.View>
             </dxg:GridControl>
         </dxlc:LayoutGroup>

@@ -1,5 +1,31 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">SOLUTION</s:String>
+	
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Program Files (x86)\DevExpress 15.2\Components\Bin\Framework\DevExpress.Sparkline.v15.2.Core.dll" /&gt;&#xD;
-&lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>
+&lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=22a4017e_002D30e0_002D4ec5_002D9192_002D77997e371794/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DataSourceGetTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::0ADE9C9B-B276-4FDC-B21C-F35B86817D77::.NETFramework,Version=v4.7.2::KursRepozit.Tests.RepositoryTests.DataSorceRepositoryTests.DataSourceGetTest&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6bb8e8b2_002D0144_002D4519_002Db41f_002D15c2ae118380/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="LogFirstTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;Or&gt;&#xD;
+      &lt;TestAncestor&gt;&#xD;
+        &lt;TestId&gt;NUnit3x::0ADE9C9B-B276-4FDC-B21C-F35B86817D77::.NETFramework,Version=v4.7.2::KursRepozit.Tests.LogTests.LogStartTest.LogFirstTest&lt;/TestId&gt;&#xD;
+      &lt;/TestAncestor&gt;&#xD;
+      &lt;TestAncestor&gt;&#xD;
+        &lt;TestId&gt;NUnit3x::0ADE9C9B-B276-4FDC-B21C-F35B86817D77::.NETFramework,Version=v4.7.2::KursRepozit.Tests.RepositoryTests.DataSorceRepositoryTests.DataSourceCRUDTest&lt;/TestId&gt;&#xD;
+      &lt;/TestAncestor&gt;&#xD;
+    &lt;/Or&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::0ADE9C9B-B276-4FDC-B21C-F35B86817D77::.NETFramework,Version=v4.7.2::KursRepozit.Tests.RepositoryTests.DataSorceRepositoryTests.DataSourceGetTest&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+  &lt;/Or&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a7625467_002Dc0a8_002D4b35_002D9fc4_002D076f286ad9b0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DataSourceCRUDTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::0ADE9C9B-B276-4FDC-B21C-F35B86817D77::.NETFramework,Version=v4.7.2::KursRepozit.Tests.RepositoryTests.DataSorceRepositoryTests.DataSourceCRUDTest&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

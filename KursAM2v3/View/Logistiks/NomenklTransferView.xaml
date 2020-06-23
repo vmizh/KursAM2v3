@@ -223,8 +223,8 @@
                                     AllowPerPixelScrolling="True"
                                     ShowTotalSummary="True"
                                     EnableImmediatePosting="False"
-                                    CellStyle="{StaticResource FocusedCellStyle}" 
-                                    RowStyle="{StaticResource FocusedRowStyle}"
+                                    
+                                    
                                     CellValueChanging="tableView_CellValueChanging">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
@@ -332,8 +332,8 @@
                                     ShowTotalSummary="True"
                                     EnableImmediatePosting="False"
                                     CellValueChanging="tableView_CellValueChanging"
-                                    CellStyle="{StaticResource FocusedCellStyle}" 
-                                    RowStyle="{StaticResource FocusedRowStyle}"/>
+                                    
+                                    />
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </dxlc:LayoutGroup>

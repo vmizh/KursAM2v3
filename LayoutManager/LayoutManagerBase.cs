@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using Data;
 using DevExpress.Data;
 using DevExpress.Xpf.Core.Serialization;
+using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
 using DevExpress.XtraGrid;
@@ -30,23 +31,24 @@ namespace LayoutManager
                 return spath;
             }
         }
-        [DataMember(IsRequired = false)]
-        public XDocument OptionsData { set; get; }
-        [DataMember]
-        public WindowsScreenState WinState { set; get; }
-        [DataMember]
-        public MemoryStream LayoutBase { set; get; }
-        [DataMember]
-        public string FileName { set; get; }
-        [DataMember]
-        public Window Win { set; get; }
+
+        [DataMember(IsRequired = false)] public XDocument OptionsData { set; get; }
+
+        [DataMember] public WindowsScreenState WinState { set; get; }
+
+        [DataMember] public MemoryStream LayoutBase { set; get; }
+
+        [DataMember] public string FileName { set; get; }
+
+        [DataMember] public Window Win { set; get; }
+
         /// <summary>
         ///     DevExpress conrol/ Conrol верхнего уровня для сериализации DXSerialize
         /// </summary>
         [DataMember]
         public DependencyObject LayoutControl { set; get; }
-        [DataMember]
-        public bool IsWindowOnly { set; get; }
+
+        [DataMember] public bool IsWindowOnly { set; get; }
 
         public virtual void Save()
         {
@@ -62,6 +64,7 @@ namespace LayoutManager
                         DXSerializer.Serialize(LayoutControl, ms, "Kurs", null);
                         saveLayout.Layout = ms.ToArray();
                     }
+
                     var ser1 =
                         new DataContractSerializer(typeof(WindowsScreenState));
                     using (var writer = XmlWriter.Create(sb))
@@ -70,6 +73,7 @@ namespace LayoutManager
                         writer.Flush();
                     }
                 }
+
                 var connString = new SqlConnectionStringBuilder
                 {
                     DataSource = "172.16.0.1",
@@ -79,9 +83,9 @@ namespace LayoutManager
                 }.ToString();
                 using (var ctx = new KursSystemEntities(connString))
                 {
-                    if (Helper.CurrentUser.UserInfo == null) return;
+                    if (CurrentUser.UserInfo == null) return;
                     var w = Win != null ? Win.GetType().Name : "Control";
-                    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == Helper.CurrentUser.UserInfo.KursId
+                    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
                                                                && _.FormName == w && _.ControlName == FileName);
                     try
                     {
@@ -91,7 +95,7 @@ namespace LayoutManager
                             {
                                 Id = Guid.NewGuid(),
                                 UpdateDate = DateTime.Now,
-                                UserId = Helper.CurrentUser.UserInfo.KursId,
+                                UserId = CurrentUser.UserInfo.KursId,
                                 FormName = w,
                                 ControlName = FileName,
                                 Layout = sb.ToString()
@@ -100,11 +104,12 @@ namespace LayoutManager
                         else
                         {
                             l.UpdateDate = DateTime.Now;
-                            l.UserId = Helper.CurrentUser.UserInfo.KursId;
+                            l.UserId = CurrentUser.UserInfo.KursId;
                             l.FormName = w;
                             l.ControlName = FileName;
                             l.Layout = sb.ToString();
                         }
+
                         ctx.SaveChanges();
                     }
                     catch (Exception ex)
@@ -143,43 +148,6 @@ namespace LayoutManager
 
         public virtual void ResetLayout()
         {
-            //try
-            //{
-            //    if (WinState == null) return;
-            //    if (!controlOnly)
-            //        if (Win != null)
-            //        {
-            //            Win.Height = WinState.FormHeight;
-            //            Win.Width = WinState.FormWidth;
-            //            Win.Left = WinState.FormLeft;
-            //            Win.Top = WinState.FormTop;
-            //            Win.WindowStartupLocation = WinState.FormStartLocation;
-            //            Win.WindowState = WinState.FormState;
-            //        }
-            //    if (WinState.Layout == null) return;
-            //    if (LayoutControl == null) return;
-            //    var ms = new MemoryStream(WinState.Layout);
-            //    DXSerializer.Deserialize(LayoutControl, ms, "Kurs", null);
-            //    ms.Close();
-            //}
-            //catch (Exception ex)
-            //{
-            //    var errText = new StringBuilder(ex.Message);
-            //    if (ex.InnerException != null)
-            //    {
-            //        var ex1 = ex.InnerException;
-            //        errText.Append(ex1.Message + "\n");
-            //        if (ex1.InnerException != null)
-            //            errText.Append(ex1.InnerException.Message);
-            //    }
-            //    WinUIMessageBox.Show(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
-            //        errText.ToString(),
-            //        "Ошибка",
-            //        MessageBoxButton.OK,
-            //        MessageBoxImage.Error,
-            //        MessageBoxResult.None, MessageBoxOptions.None,
-            //        FloatingMode.Adorner);
-            //}
         }
 
         public bool IsLayoutExists()
@@ -189,7 +157,7 @@ namespace LayoutManager
 
         public virtual void Load(bool autoSummary = false)
         {
-            if (Helper.CurrentUser.UserInfo == null) return;
+            if (CurrentUser.UserInfo == null) return;
             var connString = new SqlConnectionStringBuilder
             {
                 DataSource = "172.16.0.1",
@@ -203,7 +171,7 @@ namespace LayoutManager
                 var w = Win != null ? Win.GetType().Name : "Control";
                 try
                 {
-                    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == Helper.CurrentUser.UserInfo.KursId
+                    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
                                                                && _.FormName == w && _.ControlName == FileName);
                     if (l != null) layoutData = l.Layout;
                 }
@@ -212,6 +180,7 @@ namespace LayoutManager
                     MessageBox.Show($"Ошибка загрузки разметки {w} " + ex.Message);
                 }
             }
+
             if (!IsLayoutExists() && layoutData == null) return;
             try
             {
@@ -232,6 +201,7 @@ namespace LayoutManager
                     DXSerializer.Serialize(LayoutControl, ms1, "Kurs", null);
                     WinState.Layout = ms1.ToArray();
                 }
+
                 if (!File.Exists($"{AppDataPath}\\{FileName}.xml") && layoutData == null) return;
                 XmlReader r;
                 FileStream fs;
@@ -249,6 +219,7 @@ namespace LayoutManager
                         r = XmlReader.Create(fs);
                     }
                 }
+
                 if (!(new DataContractSerializer(typeof(WindowsScreenState)).ReadObject(r) is WindowsScreenState p)
                 ) return;
                 if (Win != null)
@@ -260,6 +231,7 @@ namespace LayoutManager
                     Win.Left = p.FormLeft < 0 ? 0 : p.FormLeft;
                     Win.Top = p.FormTop < 0 ? 0 : p.FormTop;
                 }
+
                 if (p.Layout == null || IsWindowOnly) return;
                 var ms = new MemoryStream(p.Layout);
                 //var doc = XDocument.Load(ms);
@@ -280,7 +252,13 @@ namespace LayoutManager
                             column.AutoFilterCondition = AutoFilterCondition.Contains;
                             column.ColumnFilterMode = ColumnFilterMode.DisplayText;
                             column.SortMode = ColumnSortMode.DisplayText;
+                            if (column.FieldType == typeof(string))
+                                column.EditSettings = new TextEditSettings
+                                {
+                                    SelectAllOnMouseUp = true
+                                };
                         }
+
                 if (trees != null && trees.Count > 0)
                     foreach (var ctrl in trees)
                     foreach (var column in ctrl.Columns)
@@ -295,7 +273,13 @@ namespace LayoutManager
                             column.AutoFilterCondition = AutoFilterCondition.Contains;
                             column.ColumnFilterMode = ColumnFilterMode.DisplayText;
                             column.SortMode = ColumnSortMode.DisplayText;
+                            if (column.FieldType == typeof(string))
+                                column.EditSettings = new TextEditSettings
+                                {
+                                    SelectAllOnMouseUp = true
+                                };
                         }
+
                 if (autoSummary)
                 {
                     if (LayoutControl is GridControl ctrl1)
@@ -328,9 +312,17 @@ namespace LayoutManager
                                     column.AutoFilterCondition = AutoFilterCondition.Contains;
                                     column.ColumnFilterMode = ColumnFilterMode.DisplayText;
                                     column.SortMode = ColumnSortMode.DisplayText;
+                                    if (column.FieldType == typeof(string))
+                                    {
+                                        column.EditSettings = new TextEditSettings
+                                        {
+                                            SelectAllOnMouseUp = true
+                                        };
+                                    }
                                 }
                             }
                     }
+
                     if (LayoutControl is TreeListControl ctrl)
                     {
                         ctrl.TotalSummary.Clear();
@@ -353,13 +345,27 @@ namespace LayoutManager
                             else
                             {
                                 foreach (var col in ctrl.Columns)
-                                    if (col.FieldType != typeof(decimal) && col.FieldType != typeof(decimal?)
-                                                                         && col.FieldType != typeof(double) &&
-                                                                         col.FieldType != typeof(double?))
-                                        col.AutoFilterCondition = AutoFilterCondition.Contains;
+                                    if (col.FieldType != typeof(decimal) || column.FieldType == typeof(decimal?)
+                                                                         || column.FieldType == typeof(double) ||
+                                                                         column.FieldType == typeof(double?)
+                                                                         || column.FieldType == typeof(float) ||
+                                                                         column.FieldType == typeof(float?))
+                                    {
+                                        column.AutoFilterCondition = AutoFilterCondition.Contains;
+                                        column.ColumnFilterMode = ColumnFilterMode.DisplayText;
+                                        column.SortMode = ColumnSortMode.DisplayText;
+                                        if (column.FieldType == typeof(string))
+                                        {
+                                            column.EditSettings = new TextEditSettings
+                                            {
+                                                SelectAllOnMouseUp = true
+                                            };
+                                        }
+                                    }
                             }
                     }
                 }
+
                 ms.Close();
             }
             catch
@@ -368,15 +374,6 @@ namespace LayoutManager
                     File.Delete($"{AppDataPath}\\{FileName}.xml");
                 ResetLayout();
             }
-        }
-
-        public static bool ColumnFieldTypeCheckDecimal(Type type)
-        {
-            return type == typeof(decimal) || type == typeof(decimal?)
-                                           || type == typeof(double) ||
-                                           type == typeof(double?)
-                                           || type == typeof(float) ||
-                                           type == typeof(float?);
         }
     }
 

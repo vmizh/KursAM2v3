@@ -37,8 +37,8 @@
                         <dxg:TableView x:Name="tableView"
                                        AllowPerPixelScrolling="True"
                                        ShowTotalSummary="False"
-                                       CellStyle="{StaticResource FocusedCellStyle}" 
-                                       RowStyle="{StaticResource FocusedRowStyle}">
+                                       
+                                       >
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Добавить строку" Command="{Binding AddRowCommand}" />

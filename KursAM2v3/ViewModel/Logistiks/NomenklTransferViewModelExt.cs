@@ -206,7 +206,7 @@ namespace KursAM2.ViewModel.Logistiks
                                 old.Date = Date;
                                 old.Note = Note;
                                 old.SkladDC = Warehouse.DocCode;
-                                old.Creator = GlobalOptions.UserInfo.NickName;
+                                //old.Creator = GlobalOptions.UserInfo.NickName;
                                 old.LastUpdate = DateTime.Now;
                                 old.LastUpdater = GlobalOptions.UserInfo.NickName;
                                 foreach (var nr in Rows)

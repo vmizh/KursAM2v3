@@ -1,10 +1,8 @@
-﻿using System.ComponentModel;
-using System.IO;
-using System.Linq;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using DevExpress.Xpf.Grid;
-using KursAM2.ViewModel.Finance.Invoices;
 using LayoutManager;
 
 namespace KursAM2.View.Finance.Invoices
@@ -15,16 +13,18 @@ namespace KursAM2.View.Finance.Invoices
     public partial class SearchInvoiceClientView : ILayout
     {
         private LayoutManagerGridAutoGenerationColumns resultGridControlLayout;
+
         public SearchInvoiceClientView()
         {
             InitializeComponent();
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this,null);
+            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, null);
             Loaded += SearchBaseView_Loaded;
             Closing += SearchBaseView_Closing;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         private void SearchBaseView_Closing(object sender, CancelEventArgs e)
         {
             LayoutManager.Save();
@@ -56,12 +56,17 @@ namespace KursAM2.View.Finance.Invoices
             e.Column.ReadOnly = true;
         }
 
-        private void UIElement_OnKeyDown(object sender, KeyEventArgs e)
+        private void TableView_MouseMove(object sender, MouseEventArgs e)
         {
-            var dtx = DataContext as InvoiceClientSearchViewModel;
-            if (e.Key == Key.Enter)
-                // ReSharper disable once PossibleNullReferenceException
-                dtx.GetSearchDocument(null);
+            var view = (TableView) sender;
+            var info = view.CalcHitInfo(e.OriginalSource as DependencyObject);
+            if (info.Column != null)
+            {
+                if (Convert.ToBoolean(info.Column.Tag)) return; 
+                foreach (var c in view.Grid.Columns)
+                    c.Tag = null;
+                info.Column.Tag = "True";
+            }
         }
     }
 }

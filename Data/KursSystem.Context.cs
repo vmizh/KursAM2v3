@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 using System.Data.Entity.Core.EntityClient;
+using System.Data.SqlClient;
 
 namespace Data
 {
@@ -18,11 +19,27 @@ namespace Data
     public partial class KursSystemEntities : DbContext
     {
         public KursSystemEntities()
-            : base("name=KursSystemEntities")
+            : base(new EntityConnectionStringBuilder
         {
+            Provider = "System.Data.SqlClient",
+            ProviderConnectionString = new SqlConnectionStringBuilder
+            {
+            DataSource = "172.16.0.1",
+            InitialCatalog = "KursSystem",
+            UserID = "sa",
+            Password = "CbvrfFhntvrf65"
+                }.ToString(),
+            Metadata =
+                @"res://*/KursSystem.csdl|res://*/KursSystem.ssdl|res://*/KursSystem.msl"
+        }.ToString()) 
+        {
+            Configuration.ValidateOnSaveEnabled = true;
+            Configuration.LazyLoadingEnabled = false;
+            Configuration.AutoDetectChangesEnabled = true;
         }
 
-        public KursSystemEntities(string connectionString,
+
+public KursSystemEntities(string connectionString,
             bool validationMode = true,
             bool lazyLoadingMode = true,
             bool autoDetectMode = true)

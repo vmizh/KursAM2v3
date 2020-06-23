@@ -64,8 +64,7 @@
                                 ShowTotalSummary="False" ShowAutoFilterRow="False"
                                 ShowGroupPanel="False" ShowIndicator="False"
                                 VerticalScrollbarVisibility="Disabled"
-                                CellStyle="{StaticResource FocusedCellStyle}"
-                                RowStyle="{StaticResource FocusedRowStyle}"/>
+                                />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </StackPanel>

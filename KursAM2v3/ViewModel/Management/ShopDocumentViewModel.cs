@@ -2,7 +2,7 @@
 
 namespace KursAM2.ViewModel.Management
 {
-    public class ShopDocumentViewModel : KursViewModelBase
+    public class ShopDocumentViewModel : RSViewModelBase
     {
         public string NomenklNumber { set; get; }
         public decimal Quantity { set; get; }

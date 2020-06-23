@@ -224,8 +224,8 @@
                             <dxg:TableView x:Name="gridViewMain" 
                                            AllowPerPixelScrolling="True"
                                            ShowTotalSummary="True"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+                                           
+                                           >
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть калькуляцию себестоимости"
@@ -312,8 +312,8 @@
                             <dxg:TableView AllowPerPixelScrolling="True" 
                                            ShowTotalSummary="True"
                                            x:Name="operListGridView"
-                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                           RowStyle="{StaticResource FocusedRowStyle}">
+                                           
+                                           >
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}" />

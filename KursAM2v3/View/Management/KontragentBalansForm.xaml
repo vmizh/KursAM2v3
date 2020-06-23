@@ -62,8 +62,8 @@
                                         <dxg:GridControl.View>
                                             <dxg:TableView AutoWidth="True"
                                                            Loaded="FrameworkElement_OnLoaded"
-                                                           CellStyle="{StaticResource FocusedCellStyle}" 
-                                                           RowStyle="{StaticResource FocusedRowStyle}"
+                                                           
+                                                           
                                                            ShowAutoFilterRow="True">
                                             <dxg:TableView.ContextMenu>
                                                     <ContextMenu>
@@ -268,8 +268,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True" 
                                                Name="KontrOperTableView"
-                                               CellStyle="{StaticResource FocusedCellStyle}" 
-                                               RowStyle="{StaticResource FocusedRowStyle}"
+                                               
+                                               
                                                EditorButtonShowMode="ShowForFocusedRow"
                                                ShowAutoFilterRow="True">
                                     <dxg:TableView.ContextMenu>

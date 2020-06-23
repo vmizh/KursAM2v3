@@ -199,8 +199,8 @@
                                                    ShowTotalSummary="True"
                                                    ShowGroupPanel="False" 
                                                    ShowAutoFilterRow="True"
-                                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                                   RowStyle="{StaticResource FocusedRowStyle}">
+                                                   
+                                                   >
                                         <dxg:TableView.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem Header="Открыть калькуляцию" Command="{Binding NomenklCalcOpenCommand}"/>
@@ -342,8 +342,8 @@
                                                    ShowTotalSummary="True"
                                                    ShowGroupPanel="False" 
                                                    ShowAutoFilterRow="True" 
-                                                   CellStyle="{StaticResource FocusedCellStyle}" 
-                                                   RowStyle="{StaticResource FocusedRowStyle}">
+                                                   
+                                                   >
                                         <dxg:TableView.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem Header="Открыть товарный документ" Command="{Binding DocumentTovarOpenCommand}" />
