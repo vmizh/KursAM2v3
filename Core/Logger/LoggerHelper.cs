@@ -4,7 +4,7 @@ using System.Windows;
 using JetBrains.Annotations;
 using NLog;
 
-namespace KursRepozit.Logger
+namespace Core.Logger
 {
     public static class LoggerHelper
     {

@@ -61,7 +61,7 @@
             <dxe:DateEdit EditValue="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}"
                           Width="120"
                           Margin="10,0,0,0"/>
-            <Label Content="Дата окончания:"/>
+            <Label Content="Дата окончания:" Margin="10,0,0,0"/>
             <dxe:DateEdit EditValue="{Binding EndDate, UpdateSourceTrigger=PropertyChanged}"
                           Width="120"
                           Margin="10,0,0,0"/>
@@ -87,7 +87,37 @@
                 <dxg:TableView ShowTotalSummary="True"
                                AllowPerPixelScrolling="True"
                                ShowGroupPanel="False"
-                               ShowAutoFilterRow="True"/>
+                               ShowAutoFilterRow="True"
+                               >
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}" />
+                            <Separator />
+                            <MenuItem Header="Новый документ">
+                                <MenuItem Header="Пустой" Command="{Binding DocNewEmptyCommand}"
+                                                      CommandParameter="0" />
+                                <MenuItem Header="Копия текущего" Command="{Binding DocNewCopyCommand}"
+                                                      CommandParameter="1" />
+                                <MenuItem Header="Новый с реквизитами текущего" Command="{Binding DocNewCopyRequisiteCommand}"
+                                                      CommandParameter="2" />
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                                    CommandParameter="{Binding Path=PlacementTarget, 
+                                                    RelativeSource={RelativeSource Mode=FindAncestor,
+                                                    AncestorType={x:Type ContextMenu}}}">
+                                <MenuItem.Icon>
+                                    <Image Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Копировать итоговую сумму"
+                                                    Command="{Binding GetColumnSummaCommand}"
+                                                    CommandParameter="{Binding Path=PlacementTarget, 
+                                                    RelativeSource={RelativeSource Mode=FindAncestor,
+                                                    AncestorType={x:Type ContextMenu}}}" />
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                </dxg:TableView>
             </dxg:GridControl.View>
         </dxg:GridControl>
     </DockPanel>

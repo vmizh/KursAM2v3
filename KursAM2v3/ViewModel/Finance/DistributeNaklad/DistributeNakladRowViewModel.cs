@@ -2,8 +2,10 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel;
+using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Data;
+using JetBrains.Annotations;
 
 namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {
@@ -11,17 +13,23 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
     {
         #region Fields 
         #endregion
+
         #region Constructors 
-        public DistributeNakladRowViewModel(DistributeNakladRow entity, RowStatus state = RowStatus.NotEdited)
+        public DistributeNakladRowViewModel()
         {
-            Entity = entity ?? new DistributeNakladRow
+            Entity = new DistributeNakladRow
             {
                 Id = Guid.NewGuid()
             };
-            // ReSharper disable once VirtualMemberCallInConstructor
-            Id = state == RowStatus.NewRow ? Guid.NewGuid() : Entity.Id;
-            State = state;
+            State = RowStatus.NewRow;
         }
+
+        public DistributeNakladRowViewModel([NotNull]DistributeNakladRow rent)
+        {
+            Entity = rent;
+            State = RowStatus.NotEdited;
+        }
+
         #endregion
         #region Properties
         [DisplayName("Entity")]

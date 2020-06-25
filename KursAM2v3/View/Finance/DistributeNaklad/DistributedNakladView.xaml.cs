@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
+using Core;
+using Core.ViewModel.Base;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -21,7 +24,7 @@ namespace KursAM2.View.Finance.DistributeNaklad
             Loaded += DistributedNakladView_Loaded;
             Unloaded += DistributedNakladView_Unloaded;
         }
-
+        public ComboBoxEdit CurrencyItem { set; get; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
 
@@ -49,18 +52,40 @@ namespace KursAM2.View.Finance.DistributeNaklad
             }
 
             switch (e.PropertyName)
-            {
-                //case nameof(DistributeNakladViewModel.AvatarSource):
-                //    var newContent = new ImageEdit();
-                //    newContent.Height = 250;
-                //    newContent.Width = 250;
-                //    newContent.EditValuePostMode = PostMode.Immediate;
-                //    newContent.EditValueChanged += NewContent_EditValueChanged;
-                //    BindingHelper.CopyBinding(oldContent, newContent, BaseEdit.EditValueProperty);
-                //    e.Item.Content = newContent;
-                //    break;
+            { 
+                case nameof(DistributeNakladViewModel.DocNum):
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                    var edit = new TextEdit();
+                    edit.Width = 50;
+                    BindingHelper.CopyBinding(oldContent, edit, BaseEdit.EditValueProperty);
+                    e.Item.Content = edit;
+                    break;
+                case nameof(DistributeNakladViewModel.DocDate):
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                    e.Item.Width = 120;
+                    break;
+                case nameof(DistributeNakladViewModel.Currency):
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                    e.Item.Width = 50;
+                    CurrencyItem = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Currency, "Currency",
+                        MainReferences.Currencies.Values.ToList(), width: 50);
+                    if (doc.Tovars.Count > 0 && doc.State != RowStatus.NewRow)
+                        CurrencyItem.IsEnabled = false;
+                    break;
+                case nameof(DistributeNakladViewModel.State):
+                    e.Item.IsReadOnly = true;
+                    if (e.Item.Content is ComboBoxEdit cbState) cbState.IsEnabled = false;
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Right;
+                    break;
+                case nameof(DistributeNakladViewModel.Creator):
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Right;
+                    e.Item.Width = 150;
+                    e.Item.IsEnabled = false;
+                    break;
+                case nameof(DistributeNakladViewModel.Note):
+                    ViewFluentHelper.SetDefaultTextEdit(e.Item,HorizontalAlignment.Left,600, 80);
+                    break;
             }
-
             ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
         }
 

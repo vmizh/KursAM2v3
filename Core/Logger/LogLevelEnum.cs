@@ -1,4 +1,4 @@
-﻿namespace KursRepozit.Logger
+﻿namespace Core.Logger
 {
     public enum LogLevelEnum
     {

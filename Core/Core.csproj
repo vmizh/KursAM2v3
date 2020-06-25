@@ -160,6 +160,8 @@
     <Compile Include="Helper\MultyCurrencyHelper.cs" />
     <Compile Include="Logger\LoggerHelper.cs" />
     <Compile Include="Logger\LogLevelEnum.cs" />
+    <Compile Include="Repository\Base\DocumentCreateTypeEnum.cs" />
+    <Compile Include="Repository\Base\IDocumentOperations.cs" />
     <Compile Include="Repository\Base\IGenericRepository.cs" />
     <Compile Include="Repository\Base\IRepository.cs" />
     <Compile Include="Repository\Base\IUnitOfWork.cs" />

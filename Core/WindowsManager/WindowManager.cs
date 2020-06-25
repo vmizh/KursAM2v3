@@ -4,9 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
+using Core.Logger;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI;
-using KursRepozit.Logger;
 
 namespace Core.WindowsManager
 {
@@ -106,6 +106,7 @@ namespace Core.WindowsManager
                 errText.Append(inEx.InnerException.Message);
                 inEx = inEx.InnerException;
             }
+
             using (var errCtx = GlobalOptions.KursSystem())
             {
                 errCtx.Errors.Add(new Data.Errors
@@ -117,6 +118,7 @@ namespace Core.WindowsManager
                     ErrorText = errText.ToString()
                 });
             }
+
             LoggerHelper.WriteError(ex);
             WinUIMessageBox.Show(win ?? Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
                 errText.ToString(),
@@ -145,16 +147,13 @@ namespace Core.WindowsManager
 
         private static string GetCallForExceptionThisMethod(MethodBase methodBase, Exception e)
         {
-            StackTrace trace = new StackTrace(e);
+            var trace = new StackTrace(e);
             StackFrame previousFrame = null;
 
             // ReSharper disable once PossibleNullReferenceException
-            foreach (StackFrame frame in trace.GetFrames())
+            foreach (var frame in trace.GetFrames())
             {
-                if (frame.GetMethod() == methodBase)
-                {
-                    break;
-                }
+                if (frame.GetMethod() == methodBase) break;
 
                 previousFrame = frame;
             }
@@ -175,7 +174,8 @@ namespace Core.WindowsManager
                 if (ex1.InnerException != null)
                     errText.Append(ex1.InnerException.Message);
             }
-            if(GlobalOptions.UserInfo != null){
+
+            if (GlobalOptions.UserInfo != null)
                 using (var errCtx = GlobalOptions.KursSystem())
                 {
                     errCtx.Errors.Add(new Data.Errors
@@ -189,7 +189,7 @@ namespace Core.WindowsManager
                     });
                     errCtx.SaveChanges();
                 }
-            }
+
             if (Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive) != null)
                 WinUIMessageBox.Show(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
                     errText.ToString(),

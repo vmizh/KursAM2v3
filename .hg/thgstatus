@@ -288,7 +288,7 @@ mDevExpress/Scripts/esm
 mDevExpress/Scripts/umd
 mFinanceAnalitic
 mGenerateDataContract
-mHelper
+rHelper
 mKursAM2.Tests
 rKursAM2C
 rKursAM2C/App_Start
@@ -1469,6 +1469,14 @@ rpackages/Modernizr.2.6.2/Content/Scripts
 rpackages/Modernizr.2.6.2/Tools
 mpackages/Modernizr.2.8.3
 mpackages/NUnit.2.6.4
+rpackages/NUnit.3.11.0
+rpackages/NUnit.3.11.0/build
+rpackages/NUnit.3.11.0/lib/net20
+rpackages/NUnit.3.11.0/lib/net35
+rpackages/NUnit.3.11.0/lib/net40
+rpackages/NUnit.3.11.0/lib/net45
+rpackages/NUnit.3.11.0/lib/netstandard1.4
+rpackages/NUnit.3.11.0/lib/netstandard2.0
 mpackages/NUnit.3.2.0
 mpackages/NUnit.3.2.1
 mpackages/NUnit.3.4.1

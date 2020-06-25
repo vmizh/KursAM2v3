@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using Core;
 using Core.Menu;
 using Core.Repository.Base;
 using Core.ViewModel.Base;
@@ -35,7 +36,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         private DateTime myDateEnd;
         private DateTime myDateStart;
 
-        private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork = new UnitOfWork<ALFAMEDIAEntities>();
+        private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork
+            = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
         // ReSharper disable once NotAccessedField.Local
         private readonly GenericKursRepository<Data.DistributeNaklad> baseRepository;
 
@@ -99,11 +101,37 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 Owner = Application.Current.MainWindow
             };
-            var dsDataContext = new DistributeNakladViewModel(null,RowStatus.NewRow);
+            var dsDataContext = new DistributeNakladViewModel(null,DocumentCreateTypeEnum.New);
             dsForm.DataContext = dsDataContext;
             dsDataContext.Form = dsForm;
             dsForm.Show();
         }
+
+        public override void DocNewCopy(object form)
+        {
+            var dsForm = new KursBaseWindow
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var dsDataContext = new DistributeNakladViewModel(CurrentDocument.Id,DocumentCreateTypeEnum.Copy);
+            dsForm.DataContext = dsDataContext;
+            dsDataContext.Form = dsForm;
+            dsForm.Show();
+        }
+
+        public override void DocumentOpen(object obj)
+        {
+            var dsForm = new KursBaseWindow
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var dsDataContext = new DistributeNakladViewModel(CurrentDocument.Id,DocumentCreateTypeEnum.Open);
+            dsForm.DataContext = dsDataContext;
+            dsDataContext.Form = dsForm;
+            dsForm.Show();
+        }
+
+        public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
         public override bool CanSave()
         {
@@ -117,9 +145,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 Documents.Add(new DistributeNakladViewModel(d));
             }
+            RaisePropertiesChanged(nameof(Documents));
         }
 
-        public override bool IsCanSaveData => CanSave();
+        public override bool CanLoad()
+        {
+            return State != RowStatus.NewRow;
+        }
 
         #endregion
     }

@@ -155,7 +155,7 @@ namespace Core.Repository.Base
         public GenericKursRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork)
             : this(unitOfWork.Context)
         {
-            Context = new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString);
+            Context = unitOfWork.Context;
         }
 
         public GenericKursRepository(ALFAMEDIAEntities context)
@@ -195,8 +195,6 @@ namespace Core.Repository.Base
                 Entities.Add(entity);
                 if (Context == null || isDisposed)
                     Context = new ALFAMEDIAEntities();
-                //Context.SaveChanges(); commented out call to SaveChanges as Context save changes will be 
-                //called with Unit of work
             }
             catch (DbEntityValidationException dbEx)
             {
