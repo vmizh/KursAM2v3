@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Core.Logger;
 using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -8,7 +9,6 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.Native;
 using KursRepozit.Auxiliary;
-using KursRepozit.Logger;
 using KursRepozit.Repositories;
 using KursRepozit.Views;
 

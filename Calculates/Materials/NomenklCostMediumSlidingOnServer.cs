@@ -13,6 +13,7 @@ namespace Calculates.Materials
 
         public override List<NomenklCalcCostOperation> Calc(ObservableCollection<NomenklCalcCostOperation> operList)
         {
+            // ReSharper disable once UnusedVariable
             using (var ctx = GlobalOptions.GetEntities())
             {
                 //ctx.Database.ExecuteSqlCommand("exec NomenklCalculateCostsForAll",new object[0]);

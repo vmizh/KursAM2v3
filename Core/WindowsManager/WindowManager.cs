@@ -4,9 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
+using Core.Logger;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI;
-using KursRepozit.Logger;
 
 namespace Core.WindowsManager
 {

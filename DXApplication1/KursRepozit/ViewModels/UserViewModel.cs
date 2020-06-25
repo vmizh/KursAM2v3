@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Core.Helper;
+using Core.Logger;
 using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -16,7 +17,6 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Utils.CommonDialogs.Internal;
 using DevExpress.Xpf.Editors;
-using KursRepozit.Logger;
 using KursRepozit.Repositories;
 using KursRepozit.Views;
 

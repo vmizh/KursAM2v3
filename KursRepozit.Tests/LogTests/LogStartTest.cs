@@ -1,5 +1,5 @@
 ﻿using System;
-using KursRepozit.Logger;
+using Core.Logger;
 using NUnit.Framework;
 
 namespace KursRepozit.Tests.LogTests
