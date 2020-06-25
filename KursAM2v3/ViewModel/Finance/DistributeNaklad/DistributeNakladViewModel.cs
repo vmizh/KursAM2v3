@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Windows;
 using System.Windows.Controls;
 using Core;
 using Core.EntityViewModel;
@@ -23,66 +24,88 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
     {
         #region Constructors
 
-        public DistributeNakladViewModel(Guid id) : this()
+        public DistributeNakladViewModel(Guid? id, DocumentCreateTypeEnum createType) : this()
         {
-            Entity = distributeNakladRepository.GetById(id);
-            State = RowStatus.NotEdited;
+            if (id == null)
+            {
+                Entity = DistributeNakladRepository.CreateNew();
+                State = RowStatus.NewRow;
+                return;
+            }
+
+            switch (createType)
+            {
+                case DocumentCreateTypeEnum.Open:
+                    Entity = DistributeNakladRepository.GetById((Guid) id);
+                    State = RowStatus.NotEdited;
+                    break;
+                case DocumentCreateTypeEnum.Copy:
+                    Entity = DistributeNakladRepository.CreateCopy((Guid) id);
+                    State = RowStatus.NewRow;
+                    break;
+                case DocumentCreateTypeEnum.RequisiteCopy:
+                    Entity = DistributeNakladRepository.CreateRequisiteCopy((Guid) id);
+                    State = RowStatus.NewRow;
+                    break;
+            }
         }
 
-        public DistributeNakladViewModel()
+        private DistributeNakladViewModel()
         {
-            Entity = new Data.DistributeNaklad
-            {
-                Id = Guid.Empty,
-                CurrencyDC = GlobalOptions.SystemProfile.NationalCurrency.DocCode
-            };
             ModelView = new DistributedNakladView();
-            baseRepository = new GenericKursRepository<Data.DistributeNaklad>(unitOfWork);
-            distributeNakladRepository = new DistributeNakladRepository(unitOfWork);
-            invoiceProviderRepository = new InvoiceProviderRepository(unitOfWork);
+            BaseRepository = new GenericKursRepository<Data.DistributeNaklad>(unitOfWork);
+            DistributeNakladRepository = new DistributeNakladRepository(unitOfWork);
+            InvoiceProviderRepository = new InvoiceProviderRepository(unitOfWork);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             WindowName = "Распределение накладных расходов";
         }
 
-        public DistributeNakladViewModel(Data.DistributeNaklad entity,
-            RowStatus state = RowStatus.NotEdited):this()
+        public DistributeNakladViewModel(Data.DistributeNaklad entity)
         {
-            if (entity == null)
-                Entity = new Data.DistributeNaklad
-                {
-                    Id = Guid.NewGuid(),
-                    CurrencyDC = GlobalOptions.SystemProfile.NationalCurrency.DocCode
-                };
-            else
-                // ReSharper disable once VirtualMemberCallInConstructor
-                Id = state == RowStatus.NewRow ? Guid.NewGuid() : Entity.Id;
-            State = state;
+            Entity = entity;
+            State = RowStatus.NotEdited;
         }
 
         #endregion
 
         #region Fields
 
-        private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork = new UnitOfWork<ALFAMEDIAEntities>();
-        // ReSharper disable once NotAccessedField.Local
-        private readonly GenericKursRepository<Data.DistributeNaklad> baseRepository;
+        private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork
+            = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         // ReSharper disable once NotAccessedField.Local
-        private readonly IDistributeNakladRepository distributeNakladRepository;
+        public readonly GenericKursRepository<Data.DistributeNaklad> BaseRepository;
 
-        private readonly IInvoiceProviderRepository invoiceProviderRepository;
+        // ReSharper disable once NotAccessedField.Local
+        public readonly IDistributeNakladRepository DistributeNakladRepository;
+
+        public readonly IInvoiceProviderRepository InvoiceProviderRepository;
+
+        private readonly WindowManager winManager = new WindowManager();
 
         #endregion
 
         #region Properties
 
-        [Display(AutoGenerateField = false)]
-        public DistributeNakladViewModel Current => this;
+        public override Guid Id
+        {
+            get => Entity.Id;
+            set
+            {
+                if (Entity.Id == value) return;
+                Entity.Id = value;
+                SetChangeStatus();
+            }
+        }
+
+        [Display(AutoGenerateField = false)] public DistributeNakladViewModel Current => this;
 
         [Display(AutoGenerateField = false)]
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<DistributeNakladRowViewModel> Tovars { set; get; }
             = new ObservableCollection<DistributeNakladRowViewModel>();
+
         [Display(AutoGenerateField = false)]
         public ObservableCollection<DistributeNakladRowViewModel> SelectedTovars { set; get; }
             = new ObservableCollection<DistributeNakladRowViewModel>();
@@ -145,7 +168,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
-        [DisplayName("№")]
+        [DisplayName("№ ")]
         [Display(AutoGenerateField = true)]
         public string DocNum
         {
@@ -187,7 +210,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [DisplayName("Валюта")]
         [Display(AutoGenerateField = true)]
         // ReSharper disable once PossibleInvalidOperationException
-        public Currency Currency => MainReferences.GetCurrency(Entity.CurrencyDC);
+        public Currency Currency
+        {
+            get => MainReferences.GetCurrency(Entity.CurrencyDC);
+            set => SetValue(value, () => CurrencyDC = value?.DocCode);
+        }
 
         [DisplayName("Примечания")]
         [Display(AutoGenerateField = true)]
@@ -210,15 +237,64 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Commands
 
+        public override void Save()
+        {
+            try
+            {
+                unitOfWork.CreateTransaction();
+                unitOfWork.Save();
+                unitOfWork.Commit();
+                State = RowStatus.NotEdited;
+                RaisePropertiesChanged(nameof(State));
+                Load();
+            }
+
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+                unitOfWork.Rollback();
+            }
+        }
+
+        public override bool CanSave()
+        {
+            return State != RowStatus.NotEdited;
+        }
+
         public override void Load()
         {
-            WindowManager.ShowFunctionNotReleased();
+            if (CanSave())
+            {
+                if (winManager.ShowWinUIMessageBox("В документ внесены изменения. Сохранить?",
+                    "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    Save();
+                    return;
+                }
+            }
+            Entity = DistributeNakladRepository.GetById(Id);
+            State = RowStatus.NotEdited;
         }
+
         [Command]
         public void AddNomenkl()
         {
-            if (invoiceProviderRepository.Dialogs.ShowDialog(Currency) == true)
+            if (InvoiceProviderRepository.Dialogs.ShowDialog(Currency) == true)
             {
+                foreach (var d in InvoiceProviderRepository.Dialogs.SelectedItems)
+                {
+                    foreach (var r in d.Rows)
+                    { 
+                        var newRow = DistributeNakladRepository.CreateRowNew(Entity);
+                        newRow.TovarInvoiceRowId = d.Entity.Id;
+                        Tovars.Add(new DistributeNakladRowViewModel(newRow)
+                        {
+                            InvoiceRow = r,
+                            State = RowStatus.NewRow,
+                        });
+                    }
+                   
+                }
 
             }
         }
@@ -227,6 +303,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         {
             return Currency != null;
         }
+
         [Command]
         public void DeleteNomenkl()
         {
@@ -269,6 +346,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         void IMetadataProvider<DistributeNakladViewModel>.BuildMetadata(
             MetadataBuilder<DistributeNakladViewModel> builder)
         {
+            builder.Property(_ => _.State).AutoGenerated().DisplayName("Статус").ReadOnly();
+
             #region Form Layout
 
             // @formatter:off
@@ -278,9 +357,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                         .ContainsProperty(_ => _.DocNum)
                         .ContainsProperty(_ => _.DocDate)
                         .ContainsProperty(_ => _.Currency)
+                        .ContainsProperty(_ => _.Creator)
+                        .ContainsProperty(_ => _.State)
                     .EndGroup()
                     .Group("a2", Orientation.Vertical)
-                        .ContainsProperty(_ => _.Creator)
+                        
                         .ContainsProperty(_ => _.Note)
                     .EndGroup()
                 .EndGroup();

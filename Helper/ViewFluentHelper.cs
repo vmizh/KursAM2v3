@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using DevExpress.Utils.Filtering.Internal;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -12,7 +13,8 @@ namespace Helper
 {
     public class ViewFluentHelper
     {
-        public static MemoEdit SetDefaultMemoEdit(DataLayoutItem item)
+        public static MemoEdit SetDefaultMemoEdit(DataLayoutItem item, 
+            HorizontalAlignment hrzAlign = HorizontalAlignment.Stretch, float? width = null,float height = 80)
         {
             var oldContent = item.Content as BaseEdit;
             var defaultMemo = new MemoEdit
@@ -28,9 +30,30 @@ namespace Helper
             BindingHelper.CopyBinding(oldContent, defaultMemo, BaseEdit.EditValueProperty);
             item.Content = defaultMemo;
             if (defaultMemo.EditValue != null && !string.IsNullOrWhiteSpace((string)defaultMemo.EditValue))
-                item.Height = 80;
-            item.HorizontalAlignment = HorizontalAlignment.Stretch;
+                item.Height = height;
+            item.HorizontalAlignment = hrzAlign;
+            if (width != null)
+                item.Width = width.Value;
             return defaultMemo;
+        }
+
+        public static TextEdit SetDefaultTextEdit(DataLayoutItem item, 
+            HorizontalAlignment hrzAlign = HorizontalAlignment.Left, 
+        float? width = null, float? height = null)
+        {
+            var oldContent = item.Content as BaseEdit;
+            var defaultText = new TextEdit
+            {
+                TextWrapping = TextWrapping.Wrap
+            };
+            BindingHelper.CopyBinding(oldContent, defaultText, BaseEdit.EditValueProperty);
+            item.Content = defaultText;
+            item.HorizontalAlignment = hrzAlign;
+            if (width != null)
+                item.Width = width.Value;
+            if (height != null)
+                item.Height = height.Value;
+            return defaultText;
         }
 
         public static void SetModeUpdateProperties(object Document, DataLayoutItem item, string propertyName)

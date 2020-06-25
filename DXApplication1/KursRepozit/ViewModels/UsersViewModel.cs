@@ -51,6 +51,7 @@ namespace KursRepozit.ViewModels
         #region Fields
 
         private readonly UnitOfWork<KursSystemEntities> unitOfWork = new UnitOfWork<KursSystemEntities>();
+
         // ReSharper disable once NotAccessedField.Local
         private readonly GenericKursSystemRepository<Users> kursSystemRepository;
 
@@ -169,6 +170,7 @@ namespace KursRepozit.ViewModels
                     CurrentUser.DBSources.Add(newItem);
                 }
                 else
+                {
                     switch (d.State)
                     {
                         case RowStatus.Deleted:
@@ -179,6 +181,7 @@ namespace KursRepozit.ViewModels
                             CurrentUser.Entity.DataSources.Add(d.Entity);
                             break;
                     }
+                }
             }
             else
             {
@@ -188,6 +191,7 @@ namespace KursRepozit.ViewModels
                 CurrentUser.DBSources.Remove(d);
                 CurrentUser.Entity.DataSources.Remove(d.Entity);
             }
+
             UpdateDataSources();
             if (CurrentUser.State == RowStatus.NotEdited)
                 CurrentUser.State = RowStatus.Edited;
@@ -213,7 +217,7 @@ namespace KursRepozit.ViewModels
                 UnitOfWork = unitOfWork
             };
             dsDataContext.Form = dsForm;
-            dsForm.DataContext = dsDataContext; 
+            dsForm.DataContext = dsDataContext;
             dsForm.ShowDialog();
         }
 

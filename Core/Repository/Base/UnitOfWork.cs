@@ -21,6 +21,11 @@ namespace Core.Repository.Base
         {
             context = new TContext();
         }
+
+        public UnitOfWork(TContext ctx)
+        {
+            context = ctx;
+        }
         //The Dispose() method is used to free unmanaged resources like files, 
         //database connections etc. at any time.
         public void Dispose()
@@ -48,6 +53,7 @@ namespace Core.Repository.Base
         //method to Rollback the database changes to its previous state
         public void Rollback()
         {
+            if (objTran == null) return;
             objTran.Rollback();
             objTran.Dispose();
         }

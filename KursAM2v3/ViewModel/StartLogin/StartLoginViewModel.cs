@@ -306,7 +306,8 @@ namespace KursAM2.ViewModel.StartLogin
                         .FirstOrDefault(_ => _.USR_NICKNAME.ToUpper() == CurrentUser.ToUpper());
                     if (usr == null)
                     {
-                        WindowManager.ShowMessage(null, "Неправильный пароль или пользователь.", "Ошибка",
+                        WindowManager.ShowMessage(null, "Неправильный пароль или пользователь.",
+                            "Ошибка",
                             MessageBoxImage.Error);
                         newUser = null;
                         return false;

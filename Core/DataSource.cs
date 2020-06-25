@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Media;
 
 namespace Core
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class DataSource
     {
         public Guid Id { set; get; }
