@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel;
-using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Data;
 using JetBrains.Annotations;
@@ -11,10 +10,12 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {
     public class DistributeNakladRowViewModel : KursBaseViewModel, IViewModelToEntity<DistributeNakladRow>
     {
-        #region Fields 
+        #region Fields
+
         #endregion
 
-        #region Constructors 
+        #region Constructors
+
         public DistributeNakladRowViewModel()
         {
             Entity = new DistributeNakladRow
@@ -24,24 +25,24 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             State = RowStatus.NewRow;
         }
 
-        public DistributeNakladRowViewModel([NotNull]DistributeNakladRow rent)
+        public DistributeNakladRowViewModel([NotNull] DistributeNakladRow rent)
         {
             Entity = rent;
             State = RowStatus.NotEdited;
         }
 
         #endregion
+
         #region Properties
+
         [DisplayName("Entity")]
         [Display(AutoGenerateField = false)]
         public DistributeNakladRow Entity
         {
             get => GetValue<DistributeNakladRow>();
-            set => SetValue(value, () =>
-            {
-                SetChangeStatus();
-            });
+            set => SetValue(value, () => { SetChangeStatus(); });
         }
+
         [DisplayName("DocId")]
         [Display(AutoGenerateField = false)]
         public Guid DocId
@@ -54,6 +55,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 SetChangeStatus();
             }
         }
+
         [DisplayName("TovarInvoiceRowId")]
         [Display(AutoGenerateField = false)]
         public Guid TovarInvoiceRowId
@@ -97,7 +99,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         [DisplayName("Цена")]
         [Display(AutoGenerateField = true)]
-        public decimal Price => Quantity != 0 ? (InvoiceRow?.SFT_SUMMA_K_OPLATE ?? 0)/Quantity : 0;
+        public decimal Price => Quantity != 0 ? (InvoiceRow?.SFT_SUMMA_K_OPLATE ?? 0) / Quantity : 0;
 
         [DisplayName("Сумма")]
         [Display(AutoGenerateField = true)]
@@ -124,10 +126,15 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 SetChangeStatus();
             }
         }
+
         #endregion
-        #region Methods 
+
+        #region Methods
+
         #endregion
-        #region Commands 
+
+        #region Commands
+
         #endregion
     }
 }
