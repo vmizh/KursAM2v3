@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BindingHelper.cs" />
+    <Compile Include="ThemeHelper.cs" />
     <Compile Include="ViewFluentHelper.cs" />
     <Compile Include="CopyFiles.cs" />
     <Compile Include="KursGridControlHelper.cs" />

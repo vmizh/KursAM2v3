@@ -111,6 +111,7 @@
     <Reference Include="System.Threading" />
     <Reference Include="System.Threading.Tasks" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -166,6 +167,10 @@
     <Compile Include="Repository\Base\IRepository.cs" />
     <Compile Include="Repository\Base\IUnitOfWork.cs" />
     <Compile Include="Repository\Base\UnitOfWork.cs" />
+    <Compile Include="ViewModel\Base\SplashScreenView.xaml.cs">
+      <DependentUpon>SplashScreenView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\Base\SplashScreenViewModel.cs" />
     <Compile Include="ViewModel\Base\IDocumentOperation.cs" />
     <Compile Include="ViewModel\Base\ISearchWindowViewModel.cs" />
     <Compile Include="ViewModel\Base\IViewModelToEntity.cs" />
@@ -355,6 +360,10 @@
     <Page Include="Control\WindowMenu.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModel\Base\SplashScreenView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup />

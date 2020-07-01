@@ -7,8 +7,8 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using JetBrains.Annotations;
 using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
-using KursRepozit.Views.Base;
 
 namespace KursAM2.Dialogs
 {
@@ -112,9 +112,11 @@ namespace KursAM2.Dialogs
             return dsForm.ShowDialog();
         }
 
-        public bool? ShowDialog(Currency crs)
+        public bool? ShowDialog(Currency crs, DateTime? dateStart = null, DateTime? dateEnd = null)
         {
             Currency = crs;
+            StartDate = dateStart;
+            EndDate = dateEnd;
             var dsForm = new KursBaseDialog
             {
                 Owner = Application.Current.MainWindow

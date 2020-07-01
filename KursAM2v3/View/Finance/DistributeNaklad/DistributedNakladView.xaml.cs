@@ -83,7 +83,7 @@ namespace KursAM2.View.Finance.DistributeNaklad
                     e.Item.IsEnabled = false;
                     break;
                 case nameof(DistributeNakladViewModel.Note):
-                    ViewFluentHelper.SetDefaultTextEdit(e.Item,HorizontalAlignment.Left,600, 80);
+                    ViewFluentHelper.SetDefaultTextEdit(e.Item,HorizontalAlignment.Left,600, 50);
                     break;
             }
             ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);

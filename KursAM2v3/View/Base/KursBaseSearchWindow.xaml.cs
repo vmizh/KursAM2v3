@@ -31,7 +31,7 @@ namespace KursAM2.View.Base
 
         private void KursBaseWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            LayoutManager = new LayoutManager.LayoutManager(LayoutManagerName, this);
+            LayoutManager = new LayoutManager.LayoutManager(LayoutManagerName, this, resultGridControl);
             LayoutManager.Load();
         }
 

@@ -9,10 +9,10 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.Native;
+using KursAM2.View.Base;
 using KursRepozit.Auxiliary;
 using KursRepozit.Repositories;
 using KursRepozit.Views;
-using KursRepozit.Views.Base;
 
 namespace KursRepozit.ViewModels
 {

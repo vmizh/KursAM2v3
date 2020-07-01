@@ -61,7 +61,7 @@
                                      ShowRestoreButton="False"
                                      ShowBorder="False" 
                                      ShowCaption="True"
-                                     Padding="0" Margin="5,2,2,0"
+                                     Padding="-1,0" Margin="4,2,2,0"
                                      Name="DocumentLayoutPanel"
                                      dx:DXSerializer.SerializationID="DocumentLayoutPanel1"
                                      dx:DXSerializer.LayoutVersion="1"

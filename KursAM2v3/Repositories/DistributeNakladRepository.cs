@@ -6,6 +6,7 @@ using Core;
 using Core.Repository.Base;
 using Core.WindowsManager;
 using Data;
+using KursAM2.ViewModel.Finance.DistributeNaklad;
 
 namespace KursAM2.Repositories
 {
@@ -13,7 +14,6 @@ namespace KursAM2.Repositories
     {
         DistributeNaklad GetById(Guid id);
         List<DistributeNaklad> GetAllByDates(DateTime dateStart, DateTime dateEnd);
-
     }
     public class DistributeNakladRepository : GenericKursRepository<DistributeNaklad>, IDistributeNakladRepository
     {
@@ -111,11 +111,12 @@ namespace KursAM2.Repositories
 
         public DistributeNakladRow CreateRowNew(DistributeNaklad head)
         {
-            return new DistributeNakladRow
+            var newItem = new DistributeNakladRow
             {
                 Id = Guid.NewGuid(),
-                DocId = head.Id,
             };
+            head.DistributeNakladRow.Add(newItem);
+            return newItem;
         }
 
         public DistributeNakladRow CreateRowCopy(DistributeNakladRow oldent)

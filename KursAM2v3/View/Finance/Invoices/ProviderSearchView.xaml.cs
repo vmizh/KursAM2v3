@@ -1,7 +1,11 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using Core.Menu;
+using Core.WindowsManager;
 using DevExpress.Data;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
+using KursAM2.ViewModel.Finance.Invoices;
 using LayoutManager;
 
 namespace KursAM2.View.Finance.Invoices
@@ -75,5 +79,17 @@ namespace KursAM2.View.Finance.Invoices
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
+        private void MenuButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var ctx = DataContext as ProviderWindowViewModel;
+            if (ctx != null)
+            {
+                ctx.IsLoading = true;
+            }
+            var menu = sender as Button;
+            if (!(menu?.DataContext is MenuButtonInfo d) || d.SubMenu.Count == 0) return;
+            d.MenuOpen(this);
+        }
     }
 }

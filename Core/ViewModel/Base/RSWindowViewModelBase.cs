@@ -1,17 +1,22 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core.EntityViewModel;
 using Core.Menu;
 using Core.WindowsManager;
+using DevExpress.Mvvm;
+using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Grid;
 using LayoutManager;
 
 namespace Core.ViewModel.Base
 {
+    [POCOViewModel]
     public abstract class RSWindowViewModelBase : RSViewModelBase
     {
         public readonly WindowManager WinManager = new WindowManager();
@@ -32,6 +37,18 @@ namespace Core.ViewModel.Base
         {
             Form = form;
             myIsCanRefresh = true;
+        }
+
+        private bool myIsLoading = true;
+        public bool IsLoading
+        {
+            get => myIsLoading;
+            set
+            {
+                if (myIsLoading == value) return;
+                myIsLoading = value;
+                RaisePropertyChanged();
+            }
         }
 
         public StandartErrorManager ErrorManager { set; get; }
@@ -150,6 +167,19 @@ namespace Core.ViewModel.Base
         public virtual void RefreshData(object obj)
         {
             MainReferences.Refresh();
+        }
+
+        public AsyncCommand AsyncRefreshDataCommand => new AsyncCommand(AsyncTaskRefresh, IsCanRefresh);
+
+        
+        public async Task AsyncTaskRefresh()
+        {
+            await Task.Factory.StartNew(AsyncRefresh());
+        }
+
+        public virtual Action AsyncRefresh()
+        {
+            return null;
         }
 
 #pragma warning disable 693

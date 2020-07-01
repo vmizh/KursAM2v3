@@ -196,6 +196,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             CreateReportsMenu();
         }
 
+        
         public ProviderWindowViewModel(decimal? dc) : this()
         {
             Document = dc != null ? InvoicesManager.GetInvoiceProvider(dc.Value) : InvoicesManager.NewProvider();

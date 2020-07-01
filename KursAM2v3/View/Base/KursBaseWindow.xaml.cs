@@ -24,7 +24,7 @@ namespace KursAM2.View.Base
 
         private void KursBaseWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            LayoutManager = new global::LayoutManager.LayoutManager(LayoutManagerName,this);
+            LayoutManager = new global::LayoutManager.LayoutManager(LayoutManagerName,this,null);
             LayoutManager.Load();
         }
 

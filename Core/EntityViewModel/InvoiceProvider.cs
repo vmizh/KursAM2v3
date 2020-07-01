@@ -1142,7 +1142,7 @@ namespace Core.EntityViewModel
         public override string ToString()
         {
             return
-                $"Счет-фактура поставщика №{SF_POSTAV_NUM}/{SF_IN_NUM} от {SF_POSTAV_DATE} Пост:{Kontragent} на сумму:{SF_CRS_SUMMA} {Currency}";
+                $"С/ф (поставщика) №{SF_POSTAV_NUM}/{SF_IN_NUM} от {SF_POSTAV_DATE.ToShortDateString()} от: {Kontragent} сумма: {SF_CRS_SUMMA} {Currency}";
         }
 
         #endregion Methods
