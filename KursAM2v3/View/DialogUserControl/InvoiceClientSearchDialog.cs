@@ -147,10 +147,14 @@ namespace KursAM2.View.DialogUserControl
 
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork = new UnitOfWork<ALFAMEDIAEntities>();
         // ReSharper disable once NotAccessedField.Local
+#pragma warning disable 169
         private readonly GenericKursRepository<InvoiceProvider> baseRepository;
+#pragma warning restore 169
 
         // ReSharper disable once NotAccessedField.Local
+#pragma warning disable 169
         private readonly IInvoiceProviderRepository invoiceProviderRepository;
+#pragma warning restore 169
 
         #endregion
 

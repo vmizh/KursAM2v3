@@ -4,7 +4,7 @@
     {
         void Save();
         bool CanSave();
-        void Load();
-        bool CanLoad();
+        void Load(object o);
+        bool CanLoad(object o);
     }
 }

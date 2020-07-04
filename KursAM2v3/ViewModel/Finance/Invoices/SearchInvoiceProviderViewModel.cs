@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using Core;
 using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
+using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.View.Finance.Invoices;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
+    [POCOViewModel]
     public class SearchInvoiceProviderViewModel : RSWindowSearchViewModelBase
     {
         private InvoiceProvider myCurrentDocument;
@@ -18,6 +21,16 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private DateTime myDateStart;
         private bool myIsEnabled;
 
+        public SearchInvoiceProviderViewModel()
+        {
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
+            Documents = new ObservableCollection<InvoiceProvider>();
+            SelectedDocs = new ObservableCollection<InvoiceProvider>();
+            IsEnabled = true;
+            DateEnd = DateTime.Today;
+            DateStart = DateEnd.AddDays(-30);
+        }
         public SearchInvoiceProviderViewModel(Window form) : base(form)
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -86,9 +99,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
-        public override void RefreshData(object data)
+        public override Action AsyncRefresh()
         {
-            base.RefreshData(data);
+            Application.Current.Dispatcher.Invoke(() => { IsLoading = true; });
+            base.RefreshData(null);
             IsPrintAllow = false;
             while (!MainReferences.IsReferenceLoadComplete)
             {
@@ -102,6 +116,31 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var d in InvoicesManager.GetInvoicesProvider(false, false))
                     Documents.Add(d);
             RaisePropertyChanged(nameof(Documents));
+            IsLoading = false;
+            return base.AsyncRefresh();
+        }
+
+        public override void RefreshData(object data)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                IsLoading = true;
+                base.RefreshData(null);
+                IsPrintAllow = false;
+                while (!MainReferences.IsReferenceLoadComplete)
+                {
+                }
+
+                Documents.Clear();
+                if (IsEnabled)
+                    foreach (var d in InvoicesManager.GetInvoicesProvider(DateStart, DateEnd, false))
+                        Documents.Add(d);
+                else
+                    foreach (var d in InvoicesManager.GetInvoicesProvider(false, false))
+                        Documents.Add(d);
+                RaisePropertyChanged(nameof(Documents));
+                IsLoading = false;
+            });
         }
 
         public override void DocumentOpen(object obj)
@@ -125,25 +164,27 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewCopy(object form)
         {
             if (CurrentDocument == null) return;
-            var Document = InvoicesManager.GetInvoiceProvider(CurrentDocument.DocCode);
-            if (Document == null) return;
+            var document = InvoicesManager.GetInvoiceProvider(CurrentDocument.DocCode);
+            if (document == null) return;
             var frm = new InvoiceProviderView {Owner = Application.Current.MainWindow};
-            var ctx = new ProviderWindowViewModel {Form = frm};
-            ctx.Document = InvoicesManager.NewProviderCopy(Document.DocCode);
+            var ctx = new ProviderWindowViewModel
+            {
+                Form = frm, Document = InvoicesManager.NewProviderCopy(document.DocCode)
+            };
             frm.Show();
             frm.DataContext = ctx;
         }
 
         public override void DocNewCopyRequisite(object form)
         {
-            //var d = form as InvoiceProvider;
-            //if (d == null) return;
             if (CurrentDocument == null) return;
-            var Document = InvoicesManager.GetInvoiceProvider(CurrentDocument.DocCode);
-            if (Document == null) return;
+            var document = InvoicesManager.GetInvoiceProvider(CurrentDocument.DocCode);
+            if (document == null) return;
             var frm = new InvoiceProviderView {Owner = Application.Current.MainWindow};
-            var ctx = new ProviderWindowViewModel {Form = frm};
-            ctx.Document = InvoicesManager.NewProviderRequisite(Document.DocCode);
+            var ctx = new ProviderWindowViewModel
+            {
+                Form = frm, Document = InvoicesManager.NewProviderRequisite(document.DocCode)
+            };
             frm.Show();
             frm.DataContext = ctx;
         }

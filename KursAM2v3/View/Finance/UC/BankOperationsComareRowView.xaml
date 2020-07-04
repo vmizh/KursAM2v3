@@ -10,6 +10,7 @@
              d:DesignHeight="250" d:DesignWidth="500"
              >
     <UserControl.Resources>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
         <ControlTemplate x:Key="SummaTemplate" TargetType="dxe:PopupCalcEdit">
             <Border x:Name="TextBoreder" >
             </Border>
@@ -24,6 +25,7 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
         <Style x:Key="SummaStyle" TargetType="{x:Type dxe:PopupCalcEdit}">
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="True">

@@ -247,7 +247,6 @@
     <Compile Include="Repositories\DistributeNakladRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceClientRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
-    <Compile Include="Repositories\IUnitOfWork.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />
     <Compile Include="Resource\ErrorToBrushConverter.cs" />
     <Compile Include="Tests\TreeControlFluentTests.xaml.cs">
@@ -357,6 +356,9 @@
     </Compile>
     <Compile Include="View\Finance\DistributeNaklad\DistributedNakladView.xaml.cs">
       <DependentUpon>DistributedNakladView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\DistributeNaklad\DistributeNakladSearchView.xaml.cs">
+      <DependentUpon>DistributeNakladSearchView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\KursReferences\KontragentCategoryReferenceView.xaml.cs">
       <DependentUpon>KontragentCategoryReferenceView.xaml</DependentUpon>
@@ -1015,6 +1017,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Finance\DistributeNaklad\DistributedNakladView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\DistributeNaklad\DistributeNakladSearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

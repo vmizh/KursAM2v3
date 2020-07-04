@@ -208,7 +208,6 @@ namespace KursAM2.Managers
             if (accountInfo == null) return $"Нет счета с кодом {bankDC}";
             if (accountInfo.BA_NEGATIVE_RESTS == 1)
             {
-                var d = accountInfo.DateNonZero ?? DateTime.MinValue;
                 var firstZero = data.FirstOrDefault(_ => _.Date >= accountInfo.DateNonZero
                                                          && _.End < 0);
                 if (firstZero != null)

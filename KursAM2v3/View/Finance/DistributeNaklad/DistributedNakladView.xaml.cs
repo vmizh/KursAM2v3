@@ -16,28 +16,14 @@ namespace KursAM2.View.Finance.DistributeNaklad
     /// <summary>
     ///     Interaction logic for DistributedNakladView.xaml
     /// </summary>
-    public partial class DistributedNakladView : ILayout
+    public partial class DistributedNakladView
     {
-        public DistributedNakladView()
+        public DistributedNakladView(Window parentForm, IDocumentOpenType openType)
         {
             InitializeComponent();
-            Loaded += DistributedNakladView_Loaded;
-            Unloaded += DistributedNakladView_Unloaded;
+            DataContext = new DistributeNakladViewModel(parentForm, openType);
         }
         public ComboBoxEdit CurrencyItem { set; get; }
-        public LayoutManager.LayoutManager LayoutManager { get; set; }
-        public string LayoutManagerName { get; set; }
-
-        private void DistributedNakladView_Unloaded(object sender, RoutedEventArgs e)
-        {
-            LayoutManager.Save();
-        }
-
-        private void DistributedNakladView_Loaded(object sender, RoutedEventArgs e)
-        {
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, mainLayoutControl);
-            LayoutManager.Load();
-        }
 
         private void DataLayoutControlHeader_OnAutoGeneratingItem(object sender,
             DataLayoutControlAutoGeneratingItemEventArgs e)
@@ -83,7 +69,7 @@ namespace KursAM2.View.Finance.DistributeNaklad
                     e.Item.IsEnabled = false;
                     break;
                 case nameof(DistributeNakladViewModel.Note):
-                    ViewFluentHelper.SetDefaultTextEdit(e.Item,HorizontalAlignment.Left,600, 80);
+                    ViewFluentHelper.SetDefaultTextEdit(e.Item,HorizontalAlignment.Left,600, 50);
                     break;
             }
             ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);

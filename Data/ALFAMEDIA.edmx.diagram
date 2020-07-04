@@ -2033,7 +2033,7 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_DistributeNakladRow_DocId" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_DistributeNakladInfo_InvoiceCrsDC" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_DistributeNakladInfo_RowId" />
-      </Diagram>
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

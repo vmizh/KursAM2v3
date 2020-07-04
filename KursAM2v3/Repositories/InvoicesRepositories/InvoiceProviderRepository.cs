@@ -17,6 +17,9 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         List<InvoiceProviderShort> GetAllForNakladDistribute(Currency crs, DateTime? dateStart,
             DateTime? dateEnd);
+
+        InvoiceProviderRowShort GetInvoiceRow(Guid id);
+        InvoiceProviderShort GetInvoiceHead(Guid id);
         InvoiceProviderDialogs Dialogs { set; get; }
     }
 
@@ -179,6 +182,37 @@ namespace KursAM2.Repositories.InvoicesRepositories
             foreach (var d in data) ret.Add(new InvoiceProviderShort(d));
 
             return ret;
+        }
+
+        public InvoiceProviderRowShort GetInvoiceRow(Guid id)
+        {
+            var item = Context.TD_26.Include(_ => _.TD_24)
+                .Include(_ => _.SD_83)
+                .Include(_ => _.SD_175)
+                .Include(_ => _.SD_43)
+                .Include(_ => _.SD_165)
+                .Include(_ => _.SD_175)
+                .Include(_ => _.SD_1751)
+                .Include(_ => _.SD_26)
+                .Include(_ => _.SD_261)
+                .Include(_ => _.SD_301)
+                .Include(_ => _.SD_303)
+                .SingleOrDefault(_ => _.Id == id);
+            if(item != null) return new InvoiceProviderRowShort(item);
+            return null;
+        }
+
+        public InvoiceProviderShort GetInvoiceHead(Guid id)
+        {
+            var item = Context.SD_26
+                .Include(_ => _.TD_26)
+                .Include(_ => _.SD_43)
+                .Include(_ => _.SD_179)
+                .Include(_ => _.SD_77)
+                .Include(_ => _.SD_189)
+                .Include(_ => _.SD_40)
+                .SingleOrDefault(_ => _.Id == id);
+            return new InvoiceProviderShort(item);
         }
 
         public InvoiceProviderDialogs Dialogs { get; set; }

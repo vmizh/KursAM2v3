@@ -9,6 +9,7 @@ using Core.WindowsManager;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Utils.CommonDialogs.Internal;
 using DevExpress.Xpf.Grid;
+using Helper;
 using JetBrains.Annotations;
 using LayoutManager;
 
@@ -93,22 +94,22 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand RefreshDataCommand
         {
-            get { return new Command(Load, param => CanLoad()); }
+            get { return new Command(Load, param => CanLoad(null)); }
         }
 
-        public virtual bool CanLoad()
+        public virtual bool CanLoad(object o)
         {
             return true;
         }
         
         [Command]
-        public virtual void Load()
-        {
-        }
+        //public virtual void Load()
+        //{
+        //}
 
         public virtual void Load(object obj)
         {
-            Load();
+           
         }
 
         [Display(AutoGenerateField = false)]
@@ -427,6 +428,11 @@ namespace Core.ViewModel.Base
 
         public virtual void ResetLayout(object form)
         {
+            if (this is IKursLayoutManager l)
+            {
+                l.LayoutManager.ResetLayout();
+                return;
+            }
             var layman = form as ILayout;
             layman?.LayoutManager?.ResetLayout();
         }

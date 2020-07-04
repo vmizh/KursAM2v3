@@ -60,7 +60,7 @@ namespace KursRepozit.ViewModels
         #region Commands
 
         [Command]
-        public override void Load()
+        public override void Load(object o)
         {
             DataSources.Clear();
             foreach (var ds in kursSystemRepository.GetAll())
@@ -70,7 +70,7 @@ namespace KursRepozit.ViewModels
             }
         }
 
-        public override bool CanLoad()
+        public override bool CanLoad(object o)
         {
             return true;
         }
@@ -98,7 +98,7 @@ namespace KursRepozit.ViewModels
                 unitOfWork.Save();
                 unitOfWork.Commit();
                 DataSources.ForEach(_ => _.State = RowStatus.NotEdited);
-                Load();
+                Load(null);
             }
 
             catch (Exception ex)

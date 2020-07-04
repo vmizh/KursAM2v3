@@ -575,6 +575,9 @@
     <Compile Include="LIC_SCHET_KONTR_TABLE_Result.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="Log.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="MAIN_DOCUMENT_GROUP.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -1436,6 +1439,9 @@
     </Compile>
     <Compile Include="Tablica.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TasksLog.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="TaxUpdateHistory.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>

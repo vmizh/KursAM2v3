@@ -1,7 +1,6 @@
 ﻿using System.Windows;
-using DevExpress.XtraSpreadsheet.Model;
 
-namespace KursRepozit.Views.Base
+namespace KursAM2.View.Base
 {
     /// <summary>
     ///     Interaction logic for KursBaseDialog.xaml

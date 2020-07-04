@@ -43,6 +43,19 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             set => SetValue(value, () => { SetChangeStatus(); });
         }
 
+        [DisplayName("Id")]
+        [Display(AutoGenerateField = false)]
+        public override Guid Id
+        {
+            get => Entity.Id;
+            set
+            {
+                if (Entity.Id == value) return;
+                Entity.Id = value;
+                SetChangeStatus();
+            }
+        }
+
         [DisplayName("DocId")]
         [Display(AutoGenerateField = false)]
         public Guid DocId

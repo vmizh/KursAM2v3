@@ -394,7 +394,8 @@ namespace Core.Menu
                     HAlignment = HorizontalAlignment.Right,
                     Content = Application.Current.Resources["menuRefresh"] as ControlTemplate,
                     ToolTip = "Обновить",
-                    Command = vm.RefreshDataCommand
+                    Command = vm.RefreshDataCommand,
+                    
                 },
                 new MenuButtonInfo
                 {
@@ -574,6 +575,75 @@ namespace Core.Menu
                     Content = Application.Current.Resources["menuRefresh"] as ControlTemplate,
                     ToolTip = "Обновить список документов",
                     Command = vm.RefreshDataCommand
+                },
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuDocumentOpen"] as ControlTemplate,
+                    ToolTip = "Открыть выбранный документ",
+                    Command = vm.DocumentOpenCommand
+                },
+                docNew,
+                prn,
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuExit"] as ControlTemplate,
+                    ToolTip = "Закрыть поиск",
+                    Command = vm.CloseWindowCommand
+                }
+            };
+            return ret;
+        }
+
+        public static ObservableCollection<MenuButtonInfo> StandartAsyncSearchRightBar(RSWindowViewModelBase vm)
+        {
+
+            var prn = new MenuButtonInfo
+            {
+                Name = "Print",
+                Alignment = Dock.Right,
+                HAlignment = HorizontalAlignment.Right,
+                Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
+                ToolTip = "Печать"
+            };
+            var docNew = new MenuButtonInfo
+            {
+                Name = "New",
+                Alignment = Dock.Right,
+                HAlignment = HorizontalAlignment.Right,
+                Content = Application.Current.Resources["menuDocumentAdd"] as ControlTemplate,
+                ToolTip = "Новый документ"
+            };
+            docNew.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "Пустой документ",
+                Image = Application.Current.Resources["imageDocumentNewEmpty"] as DrawingImage,
+                Command = vm.DocNewEmptyCommand
+            });
+            docNew.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "С текущими реквизитами",
+                Image = Application.Current.Resources["imageDocumentNewRequisite"] as DrawingImage,
+                Command = vm.DocNewCopyRequisiteCommand
+            });
+            docNew.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "Копия текущего",
+                Image = Application.Current.Resources["imageDocumentNewCopy"] as DrawingImage,
+                Command = vm.DocNewCopyCommand
+            });
+            var ret = new ObservableCollection<MenuButtonInfo>
+            {
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuRefresh"] as ControlTemplate,
+                    ToolTip = "Обновить список документов",
+                    Command = vm.AsyncRefreshDataCommand
                 },
                 new MenuButtonInfo
                 {

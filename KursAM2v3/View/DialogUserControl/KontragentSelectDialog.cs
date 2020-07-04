@@ -13,7 +13,9 @@ namespace KursAM2.View.DialogUserControl
 {
     public class KontragentSelectDialog : RSWindowViewModelBase, IDataUserControl
     {
+        // ReSharper disable once NotAccessedField.Local
         private readonly bool isDateCheck;
+        // ReSharper disable once NotAccessedField.Local
         private readonly decimal kontrDC;
         private Currency myCurrency;
         private Kontragent myCurrentKontragent;

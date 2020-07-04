@@ -6,14 +6,19 @@ using Core.Menu;
 using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.Mvvm;
+using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Mvvm.POCO;
+using Helper;
 using KursAM2.Repositories;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.DistributeNaklad;
 
 namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {
+    [POCOViewModel]
     public class DistributeNakladSearchViewModel : KursWindowSearchBaseViewModel,
-        ISearchWindowViewModel<DistributeNakladViewModel>
+        ISearchWindowViewModel<DistributeNakladViewModel>, IKursLayoutManager
     {
         #region Constructors
 
@@ -25,11 +30,23 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             DateStart = DateEnd.AddDays(-30);
             baseRepository = new GenericKursRepository<Data.DistributeNaklad>(unitOfWork);
             distributeNakladRepository = new DistributeNakladRepository(unitOfWork);
-            ModelView = new DistributedNakladView();
+            //ModelView = new DistributeNakladSearchView();
+            WindowName = "Поиск распределений накладных расходов";
+        }
+
+        public DistributeNakladSearchViewModel()
+        {
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
+            DateEnd = DateTime.Today;
+            DateStart = DateEnd.AddDays(-30);
+            baseRepository = new GenericKursRepository<Data.DistributeNaklad>(unitOfWork);
+            distributeNakladRepository = new DistributeNakladRepository(unitOfWork);
             WindowName = "Поиск распределений накладных расходов";
         }
 
         #endregion
+
 
         #region Fields
 
@@ -38,15 +55,21 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork
             = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+
         // ReSharper disable once NotAccessedField.Local
         private readonly GenericKursRepository<Data.DistributeNaklad> baseRepository;
 
         // ReSharper disable once NotAccessedField.Local
-        private IDistributeNakladRepository distributeNakladRepository;
+        private readonly IDistributeNakladRepository distributeNakladRepository;
 
         #endregion
 
         #region Properties
+
+        public Helper.LayoutManager LayoutManager { get; set; }
+
+        private ILayoutSerializationService LayoutSerializationService
+            => GetService<ILayoutSerializationService>();
 
         public DateTime DateEnd
         {
@@ -62,8 +85,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
-        public ObservableCollection<DistributeNakladViewModel> Documents { get; set; } = 
+        public ObservableCollection<DistributeNakladViewModel> Documents { get; set; } =
             new ObservableCollection<DistributeNakladViewModel>();
+
         public ObservableCollection<DistributeNakladViewModel> SelectDocuments { get; set; } =
             new ObservableCollection<DistributeNakladViewModel>();
 
@@ -91,9 +115,33 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Methods
 
+        public static DistributeNakladSearchViewModel Create()
+        {
+            return ViewModelSource.Create(() => new DistributeNakladSearchViewModel());
+        }
+
         #endregion
 
         #region Commands
+
+        [Command]
+        public void OnWindowClosing()
+        {
+            LayoutManager.Save();
+        }
+
+        [Command]
+        public void OnWindowLoaded()
+        {
+            LayoutManager = new Helper.LayoutManager(Form, LayoutSerializationService,
+                GetType().Name, null);
+            LayoutManager.Load();
+        }
+
+        public override void ResetLayout(object form)
+        {
+            LayoutManager.ResetLayout();
+        }
 
         public override void DocNewEmpty(object form)
         {
@@ -101,7 +149,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 Owner = Application.Current.MainWindow
             };
-            var dsDataContext = new DistributeNakladViewModel(null,DocumentCreateTypeEnum.New);
+            var dsDataContext = new DistributeNakladViewModel( dsForm, new DocumentOpenType
+            {
+                OpenType = DocumentCreateTypeEnum.New
+            });
             dsForm.DataContext = dsDataContext;
             dsDataContext.Form = dsForm;
             dsForm.Show();
@@ -113,7 +164,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 Owner = Application.Current.MainWindow
             };
-            var dsDataContext = new DistributeNakladViewModel(CurrentDocument.Id,DocumentCreateTypeEnum.Copy);
+            var dsDataContext = new DistributeNakladViewModel(dsForm, new DocumentOpenType
+            {
+                Id = CurrentDocument.Id,
+                OpenType = DocumentCreateTypeEnum.Copy
+            });
             dsForm.DataContext = dsDataContext;
             dsDataContext.Form = dsForm;
             dsForm.Show();
@@ -125,9 +180,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 Owner = Application.Current.MainWindow
             };
-            var dsDataContext = new DistributeNakladViewModel(CurrentDocument.Id,DocumentCreateTypeEnum.Open);
-            dsForm.DataContext = dsDataContext;
-            dsDataContext.Form = dsForm;
+            var v = new DistributedNakladView(dsForm, new DocumentOpenType
+            {
+                Id = CurrentDocument.Id,
+                OpenType = DocumentCreateTypeEnum.Open
+            });
+            dsForm.modelViewControl.Content = v;
+            dsForm.DataContext = v.DataContext;
             dsForm.Show();
         }
 
@@ -138,17 +197,15 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             return false;
         }
 
-        public override void Load()
+        public override void Load(object o)
         {
             Documents.Clear();
             foreach (var d in distributeNakladRepository.GetAllByDates(StartDate, EndDate))
-            {
                 Documents.Add(new DistributeNakladViewModel(d));
-            }
             RaisePropertiesChanged(nameof(Documents));
         }
 
-        public override bool CanLoad()
+        public override bool CanLoad(object o)
         {
             return State != RowStatus.NewRow;
         }
