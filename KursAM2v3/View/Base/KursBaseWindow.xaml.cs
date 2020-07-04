@@ -8,28 +8,12 @@ namespace KursAM2.View.Base
     /// <summary>
     ///     Interaction logic for KursBaseWindow.xaml
     /// </summary>
-    public partial class KursBaseWindow : ILayout
+    public partial class KursBaseWindow 
     {
         public KursBaseWindow()
         {
             InitializeComponent();
-            Loaded += KursBaseWindow_Loaded;
-            Closing += KursBaseWindow_Closing;
         }
-
-        private void KursBaseWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            LayoutManager.Save();
-        }
-
-        private void KursBaseWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            LayoutManager = new global::LayoutManager.LayoutManager(LayoutManagerName,this,null);
-            LayoutManager.Load();
-        }
-
-        public global::LayoutManager.LayoutManager LayoutManager { get; set; }
-        public string LayoutManagerName { get; set; }
 
         private void MenuButton_OnClick(object sender, RoutedEventArgs e)
         {

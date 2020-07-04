@@ -42,6 +42,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             get => GetValue<DistributeNakladRow>();
             set => SetValue(value, () => { SetChangeStatus(); });
         }
+
         [DisplayName("Id")]
         [Display(AutoGenerateField = false)]
         public override Guid Id

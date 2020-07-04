@@ -15,23 +15,23 @@ namespace Data
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-    
+
     public partial class KursSystemEntities : DbContext
     {
         public KursSystemEntities()
             : base(new EntityConnectionStringBuilder
-        {
-            Provider = "System.Data.SqlClient",
-            ProviderConnectionString = new SqlConnectionStringBuilder
             {
-            DataSource = "172.16.0.1",
-            InitialCatalog = "KursSystem",
-            UserID = "sa",
-            Password = "CbvrfFhntvrf65"
+                Provider = "System.Data.SqlClient",
+                ProviderConnectionString = new SqlConnectionStringBuilder
+                {
+                    DataSource = "172.16.0.1",
+                    InitialCatalog = "KursSystem",
+                    UserID = "sa",
+                    Password = "CbvrfFhntvrf65"
                 }.ToString(),
-            Metadata =
+                Metadata =
                 @"res://*/KursSystem.csdl|res://*/KursSystem.ssdl|res://*/KursSystem.msl"
-        }.ToString()) 
+            }.ToString())
         {
             Configuration.ValidateOnSaveEnabled = true;
             Configuration.LazyLoadingEnabled = false;
@@ -39,28 +39,28 @@ namespace Data
         }
 
 
-public KursSystemEntities(string connectionString,
-            bool validationMode = true,
-            bool lazyLoadingMode = true,
-            bool autoDetectMode = true)
-            : base(new EntityConnectionStringBuilder
-            {
-                Provider = "System.Data.SqlClient",
-                ProviderConnectionString = connectionString,
-                Metadata =
-                    @"res://*/KursSystem.csdl|res://*/KursSystem.ssdl|res://*/KursSystem.msl"
-            }.ToString())
+        public KursSystemEntities(string connectionString,
+                    bool validationMode = true,
+                    bool lazyLoadingMode = true,
+                    bool autoDetectMode = true)
+                    : base(new EntityConnectionStringBuilder
+                    {
+                        Provider = "System.Data.SqlClient",
+                        ProviderConnectionString = connectionString,
+                        Metadata =
+                            @"res://*/KursSystem.csdl|res://*/KursSystem.ssdl|res://*/KursSystem.msl"
+                    }.ToString())
         {
             Configuration.ValidateOnSaveEnabled = validationMode;
             Configuration.LazyLoadingEnabled = lazyLoadingMode;
             Configuration.AutoDetectChangesEnabled = autoDetectMode;
         }
-    
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
         }
-    
+
         public virtual DbSet<DataSources> DataSources { get; set; }
         public virtual DbSet<KontragentCashes> KontragentCashes { get; set; }
         public virtual DbSet<KursMenuGroup> KursMenuGroup { get; set; }
@@ -72,5 +72,7 @@ public KursSystemEntities(string connectionString,
         public virtual DbSet<Errors> Errors { get; set; }
         public virtual DbSet<FormLayout> FormLayout { get; set; }
         public virtual DbSet<UserMenuOrder> UserMenuOrder { get; set; }
+        public virtual DbSet<Log> Log { get; set; }
+        public virtual DbSet<TasksLog> TasksLog { get; set; }
     }
 }

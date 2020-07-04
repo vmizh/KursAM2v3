@@ -358,6 +358,9 @@
     <Compile Include="View\Finance\DistributeNaklad\DistributedNakladView.xaml.cs">
       <DependentUpon>DistributedNakladView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Finance\DistributeNaklad\DistributeNakladSearchView.xaml.cs">
+      <DependentUpon>DistributeNakladSearchView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\KursReferences\KontragentCategoryReferenceView.xaml.cs">
       <DependentUpon>KontragentCategoryReferenceView.xaml</DependentUpon>
     </Compile>
@@ -1015,6 +1018,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Finance\DistributeNaklad\DistributedNakladView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\DistributeNaklad\DistributeNakladSearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

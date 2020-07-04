@@ -167,6 +167,7 @@
     <Compile Include="Repository\Base\IRepository.cs" />
     <Compile Include="Repository\Base\IUnitOfWork.cs" />
     <Compile Include="Repository\Base\UnitOfWork.cs" />
+    <Compile Include="ViewModel\Base\IDocumentOpenType.cs" />
     <Compile Include="ViewModel\Base\SplashScreenView.xaml.cs">
       <DependentUpon>SplashScreenView.xaml</DependentUpon>
     </Compile>

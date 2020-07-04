@@ -5,7 +5,11 @@ using DevExpress.Mvvm;
 
 namespace Core.ViewModel.Base
 {
-    public abstract class KursBaseViewModel : ViewModelBase
+    interface IKursParentViewModel
+    {
+        KursBaseViewModel Parent { get; set; }
+    }
+    public abstract class KursBaseViewModel : ViewModelBase, IKursParentViewModel
     {
 
         #region Fields
@@ -24,6 +28,10 @@ namespace Core.ViewModel.Base
             get => GetValue<Guid>();
             set => SetValue(value);
         }
+
+        [DisplayName("Parent")]
+        [Display(AutoGenerateField = false)]
+        public KursBaseViewModel Parent { get; set; }
 
         [DisplayName("DocCode")]
         [Display(AutoGenerateField = false)]
@@ -45,10 +53,14 @@ namespace Core.ViewModel.Base
 
         #region Methods
 
-        public void SetChangeStatus(RowStatus state = RowStatus.Edited)
+        public virtual void SetChangeStatus(RowStatus state = RowStatus.Edited)
         {
-            if (State == RowStatus.NewRow) return;
-            State = state;
+            if (State != RowStatus.NewRow)
+            { 
+                State = state;
+            }
+            if (Parent != null && Parent.State != RowStatus.NewRow)
+                Parent.State = RowStatus.Edited;
             RaisePropertyChanged();
         }
 
@@ -63,5 +75,7 @@ namespace Core.ViewModel.Base
         #region Commands
 
         #endregion
+
+       
     }
 }

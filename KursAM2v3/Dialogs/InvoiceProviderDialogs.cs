@@ -93,7 +93,7 @@ namespace KursAM2.Dialogs
 
         #region Commands
 
-        public override void Load()
+        public override void Load(object o)
         {
             ItemsCollection.Clear();
             foreach (var d in invoiceProviderRepository.GetAllForNakladDistribute(Currency,

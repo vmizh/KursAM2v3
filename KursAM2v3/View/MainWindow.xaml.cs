@@ -17,6 +17,7 @@ using KursAM2.Managers;
 using KursAM2.View.Base;
 using KursAM2.View.Finance;
 using KursAM2.View.Finance.Cash;
+using KursAM2.View.Finance.DistributeNaklad;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.KursReferences;
 using KursAM2.View.Logistiks;
@@ -478,21 +479,15 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Распределение накладных расходов":
-                        //var purCtx = new PurchaseOverheadsWindowViewModel();
-                        //form = new PurchaseInvoicesOverheadsView
-                        //{
-                        //    Owner = Application.Current.MainWindow,
-                        //    DataContext = purCtx
-                        //};
-                        //purCtx.Form = form;
-                        //form.Show();
-                        var dnakForm = new KursBaseSearchWindow
+                        var dnakForm = new KursBaseSearchWindow()
                         {
                             Owner = Application.Current.MainWindow,
-                            LayoutManagerName = "DistributeNakladSearch"
+                            
                         };
-                        var dnakCtx = new DistributeNakladSearchViewModel(dnakForm);
-                        dnakForm.DataContext = dnakCtx;
+                        var v = new DistributeNakladSearchView(dnakForm);
+                        dnakForm.modelViewControl.Content = v;
+                        ((KursBaseControlViewModel) v.DataContext).Form = dnakForm;
+                        dnakForm.DataContext = v.DataContext;
                         dnakForm.Show();
                         break;
                         

@@ -29,7 +29,7 @@ namespace KursRepozit.ViewModels
             WindowName = "Управление пользователями";
             LeftMenuBar = WindowMenuGenerator.BaseLeftBar(this);
             RightMenuBar = WindowMenuGenerator.ReferenceRightBar(this);
-            Load();
+            Load(null);
         }
 
         #endregion
@@ -91,7 +91,7 @@ namespace KursRepozit.ViewModels
         #region Commands
 
         [Command]
-        public sealed override void Load()
+        public sealed override void Load(object o)
         {
             Users.Clear();
             foreach (var u in userRepository.GetAllWithDataSources().OrderBy(_ => _.Name))
@@ -101,7 +101,7 @@ namespace KursRepozit.ViewModels
                 DataSources.Add(new DataSourceSelectedViewModel(d));
         }
 
-        public override bool CanLoad()
+        public override bool CanLoad(object o)
         {
             return true;
         }
@@ -129,7 +129,7 @@ namespace KursRepozit.ViewModels
                 unitOfWork.Save();
                 unitOfWork.Commit();
                 Users.ForEach(_ => _.State = RowStatus.NotEdited);
-                Load();
+                Load(null);
             }
 
             catch (Exception ex)

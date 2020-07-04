@@ -40,6 +40,7 @@
           <Property Name="Layout" Type="varchar(max)" Nullable="false" />
           <Property Name="FormId" Type="int" />
           <Property Name="UpdateDate" Type="datetime" Nullable="false" />
+          <Property Name="WindowState" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="KontragentCashes">
           <Key>
@@ -74,6 +75,29 @@
           <Property Name="Note" Type="varchar" MaxLength="500" />
           <Property Name="OrderBy" Type="int" />
           <Property Name="Code" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Log">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MachineName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Logged" Type="datetime" />
+          <Property Name="Level" Type="nvarchar" MaxLength="50" />
+          <Property Name="Message" Type="nvarchar(max)" />
+          <Property Name="Logger" Type="nvarchar" MaxLength="250" />
+          <Property Name="Callsite" Type="nvarchar(max)" />
+          <Property Name="ProgramName" Type="nvarchar" MaxLength="500" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="TasksLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TypeName" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="TaskInfo" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ExecTime" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="UserMenuOrder">
           <Key>
@@ -290,6 +314,8 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <EntitySet Name="KontragentCashes" EntityType="Self.KontragentCashes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KursMenuGroup" EntityType="Self.KursMenuGroup" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KursMenuItem" EntityType="Self.KursMenuItem" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Log" EntityType="Self.Log" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TasksLog" EntityType="Self.TasksLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMenuOrder" EntityType="Self.UserMenuOrder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMenuRight" EntityType="Self.UserMenuRight" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
@@ -588,6 +614,8 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             <End Role="FormLayout" EntitySet="FormLayout" />
           </AssociationSet>
           <EntitySet Name="UserMenuOrder" EntityType="KursSystemModel.UserMenuOrder" />
+          <EntitySet Name="Log" EntityType="KursSystemModel.Log" />
+          <EntitySet Name="TasksLog" EntityType="KursSystemModel.TasksLog" />
           </EntityContainer>
         <EntityType Name="Errors">
           <Key>
@@ -640,6 +668,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <Property Name="UpdateDate" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_FormLayout_FormId" FromRole="FormLayout" ToRole="KursMenuItem" />
           <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_FormLayout_UserId" FromRole="FormLayout" ToRole="Users" />
+          <Property Name="WindowState" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_FormLayout_FormId">
           <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="0..1" />
@@ -674,6 +703,29 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <Property Name="UserId" Type="Guid" Nullable="false" />
           <Property Name="TileId" Type="Int32" Nullable="false" />
           <Property Name="Order" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Log">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MachineName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Logged" Type="DateTime" Precision="3" />
+          <Property Name="Level" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Logger" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Callsite" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProgramName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="TasksLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="TypeName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="TaskInfo" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ExecTime" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -802,6 +854,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <EntitySetMapping Name="FormLayout">
             <EntityTypeMapping TypeName="KursSystemModel.FormLayout">
               <MappingFragment StoreEntitySet="FormLayout">
+                <ScalarProperty Name="WindowState" ColumnName="WindowState" />
                 <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
                 <ScalarProperty Name="FormId" ColumnName="FormId" />
                 <ScalarProperty Name="Layout" ColumnName="Layout" />
@@ -819,6 +872,31 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
                 <ScalarProperty Name="TileId" ColumnName="TileId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="IsGroup" ColumnName="IsGroup" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Log">
+            <EntityTypeMapping TypeName="KursSystemModel.Log">
+              <MappingFragment StoreEntitySet="Log">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="ProgramName" ColumnName="ProgramName" />
+                <ScalarProperty Name="Callsite" ColumnName="Callsite" />
+                <ScalarProperty Name="Logger" ColumnName="Logger" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Logged" ColumnName="Logged" />
+                <ScalarProperty Name="MachineName" ColumnName="MachineName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TasksLog">
+            <EntityTypeMapping TypeName="KursSystemModel.TasksLog">
+              <MappingFragment StoreEntitySet="TasksLog">
+                <ScalarProperty Name="ExecTime" ColumnName="ExecTime" />
+                <ScalarProperty Name="TaskInfo" ColumnName="TaskInfo" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

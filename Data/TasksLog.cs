@@ -12,18 +12,11 @@ namespace Data
     using System;
     using System.Collections.Generic;
     
-    public partial class FormLayout
+    public partial class TasksLog
     {
         public System.Guid Id { get; set; }
-        public System.Guid UserId { get; set; }
-        public string FormName { get; set; }
-        public string ControlName { get; set; }
-        public string Layout { get; set; }
-        public Nullable<int> FormId { get; set; }
-        public System.DateTime UpdateDate { get; set; }
-        public string WindowState { get; set; }
-    
-        public virtual KursMenuItem KursMenuItem { get; set; }
-        public virtual Users Users { get; set; }
+        public string TypeName { get; set; }
+        public string TaskInfo { get; set; }
+        public System.DateTime ExecTime { get; set; }
     }
 }
