@@ -14764,3 +14764,5 @@ data/packages/NUnit.3.6.1/CHANGES.txt.i
 data/Core/EntityViewModel/WarehouseStorageOrderOutRow.cs.i
 data/KursAM2C/node_modules/request/node_modules/uuid/AUTHORS.i
 data/packages/Microsoft.Net.Compilers.3.0.0/tools/System.Buffers.dll.i
+data/packages/System.Diagnostics.DiagnosticSource.4.4.1/System.Diagnostics.DiagnosticSource.4.4.1.nupkg.d
+data/DevExpress/Scripts/jquery-3.3.1.js.d
