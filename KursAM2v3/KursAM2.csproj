@@ -881,7 +881,9 @@
     <Compile Include="View\Personal\UsersRightToPayRoll.xaml.cs" />
     <Compile Include="View\Reconciliation\ActOfReconciliation.xaml.cs" />
     <Compile Include="View\StartLogin.xaml.cs" />
-    <Compile Include="View\WindowStart.xaml.cs" />
+    <Compile Include="View\WindowStart.xaml.cs">
+      <DependentUpon>WindowStart.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -1585,8 +1587,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\WindowStart.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

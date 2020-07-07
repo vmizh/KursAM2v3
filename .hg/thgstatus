@@ -270,6 +270,7 @@ mCalculates.Tests
 mCalculates/Materials
 rCore
 mCore.Tests
+mCore/Control
 mCore/EntityViewModel
 mCore/Finance
 mCore/Managers
