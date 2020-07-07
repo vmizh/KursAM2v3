@@ -339,7 +339,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                         if (r.IsUsluga) continue;
                         if (Tovars.Any(_ => _.DocId == Id && _.TovarInvoiceRowId == r.Entity.Id)) continue;
                         var newRow = DistributeNakladRepository.CreateRowNew(Entity);
-
                         newRow.TovarInvoiceRowId = r.Entity.Id;
                         var newTovar = new DistributeNakladRowViewModel(newRow)
                         {
