@@ -86,6 +86,9 @@ namespace KursAM2.ViewModel.StartLogin
             get => myCurrentPassword;
         }
 
+        public ObservableCollection<string> ThemeNameList { set; get; } =
+            new ObservableCollection<string>();
+
         #region command
 
         // ReSharper disable once InconsistentNaming

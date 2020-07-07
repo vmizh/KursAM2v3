@@ -47,7 +47,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #endregion
 
-
         #region Fields
 
         private DateTime myDateEnd;

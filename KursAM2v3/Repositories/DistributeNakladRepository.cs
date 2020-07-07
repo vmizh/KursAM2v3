@@ -6,15 +6,16 @@ using Core;
 using Core.Repository.Base;
 using Core.WindowsManager;
 using Data;
-using KursAM2.ViewModel.Finance.DistributeNaklad;
 
 namespace KursAM2.Repositories
 {
-    public interface IDistributeNakladRepository : IDocumentWithRowOperations<DistributeNaklad, DistributeNakladRow>
+    public interface IDistributeNakladRepository : IDocumentWithRowOperations<DistributeNaklad, 
+        DistributeNakladRow>
     {
         DistributeNaklad GetById(Guid id);
         List<DistributeNaklad> GetAllByDates(DateTime dateStart, DateTime dateEnd);
     }
+
     public class DistributeNakladRepository : GenericKursRepository<DistributeNaklad>, IDistributeNakladRepository
     {
         public DistributeNakladRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
@@ -108,12 +109,11 @@ namespace KursAM2.Repositories
             return CreateCopy(dc);
         }
 
-
         public DistributeNakladRow CreateRowNew(DistributeNaklad head)
         {
             var newItem = new DistributeNakladRow
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid()
             };
             head.DistributeNakladRow.Add(newItem);
             return newItem;

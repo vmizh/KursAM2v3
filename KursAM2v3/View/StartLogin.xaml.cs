@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Core;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using Helper;
 using KursAM2.ViewModel.StartLogin;
@@ -58,8 +59,14 @@ namespace KursAM2.View
                     }
                 }
             }
+        }
 
-            //
+       
+      
+
+        private void ThemeSources_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
+        {
+            ApplicationThemeHelper.ApplicationThemeName = (string) e.NewValue;
         }
 
         private void dataSources_EditValueChanged(object sender, EditValueChangedEventArgs e)

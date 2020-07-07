@@ -23,6 +23,7 @@ namespace Core
 
         public MainReferences()
         {
+            ThemeNames = getThemeNames();
             AllKontragents = new Dictionary<decimal, Kontragent>();
             ALLNomenkls = new Dictionary<decimal, Nomenkl>();
             ActiveKontragents = new Dictionary<decimal, Kontragent>();
@@ -49,6 +50,22 @@ namespace Core
             Regions = new Dictionary<decimal, Region>();
         }
 
+        private List<string> getThemeNames()
+        {
+            return new List<string>(new[]{"MetropolisLight",
+                "MetropolisDark", "Office2019Black", "Office2019Colorful",
+                "Office2019DarkGray", "Office2019White", "Office2019HighContrast",
+                "VS2019Blue", "VS2019Dark", "VS2019Light", "VS2017Blue",
+                "VS2017Dark", "VS2017Light", "Office2016WhiteSE", "Office2016BlackSE",
+                "Office2016ColorfulSE", "Office2016DarkGraySE",
+                "Office2016White", "Office2016Black", "Office2016Colorful",
+                "Office2013", "Office2013DarkGray", "Office2013LightGray",
+                "Office2010Black", "Office2010Blue", "Office2010Silver",
+                "Office2010Silver", "Office2007Black", "Office2007Blue", "Office2007Silver",
+                "TouchlineDark", "DeepBlue", "DXStyle", "LightGray", "Seven", "VS2010"});
+        }
+
+        public static List<string> ThemeNames { set; get; }
         public static Dictionary<decimal, Region> Regions { set; get; }
         public static Dictionary<decimal, DeliveryCondition> DeliveryConditions { set; get; }
         public static Dictionary<decimal, ContractType> ContractTypes { set; get; }

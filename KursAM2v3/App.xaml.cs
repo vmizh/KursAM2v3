@@ -18,7 +18,8 @@ namespace KursAM2
             var ci = new CultureInfo("ru-RU");
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
-            if (!Directory.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KursAM2v3"))
+            if (!Directory.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}" +
+                                  $"\\KursAM2v3"))
                 Directory.CreateDirectory(
                     $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KursAM2v3");
             Current.Properties.Add("DataPath",
