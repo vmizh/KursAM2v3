@@ -60,7 +60,7 @@ namespace Data
         {
             throw new UnintentionalCodeFirstException();
         }
-
+    
         public virtual DbSet<DataSources> DataSources { get; set; }
         public virtual DbSet<KontragentCashes> KontragentCashes { get; set; }
         public virtual DbSet<KursMenuGroup> KursMenuGroup { get; set; }

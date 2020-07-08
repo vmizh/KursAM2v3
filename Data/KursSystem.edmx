@@ -131,6 +131,7 @@
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="Avatar" Type="image" />
           <Property Name="FullName" Type="varchar" MaxLength="50" />
+          <Property Name="ThemeName" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="UsersLinkDB">
           <Key>
@@ -461,6 +462,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <NavigationProperty Name="DataSources" Relationship="Self.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
           <NavigationProperty Name="Errors" Relationship="KursSystemModel.FK_Errors_UserId" FromRole="Users" ToRole="Errors" />
           <NavigationProperty Name="FormLayout" Relationship="KursSystemModel.FK_FormLayout_UserId" FromRole="Users" ToRole="FormLayout" />
+          <Property Name="ThemeName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Version">
           <Key>
@@ -797,6 +799,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="KursSystemModel.Users">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="ThemeName" ColumnName="ThemeName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Note" ColumnName="Note" />

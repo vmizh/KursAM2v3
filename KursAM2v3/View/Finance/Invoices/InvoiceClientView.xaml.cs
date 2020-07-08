@@ -203,7 +203,7 @@ namespace KursAM2.View.Finance.Invoices
                     e.Item.HorizontalAlignment = HorizontalAlignment.Right;
                     break;
                 case nameof(InvoiceClient.SF_NOTE):
-                    //ViewFluentHelper.SetDefaultMemoEdit(e.Item);
+                    ViewFluentHelper.SetDefaultMemoEdit(e.Item);
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.MinWidth = 600;
                     break;

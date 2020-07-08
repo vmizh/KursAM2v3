@@ -61,9 +61,6 @@ namespace KursAM2.View
             }
         }
 
-       
-      
-
         private void ThemeSources_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             ApplicationThemeHelper.ApplicationThemeName = (string) e.NewValue;

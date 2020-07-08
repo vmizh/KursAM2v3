@@ -370,7 +370,10 @@ namespace KursAM2.ViewModel.StartLogin
             ComboBoxItemSource.Clear();
             var connection = new SqlConnectionStringBuilder
             {
-                DataSource = "172.16.0.1", InitialCatalog = "KursSystem", UserID = "KursUser", Password = "KursUser"
+                DataSource = "172.16.0.1", 
+                InitialCatalog = "KursSystem", 
+                UserID = "KursUser", 
+                Password = "KursUser"
             };
             try
             {
@@ -438,10 +441,13 @@ namespace KursAM2.ViewModel.StartLogin
                         view.AvatarObj.Source =
                             new BitmapImage(new Uri("./../Images/businessman.png", UriKind.Relative));
                     else
+                    {
                         // ReSharper disable once PossibleNullReferenceException
                         view.AvatarObj.Source = user.Avatar != null
                             ? ImageManager.ByteToImageSource(user.Avatar)
                             : new BitmapImage(new Uri("./../Images/businessman.png", UriKind.Relative));
+                        view.themeSources.SelectedItem = user.ThemeName;
+                    }
                 }
             }
             catch (Exception ex)
