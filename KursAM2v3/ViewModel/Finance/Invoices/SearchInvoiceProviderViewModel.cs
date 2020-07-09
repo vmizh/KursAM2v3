@@ -27,7 +27,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             Documents = new ObservableCollection<InvoiceProvider>();
             SelectedDocs = new ObservableCollection<InvoiceProvider>();
-            IsEnabled = true;
             DateEnd = DateTime.Today;
             DateStart = DateEnd.AddDays(-30);
         }
@@ -37,7 +36,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             Documents = new ObservableCollection<InvoiceProvider>();
             SelectedDocs = new ObservableCollection<InvoiceProvider>();
-            IsEnabled = true;
             DateEnd = DateTime.Today;
             DateStart = DateEnd.AddDays(-30);
         }
@@ -99,9 +97,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
-        public override Action AsyncRefresh()
+        public override void RefreshData(object data)
         {
-            Application.Current.Dispatcher.Invoke(() => { IsLoading = true; });
             base.RefreshData(null);
             IsPrintAllow = false;
             while (!MainReferences.IsReferenceLoadComplete)
@@ -116,31 +113,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var d in InvoicesManager.GetInvoicesProvider(false, false))
                     Documents.Add(d);
             RaisePropertyChanged(nameof(Documents));
-            IsLoading = false;
-            return base.AsyncRefresh();
-        }
-
-        public override void RefreshData(object data)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                IsLoading = true;
-                base.RefreshData(null);
-                IsPrintAllow = false;
-                while (!MainReferences.IsReferenceLoadComplete)
-                {
-                }
-
-                Documents.Clear();
-                if (IsEnabled)
-                    foreach (var d in InvoicesManager.GetInvoicesProvider(DateStart, DateEnd, false))
-                        Documents.Add(d);
-                else
-                    foreach (var d in InvoicesManager.GetInvoicesProvider(false, false))
-                        Documents.Add(d);
-                RaisePropertyChanged(nameof(Documents));
-                IsLoading = false;
-            });
         }
 
         public override void DocumentOpen(object obj)

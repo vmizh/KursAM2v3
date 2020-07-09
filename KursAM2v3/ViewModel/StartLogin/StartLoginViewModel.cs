@@ -29,6 +29,7 @@ namespace KursAM2.ViewModel.StartLogin
         private string myCurrentPassword;
         private string myCurrentUser;
         private string myVersionValue;
+        private bool myIsThemeAllow;
 
         public StartLoginViewModel(Window formWindow)
         {
@@ -442,6 +443,7 @@ namespace KursAM2.ViewModel.StartLogin
                             new BitmapImage(new Uri("./../Images/businessman.png", UriKind.Relative));
                     else
                     {
+                        IsThemeAllow = true;
                         // ReSharper disable once PossibleNullReferenceException
                         view.AvatarObj.Source = user.Avatar != null
                             ? ImageManager.ByteToImageSource(user.Avatar)
@@ -490,9 +492,15 @@ namespace KursAM2.ViewModel.StartLogin
             }
         }
 
-        public void HideSplash()
+        public bool IsThemeAllow
         {
-            SplashScreenService.HideSplashScreen();
+            get => myIsThemeAllow;
+            set
+            {
+                if (myIsThemeAllow == value) return;
+                myIsThemeAllow = value;
+                RaisePropertiesChanged();
+            }
         }
 
         #endregion

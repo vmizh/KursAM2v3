@@ -93,12 +93,11 @@
         </DockPanel>
         <StackPanel Orientation="Horizontal"
                     DockPanel.Dock="Top">
-            <dxe:CheckEdit Content="Включая период с" 
+            <dxe:CheckEdit Content="Включая период с " 
                            IsChecked="{Binding IsLoading, UpdateSourceTrigger=PropertyChanged}"/>
             <dxe:DateEdit Width="120" EditValue="{Binding DateStart}" IsEnabled="{Binding IsDateEnabled}"/>
             <Label Content="по"></Label>
             <dxe:DateEdit Width="120" EditValue="{Binding DateEnd}" IsEnabled="{Binding IsDateEnabled}"/>
-            <Button Content="Кнопка" Command="{Binding RefreshDataCommand}"/>
         </StackPanel>
         <dxg:GridControl Name="gridDocuments"
                              Margin="0,10,0,0"

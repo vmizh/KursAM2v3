@@ -173,6 +173,9 @@
     <Compile Include="DistributeNakladInfo.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="DistributeNakladInvoices.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="DistributeNakladRow.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

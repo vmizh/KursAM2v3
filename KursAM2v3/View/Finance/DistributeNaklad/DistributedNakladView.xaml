@@ -156,6 +156,9 @@
                                                                 AncestorType={x:Type ContextMenu}}}" />
                                             </ContextMenu>
                                         </dxg:TableView.ContextMenu>
+                                        <dxmvvm:Interaction.Behaviors>
+                                            <dxmvvm:EventToCommand EventName="CellValueChanged" Command="{Binding DistributeTypeChangedCommand}" />
+                                        </dxmvvm:Interaction.Behaviors>
                                     </dxg:TableView>
                                 </dxg:GridControl.View>
                             </dxg:GridControl>

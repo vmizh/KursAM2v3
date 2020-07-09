@@ -1,0 +1,146 @@
+﻿using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using Core;
+using Core.ViewModel.Base;
+using Data;
+using KursAM2.Repositories;
+
+namespace KursAM2.ViewModel.Finance.DistributeNaklad
+{
+    public class DistributeNakladInvoiceViewModel : KursBaseViewModel,
+        IViewModelToEntity<DistributeNakladInvoices>
+    {
+        #region Constructors
+
+        public DistributeNakladInvoiceViewModel(DistributeNakladInvoices entity)
+        {
+            if (entity != null)
+            {
+                Entity = entity;
+                State = RowStatus.NotEdited;
+            }
+            else
+            {
+                Entity = new DistributeNakladInvoices
+                {
+                    Id = Guid.NewGuid()
+                };
+                State = RowStatus.NewRow;
+            }
+        }
+
+        #endregion
+
+        #region Fields
+
+        private decimal mySumma;
+        private decimal mySummaDistribute;
+
+        #endregion
+
+        #region Properties
+
+        [Display(AutoGenerateField = false)] public DistributeNakladInvoices Entity { get; set; }
+
+        [Display(AutoGenerateField = false)]
+        public override Guid Id
+        {
+            get => Entity.Id;
+            set
+            {
+                if (Entity.Id == value) return;
+                Entity.Id = value;
+                RaisePropertiesChanged();
+            }
+        }
+
+        [Display(AutoGenerateField = false)]
+        public Guid DocId
+        {
+            get => Entity.DocId;
+            set
+            {
+                if (Entity.DocId == value) return;
+                Entity.DocId = value;
+                RaisePropertiesChanged();
+            }
+        }
+
+        [Display(Name = "Тип распределения")]
+        public DistributeNakladRepository.DistributeNakladTypeEnum DistributeType
+        {
+            get => (DistributeNakladRepository.DistributeNakladTypeEnum) Entity.DistributeType;
+            set
+            {
+                if (Entity.DistributeType == (short) value) return;
+                Entity.DistributeType = (short) value;
+                RaisePropertiesChanged();
+            }
+        }
+
+        [Display(AutoGenerateField = false)] public SD_26 Invoice { set; get; }
+
+        [DisplayName("Номер")]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
+        public string DocNum => $"{Invoice?.SF_IN_NUM} / {Invoice?.SF_POSTAV_NUM} ";
+
+        [DisplayName("Дата сф")]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
+        public string DocDate => Invoice?.SF_POSTAV_DATE.ToShortDateString();
+
+
+        [DisplayName("Поставщик")]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
+        public string ProviderName => Invoice != null
+            ? MainReferences.GetKontragent(Invoice.SF_POST_DC).Name
+            : null;
+
+
+        [DisplayName("Сумма накладных")]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
+        public decimal Summa
+        {
+            get => mySumma;
+            set
+            {
+                if (mySumma == value) return;
+                mySumma = value;
+                RaisePropertiesChanged();
+                RaisePropertiesChanged(nameof(SummaRemain));
+            }
+        }
+
+        [DisplayName("Распределено")]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
+        public decimal SummaDistribute
+        {
+            get => mySummaDistribute;
+            set
+            {
+                if (mySummaDistribute == value) return;
+                mySummaDistribute = value;
+                RaisePropertiesChanged();
+                RaisePropertiesChanged(nameof(SummaRemain));
+            }
+        }
+
+        [DisplayName("Остаток")]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
+        public decimal SummaRemain => Summa - SummaDistribute;
+
+        [DisplayName("Валюта")]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
+        // ReSharper disable once PossibleInvalidOperationException
+        public string Currency => Invoice != null ? MainReferences.Currencies[Invoice.SF_CRS_DC.Value].Name : null;
+
+        #endregion
+    }
+}

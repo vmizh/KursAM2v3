@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Core;
 using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
@@ -83,13 +84,35 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         }
 
         [DisplayName("Счет-фактура поставщика")]
-        [Display(AutoGenerateField = true)]
+        [Display(AutoGenerateField = false)]
         public InvoiceProvider Invoice
         {
             get => GetValue<InvoiceProvider>();
             set => SetValue(value);
         }
 
+        [DisplayName("Документ")]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
+        public string DocName => Invoice != null ? "С/фактура поставщика" : null;
+
+        [DisplayName("Номер")]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
+        public string DocNum => $"{Invoice?.SF_IN_NUM} / {Invoice?.SF_POSTAV_NUM} ";
+
+        [DisplayName("Дата сф")]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
+        public string DocDate => Invoice?.SF_POSTAV_DATE.ToShortDateString();
+
+
+        [DisplayName("Поставщик")]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
+        public string ProviderName => Invoice != null
+            ? MainReferences.GetKontragent(Invoice.SF_POST_DC).Name
+            : null;
 
         [Display(AutoGenerateField = false)]
         public InvoiceProviderRow InvoiceRow

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
@@ -9,6 +11,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using Helper;
 using KursAM2.ViewModel.StartLogin;
+using MessageBox = System.Windows.MessageBox;
 
 // ReSharper disable InconsistentNaming
 namespace KursAM2.View
@@ -64,6 +67,22 @@ namespace KursAM2.View
         private void ThemeSources_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             ApplicationThemeHelper.ApplicationThemeName = (string) e.NewValue;
+            try
+            {
+                using (var ctx = GlobalOptions.KursSystem())
+                {
+                    var user = ctx.Users.FirstOrDefault(_ => _.Name == userNameText.Text);
+                    if (user == null) return;
+                    user.ThemeName = (string) themeSources.EditValue;
+                    ctx.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                var errText = new StringBuilder(ex.Message);
+                while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
+                MessageBox.Show("KursSystem error.\n" + errText);
+            }
         }
 
         private void dataSources_EditValueChanged(object sender, EditValueChangedEventArgs e)

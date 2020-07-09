@@ -1,11 +1,10 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using Core.Menu;
-using Core.WindowsManager;
 using DevExpress.Data;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
-using KursAM2.ViewModel.Finance.Invoices;
 using LayoutManager;
 
 namespace KursAM2.View.Finance.Invoices
@@ -15,7 +14,6 @@ namespace KursAM2.View.Finance.Invoices
     /// </summary>
     public partial class ProviderSearchView : ILayout
     {
-        public string LayoutName { set; get; }
         public ProviderSearchView()
         {
             InitializeComponent();
@@ -24,7 +22,12 @@ namespace KursAM2.View.Finance.Invoices
             Closing += ProviderSearchView_Closing;
         }
 
-        private void ProviderSearchView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        public string LayoutName { set; get; }
+
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
+        public string LayoutManagerName { get; set; }
+
+        private void ProviderSearchView_Closing(object sender, CancelEventArgs e)
         {
             LayoutManager.Save();
         }
@@ -44,7 +47,7 @@ namespace KursAM2.View.Finance.Invoices
                     e.Column.Visible = false;
                     break;
                 case "SF_NOTES":
-                    e.Column.EditSettings = new MemoEditSettings()
+                    e.Column.EditSettings = new MemoEditSettings
                     {
                         ShowIcon = false
                     };
@@ -77,16 +80,8 @@ namespace KursAM2.View.Finance.Invoices
             }
         }
 
-        public LayoutManager.LayoutManager LayoutManager { get; set; }
-        public string LayoutManagerName { get; set; }
-
         private void MenuButton_OnClick(object sender, RoutedEventArgs e)
         {
-            var ctx = DataContext as ProviderWindowViewModel;
-            if (ctx != null)
-            {
-                ctx.IsLoading = true;
-            }
             var menu = sender as Button;
             if (!(menu?.DataContext is MenuButtonInfo d) || d.SubMenu.Count == 0) return;
             d.MenuOpen(this);

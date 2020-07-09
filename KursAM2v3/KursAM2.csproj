@@ -267,6 +267,7 @@
     <Compile Include="ViewModel\Finance\BankCurrencyChangeWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\controls\AddBankOperionUC.cs" />
     <Compile Include="ViewModel\Finance\DistributeNaklad\DistributeNakladInfoViewModel.cs" />
+    <Compile Include="ViewModel\Finance\DistributeNaklad\DistributeNakladInvoiceViewModel.cs" />
     <Compile Include="ViewModel\Finance\DistributeNaklad\DistributeNakladRowViewModel.cs" />
     <Compile Include="ViewModel\Finance\DistributeNaklad\DistributeNakladSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\DistributeNaklad\DistributeNakladViewModel.cs" />

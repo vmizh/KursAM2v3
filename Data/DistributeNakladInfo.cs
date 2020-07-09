@@ -20,6 +20,7 @@ namespace Data
         public decimal InvoiceCrsDC { get; set; }
         public decimal Rate { get; set; }
         public decimal DistributeSumma { get; set; }
+        public Nullable<decimal> NakladSumma { get; set; }
     
         public virtual SD_301 SD_301 { get; set; }
         public virtual DistributeNakladRow DistributeNakladRow { get; set; }

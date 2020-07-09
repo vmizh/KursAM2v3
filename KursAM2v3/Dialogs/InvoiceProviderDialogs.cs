@@ -51,6 +51,8 @@ namespace KursAM2.Dialogs
 
         #region Properties
 
+        public bool IsNakladInvoices { set; get; }
+
         public InvoiceProvider CurrentItem
         {
             set => SetValue(value);
@@ -96,9 +98,18 @@ namespace KursAM2.Dialogs
         public override void Load(object o)
         {
             ItemsCollection.Clear();
-            foreach (var d in invoiceProviderRepository.GetAllForNakladDistribute(Currency,
-                StartDate, EndDate).OrderByDescending(_ => _.SF_POSTAV_DATE))
-                ItemsCollection.Add(d);
+            if (!IsNakladInvoices)
+            {
+                foreach (var d in invoiceProviderRepository.GetAllForNakladDistribute(Currency,
+                    StartDate, EndDate).OrderByDescending(_ => _.SF_POSTAV_DATE))
+                    ItemsCollection.Add(d);
+            }
+            else
+            {
+                foreach (var d in invoiceProviderRepository.GetNakladInvoices(StartDate, EndDate)
+                    .OrderByDescending(_ => _.SF_POSTAV_DATE))
+                    ItemsCollection.Add(d);
+            }
         }
 
         public bool? ShowDialog()

@@ -299,7 +299,8 @@ namespace KursAM2.Managers.Invoices
                                 SF_PEREVOZCHIK_SUM = doc.SF_PEREVOZCHIK_SUM,
                                 SF_AUTO_CREATE = doc.SF_AUTO_CREATE,
                                 Id = guidId,
-                                PersonalResponsibleDC = doc.PersonaResponsible?.DocCode
+                                PersonalResponsibleDC = doc.PersonaResponsible?.DocCode,
+                                IsInvoiceNakald = doc.IsInvoiceNakald
                             });
                             if (doc.Rows.Count > 0)
                             {
@@ -403,6 +404,7 @@ namespace KursAM2.Managers.Invoices
                             old.SF_PEREVOZCHIK_SUM = doc.SF_PEREVOZCHIK_SUM;
                             old.SF_AUTO_CREATE = doc.SF_AUTO_CREATE;
                             old.PersonalResponsibleDC = doc.PersonaResponsible?.DocCode;
+                            old.IsInvoiceNakald = doc.IsInvoiceNakald;
                             foreach (var r in doc.Rows)
                             {
                                 var oldRow = ctx.TD_26.FirstOrDefault(_ =>

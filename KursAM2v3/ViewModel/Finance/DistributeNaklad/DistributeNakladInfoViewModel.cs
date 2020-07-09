@@ -24,7 +24,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 State = RowStatus.NewRow;
             }
             else
-            { 
+            {
+                Entity = entity;
                 // ReSharper disable once VirtualMemberCallInConstructor
                 Id = state == RowStatus.NewRow ? Guid.NewGuid() : Entity.Id;
                 State = state;
@@ -79,8 +80,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Display(AutoGenerateField = true)]
         public decimal NakladSumma
         {
-            get => GetValue<decimal>();
-            set => SetValue(value);
+            get => Entity.NakladSumma ?? 0;
+            set
+            {
+                if (Entity.NakladSumma == value) return;
+                Entity.NakladSumma = value;
+                RaisePropertiesChanged();
+            }
         }
 
         [DisplayName("InvoiceCrsDC")]

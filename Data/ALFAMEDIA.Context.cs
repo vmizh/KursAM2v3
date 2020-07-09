@@ -780,6 +780,7 @@ namespace Data
         public virtual DbSet<DistributeNaklad> DistributeNaklad { get; set; }
         public virtual DbSet<DistributeNakladInfo> DistributeNakladInfo { get; set; }
         public virtual DbSet<DistributeNakladRow> DistributeNakladRow { get; set; }
+        public virtual DbSet<DistributeNakladInvoices> DistributeNakladInvoices { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()
