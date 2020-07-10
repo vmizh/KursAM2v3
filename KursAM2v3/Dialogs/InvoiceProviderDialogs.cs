@@ -114,6 +114,7 @@ namespace KursAM2.Dialogs
 
         public bool? ShowDialog()
         {
+            ItemsCollection.Clear();
             var dsForm = new KursBaseDialog
             {
                 Owner = Application.Current.MainWindow
@@ -125,6 +126,7 @@ namespace KursAM2.Dialogs
 
         public bool? ShowDialog(Currency crs, DateTime? dateStart = null, DateTime? dateEnd = null)
         {
+            ItemsCollection.Clear();
             Currency = crs;
             StartDate = dateStart;
             EndDate = dateEnd;
