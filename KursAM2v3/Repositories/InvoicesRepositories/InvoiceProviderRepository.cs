@@ -258,7 +258,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                     .Include("TD_26.SD_301")
                     .Include("TD_26.SD_303")
                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
-                                                              && (_.IsInvoiceNakald ?? false) == true
+                                                              && (_.IsInvoiceNakald ?? false) 
                                                               && (_.NakladDistributedSumma ?? 0) < _.SF_KONTR_CRS_SUMMA && _.SF_ACCEPTED == 1)
                     .ToList();
 

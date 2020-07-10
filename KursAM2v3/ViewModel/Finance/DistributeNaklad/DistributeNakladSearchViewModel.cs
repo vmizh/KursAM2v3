@@ -148,12 +148,12 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 Owner = Application.Current.MainWindow
             };
-            var dsDataContext = new DistributeNakladViewModel( dsForm, new DocumentOpenType
+            var v = new DistributedNakladView(dsForm, new DocumentOpenType
             {
                 OpenType = DocumentCreateTypeEnum.New
             });
-            dsForm.DataContext = dsDataContext;
-            dsDataContext.Form = dsForm;
+            dsForm.modelViewControl.Content = v;
+            dsForm.DataContext = v.DataContext;
             dsForm.Show();
         }
 
@@ -163,13 +163,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 Owner = Application.Current.MainWindow
             };
-            var dsDataContext = new DistributeNakladViewModel(dsForm, new DocumentOpenType
+            var v = new DistributedNakladView(dsForm, new DocumentOpenType
             {
                 Id = CurrentDocument.Id,
                 OpenType = DocumentCreateTypeEnum.Copy
             });
-            dsForm.DataContext = dsDataContext;
-            dsDataContext.Form = dsForm;
+            dsForm.modelViewControl.Content = v;
+            dsForm.DataContext = v.DataContext;
             dsForm.Show();
         }
 
@@ -199,6 +199,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         public override void Load(object o)
         {
             Documents.Clear();
+            while (!MainReferences.IsReferenceLoadComplete) {}
             foreach (var d in distributeNakladRepository.GetAllByDates(StartDate, EndDate))
                 Documents.Add(new DistributeNakladViewModel(d));
             RaisePropertiesChanged(nameof(Documents));

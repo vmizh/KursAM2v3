@@ -80,6 +80,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Fields
 
+        private readonly WindowManager winManager = new WindowManager();
+
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork
             = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
@@ -539,7 +541,21 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Command]
         public void DeleteNakladInvoice()
         {
-            WindowManager.ShowFunctionNotReleased();
+            if (winManager.ShowWinUIMessageBox("Вы уверены, что хотите удалисть счет накладных?",
+                "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                CurrentNakladInvoice.SummaDistribute = 0;
+                var ids = DistributeAllNaklads.Where(_ => _.InvoiceNakladId == CurrentNakladInvoice.Invoice.Id)
+                    .Select(_ => _.Id).ToList();
+                foreach (var id in ids)
+                {
+                    var o = DistributeAllNaklads.First(_ => _.Id == id);
+                    var r = Tovars.First(_ => _.Id == o.RowId);
+                    r.SummaNaklad -= o.DistributeSumma;
+                    DistributeAllNaklads.Remove(o);
+                }
+                NakladInvoices.Remove(CurrentNakladInvoice);
+            }
         }
 
         public bool CanDeleteNakladInvoice()

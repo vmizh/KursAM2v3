@@ -34,9 +34,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Fields
 
-        private decimal mySumma;
-        private decimal mySummaDistribute;
-
         #endregion
 
         #region Properties
@@ -103,13 +100,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [DisplayName("Сумма накладных")]
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
-        public decimal Summa
+        public decimal? Summa
         {
-            get => mySumma;
+            get => Invoice.SF_KONTR_CRS_SUMMA;
             set
             {
-                if (mySumma == value) return;
-                mySumma = value;
+                if (Invoice.SF_KONTR_CRS_SUMMA == value) return;
+                Invoice.SF_KONTR_CRS_SUMMA = value;
                 RaisePropertiesChanged();
                 RaisePropertiesChanged(nameof(SummaRemain));
             }
@@ -118,13 +115,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [DisplayName("Распределено")]
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
-        public decimal SummaDistribute
+        public decimal? SummaDistribute
         {
-            get => mySummaDistribute;
+            get => Invoice.NakladDistributedSumma;
             set
             {
-                if (mySummaDistribute == value) return;
-                mySummaDistribute = value;
+                if (Invoice.NakladDistributedSumma == value) return;
+                Invoice.NakladDistributedSumma = value;
                 RaisePropertiesChanged();
                 RaisePropertiesChanged(nameof(SummaRemain));
             }
@@ -133,7 +130,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [DisplayName("Остаток")]
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
-        public decimal SummaRemain => Summa - SummaDistribute;
+        public decimal SummaRemain => (Summa ?? 0) - (SummaDistribute ?? 0);
 
         [DisplayName("Валюта")]
         [Display(AutoGenerateField = true)]
