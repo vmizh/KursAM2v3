@@ -8,7 +8,6 @@ using Core;
 using Core.Repository.Base;
 using Core.WindowsManager;
 using Data;
-using DevExpress.Mvvm;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
 
 namespace KursAM2.Repositories
@@ -20,7 +19,6 @@ namespace KursAM2.Repositories
         List<DistributeNaklad> GetAllByDates(DateTime dateStart, DateTime dateEnd);
 
         List<DistributeNakladInvoiceViewModel> GetInvoiceProviders(DistributeNakladViewModel vm);
-        void UpdateProviderInvoices(DistributeNakladViewModel vm);
     }
 
 
@@ -111,14 +109,6 @@ namespace KursAM2.Repositories
                 });
             }
             return ret;
-        }
-
-        public void UpdateProviderInvoices(DistributeNakladViewModel vm)
-        {
-            foreach (var inv in vm.NakladInvoices)
-            {
-                inv.Invoice.NakladDistributedSumma = inv.SummaDistribute;
-            }
         }
 
         public DistributeNaklad CreateNew()
