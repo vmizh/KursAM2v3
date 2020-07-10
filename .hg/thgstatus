@@ -261,7 +261,9 @@ r.vs/KursAM2v3/DesignTimeBuild
 r.vs/KursAM2v3/config
 r.vs/KursAM2v3/v16/Server/sqlite3
 rCore
+mCore/EntityViewModel
 rCore/ViewModel/Common
+mData
 rHelper
 rKursAM2C
 rKursAM2C/App_Start
@@ -1259,13 +1261,17 @@ rKursAM2C/scss/component
 rKursAM2C/scss/page
 rKursAM2v3
 rKursAM2v3/Managers/Invoices
+mKursAM2v3/View
 rKursAM2v3/View/Finance
+mKursAM2v3/View/Finance/Invoices
 rKursAM2v3/View/Logistiks
 rKursAM2v3/ViewModel/Finance
+mKursAM2v3/ViewModel/Finance/Invoices
 rKursAM2v3/ViewModel/Logistiks
 rKursAM2v3/ViewModel/Logistiks/Warehouse
 rKursAM2v3/ViewModel/Management/BreakEven
 rKursAM2v3/ViewModel/Personal
+mKursAM2v3/ViewModel/StartLogin
 rLayoutManager2
 rLayoutManager2/Properties
 rMVC5DevExpressTest
