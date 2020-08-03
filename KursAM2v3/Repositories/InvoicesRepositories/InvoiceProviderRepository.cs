@@ -23,19 +23,17 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         InvoiceProviderRowShort GetInvoiceRow(Guid id);
         InvoiceProviderShort GetInvoiceHead(Guid id);
-        InvoiceProviderDialogs Dialogs { set; get; }
+        //InvoiceProviderDialogs Dialogs { set; get; }
     }
 
     public class InvoiceProviderRepository : GenericKursRepository<InvoiceProvider>, IInvoiceProviderRepository
     {
         public InvoiceProviderRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {
-            Dialogs = new InvoiceProviderDialogs(this);
         }
 
         public InvoiceProviderRepository(ALFAMEDIAEntities context) : base(context)
         {
-            Dialogs = new InvoiceProviderDialogs(this);
         }
 
         public InvoiceProvider GetById(Guid id)
@@ -212,7 +210,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                     .Include("TD_26.SD_301")
                     .Include("TD_26.SD_303")
                     .Where(_ => _.SF_ACCEPTED == 1 && _.IsInvoiceNakald == true 
-                    && _.NakladDistributedSumma < _.SF_KONTR_CRS_SUMMA)
+                    && (_.NakladDistributedSumma ?? 0) < _.SF_KONTR_CRS_SUMMA)
                     .ToList();
 
             if (dateStart == null && dateEnd != null)
@@ -235,7 +233,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                     .Include("TD_26.SD_301")
                     .Include("TD_26.SD_303")
                     .Where(_ => _.SF_POSTAV_DATE <= dateStart && _.IsInvoiceNakald == true
-                                                              && _.NakladDistributedSumma < _.SF_KONTR_CRS_SUMMA
+                                                              && (_.NakladDistributedSumma ?? 0) < _.SF_KONTR_CRS_SUMMA
                                                               && _.SF_ACCEPTED == 1)
                     .ToList();
             if (dateStart != null && dateEnd != null)
@@ -298,6 +296,5 @@ namespace KursAM2.Repositories.InvoicesRepositories
             return new InvoiceProviderShort(item);
         }
 
-        public InvoiceProviderDialogs Dialogs { get; set; }
     }
 }

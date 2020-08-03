@@ -24,6 +24,11 @@ namespace Data
         public System.Guid DocId { get; set; }
         public System.Guid TovarInvoiceRowId { get; set; }
         public string Note { get; set; }
+        public decimal Quantity { get; set; }
+        public decimal Price { get; set; }
+        public decimal Summa { get; set; }
+        public decimal DistributeSumma { get; set; }
+        public decimal DistributePrice { get; set; }
     
         public virtual DistributeNaklad DistributeNaklad { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

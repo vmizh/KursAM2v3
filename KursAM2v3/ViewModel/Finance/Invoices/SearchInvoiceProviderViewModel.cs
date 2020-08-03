@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Windows;
 using Core;
 using Core.EntityViewModel;
@@ -29,15 +28,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
             SelectedDocs = new ObservableCollection<InvoiceProvider>();
             DateEnd = DateTime.Today;
             DateStart = DateEnd.AddDays(-30);
+            
         }
+
         public SearchInvoiceProviderViewModel(Window form) : base(form)
         {
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
-            RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            Documents = new ObservableCollection<InvoiceProvider>();
-            SelectedDocs = new ObservableCollection<InvoiceProvider>();
-            DateEnd = DateTime.Today;
-            DateStart = DateEnd.AddDays(-30);
+            // ReSharper disable once VirtualMemberCallInConstructor
+            Form = form;
         }
 
         public DateTime DateEnd
@@ -84,17 +81,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
-        public bool IsEnabled
-        {
-            get => myIsEnabled;
-            set
-            {
-                if (myIsEnabled == value) return;
-                myIsEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
         public override void RefreshData(object data)
@@ -106,12 +92,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             Documents.Clear();
-            if (IsEnabled)
-                foreach (var d in InvoicesManager.GetInvoicesProvider(DateStart, DateEnd, false))
+            foreach (var d in InvoicesManager.GetInvoicesProvider(DateStart, DateEnd, false))
                     Documents.Add(d);
-            else
-                foreach (var d in InvoicesManager.GetInvoicesProvider(false, false))
-                    Documents.Add(d);
+            
             RaisePropertyChanged(nameof(Documents));
         }
 

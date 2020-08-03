@@ -475,7 +475,7 @@ namespace Core.ViewModel.Base
 
         public virtual void ResetLayout(object form)
         {
-            var layman = form as ILayout;
+            var layman = Form as ILayout;
             layman?.LayoutManager?.ResetLayout();
         }
 

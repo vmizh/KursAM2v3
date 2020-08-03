@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using Core;
 using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
@@ -26,6 +27,8 @@ namespace KursAM2.Dialogs
         {
             ModelView = new StandartDialogSelectWithDateUC(GetType().Name);
             RightMenuBar = MenuGenerator.RefreshOnlyRightBar(this);
+            invoiceProviderRepository = new InvoiceProviderRepository(GlobalOptions.GetEntities());
+
         }
 
         public InvoiceProviderDialogs(IInvoiceProviderRepository repos) : this()

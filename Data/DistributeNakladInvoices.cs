@@ -19,7 +19,12 @@ namespace Data
         public System.Guid InvoiceId { get; set; }
         public short DistributeType { get; set; }
         public string Note { get; set; }
+        public decimal CrsDC { get; set; }
+        public decimal Rate { get; set; }
+        public decimal SummaInvoice { get; set; }
+        public decimal SummaDistribute { get; set; }
     
         public virtual DistributeNaklad DistributeNaklad { get; set; }
+        public virtual SD_301 SD_301 { get; set; }
     }
 }

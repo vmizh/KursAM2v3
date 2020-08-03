@@ -19,6 +19,7 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.POCO;
 using Helper;
+using KursAM2.Dialogs;
 using KursAM2.Repositories;
 using KursAM2.Repositories.InvoicesRepositories;
 
@@ -70,7 +71,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             WindowName = "Распределение накладных расходов";
         }
 
-        public DistributeNakladViewModel(Data.DistributeNaklad entity)
+        public DistributeNakladViewModel(Data.DistributeNaklad entity) : this()
         {
             Entity = entity;
             State = RowStatus.NotEdited;
@@ -481,10 +482,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Command]
         public void AddNomenkl()
         {
-            InvoiceProviderRepository.Dialogs.IsNakladInvoices = false;
-            if (InvoiceProviderRepository.Dialogs.ShowDialog(Currency, DateTime.Today.AddDays(-30),
+            InvoiceProviderDialogs dialogs = new InvoiceProviderDialogs();
+            dialogs.IsNakladInvoices = false;
+            if (dialogs.ShowDialog(Currency, DateTime.Today.AddDays(-30),
                 DateTime.Today) == true)
-                foreach (var d in InvoiceProviderRepository.Dialogs.SelectedItems)
+                foreach (var d in dialogs.SelectedItems)
                 foreach (var r in d.Rows)
                 {
                     if (r.IsUsluga) continue;
@@ -579,10 +581,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Command]
         public void AddNakladInvoice()
         {
-            InvoiceProviderRepository.Dialogs.IsNakladInvoices = true;
-            if (InvoiceProviderRepository.Dialogs.ShowDialog(null, DateTime.Today.AddDays(-30),
-                DateTime.Today) == true)
-                foreach (var d in InvoiceProviderRepository.Dialogs.SelectedItems)
+            InvoiceProviderDialogs dialogs = new InvoiceProviderDialogs {IsNakladInvoices = true};
+            if (dialogs.ShowDialog(null, DateTime.Today.AddDays(-30),
+                    DateTime.Today) == true)
+                foreach (var d in dialogs.SelectedItems)
                     if (NakladInvoices.All(_ => _.Invoice.DOC_CODE != d.DOC_CODE))
                     {
                         var ent = new DistributeNakladInvoices

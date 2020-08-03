@@ -155,6 +155,7 @@
     <Compile Include="EntityViewModel\WarehouseSenderType.cs" />
     <Compile Include="EntityViewModel\Waybill.cs" />
     <Compile Include="EntityViewModel\WaybillRow.cs" />
+    <Compile Include="Finance\CurrencySumma.cs" />
     <Compile Include="Finance\InvoicePaymentDocument.cs" />
     <Compile Include="Helper\KursConvert.cs" />
     <Compile Include="Helper\TypeProfitAndLossCalc.cs" />

@@ -16,7 +16,7 @@ namespace KursAM2.View.Logistiks.UC
         private Currency currentCrs;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private bool IsUsluga;
+        private bool myIsUsluga;
         private NomenklGroup myCurrentGroup;
         private Nomenkl myCurrentNomenkl;
         private Nomenkl myCurrentSelectNomenkl;
@@ -51,6 +51,17 @@ namespace KursAM2.View.Logistiks.UC
                 RaisePropertiesChanged();
             }
             get => myCurrentGroup;
+        }
+
+        public bool IsUsluga
+        {
+            set
+            {
+                if (myIsUsluga == value) return;
+                myIsUsluga = value;
+                RaisePropertiesChanged();
+            }
+            get => myIsUsluga;
         }
         public AddNomenklUC DataUserControl
         {
@@ -109,7 +120,8 @@ namespace KursAM2.View.Logistiks.UC
                         if (IsUsluga)
                         {
                             if (item.NOM_0MATER_1USLUGA == 1)
-                                NomenklItemCollection.Add(new Nomenkl(item));
+                                NomenklItem.Add(new Nomenkl(item));
+                            RaisePropertiesChanged(nameof(NomenklItem));
                         }
                         else
                         {

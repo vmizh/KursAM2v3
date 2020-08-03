@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
@@ -8,57 +7,63 @@ using Core;
 using Core.Repository.Base;
 using Core.WindowsManager;
 using Data;
-using KursAM2.ViewModel.Finance.DistributeNaklad;
+using KursAM2.Repositories.InvoicesRepositories;
 
 namespace KursAM2.Repositories
 {
-    public interface IDistributeNakladRepository : IDocumentWithRowOperations<DistributeNaklad, 
+    public interface IDistributeNakladRepository : IDocumentWithRowOperations<DistributeNaklad,
         DistributeNakladRow>
     {
+        InvoiceProviderRepository InvoiceProviderRepository { set; get; }
         DistributeNaklad GetById(Guid id);
         List<DistributeNaklad> GetAllByDates(DateTime dateStart, DateTime dateEnd);
+        List<DistributeNakladRow> GetTovarFromInvoiceProviders(DistributeNaklad ent);
+        List<DistributeNakladRow> GetTovarFromInvoiceProviders(DistributeNaklad ent, DateTime start, DateTime end);
 
-        List<DistributeNakladInvoiceViewModel> GetInvoiceProviders(DistributeNakladViewModel vm);
+        List<DistributeNakladInvoices> GetDistributeInvoice(DistributeNaklad ent);
+        List<DistributeNakladInvoices> GetDistributeInvoice(DistributeNaklad ent, DateTime start, DateTime end);
+
+        void Delete(DistributeNaklad doc);
+
+        DistributeNakladInvoices CreateNewInvoice(DistributeNaklad doc);
+
+        void DistributeNakladRecalc(DistributeNaklad doc, List<DistributeNakladInvoices> invoices);
     }
 
 
     public class DistributeNakladRepository : GenericKursRepository<DistributeNaklad>, IDistributeNakladRepository
     {
         /// <summary>
-        /// Типы распределения накладных расходов
+        ///     Типы распределения накладных расходов
         /// </summary>
         public enum DistributeNakladTypeEnum
         {
-            [Display(Name = "Нет распределния")]
-            NotDistribute = 0,
+            [Display(Name = "Нет распределния")] NotDistribute = 0,
 
-            [Display(Name = "По цене")]
-            PriceValue = 1,
+            [Display(Name = "По цене")] PriceValue = 1,
 
-            [Display(Name = "По сумме")]
-            SummaValue = 2,
+            [Display(Name = "По сумме")] SummaValue = 2,
 
-            [Display(Name = "По количеству")]
-            QuantityValue = 3,
+            [Display(Name = "По количеству")] QuantityValue = 3,
 
-            [Display(Name = "По объему")]
-            VolumeValue = 4,
+            [Display(Name = "По объему")] VolumeValue = 4,
 
-            [Display(Name = "По весу")]
-            WeightValue = 5,
+            [Display(Name = "По весу")] WeightValue = 5,
 
-            [Display(Name = "Вручную")]
-            ManualValue = 6,
-
+            [Display(Name = "Вручную")] ManualValue = 6
         }
 
         public DistributeNakladRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {
+            InvoiceProviderRepository = new InvoiceProviderRepository(unitOfWork.Context);
         }
 
         public DistributeNakladRepository(ALFAMEDIAEntities context) : base(context)
         {
+            InvoiceProviderRepository = new InvoiceProviderRepository(context);
         }
+
+        public InvoiceProviderRepository InvoiceProviderRepository { get; set; }
 
         public DistributeNaklad GetById(Guid id)
         {
@@ -77,38 +82,194 @@ namespace KursAM2.Repositories
                 .ToList();
         }
 
-        public List<DistributeNakladInvoiceViewModel> GetInvoiceProviders(DistributeNakladViewModel vm)
+        public List<DistributeNakladRow> GetTovarFromInvoiceProviders(DistributeNaklad ent)
         {
-            List<DistributeNakladInvoiceViewModel> ret = new List<DistributeNakladInvoiceViewModel>();
-            var data = Context.SD_26
-                .Include(_ => _.TD_26)
-                .Include("TD_26.SD_83")
-                .Where(_ => _.IsInvoiceNakald == true 
-                            && _.NakladDistributedSumma < _.SF_KONTR_CRS_SUMMA
-                            && _.TD_26.All(s => s.SD_83.NOM_0MATER_1USLUGA == 1)
-                            )
-                .OrderByDescending(_ => _.SF_POSTAV_DATE);
-            foreach (var d in data)
+            var ret = new List<DistributeNakladRow>();
+            var rows = InvoiceProviderRepository.GetAllForNakladDistribute(MainReferences.GetCurrency(ent.CurrencyDC),
+                null, null);
+            foreach (var inv in rows)
+            foreach (var r in inv.Rows)
             {
-                var distrSumma = Context.DistributeNakladInfo
-                    .Where(_ => _.InvoiceNakladId == d.Id).Sum(_ => _.NakladSumma) ?? 0;
-                ret.Add(new DistributeNakladInvoiceViewModel(
-                    Context.DistributeNakladInvoices.Add(new DistributeNakladInvoices
-                    {
-                        DocId = vm.Id,
-                        Id = Guid.NewGuid(),
-                        InvoiceId = d.Id,
-                        DistributeNaklad = vm.Entity,
-                        DistributeType = 0 
-                        
-                    }))
+                if (r.IsUsluga) continue;
+                if (ret.Any(_ => _.TovarInvoiceRowId == r.Id)) continue;
+                ret.Add(new DistributeNakladRow
                 {
-                    Invoice = d,
-                    Summa = d.SF_KONTR_CRS_SUMMA ?? 0,
-                    SummaDistribute = distrSumma,
+                    Id = Guid.NewGuid(),
+                    TovarInvoiceRowId = r.Id,
+                    Note = r.Note
                 });
             }
+
             return ret;
+        }
+
+        public List<DistributeNakladRow> GetTovarFromInvoiceProviders(DistributeNaklad ent, DateTime start,
+            DateTime end)
+        {
+            var ret = new List<DistributeNakladRow>();
+            var rows = InvoiceProviderRepository.GetAllForNakladDistribute(MainReferences.GetCurrency(ent.CurrencyDC),
+                start, end);
+            foreach (var inv in rows)
+            foreach (var r in inv.Rows)
+            {
+                if (r.IsUsluga) continue;
+                if (ret.Any(_ => _.TovarInvoiceRowId == r.Id)) continue;
+                ret.Add(new DistributeNakladRow
+                {
+                    Id = Guid.NewGuid(),
+                    TovarInvoiceRowId = r.Id,
+                    Note = r.Note
+                });
+            }
+
+            return ret;
+        }
+
+        public List<DistributeNakladInvoices> GetDistributeInvoice(DistributeNaklad ent)
+        {
+            var ret = new List<DistributeNakladInvoices>();
+            var rows = InvoiceProviderRepository.GetNakladInvoices(null, null);
+            foreach (var r in rows)
+                ret.Add(new DistributeNakladInvoices
+                {
+                    Id = Guid.NewGuid(),
+                    DocId = ent.Id,
+                    InvoiceId = r.Id,
+                    Note = r.Note,
+                    DistributeType = 0,
+                    DistributeNaklad = ent
+                });
+            return ret;
+        }
+
+        public List<DistributeNakladInvoices> GetDistributeInvoice(DistributeNaklad ent, DateTime start, DateTime end)
+        {
+            var ret = new List<DistributeNakladInvoices>();
+            var rows = InvoiceProviderRepository.GetNakladInvoices(start, end);
+            foreach (var r in rows)
+                ret.Add(new DistributeNakladInvoices
+                {
+                    Id = Guid.NewGuid(),
+                    DocId = ent.Id,
+                    InvoiceId = r.Id,
+                    Note = r.Note,
+                    DistributeType = 0,
+                    DistributeNaklad = ent
+                });
+            return ret;
+        }
+
+        public override void Delete(DistributeNaklad doc)
+        {
+            var rlist = new List<DistributeNakladInfo>();
+            foreach (var r in doc.DistributeNakladRow) rlist.AddRange(r.DistributeNakladInfo);
+            Context.DistributeNakladInfo.RemoveRange(rlist);
+            Context.DistributeNakladRow.RemoveRange(doc.DistributeNakladRow);
+            Context.DistributeNakladInvoices.RemoveRange(doc.DistributeNakladInvoices);
+            Context.DistributeNaklad.Remove(doc);
+        }
+
+        public DistributeNakladInvoices CreateNewInvoice(DistributeNaklad doc)
+        {
+            var newItem = new DistributeNakladInvoices
+            {
+                Id = Guid.NewGuid(),
+                DocId = doc.Id,
+                DistributeType = 0,
+                DistributeNaklad = doc
+            };
+            doc.DistributeNakladInvoices.Add(newItem);
+            return newItem;
+        }
+
+        public void DistributeNakladRecalc(DistributeNaklad doc, List<DistributeNakladInvoices> invoices)
+        {
+            if (doc.DistributeNakladRow.Count == 0) return;
+            foreach (var n in doc.DistributeNakladRow)
+            foreach (var inv in invoices)
+            {
+                var nr = n.DistributeNakladInfo.FirstOrDefault(_ => _.RowId == n.Id
+                                                                    && _.InvoiceNakladId == inv.Id);
+                if (nr != null)
+                {
+                    nr.NakladSumma = 0;
+                    nr.Rate = inv.Rate;
+                    nr.DistributeSumma = 0;
+                }
+                else
+                {
+                    n.DistributeNakladInfo.Add(new DistributeNakladInfo
+                    {
+                        Id = Guid.NewGuid(),
+                        InvoiceNakladId = inv.Id,
+                        DistributeNakladRow = n,
+                        NakladSumma = 0,
+                        DistributeSumma = 0,
+                        InvoiceCrsDC = inv.CrsDC,
+                        Rate = 1,
+                        RowId = n.Id
+                    });
+                }
+            }
+
+            foreach (var invoice in invoices)
+            {
+                decimal allSumma = 0;
+                switch ((DistributeNakladTypeEnum) invoice.DistributeType)
+                {
+                    case DistributeNakladTypeEnum.ManualValue:
+                        break;
+                    case DistributeNakladTypeEnum.NotDistribute:
+                        break;
+                    case DistributeNakladTypeEnum.PriceValue:
+                        allSumma = doc.DistributeNakladRow.Sum(_ => _.Price);
+                        break;
+                    case DistributeNakladTypeEnum.QuantityValue:
+                        allSumma = doc.DistributeNakladRow.Sum(_ => _.Quantity);
+                        break;
+                    case DistributeNakladTypeEnum.SummaValue:
+                        allSumma = doc.DistributeNakladRow.Sum(_ => _.Price * _.Quantity);
+                        break;
+                    case DistributeNakladTypeEnum.VolumeValue:
+                        allSumma = 0;
+                        break;
+                    case DistributeNakladTypeEnum.WeightValue:
+                        allSumma = 0;
+                        break;
+                }
+
+                foreach (var r in doc.DistributeNakladRow)
+                {
+                    var nprow = r.DistributeNakladInfo.FirstOrDefault(_ => _.InvoiceNakladId == invoice.Id);
+                    if (nprow == null) continue;
+
+                    switch ((DistributeNakladTypeEnum) invoice.DistributeType)
+                    {
+                        case DistributeNakladTypeEnum.ManualValue:
+                            break;
+                        case DistributeNakladTypeEnum.NotDistribute:
+                            break;
+                        case DistributeNakladTypeEnum.PriceValue:
+                            nprow.NakladSumma = r.Price * (invoice.SummaInvoice - invoice.SummaDistribute) / allSumma;
+                            break;
+                        case DistributeNakladTypeEnum.QuantityValue:
+                            nprow.NakladSumma =
+                                r.Quantity * (invoice.SummaInvoice - invoice.SummaDistribute) / allSumma;
+                            break;
+                        case DistributeNakladTypeEnum.SummaValue:
+                            nprow.NakladSumma = r.Quantity * r.Price *
+                                (invoice.SummaInvoice - invoice.SummaDistribute) / allSumma;
+                            break;
+                        case DistributeNakladTypeEnum.VolumeValue:
+                            break;
+                        case DistributeNakladTypeEnum.WeightValue:
+                            break;
+                    }
+
+                    // ReSharper disable once PossibleInvalidOperationException
+                    nprow.DistributeSumma = (decimal) nprow.NakladSumma * invoice.Rate;
+                }
+            }
         }
 
         public DistributeNaklad CreateNew()
@@ -182,7 +343,9 @@ namespace KursAM2.Repositories
         {
             var newItem = new DistributeNakladRow
             {
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                DocId = head.Id,
+                DistributeNaklad = head
             };
             head.DistributeNakladRow.Add(newItem);
             return newItem;
