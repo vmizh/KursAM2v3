@@ -67,6 +67,17 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
+        public override Guid Id
+        {
+            get => Entity.Id;
+            set
+            {
+                if (Entity.Id == value) return;
+                Entity.Id = value;
+                RaisePropertyChanged();
+            }
+        }
         public string SFT_TEXT
         {
             get => Entity.SFT_TEXT;

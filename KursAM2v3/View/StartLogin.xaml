@@ -5,6 +5,7 @@
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:splashWindow="clr-namespace:KursAM2.View.SplashWindow"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
              x:Class="KursAM2.View.StartLogin"
              Title="Вход в КурсАМ2"
              Icon="pack://siteoforigin:,,,/Images/User1.png" 
@@ -124,65 +125,27 @@
                     <TextBlock Text="Войти" FontSize="20" Foreground="#5f5f5f" />
                 </Button>
             </dxlc:LayoutItem>
-            <dxlc:LayoutItem HorizontalAlignment="Center" Margin="0 20 0 0">
-                <Label Content="Забыли пароль? Обратитесь к администратору." Foreground="#a0a0a0" />
-            </dxlc:LayoutItem>
-            <dxlc:LayoutItem Label="Цветовая тема" 
-                             FontSize="16" 
-                             Foreground="#5f5f5f" 
-                             Margin="50 0 50 5"/>
             <dxlc:LayoutItem FontSize="16" 
                              Foreground="#5f5f5f" 
                              Margin="50 0 50 5">
-                <dxe:ComboBoxEdit x:Name="themeSources"
-                                  Height="35" 
-                                  EditValueChanged="ThemeSources_OnEditValueChanged"
-                                  IsEnabled="{Binding IsThemeAllow}"
-                                  >
-                    <dxe:ComboBoxEdit.Items>
-                    <dxe:ComboBoxEditItem Content="MetropolisLight"/>
-                    <dxe:ComboBoxEditItem Content="MetropolisDark"/>
-                        <dxe:ComboBoxEditItem Content="Office2019Black"/>
-                        <dxe:ComboBoxEditItem Content="Office2019Colorful"/>
-                        <dxe:ComboBoxEditItem Content="Office2019DarkGray"/>
-                        <dxe:ComboBoxEditItem Content="Office2019White"/>
-                        <dxe:ComboBoxEditItem Content="Office2019HighContrast"/>
-                        <dxe:ComboBoxEditItem Content="VS2019Blue"/>
-                        <dxe:ComboBoxEditItem Content="VS2019Dark"/>
-                        <dxe:ComboBoxEditItem Content="VS2019Light"/>
-                        <dxe:ComboBoxEditItem Content="VS2017Blue"/>
-                        <dxe:ComboBoxEditItem Content="VS2017Dark"/>
-                        <dxe:ComboBoxEditItem Content="VS2017Light"/>
-                        <dxe:ComboBoxEditItem Content="Office2016WhiteSE"/>
-                        <dxe:ComboBoxEditItem Content="Office2016BlackSE"/>
-                        <dxe:ComboBoxEditItem Content="Office2016ColorfulSE"/>
-                        <dxe:ComboBoxEditItem Content="Office2016DarkGraySE"/>
-                        <dxe:ComboBoxEditItem Content="Office2016White"/>
-                        <dxe:ComboBoxEditItem Content="Office2016Black"/>
-                        <dxe:ComboBoxEditItem Content="Office2016Colorful"/>
-                        <dxe:ComboBoxEditItem Content="Office2013"/>
-                        <dxe:ComboBoxEditItem Content="Office2013DarkGray"/>
-                        <dxe:ComboBoxEditItem Content="Office2013LightGray"/>
-                        <dxe:ComboBoxEditItem Content="Office2010Black"/>
-                        <dxe:ComboBoxEditItem Content="Office2010Blue"/>
-                        <dxe:ComboBoxEditItem Content="Office2010Silver"/>
-                        <dxe:ComboBoxEditItem Content="Office2007Black"/>
-                        <dxe:ComboBoxEditItem Content="Office2007Blue"/>
-                        <dxe:ComboBoxEditItem Content="Office2007Silver"/>
-                        <dxe:ComboBoxEditItem Content="TouchlineDark"/>
-                        <dxe:ComboBoxEditItem Content="DeepBlue"/>
-                        <dxe:ComboBoxEditItem Content="DXStyle"/>
-                        <dxe:ComboBoxEditItem Content="LightGray"/>
-                        <dxe:ComboBoxEditItem Content="Seven"/>
-                        <dxe:ComboBoxEditItem Content="VS2010"/>
-                    </dxe:ComboBoxEdit.Items>
-                </dxe:ComboBoxEdit>
+                <dxb:MainMenuControl DockPanel.Dock="Top">
+                    <dxb:MainMenuControl.Items>
+                        <dxb:BarSplitButtonItem Content="Цветовая тема">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxb:BarSplitItemThemeSelectorBehavior Changed="BarSplitItemThemeSelectorBehavior_Changed" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxb:BarSplitButtonItem>
+                    </dxb:MainMenuControl.Items>
+                </dxb:MainMenuControl>
             </dxlc:LayoutItem>
             <dxlc:LayoutItem Margin="0 10 0 0">
                 <Label Name="version" Content="{Binding VersionValue}" 
                        Foreground="#a0a0a0" 
                        HorizontalAlignment="Left"
                        VerticalAlignment="Bottom" />
+            </dxlc:LayoutItem>
+            <dxlc:LayoutItem HorizontalAlignment="Center" Margin="0 20 0 0">
+                <Label Content="Забыли пароль? Обратитесь к администратору." Foreground="#a0a0a0" />
             </dxlc:LayoutItem>
         </dxlc:LayoutGroup>
     </dxlc:LayoutControl>

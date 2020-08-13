@@ -16,6 +16,7 @@ using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
 using DevExpress.Mvvm;
+using DevExpress.Xpf.Core;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Splash;
@@ -448,7 +449,8 @@ namespace KursAM2.ViewModel.StartLogin
                         view.AvatarObj.Source = user.Avatar != null
                             ? ImageManager.ByteToImageSource(user.Avatar)
                             : new BitmapImage(new Uri("./../Images/businessman.png", UriKind.Relative));
-                        view.themeSources.SelectedItem = user.ThemeName;
+                        ApplicationThemeHelper.ApplicationThemeName = user.ThemeName;
+                        ApplicationThemeHelper.UpdateApplicationThemeName();
                     }
                 }
             }

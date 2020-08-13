@@ -73,7 +73,7 @@ namespace KursAM2.View
                 {
                     var user = ctx.Users.FirstOrDefault(_ => _.Name == userNameText.Text);
                     if (user == null) return;
-                    user.ThemeName = (string) themeSources.EditValue;
+                    user.ThemeName = ApplicationThemeHelper.ApplicationThemeName;
                     ctx.SaveChanges();
                 }
             }
@@ -88,6 +88,26 @@ namespace KursAM2.View
         private void dataSources_EditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             dtx.SelectedDataSource = e.NewValue as DataSource;
+        }
+
+        private void BarSplitItemThemeSelectorBehavior_Changed(object sender, EventArgs e)
+        {
+            try
+            {
+                using (var ctx = GlobalOptions.KursSystem())
+                {
+                    var user = ctx.Users.FirstOrDefault(_ => _.Name == userNameText.Text);
+                    if (user == null) return;
+                    user.ThemeName = ApplicationThemeHelper.ApplicationThemeName;
+                    ctx.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                var errText = new StringBuilder(ex.Message);
+                while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
+                MessageBox.Show("KursSystem error.\n" + errText);
+            }
         }
     }
 }

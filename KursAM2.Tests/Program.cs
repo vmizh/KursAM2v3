@@ -1,8 +1,9 @@
 ﻿namespace KursAM2.Tests
 {
-    public class Program
+    internal static class Program
     {
-        public static void Main(string[] args)
+        // ReSharper disable once UnusedParameter.Local
+        private static void Main(string[] args)
         {
         }
     }

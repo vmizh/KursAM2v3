@@ -31,7 +31,8 @@
 
                 <dxlc:LayoutGroup Orientation="Vertical" Name="Group4" dxlc:LayoutControl.AllowVerticalSizing="True">
                     <dxlc:LayoutGroup Orientation="Horizontal" x:Name="Group1"
-                                      dxlc:LayoutControl.AllowHorizontalSizing="True">
+                                      dxlc:LayoutControl.AllowHorizontalSizing="True"
+                                      >
                         <dxg:TreeListControl
                             Name="treeListPermissionStruct"
                             AutoGenerateColumns="AddNew"
@@ -45,7 +46,8 @@
                             dxg:DataControlSerializationOptions.AddNewColumns="False"
                             dxg:DataControlSerializationOptions.RemoveOldColumns="False"
                             CurrentItem="{Binding CurrentGroup}"
-                            ItemsSource="{Binding NomenklGroup}">
+                            ItemsSource="{Binding NomenklGroup}"
+                            IsEnabled="{Binding IsUsluga, UpdateSourceTrigger=LostFocus}">
                             <dxg:TreeListControl.View>
                                 <dxg:TreeListView ShowTotalSummary="False"
                                                   Name="treeListPermissionStructView"
