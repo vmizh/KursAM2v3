@@ -1431,10 +1431,6 @@ namespace Core.EntityViewModel
         #endregion
     }
 
-    public class NomenklMoveWithPriceNakopit : NomenklMoveWithPrice
-    {
-    }
-
     public class DataAnnotationsNomenklViewModel : DataAnnotationForFluentApiBase, IMetadataProvider<Nomenkl>
     {
         void IMetadataProvider<Nomenkl>.BuildMetadata(MetadataBuilder<Nomenkl> builder)

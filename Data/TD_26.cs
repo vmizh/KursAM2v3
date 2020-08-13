@@ -65,6 +65,14 @@ namespace Data
         public Nullable<System.Guid> SchetRowNakladRashodId { get; set; }
         public Nullable<decimal> SchetRowNakladSumma { get; set; }
         public Nullable<decimal> SchetRowNakladRate { get; set; }
+        public Nullable<decimal> RUBRate { get; set; }
+        public Nullable<decimal> RUBSumma { get; set; }
+        public Nullable<decimal> USDRate { get; set; }
+        public Nullable<decimal> USDSumma { get; set; }
+        public Nullable<decimal> EURRate { get; set; }
+        public Nullable<decimal> EURSumma { get; set; }
+        public Nullable<decimal> GBPRate { get; set; }
+        public Nullable<decimal> GBPSumma { get; set; }
     
         public virtual SD_165 SD_165 { get; set; }
         public virtual SD_175 SD_175 { get; set; }

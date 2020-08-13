@@ -113,6 +113,7 @@ namespace Data
             this.SD_114 = new HashSet<SD_114>();
             this.DistributeNaklad = new HashSet<DistributeNaklad>();
             this.DistributeNakladInfo = new HashSet<DistributeNakladInfo>();
+            this.DistributeNakladInvoices = new HashSet<DistributeNakladInvoices>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -319,5 +320,7 @@ namespace Data
         public virtual ICollection<DistributeNaklad> DistributeNaklad { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DistributeNakladInfo> DistributeNakladInfo { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DistributeNakladInvoices> DistributeNakladInvoices { get; set; }
     }
 }
