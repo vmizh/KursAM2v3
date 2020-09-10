@@ -143,10 +143,28 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         [DisplayName("Сумма накладных")]
         [Display(AutoGenerateField = true)]
-        public decimal SummaNaklad
+        public decimal DistributeSumma
         {
-            get => GetValue<decimal>();
-            set => SetValue(value, () => SetChangeStatus());
+            get => Entity.DistributeSumma;
+            set
+            {
+                if (Entity.DistributeSumma == value) return;
+                Entity.DistributeSumma = value;
+                SetChangeStatus();
+            }
+        }
+
+        [DisplayName("Цена с накладными")]
+        [Display(AutoGenerateField = true)]
+        public decimal DistributePrice
+        {
+            get => Entity.DistributePrice;
+            set
+            {
+                if (Entity.DistributePrice == value) return;
+                Entity.DistributePrice = value;
+                SetChangeStatus();
+            }
         }
 
 

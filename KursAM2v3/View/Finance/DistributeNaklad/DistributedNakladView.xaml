@@ -220,6 +220,7 @@
                 </dxlc:LayoutGroup>
                 <dxlc:LayoutGroup Header="Распределение по счетам (информация)"
                                   x:Name="layoutDistribNaklad"
+                                  Visibility="Hidden"
                               dx:DXSerializer.SerializationID="layoutDistribNaklad"
                               dx:DXSerializer.StoreLayoutMode="All">
                     <dxlc:LayoutGroup Orientation="Vertical"

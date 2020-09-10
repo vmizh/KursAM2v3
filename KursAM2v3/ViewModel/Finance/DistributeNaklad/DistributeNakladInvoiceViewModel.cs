@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Core;
+using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.Repositories;
@@ -136,7 +137,31 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
         // ReSharper disable once PossibleInvalidOperationException
-        public string Currency => Invoice != null ? MainReferences.Currencies[Invoice.SF_CRS_DC.Value].Name : null;
+        public Currency Currency
+        {
+            get => MainReferences.GetCurrency(Entity.CrsDC);
+            set
+            {
+                if (value == null) return;
+                if (Entity.CrsDC == value.DocCode) return;
+                Entity.CrsDC = value.DocCode;
+                RaisePropertiesChanged();
+            }
+        }
+
+        [DisplayName("Курс")]
+        [Display(AutoGenerateField = true)]
+        // ReSharper disable once PossibleInvalidOperationException
+        public decimal Rate
+        {
+            get => Entity.Rate;
+            set
+            {
+                if (Entity.Rate == value) return;
+                Entity.Rate = value;
+                RaisePropertiesChanged();
+            }
+        }
 
         #endregion
     }

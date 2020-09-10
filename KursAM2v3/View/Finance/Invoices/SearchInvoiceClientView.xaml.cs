@@ -5,6 +5,7 @@ using System.Windows.Input;
 using DevExpress.Xpf.Grid;
 using LayoutManager;
 
+
 namespace KursAM2.View.Finance.Invoices
 {
     /// <summary>

@@ -80,6 +80,17 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
+        public bool IsCurrencyTransfer
+        {
+            get => Entity.IsCurrencyTransfer ?? false;
+            set
+            {
+                if (Entity.IsCurrencyTransfer == value) return;
+                Entity.IsCurrencyTransfer = value;
+                RaisePropertyChanged();
+            }
+        }
         public bool IsUsluga
         {
             get => Entity.IsUsluga;

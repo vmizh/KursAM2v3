@@ -18,6 +18,8 @@ namespace Data
         public SD_303()
         {
             this.ND_303 = new HashSet<ND_303>();
+            this.OffBalanceSheetInRow = new HashSet<OffBalanceSheetInRow>();
+            this.OffBalanceSheetOutRow = new HashSet<OffBalanceSheetOutRow>();
             this.SD_117 = new HashSet<SD_117>();
             this.SD_120 = new HashSet<SD_120>();
             this.SD_122 = new HashSet<SD_122>();
@@ -63,8 +65,6 @@ namespace Data
             this.EXT_ANALS = new HashSet<EXT_ANALS>();
             this.TYPES = new HashSet<TYPES>();
             this.SD_201 = new HashSet<SD_201>();
-            this.OffBalanceSheetInRow = new HashSet<OffBalanceSheetInRow>();
-            this.OffBalanceSheetOutRow = new HashSet<OffBalanceSheetOutRow>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -83,6 +83,10 @@ namespace Data
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ND_303> ND_303 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OffBalanceSheetInRow> OffBalanceSheetInRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OffBalanceSheetOutRow> OffBalanceSheetOutRow { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_117> SD_117 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -175,9 +179,5 @@ namespace Data
         public virtual ICollection<TYPES> TYPES { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_201> SD_201 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OffBalanceSheetInRow> OffBalanceSheetInRow { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OffBalanceSheetOutRow> OffBalanceSheetOutRow { get; set; }
     }
 }

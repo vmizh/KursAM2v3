@@ -22,6 +22,7 @@ namespace Data
             this.TD_24_2 = new HashSet<TD_24_2>();
             this.TD_800 = new HashSet<TD_800>();
             this.UD_800 = new HashSet<UD_800>();
+            this.TD_26_CurrencyConvert = new HashSet<TD_26_CurrencyConvert>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -94,5 +95,7 @@ namespace Data
         public virtual ICollection<TD_800> TD_800 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UD_800> UD_800 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TD_26_CurrencyConvert> TD_26_CurrencyConvert { get; set; }
     }
 }

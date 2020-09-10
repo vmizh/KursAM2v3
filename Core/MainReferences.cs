@@ -15,6 +15,8 @@ using Helper;
 
 namespace Core
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
     public class MainReferences
     {
         private static bool myIsNomComplete;
@@ -132,6 +134,23 @@ namespace Core
                 return null;
             }
             return ALLNomenkls[dc];
+        }
+
+        public static Nomenkl GetNomenkl(Guid id)
+        {
+            var n = ALLNomenkls.Values.FirstOrDefault(_ => _.Id == id);
+            if (n != null)
+            {
+                return n;
+            }
+
+            LoadNomenkl(id);
+            if (ALLNomenkls.Values.All(_ => _.Id != id))
+            {
+                WindowManager.ShowMessage($"Номенклатура с кодом {id} отсутствует.", "Ошибка", MessageBoxImage.Error);
+                return null;
+            }
+            return null;
         }
 
         public static Nomenkl GetNomenkl(decimal? dc)
@@ -696,8 +715,9 @@ namespace Core
             {
                 var sql = " SELECT SD_83.DOC_CODE as DOC_CODE, NOM_NAME, NOM_NOMENKL, NOM_CATEG_DC, " +
                           " SD_175.DOC_CODE as UNIT_DC, SD_175.ED_IZM_NAME AS UNIT_NAME, SD_175.ED_IZM_OKEI_CODE as UNIT_CODE, " +
-                          " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
-                          " isnull(sd_83.NOM_PRODUCT_DC,0) as NOM_PRODUCT_DC " +
+                          " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, SD_83.Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
+                          " isnull(sd_83.NOM_PRODUCT_DC,0) as NOM_PRODUCT_DC, " +
+                          " ISNULL(IsCurrencyTransfer,0) as IsCurrencyTransfer " +
                           " FROM SD_83 " +
                           " INNER JOIN SD_175 ON SD_175.DOC_CODE = SD_83.NOM_ED_IZM_DC " +
                           $" and SD_83.UpdateDate > '{CustomFormat.DateWithTimeToString(NomenklLastUpdate)}'";
@@ -717,6 +737,7 @@ namespace Core
                         n.NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA;
                         n.NOM_CATEG_DC = d.NOM_CATEG_DC;
                         n.NOM_PRODUCT_DC = d.NOM_PRODUCT_DC;
+                        n.IsCurrencyTransfer = d.IsCurrencyTransfer;
                     }
                     else
                     {
@@ -733,7 +754,8 @@ namespace Core
                                 UpdateDate = d.UpdateDate,
                                 NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
                                 NOM_CATEG_DC = d.NOM_CATEG_DC,
-                                NOM_PRODUCT_DC = d.NOM_PRODUCT_DC
+                                NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
+                                IsCurrencyTransfer = d.IsCurrencyTransfer
                             },
                             Unit = Units[d.UNIT_DC],
                             Currency = Currencies[d.NOM_SALE_CRS_DC],
@@ -751,13 +773,18 @@ namespace Core
                 var data = ent.Database.SqlQuery<NomenklShort>(
                     " SELECT SD_83.DOC_CODE as DOC_CODE, NOM_NAME, NOM_NOMENKL, NOM_CATEG_DC, " +
                     " SD_175.DOC_CODE as UNIT_DC, SD_175.ED_IZM_NAME AS UNIT_NAME, SD_175.ED_IZM_OKEI_CODE as UNIT_CODE, " +
-                    " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
-                    " isnull(sd_83.NOM_PRODUCT_DC,0) as NOM_PRODUCT_DC, isnull(sd_83.IsUslugaInRent,0) as IsRentabelnost " +
+                    " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, SD_83.Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
+                    " isnull(sd_83.NOM_PRODUCT_DC,0) as NOM_PRODUCT_DC, isnull(sd_83.IsUslugaInRent,0) as IsRentabelnost, " +
+                    " ISNULL(IsCurrencyTransfer,0) as IsCurrencyTransfer " +
                     " FROM SD_83 " +
                     " INNER JOIN SD_175 ON SD_175.DOC_CODE = SD_83.NOM_ED_IZM_DC " +
                     " and SD_83.DOC_CODE = '" + CustomFormat.DecimalToSqlDecimal(dc) + "'").ToList();
                 if (data.Count == 0) return;
                 var d = data[0];
+                if (ALLNomenkls.ContainsKey(d.DOC_CODE))
+                {
+                    ALLNomenkls.Remove(d.DOC_CODE);
+                }
                 ALLNomenkls.Add(d.DOC_CODE, new Nomenkl
                 {
                     Entity = new SD_83
@@ -772,7 +799,51 @@ namespace Core
                         NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
                         NOM_CATEG_DC = d.NOM_CATEG_DC,
                         NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
-                        IsUslugaInRent = d.IsRentabelnost
+                        IsUslugaInRent = d.IsRentabelnost,
+                        IsCurrencyTransfer = d.IsCurrencyTransfer
+                    },
+                    Unit = Units[d.UNIT_DC],
+                    Currency = Currencies[d.NOM_SALE_CRS_DC],
+                    Group = NomenklGroups[d.NOM_CATEG_DC]
+                });
+            }
+        }
+
+        public static void LoadNomenkl(Guid id)
+        {
+            using (var ent = GlobalOptions.GetEntities())
+            {
+                var data = ent.Database.SqlQuery<NomenklShort>(
+                    " SELECT SD_83.DOC_CODE as DOC_CODE, NOM_NAME, NOM_NOMENKL, NOM_CATEG_DC, " +
+                    " SD_175.DOC_CODE as UNIT_DC, SD_175.ED_IZM_NAME AS UNIT_NAME, SD_175.ED_IZM_OKEI_CODE as UNIT_CODE, " +
+                    " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, SD_83.Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
+                    " isnull(sd_83.NOM_PRODUCT_DC,0) as NOM_PRODUCT_DC, isnull(sd_83.IsUslugaInRent,0) as IsRentabelnost, " +
+                    " ISNULL(IsCurrencyTransfer,0) as IsCurrencyTransfer " +
+                    " FROM SD_83 " +
+                    " INNER JOIN SD_175 ON SD_175.DOC_CODE = SD_83.NOM_ED_IZM_DC " +
+                    $" and SD_83.Id = '{id}'").ToList();
+                if (data.Count == 0) return;
+                var d = data[0];
+                if (ALLNomenkls.ContainsKey(d.DOC_CODE))
+                {
+                    ALLNomenkls.Remove(d.DOC_CODE);
+                }
+                ALLNomenkls.Add(d.DOC_CODE, new Nomenkl
+                {
+                    Entity = new SD_83
+                    {
+                        DOC_CODE = d.DOC_CODE,
+                        NOM_NAME = d.NOM_NAME,
+                        NOM_NOMENKL = d.NOM_NOMENKL,
+                        NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
+                        Id = d.Id,
+                        MainId = d.MainId,
+                        UpdateDate = d.UpdateDate,
+                        NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
+                        NOM_CATEG_DC = d.NOM_CATEG_DC,
+                        NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
+                        IsUslugaInRent = d.IsRentabelnost,
+                        IsCurrencyTransfer = d.IsCurrencyTransfer
                     },
                     Unit = Units[d.UNIT_DC],
                     Currency = Currencies[d.NOM_SALE_CRS_DC],
@@ -791,8 +862,9 @@ namespace Core
                     var data = ent.Database.SqlQuery<NomenklShort>(
                             " SELECT SD_83.DOC_CODE as DOC_CODE, NOM_NAME, NOM_NOMENKL, NOM_CATEG_DC, " +
                             " SD_175.DOC_CODE as UNIT_DC, SD_175.ED_IZM_NAME AS UNIT_NAME, SD_175.ED_IZM_OKEI_CODE as UNIT_CODE, " +
-                            " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
-                            " sd_83.NOM_PRODUCT_DC as NOM_PRODUCT_DC " +
+                            " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, SD_83.Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
+                            " sd_83.NOM_PRODUCT_DC as NOM_PRODUCT_DC, " +
+                            " ISNULL(IsCurrencyTransfer,0) as IsCurrencyTransfer " +
                             " FROM SD_83 " +
                             " INNER JOIN SD_175 ON SD_175.DOC_CODE = SD_83.NOM_ED_IZM_DC " +
                             " and isnull(UpdateDate,getdate()) > '" + CustomFormat.DateToString(NomenklLastUpdate) +
@@ -812,7 +884,8 @@ namespace Core
                                 UpdateDate = d.UpdateDate,
                                 NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
                                 NOM_CATEG_DC = d.NOM_CATEG_DC,
-                                NOM_PRODUCT_DC = d.NOM_PRODUCT_DC
+                                NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
+                                IsCurrencyTransfer = d.IsCurrencyTransfer
                             },
                             Unit = Units[d.UNIT_DC],
                             Currency = Currencies[d.NOM_SALE_CRS_DC],
@@ -1080,6 +1153,8 @@ namespace Core
         public decimal NOM_CATEG_DC { set; get; }
         public decimal NOM_PRODUCT_DC { set; get; }
         public bool IsRentabelnost { set; get; }
+
+        public bool IsCurrencyTransfer { set; get; }
         // ReSharper restore UnusedAutoPropertyAccessor.Global
         // ReSharper restore InconsistentNaming
     }

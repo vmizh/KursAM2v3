@@ -17,6 +17,7 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public NomenklMain()
         {
+            this.NomenklMainRemains = new HashSet<NomenklMainRemains>();
             this.SD_83 = new HashSet<SD_83>();
         }
     
@@ -35,12 +36,15 @@ namespace Data
         public Nullable<bool> IsDelete { get; set; }
         public decimal ProductDC { get; set; }
         public Nullable<bool> IsRentabelnost { get; set; }
+        public Nullable<bool> IsCurrencyTransfer { get; set; }
     
         public virtual Countries Countries { get; set; }
         public virtual SD_50 SD_50 { get; set; }
         public virtual SD_119 SD_119 { get; set; }
         public virtual SD_175 SD_175 { get; set; }
         public virtual SD_82 SD_82 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<NomenklMainRemains> NomenklMainRemains { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_83> SD_83 { get; set; }
     }

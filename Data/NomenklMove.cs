@@ -16,6 +16,7 @@ namespace Data
     {
         public decimal NomDC { get; set; }
         public System.DateTime Date { get; set; }
+        public Nullable<decimal> Start { get; set; }
         public Nullable<decimal> Prihod { get; set; }
         public Nullable<decimal> Rashod { get; set; }
         public Nullable<decimal> Nakopit { get; set; }
@@ -25,6 +26,5 @@ namespace Data
         public Nullable<decimal> SummaNakladOut { get; set; }
         public decimal Price { get; set; }
         public decimal PriceWithNaklad { get; set; }
-        public Nullable<decimal> Start { get; set; }
     }
 }

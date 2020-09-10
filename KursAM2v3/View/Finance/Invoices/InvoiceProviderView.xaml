@@ -8,6 +8,7 @@
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              mc:Ignorable="d"
              Title="{Binding WindowName}" MinHeight="450" MinWidth="800">
     <Grid Background="White">
@@ -82,7 +83,7 @@
                                         <MenuItem Header="Удалить номенклатуру" Command="{Binding DeleteRowCommand}" />
                                         <Separator/>
                                         <MenuItem Header="Добавить из договора" Command="{Binding AddFromDogovorCommand}" />
-                                        <Separator/>
+                                        <!--<Separator/>
                                         <MenuItem Header="Накладные расходы">
                                             <MenuItem Header="По стоимости" Command="{Binding SetTypeNakladCommand}" CommandParameter="0"/>
                                             <MenuItem Header="По цене за единицу"  Command="{Binding SetTypeNakladCommand}" CommandParameter="1"/>
@@ -91,9 +92,13 @@
                                             <MenuItem Header="По объему"  Command="{Binding SetTypeNakladCommand}" CommandParameter="4"/>
                                             <MenuItem Header="По стоимости" Command="{Binding SetTypeNakladCommand}" CommandParameter="5"/>
                                             <MenuItem Header="В ручную" Command="{Binding SetTypeNakladCommand}" CommandParameter="6"/>
+                                        </MenuItem>-->
+                                        <MenuItem Header="Валютная таксировка">
+                                            <MenuItem Header="Добавить таксировку" Command="{Binding AddNomenklCrsConvertCommand}" />
+                                            <MenuItem Header="Удалить таксировку" Command="{Binding DeleteNomenklCrsConvertCommand}" />
                                         </MenuItem>
                                         <Separator />
-                                        <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                                <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                                   CommandParameter="{Binding Path=PlacementTarget, 
                            RelativeSource={RelativeSource Mode=FindAncestor,
                                             AncestorType={x:Type ContextMenu}}}">
@@ -115,6 +120,32 @@
                                 </dxmvvm:Interaction.Behaviors>
                             </dxg:TableView>
                         </dxg:GridControl.View>
+                        <dxg:GridControl.DetailDescriptor>
+                                    <dxg:DataControlDetailDescriptor ShowHeader="False" 
+                                                                     ItemsSourceBinding="{Binding CurrencyConvertRows}">
+                                        <dxg:GridControl
+                                            AutoGenerateColumns="AddNew"
+                                            EnableSmartColumnsGeneration="True"
+                                            HorizontalAlignment="Stretch" 
+                                            VerticalAlignment="Stretch"
+                                            MaxHeight="10000"
+                                            MaxWidth="10000"
+                                            dx:DXSerializer.SerializationID="gridDetailRows"
+                                            dx:DXSerializer.StoreLayoutMode="All"
+                                            dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                            dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                            CurrentItem="{Binding CurrentCrsConvertItem}"
+                                            >
+                                            <dxg:GridControl.View>
+                                                <dxg:TableView VerticalScrollbarVisibility="Auto" 
+                                                               NavigationStyle="Row" 
+                                                               DetailHeaderContent="С/ф" 
+                                                               ShowFixedTotalSummary="True" CellValueChanged="TableView_CellValueChanged">
+                                                </dxg:TableView>
+                                            </dxg:GridControl.View>
+                                        </dxg:GridControl>
+                                    </dxg:DataControlDetailDescriptor>
+                                </dxg:GridControl.DetailDescriptor>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>
                 <dxlc:LayoutGroup Header="Фактурирование"

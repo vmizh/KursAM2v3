@@ -66,6 +66,8 @@ namespace KursAM2.ViewModel.Finance.controls
                 State = isNew ? RowStatus.NewRow : RowStatus.NotEdited
             };
         }
+        // ReSharper disable once InconsistentNaming
+        public List<SDRSchet> SHPZList => MainReferences.SDRSchets.Values.ToList();
 
         public BankAccount BankAccount
         {

@@ -611,6 +611,15 @@
     <Compile Include="NomenklMain.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="NomenklMainRemainMoney.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="NomenklMainRemainMoneyRates.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="NomenklMainRemains.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="NomenklMove.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -1630,6 +1639,9 @@
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="TD_266.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TD_26_CurrencyConvert.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="TD_27.cs">

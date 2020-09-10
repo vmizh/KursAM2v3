@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using Core.ViewModel.Base;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -10,7 +11,7 @@ namespace KursAM2.View.DialogUserControl
     /// <summary>
     ///     Interaction logic for StandartDialogSelectUC.xaml
     /// </summary>
-    public partial class StandartDialogSelectWithDateUC : IDataUserControl, ILayout
+    public partial class StandartDialogSelectWithDateUC : UserControl,IDataUserControl, ILayout
     {
         public StandartDialogSelectWithDateUC(string layoutName)
         {

@@ -25,6 +25,8 @@ namespace KursAM2.Repositories
 
         void Delete(DistributeNaklad doc);
 
+        void UpdateSFNaklad(DistributeNaklad doc);
+     
         DistributeNakladInvoices CreateNewInvoice(DistributeNaklad doc);
 
         void DistributeNakladRecalc(DistributeNaklad doc, List<DistributeNakladInvoices> invoices);
@@ -167,6 +169,21 @@ namespace KursAM2.Repositories
             Context.DistributeNakladRow.RemoveRange(doc.DistributeNakladRow);
             Context.DistributeNakladInvoices.RemoveRange(doc.DistributeNakladInvoices);
             Context.DistributeNaklad.Remove(doc);
+        }
+
+        public void UpdateSFNaklad(DistributeNaklad doc)
+        {
+            foreach (var row in doc.DistributeNakladRow)
+            {
+                var t26 = Context.TD_26.FirstOrDefault(_ => _.Id == row.TovarInvoiceRowId);
+                if (t26 == null) continue;
+                var r = Context.DistributeNakladRow
+                    .Where(_ => _.TovarInvoiceRowId == row.TovarInvoiceRowId);
+                if (!r.Any()) continue;
+                var s = r.Sum(_ => _.DistributeSumma);
+                t26.SFT_SUMMA_NAKLAD = s;
+                t26.SFT_ED_CENA_PRIHOD = t26.SFT_ED_CENA + s / t26.SFT_KOL;
+            }
         }
 
         public DistributeNakladInvoices CreateNewInvoice(DistributeNaklad doc)

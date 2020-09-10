@@ -27,17 +27,6 @@ using Reports.Base;
 namespace KursAM2.ViewModel.Finance.Invoices
 {
     /// <summary>
-    ///     Вспомогательный класс для загрузки
-    /// </summary>
-    public class InvoiceProviderStoreLinkTemp
-    {
-        public decimal DocCode { set; get; }
-        public int Code { set; get; }
-        public decimal SFQuantity { set; get; }
-        public decimal QuantityIn { set; get; }
-    }
-
-    /// <summary>
     ///     Сфчет-фактура поставщика
     /// </summary>
     [SuppressMessage("ReSharper", "PossibleUnintendedReferenceComparison")]
@@ -195,7 +184,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             WindowName = "Счет-фактура поставщика";
             CreateReportsMenu();
         }
-
         
         public ProviderWindowViewModel(decimal? dc) : this()
         {
@@ -295,7 +283,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                           Document.SF_VZAIMOR_TYPE_DC != null
                           && Document.SF_FORM_RASCH_DC != null &&
                           Document.State != RowStatus.NotEdited ||
-                          Document.DeletedRows.Count > 0 || Document.Rows.Any(_ => _.State != RowStatus.NotEdited);
+                          Document.DeletedRows.Count > 0 || 
+                          Document.Rows.Any(_ => _.State != RowStatus.NotEdited);
                 if (!res)
                 {
                     if (Document.SF_POST_DC == 0)
@@ -319,6 +308,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         }
 
         private InvoicePaymentDocument myCurrentPaymentDoc;
+        private InvoiceProviderRowCurrencyConvertViewModel myCurrentCrsConvertItem;
 
         public InvoicePaymentDocument CurrentPaymentDoc
         {
@@ -677,7 +667,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand DeleteRowCommand
         {
-            get { return new Command(DeleteRow, param => true); }
+            get { return new Command(DeleteRow, _ => CurrentRow != null); }
         }
 
         private void DeleteRow(object obj)
@@ -688,6 +678,82 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (f != null) Document.Facts.Remove(f);
             Document.Rows.Remove(CurrentRow);
             UpdateVisualData();
+        }
+
+        public ICommand AddNomenklCrsConvertCommand
+        {
+            get
+            {
+                return new Command(AddNomenklCrsConvert, _ => CurrentRow != null &&
+                                                              CurrentRow?.State != RowStatus.NewRow
+                                                              && CurrentRow?.Nomenkl?.IsCurrencyTransfer == true);
+            }
+        }
+
+        private void AddNomenklCrsConvert(object obj)
+        {
+            var crsrates = new CurrencyRates(Document.SF_POSTAV_DATE.AddDays(-5),DateTime.Today);
+
+            var noms = MainReferences.ALLNomenkls.Values.Where(_ => _.MainId == CurrentRow.Nomenkl.MainId
+                                                                    && _.Currency.DocCode !=
+                                                                    CurrentRow.Nomenkl.Currency.DocCode).ToList();
+            if (noms.Count == 0) return;
+            if (noms.Count == 1)
+            {
+                var newItem = new InvoiceProviderRowCurrencyConvertViewModel
+                {
+                    Id = Guid.NewGuid(),
+                    DocCode = CurrentRow.DocCode,
+                    Code = CurrentRow.Code,
+                    NomenklId = noms[0].Id,
+                    Date = DateTime.Today,
+                    // ReSharper disable once PossibleInvalidOperationException
+                    OLdPrice = (decimal) CurrentRow.SFT_ED_CENA,
+                    OLdNakladPrice = (decimal) CurrentRow.SFT_ED_CENA +
+                                     // ReSharper disable once PossibleInvalidOperationException
+                                     (decimal) CurrentRow.SFT_ED_CENA / (decimal) CurrentRow.SFT_SUMMA_NAKLAD,
+                    Quantity = 1,
+                    Rate = crsrates.GetRate(CurrentRow.Nomenkl.Currency.DocCode,
+                        noms[0].Currency.DocCode, DateTime.Today)
+                };
+                newItem.CalcRow(DirectCalc.Rate);
+                CurrentRow.CurrencyConvertRows.Add(newItem);
+                CurrentRow.State = RowStatus.Edited;
+            }
+        }
+
+        public InvoiceProviderRowCurrencyConvertViewModel CurrentCrsConvertItem
+        {
+            get => myCurrentCrsConvertItem;
+            set
+            {
+                if (myCurrentCrsConvertItem == value) return;
+                myCurrentCrsConvertItem = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ICommand DeleteNomenklCrsConvertCommand
+        {
+            get { return new Command(DeleteNomenklCrsConvert, _ => CurrentCrsConvertItem != null); }
+        }
+
+        private void DeleteNomenklCrsConvert(object obj)
+        {
+            if (CurrentCrsConvertItem == null) return;
+            if(CurrentCrsConvertItem.State != RowStatus.NewRow)
+                Document.DeletedCurrencyRows.Add(CurrentCrsConvertItem);
+            if (CurrentRow == null)
+            {
+                var row = Document.Rows.FirstOrDefault(_ => _.Code == CurrentCrsConvertItem.Code);
+                row?.CurrencyConvertRows.Remove(CurrentCrsConvertItem);
+                row.State = RowStatus.Edited;
+            }
+            else
+            {
+                CurrentRow.CurrencyConvertRows.Remove(CurrentCrsConvertItem);
+                CurrentRow.State = RowStatus.Edited;
+            }
         }
 
         public ICommand AddNomenklCommand
@@ -705,11 +771,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 defaultNDS = Convert.ToDecimal(entctx.PROFILE
                     .FirstOrDefault(_ => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")?.ITEM_VALUE);
             }
-
+            var cr = new CurrencyRates(Document.SF_POSTAV_DATE, Document.SF_POSTAV_DATE);
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             foreach (var n in nomenkls.Where(_ => Document.Rows.All(t => t.DocCode != _.DocCode)))
             {
-                Document.Rows.Add(new InvoiceProviderRow
+                var newRow = new InvoiceProviderRow
                 {
                     DocCode = Document.DocCode,
                     Code = newCode,
@@ -723,7 +789,29 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     PostUnit = n.Unit,
                     UchUnit = n.Unit,
                     State = RowStatus.NewRow
-                });
+
+                };
+                switch (Document.Currency.DocCode)
+                {
+                    case CurrencyCode.EUR:
+                        newRow.EURRate = cr.GetRate(Document.Currency.DocCode, CurrencyCode.EUR,Document.SF_POSTAV_DATE);
+                        newRow.EURSumma = newRow.EURRate;
+                        break;
+                    case CurrencyCode.USD:
+                        newRow.EURRate = cr.GetRate(Document.Currency.DocCode, CurrencyCode.USD, Document.SF_POSTAV_DATE);
+                        newRow.EURSumma = newRow.USDRate;
+                        break;
+                    case CurrencyCode.RUB:
+                        newRow.RUBRate = cr.GetRate(Document.Currency.DocCode, CurrencyCode.RUB, Document.SF_POSTAV_DATE);
+                        newRow.RUBSumma = newRow.RUBRate;
+                        break;
+                    case CurrencyCode.GBP:
+                        newRow.GBPRate = cr.GetRate(Document.Currency.DocCode, CurrencyCode.GBP, Document.SF_POSTAV_DATE);
+                        newRow.GBPSumma = newRow.GBPRate;
+                        break;
+
+                }
+                Document.Rows.Add(newRow);
                 newCode++;
             }
         }

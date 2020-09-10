@@ -13,15 +13,17 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <!-- ReSharper disable once InconsistentNaming -->
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
                Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
         <DockPanel>
+            <!-- ReSharper disable once InconsistentNaming -->
             <dxlc:LayoutItem Label="Поиск"
-                         ToolTip="Строка поиска по полям документов"
-                         Height="26"
-                         Name="TextSearch"
-                         HorizontalAlignment="Stretch"
-                         DockPanel.Dock="Top">
+                             ToolTip="Строка поиска по полям документов"
+                             Height="26"
+                             Name="TextSearch"
+                             HorizontalAlignment="Stretch"
+                             DockPanel.Dock="Top">
             <dxe:ButtonEdit AllowDefaultButton="False"
                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                             IsEnabled="{Binding IsSearchEnabled}">

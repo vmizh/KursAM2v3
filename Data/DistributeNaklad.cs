@@ -17,8 +17,8 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public DistributeNaklad()
         {
-            this.DistributeNakladRow = new HashSet<DistributeNakladRow>();
             this.DistributeNakladInvoices = new HashSet<DistributeNakladInvoices>();
+            this.DistributeNakladRow = new HashSet<DistributeNakladRow>();
         }
     
         public System.Guid Id { get; set; }
@@ -30,8 +30,8 @@ namespace Data
     
         public virtual SD_301 SD_301 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DistributeNakladRow> DistributeNakladRow { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DistributeNakladInvoices> DistributeNakladInvoices { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DistributeNakladRow> DistributeNakladRow { get; set; }
     }
 }

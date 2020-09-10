@@ -62,7 +62,9 @@ namespace KursAM2.Managers.Invoices
                         .Include("TD_26.SD_26")
                         .Include("TD_26.SD_261")
                         .Include("TD_26.SD_301")
-                        .Include("TD_26.SD_303").FirstOrDefault(_ => _.DOC_CODE == dc);
+                        .Include("TD_26.SD_303")
+                        .Include(_ => _.TD_26.Select(x => x.TD_26_CurrencyConvert))
+                        .FirstOrDefault(_ => _.DOC_CODE == dc);
                     foreach (var c in ctx.SD_34.Where(_ => _.SPOST_DC == dc).ToList())
                         pDocs.Add(new InvoicePaymentDocument
                         {
@@ -120,6 +122,10 @@ namespace KursAM2.Managers.Invoices
                     {
                         row.Parent = doc;
                         row.myState = RowStatus.NotEdited;
+                        foreach (var c in row.CurrencyConvertRows)
+                        {
+                            c.myState = RowStatus.NotEdited;
+                        }
                     }
                     doc.Facts = new ObservableCollection<WarehouseOrderInRow>();
                     if (doc.Entity?.TD_26 != null)
@@ -229,10 +235,26 @@ namespace KursAM2.Managers.Invoices
                 {
                     try
                     {
+                        foreach (var d in doc.DeletedCurrencyRows)
+                        {
+                            var oldcrs = ctx.TD_26_CurrencyConvert.Where(_ => _.DOC_CODE == d.DocCode
+                                                                              && _.CODE == d.Code).ToList();
+                            foreach (var o in oldcrs)
+                            {
+                                ctx.TD_26_CurrencyConvert.Remove(o);
+                            }
+                        }
                         foreach (var d in doc.DeletedRows)
                         {
                             var oldrow = ctx.TD_26.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode && _.CODE == d.Code);
                             if (oldrow == null) continue;
+                            var oldCrs = ctx.TD_26_CurrencyConvert.Where(_ => _.DOC_CODE == d.DocCode
+                                                                              && _.CODE == d.Code).ToList();
+                            if (oldCrs.Count > 0)
+                            {
+                                foreach (var crs in oldCrs)
+                                    ctx.TD_26_CurrencyConvert.Remove(crs);
+                            }
                             var oldOrdRows = ctx.TD_24.Where(_ => _.DDT_SPOST_DC == d.DocCode
                                                                   && _.DDT_SPOST_ROW_CODE == d.Code);
                             if (oldOrdRows.Any())
@@ -493,6 +515,42 @@ namespace KursAM2.Managers.Invoices
                                     oldRow.SchetRowNakladRashodId = r.SchetRowNakladRashodId;
                                     oldRow.SchetRowNakladSumma = r.SchetRowNakladSumma;
                                     oldRow.SchetRowNakladRate = r.SchetRowNakladRate;
+                                    foreach (var c in r.CurrencyConvertRows)
+                                    {
+                                        var oldItem = ctx.TD_26_CurrencyConvert.FirstOrDefault(_ =>
+                                            _.DOC_CODE == c.DocCode
+                                            && _.CODE == c.Code);
+                                        if (oldItem != null)
+                                        {
+                                            oldItem.Rate = c.Rate;
+                                            oldItem.Date = c.Date;
+                                            oldItem.PriceWithNaklad = c.PriceWithNaklad;
+                                            oldItem.Price = c.Price;
+                                            oldItem.NomenklId = c.NomenklId;
+                                            oldItem.Note = c.Note;
+                                            oldItem.Quantity = c.Quantity;
+                                            oldItem.Summa = c.Summa;
+                                            oldItem.SummaWithNaklad = c.SummaWithNaklad;
+                                        }
+                                        else
+                                        {
+                                            ctx.TD_26_CurrencyConvert.Add(new TD_26_CurrencyConvert
+                                            {
+                                                DOC_CODE = c.DocCode,
+                                                CODE = c.Code,
+                                                Rate = c.Rate,
+                                                PriceWithNaklad = c.PriceWithNaklad,
+                                                Price = c.Price,
+                                                NomenklId = c.NomenklId,
+                                                Note = c.Note,
+                                                Date = c.Date,
+                                                Quantity = c.Quantity,
+                                                Id = c.Id,
+                                                Summa = c.Summa,
+                                                SummaWithNaklad = c.SummaWithNaklad
+                                            });
+                                        }
+                                    }
                                 }
                             }
                         }

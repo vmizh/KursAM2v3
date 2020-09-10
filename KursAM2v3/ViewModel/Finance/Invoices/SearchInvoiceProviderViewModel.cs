@@ -18,7 +18,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private InvoiceProvider myCurrentDocument;
         private DateTime myDateEnd;
         private DateTime myDateStart;
-        private bool myIsEnabled;
 
         public SearchInvoiceProviderViewModel()
         {
@@ -35,6 +34,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             // ReSharper disable once VirtualMemberCallInConstructor
             Form = form;
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
+            Documents = new ObservableCollection<InvoiceProvider>();
+            SelectedDocs = new ObservableCollection<InvoiceProvider>();
+            DateEnd = DateTime.Today;
+            DateStart = DateEnd.AddDays(-30);
         }
 
         public DateTime DateEnd
@@ -75,13 +80,19 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => myCurrentDocument;
             set
             {
-                if (myCurrentDocument != null && myCurrentDocument.Equals(value)) return;
+                // ReSharper disable once PossibleUnintendedReferenceComparison
+                if (myCurrentDocument == value) return;
                 myCurrentDocument = value;
+                if (myCurrentDocument != null)
+                {
+                    IsDocumentOpenAllow = true;
+                    IsDocNewCopyAllow = true;
+                    IsDocNewCopyRequisiteAllow = true;
+                    IsPrintAllow = true;
+                }
                 RaisePropertyChanged();
             }
         }
-
-        public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
         public override void RefreshData(object data)
         {

@@ -138,6 +138,8 @@
                                             ReadOnly="True" />
                             <dxg:GridColumn Name="col_1_8" Header="Рентабельность" FieldName="IsRentabelnost"
                                             ReadOnly="True" />
+                            <dxg:GridColumn Name="col_1_9" Header="Валютный учет" FieldName="IsCurrencyTransfer"
+                                            ReadOnly="True" />
                         </dxg:GridControl.Columns>
                         <dxg:GridControl.View>
                             <dxg:TableView x:Name="tableViewNomenklMain"

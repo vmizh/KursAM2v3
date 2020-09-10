@@ -59,6 +59,9 @@
                 <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsRentabelnost, Mode=TwoWay}" DockPanel.Dock="Left"
                                Margin="5,0,0,0" VerticalAlignment="Center" 
                                IsEnabled="{Binding NomenklMain.IsUsluga, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center">Валютный учет</Label>
+                <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsCurrencyTransfer, Mode=TwoWay}" DockPanel.Dock="Left"
+                               Margin="5,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
             <DockPanel Height="40" Margin="0,5,0,5" LastChildFill="False">
                 <StackPanel Orientation="Horizontal">

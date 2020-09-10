@@ -13,6 +13,7 @@ namespace Calculates.Materials
     [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
     public class NomenklCostMediumSliding : NomenklCostBase
     {
+        // ReSharper disable once InconsistentNaming
         public ALFAMEDIAEntities context;
 
         public NomenklCostMediumSliding(ALFAMEDIAEntities ctx)

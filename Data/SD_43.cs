@@ -20,6 +20,8 @@ namespace Data
             this.KONTR_BALANS_OPER_ARC = new HashSet<KONTR_BALANS_OPER_ARC>();
             this.KONTRAGENT_REF_OUT = new HashSet<KONTRAGENT_REF_OUT>();
             this.ND_43 = new HashSet<ND_43>();
+            this.OffBalanceSheetInDoc = new HashSet<OffBalanceSheetInDoc>();
+            this.OffBalanceSheetOutDoc = new HashSet<OffBalanceSheetOutDoc>();
             this.PD_43 = new HashSet<PD_43>();
             this.RequirementForShipping = new HashSet<RequirementForShipping>();
             this.SD_112 = new HashSet<SD_112>();
@@ -103,8 +105,6 @@ namespace Data
             this.SD_246 = new HashSet<SD_246>();
             this.SD_2461 = new HashSet<SD_246>();
             this.SD_396 = new HashSet<SD_396>();
-            this.OffBalanceSheetInDoc = new HashSet<OffBalanceSheetInDoc>();
-            this.OffBalanceSheetOutDoc = new HashSet<OffBalanceSheetOutDoc>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -166,6 +166,10 @@ namespace Data
         public virtual ICollection<KONTRAGENT_REF_OUT> KONTRAGENT_REF_OUT { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ND_43> ND_43 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OffBalanceSheetInDoc> OffBalanceSheetInDoc { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OffBalanceSheetOutDoc> OffBalanceSheetOutDoc { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PD_43> PD_43 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -342,9 +346,5 @@ namespace Data
         public virtual ICollection<SD_246> SD_2461 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_396> SD_396 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OffBalanceSheetInDoc> OffBalanceSheetInDoc { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OffBalanceSheetOutDoc> OffBalanceSheetOutDoc { get; set; }
     }
 }

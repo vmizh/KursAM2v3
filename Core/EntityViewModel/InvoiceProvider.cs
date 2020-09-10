@@ -64,7 +64,7 @@ namespace Core.EntityViewModel
         {
             Entity = entity ?? DefaultValue();
             LoadReferences();
-            Rows.CollectionChanged += (o, args) => State = RowStatus.Edited;
+            Rows.CollectionChanged += (o, args) => State = RowStatus.NotEdited;
         }
 
         #endregion
@@ -955,6 +955,9 @@ namespace Core.EntityViewModel
         public ObservableCollection<Overhead> Overheads { set; get; }
         public ObservableCollection<InvoiceProviderRow> DeletedRows { get; set; } =
             new ObservableCollection<InvoiceProviderRow>();
+
+        public ObservableCollection<InvoiceProviderRowCurrencyConvertViewModel> DeletedCurrencyRows { get; set; } =
+            new ObservableCollection<InvoiceProviderRowCurrencyConvertViewModel>();
 
         #endregion Properties
 

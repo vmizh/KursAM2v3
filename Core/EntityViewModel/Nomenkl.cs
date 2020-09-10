@@ -17,6 +17,8 @@ namespace Core.EntityViewModel
 {
     [MetadataType(typeof(DataAnnotationsNomenklViewModel))]
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+    [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class Nomenkl : RSViewModelBase, IEntity<SD_83>, ICheckViewModel
     {
@@ -37,13 +39,24 @@ namespace Core.EntityViewModel
             LoadReference();
         }
 
+        public override Guid Id
+        {
+            get => Entity.Id;
+            set
+            {
+                if (Entity.Id == value) return;
+                Entity.Id = value;
+                RaisePropertyChanged();
+            }
+        }
+
         [GridColumnView("%  НДС", SettingsType.Combo)]
         public decimal? NDSPercent
         {
             get => Entity.NOM_NDS_PERCENT == null ? (decimal?) null : (decimal) Entity.NOM_NDS_PERCENT;
             set
             {
-                if (Math.Abs((Entity.NOM_NDS_PERCENT ?? 0) - (double) value) < 0.01) return;
+                if (Math.Abs((Entity.NOM_NDS_PERCENT ?? 0) - (double) (value ?? 0)) < 0.01) return;
                 Entity.NOM_NDS_PERCENT = (double?) value;
                 RaisePropertyChanged();
             }
@@ -93,6 +106,18 @@ namespace Core.EntityViewModel
             {
                 if (Entity.IsUslugaInRent == value) return;
                 Entity.IsUslugaInRent = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        [GridColumnView("Валютный учет", SettingsType.Default)]
+        public bool IsCurrencyTransfer
+        {
+            get => Entity.IsCurrencyTransfer ?? false;
+            set
+            {
+                if (Entity.IsCurrencyTransfer == value) return;
+                Entity.IsCurrencyTransfer = value;
                 RaisePropertyChanged();
             }
         }
@@ -490,13 +515,13 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-        public decimal? NOM_PRODUCT_DC
+        public decimal NOM_PRODUCT_DC
         {
             get => Entity.NOM_PRODUCT_DC;
             set
             {
                 if (Entity.NOM_PRODUCT_DC == value) return;
-                Entity.NOM_PRODUCT_DC = (decimal) value;
+                Entity.NOM_PRODUCT_DC = value;
                 RaisePropertyChanged();
             }
         }
@@ -1157,7 +1182,7 @@ namespace Core.EntityViewModel
             ent.NOM_ACC = NOM_ACC;
             ent.NOM_SUBACC = NOM_SUBACC;
             ent.NOM_MBP = NOM_MBP;
-            ent.NOM_PRODUCT_DC = (decimal) NOM_PRODUCT_DC;
+            ent.NOM_PRODUCT_DC = NOM_PRODUCT_DC;
             ent.NOM_OKP = NOM_OKP;
             ent.NOM_PRODUCTOR_DC = NOM_PRODUCTOR_DC;
             ent.NOM_PROIZVODSTVO = NOM_PROIZVODSTVO;
@@ -1218,11 +1243,13 @@ namespace Core.EntityViewModel
             };
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public SD_83 Load(decimal dc, bool isShort = true)
         {
             throw new NotImplementedException();
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public SD_83 Load(Guid id, bool isShort = true)
         {
             throw new NotImplementedException();
@@ -1422,7 +1449,6 @@ namespace Core.EntityViewModel
         private class ReturnQueryNomMove
         {
             //NomDC,Date,SUM(Prihod) Prihod,SUM(Rashod) Rashod 
-            public decimal NomDC { set; get; }
             public DateTime Date { set; get; }
             public decimal Prihod { set; get; }
             public decimal Rashod { set; get; }

@@ -5,7 +5,6 @@ using System.Linq;
 using Core.EntityViewModel;
 using Core.Repository.Base;
 using Data;
-using KursAM2.Dialogs;
 
 namespace KursAM2.Repositories.InvoicesRepositories
 {
@@ -22,6 +21,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
             DateTime? dateEnd);
 
         InvoiceProviderRowShort GetInvoiceRow(Guid id);
+
         InvoiceProviderShort GetInvoiceHead(Guid id);
         //InvoiceProviderDialogs Dialogs { set; get; }
     }
@@ -209,8 +209,8 @@ namespace KursAM2.Repositories.InvoicesRepositories
                     .Include("TD_26.SD_261")
                     .Include("TD_26.SD_301")
                     .Include("TD_26.SD_303")
-                    .Where(_ => _.SF_ACCEPTED == 1 && _.IsInvoiceNakald == true 
-                    && (_.NakladDistributedSumma ?? 0) < _.SF_KONTR_CRS_SUMMA)
+                    .Where(_ => _.SF_ACCEPTED == 1 && _.IsInvoiceNakald == true
+                                                   && (_.NakladDistributedSumma ?? 0) < _.SF_KONTR_CRS_SUMMA)
                     .ToList();
 
             if (dateStart == null && dateEnd != null)
@@ -232,10 +232,12 @@ namespace KursAM2.Repositories.InvoicesRepositories
                     .Include("TD_26.SD_261")
                     .Include("TD_26.SD_301")
                     .Include("TD_26.SD_303")
-                    .Where(_ => _.SF_POSTAV_DATE <= dateStart && _.IsInvoiceNakald == true
-                                                              && (_.NakladDistributedSumma ?? 0) < _.SF_KONTR_CRS_SUMMA
+                    .Where(_ => _.SF_POSTAV_DATE >= dateStart && (_.IsInvoiceNakald ?? false)
+                                                              && (_.NakladDistributedSumma ?? 0) <
+                                                              _.SF_KONTR_CRS_SUMMA
                                                               && _.SF_ACCEPTED == 1)
                     .ToList();
+
             if (dateStart != null && dateEnd != null)
                 data = Context.SD_26
                     .Include(_ => _.TD_26)
@@ -256,10 +258,10 @@ namespace KursAM2.Repositories.InvoicesRepositories
                     .Include("TD_26.SD_301")
                     .Include("TD_26.SD_303")
                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
-                                                              && (_.IsInvoiceNakald ?? false) 
-                                                              && (_.NakladDistributedSumma ?? 0) < _.SF_KONTR_CRS_SUMMA && _.SF_ACCEPTED == 1)
+                                                              && _.IsInvoiceNakald == true
+                                                              && (_.NakladDistributedSumma ?? 0) <
+                                                              _.SF_KONTR_CRS_SUMMA && _.SF_ACCEPTED == 1)
                     .ToList();
-
             foreach (var d in data) ret.Add(new InvoiceProviderShort(d));
 
             return ret;
@@ -279,7 +281,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 .Include(_ => _.SD_301)
                 .Include(_ => _.SD_303)
                 .SingleOrDefault(_ => _.Id == id);
-            if(item != null) return new InvoiceProviderRowShort(item);
+            if (item != null) return new InvoiceProviderRowShort(item);
             return null;
         }
 
@@ -295,6 +297,5 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 .SingleOrDefault(_ => _.Id == id);
             return new InvoiceProviderShort(item);
         }
-
     }
 }

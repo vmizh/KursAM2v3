@@ -44,7 +44,7 @@ namespace Data
         {
             throw new UnintentionalCodeFirstException();
         }
-    
+
         public virtual DbSet<AccountInvoice> AccountInvoice { get; set; }
         public virtual DbSet<AD_149> AD_149 { get; set; }
         public virtual DbSet<AD_2> AD_2 { get; set; }
@@ -52,6 +52,7 @@ namespace Data
         public virtual DbSet<AD_83> AD_83 { get; set; }
         public virtual DbSet<BALANS_OPER_CROSS> BALANS_OPER_CROSS { get; set; }
         public virtual DbSet<BALANS_OPER_TYPE> BALANS_OPER_TYPE { get; set; }
+        public virtual DbSet<BankCurrencyChange> BankCurrencyChange { get; set; }
         public virtual DbSet<BD_2> BD_2 { get; set; }
         public virtual DbSet<BD_83> BD_83 { get; set; }
         public virtual DbSet<BreakEvenPersent> BreakEvenPersent { get; set; }
@@ -64,12 +65,17 @@ namespace Data
         public virtual DbSet<Countries> Countries { get; set; }
         public virtual DbSet<COUNTRY> COUNTRY { get; set; }
         public virtual DbSet<CURRENCY_RATES_CB> CURRENCY_RATES_CB { get; set; }
+        public virtual DbSet<DistributeNaklad> DistributeNaklad { get; set; }
+        public virtual DbSet<DistributeNakladInfo> DistributeNakladInfo { get; set; }
+        public virtual DbSet<DistributeNakladInvoices> DistributeNakladInvoices { get; set; }
+        public virtual DbSet<DistributeNakladRow> DistributeNakladRow { get; set; }
         public virtual DbSet<DOC_FILES> DOC_FILES { get; set; }
         public virtual DbSet<dtproperties> dtproperties { get; set; }
         public virtual DbSet<EMP_PAYROLL_TYPE> EMP_PAYROLL_TYPE { get; set; }
         public virtual DbSet<EMP_PR_DOC> EMP_PR_DOC { get; set; }
         public virtual DbSet<EMP_PR_ROWS> EMP_PR_ROWS { get; set; }
         public virtual DbSet<EMP_USER_RIGHTS> EMP_USER_RIGHTS { get; set; }
+        public virtual DbSet<ErrorMessages> ErrorMessages { get; set; }
         public virtual DbSet<EXEC_CALC_BALANS> EXEC_CALC_BALANS { get; set; }
         public virtual DbSet<EXT_ANAL_VALUES> EXT_ANAL_VALUES { get; set; }
         public virtual DbSet<EXT_ANALS> EXT_ANALS { get; set; }
@@ -173,9 +179,17 @@ namespace Data
         public virtual DbSet<NomenklCostReset> NomenklCostReset { get; set; }
         public virtual DbSet<NomenklCostResetRows> NomenklCostResetRows { get; set; }
         public virtual DbSet<NomenklMain> NomenklMain { get; set; }
+        public virtual DbSet<NomenklMainRemainMoney> NomenklMainRemainMoney { get; set; }
+        public virtual DbSet<NomenklMainRemainMoneyRates> NomenklMainRemainMoneyRates { get; set; }
+        public virtual DbSet<NomenklMainRemains> NomenklMainRemains { get; set; }
         public virtual DbSet<NomenklStatus> NomenklStatus { get; set; }
         public virtual DbSet<NomenklTransfer> NomenklTransfer { get; set; }
         public virtual DbSet<NomenklTransferRow> NomenklTransferRow { get; set; }
+        public virtual DbSet<OffBalanceSheetChargesType> OffBalanceSheetChargesType { get; set; }
+        public virtual DbSet<OffBalanceSheetInDoc> OffBalanceSheetInDoc { get; set; }
+        public virtual DbSet<OffBalanceSheetInRow> OffBalanceSheetInRow { get; set; }
+        public virtual DbSet<OffBalanceSheetOutDoc> OffBalanceSheetOutDoc { get; set; }
+        public virtual DbSet<OffBalanceSheetOutRow> OffBalanceSheetOutRow { get; set; }
         public virtual DbSet<PD_114> PD_114 { get; set; }
         public virtual DbSet<PD_116> PD_116 { get; set; }
         public virtual DbSet<PD_2> PD_2 { get; set; }
@@ -211,6 +225,8 @@ namespace Data
         public virtual DbSet<SD_111> SD_111 { get; set; }
         public virtual DbSet<SD_112> SD_112 { get; set; }
         public virtual DbSet<SD_114> SD_114 { get; set; }
+        public virtual DbSet<SD_114_Remains> SD_114_Remains { get; set; }
+        public virtual DbSet<SD_114_StartRemain> SD_114_StartRemain { get; set; }
         public virtual DbSet<SD_116> SD_116 { get; set; }
         public virtual DbSet<SD_117> SD_117 { get; set; }
         public virtual DbSet<SD_118> SD_118 { get; set; }
@@ -695,14 +711,20 @@ namespace Data
         public virtual DbSet<WD_11> WD_11 { get; set; }
         public virtual DbSet<WD_152> WD_152 { get; set; }
         public virtual DbSet<ZD_184> ZD_184 { get; set; }
+        public virtual DbSet<BankOperationList> BankOperationList { get; set; }
+        public virtual DbSet<BankOperations> BankOperations { get; set; }
         public virtual DbSet<BankPeriodsOperations> BankPeriodsOperations { get; set; }
         public virtual DbSet<DataForRequirement> DataForRequirement { get; set; }
         public virtual DbSet<FK_REFERENCE_VIEW> FK_REFERENCE_VIEW { get; set; }
         public virtual DbSet<INVOICE_SEARCH_VIEW> INVOICE_SEARCH_VIEW { get; set; }
         public virtual DbSet<KontragentGroups> KontragentGroups { get; set; }
         public virtual DbSet<NOMENKL_MOVE_VIEW> NOMENKL_MOVE_VIEW { get; set; }
+        public virtual DbSet<NomenklMove> NomenklMove { get; set; }
         public virtual DbSet<NomenklMoveForCalc> NomenklMoveForCalc { get; set; }
         public virtual DbSet<NomenklMoveForCalcCosts> NomenklMoveForCalcCosts { get; set; }
+        public virtual DbSet<NomenklMoveStore> NomenklMoveStore { get; set; }
+        public virtual DbSet<NomenklMoveWithPrice> NomenklMoveWithPrice { get; set; }
+        public virtual DbSet<ProjectsDocuments> ProjectsDocuments { get; set; }
         public virtual DbSet<ProjectsInfo> ProjectsInfo { get; set; }
         public virtual DbSet<SD_2_CORR> SD_2_CORR { get; set; }
         public virtual DbSet<SHOP_NOMENKL_MOVE_VIEW> SHOP_NOMENKL_MOVE_VIEW { get; set; }
@@ -762,25 +784,7 @@ namespace Data
         public virtual DbSet<VH_SD_77> VH_SD_77 { get; set; }
         public virtual DbSet<VH_SD_82> VH_SD_82 { get; set; }
         public virtual DbSet<VVD_24> VVD_24 { get; set; }
-        public virtual DbSet<ProjectsDocuments> ProjectsDocuments { get; set; }
-        public virtual DbSet<ErrorMessages> ErrorMessages { get; set; }
-        public virtual DbSet<OffBalanceSheetChargesType> OffBalanceSheetChargesType { get; set; }
-        public virtual DbSet<OffBalanceSheetInDoc> OffBalanceSheetInDoc { get; set; }
-        public virtual DbSet<OffBalanceSheetInRow> OffBalanceSheetInRow { get; set; }
-        public virtual DbSet<OffBalanceSheetOutDoc> OffBalanceSheetOutDoc { get; set; }
-        public virtual DbSet<OffBalanceSheetOutRow> OffBalanceSheetOutRow { get; set; }
-        public virtual DbSet<SD_114_StartRemain> SD_114_StartRemain { get; set; }
-        public virtual DbSet<BankCurrencyChange> BankCurrencyChange { get; set; }
-        public virtual DbSet<NomenklMoveWithPrice> NomenklMoveWithPrice { get; set; }
-        public virtual DbSet<SD_114_Remains> SD_114_Remains { get; set; }
-        public virtual DbSet<BankOperationList> BankOperationList { get; set; }
-        public virtual DbSet<BankOperations> BankOperations { get; set; }
-        public virtual DbSet<NomenklMove> NomenklMove { get; set; }
-        public virtual DbSet<NomenklMoveStore> NomenklMoveStore { get; set; }
-        public virtual DbSet<DistributeNaklad> DistributeNaklad { get; set; }
-        public virtual DbSet<DistributeNakladInfo> DistributeNakladInfo { get; set; }
-        public virtual DbSet<DistributeNakladRow> DistributeNakladRow { get; set; }
-        public virtual DbSet<DistributeNakladInvoices> DistributeNakladInvoices { get; set; }
+        public virtual DbSet<TD_26_CurrencyConvert> TD_26_CurrencyConvert { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

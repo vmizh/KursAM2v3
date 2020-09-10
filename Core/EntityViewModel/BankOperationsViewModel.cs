@@ -39,6 +39,8 @@ namespace Core.EntityViewModel
                 SD_101 = new SD_101()
             };
             BankOperationType = BankOperationType.NotChoice;
+            
+            RaisePropertyChanged(nameof(SHPZList));
         }
 
         public BankOperationsViewModel(TD_101 entity)
@@ -48,7 +50,9 @@ namespace Core.EntityViewModel
                 DOC_CODE = -1,
                 SD_101 = new SD_101()
             };
+            SHPZList = new List<SDRSchet>(MainReferences.SDRSchets.Values.ToList());
             updateReferences();
+            RaisePropertyChanged(nameof(SHPZList));
         }
 
         public bool NotAllowSummaPrihodChanged => BankOperationType == BankOperationType.BankIn ||
@@ -57,6 +61,7 @@ namespace Core.EntityViewModel
                                                   BankOperationType == BankOperationType.CashOut;
         public bool IsChangeTypeEnable => State == RowStatus.NewRow;
         public bool IsNotCurrencyChange => Entity.IsCurrencyChange == false;
+
         public BankOperationType BankOperationType
         {
             get => myBankOperationType;
@@ -863,7 +868,7 @@ namespace Core.EntityViewModel
         #region compendiums
 
         public List<Currency> CurrencysCompendium => MainReferences.Currencies.Values.ToList();
-        public List<SDRSchet> SHPZList => MainReferences.SDRSchets.Values.ToList();
+        public List<SDRSchet> SHPZList { set; get; } = new List<SDRSchet>(MainReferences.SDRSchets.Values.ToList());
 
         #endregion
     }

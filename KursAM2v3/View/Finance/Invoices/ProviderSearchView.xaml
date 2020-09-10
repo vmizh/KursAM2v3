@@ -14,9 +14,6 @@
         xmlns:invoices="clr-namespace:KursAM2.ViewModel.Finance.Invoices"
         mc:Ignorable="d"
         Title="Выбор счетов-фактур поставщиков" Height="450" Width="800">
-    <dx:DXWindow.DataContext>
-        <invoices:SearchInvoiceProviderViewModel/>
-    </dx:DXWindow.DataContext>
     <DockPanel>
         <DockPanel DockPanel.Dock="Top"  LastChildFill="False">
             <ItemsControl VerticalAlignment="Center" 

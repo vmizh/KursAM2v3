@@ -24,6 +24,8 @@ namespace Data
             this.NOM_PRICE = new HashSet<NOM_PRICE>();
             this.NomenklTransferRow = new HashSet<NomenklTransferRow>();
             this.NomenklTransferRow1 = new HashSet<NomenklTransferRow>();
+            this.OffBalanceSheetInRow = new HashSet<OffBalanceSheetInRow>();
+            this.OffBalanceSheetOutRow = new HashSet<OffBalanceSheetOutRow>();
             this.RequirementForShippingRows = new HashSet<RequirementForShippingRows>();
             this.SCHET_FACT_KONTR_OUT_ROWS = new HashSet<SCHET_FACT_KONTR_OUT_ROWS>();
             this.SD_161 = new HashSet<SD_161>();
@@ -98,8 +100,6 @@ namespace Data
             this.UD_83 = new HashSet<UD_83>();
             this.UD_831 = new HashSet<UD_83>();
             this.SD_821 = new HashSet<SD_82>();
-            this.OffBalanceSheetInRow = new HashSet<OffBalanceSheetInRow>();
-            this.OffBalanceSheetOutRow = new HashSet<OffBalanceSheetOutRow>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -169,6 +169,7 @@ namespace Data
         public Nullable<System.Guid> MainId { get; set; }
         public Nullable<System.Guid> StatusId { get; set; }
         public Nullable<bool> IsUslugaInRent { get; set; }
+        public Nullable<bool> IsCurrencyTransfer { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AD_27> AD_27 { get; set; }
@@ -186,6 +187,10 @@ namespace Data
         public virtual ICollection<NomenklTransferRow> NomenklTransferRow { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<NomenklTransferRow> NomenklTransferRow1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OffBalanceSheetInRow> OffBalanceSheetInRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OffBalanceSheetOutRow> OffBalanceSheetOutRow { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RequirementForShippingRows> RequirementForShippingRows { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -346,9 +351,5 @@ namespace Data
         public virtual ICollection<UD_83> UD_831 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_82> SD_821 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OffBalanceSheetInRow> OffBalanceSheetInRow { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OffBalanceSheetOutRow> OffBalanceSheetOutRow { get; set; }
     }
 }

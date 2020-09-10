@@ -14,6 +14,7 @@ namespace Data
     
     public partial class ProjectsDocuments
     {
+        public System.Guid Id { get; set; }
         public string DocInNum { get; set; }
         public decimal DocDC { get; set; }
         public Nullable<int> DocRowId { get; set; }
@@ -31,6 +32,5 @@ namespace Data
         public Nullable<decimal> NomenklDC { get; set; }
         public int TypeProfitAndLossCalc { get; set; }
         public Nullable<decimal> Kol { get; set; }
-        public System.Guid Id { get; set; }
     }
 }

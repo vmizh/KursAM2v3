@@ -17,7 +17,12 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public SD_301()
         {
+            this.BankCurrencyChange = new HashSet<BankCurrencyChange>();
+            this.BankCurrencyChange1 = new HashSet<BankCurrencyChange>();
             this.CURRENCY_RATES_CB = new HashSet<CURRENCY_RATES_CB>();
+            this.DistributeNaklad = new HashSet<DistributeNaklad>();
+            this.DistributeNakladInfo = new HashSet<DistributeNakladInfo>();
+            this.DistributeNakladInvoices = new HashSet<DistributeNakladInvoices>();
             this.EMP_PR_ROWS = new HashSet<EMP_PR_ROWS>();
             this.KONTR_BALANS_OPER_ARC = new HashSet<KONTR_BALANS_OPER_ARC>();
             this.NOM_CRS_PRICE = new HashSet<NOM_CRS_PRICE>();
@@ -25,6 +30,8 @@ namespace Data
             this.SCHET_FACT_KONTR_OUT = new HashSet<SCHET_FACT_KONTR_OUT>();
             this.SD_110 = new HashSet<SD_110>();
             this.SD_1101 = new HashSet<SD_110>();
+            this.SD_114 = new HashSet<SD_114>();
+            this.SD_114_StartRemain = new HashSet<SD_114_StartRemain>();
             this.SD_149 = new HashSet<SD_149>();
             this.SD_2 = new HashSet<SD_2>();
             this.SD_215 = new HashSet<SD_215>();
@@ -107,13 +114,6 @@ namespace Data
             this.UD_903 = new HashSet<UD_903>();
             this.VD_193 = new HashSet<VD_193>();
             this.SD_43 = new HashSet<SD_43>();
-            this.SD_114_StartRemain = new HashSet<SD_114_StartRemain>();
-            this.BankCurrencyChange = new HashSet<BankCurrencyChange>();
-            this.BankCurrencyChange1 = new HashSet<BankCurrencyChange>();
-            this.SD_114 = new HashSet<SD_114>();
-            this.DistributeNaklad = new HashSet<DistributeNaklad>();
-            this.DistributeNakladInfo = new HashSet<DistributeNakladInfo>();
-            this.DistributeNakladInvoices = new HashSet<DistributeNakladInvoices>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -129,7 +129,17 @@ namespace Data
         public Nullable<int> ORDER_IMPOTANCE { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BankCurrencyChange> BankCurrencyChange { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BankCurrencyChange> BankCurrencyChange1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CURRENCY_RATES_CB> CURRENCY_RATES_CB { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DistributeNaklad> DistributeNaklad { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DistributeNakladInfo> DistributeNakladInfo { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DistributeNakladInvoices> DistributeNakladInvoices { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EMP_PR_ROWS> EMP_PR_ROWS { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -144,6 +154,10 @@ namespace Data
         public virtual ICollection<SD_110> SD_110 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_110> SD_1101 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SD_114> SD_114 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SD_114_StartRemain> SD_114_StartRemain { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_149> SD_149 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -308,19 +322,5 @@ namespace Data
         public virtual ICollection<VD_193> VD_193 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_43> SD_43 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SD_114_StartRemain> SD_114_StartRemain { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BankCurrencyChange> BankCurrencyChange { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BankCurrencyChange> BankCurrencyChange1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SD_114> SD_114 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DistributeNaklad> DistributeNaklad { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DistributeNakladInfo> DistributeNakladInfo { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DistributeNakladInvoices> DistributeNakladInvoices { get; set; }
     }
 }

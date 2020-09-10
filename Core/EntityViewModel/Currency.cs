@@ -34,6 +34,18 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
+        public override Guid Id
+        {
+            get => Entity.Id;
+            set
+            {
+                if (Entity.Id == value) return;
+                Entity.Id = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public string CRS_CODE
         {
             get => Entity.CRS_CODE;

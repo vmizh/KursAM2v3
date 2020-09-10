@@ -1276,14 +1276,17 @@ rKursAM2v3/Properties
 mKursAM2v3/View
 rKursAM2v3/View/Finance
 mKursAM2v3/View/Finance/Invoices
+mKursAM2v3/View/KursReferences
 rKursAM2v3/View/Logistiks
 mKursAM2v3/View/Logistiks/UC
 rKursAM2v3/ViewModel/Finance
 mKursAM2v3/ViewModel/Finance/Invoices
+mKursAM2v3/ViewModel/Finance/controls
 rKursAM2v3/ViewModel/Logistiks
 rKursAM2v3/ViewModel/Logistiks/Warehouse
 rKursAM2v3/ViewModel/Management/BreakEven
 rKursAM2v3/ViewModel/Personal
+mKursAM2v3/ViewModel/Reference/Nomenkl
 mKursAM2v3/ViewModel/StartLogin
 rLayoutManager2
 rLayoutManager2/Properties

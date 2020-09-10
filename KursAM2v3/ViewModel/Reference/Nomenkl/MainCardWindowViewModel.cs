@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -15,7 +16,7 @@ using KursAM2.View.Base;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
-    public class MainCardWindowViewModel : RSWindowDataErrorInfoViewModelBase
+    public sealed class MainCardWindowViewModel : RSWindowDataErrorInfoViewModelBase
     {
         private readonly Guid myId = Guid.Empty;
         private NomenklMainViewModel myNomenklMain;
@@ -193,7 +194,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     IsUsluga = NomenklMain.IsUsluga,
                                     UnitDC = NomenklMain.UnitDC,
                                     ProductDC = NomenklMain.ProductType.DOC_CODE,
-                                    IsRentabelnost = NomenklMain.IsRentabelnost
+                                    IsRentabelnost = NomenklMain.IsRentabelnost,
+                                    IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer
                                 };
                                 ctx.NomenklMain.Add(newItem);
                                 var newNomItem = new SD_83
@@ -213,7 +215,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     NOM_PRODUCT_DC = newItem.ProductDC,
                                     Id = Guid.NewGuid(),
                                     MainId = newItem.Id,
-                                    IsUslugaInRent = newItem.IsRentabelnost
+                                    IsUslugaInRent = newItem.IsRentabelnost,
+                                    IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer
                                 };
                                 ctx.SD_83.Add(newNomItem);
                                 break;
@@ -227,6 +230,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                         n.NOM_0MATER_1USLUGA = NomenklMain.IsUsluga ? 1 : 0;
                                         n.NOM_1NAKLRASH_0NO = NomenklMain.IsNakladExpense ? 1 : 0;
                                         n.IsUslugaInRent = NomenklMain.IsRentabelnost;
+                                        n.IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
                                     }
                                 }
                                 var old = ctx.NomenklMain.SingleOrDefault(_ => _.Id == NomenklMain.Id);
@@ -244,8 +248,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 old.UnitDC = NomenklMain.UnitDC;
                                 old.ProductDC = NomenklMain.ProductType.DOC_CODE;
                                 old.IsRentabelnost = NomenklMain.IsRentabelnost;
-
-                               
+                                old.IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
                                 break;
                         }
                         ctx.SaveChanges();
@@ -253,6 +256,11 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         NomenklMain.myState = RowStatus.NotEdited;
                         RaisePropertyChanged(nameof(IsCanSaveData));
                         ParentReference?.LoadNomMainForCategory(null);
+                        var dcs = new List<decimal>(MainReferences.ALLNomenkls.Values.Where(_ => _.MainId == NomenklMain.Id).Select(_ => _.DOC_CODE));
+                        foreach (var n in dcs)
+                        {
+                            MainReferences.LoadNomenkl(n);
+                        }
                     }
                     catch (Exception ex)
                     {

@@ -17,18 +17,18 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public SD_114()
         {
+            this.BankCurrencyChange = new HashSet<BankCurrencyChange>();
+            this.BankCurrencyChange1 = new HashSet<BankCurrencyChange>();
             this.ND_114 = new HashSet<ND_114>();
             this.PD_114 = new HashSet<PD_114>();
             this.SD_101 = new HashSet<SD_101>();
+            this.SD_114_StartRemain = new HashSet<SD_114_StartRemain>();
             this.SD_161 = new HashSet<SD_161>();
             this.SD_33 = new HashSet<SD_33>();
             this.SD_34 = new HashSet<SD_34>();
             this.SD_382 = new HashSet<SD_382>();
-            this.EXT_USERS = new HashSet<EXT_USERS>();
             this.TD_101 = new HashSet<TD_101>();
-            this.SD_114_StartRemain = new HashSet<SD_114_StartRemain>();
-            this.BankCurrencyChange = new HashSet<BankCurrencyChange>();
-            this.BankCurrencyChange1 = new HashSet<BankCurrencyChange>();
+            this.EXT_USERS = new HashSet<EXT_USERS>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -50,14 +50,21 @@ namespace Data
         public Nullable<System.DateTime> DateNonZero { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BankCurrencyChange> BankCurrencyChange { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BankCurrencyChange> BankCurrencyChange1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ND_114> ND_114 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PD_114> PD_114 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_101> SD_101 { get; set; }
+        public virtual SD_301 SD_301 { get; set; }
         public virtual SD_44 SD_44 { get; set; }
         public virtual TD_43 TD_43 { get; set; }
         public virtual SD_40 SD_40 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SD_114_StartRemain> SD_114_StartRemain { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_161> SD_161 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -67,15 +74,8 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_382> SD_382 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EXT_USERS> EXT_USERS { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TD_101> TD_101 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SD_114_StartRemain> SD_114_StartRemain { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BankCurrencyChange> BankCurrencyChange { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BankCurrencyChange> BankCurrencyChange1 { get; set; }
-        public virtual SD_301 SD_301 { get; set; }
+        public virtual ICollection<EXT_USERS> EXT_USERS { get; set; }
     }
 }
