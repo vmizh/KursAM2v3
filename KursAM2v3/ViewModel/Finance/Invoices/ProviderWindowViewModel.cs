@@ -724,6 +724,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             if (n == null) return;
+            var oldQuan = CurrentRow.CurrencyConvertRows.Count == 0
+                ? 0
+                : CurrentRow.CurrencyConvertRows.Sum(_ => _.Quantity);
             var newItem = new InvoiceProviderRowCurrencyConvertViewModel
             {
                 Id = Guid.NewGuid(),
@@ -733,12 +736,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Date = DateTime.Today,
                 // ReSharper disable once PossibleInvalidOperationException
                 OLdPrice = (decimal) CurrentRow.SFT_ED_CENA,
-                OLdNakladPrice = (decimal) CurrentRow.SFT_ED_CENA +
+                OLdNakladPrice = Math.Round((decimal) CurrentRow.SFT_ED_CENA +
                                  // ReSharper disable once PossibleInvalidOperationException
-                                 (decimal) CurrentRow.SFT_ED_CENA / (decimal) CurrentRow.SFT_SUMMA_NAKLAD,
-                Quantity = 1,
-                Rate = crsrates.GetRate(CurrentRow.Nomenkl.Currency.DocCode,
-                    n.Currency.DocCode, DateTime.Today)
+                                 (decimal) CurrentRow.SFT_ED_CENA / (decimal) CurrentRow.SFT_SUMMA_NAKLAD,2),
+                Quantity = CurrentRow.SFT_KOL - oldQuan,
+                Rate = Math.Round(crsrates.GetRate(CurrentRow.Nomenkl.Currency.DocCode,
+                    n.Currency.DocCode, DateTime.Today),4)
             };
             newItem.CalcRow(DirectCalc.Rate);
             CurrentRow.CurrencyConvertRows.Add(newItem);

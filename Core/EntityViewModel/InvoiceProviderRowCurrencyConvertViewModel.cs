@@ -224,35 +224,35 @@ namespace Core.EntityViewModel
             {
                 case DirectCalc.Price:
                     if (Currency.Id == GlobalOptions.SystemProfile.NationalCurrency.Id)
-                        Rate = Price / OLdPrice;
+                        Rate = Math.Round(Price / OLdPrice,2);
                     else
-                        Rate = OLdPrice / Price;
-                    PriceWithNaklad = OLdNakladPrice * Rate;
+                        Rate = Math.Round(OLdPrice / Price,2);
+                    PriceWithNaklad = Math.Round(OLdNakladPrice * Rate,2);
                     break;
                 case DirectCalc.PriceWithNaklad:
                     if (Currency.Id == GlobalOptions.SystemProfile.NationalCurrency.Id)
-                        Rate = PriceWithNaklad / OLdNakladPrice;
+                        Rate = Math.Round(PriceWithNaklad / OLdNakladPrice,2);
                     else
-                        Rate = OLdNakladPrice / PriceWithNaklad;
-                    Price = OLdPrice * Rate;
+                        Rate = Math.Round(OLdNakladPrice / PriceWithNaklad,2);
+                    Price = Math.Round(OLdPrice * Rate,2);
                     break;
                 case DirectCalc.Rate:
                     if (Currency.Id == GlobalOptions.SystemProfile.NationalCurrency.Id)
                     {
-                        Price = OLdPrice * Rate;
-                        PriceWithNaklad = OLdNakladPrice * Rate;
+                        Price = Math.Round(OLdPrice * Rate,2);
+                        PriceWithNaklad = Math.Round(OLdNakladPrice * Rate,2);
                     }
                     else
                     {
-                        Price = OLdPrice / Rate;
-                        PriceWithNaklad = OLdNakladPrice / Rate;
+                        Price = Math.Round(OLdPrice / Rate,2);
+                        PriceWithNaklad = Math.Round(OLdNakladPrice / Rate,2);
                     }
 
                     break;
             }
 
-            Summa = Price * Quantity;
-            SummaWithNaklad = PriceWithNaklad * Quantity;
+            Summa = Math.Round(Price * Quantity,2);
+            SummaWithNaklad = Math.Round(PriceWithNaklad * Quantity,2);
         }
 
         public TD_26_CurrencyConvert Load(decimal dc)
