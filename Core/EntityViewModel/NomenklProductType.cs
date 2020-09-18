@@ -36,6 +36,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => DOC_CODE;
@@ -46,6 +47,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string MC_NAME
         {
             get => Entity.MC_NAME;
@@ -56,6 +58,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => MC_NAME;
@@ -66,6 +69,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short MC_DELETED
         {
             get => Entity.MC_DELETED;
@@ -76,6 +80,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? MC_PROC_OTKL
         {
             get => Entity.MC_PROC_OTKL;
@@ -86,6 +91,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? MC_TARA
         {
             get => Entity.MC_TARA;
@@ -96,6 +102,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsDeleted
         {
             get => MC_DELETED == 1;
@@ -106,6 +113,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? MC_TRANSPORT
         {
             get => Entity.MC_TRANSPORT;
@@ -116,6 +124,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? MC_PREDOPLATA
         {
             get => Entity.MC_PREDOPLATA;
@@ -126,6 +135,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_119 Entity
         {
             get => myEntity;
@@ -136,6 +146,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_119> LoadList()

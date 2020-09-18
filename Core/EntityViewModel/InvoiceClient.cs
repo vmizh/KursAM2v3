@@ -53,15 +53,12 @@ namespace Core.EntityViewModel
                 var newRow = new InvoiceClientRow(row)
                 {
                     Parent = this,
-                    IsNDSInPrice = this.IsNDSIncludeInPrice
+                    IsNDSInPrice = IsNDSIncludeInPrice
                 };
                 Rows.Add(newRow);
             }
         }
 
-        //TODO Убрать лишние property
-        //public decimal Summa => SF_CRS_SUMMA_K_OPLATE ?? 0;
-        //public string COName => CO?.Name;
         public bool IsAccepted
         {
             get => Entity.SF_ACCEPTED == 1;

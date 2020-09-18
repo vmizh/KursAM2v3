@@ -37,6 +37,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => DOC_CODE;
@@ -47,6 +48,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ED_IZM_NAME
         {
             get => Entity.ED_IZM_NAME;
@@ -57,6 +59,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => ED_IZM_NAME;
@@ -67,6 +70,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ED_IZM_OKEI
         {
             get => Entity.ED_IZM_OKEI;
@@ -77,6 +81,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? ED_IZM_MONEY
         {
             get => Entity.ED_IZM_MONEY;
@@ -87,6 +92,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? ED_IZM_INT
         {
             get => Entity.ED_IZM_INT;
@@ -97,6 +103,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ED_IZM_OKEI_CODE
         {
             get => Entity.ED_IZM_OKEI_CODE;
@@ -107,6 +114,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_175 Entity
         {
             get => myEntity;
@@ -117,6 +125,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_175> LoadList()

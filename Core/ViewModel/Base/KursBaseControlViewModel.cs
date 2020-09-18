@@ -101,15 +101,13 @@ namespace Core.ViewModel.Base
         {
             return true;
         }
-        
+
         [Command]
         //public virtual void Load()
         //{
         //}
-
         public virtual void Load(object obj)
         {
-           
         }
 
         [Display(AutoGenerateField = false)]
@@ -261,6 +259,7 @@ namespace Core.ViewModel.Base
         {
             return true;
         }
+
         [Command]
         public virtual void Save()
         {
@@ -283,6 +282,7 @@ namespace Core.ViewModel.Base
 
         // ReSharper disable once InconsistentNaming
         private bool myIsDocNewEmptyAllow = true;
+
         [Display(AutoGenerateField = false)]
         public virtual bool IsDocNewEmptyAllow
         {
@@ -296,6 +296,7 @@ namespace Core.ViewModel.Base
         }
 
         private bool myIsDocNewCopyAllow = true;
+
         [Display(AutoGenerateField = false)]
         public virtual bool IsDocNewCopyAllow
         {
@@ -433,6 +434,7 @@ namespace Core.ViewModel.Base
                 l.LayoutManager.ResetLayout();
                 return;
             }
+
             var layman = form as ILayout;
             layman?.LayoutManager?.ResetLayout();
         }

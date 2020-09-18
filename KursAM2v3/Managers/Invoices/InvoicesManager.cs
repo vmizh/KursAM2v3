@@ -10,7 +10,10 @@ using Core.Finance;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using Data.Repository;
 using Helper;
+using KursAM2.Managers.Nomenkl;
+using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.ViewModel.Management.Calculations;
@@ -19,6 +22,16 @@ namespace KursAM2.Managers.Invoices
 {
     public class InvoicesManager
     {
+        private GenericKursDBRepository<SD_26> genericProviderRepository;
+        // ReSharper disable once NotAccessedField.Local
+        private IInvoiceProviderRepository invoiceProviderRepository;
+
+        public InvoicesManager()
+        {
+            genericProviderRepository = new GenericKursDBRepository<SD_26>(GlobalOptions.KursDBUnitOfWork);
+            invoiceProviderRepository = new InvoiceProviderRepository(GlobalOptions.KursDBUnitOfWork);
+        }
+
         /// <summary>
         ///     Оплата по счетам
         /// </summary>
@@ -148,6 +161,90 @@ namespace KursAM2.Managers.Invoices
             return doc;
         }
 
+        public InvoiceProvider GetInvoiceProvider2(decimal dc)
+        {
+            InvoiceProvider doc;
+            var pDocs = new List<InvoicePaymentDocument>();
+            var i = genericProviderRepository.GetById(dc);
+            foreach (var c in GlobalOptions.KursDBUnitOfWork.Context.SD_34.Where(_ => _.SPOST_DC == dc).ToList())
+                pDocs.Add(new InvoicePaymentDocument
+                {
+                    DocCode = c.DOC_CODE,
+                    Code = 0,
+                    DocumentType = DocumentType.CashOut,
+                    // ReSharper disable once PossibleInvalidOperationException
+                    DocumentName =
+                        $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                    // ReSharper disable once PossibleInvalidOperationException
+                    Summa = (decimal) c.SUMM_ORD,
+                    Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                    Note = c.NOTES_ORD
+                });
+            foreach (var c in GlobalOptions.KursDBUnitOfWork.Context.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_POSTAV_DC == dc)
+                .ToList())
+                pDocs.Add(new InvoicePaymentDocument
+                {
+                    DocCode = c.DOC_CODE,
+                    Code = c.CODE,
+                    DocumentType = DocumentType.Bank,
+                    DocumentName =
+                        // ReSharper disable once PossibleInvalidOperationException
+                        $"{c.SD_101.VV_START_DATE} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                    // ReSharper disable once PossibleInvalidOperationException
+                    Summa = (decimal) c.VVT_VAL_RASHOD,
+                    Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                    Note = c.VVT_DOC_NUM
+                });
+            foreach (var c in GlobalOptions.KursDBUnitOfWork.Context.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SPOST_DC == dc).ToList())
+                pDocs.Add(new InvoicePaymentDocument
+                {
+                    DocCode = c.DOC_CODE,
+                    Code = c.CODE,
+                    DocumentType = DocumentType.MutualAccounting,
+                    DocumentName =
+                        // ReSharper disable once PossibleInvalidOperationException
+                        $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE} на {c.VZT_CRS_SUMMA}",
+                    // ReSharper disable once PossibleInvalidOperationException
+                    Summa = (decimal) c.VZT_CRS_SUMMA,
+                    Currency = MainReferences.Currencies[c.SD_110.CurrencyToDC],
+                    Note = c.VZT_DOC_NOTES
+                });
+            decimal sum = 0;
+            if (i?.SD_24 != null)
+                sum += (from q in i.TD_26 from d in q.TD_24 select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            doc = new InvoiceProvider(i)
+            {
+                SummaFact = sum,
+                myState = RowStatus.NotEdited
+            };
+            foreach (var p in pDocs) doc.PaymentDocs.Add(p);
+            foreach (var row in doc.Rows)
+            {
+                row.Parent = doc;
+                row.myState = RowStatus.NotEdited;
+                foreach (var c in row.CurrencyConvertRows)
+                {
+                    c.myState = RowStatus.NotEdited;
+                }
+            }
+
+            doc.Facts = new ObservableCollection<WarehouseOrderInRow>();
+            if (doc.Entity?.TD_26 != null)
+            {
+                foreach (var r in doc.Entity.TD_26)
+                {
+                    foreach (var r2 in r.TD_24)
+                    {
+                        doc.Facts.Add(new WarehouseOrderInRow(r2));
+                    }
+                }
+            }
+
+            doc.myState = RowStatus.NotEdited;
+            return doc;
+        }
+
         public static InvoiceProvider NewProvider()
         {
             var ret = new InvoiceProvider(null)
@@ -244,6 +341,7 @@ namespace KursAM2.Managers.Invoices
                                 ctx.TD_26_CurrencyConvert.Remove(o);
                             }
                         }
+
                         foreach (var d in doc.DeletedRows)
                         {
                             var oldrow = ctx.TD_26.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode && _.CODE == d.Code);
@@ -255,6 +353,7 @@ namespace KursAM2.Managers.Invoices
                                 foreach (var crs in oldCrs)
                                     ctx.TD_26_CurrencyConvert.Remove(crs);
                             }
+
                             var oldOrdRows = ctx.TD_24.Where(_ => _.DDT_SPOST_DC == d.DocCode
                                                                   && _.DDT_SPOST_ROW_CODE == d.Code);
                             if (oldOrdRows.Any())
@@ -265,8 +364,10 @@ namespace KursAM2.Managers.Invoices
                                     r.DDT_SPOST_ROW_CODE = null;
                                 }
                             }
+
                             ctx.TD_26.Remove(oldrow);
                         }
+
                         if (doc.DocCode == -1)
                         {
                             var guidId = Guid.NewGuid();
@@ -515,11 +616,10 @@ namespace KursAM2.Managers.Invoices
                                     oldRow.SchetRowNakladRashodId = r.SchetRowNakladRashodId;
                                     oldRow.SchetRowNakladSumma = r.SchetRowNakladSumma;
                                     oldRow.SchetRowNakladRate = r.SchetRowNakladRate;
+
                                     foreach (var c in r.CurrencyConvertRows)
                                     {
-                                        var oldItem = ctx.TD_26_CurrencyConvert.FirstOrDefault(_ =>
-                                            _.DOC_CODE == c.DocCode
-                                            && _.CODE == c.Code);
+                                        var oldItem = ctx.TD_26_CurrencyConvert.FirstOrDefault(_ => _.Id == c.Id);
                                         if (oldItem != null)
                                         {
                                             oldItem.Rate = c.Rate;
@@ -574,9 +674,26 @@ namespace KursAM2.Managers.Invoices
                             r.myState = RowStatus.NotEdited;
                             r.RaisePropertyChanged("State");
                         }
+
                         doc.myState = RowStatus.NotEdited;
                         doc.RaisePropertyChanged("State");
                         doc.DeletedRows.Clear();
+                        foreach (var r in doc.Rows)
+                        {
+                            var sql = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
+                                      $" VALUES({CustomFormat.DecimalToSqlDecimal(r.SFT_NEMENKL_DC)},'20000101')";
+                            ctx.Database.ExecuteSqlCommand(sql);
+                            if (r.CurrencyConvertRows.Count > 0)
+                            {
+                                foreach (var rc in r.CurrencyConvertRows)
+                                {
+                                    var sql1 = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
+                                               $" VALUES({CustomFormat.DecimalToSqlDecimal(rc.Nomenkl.DocCode)},'20000101')";
+                                    ctx.Database.ExecuteSqlCommand(sql1);
+                                }
+                            }
+                        }
+                        ctx.SaveChanges();
                     }
                     catch (Exception ex)
                     {
@@ -585,11 +702,81 @@ namespace KursAM2.Managers.Invoices
                         WindowManager.ShowError(ex);
                         return -1;
                     }
+                    NomenklManager.RecalcPrice();
                 }
             }
             return newDC;
         }
 
+        public decimal SaveProvider2(InvoiceProvider doc)
+        {
+            decimal newDC;
+            if (doc.DocCode == -1)
+            {
+                var guidId = Guid.NewGuid();
+                var inNum = (GlobalOptions.KursDBUnitOfWork.Context.SD_26.Any() 
+                    ? (GlobalOptions.KursDBUnitOfWork.Context.SD_26.Max(_ => _.SF_IN_NUM) ?? 0) + 1 : 1);
+                newDC = GlobalOptions.KursDBUnitOfWork.Context.SD_26.Any() 
+                    ? GlobalOptions.KursDBUnitOfWork.Context.SD_26.Max(_ => _.DOC_CODE) + 1 : 10260000001;
+                doc.DOC_CODE = newDC;
+                doc.Id = guidId;
+                doc.SF_IN_NUM = inNum;
+                foreach (var r in doc.Rows)
+                {
+                    r.DOC_CODE = newDC;
+                }
+            }
+            else
+            {
+                newDC = doc.DocCode;
+            }
+
+            try
+            {
+                GlobalOptions.KursDBUnitOfWork.CreateTransaction();
+                GlobalOptions.KursDBUnitOfWork.Save();
+                GlobalOptions.KursDBUnitOfWork.Commit();
+                RecalcKontragentBalans.CalcBalans(doc.SF_POST_DC, doc.SF_POSTAV_DATE);
+                foreach (var r in doc.Rows)
+                {
+                    r.myState = RowStatus.NotEdited;
+                    r.RaisePropertyChanged("State");
+                }
+
+                doc.myState = RowStatus.NotEdited;
+                doc.RaisePropertyChanged("State");
+                doc.DeletedRows.Clear();
+                foreach (var r in doc.Rows)
+                {
+                    var sql = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
+                              $" VALUES({CustomFormat.DecimalToSqlDecimal(r.SFT_NEMENKL_DC)},'20000101')";
+                    GlobalOptions.KursDBUnitOfWork.Context.Database.ExecuteSqlCommand(sql);
+                    if (r.CurrencyConvertRows.Count > 0)
+                    {
+                        foreach (var rc in r.CurrencyConvertRows)
+                        {
+                            var sql1 = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
+                                       $" VALUES({CustomFormat.DecimalToSqlDecimal(rc.Nomenkl.DocCode)},'20000101')";
+                            GlobalOptions.KursDBUnitOfWork.Context.Database.ExecuteSqlCommand(sql1);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                GlobalOptions.KursDBUnitOfWork.Rollback();
+                WindowManager.ShowError(ex);
+                return -1;
+            }
+
+            return newDC;
+
+        }
+
+        public void RefreshProvider(InvoiceProvider doc)
+        {
+            genericProviderRepository.Refresh(doc.Entity);
+        }
         public static void DeleteProvider(decimal dc, ProviderSearchView searchWindow = null)
         {
             using (var ctx = GlobalOptions.GetEntities())
@@ -598,11 +785,16 @@ namespace KursAM2.Managers.Invoices
                 {
                     try
                     {
+                        var sql =
+                            "DELETE FROM TD_26_CurrencyConvert " +
+                            $"WHERE DOC_CODE = {CustomFormat.DecimalToSqlDecimal(dc)};";
+                        ctx.Database.ExecuteSqlCommand(sql);
                         var doc = ctx.SD_26.Include(_ => _.TD_26).FirstOrDefault(_ => _.DOC_CODE == dc);
                         if (doc == null) return;
                         ctx.SD_26.Remove(doc);
                         ctx.SaveChanges();
                         transaction.Commit();
+                        NomenklManager.RecalcPrice();
                         RecalcKontragentBalans.CalcBalans(doc.SF_POST_DC, doc.SF_POSTAV_DATE);
                     }
                     catch (Exception ex)
@@ -1522,6 +1714,7 @@ namespace KursAM2.Managers.Invoices
                     }
                 }
             }
+            NomenklManager.RecalcPrice();
         }
 
         public static decimal SaveClient(InvoiceClient doc, ProviderSearchView searchWindow = null)
@@ -1749,6 +1942,14 @@ namespace KursAM2.Managers.Invoices
                         dtx.Commit();
                         foreach (var r in doc.Rows) r.myState = RowStatus.NotEdited;
                         doc.myState = RowStatus.NotEdited;
+                        foreach (var r in doc.Rows)
+                        {
+                            var sql = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
+                                      $" VALUES({CustomFormat.DecimalToSqlDecimal(r.SFT_NEMENKL_DC)},'20000101')";
+                            ctx.Database.ExecuteSqlCommand(sql);
+                        }
+                        ctx.SaveChanges();
+                        NomenklManager.RecalcPrice();
                     }
                     catch (Exception e)
                     {

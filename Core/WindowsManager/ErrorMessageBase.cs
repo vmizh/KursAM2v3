@@ -17,6 +17,8 @@ namespace Core.WindowsManager
         public bool ShowInDatabase { set; get; } = true;
         public string FormName { set; get; }
 
+        public string Note { get; set; }
+
         public virtual void WriteErrorMessage(string messageBoxText, string note = null)
         {
             Console.WriteLine(messageBoxText);
@@ -45,12 +47,12 @@ namespace Core.WindowsManager
                     exx = exx.InnerException;
                 }
             }
+
             return errText.ToString();
         }
 
         public virtual void WriteErrorMessage(Exception ex, string note = null)
         {
-
             var errText = GetExceptionErrorText(ex);
             Console.WriteLine(errText);
             if (ShowInDatabase)
@@ -63,8 +65,6 @@ namespace Core.WindowsManager
                     DateTime.Now);
             }
         }
-
-        public string Note { get; set; }
 
         public virtual void WriteErrorMessage(string messageBoxText, string caption, string note = null)
         {
@@ -82,7 +82,7 @@ namespace Core.WindowsManager
 
         public virtual void WriteErrorMessage(Exception ex, string caption, string note = null)
         {
-            WriteErrorMessage( GetExceptionErrorText(ex), caption, note);
+            WriteErrorMessage(GetExceptionErrorText(ex), caption, note);
         }
     }
 }

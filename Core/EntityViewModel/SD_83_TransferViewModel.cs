@@ -30,6 +30,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal SkladDC
         {
             get => Entity.SkladDC;
@@ -40,6 +41,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal NomenklOutDC
         {
             get => Entity.NomenklOutDC;
@@ -50,6 +52,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal NomenklInDC
         {
             get => Entity.NomenklInDC;
@@ -60,6 +63,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal Quantity
         {
             get => Entity.Quantity;
@@ -70,6 +74,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal PriceIn
         {
             get => Entity.PriceIn;
@@ -80,6 +85,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string Creator
         {
             get => Entity.Creator;
@@ -90,6 +96,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_27 SD_27
         {
             get => Entity.SD_27;
@@ -100,6 +107,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_83 SD_83
         {
             get => Entity.SD_83;
@@ -110,6 +118,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_83 SD_831
         {
             get => Entity.SD_831;
@@ -120,6 +129,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_83_Transfer Entity
         {
             get => myEntity;
@@ -130,6 +140,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_83_Transfer> LoadList()

@@ -29,6 +29,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime ZAK_DATE
         {
             get => Entity.ZAK_DATE;
@@ -39,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int ZAK_NUM
         {
             get => Entity.ZAK_NUM;
@@ -49,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? ZAK_PLAN_OTRGRUZ_DATE
         {
             get => Entity.ZAK_PLAN_OTRGRUZ_DATE;
@@ -59,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime ZAK_PAY_LAST_DATE
         {
             get => Entity.ZAK_PAY_LAST_DATE;
@@ -69,6 +73,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_CLIENT_DC
         {
             get => Entity.ZAK_CLIENT_DC;
@@ -79,6 +84,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? ZAK_CLIENT_TABELNUMBER
         {
             get => Entity.ZAK_CLIENT_TABELNUMBER;
@@ -89,6 +95,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ZAK_CLIENT_NAME
         {
             get => Entity.ZAK_CLIENT_NAME;
@@ -99,6 +106,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal ZAK_CRS_DC
         {
             get => Entity.ZAK_CRS_DC;
@@ -109,6 +117,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double ZAK_CRS_RATE
         {
             get => Entity.ZAK_CRS_RATE;
@@ -119,6 +128,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_CRS_SUMMA
         {
             get => Entity.ZAK_CRS_SUMMA;
@@ -129,6 +139,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double ZAK_SKID_PERC_QUAN
         {
             get => Entity.ZAK_SKID_PERC_QUAN;
@@ -139,6 +150,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_SKID_CRS_SUMMA
         {
             get => Entity.ZAK_SKID_CRS_SUMMA;
@@ -149,6 +161,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_PAY_CRS_SUMMA
         {
             get => Entity.ZAK_PAY_CRS_SUMMA;
@@ -159,6 +172,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_PAY_RUB_SUMMA
         {
             get => Entity.ZAK_PAY_RUB_SUMMA;
@@ -169,6 +183,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short ZAK_ACCEPTED
         {
             get => Entity.ZAK_ACCEPTED;
@@ -179,6 +194,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CREATOR
         {
             get => Entity.CREATOR;
@@ -189,6 +205,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ZAK_BASE
         {
             get => Entity.ZAK_BASE;
@@ -199,6 +216,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_FORM_RASCH_DC
         {
             get => Entity.ZAK_FORM_RASCH_DC;
@@ -209,6 +227,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_TYPE_DC
         {
             get => Entity.ZAK_TYPE_DC;
@@ -219,6 +238,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? ZAK_EXECUTED
         {
             get => Entity.ZAK_EXECUTED;
@@ -229,6 +249,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? ZAK_START_DATE
         {
             get => Entity.ZAK_START_DATE;
@@ -239,6 +260,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? ZAK_STOP_DATE
         {
             get => Entity.ZAK_STOP_DATE;
@@ -249,6 +271,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_USL_POSTAV_DC
         {
             get => Entity.ZAK_USL_POSTAV_DC;
@@ -259,6 +282,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public byte[] ZAK_FILE
         {
             get => Entity.ZAK_FILE;
@@ -269,6 +293,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? ZAK_OTV_TABELNUMBER
         {
             get => Entity.ZAK_OTV_TABELNUMBER;
@@ -279,6 +304,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_BASE_KOTRACT_DC
         {
             get => Entity.ZAK_BASE_KOTRACT_DC;
@@ -289,6 +315,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? ZAK_NDS_1INCLUD_0NO
         {
             get => Entity.ZAK_NDS_1INCLUD_0NO;
@@ -299,6 +326,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_KATEGORY_DC
         {
             get => Entity.ZAK_KATEGORY_DC;
@@ -309,6 +337,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_DILER_DC
         {
             get => Entity.ZAK_DILER_DC;
@@ -319,6 +348,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_DOHOD_DILERA
         {
             get => Entity.ZAK_DOHOD_DILERA;
@@ -329,6 +359,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_RUB_CRS_SUMMA
         {
             get => Entity.ZAK_RUB_CRS_SUMMA;
@@ -339,6 +370,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? ZAK_RUB_CRS_RATE
         {
             get => Entity.ZAK_RUB_CRS_RATE;
@@ -349,6 +381,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? ZAK_OBRAT_RASCHET
         {
             get => Entity.ZAK_OBRAT_RASCHET;
@@ -359,6 +392,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? ZAK_CONTROL_DATE
         {
             get => Entity.ZAK_CONTROL_DATE;
@@ -369,6 +403,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ZAK_CONTROL_NOTE
         {
             get => Entity.ZAK_CONTROL_NOTE;
@@ -379,6 +414,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ZAK_CONTROL_FLAGS
         {
             get => Entity.ZAK_CONTROL_FLAGS;
@@ -389,6 +425,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_POSTAV_DC
         {
             get => Entity.ZAK_POSTAV_DC;
@@ -399,6 +436,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ZAK_SUDNO_DC
         {
             get => Entity.ZAK_SUDNO_DC;
@@ -409,6 +447,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ZAK_OUT_NUM
         {
             get => Entity.ZAK_OUT_NUM;
@@ -419,6 +458,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_102 SD_102
         {
             get => Entity.SD_102;
@@ -429,6 +469,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_103 SD_103
         {
             get => Entity.SD_103;
@@ -439,6 +480,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_148 SD_148
         {
             get => Entity.SD_148;
@@ -449,6 +491,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_189 SD_189
         {
             get => Entity.SD_189;
@@ -459,6 +502,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_2 SD_2
         {
             get => Entity.SD_2;
@@ -469,6 +513,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_2 SD_21
         {
             get => Entity.SD_21;
@@ -479,6 +524,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_301
         {
             get => Entity.SD_301;
@@ -489,6 +535,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_43
         {
             get => Entity.SD_43;
@@ -499,6 +546,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_431
         {
             get => Entity.SD_431;
@@ -509,6 +557,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_432
         {
             get => Entity.SD_432;
@@ -519,6 +568,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_437 SD_437
         {
             get => Entity.SD_437;
@@ -529,6 +579,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_9 SD_92
         {
             get => Entity.SD_92;
@@ -539,6 +590,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_9 Entity
         {
             get => myEntity;
@@ -549,6 +601,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_9> LoadList()

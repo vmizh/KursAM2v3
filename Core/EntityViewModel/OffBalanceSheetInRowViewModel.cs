@@ -29,6 +29,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override Guid Id
         {
             get => Entity.Id;
@@ -39,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid DocId
         {
             get => Entity.DocId;
@@ -49,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal NomenklDC
         {
             get => Entity.NomenklDC;
@@ -59,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal Price
         {
             get => Entity.Price;
@@ -69,6 +73,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal Quantity
         {
             get => Entity.Quantity;
@@ -79,6 +84,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal Summa
         {
             get => Entity.Summa;
@@ -89,6 +95,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Note
         {
             get => Entity.Note;
@@ -99,6 +106,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal SDR_DC
         {
             get => Entity.SDR_DC;
@@ -109,6 +117,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public OffBalanceSheetInDoc OffBalanceSheetInDoc
         {
             get => Entity.OffBalanceSheetInDoc;
@@ -119,6 +128,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_83 SD_83
         {
             get => Entity.SD_83;
@@ -129,6 +139,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_303 SD_303
         {
             get => Entity.SD_303;
@@ -139,6 +150,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsAccessRight { get; set; }
 
         public List<OffBalanceSheetInRow> LoadList()

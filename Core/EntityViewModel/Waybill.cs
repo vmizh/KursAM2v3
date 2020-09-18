@@ -8,7 +8,6 @@ using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using ServiceStack;
 
 namespace Core.EntityViewModel
 {
@@ -57,6 +56,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Kontragent Client
         {
             get => myClient;
@@ -68,9 +68,10 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-        
+
         public ObservableCollection<WaybillRow> Rows { set; get; }
         public List<WaybillRow> DeletedRows { set; get; }
+
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -81,9 +82,10 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name =>
             $"№{Entity.DD_IN_NUM}/{Entity.DD_EXT_NUM} от {Entity.DD_DATE.ToShortDateString()} Склад-{WarehouseOut?.Name} Получатель-{KontragentReceiver?.Name}";
-       
+
         public void RefreshData()
         {
             throw new NotImplementedException();

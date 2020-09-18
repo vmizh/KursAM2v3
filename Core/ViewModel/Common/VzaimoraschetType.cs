@@ -24,6 +24,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => Entity.TV_NAME;

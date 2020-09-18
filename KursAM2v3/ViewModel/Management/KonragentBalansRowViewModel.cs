@@ -72,8 +72,6 @@ namespace KursAM2.ViewModel.Management
                 CrsOperRate = (decimal) db.OPER_CRS_RATE,
                 Nakopit = 0,
                 CrsUchRate = (decimal) db.UCH_CRS_RATE
-                //TODO Проекты доработать в балансе контрагентов
-                //Project = MainReferences.Projects[db.]
             };
         }
 

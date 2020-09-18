@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using Core.Helper;
 using Data;
@@ -22,13 +21,13 @@ namespace Core.EntityViewModel
 
         public WarehouseOrderInRow(TD_24 entity) : base(entity)
         {
-            if(entity.DDT_SPOST_DC != null)
+            if (entity.DDT_SPOST_DC != null)
                 LinkInvoice = new InvoiceProviderRow(entity.TD_26);
             if (entity.DDT_RASH_ORD_DC != null)
             {
                 var rash = entity.TD_241.FirstOrDefault(_ =>
                     _.DDT_RASH_ORD_DC == entity.DDT_RASH_ORD_DC && _.DDT_RASH_ORD_CODE == entity.DDT_RASH_ORD_CODE);
-                if(rash != null)
+                if (rash != null)
                     LinkOrder = new WarehouseOrderOutRow(rash);
             }
         }
@@ -37,6 +36,7 @@ namespace Core.EntityViewModel
         public bool Taksirovka => DDT_TAX_EXECUTED == 1;
         public bool Factur => DDT_FACT_EXECUTED == 1;
         public string LinkDocument => LinkInvoice?.ToString() ?? LinkOrder?.ToString();
+
         public InvoiceProviderRow LinkInvoice
         {
             get => myLinkInvoice;
@@ -47,6 +47,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public WarehouseOrderOutRow LinkOrder
         {
             get => myLinkOrder;

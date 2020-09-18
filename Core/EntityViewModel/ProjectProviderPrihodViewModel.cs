@@ -29,6 +29,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override Guid Id
         {
             get => Entity.Id;
@@ -39,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override Guid RowId
         {
             get => Entity.RowId;
@@ -49,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal Quantity
         {
             get => Entity.Quantity;
@@ -59,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Note
         {
             get => Entity.Note;

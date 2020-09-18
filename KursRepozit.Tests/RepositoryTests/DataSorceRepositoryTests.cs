@@ -2,6 +2,7 @@
 using System.Linq;
 using Core.Repository.Base;
 using Data;
+using Data.Repository;
 using KursRepozit.Repositories;
 using NUnit.Framework;
 
@@ -12,12 +13,12 @@ namespace KursRepozit.Tests.RepositoryTests
     {
         private readonly UnitOfWork<KursSystemEntities> 
             unitOfWork = new UnitOfWork<KursSystemEntities>();
-        private GenericKursSystemRepository<DataSources> kursSystemRepository;
+        private GenericKursSystemDBRepository<DataSources> kursSystemRepository;
         private IDataSourcesRepository dataSourceRepository;
         [SetUp]
         public void SetUp()
         {
-            kursSystemRepository = new GenericKursSystemRepository<DataSources>(unitOfWork);
+            kursSystemRepository = new GenericKursSystemDBRepository<DataSources>(unitOfWork);
             //If you want to use Specific KursSystemRepository with Unit of work
             dataSourceRepository = new DataSourcesKursSystemRepository(unitOfWork);
         }

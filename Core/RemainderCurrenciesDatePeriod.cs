@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel;
 using Core.Helper;
-using Data;
 using DevExpress.Mvvm.DataAnnotations;
 
 namespace Core
@@ -75,6 +74,7 @@ namespace Core
         #region CHF
 
         private decimal? mySummaOutCHF;
+
         public decimal? SummaOutCHF
         {
             set
@@ -85,7 +85,9 @@ namespace Core
             }
             get => mySummaOutCHF;
         }
+
         private decimal? mySummaInCHF;
+
         public decimal? SummaInCHF
         {
             set
@@ -96,7 +98,9 @@ namespace Core
             }
             get => mySummaInCHF;
         }
+
         private decimal? mySummaEndCHF;
+
         public decimal? SummaEndCHF
         {
             set
@@ -107,7 +111,9 @@ namespace Core
             }
             get => mySummaEndCHF;
         }
+
         private decimal? mySummaStartCHF;
+
         public decimal? SummaStartCHF
         {
             set
@@ -124,6 +130,7 @@ namespace Core
         #region EUR
 
         private decimal? mySummaOutEUR;
+
         public decimal? SummaOutEUR
         {
             set
@@ -134,7 +141,9 @@ namespace Core
             }
             get => mySummaOutEUR;
         }
+
         private decimal? mySummaInEUR;
+
         public decimal? SummaInEUR
         {
             set
@@ -145,7 +154,9 @@ namespace Core
             }
             get => mySummaInEUR;
         }
+
         private decimal? mySummaEndEUR;
+
         public decimal? SummaEndEUR
         {
             set
@@ -156,7 +167,9 @@ namespace Core
             }
             get => mySummaEndEUR;
         }
+
         private decimal? mySummaStartEUR;
+
         public decimal? SummaStartEUR
         {
             set
@@ -173,6 +186,7 @@ namespace Core
         #region GBP
 
         private decimal? mySummaOutGBP;
+
         public decimal? SummaOutGBP
         {
             set
@@ -183,7 +197,9 @@ namespace Core
             }
             get => mySummaOutGBP;
         }
+
         private decimal? mySummaInGBP;
+
         public decimal? SummaInGBP
         {
             set
@@ -194,7 +210,9 @@ namespace Core
             }
             get => mySummaInGBP;
         }
+
         private decimal? mySummaEndGBP;
+
         public decimal? SummaEndGBP
         {
             set
@@ -205,7 +223,9 @@ namespace Core
             }
             get => mySummaEndGBP;
         }
+
         private decimal? mySummaStartGBP;
+
         public decimal? SummaStartGBP
         {
             set
@@ -222,6 +242,7 @@ namespace Core
         #region RUB
 
         private decimal? mySummaOutRUB;
+
         public decimal? SummaOutRUB
         {
             set
@@ -232,7 +253,9 @@ namespace Core
             }
             get => mySummaOutRUB;
         }
+
         private decimal? mySummaInRUB;
+
         public decimal? SummaInRUB
         {
             set
@@ -243,7 +266,9 @@ namespace Core
             }
             get => mySummaInRUB;
         }
+
         private decimal? mySummaEndRUB;
+
         public decimal? SummaEndRUB
         {
             set
@@ -254,7 +279,9 @@ namespace Core
             }
             get => mySummaEndRUB;
         }
+
         private decimal? mySummaStartRUB;
+
         public decimal? SummaStartRUB
         {
             set
@@ -271,6 +298,7 @@ namespace Core
         #region USD
 
         private decimal? mySummaOutUSD;
+
         public decimal? SummaOutUSD
         {
             set
@@ -281,7 +309,9 @@ namespace Core
             }
             get => mySummaOutUSD;
         }
+
         private decimal? mySummaInUSD;
+
         public decimal? SummaInUSD
         {
             set
@@ -292,7 +322,9 @@ namespace Core
             }
             get => mySummaInUSD;
         }
+
         private decimal? mySummaEndUSD;
+
         public decimal? SummaEndUSD
         {
             set
@@ -303,7 +335,9 @@ namespace Core
             }
             get => mySummaEndUSD;
         }
+
         private decimal? mySummaStartUSD;
+
         public decimal? SummaStartUSD
         {
             set
@@ -320,6 +354,7 @@ namespace Core
         #region SEK
 
         private decimal? mySummaOutSEK;
+
         public decimal? SummaOutSEK
         {
             set
@@ -330,7 +365,9 @@ namespace Core
             }
             get => mySummaOutSEK;
         }
+
         private decimal? mySummaInSEK;
+
         public decimal? SummaInSEK
         {
             set
@@ -341,7 +378,9 @@ namespace Core
             }
             get => mySummaInSEK;
         }
+
         private decimal? mySummaEndSEK;
+
         public decimal? SummaEndSEK
         {
             set
@@ -352,7 +391,9 @@ namespace Core
             }
             get => mySummaEndSEK;
         }
+
         private decimal? mySummaStartSEK;
+
         public decimal? SummaStartSEK
         {
             set
@@ -456,19 +497,21 @@ namespace Core
     [MetadataType(typeof(DataAnnotationsRemainderDatePeriod))]
     public class ReminderDatePeriod : DatePeriod
     {
-        public ReminderDatePeriod(DatePeriod p) : this()
-        {
-            UpdateFromDatePeriod(p);
-        }
-        public ReminderDatePeriod()
-        {
-            DefaultValue();
-        }
         private Currency myCurrency;
         private decimal? mySummaEnd;
         private decimal? mySummaIn;
         private decimal? mySummaOut;
         private decimal? mySummaStart;
+
+        public ReminderDatePeriod(DatePeriod p) : this()
+        {
+            UpdateFromDatePeriod(p);
+        }
+
+        public ReminderDatePeriod()
+        {
+            DefaultValue();
+        }
 
         public Currency Currency
         {
@@ -480,6 +523,7 @@ namespace Core
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SummaOut
         {
             set
@@ -490,6 +534,7 @@ namespace Core
             }
             get => mySummaOut;
         }
+
         public decimal? SummaIn
         {
             set
@@ -500,6 +545,7 @@ namespace Core
             }
             get => mySummaIn;
         }
+
         public decimal? SummaEnd
         {
             set
@@ -510,6 +556,7 @@ namespace Core
             }
             get => mySummaEnd;
         }
+
         public decimal? SummaStart
         {
             set

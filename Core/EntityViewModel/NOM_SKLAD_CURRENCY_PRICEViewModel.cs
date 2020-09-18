@@ -30,6 +30,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid CurrencyId
         {
             get => Entity.CurrencyId;
@@ -40,6 +41,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid NomenklId
         {
             get => Entity.NomenklId;
@@ -50,6 +52,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime CostDate
         {
             get => Entity.CostDate;
@@ -60,6 +63,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal Cost
         {
             get => Entity.Cost;
@@ -70,6 +74,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal Quantity
         {
             get => Entity.Quantity;
@@ -80,6 +85,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public NOM_SKLAD_CURRENCY_PRICE Entity
         {
             get => myEntity;
@@ -90,6 +96,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<NOM_SKLAD_CURRENCY_PRICE> LoadList()

@@ -31,6 +31,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal CK_MIN_OBOROT
         {
             get => Entity.CK_MIN_OBOROT;
@@ -41,6 +42,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double CK_MAX_PROSROCH_DNEY
         {
             get => Entity.CK_MAX_PROSROCH_DNEY;
@@ -51,6 +53,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal CK_CREDIT_SUM
         {
             get => Entity.CK_CREDIT_SUM;
@@ -61,6 +64,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CK_NAME
         {
             get => Entity.CK_NAME;
@@ -71,6 +75,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? CK_NACEN_DEFAULT_ROZN
         {
             get => Entity.CK_NACEN_DEFAULT_ROZN;
@@ -81,6 +86,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? CK_NACEN_DEFAULT_KOMPL
         {
             get => Entity.CK_NACEN_DEFAULT_KOMPL;
@@ -91,6 +97,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? CK_IMMEDIATE_PRICE_CHANGE
         {
             get => Entity.CK_IMMEDIATE_PRICE_CHANGE;
@@ -101,6 +108,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CK_GROUP
         {
             get => Entity.CK_GROUP;
@@ -111,6 +119,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_148 Entity
         {
             get => myEntity;
@@ -121,6 +130,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_148> LoadList()

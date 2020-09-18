@@ -29,6 +29,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override int Code
         {
             get => Entity.CODE;
@@ -39,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string RASCH_ACC
         {
             get => Entity.RASCH_ACC;
@@ -49,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DELETED
         {
             get => Entity.DELETED;
@@ -59,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? BANK_DC
         {
             get => Entity.BANK_DC;
@@ -69,6 +73,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? VALUTNIY
         {
             get => Entity.VALUTNIY;
@@ -79,6 +84,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? TRANSITNIY
         {
             get => Entity.TRANSITNIY;
@@ -89,6 +95,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string FILIAL_BANKA
         {
             get => Entity.FILIAL_BANKA;
@@ -99,6 +106,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DISABLED
         {
             get => Entity.DISABLED;
@@ -109,6 +117,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? USE_FOR_TLAT_TREB
         {
             get => Entity.USE_FOR_TLAT_TREB;
@@ -119,6 +128,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_43
         {
             get => Entity.SD_43;
@@ -129,6 +139,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_44 SD_44
         {
             get => Entity.SD_44;
@@ -139,6 +150,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public TD_43 Entity
         {
             get => myEntity;
@@ -149,6 +161,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<TD_43> LoadList()

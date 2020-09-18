@@ -17,7 +17,7 @@ namespace Core.ViewModel
         //минуя это свойство. Поэтому нет смысла туда что-то дописывать
         public bool IsNewDocument
         {
-            get => (bool)GetValue(IdProperty);
+            get => (bool) GetValue(IdProperty);
             set => SetValue(IdProperty, value);
         }
 
@@ -25,7 +25,7 @@ namespace Core.ViewModel
         private static void IdChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // ReSharper disable once UnusedVariable
-            var button = (KursButton)d;
+            var button = (KursButton) d;
             Debug.WriteLine("New IsNewDocument = {0}; Old IsNewDocument = {1}", e.NewValue, e.OldValue);
         }
     }

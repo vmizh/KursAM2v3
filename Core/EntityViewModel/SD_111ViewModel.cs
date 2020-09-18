@@ -43,6 +43,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => Entity.ZACH_NAME;
@@ -53,6 +54,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsCurrencyConvert
         {
             get => Entity.IsCurrencyConvert;
@@ -63,6 +65,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_111 Entity
         {
             get => myEntity;
@@ -73,6 +76,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; } = new EntityLoadCodition();
 
         public List<SD_111> LoadList()
@@ -104,6 +108,7 @@ namespace Core.EntityViewModel
             {
                 WindowManager.ShowError(ex);
             }
+
             return item;
         }
 

@@ -5,6 +5,6 @@
         Open = 0,
         New = 1,
         Copy = 2,
-        RequisiteCopy = 3,
+        RequisiteCopy = 3
     }
 }

@@ -315,8 +315,8 @@ namespace KursAM2.Managers
                                 VV_STOP_DATE = item.Date
                             };
                             ctx.SD_101.Add(oldDC);
+                            oldItem.DOC_CODE = oldDC.DOC_CODE;
                         }
-                        oldItem.DOC_CODE = oldDC.DOC_CODE;
                         oldItem.VVT_DOC_NUM = item.VVT_DOC_NUM;
                         oldItem.VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD;
                         oldItem.VVT_VAL_RASHOD = item.VVT_VAL_RASHOD;

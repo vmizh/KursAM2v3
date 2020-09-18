@@ -33,6 +33,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => DOC_CODE;
@@ -43,6 +44,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => BANK_NAME;
@@ -53,6 +55,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string BANK_NAME
         {
             get => Entity.BANK_NAME;
@@ -63,6 +66,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CORRESP_ACC
         {
             get => Entity.CORRESP_ACC;
@@ -73,6 +77,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string MFO_NEW
         {
             get => Entity.MFO_NEW;
@@ -83,6 +88,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string MFO_OLD
         {
             get => Entity.MFO_OLD;
@@ -93,6 +99,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string POST_CODE
         {
             get => Entity.POST_CODE;
@@ -103,6 +110,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SUB_CORR_ACC
         {
             get => Entity.SUB_CORR_ACC;
@@ -113,6 +121,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ADDRESS
         {
             get => Entity.ADDRESS;
@@ -123,6 +132,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string BANK_NICKNAME
         {
             get => Entity.BANK_NICKNAME;
@@ -133,6 +143,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_44 Entity
         {
             get => myEntity;
@@ -143,6 +154,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
         public string Info => $"{BANK_NAME} БИК {POST_CODE} К/счет {CORRESP_ACC}";
 

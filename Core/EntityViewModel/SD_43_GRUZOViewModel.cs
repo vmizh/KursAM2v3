@@ -31,6 +31,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool? IsDefault
         {
             get => Entity.IsDefault;
@@ -41,6 +42,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string GRUZO_TEXT_SF
         {
             get => Entity.GRUZO_TEXT_SF;
@@ -51,6 +53,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string OKPO
         {
             get => Entity.OKPO;
@@ -61,6 +64,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? CHANGED_DATE
         {
             get => Entity.CHANGED_DATE;
@@ -71,6 +75,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string GRUZO_TEXT_NAKLAD
         {
             get => Entity.GRUZO_TEXT_NAKLAD;
@@ -81,6 +86,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_43
         {
             get => Entity.SD_43;
@@ -91,6 +97,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43_GRUZO Entity
         {
             get => myEntity;
@@ -101,6 +108,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_43_GRUZO> LoadList()

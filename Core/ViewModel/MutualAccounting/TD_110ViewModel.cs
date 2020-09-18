@@ -15,12 +15,13 @@ namespace Core.ViewModel.MutualAccounting
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_110ViewModel>
     {
+        public decimal MaxSumma = decimal.MaxValue;
         private TD_110 myEntity;
         private Kontragent myKontragent;
-        private SDRSchet mySHPZ;
-        private SD_77ViewModel myVzaimoraschType;
         private InvoiceClient mySFClient;
         private InvoiceProvider mySFProvider;
+        private SDRSchet mySHPZ;
+        private SD_77ViewModel myVzaimoraschType;
 
         public TD_110ViewModel()
         {
@@ -33,7 +34,6 @@ namespace Core.ViewModel.MutualAccounting
             UpdateFrom(entity);
         }
 
-        public decimal MaxSumma = Decimal.MaxValue;
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -45,6 +45,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public override string Note
         {
             get => Entity.VZT_DOC_NOTES;
@@ -55,6 +56,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public override int Code
         {
             get => Entity.CODE;
@@ -65,6 +67,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal? VZT_CRS_SUMMA
         {
             get => Entity.VZT_CRS_SUMMA;
@@ -75,18 +78,20 @@ namespace Core.ViewModel.MutualAccounting
                 {
                     WindowManager.ShowMessage("Сумма не может быть меньше 0!", "Ошибка",
                         MessageBoxImage.Stop);
-                                        return;
+                    return;
                 }
+
                 if (value > MaxSumma && VZT_SFACT_DC != null)
                 {
                     WindowManager.ShowMessage("Сумма не может быть больше сумму оплаты по счету!", "Ошибка",
                         MessageBoxImage.Stop);
                     return;
                 }
+
                 Entity.VZT_CRS_SUMMA = value;
                 VZT_KONTR_CRS_SUMMA = VZT_1MYDOLZH_0NAMDOLZH == 0 ? -Entity.VZT_CRS_SUMMA : Entity.VZT_CRS_SUMMA;
                 //VZT_CRS_POGASHENO = Entity.VZT_CRS_POGASHENO;
-                if (Entity.VZT_CRS_DC == CurrencyCode.USD && VZT_KONTR_CRS_DC == CurrencyCode.RUB) 
+                if (Entity.VZT_CRS_DC == CurrencyCode.USD && VZT_KONTR_CRS_DC == CurrencyCode.RUB)
                     VZT_UCH_CRS_POGASHENO = Entity.VZT_CRS_SUMMA *
                                             (Entity.VZT_UCH_CRS_RATE == 0 ? 1 : Entity.VZT_UCH_CRS_RATE);
                 else
@@ -96,6 +101,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal VZT_CRS_DC
         {
             get => Entity.VZT_CRS_DC;
@@ -107,7 +113,9 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged(nameof(Currency));
             }
         }
+
         public Currency Currency => KontragentCurrency;
+
         public decimal? VZT_SPOST_DC
         {
             get => Entity.VZT_SPOST_DC;
@@ -164,6 +172,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public string VZT_DOC_NUM
         {
             get => Entity.VZT_DOC_NUM;
@@ -174,6 +183,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public string VZT_DOC_NOTES
         {
             get => Entity.VZT_DOC_NOTES;
@@ -184,6 +194,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal VZT_KONTR_DC
         {
             get => Entity.VZT_KONTR_DC;
@@ -196,6 +207,7 @@ namespace Core.ViewModel.MutualAccounting
                 //RaisePropertyChanged(nameof(Kontragent));
             }
         }
+
         public Kontragent Kontragent
         {
             get => myKontragent;
@@ -210,13 +222,15 @@ namespace Core.ViewModel.MutualAccounting
                     Entity.VZT_KONTR_CRS_DC = myKontragent.BalansCurrency.DocCode;
                     Entity.VZT_KONTR_CRS_RATE = 1;
                 }
+
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(VZT_KONTR_DC));
                 RaisePropertyChanged(nameof(VZT_KONTR_CRS_DC));
             }
         }
 
-        public bool IsBalans =>  Kontragent != null && !Kontragent.IsBalans;
+        public bool IsBalans => Kontragent != null && !Kontragent.IsBalans;
+
         public decimal? VZT_CRS_POGASHENO
         {
             get => Entity.VZT_CRS_POGASHENO;
@@ -227,6 +241,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal? VZT_UCH_CRS_POGASHENO
         {
             get => Entity.VZT_UCH_CRS_POGASHENO;
@@ -237,6 +252,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal VZT_UCH_CRS_RATE
         {
             get => Entity.VZT_UCH_CRS_RATE == 0 ? 1 : Entity.VZT_UCH_CRS_RATE;
@@ -253,6 +269,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal VZT_VZAIMOR_TYPE_DC
         {
             get => Entity.VZT_VZAIMOR_TYPE_DC;
@@ -263,6 +280,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public SD_77ViewModel VzaimoraschType
         {
             get => myVzaimoraschType;
@@ -276,6 +294,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged(nameof(VZT_VZAIMOR_TYPE_DC));
             }
         }
+
         public short VZT_1MYDOLZH_0NAMDOLZH
         {
             get => Entity.VZT_1MYDOLZH_0NAMDOLZH;
@@ -286,6 +305,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal VZT_KONTR_CRS_DC
         {
             get => Entity.VZT_KONTR_CRS_DC;
@@ -296,7 +316,9 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public Currency KontragentCurrency => Kontragent?.BalansCurrency;
+
         public decimal VZT_KONTR_CRS_RATE
         {
             get => Entity.VZT_KONTR_CRS_RATE;
@@ -307,6 +329,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal? VZT_KONTR_CRS_SUMMA
         {
             get => Entity.VZT_KONTR_CRS_SUMMA;
@@ -317,6 +340,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal? VZT_SHPZ_DC
         {
             get => Entity.VZT_SHPZ_DC;
@@ -330,6 +354,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged(nameof(SHPZ));
             }
         }
+
         public SDRSchet SHPZ
         {
             get => mySHPZ;
@@ -343,6 +368,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged(nameof(VZT_SHPZ_DC));
             }
         }
+
         public byte[] TSTAMP
         {
             get => Entity.TSTAMP;
@@ -353,6 +379,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public SD_110 SD_110
         {
             get => Entity.SD_110;
@@ -363,6 +390,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public SD_26 SD_26
         {
             get => Entity.SD_26;
@@ -373,6 +401,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_301
         {
             get => Entity.SD_301;
@@ -383,6 +412,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_3011
         {
             get => Entity.SD_3011;
@@ -393,6 +423,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public SD_303 SD_303
         {
             get => Entity.SD_303;
@@ -403,6 +434,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_43
         {
             get => Entity.SD_43;
@@ -413,6 +445,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public SD_77 SD_77
         {
             get => Entity.SD_77;
@@ -423,6 +456,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public SD_84 SD_84
         {
             get => Entity.SD_84;
@@ -433,6 +467,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public TD_110 Entity
         {
             get => myEntity;
@@ -443,6 +478,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<TD_110> LoadList()

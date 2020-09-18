@@ -16,6 +16,7 @@ namespace Core.ViewModel.Common
         private Warehouse mySklad;
         private decimal mySumma;
         private decimal mySummaWithNaklad;
+
         public DateTime RemainDate
         {
             get => myRemainDate;
@@ -26,6 +27,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public Warehouse Sklad
         {
             get => mySklad;
@@ -37,7 +39,9 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string SkladName => mySklad?.Name;
+
         public decimal Quantity
         {
             get => myQuantity;
@@ -48,6 +52,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal Price
         {
             get => myPrice;
@@ -58,6 +63,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal PriceNaklad
         {
             get => myPriceNaklad;
@@ -68,6 +74,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal Summa
         {
             get => mySumma;
@@ -78,6 +85,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaWithNaklad
         {
             get => mySummaWithNaklad;

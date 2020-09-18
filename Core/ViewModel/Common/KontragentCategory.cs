@@ -27,6 +27,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => Entity.CK_NAME;
@@ -44,7 +45,8 @@ namespace Core.ViewModel.Common
         }
     }
 
-    public class DataAnnotationsKontragentCategory : DataAnnotationForFluentApiBase, IMetadataProvider<KontragentCategory>
+    public class DataAnnotationsKontragentCategory : DataAnnotationForFluentApiBase,
+        IMetadataProvider<KontragentCategory>
     {
         void IMetadataProvider<KontragentCategory>.BuildMetadata(MetadataBuilder<KontragentCategory> builder)
         {

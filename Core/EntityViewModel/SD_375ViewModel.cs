@@ -29,6 +29,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short DOP_USL_DEFAULT
         {
             get => Entity.DOP_USL_DEFAULT;
@@ -39,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DOP_USL_TEXT
         {
             get => Entity.DOP_USL_TEXT;
@@ -49,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_375 Entity
         {
             get => myEntity;
@@ -59,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_375> LoadList()

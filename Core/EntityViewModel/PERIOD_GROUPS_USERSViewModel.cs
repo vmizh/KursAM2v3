@@ -33,6 +33,7 @@ namespace Core.EntityViewModel
             }
             get => Entity.EXT_USERS.USR_NICKNAME;
         }
+
         public override Guid Id
         {
             get => Entity.ID;
@@ -43,6 +44,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int USER_ID
         {
             get => Entity.USER_ID;
@@ -53,6 +55,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid GROUP_ID
         {
             get => Entity.GROUP_ID;
@@ -63,6 +66,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EXT_USERS EXT_USERS
         {
             get => Entity.EXT_USERS;
@@ -73,6 +77,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public PERIOD_GROUPS PERIOD_GROUPS
         {
             get => Entity.PERIOD_GROUPS;
@@ -83,6 +88,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public PERIOD_GROUPS_USERS Entity
         {
             get => myEntity;
@@ -93,6 +99,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<PERIOD_GROUPS_USERS> LoadList()

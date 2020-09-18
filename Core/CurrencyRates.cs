@@ -36,6 +36,7 @@ namespace Core
                         ent.CURRENCY_RATES_CB.Where(_ => _.RATE_DATE >= StartDate && _.RATE_DATE <= EndDate)
                             .ToList();
                 }
+
                 var dt = myRates.Select(_ => _.RATE_DATE).Distinct().ToList();
                 myRates.AddRange(dt.Select(r => new CURRENCY_RATES_CB
                 {

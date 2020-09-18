@@ -66,12 +66,14 @@ namespace Core.ViewModel.Common
                     foreach (var r in ctx.CURRENCY_RATES_CB.Where(_ => _.RATE_DATE == maxd))
                         ret.Add(MainReferences.Currencies[r.CRS_DC], decimal.Round(r.RATE, 4));
                 }
+
                 ret.Add(GlobalOptions.SystemProfile.NationalCurrency, 1);
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
             }
+
             return ret;
         }
 

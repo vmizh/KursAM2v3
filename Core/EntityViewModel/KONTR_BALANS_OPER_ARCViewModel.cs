@@ -31,6 +31,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DOC_NUM
         {
             get => Entity.DOC_NUM;
@@ -41,6 +42,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime DOC_DATE
         {
             get => Entity.DOC_DATE;
@@ -51,6 +53,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double CRS_KONTR_IN
         {
             get => Entity.CRS_KONTR_IN;
@@ -61,6 +64,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double CRS_KONTR_OUT
         {
             get => Entity.CRS_KONTR_OUT;
@@ -71,6 +75,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DOC_DC
         {
             get => Entity.DOC_DC;
@@ -81,6 +86,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int DOC_ROW_CODE
         {
             get => Entity.DOC_ROW_CODE;
@@ -91,6 +97,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int DOC_TYPE_CODE
         {
             get => Entity.DOC_TYPE_CODE;
@@ -101,6 +108,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double CRS_OPER_IN
         {
             get => Entity.CRS_OPER_IN;
@@ -111,6 +119,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double CRS_OPER_OUT
         {
             get => Entity.CRS_OPER_OUT;
@@ -121,6 +130,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal OPER_CRS_DC
         {
             get => Entity.OPER_CRS_DC;
@@ -131,6 +141,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double OPER_CRS_RATE
         {
             get => Entity.OPER_CRS_RATE;
@@ -141,6 +152,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double UCH_CRS_RATE
         {
             get => Entity.UCH_CRS_RATE;
@@ -151,6 +163,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal KONTR_DC
         {
             get => Entity.KONTR_DC;
@@ -161,6 +174,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ID
         {
             get => Entity.ID;
@@ -171,6 +185,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int NEW_CALC
         {
             get => Entity.NEW_CALC;
@@ -181,6 +196,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public KONTR_BALANS_OPER_ARC Entity
         {
             get => myEntity;
@@ -191,6 +207,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<KONTR_BALANS_OPER_ARC> LoadList()

@@ -14,6 +14,8 @@ namespace Core.EntityViewModel
     {
         private SD_77 myEntity;
 
+        private SDRSchet mySHPZ;
+
         public SD_77ViewModel()
         {
             Entity = DefaultValue();
@@ -36,6 +38,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => Entity.TV_NAME;
@@ -46,6 +49,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -56,6 +60,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string TV_NAME
         {
             get => Entity.TV_NAME;
@@ -66,6 +71,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? TV_TYPE
         {
             get => Entity.TV_TYPE;
@@ -76,6 +82,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? TV_SHPZ_DC
         {
             get => Entity.TV_SHPZ_DC;
@@ -89,7 +96,6 @@ namespace Core.EntityViewModel
             }
         }
 
-        private SDRSchet mySHPZ;
         public SDRSchet SHPZ
         {
             get => mySHPZ;
@@ -98,11 +104,12 @@ namespace Core.EntityViewModel
                 // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (mySHPZ == value) return;
                 mySHPZ = value;
-                if(mySHPZ != null)
+                if (mySHPZ != null)
                     TV_SHPZ_DC = mySHPZ.DocCode;
                 RaisePropertyChanged();
             }
         }
+
         public SD_303 SD_303
         {
             get => Entity.SD_303;
@@ -113,6 +120,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_77 Entity
         {
             get => myEntity;
@@ -123,6 +131,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_77> LoadList()

@@ -31,6 +31,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => Entity.CENT_NAME;
@@ -41,6 +42,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         [DataMember]
         public string FullName
         {
@@ -52,6 +54,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         [DataMember]
         public bool IsDeleted
         {

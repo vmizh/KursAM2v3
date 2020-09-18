@@ -15,6 +15,7 @@ using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.POCO;
@@ -63,7 +64,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         private DistributeNakladViewModel()
         {
-            BaseRepository = new GenericKursRepository<Data.DistributeNaklad>(unitOfWork);
+            BaseRepository = new GenericKursDBRepository<Data.DistributeNaklad>(unitOfWork);
             DistributeNakladRepository = new DistributeNakladRepository(unitOfWork);
             InvoiceProviderRepository = new InvoiceProviderRepository(unitOfWork);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -87,7 +88,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         // ReSharper disable once NotAccessedField.Local
-        public readonly GenericKursRepository<Data.DistributeNaklad> BaseRepository;
+        public readonly GenericKursDBRepository<Data.DistributeNaklad> BaseRepository;
 
         // ReSharper disable once NotAccessedField.Local
         public readonly IDistributeNakladRepository DistributeNakladRepository;

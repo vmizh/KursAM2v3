@@ -30,6 +30,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -40,6 +41,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => Entity.Name;
@@ -50,6 +52,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int Type
         {
             get => Entity.Type;
@@ -60,6 +63,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EMP_PAYROLL_TYPE Entity
         {
             get => myEntity;
@@ -70,6 +74,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<EMP_PAYROLL_TYPE> LoadList()

@@ -30,6 +30,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid DocId
         {
             get => Entity.DocId;
@@ -40,6 +41,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal NomenklOutDC
         {
             get => Entity.NomenklOutDC;
@@ -50,6 +52,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal NomenklInDC
         {
             get => Entity.NomenklInDC;
@@ -60,6 +63,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal Quantity
         {
             get => Entity.Quantity;
@@ -70,6 +74,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal Rate
         {
             get => Entity.Rate;
@@ -80,6 +85,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string LastUpdater
         {
             get => Entity.LastUpdater;
@@ -90,6 +96,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime LastUpdate
         {
             get => Entity.LastUpdate;
@@ -100,6 +107,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsAccepted
         {
             get => Entity.IsAccepted;
@@ -110,6 +118,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal PriceIn
         {
             get => Entity.PriceIn;
@@ -120,6 +129,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal PriceOut
         {
             get => Entity.PriceOut;
@@ -130,6 +140,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool? IsPriceAcepted
         {
             get => Entity.IsPriceAcepted;
@@ -140,6 +151,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? StoreDC
         {
             get => Entity.StoreDC;
@@ -150,6 +162,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid? InvoiceSupplierRowId
         {
             get => Entity.InvoiceSupplierRowId;
@@ -160,6 +173,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? NakladRate
         {
             get => Entity.NakladRate;
@@ -170,6 +184,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? NakladEdSumma
         {
             get => Entity.NakladEdSumma;
@@ -180,6 +195,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public NomenklTransfer NomenklTransfer
         {
             get => Entity.NomenklTransfer;
@@ -190,6 +206,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_83 SD_83
         {
             get => Entity.SD_83;
@@ -200,6 +217,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_83 SD_831
         {
             get => Entity.SD_831;
@@ -210,6 +228,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public NomenklTransferRow Entity
         {
             get => myEntity;
@@ -220,6 +239,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<NomenklTransferRow> LoadList()

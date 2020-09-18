@@ -15,6 +15,8 @@ using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
+using Data;
+using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using Helper;
@@ -29,8 +31,8 @@ namespace KursAM2.ViewModel.StartLogin
         private string myCurrentBoxItem;
         private string myCurrentPassword;
         private string myCurrentUser;
-        private string myVersionValue;
         private bool myIsThemeAllow;
+        private string myVersionValue;
 
         public StartLoginViewModel(Window formWindow)
         {
@@ -40,9 +42,12 @@ namespace KursAM2.ViewModel.StartLogin
         }
 
         private ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
+
         public ObservableCollection<DataSource> ComboBoxItemSource { set; get; } =
             new ObservableCollection<DataSource>();
+
         public DataSource SelectedDataSource { set; get; }
+
         public string VersionValue
         {
             set
@@ -53,6 +58,7 @@ namespace KursAM2.ViewModel.StartLogin
             }
             get => myVersionValue;
         }
+
         public string CurrentUser
         {
             set
@@ -67,6 +73,7 @@ namespace KursAM2.ViewModel.StartLogin
             }
             get => myCurrentUser;
         }
+
         public string CurrentBoxItem
         {
             set
@@ -77,6 +84,7 @@ namespace KursAM2.ViewModel.StartLogin
             }
             get => myCurrentBoxItem;
         }
+
         public string CurrentPassword
         {
             set
@@ -111,6 +119,7 @@ namespace KursAM2.ViewModel.StartLogin
                     MessageBoxImage.Question);
                 return;
             }
+
             SplashLoadBar();
             User newUser;
             if (!CheckAndSetUser(out newUser)) return;
@@ -142,6 +151,7 @@ namespace KursAM2.ViewModel.StartLogin
                             tileGroupsTemp.Add(newGrp);
                         }
                 }
+
                 var tileGroups = new List<TileGroup>(tileGroupsTemp.OrderBy(_ => _.OrderBy));
                 foreach (var grp in tileGroups)
                 {
@@ -161,8 +171,10 @@ namespace KursAM2.ViewModel.StartLogin
                             OrderBy = (int) (ord != null ? ord.Order : tile.Id)
                         });
                     }
+
                     grp.TileItems = new List<TileItem>(tItems.OrderBy(_ => _.OrderBy));
                 }
+
                 newUser.MainTileGroups = new List<TileGroup>(tileGroups.OrderBy(_ => _.OrderBy));
                 newUser.Groups =
                     GlobalOptions.GetEntities().EXT_GROUPS.Select(
@@ -172,6 +184,7 @@ namespace KursAM2.ViewModel.StartLogin
                 Helper.CurrentUser.UserInfo = newUser;
                 GlobalOptions.SystemProfile = new SystemProfile();
             }
+
             SetUserProfile(newUser.NickName.ToUpper());
             SetGlobalProfile();
             // ReSharper disable once PossibleNullReferenceException
@@ -200,6 +213,7 @@ namespace KursAM2.ViewModel.StartLogin
                     GlobalOptions.SystemProfile.OwnerKontragent =
                         new Kontragent(ownKontr);
                 }
+
                 var mainCrsDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
                     _ => _.SECTION == "CURRENCY" && _.ITEM == "MAIN");
                 if (mainCrsDC != null)
@@ -209,6 +223,7 @@ namespace KursAM2.ViewModel.StartLogin
                         GlobalOptions.GetEntities().SD_301.Single(_ => _.DOC_CODE == dc);
                     GlobalOptions.SystemProfile.MainCurrency = new Currency(mainCrs);
                 }
+
                 var nationalCrsDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
                     _ => _.SECTION == "CURRENCY" && _.ITEM == "ОСНОВНАЯ_В_ГОСУДАРСТВЕ");
                 if (nationalCrsDC != null)
@@ -219,6 +234,7 @@ namespace KursAM2.ViewModel.StartLogin
                     GlobalOptions.SystemProfile.NationalCurrency =
                         new Currency(nationalCrs);
                 }
+
                 var employeeDefaultCurrencyDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
                     _ => _.SECTION == "ЗАРПЛАТА" && _.ITEM == "ВАЛЮТА")?.ITEM_VALUE;
                 if (employeeDefaultCurrencyDC != null)
@@ -232,6 +248,7 @@ namespace KursAM2.ViewModel.StartLogin
                 {
                     GlobalOptions.SystemProfile.EmployeeDefaultCurrency = GlobalOptions.SystemProfile.NationalCurrency;
                 }
+
                 var prTypeDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
                     _ => _.SECTION == "ЗAРПЛАТА" && _.ITEM == "НАЧИСЛЕНИЕ_ПО_УМОЛЧАНИЮ")?.ITEM_VALUE;
                 if (prTypeDC != null)
@@ -278,33 +295,43 @@ namespace KursAM2.ViewModel.StartLogin
                         newUser = null;
                         return false;
                     }
-                    else
+
+                    if (u.IsDeleted)
                     {
-                        if (u.IsDeleted)
-                        {
-                            WinManager.ShowMessageBox(
-                                $"Пользователю {CurrentUser} запрещен вход в систему.Обратитесь к администратору.",
-                                "Ошибка входа");
-                            newUser = null;
-                            return false;
-                        }
-                        if (u.IsDeleted)
-                        {
-                            WinManager.ShowMessageBox(
-                                $"Пользователю {CurrentUser} не назначен доступ ни к одной базе данных. " +
-                                "Обратитесь к администратору.",
-                                "Ошибка входа");
-                            newUser = null;
-                            return false;
-                        }
+                        WinManager.ShowMessageBox(
+                            $"Пользователю {CurrentUser} запрещен вход в систему.Обратитесь к администратору.",
+                            "Ошибка входа");
+                        newUser = null;
+                        return false;
                     }
 
+                    if (u.IsDeleted)
+                    {
+                        WinManager.ShowMessageBox(
+                            $"Пользователю {CurrentUser} не назначен доступ ни к одной базе данных. " +
+                            "Обратитесь к администратору.",
+                            "Ошибка входа");
+                        newUser = null;
+                        return false;
+                    }
                 }
+
                 GlobalOptions.DataBaseName = SelectedDataSource.ShowName;
                 GlobalOptions.DataBaseId = SelectedDataSource.Id;
                 GlobalOptions.DatabaseColor = SelectedDataSource.Color;
                 GlobalOptions.SqlConnectionString =
                     SelectedDataSource.GetConnectionString(CurrentUser, CurrentPassword);
+                GlobalOptions.KursDBContext = new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString);
+                GlobalOptions.KursDBUnitOfWork = new UnitOfWork<ALFAMEDIAEntities>(GlobalOptions.KursDBContext);
+                GlobalOptions.KursSystemDBContext = new KursSystemEntities(new SqlConnectionStringBuilder
+                {
+                    DataSource = "172.16.0.1",
+                    InitialCatalog = "KursSystem",
+                    UserID = "sa",
+                    Password = "CbvrfFhntvrf65"
+                }.ToString());
+                GlobalOptions.KursSystemDBUnitOfWork =
+                    new UnitOfWork<KursSystemEntities>(GlobalOptions.KursSystemDBContext);
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var usr = ctx.EXT_USERS
@@ -317,6 +344,7 @@ namespace KursAM2.ViewModel.StartLogin
                         newUser = null;
                         return false;
                     }
+
                     newUser = new User
                     {
                         Id = Convert.ToInt32(usr.USR_ID),
@@ -344,10 +372,12 @@ namespace KursAM2.ViewModel.StartLogin
                     errText.Append($"\n {exx.InnerException.Message}");
                     exx = exx.InnerException;
                 }
+
                 MessageBox.Show("CheckAndSetUser error.\n" + errText);
                 newUser = null;
                 return false;
             }
+
             return true;
         }
 
@@ -372,9 +402,9 @@ namespace KursAM2.ViewModel.StartLogin
             ComboBoxItemSource.Clear();
             var connection = new SqlConnectionStringBuilder
             {
-                DataSource = "172.16.0.1", 
-                InitialCatalog = "KursSystem", 
-                UserID = "KursUser", 
+                DataSource = "172.16.0.1",
+                InitialCatalog = "KursSystem",
+                UserID = "KursUser",
                 Password = "KursUser"
             };
             try
@@ -440,8 +470,10 @@ namespace KursAM2.ViewModel.StartLogin
                     var user = ctx.Users.FirstOrDefault(_ => _.Name == CurrentUser);
                     if (user == null)
                         // ReSharper disable once PossibleNullReferenceException
+                    {
                         view.AvatarObj.Source =
                             new BitmapImage(new Uri("./../Images/businessman.png", UriKind.Relative));
+                    }
                     else
                     {
                         IsThemeAllow = true;
@@ -469,6 +501,7 @@ namespace KursAM2.ViewModel.StartLogin
                 GlobalOptions.Version = $"Версия {ver.Major}.{ver.Minor}.{ver.Ver}";
                 VersionValue = $"Версия {ver.Major}.{ver.Minor}.{ver.Ver}";
             }
+
             LoadDataSources();
         }
 

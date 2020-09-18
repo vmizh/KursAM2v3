@@ -30,11 +30,7 @@ namespace Core.EntityViewModel
             Entity = entity ?? new SD_114 {DOC_CODE = -1};
             myIsNegative = Entity.BA_NEGATIVE_RESTS == 1;
             myCO = MainReferences.GetCO(Entity.BA_CENTR_OTV_DC);
-            if (Entity.SD_44 != null)
-            {
-                Bank = new Bank(Entity.SD_44);
-            }
-
+            if (Entity.SD_44 != null) Bank = new Bank(Entity.SD_44);
         }
 
         public SD_114 Entity
@@ -47,6 +43,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -57,6 +54,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => DOC_CODE;
@@ -67,6 +65,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int BA_RASH_ACC_CODE
         {
             get => Entity.BA_RASH_ACC_CODE;
@@ -77,6 +76,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string BA_RASH_ACC
         {
             get => Entity.BA_RASH_ACC;
@@ -87,6 +87,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short BA_CURRENCY
         {
             get => Entity.BA_CURRENCY;
@@ -97,6 +98,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? BA_BANK_AS_KONTRAGENT_DC
         {
             get => Entity.BA_BANK_AS_KONTRAGENT_DC;
@@ -107,6 +109,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short BA_TRANSIT
         {
             get => Entity.BA_TRANSIT;
@@ -117,6 +120,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal BA_BANKDC
         {
             get => Entity.BA_BANKDC;
@@ -127,6 +131,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Bank Bank
         {
             get => myBank;
@@ -139,6 +144,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string BA_BANK_NAME
         {
             get => Entity.BA_BANK_NAME;
@@ -171,6 +177,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsNegative
         {
             get => myIsNegative;
@@ -180,13 +187,9 @@ namespace Core.EntityViewModel
                 myIsNegative = value;
                 BA_NEGATIVE_RESTS = (short?) (myIsNegative ? 1 : 0);
                 if (myIsNegative)
-                {
                     DateNonZero = DateTime.Today;
-                }
                 else
-                {
                     DateNonZero = null;
-                }
                 RaisePropertyChanged();
             }
         }
@@ -203,7 +206,8 @@ namespace Core.EntityViewModel
             }
         }
 
-        public bool? IsDeleted {
+        public bool? IsDeleted
+        {
             get => Entity.IsDeleted;
             set
             {
@@ -255,6 +259,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string BA_ACC_SHORTNAME
         {
             get => Entity.BA_ACC_SHORTNAME;
@@ -265,6 +270,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? BA_CENTR_OTV_DC
         {
             get => Entity.BA_CENTR_OTV_DC;
@@ -275,6 +281,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public CentrOfResponsibility CO
         {
             get => myCO;
@@ -286,6 +293,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_44 SD_44
         {
             get => Entity.SD_44;
@@ -296,6 +304,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public TD_43 TD_43
         {
             get => Entity.TD_43;
@@ -306,6 +315,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_40 SD_40
         {
             get => Entity.SD_40;
@@ -316,6 +326,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsAccessRight { get; set; }
 
         public List<SD_114> LoadList()

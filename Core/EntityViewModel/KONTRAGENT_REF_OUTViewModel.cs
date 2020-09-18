@@ -30,6 +30,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string GlavBuh
         {
             get => Entity.GlavBuh;
@@ -40,6 +41,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string INN
         {
             get => Entity.INN;
@@ -50,6 +52,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string KPP
         {
             get => Entity.KPP;
@@ -60,6 +63,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string OKPO
         {
             get => Entity.OKPO;
@@ -70,6 +74,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string Address
         {
             get => Entity.Address;
@@ -80,6 +85,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string OKONH
         {
             get => Entity.OKONH;
@@ -90,6 +96,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? OLD_DC
         {
             get => Entity.OLD_DC;
@@ -100,6 +107,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_43
         {
             get => Entity.SD_43;
@@ -110,6 +118,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public KONTRAGENT_REF_OUT Entity
         {
             get => myEntity;
@@ -120,6 +129,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<KONTRAGENT_REF_OUT> LoadList()

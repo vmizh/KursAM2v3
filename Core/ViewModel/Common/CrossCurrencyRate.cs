@@ -37,6 +37,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         [Display(AutoGenerateField = false)]
         public Currency Currency
         {
@@ -48,6 +49,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         [Display(Name = "USD")]
         [DisplayFormat(DataFormatString = "n4")]
         public decimal CurrencyUSD
@@ -60,6 +62,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         [Display(AutoGenerateField = false)]
         public decimal CurrencyRUB
         {
@@ -71,6 +74,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         [Display(Name = "EUR")]
         [DisplayFormat(DataFormatString = "n4")]
         public decimal CurrencyEUR
@@ -83,6 +87,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         [Display(Name = "GBP")]
         [DisplayFormat(DataFormatString = "n4")]
         public decimal CurrencyGBP
@@ -150,6 +155,7 @@ namespace Core.ViewModel.Common
                 case CurrencyCode.GBPName:
                     return row.CurrencyGBP;
             }
+
             return -1;
         }
 
@@ -171,6 +177,7 @@ namespace Core.ViewModel.Common
                 case CurrencyCode.GBP:
                     return CurrencyGBP;
             }
+
             return -1;
         }
 

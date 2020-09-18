@@ -29,6 +29,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NAME
         {
             get => Entity.NAME;
@@ -39,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NOTES
         {
             get => Entity.NOTES;
@@ -49,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int ORDERBY
         {
             get => Entity.ORDERBY;
@@ -59,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public byte[] PICTURE
         {
             get => Entity.PICTURE;
@@ -69,6 +73,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public MAIN_DOCUMENT_GROUP Entity
         {
             get => myEntity;
@@ -79,6 +84,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<MAIN_DOCUMENT_GROUP> LoadList()

@@ -29,6 +29,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid NomenklId
         {
             get => Entity.NomenklId;
@@ -39,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid CurrencyId
         {
             get => Entity.CurrencyId;
@@ -49,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal Quantity
         {
             get => Entity.Quantity;
@@ -59,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid CurrencyNewId
         {
             get => Entity.CurrencyNewId;
@@ -69,6 +73,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal QuantityReset
         {
             get => Entity.QuantityReset;
@@ -79,6 +84,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal Rate
         {
             get => Entity.Rate;
@@ -89,6 +95,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public NomenklCostReset NomenklCostReset
         {
             get => Entity.NomenklCostReset;
@@ -99,6 +106,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public NomenklCostResetRows Entity
         {
             get => myEntity;
@@ -109,6 +117,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<NomenklCostResetRows> LoadList()

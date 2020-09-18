@@ -36,6 +36,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public TD_22 Entity
         {
             get => myEntity;
@@ -46,6 +47,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -56,6 +58,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => DOC_CODE;
@@ -66,6 +69,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override int Code
         {
             get => (int) Entity.CODE;
@@ -76,6 +80,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal CRS_DC
         {
             get => Entity.CRS_DC;
@@ -86,6 +91,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Currency Currency
         {
             get => myCurrency;
@@ -98,6 +104,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime DATE_START
         {
             get => Entity.DATE_START;
@@ -108,6 +115,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal SUMMA_START
         {
             get => Entity.SUMMA_START;
@@ -118,6 +126,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? CASH_DATE_DC
         {
             get => Entity.CASH_DATE_DC;
@@ -128,6 +137,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_22 SD_22
         {
             get => Entity.SD_22;
@@ -138,6 +148,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsAccessRight { get; set; }
 
         public List<TD_22> LoadList()

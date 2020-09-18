@@ -32,6 +32,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public new decimal DocCode
         {
             get => Entity.DOC_CODE;

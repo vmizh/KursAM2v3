@@ -37,20 +37,21 @@ namespace Core.EntityViewModel
                     var r = new WarehouseOrderOutRow(item) {Parent = this};
                     Rows.Add(r);
                 }
+
             myState = RowStatus.NotEdited;
-            foreach (var r in Rows)
-            {
-                r.myState = RowStatus.NotEdited;
-            }
+            foreach (var r in Rows) r.myState = RowStatus.NotEdited;
             Rows.CollectionChanged += (o, args) => State = RowStatus.Edited;
         }
 
         public ObservableCollection<WarehouseOrderOutRow> Rows { set; get; } =
             new ObservableCollection<WarehouseOrderOutRow>();
-        public ObservableCollection<WarehouseOrderOutRow>  DeletedRows { get; set; } =
+
+        public ObservableCollection<WarehouseOrderOutRow> DeletedRows { get; set; } =
             new ObservableCollection<WarehouseOrderOutRow>();
-        public ObservableCollection<WarehouseOrderOutRow>  SelectedRows { get; set; } =
+
+        public ObservableCollection<WarehouseOrderOutRow> SelectedRows { get; set; } =
             new ObservableCollection<WarehouseOrderOutRow>();
+
         public WarehouseSenderType WarehouseSenderType
         {
             get => myWarehouseSenderType;
@@ -64,7 +65,8 @@ namespace Core.EntityViewModel
 
         public override string ToString()
         {
-            return $"Расходный складской ордер №{DD_IN_NUM}/{DD_EXT_NUM} от {DD_DATE.ToShortDateString()} склад:{WarehouseOut}";
+            return
+                $"Расходный складской ордер №{DD_IN_NUM}/{DD_EXT_NUM} от {DD_DATE.ToShortDateString()} склад:{WarehouseOut}";
         }
     }
 

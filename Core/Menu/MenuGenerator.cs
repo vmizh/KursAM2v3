@@ -394,8 +394,7 @@ namespace Core.Menu
                     HAlignment = HorizontalAlignment.Right,
                     Content = Application.Current.Resources["menuRefresh"] as ControlTemplate,
                     ToolTip = "Обновить",
-                    Command = vm.RefreshDataCommand,
-                    
+                    Command = vm.RefreshDataCommand
                 },
                 new MenuButtonInfo
                 {
@@ -600,7 +599,6 @@ namespace Core.Menu
 
         public static ObservableCollection<MenuButtonInfo> StandartAsyncSearchRightBar(RSWindowViewModelBase vm)
         {
-
             var prn = new MenuButtonInfo
             {
                 Name = "Print",

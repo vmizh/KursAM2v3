@@ -54,12 +54,13 @@ namespace Core
         // ReSharper disable once CollectionNeverQueried.Global
         // ReSharper disable once MemberCanBePrivate.Global
         public IList<string> NotifyProtocol = new List<string>();
-        [DataMember]
-        public PeriodType PeriodType { set; get; }
-        [DataMember]
-        public DateTime DateStart { set; get; }
-        [DataMember]
-        public DateTime DateEnd { set; get; }
+
+        [DataMember] public PeriodType PeriodType { set; get; }
+
+        [DataMember] public DateTime DateStart { set; get; }
+
+        [DataMember] public DateTime DateEnd { set; get; }
+
         public object ParentId { get; set; }
         public Guid Id { get; set; }
         public virtual string Name { get; set; }
@@ -128,6 +129,7 @@ namespace Core
                     ret = "Декабрь";
                     break;
             }
+
             return ret;
         }
 
@@ -168,40 +170,36 @@ namespace Core
                         d.ToString()
                 });
             foreach (var y1 in years)
+            foreach (var d in dates.Where(_ => _.Date.Year == y1.DateStart.Year))
             {
-                foreach (var d in dates.Where(_ => _.Date.Year == y1.DateStart.Year))
-                {
-                    var mm = months.FirstOrDefault(_ => _.DateStart.Year == y1.DateStart.Year && _.DateStart.Month == d.Date.Month);
-                    if (mm == null)
-                    {
-                        months.Add(new DatePeriod
-                        {
-                            Id = Guid.NewGuid(),
-                            ParentId = y1.Id,
-                            PeriodType = PeriodType.Month,
-                            DateStart = new DateTime(y1.DateStart.Year, d.Month, 1),
-                            DateEnd = new DateTime(y1.DateStart.Year, d.Month, 1).AddMonths(1).AddDays(-1),
-                            Name = GetMonthName(d.Month)
-                        });
-                    }
-                }
-            }
-            foreach (var m1 in months)
-            {
-                foreach (var d1 in dates.Where(_ =>
-                        _.Date.Year == m1.DateStart.Year && _.Date.Month == m1.DateStart.Month).Select(_ => _.Date)
-                    .Distinct())
-
-                    days.Add(new DatePeriod
+                var mm = months.FirstOrDefault(_ =>
+                    _.DateStart.Year == y1.DateStart.Year && _.DateStart.Month == d.Date.Month);
+                if (mm == null)
+                    months.Add(new DatePeriod
                     {
                         Id = Guid.NewGuid(),
-                        ParentId = m1.Id,
-                        PeriodType = PeriodType.Day,
-                        DateStart = d1,
-                        DateEnd = d1,
-                        Name = d1.ToShortDateString()
+                        ParentId = y1.Id,
+                        PeriodType = PeriodType.Month,
+                        DateStart = new DateTime(y1.DateStart.Year, d.Month, 1),
+                        DateEnd = new DateTime(y1.DateStart.Year, d.Month, 1).AddMonths(1).AddDays(-1),
+                        Name = GetMonthName(d.Month)
                     });
             }
+
+            foreach (var m1 in months)
+            foreach (var d1 in dates.Where(_ =>
+                    _.Date.Year == m1.DateStart.Year && _.Date.Month == m1.DateStart.Month).Select(_ => _.Date)
+                .Distinct())
+
+                days.Add(new DatePeriod
+                {
+                    Id = Guid.NewGuid(),
+                    ParentId = m1.Id,
+                    PeriodType = PeriodType.Day,
+                    DateStart = d1,
+                    DateEnd = d1,
+                    Name = d1.ToShortDateString()
+                });
             return years.Union(months).Union(days).OrderByDescending(_ => _.DateStart);
         }
 
@@ -215,6 +213,7 @@ namespace Core
                 dates.Add(dtemp);
                 dtemp = dtemp.AddDays(1);
             }
+
             foreach (var d in dates)
             {
                 if (!ret.Any(t => t.PeriodType == PeriodType.Year && t.DateStart.Year == d.Year))
@@ -256,6 +255,7 @@ namespace Core
                         .Id;
                 ret.Add(newMonthPeriod);
             }
+
             return ret;
         }
 

@@ -4,7 +4,6 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 
-
 namespace Core.Finance
 {
     [MetadataType(typeof(DataAnnotationsInvoicePaymentDocument))]

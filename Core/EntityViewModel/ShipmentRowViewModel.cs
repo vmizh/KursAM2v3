@@ -34,6 +34,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Waybill Waybill
         {
             get => myWaybill;
@@ -43,6 +44,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NomenklNom => Nomenkl?.NomenklNumber;
         public override Unit Unit => Nomenkl?.Unit;
     }

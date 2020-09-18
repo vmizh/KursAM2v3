@@ -22,8 +22,10 @@ namespace Core.EntityViewModel
 
         public ObservableCollection<OffBalanceSheetInRowViewModel> Rows { set; get; }
             = new ObservableCollection<OffBalanceSheetInRowViewModel>();
+
         public ObservableCollection<OffBalanceSheetInRowViewModel> DeletedRows { set; get; }
             = new ObservableCollection<OffBalanceSheetInRowViewModel>();
+
         public OffBalanceSheetInDoc Entity
         {
             get => myEntity;
@@ -34,6 +36,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override Guid Id
         {
             get => Entity.Id;
@@ -44,6 +47,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string Num
         {
             get => Entity.Num;
@@ -54,6 +58,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal KontrDC
         {
             get => Entity.KontrDC;
@@ -64,6 +69,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Note
         {
             get => Entity.Note;
@@ -74,6 +80,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime Date
         {
             get => Entity.Date;
@@ -84,6 +91,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid TypeDocId
         {
             get => Entity.TypeDocId;
@@ -94,6 +102,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public OffBalanceSheetChargesType OffBalanceSheetChargesType
         {
             get => Entity.OffBalanceSheetChargesType;
@@ -104,6 +113,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_43
         {
             get => Entity.SD_43;
@@ -114,6 +124,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsAccessRight { get; set; }
 
         public List<OffBalanceSheetInDoc> LoadList()

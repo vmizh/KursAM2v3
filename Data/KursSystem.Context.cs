@@ -7,55 +7,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.Data.Entity.Core.EntityClient;
-using System.Data.SqlClient;
-
 namespace Data
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-
+    
     public partial class KursSystemEntities : DbContext
     {
         public KursSystemEntities()
-            : base(new EntityConnectionStringBuilder
-            {
-                Provider = "System.Data.SqlClient",
-                ProviderConnectionString = new SqlConnectionStringBuilder
-                {
-                    DataSource = "172.16.0.1",
-                    InitialCatalog = "KursSystem",
-                    UserID = "sa",
-                    Password = "CbvrfFhntvrf65"
-                }.ToString(),
-                Metadata =
-                @"res://*/KursSystem.csdl|res://*/KursSystem.ssdl|res://*/KursSystem.msl"
-            }.ToString())
+            : base("name=KursSystemEntities")
         {
-            Configuration.ValidateOnSaveEnabled = true;
-            Configuration.LazyLoadingEnabled = false;
-            Configuration.AutoDetectChangesEnabled = true;
         }
-
-
-        public KursSystemEntities(string connectionString,
-                    bool validationMode = true,
-                    bool lazyLoadingMode = true,
-                    bool autoDetectMode = true)
-                    : base(new EntityConnectionStringBuilder
-                    {
-                        Provider = "System.Data.SqlClient",
-                        ProviderConnectionString = connectionString,
-                        Metadata =
-                            @"res://*/KursSystem.csdl|res://*/KursSystem.ssdl|res://*/KursSystem.msl"
-                    }.ToString())
-        {
-            Configuration.ValidateOnSaveEnabled = validationMode;
-            Configuration.LazyLoadingEnabled = lazyLoadingMode;
-            Configuration.AutoDetectChangesEnabled = autoDetectMode;
-        }
-
+    
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();

@@ -455,7 +455,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 IsNaklRashod = CurrentNomenklMain.IsNakladExpense,
                 IsRentabelnost = CurrentNomenklMain.IsRentabelnost,
                 State = RowStatus.NewRow,
-                NOM_PRODUCT_DC = CurrentNomenklMain.ProductType.DOC_CODE
+                NOM_PRODUCT_DC = CurrentNomenklMain.ProductType.DOC_CODE,
+                IsCurrencyTransfer = CurrentNomenklMain.IsCurrencyTransfer
             };
             CurrentNomenklMain.NomenklCollection.Add(newItem);
         }

@@ -4,12 +4,14 @@ namespace Core.Finance
 {
     public enum DocumentTypes
     {
-        [Display(Name = "Тип не указан")]
-        NotType = 0,
+        [Display(Name = "Тип не указан")] NotType = 0,
+
         [Display(Name = "Банковская транзакция")]
         Bank = 101,
+
         [Display(Name = "Приходный кассовый ордер")]
         CashIn = 33,
+
         [Display(Name = "Расходный кассовый ордер")]
         CashOut = 34,
 
@@ -25,8 +27,7 @@ namespace Core.Finance
         SaleForCash = 259,
 
         // Акт взаимозачета
-        [Display(Name = "Акт взаимозачета")]
-        ActZachet = 110,
+        [Display(Name = "Акт взаимозачета")] ActZachet = 110,
 
         //акт сверки
         ActReconciliation = 430

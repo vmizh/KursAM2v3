@@ -30,6 +30,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid HEAD_ID
         {
             get => Entity.HEAD_ID;
@@ -40,6 +41,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ROW_TEXT
         {
             get => Entity.ROW_TEXT;
@@ -50,6 +52,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal NOMENKL_DC
         {
             get => Entity.NOMENKL_DC;
@@ -60,6 +63,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal KOL
         {
             get => Entity.KOL;
@@ -70,6 +74,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal PRICE
         {
             get => Entity.PRICE;
@@ -80,6 +85,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal NDS_PERCENT
         {
             get => Entity.NDS_PERCENT;
@@ -90,6 +96,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal SUMMA_NDS
         {
             get => Entity.SUMMA_NDS;
@@ -100,6 +107,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal SUMMA_WITHOUT_NDS
         {
             get => Entity.SUMMA_WITHOUT_NDS;
@@ -110,6 +118,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal SUMMA_WITH_NDS
         {
             get => Entity.SUMMA_WITH_NDS;
@@ -120,6 +129,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string COUNTRY
         {
             get => Entity.COUNTRY;
@@ -130,6 +140,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string COUNTRY_CODE
         {
             get => Entity.COUNTRY_CODE;
@@ -140,6 +151,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NUM_GRUZ_DECLAR
         {
             get => Entity.NUM_GRUZ_DECLAR;
@@ -150,6 +162,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SCHET_FACT_KONTR_OUT SCHET_FACT_KONTR_OUT
         {
             get => Entity.SCHET_FACT_KONTR_OUT;
@@ -160,6 +173,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_83 SD_83
         {
             get => Entity.SD_83;
@@ -170,6 +184,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SCHET_FACT_KONTR_OUT_ROWS Entity
         {
             get => myEntity;
@@ -180,6 +195,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SCHET_FACT_KONTR_OUT_ROWS> LoadList()

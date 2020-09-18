@@ -6,6 +6,5 @@ namespace Core.EntityViewModel
     {
         [Display(Name = "Контрагент")] Kontragent = 0,
         [Display(Name = "Склад")] Store = 1
-        
     }
 }

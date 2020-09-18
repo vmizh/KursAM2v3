@@ -7,6 +7,7 @@ using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.Native;
 using KursAM2.View.Base;
@@ -22,7 +23,7 @@ namespace KursRepozit.ViewModels
 
         public UsersViewModel()
         {
-            kursSystemRepository = new GenericKursSystemRepository<Users>(unitOfWork);
+            kursSystemRepository = new GenericKursSystemDBRepository<Users>(unitOfWork);
             //If you want to use Specific KursSystemRepository with Unit of work
             userRepository = new UserKursSystemRepository(unitOfWork);
             ModelView = new UsersView();
@@ -53,7 +54,7 @@ namespace KursRepozit.ViewModels
         private readonly UnitOfWork<KursSystemEntities> unitOfWork = new UnitOfWork<KursSystemEntities>();
 
         // ReSharper disable once NotAccessedField.Local
-        private readonly GenericKursSystemRepository<Users> kursSystemRepository;
+        private readonly GenericKursSystemDBRepository<Users> kursSystemRepository;
 
         // ReSharper disable once NotAccessedField.Local
         private readonly IUsersRepository userRepository;

@@ -14,6 +14,7 @@ namespace Core.EntityViewModel
     [MetadataType(typeof(SD_33LayoutData_FluentAPI))]
     public class CashIn : RSViewModelBase, IEntity<SD_33>
     {
+        public decimal MaxSumma = decimal.MaxValue;
         private BankAccount myBankAccount;
         private Cash myCash;
         private Currency myCurrency;
@@ -46,6 +47,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -56,6 +58,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Note
         {
             get => Entity.NOTES_ORD;
@@ -67,7 +70,6 @@ namespace Core.EntityViewModel
             }
         }
 
-        public decimal MaxSumma = decimal.MaxValue;
         public int? NUM_ORD
         {
             get => Entity.NUM_ORD;
@@ -78,6 +80,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SUMM_ORD
         {
             get => Entity.SUMM_ORD;
@@ -85,26 +88,28 @@ namespace Core.EntityViewModel
             {
                 if (Entity.SUMM_ORD == value) return;
                 Entity.SUMM_ORD = value;
-                if ((decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
-                    (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
+                if ((decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
+                    (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
                 {
                     if (IsBackCalc)
                     {
                         Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                     (100 + (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                     (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(SUMM_ORD));
                     }
                     else
                     {
                         Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                      (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                      (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(CRS_SUMMA));
                     }
                 }
+
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(CRS_SUMMA));
             }
         }
+
         public decimal? CRS_SUMMA
         {
             get => Entity.CRS_SUMMA;
@@ -112,26 +117,28 @@ namespace Core.EntityViewModel
             {
                 if (Entity.CRS_SUMMA == value) return;
                 Entity.CRS_SUMMA = value;
-                if ((decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
-                    (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
+                if ((decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
+                    (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
                 {
                     if (IsBackCalc)
                     {
                         Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                     (100 + (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                     (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(SUMM_ORD));
                     }
                     else
                     {
                         Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                      (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                      (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(CRS_SUMMA));
                     }
                 }
+
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(SUMM_ORD));
             }
         }
+
         public string NAME_ORD
         {
             get => Entity.NAME_ORD;
@@ -142,6 +149,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string OSN_ORD
         {
             get => Entity.OSN_ORD;
@@ -152,6 +160,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NOTES_ORD
         {
             get => Entity.NOTES_ORD;
@@ -162,6 +171,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? DATE_ORD
         {
             get => Entity.DATE_ORD;
@@ -172,6 +182,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public CashKontragentType KontragentType
         {
             get => myKontragentType;
@@ -187,6 +198,7 @@ namespace Core.EntityViewModel
                     SFACT_DC = null;
                     SFactName = null;
                 }
+
                 BankAccount = null;
                 IsKontrSelectEnable = myKontragentType != CashKontragentType.NotChoice;
                 if (State == RowStatus.NewRow)
@@ -194,10 +206,12 @@ namespace Core.EntityViewModel
                     NAME_ORD = "";
                     Note = "";
                 }
+
                 RaisePropertyChanged();
                 RaisePropertiesChanged();
             }
         }
+
         public bool IsKontrSelectEnable
         {
             get => myIsKontrSelectEnable;
@@ -208,6 +222,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? CODE_CASS
         {
             get => Entity.CODE_CASS;
@@ -218,6 +233,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? TABELNUMBER
         {
             get => Entity.TABELNUMBER;
@@ -229,9 +245,11 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged(nameof(Kontragent));
             }
         }
+
         public Employee Employee => TABELNUMBER != null
             ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == TABELNUMBER)
             : null;
+
         public short? OP_CODE
         {
             get => Entity.OP_CODE;
@@ -242,6 +260,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? CA_DC
         {
             get => Entity.CA_DC;
@@ -252,6 +271,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Cash Cash
         {
             get => myCash;
@@ -265,6 +285,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged(nameof(Kontragent));
             }
         }
+
         public decimal? KONTRAGENT_DC
         {
             get => Entity.KONTRAGENT_DC;
@@ -276,6 +297,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged(nameof(Kontragent));
             }
         }
+
         public string Kontragent
         {
             get
@@ -295,9 +317,11 @@ namespace Core.EntityViewModel
                     case CashKontragentType.Employee:
                         return Employee?.Name;
                 }
+
                 return null;
             }
         }
+
         public string SHPZ_ORD
         {
             get => Entity.SHPZ_ORD;
@@ -308,6 +332,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SHPZ_DC
         {
             get => Entity.SHPZ_DC;
@@ -318,6 +343,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SDRSchet SDRSchet
         {
             get => mySDRSchet;
@@ -329,6 +355,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? RASH_ORDER_FROM_DC
         {
             get => Entity.RASH_ORDER_FROM_DC;
@@ -340,6 +367,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged(nameof(Kontragent));
             }
         }
+
         public string RashodOrderFromName
         {
             get => myRashodOrderFromName;
@@ -351,6 +379,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged(nameof(Kontragent));
             }
         }
+
         public decimal? SFACT_DC
         {
             get => Entity.SFACT_DC;
@@ -363,6 +392,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged(nameof(SFactName));
             }
         }
+
         public string SFactName
         {
             get => mySFactName;
@@ -373,6 +403,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? NCODE
         {
             get => Entity.NCODE;
@@ -383,6 +414,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? POS_DC
         {
             get => Entity.POS_DC;
@@ -393,6 +425,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? POS_PREV_OST
         {
             get => Entity.POS_PREV_OST;
@@ -403,6 +436,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? POS_PRIHOD
         {
             get => Entity.POS_PRIHOD;
@@ -413,6 +447,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? POS_NOW_OST
         {
             get => Entity.POS_NOW_OST;
@@ -423,6 +458,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? KONTR_CRS_DC
         {
             get => Entity.KONTR_CRS_DC;
@@ -433,6 +469,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? CRS_KOEF
         {
             get => Entity.CRS_KOEF;
@@ -443,6 +480,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public byte? CHANGE_ORD
         {
             get => Entity.CHANGE_ORD;
@@ -453,6 +491,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? CRS_DC
         {
             get => Entity.CRS_DC;
@@ -463,6 +502,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Currency Currency
         {
             get => myCurrency;
@@ -476,6 +516,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? UCH_VALUTA_DC
         {
             get => Entity.UCH_VALUTA_DC;
@@ -486,6 +527,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SUMMA_V_UCH_VALUTE
         {
             get => Entity.SUMMA_V_UCH_VALUTE;
@@ -496,6 +538,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? UCH_VALUTA_RATE
         {
             get => Entity.UCH_VALUTA_RATE;
@@ -506,6 +549,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SUM_NDS
         {
             get => Entity.SUM_NDS;
@@ -516,6 +560,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SFACT_OPLACHENO
         {
             get => Entity.SFACT_OPLACHENO;
@@ -526,6 +571,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? SFACT_CRS_RATE
         {
             get => Entity.SFACT_CRS_RATE;
@@ -536,6 +582,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SFACT_CRS_DC
         {
             get => Entity.SFACT_CRS_DC;
@@ -546,6 +593,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? BANK_RASCH_SCHET_DC
         {
             get => Entity.BANK_RASCH_SCHET_DC;
@@ -557,6 +605,7 @@ namespace Core.EntityViewModel
                 RaisePropertiesChanged(nameof(Kontragent));
             }
         }
+
         public BankAccount BankAccount
         {
             get => myBankAccount;
@@ -569,6 +618,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged(nameof(Kontragent));
             }
         }
+
         public string CREATOR
         {
             get => Entity.CREATOR;
@@ -579,6 +629,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? RUB_SUMMA
         {
             get => Entity.RUB_SUMMA;
@@ -589,6 +640,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? RUB_RATE
         {
             get => Entity.RUB_RATE;
@@ -599,6 +651,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? OBRATNY_RASCHET
         {
             get => Entity.OBRATNY_RASCHET;
@@ -611,6 +664,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged(nameof(IsSummaEnabled));
             }
         }
+
         public bool IsBackCalc
         {
             get => Entity.OBRATNY_RASCHET == 1;
@@ -618,25 +672,27 @@ namespace Core.EntityViewModel
             {
                 if (OBRATNY_RASCHET == (value ? 1 : 0)) return;
                 OBRATNY_RASCHET = value ? (short?) 1 : (short?) 0;
-                if ((decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
-                    (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
+                if ((decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
+                    (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
                 {
                     if (IsBackCalc)
                     {
                         Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                          (100 + (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)),2);
+                                                     (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(SUMM_ORD));
                     }
                     else
                     {
                         Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                           (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)),2);
+                                                      (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(CRS_SUMMA));
                     }
                 }
+
                 RaisePropertyChanged();
             }
         }
+
         public double? KONTR_CRS_SUM_CORRECT_PERCENT
         {
             get => Entity.KONTR_CRS_SUM_CORRECT_PERCENT;
@@ -647,6 +703,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? PercentForKontragent
         {
             get => Convert.ToDecimal(Entity.KONTR_CRS_SUM_CORRECT_PERCENT);
@@ -660,19 +717,21 @@ namespace Core.EntityViewModel
                     if (IsBackCalc)
                     {
                         Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                          (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)),2);
+                                                     (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(SUMM_ORD));
                     }
                     else
                     {
                         Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                           (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)),2);
+                                                      (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(CRS_SUMMA));
                     }
                 }
+
                 RaisePropertyChanged();
             }
         }
+
         public string V_TOM_CHISLE
         {
             get => Entity.V_TOM_CHISLE;
@@ -683,6 +742,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? KONTR_FROM_DC
         {
             get => Entity.KONTR_FROM_DC;
@@ -693,6 +753,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? SFACT_FLAG
         {
             get => Entity.SFACT_FLAG;
@@ -703,8 +764,10 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsSummaEnabled => (OBRATNY_RASCHET ?? 0) == 0;
         public bool IsKontrSummaEnabled => (OBRATNY_RASCHET ?? 0) == 1;
+
         public byte[] TSTAMP
         {
             get => Entity.TSTAMP;
@@ -715,6 +778,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_114 SD_114
         {
             get => Entity.SD_114;
@@ -726,6 +790,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_2 SD_2
         {
             get => Entity.SD_2;
@@ -737,6 +802,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_22 SD_22
         {
             get => Entity.SD_22;
@@ -748,6 +814,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_301
         {
             get => Entity.SD_301;
@@ -758,6 +825,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_3011
         {
             get => Entity.SD_3011;
@@ -768,6 +836,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_3012
         {
             get => Entity.SD_3012;
@@ -778,6 +847,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_3013
         {
             get => Entity.SD_3013;
@@ -788,6 +858,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_303 SD_303
         {
             get => Entity.SD_303;
@@ -798,6 +869,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_34 SD_34
         {
             get => Entity.SD_34;
@@ -808,6 +880,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public VD_46 VD_46
         {
             get => Entity.VD_46;
@@ -818,6 +891,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_90 SD_90
         {
             get => Entity.SD_90;
@@ -828,6 +902,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_84 SD_84
         {
             get => Entity.SD_84;
@@ -838,6 +913,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_43
         {
             get => Entity.SD_43;
@@ -848,6 +924,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_33 Entity
         {
             get => myEntity;
@@ -875,11 +952,11 @@ namespace Core.EntityViewModel
             myKontragentType = CashKontragentType.NotChoice;
             if (KONTRAGENT_DC != null)
                 myKontragentType = CashKontragentType.Kontragent;
-            if(TABELNUMBER != null)
+            if (TABELNUMBER != null)
                 myKontragentType = CashKontragentType.Employee;
-            if(BANK_RASCH_SCHET_DC != null)
+            if (BANK_RASCH_SCHET_DC != null)
                 myKontragentType = CashKontragentType.Bank;
-            if(RASH_ORDER_FROM_DC != null)
+            if (RASH_ORDER_FROM_DC != null)
                 myKontragentType = CashKontragentType.Cash;
             IsKontrSelectEnable = myKontragentType != CashKontragentType.NotChoice;
             if (Entity?.CRS_DC != null) Currency = MainReferences.Currencies[(decimal) Entity?.CRS_DC];

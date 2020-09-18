@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using Core;
 using Core.Repository.Base;
 using Core.WindowsManager;
 using Data;
+using Data.Repository;
 using KursAM2.Repositories.InvoicesRepositories;
 
 namespace KursAM2.Repositories
@@ -33,7 +35,7 @@ namespace KursAM2.Repositories
     }
 
 
-    public class DistributeNakladRepository : GenericKursRepository<DistributeNaklad>, IDistributeNakladRepository
+    public class DistributeNakladRepository : GenericKursDBRepository<DistributeNaklad>, IDistributeNakladRepository
     {
         /// <summary>
         ///     Типы распределения накладных расходов
@@ -161,7 +163,7 @@ namespace KursAM2.Repositories
             return ret;
         }
 
-        public override void Delete(DistributeNaklad doc)
+        public new void Delete(DistributeNaklad doc)
         {
             var rlist = new List<DistributeNakladInfo>();
             foreach (var r in doc.DistributeNakladRow) rlist.AddRange(r.DistributeNakladInfo);

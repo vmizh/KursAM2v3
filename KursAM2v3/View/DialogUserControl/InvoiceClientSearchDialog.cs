@@ -3,32 +3,31 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using Core.EntityViewModel;
 using Core.Menu;
-using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using Data.Repository;
 using JetBrains.Annotations;
 using KursAM2.Managers.Invoices;
-using KursAM2.Repositories;
 using KursAM2.Repositories.InvoicesRepositories;
 
 namespace KursAM2.View.DialogUserControl
 {
-    public class InvoiceClientSearchDialog : RSWindowViewModelBase, IDataUserControl
+    public sealed class InvoiceClientSearchDialog : RSWindowViewModelBase, IDataUserControl
     {
         private readonly bool isAccepted;
-        private readonly bool IsPaymentUse;
-        private readonly decimal KontragentDC;
+        private readonly bool isPaymentUse;
+        private readonly decimal kontragentDC;
+        private readonly Waybill waybill;
         private InvoiceClient myCurrentItem;
         private StandartDialogSelectUC myDataUserControl;
-        private readonly Waybill Waybill;
 
         public InvoiceClientSearchDialog(bool isPaymentUse, bool isUseAcepted)
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             WindowName = "Выбор счета";
-            IsPaymentUse = isPaymentUse;
+            this.isPaymentUse = isPaymentUse;
             isAccepted = isUseAcepted;
             RefreshData(null);
         }
@@ -38,16 +37,16 @@ namespace KursAM2.View.DialogUserControl
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             WindowName = "Выбор счета";
-            KontragentDC = kontragentDC;
-            IsPaymentUse = isPaymentUse;
+            this.kontragentDC = kontragentDC;
+            this.isPaymentUse = isPaymentUse;
             isAccepted = isUseAcepted;
-            Waybill = null;
+            waybill = null;
             RefreshData(null);
         }
 
-        public InvoiceClientSearchDialog([NotNull]Waybill waybill)
+        public InvoiceClientSearchDialog([NotNull] Waybill waybill)
         {
-            Waybill = waybill;
+            this.waybill = waybill;
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             WindowName = "Выбор счета";
@@ -56,7 +55,7 @@ namespace KursAM2.View.DialogUserControl
 
         public ObservableCollection<InvoiceClient> ItemsCollection { set; get; } =
             new ObservableCollection<InvoiceClient>();
-        
+
         public InvoiceClient CurrentItem
         {
             get => myCurrentItem;
@@ -67,6 +66,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public StandartDialogSelectUC DataUserControl
         {
             get => myDataUserControl;
@@ -77,15 +77,16 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public override bool IsCanSearch => !string.IsNullOrEmpty(SearchText);
         public DependencyObject LayoutControl { get; }
 
         public override void RefreshData(object obj)
         {
             base.RefreshData(obj);
-            
-                SearchClear(null);
-                Search(null);
+
+            SearchClear(null);
+            Search(null);
         }
 
         public override void ResetLayout(object form)
@@ -98,23 +99,23 @@ namespace KursAM2.View.DialogUserControl
         public override void Search(object obj)
         {
             try
-            {  ItemsCollection.Clear();
-                if (Waybill == null)
+            {
+                ItemsCollection.Clear();
+                if (waybill == null)
                 {
-
-                    if (KontragentDC > 0)
-                        foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000, 1, 1), DateTime.Today,
-                            IsPaymentUse, KontragentDC, isAccepted))
+                    if (kontragentDC > 0)
+                        foreach (var d in InvoicesManager.GetInvoicesClient(DateTime.Today.AddDays(-300), DateTime.Today,
+                            isPaymentUse, kontragentDC, isAccepted))
                             ItemsCollection.Add(d);
                     else
-                        foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000, 1, 1), DateTime.Today,
-                            IsPaymentUse, SearchText, isAccepted))
+                        foreach (var d in InvoicesManager.GetInvoicesClient(DateTime.Today.AddDays(-300), DateTime.Today,
+                            isPaymentUse, SearchText, isAccepted))
                             ItemsCollection.Add(d);
                 }
                 else
                 {
-                    foreach (var d in InvoicesManager.GetInvoicesClient(Waybill))
-                            ItemsCollection.Add(d);
+                    foreach (var d in InvoicesManager.GetInvoicesClient(waybill))
+                        ItemsCollection.Add(d);
                 }
             }
             catch (Exception ex)
@@ -132,23 +133,62 @@ namespace KursAM2.View.DialogUserControl
         #endregion
     }
 
-    
-    public class InvoiceProviderSearchDialog : RSWindowViewModelBase, IDataUserControl
+
+    public sealed class InvoiceProviderSearchDialog : RSWindowViewModelBase, IDataUserControl
     {
+        public ObservableCollection<InvoiceProvider> ItemsCollection { set; get; } =
+            new ObservableCollection<InvoiceProvider>();
+
+        public InvoiceProvider CurrentItem
+        {
+            get => myCurrentItem;
+            set
+            {
+                if (myCurrentItem != null && myCurrentItem.Equals(value)) return;
+                myCurrentItem = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public StandartDialogSelectUC DataUserControl
+        {
+            get => myDataUserControl;
+            set
+            {
+                if (Equals(myDataUserControl, value)) return;
+                myDataUserControl = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public DependencyObject LayoutControl { get; }
+
+        public override void RefreshData(object obj)
+        {
+            base.RefreshData(obj);
+            SearchClear(null);
+            Search(null);
+        }
+
+        public override void ResetLayout(object form)
+        {
+            myDataUserControl?.LayoutManager.ResetLayout();
+        }
+
         #region Fields
 
         private readonly bool isAccepted;
 
         // ReSharper disable once NotAccessedField.Local
-        private readonly bool IsPaymentUse;
-        private readonly decimal KontragentDC;
+        private readonly bool isPaymentUse;
+        private readonly decimal kontragentDC;
         private InvoiceProvider myCurrentItem;
         private StandartDialogSelectUC myDataUserControl;
 
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork = new UnitOfWork<ALFAMEDIAEntities>();
         // ReSharper disable once NotAccessedField.Local
 #pragma warning disable 169
-        private readonly GenericKursRepository<InvoiceProvider> baseRepository;
+        private readonly GenericKursDBRepository<InvoiceProvider> baseRepository;
 #pragma warning restore 169
 
         // ReSharper disable once NotAccessedField.Local
@@ -165,7 +205,7 @@ namespace KursAM2.View.DialogUserControl
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             WindowName = "Выбор счета";
-            IsPaymentUse = isUsePayment;
+            isPaymentUse = isUsePayment;
             isAccepted = isUseAccepted;
             RefreshData(null);
         }
@@ -174,50 +214,14 @@ namespace KursAM2.View.DialogUserControl
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            KontragentDC = kontrDC;
+            kontragentDC = kontrDC;
             WindowName = "Выбор счета";
-            IsPaymentUse = isUsePayment;
+            isPaymentUse = isUsePayment;
             isAccepted = isUseAccepted;
             RefreshData(null);
         }
 
         #endregion
-
-        public ObservableCollection<InvoiceProvider> ItemsCollection { set; get; } =
-            new ObservableCollection<InvoiceProvider>();
-        public InvoiceProvider CurrentItem
-        {
-            get => myCurrentItem;
-            set
-            {
-                if (myCurrentItem != null && myCurrentItem.Equals(value)) return;
-                myCurrentItem = value;
-                RaisePropertyChanged();
-            }
-        }
-        public StandartDialogSelectUC DataUserControl
-        {
-            get => myDataUserControl;
-            set
-            {
-                if (Equals(myDataUserControl, value)) return;
-                myDataUserControl = value;
-                RaisePropertyChanged();
-            }
-        }
-        public DependencyObject LayoutControl { get; }
-
-        public override void RefreshData(object obj)
-        {
-            base.RefreshData(obj);
-            SearchClear(null);
-            Search(null);
-        }
-
-        public override void ResetLayout(object form)
-        {
-            myDataUserControl?.LayoutManager.ResetLayout();
-        }
 
         #region Commands
 
@@ -228,10 +232,10 @@ namespace KursAM2.View.DialogUserControl
             try
             {
                 ItemsCollection.Clear();
-                if (KontragentDC > 0)
+                if (kontragentDC > 0)
                     foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
                         true,
-                        KontragentDC, isAccepted))
+                        kontragentDC, isAccepted))
                         ItemsCollection.Add(d);
                 else
                     foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
@@ -254,11 +258,11 @@ namespace KursAM2.View.DialogUserControl
         #endregion
     }
 
-    public class InvoiceAllSearchDialog : RSWindowViewModelBase, IDataUserControl
+    public sealed class InvoiceAllSearchDialog : RSWindowViewModelBase, IDataUserControl
     {
-        private readonly decimal kontragentDC;
         private readonly bool isAccepted;
         private readonly bool isUsePayment;
+        private readonly decimal kontragentDC;
         private InvoiceClient myCurrentClientItem;
         private InvoiceProvider myCurrentProviderItem;
         private AllInvocesDialogSelectUC myDataUserControl;
@@ -294,8 +298,10 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<InvoiceClient> ClientItemsCollection { set; get; } =
             new ObservableCollection<InvoiceClient>();
+
         public InvoiceClient CurrentClientItem
         {
             get => myCurrentClientItem;
@@ -308,8 +314,10 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<InvoiceProvider> ProviderItemsCollection { set; get; } =
             new ObservableCollection<InvoiceProvider>();
+
         public InvoiceProvider CurrentProviderItem
         {
             get => myCurrentProviderItem;
@@ -322,6 +330,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public DependencyObject LayoutControl { get; }
 
         public override void RefreshData(object obj)

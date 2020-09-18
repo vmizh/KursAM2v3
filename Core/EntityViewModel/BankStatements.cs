@@ -31,6 +31,7 @@ namespace Core.EntityViewModel
             }
             get => myDC114;
         }
+
         public Bank Bank
         {
             get => myBank;
@@ -41,6 +42,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string Account
         {
             get => myAccount;
@@ -51,6 +53,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime Date
         {
             set
@@ -61,6 +64,7 @@ namespace Core.EntityViewModel
             }
             get => myDate;
         }
+
         public Currency Currency
         {
             get => myCurrency;
@@ -72,6 +76,8 @@ namespace Core.EntityViewModel
             }
         }
 
+        public override string Name => $"{Bank?.Name} {Account} {Currency}";
+
         private void DefailtValue()
         {
             RemainderCHF = 0;
@@ -82,8 +88,6 @@ namespace Core.EntityViewModel
             RemainderSEK = 0;
         }
 
-        public override string Name => $"{Bank?.Name} {Account} {Currency}";
-
         public override string ToString()
         {
             return $"{Bank.Name} {Account} {Currency}";
@@ -92,6 +96,7 @@ namespace Core.EntityViewModel
         #region Currency
 
         private decimal? myRemainderCHF;
+
         public decimal? RemainderCHF
         {
             set
@@ -102,7 +107,9 @@ namespace Core.EntityViewModel
             }
             get => myRemainderCHF;
         }
+
         private decimal? myRemainderEUR;
+
         public decimal? RemainderEUR
         {
             set
@@ -113,7 +120,9 @@ namespace Core.EntityViewModel
             }
             get => myRemainderEUR;
         }
+
         private decimal? myRemainderRUB;
+
         public decimal? RemainderRUB
         {
             set
@@ -124,7 +133,9 @@ namespace Core.EntityViewModel
             }
             get => myRemainderRUB;
         }
+
         private decimal? myRemainderGBP;
+
         public decimal? RemainderGBP
         {
             set
@@ -135,7 +146,9 @@ namespace Core.EntityViewModel
             }
             get => myRemainderGBP;
         }
+
         private decimal? myRemainderSEK;
+
         public decimal? RemainderSEK
         {
             set
@@ -146,7 +159,9 @@ namespace Core.EntityViewModel
             }
             get => myRemainderSEK;
         }
+
         private decimal? myRemainderUSD;
+
         public decimal? RemainderUSD
         {
             set

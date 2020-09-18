@@ -29,6 +29,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int FORM_ID
         {
             get => Entity.FORM_ID;
@@ -39,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public MAIN_DOCUMENT_ITEM MAIN_DOCUMENT_ITEM
         {
             get => Entity.MAIN_DOCUMENT_ITEM;
@@ -49,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public USER_FORMS_RIGHT Entity
         {
             get => myEntity;
@@ -59,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<USER_FORMS_RIGHT> LoadList()

@@ -9,7 +9,7 @@ namespace Core.ViewModel.Base
         private string myFirstSearchName;
         private string mySecondSearchName;
         private DateTime myStartDate;
-      
+
         public RSWindowSearchViewModelBase()
         {
             StartDate = DateTime.Today.AddDays(-14);
@@ -33,6 +33,7 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         public string SecondSearchName
         {
             get => mySecondSearchName;
@@ -43,6 +44,7 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         public DateTime StartDate
         {
             get => myStartDate;
@@ -53,6 +55,7 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         public DateTime EndDate
         {
             get => myEndDate;

@@ -56,6 +56,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CRS_NAME
         {
             get => Entity.CRS_NAME;
@@ -66,6 +67,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CRS_SHORTNAME
         {
             get => Entity.CRS_SHORTNAME;
@@ -76,6 +78,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short CRS_MAIN_CURRENCY
         {
             get => Entity.CRS_MAIN_CURRENCY;
@@ -86,6 +89,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CRS_BIG_SYMBOL
         {
             get => Entity.CRS_BIG_SYMBOL;
@@ -96,6 +100,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CRS_SMALL_SYMBOL
         {
             get => Entity.CRS_SMALL_SYMBOL;
@@ -106,6 +111,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? CRS_ACTIVE
         {
             get => Entity.CRS_ACTIVE;
@@ -116,6 +122,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public new string Name
         {
             get => Entity.CRS_SHORTNAME;
@@ -126,6 +133,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -137,6 +145,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string FullName
         {
             get => Entity.CRS_NAME;
@@ -147,6 +156,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CrsCode
         {
             get => Entity.CRS_CODE;
@@ -157,6 +167,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public byte[] SMALL_SUMBOL
         {
             get => Entity.SMALL_SUMBOL;
@@ -167,6 +178,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 Entity
         {
             get => myEntity;
@@ -177,6 +189,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_301> LoadList()

@@ -38,6 +38,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => DOC_CODE;
@@ -48,6 +49,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override Guid Id
         {
             get => Entity.Id;
@@ -58,6 +60,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override Guid? ParentId
         {
             get => Entity.ParentId;
@@ -68,6 +71,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SKL_NAME
         {
             get => Entity.SKL_NAME;
@@ -78,6 +82,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => SKL_NAME;
@@ -88,6 +93,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int TABELNUMBER
         {
             get => Entity.TABELNUMBER;
@@ -98,6 +104,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Employee Employee
         {
             get => myEmployee;
@@ -110,6 +117,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal SKL_REGION_DC
         {
             get => Entity.SKL_REGION_DC;
@@ -120,6 +128,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Region Region
         {
             get => myRegion;
@@ -132,6 +141,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SKL_NEGATIVE_REST
         {
             get => Entity.SKL_NEGATIVE_REST;
@@ -142,6 +152,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsCanNegativeRest
         {
             get => myIsCanNegativeRest;
@@ -153,6 +164,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SKL_PROIZVODSTVO
         {
             get => Entity.SKL_PROIZVODSTVO;
@@ -163,6 +175,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SKL_NOTAXTO_MUSTTAXFROM
         {
             get => Entity.SKL_NOTAXTO_MUSTTAXFROM;
@@ -173,6 +186,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SKL_GOTOV_PRODUC
         {
             get => Entity.SKL_GOTOV_PRODUC;
@@ -183,6 +197,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SKL_TORGOVY_ZAL
         {
             get => Entity.SKL_TORGOVY_ZAL;
@@ -193,6 +208,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SKL_OTK
         {
             get => Entity.SKL_OTK;
@@ -203,6 +219,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SKL_UDAL_TORG_POINT
         {
             get => Entity.SKL_UDAL_TORG_POINT;
@@ -213,6 +230,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SKL_KONTR_TO_SPIS_DC
         {
             get => Entity.SKL_KONTR_TO_SPIS_DC;
@@ -223,6 +241,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsDeleted
         {
             get => Entity.IsDeleted ?? false;
@@ -233,6 +252,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_27 Entity
         {
             get => myEntity;
@@ -243,6 +263,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_27> LoadList()

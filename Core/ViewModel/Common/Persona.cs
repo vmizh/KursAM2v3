@@ -14,6 +14,7 @@ namespace Core.ViewModel.Common
         {
             Entity = new SD_2();
         }
+
         public override Guid Id
         {
             get => Entity.ID == null ? Guid.NewGuid() : Guid.Parse(Entity.ID);
@@ -26,6 +27,7 @@ namespace Core.ViewModel.Common
                 }
             }
         }
+
         public override Currency Currency
         {
             get => Entity.crs_dc != null ? MainReferences.Currencies[Entity.crs_dc.Value] : null;
@@ -38,6 +40,7 @@ namespace Core.ViewModel.Common
                 }
             }
         }
+
         public override int TabelNumber
         {
             get => Entity.TABELNUMBER;
@@ -48,7 +51,9 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public override string Name => $"{LastName} {FirstName} {SecondName}";
+
         public override string FirstName
         {
             get => Entity.NAME_FIRST;
@@ -60,6 +65,7 @@ namespace Core.ViewModel.Common
                 RaisePropertiesChanged(nameof(Name));
             }
         }
+
         public override string LastName
         {
             get => Entity.NAME_LAST;
@@ -71,6 +77,7 @@ namespace Core.ViewModel.Common
                 RaisePropertiesChanged(nameof(Name));
             }
         }
+
         public override string SecondName
         {
             get => Entity.NAME_SECOND;
@@ -82,6 +89,7 @@ namespace Core.ViewModel.Common
                 RaisePropertiesChanged(nameof(Name));
             }
         }
+
         public DateTime? DateChanged
         {
             get => CHANGE_DATE;
@@ -92,6 +100,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public override bool IsDeleted
         {
             get => (Entity.DELETED ?? 0) != 0;
@@ -102,6 +111,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public override string StatusNotes
         {
             get => Entity.STATUS_NOTES;

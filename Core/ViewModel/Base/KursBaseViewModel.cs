@@ -5,13 +5,13 @@ using DevExpress.Mvvm;
 
 namespace Core.ViewModel.Base
 {
-    interface IKursParentViewModel
+    internal interface IKursParentViewModel
     {
         KursBaseViewModel Parent { get; set; }
     }
+
     public abstract class KursBaseViewModel : ViewModelBase, IKursParentViewModel
     {
-
         #region Fields
 
         #endregion
@@ -21,6 +21,7 @@ namespace Core.ViewModel.Base
         #endregion
 
         #region Properties
+
         [DisplayName("Id")]
         [Display(AutoGenerateField = false)]
         public virtual Guid Id
@@ -55,10 +56,7 @@ namespace Core.ViewModel.Base
 
         public virtual void SetChangeStatus(RowStatus state = RowStatus.Edited)
         {
-            if (State != RowStatus.NewRow)
-            { 
-                State = state;
-            }
+            if (State != RowStatus.NewRow) State = state;
             if (Parent != null && Parent.State != RowStatus.NewRow)
                 Parent.State = RowStatus.Edited;
             RaisePropertyChanged();
@@ -75,7 +73,5 @@ namespace Core.ViewModel.Base
         #region Commands
 
         #endregion
-
-       
     }
 }

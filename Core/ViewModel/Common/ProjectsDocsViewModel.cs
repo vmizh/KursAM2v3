@@ -29,6 +29,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string DocTypeName
         {
             get => Entity.DocTypeName;
@@ -39,6 +40,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string DocInfo
         {
             get => Entity.DocInfo;
@@ -49,6 +51,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal DocDC
         {
             get => Entity.DocDC;
@@ -59,6 +62,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public Projects Projects
         {
             get => Entity.Projects;
@@ -69,6 +73,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public ProjectsDocs Entity
         {
             get => myEntity;
@@ -79,6 +84,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<ProjectsDocs> LoadList()

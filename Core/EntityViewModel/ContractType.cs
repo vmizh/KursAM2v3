@@ -32,6 +32,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -42,6 +43,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -52,6 +54,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string TD_NAME
         {
             get => Entity.TD_NAME;
@@ -62,6 +65,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short TD_0BUY_1SALE
         {
             get => Entity.TD_0BUY_1SALE;
@@ -72,6 +76,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? TD_DOP_SOGL
         {
             get => Entity.TD_DOP_SOGL;
@@ -82,6 +87,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? TD_DILER
         {
             get => Entity.TD_DILER;
@@ -92,6 +98,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? TD_SF_AUTOMAT
         {
             get => Entity.TD_SF_AUTOMAT;
@@ -102,6 +109,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? TD_IN_SF_WITH_TEK_PRICES
         {
             get => Entity.TD_IN_SF_WITH_TEK_PRICES;
@@ -112,6 +120,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? TD_USE_PRICES_FOR_ZAKUPOK
         {
             get => Entity.TD_USE_PRICES_FOR_ZAKUPOK;
@@ -122,6 +131,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? TD_DAVLENCH_DOG
         {
             get => Entity.TD_DAVLENCH_DOG;

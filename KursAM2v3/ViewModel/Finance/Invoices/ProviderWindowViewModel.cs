@@ -17,6 +17,7 @@ using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.View.Base;
+using KursAM2.View.DialogUserControl;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.View.Logistiks.Warehouse;
@@ -170,6 +171,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private InvoiceProvider myDocument;
         private InvoiceProviderRow myCurrentRow;
+        private readonly InvoicesManager invoiceManager = new InvoicesManager();
 
         #endregion
 
@@ -187,8 +189,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
         
         public ProviderWindowViewModel(decimal? dc) : this()
         {
-            Document = dc != null ? InvoicesManager.GetInvoiceProvider(dc.Value) : InvoicesManager.NewProvider();
-            if (Document == null || Document.Rows == null) return;
+            //Document = dc != null ? InvoicesManager.GetInvoiceProvider(dc.Value) : InvoicesManager.NewProvider();
+            Document = dc != null ? invoiceManager.GetInvoiceProvider2(dc.Value) : InvoicesManager.NewProvider();
+            if (Document?.Rows == null) return;
             if (Document != null)
                 WindowName = Document.ToString();
         }
@@ -504,21 +507,26 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 switch (res)
                 {
                     case MessageBoxResult.Yes:
-                        InvoicesManager.SaveProvider(Document);
-                        Document = InvoicesManager.GetInvoiceProvider(Document.DocCode);
-                        Document.WindowViewModel = this;
+                        invoiceManager.SaveProvider2(Document);
                         return;
                     case MessageBoxResult.No:
-                        Document = InvoicesManager.GetInvoiceProvider(Document.DocCode);
-                        Document.WindowViewModel = this;
+                        invoiceManager.RefreshProvider(Document);
+                        //Document.Entity.
+                        //context.Entry(entity).State = EntityState.Detached;
+                        //entity = context.Find(entity.ID);
                         RaisePropertiesChanged(nameof(Document));
                         return;
                 }
             }
-            else
+
+            Document.myState = RowStatus.NotEdited;
+            foreach (var r in Document.Rows)
             {
-                Document = InvoicesManager.GetInvoiceProvider(Document.DocCode);
-                Document.WindowViewModel = this;
+                r.myState = RowStatus.NotEdited;
+                foreach (var rr in r.CurrencyConvertRows)
+                {
+                    rr.State = RowStatus.NotEdited;
+                }
             }
         }
 
@@ -692,34 +700,49 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void AddNomenklCrsConvert(object obj)
         {
-            var crsrates = new CurrencyRates(Document.SF_POSTAV_DATE.AddDays(-5),DateTime.Today);
+            var crsrates = new CurrencyRates(Document.SF_POSTAV_DATE.AddDays(-5), DateTime.Today);
 
             var noms = MainReferences.ALLNomenkls.Values.Where(_ => _.MainId == CurrentRow.Nomenkl.MainId
                                                                     && _.Currency.DocCode !=
                                                                     CurrentRow.Nomenkl.Currency.DocCode).ToList();
             if (noms.Count == 0) return;
-            if (noms.Count == 1)
+            Nomenkl n;
+            if (noms.Count > 1)
             {
-                var newItem = new InvoiceProviderRowCurrencyConvertViewModel
+                var ctx = new NomenklSlectForCurrencyConvertViewModel()
                 {
-                    Id = Guid.NewGuid(),
-                    DocCode = CurrentRow.DocCode,
-                    Code = CurrentRow.Code,
-                    NomenklId = noms[0].Id,
-                    Date = DateTime.Today,
-                    // ReSharper disable once PossibleInvalidOperationException
-                    OLdPrice = (decimal) CurrentRow.SFT_ED_CENA,
-                    OLdNakladPrice = (decimal) CurrentRow.SFT_ED_CENA +
-                                     // ReSharper disable once PossibleInvalidOperationException
-                                     (decimal) CurrentRow.SFT_ED_CENA / (decimal) CurrentRow.SFT_SUMMA_NAKLAD,
-                    Quantity = 1,
-                    Rate = crsrates.GetRate(CurrentRow.Nomenkl.Currency.DocCode,
-                        noms[0].Currency.DocCode, DateTime.Today)
+                    ItemsCollection = new ObservableCollection<Nomenkl>(noms)
                 };
-                newItem.CalcRow(DirectCalc.Rate);
-                CurrentRow.CurrencyConvertRows.Add(newItem);
-                CurrentRow.State = RowStatus.Edited;
+                var dlg = new SelectDialogView {DataContext = ctx};
+                ctx.Form = dlg;
+                dlg.ShowDialog();
+                n = !ctx.DialogResult ? null : ctx.CurrentItem;
             }
+            else
+            {
+                n = noms[0];
+            }
+
+            if (n == null) return;
+            var newItem = new InvoiceProviderRowCurrencyConvertViewModel
+            {
+                Id = Guid.NewGuid(),
+                DocCode = CurrentRow.DocCode,
+                Code = CurrentRow.Code,
+                NomenklId = n.Id,
+                Date = DateTime.Today,
+                // ReSharper disable once PossibleInvalidOperationException
+                OLdPrice = (decimal) CurrentRow.SFT_ED_CENA,
+                OLdNakladPrice = (decimal) CurrentRow.SFT_ED_CENA +
+                                 // ReSharper disable once PossibleInvalidOperationException
+                                 (decimal) CurrentRow.SFT_ED_CENA / (decimal) CurrentRow.SFT_SUMMA_NAKLAD,
+                Quantity = 1,
+                Rate = crsrates.GetRate(CurrentRow.Nomenkl.Currency.DocCode,
+                    n.Currency.DocCode, DateTime.Today)
+            };
+            newItem.CalcRow(DirectCalc.Rate);
+            CurrentRow.CurrencyConvertRows.Add(newItem);
+            CurrentRow.State = RowStatus.Edited;
         }
 
         public InvoiceProviderRowCurrencyConvertViewModel CurrentCrsConvertItem
@@ -746,8 +769,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (CurrentRow == null)
             {
                 var row = Document.Rows.FirstOrDefault(_ => _.Code == CurrentCrsConvertItem.Code);
-                row?.CurrencyConvertRows.Remove(CurrentCrsConvertItem);
-                row.State = RowStatus.Edited;
+                if (row != null)
+                {
+                    row.CurrencyConvertRows.Remove(CurrentCrsConvertItem);
+                    row.State = RowStatus.Edited;
+                }
             }
             else
             {
@@ -869,7 +895,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void SaveData(object data)
         {
-            var dc = InvoicesManager.SaveProvider(Document);
+            //var dc = InvoicesManager.SaveProvider(Document);
+            var dc = invoiceManager.SaveProvider2(Document);
             if (dc > 0)
             {
                 if (Document.DocCode < 0)
@@ -1017,6 +1044,57 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 ctx.SaveChanges();
                 UpdatePayDocuments(ctx);
             }
+        }
+
+        #endregion
+    }
+
+    public class NomenklSlectForCurrencyConvertViewModel : RSWindowViewModelBase
+    {
+        private Nomenkl myCurrentItem;
+        private StandartDialogSelectUC myDataUserControl;
+
+        public NomenklSlectForCurrencyConvertViewModel()
+        {
+            myDataUserControl = new StandartDialogSelectUC(GetType().Name);
+            // ReSharper disable once VirtualMemberCallInConstructor
+            RefreshData(null);
+        }
+
+        #region command
+
+        public override void RefreshData(object o)
+        {
+            RaisePropertyChanged(nameof(ItemsCollection));
+        }
+
+        #endregion
+
+        #region properties
+
+        public ObservableCollection<Nomenkl> ItemsCollection { set; get; } =
+            new ObservableCollection<Nomenkl>();
+
+        public StandartDialogSelectUC DataUserControl
+        {
+            set
+            {
+                if (Equals(myDataUserControl, value)) return;
+                myDataUserControl = value;
+                RaisePropertyChanged();
+            }
+            get => myDataUserControl;
+        }
+
+        public Nomenkl CurrentItem
+        {
+            set
+            {
+                if (myCurrentItem != null && myCurrentItem.Equals(value)) return;
+                myCurrentItem = value;
+                RaisePropertyChanged();
+            }
+            get => myCurrentItem;
         }
 
         #endregion

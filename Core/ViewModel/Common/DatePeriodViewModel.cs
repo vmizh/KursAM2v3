@@ -25,6 +25,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string Header
         {
             get => myHeader;
@@ -35,6 +36,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public DateTime SecondDate
         {
             get => mySecondDate;

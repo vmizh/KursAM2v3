@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.Repository.Base;
+using Data.Repository;
 using KursAM2.Repositories;
 using NUnit.Framework;
 
@@ -10,13 +11,13 @@ namespace KursAM2.Tests.RepositoriesTests.DistributeNaklad
     {
         private IDistributeNakladRepository rep;
         // ReSharper disable once NotAccessedField.Local
-        private GenericKursRepository<Data.DistributeNaklad> drep;
+        private GenericKursDBRepository<Data.DistributeNaklad> drep;
 
         [Test]
         public void Test()
         {
             rep = new DistributeNakladRepository(UnitOfWork.Context);
-            drep = new GenericKursRepository<Data.DistributeNaklad>(UnitOfWork);
+            drep = new GenericKursDBRepository<Data.DistributeNaklad>(UnitOfWork);
             var doc = rep.CreateNew();
             doc.Note = "test 1";
             UnitOfWork.CreateTransaction();

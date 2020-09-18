@@ -37,6 +37,7 @@ namespace Core.EntityViewModel
 
         public string Sender => KontragentSender?.Name ?? WarehouseOut?.Name;
         public string Receiver => KontragentReceiver?.Name ?? WarehouseIn?.Name;
+
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -47,6 +48,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -57,6 +59,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DD_TYPE_DC
         {
             get => Entity.DD_TYPE_DC;
@@ -67,6 +70,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public MaterialDocumentType DocumentType
         {
             get => myDocumentType;
@@ -79,6 +83,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime DD_DATE
         {
             get => Entity.DD_DATE;
@@ -89,6 +94,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int DD_IN_NUM
         {
             get => Entity.DD_IN_NUM;
@@ -99,6 +105,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DD_EXT_NUM
         {
             get => Entity.DD_EXT_NUM;
@@ -109,6 +116,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_SKLAD_OTPR_DC
         {
             get => Entity.DD_SKLAD_OTPR_DC;
@@ -120,6 +128,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged(nameof(Sender));
             }
         }
+
         /// <summary>
         ///     Склад отправитель
         /// </summary>
@@ -136,6 +145,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged(nameof(Sender));
             }
         }
+
         public decimal? DD_SKLAD_POL_DC
         {
             get => Entity.DD_SKLAD_POL_DC;
@@ -149,6 +159,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged(nameof(WarehouseIn));
             }
         }
+
         /// <summary>
         ///     Склад получатель
         /// </summary>
@@ -165,6 +176,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged(nameof(Receiver));
             }
         }
+
         public decimal? DD_KONTR_OTPR_DC
         {
             get => Entity.DD_KONTR_OTPR_DC;
@@ -175,6 +187,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         /// <summary>
         ///     Контрагент отправитель
         /// </summary>
@@ -190,10 +203,12 @@ namespace Core.EntityViewModel
                     DD_KONTR_OTPR_DC = myKontragentSender.DocCode;
                     DD_OTRPAV_NAME = myKontragentSender.Name;
                 }
+
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Sender));
             }
         }
+
         public decimal? DD_KONTR_POL_DC
         {
             get => Entity.DD_KONTR_POL_DC;
@@ -204,6 +219,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         /// <summary>
         ///     Контрагент получатель
         /// </summary>
@@ -219,10 +235,12 @@ namespace Core.EntityViewModel
                     DD_KONTR_POL_DC = myKontragentReceiver.DocCode;
                     DD_POLUCH_NAME = myKontragentReceiver.Name;
                 }
+
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Sender));
             }
         }
+
         public int? DD_KLADOV_TN
         {
             get => Entity.DD_KLADOV_TN;
@@ -233,6 +251,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Employee Kladovshik
         {
             get => myKladovshik;
@@ -244,6 +263,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short DD_EXECUTED
         {
             get => Entity.DD_EXECUTED;
@@ -254,6 +274,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DD_POLUCHATEL_TN
         {
             get => Entity.DD_POLUCHATEL_TN;
@@ -264,6 +285,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DD_OTRPAV_NAME
         {
             get => Entity.DD_OTRPAV_NAME;
@@ -274,6 +296,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DD_POLUCH_NAME
         {
             get => Entity.DD_POLUCH_NAME;
@@ -284,6 +307,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DD_KTO_SDAL_TN
         {
             get => Entity.DD_KTO_SDAL_TN;
@@ -294,6 +318,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DD_KOMU_PEREDANO
         {
             get => Entity.DD_KOMU_PEREDANO;
@@ -304,6 +329,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DD_OT_KOGO_POLUCHENO
         {
             get => Entity.DD_OT_KOGO_POLUCHENO;
@@ -314,6 +340,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DD_GRUZOOTPRAVITEL
         {
             get => Entity.DD_GRUZOOTPRAVITEL;
@@ -324,6 +351,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DD_GRUZOPOLUCHATEL
         {
             get => Entity.DD_GRUZOPOLUCHATEL;
@@ -334,6 +362,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_OTPUSK_NA_SKLAD_DC
         {
             get => Entity.DD_OTPUSK_NA_SKLAD_DC;
@@ -344,6 +373,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         /// <summary>
         ///     Отпуск на склад
         /// </summary>
@@ -359,6 +389,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_PRIHOD_SO_SKLADA_DC
         {
             get => Entity.DD_PRIHOD_SO_SKLADA_DC;
@@ -369,6 +400,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         /// <summary>
         ///     Приход со склада
         /// </summary>
@@ -384,6 +416,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short DD_SHABLON
         {
             get => Entity.DD_SHABLON;
@@ -394,6 +427,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_VED_VIDACH_DC
         {
             get => Entity.DD_VED_VIDACH_DC;
@@ -404,6 +438,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_PERIOD_DC
         {
             get => Entity.DD_PERIOD_DC;
@@ -414,6 +449,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Period Period
         {
             get => myPeriod;
@@ -425,6 +461,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DD_TREB_NUM
         {
             get => Entity.DD_TREB_NUM;
@@ -435,6 +472,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? DD_TREB_DATE
         {
             get => Entity.DD_TREB_DATE;
@@ -445,6 +483,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_TREB_DC
         {
             get => Entity.DD_TREB_DC;
@@ -455,6 +494,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CREATOR
         {
             get => Entity.CREATOR;
@@ -465,6 +505,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DD_PODTVERZHDEN
         {
             get => Entity.DD_PODTVERZHDEN;
@@ -475,6 +516,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_OSN_OTGR_DC
         {
             get => Entity.DD_OSN_OTGR_DC;
@@ -485,6 +527,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DD_SCHET
         {
             get => Entity.DD_SCHET;
@@ -495,6 +538,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DD_DOVERENNOST
         {
             get => Entity.DD_DOVERENNOST;
@@ -505,6 +549,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DD_NOSZATR_ID
         {
             get => Entity.DD_NOSZATR_ID;
@@ -515,6 +560,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_NOSZATR_DC
         {
             get => Entity.DD_NOSZATR_DC;
@@ -525,6 +571,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_DOGOVOR_POKUPKI_DC
         {
             get => Entity.DD_DOGOVOR_POKUPKI_DC;
@@ -535,6 +582,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DD_NOTES
         {
             get => Entity.DD_NOTES;
@@ -545,6 +593,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_KONTR_CRS_DC
         {
             get => Entity.DD_KONTR_CRS_DC;
@@ -555,6 +604,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? DD_KONTR_CRS_RATE
         {
             get => Entity.DD_KONTR_CRS_RATE;
@@ -565,6 +615,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_UCHET_VALUTA_DC
         {
             get => Entity.DD_UCHET_VALUTA_DC;
@@ -575,6 +626,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? DD_UCHET_VALUTA_RATE
         {
             get => Entity.DD_UCHET_VALUTA_RATE;
@@ -585,6 +637,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_SPOST_DC
         {
             get => Entity.DD_SPOST_DC;
@@ -595,6 +648,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public InvoiceProvider InvoiceProvider
         {
             get => myInvoiceProvider;
@@ -607,6 +661,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_SFACT_DC
         {
             get => Entity.DD_SFACT_DC;
@@ -617,6 +672,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public InvoiceClient InvoiceClient
         {
             get => myInvoiceClient;
@@ -629,6 +685,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DD_VOZVRAT
         {
             get => Entity.DD_VOZVRAT;
@@ -639,6 +696,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsVozvrat
         {
             get => DD_VOZVRAT == 1;
@@ -649,6 +707,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DD_OTPRAV_TYPE
         {
             get => Entity.DD_OTPRAV_TYPE;
@@ -659,6 +718,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DD_POLUCH_TYPE
         {
             get => Entity.DD_POLUCH_TYPE;
@@ -669,6 +729,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DD_LISTOV_SERVIFICATOV
         {
             get => Entity.DD_LISTOV_SERVIFICATOV;
@@ -679,6 +740,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DD_VIEZD_FLAG
         {
             get => Entity.DD_VIEZD_FLAG;
@@ -689,6 +751,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DD_VIEZD_MASHINE
         {
             get => Entity.DD_VIEZD_MASHINE;
@@ -699,6 +762,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DD_VIEZD_CREATOR
         {
             get => Entity.DD_VIEZD_CREATOR;
@@ -709,6 +773,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? DD_VIEZD_DATE
         {
             get => Entity.DD_VIEZD_DATE;
@@ -719,6 +784,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_KONTR_POL_FILIAL_DC
         {
             get => Entity.DD_KONTR_POL_FILIAL_DC;
@@ -729,6 +795,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DD_KONTR_POL_FILIAL_CODE
         {
             get => Entity.DD_KONTR_POL_FILIAL_CODE;
@@ -739,6 +806,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DD_PROZV_PROCESS_DC
         {
             get => Entity.DD_PROZV_PROCESS_DC;
@@ -749,6 +817,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public byte[] TSTAMP
         {
             get => Entity.TSTAMP;
@@ -759,6 +828,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string OWNER_ID
         {
             get => Entity.OWNER_ID;
@@ -769,6 +839,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string OWNER_TEXT
         {
             get => Entity.OWNER_TEXT;
@@ -779,6 +850,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CONSIGNEE_ID
         {
             get => Entity.CONSIGNEE_ID;
@@ -789,6 +861,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CONSIGNEE_TEXT
         {
             get => Entity.CONSIGNEE_TEXT;
@@ -799,6 +872,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string BUYER_ID
         {
             get => Entity.BUYER_ID;
@@ -809,6 +883,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string BUYER_TEXT
         {
             get => Entity.BUYER_TEXT;
@@ -819,6 +894,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SHIPMENT_ID
         {
             get => Entity.SHIPMENT_ID;
@@ -829,6 +905,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SHIPMENT_TEXT
         {
             get => Entity.SHIPMENT_TEXT;
@@ -839,6 +916,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SUPPLIER_ID
         {
             get => Entity.SUPPLIER_ID;
@@ -849,6 +927,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SUPPLIER_TEXT
         {
             get => Entity.SUPPLIER_TEXT;
@@ -859,6 +938,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid? GRUZO_INFO_ID
         {
             get => Entity.GRUZO_INFO_ID;
@@ -869,6 +949,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public GROZO_REQUISITE GROZO_REQUISITE
         {
             get => Entity.GROZO_REQUISITE;
@@ -879,6 +960,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_112 SD_112
         {
             get => Entity.SD_112;
@@ -889,6 +971,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_131 SD_131
         {
             get => Entity.SD_131;
@@ -899,6 +982,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_189 SD_189
         {
             get => Entity.SD_189;
@@ -909,6 +993,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_2 SD_2
         {
             get => Entity.SD_2;
@@ -919,6 +1004,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_201 SD_201
         {
             get => Entity.SD_201;
@@ -929,6 +1015,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_9 SD_9
         {
             get => Entity.SD_9;
@@ -939,6 +1026,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_84 SD_84
         {
             get => Entity.SD_84;
@@ -949,6 +1037,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_26 SD_26
         {
             get => Entity.SD_26;
@@ -959,6 +1048,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_24 SD_242
         {
             get => Entity.SD_242;
@@ -969,6 +1059,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_257 SD_257
         {
             get => Entity.SD_257;
@@ -979,6 +1070,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_432 SD_432
         {
             get => Entity.SD_432;
@@ -989,6 +1081,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public XD_43 XD_43
         {
             get => Entity.XD_43;
@@ -999,6 +1092,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_301
         {
             get => Entity.SD_301;
@@ -1009,6 +1103,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_3011
         {
             get => Entity.SD_3011;
@@ -1019,6 +1114,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_43
         {
             get => Entity.SD_43;
@@ -1029,6 +1125,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_433
         {
             get => Entity.SD_433;
@@ -1039,6 +1136,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_27 SD_27
         {
             get => Entity.SD_27;
@@ -1049,6 +1147,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_27 SD_271
         {
             get => Entity.SD_271;
@@ -1059,6 +1158,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_27 SD_272
         {
             get => Entity.SD_272;
@@ -1069,6 +1169,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_27 SD_273
         {
             get => Entity.SD_273;
@@ -1079,6 +1180,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_24 Entity
         {
             get => myEntity;
@@ -1089,6 +1191,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_24> LoadList()

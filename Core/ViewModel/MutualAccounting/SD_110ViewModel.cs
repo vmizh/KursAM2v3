@@ -75,14 +75,17 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DebitorSumma
         {
             get { return Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0; }
         }
+
         public decimal? CreditorSumma
         {
             get { return Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0; }
         }
+
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -93,6 +96,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public override string Note
         {
             get => Entity.VZ_NOTES;
@@ -103,6 +107,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public Currency DebitorCurrency
         {
             get => myDebitorCurrency;
@@ -117,10 +122,12 @@ namespace Core.ViewModel.MutualAccounting
                     myCreditorCurrency = myDebitorCurrency;
                     Entity.CurrencyToDC = myDebitorCurrency.DocCode;
                 }
+
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(CreditorCurrency));
             }
         }
+
         public Currency CreditorCurrency
         {
             get => myCreditorCurrency;
@@ -135,10 +142,12 @@ namespace Core.ViewModel.MutualAccounting
                     myDebitorCurrency = myCreditorCurrency;
                     Entity.CurrencyFromDC = myCreditorCurrency.DocCode;
                 }
+
                 RaisePropertyChanged();
                 RaisePropertiesChanged(nameof(DebitorCurrency));
             }
         }
+
         public int VZ_NUM
         {
             get => Entity.VZ_NUM;
@@ -149,6 +158,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public DateTime VZ_DATE
         {
             get => Entity.VZ_DATE;
@@ -159,6 +169,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public SD_111ViewModel MutualAccountingOldType
         {
             get => myMutualAccountingOldType;
@@ -171,6 +182,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged(nameof(VZ_TYPE_DC));
             }
         }
+
         public decimal VZ_TYPE_DC
         {
             get => Entity.VZ_TYPE_DC;
@@ -181,6 +193,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal? VZ_PRIBIL_UCH_CRS_SUM
         {
             get => Entity.VZ_PRIBIL_UCH_CRS_SUM;
@@ -191,6 +204,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public string VZ_NOTES
         {
             get => Entity.VZ_NOTES;
@@ -201,6 +215,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public string CREATOR
         {
             get => Entity.CREATOR;
@@ -211,6 +226,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal? VZ_LEFT_UCH_CRS_SUM
         {
             get => Entity.VZ_LEFT_UCH_CRS_SUM;
@@ -221,6 +237,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public decimal? VZ_RIGHT_UCH_CRS_SUM
         {
             get => Entity.VZ_RIGHT_UCH_CRS_SUM;
@@ -231,6 +248,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public byte[] tstamp
         {
             get => Entity.tstamp;
@@ -241,6 +259,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public Guid? ActType
         {
             get => Entity.ActType;
@@ -251,6 +270,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public SD_111 SD_111
         {
             get => Entity.SD_111;
@@ -262,6 +282,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public UD_110 UD_110
         {
             get => Entity.UD_110;
@@ -294,6 +315,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_110> LoadList()
@@ -302,6 +324,7 @@ namespace Core.ViewModel.MutualAccounting
         }
 
         public ObservableCollection<TD_110ViewModel> Rows { get; set; } = new ObservableCollection<TD_110ViewModel>();
+
         public ObservableCollection<TD_110ViewModel> DeletedRows { get; set; } =
             new ObservableCollection<TD_110ViewModel>();
 
@@ -381,6 +404,7 @@ namespace Core.ViewModel.MutualAccounting
                                 ctx.TD_110.Add(row.Entity);
                                 i++;
                             }
+
                             ctx.SD_110.Add(Entity);
                             ctx.SaveChanges();
                             State = RowStatus.NotEdited;
@@ -396,6 +420,7 @@ namespace Core.ViewModel.MutualAccounting
                                 if (delRow != null)
                                     ctx.TD_110.Remove(delRow);
                             }
+
                             foreach (var r in Rows)
                                 switch (r.State)
                                 {
@@ -409,6 +434,7 @@ namespace Core.ViewModel.MutualAccounting
                                         ctx.TD_110.Add(r.Entity);
                                         break;
                                 }
+
                             ctx.SaveChanges();
                             break;
                     }
@@ -486,6 +512,7 @@ namespace Core.ViewModel.MutualAccounting
                 };
                 Rows.Add(newrow);
             }
+
             if (ent.DOC_CODE <= 11100025000)
                 IsOld = true;
         }

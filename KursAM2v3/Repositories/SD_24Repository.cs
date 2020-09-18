@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using Core.Repository.Base;
 using Data;
+using Data.Repository;
 
 namespace KursAM2.Repositories
 {
@@ -16,7 +17,7 @@ namespace KursAM2.Repositories
     }
 
     // ReSharper disable once InconsistentNaming
-    public class SD_24Repository : GenericKursRepository<SD_24>, ISD_24Repository
+    public class SD_24Repository : GenericKursDBRepository<SD_24>, ISD_24Repository
     {
         public SD_24Repository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {

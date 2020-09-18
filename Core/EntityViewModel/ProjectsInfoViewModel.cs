@@ -32,6 +32,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override Guid Id
         {
             get => Entity.Id;
@@ -42,6 +43,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? DATE_ORD
         {
             get => Entity.DATE_ORD;
@@ -52,6 +54,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? SUMM_ORD
         {
             get => Entity.SUMM_ORD;
@@ -62,6 +65,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? CRS_DC
         {
             get => Entity.CRS_DC;
@@ -72,6 +76,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaDiler
         {
             get => mySummaDiler;
@@ -82,6 +87,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<ProjectsInfo> LoadList()

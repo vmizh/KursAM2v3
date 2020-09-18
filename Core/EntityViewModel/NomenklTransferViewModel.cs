@@ -34,6 +34,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime Date
         {
             get => Entity.Date;
@@ -44,6 +45,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Note
         {
             get => Entity.Note;
@@ -54,6 +56,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal SkladDC
         {
             get
@@ -68,6 +71,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string Creator
         {
             get => Entity.Creator;
@@ -78,6 +82,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string LastUpdater
         {
             get => Entity.LastUpdater;
@@ -88,6 +93,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? LastUpdate
         {
             get => Entity.LastUpdate;
@@ -98,6 +104,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int DucNum
         {
             get => Entity.DucNum;
@@ -108,6 +115,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_27 SD_27
         {
             get => Entity.SD_27;
@@ -118,8 +126,10 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<NomenklTransferRow> NomenklTransferRow { get; set; } =
             new ObservableCollection<NomenklTransferRow>();
+
         public NomenklTransfer Entity
         {
             get => myEntity;
@@ -130,6 +140,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<NomenklTransfer> LoadList()

@@ -31,6 +31,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ALPHA2
         {
             get => Entity.ALPHA2;
@@ -41,6 +42,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ALPHA3
         {
             get => Entity.ALPHA3;
@@ -51,6 +53,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string ISO
         {
             get => Entity.ISO;
@@ -61,6 +64,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string FOREIGN_NAME
         {
             get => Entity.FOREIGN_NAME;
@@ -71,6 +75,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string RUSSIAN_NAME
         {
             get => Entity.RUSSIAN_NAME;
@@ -81,6 +86,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NOTES
         {
             get => Entity.NOTES;
@@ -91,6 +97,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NAME
         {
             get => Entity.NAME;
@@ -101,6 +108,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string LOCATION
         {
             get => Entity.LOCATION;
@@ -111,6 +119,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string LOCATION_PRECISE
         {
             get => Entity.LOCATION_PRECISE;
@@ -121,6 +130,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public byte[] SMALL_FLAG
         {
             get => Entity.SMALL_FLAG;
@@ -131,6 +141,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public COUNTRY Entity
         {
             get => myEntity;
@@ -141,6 +152,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<COUNTRY> LoadList()

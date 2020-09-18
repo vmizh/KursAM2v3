@@ -35,6 +35,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => Entity.CAT_NAME;
@@ -45,6 +46,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? CAT_PARENT_DC
         {
             get => Entity.CAT_PARENT_DC;
@@ -55,6 +57,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CAT_OKP
         {
             get => Entity.CAT_OKP;
@@ -65,6 +68,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CAT_PATH_NAME
         {
             get => Entity.CAT_PATH_NAME;
@@ -75,6 +79,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_82 SD_822
         {
             get => Entity.SD_822;
@@ -85,6 +90,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_82 Entity
         {
             get => myEntity;
@@ -95,7 +101,9 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
+
         public override decimal? ParentDC
         {
             get => Entity.CAT_PARENT_DC;

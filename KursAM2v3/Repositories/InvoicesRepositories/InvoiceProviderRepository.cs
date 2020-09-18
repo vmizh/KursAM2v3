@@ -5,6 +5,7 @@ using System.Linq;
 using Core.EntityViewModel;
 using Core.Repository.Base;
 using Data;
+using Data.Repository;
 
 namespace KursAM2.Repositories.InvoicesRepositories
 {
@@ -26,7 +27,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
         //InvoiceProviderDialogs Dialogs { set; get; }
     }
 
-    public class InvoiceProviderRepository : GenericKursRepository<InvoiceProvider>, IInvoiceProviderRepository
+    public class InvoiceProviderRepository : GenericKursDBRepository<InvoiceProvider>, IInvoiceProviderRepository
     {
         public InvoiceProviderRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {
@@ -192,46 +193,46 @@ namespace KursAM2.Repositories.InvoicesRepositories
             var ret = new List<InvoiceProviderShort>();
             if (dateStart == null && dateEnd == null)
                 data = Context.SD_26
-                    .Include(_ => _.TD_26)
-                    .Include("TD_26.TD_24")
-                    .Include(_ => _.SD_43)
-                    .Include(_ => _.SD_179)
-                    .Include(_ => _.SD_77)
-                    .Include(_ => _.SD_189)
-                    .Include(_ => _.SD_40)
-                    .Include("TD_26.SD_83")
-                    .Include("TD_26.SD_175")
-                    .Include("TD_26.SD_43")
-                    .Include("TD_26.SD_165")
-                    .Include("TD_26.SD_175")
-                    .Include("TD_26.SD_1751")
-                    .Include("TD_26.SD_26")
-                    .Include("TD_26.SD_261")
-                    .Include("TD_26.SD_301")
-                    .Include("TD_26.SD_303")
+                    //.Include(_ => _.TD_26)
+                    //.Include("TD_26.TD_24")
+                    //.Include(_ => _.SD_43)
+                    //.Include(_ => _.SD_179)
+                    //.Include(_ => _.SD_77)
+                    //.Include(_ => _.SD_189)
+                    //.Include(_ => _.SD_40)
+                    //.Include("TD_26.SD_83")
+                    //.Include("TD_26.SD_175")
+                    //.Include("TD_26.SD_43")
+                    //.Include("TD_26.SD_165")
+                    //.Include("TD_26.SD_175")
+                    //.Include("TD_26.SD_1751")
+                    //.Include("TD_26.SD_26")
+                    //.Include("TD_26.SD_261")
+                    //.Include("TD_26.SD_301")
+                    //.Include("TD_26.SD_303")
                     .Where(_ => _.SF_ACCEPTED == 1 && _.IsInvoiceNakald == true
                                                    && (_.NakladDistributedSumma ?? 0) < _.SF_KONTR_CRS_SUMMA)
                     .ToList();
 
             if (dateStart == null && dateEnd != null)
                 data = Context.SD_26
-                    .Include(_ => _.TD_26)
-                    .Include("TD_26.TD_24")
-                    .Include(_ => _.SD_43)
-                    .Include(_ => _.SD_179)
-                    .Include(_ => _.SD_77)
-                    .Include(_ => _.SD_189)
-                    .Include(_ => _.SD_40)
-                    .Include("TD_26.SD_83")
-                    .Include("TD_26.SD_175")
-                    .Include("TD_26.SD_43")
-                    .Include("TD_26.SD_165")
-                    .Include("TD_26.SD_175")
-                    .Include("TD_26.SD_1751")
-                    .Include("TD_26.SD_26")
-                    .Include("TD_26.SD_261")
-                    .Include("TD_26.SD_301")
-                    .Include("TD_26.SD_303")
+                    //.Include(_ => _.TD_26)
+                    //.Include("TD_26.TD_24")
+                    //.Include(_ => _.SD_43)
+                    //.Include(_ => _.SD_179)
+                    //.Include(_ => _.SD_77)
+                    //.Include(_ => _.SD_189)
+                    //.Include(_ => _.SD_40)
+                    //.Include("TD_26.SD_83")
+                    //.Include("TD_26.SD_175")
+                    //.Include("TD_26.SD_43")
+                    //.Include("TD_26.SD_165")
+                    //.Include("TD_26.SD_175")
+                    //.Include("TD_26.SD_1751")
+                    //.Include("TD_26.SD_26")
+                    //.Include("TD_26.SD_261")
+                    //.Include("TD_26.SD_301")
+                    //.Include("TD_26.SD_303")
                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && (_.IsInvoiceNakald ?? false)
                                                               && (_.NakladDistributedSumma ?? 0) <
                                                               _.SF_KONTR_CRS_SUMMA
@@ -240,23 +241,23 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
             if (dateStart != null && dateEnd != null)
                 data = Context.SD_26
-                    .Include(_ => _.TD_26)
-                    .Include("TD_26.TD_24")
-                    .Include(_ => _.SD_43)
-                    .Include(_ => _.SD_179)
-                    .Include(_ => _.SD_77)
-                    .Include(_ => _.SD_189)
-                    .Include(_ => _.SD_40)
-                    .Include("TD_26.SD_83")
-                    .Include("TD_26.SD_175")
-                    .Include("TD_26.SD_43")
-                    .Include("TD_26.SD_165")
-                    .Include("TD_26.SD_175")
-                    .Include("TD_26.SD_1751")
-                    .Include("TD_26.SD_26")
-                    .Include("TD_26.SD_261")
-                    .Include("TD_26.SD_301")
-                    .Include("TD_26.SD_303")
+                    //.Include(_ => _.TD_26)
+                    //.Include("TD_26.TD_24")
+                    //.Include(_ => _.SD_43)
+                    //.Include(_ => _.SD_179)
+                    //.Include(_ => _.SD_77)
+                    //.Include(_ => _.SD_189)
+                    //.Include(_ => _.SD_40)
+                    //.Include("TD_26.SD_83")
+                    //.Include("TD_26.SD_175")
+                    //.Include("TD_26.SD_43")
+                    //.Include("TD_26.SD_165")
+                    //.Include("TD_26.SD_175")
+                    //.Include("TD_26.SD_1751")
+                    //.Include("TD_26.SD_26")
+                    //.Include("TD_26.SD_261")
+                    //.Include("TD_26.SD_301")
+                    //.Include("TD_26.SD_303")
                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
                                                               && _.IsInvoiceNakald == true
                                                               && (_.NakladDistributedSumma ?? 0) <

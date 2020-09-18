@@ -28,6 +28,7 @@ namespace Core.ViewModel.Common
         private decimal mySummaUSDIn;
         private decimal mySummaUSDOut;
         private decimal mySummaUSDStart;
+
         public Nomenkl Nomenkl
         {
             get => myNomenkl;
@@ -38,10 +39,12 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public new string Name => Nomenkl?.Name;
         public string NomenklNumber => Nomenkl?.NomenklNumber;
         public string CurrencyName => Nomenkl?.Currency.Name;
         public new string Note => Nomenkl?.Note;
+
         public decimal QuantityStart
         {
             get => myQuantityStart;
@@ -52,6 +55,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal QuantityEnd
         {
             get => myQuantityEnd;
@@ -62,6 +66,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal QuantityIn
         {
             get => myQuantityIn;
@@ -72,6 +77,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal QuantityOut
         {
             get => myQuantityOut;
@@ -82,6 +88,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal PriceStart
         {
             get => myPriceStart;
@@ -92,6 +99,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal PriceEnd
         {
             get => myPriceEnd;
@@ -102,6 +110,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaRUBStart
         {
             get => mySummaRUBStart;
@@ -112,6 +121,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaRUBEnd
         {
             get => mySummaRUBEnd;
@@ -122,6 +132,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaRUBIn
         {
             get => mySummaRUBIn;
@@ -132,6 +143,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaRUBOut
         {
             get => mySummaRUBOut;
@@ -142,6 +154,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaUSDStart
         {
             get => mySummaUSDStart;
@@ -152,6 +165,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaUSDEnd
         {
             get => mySummaUSDEnd;
@@ -162,6 +176,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaUSDIn
         {
             get => mySummaUSDIn;
@@ -172,6 +187,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaUSDOut
         {
             get => mySummaUSDOut;
@@ -182,6 +198,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaEURStart
         {
             get => mySummaEURStart;
@@ -192,6 +209,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaEUREnd
         {
             get => mySummaEUREnd;
@@ -202,6 +220,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaEURIn
         {
             get => mySummaEURIn;
@@ -212,6 +231,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaEUROut
         {
             get => mySummaEUROut;
@@ -222,6 +242,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaAllStart
         {
             get => mySummaAllStart;
@@ -232,6 +253,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaAllEnd
         {
             get => mySummaAllEnd;
@@ -242,6 +264,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaAllIn
         {
             get => mySummaAllIn;
@@ -252,6 +275,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaAllOut
         {
             get => mySummaAllOut;

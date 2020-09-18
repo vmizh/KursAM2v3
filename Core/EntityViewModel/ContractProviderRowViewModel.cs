@@ -32,6 +32,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -42,6 +43,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -52,6 +54,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int CODE
         {
             get => Entity.CODE;
@@ -62,6 +65,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DOT_NOMENKL_DC
         {
             get => Entity.DOT_NOMENKL_DC;
@@ -72,6 +76,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double DOT_KOL
         {
             get => Entity.DOT_KOL;
@@ -82,6 +87,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DOT_CRS_CENA
         {
             get => Entity.DOT_CRS_CENA;
@@ -92,6 +98,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double DOT_NDS_PERCENT
         {
             get => Entity.DOT_NDS_PERCENT;
@@ -102,6 +109,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DOT_NDS
         {
             get => Entity.DOT_NDS;
@@ -112,6 +120,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DOT_ACCIZ_SUMMA
         {
             get => Entity.DOT_ACCIZ_SUMMA;
@@ -122,6 +131,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DOT_K_OPLATE_SUMMA
         {
             get => Entity.DOT_K_OPLATE_SUMMA;
@@ -132,6 +142,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_112 SD_112
         {
             get => Entity.SD_112;
@@ -142,6 +153,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_83 SD_83
         {
             get => Entity.SD_83;

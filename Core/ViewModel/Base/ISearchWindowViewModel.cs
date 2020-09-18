@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using Core.EntityViewModel;
 
 namespace Core.ViewModel.Base
 {
@@ -12,7 +11,5 @@ namespace Core.ViewModel.Base
         ObservableCollection<T> SelectDocuments { set; get; }
 
         T CurrentDocument { set; get; }
-
-
     }
 }

@@ -38,6 +38,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -48,6 +49,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CA_NAME
         {
             get => Entity.CA_NAME;
@@ -58,6 +60,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => Entity.CA_NAME;
@@ -68,6 +71,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal CA_CRS_DC
         {
             get => Entity.CA_CRS_DC;
@@ -78,6 +82,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? CA_NEGATIVE_RESTS
         {
             get => Entity.CA_NEGATIVE_RESTS;
@@ -88,6 +93,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsCanNegative
         {
             get => myIsCanNegative;
@@ -99,6 +105,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? CA_KONTRAGENT_DC
         {
             get => Entity.CA_KONTRAGENT_DC;
@@ -109,6 +116,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? CA_CENTR_OTV_DC
         {
             get => Entity.CA_CENTR_OTV_DC;
@@ -119,6 +127,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public CentrOfResponsibility CO
         {
             get => myCO;
@@ -131,6 +140,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? CA_KONTR_DC
         {
             get => Entity.CA_KONTR_DC;
@@ -141,6 +151,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? CA_NO_BALANS
         {
             get => Entity.CA_NO_BALANS;
@@ -151,6 +162,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_40 SD_40
         {
             get => Entity.SD_40;
@@ -161,6 +173,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_22 Entity
         {
             get => myEntity;
@@ -171,6 +184,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_22> LoadList()
@@ -300,6 +314,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<CashStartRemains> StartRemains { set; get; } =
             new ObservableCollection<CashStartRemains>();
     }

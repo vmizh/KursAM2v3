@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Core.EntityViewModel;
 using Core.Repository.Base;
 using Data;
+using Data.Repository;
 
 namespace KursAM2.Repositories.InvoicesRepositories
 {
@@ -12,7 +13,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
         List<InvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd);
 
     }
-    public class InvoiceClientRepository : GenericKursRepository<InvoiceClient>, IInvoiceClientRepository
+    public class InvoiceClientRepository : GenericKursDBRepository<InvoiceClient>, IInvoiceClientRepository
     {
         public InvoiceClientRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {

@@ -24,6 +24,7 @@ namespace Core.EntityViewModel
         public string NomNomenkl => Nomenkl.NOM_NOMENKL;
         public bool Taksirovka => DDT_TAX_EXECUTED == 1;
         public bool Factur => DDT_FACT_EXECUTED == 1;
+
         public decimal MaxQuantity
         {
             get => myMaxQuantity;
@@ -34,6 +35,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal Quantity
         {
             get => DDT_KOL_RASHOD;

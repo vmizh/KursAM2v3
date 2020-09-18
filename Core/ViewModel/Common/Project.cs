@@ -42,6 +42,7 @@ namespace Core.ViewModel.Common
             }
             get => Entity.Id;
         }
+
         public DateTime DateStart
         {
             get => Entity.DateStart;
@@ -52,6 +53,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? DateEnd
         {
             get => Entity.DateEnd;
@@ -62,6 +64,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal? ManagerDC
         {
             get => Entity.ManagerDC;
@@ -72,7 +75,9 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<ProjectsDocs> ProjectsDocs { get; set; }
+
         /// <summary>
         ///     Ответственный
         /// </summary>
@@ -87,6 +92,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public bool IsClosed
         {
             get => Entity.IsClosed;
@@ -97,6 +103,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public bool IsDeleted
         {
             get => Entity.IsDeleted;
@@ -107,6 +114,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public Projects Entity
         {
             get => myEntity;
@@ -117,6 +125,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; } = new EntityLoadCodition();
 
         public bool Check()
@@ -141,6 +150,7 @@ namespace Core.ViewModel.Common
             {
                 WindowManager.ShowError(ex);
             }
+
             return null;
         }
 
@@ -173,6 +183,7 @@ namespace Core.ViewModel.Common
             {
                 WindowManager.ShowError(ex);
             }
+
             return prj;
         }
 
@@ -212,6 +223,7 @@ namespace Core.ViewModel.Common
                                 entity.IsDeleted = doc.IsDeleted;
                                 entity.ManagerDC = doc.ManagerDC;
                             }
+
                             ctx.SaveChanges();
                             var d = MainReferences.Projects[doc.Id];
                             d.ParentId = doc.ParentId;
@@ -225,6 +237,7 @@ namespace Core.ViewModel.Common
                             break;
                     }
                 }
+
                 if (State == RowStatus.NewRow)
                     MainReferences.Projects.Add(doc.Id, doc);
                 State = RowStatus.NotEdited;
@@ -273,6 +286,7 @@ namespace Core.ViewModel.Common
                                 entity.IsDeleted = doc.IsDeleted;
                                 entity.ManagerDC = doc.ManagerDC;
                             }
+
                             ctx.SaveChanges();
                             // ReSharper disable once PossibleNullReferenceException
                             var p = MainReferences.Projects[entity.Id];
@@ -287,9 +301,11 @@ namespace Core.ViewModel.Common
                                 p.IsDeleted = entity.IsDeleted;
                                 p.ManagerDC = entity.ManagerDC;
                             }
+
                             break;
                     }
                 }
+
                 State = RowStatus.NotEdited;
             }
             catch (Exception ex)

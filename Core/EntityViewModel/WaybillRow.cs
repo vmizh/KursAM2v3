@@ -25,6 +25,7 @@ namespace Core.EntityViewModel
                 Entity = new TD_24 {DOC_CODE = -1, CODE = 0};
                 return;
             }
+
             SchetLinkedRow = new InvoiceClientRow(entity.TD_84);
         }
 
@@ -51,6 +52,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? Price => SchetLinkedRow?.Price;
         public decimal? Summa => SchetLinkedRow?.Summa;
         public string NomenklNumber => Nomenkl?.NomenklNumber;

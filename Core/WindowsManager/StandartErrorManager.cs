@@ -19,6 +19,7 @@ namespace Core.WindowsManager
                 ShowWindow = true;
             }
         }
+
         public StandartErrorManager(DbContext dbContext, string formName)
         {
             EntityFrameworkContext = dbContext;

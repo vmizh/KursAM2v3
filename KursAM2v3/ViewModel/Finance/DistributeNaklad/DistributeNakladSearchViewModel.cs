@@ -6,6 +6,7 @@ using Core.Menu;
 using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Data;
+using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.POCO;
@@ -28,7 +29,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             DateEnd = DateTime.Today;
             DateStart = DateEnd.AddDays(-30);
-            baseRepository = new GenericKursRepository<Data.DistributeNaklad>(unitOfWork);
+            baseRepository = new GenericKursDBRepository<Data.DistributeNaklad>(unitOfWork);
             distributeNakladRepository = new DistributeNakladRepository(unitOfWork);
             //ModelView = new DistributeNakladSearchView();
             WindowName = "Поиск распределений накладных расходов";
@@ -40,7 +41,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             DateEnd = DateTime.Today;
             DateStart = DateEnd.AddDays(-30);
-            baseRepository = new GenericKursRepository<Data.DistributeNaklad>(unitOfWork);
+            baseRepository = new GenericKursDBRepository<Data.DistributeNaklad>(unitOfWork);
             distributeNakladRepository = new DistributeNakladRepository(unitOfWork);
             WindowName = "Поиск распределений накладных расходов";
         }
@@ -56,7 +57,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         // ReSharper disable once NotAccessedField.Local
-        private readonly GenericKursRepository<Data.DistributeNaklad> baseRepository;
+        private readonly GenericKursDBRepository<Data.DistributeNaklad> baseRepository;
 
         // ReSharper disable once NotAccessedField.Local
         private readonly IDistributeNakladRepository distributeNakladRepository;

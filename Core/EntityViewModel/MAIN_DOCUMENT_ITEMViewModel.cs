@@ -29,6 +29,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int GROUP_ID
         {
             get => Entity.GROUP_ID;
@@ -39,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NAME
         {
             get => Entity.NAME;
@@ -49,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public byte[] PICTURE
         {
             get => Entity.PICTURE;
@@ -59,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NOTES
         {
             get => Entity.NOTES;
@@ -69,6 +73,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? ORDERBY
         {
             get => Entity.ORDERBY;
@@ -79,6 +84,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SCODE
         {
             get => Entity.CODE;
@@ -89,6 +95,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public MAIN_DOCUMENT_GROUP MAIN_DOCUMENT_GROUP
         {
             get => Entity.MAIN_DOCUMENT_GROUP;
@@ -99,6 +106,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public MAIN_DOCUMENT_ITEM Entity
         {
             get => myEntity;
@@ -109,6 +117,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<MAIN_DOCUMENT_ITEM> LoadList()

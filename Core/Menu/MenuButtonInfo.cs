@@ -38,6 +38,7 @@ namespace Core.Menu
                     ctxMenu.Items.Add(new Separator());
                     continue;
                 }
+
                 var menuItem = new MenuItem
                 {
                     Header = item.Caption,
@@ -57,6 +58,7 @@ namespace Core.Menu
                         menuItem.Items.Add(new Separator());
                         continue;
                     }
+
                     foreach (var subitem in item.SubMenu)
                         menuItem.Items.Add(new MenuItem
                         {
@@ -71,8 +73,10 @@ namespace Core.Menu
                                 : null
                         });
                 }
+
                 ctxMenu.Items.Add(menuItem);
             }
+
             ctxMenu.IsOpen = true;
         }
     }

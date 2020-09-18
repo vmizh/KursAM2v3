@@ -32,6 +32,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -42,6 +43,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => DOC_CODE;
@@ -52,6 +54,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string D_NAME
         {
             get => Entity.D_NAME;
@@ -62,6 +65,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int D_OP_CODE
         {
             get => Entity.D_OP_CODE;
@@ -72,6 +76,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string D_SAL_FORM
         {
             get => Entity.D_SAL_FORM;
@@ -82,6 +87,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? D_PRIHOD
         {
             get => Entity.D_PRIHOD;
@@ -92,6 +98,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? D_RASHOD
         {
             get => Entity.D_RASHOD;
@@ -102,6 +109,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? D_HELP_CONTEXT
         {
             get => Entity.D_HELP_CONTEXT;
@@ -112,6 +120,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? ORDER_CALC
         {
             get => Entity.ORDER_CALC;
@@ -122,6 +131,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsAccessRight { get; set; }
 
         public List<SD_201> LoadList()

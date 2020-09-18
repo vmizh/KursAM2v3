@@ -29,6 +29,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid CLOSED_ID
         {
             get => Entity.CLOSED_ID;
@@ -39,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid USER_GROUP_ID
         {
             get => Entity.USER_GROUP_ID;
@@ -49,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime DateExclude
         {
             get => Entity.DateExclude;
@@ -59,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Note
         {
             get => Entity.Note;
@@ -69,6 +73,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime DateFrom
         {
             get => Entity.DateFrom;
@@ -79,6 +84,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public PERIOD_CLOSED PERIOD_CLOSED
         {
             get => Entity.PERIOD_CLOSED;
@@ -89,6 +95,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public PERIOD_GROUPS PERIOD_GROUPS
         {
             get => Entity.PERIOD_GROUPS;
@@ -99,6 +106,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public PERIOD_CLOSED_EXCLUDE Entity
         {
             get => myEntity;
@@ -109,6 +117,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<PERIOD_CLOSED_EXCLUDE> LoadList()

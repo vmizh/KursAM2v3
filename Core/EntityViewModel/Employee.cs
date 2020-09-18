@@ -51,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NAME_LAST
         {
             get => Entity.NAME_LAST;
@@ -61,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NAME_SECOND
         {
             get => Entity.NAME_SECOND;
@@ -71,6 +73,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NAME_OGLY
         {
             get => Entity.NAME_OGLY;
@@ -81,6 +84,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DELETED
         {
             get => Entity.DELETED;
@@ -91,6 +95,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? OK_DATA_CHANGED
         {
             get => Entity.OK_DATA_CHANGED;
@@ -101,6 +106,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? CHANGE_DATE
         {
             get => Entity.CHANGE_DATE;
@@ -111,6 +117,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? crs_dc
         {
             get => Entity.crs_dc;
@@ -121,6 +128,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? OLD
         {
             get => Entity.OLD;
@@ -152,6 +160,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string STATUS_NOTES
         {
             get => Entity.STATUS_NOTES;
@@ -162,6 +171,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_301
         {
             get => Entity.SD_301;
@@ -172,6 +182,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_269 SD_269
         {
             get => Entity.SD_269;
@@ -182,6 +193,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_2 Entity
         {
             get => myEntity;
@@ -192,7 +204,9 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
+
         public override decimal DocCode
         {
             get => Entity?.DOC_CODE ?? -1;
@@ -203,6 +217,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public virtual int TabelNumber
         {
             get => Entity?.TABELNUMBER ?? -1;
@@ -213,6 +228,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => Entity?.NAME;
@@ -223,6 +239,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public virtual string NameFirst
         {
             get => Entity?.NAME_FIRST;
@@ -233,6 +250,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public virtual string FirstName
         {
             get => Entity?.NAME_FIRST;
@@ -243,6 +261,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         [GridColumnView("Фамилия", SettingsType.Default)]
         public virtual string NameLast
         {
@@ -254,6 +273,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public virtual string LastName
         {
             get => Entity?.NAME_LAST;
@@ -264,6 +284,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         [GridColumnView("Отчество", SettingsType.Default)]
         public virtual string NameSecond
         {
@@ -275,6 +296,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public virtual string SecondName
         {
             get => Entity?.NAME_SECOND;
@@ -285,6 +307,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         [GridColumnView("Удален", SettingsType.Default)]
         public virtual bool IsDeleted
         {
@@ -296,6 +319,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         [GridColumnView("Фотография", SettingsType.Default)]
         public byte[] Photo
         {
@@ -307,6 +331,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         [GridColumnView("Спец. примечание", SettingsType.Default)]
         public virtual string StatusNotes
         {
@@ -318,6 +343,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public virtual Currency Currency
         {
             get
@@ -340,6 +366,7 @@ namespace Core.EntityViewModel
                     if (Entity.crs_dc == value.DOC_CODE) return;
                     Entity.crs_dc = value.DOC_CODE;
                 }
+
                 RaisePropertyChanged();
             }
         }

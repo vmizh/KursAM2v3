@@ -20,7 +20,6 @@ namespace Core.EntityViewModel
 
         public WarehouseOrderIn()
         {
-
         }
 
         public WarehouseOrderIn(SD_24 entity) : base(entity)
@@ -46,12 +45,16 @@ namespace Core.EntityViewModel
 
         public ObservableCollection<WarehouseOrderInRow> Rows { set; get; } =
             new ObservableCollection<WarehouseOrderInRow>();
+
         public ObservableCollection<InvoiceProviderRow> biling { set; get; } =
             new ObservableCollection<InvoiceProviderRow>();
+
         public ObservableCollection<WarehouseOrderInRow> SelectedRows { set; get; } =
             new ObservableCollection<WarehouseOrderInRow>();
+
         public ObservableCollection<WarehouseOrderInRow> DeletedRows { set; get; } =
             new ObservableCollection<WarehouseOrderInRow>();
+
         public WarehouseSenderType WarehouseSenderType
         {
             get => myWarehouseSenderType;

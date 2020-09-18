@@ -30,6 +30,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => EG_ID;
@@ -40,6 +41,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string EG_NAME
         {
             get => Entity.EG_NAME;
@@ -50,6 +52,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => EG_NAME;
@@ -60,6 +63,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? EG_PARENT_ID
         {
             get => Entity.EG_PARENT_ID;
@@ -70,6 +74,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal? ParentDC
         {
             get => EG_PARENT_ID;
@@ -80,6 +85,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? EG_DELETED
         {
             get => Entity.EG_DELETED;
@@ -90,6 +96,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsDeleted
         {
             get => EG_DELETED == 1;
@@ -100,6 +107,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? EG_BALANS_GROUP
         {
             get => Entity.EG_BALANS_GROUP;
@@ -110,6 +118,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public UD_43 UD_432
         {
             get => Entity.UD_432;
@@ -120,6 +129,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public UD_43 Entity
         {
             get => myEntity;
@@ -130,6 +140,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<UD_43> LoadList()

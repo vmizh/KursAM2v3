@@ -7,12 +7,19 @@ using System.Windows.Media;
 using Core.EntityViewModel;
 using Core.ViewModel.Common;
 using Data;
+using Data.Repository;
 using User = Helper.User;
 
 namespace Core
 {
     public static class GlobalOptions
     {
+        public static ALFAMEDIAEntities KursDBContext;
+        public static UnitOfWork<ALFAMEDIAEntities> KursDBUnitOfWork;
+
+        public static KursSystemEntities KursSystemDBContext;
+        public static UnitOfWork<KursSystemEntities> KursSystemDBUnitOfWork;
+
         public static string SqlConnectionString;
         public static User UserInfo { set; get; }
 
@@ -67,6 +74,7 @@ namespace Core
             while (!MainReferences.IsReferenceLoadComplete)
             {
             }
+
             return ret;
         }
 
@@ -114,14 +122,17 @@ namespace Core
         ///     учетная валюта
         /// </summary>
         public Currency MainCurrency { set; get; }
+
         /// <summary>
         ///     Государственная валюта
         /// </summary>
         public Currency NationalCurrency { set; get; }
+
         /// <summary>
         ///     контрагент - владелей тккущей БД
         /// </summary>
         public Kontragent OwnerKontragent { set; get; }
+
         public NomenklCalcType NomenklCalcType { set; get; }
         public List<PROFILE> Profile { set; get; } = new List<PROFILE>();
         public Currency EmployeeDefaultCurrency { set; get; }

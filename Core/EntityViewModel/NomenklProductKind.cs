@@ -36,6 +36,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -46,6 +47,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => DOC_CODE;
@@ -56,6 +58,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string PROD_NAME
         {
             get => Entity.PROD_NAME;
@@ -66,6 +69,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => PROD_NAME;
@@ -76,6 +80,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short PROD_TYPE
         {
             get => Entity.PROD_TYPE;
@@ -86,6 +91,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string PROD_ED_IZM
         {
             get => Entity.PROD_ED_IZM;
@@ -96,6 +102,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? PROD_PARENT_DC
         {
             get => Entity.PROD_PARENT_DC;
@@ -106,6 +113,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal? ParentDC
         {
             get => PROD_PARENT_DC;
@@ -116,6 +124,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string PROD_FULL_NAME
         {
             get => Entity.PROD_FULL_NAME;
@@ -126,6 +135,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_50 SD_502
         {
             get => Entity.SD_502;
@@ -136,6 +146,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsAccessRight { get; set; }
 
         public List<SD_50> LoadList()

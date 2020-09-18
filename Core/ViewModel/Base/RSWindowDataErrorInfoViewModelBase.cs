@@ -13,6 +13,7 @@ namespace Core.ViewModel.Base
 
         string IDataErrorInfo.Error => throw new NotSupportedException(
             "IDataErrorInfo.Error is not supported, use IDataErrorInfo.this[propertyName] instead.");
+
         private readonly Dictionary<string, object> myValues = new Dictionary<string, object>();
 
         protected void SetValue<T>(Expression<Func<T>> propertySelector, T value)
@@ -54,6 +55,7 @@ namespace Core.ViewModel.Base
                 value = propertyDescriptor.GetValue(this);
                 myValues.Add(propertyName, value);
             }
+
             return value;
         }
 
@@ -76,6 +78,7 @@ namespace Core.ViewModel.Base
                 var validationResult = results.First();
                 error = validationResult.ErrorMessage;
             }
+
             return error;
         }
 

@@ -35,6 +35,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         [ReadOnly(true)]
         public string USR_NICKNAME
         {
@@ -46,6 +47,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         [ReadOnly(true)]
         public string USR_FULLNAME
         {
@@ -57,6 +59,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         [ReadOnly(true)]
         public int? TABELNUMBER
         {
@@ -68,6 +71,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string USR_PHONE
         {
             get => Entity.USR_PHONE;
@@ -78,6 +82,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string USR_NOTES
         {
             get => Entity.USR_NOTES;
@@ -88,6 +93,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string USR_PASSWORD
         {
             get => Entity.USR_PASSWORD;
@@ -98,6 +104,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? USR_PROVODKY
         {
             get => Entity.USR_PROVODKY;
@@ -108,6 +115,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? USR_ABORT_CONNECT
         {
             get => Entity.USR_ABORT_CONNECT;
@@ -119,6 +127,7 @@ namespace Core.EntityViewModel
                 RaisePropertiesChanged(nameof(UserBlock));
             }
         }
+
         public bool UserBlock
         {
             set
@@ -129,6 +138,7 @@ namespace Core.EntityViewModel
             }
             get => Entity.USR_ABORT_CONNECT == 1;
         }
+
         public EXT_USERS Entity
         {
             get => myEntity;
@@ -139,6 +149,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<EXT_USERS> LoadList()

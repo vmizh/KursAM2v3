@@ -37,6 +37,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => DOC_CODE;
@@ -47,6 +48,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string REG_NAME
         {
             get => Entity.REG_NAME;
@@ -57,6 +59,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => REG_NAME;
@@ -67,6 +70,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? REG_PARENT_DC
         {
             get => Entity.REG_PARENT_DC;
@@ -77,6 +81,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal? ParentDC
         {
             get => REG_PARENT_DC;
@@ -99,6 +104,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_23 SD_232
         {
             get => Entity.SD_232;
@@ -109,6 +115,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_434 SD_434
         {
             get => Entity.SD_434;
@@ -119,6 +126,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_23 Entity
         {
             get => myEntity;
@@ -129,6 +137,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_23> LoadList()

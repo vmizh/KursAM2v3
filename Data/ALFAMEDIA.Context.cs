@@ -24,22 +24,6 @@ namespace Data
         {
         }
 
-        public ALFAMEDIAEntities(string connectionString,
-            bool validationMode = true,
-            bool lazyLoadingMode = true,
-            bool autoDetectMode = true)
-            : base(new EntityConnectionStringBuilder
-            {
-                Provider = "System.Data.SqlClient",
-                ProviderConnectionString = connectionString,
-                Metadata =
-                    @"res://*/ALFAMEDIA.csdl|res://*/ALFAMEDIA.ssdl|res://*/ALFAMEDIA.msl"
-            }.ToString())
-        {
-            Configuration.ValidateOnSaveEnabled = validationMode;
-            Configuration.LazyLoadingEnabled = lazyLoadingMode;
-            Configuration.AutoDetectChangesEnabled = autoDetectMode;
-        }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();

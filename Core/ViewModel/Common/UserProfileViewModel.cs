@@ -30,6 +30,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string OptionName
         {
             get => Entity.OptionName;
@@ -40,6 +41,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string OptionValue
         {
             get => Entity.OptionValue;
@@ -50,6 +52,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public EXT_USERS EXT_USERS
         {
             get => Entity.EXT_USERS;
@@ -60,6 +63,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public UserProfile Entity
         {
             get => myEntity;
@@ -70,6 +74,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<UserProfile> LoadList()

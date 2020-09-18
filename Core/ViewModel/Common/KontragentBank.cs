@@ -5,7 +5,7 @@ namespace Core.ViewModel.Common
 {
     public class KontragentBank : TD_43ViewModel
     {
-        private EntityViewModel.Bank myBank;
+        private Bank myBank;
 
         public KontragentBank()
         {
@@ -17,10 +17,10 @@ namespace Core.ViewModel.Common
             if (entity == null)
                 Entity = new TD_43 {DOC_CODE = -1, CODE = -1};
             else if (entity.SD_44 != null)
-                Bank = new EntityViewModel.Bank(entity.SD_44);
+                Bank = new Bank(entity.SD_44);
         }
 
-        public EntityViewModel.Bank Bank
+        public Bank Bank
         {
             get => myBank;
             set

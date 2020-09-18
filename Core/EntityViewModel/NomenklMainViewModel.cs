@@ -5,7 +5,6 @@ using System.Linq;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Data;
-using NomenklMain = Data.NomenklMain;
 
 namespace Core.EntityViewModel
 {
@@ -30,6 +29,7 @@ namespace Core.EntityViewModel
         }
 
         public ObservableCollection<Nomenkl> NomenklCollection { set; get; } = new ObservableCollection<Nomenkl>();
+
         public NomenklMain Entity
         {
             get => myEntity;
@@ -40,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override Guid Id
         {
             get => Entity.Id;
@@ -50,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => Entity.Name;
@@ -60,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NomenklNumber
         {
             get => Entity.NomenklNumber;
@@ -70,6 +73,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Note
         {
             get => Entity.Note;
@@ -91,6 +95,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsUsluga
         {
             get => Entity.IsUsluga;
@@ -105,27 +110,9 @@ namespace Core.EntityViewModel
                         IsNakladExpense = false;
                         IsRentabelnost = false;
                     }
-                    RaisePropertyChanged();
-                } 
-            }
-        }
 
-        private bool CheckResetIsUsluga()
-        {
-            if (State == RowStatus.NewRow) return true;
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                if (Entity.IsUsluga)
-                {
-                    if (ctx.TD_26.Any(_ => _.SFT_NEMENKL_DC == DocCode) ||
-                        ctx.TD_84.Any(_ => _.SFT_NEMENKL_DC == DocCode))
-                    {
-                        return false;
-                    }
-                    return true;
+                    RaisePropertyChanged();
                 }
-                if (ctx.TD_24.Any(_ => _.DDT_NOMENKL_DC == DocCode)) return false;
-                return true;
             }
         }
 
@@ -139,6 +126,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal CategoryDC
         {
             get => Entity.CategoryDC;
@@ -149,6 +137,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public NomenklGroup NomenklCategory
         {
             get => myNomenklCategory;
@@ -161,6 +150,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string FullName
         {
             get => Entity.FullName;
@@ -171,6 +161,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsNakladExpense
         {
             get => Entity.IsNakladExpense;
@@ -181,6 +172,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid? CountryId
         {
             get => Entity.CountryId;
@@ -191,6 +183,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Country Country
         {
             get => myCountry;
@@ -203,6 +196,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal UnitDC
         {
             get => Entity.UnitDC;
@@ -213,6 +207,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Unit Unit
         {
             get => myUnit;
@@ -225,6 +220,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsComplex
         {
             get => Entity.IsComplex;
@@ -235,6 +231,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal NomenklTypeDC
         {
             get => Entity.TypeDC;
@@ -245,6 +242,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public NomenklProductType NomenklType
         {
             get => myNomenklType;
@@ -257,6 +255,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public NomenklProductKind ProductType
         {
             get => myProductType;
@@ -291,6 +290,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal ProductDC
         {
             get => Entity.ProductDC;
@@ -301,6 +301,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Countries Countries
         {
             get => Entity.Countries;
@@ -311,6 +312,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_50 SD_50
         {
             get => Entity.SD_50;
@@ -321,6 +323,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_119 SD_119
         {
             get => Entity.SD_119;
@@ -331,6 +334,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_175 SD_175
         {
             get => Entity.SD_175;
@@ -341,6 +345,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_82 SD_82
         {
             get => Entity.SD_82;
@@ -351,11 +356,30 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsAccessRight { get; set; }
 
         List<NomenklMain> IEntity<NomenklMain>.LoadList()
         {
             throw new NotImplementedException();
+        }
+
+        private bool CheckResetIsUsluga()
+        {
+            if (State == RowStatus.NewRow) return true;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                if (Entity.IsUsluga)
+                {
+                    if (ctx.TD_26.Any(_ => _.SFT_NEMENKL_DC == DocCode) ||
+                        ctx.TD_84.Any(_ => _.SFT_NEMENKL_DC == DocCode))
+                        return false;
+                    return true;
+                }
+
+                if (ctx.TD_24.Any(_ => _.DDT_NOMENKL_DC == DocCode)) return false;
+                return true;
+            }
         }
 
         private void LoadReference()

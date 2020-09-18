@@ -29,6 +29,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string OKPO
         {
             get => Entity.OKPO;
@@ -39,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SFText
         {
             get => Entity.SFText;
@@ -49,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NaklText
         {
             get => Entity.NaklText;
@@ -59,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public new string Note
         {
             get => Entity.Note;
@@ -69,6 +73,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public KONTRAGENT_REF_OUT KontragentRefOut
         {
             get => Entity.KONTRAGENT_REF_OUT;
@@ -79,6 +84,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public KONTRAGENT_REF_OUT_REQUISITE Entity
         {
             get => myEntity;
@@ -89,6 +95,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<KONTRAGENT_REF_OUT_REQUISITE> LoadList()

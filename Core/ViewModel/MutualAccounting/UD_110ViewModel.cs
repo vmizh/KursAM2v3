@@ -33,6 +33,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public UD_110 Entity
         {
             get => myEntity;
@@ -43,6 +44,7 @@ namespace Core.ViewModel.MutualAccounting
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<UD_110> LoadList()

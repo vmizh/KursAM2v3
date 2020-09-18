@@ -44,6 +44,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => DOC_CODE;
@@ -54,6 +55,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override int Code
         {
             get => Entity.CODE;
@@ -64,6 +66,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DDT_NOMENKL_DC
         {
             get => Entity.DDT_NOMENKL_DC;
@@ -74,6 +77,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Nomenkl Nomenkl
         {
             get => myNomenkl;
@@ -87,9 +91,11 @@ namespace Core.EntityViewModel
                     DDT_ED_IZM_DC = myNomenkl.Unit.DocCode;
                     DDT_POST_ED_IZM_DC = myNomenkl.Unit.DocCode;
                 }
+
                 RaisePropertyChanged();
             }
         }
+
         public decimal DDT_KOL_PRIHOD
         {
             get => Entity.DDT_KOL_PRIHOD;
@@ -100,6 +106,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? DDT_KOL_ZATREBOVANO
         {
             get => Entity.DDT_KOL_ZATREBOVANO;
@@ -111,6 +118,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public virtual decimal DDT_KOL_RASHOD
         {
             get => Entity.DDT_KOL_RASHOD;
@@ -121,6 +129,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_KOL_PODTVERZHDENO
         {
             get => Convert.ToDecimal(Entity.DDT_KOL_PODTVERZHDENO);
@@ -131,6 +140,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_KOL_SHAB_PRIHOD
         {
             get => Convert.ToDecimal(Entity.DDT_KOL_SHAB_PRIHOD);
@@ -141,6 +151,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DDT_ED_IZM_DC
         {
             get => Entity.DDT_ED_IZM_DC;
@@ -151,6 +162,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public virtual Unit Unit
         {
             get => myUnit;
@@ -164,6 +176,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_SPOST_DC
         {
             get => Entity.DDT_SPOST_DC;
@@ -174,6 +187,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public InvoiceProvider InvoiceProvider
         {
             get => myInvoiceProvider;
@@ -186,6 +200,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DDT_SPOST_ROW_CODE
         {
             get => Entity.DDT_SPOST_ROW_CODE;
@@ -196,6 +211,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public InvoiceProviderRow InvoiceProviderRow
         {
             get => myInvoiceProviderRow;
@@ -208,9 +224,11 @@ namespace Core.EntityViewModel
                     DDT_SPOST_DC = myInvoiceProviderRow.DOC_CODE;
                     DDT_SPOST_ROW_CODE = myInvoiceProviderRow.Code;
                 }
+
                 RaisePropertyChanged();
             }
         }
+
         public decimal DDT_CRS_DC
         {
             get => Entity.DDT_CRS_DC;
@@ -221,6 +239,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Currency Currency
         {
             get => myCurrency;
@@ -234,7 +253,6 @@ namespace Core.EntityViewModel
             }
         }
 
-        //TODO Счет-фактура клиентам и строки их разработать + флюент
         public decimal? DDT_SFACT_DC
         {
             get => Entity.DDT_SFACT_DC;
@@ -245,6 +263,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DDT_SFACT_ROW_CODE
         {
             get => Entity.DDT_SFACT_ROW_CODE;
@@ -255,6 +274,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_OSTAT_STAR
         {
             get => (decimal?) Entity.DDT_OSTAT_STAR;
@@ -265,6 +285,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_OSTAT_NOV
         {
             get => (decimal?) Entity.DDT_OSTAT_NOV;
@@ -275,6 +296,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_TAX_CRS_CENA
         {
             get => Entity.DDT_TAX_CRS_CENA;
@@ -285,6 +307,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_TAX_CENA
         {
             get => Entity.DDT_TAX_CENA;
@@ -295,6 +318,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short DDT_TAX_EXECUTED
         {
             get => Entity.DDT_TAX_EXECUTED;
@@ -305,6 +329,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsTaxExecuted
         {
             get => Entity.DDT_TAX_EXECUTED == 1;
@@ -315,6 +340,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DDT_TAX_IN_SFACT
         {
             get => Entity.DDT_TAX_IN_SFACT;
@@ -325,6 +351,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsTaxInSFact
         {
             get => Entity.DDT_TAX_IN_SFACT == 1;
@@ -335,6 +362,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_FACT_CRS_CENA
         {
             get => Entity.DDT_FACT_CRS_CENA;
@@ -345,6 +373,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_FACT_CENA
         {
             get => Entity.DDT_FACT_CENA;
@@ -355,6 +384,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short DDT_FACT_EXECUTED
         {
             get => Entity.DDT_FACT_EXECUTED;
@@ -365,6 +395,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsFactExecuted
         {
             get => Entity.DDT_FACT_EXECUTED == 1;
@@ -375,6 +406,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_TREB_DC
         {
             get => Entity.DDT_TREB_DC;
@@ -385,6 +417,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DDT_TREB_CODE
         {
             get => Entity.DDT_TREB_CODE;
@@ -395,6 +428,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_NOSZATR_DC
         {
             get => Entity.DDT_NOSZATR_DC;
@@ -405,6 +439,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DDT_NOSZATR_ROW_CODE
         {
             get => Entity.DDT_NOSZATR_ROW_CODE;
@@ -415,6 +450,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_POST_ED_IZM_DC
         {
             get => Entity.DDT_POST_ED_IZM_DC;
@@ -425,6 +461,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_KOL_POST_PRIHOD
         {
             get => (decimal?) Entity.DDT_KOL_POST_PRIHOD;
@@ -435,6 +472,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DDT_PRICHINA_SPISANIA
         {
             get => Entity.DDT_PRICHINA_SPISANIA;
@@ -445,6 +483,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DDT_VOZVRAT_TREBOVINIA
         {
             get => Entity.DDT_VOZVRAT_TREBOVINIA;
@@ -455,6 +494,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DDT_VOZVRAT_PRICHINA
         {
             get => Entity.DDT_VOZVRAT_PRICHINA;
@@ -465,6 +505,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_TOV_CHECK_DC
         {
             get => Entity.DDT_TOV_CHECK_DC;
@@ -475,6 +516,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DDT_TOV_CHECK_CODE
         {
             get => Entity.DDT_TOV_CHECK_CODE;
@@ -485,6 +527,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DDT_ACT_GP_PROD_CODE
         {
             get => Entity.DDT_ACT_GP_PROD_CODE;
@@ -495,6 +538,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_SHPZ_DC
         {
             get => Entity.DDT_SHPZ_DC;
@@ -505,6 +549,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SDRSchet SDRSchet
         {
             get => mySDRSchet;
@@ -517,6 +562,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_KONTR_CRS_SUMMA
         {
             get => Entity.DDT_KONTR_CRS_SUMMA;
@@ -527,6 +573,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_SUMMA_V_UCHET_VALUTE
         {
             get => Entity.DDT_SUMMA_V_UCHET_VALUTE;
@@ -537,6 +584,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_CENA_V_UCHET_VALUTE
         {
             get => Entity.DDT_CENA_V_UCHET_VALUTE;
@@ -547,6 +595,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_SKLAD_OTPR_DC
         {
             get => Entity.DDT_SKLAD_OTPR_DC;
@@ -557,6 +606,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_NOM_CRS_RATE
         {
             get => (decimal?) Entity.DDT_NOM_CRS_RATE;
@@ -567,6 +617,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_PROIZV_PLAN_DC
         {
             get => Entity.DDT_PROIZV_PLAN_DC;
@@ -577,6 +628,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_RASH_ORD_DC
         {
             get => Entity.DDT_RASH_ORD_DC;
@@ -587,6 +639,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DDT_RASH_ORD_CODE
         {
             get => Entity.DDT_RASH_ORD_CODE;
@@ -597,6 +650,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_VOZVR_OTGR_CSR_DC
         {
             get => Entity.DDT_VOZVR_OTGR_CSR_DC;
@@ -607,6 +661,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_VOZVR_UCH_CRS_RATE
         {
             get => (decimal?) Entity.DDT_VOZVR_UCH_CRS_RATE;
@@ -617,6 +672,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_VOZVR_OTGR_CRS_TAX_CENA
         {
             get => Entity.DDT_VOZVR_OTGR_CRS_TAX_CENA;
@@ -627,6 +683,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DDT_SBORSCHIK_TN
         {
             get => Entity.DDT_SBORSCHIK_TN;
@@ -637,6 +694,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_KOL_IN_ONE
         {
             get => (decimal?) Entity.DDT_KOL_IN_ONE;
@@ -647,6 +705,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_OS_DC
         {
             get => Entity.DDT_OS_DC;
@@ -657,6 +716,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_GARANT_DC
         {
             get => Entity.DDT_GARANT_DC;
@@ -667,6 +727,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DDT_GARANT_ROW_CODE
         {
             get => Entity.DDT_GARANT_ROW_CODE;
@@ -677,6 +738,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_ACT_RAZ_PROC_STOIM
         {
             get => (decimal?) Entity.DDT_ACT_RAZ_PROC_STOIM;
@@ -687,6 +749,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DDT_PROIZV_PLAN_ROW_CODE
         {
             get => Entity.DDT_PROIZV_PLAN_ROW_CODE;
@@ -697,6 +760,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_APGP_TO_EXECUTE
         {
             get => (decimal?) Entity.DDT_APGP_TO_EXECUTE;
@@ -707,6 +771,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DDT_APGP_NOT_EXECUTE
         {
             get => Entity.DDT_APGP_NOT_EXECUTE;
@@ -717,6 +782,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_DILER_DC
         {
             get => Entity.DDT_DILER_DC;
@@ -727,6 +793,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Kontragent Diler
         {
             get => myDiler;
@@ -739,6 +806,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_DILER_SUM
         {
             get => Entity.DDT_DILER_SUM;
@@ -749,6 +817,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DDT_VHOD_KONTR_EXECUTE
         {
             get => Entity.DDT_VHOD_KONTR_EXECUTE;
@@ -759,6 +828,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DDT_VHOD_KONTR_NOTE
         {
             get => Entity.DDT_VHOD_KONTR_NOTE;
@@ -769,6 +839,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DDT_VHOD_KONTR_USER
         {
             get => Entity.DDT_VHOD_KONTR_USER;
@@ -779,6 +850,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_ZAIAVKA_DC
         {
             get => Entity.DDT_ZAIAVKA_DC;
@@ -789,6 +861,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? DDT_RASHOD_DATE
         {
             get => Entity.DDT_RASHOD_DATE;
@@ -799,6 +872,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DDT_VOZVRAT_TREB_CREATOR
         {
             get => Entity.DDT_VOZVRAT_TREB_CREATOR;
@@ -809,6 +883,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_VOZVRAT_SFACT_OPLAT_DC
         {
             get => Entity.DDT_VOZVRAT_SFACT_OPLAT_DC;
@@ -819,6 +894,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_VOZVRAT_SFACT_CRS_DC
         {
             get => Entity.DDT_VOZVRAT_SFACT_CRS_DC;
@@ -829,6 +905,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_VOZVRAT_SFACT_SUM
         {
             get => Entity.DDT_VOZVRAT_SFACT_SUM;
@@ -839,6 +916,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? DDT_VOZVRAT_SFACT_CRS_RATE
         {
             get => Entity.DDT_VOZVRAT_SFACT_CRS_RATE;
@@ -849,6 +927,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_PROIZV_PROC_NOMENKL_DC
         {
             get => Entity.DDT_PROIZV_PROC_NOMENKL_DC;
@@ -859,6 +938,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_PROIZV_PARTIA_DC
         {
             get => Entity.DDT_PROIZV_PARTIA_DC;
@@ -869,6 +949,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? DDT_PROIZV_PARTIA_CODE
         {
             get => Entity.DDT_PROIZV_PARTIA_CODE;
@@ -879,6 +960,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DDT_DAVAL_SIRIE
         {
             get => Entity.DDT_DAVAL_SIRIE;
@@ -889,6 +971,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_MEST_TARA
         {
             get => (decimal?) Entity.DDT_MEST_TARA;
@@ -899,6 +982,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_TARA_DC
         {
             get => Entity.DDT_TARA_DC;
@@ -909,6 +993,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? DDT_TARA_FLAG
         {
             get => Entity.DDT_TARA_FLAG;
@@ -919,6 +1004,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DDT_PART_NUMBER
         {
             get => Entity.DDT_PART_NUMBER;
@@ -929,6 +1015,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_VNPER_UD_POINT_UCHVAL_PRICE
         {
             get => Entity.DDT_VNPER_UD_POINT_UCHVAL_PRICE;
@@ -939,6 +1026,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_SKIDKA_CREDIT_NOTE
         {
             get => Entity.DDT_SKIDKA_CREDIT_NOTE;
@@ -949,6 +1037,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_CALC_NOM_TAX_PRICE
         {
             get => Entity.DDT_CALC_NOM_TAX_PRICE;
@@ -959,6 +1048,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? DDT_CALC_UCHET_TAX_PRICE
         {
             get => Entity.DDT_CALC_UCHET_TAX_PRICE;
@@ -969,6 +1059,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public byte[] TSTAMP
         {
             get => Entity.TSTAMP;
@@ -979,6 +1070,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid DocId
         {
             get => Entity.DocId;
@@ -989,6 +1081,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SaleTaxPrice
         {
             get => Entity.SaleTaxPrice;
@@ -999,6 +1092,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid? SaleTaxCurrency
         {
             get => Entity.SaleTaxCurrency;
@@ -1009,6 +1103,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SaleTaxRate
         {
             get => Entity.SaleTaxRate;
@@ -1019,6 +1114,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SaleTaxNote
         {
             get => Entity.SaleTaxNote;
@@ -1029,6 +1125,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsSaleTax
         {
             get => Entity.IsSaleTax;
@@ -1039,6 +1136,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool? IsAutoTax
         {
             get => Entity.IsAutoTax;
@@ -1049,6 +1147,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string TaxUpdater
         {
             get => Entity.TaxUpdater;
@@ -1059,6 +1158,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_122 SD_122
         {
             get => Entity.SD_122;
@@ -1069,6 +1169,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_170 SD_170
         {
             get => Entity.SD_170;
@@ -1079,6 +1180,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_175 SD_175
         {
             get => Entity.SD_175;
@@ -1089,6 +1191,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_175 SD_1751
         {
             get => Entity.SD_1751;
@@ -1099,6 +1202,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_2 SD_2
         {
             get => Entity.SD_2;
@@ -1109,6 +1213,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_24 SD_24
         {
             get => Entity.SD_24;
@@ -1119,6 +1224,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_254 SD_254
         {
             get => Entity.SD_254;
@@ -1129,6 +1235,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_27 SD_27
         {
             get => Entity.SD_27;
@@ -1139,6 +1246,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_301
         {
             get => Entity.SD_301;
@@ -1149,6 +1257,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_3011
         {
             get => Entity.SD_3011;
@@ -1159,6 +1268,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_3012
         {
             get => Entity.SD_3012;
@@ -1169,6 +1279,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_303 SD_303
         {
             get => Entity.SD_303;
@@ -1179,6 +1290,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_384 SD_384
         {
             get => Entity.SD_384;
@@ -1189,6 +1301,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_43 SD_43
         {
             get => Entity.SD_43;
@@ -1199,6 +1312,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_83 SD_83
         {
             get => Entity.SD_83;
@@ -1209,6 +1323,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_83 SD_831
         {
             get => Entity.SD_831;
@@ -1219,6 +1334,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_83 SD_832
         {
             get => Entity.SD_832;
@@ -1229,6 +1345,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_84 SD_84
         {
             get => Entity.SD_84;
@@ -1239,6 +1356,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public TD_73 TD_73
         {
             get => Entity.TD_73;
@@ -1249,6 +1367,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public TD_9 TD_9
         {
             get => Entity.TD_9;
@@ -1259,6 +1378,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public TD_84 TD_84
         {
             get => Entity.TD_84;
@@ -1269,6 +1389,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public TD_26 TD_26
         {
             get => Entity.TD_26;
@@ -1279,6 +1400,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public TD_24 TD_242
         {
             get => Entity.TD_242;
@@ -1289,6 +1411,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public TD_24 TD_243
         {
             get => Entity.TD_243;
@@ -1299,6 +1422,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public TD_24 TD_244
         {
             get => Entity.TD_244;
@@ -1309,7 +1433,9 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
+
         public TD_24 Entity
         {
             get => myEntity;

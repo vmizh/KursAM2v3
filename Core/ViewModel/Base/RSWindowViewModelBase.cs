@@ -23,6 +23,9 @@ namespace Core.ViewModel.Base
         private bool myDialogResult;
         private Window myForm;
         private bool myIsCanRefresh = true;
+
+        private bool myIsLoading = true;
+
         // ReSharper disable once InconsistentNaming
         protected string mySearchText;
         private string myWindowName;
@@ -39,7 +42,6 @@ namespace Core.ViewModel.Base
             myIsCanRefresh = true;
         }
 
-        private bool myIsLoading = true;
         public bool IsLoading
         {
             get => myIsLoading;
@@ -68,6 +70,7 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         public virtual string WindowName
         {
             get => myWindowName;
@@ -90,6 +93,50 @@ namespace Core.ViewModel.Base
             get => myFooterText;
         }
 
+        public bool IsCanSave { get; set; }
+
+        public void RefreshData()
+        {
+            //throw new System.NotImplementedException();
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Check()
+        {
+            throw new NotImplementedException();
+        }
+
+        public InvoiceClient NewDocument()
+        {
+            throw new NotImplementedException();
+        }
+
+        public InvoiceClient CopyDocument()
+        {
+            throw new NotImplementedException();
+        }
+
+        public InvoiceClient CopyRequisite()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UnDeleteRows()
+        {
+            throw new NotImplementedException();
+        }
+
+        [SuppressMessage("ReSharper", "NotResolvedInText")]
+        public virtual void UpdatePropertyChangies()
+        {
+            RaisePropertyChanged("Document");
+            RaisePropertyChanged("Rows");
+        }
+
         #region Command
 
         [Display(AutoGenerateField = false)]
@@ -97,9 +144,10 @@ namespace Core.ViewModel.Base
         {
             get { return new Command(GridControlExport, param => true); }
         }
+
         public string DatabaseName => GlobalOptions.DataBaseName;
-        [Display(AutoGenerateField = false)]
-        public Brush DatabaseColor => GlobalOptions.DatabaseColor;
+
+        [Display(AutoGenerateField = false)] public Brush DatabaseColor => GlobalOptions.DatabaseColor;
 
         private void GridControlExport(object obj)
         {
@@ -109,6 +157,7 @@ namespace Core.ViewModel.Base
                 view.ShowPrintPreview(Application.Current.MainWindow);
                 return;
             }
+
             var tgrid = obj as TreeListControl;
             var view1 = tgrid?.View;
             view1?.ShowPrintPreview(Application.Current.MainWindow);
@@ -119,6 +168,7 @@ namespace Core.ViewModel.Base
         {
             get { return new Command(CloseWindow, param => true); }
         }
+
         public virtual bool IsSearchTextNull => string.IsNullOrEmpty(SearchText);
 
         public virtual void CloseWindow(object form)
@@ -139,11 +189,13 @@ namespace Core.ViewModel.Base
                         return;
                 }
             }
+
             if (Form != null)
             {
                 Form.Close();
                 return;
             }
+
             var frm = form as Window;
             frm?.Close();
         }
@@ -153,6 +205,7 @@ namespace Core.ViewModel.Base
         {
             get { return new Command(RefreshData, param => IsCanRefresh); }
         }
+
         public virtual bool IsCanRefresh
         {
             get => myIsCanRefresh;
@@ -171,7 +224,7 @@ namespace Core.ViewModel.Base
 
         public AsyncCommand AsyncRefreshDataCommand => new AsyncCommand(AsyncTaskRefresh, IsCanRefresh);
 
-        
+
         public async Task AsyncTaskRefresh()
         {
             await Task.Factory.StartNew(AsyncRefresh());
@@ -195,11 +248,13 @@ namespace Core.ViewModel.Base
         {
             get { return new Command(SaveData, param => IsCanSaveData); }
         }
+
         [Display(AutoGenerateField = false)]
         public virtual ICommand DoneCommand
         {
             get { return new Command(Done, param => IsCanDone); }
         }
+
         public virtual bool IsCanDone { get; set; } = false;
 
         public virtual void Done(object obj)
@@ -212,7 +267,9 @@ namespace Core.ViewModel.Base
         {
             get { return new Command(DocumentOpen, param => IsDocumentOpenAllow); }
         }
+
         private ColumnBase myCurrentColumn;
+
         [Display(AutoGenerateField = false)]
         public ColumnBase CurrentColumn
         {
@@ -224,6 +281,7 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         [Display(AutoGenerateField = false)]
         public virtual ICommand VisualControlExportCommand
         {
@@ -266,6 +324,7 @@ namespace Core.ViewModel.Base
         }
 
         private string mySaveInfo;
+
         public virtual string SaveInfo
         {
             get => mySaveInfo;
@@ -276,7 +335,9 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         private bool myIsCanDocNew = true;
+
         public virtual bool IsCanDocNew
         {
             get => myIsCanDocNew;
@@ -287,7 +348,9 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         private bool myIsCanSaveData;
+
         public virtual bool IsCanSaveData
         {
             get => myIsCanSaveData;
@@ -315,6 +378,7 @@ namespace Core.ViewModel.Base
 
         // ReSharper disable once InconsistentNaming
         private bool myIsDocNewEmptyAllow = true;
+
         public virtual bool IsDocNewEmptyAllow
         {
             get => myIsDocNewEmptyAllow;
@@ -325,7 +389,9 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         private bool myIsDocNewCopyAllow = true;
+
         public virtual bool IsDocNewCopyAllow
         {
             get => myIsDocNewCopyAllow;
@@ -336,6 +402,7 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         [Display(AutoGenerateField = false)]
         public virtual ICommand DocNewCopyCommand
         {
@@ -347,6 +414,7 @@ namespace Core.ViewModel.Base
         }
 
         private bool myIsDocNewCopyRequisiteAllow = true;
+
         public virtual bool IsDocNewCopyRequisiteAllow
         {
             get => myIsDocNewCopyRequisiteAllow;
@@ -357,7 +425,9 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         private bool myIsDocDeleteAllow = true;
+
         public virtual bool IsDocDeleteAllow
         {
             get => myIsDocDeleteAllow;
@@ -368,6 +438,7 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         [Display(AutoGenerateField = false)]
         public virtual ICommand DoсDeleteCommand
         {
@@ -379,6 +450,7 @@ namespace Core.ViewModel.Base
         }
 
         private bool myIsRedoAllow = true;
+
         public virtual bool IsRedoAllow
         {
             get => myIsRedoAllow;
@@ -389,6 +461,7 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         [Display(AutoGenerateField = false)]
         public virtual ICommand RedoCommand
         {
@@ -410,6 +483,7 @@ namespace Core.ViewModel.Base
         }
 
         private bool myIsPrintAllow = true;
+
         public virtual bool IsPrintAllow
         {
             get => myIsPrintAllow;
@@ -420,11 +494,13 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         [Display(AutoGenerateField = false)]
         public virtual ICommand PrintCommand
         {
             get { return new Command(Print, param => IsPrintAllow); }
         }
+
         [Display(AutoGenerateField = false)]
         public virtual ICommand OkCommand
         {
@@ -490,6 +566,7 @@ namespace Core.ViewModel.Base
                 RaisePropertiesChanged(nameof(IsSearchTextNull));
             }
         }
+
         private bool myIsCanSearch;
         private string myFooterText;
 
@@ -503,6 +580,7 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         [Display(AutoGenerateField = false)]
         public ICommand SearchCommand
         {
@@ -536,48 +614,5 @@ namespace Core.ViewModel.Base
         }
 
         #endregion Command
-
-        public bool IsCanSave { get; set; }
-        public void RefreshData()
-        {
-            //throw new System.NotImplementedException();
-        }
-
-        public void Save()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool Check()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public InvoiceClient NewDocument()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public InvoiceClient CopyDocument()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public InvoiceClient CopyRequisite()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UnDeleteRows()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        [SuppressMessage("ReSharper", "NotResolvedInText")]
-        public virtual void UpdatePropertyChangies()
-        {
-            RaisePropertyChanged("Document");
-            RaisePropertyChanged("Rows");
-        }
     }
 }

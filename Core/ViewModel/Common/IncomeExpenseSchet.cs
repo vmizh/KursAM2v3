@@ -5,6 +5,7 @@ namespace Core.ViewModel.Common
     public class IncomeExpenseSchet : RSViewModelData
     {
         private IncomeExpenseStatia myStatia;
+
         public IncomeExpenseStatia Statia
         {
             get => myStatia;

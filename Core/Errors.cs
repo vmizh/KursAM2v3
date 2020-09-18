@@ -17,6 +17,7 @@ namespace Core
                 errText.Append("\n Внутрення ошибка:\n");
                 errText.Append(ex.InnerException.Message);
             }
+
             WindowManager.ShowWinUIMessageBox(errText.ToString(), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error,
                 MessageBoxResult.OK, MessageBoxOptions.None);
             DXMessageBox.Show(errText.ToString(), "Ошибка");

@@ -39,6 +39,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime Date
         {
             get => Entity.Date;
@@ -49,6 +50,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string Updater
         {
             get => Entity.Updater;
@@ -59,6 +61,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SaleTaxRate
         {
             get => Entity.SaleTaxRate;
@@ -69,7 +72,9 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
+
         public TaxUpdateHistory Entity
         {
             get => myEntity;

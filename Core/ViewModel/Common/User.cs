@@ -15,6 +15,7 @@ namespace Core.ViewModel.Common
         }
 
         public override decimal DocCode => USR_ID;
+
         public string NickName
         {
             get => Entity.USR_NICKNAME;
@@ -25,6 +26,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string FullName
         {
             get => Entity.USR_FULLNAME;
@@ -35,6 +37,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public override string Note
         {
             get => Entity.USR_NOTES;
@@ -45,6 +48,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public int? TabelNumber
         {
             get => Entity.TABELNUMBER;

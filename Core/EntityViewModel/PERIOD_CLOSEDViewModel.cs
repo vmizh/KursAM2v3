@@ -24,6 +24,7 @@ namespace Core.EntityViewModel
         }
 
         public override string Name => Entity.CLOSED_DOC_TYPE.NAME;
+
         public override Guid Id
         {
             get => Entity.ID;
@@ -34,6 +35,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid TYPE_ID
         {
             get => Entity.TYPE_ID;
@@ -44,6 +46,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime DateClosed
         {
             get => Entity.DateClosed;
@@ -54,6 +57,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public PERIOD_CLOSED Entity
         {
             get => myEntity;
@@ -64,6 +68,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<PERIOD_CLOSED> LoadList()

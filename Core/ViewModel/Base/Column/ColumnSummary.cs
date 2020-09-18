@@ -9,6 +9,7 @@ namespace Core.ViewModel.Base.Column
         public string FieldName { get; set; }
         public string DisplayFormat { set; get; }
         public string Key { set; get; }
+
         public decimal Summa
         {
             get => mySumma;

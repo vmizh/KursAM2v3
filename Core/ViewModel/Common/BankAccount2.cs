@@ -28,6 +28,7 @@ namespace Core.ViewModel.Common
         }
 
         public string FullName => $"{Bank?.Name} Сч.№ {Account} {Currency} ";
+
         public decimal BankDC
         {
             get => myBankDC;
@@ -38,6 +39,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public Bank Bank
         {
             get => myBank;
@@ -48,6 +50,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public int KontrBankCode
         {
             get => myKontrBankCode;
@@ -58,6 +61,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string BankName
         {
             get => myBankName;
@@ -68,6 +72,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string CorrAccount
         {
             get => myCorrAccount;
@@ -78,6 +83,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string BIK
         {
             get => myBIK;
@@ -88,6 +94,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string Account
         {
             get => myAccount;
@@ -98,6 +105,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public Currency Currency { get; set; }
         public bool IsAccessRight { get; set; }
 

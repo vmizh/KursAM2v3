@@ -14,6 +14,7 @@ using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Utils.CommonDialogs.Internal;
 using DevExpress.Xpf.Editors;
@@ -216,7 +217,7 @@ namespace KursRepozit.ViewModels
         [Display(AutoGenerateField = false)]
         public IUsersRepository UserRepository { set; get; }
 
-        public GenericKursSystemRepository<Users> KursSystemRepository { set; get; }
+        public GenericKursSystemDBRepository<Users> KursSystemRepository { set; get; }
 
         [DisplayName("Пароль")]
         [Display(AutoGenerateField = true)]

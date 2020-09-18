@@ -5,7 +5,6 @@ namespace Core.ViewModel.Base
 {
     public class SplashScreenViewModel : ViewModelBase
     {
-
         public string Caption
         {
             get { return GetProperty(() => Caption); }
@@ -21,7 +20,7 @@ namespace Core.ViewModel.Base
         [Command]
         public void ChangeText()
         {
-           Caption = Caption;
+            Caption = Caption;
         }
     }
 }

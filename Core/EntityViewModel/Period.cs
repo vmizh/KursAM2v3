@@ -32,6 +32,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -42,6 +43,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -54,6 +56,7 @@ namespace Core.EntityViewModel
                 }
             }
         }
+
         public short? DELETED
         {
             get => Entity.DELETED;
@@ -64,6 +67,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? BS_START_BLS
         {
             get => Entity.BS_START_BLS;
@@ -74,6 +78,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? BS_STOP_BLS
         {
             get => Entity.BS_STOP_BLS;
@@ -84,6 +89,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string BS_COMMENT
         {
             get => Entity.BS_COMMENT;
@@ -94,6 +100,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? BS_UCHET_TYPE
         {
             get => Entity.BS_UCHET_TYPE;
@@ -104,6 +111,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? BS_EXECUTED
         {
             get => Entity.BS_EXECUTED;
@@ -114,6 +122,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? OA_COMPLETE_FLAG
         {
             get => Entity.OA_COMPLETE_FLAG;
@@ -124,6 +133,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? BS_INC_NAKLAD_TO_CENA
         {
             get => Entity.BS_INC_NAKLAD_TO_CENA;
@@ -134,6 +144,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? BS_PREV_PERIOD_DC
         {
             get => Entity.BS_PREV_PERIOD_DC;
@@ -144,6 +155,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? BS_0AVER_1AVERSLIDE
         {
             get => Entity.BS_0AVER_1AVERSLIDE;
@@ -154,6 +166,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? BS_UCH_PROZV_V_BUH
         {
             get => Entity.BS_UCH_PROZV_V_BUH;
@@ -164,6 +177,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public bool IsAccessRight { get; set; }
 
         public List<SD_138> LoadList()

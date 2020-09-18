@@ -8,22 +8,21 @@ namespace Core
     [DataContract]
     public class MonthYearDayItem
     {
-        [DataMember]
-        public Guid Id { set; get; }
-        [DataMember]
-        public Guid ParentId { set; get; }
-        [DataMember]
-        public DatePeriodType PeriodType { set; get; }
-        [DataMember]
-        public string PeriodName { set; get; }
-        [DataMember]
-        public string PeriodNameYear { set; get; }
-        [DataMember]
-        public string PeriodNameMonth { set; get; }
-        [DataMember]
-        public DateTime PeriodStart { set; get; }
-        [DataMember]
-        public DateTime PeriodEnd { set; get; }
+        [DataMember] public Guid Id { set; get; }
+
+        [DataMember] public Guid ParentId { set; get; }
+
+        [DataMember] public DatePeriodType PeriodType { set; get; }
+
+        [DataMember] public string PeriodName { set; get; }
+
+        [DataMember] public string PeriodNameYear { set; get; }
+
+        [DataMember] public string PeriodNameMonth { set; get; }
+
+        [DataMember] public DateTime PeriodStart { set; get; }
+
+        [DataMember] public DateTime PeriodEnd { set; get; }
 
         public static string MonthName(int month)
         {
@@ -56,6 +55,7 @@ namespace Core
                 case 12:
                     return "Декабрь";
             }
+
             return "";
         }
 
@@ -104,6 +104,7 @@ namespace Core
                             }));
                 }
             }
+
             return res;
         }
 
@@ -156,6 +157,7 @@ namespace Core
                             }));
                 }
             }
+
             return res;
         }
 
@@ -206,6 +208,7 @@ namespace Core
                             }));
                 }
             }
+
             return res;
         }
     }

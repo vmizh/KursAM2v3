@@ -50,8 +50,10 @@ namespace Core.Helper
                                 c.Visible = false;
                             break;
                     }
+
                 return;
             }
+
             var IsResultCHF = data
                 .Any(_ => _.ProfitCHF != 0 || _.LossCHF != 0 || _.DilerCHF != 0);
             var IsResultSEK = data
@@ -140,8 +142,10 @@ namespace Core.Helper
                                 c.Visible = false;
                             break;
                     }
+
                 return;
             }
+
             var IsResultCHF = data
                 .Any(_ => _.ProfitCHF != 0 || _.LossCHF != 0);
             var IsResultSEK = data
@@ -230,8 +234,10 @@ namespace Core.Helper
                                 c.Visible = false;
                             break;
                     }
+
                 return;
             }
+
             var IsResultCHF = data
                 .Any(_ => _.ProfitCHF != 0 || _.LossCHF != 0 || _.DilerCHF != 0);
             var IsResultSEK = data
@@ -320,8 +326,10 @@ namespace Core.Helper
                                 c.Visible = false;
                             break;
                     }
+
                 return;
             }
+
             var IsResultCHF = data
                 .Any(_ => _.ProfitCHF != 0 || _.LossCHF != 0);
             var IsResultSEK = data
@@ -430,6 +438,7 @@ namespace Core.Helper
                             row.LossRUB = summa;
                             break;
                     }
+
                     break;
                 case CurrencyCode.USDName:
                     switch (calcType)
@@ -445,6 +454,7 @@ namespace Core.Helper
                             row.LossUSD = summa;
                             break;
                     }
+
                     break;
                 case CurrencyCode.EURName:
                     switch (calcType)
@@ -460,6 +470,7 @@ namespace Core.Helper
                             row.LossEUR = summa;
                             break;
                     }
+
                     break;
                 case CurrencyCode.GBPName:
                     switch (calcType)
@@ -475,6 +486,7 @@ namespace Core.Helper
                             row.LossGBP = summa;
                             break;
                     }
+
                     break;
                 case CurrencyCode.CHFName:
                     switch (calcType)
@@ -490,6 +502,7 @@ namespace Core.Helper
                             row.LossCHF = summa;
                             break;
                     }
+
                     break;
                 case CurrencyCode.SEKName:
                     switch (calcType)
@@ -505,6 +518,7 @@ namespace Core.Helper
                             row.LossSEK = summa;
                             break;
                     }
+
                     break;
             }
         }
@@ -538,6 +552,7 @@ namespace Core.Helper
                             row.LossRUB = summa;
                             break;
                     }
+
                     row.DilerRUB = dilerSumma;
                     break;
                 case CurrencyCode.USDName:
@@ -554,6 +569,7 @@ namespace Core.Helper
                             row.LossUSD = summa;
                             break;
                     }
+
                     row.DilerUSD = dilerSumma;
                     break;
                 case CurrencyCode.EURName:
@@ -570,6 +586,7 @@ namespace Core.Helper
                             row.LossEUR = summa;
                             break;
                     }
+
                     row.DilerEUR = dilerSumma;
                     break;
                 case CurrencyCode.GBPName:
@@ -586,6 +603,7 @@ namespace Core.Helper
                             row.LossGBP = summa;
                             break;
                     }
+
                     row.DilerGBP = dilerSumma;
                     break;
                 case CurrencyCode.CHFName:
@@ -602,6 +620,7 @@ namespace Core.Helper
                             row.LossCHF = summa;
                             break;
                     }
+
                     row.DilerCHF = dilerSumma;
                     break;
                 case CurrencyCode.SEKName:
@@ -618,6 +637,7 @@ namespace Core.Helper
                             row.LossSEK = summa;
                             break;
                     }
+
                     row.DilerSEK = dilerSumma;
                     break;
             }

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using Core.Repository.Base;
 using Data;
+using Data.Repository;
 
 namespace KursRepozit.Repositories
 {
@@ -16,7 +16,7 @@ namespace KursRepozit.Repositories
         List<DataSources> GetAllDataSources();
     }
 
-    public class UserKursSystemRepository : GenericKursSystemRepository<Users>, IUsersRepository
+    public class UserKursSystemRepository : GenericKursSystemDBRepository<Users>, IUsersRepository
     {
         // ReSharper disable once NotAccessedField.Local
         public UserKursSystemRepository(IUnitOfWork<KursSystemEntities> unitOfWork) : base(unitOfWork)

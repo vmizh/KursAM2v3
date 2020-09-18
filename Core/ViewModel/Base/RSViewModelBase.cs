@@ -29,16 +29,17 @@ namespace Core.ViewModel.Base
         private RSViewModelBase myParent;
         private decimal? myParentDC;
         private Guid? myParentId;
-        private RSWindowViewModelBase myWindowViewModel;
+        private Guid myRowId;
 
         // ReSharper disable once InconsistentNaming
         public RowStatus myState = RowStatus.NotEdited;
+        private RSWindowViewModelBase myWindowViewModel;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Global
         // ReSharper disable once CollectionNeverQueried.Global
         // ReSharper disable once MemberCanBePrivate.Global
         public IList<string> NotifyProtocol = new List<string>();
-        private Guid myRowId;
+
         [Display(AutoGenerateField = false)]
         public RSWindowViewModelBase WindowViewModel
         {
@@ -63,8 +64,7 @@ namespace Core.ViewModel.Base
             }
         }
 
-        [Display(AutoGenerateField = false)]
-        public virtual bool IsNewDocument => myState == RowStatus.NewRow;
+        [Display(AutoGenerateField = false)] public virtual bool IsNewDocument => myState == RowStatus.NewRow;
 
         [Display(AutoGenerateField = false)]
         public virtual decimal? ParentDC
@@ -97,6 +97,7 @@ namespace Core.ViewModel.Base
                         myState = value;
                         break;
                 }
+
                 if (myState != RowStatus.NotEdited && Parent != null && Parent.State == RowStatus.NotEdited)
                     Parent.State = RowStatus.Edited;
                 RaisePropertyChanged();
@@ -142,6 +143,7 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
         [DataMember]
         [Display(AutoGenerateField = false)]
         public virtual int Code
@@ -184,10 +186,11 @@ namespace Core.ViewModel.Base
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return myDocCode == other.DocCode && myId.Equals(other.Id) && myCode.Equals(other.Code) && myRowId.Equals(other.RowId);
+            return myDocCode == other.DocCode && myId.Equals(other.Id) && myCode.Equals(other.Code) &&
+                   myRowId.Equals(other.RowId);
         }
 
-       
+
         /// <summary>
         ///     Событие изменения значения свойства представления
         /// </summary>
@@ -233,10 +236,8 @@ namespace Core.ViewModel.Base
                 if (State == RowStatus.NotEdited)
                     State = RowStatus.Edited;
             if (Parent != null && myState != RowStatus.NotEdited)
-            {
                 if (Parent.State != RowStatus.NewRow)
                     Parent.State = RowStatus.Edited;
-            }
             NotifyProtocol.Add(propertyName);
             handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

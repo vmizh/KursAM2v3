@@ -29,6 +29,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => Entity.SHPZ_NAME;
@@ -39,6 +40,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -49,6 +51,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SHPZ_NAME
         {
             get => Entity.SHPZ_NAME;
@@ -59,6 +62,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short SHPZ_DELETED
         {
             get => Entity.SHPZ_DELETED;
@@ -69,6 +73,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public int? OP_CODE
         {
             get => Entity.OP_CODE;
@@ -79,6 +84,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string SHPZ_SHIRF
         {
             get => Entity.SHPZ_SHIRF;
@@ -89,6 +95,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SHPZ_1OSN_0NO
         {
             get => Entity.SHPZ_1OSN_0NO;
@@ -99,6 +106,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SHPZ_STATIA_DC
         {
             get => Entity.SHPZ_STATIA_DC;
@@ -109,6 +117,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SHPZ_ELEMENT_DC
         {
             get => Entity.SHPZ_ELEMENT_DC;
@@ -119,6 +128,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SHPZ_PODOTCHET
         {
             get => Entity.SHPZ_PODOTCHET;
@@ -129,6 +139,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SHPZ_1DOHOD_0_RASHOD
         {
             get => Entity.SHPZ_1DOHOD_0_RASHOD;
@@ -139,6 +150,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SHPZ_1TARIFIC_0NO
         {
             get => Entity.SHPZ_1TARIFIC_0NO;
@@ -149,6 +161,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SHPZ_1ZARPLATA_0NO
         {
             get => Entity.SHPZ_1ZARPLATA_0NO;
@@ -159,6 +172,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public short? SHPZ_NOT_USE_IN_OTCH_DDS
         {
             get => Entity.SHPZ_NOT_USE_IN_OTCH_DDS;
@@ -169,6 +183,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_99 SD_99
         {
             get => Entity.SD_99;
@@ -179,6 +194,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_97 SD_97
         {
             get => Entity.SD_97;
@@ -189,6 +205,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_303 Entity
         {
             get => myEntity;
@@ -199,6 +216,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_303> LoadList()

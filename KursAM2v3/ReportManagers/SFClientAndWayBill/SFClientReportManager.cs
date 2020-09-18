@@ -251,9 +251,6 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"V{document.Rows.Count + startTableRow + 1}"].Formula =
                 $"SUM(V{startTableRow}:V{document.Rows.Count + startTableRow})";
             sheet.Cells[$"V{document.Rows.Count + startTableRow + 1}"].NumberFormat = "#,##0.00";
-            //todo проверить обязательно
-            //for (var i = 16; i < document.Rows.Count; i++)
-            //    sheet.Rows[i].AutoFitRows();
         }
     }
 

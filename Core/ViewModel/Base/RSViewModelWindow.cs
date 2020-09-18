@@ -18,6 +18,7 @@ namespace Core.ViewModel.Base
                 errText.Append("\n Внутрення ошибка:\n");
                 errText.Append(ex.InnerException.Message);
             }
+
             WinUIMessageBox.Show(errText.ToString(), "Ошибка");
         }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using DevExpress.XtraRichEdit.Model.History;
 
 namespace Core.Repository.Base
 {
@@ -15,7 +14,7 @@ namespace Core.Repository.Base
         T CreateRequisiteCopy(decimal dc);
     }
 
-    public interface IDocumentWithRowOperations<T, R> : IDocumentOperations<T> where T : class 
+    public interface IDocumentWithRowOperations<T, R> : IDocumentOperations<T> where T : class
     {
         R CreateRowNew(T head);
         R CreateRowCopy(R oldent);

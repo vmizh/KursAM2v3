@@ -33,6 +33,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public override string Name
         {
             get => Entity.NAME;
@@ -43,6 +44,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public PERIOD_GROUPS Entity
         {
             get => myEntity;
@@ -53,6 +55,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<PERIOD_GROUPS> LoadList()

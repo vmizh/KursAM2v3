@@ -9,6 +9,8 @@ namespace Core.ViewModel.Common
     [MetadataType(typeof(DataAnnotationsSDRState))]
     public class SDRState : SD_99ViewModel
     {
+        private string myShifr;
+
         public SDRState()
         {
         }
@@ -28,6 +30,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public new decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -39,8 +42,6 @@ namespace Core.ViewModel.Common
             }
         }
 
-
-        private string myShifr;
         public string Shifr
         {
             get => Entity.SZ_SHIFR;
@@ -52,7 +53,9 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
-        public override decimal? ParentDC {
+
+        public override decimal? ParentDC
+        {
             get => Entity.SZ_PARENT_DC;
             set
             {

@@ -28,6 +28,7 @@ namespace KursAM2.Managers.Nomenkl
                     ParentDC = g.CAT_PARENT_DC
                 }));
             }
+
             return ret;
         }
 
@@ -56,7 +57,8 @@ namespace KursAM2.Managers.Nomenkl
             return ret;
         }
 
-        public static List<NomenklTransferRowViewModelExt> SelectNomenklsWithRemainsDialog(Warehouse warehouse, DateTime date)
+        public static List<NomenklTransferRowViewModelExt> SelectNomenklsWithRemainsDialog(Warehouse warehouse,
+            DateTime date)
         {
             var ctxTransf = new NomTransferAddForSklad(warehouse, date);
             var dlg = new SelectDialogView {DataContext = ctxTransf};
@@ -103,6 +105,7 @@ namespace KursAM2.Managers.Nomenkl
                         Currency = MainReferences.Currencies[n.NOM_SALE_CRS_DC.Value]
                     });
             }
+
             return ret;
         }
 
@@ -144,13 +147,14 @@ namespace KursAM2.Managers.Nomenkl
                         tnx.Complete();
                         if (!MainReferences.NomenklGroups.ContainsKey(newDC))
                         {
-                            MainReferences.NomenklGroups.Add(newDC,new NomenklGroup
+                            MainReferences.NomenklGroups.Add(newDC, new NomenklGroup
                             {
                                 DocCode = newDC,
                                 Name = newCat.CAT_NAME,
                                 ParentDC = newCat.CAT_PARENT_DC
                             });
                         }
+
                         // ReSharper disable once InconsistentNaming
                         var newCatVM = new NomenklGroup(newCat)
                         {
@@ -162,6 +166,50 @@ namespace KursAM2.Managers.Nomenkl
                     {
                         WindowManager.ShowError(ex);
                         return null;
+                    }
+                }
+            }
+        }
+
+        public static void RecalcPrice()
+        {
+            var sql = "DECLARE @NomDC NUMERIC(15, 0); " +
+                      " DECLARE NomenklList CURSOR FOR " +
+                      " SELECT DISTINCT NOM_DC " +
+                      " FROM NOMENKL_RECALC; " +
+                      " OPEN NomenklList " +
+                      " FETCH NEXT FROM NomenklList INTO @NomDC " +
+                      " WHILE @@fetch_status = 0 " +
+                      " BEGIN " +
+                      " EXEC dbo.NomenklCalculateCostsForOne @NomDC " +
+                      " FETCH NEXT FROM NomenklList INTO @NomDC " +
+                      " END" +
+                      " CLOSE NomenklList; " +
+                      " DEALLOCATE NomenklList; " +
+                      " DELETE FROM WD_27 " +
+                      " INSERT INTO dbo.WD_27 (DOC_CODE, SKLW_NOMENKL_DC, SKLW_DATE, SKLW_KOLICH) " +
+                      " SELECT n.StoreDC, n.nomdc, n.DATE, SUM(n.prihod) - SUM(n.rashod) Quantity " +
+                      " FROM NomenklMoveWithPrice n " +
+                      " WHERE n.DATE = (SELECT MAX(n1.DATE) " +
+                      " FROM NomenklMoveWithPrice n1 " +
+                      " WHERE n1.nomdc = n.nomdc AND n.storedc = n1.storedc) " +
+                      " GROUP BY n.nomdc, n.StoreDc, n.DATE " +
+                      " HAVING SUM(n.prihod) - SUM(n.rashod) > 0; " +
+                      " DELETE FROM NOMENKL_RECALC;";
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                using (var transaction = ctx.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        ctx.Database.ExecuteSqlCommand(sql);
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        if (transaction.UnderlyingTransaction.Connection != null)
+                            transaction.Rollback();
+                        WindowManager.ShowError(ex);
                     }
                 }
             }

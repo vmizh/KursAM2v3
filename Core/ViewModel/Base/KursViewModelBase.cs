@@ -22,13 +22,15 @@ namespace Core.ViewModel.Base
         // ReSharper disable once InconsistentNaming
         protected string myNote;
         private bool mySaveEnable;
-        [Display(AutoGenerateField = false)]
-        public string LayoutName { set; get; }
+
+        [Display(AutoGenerateField = false)] public string LayoutName { set; get; }
+
         /// <summary>
         ///     задает и получает статус документа или строки документа
         /// </summary>
         [Display(AutoGenerateField = false)]
         public RowStatus State { set; get; }
+
         [Display(AutoGenerateField = false)]
         public Guid Id
         {
@@ -40,6 +42,7 @@ namespace Core.ViewModel.Base
                 OnPropertyChanged(nameof(Id));
             }
         }
+
         [Display(AutoGenerateField = false)]
         public bool Deleted
         {
@@ -51,6 +54,7 @@ namespace Core.ViewModel.Base
                 OnPropertyChanged(nameof(Deleted));
             }
         }
+
         public virtual string Name
         {
             get => myName;
@@ -61,6 +65,7 @@ namespace Core.ViewModel.Base
                 OnPropertyChanged(nameof(Name));
             }
         }
+
         public virtual string Note
         {
             get => myNote;
@@ -71,16 +76,19 @@ namespace Core.ViewModel.Base
                 OnPropertyChanged(nameof(Note));
             }
         }
+
         [Display(AutoGenerateField = false)]
         public ICommand CloseCommand
         {
             get { return new Command(CloseWindow, param => true); }
         }
+
         [Display(AutoGenerateField = false)]
         public ICommand SaveDataCommand
         {
             get { return new Command(param => SaveData(), param => IsSaveEnable); }
         }
+
         [Display(AutoGenerateField = false)]
         public bool IsSaveEnable
         {
@@ -93,13 +101,15 @@ namespace Core.ViewModel.Base
                 OnPropertyChanged(nameof(SaveDataCommand));
             }
         }
+
         [Display(AutoGenerateField = false)]
         public ICommand RefreshDataCommand
         {
             get { return new Command(param => RefreshData(), param => true); }
         }
-        [Display(AutoGenerateField = false)]
-        public virtual DateTime PeriodDate { set; get; }
+
+        [Display(AutoGenerateField = false)] public virtual DateTime PeriodDate { set; get; }
+
         public GridTableViewInfo TableViewInfo { get; set; }
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global

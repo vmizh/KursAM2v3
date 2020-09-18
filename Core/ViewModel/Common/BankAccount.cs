@@ -12,6 +12,9 @@ namespace Core.ViewModel.Common
     [MetadataType(typeof(DataAnnotationBankAccount))]
     public class BankAccount : RSViewModelBase, IEntity<SD_114>
     {
+        private Bank myBank;
+
+        private Currency myCurrency;
         private SD_114 myEntity;
         private int myKontrBankCode;
 
@@ -40,7 +43,6 @@ namespace Core.ViewModel.Common
             }
         }
 
-        private Currency myCurrency;
         public Currency Currency
         {
             get => myCurrency;
@@ -62,6 +64,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -73,8 +76,6 @@ namespace Core.ViewModel.Common
             }
         }
 
-
-        private Bank myBank;
         public Bank Bank
         {
             get => myBank;
@@ -85,10 +86,11 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string BankName => Bank?.Name;
 
         public string CorrAccount => Bank?.CORRESP_ACC;
-       
+
         public int KontrBankCode
         {
             get => myKontrBankCode;
@@ -99,6 +101,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public int BA_RASH_ACC_CODE
         {
             get => Entity.BA_RASH_ACC_CODE;
@@ -109,6 +112,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string Account
         {
             get => Entity.BA_RASH_ACC;
@@ -119,6 +123,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public short BA_CURRENCY
         {
             get => Entity.BA_CURRENCY;
@@ -129,6 +134,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal? BA_BANK_AS_KONTRAGENT_DC
         {
             get => Entity.BA_BANK_AS_KONTRAGENT_DC;
@@ -139,6 +145,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public short BA_TRANSIT
         {
             get => Entity.BA_TRANSIT;
@@ -149,6 +156,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal BankDC
         {
             get => Entity.BA_BANKDC;
@@ -171,6 +179,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public short? BA_NEGATIVE_RESTS
         {
             get => Entity.BA_NEGATIVE_RESTS;
@@ -181,6 +190,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public short? BA_BANK_ACCOUNT
         {
             get => Entity.BA_BANK_ACCOUNT;
@@ -191,6 +201,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string BA_ACC_SHORTNAME
         {
             get => Entity.BA_ACC_SHORTNAME;
@@ -201,6 +212,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal? BA_CENTR_OTV_DC
         {
             get => Entity.BA_CENTR_OTV_DC;
@@ -211,6 +223,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal? CurrencyDC
         {
             get => Entity.CurrencyDC;
@@ -221,6 +234,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? StartDate
         {
             get => Entity.StartDate;
@@ -231,6 +245,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public decimal? StartSumma
         {
             get => Entity.StartSumma;
@@ -241,6 +256,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public bool? IsDeleted
         {
             get => Entity.IsDeleted;
@@ -251,6 +267,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? DateNonZero
         {
             get => Entity.DateNonZero;
@@ -261,6 +278,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public SD_44 SD_44
         {
             get => Entity.SD_44;
@@ -271,6 +289,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public TD_43 TD_43
         {
             get => Entity.TD_43;
@@ -281,6 +300,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public SD_40 SD_40
         {
             get => Entity.SD_40;
@@ -291,6 +311,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_301
         {
             get => Entity.SD_301;
@@ -300,6 +321,13 @@ namespace Core.ViewModel.Common
                 Entity.SD_301 = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public bool IsAccessRight { get; set; }
+
+        public List<SD_114> LoadList()
+        {
+            throw new NotImplementedException();
         }
 
         public virtual SD_114 Load(decimal dc)
@@ -363,12 +391,6 @@ namespace Core.ViewModel.Common
             ent.TD_43 = TD_43;
             ent.SD_40 = SD_40;
             ent.SD_301 = SD_301;
-        }
-
-        public bool IsAccessRight { get; set; }
-        public List<SD_114> LoadList()
-        {
-            throw new NotImplementedException();
         }
     }
 

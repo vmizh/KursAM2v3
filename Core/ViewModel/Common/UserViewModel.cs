@@ -8,6 +8,7 @@ namespace Core.ViewModel.Common
         [Display(Name = "Полное имя")] private string myFullName;
         private int myTabelNumber;
         private int myUserId;
+
         [Display(AutoGenerateField = false)]
         public int UserId
         {
@@ -19,6 +20,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         public string FullName
         {
             get => myFullName;
@@ -29,6 +31,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         [Display(Name = "Табельный номер")]
         public int TabelNumber
         {

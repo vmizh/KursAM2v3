@@ -32,6 +32,7 @@ namespace Core.EntityViewModel
             }
             get => myCODE;
         }
+
         public string RASCH_ACC
         {
             set
@@ -42,6 +43,7 @@ namespace Core.EntityViewModel
             }
             get => myRASCH_ACC;
         }
+
         public bool IsDisabled
         {
             set
@@ -53,6 +55,7 @@ namespace Core.EntityViewModel
             }
             get => DISABLED == 1;
         }
+
         public short? DISABLED
         {
             set
@@ -63,6 +66,7 @@ namespace Core.EntityViewModel
             }
             get => myDISABLED;
         }
+
         public bool IsDeleted
         {
             set
@@ -74,6 +78,7 @@ namespace Core.EntityViewModel
             }
             get => DISABLED == 1;
         }
+
         public short? DELETED
         {
             set
@@ -84,6 +89,7 @@ namespace Core.EntityViewModel
             }
             get => myDELETED;
         }
+
         public decimal? BankDC
         {
             set
@@ -94,6 +100,7 @@ namespace Core.EntityViewModel
             }
             get => myBankDC;
         }
+
         public Bank Bank
         {
             get => myBank;

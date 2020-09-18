@@ -84,6 +84,7 @@ namespace Core.ViewModel.Base.Column
                     };
                     Columns.Add(c);
                 }
+
                 var attrSum = prop.GetCustomAttributes(typeof(GridColumnSummary)) as GridColumnSummary[];
                 if (attrSum == null || !attrSum.Any()) continue;
                 foreach (var summ in attrSum)

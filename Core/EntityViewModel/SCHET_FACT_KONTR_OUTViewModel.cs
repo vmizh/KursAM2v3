@@ -30,6 +30,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NUM
         {
             get => Entity.NUM;
@@ -40,6 +41,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CORRECT_NUM
         {
             get => Entity.CORRECT_NUM;
@@ -50,6 +52,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime DOC_DATE
         {
             get => Entity.DOC_DATE;
@@ -60,6 +63,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public DateTime? DOC_CORRECT_DATE
         {
             get => Entity.DOC_CORRECT_DATE;
@@ -70,6 +74,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid KONTR_ID
         {
             get => Entity.KONTR_ID;
@@ -80,6 +85,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal CURRENCY_DC
         {
             get => Entity.CURRENCY_DC;
@@ -90,6 +96,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SUMMA
         {
             get => Entity.SUMMA;
@@ -100,6 +107,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string CREATOR
         {
             get => Entity.CREATOR;
@@ -110,6 +118,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string GRUZOOTPRAVITEL
         {
             get => Entity.GRUZOOTPRAVITEL;
@@ -120,6 +129,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string GRUZOPOLUCHATEL
         {
             get => Entity.GRUZOPOLUCHATEL;
@@ -130,6 +140,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string PAYDOC_TEXT
         {
             get => Entity.PAYDOC_TEXT;
@@ -140,6 +151,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string DIRECTOR
         {
             get => Entity.DIRECTOR;
@@ -150,6 +162,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string GL_BUH
         {
             get => Entity.GL_BUH;
@@ -160,6 +173,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public string NOTE
         {
             get => Entity.NOTE;
@@ -170,6 +184,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Guid? RECEIVER_KONTR_ID
         {
             get => Entity.RECEIVER_KONTR_ID;
@@ -180,6 +195,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public decimal? SD_84_DC
         {
             get => Entity.SD_84_DC;
@@ -190,6 +206,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public KONTRAGENT_REF_OUT KONTRAGENT_REF_OUT
         {
             get => Entity.KONTRAGENT_REF_OUT;
@@ -200,6 +217,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public KONTRAGENT_REF_OUT KONTRAGENT_REF_OUT1
         {
             get => Entity.KONTRAGENT_REF_OUT1;
@@ -210,6 +228,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_301 SD_301
         {
             get => Entity.SD_301;
@@ -220,6 +239,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SD_84 SD_84
         {
             get => Entity.SD_84;
@@ -230,6 +250,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public SCHET_FACT_KONTR_OUT Entity
         {
             get => myEntity;
@@ -240,6 +261,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SCHET_FACT_KONTR_OUT> LoadList()
