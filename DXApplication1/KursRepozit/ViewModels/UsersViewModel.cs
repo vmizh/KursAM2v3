@@ -141,6 +141,8 @@ namespace KursRepozit.ViewModels
             }
         }
 
+        public override bool IsCanRefresh { get; } = true;
+
         public override bool CanSave()
         {
             return Users.Any(_ => _.State != RowStatus.NotEdited);

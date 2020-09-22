@@ -88,10 +88,10 @@ namespace LayoutManager
                 if (BaseControlLayouts.Count > 0)
                     foreach (var l in BaseControlLayouts)
                     {
-                        l.Value.Seek(0,SeekOrigin.Begin);
-                        ((DataControlBase)l.Key).BeginInit();
+                        l.Value.Position = 0;
+                        //((DataControlBase)l.Key).BeginInit();
                         ((DataControlBase)l.Key).RestoreLayoutFromStream(l.Value);
-                        ((DataControlBase)l.Key).EndInit();
+                        //((DataControlBase)l.Key).EndInit();
                     }
             }
             catch (Exception ex)

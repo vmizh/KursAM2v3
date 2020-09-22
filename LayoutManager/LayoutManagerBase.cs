@@ -235,7 +235,8 @@ namespace LayoutManager
                 if (p.Layout == null || IsWindowOnly) return;
                 var ms = new MemoryStream(p.Layout);
                 //var doc = XDocument.Load(ms);
-                DXSerializer.Deserialize(LayoutControl, ms, "Kurs", null);
+                if (LayoutControl != null)
+                    DXSerializer.Deserialize(LayoutControl, ms, "Kurs", null);
                 var grids = WindowHelper.GetLogicalChildCollection<GridControl>(LayoutControl);
                 var trees = WindowHelper.GetLogicalChildCollection<TreeListControl>(LayoutControl);
                 if (grids != null && grids.Count > 0)

@@ -261,8 +261,11 @@ r.git/objects/info
 r.vs/KursAM2v3/DesignTimeBuild
 r.vs/KursAM2v3/config
 r.vs/KursAM2v3/v16/Server/sqlite3
+mCalculates
+mCalculates.Tests
 mCalculates/Materials
 rCore
+mCore.Tests
 mCore/EntityViewModel
 mCore/Finance
 mCore/Helper
@@ -273,7 +276,10 @@ mCore/ViewModel/Base/Column
 rCore/ViewModel/Common
 mCore/ViewModel/MutualAccounting
 mCore/WindowsManager
+mCoreView
 mData
+mDevExpress
+mFinanceAnalitic
 rHelper
 rKursAM2.Tests
 rKursAM2.Tests/Cash
@@ -1301,6 +1307,11 @@ rKursAM2v3/ViewModel/Management/BreakEven
 rKursAM2v3/ViewModel/Personal
 mKursAM2v3/ViewModel/Reference/Nomenkl
 mKursAM2v3/ViewModel/StartLogin
+mKursStart
+mKursStart/LayoutManager
+mKursStart/Properties
+mKursWPFFormTest
+mLayoutManager
 rLayoutManager2
 rLayoutManager2/Properties
 rMVC5DevExpressTest
@@ -1314,7 +1325,10 @@ rMVC5DevExpressTest/Views
 rMVC5DevExpressTest/Views/Home
 rMVC5DevExpressTest/Views/Shared
 rMVC5DevExpressTest/fonts
+mPeriodManager
 rPeriodManager/ViewModel
+mReports
+mServerCalculate
 rStoreProcedures
 rStoreProcedures/Properties
 rpackages

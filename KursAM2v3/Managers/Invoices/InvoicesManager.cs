@@ -22,14 +22,17 @@ namespace KursAM2.Managers.Invoices
 {
     public class InvoicesManager
     {
-        private GenericKursDBRepository<SD_26> genericProviderRepository;
+        private readonly GenericKursDBRepository<SD_26> genericProviderRepository;
         // ReSharper disable once NotAccessedField.Local
         private IInvoiceProviderRepository invoiceProviderRepository;
 
+        public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
+            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+
         public InvoicesManager()
         {
-            genericProviderRepository = new GenericKursDBRepository<SD_26>(GlobalOptions.KursDBUnitOfWork);
-            invoiceProviderRepository = new InvoiceProviderRepository(GlobalOptions.KursDBUnitOfWork);
+            genericProviderRepository = new GenericKursDBRepository<SD_26>(UnitOfWork);
+            invoiceProviderRepository = new InvoiceProviderRepository(UnitOfWork);
         }
 
         /// <summary>
@@ -166,7 +169,7 @@ namespace KursAM2.Managers.Invoices
             InvoiceProvider doc;
             var pDocs = new List<InvoicePaymentDocument>();
             var i = genericProviderRepository.GetById(dc);
-            foreach (var c in GlobalOptions.KursDBUnitOfWork.Context.SD_34.Where(_ => _.SPOST_DC == dc).ToList())
+            foreach (var c in UnitOfWork.Context.SD_34.Where(_ => _.SPOST_DC == dc).ToList())
                 pDocs.Add(new InvoicePaymentDocument
                 {
                     DocCode = c.DOC_CODE,
@@ -180,7 +183,7 @@ namespace KursAM2.Managers.Invoices
                     Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
                     Note = c.NOTES_ORD
                 });
-            foreach (var c in GlobalOptions.KursDBUnitOfWork.Context.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_POSTAV_DC == dc)
+            foreach (var c in UnitOfWork.Context.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_POSTAV_DC == dc)
                 .ToList())
                 pDocs.Add(new InvoicePaymentDocument
                 {
@@ -195,7 +198,7 @@ namespace KursAM2.Managers.Invoices
                     Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                     Note = c.VVT_DOC_NUM
                 });
-            foreach (var c in GlobalOptions.KursDBUnitOfWork.Context.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SPOST_DC == dc).ToList())
+            foreach (var c in UnitOfWork.Context.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SPOST_DC == dc).ToList())
                 pDocs.Add(new InvoicePaymentDocument
                 {
                     DocCode = c.DOC_CODE,
@@ -714,10 +717,10 @@ namespace KursAM2.Managers.Invoices
             if (doc.DocCode == -1)
             {
                 var guidId = Guid.NewGuid();
-                var inNum = (GlobalOptions.KursDBUnitOfWork.Context.SD_26.Any() 
-                    ? (GlobalOptions.KursDBUnitOfWork.Context.SD_26.Max(_ => _.SF_IN_NUM) ?? 0) + 1 : 1);
-                newDC = GlobalOptions.KursDBUnitOfWork.Context.SD_26.Any() 
-                    ? GlobalOptions.KursDBUnitOfWork.Context.SD_26.Max(_ => _.DOC_CODE) + 1 : 10260000001;
+                var inNum = (UnitOfWork.Context.SD_26.Any() 
+                    ? (UnitOfWork.Context.SD_26.Max(_ => _.SF_IN_NUM) ?? 0) + 1 : 1);
+                newDC = UnitOfWork.Context.SD_26.Any() 
+                    ? UnitOfWork.Context.SD_26.Max(_ => _.DOC_CODE) + 1 : 10260000001;
                 doc.DOC_CODE = newDC;
                 doc.Id = guidId;
                 doc.SF_IN_NUM = inNum;
@@ -733,9 +736,9 @@ namespace KursAM2.Managers.Invoices
 
             try
             {
-                GlobalOptions.KursDBUnitOfWork.CreateTransaction();
-                GlobalOptions.KursDBUnitOfWork.Save();
-                GlobalOptions.KursDBUnitOfWork.Commit();
+                UnitOfWork.CreateTransaction();
+                UnitOfWork.Save();
+                UnitOfWork.Commit();
                 RecalcKontragentBalans.CalcBalans(doc.SF_POST_DC, doc.SF_POSTAV_DATE);
                 foreach (var r in doc.Rows)
                 {
@@ -750,21 +753,49 @@ namespace KursAM2.Managers.Invoices
                 {
                     var sql = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
                               $" VALUES({CustomFormat.DecimalToSqlDecimal(r.SFT_NEMENKL_DC)},'20000101')";
-                    GlobalOptions.KursDBUnitOfWork.Context.Database.ExecuteSqlCommand(sql);
+                    UnitOfWork.Context.Database.ExecuteSqlCommand(sql);
                     if (r.CurrencyConvertRows.Count > 0)
                     {
                         foreach (var rc in r.CurrencyConvertRows)
                         {
                             var sql1 = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
                                        $" VALUES({CustomFormat.DecimalToSqlDecimal(rc.Nomenkl.DocCode)},'20000101')";
-                            GlobalOptions.KursDBUnitOfWork.Context.Database.ExecuteSqlCommand(sql1);
+                            UnitOfWork.Context.Database.ExecuteSqlCommand(sql1);
                         }
                     }
                 }
+                UnitOfWork.CreateTransaction();
+                var sqlcalc = "DECLARE @NomDC NUMERIC(15, 0); " +
+                              "DECLARE NomenklList CURSOR FOR " +
+                              "SELECT DISTINCT  " +
+                              "NOM_DC FROM NOMENKL_RECALC; " +
+                              "OPEN NomenklList " +
+                              "FETCH NEXT FROM NomenklList INTO @NomDC " +
+                              "WHILE @@fetch_status = 0 " +
+                              "BEGIN " +
+                              "EXEC dbo.NomenklCalculateCostsForOne @NomDC " +
+                              "FETCH NEXT FROM NomenklList INTO @NomDC " +
+                              "END " +
+                              "CLOSE NomenklList; " +
+                              "DEALLOCATE NomenklList; " +
+                              "DELETE FROM WD_27 " +
+                              "INSERT INTO dbo.WD_27 " +
+                              "(DOC_CODE, SKLW_NOMENKL_DC, SKLW_DATE, SKLW_KOLICH)  " +
+                              "SELECT n.StoreDC,n.nomdc,n.DATE " +
+                              ",SUM(n.prihod) - SUM(n.rashod) Quantity " +
+                              "FROM NomenklMoveWithPrice n  " +
+                              "WHERE n.DATE = (SELECT MAX(n1.DATE) " +
+                              "FROM NomenklMoveWithPrice n1 WHERE n1.nomdc = n.nomdc " +
+                              "AND n.storedc = n1.storedc) " +
+                              "GROUP BY n.nomdc, n.StoreDc,n.DATE " +
+                              "HAVING SUM(n.prihod) - SUM(n.rashod) > 0; " +
+                              "DELETE FROM NOMENKL_RECALC";
+                UnitOfWork.Context.Database.ExecuteSqlCommand(sqlcalc);
+                UnitOfWork.Commit();
             }
             catch (Exception ex)
             {
-                GlobalOptions.KursDBUnitOfWork.Rollback();
+                UnitOfWork.Rollback();
                 WindowManager.ShowError(ex);
                 return -1;
             }
@@ -947,6 +978,170 @@ namespace KursAM2.Managers.Invoices
                                       || td26.SD_175.ED_IZM_NAME.Contains(searchText)
                                       || td26.SD_43.NAME.Contains(searchText)
                                 select sd26).ToList();
+                    }
+                    var sql =
+                        "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
+                        "FROM sd_26 s26 " +
+                        "LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DOC_CODE " +
+                        "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_POSTAV_DC = s26.DOC_CODE " +
+                        "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SPOST_DC = s26.DOC_CODE " +
+                        $"WHERE s26.SF_POSTAV_DATE >= '{CustomFormat.DateToString(dateStart)}' AND s26.SF_POSTAV_DATE <= '{CustomFormat.DateToString(dateEnd)}'" +
+                        "GROUP BY s26.doc_code, s26.SF_CRS_SUMMA ";
+                    var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
+                    foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
+                    {
+                        var newDoc = new InvoiceProvider(d);
+                        if (isUsePayment)
+                        {
+                            var pd = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode);
+                            if (pd == null)
+                            {
+                                ret.Add(newDoc);
+                                continue;
+                            }
+                            if (newDoc.SF_CRS_SUMMA > pd.PaySumma)
+                            {
+                                newDoc.PaymentDocs.Add(new InvoicePaymentDocument
+                                {
+                                    Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
+                                });
+                                ret.Add(newDoc);
+                            }
+                        }
+                        else
+                        {
+                            newDoc.PaymentDocs.Add(new InvoicePaymentDocument
+                            {
+                                Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
+                            });
+                            ret.Add(newDoc);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+            return ret;
+        }
+
+        public List<InvoiceProvider> GetInvoicesProvider2(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
+           string searchText = null, bool isAccepted = false)
+        {
+            var ret = new List<InvoiceProvider>();
+            try
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    List<SD_26> data;
+                    if (string.IsNullOrEmpty(searchText))
+                    {
+                        if (isAccepted)
+                            data = ctx.SD_26
+                                .Include(_ => _.TD_26)
+                                .Include("TD_26.TD_24")
+                                .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
+                                                                          && _.SF_ACCEPTED == 1).ToList();
+                        else
+                            data = ctx.SD_26
+                                .Include(_ => _.TD_26)
+                                .Include("TD_26.TD_24")
+                                .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd).ToList();
+                    }
+                    else
+                    {
+                        if (isAccepted)
+                            data = (from sd26 in ctx.SD_26
+                                    .Include(_ => _.TD_26)
+                                    .Include("TD_26.TD_24")
+                                    .Include(_ => _.SD_43)
+                                    .Include(_ => _.SD_179)
+                                    .Include(_ => _.SD_77)
+                                    .Include(_ => _.SD_189)
+                                    .Include(_ => _.SD_40)
+                                    .AsNoTracking()
+                                    .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
+                                                                              && _.SF_ACCEPTED == 1)
+                                    join td26 in ctx.TD_26
+                                            .Include(_ => _.SD_83)
+                                            .Include(_ => _.SD_175)
+                                            .Include(_ => _.SD_43)
+                                        on sd26.DOC_CODE equals td26.DOC_CODE
+                                    // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+                                    where sd26.SF_CRS_SUMMA.ToString().Contains(searchText)
+                                          || sd26.SF_CRS_RATE.ToString()
+                                              .Contains(searchText)
+                                          || sd26.SF_NOTES.Contains(searchText)
+                                          || sd26.SF_IN_NUM.ToString().Contains(searchText)
+                                          || sd26.SF_POSTAV_NUM.Contains(searchText)
+                                          // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+                                          || sd26.SF_POSTAV_DATE.ToString()
+                                              .Contains(searchText)
+                                          || sd26.SF_OPRIHOD_DATE.ToString()
+                                              .Contains(searchText)
+                                          || sd26.CREATOR.Contains(searchText)
+                                          || sd26.SD_43.NAME.Contains(searchText)
+                                          || sd26.SD_179.PT_NAME.Contains(searchText)
+                                          || sd26.SD_77.TV_NAME.Contains(searchText)
+                                          || sd26.SD_189.OOT_NAME.Contains(searchText)
+                                          || sd26.SD_40.CENT_NAME.Contains(searchText)
+                                          || td26.SFT_TEXT.Contains(searchText)
+                                          || td26.SFT_ED_CENA.ToString().Contains(searchText)
+                                          || td26.SFT_KOL.ToString().Contains(searchText)
+                                          || td26.SFT_STRANA_PROIS.Contains(searchText)
+                                          || td26.SFT_N_GRUZ_DECLAR.Contains(searchText)
+                                          || td26.SD_83.NOM_NOMENKL.Contains(searchText)
+                                          || td26.SD_83.NOM_NAME.Contains(searchText)
+                                          || td26.SD_83.NOM_NOTES.Contains(searchText)
+                                          || td26.SD_175.ED_IZM_NAME.Contains(searchText)
+                                          || td26.SD_43.NAME.Contains(searchText)
+                                    select sd26).ToList();
+                        else
+                            data = (from sd26 in ctx.SD_26
+                                    .Include(_ => _.TD_26)
+                                    .Include("TD_26.TD_24")
+                                    .Include(_ => _.SD_43)
+                                    .Include(_ => _.SD_179)
+                                    .Include(_ => _.SD_77)
+                                    .Include(_ => _.SD_189)
+                                    .Include(_ => _.SD_40)
+                                    .AsNoTracking()
+                                    .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd)
+                                    join td26 in ctx.TD_26
+                                            .Include(_ => _.SD_83)
+                                            .Include(_ => _.SD_175)
+                                            .Include(_ => _.SD_43)
+                                        on sd26.DOC_CODE equals td26.DOC_CODE
+                                    // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+                                    where sd26.SF_CRS_SUMMA.ToString().Contains(searchText)
+                                          || sd26.SF_CRS_RATE.ToString()
+                                              .Contains(searchText)
+                                          || sd26.SF_NOTES.Contains(searchText)
+                                          || sd26.SF_IN_NUM.ToString().Contains(searchText)
+                                          || sd26.SF_POSTAV_NUM.Contains(searchText)
+                                          // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+                                          || sd26.SF_POSTAV_DATE.ToString()
+                                              .Contains(searchText)
+                                          || sd26.SF_OPRIHOD_DATE.ToString()
+                                              .Contains(searchText)
+                                          || sd26.CREATOR.Contains(searchText)
+                                          || sd26.SD_43.NAME.Contains(searchText)
+                                          || sd26.SD_179.PT_NAME.Contains(searchText)
+                                          || sd26.SD_77.TV_NAME.Contains(searchText)
+                                          || sd26.SD_189.OOT_NAME.Contains(searchText)
+                                          || sd26.SD_40.CENT_NAME.Contains(searchText)
+                                          || td26.SFT_TEXT.Contains(searchText)
+                                          || td26.SFT_ED_CENA.ToString().Contains(searchText)
+                                          || td26.SFT_KOL.ToString().Contains(searchText)
+                                          || td26.SFT_STRANA_PROIS.Contains(searchText)
+                                          || td26.SFT_N_GRUZ_DECLAR.Contains(searchText)
+                                          || td26.SD_83.NOM_NOMENKL.Contains(searchText)
+                                          || td26.SD_83.NOM_NAME.Contains(searchText)
+                                          || td26.SD_83.NOM_NOTES.Contains(searchText)
+                                          || td26.SD_175.ED_IZM_NAME.Contains(searchText)
+                                          || td26.SD_43.NAME.Contains(searchText)
+                                    select sd26).ToList();
                     }
                     var sql =
                         "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +

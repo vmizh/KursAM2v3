@@ -191,7 +191,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             //Document = dc != null ? InvoicesManager.GetInvoiceProvider(dc.Value) : InvoicesManager.NewProvider();
             Document = dc != null ? invoiceManager.GetInvoiceProvider2(dc.Value) : InvoicesManager.NewProvider();
-            if (Document?.Rows == null) return;
             if (Document != null)
                 WindowName = Document.ToString();
         }
@@ -222,7 +221,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => myCurrentRow;
             set
             {
-                if (myCurrentRow != null && myCurrentRow.Equals(value)) return;
+                if (myCurrentRow == value) return;
                 myCurrentRow = value;
                 RaisePropertyChanged();
             }
@@ -743,6 +742,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Rate = Math.Round(crsrates.GetRate(CurrentRow.Nomenkl.Currency.DocCode,
                     n.Currency.DocCode, DateTime.Today),4)
             };
+            CurrentRow.Entity.TD_26_CurrencyConvert.Add(newItem.Entity);
             newItem.CalcRow(DirectCalc.Rate);
             CurrentRow.CurrencyConvertRows.Add(newItem);
             CurrentRow.State = RowStatus.Edited;
@@ -771,7 +771,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.DeletedCurrencyRows.Add(CurrentCrsConvertItem);
             if (CurrentRow == null)
             {
-                var row = Document.Rows.FirstOrDefault(_ => _.Code == CurrentCrsConvertItem.Code);
+                var row = Document.Rows.FirstOrDefault(_ => _.Id == CurrentCrsConvertItem.Id);
                 if (row != null)
                 {
                     row.CurrencyConvertRows.Remove(CurrentCrsConvertItem);
@@ -781,6 +781,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             else
             {
                 CurrentRow.CurrencyConvertRows.Remove(CurrentCrsConvertItem);
+                CurrentRow.Entity.TD_26_CurrencyConvert.Remove(CurrentCrsConvertItem.Entity);
                 CurrentRow.State = RowStatus.Edited;
             }
         }

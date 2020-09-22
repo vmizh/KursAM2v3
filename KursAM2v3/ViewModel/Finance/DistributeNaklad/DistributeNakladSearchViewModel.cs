@@ -143,6 +143,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             LayoutManager.ResetLayout();
         }
 
+        public override bool IsCanRefresh { get; } = true;
+
         public override void DocNewEmpty(object form)
         {
             var dsForm = new KursBaseWindow

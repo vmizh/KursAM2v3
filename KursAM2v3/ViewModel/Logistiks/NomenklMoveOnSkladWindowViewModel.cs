@@ -65,9 +65,10 @@ namespace KursAM2.ViewModel.Logistiks
                 if (myCurrentNomenklMoveItem == value) return;
                 myCurrentNomenklMoveItem = value;
                 RaisePropertyChanged();
-                if (myCurrentNomenklMoveItem != null && CurrentSklad.DOC_CODE == 0)
+                if (myCurrentNomenklMoveItem != null && CurrentSklad?.DOC_CODE == 0)
                     LoadDocuments();
-                else
+                else 
+                 if(CurrentSklad != null)
                     LoadDocuments(CurrentSklad.DocCode);
             }
         }

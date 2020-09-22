@@ -927,7 +927,14 @@ namespace Core.EntityViewModel
 
             if (Entity.TD_26_CurrencyConvert?.Count > 0)
                 foreach (var d in Entity.TD_26_CurrencyConvert)
-                    CurrencyConvertRows.Add(new InvoiceProviderRowCurrencyConvertViewModel(d));
+                {
+                    var newItem = new InvoiceProviderRowCurrencyConvertViewModel(d);
+                    newItem.OLdPrice = (decimal) SFT_ED_CENA;
+                    newItem.OLdNakladPrice = Math.Round((decimal) SFT_ED_CENA +
+                                                        // ReSharper disable once PossibleInvalidOperationException
+                                                        (decimal) SFT_ED_CENA / (decimal) SFT_SUMMA_NAKLAD, 2);
+                    CurrencyConvertRows.Add(newItem);
+                }
         }
 
         public virtual void Save(TD_26 doc)

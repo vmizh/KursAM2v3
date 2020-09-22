@@ -239,7 +239,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 }
             }
         }
-        
+
         public void GetDefaultValue()
         {
             Document.State = RowStatus.NotEdited;
@@ -555,9 +555,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     }
                     InvoicesManager.DeleteClient(Document.DocCode);
                     // ReSharper disable once PossibleInvalidOperationException
-                    RecalcKontragentBalans.CalcBalans((decimal) Document.SF_CLIENT_DC, Document.SF_DATE);
+                    RecalcKontragentBalans.CalcBalans((decimal)Document.SF_CLIENT_DC, Document.SF_DATE);
                     if (Document.SF_DILER_DC != null)
-                        RecalcKontragentBalans.CalcBalans((decimal) Document.SF_DILER_DC, Document.SF_DATE);
+                        RecalcKontragentBalans.CalcBalans((decimal)Document.SF_DILER_DC, Document.SF_DATE);
                     Form.Close();
                     return;
                 case MessageBoxResult.No:
@@ -570,8 +570,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            var ctx = new ClientWindowViewModel {Form = frm};
+            var frm = new InvoiceClientView { Owner = Application.Current.MainWindow };
+            var ctx = new ClientWindowViewModel { Form = frm };
             ctx.Document = InvoicesManager.NewClient();
             frm.Show();
             frm.DataContext = ctx;
@@ -583,8 +583,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewCopyRequisite(object obj)
         {
             if (Document == null) return;
-            var frm = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            var ctx = new ClientWindowViewModel {Form = frm};
+            var frm = new InvoiceClientView { Owner = Application.Current.MainWindow };
+            var ctx = new ClientWindowViewModel { Form = frm };
             ctx.Document = InvoicesManager.NewClientRequisite(Document.DocCode);
             frm.Show();
             frm.DataContext = ctx;
@@ -593,8 +593,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewCopy(object obj)
         {
             if (Document == null) return;
-            var frm = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            var ctx = new ClientWindowViewModel {Form = frm};
+            var frm = new InvoiceClientView { Owner = Application.Current.MainWindow };
+            var ctx = new ClientWindowViewModel { Form = frm };
             ctx.Document = InvoicesManager.NewClientCopy(Document.DocCode);
             frm.Show();
             frm.DataContext = ctx;
@@ -619,13 +619,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
                     else
-                        nds = (decimal) item.NOM_NDS_PERCENT;
+                        nds = (decimal)item.NOM_NDS_PERCENT;
                     Document.Rows.Add(new InvoiceClientRow
                     {
                         DOC_CODE = Document.DocCode,
                         Code = newCode,
                         SFT_NEMENKL_DC = item.DOC_CODE,
-                        SFT_NDS_PERCENT = (double) nds,
+                        SFT_NDS_PERCENT = (double)nds,
                         SFT_KOL = 1,
                         SFT_ED_CENA = 0
                     });
@@ -674,13 +674,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
                     else
-                        nds = (decimal) item.NOM_NDS_PERCENT;
+                        nds = (decimal)item.NOM_NDS_PERCENT;
                     Document?.Rows.Add(new InvoiceClientRow
                     {
                         DOC_CODE = Document.DocCode,
                         Code = newCode,
                         SFT_NEMENKL_DC = item.DOC_CODE,
-                        SFT_NDS_PERCENT = (double) nds,
+                        SFT_NDS_PERCENT = (double)nds,
                         SFT_KOL = 1,
                         SFT_ED_CENA = 0
                     });
@@ -854,8 +854,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand AddPaymentFromBankCommand
         {
-            get {return new Command(AddPaymentFromBank, 
-                _ => Document?.Client != null && Document.PaySumma < Document.SF_CRS_SUMMA_K_OPLATE);}
+            get
+            {
+                return new Command(AddPaymentFromBank,
+               _ => Document?.Client != null && Document.PaySumma < Document.SF_CRS_SUMMA_K_OPLATE);
+            }
         }
 
         private void AddPaymentFromBank(object obj)
@@ -877,8 +880,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
         }
         public ICommand AddPaymentFromCashCommand
         {
-            get { return new Command(AddPaymentFromCash, 
-                _ => Document?.Client != null && Document.PaySumma < Document.SF_CRS_SUMMA_K_OPLATE); }
+            get
+            {
+                return new Command(AddPaymentFromCash,
+              _ => Document?.Client != null && Document.PaySumma < Document.SF_CRS_SUMMA_K_OPLATE);
+            }
         }
 
         private void AddPaymentFromCash(object obj)
@@ -902,8 +908,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand AddPaymentFromVZCommand
         {
-            get { return new Command(AddPaymentFromVZ, 
-                _ => Document?.Client != null && Document.PaySumma < Document.SF_CRS_SUMMA_K_OPLATE); }
+            get
+            {
+                return new Command(AddPaymentFromVZ,
+              _ => Document?.Client != null && Document.PaySumma < Document.SF_CRS_SUMMA_K_OPLATE);
+            }
         }
 
         private void AddPaymentFromVZ(object obj)

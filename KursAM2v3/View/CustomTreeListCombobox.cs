@@ -23,18 +23,6 @@ using DevExpress.Xpf.Editors.Settings;
 
 namespace KursAM2.View
 {
-    //public partial class MainWindow : Window {
-    //    public MainWindow() {
-    //        InitializeComponent();
-    //    }
-
-    //    private void Button_Click(object sender, RoutedEventArgs e)
-    //    {
-    //        TestData staticVar = ((customControl.ItemsSource as IList)[3] as TestData);
-    //        customControl.EditValue = staticVar.Item1;          
-    //    }
-    //}
-
     public class TreeViewComboBoxEdit : ComboBoxEdit
     {
         static TreeViewComboBoxEdit()
@@ -104,14 +92,14 @@ namespace KursAM2.View
             return true;
         }
 
-        public override object GetSelectedItem()
+        public object GetSelectedItem()
         {
             if (!IsLoaded)
                 return null;
             return TreeView.SelectedItem;
         }
 
-        public override IEnumerable GetSelectedItems()
+        public IEnumerable GetSelectedItems()
         {
             if (!IsLoaded)
                 return null;

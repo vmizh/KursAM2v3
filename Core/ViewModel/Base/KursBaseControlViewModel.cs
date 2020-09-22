@@ -74,7 +74,7 @@ namespace Core.ViewModel.Base
 
         [Display(AutoGenerateField = false)] public ObservableCollection<MenuButtonInfo> LeftMenuBar { get; set; }
 
-        [Display(AutoGenerateField = false)] public string WindowName { get; set; }
+        [Display(AutoGenerateField = false)] public virtual string WindowName { get; set; }
 
         #endregion
 
@@ -440,6 +440,7 @@ namespace Core.ViewModel.Base
         }
 
         [Display(AutoGenerateField = false)] public DialogResult Result { get; set; }
+        public abstract bool IsCanRefresh { get; }
 
         [Command]
         public virtual void Ok()

@@ -1077,7 +1077,8 @@ namespace Core.EntityViewModel
             if (Entity.TD_26 != null && Entity.TD_26.Count > 0)
                 foreach (var t in Entity.TD_26)
                 {
-                    Rows.Add(new InvoiceProviderRow(t));
+                    var newRow = new InvoiceProviderRow(t);
+                    Rows.Add(newRow);
                     if (t.TD_24 != null)
                         SummaFact += (decimal) t.SFT_SUMMA_K_OPLATE / t.SFT_KOL *
                                      t.TD_24.Sum(_ => _.DDT_KOL_PRIHOD);

@@ -433,6 +433,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
+        public override bool IsCanRefresh { get; } = true;
+
         public override bool CanSave()
         {
             return State != RowStatus.NotEdited;

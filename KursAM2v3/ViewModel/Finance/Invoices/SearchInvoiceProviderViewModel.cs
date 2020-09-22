@@ -18,6 +18,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private InvoiceProvider myCurrentDocument;
         private DateTime myDateEnd;
         private DateTime myDateStart;
+        private InvoicesManager invoiceManager = new InvoicesManager();
 
         public SearchInvoiceProviderViewModel()
         {
@@ -103,7 +104,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             Documents.Clear();
-            foreach (var d in InvoicesManager.GetInvoicesProvider(DateStart, DateEnd, false))
+            foreach (var d in invoiceManager.GetInvoicesProvider2(DateStart, DateEnd, false))
                     Documents.Add(d);
             
             RaisePropertyChanged(nameof(Documents));
