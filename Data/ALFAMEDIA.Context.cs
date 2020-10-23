@@ -7,8 +7,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.Data.Entity.Core.EntityClient;
-
 namespace Data
 {
     using System;
@@ -16,19 +14,19 @@ namespace Data
     using System.Data.Entity.Infrastructure;
     using System.Data.Entity.Core.Objects;
     using System.Linq;
-
+    
     public partial class ALFAMEDIAEntities : DbContext
     {
         public ALFAMEDIAEntities()
-            : base("name=ALFAMEDIAEntities")
+            : base("name=Entities")
         {
         }
-
+    
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
         }
-
+    
         public virtual DbSet<AccountInvoice> AccountInvoice { get; set; }
         public virtual DbSet<AD_149> AD_149 { get; set; }
         public virtual DbSet<AD_2> AD_2 { get; set; }
@@ -769,6 +767,7 @@ namespace Data
         public virtual DbSet<VH_SD_82> VH_SD_82 { get; set; }
         public virtual DbSet<VVD_24> VVD_24 { get; set; }
         public virtual DbSet<TD_26_CurrencyConvert> TD_26_CurrencyConvert { get; set; }
+        public virtual DbSet<ProviderInvoicePay> ProviderInvoicePay { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

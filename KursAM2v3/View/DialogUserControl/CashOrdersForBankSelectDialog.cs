@@ -9,18 +9,18 @@ using Core.ViewModel.Common;
 
 namespace KursAM2.View.DialogUserControl
 {
-    public class CashOrdersForBankSelectDialog : RSWindowViewModelBase, IDataUserControl
+    public sealed class CashOrdersForBankSelectDialog : RSWindowViewModelBase, IDataUserControl
     {
         private CashOrdersForBankSelectDialogUC myDataUserControl;
-        private readonly SelectCashOrdersDelegate SelectCashOrders;
-        private readonly BankAccount BankAcc;
+        private readonly SelectCashOrdersDelegate selectCashOrders;
+        private readonly BankAccount bankAcc;
 
         public CashOrdersForBankSelectDialog(BankAccount bankAcc, SelectCashOrdersDelegate selectMethod)
         {
-            BankAcc = bankAcc;
+            this.bankAcc = bankAcc;
             DateEnd = DateTime.Today;
             DateStart = DateTime.Today.AddDays(-30);
-            SelectCashOrders = selectMethod;
+            selectCashOrders = selectMethod;
             LayoutControl = myDataUserControl = new CashOrdersForBankSelectDialogUC();
             RefreshData(null);
             WindowName = "Выбор кассовых ордеров для банка";
@@ -63,7 +63,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentDocument;
             set
             {
-                if (myCurrentDocument != null && myCurrentDocument.Equals(value)) return;
+                if (myCurrentDocument == value) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }
@@ -75,7 +75,7 @@ namespace KursAM2.View.DialogUserControl
             get => myDataUserControl;
             set
             {
-                if (Equals(myDataUserControl, value)) return;
+                if (myDataUserControl == value) return;
                 myDataUserControl = value;
                 RaisePropertyChanged();
             }
@@ -86,7 +86,7 @@ namespace KursAM2.View.DialogUserControl
         {
             base.RefreshData(obj);
             Documents.Clear();
-            Documents.AddRange(SelectCashOrders(BankAcc.DocCode, DateStart, DateEnd));
+            Documents.AddRange(selectCashOrders(bankAcc.DocCode, DateStart, DateEnd));
             myDataUserControl.gridDocument.ItemsSource = Documents;
             myDataUserControl.gridDocument.RefreshData();
         }

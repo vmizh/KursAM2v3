@@ -132,7 +132,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 ItemsCollection.Clear();
                 var data = ctx.SD_34.Where(_ => _.KONTRAGENT_DC == kontrDC
-                                                && _.KONTR_FROM_DC == null && _.SPOST_DC == null);
+                                                && (_.KONTR_FROM_DC ?? 0) == 0 && (_.SPOST_DC ?? 0) == 0)
+                    .OrderByDescending(_ => _.DATE_ORD);
                 foreach (var d in data)
                 {
                     ItemsCollection.Add(new CashPaymentRow
@@ -147,7 +148,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     });
                 }
             }
-
             RaisePropertyChanged(nameof(ItemsCollection));
         }
 

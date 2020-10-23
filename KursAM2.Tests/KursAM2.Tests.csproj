@@ -61,6 +61,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepositoriesTests\DistributeNaklad\DistributeNakladCRUD.cs" />
+    <Compile Include="RepositoriesTests\Invoices\ProviderTests.cs" />
     <Compile Include="TestBase.cs" />
   </ItemGroup>
   <ItemGroup>

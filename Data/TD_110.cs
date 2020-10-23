@@ -18,6 +18,7 @@ namespace Data
         public TD_110()
         {
             this.TD_397 = new HashSet<TD_397>();
+            this.ProviderInvoicePay = new HashSet<ProviderInvoicePay>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -51,5 +52,7 @@ namespace Data
         public virtual SD_84 SD_84 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TD_397> TD_397 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProviderInvoicePay> ProviderInvoicePay { get; set; }
     }
 }

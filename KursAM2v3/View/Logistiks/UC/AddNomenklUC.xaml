@@ -47,7 +47,7 @@
                             dxg:DataControlSerializationOptions.RemoveOldColumns="False"
                             CurrentItem="{Binding CurrentGroup}"
                             ItemsSource="{Binding NomenklGroup}"
-                            IsEnabled="{Binding IsUsluga, UpdateSourceTrigger=LostFocus}">
+                            IsEnabled="{Binding IsNotUsluga, UpdateSourceTrigger=LostFocus}">
                             <dxg:TreeListControl.View>
                                 <dxg:TreeListView ShowTotalSummary="False"
                                                   Name="treeListPermissionStructView"

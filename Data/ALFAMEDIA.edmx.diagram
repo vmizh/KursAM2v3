@@ -2044,7 +2044,13 @@
         <AssociationConnector Association="ALFAMEDIA.HD_17" ManuallyRouted="false" />
         <EntityTypeShape EntityType="ALFAMEDIA.TD_26_CurrencyConvert" Width="1.5" PointX="51" PointY="663.5" />
         <AssociationConnector Association="ALFAMEDIA.FK_TD_26_CurrencyConvert" />
-      </Diagram>
+        <EntityTypeShape EntityType="ALFAMEDIA.ProviderInvoicePay" Width="1.5" PointX="53.75" PointY="663.375" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProviderInvoicePay" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProviderInvoicePay_BankCode" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProviderInvoicePay_CashDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProviderInvoicePay_SD_26" />
+        <AssociationConnector Association="ALFAMEDIA.FK_TD_26_CurrencyConvert_SD_27" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

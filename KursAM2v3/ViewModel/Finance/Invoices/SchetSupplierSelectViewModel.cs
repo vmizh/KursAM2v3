@@ -4,6 +4,8 @@ using Core;
 using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using Data;
+using Data.Repository;
 using KursAM2.View.Finance.UC;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -56,7 +58,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     foreach (var c in ctx.SD_26)
-                        InvoiceCollection.Add(new InvoiceProvider(c));
+                        InvoiceCollection.Add(new InvoiceProvider(c,new UnitOfWork<ALFAMEDIAEntities>()));
                 }
             }
             catch (Exception ex)

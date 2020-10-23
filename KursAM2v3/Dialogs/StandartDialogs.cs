@@ -64,10 +64,10 @@ namespace KursAM2.Dialogs
             return ret;
         }
 
-        public static List<Nomenkl> SelectNomenkls(Currency crs = null, bool isUsluga = false)
+        public static List<Nomenkl> SelectNomenkls(Currency crs = null, bool isNotUsluga = false)
         {
             //MainReferences.UpdateNomenkl();
-            var ctx = new AddNomenklViewModel(crs, isUsluga)
+            var ctx = new AddNomenklViewModel(crs, isNotUsluga)
             {
                 WindowName = "Выбор номенклатур"
             };
@@ -173,7 +173,7 @@ namespace KursAM2.Dialogs
 
         public static BankPaymentRow SelectBankOperationForProviderInvoice(decimal kontrDC)
         {
-            var ctx = new AddPaymentBankClientInvoice(kontrDC)
+            var ctx = new AddPaymentBankProviderInvoice(kontrDC)
             {
                 WindowName = $"Выбор банковского платежа для {MainReferences.GetKontragent(kontrDC).Name}"
             };
@@ -185,7 +185,7 @@ namespace KursAM2.Dialogs
 
         public static CashPaymentRow SelectCashOperationForProviderInvoice(decimal kontrDC)
         {
-            var ctx = new AddPaymentCashClientInvoice(kontrDC)
+            var ctx = new AddPaymentCashProviderInvoice(kontrDC)
             {
                 WindowName = $"Выбор кассового расхода для {MainReferences.GetKontragent(kontrDC).Name}"
             };
@@ -305,13 +305,13 @@ namespace KursAM2.Dialogs
         }
 
         public static InvoiceProvider SelectInvoiceProvider(CashOutWindowViewModel cashOut, bool isUsePayment,
-            bool isUseAccepted)
+            bool isUseAccepted, bool isOnlyLastYear = false)
         {
             if (cashOut == null) return null;
             if (cashOut.Document.KONTRAGENT_DC != null)
             {
                 var ctx = new InvoiceProviderSearchDialog((decimal) cashOut.Document.KONTRAGENT_DC, isUsePayment,
-                    isUseAccepted);
+                    isUseAccepted,true);
                 var dlg = new SelectDialogView {DataContext = ctx};
                 ctx.Form = dlg;
                 dlg.ShowDialog();
@@ -327,18 +327,18 @@ namespace KursAM2.Dialogs
             }
         }
 
-        public static InvoiceProvider SelectInvoiceProvider(bool isUsePayment, bool isUseAccepted)
+        public static InvoiceProvider SelectInvoiceProvider(bool isUsePayment, bool isUseAccepted, bool isLastYearOnly = false)
         {
-            var ctx = new InvoiceProviderSearchDialog(isUsePayment, isUseAccepted);
+            var ctx = new InvoiceProviderSearchDialog(isUsePayment, isUseAccepted, isLastYearOnly);
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
-        public static InvoiceProvider SelectInvoiceProvider(decimal kontrDC, bool isUsePayment, bool isUseAccepted)
+        public static InvoiceProvider SelectInvoiceProvider(decimal kontrDC, bool isUsePayment, bool isUseAccepted, bool isLastYearOnly = false)
         {
-            var ctx = new InvoiceProviderSearchDialog(kontrDC, isUsePayment, isUseAccepted);
+            var ctx = new InvoiceProviderSearchDialog(kontrDC, isUsePayment, isUseAccepted,isLastYearOnly);
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();

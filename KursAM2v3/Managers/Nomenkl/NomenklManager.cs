@@ -8,6 +8,7 @@ using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using Helper;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl.ViewModel;
 using KursAM2.ViewModel.Logistiks;
@@ -121,11 +122,6 @@ namespace KursAM2.Managers.Nomenkl
             return item?.Remain ?? 0;
         }
 
-        //public decimal GetNomenklCount(DateTime date, decimal nomDC)
-        //{
-
-        //}
-
         public static NomenklGroup CategoryAdd(NameNoteViewModel cat, decimal? parentDC)
         {
             using (var ctx = GlobalOptions.GetEntities())
@@ -212,6 +208,35 @@ namespace KursAM2.Managers.Nomenkl
                         WindowManager.ShowError(ex);
                     }
                 }
+            }
+        }
+
+        public static void RecalcPrice(List<decimal> nomdcs)
+        {
+
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                using (var transaction = ctx.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var n in nomdcs)
+                        {
+                            ctx.Database.ExecuteSqlCommand($"INSERT INTO NOMENKL_RECALC (NOM_DC, OPER_DATE) " +
+                                                           $"VALUES ({CustomFormat.DecimalToSqlDecimal(n)}, '20000101');");
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        if (transaction.UnderlyingTransaction.Connection != null)
+                            transaction.Rollback();
+                        WindowManager.ShowError(ex);
+                    }
+                }
+
+                RecalcPrice();
             }
         }
     }

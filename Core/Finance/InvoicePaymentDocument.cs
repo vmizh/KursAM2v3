@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -18,7 +19,9 @@ namespace Core.Finance
         #endregion
 
         #region Properties
-
+        public override decimal DocCode { set; get; }
+        public override int Code { set; get; }
+        public override Guid Id { set; get; }
         public DocumentType DocumentType { set; get; }
         public string DocumentName { set; get; }
         public decimal Summa { set; get; }

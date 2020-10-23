@@ -40,10 +40,12 @@
                 </dxb:Bar.DockInfo>
             </dxb:Bar>
         </dxb:BarManager.Bars>
-        <dxd:DockLayoutManager Margin="0" x:Name="dockLayout1" AllowCustomization="True">
+        <dxd:DockLayoutManager Margin="0"  x:Name="dockLayout1" AllowCustomization="True">
             <dxd:DockLayoutManager.LayoutRoot>
+                <!-- ReSharper disable once UnusedMember.Global -->
                 <dxd:LayoutGroup Name="LayoutGroup" Padding="0" ShowCloseButton="False" ShowControlBox="False"
-                                 ShowScrollNextButton="False" ShowScrollPrevButton="False" Margin="0">
+                                 ShowScrollNextButton="False" ShowScrollPrevButton="False" Margin="0"
+                                 >
                     <dxd:LayoutPanel Name="LayoutPanel" Caption="" ShowCloseButton="False" Padding="0" Margin="0"
                                      ShowControlBox="False"
                                      ShowPinButton="False" 

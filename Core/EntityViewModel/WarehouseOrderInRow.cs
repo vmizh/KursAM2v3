@@ -19,8 +19,9 @@ namespace Core.EntityViewModel
         {
         }
 
-        public WarehouseOrderInRow(TD_24 entity) : base(entity)
+        public WarehouseOrderInRow(TD_24 entity, bool isLoadSPost = true) : base(entity)
         {
+            
             if (entity.DDT_SPOST_DC != null)
                 LinkInvoice = new InvoiceProviderRow(entity.TD_26);
             if (entity.DDT_RASH_ORD_DC != null)

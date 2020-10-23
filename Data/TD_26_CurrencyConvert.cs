@@ -24,9 +24,11 @@ namespace Data
         public decimal Summa { get; set; }
         public decimal SummaWithNaklad { get; set; }
         public string Note { get; set; }
-        public decimal DOC_CODE { get; set; }
-        public int CODE { get; set; }
+        public Nullable<decimal> DOC_CODE { get; set; }
+        public Nullable<int> CODE { get; set; }
+        public decimal StoreDC { get; set; }
     
         public virtual TD_26 TD_26 { get; set; }
+        public virtual SD_27 SD_27 { get; set; }
     }
 }

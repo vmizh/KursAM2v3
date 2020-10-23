@@ -2,29 +2,22 @@
 <module type="RIDER_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$/../../Calculates" />
-    <content url="file://$MODULE_DIR$/../../Calculates.Tests" />
     <content url="file://$MODULE_DIR$/../../Core" />
     <content url="file://$MODULE_DIR$/../../Core.Tests" />
     <content url="file://$MODULE_DIR$/../../CoreView" />
+    <content url="file://$MODULE_DIR$/../../DXApplication1/KursRepozit" />
     <content url="file://$MODULE_DIR$/../../Data" />
-    <content url="file://$MODULE_DIR$/../../DevExpress" />
     <content url="file://$MODULE_DIR$/../../FinanceAnalitic" />
-    <content url="file://$MODULE_DIR$/../../GenerateDataContract" />
-    <content url="file://$MODULE_DIR$/../../GenerateDataContract.Tests" />
     <content url="file://$MODULE_DIR$/../../Helper" />
     <content url="file://$MODULE_DIR$/../../KursAM2.Tests" />
     <content url="file://$MODULE_DIR$/../../KursAM2v3" />
     <content url="file://$MODULE_DIR$/../../KursAM2v3.sln" />
-    <content url="file://$MODULE_DIR$/../../KursStart" />
-    <content url="file://$MODULE_DIR$/../../KursWPFFormTest" />
+    <content url="file://$MODULE_DIR$/../../KursRepozit.Tests" />
     <content url="file://$MODULE_DIR$/../../LayoutManager" />
     <content url="file://$MODULE_DIR$/../../PeriodManager" />
     <content url="file://$MODULE_DIR$/../../Reports" />
-    <content url="file://$MODULE_DIR$/../../SQLite.Base" />
     <content url="file://$MODULE_DIR$/../../ServerCalculate" />
-    <content url="file://$MODULE_DIR$/../../ServerCalculate.Tests" />
     <content url="file://$MODULE_DIR$/../../Updater" />
-    <content url="file://$MODULE_DIR$/../../Updater.Tests" />
     <content url="file://$MODULE_DIR$/../../VersionGenerate" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

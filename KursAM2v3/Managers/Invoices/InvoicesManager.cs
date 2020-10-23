@@ -55,7 +55,7 @@ namespace KursAM2.Managers.Invoices
         /// <returns></returns>
         public static InvoiceProvider GetInvoiceProvider(decimal dc)
         {
-            var doc = new InvoiceProvider();
+            var doc = new InvoiceProvider(new UnitOfWork<ALFAMEDIAEntities>());
             var pDocs = new List<InvoicePaymentDocument>();
             try
             {
@@ -128,21 +128,21 @@ namespace KursAM2.Managers.Invoices
                     if (i?.SD_24 != null)
                         sum += (from q in i.TD_26 from d in q.TD_24 select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
                     // ReSharper disable once AssignNullToNotNullAttribute
-                    doc = new InvoiceProvider(i)
+                    doc = new InvoiceProvider(i,new UnitOfWork<ALFAMEDIAEntities>())
                     {
                         SummaFact = sum,
                         myState = RowStatus.NotEdited
                     };
-                    foreach (var p in pDocs) doc.PaymentDocs.Add(p);
-                    foreach (var row in doc.Rows)
-                    {
-                        row.Parent = doc;
-                        row.myState = RowStatus.NotEdited;
-                        foreach (var c in row.CurrencyConvertRows)
-                        {
-                            c.myState = RowStatus.NotEdited;
-                        }
-                    }
+                    // foreach (var p in pDocs) doc.PaymentDocs.Add(p);
+                    // foreach (var row in doc.Rows)
+                    // {
+                    //     row.Parent = doc;
+                    //     row.myState = RowStatus.NotEdited;
+                    //     foreach (var c in row.CurrencyConvertRows)
+                    //     {
+                    //         c.myState = RowStatus.NotEdited;
+                    //     }
+                    // }
                     doc.Facts = new ObservableCollection<WarehouseOrderInRow>();
                     if (doc.Entity?.TD_26 != null)
                     {
@@ -216,12 +216,12 @@ namespace KursAM2.Managers.Invoices
             if (i?.SD_24 != null)
                 sum += (from q in i.TD_26 from d in q.TD_24 select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
             // ReSharper disable once AssignNullToNotNullAttribute
-            doc = new InvoiceProvider(i)
+            doc = new InvoiceProvider(i,new UnitOfWork<ALFAMEDIAEntities>())
             {
                 SummaFact = sum,
                 myState = RowStatus.NotEdited
             };
-            foreach (var p in pDocs) doc.PaymentDocs.Add(p);
+            // foreach (var p in pDocs) doc.PaymentDocs.Add(p);
             foreach (var row in doc.Rows)
             {
                 row.Parent = doc;
@@ -266,7 +266,7 @@ namespace KursAM2.Managers.Invoices
 
         public static InvoiceProvider NewProviderCopy(InvoiceProvider doc)
         {
-            var ret = new InvoiceProvider(doc?.Entity)
+            var ret = new InvoiceProvider(doc?.Entity,new UnitOfWork<ALFAMEDIAEntities>())
             {
                 DocCode = -1,
                 SF_POSTAV_NUM = null,
@@ -990,7 +990,7 @@ namespace KursAM2.Managers.Invoices
                     var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
-                        var newDoc = new InvoiceProvider(d);
+                        var newDoc = new InvoiceProvider(d,new UnitOfWork<ALFAMEDIAEntities>());
                         if (isUsePayment)
                         {
                             var pd = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode);
@@ -999,22 +999,22 @@ namespace KursAM2.Managers.Invoices
                                 ret.Add(newDoc);
                                 continue;
                             }
-                            if (newDoc.SF_CRS_SUMMA > pd.PaySumma)
-                            {
-                                newDoc.PaymentDocs.Add(new InvoicePaymentDocument
-                                {
-                                    Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
-                                });
-                                ret.Add(newDoc);
-                            }
+                            // if (newDoc.SF_CRS_SUMMA > pd.PaySumma)
+                            // {
+                            //     newDoc.PaymentDocs.Add(new InvoicePaymentDocument
+                            //     {
+                            //         Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
+                            //     });
+                            //     ret.Add(newDoc);
+                            // }
                         }
                         else
                         {
-                            newDoc.PaymentDocs.Add(new InvoicePaymentDocument
-                            {
-                                Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
-                            });
-                            ret.Add(newDoc);
+                            // newDoc.PaymentDocs.Add(new InvoicePaymentDocument
+                            // {
+                            //     Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
+                            // });
+                            // ret.Add(newDoc);
                         }
                     }
                 }
@@ -1154,7 +1154,7 @@ namespace KursAM2.Managers.Invoices
                     var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
-                        var newDoc = new InvoiceProvider(d);
+                        var newDoc = new InvoiceProvider(d,new UnitOfWork<ALFAMEDIAEntities>());
                         if (isUsePayment)
                         {
                             var pd = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode);
@@ -1163,22 +1163,22 @@ namespace KursAM2.Managers.Invoices
                                 ret.Add(newDoc);
                                 continue;
                             }
-                            if (newDoc.SF_CRS_SUMMA > pd.PaySumma)
-                            {
-                                newDoc.PaymentDocs.Add(new InvoicePaymentDocument
-                                {
-                                    Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
-                                });
-                                ret.Add(newDoc);
-                            }
+                            // if (newDoc.SF_CRS_SUMMA > pd.PaySumma)
+                            // {
+                            //     newDoc.PaymentDocs.Add(new InvoicePaymentDocument
+                            //     {
+                            //         Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
+                            //     });
+                            //     ret.Add(newDoc);
+                            // }
                         }
                         else
                         {
-                            newDoc.PaymentDocs.Add(new InvoicePaymentDocument
-                            {
-                                Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
-                            });
-                            ret.Add(newDoc);
+                            // newDoc.PaymentDocs.Add(new InvoicePaymentDocument
+                            // {
+                            //     Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
+                            // });
+                            // ret.Add(newDoc);
                         }
                     }
                 }
@@ -1187,7 +1187,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
-            return ret;
+            return ret.OrderByDescending(_ => _.SF_POSTAV_DATE).ToList();
         }
 
         public static List<InvoiceProvider> GetInvoicesProvider(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
@@ -1209,7 +1209,7 @@ namespace KursAM2.Managers.Invoices
                                 .Include(_ => _.SD_189)
                                 .Include(_ => _.SD_40)
                                 .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd &&
-                                            _.SF_POST_DC == kontragentDC && _.SF_ACCEPTED == 1)
+                                            _.SF_POST_DC == kontragentDC && (_.SF_ACCEPTED ?? 0) == 1)
                             join td26 in ctx.TD_26
                                     .Include(_ => _.SD_83)
                                     .Include(_ => _.SD_175)
@@ -1246,31 +1246,16 @@ namespace KursAM2.Managers.Invoices
                     var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
-                        var newDoc = new InvoiceProvider(d);
+                        if (ret.Any(_ => _.DOC_CODE == d.DOC_CODE)) continue;
+                        var newDoc = new InvoiceProvider(d,new UnitOfWork<ALFAMEDIAEntities>());
                         if (isUsePayment)
                         {
-                            var pd = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode);
-                            if (pd == null)
-                            {
+                            if(newDoc.PaySumma < newDoc.SF_CRS_SUMMA)
                                 ret.Add(newDoc);
-                                continue;
-                            }
-                            if (newDoc.SF_CRS_SUMMA > pd.PaySumma)
-                            {
-                                newDoc.PaymentDocs.Add(new InvoicePaymentDocument
-                                {
-                                    Summa = pd.PaySumma
-                                });
-                                ret.Add(newDoc);
-                            }
                         }
                         else
                         {
-                            newDoc.PaymentDocs.Add(new InvoicePaymentDocument
-                            {
-                                Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
-                            });
-                            ret.Add(newDoc);
+                           ret.Add(newDoc);
                         }
                     }
                 }
@@ -1279,7 +1264,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
-            return ret;
+            return ret.OrderByDescending(_ => _.SF_POSTAV_DATE).ToList();
         }
 
         #endregion
@@ -1734,7 +1719,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
-            return ret;
+            return ret.OrderByDescending(_ => _.SF_DATE).ToList();
         }
 
         public static List<InvoiceClient> GetInvoicesClient(Waybill waybill)
@@ -1789,7 +1774,7 @@ namespace KursAM2.Managers.Invoices
                 WindowManager.ShowError(ex);
                 return null;
             }
-            return ret;
+            return ret.OrderByDescending(_ => _.SF_DATE).ToList();
         }
 
         public static List<InvoiceClient> GetInvoicesClient(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
@@ -1883,7 +1868,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
-            return ret;
+            return ret.OrderByDescending(_ => _.SF_DATE).ToList();
         }
 
         public static void DeleteClient(decimal dc, SearchInvoiceClientView searchWindow = null)

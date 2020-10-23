@@ -85,6 +85,7 @@ namespace KursAM2.View
                 MessageBox.Show(s.ToString());
             }
         }
+
         private void CheckUpdateVersion()
         {
             myVersionUpdateTimer.Dispose();
@@ -92,6 +93,7 @@ namespace KursAM2.View
             ver.CheckVersion();
             myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, 1000 * 60, Timeout.Infinite);
         }
+
         public ICommand ProgramCloseCommnd
         {
             get { return new Command(ProgramClose, _ => true); }
@@ -482,7 +484,6 @@ namespace KursAM2.View
                         var dnakForm = new KursBaseSearchWindow()
                         {
                             Owner = Application.Current.MainWindow,
-                            
                         };
                         var v = new DistributeNakladSearchView(dnakForm);
                         dnakForm.modelViewControl.Content = v;
@@ -490,7 +491,7 @@ namespace KursAM2.View
                         dnakForm.DataContext = v.DataContext;
                         dnakForm.Show();
                         break;
-                        
+
                     case "Сравнение балансов":
                         form = new ManagementBalansCompareView
                         {

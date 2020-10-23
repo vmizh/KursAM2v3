@@ -68,7 +68,8 @@ namespace Data.Repository
 
         public void Rollback()
         {
-            if (objTran == null) return;
+            if (objTran?.UnderlyingTransaction.Connection == null)
+                return;
             objTran.Rollback();
             objTran.Dispose();
         }

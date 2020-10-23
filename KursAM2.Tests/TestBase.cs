@@ -50,7 +50,7 @@ namespace KursAM2.Tests
         }
 
         public decimal DocDC = -1;
-        protected UnitOfWork<ALFAMEDIAEntities> UnitOfWork;
+        protected UnitOfWork<ALFAMEDIAEntities> UnitOfWork = new UnitOfWork<ALFAMEDIAEntities>();
 
         private ALFAMEDIAEntities entities;
     }

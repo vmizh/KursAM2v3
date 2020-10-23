@@ -138,6 +138,7 @@
     <Compile Include="EntityViewModel\OffBalanceSheetInDocViewModel.cs" />
     <Compile Include="EntityViewModel\OffBalanceSheetInRowViewModel.cs" />
     <Compile Include="EntityViewModel\OffBalanceSheetChargesTypeViewModel.cs" />
+    <Compile Include="EntityViewModel\ProviderInvoicePay.cs" />
     <Compile Include="EntityViewModel\SD_43ViewModel.cs" />
     <Compile Include="EntityViewModel\NomenklProductKind.cs" />
     <Compile Include="EntityViewModel\Period.cs" />

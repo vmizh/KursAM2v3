@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Windows.Media;
@@ -50,7 +52,7 @@ namespace Core
                     DataSource = "172.16.0.1",
                     InitialCatalog = "EcoOndol",
                     UserID = "sysadm",
-                    Password = "19655691"
+                    Password = "19655691",
                 }.ToString();
             var ret = new ALFAMEDIAEntities(SqlConnectionString);
             return ret;

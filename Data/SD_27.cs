@@ -55,6 +55,7 @@ namespace Data
             this.EXT_USERS1 = new HashSet<EXT_USERS>();
             this.EXT_USERS2 = new HashSet<EXT_USERS>();
             this.SD_40 = new HashSet<SD_40>();
+            this.TD_26_CurrencyConvert = new HashSet<TD_26_CurrencyConvert>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -150,5 +151,7 @@ namespace Data
         public virtual ICollection<EXT_USERS> EXT_USERS2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_40> SD_40 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TD_26_CurrencyConvert> TD_26_CurrencyConvert { get; set; }
     }
 }

@@ -1458,9 +1458,9 @@ namespace Core.EntityViewModel
         {
             Nomenkl = MainReferences.GetNomenkl(DDT_NOMENKL_DC);
             Unit = Nomenkl.Unit;
-            if (DDT_SPOST_ROW_CODE != null && TD_26 != null) InvoiceProviderRow = new InvoiceProviderRow(TD_26);
-            if (DDT_SPOST_DC != null && TD_26 != null && TD_26.SD_26 != null)
-                InvoiceProvider = new InvoiceProvider(TD_26.SD_26);
+            //if (DDT_SPOST_ROW_CODE != null && TD_26 != null) InvoiceProviderRow = new InvoiceProviderRow(TD_26);
+            //if (DDT_SPOST_DC != null && TD_26 != null && TD_26.SD_26 != null)
+            //    InvoiceProvider = new InvoiceProvider(TD_26.SD_26);
             if (MainReferences.Currencies.ContainsKey(DDT_CRS_DC)) Currency = MainReferences.Currencies[DDT_CRS_DC];
             if (DDT_SHPZ_DC != null)
                 SDRSchet = MainReferences.SDRSchets[DDT_SHPZ_DC.Value];

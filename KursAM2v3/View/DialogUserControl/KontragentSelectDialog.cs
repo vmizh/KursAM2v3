@@ -105,7 +105,7 @@ namespace KursAM2.View.DialogUserControl
                             FullName = k.FullName,
                             IsBalans = k.IsBalans,
                             INN = k.INN,
-                            DELETED = k.DELETED,
+                            DELETED = k.DELETED ?? 0,
                             Note = k.Note
                         });
                     }
@@ -123,7 +123,7 @@ namespace KursAM2.View.DialogUserControl
                             FullName = k.FullName,
                             IsBalans = k.IsBalans,
                             INN = k.INN,
-                            DELETED = k.DELETED,
+                            DELETED = k.DELETED ?? 0,
                             Note = k.Note
                         };
                         KontragentCollection.Add(kontr);
@@ -153,7 +153,7 @@ namespace KursAM2.View.DialogUserControl
                             FullName = k.FullName,
                             IsBalans = k.IsBalans,
                             INN = k.INN,
-                            DELETED = k.DELETED
+                            DELETED = k.DELETED ?? 0
                         });
                     }
                 else
@@ -170,7 +170,7 @@ namespace KursAM2.View.DialogUserControl
                             FullName = k.FullName,
                             IsBalans = k.IsBalans,
                             INN = k.INN,
-                            DELETED = k.DELETED
+                            DELETED = k.DELETED ?? 0
                         };
                         KontragentCollection.Add(kontr);
                     }
@@ -209,7 +209,7 @@ namespace KursAM2.View.DialogUserControl
                                 FullName = k.FullName,
                                 IsBalans = k.IsBalans,
                                 INN = k.INN,
-                                DELETED = k.DELETED
+                                DELETED = k.DELETED ?? 0
                             });
                         }
                         else
@@ -224,7 +224,7 @@ namespace KursAM2.View.DialogUserControl
                                     FullName = k.FullName,
                                     IsBalans = k.IsBalans,
                                     INN = k.INN,
-                                    DELETED = k.DELETED
+                                    DELETED = k.DELETED ?? 0
                                 });
                         }
                 RaisePropertyChanged(nameof(KontragentCollection));

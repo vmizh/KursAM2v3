@@ -11,6 +11,7 @@ using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.ViewModel.MutualAccounting;
 using Core.WindowsManager;
+using Data;
 using DevExpress.Xpf.Editors;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -154,8 +155,8 @@ namespace KursAM2.ViewModel.Finance
             if (CurrentCreditor != null)
             {
                 var item = CurrentCreditor.VZT_KONTR_DC > 0
-                    ? StandartDialogs.SelectInvoiceProvider(CurrentCreditor.VZT_KONTR_DC, true, true)
-                    : StandartDialogs.SelectInvoiceProvider(true, true);
+                    ? StandartDialogs.SelectInvoiceProvider(CurrentCreditor.VZT_KONTR_DC, true, true, true)
+                    : StandartDialogs.SelectInvoiceProvider(true, true, true);
                 if (item == null) return;
                 CurrentCreditor.VZT_DOC_NUM = (Document.Rows.Count + 1).ToString();
                 CurrentCreditor.VZT_CRS_POGASHENO = item.SF_CRS_SUMMA - item.PaySumma;
@@ -163,7 +164,7 @@ namespace KursAM2.ViewModel.Finance
                 CurrentCreditor.VZT_CRS_SUMMA = item.SF_CRS_SUMMA - item.PaySumma;
                 CurrentCreditor.VZT_KONTR_CRS_SUMMA = item.SF_CRS_SUMMA - item.PaySumma;
                 CurrentCreditor.VZT_UCH_CRS_RATE = 1;
-                CurrentCreditor.VZT_SFACT_DC = item.DocCode;
+                CurrentCreditor.VZT_SPOST_DC = item.DocCode;
                 CurrentCreditor.Kontragent = MainReferences.GetKontragent(item.SF_POST_DC);
                 CurrentCreditor.SFProvider = item;
                 if (CurrentCreditor.State == RowStatus.NotEdited) CurrentCreditor.myState = RowStatus.Edited;
@@ -171,7 +172,7 @@ namespace KursAM2.ViewModel.Finance
             }
             else
             {
-                var item = StandartDialogs.SelectInvoiceProvider(true, true);
+                var item = StandartDialogs.SelectInvoiceProvider(true, true, true);
                 if (item == null) return;
                 VzaimoraschetType vzdefault = null;
                 var vzdefDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>
@@ -191,6 +192,7 @@ namespace KursAM2.ViewModel.Finance
                     VZT_CRS_SUMMA = item.SF_CRS_SUMMA - item.PaySumma,
                     VZT_KONTR_CRS_SUMMA = item.SF_CRS_SUMMA - item.PaySumma,
                     VZT_UCH_CRS_RATE = 1,
+                    VZT_SPOST_DC = item.DocCode,
                     State = RowStatus.NewRow,
                     VzaimoraschType = vzdefault,
                     Parent = Document,
@@ -203,7 +205,38 @@ namespace KursAM2.ViewModel.Finance
                 KontragentManager.UpdateSelectCount(newcred.Kontragent.DocCode);
             }
 
-            UpdateVisualData();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                try
+                {
+                    var old = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.VZDC == CurrentCreditor.DocCode
+                                                                         && _.VZCode == CurrentCreditor.Code);
+                    if (old == null)
+                    {
+                        ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
+                        {
+                            Id = Guid.NewGuid(),
+                            Rate = 1,
+                            Summa = (decimal) CurrentCreditor.VZT_CRS_SUMMA,
+                            VZDC = CurrentCreditor.DocCode,
+                            VZCode = CurrentCreditor.Code,
+                            DocDC = (decimal) CurrentCreditor.VZT_SPOST_DC
+                        });
+                    }
+                    else
+                    {
+                        old.Summa = (decimal) CurrentCreditor.VZT_CRS_SUMMA;
+                    }
+
+                    ctx.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    WindowManager.ShowError(ex);
+                }
+
+                UpdateVisualData();
+            }
         }
 
         public ICommand SetCreditorSFCommand
@@ -471,7 +504,7 @@ namespace KursAM2.ViewModel.Finance
             {
                 return new Command(AddNewCreditor,
                     appDomain => Document?.CreditorCurrency != null ||
-                                  !IsCurrencyConvert && Document?.DebitorCurrency != null);
+                                 !IsCurrencyConvert && Document?.DebitorCurrency != null);
             }
         }
 

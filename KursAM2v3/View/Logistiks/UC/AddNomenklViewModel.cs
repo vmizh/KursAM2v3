@@ -16,16 +16,16 @@ namespace KursAM2.View.Logistiks.UC
         private Currency currentCrs;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private bool myIsUsluga;
+        private bool myIsNotUsluga;
         private NomenklGroup myCurrentGroup;
         private Nomenkl myCurrentNomenkl;
         private Nomenkl myCurrentSelectNomenkl;
         private AddNomenklUC myDataUserControl;
 
-        public AddNomenklViewModel(Currency crs = null, bool isUsluga = false)
+        public AddNomenklViewModel(Currency crs = null, bool isNotUsluga = false)
         {
             currentCrs = crs;
-            IsUsluga = isUsluga;
+            IsNotUsluga = isNotUsluga;
             myDataUserControl = new AddNomenklUC();
             // ReSharper disable once VirtualMemberCallInConstructor
             RefreshData(null);
@@ -53,15 +53,15 @@ namespace KursAM2.View.Logistiks.UC
             get => myCurrentGroup;
         }
 
-        public bool IsUsluga
+        public bool IsNotUsluga
         {
             set
             {
-                if (myIsUsluga == value) return;
-                myIsUsluga = value;
+                if (myIsNotUsluga == value) return;
+                myIsNotUsluga = value;
                 RaisePropertiesChanged();
             }
-            get => myIsUsluga;
+            get => myIsNotUsluga;
         }
         public AddNomenklUC DataUserControl
         {
@@ -117,18 +117,18 @@ namespace KursAM2.View.Logistiks.UC
                     foreach (var item in ctx.SD_82.ToList())
                         NomenklGroup.Add(new NomenklGroup(item));
                     foreach (var item in ctx.SD_83.ToList())
-                        if (IsUsluga)
-                        {
-                            if (item.NOM_0MATER_1USLUGA == 1)
-                                NomenklItem.Add(new Nomenkl(item));
-                            RaisePropertiesChanged(nameof(NomenklItem));
-                        }
-                        else
+                        if (IsNotUsluga)
                         {
                             if (currentCrs == null)
                                 NomenklItemCollection.Add(new Nomenkl(item));
                             else if (item.NOM_SALE_CRS_DC == currentCrs.DocCode)
                                 NomenklItemCollection.Add(new Nomenkl(item));
+                        }
+                        else
+                        {
+                            if (item.NOM_0MATER_1USLUGA == 1)
+                                NomenklItem.Add(new Nomenkl(item));
+                            RaisePropertiesChanged(nameof(NomenklItem));
                         }
                 }
             }

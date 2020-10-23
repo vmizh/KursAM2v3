@@ -45,9 +45,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                 _.IsCurrencyChange != true
                                 && _.VVT_KASS_PRIH_ORDER_DC == null &&
                                 _.VVT_RASH_KASS_ORDER_DC == null
-                                && _.VVT_VAL_RASHOD == 0)
+                                && (_.VVT_VAL_RASHOD ?? 0) == 0)
                     .OrderByDescending(_ => _.SD_101.VV_START_DATE).ToList();
-                foreach (var d in data)
+                foreach (var d in data.Where(_ => _.BankAccountDC == null &&
+                                                  _.VVT_SFACT_POSTAV_DC == null &&
+                                                  _.VVT_SFACT_CLIENT_DC == null
+                                                  && _.BankFromTransactionCode == null &&
+                                                  _.IsCurrencyChange != true
+                                                  && _.VVT_KASS_PRIH_ORDER_DC == null &&
+                                                  _.VVT_RASH_KASS_ORDER_DC == null))
                     ItemsCollection.Add(new BankPaymentRow
                     {
                         DocCode = d.DOC_CODE,
@@ -130,9 +136,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ItemsCollection.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                ItemsCollection.Clear();
                 var data = ctx.SD_33.Where(_ => _.KONTRAGENT_DC == kontrDC
-                                                && _.KONTR_FROM_DC == null && _.SFACT_DC == null);
+                                                && (_.KONTR_FROM_DC ?? 0) == 0 && (_.SFACT_DC ?? 0) == 0);
                 foreach (var d in data)
                 {
                     ItemsCollection.Add(new CashPaymentRow

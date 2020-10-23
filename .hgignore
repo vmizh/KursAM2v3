@@ -29,3 +29,5 @@ VersionGenerate.exe
 .vs/KursAM2v3/v15/Server/sqlite3/storage.ide-wal
 .vs/KursAM2v3/v15/sqlite3/db.lock
 DataAnalysis/SD 43.dim
+# Default ignored files
+KursAM2v3/GenViewModel/.idea/.idea.GenViewModel.dir/.idea/workspace.xml

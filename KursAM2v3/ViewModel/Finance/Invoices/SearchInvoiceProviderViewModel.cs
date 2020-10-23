@@ -5,23 +5,37 @@ using Core;
 using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Data;
+using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
+using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Finance.Invoices;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
     [POCOViewModel]
-    public class SearchInvoiceProviderViewModel : RSWindowSearchViewModelBase
+    public sealed class SearchInvoiceProviderViewModel : RSWindowSearchViewModelBase
     {
         private InvoiceProvider myCurrentDocument;
         private DateTime myDateEnd;
         private DateTime myDateStart;
-        private InvoicesManager invoiceManager = new InvoicesManager();
+        //private InvoicesManager invoiceManager = new InvoicesManager();
+
+        private readonly GenericKursDBRepository<SD_26> genericProviderRepository;
+
+        // ReSharper disable once NotAccessedField.Local
+        private readonly IInvoiceProviderRepository invoiceProviderRepository;
+
+        private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork =
+            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         public SearchInvoiceProviderViewModel()
         {
+            genericProviderRepository = new GenericKursDBRepository<SD_26>(unitOfWork);
+            invoiceProviderRepository = new InvoiceProviderRepository(unitOfWork);
+
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             Documents = new ObservableCollection<InvoiceProvider>();
@@ -34,6 +48,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public SearchInvoiceProviderViewModel(Window form) : base(form)
         {
             // ReSharper disable once VirtualMemberCallInConstructor
+            genericProviderRepository = new GenericKursDBRepository<SD_26>(unitOfWork);
+            invoiceProviderRepository = new InvoiceProviderRepository(unitOfWork);
             Form = form;
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
@@ -104,7 +120,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             Documents.Clear();
-            foreach (var d in invoiceManager.GetInvoicesProvider2(DateStart, DateEnd, false))
+            foreach (var d in invoiceProviderRepository.GetAllByDates(DateStart, DateEnd))
                     Documents.Add(d);
             
             RaisePropertyChanged(nameof(Documents));
@@ -119,10 +135,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewEmpty(object form)
         {
             var view = new InvoiceProviderView {Owner = Application.Current.MainWindow};
-            var ctx = new ProviderWindowViewModel
+            var ctx = new ProviderWindowViewModel(null)
             {
                 Form = view,
-                Document = InvoicesManager.NewProvider()
             };
             view.Show();
             view.DataContext = ctx;

@@ -1386,7 +1386,6 @@ namespace Core.EntityViewModel
                                 .Where(_ => _.NomDC == nomDC && _.StoreDC == storeDC && _.Date <= date)
                                 .Sum(_ => _.Prihod - _.Rashod);
                 }
-
                 return q;
             }
             catch (Exception ex)

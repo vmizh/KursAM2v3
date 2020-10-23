@@ -450,7 +450,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 DistributeAllNaklads.Clear();
                 foreach (var inv in Entity.DistributeNakladInvoices)
                 {
-                    var invoice = InvoiceProviderRepository.GetById(inv.InvoiceId);
+                    var invoice = InvoiceProviderRepository.GetByGuidId(inv.InvoiceId);
                     NakladInvoices.Add(new DistributeNakladInvoiceViewModel(inv)
                     {
                         Invoice = invoice.Entity,

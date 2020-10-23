@@ -743,6 +743,9 @@
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProviderInvoicePay.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="REMAINS.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

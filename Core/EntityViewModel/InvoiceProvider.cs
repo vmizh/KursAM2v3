@@ -9,6 +9,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Data;
+using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 
 // ReSharper disable All
@@ -22,13 +23,12 @@ namespace Core.EntityViewModel
     [MetadataType(typeof(SD_26LayoutData_FluentAPI))]
     public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>
     {
+        private UnitOfWork<ALFAMEDIAEntities> context;
+
         protected string SFact(decimal dc)
         {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var doc = ctx.SD_84.FirstOrDefault(_ => _.DOC_CODE == dc);
-                return doc == null ? null : $"№ {doc.SF_IN_NUM}/{doc.SF_OUT_NUM} от {doc.SF_DATE}  {doc.SF_NOTE}";
-            }
+            var doc = context.Context.SD_84.FirstOrDefault(_ => _.DOC_CODE == dc);
+            return doc == null ? null : $"№ {doc.SF_IN_NUM}/{doc.SF_OUT_NUM} от {doc.SF_DATE}  {doc.SF_NOTE}";
         }
 
         public virtual void Save(SD_26 doc)
@@ -51,17 +51,22 @@ namespace Core.EntityViewModel
         private Money myNakladAll;
         private decimal mySummaFact;
 
+        private bool isLoadAll;
+
         #endregion
 
         #region Constructors
 
-        public InvoiceProvider()
+        public InvoiceProvider(UnitOfWork<ALFAMEDIAEntities> ctx)
         {
+            context = ctx;
             Entity = DefaultValue();
         }
 
-        public InvoiceProvider(SD_26 entity)
+        public InvoiceProvider(SD_26 entity, UnitOfWork<ALFAMEDIAEntities> ctx, bool isLoadAll = false)
         {
+            this.isLoadAll = isLoadAll;
+            context = ctx;
             Entity = entity ?? DefaultValue();
             LoadReferences();
             Rows.CollectionChanged += (o, args) => State = RowStatus.NotEdited;
@@ -77,8 +82,8 @@ namespace Core.EntityViewModel
         public ObservableCollection<WarehouseOrderInRow> Facts { set; get; } =
             new ObservableCollection<WarehouseOrderInRow>();
 
-        public ObservableCollection<InvoicePaymentDocument> PaymentDocs { set; get; } =
-            new ObservableCollection<InvoicePaymentDocument>();
+        public ObservableCollection<ProviderInvoicePayViewModel> PaymentDocs { set; get; } =
+            new ObservableCollection<ProviderInvoicePayViewModel>();
 
         public decimal DOC_CODE
         {
@@ -220,8 +225,20 @@ namespace Core.EntityViewModel
             }
         }
 
-        public decimal SF_CRS_SUMMA =>
-            (decimal) (Rows == null || Rows.Count == 0 ? 0 : Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE));
+        public decimal SF_CRS_SUMMA
+        {
+            get => Entity.SF_CRS_SUMMA;
+            set
+            {
+                if (Entity.SF_CRS_SUMMA == value) return;
+                Entity.SF_CRS_SUMMA = value;
+                Entity.SF_RUB_SUMMA = value;
+                Entity.SF_FACT_SUMMA = value;
+                Entity.SF_KONTR_CRS_SUMMA = value;
+                Entity.SF_RUB_SUMMA = value;
+                RaisePropertyChanged();
+            }
+        }
 
         /// <summary>
         ///     Отфактурированная сумма
@@ -1077,14 +1094,80 @@ namespace Core.EntityViewModel
             if (Entity.TD_26 != null && Entity.TD_26.Count > 0)
                 foreach (var t in Entity.TD_26)
                 {
-                    var newRow = new InvoiceProviderRow(t);
+                    var newRow = new InvoiceProviderRow(t)
+                    {
+                        Parent = this
+                    };
                     Rows.Add(newRow);
                     if (t.TD_24 != null)
                         SummaFact += (decimal) t.SFT_SUMMA_K_OPLATE / t.SFT_KOL *
                                      t.TD_24.Sum(_ => _.DDT_KOL_PRIHOD);
                 }
 
+            PaymentDocs = new ObservableCollection<ProviderInvoicePayViewModel>();
+            if (Entity.ProviderInvoicePay != null && Entity.ProviderInvoicePay.Count > 0)
+            {
+                foreach (var pay in Entity.ProviderInvoicePay)
+                {
+                    var newItem = new ProviderInvoicePayViewModel(pay);
+                    if (pay.TD_101 != null)
+                    {
+                        newItem.DocSumma = (decimal) pay.TD_101.VVT_VAL_RASHOD;
+                        newItem.DocDate = pay.TD_101.SD_101.VV_START_DATE;
+                        newItem.DocName = "Банковский платеж";
+                        newItem.DocExtName = $"{pay.TD_101.SD_101.SD_114.BA_BANK_NAME} " +
+                                             $"р/с {pay.TD_101.SD_101.SD_114.BA_RASH_ACC}";
+                    }
+
+                    if (pay.SD_34 != null)
+                    {
+                        newItem.DocSumma = (decimal) pay.SD_34.SUMM_ORD;
+                        newItem.DocName = "Расходный кассовый ордер";
+                        newItem.DocNum = pay.SD_34.NUM_ORD.ToString();
+                        newItem.DocDate = (DateTime) pay.SD_34.DATE_ORD;
+                        if (pay.SD_34.SD_22 != null)
+                        {
+                            newItem.DocExtName = $"Касса {pay.SD_34.SD_22.CA_NAME}";
+                        }
+                        else
+                        {
+                            newItem.DocExtName = $"Касса {MainReferences.Cashs[(decimal) pay.SD_34.CA_DC].Name}";
+                        }
+                    }
+
+                    if (pay.TD_110 != null)
+                    {
+                        newItem.DocSumma = (decimal) pay.TD_110.VZT_CRS_SUMMA;
+                        newItem.DocName = "Акт взаимозачета";
+                        newItem.DocNum = pay.TD_110.SD_110.VZ_NUM.ToString();
+                        newItem.DocDate = pay.TD_110.SD_110.VZ_DATE;
+                        newItem.DocExtName = $"{pay.TD_110.VZT_DOC_NOTES}";
+                    }
+
+                    PaymentDocs.Add(newItem);
+                }
+            }
+
+            SummaFact = 0;
+            if (Entity.SD_24 != null)
+                SummaFact += (from q in Entity.TD_26
+                    from d in q.TD_24
+                    select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
+
             Facts = new ObservableCollection<WarehouseOrderInRow>();
+            if (Entity.TD_26 != null && Entity.TD_26.Count > 0)
+            {
+                foreach (var r in Entity.TD_26)
+                {
+                    if (r.TD_24 != null && r.TD_24.Count > 0)
+                    {
+                        foreach (var r2 in r.TD_24)
+                        {
+                            Facts.Add(new WarehouseOrderInRow(r2, isLoadAll));
+                        }
+                    }
+                }
+            }
         }
 
         public List<SD_26> LoadList()
@@ -1274,7 +1357,7 @@ namespace Core.EntityViewModel
             builder.Property(x => x.KontrReceiver).AutoGenerated()
                 .DisplayName("Получатель");
             builder.Property(x => x.Currency).AutoGenerated()
-                .DisplayName("Валюта");
+                .DisplayName("Валюта").Required();
             builder.Property(x => x.SF_CRS_SUMMA).AutoGenerated()
                 .DisplayName("Сумма").ReadOnly().DisplayFormatString("n2");
             builder.Property(x => x.SF_IN_NUM).AutoGenerated()
@@ -1309,9 +1392,9 @@ namespace Core.EntityViewModel
                 .DisplayName("Фактурировано");
             builder.Property(x => x.SF_KONTR_CRS_SUMMA).AutoGenerated()
                 .DisplayName("Сумма контрагента").ReadOnly().DisplayFormatString("n2");
-            builder.Property(x => x.NakladAll).AutoGenerated()
+            builder.Property(x => x.NakladAll).NotAutoGenerated()
                 .DisplayName("Всего").ReadOnly().DisplayFormatString("n2");
-            builder.Property(x => x.Overheads).AutoGenerated()
+            builder.Property(x => x.Overheads).NotAutoGenerated()
                 .DisplayName("По контрагентам").NullDisplayText("Накладные отсутствуют ");
             builder.Property(x => x.Contract).AutoGenerated()
                 .DisplayName("Договор поставки");
@@ -1395,13 +1478,13 @@ namespace Core.EntityViewModel
                                     .ContainsProperty(_ => _.SF_GRUZOPOLUCHATEL)
                                 .EndGroup()
                             .EndGroup()
-                            .GroupBox("Накладные расходы", Orientation.Horizontal)
-                                .ContainsProperty(_ => _.NakladAll)
-                                .ContainsProperty(_ => _.Overheads)
+                            .Group("Накладные расходы", Orientation.Vertical)
+                                //    .ContainsProperty(_ => _.NakladAll)
+                                //    .ContainsProperty(_ => _.Overheads)
+                                .ContainsProperty(_ => _.SF_NOTES)
+                                .ContainsProperty(_ => _.PersonaResponsible)
                             .EndGroup()
                         .EndGroup()
-                        .ContainsProperty(_ => _.SF_NOTES)
-                        .ContainsProperty(_ => _.PersonaResponsible)
                     .EndGroup()
                 .EndGroup();
             // @formatter:on
@@ -1413,11 +1496,11 @@ namespace Core.EntityViewModel
     [MetadataType(typeof(DataAnnotationsInvoiceProviderShort))]
     public class InvoiceProviderShort : InvoiceProvider
     {
-        public InvoiceProviderShort() : base()
+        public InvoiceProviderShort(UnitOfWork<ALFAMEDIAEntities> ctx) : base(ctx)
         {
         }
 
-        public InvoiceProviderShort(SD_26 entity) : base(entity)
+        public InvoiceProviderShort(SD_26 entity, UnitOfWork<ALFAMEDIAEntities> ctx) : base(entity, ctx)
         {
         }
     }

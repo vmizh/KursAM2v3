@@ -1,5 +1,6 @@
 ﻿using System.Data.Entity;
 using System.Data.Entity.Core.EntityClient;
+using System.Data.Entity.Infrastructure;
 
 namespace Data
 {

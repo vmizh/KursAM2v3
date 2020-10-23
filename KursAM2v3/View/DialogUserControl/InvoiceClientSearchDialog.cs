@@ -178,6 +178,7 @@ namespace KursAM2.View.DialogUserControl
         #region Fields
 
         private readonly bool isAccepted;
+        private readonly bool isOnlyLastYear;
 
         // ReSharper disable once NotAccessedField.Local
         private readonly bool isPaymentUse;
@@ -200,17 +201,18 @@ namespace KursAM2.View.DialogUserControl
 
         #region Constructors
 
-        public InvoiceProviderSearchDialog(bool isUsePayment, bool isUseAccepted)
+        public InvoiceProviderSearchDialog(bool isUsePayment, bool isUseAccepted,bool isOnlyLastYear = false)
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             WindowName = "Выбор счета";
             isPaymentUse = isUsePayment;
             isAccepted = isUseAccepted;
+            this.isOnlyLastYear = isOnlyLastYear;
             RefreshData(null);
         }
 
-        public InvoiceProviderSearchDialog(decimal kontrDC, bool isUsePayment, bool isUseAccepted)
+        public InvoiceProviderSearchDialog(decimal kontrDC, bool isUsePayment, bool isUseAccepted, bool isOnlyLastYear = false)
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
@@ -218,6 +220,7 @@ namespace KursAM2.View.DialogUserControl
             WindowName = "Выбор счета";
             isPaymentUse = isUsePayment;
             isAccepted = isUseAccepted;
+            this.isOnlyLastYear = isOnlyLastYear;
             RefreshData(null);
         }
 
@@ -233,15 +236,34 @@ namespace KursAM2.View.DialogUserControl
             {
                 ItemsCollection.Clear();
                 if (kontragentDC > 0)
-                    foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
-                        true,
-                        kontragentDC, isAccepted))
-                        ItemsCollection.Add(d);
+                    if(!isOnlyLastYear)
+                        foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
+                            true,
+                            kontragentDC, isAccepted))
+                            ItemsCollection.Add(d);
+                    else
+                    {
+                        foreach (var d in InvoicesManager.GetInvoicesProvider(DateTime.Today.AddDays(-365), DateTime.Today,
+                            true,
+                            kontragentDC, isAccepted))
+                            ItemsCollection.Add(d);
+                    }
+
                 else
-                    foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
-                        true,
-                        SearchText, isAccepted))
-                        ItemsCollection.Add(d);
+                {
+                    if (!isOnlyLastYear)
+                        foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
+                            true,
+                            SearchText, isAccepted))
+                            ItemsCollection.Add(d);
+                    else
+                    {
+                        foreach (var d in InvoicesManager.GetInvoicesProvider(DateTime.Today.AddDays(-365), DateTime.Today,
+                            true,
+                            SearchText, isAccepted))
+                            ItemsCollection.Add(d);
+                    }
+                }
             }
             catch (Exception ex)
             {

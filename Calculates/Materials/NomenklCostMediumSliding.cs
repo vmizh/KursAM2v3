@@ -244,6 +244,76 @@ namespace Calculates.Materials
                         }
                     }
                 }
+
+                var nomId = MainReferences.GetNomenkl(nomDC).Id;
+                var nomcrsconverts = context.TD_26_CurrencyConvert
+                    .Include(_ => _.TD_26)
+                    .Include(_ => _.TD_26.SD_26)
+                    .Where(_ => _.NomenklId == nomId).ToList();
+                var nomcrsconverts2 = context.TD_26_CurrencyConvert
+                    .Include(_ => _.TD_26)
+                    .Include(_ => _.TD_26.SD_26)
+                    .Where(_ => _.TD_26.SFT_NEMENKL_DC == nomDC).ToList();
+                foreach (var d in nomcrsconverts)
+                {
+                    currentRowNumber++;
+                    var newTransOper = new NomenklCalcCostOperation
+                        {
+                            RowNumber = currentRowNumber,
+                            Note = d.Note,
+                            CalcPrice = 0,
+                            CalcPriceNaklad = 0,
+                            DocDate = d.Date,
+                            KontragentIn = null,
+                            KontragentOut = null,
+                            OperationName = "Валютный перевод товара(из счета)",
+                            OperCode = 19,
+                            QuantityIn = d.Quantity,
+                            QuantityOut = 0,
+                            DocPrice = 0,
+                            Naklad = 0,
+                            SkladIn = MainReferences.Warehouses[d.StoreDC],
+                            SkladOut = null,
+                            SummaIn = d.Price * d.Quantity,
+                            SummaInWithNaklad = d.PriceWithNaklad * d.Quantity,
+                            SummaOut = 0,
+                            SummaOutWithNaklad = 0,
+                            QuantityNakopit = 0,
+                            TovarDocDC = -1,
+                            NomenklDC = nomDC
+                        };
+                        ret.Operations.Add(newTransOper);
+                }
+                foreach (var d in nomcrsconverts2)
+                {
+                    currentRowNumber++;
+                    var newTransOper = new NomenklCalcCostOperation
+                    {
+                        RowNumber = currentRowNumber,
+                        Note = d.Note,
+                        CalcPrice = 0,
+                        CalcPriceNaklad = 0,
+                        DocDate = d.Date,
+                        KontragentIn = null,
+                        KontragentOut = null,
+                        OperationName = "Валютный перевод товара(из счета)",
+                        OperCode = 19,
+                        QuantityIn = 0,
+                        QuantityOut = d.Quantity,
+                        DocPrice = 0,
+                        Naklad = 0,
+                        SkladIn = null,
+                        SkladOut = MainReferences.Warehouses[d.StoreDC],
+                        SummaIn = 0,
+                        SummaInWithNaklad = 0,
+                        SummaOut = 0,
+                        SummaOutWithNaklad = 0,
+                        QuantityNakopit = 0,
+                        TovarDocDC = -1,
+                        NomenklDC = nomDC
+                    };
+                    ret.Operations.Add(newTransOper);
+                }
                 if (isCalOnly)
                 {
                     var calc = Calc(ret.Operations);

@@ -8,6 +8,8 @@ using Core;
 using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using Data;
+using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
@@ -40,6 +42,7 @@ namespace KursAM2.View.Finance.Cash
         public ObservableCollection<Currency> CurrencyList { set; get; } = new ObservableCollection<Currency>();
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         private void CashoutView_Unloaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Save();
@@ -70,6 +73,7 @@ namespace KursAM2.View.Finance.Cash
                 BindingHelper.CopyBinding(oldContent, newContent, BaseEdit.EditValueProperty);
                 e.Item.Content = newContent;
             }
+
             switch (e.PropertyName)
             {
                 case nameof(doc.Cash):
@@ -103,7 +107,9 @@ namespace KursAM2.View.Finance.Cash
                     {
                         WindowManager.ShowError(ex);
                     }
-                    CurrencyItem = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Currency, "Currency", ctx.CurrencyList, width: 50);
+
+                    CurrencyItem = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Currency, "Currency", ctx.CurrencyList,
+                        width: 50);
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
                     if (doc.BANK_RASCH_SCHET_DC != null && doc.SPOST_DC != null && doc.State != RowStatus.NewRow)
                         CurrencyItem.IsEnabled = false;
@@ -150,7 +156,7 @@ namespace KursAM2.View.Finance.Cash
                         ButtonKind = ButtonKind.Simple,
                         GlyphKind = GlyphKind.Cancel,
                         ToolTip = "Удалить связь со счетом",
-                       // IsEnabled = doc.SPOST_DC != null,
+                        // IsEnabled = doc.SPOST_DC != null,
                     };
                     cancelBtn.Click += CancelBtn_Click;
                     var spostEdit = new ButtonEdit
@@ -210,6 +216,7 @@ namespace KursAM2.View.Finance.Cash
                     NCODEItem = e.Item;
                     break;
             }
+
             ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
         }
 
@@ -219,14 +226,15 @@ namespace KursAM2.View.Finance.Cash
         {
             if (!(DataContext is CashOutWindowViewModel ctx)) return;
             var doc = ctx.Document;
-            if ((decimal)e.NewValue < 0)
+            if ((decimal) e.NewValue < 0)
             {
                 WindowManager.ShowMessage(this, "Сумма ордера не может быть меньше 0!", "Ошибка",
                     MessageBoxImage.Stop);
                 doc.SUMM_ORD = 0;
                 return;
             }
-            if ((decimal)e.NewValue > doc.CRS_SUMMA + doc.MaxSumma && doc.SPOST_DC != null)
+
+            if ((decimal) e.NewValue > doc.CRS_SUMMA + doc.MaxSumma && doc.SPOST_DC != null)
             {
                 WindowManager.ShowMessage(this, "Сумма ордера не может быть больше сумму оплаты по счету!", "Ошибка",
                     MessageBoxImage.Stop);
@@ -245,10 +253,18 @@ namespace KursAM2.View.Finance.Cash
 
         private void SFPostEdit_DefaultButtonClick(object sender, RoutedEventArgs e)
         {
-            var dtx = DataContext as CashOutWindowViewModel;
-            if (dtx == null) return;
+            if (!(DataContext is CashOutWindowViewModel dtx)) return;
+            if (dtx.Document.State == RowStatus.NewRow)
+            {
+                var wManager = new WindowManager();
+                wManager.ShowWinUIMessageBox("Нельзя првязать оплату к счету для нового документа." +
+                                             "Сначала сохрание ордер.", "Предупреждение",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
             var doc = dtx.Document;
-            var item = StandartDialogs.SelectInvoiceProvider(dtx,true,true);
+            var item = StandartDialogs.SelectInvoiceProvider(dtx, true, true,true);
             if (item == null) return;
 
             var winManager = new WindowManager();
@@ -259,7 +275,7 @@ namespace KursAM2.View.Finance.Cash
                     $"Дата счета {item.SF_POSTAV_DATE.ToShortDateString()} не совпадает с датой ордера {doc.DATE_ORD}." +
                     "Установить дату ордера равной дате счета?", "Запрос", MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
-                if ( res == MessageBoxResult.Yes)
+                if (res == MessageBoxResult.Yes)
                 {
                     doc.DATE_ORD = item.SF_POSTAV_DATE;
                     doc.SPostName = item.ToString();
@@ -291,7 +307,37 @@ namespace KursAM2.View.Finance.Cash
                 doc.KONTRAGENT_DC = item.Kontragent.DocCode;
                 doc.NOTES_ORD = item.SF_NOTES;
             }
-            
+
+
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                try
+                {
+                    var old = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.CashDC == dtx.Document.DocCode
+                                                                         && _.DocDC == dtx.Document.SPOST_DC);
+                    if (old == null)
+                    {
+                        ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
+                        {
+                            Id = Guid.NewGuid(),
+                            Rate = 1,
+                            Summa = (decimal) dtx.Document.SUMM_ORD,
+                            CashDC = dtx.Document.DocCode,
+                            DocDC = (decimal)dtx.Document.SPOST_DC
+                        });
+                    }
+                    else
+                    {
+                        old.Summa = (decimal) dtx.Document.SUMM_ORD;
+                    }
+
+                    ctx.SaveChanges();
+                }
+                catch(Exception ex)
+                {
+                    WindowManager.ShowError(ex);
+                }
+            }
         }
 
         private void KontrEdit_DefaultButtonClick(object sender, RoutedEventArgs e)
@@ -306,6 +352,7 @@ namespace KursAM2.View.Finance.Cash
                     "Предупреждение", MessageBoxImage.Information);
                 return;
             }
+
             switch (ctx.Document.KontragentType)
             {
                 case CashKontragentType.Kontragent:

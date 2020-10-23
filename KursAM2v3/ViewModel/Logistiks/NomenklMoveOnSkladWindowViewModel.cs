@@ -51,11 +51,15 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<NomenklMoveOnSkladViewModel> NomenklMoveList { set; get; } =
             new ObservableCollection<NomenklMoveOnSkladViewModel>();
+
         public ObservableCollection<NomPriceDocumentViewModel> DocumentList { get; set; } =
             new ObservableCollection<NomPriceDocumentViewModel>();
+
         public List<Core.EntityViewModel.Warehouse> Sklads { set; get; } = new List<Core.EntityViewModel.Warehouse>();
+
         public NomenklMoveOnSkladViewModel CurrentNomenklMoveItem
         {
             get => myCurrentNomenklMoveItem;
@@ -67,11 +71,11 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
                 if (myCurrentNomenklMoveItem != null && CurrentSklad?.DOC_CODE == 0)
                     LoadDocuments();
-                else 
-                 if(CurrentSklad != null)
+                else if (CurrentSklad != null)
                     LoadDocuments(CurrentSklad.DocCode);
             }
         }
+
         public bool IsShowAll
         {
             get => myIsShowAll;
@@ -79,11 +83,18 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 if (myIsShowAll == value) return;
                 myIsShowAll = value;
+                if (myIsShowAll)
+                {
+                    CurrentSklad = null;
+                    RaisePropertyChanged(nameof(CurrentSklad));
+                }
+
                 NomenklMoveList.Clear();
                 RefreshData(null);
                 RaisePropertyChanged();
             }
         }
+
         public Core.EntityViewModel.Warehouse CurrentSklad
         {
             get => myCurrentSklad;
@@ -95,10 +106,12 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
             }
         }
+
         public ICommand NomenklCalcOpenCommand
         {
             get { return new Command(NomenklCalcOpen, _ => CurrentNomenklMoveItem != null); }
         }
+
         public DateTime StartDate
         {
             set
@@ -116,6 +129,7 @@ namespace KursAM2.ViewModel.Logistiks
                 return myStartDate;
             }
         }
+
         public DateTime EndDate
         {
             set
@@ -133,10 +147,12 @@ namespace KursAM2.ViewModel.Logistiks
                 return myEndDate;
             }
         }
+
         public new Command DocumentOpenCommand
         {
             get { return new Command(DocumentOpen, param => IsDocumentOpenAllow); }
         }
+
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
         private void LoadDocuments()
@@ -220,8 +236,10 @@ namespace KursAM2.ViewModel.Logistiks
                                              doc.DDT_KOL_PRIHOD;
                         newItem.Note = doc.SD_24.DD_NOTES;
                     }
+
                     DocumentList.Add(newItem);
                 }
+
                 docs = ctx.TD_24
                     .Include(_ => _.SD_24)
                     .Include(_ => _.SD_24.SD_201)
@@ -307,6 +325,7 @@ namespace KursAM2.ViewModel.Logistiks
             while (!MainReferences.IsReferenceLoadComplete)
             {
             }
+
             if (CurrentNomenklMoveItem == null || storeDC == 0) return;
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -388,8 +407,10 @@ namespace KursAM2.ViewModel.Logistiks
                                              doc.DDT_KOL_PRIHOD;
                         newItem.Note = doc.SD_24.DD_NOTES;
                     }
+
                     DocumentList.Add(newItem);
                 }
+
                 docs = ctx.TD_24
                     .Include(_ => _.SD_24)
                     .Include(_ => _.SD_24.SD_201)
@@ -533,11 +554,12 @@ namespace KursAM2.ViewModel.Logistiks
                     {
                         start = 0;
                     }
+
                     var summaIn = (decimal) dtemp.Where(_ => _.Date >= StartDate && _.Date <= EndDate)
                         .Sum(_ => _.SummaIn);
                     var summaOut = (decimal) dtemp.Where(_ => _.Date >= StartDate && _.Date <= EndDate)
                         .Sum(_ => _.SummaOut);
-                    
+
                     if (start == 0 && kolIn == 0 && kolOut == 0 && datarow.Nakopit == 0) continue;
                     var newitem = new NomenklMoveOnSkladViewModel
                     {
@@ -556,6 +578,7 @@ namespace KursAM2.ViewModel.Logistiks
                         newitem.SummaRUBIn = summaIn;
                         newitem.SummaRUBOut = summaOut;
                     }
+
                     if (newitem.CurrencyName == "USD")
                     {
                         newitem.SummaUSDStart = newitem.PriceStart * newitem.QuantityStart;
@@ -563,6 +586,7 @@ namespace KursAM2.ViewModel.Logistiks
                         newitem.SummaUSDIn = summaIn;
                         newitem.SummaUSDOut = summaOut;
                     }
+
                     if (newitem.CurrencyName == "EUR")
                     {
                         newitem.SummaEURStart = newitem.PriceStart * newitem.QuantityStart;
@@ -570,6 +594,7 @@ namespace KursAM2.ViewModel.Logistiks
                         newitem.SummaEURIn = summaIn;
                         newitem.SummaEUROut = summaOut;
                     }
+
                     if (newitem.CurrencyName != "RUR" && newitem.CurrencyName != "RUB" &&
                         newitem.CurrencyName != "USD" &&
                         newitem.CurrencyName != "EUR")
@@ -579,6 +604,7 @@ namespace KursAM2.ViewModel.Logistiks
                         newitem.SummaAllIn = summaIn;
                         newitem.SummaAllOut = summaOut;
                     }
+
                     NomenklMoveList.Add(newitem);
                 }
             }
@@ -632,6 +658,7 @@ namespace KursAM2.ViewModel.Logistiks
                     {
                         start = 0;
                     }
+
                     var summaIn = (decimal) dtemp.Where(_ => _.Date >= StartDate && _.Date <= EndDate)
                         .Sum(_ => _.SummaIn);
                     var summaOut = (decimal) dtemp.Where(_ => _.Date >= StartDate && _.Date <= EndDate)
@@ -654,6 +681,7 @@ namespace KursAM2.ViewModel.Logistiks
                         newitem.SummaRUBIn = summaIn;
                         newitem.SummaRUBOut = summaOut;
                     }
+
                     if (newitem.CurrencyName == "USD")
                     {
                         newitem.SummaUSDStart = newitem.PriceStart * newitem.QuantityStart;
@@ -661,6 +689,7 @@ namespace KursAM2.ViewModel.Logistiks
                         newitem.SummaUSDIn = summaIn;
                         newitem.SummaUSDOut = summaOut;
                     }
+
                     if (newitem.CurrencyName == "EUR")
                     {
                         newitem.SummaEURStart = newitem.PriceStart * newitem.QuantityStart;
@@ -668,6 +697,7 @@ namespace KursAM2.ViewModel.Logistiks
                         newitem.SummaEURIn = summaIn;
                         newitem.SummaEUROut = summaOut;
                     }
+
                     if (newitem.CurrencyName != "RUR" && newitem.CurrencyName != "RUB" &&
                         newitem.CurrencyName != "USD" &&
                         newitem.CurrencyName != "EUR")
@@ -677,6 +707,7 @@ namespace KursAM2.ViewModel.Logistiks
                         newitem.SummaAllIn = summaIn;
                         newitem.SummaAllOut = summaOut;
                     }
+
                     NomenklMoveList.Add(newitem);
                 }
             }
@@ -693,6 +724,7 @@ namespace KursAM2.ViewModel.Logistiks
                 var skls = ctx.Database.SqlQuery<decimal>(sql);
                 foreach (var s in skls) Sklads.Add(MainReferences.Warehouses[s]);
             }
+
             RaisePropertiesChanged(nameof(Sklads));
         }
 

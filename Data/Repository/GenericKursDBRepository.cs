@@ -26,6 +26,14 @@ namespace Data.Repository
             Context = context;
         }
 
+        public void DetachObjects()
+        {
+            foreach (var en in Context.ChangeTracker.Entries())
+            {
+                en.State = EntityState.Detached;
+            }
+        }
+
         public ALFAMEDIAEntities Context { get; set; }
 
         public IQueryable<T> Table => Entities;
@@ -111,8 +119,6 @@ namespace Data.Repository
         public void Refresh(T entity)
         {
             if (entity == null) return;
-
-            //((IObjectContextAdapter)Context).ObjectContext.Refresh(RefreshMode.StoreWins, entity);
             Context.Entry(entity).Reload();
         }
 
