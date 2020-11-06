@@ -1,0 +1,463 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3541BE94-A5B6-4E4E-8A63-DBB103ACDE29}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Core</RootNamespace>
+    <AssemblyName>Core</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0436;</NoWarn>
+    <LangVersion>7.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0436</NoWarn>
+    <LangVersion>7.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EntityViewModel\BankOperationType.cs" />
+    <Compile Include="EntityViewModel\CashCurrencyExchangeKontragentType.cs" />
+    <Compile Include="EntityViewModel\CashOrder.cs" />
+    <Compile Include="EntityViewModel\CashStartRemains.cs" />
+    <Compile Include="EntityViewModel\BankAccountReference.cs" />
+    <Compile Include="EntityViewModel\BankCurrencyChangeViewModel.cs" />
+    <Compile Include="EntityViewModel\InvoiceProviderRowCurrencyConvertViewModel.cs" />
+    <Compile Include="EntityViewModel\FormPay.cs" />
+    <Compile Include="EntityViewModel\OffBalanceSheetOutDocViewModel.cs" />
+    <Compile Include="EntityViewModel\OffBalanceSheetOutRowViewModel.cs" />
+    <Compile Include="EntityViewModel\OffBalanceSheetInDocViewModel.cs" />
+    <Compile Include="EntityViewModel\OffBalanceSheetInRowViewModel.cs" />
+    <Compile Include="EntityViewModel\OffBalanceSheetChargesTypeViewModel.cs" />
+    <Compile Include="EntityViewModel\ProviderInvoicePay.cs" />
+    <Compile Include="EntityViewModel\SD_43ViewModel.cs" />
+    <Compile Include="EntityViewModel\NomenklProductKind.cs" />
+    <Compile Include="EntityViewModel\Period.cs" />
+    <Compile Include="EntityViewModel\MaterialDocumentType.cs" />
+    <Compile Include="EntityViewModel\Employee.cs" />
+    <Compile Include="EntityViewModel\BankPeriodOperations.cs" />
+    <Compile Include="EntityViewModel\ContractType.cs" />
+    <Compile Include="EntityViewModel\ContractProvider.cs" />
+    <Compile Include="EntityViewModel\DeliveryCondition.cs" />
+    <Compile Include="EntityViewModel\ContractProviderRowViewModel.cs" />
+    <Compile Include="EntityViewModel\InvoiceProvider.cs" />
+    <Compile Include="EntityViewModel\Nomenkl.cs" />
+    <Compile Include="EntityViewModel\TD_22ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_251ViewModel.cs" />
+    <Compile Include="EntityViewModel\ProjectProviderPrihodViewModel.cs" />
+    <Compile Include="EntityViewModel\WarehouseOrderOut.cs" />
+    <Compile Include="EntityViewModel\WarehouseOrderOutRow.cs" />
+    <Compile Include="EntityViewModel\WarehouseSenderType.cs" />
+    <Compile Include="EntityViewModel\Waybill.cs" />
+    <Compile Include="EntityViewModel\WaybillRow.cs" />
+    <Compile Include="Finance\CurrencySumma.cs" />
+    <Compile Include="Finance\InvoicePaymentDocument.cs" />
+    <Compile Include="Helper\KursConvert.cs" />
+    <Compile Include="Helper\TypeProfitAndLossCalc.cs" />
+    <Compile Include="Helper\MultyCurrencyHelper.cs" />
+    <Compile Include="Logger\LoggerHelper.cs" />
+    <Compile Include="Logger\LogLevelEnum.cs" />
+    <Compile Include="Repository\Base\DocumentCreateTypeEnum.cs" />
+    <Compile Include="Repository\Base\IDocumentOperations.cs" />
+    <Compile Include="ViewModel\Base\IDocumentOpenType.cs" />
+    <Compile Include="ViewModel\Base\SplashScreenView.xaml.cs">
+      <DependentUpon>SplashScreenView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\Base\SplashScreenViewModel.cs" />
+    <Compile Include="ViewModel\Base\IDocumentOperation.cs" />
+    <Compile Include="ViewModel\Base\ISearchWindowViewModel.cs" />
+    <Compile Include="ViewModel\Base\IViewModelToEntity.cs" />
+    <Compile Include="ViewModel\Base\KursBaseControlViewModel.cs" />
+    <Compile Include="ViewModel\Base\KursBaseViewModel.cs" />
+    <Compile Include="ViewModel\Base\KursWindowSearchBaseViewModel.cs" />
+    <Compile Include="ViewModel\Common\BankAccount.cs" />
+    <Compile Include="ViewModel\KursButton.cs" />
+    <Compile Include="ViewModel\Common\ICheckViewModel.cs" />
+    <Compile Include="ViewModel\Common\Money.cs" />
+    <Compile Include="WindowsManager\ErrorMessageBase.cs" />
+    <Compile Include="WindowsManager\StandartErrorManager.cs" />
+    <Compile Include="RemainderCurrenciesDatePeriod.cs" />
+    <Compile Include="DatePeriod.cs" />
+    <Compile Include="DocumentOpenInfo.cs" />
+    <Compile Include="DocumentType.cs" />
+    <Compile Include="EntityViewModel\BankAndAccounts.cs" />
+    <Compile Include="EntityViewModel\BankStatements.cs" />
+    <Compile Include="EntityViewModel\CashKontragentType.cs" />
+    <Compile Include="EntityViewModel\CLOSED_DOC_TYPEViewModel.cs" />
+    <Compile Include="EntityViewModel\PeriodGroupsExludeViewModel.cs" />
+    <Compile Include="EntityViewModel\PERIOD_GROUPS_USERSViewModel.cs" />
+    <Compile Include="EntityViewModel\PERIOD_GROUPSViewModel.cs" />
+    <Compile Include="EntityViewModel\PERIOD_CLOSED_EXCLUDEViewModel.cs" />
+    <Compile Include="EntityViewModel\PERIOD_CLOSEDViewModel.cs" />
+    <Compile Include="EntityViewModel\MAIN_DOCUMENT_ITEMViewModel.cs" />
+    <Compile Include="EntityViewModel\ProjectsInfoViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_101ViewModel.cs" />
+    <Compile Include="EntityViewModel\BankOperationsViewModel.cs" />
+    <Compile Include="EntityViewModel\WarehouseOrderInRow.cs" />
+    <Compile Include="EntityViewModel\WarehouseOrderIn.cs" />
+    <Compile Include="EntityViewModel\ShipmentRowViewModel.cs" />
+    <Compile Include="EntityViewModel\USER_FORMS_RIGHTViewModel.cs" />
+    <Compile Include="EntityViewModel\MAIN_DOCUMENT_GROUPViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_111ViewModel.cs" />
+    <Compile Include="EntityViewModel\EXT_USERSViewModel.cs" />
+    <Compile Include="EntityViewModel\NomenklTransferViewModel.cs" />
+    <Compile Include="EntityViewModel\CountriesViewModel.cs" />
+    <Compile Include="EntityViewModel\NomenklTransferRowViewModel.cs" />
+    <Compile Include="ISummaMultiCurrency.cs" />
+    <Compile Include="ISummaMultiWithPriceCurrency.cs" />
+    <Compile Include="IMultyCurrency.cs" />
+    <Compile Include="MonthYearDayItem.cs" />
+    <Compile Include="EntityViewModel\InvoiceClientRow.cs" />
+    <Compile Include="EntityViewModel\InvoiceClient.cs" />
+    <Compile Include="ViewModel\Base\CurrencyCode.cs" />
+    <Compile Include="ViewModel\Base\EntityLoadCodition.cs" />
+    <Compile Include="ViewModel\Base\IDataUserControl.cs" />
+    <Compile Include="ViewModel\Common\BankAccount2.cs" />
+    <Compile Include="ViewModel\Common\CrossCurrencyRate.cs" />
+    <Compile Include="Helper\DataAnnotationForFluentApiBase.cs" />
+    <Compile Include="ViewModel\Common\Kontragent.cs" />
+    <Compile Include="ViewModel\Common\NomenklMoveOnSkladViewModel.cs" />
+    <Compile Include="ViewModel\Common\UserProfileViewModel.cs" />
+    <Compile Include="ViewModel\Common\ProjectsDocsViewModel.cs" />
+    <Compile Include="ViewModel\Common\Project.cs" />
+    <Compile Include="EntityViewModel\NomenklMainViewModel.cs" />
+    <Compile Include="Errors.cs" />
+    <Compile Include="Control\SearchButtonEditor.xaml.cs">
+      <DependentUpon>SearchButtonEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\WindowMenu.xaml.cs">
+      <DependentUpon>WindowMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CurrencyRates.cs" />
+    <Compile Include="DataSource.cs" />
+    <Compile Include="EntityViewModel\COUNTRYViewModel.cs" />
+    <Compile Include="EntityViewModel\EMP_PAYROLL_TYPEViewModel.cs" />
+    <Compile Include="EntityViewModel\KONTRAGENT_REF_OUTViewModel.cs" />
+    <Compile Include="EntityViewModel\KONTRAGENT_REF_OUT_REQUISITEViewModel.cs" />
+    <Compile Include="EntityViewModel\KONTR_BALANS_OPER_ARCViewModel.cs" />
+    <Compile Include="EntityViewModel\NomenklCostResetRowsViewModel.cs" />
+    <Compile Include="EntityViewModel\NomenklCostResetViewModel.cs" />
+    <Compile Include="EntityViewModel\NOM_SKLAD_CURRENCY_PRICEViewModel.cs" />
+    <Compile Include="EntityViewModel\SCHET_FACT_KONTR_OUTViewModel.cs" />
+    <Compile Include="EntityViewModel\SCHET_FACT_KONTR_OUT_ROWSViewModel.cs" />
+    <Compile Include="EntityViewModel\NomenklProductType.cs" />
+    <Compile Include="EntityViewModel\SD_148ViewModel.cs" />
+    <Compile Include="EntityViewModel\Unit.cs" />
+    <Compile Include="EntityViewModel\UsagePay.cs" />
+    <Compile Include="EntityViewModel\Cash.cs" />
+    <Compile Include="EntityViewModel\Region.cs" />
+    <Compile Include="EntityViewModel\SD_24ViewModel.cs" />
+    <Compile Include="EntityViewModel\Warehouse.cs" />
+    <Compile Include="EntityViewModel\Currency.cs" />
+    <Compile Include="EntityViewModel\SD_303ViewModel.cs" />
+    <Compile Include="EntityViewModel\CashIn.cs" />
+    <Compile Include="EntityViewModel\CashOut.cs" />
+    <Compile Include="EntityViewModel\SD_375ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_40ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_43_GRUZOViewModel.cs" />
+    <Compile Include="EntityViewModel\Bank.cs" />
+    <Compile Include="EntityViewModel\SD_77ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_82ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_83_TransferViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_99ViewModel.cs" />
+    <Compile Include="EntityViewModel\SD_9ViewModel.cs" />
+    <Compile Include="EntityViewModel\TaxUpdateHistoryViewModel.cs" />
+    <Compile Include="EntityViewModel\TD_24ViewModel.cs" />
+    <Compile Include="EntityViewModel\InvoiceProviderRow.cs" />
+    <Compile Include="EntityViewModel\TD_43ViewModel.cs" />
+    <Compile Include="EntityViewModel\TD_9ViewModel.cs" />
+    <Compile Include="EntityViewModel\KontragentGroup.cs" />
+    <Compile Include="Finance\DocumentTypes.cs" />
+    <Compile Include="GlobalOptions.cs" />
+    <Compile Include="KursMoney.cs" />
+    <Compile Include="MainReferences.cs" />
+    <Compile Include="Menu\MenuButtonInfo.cs" />
+    <Compile Include="Menu\MenuGenerator.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModel\Base\Column\ColumnSummary.cs" />
+    <Compile Include="ViewModel\Base\Column\ColumnHelper.cs" />
+    <Compile Include="ViewModel\Base\Command.cs" />
+    <Compile Include="ViewModel\Base\Column\GridColumnHelper.cs" />
+    <Compile Include="ViewModel\Base\Column\GridColumnTemplateSelector.cs" />
+    <Compile Include="ViewModel\Base\IDocument.cs" />
+    <Compile Include="ViewModel\Base\IEntity.cs" />
+    <Compile Include="ViewModel\Base\ITreeReference.cs" />
+    <Compile Include="ViewModel\Base\IViewModel.cs" />
+    <Compile Include="ViewModel\Base\KursViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RowStatus.cs" />
+    <Compile Include="ViewModel\Base\RSDataErrorWindowInfoViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RSViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RSViewModelData.cs" />
+    <Compile Include="ViewModel\Base\RSViewModelDataEntity.cs" />
+    <Compile Include="ViewModel\Base\RSViewModelWindow.cs" />
+    <Compile Include="ViewModel\Base\RSWindowDataErrorInfoViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RSWindowDialogViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RSWindowSearchViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RSWindowViewModelBase.cs" />
+    <Compile Include="ViewModel\Common\CentrOfResponsibility.cs" />
+    <Compile Include="ViewModel\Common\Country.cs" />
+    <Compile Include="ViewModel\Common\CountryDialogViewModel.cs" />
+    <Compile Include="ViewModel\Common\CurrencyRate.cs" />
+    <Compile Include="ViewModel\Common\DatePeriodViewModel.cs" />
+    <Compile Include="ViewModel\Common\IncomeExpenseSchet.cs" />
+    <Compile Include="ViewModel\Common\IncomeExpenseStatia.cs" />
+    <Compile Include="ViewModel\Common\KontragentBank.cs" />
+    <Compile Include="ViewModel\Common\KontragentCategory.cs" />
+    <Compile Include="ViewModel\Common\KontragentGruzoRequisite.cs" />
+    <Compile Include="ViewModel\Common\NomenklRemains.cs" />
+    <Compile Include="ViewModel\Common\NomenklSkladRemain.cs" />
+    <Compile Include="ViewModel\Common\NomenklSkladRemains.cs" />
+    <Compile Include="ViewModel\Common\Persona.cs" />
+    <Compile Include="ViewModel\Common\SDRSchet.cs" />
+    <Compile Include="ViewModel\Common\SDRState.cs" />
+    <Compile Include="ViewModel\Common\User.cs" />
+    <Compile Include="ViewModel\Common\UserViewModel.cs" />
+    <Compile Include="ViewModel\Common\VzaimoraschetType.cs" />
+    <Compile Include="ViewModel\KontragentTypeEnum.cs" />
+    <Compile Include="ViewModel\MutualAccounting\TD_110ViewModel.cs" />
+    <Compile Include="ViewModel\MutualAccounting\SD_110ViewModel.cs" />
+    <Compile Include="ViewModel\MutualAccounting\UD_110ViewModel.cs" />
+    <Compile Include="ViewModel\StateEventArgs.cs" />
+    <Compile Include="WindowsManager\IWindowManager.cs" />
+    <Compile Include="WindowsManager\WindowManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Data\Data.csproj">
+      <Project>{ae6bdc42-9b1e-4f09-8923-2295b1c87212}</Project>
+      <Name>Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Helper\Helper.csproj">
+      <Project>{45442B20-578B-4519-A31C-6BA5102B240F}</Project>
+      <Name>Helper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LayoutManager\LayoutManager.csproj">
+      <Project>{0ac84fa1-a12e-414a-8d3e-ede48e795908}</Project>
+      <Name>LayoutManager</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.111.0\build\net45\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.111.0\build\net45\System.Data.SQLite.Core.targets'))" />
+  </Target>
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.111.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.111.0\build\net45\System.Data.SQLite.Core.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\Data\bin\Debug\Data.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Charts.v20.1.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Data.Desktop.v20.1.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Data.v20.1.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Mvvm.v20.1.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Office.v20.1.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Pdf.v20.1.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Printing.v20.1.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.RichEdit.v20.1.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.RichEdit.v20.1.Export.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Spreadsheet.v20.1.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Xpf.CodeView.v20.1.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Xpf.Controls.v20.1.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Xpf.Core.v20.1.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Xpf.Grid.v20.1.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Xpf.Grid.v20.1.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Xpf.Layout.v20.1.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Xpf.LayoutControl.v20.1.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Xpf.NavBar.v20.1.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Xpf.Office.v20.1.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Xpf.Printing.v20.1.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Xpf.Ribbon.v20.1.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\DevExpress 20.1\Components\Bin\Framework\DevExpress.Xpf.Spreadsheet.v20.1.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\Helper\bin\Debug\Helper.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\JetBrains.Annotations.2019.1.1\lib\net20\JetBrains.Annotations.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\LayoutManager\bin\Debug\LayoutManager.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Microsoft.CSharp.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\mscorlib.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\NLog.4.7.2\lib\net45\NLog.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\PresentationCore.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\PresentationFramework.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\ServiceStack.Common.5.5.0\lib\net45\ServiceStack.Common.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\ServiceStack.Interfaces.5.5.0\lib\net45\ServiceStack.Interfaces.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\ServiceStack.OrmLite.5.5.0\lib\net45\ServiceStack.OrmLite.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\ServiceStack.Text.5.5.0\lib\net45\ServiceStack.Text.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\System.Buffers.4.5.0\lib\netstandard1.1\System.Buffers.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.ComponentModel.DataAnnotations.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Configuration.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Data.DataSetExtensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Data.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\System.Data.SQLite.Core.1.0.111.0\lib\net45\System.Data.SQLite.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\System.Data.SQLite.EF6.1.0.111.0\lib\net45\System.Data.SQLite.EF6.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Drawing.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.IO.Compression.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\System.Memory.4.5.2\lib\netstandard1.1\System.Memory.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Net.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Net.Http.dll" />
+    <ReferencePath Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Runtime.Serialization.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.ServiceModel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.Tasks.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Transactions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Web.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Windows.Forms.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Xaml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Xml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Xml.Linq.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\WindowsBase.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\Microsoft.Win32.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\netstandard.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.AppContext.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Collections.Concurrent.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Collections.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Collections.NonGeneric.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Collections.Specialized.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ComponentModel.Annotations.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ComponentModel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ComponentModel.EventBasedAsync.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ComponentModel.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ComponentModel.TypeConverter.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Console.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Data.Common.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.Contracts.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.Debug.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.FileVersionInfo.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.Process.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.StackTrace.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.TextWriterTraceListener.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.Tools.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.TraceSource.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Drawing.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Dynamic.Runtime.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Globalization.Calendars.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Globalization.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Globalization.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.Compression.ZipFile.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.FileSystem.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.FileSystem.DriveInfo.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.FileSystem.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.FileSystem.Watcher.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.IsolatedStorage.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.MemoryMappedFiles.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.Pipes.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.UnmanagedMemoryStream.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Linq.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Linq.Expressions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Linq.Parallel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Linq.Queryable.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.Http.Rtc.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.NameResolution.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.NetworkInformation.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.Ping.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.Requests.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.Security.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.Sockets.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.WebHeaderCollection.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.WebSockets.Client.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.WebSockets.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ObjectModel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Reflection.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Reflection.Emit.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Reflection.Emit.ILGeneration.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Reflection.Emit.Lightweight.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Reflection.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Reflection.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Resources.Reader.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Resources.ResourceManager.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Resources.Writer.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.CompilerServices.VisualC.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Handles.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.InteropServices.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.InteropServices.RuntimeInformation.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.InteropServices.WindowsRuntime.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Numerics.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Serialization.Formatters.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Serialization.Json.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Serialization.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Serialization.Xml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Claims.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Cryptography.Algorithms.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Cryptography.Csp.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Cryptography.Encoding.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Cryptography.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Cryptography.X509Certificates.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Principal.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.SecureString.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ServiceModel.Duplex.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ServiceModel.Http.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ServiceModel.NetTcp.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ServiceModel.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ServiceModel.Security.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Text.Encoding.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Text.Encoding.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Text.RegularExpressions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.Overlapped.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.Tasks.Parallel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.Thread.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.ThreadPool.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.Timer.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ValueTuple.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Xml.ReaderWriter.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Xml.XDocument.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Xml.XmlDocument.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Xml.XmlSerializer.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Xml.XPath.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Xml.XPath.XDocument.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\Core\obj\Debug\Control\SearchButtonEditor.g.cs" />
+    <Compile Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\Core\obj\Debug\Control\WindowMenu.g.cs" />
+    <Compile Include="C:\Users\vmizh\Work\Dev19\KursAM2v3\Core\obj\Debug\ViewModel\Base\SplashScreenView.g.cs" />
+  </ItemGroup>
+</Project>

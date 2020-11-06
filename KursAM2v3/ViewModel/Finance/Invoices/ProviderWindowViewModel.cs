@@ -180,8 +180,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     SF_EXECUTED = 0,
                     TD_26 = new List<TD_26>()
                 };
-                //genericProviderRepository.Insert(doc);
-                //genericProviderRepository.Context.SD_26.Add(doc);
+                unitOfWork.Context.SD_26.Add(doc);
             }
 
             Document = new InvoiceProvider(doc, unitOfWork)
@@ -771,7 +770,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             //if (CurrentCrsConvertItem.State != RowStatus.NewRow)
             //    Document.DeletedCurrencyRows.Add(CurrentCrsConvertItem);
             if (CurrentRow == null)
-            { 
+            {
                 row.Entity.TD_26_CurrencyConvert.Remove(CurrentCrsConvertItem.Entity);
                 row.CurrencyConvertRows.Remove(CurrentCrsConvertItem);
                 row.State = RowStatus.Edited;
@@ -847,7 +846,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
                 Document.Entity.TD_26.Add(newRow.Entity);
                 Document.Rows.Add(newRow);
-
                 newCode++;
             }
         }
@@ -884,14 +882,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         SFT_POST_ED_IZM_DC = item.Unit.DocCode,
                         PostUnit = item.Unit,
                         UchUnit = item.Unit,
-                        State = RowStatus.NewRow
+                        State = RowStatus.NewRow, 
+                        SFT_TEXT = " "
                     };
                     Document.Rows.Add(newRow);
                     Document.Entity.TD_26.Add(newRow.Entity);
                     newCode++;
                 }
-
-                UpdateVisualData();
             }
         }
 
@@ -924,7 +921,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 if (Document.State == RowStatus.NewRow)
                 {
-                    Document.Id = Guid.NewGuid();
                     Document.SF_IN_NUM = unitOfWork.Context.SD_26.Any()
                         ? unitOfWork.Context.SD_26.Max(_ => _.SF_IN_NUM) + 1
                         : 1;
@@ -970,8 +966,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
             //if (d == null) return;
             if (Document == null) return;
             var frm = new InvoiceProviderView {Owner = Application.Current.MainWindow};
-            var ctx = new ProviderWindowViewModel {Form = frm};
-            ctx.Document = InvoicesManager.NewProviderRequisite(Document.DocCode);
+            var ctx = new ProviderWindowViewModel
+            {
+                Form = frm, Document = InvoicesManager.NewProviderRequisite(Document.DocCode)
+            };
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -1063,12 +1061,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 case "Банковский платеж":
                     var old = unitOfWork.Context.TD_101.SingleOrDefault(_ =>
-                        _.CODE == CurrentPaymentDoc.Code);
+                        _.CODE == CurrentPaymentDoc.BankCode);
                     if (old != null) old.VVT_SFACT_POSTAV_DC = null;
                     break;
                 case "Расходный кассовый ордер":
                     var old1 = unitOfWork.Context.SD_34.SingleOrDefault(_ =>
-                        _.DOC_CODE == CurrentPaymentDoc.DocCode);
+                        _.DOC_CODE == CurrentPaymentDoc.CashDC);
                     if (old1 != null)
                     {
                         old1.SPOST_DC = null;
@@ -1078,8 +1076,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     break;
                 case "Акт взаимозачета":
                     var old2 = unitOfWork.Context.TD_110.SingleOrDefault(_ =>
-                        _.DOC_CODE == CurrentPaymentDoc.DocCode
-                        && _.CODE == CurrentPaymentDoc.Code);
+                        _.DOC_CODE == CurrentPaymentDoc.VZDC
+                        && _.CODE == CurrentPaymentDoc.VZCode);
                     if (old2 != null)
                         old2.VZT_SPOST_DC = null;
                     break;
@@ -1087,6 +1085,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             unitOfWork.Context.ProviderInvoicePay.Remove(CurrentPaymentDoc.Entity);
             Document.PaymentDocs.Remove(CurrentPaymentDoc);
+            SaveData(null);
             Document.RaisePropertyChanged("PaySumma");
         }
 
@@ -1103,6 +1102,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             var oper = StandartDialogs.SelectBankOperationForProviderInvoice(Document.Kontragent.DocCode);
             if (oper == null) return;
+            if (Document.PaymentDocs.Any(_ => _.BankCode == oper.Code))
+            {
+                return;
+            }
 
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -1118,8 +1121,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     BankCode = old.CODE,
                     myState = RowStatus.NewRow,
-                    Summa = Document.SF_CRS_SUMMA - Document.PaySumma >= (decimal) old.VVT_VAL_RASHOD
-                        ? (decimal) old.VVT_VAL_RASHOD
+                    Summa = Document.SF_CRS_SUMMA - Document.PaySumma >= oper.Remainder
+                        ? oper.Remainder
                         : Document.SF_CRS_SUMMA - Document.PaySumma,
                     DocSumma = (decimal) old.VVT_VAL_RASHOD,
                     DocDate = old.SD_101.VV_START_DATE,

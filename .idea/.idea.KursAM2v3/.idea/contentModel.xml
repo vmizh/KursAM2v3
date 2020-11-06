@@ -176,7 +176,7 @@
         <e p="NLog.config" t="Include" />
         <e p="NLog.xsd" t="Include" />
         <e p="obj" t="ExcludeRecursive">
-          <e p="Release" t="Include">
+          <e p="Debug" t="Include">
             <e p="Control" t="Include">
               <e p="SearchButtonEditor.g.cs" t="Include" />
               <e p="WindowMenu.g.cs" t="Include" />
@@ -314,7 +314,7 @@
         </e>
         <e p="CoreView.csproj" t="IncludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
-          <e p="Release" t="Include">
+          <e p="Debug" t="Include">
             <e p="Common" t="Include">
               <e p="RangeDateDialogView.g.cs" t="Include" />
               <e p="StandartCardView.g.cs" t="Include" />
@@ -1142,7 +1142,7 @@
         <e p="NLog.config" t="Include" />
         <e p="NLog.xsd" t="Include" />
         <e p="obj" t="ExcludeRecursive">
-          <e p="Release" t="Include">
+          <e p="Debug" t="Include">
             <e p="App.g.cs" t="Include" />
             <e p="GeneratedInternalTypeHelper.g.cs" t="Include" />
             <e p="KursRepozit_Content.g.cs" t="Include" />
@@ -1504,7 +1504,7 @@
           <e p="WarehouseManager.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
-          <e p="Release" t="Include">
+          <e p="Debug" t="Include">
             <e p="App.g.cs" t="Include" />
             <e p="GeneratedInternalTypeHelper.g.cs" t="Include" />
             <e p="Tests" t="Include">
@@ -2423,7 +2423,7 @@
         <e p="App.config" t="Include" />
         <e p="Bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
-          <e p="Release" t="Include">
+          <e p="Debug" t="Include">
             <e p="View" t="Include">
               <e p="SetPeriodCloseForGroupView.g.cs" t="Include" />
             </e>
@@ -2459,7 +2459,7 @@
         </e>
         <e p="Bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
-          <e p="Release" t="Include">
+          <e p="Debug" t="Include">
             <e p="Base" t="Include">
               <e p="ExportView.g.cs" t="Include" />
             </e>

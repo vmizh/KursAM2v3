@@ -8,7 +8,6 @@ using KursAM2.View.DialogUserControl;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
-
     public sealed class AddPaymentBankProviderInvoice : RSWindowViewModelBase
     {
         #region Constructors
@@ -28,6 +27,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             //base.RefreshData(obj);
             ItemsCollection.Clear();
+            TempCollection.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var data = ctx.TD_101
@@ -42,8 +42,20 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                 _.IsCurrencyChange != true
                                 && _.VVT_KASS_PRIH_ORDER_DC == null &&
                                 _.VVT_RASH_KASS_ORDER_DC == null
-                                && _.VVT_VAL_PRIHOD == 0)
-                    .OrderByDescending(_ => _.SD_101.VV_START_DATE).ToList();
+                                && _.VVT_VAL_PRIHOD == 0).ToList();
+                var sqlcodelist = "SELECT td_101.code FROM td_101 " +
+                                " INNER JOIN ProviderInvoicePay  p ON p.BankCode = td_101.CODE " +
+                                " GROUP BY  td_101.CODE HAVING  MAX(TD_101.VVT_VAL_RASHOD) > SUM(p.Summa)";
+                var codelist = ctx.Database.SqlQuery<int>(sqlcodelist);
+                var data2 = ctx.TD_101
+                    .Include(_ => _.SD_101)
+                    .Include(_ => _.SD_114)
+                    .Include(_ => _.SD_114.SD_44)
+                    .Include(_ => _.ProviderInvoicePay)
+                    .Where(_ => //_.VVT_KONTRAGENT == kontrDC &&
+                                _.VVT_SFACT_POSTAV_DC != null && _.VVT_VAL_RASHOD 
+                                > _.ProviderInvoicePay.Sum(x => x.Summa))
+                    .ToList(); 
                 foreach (var d in data)
                     ItemsCollection.Add(new BankPaymentRow
                     {
@@ -57,6 +69,26 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Name = d.SD_101.SD_114.SD_44.BANK_NAME,
                         AccountName = d.SD_101.SD_114.BA_RASH_ACC
                     });
+                foreach (var d in data2)
+                    ItemsCollection.Add(new BankPaymentRow
+                    {
+                        DocCode = d.DOC_CODE,
+                        Code = d.CODE,
+                        CurrencyName = MainReferences.Currencies[d.VVT_CRS_DC].Name,
+                        DocDate = d.SD_101.VV_START_DATE,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        Summa = (decimal) d.VVT_VAL_RASHOD,
+                        Note = d.VVT_DOC_NUM,
+                        Name = d.SD_101.SD_114.SD_44.BANK_NAME,
+                        AccountName = d.SD_101.SD_114.BA_RASH_ACC,
+                        AlreadyPay = d.ProviderInvoicePay.Sum(_ => _.Summa),
+                        Remainder = (decimal) d.VVT_VAL_RASHOD - d.ProviderInvoicePay.Sum(_ => _.Summa)
+                    });
+            }
+
+            foreach (var item in TempCollection.OrderByDescending(_ => _.DocDate))
+            {
+                ItemsCollection.Add(item);
             }
 
             RaisePropertyChanged(nameof(ItemsCollection));
@@ -78,6 +110,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
             new ObservableCollection<BankPaymentRow>();
 
         public ObservableCollection<BankPaymentRow> SelectedItems { set; get; } =
+            new ObservableCollection<BankPaymentRow>();
+
+        public ObservableCollection<BankPaymentRow> TempCollection { set; get; } =
             new ObservableCollection<BankPaymentRow>();
 
         public StandartDialogSelectUC DataUserControl
@@ -134,6 +169,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var data = ctx.SD_34.Where(_ => _.KONTRAGENT_DC == kontrDC
                                                 && (_.KONTR_FROM_DC ?? 0) == 0 && (_.SPOST_DC ?? 0) == 0)
                     .OrderByDescending(_ => _.DATE_ORD);
+                
                 foreach (var d in data)
                 {
                     ItemsCollection.Add(new CashPaymentRow
@@ -148,6 +184,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     });
                 }
             }
+
             RaisePropertyChanged(nameof(ItemsCollection));
         }
 

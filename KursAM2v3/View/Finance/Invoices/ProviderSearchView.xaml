@@ -66,28 +66,28 @@
         </DockPanel>
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
                Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
-        <DockPanel DockPanel.Dock="Top">
-            <dxlc:LayoutItem Label="Поиск"
-                             Margin="0,10,0,0"
-                             ToolTip="Строка поиска по полям документов"
-                             Height="26"
-                             Name="TextSearch"
-                             Width="350"
-                             HorizontalAlignment="Right">
-                <dxe:ButtonEdit AllowDefaultButton="False"
-                                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                IsEnabled="{Binding IsSearchEnabled}">
-                    <dxe:ButtonEdit.Buttons>
-                        <dxe:ButtonInfo GlyphKind="Search" Command="{Binding SearchCommand}" />
-                        <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding SearchClearCommand}" />
-                    </dxe:ButtonEdit.Buttons>
-                    <dxmvvm:Interaction.Behaviors>
-                        <dxmvvm:KeyToCommand Command="{Binding SearchKeyDownCommand}"
-                                             KeyGesture="Enter" />
-                    </dxmvvm:Interaction.Behaviors>
-                </dxe:ButtonEdit>
-            </dxlc:LayoutItem>
-        </DockPanel>
+        <!-- <DockPanel DockPanel.Dock="Top"> -->
+        <!--     <dxlc:LayoutItem Label="Поиск" -->
+        <!--                      Margin="0,10,0,0" -->
+        <!--                      ToolTip="Строка поиска по полям документов" -->
+        <!--                      Height="26" -->
+        <!--                      Name="TextSearch" -->
+        <!--                      Width="350" -->
+        <!--                      HorizontalAlignment="Right"> -->
+        <!--         <dxe:ButtonEdit AllowDefaultButton="False" -->
+        <!--                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" -->
+        <!--                         IsEnabled="{Binding IsSearchEnabled}"> -->
+        <!--             <dxe:ButtonEdit.Buttons> -->
+        <!--                 <dxe:ButtonInfo GlyphKind="Search" Command="{Binding SearchCommand}" /> -->
+        <!--                 <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding SearchClearCommand}" /> -->
+        <!--             </dxe:ButtonEdit.Buttons> -->
+        <!--             <dxmvvm:Interaction.Behaviors> -->
+        <!--                 <dxmvvm:KeyToCommand Command="{Binding SearchKeyDownCommand}" -->
+        <!--                                      KeyGesture="Enter" /> -->
+        <!--             </dxmvvm:Interaction.Behaviors> -->
+        <!--         </dxe:ButtonEdit> -->
+        <!--     </dxlc:LayoutItem> -->
+        <!-- </DockPanel> -->
         <StackPanel Orientation="Horizontal"
                     DockPanel.Dock="Top">
            <dxe:DateEdit Width="120" EditValue="{Binding DateStart}" IsEnabled="{Binding IsDateEnabled}"/>
