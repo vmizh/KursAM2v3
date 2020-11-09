@@ -332,85 +332,95 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                     RATE = 1,
                     RATE_DATE = r
                 }));
-                var data =
-                    ent.Database.SqlQuery<DebCredTemp>(string.Format("SELECT KONTR_DC as rdr0 " +
-                                                                     ", cast(sum(BLS_START) AS NUMERIC(18, 2)) as rdr1 " +
-                                                                     ", cast(sum(BLS_out) AS NUMERIC(18, 2)) as rdr2 " +
-                                                                     ", cast(sum(BLS_in) AS NUMERIC(18, 2)) as rdr3 " +
-                                                                     ", cast(sum(BLS_START) - sum(BLS_OUT) + sum(BLS_IN)   AS NUMERIC(18, 2)) as rdr4 " +
-                                                                     ", isnull(s.flag_balans,0) as rdr5" +
-                                                                     ", s.VALUTA_DC as rdr6 " +
-                                                                     "FROM " +
-                                                                     " (SELECT KONTR_DC KONTR_DC " +
-                                                                     ", 0 BLS_START " +
-                                                                     ", SUM(CRS_KONTR_IN ) BLS_IN " +
-                                                                     ", SUM( CRS_KONTR_OUT ) BLS_OUT " +
-                                                                     ", 0 BLS_END " +
-                                                                     "FROM " +
-                                                                     " KONTR_BALANS_OPER_ARC KBOA " +
-                                                                     " INNER JOIN SD_43 S43 " +
-                                                                     "  ON S43.DOC_CODE = KBOA.KONTR_DC " +
-                                                                     "WHERE " +
-                                                                     " DOC_DATE BETWEEN '{0}' AND '{1}' " +
-                                                                     "AND DOC_DATE >= S43.START_BALANS " +
-                                                                     "GROUP BY kontr_dc " +
-                                                                     " UNION ALL " +
-                                                                     "SELECT KONTR_DC " +
-                                                                     "    , sum(CRS_KONTR_IN) - sum(CRS_KONTR_OUT) " +
-                                                                     "   , 0 " +
-                                                                     "  , 0 " +
-                                                                     " , 0 " +
-                                                                     "FROM " +
-                                                                     " KONTR_BALANS_OPER_ARC KBOA " +
-                                                                     "INNER JOIN SD_43 S43 " +
-                                                                     " ON S43.DOC_CODE = KBOA.KONTR_DC " +
-                                                                     "WHERE " +
-                                                                     " DOC_DATE < '{0}'  " +
-                                                                     "AND DOC_DATE >= S43.START_BALANS " +
-                                                                     "GROUP BY KONTR_DC " +
-                                                                     "UNION ALL " +
-                                                                     "SELECT KONTR_DC " +
-                                                                     "    , 0 " +
-                                                                     "   , 0 " +
-                                                                     "  , 0 " +
-                                                                     " , sum(CRS_KONTR_IN) - sum(CRS_KONTR_OUT) " +
-                                                                     "FROM " +
-                                                                     " KONTR_BALANS_OPER_ARC KBOA " +
-                                                                     "INNER JOIN SD_43 S43 " +
-                                                                     "ON S43.DOC_CODE = KBOA.KONTR_DC " +
-                                                                     "	WHERE " +
-                                                                     "	  DOC_DATE <= '{1}' " +
-                                                                     "	  AND DOC_DATE >= S43.START_BALANS " +
-                                                                     "	GROUP BY " +
-                                                                     "	  KONTR_DC) TAB " +
-                                                                     "	 inner join sd_43 s on s.doc_code = tab.kontr_dc and isnull(DELETED,0)=0 " +
-                                                                     "	GROUP BY " +
-                                                                     "	  KONTR_DC, s.flag_balans, s.valuta_dc",
-                            CustomFormat.DateToString(start), CustomFormat.DateToString(end)))
-                        .ToList();
-                return (from d in data.Where(_ => _.rdr4 != 0 || _.rdr2 != 0 || _.rdr3 != 0 || _.rdr1 != 0)
-                    let rate1 =
-                        GetRate(rates, d.rdr6, GlobalOptions.SystemProfile.MainCurrency.DocCode, start)
-                    let rate2 = GetRate(rates, d.rdr6, GlobalOptions.SystemProfile.MainCurrency.DocCode, end)
-                    let kontrInfo =
-                        new Kontragent(kontrs.SingleOrDefault(_ => _.DOC_CODE == d.rdr0))
-                    select new DebitorCreditorRow
-                    {
-                        Delta = Math.Round(d.rdr4 * rate2 - (d.rdr1 * rate1 + (d.rdr2 * rate2 - d.rdr3 * rate2)), 2),
-                        KontrEnd = -d.rdr4,
-                        KontrIn = d.rdr2,
-                        KontrInfo = kontrInfo,
-                        KontrOut = d.rdr3,
-                        KontrStart = -d.rdr1,
-                        UchetEnd = -Math.Round(d.rdr4 * rate2, 2),
-                        UchetIn = Math.Round(d.rdr2 * rate2, 2),
-                        UchetOut = Math.Round(d.rdr3 * rate2, 2),
-                        UchetStart = -Math.Round(d.rdr1 * rate1, 2),
-                        Kontragent = kontrInfo.Name,
-                        CurrencyName = kontrInfo.BalansCurrency.Name,
-                        IsBalans = d.rdr5 == 1
-                    }).ToList();
+                try
+                {
+                    var data =
+                        ent.Database.SqlQuery<DebCredTemp>(string.Format("SELECT KONTR_DC as rdr0 " +
+                                                                         ", cast(sum(BLS_START) AS NUMERIC(18, 2)) as rdr1 " +
+                                                                         ", cast(sum(BLS_out) AS NUMERIC(18, 2)) as rdr2 " +
+                                                                         ", cast(sum(BLS_in) AS NUMERIC(18, 2)) as rdr3 " +
+                                                                         ", cast(sum(BLS_START) - sum(BLS_OUT) + sum(BLS_IN)   AS NUMERIC(18, 2)) as rdr4 " +
+                                                                         ", isnull(s.flag_balans,0) as rdr5" +
+                                                                         ", s.VALUTA_DC as rdr6 " +
+                                                                         "FROM " +
+                                                                         " (SELECT KONTR_DC KONTR_DC " +
+                                                                         ", 0 BLS_START " +
+                                                                         ", SUM(CRS_KONTR_IN ) BLS_IN " +
+                                                                         ", SUM( CRS_KONTR_OUT ) BLS_OUT " +
+                                                                         ", 0 BLS_END " +
+                                                                         "FROM " +
+                                                                         " KONTR_BALANS_OPER_ARC KBOA " +
+                                                                         " INNER JOIN SD_43 S43 " +
+                                                                         "  ON S43.DOC_CODE = KBOA.KONTR_DC " +
+                                                                         "WHERE " +
+                                                                         " DOC_DATE BETWEEN '{0}' AND '{1}' " +
+                                                                         "AND DOC_DATE >= S43.START_BALANS " +
+                                                                         "GROUP BY kontr_dc " +
+                                                                         " UNION ALL " +
+                                                                         "SELECT KONTR_DC " +
+                                                                         "    , sum(CRS_KONTR_IN) - sum(CRS_KONTR_OUT) " +
+                                                                         "   , 0 " +
+                                                                         "  , 0 " +
+                                                                         " , 0 " +
+                                                                         "FROM " +
+                                                                         " KONTR_BALANS_OPER_ARC KBOA " +
+                                                                         "INNER JOIN SD_43 S43 " +
+                                                                         " ON S43.DOC_CODE = KBOA.KONTR_DC " +
+                                                                         "WHERE " +
+                                                                         " DOC_DATE < '{0}'  " +
+                                                                         "AND DOC_DATE >= S43.START_BALANS " +
+                                                                         "GROUP BY KONTR_DC " +
+                                                                         "UNION ALL " +
+                                                                         "SELECT KONTR_DC " +
+                                                                         "    , 0 " +
+                                                                         "   , 0 " +
+                                                                         "  , 0 " +
+                                                                         " , sum(CRS_KONTR_IN) - sum(CRS_KONTR_OUT) " +
+                                                                         "FROM " +
+                                                                         " KONTR_BALANS_OPER_ARC KBOA " +
+                                                                         "INNER JOIN SD_43 S43 " +
+                                                                         "ON S43.DOC_CODE = KBOA.KONTR_DC " +
+                                                                         "	WHERE " +
+                                                                         "	  DOC_DATE <= '{1}' " +
+                                                                         "	  AND DOC_DATE >= S43.START_BALANS " +
+                                                                         "	GROUP BY " +
+                                                                         "	  KONTR_DC) TAB " +
+                                                                         "	 inner join sd_43 s on s.doc_code = tab.kontr_dc and isnull(DELETED,0)=0 " +
+                                                                         "	GROUP BY " +
+                                                                         "	  KONTR_DC, s.flag_balans, s.valuta_dc",
+                                CustomFormat.DateToString(start), CustomFormat.DateToString(end)))
+                            .ToList();
+                    return (from d in data.Where(_ => _.rdr4 != 0 || _.rdr2 != 0 || _.rdr3 != 0 || _.rdr1 != 0)
+                        let rate1 =
+                            GetRate(rates, d.rdr6, GlobalOptions.SystemProfile.MainCurrency.DocCode, start)
+                        let rate2 = GetRate(rates, d.rdr6, GlobalOptions.SystemProfile.MainCurrency.DocCode, end)
+                        let kontrInfo =
+                            new Kontragent(kontrs.SingleOrDefault(_ => _.DOC_CODE == d.rdr0))
+                        select new DebitorCreditorRow
+                        {
+                            Delta = Math.Round(d.rdr4 * rate2 - (d.rdr1 * rate1 + (d.rdr2 * rate2 - d.rdr3 * rate2)),
+                                2),
+                            KontrEnd = -d.rdr4,
+                            KontrIn = d.rdr2,
+                            KontrInfo = kontrInfo,
+                            KontrOut = d.rdr3,
+                            KontrStart = -d.rdr1,
+                            UchetEnd = -Math.Round(d.rdr4 * rate2, 2),
+                            UchetIn = Math.Round(d.rdr2 * rate2, 2),
+                            UchetOut = Math.Round(d.rdr3 * rate2, 2),
+                            UchetStart = -Math.Round(d.rdr1 * rate1, 2),
+                            Kontragent = kontrInfo.Name,
+                            CurrencyName = kontrInfo.BalansCurrency.Name,
+                            IsBalans = d.rdr5 == 1
+                        }).ToList();
+                }
+                catch (Exception ex)
+                {
+                    var exx = ex;
+                }
             }
+
+            return null;
         }
 
         public override bool IsDocumentOpenAllow =>

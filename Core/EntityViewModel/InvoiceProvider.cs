@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Controls;
-using Core.Finance;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -236,6 +235,10 @@ namespace Core.EntityViewModel
                 Entity.SF_FACT_SUMMA = value;
                 Entity.SF_KONTR_CRS_SUMMA = value;
                 Entity.SF_RUB_SUMMA = value;
+                Entity.SF_CRS_RATE = 1;
+                Entity.SF_KONTR_CRS_RATE = 1;
+                Entity.SF_KONTR_CRS_DC = Kontragent?.BalansCurrency.DOC_CODE;
+                Entity.SF_UCHET_VALUTA_RATE = 1;
                 RaisePropertyChanged();
             }
         }
@@ -734,7 +737,16 @@ namespace Core.EntityViewModel
             }
         }
 
-        public decimal? SF_KONTR_CRS_SUMMA => Rows?.Sum(_ => _.SFT_SUMMA_K_OPLATE_KONTR_CRS);
+        public decimal? SF_KONTR_CRS_SUMMA
+        {
+            get => Entity.SF_KONTR_CRS_SUMMA;
+            set
+            {
+                if (Entity.SF_KONTR_CRS_SUMMA == value) return;
+                Entity.SF_KONTR_CRS_SUMMA = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public decimal? SF_UCHET_VALUTA_DC
         {

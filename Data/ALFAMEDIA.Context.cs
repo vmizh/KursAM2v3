@@ -18,7 +18,7 @@ namespace Data
     public partial class ALFAMEDIAEntities : DbContext
     {
         public ALFAMEDIAEntities()
-            : base("name=Entities")
+            : base("name=ALFAMEDIAEntities")
         {
         }
     

@@ -934,6 +934,49 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     //genericProviderRepository.Update(Document.Entity);
                 }
 
+                if (Document.SF_CRS_RATE == null)
+                {
+                    Document.SF_CRS_RATE = 1;
+                }
+
+                if (Document.SF_KONTR_CRS_RATE == null)
+                {
+                    Document.SF_KONTR_CRS_RATE = 1;
+                }
+
+                if (Document.SF_UCHET_VALUTA_RATE == null)
+                {
+                    Document.SF_UCHET_VALUTA_RATE = 1;
+                }
+
+                if (Document.SF_KONTR_CRS_DC == null)
+                {
+                    Document.SF_KONTR_CRS_DC = Document.Kontragent.BalansCurrency.DocCode;
+                }
+
+                if (Document.SF_KONTR_CRS_SUMMA == null)
+                {
+                    Document.SF_KONTR_CRS_SUMMA = Document.SF_CRS_SUMMA;
+                }
+
+                foreach (var row in Document.Rows)
+                {
+                    if (row.SFT_SUMMA_V_UCHET_VALUTE == null)
+                    {
+                        row.SFT_SUMMA_V_UCHET_VALUTE = row.SFT_SUMMA_K_OPLATE;
+                    }
+
+                    if (row.SFT_SUMMA_K_OPLATE_KONTR_CRS == null)
+                    {
+                        row.SFT_SUMMA_K_OPLATE_KONTR_CRS = row.SFT_SUMMA_K_OPLATE;
+                    }
+
+                    if (row.SFT_NOM_CRS_RATE == null)
+                    {
+                        row.SFT_NOM_CRS_RATE = 1;
+                    }
+                }
+
                 unitOfWork.Save();
                 unitOfWork.Commit();
                 RecalcKontragentBalans.CalcBalans(Document.SF_POST_DC, Document.SF_POSTAV_DATE);

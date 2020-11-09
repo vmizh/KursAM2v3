@@ -154,6 +154,7 @@ namespace Core.EntityViewModel
             {
                 if (Entity.SFT_POST_KOL == value) return;
                 Entity.SFT_POST_KOL = value;
+                Calc();
                 RaisePropertyChanged();
             }
         }
@@ -903,6 +904,9 @@ namespace Core.EntityViewModel
                 p.SF_CRS_SUMMA = (decimal) p.Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE);
             }
 
+            Entity.SFT_NOM_CRS_RATE = 1;
+            Entity.SFT_SUMMA_V_UCHET_VALUTE = Entity.SFT_SUMMA_K_OPLATE;
+            Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
             Entity.EURSumma = Entity.SFT_SUMMA_K_OPLATE * Entity.EURRate;
             Entity.USDSumma = Entity.SFT_SUMMA_K_OPLATE * Entity.USDRate;
             Entity.GBPSumma = Entity.SFT_SUMMA_K_OPLATE * Entity.GBPRate;
