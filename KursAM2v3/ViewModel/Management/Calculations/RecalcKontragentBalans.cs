@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using Core;
 using Core.Finance;
@@ -49,34 +48,28 @@ namespace KursAM2.ViewModel.Management.Calculations
             var ret = new List<KONTR_BALANS_OPER_ARC>();
             using (var ent = GlobalOptions.GetEntities())
             {
-                try
-                {
-                    var data = ent.H184000_DVIZH_LIC_SCHET_KONTR_TABLE(kontrDC, start, end).ToList();
-                    ret.AddRange(
-                        data
-                            .Select(d => new KONTR_BALANS_OPER_ARC
-                            {
-                                DOC_NAME = d.DOC_NAME,
-                                DOC_NUM = d.DOC_NUM,
-                                DOC_DATE = Convert.ToDateTime(d.DOC_DATE),
-                                CRS_KONTR_IN = Convert.ToDouble(d.CRS_KONTR_IN),
-                                CRS_KONTR_OUT = Convert.ToDouble(d.CRS_KONTR_OUT),
-                                DOC_DC = Convert.ToDecimal(d.DOC_DC),
-                                DOC_ROW_CODE = Convert.ToInt32(d.DOC_ROW_CODE),
-                                KONTR_DC = kontrDC,
-                                DOC_TYPE_CODE = Convert.ToInt32(d.DOC_TYPE_CODE),
-                                CRS_OPER_IN = Convert.ToDouble(d.CRS_OPER_IN),
-                                CRS_OPER_OUT = Convert.ToDouble(d.CRS_OPER_OUT),
-                                OPER_CRS_DC = Convert.ToDecimal(d.OPER_CRS_DC),
-                                OPER_CRS_RATE = Convert.ToDouble(d.OPER_CRS_RATE),
-                                UCH_CRS_RATE = Convert.ToDouble(d.UCH_CRS_RATE),
-                                ID = Guid.NewGuid().ToString().ToUpper().Replace("-", string.Empty)
-                            }));
-                }
-                catch (Exception ex)
-                {
-                    var exxx = ex;
-                }
+
+                var data = ent.H184000_DVIZH_LIC_SCHET_KONTR_TABLE(kontrDC, start, end).ToList();
+                ret.AddRange(
+                    data
+                        .Select(d => new KONTR_BALANS_OPER_ARC
+                        {
+                            DOC_NAME = d.DOC_NAME,
+                            DOC_NUM = d.DOC_NUM,
+                            DOC_DATE = Convert.ToDateTime(d.DOC_DATE),
+                            CRS_KONTR_IN = Convert.ToDouble(d.CRS_KONTR_IN),
+                            CRS_KONTR_OUT = Convert.ToDouble(d.CRS_KONTR_OUT),
+                            DOC_DC = Convert.ToDecimal(d.DOC_DC),
+                            DOC_ROW_CODE = Convert.ToInt32(d.DOC_ROW_CODE),
+                            KONTR_DC = kontrDC,
+                            DOC_TYPE_CODE = Convert.ToInt32(d.DOC_TYPE_CODE),
+                            CRS_OPER_IN = Convert.ToDouble(d.CRS_OPER_IN),
+                            CRS_OPER_OUT = Convert.ToDouble(d.CRS_OPER_OUT),
+                            OPER_CRS_DC = Convert.ToDecimal(d.OPER_CRS_DC),
+                            OPER_CRS_RATE = Convert.ToDouble(d.OPER_CRS_RATE),
+                            UCH_CRS_RATE = Convert.ToDouble(d.UCH_CRS_RATE),
+                            ID = Guid.NewGuid().ToString().ToUpper().Replace("-", string.Empty)
+                        }));
             }
 
 
@@ -963,8 +956,8 @@ namespace KursAM2.ViewModel.Management.Calculations
                             {
                                 nNakladSumToOplAll =
                                     ((kontr.VALUTA_DC == GlobalOptions.SystemProfile.MainCurrency.DocCode
-                                         ? td26.SFT_SUMMA_V_UCHET_VALUTE
-                                         : td26.SFT_SUMMA_K_OPLATE_KONTR_CRS) ?? 0) * nNakladSumKontr / nNakladSumAll
+                                        ? td26.SFT_SUMMA_V_UCHET_VALUTE
+                                        : td26.SFT_SUMMA_K_OPLATE_KONTR_CRS) ?? 0) * nNakladSumKontr / nNakladSumAll
                             }).ToList()
                         .Sum(_ => _.nNakladSumToOplAll)
                     where nNakladSumToOplAll > 0
@@ -1001,10 +994,9 @@ namespace KursAM2.ViewModel.Management.Calculations
             {
                 using (var tnx = ent.Database.BeginTransaction(IsolationLevel.ReadCommitted))
                 {
-                    var operations = GetOperationsOld(kontrDC, new DateTime(2000,1,1), DateTime.Today);
+                    var operations = GetOperationsOld(kontrDC, new DateTime(2000, 1, 1), DateTime.Today);
                     try
                     {
-                       
                         if (operations == null || operations.Count == 0)
                         {
                             ent.Database.ExecuteSqlCommand(
@@ -1020,12 +1012,12 @@ namespace KursAM2.ViewModel.Management.Calculations
                         {
                             foreach (
                                 var query in
-                                operations.Where(_ =>  _.OPER_CRS_DC > 0)
+                                operations.Where(_ => _.OPER_CRS_DC > 0)
                                     .Select(o =>
                                         "INSERT INTO dbo.KONTR_BALANS_OPER_ARC " +
                                         "(DOC_NAME ,DOC_NUM ,DOC_DATE ,CRS_KONTR_IN ,CRS_KONTR_OUT, DOC_DC, DOC_ROW_CODE, DOC_TYPE_CODE, CRS_OPER_IN " +
                                         ",CRS_OPER_OUT, OPER_CRS_DC, OPER_CRS_RATE, UCH_CRS_RATE, KONTR_DC, ID, NEW_CALC) " +
-                                        "VALUES( " + $"'{o.DOC_NAME}' " + $",'{o.DOC_NUM.Remove('\'')}' " +
+                                        "VALUES( " + $"'{o.DOC_NAME}', " + $"'{removeChars(o.DOC_NUM)}' " +
                                         $",'{CustomFormat.DateToString(o.DOC_DATE)}' " +
                                         $",{CustomFormat.DecimalToSqlDecimal((decimal) o.CRS_KONTR_IN)} " +
                                         $",{CustomFormat.DecimalToSqlDecimal((decimal) o.CRS_KONTR_OUT)} " +
@@ -1052,6 +1044,12 @@ namespace KursAM2.ViewModel.Management.Calculations
                     }
                 }
             }
+        }
+
+        private static string removeChars(string s)
+        {
+            if (string.IsNullOrEmpty(s) || string.IsNullOrWhiteSpace(s)) return s;
+            return s.Replace("\'","");
         }
 
         //public static void CalcBalans(decimal kontrDC)

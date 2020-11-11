@@ -17,6 +17,7 @@ namespace Core.EntityViewModel
     [MetadataType(typeof(DataAnnotationsSFClientViewModel))]
     [SuppressMessage("ReSharper", "MemberInitializerValueIgnored")]
     [SuppressMessage("ReSharper", "MethodOverloadWithOptionalParameter")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class InvoiceClient : RSViewModelBase, IEntity<SD_84>
     {
         private Kontragent myClient;
@@ -257,7 +258,8 @@ namespace Core.EntityViewModel
 
         public override string Name
             =>
-                $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} от {Entity.SF_DATE.ToShortDateString()} {SF_CRS_SUMMA_K_OPLATE} {Currency} {Note}";
+                $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +
+                $"от {Entity.SF_DATE.ToShortDateString()} {SF_CRS_SUMMA_K_OPLATE} {Currency} {Note}";
 
         public int SF_IN_NUM
         {

@@ -9,7 +9,6 @@ using Data;
 using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Managers;
-using KursAM2.Managers.Invoices;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Finance.Invoices;
 
@@ -18,23 +17,24 @@ namespace KursAM2.ViewModel.Finance.Invoices
     [POCOViewModel]
     public sealed class SearchInvoiceProviderViewModel : RSWindowSearchViewModelBase
     {
+        //private InvoicesManager invoiceManager = new InvoicesManager();
+
+        public readonly GenericKursDBRepository<SD_26> GenericProviderRepository;
+
+        // ReSharper disable once NotAccessedField.Local
+        public readonly IInvoiceProviderRepository InvoiceProviderRepository;
+
+        public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
+            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+
         private InvoiceProvider myCurrentDocument;
         private DateTime myDateEnd;
         private DateTime myDateStart;
-        //private InvoicesManager invoiceManager = new InvoicesManager();
-
-        private readonly GenericKursDBRepository<SD_26> genericProviderRepository;
-
-        // ReSharper disable once NotAccessedField.Local
-        private readonly IInvoiceProviderRepository invoiceProviderRepository;
-
-        private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork =
-            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         public SearchInvoiceProviderViewModel()
         {
-            genericProviderRepository = new GenericKursDBRepository<SD_26>(unitOfWork);
-            invoiceProviderRepository = new InvoiceProviderRepository(unitOfWork);
+            GenericProviderRepository = new GenericKursDBRepository<SD_26>(UnitOfWork);
+            InvoiceProviderRepository = new InvoiceProviderRepository(UnitOfWork);
 
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
@@ -42,14 +42,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
             SelectedDocs = new ObservableCollection<InvoiceProvider>();
             DateEnd = DateTime.Today;
             DateStart = DateEnd.AddDays(-30);
-            
         }
 
         public SearchInvoiceProviderViewModel(Window form) : base(form)
         {
             // ReSharper disable once VirtualMemberCallInConstructor
-            genericProviderRepository = new GenericKursDBRepository<SD_26>(unitOfWork);
-            invoiceProviderRepository = new InvoiceProviderRepository(unitOfWork);
+            GenericProviderRepository = new GenericKursDBRepository<SD_26>(UnitOfWork);
+            InvoiceProviderRepository = new InvoiceProviderRepository(UnitOfWork);
             Form = form;
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
@@ -87,6 +86,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
+        // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<InvoiceProvider> Documents { set; get; }
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
@@ -107,6 +107,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     IsDocNewCopyRequisiteAllow = true;
                     IsPrintAllow = true;
                 }
+
                 RaisePropertyChanged();
             }
         }
@@ -120,14 +121,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             Documents.Clear();
-            foreach (var d in invoiceProviderRepository.GetAllByDates(DateStart, DateEnd))
-                    Documents.Add(d);
-            
+            foreach (var d in InvoiceProviderRepository.GetAllByDates(DateStart, DateEnd))
+                Documents.Add(d);
+
             RaisePropertyChanged(nameof(Documents));
         }
 
         public override void DocumentOpen(object obj)
         {
+            if (CurrentDocument == null) return;
             DocumentsOpenManager.Open(
                 DocumentType.InvoiceProvider, CurrentDocument.DOC_CODE);
         }
@@ -137,7 +139,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var view = new InvoiceProviderView {Owner = Application.Current.MainWindow};
             var ctx = new ProviderWindowViewModel(null)
             {
-                Form = view,
+                Form = view
             };
             view.Show();
             view.DataContext = ctx;
@@ -146,13 +148,37 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewCopy(object form)
         {
             if (CurrentDocument == null) return;
-            var document = InvoicesManager.GetInvoiceProvider(CurrentDocument.DocCode);
-            if (document == null) return;
             var frm = new InvoiceProviderView {Owner = Application.Current.MainWindow};
-            var ctx = new ProviderWindowViewModel
+            var ctx = new ProviderWindowViewModel {Form = frm};
+            ctx.Document = new InvoiceProvider(ctx.GenericProviderRepository.GetById(CurrentDocument.DocCode),
+                ctx.UnitOfWork);
+            ctx.GenericProviderRepository.DetachObjects();
+            var id = Guid.NewGuid();
+            ctx.Document.Id = id;
+            ctx.Document.DocCode = -1;
+            ctx.Document.SF_POSTAV_NUM = null;
+            ctx.Document.SF_POSTAV_DATE = DateTime.Today;
+            ctx.Document.SF_REGISTR_DATE = DateTime.Today;
+            ctx.Document.CREATOR = GlobalOptions.UserInfo.Name;
+            ctx.Document.myState = RowStatus.NewRow;
+            ctx.Document.PaymentDocs.Clear();
+            ctx.Document.Facts.Clear();
+            ctx.Document.IsAccepted = false;
+            var code = 1;
+            foreach (var row in ctx.Document.Rows)
             {
-                Form = frm, Document = InvoicesManager.NewProviderCopy(document.DocCode)
-            };
+                row.DocCode = -1;
+                row.Id = Guid.NewGuid();
+                row.DocId = id;
+                row.Code = code;
+                row.myState = RowStatus.NewRow;
+                code++;
+            }
+
+            ctx.Document.DeletedRows.Clear();
+            ctx.Document.PaymentDocs.Clear();
+            ctx.Document.Facts.Clear();
+            ctx.UnitOfWork.Context.SD_26.Add(ctx.Document.Entity);
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -160,13 +186,27 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewCopyRequisite(object form)
         {
             if (CurrentDocument == null) return;
-            var document = InvoicesManager.GetInvoiceProvider(CurrentDocument.DocCode);
-            if (document == null) return;
             var frm = new InvoiceProviderView {Owner = Application.Current.MainWindow};
-            var ctx = new ProviderWindowViewModel
-            {
-                Form = frm, Document = InvoicesManager.NewProviderRequisite(document.DocCode)
-            };
+            var ctx = new ProviderWindowViewModel {Form = frm};
+            ctx.Document = new InvoiceProvider(ctx.GenericProviderRepository.GetById(CurrentDocument.DocCode),
+                ctx.UnitOfWork);
+            ctx.GenericProviderRepository.DetachObjects();
+            ctx.Document.DocCode = -1;
+            ctx.Document.Entity.SF_CRS_SUMMA = 0;
+            ctx.Document.Id = Guid.NewGuid();
+            ctx.Document.SF_POSTAV_NUM = null;
+            ctx.Document.SF_POSTAV_DATE = DateTime.Today;
+            ctx.Document.SF_REGISTR_DATE = DateTime.Today;
+            ctx.Document.CREATOR = GlobalOptions.UserInfo.Name;
+            ctx.Document.myState = RowStatus.NewRow;
+            ctx.Document.PaymentDocs.Clear();
+            ctx.Document.Facts.Clear();
+            ctx.Document.IsAccepted = false;
+            ctx.Document.DeletedRows.Clear();
+            ctx.Document.PaymentDocs.Clear();
+            ctx.Document.Facts.Clear();
+            ctx.Document.Rows.Clear();
+            ctx.UnitOfWork.Context.SD_26.Add(ctx.Document.Entity);
             frm.Show();
             frm.DataContext = ctx;
         }
