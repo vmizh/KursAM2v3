@@ -36,6 +36,7 @@ namespace KursAM2.Managers
                         {
                             BankDC = MainReferences.BankAccounts[item.DOC_CODE].Bank.DocCode,
                             Bank = MainReferences.BankAccounts[item.DOC_CODE].Bank,
+                            // ReSharper disable once PossibleInvalidOperationException
                             Currency = MainReferences.Currencies[(decimal) item.CurrencyDC],
                             Name = item.BA_ACC_SHORTNAME?.Trim() + " " + item.BA_RASH_ACC.Trim(),
                             Account = item.BA_RASH_ACC,
@@ -875,6 +876,7 @@ namespace KursAM2.Managers
                             .Sum(_ => _.VVT_VAL_RASHOD);
                     }
                 }
+                // ReSharper disable once PossibleMultipleEnumeration
                 return new List<RemainderCurrenciesDatePeriod>(PeriodAdapter);
             }
         }
@@ -889,6 +891,7 @@ namespace KursAM2.Managers
                           " order by 2";
                 var data = ctx.Database.SqlQuery<BankOperations>(sql).ToList();
                 var PeriodAdapter = DatePeriod
+                    // ReSharper disable once PossibleInvalidOperationException
                     .GenerateIerarhy(data.Select(_ => (DateTime) _.Date).ToList(),
                         PeriodIerarhy.YearMonthDay).Select(d => new ReminderDatePeriod(d)).ToList()
                     .OrderByDescending(_ => _.DateEnd);
@@ -912,6 +915,7 @@ namespace KursAM2.Managers
                     p.SummaEnd = p.SummaStart + p.SummaIn - p.SummaOut;
                     // ReSharper restore PossibleNullReferenceException
                 }
+                // ReSharper disable once PossibleMultipleEnumeration
                 return new List<ReminderDatePeriod>(PeriodAdapter);
             }
         }

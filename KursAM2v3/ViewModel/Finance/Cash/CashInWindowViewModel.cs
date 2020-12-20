@@ -104,7 +104,6 @@ namespace KursAM2.ViewModel.Finance.Cash
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
         public override bool IsNewDocument => Document != null && Document.State == RowStatus.NewRow;
         public bool IsNCODEEnable => Document != null && Document.KontragentType == CashKontragentType.Employee;
-        public override bool IsDocNewCopyRequisiteAllow => Document != null && Document.State != RowStatus.NewRow;
 
         #endregion
 

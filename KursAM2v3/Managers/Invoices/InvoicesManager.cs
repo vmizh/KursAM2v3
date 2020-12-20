@@ -921,7 +921,6 @@ namespace KursAM2.Managers.Invoices
                                       || sd26.SD_179.PT_NAME.Contains(searchText)
                                       || sd26.SD_77.TV_NAME.Contains(searchText)
                                       || sd26.SD_189.OOT_NAME.Contains(searchText)
-                                      || sd26.SD_40.CENT_NAME.Contains(searchText)
                                       || td26.SFT_TEXT.Contains(searchText)
                                       || td26.SFT_ED_CENA.ToString().Contains(searchText)
                                       || td26.SFT_KOL.ToString().Contains(searchText)
@@ -966,7 +965,6 @@ namespace KursAM2.Managers.Invoices
                                       || sd26.SD_179.PT_NAME.Contains(searchText)
                                       || sd26.SD_77.TV_NAME.Contains(searchText)
                                       || sd26.SD_189.OOT_NAME.Contains(searchText)
-                                      || sd26.SD_40.CENT_NAME.Contains(searchText)
                                       || td26.SFT_TEXT.Contains(searchText)
                                       || td26.SFT_ED_CENA.ToString().Contains(searchText)
                                       || td26.SFT_KOL.ToString().Contains(searchText)
@@ -1085,7 +1083,6 @@ namespace KursAM2.Managers.Invoices
                                           || sd26.SD_179.PT_NAME.Contains(searchText)
                                           || sd26.SD_77.TV_NAME.Contains(searchText)
                                           || sd26.SD_189.OOT_NAME.Contains(searchText)
-                                          || sd26.SD_40.CENT_NAME.Contains(searchText)
                                           || td26.SFT_TEXT.Contains(searchText)
                                           || td26.SFT_ED_CENA.ToString().Contains(searchText)
                                           || td26.SFT_KOL.ToString().Contains(searchText)
@@ -1130,7 +1127,6 @@ namespace KursAM2.Managers.Invoices
                                           || sd26.SD_179.PT_NAME.Contains(searchText)
                                           || sd26.SD_77.TV_NAME.Contains(searchText)
                                           || sd26.SD_189.OOT_NAME.Contains(searchText)
-                                          || sd26.SD_40.CENT_NAME.Contains(searchText)
                                           || td26.SFT_TEXT.Contains(searchText)
                                           || td26.SFT_ED_CENA.ToString().Contains(searchText)
                                           || td26.SFT_KOL.ToString().Contains(searchText)
@@ -1990,8 +1986,9 @@ namespace KursAM2.Managers.Invoices
                                 foreach (var item in doc.DeletedRows)
                                 {
                                     var deletedItem = ctx.TD_84.FirstOrDefault(_ => _.Id == item.Id);
+                                    if(deletedItem != null)
                                     // ReSharper disable once AssignNullToNotNullAttribute
-                                    ctx.TD_84.Remove(deletedItem);
+                                        ctx.TD_84.Remove(deletedItem);
                                 }
                         }
                         else

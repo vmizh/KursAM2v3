@@ -19,7 +19,10 @@ namespace Helper
             var oldContent = item.Content as BaseEdit;
             var defaultMemo = new MemoEdit
             {
-                ShowIcon = false
+                ShowIcon = false,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                ShowEditorButtons = false,
+                TextWrapping = TextWrapping.Wrap
             };
             defaultMemo.EditValueChanged += delegate(object o, EditValueChangedEventArgs args)
             {

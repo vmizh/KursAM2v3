@@ -13,7 +13,7 @@ namespace KursAM2.View.Logistiks.Warehouse
         public WaybillSearchView()
         {
             InitializeComponent();
-            
+
             Closing += (o, e) => { LayoutManager.Save(); };
             Loaded += (operGridControl, e) =>
             {
@@ -21,6 +21,9 @@ namespace KursAM2.View.Logistiks.Warehouse
                 LayoutManager.Load();
             };
         }
+
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
+        public string LayoutManagerName { get; set; }
 
         private void GridControlSearch_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
@@ -38,8 +41,5 @@ namespace KursAM2.View.Logistiks.Warehouse
                         DisplayFormat = "n2"
                     };
         }
-
-        public LayoutManager.LayoutManager LayoutManager { get; set; }
-        public string LayoutManagerName { get; set; }
-     }
+    }
 }

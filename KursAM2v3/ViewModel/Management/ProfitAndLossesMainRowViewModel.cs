@@ -32,6 +32,9 @@ namespace KursAM2.ViewModel.Management
         private decimal myResultRUB;
         private decimal myResultSEK;
         private decimal myResultUSD;
+        private decimal myLossCNY;
+        private decimal myProfitCNY;
+        private decimal myResultCNY;
 
         public ProfitAndLossesMainRowViewModel()
         {
@@ -280,6 +283,48 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
             get => myResultEUR;
+        }
+
+        /// <summary>
+        ///     Китайский юань
+        /// </summary>
+        public decimal LossCNY
+        {
+            get => myLossCNY;
+            set
+            {
+                if (myLossCNY == value) return;
+                myLossCNY = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        /// <summary>
+        ///     Китайский юань
+        /// </summary>
+        public decimal ProfitCNY
+        {
+            get => myProfitCNY;
+            set
+            {
+                if (myProfitCNY == value) return;
+                myProfitCNY = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        /// <summary>
+        ///     Китайский юань
+        /// </summary>
+        public decimal ResultCNY
+        {
+            get => myResultCNY;
+            set
+            {
+                if (myResultCNY == value) return;
+                myResultCNY = value;
+                RaisePropertyChanged();
+            }
         }
 
         public decimal RecalcProfit

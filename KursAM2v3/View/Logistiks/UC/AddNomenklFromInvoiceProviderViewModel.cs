@@ -93,6 +93,7 @@ namespace KursAM2.View.Logistiks.UC
                             };
                             doc.Rows.Add(newRow);
                         }
+
                         foreach (var r in doc.Rows) doc.AlreadyShipped += r.AlreadyShippedSumma;
                         doc.Remain = doc.Remain = doc.Summa - doc.AlreadyShipped;
                         Invoices.Add(doc);
@@ -121,8 +122,10 @@ namespace KursAM2.View.Logistiks.UC
         #region Properties
 
         public ObservableCollection<InvoiceShort> Invoices { set; get; } = new ObservableCollection<InvoiceShort>();
+
         public ObservableCollection<InvoiceShortRow> Nomenkls { set; get; } =
             new ObservableCollection<InvoiceShortRow>();
+
         public AddNomenklFromInvoiceProviderUC DataUserControl
         {
             get => myDataUserControl;
@@ -133,6 +136,7 @@ namespace KursAM2.View.Logistiks.UC
                 RaisePropertyChanged();
             }
         }
+
         public InvoiceShort CurrentInvoice
         {
             set
@@ -145,6 +149,7 @@ namespace KursAM2.View.Logistiks.UC
             }
             get => myCurrentInvoice;
         }
+
         public InvoiceShortRow CurrentNomenkl
         {
             set
@@ -155,6 +160,7 @@ namespace KursAM2.View.Logistiks.UC
             }
             get => myCurrentNomenkl;
         }
+
         public DependencyObject LayoutControl { get; }
 
         #endregion
@@ -178,10 +184,12 @@ namespace KursAM2.View.Logistiks.UC
         public decimal Price { set; get; }
         public decimal Summa => Price * InvoiceQuantity;
         public decimal InvoiceQuantity { set; get; }
+
         /// <summary>
         ///     уже отгружено
         /// </summary>
         public decimal AlreadyShippedQuantity { set; get; }
+
         public decimal AlreadyShippedSumma { set; get; }
         public decimal QuantityOnSklad { set; get; }
         public decimal Quantity { set; get; }
@@ -225,10 +233,12 @@ namespace KursAM2.View.Logistiks.UC
         public Kontragent Kontragent { set; get; }
         public string Note { set; get; }
         public decimal Summa { set; get; }
+
         /// <summary>
         ///     уже отгружено
         /// </summary>
         public decimal AlreadyShipped { set; get; }
+
         public decimal Remain { set; get; }
         public Currency Currency { set; get; }
         public List<InvoiceShortRow> Rows { set; get; }

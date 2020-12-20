@@ -36,16 +36,14 @@
                                     <dxg:TableView x:Name="tableView2NomenklItemGrid"
                                                    EnableImmediatePosting="True"
                                                    AllowPerPixelScrolling="True"
-                                                   ShowTotalSummary="False"
-                                                   
-                                                   >
-                                    </dxg:TableView>
+                                                   ShowTotalSummary="False" />
+
                                 </dxg:GridControl.View>
                             </dxg:GridControl>
                         </dxlc:LayoutGroup>
                     </dxlc:LayoutGroup>
                 </dxlc:LayoutGroup>
-                <dxlc:LayoutGroup dxlc:LayoutControl.AllowVerticalSizing="True"/>
+                <dxlc:LayoutGroup dxlc:LayoutControl.AllowVerticalSizing="True" />
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>
     </DockPanel>

@@ -8,5 +8,6 @@ namespace Core
         decimal PriceRUB { set; get; }
         decimal PriceSEK { set; get; }
         decimal PriceUSD { set; get; }
+        decimal PriceCNY { set; get; }
     }
 }

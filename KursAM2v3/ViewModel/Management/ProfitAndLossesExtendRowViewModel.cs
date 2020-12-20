@@ -23,6 +23,7 @@ namespace KursAM2.ViewModel.Management
         public decimal ProfitSEK { get; set; }
         public decimal LossSEK { get; set; }
         public decimal ResultSEK { get; set; }
+       
         public SDRSchet SDRSchet { set; get; }
         public SDRState SDRState { set; get; }
         public string AktZachet { set; get; }
@@ -48,6 +49,9 @@ namespace KursAM2.ViewModel.Management
         public decimal ProfitOther { get; set; }
         public decimal LossOther { get; set; }
         public decimal ResultOther { get; set; }
+        public decimal ProfitCNY { get; set; }
+        public decimal LossCNY { get; set; }
+        public decimal ResultCNY { get; set; }
         public Nomenkl Nomenkl { set; get; }
         public Kontragent KontragentBase { set; get; }
         public string Kontragent { set; get; }
@@ -90,6 +94,9 @@ namespace KursAM2.ViewModel.Management
                 ProfitEUR = d.ProfitEUR,
                 LossEUR = d.LossEUR,
                 ResultEUR = d.ResultEUR,
+                ProfitCNY = d.ProfitCNY,
+                LossCNY = d.LossCNY,
+                ResultCNY = d.ResultCNY,
                 ProfitOther = d.ProfitOther,
                 LossOther = d.LossOther,
                 ResultOther = d.ResultOther,

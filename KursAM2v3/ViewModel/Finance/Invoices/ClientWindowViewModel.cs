@@ -594,8 +594,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             if (Document == null) return;
             var frm = new InvoiceClientView { Owner = Application.Current.MainWindow };
-            var ctx = new ClientWindowViewModel { Form = frm };
-            ctx.Document = InvoicesManager.NewClientCopy(Document.DocCode);
+            var ctx = new ClientWindowViewModel
+            {
+                Form = frm, Document = InvoicesManager.NewClientCopy(Document.DocCode)
+            };
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -607,7 +609,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void AddUsluga(object obj)
         {
-            var k = StandartDialogs.SelectNomenkls(null, true);
+            var k = StandartDialogs.SelectNomenkls(null);
             if (k != null)
             {
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
@@ -663,7 +665,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void AddNomenkl(object obj)
         {
-            var k = StandartDialogs.SelectNomenkls(Document?.Currency);
+            var k = StandartDialogs.SelectNomenkls(Document?.Currency, true);
             if (k != null)
             {
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;

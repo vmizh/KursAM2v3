@@ -221,11 +221,10 @@
                             <dxg:GridSummaryItem FieldName="SummaAllEnd" SummaryType="Sum" DisplayFormat="n2" />
                         </dxg:GridControl.TotalSummary>
                         <dxg:GridControl.View>
-                            <dxg:TableView x:Name="gridViewMain" 
+                            <dxg:TableView x:Name="gridViewMain"
                                            AllowPerPixelScrolling="True"
                                            ShowTotalSummary="True"
-                                           
-                                           >
+                                           ShowAutoFilterRow="True">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть калькуляцию себестоимости"
@@ -297,6 +296,11 @@
                                     <dxe:TextEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
+                            <dxg:GridColumn Header="Накопительно" FieldName="Nakopit" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
                             <dxg:GridColumn Header="Примечание" FieldName="Note" ReadOnly="True" />
                         </dxg:GridControl.Columns>
                         <dxg:GridControl.TotalSummary>
@@ -309,11 +313,10 @@
                             <dxg:GridSummaryItem FieldName="SummaDelta" SummaryType="Sum" DisplayFormat="n2" />
                         </dxg:GridControl.TotalSummary>
                         <dxg:GridControl.View>
-                            <dxg:TableView AllowPerPixelScrolling="True" 
+                            <dxg:TableView AllowPerPixelScrolling="True"
                                            ShowTotalSummary="True"
                                            x:Name="operListGridView"
-                                           
-                                           >
+                                           ShowAutoFilterRow="True">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}" />

@@ -48,9 +48,7 @@
                                  EnableSmartColumnsGeneration="True"
                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <dxg:GridControl.View>
-                        <dxg:TableView AllowPerPixelScrolling="True" ShowTotalSummary="True" ShowGroupPanel="False" 
-                                       
-                                       />
+                        <dxg:TableView AllowPerPixelScrolling="True" ShowTotalSummary="True" ShowGroupPanel="False" />
                     </dxg:GridControl.View>
                 </dxg:GridControl>
             </dxlc:LayoutGroup>

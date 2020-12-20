@@ -680,7 +680,7 @@ namespace Core.EntityViewModel
             {
                 if (myInvoiceClient != null && myInvoiceClient.Equals(value)) return;
                 myInvoiceClient = value;
-                if (myInvoiceClient != null)
+                if (myInvoiceClient != null && myInvoiceClient.DocCode > 0)
                     DD_SFACT_DC = myInvoiceClient.DocCode;
                 RaisePropertyChanged();
             }

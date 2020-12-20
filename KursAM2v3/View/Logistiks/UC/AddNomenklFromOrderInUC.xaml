@@ -37,10 +37,8 @@
                                     <dxg:TableView x:Name="tableView2NomenklItemGrid"
                                                    EnableImmediatePosting="True"
                                                    AllowPerPixelScrolling="True"
-                                                   ShowTotalSummary="False"
-                                                   
-                                                   >
-                                    </dxg:TableView>
+                                                   ShowTotalSummary="False" />
+
                                 </dxg:GridControl.View>
                             </dxg:GridControl>
                         </dxlc:LayoutGroup>
@@ -65,10 +63,8 @@
                             <dxg:TableView x:Name="tableView3SelectedNomenklGrid"
                                            EnableImmediatePosting="True"
                                            AllowPerPixelScrolling="True"
-                                           ShowTotalSummary="False"
-                                           
-                                           >
-                            </dxg:TableView>
+                                           ShowTotalSummary="False" />
+
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>

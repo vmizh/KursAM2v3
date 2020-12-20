@@ -565,6 +565,8 @@ namespace KursAM2.ViewModel.Management
             public double? SfUchCurrencyRate { get; set; }
             public decimal? SDRSchetDC { get; set; }
             public bool IsNaklad { set; get; }
+
+            public decimal? CODC { set; get; }
         }
 
         #region Calc
@@ -1176,6 +1178,9 @@ namespace KursAM2.ViewModel.Management
         public decimal ProfitUSD { set; get; }
         public decimal LossUSD { set; get; }
         public decimal ResultUSD { set; get; }
+        public decimal ProfitCNY { set; get; }
+        public decimal LossCNY { set; get; }
+        public decimal ResultCNY { set; get; }
         public decimal ProfitEUR { set; get; }
         public decimal LossEUR { set; get; }
         public decimal ResultEUR { set; get; }

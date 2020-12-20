@@ -50,10 +50,9 @@ namespace KursAM2.View.Logistiks.UC
                               $"AND s.DD_KONTR_OTPR_DC = {CustomFormat.DecimalToSqlDecimal(Kontragent.DocCode)} " +
                               "INNER JOIN td_26 t26  ON t.DDT_SPOST_DC = t26.DOC_CODE  " +
                               "AND t.DDT_SPOST_ROW_CODE = t26.CODE " +
-                              "WHERE s.DOC_CODE != 10240040674 " +
                               "GROUP BY t.doc_code, t.CODE, t.DDT_NOMENKL_DC, s.DD_IN_NUM, s.DD_EXT_NUM, s.DD_DATE " +
                               "HAVING SUM(ISNULL(t26.SFT_KOL, 0)) < SUM(t.DDT_KOL_PRIHOD) " +
-                              "UNION " +
+                              "UNION ALL " +
                               "SELECT t.doc_code ,t.code ,t.DDT_NOMENKL_DC ," +
                               "s.DD_DATE, " +
                               "STR(s.DD_IN_NUM) + ' / ' + ISNULL(s.DD_EXT_NUM,''), " +
@@ -61,12 +60,11 @@ namespace KursAM2.View.Logistiks.UC
                               "FROM TD_24 t " +
                               "INNER JOIN sd_24 s  ON t.DOC_CODE = s.DOC_CODE  " +
                               "AND s.DD_TYPE_DC = 2010000001 " +
-                              "AND ISNULL(s.DD_VOZVRAT,0) != 1 AND s.DOC_CODE != 10240040674 " +
+                              "AND ISNULL(s.DD_VOZVRAT,0) != 1  " +
                               $"AND s.DD_KONTR_OTPR_DC = {CustomFormat.DecimalToSqlDecimal(Kontragent.DocCode)} " +
                               "WHERE t.DDT_SPOST_DC IS NULL";
                     var data = ctx.Database.SqlQuery<SelectOrderInRowBase>(sql).ToList();
                     foreach (var r in data)
-                    {
                         Nomenkls.Add(new SelectedOrderInRow
                         {
                             DocCode = r.DocCode,
@@ -80,7 +78,6 @@ namespace KursAM2.View.Logistiks.UC
                             NomDC = r.NomDC,
                             IsChecked = false
                         });
-                    }
                 }
             }
             catch (Exception ex)
@@ -102,6 +99,7 @@ namespace KursAM2.View.Logistiks.UC
 
         public ObservableCollection<SelectedOrderInRow> Nomenkls { set; get; } =
             new ObservableCollection<SelectedOrderInRow>();
+
         public AddNomenklFromInvoiceProviderRowUC DataUserControl
         {
             get => myDataUserControl;
@@ -112,6 +110,7 @@ namespace KursAM2.View.Logistiks.UC
                 RaisePropertyChanged();
             }
         }
+
         public DependencyObject LayoutControl { get; }
 
         #endregion
@@ -123,7 +122,7 @@ namespace KursAM2.View.Logistiks.UC
         public int Code { set; get; }
         public decimal NomDC { set; get; }
         public decimal QuantityFact { set; get; }
-        public decimal QuantityIn { set; get; } 
+        public decimal QuantityIn { set; get; }
         public DateTime DocDate { set; get; }
         public string DocNum { set; get; }
     }
@@ -136,7 +135,8 @@ namespace KursAM2.View.Logistiks.UC
         public bool IsChecked { set; get; }
     }
 
-    public class DataAnnotationsSelectedOrderInRow : DataAnnotationForFluentApiBase, IMetadataProvider<SelectedOrderInRow>
+    public class DataAnnotationsSelectedOrderInRow : DataAnnotationForFluentApiBase,
+        IMetadataProvider<SelectedOrderInRow>
     {
         void IMetadataProvider<SelectedOrderInRow>.BuildMetadata(MetadataBuilder<SelectedOrderInRow> builder)
         {

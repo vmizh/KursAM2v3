@@ -13,7 +13,7 @@ using KursAM2.View.Logistiks.Warehouse;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
-    public class WarehouseOrderInSearchViewModel : RSWindowSearchViewModelBase
+    public sealed class WarehouseOrderInSearchViewModel : RSWindowSearchViewModelBase
     {
         private readonly WarehouseManager orderManager;
         private WarehouseOrderIn myCurrentDocument;
@@ -30,6 +30,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ObservableCollection<WarehouseOrderIn> Documents { set; get; } =
             new ObservableCollection<WarehouseOrderIn>();
+
         public WarehouseOrderIn CurrentDocument
         {
             set
@@ -40,11 +41,22 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
             get => myCurrentDocument;
         }
+
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
         public override bool IsDocNewCopyAllow => CurrentDocument != null;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
 
         #region Commands
+
+        public ICommand DoubleClickCommand
+        {
+            get { return new Command(DoubleClick, _ => true); }
+        }
+
+        private void DoubleClick(object obj)
+        {
+            DocumentOpen(null);
+        }
 
         public override void Search(object obj)
         {
@@ -122,13 +134,14 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
                         _.DD_TYPE_DC == 2010000001).ToList(); /*приходный складской ордер*/
                     foreach (var item in d)
-                        Documents.Add(new WarehouseOrderIn(item){State = RowStatus.NotEdited});
+                        Documents.Add(new WarehouseOrderIn(item) {State = RowStatus.NotEdited});
                 }
             }
             catch (Exception e)
             {
                 WindowManager.ShowError(e);
             }
+
             RaisePropertyChanged(nameof(Documents));
             SearchText = "";
         }

@@ -19,6 +19,7 @@ namespace KursAM2.View.Logistiks
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         private void NomenklTransferView_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();

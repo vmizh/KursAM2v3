@@ -29,5 +29,9 @@
         decimal ProfitOther { set; get; }
         decimal LossOther { set; get; }
         decimal ResultOther { set; get; }
+
+        decimal ProfitCNY { set; get; }
+        decimal LossCNY { set; get; }
+        decimal ResultCNY { set; get; }
     }
 }

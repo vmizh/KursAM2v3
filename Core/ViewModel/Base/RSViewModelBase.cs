@@ -24,7 +24,7 @@ namespace Core.ViewModel.Base
         protected int myCode;
         private decimal myDocCode;
         private Guid myId;
-        protected string myName;
+        public string myName;
         protected string myNote;
         private RSViewModelBase myParent;
         private decimal? myParentDC;

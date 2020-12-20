@@ -83,7 +83,7 @@ namespace Core.EntityViewModel
             get => myNomenkl;
             set
             {
-                if (myNomenkl != null && myNomenkl.Equals(value)) return;
+                if (myNomenkl == value) return;
                 myNomenkl = value;
                 if (myNomenkl != null)
                 {
@@ -1456,7 +1456,7 @@ namespace Core.EntityViewModel
 
         private void LoadReference()
         {
-            Nomenkl = MainReferences.GetNomenkl(DDT_NOMENKL_DC);
+            myNomenkl = MainReferences.GetNomenkl(DDT_NOMENKL_DC);
             Unit = Nomenkl.Unit;
             //if (DDT_SPOST_ROW_CODE != null && TD_26 != null) InvoiceProviderRow = new InvoiceProviderRow(TD_26);
             //if (DDT_SPOST_DC != null && TD_26 != null && TD_26.SD_26 != null)

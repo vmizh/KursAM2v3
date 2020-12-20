@@ -178,11 +178,7 @@
     <ControlTemplate x:Key="buttonStartOK" TargetType="{x:Type Button}">
         <ContentControl>
             <Grid Width="48" Height="48">
-                <!--<Grid Name="backgroundGrid" Width="48" Height="48" Visibility="Visible">
-                    <Ellipse Fill="#FFD7D8D8" Name="Rect" Visibility="Visible"
-                             Style="{StaticResource ellipseStandartStyle}" />
-                </Grid>-->
-                <Viewbox Width="32" Height="32" Margin="-3,0,0,0">
+                  <Viewbox Width="32" Height="32" Margin="-3,0,0,0">
                     <Path Name="PART_1"
                           Data="M88.552,50c0,0.466-0.216,0.905-0.585,1.189l-36.77,28.27c-0.27,0.207-0.592,0.311-0.915,0.311
 	c-0.318,0-0.635-0.101-0.903-0.302c-0.538-0.406-0.74-1.122-0.492-1.749l7.394-18.718H12.948c-0.829,0-1.5-0.672-1.5-1.5l0-15

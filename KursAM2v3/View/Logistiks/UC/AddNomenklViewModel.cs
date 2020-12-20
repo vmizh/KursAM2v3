@@ -14,13 +14,13 @@ namespace KursAM2.View.Logistiks.UC
     {
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private Currency currentCrs;
-
-        // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private bool myIsNotUsluga;
         private NomenklGroup myCurrentGroup;
         private Nomenkl myCurrentNomenkl;
         private Nomenkl myCurrentSelectNomenkl;
         private AddNomenklUC myDataUserControl;
+
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private bool myIsNotUsluga;
 
         public AddNomenklViewModel(Currency crs = null, bool isNotUsluga = false)
         {
@@ -33,14 +33,19 @@ namespace KursAM2.View.Logistiks.UC
 
         public ObservableCollection<NomenklGroup> NomenklGroup { set; get; } =
             new ObservableCollection<NomenklGroup>();
+
         public ObservableCollection<Nomenkl> NomenklItem { set; get; } =
             new ObservableCollection<Nomenkl>();
+
         public ObservableCollection<Nomenkl> NomenklItemCollection { set; get; } =
             new ObservableCollection<Nomenkl>();
+
         public ObservableCollection<Nomenkl> SelectedNomenkl { set; get; } =
             new ObservableCollection<Nomenkl>();
+
         public List<Nomenkl> ListNomenklCollection { set; get; } =
             new List<Nomenkl>();
+
         public NomenklGroup CurrentGroup
         {
             set
@@ -63,6 +68,7 @@ namespace KursAM2.View.Logistiks.UC
             }
             get => myIsNotUsluga;
         }
+
         public AddNomenklUC DataUserControl
         {
             set
@@ -73,6 +79,7 @@ namespace KursAM2.View.Logistiks.UC
             }
             get => myDataUserControl;
         }
+
         public Nomenkl CurrentNomenkl
         {
             set
@@ -83,6 +90,7 @@ namespace KursAM2.View.Logistiks.UC
             }
             get => myCurrentNomenkl;
         }
+
         public Nomenkl CurrentSelectNomenkl
         {
             set
@@ -176,17 +184,24 @@ namespace KursAM2.View.Logistiks.UC
             {
                 var srch = SearchText.ToUpper();
                 if (n.NOM_NAME.ToUpper().Contains(srch) || (n.NOM_FULL_NAME?.ToUpper().Contains(srch) ?? false)
-                                                        || (n.NOM_POLNOE_IMIA?.ToUpper().Contains(srch) ?? false) 
+                                                        || (n.NOM_POLNOE_IMIA?.ToUpper().Contains(srch) ?? false)
                                                         || n.NOM_NOMENKL.ToUpper().Contains(srch)
                                                         || (n.NOM_NOTES?.ToUpper().Contains(srch) ?? false))
                 {
-                    NomenklItem.Add(n);
+                    if (currentCrs != null)
+                    {
+                        if (n.Currency.DocCode == currentCrs.DocCode)
+                            NomenklItem.Add(n);
+                    }
+                    else
+                    {
+                        NomenklItem.Add(n);
+                    }
                 }
-                if (NomenklItem.Count > 0)
-                {
-                    myDataUserControl.treeListPermissionStruct.IsEnabled = false;
-                }
+
+                if (NomenklItem.Count > 0) myDataUserControl.treeListPermissionStruct.IsEnabled = false;
             }
+
             //foreach (var item in NomenklItemCollection)
             //    // ReSharper disable once RedundantLogicalConditionalExpressionOperand
             //    // ReSharper disable once MergeConditionalExpression

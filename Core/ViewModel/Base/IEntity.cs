@@ -9,22 +9,9 @@ namespace Core.ViewModel.Base
     public interface IEntity<T>
     {
         bool IsAccessRight { set; get; }
-        //T Entity { set; get; }
-        //T Load(decimal dc);
-        //T Load(Guid id);
-        //void Save(T doc);
-
-        //void Save();
-        //void Delete();
-        //void Delete(Guid id);
-        //void Delete(decimal dc);
-
-        //void UpdateFrom(T ent);
-        //void UpdateTo(T ent);
-        //T DefaultValue();
+        
         List<T> LoadList();
 
-        //EntityLoadCodition LoadCondition { set; get; }
     }
 
     public interface IEntityDocument<T, R> : IEntity<T>

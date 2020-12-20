@@ -112,8 +112,7 @@
                                          SelectionMode="Row">
                             <dxg:GridControl.Columns>
                                 <dxg:GridColumn x:Name="col1" Header="Источник" FieldName="NomenklOut" ReadOnly="True" />
-                                <dxg:GridColumn x:Name="col2" Header="Получатель" FieldName="NomenklIn"
-                                                >
+                                <dxg:GridColumn x:Name="col2" Header="Получатель" FieldName="NomenklIn">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:ButtonEditSettings AllowDefaultButton="False">
                                             <dxe:ButtonEditSettings.Buttons>
@@ -127,8 +126,7 @@
                                                 ReadOnly="True" />
                                 <dxg:GridColumn x:Name="col4" Header="Ном.№ (источник)" FieldName="NomenklNumberOut"
                                                 ReadOnly="True" />
-                                <dxg:GridColumn x:Name="col5" Header="Кол-во" FieldName="Quantity"
-                                                >
+                                <dxg:GridColumn x:Name="col5" Header="Кол-во" FieldName="Quantity">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2"
                                                               MaskUseAsDisplayFormat="True"
@@ -143,16 +141,14 @@
                                                               AllowDefaultButton="False" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="col7" Header="Курс" FieldName="Rate"
-                                                >
+                                <dxg:GridColumn x:Name="col7" Header="Курс" FieldName="Rate">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2"
                                                               MaskUseAsDisplayFormat="True"
                                                               AllowDefaultButton="False" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="col8" Header="Цена получателя" FieldName="PriceIn"
-                                                >
+                                <dxg:GridColumn x:Name="col8" Header="Цена получателя" FieldName="PriceIn">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2"
                                                               MaskUseAsDisplayFormat="True"
@@ -161,8 +157,7 @@
                                 </dxg:GridColumn>
                                 <dxg:GridColumn x:Name="col9" Header="Валюта получателя" FieldName="CurrencyIn"
                                                 ReadOnly="True" />
-                                <dxg:GridColumn x:Name="col10" Header="Сумма получателя" FieldName="SummaIn"
-                                                >
+                                <dxg:GridColumn x:Name="col10" Header="Сумма получателя" FieldName="SummaIn">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2"
                                                               MaskUseAsDisplayFormat="True"
@@ -198,8 +193,7 @@
                                                               AllowDefaultButton="False" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="col17_1" Header="Курс (накл)" FieldName="NakladRate"
-                                                >
+                                <dxg:GridColumn x:Name="col17_1" Header="Курс (накл)" FieldName="NakladRate">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n4"
                                                               MaskUseAsDisplayFormat="True"
@@ -207,8 +201,7 @@
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn x:Name="col18" Header="Накладные расходы (новые)"
-                                                FieldName="NakladNewEdSumma"
-                                                >
+                                                FieldName="NakladNewEdSumma">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2"
                                                               MaskUseAsDisplayFormat="True"
@@ -223,8 +216,8 @@
                                     AllowPerPixelScrolling="True"
                                     ShowTotalSummary="True"
                                     EnableImmediatePosting="False"
-                                    
-                                    
+
+
                                     CellValueChanging="tableView_CellValueChanging">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
@@ -331,9 +324,7 @@
                                     AllowPerPixelScrolling="True"
                                     ShowTotalSummary="True"
                                     EnableImmediatePosting="False"
-                                    CellValueChanging="tableView_CellValueChanging"
-                                    
-                                    />
+                                    CellValueChanging="tableView_CellValueChanging" />
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </dxlc:LayoutGroup>

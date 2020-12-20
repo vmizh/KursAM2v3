@@ -59,6 +59,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.USD]);
             CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.EUR]);
             CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.GBP]);
+            CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.CNY]);
             var crsrate = new CrossCurrencyRate();
             crsrate.SetRates(DateTime.Today);
             foreach (var c in crsrate.CurrencyList)
@@ -154,6 +155,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                                     b.PriceRUB *
                                                     CurrentCurrencyRate.GetRate(
                                                         MainReferences.Currencies[CurrencyCode.RUB],
+                                                        RecalcCurrency) +
+                                                    b.PriceCNY *
+                                                    CurrentCurrencyRate.GetRate(
+                                                        MainReferences.Currencies[CurrencyCode.CNY],
                                                         RecalcCurrency), 2);
                         b.SummaCalc = decimal.Round(b.SummaEUR *
                                                     CurrentCurrencyRate.GetRate(
@@ -166,6 +171,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                                     b.SummaGBP *
                                                     CurrentCurrencyRate.GetRate(
                                                         MainReferences.Currencies[CurrencyCode.GBP],
+                                                        RecalcCurrency) +
+                                                    b.SummaCNY *
+                                                    CurrentCurrencyRate.GetRate(
+                                                        MainReferences.Currencies[CurrencyCode.CNY],
                                                         RecalcCurrency) +
                                                     b.SummaRUB *
                                                     CurrentCurrencyRate.GetRate(
@@ -217,6 +226,12 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                 frm.gridExtend.Bands.FirstOrDefault(_ => _.Columns.Any(c => c.FieldName == "SummaSEK"));
                             if (b != null)
                                 b.Visible = ExtendRowsActual.Sum(_ => _.SummaSEK) != 0;
+                            break;
+                        case "SummaCNY":
+                            b =
+                                frm.gridExtend.Bands.FirstOrDefault(_ => _.Columns.Any(c => c.FieldName == "SummaCNY"));
+                            if (b != null)
+                                b.Visible = ExtendRowsActual.Sum(_ => _.SummaCNY) != 0;
                             break;
                     }
                 }
@@ -322,6 +337,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         break;
                     case "LossSEK":
                         b.Visible = ExtendRowsActual.Sum(_ => _.SummaSEK) != 0;
+                        break;
+                    case "LossCNY":
+                        b.Visible = ExtendRowsActual.Sum(_ => _.SummaCNY) != 0;
                         break;
                 }
         }
@@ -436,6 +454,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 ch.SummaSEK =
                     BalansStructure.Where(_ => _.ParentId == ch.Id)
                         .Sum(_ => _.SummaSEK);
+                ch.SummaCNY =
+                    BalansStructure.Where(_ => _.ParentId == ch.Id)
+                        .Sum(_ => _.SummaCNY);
                 var frm = (ManagementBalansView) Form;
                 if (frm != null)
                 {
@@ -461,6 +482,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                 break;
                             case "SummaSEK":
                                 col.Visible = ch.SummaSEK != 0;
+                                break;
+                            case "SummaCNY":
+                                col.Visible = ch.SummaCNY != 0;
                                 break;
                         }
 
@@ -489,6 +513,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             ch.SummaRUB = 0;
             ch.SummaEUR = 0;
             ch.SummaUSD = 0;
+            ch.SummaCNY = 0;
             using (var ent = GlobalOptions.GetEntities())
             {
                 var CashOut = ent.SD_34.Where(_ =>
@@ -531,7 +556,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Currency = MainReferences.Currencies[d.CRS_DC.Value],
                         SummaEUR = d.CRS_DC.Value == CurrencyCode.EUR ? (decimal) d.SUMM_ORD : 0,
                         SummaUSD = d.CRS_DC.Value == CurrencyCode.USD ? (decimal) d.SUMM_ORD : 0,
-                        SummaRUB = d.CRS_DC.Value == CurrencyCode.RUB ? (decimal) d.SUMM_ORD : 0
+                        SummaRUB = d.CRS_DC.Value == CurrencyCode.RUB ? (decimal) d.SUMM_ORD : 0,
+                        SummaCNY = d.CRS_DC.Value == CurrencyCode.CNY ? (decimal) d.SUMM_ORD : 0
                     });
                 }
 
@@ -559,7 +585,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Currency = MainReferences.Currencies[d.CRS_DC.Value],
                         SummaEUR = d.CRS_DC.Value == CurrencyCode.EUR ? (decimal) d.SUMM_ORD : 0,
                         SummaUSD = d.CRS_DC.Value == CurrencyCode.USD ? (decimal) d.SUMM_ORD : 0,
-                        SummaRUB = d.CRS_DC.Value == CurrencyCode.RUB ? (decimal) d.SUMM_ORD : 0
+                        SummaRUB = d.CRS_DC.Value == CurrencyCode.RUB ? (decimal) d.SUMM_ORD : 0,
+                        SummaCNY = d.CRS_DC.Value == CurrencyCode.CNY ? (decimal) d.SUMM_ORD : 0
                     });
                 }
 
@@ -587,7 +614,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Currency = MainReferences.Currencies[d.VVT_CRS_DC],
                         SummaEUR = d.VVT_CRS_DC == CurrencyCode.EUR ? (decimal) d.VVT_VAL_RASHOD : 0,
                         SummaUSD = d.VVT_CRS_DC == CurrencyCode.USD ? (decimal) d.VVT_VAL_RASHOD : 0,
-                        SummaRUB = d.VVT_CRS_DC == CurrencyCode.RUB ? (decimal) d.VVT_VAL_RASHOD : 0
+                        SummaRUB = d.VVT_CRS_DC == CurrencyCode.RUB ? (decimal) d.VVT_VAL_RASHOD : 0,
+                        SummaCNY = d.VVT_CRS_DC == CurrencyCode.CNY ? (decimal) d.VVT_VAL_RASHOD : 0
                     });
                 }
             }
@@ -605,6 +633,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     case CurrencyCode.USDName:
                         ch.SummaUSD += e.SummaUSD;
                         break;
+                    case CurrencyCode.CNYName:
+                        ch.SummaCNY += e.SummaCNY;
+                        break;
                 }
         }
 
@@ -620,6 +651,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                    b.SummaGBP * CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.GBP],
                                        RecalcCurrency) +
                                    b.SummaRUB * CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.RUB],
+                                       RecalcCurrency) +
+                                   b.SummaCNY * CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
                                        RecalcCurrency);
             if (ExtendRowsActual.Count > 0 && RecalcCurrency != null && CurrentCurrencyRate != null)
                 foreach (var b in ExtendRowsActual)
@@ -635,6 +668,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                       RecalcCurrency) +
                                   b.PriceRUB *
                                   CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.RUB],
+                                      RecalcCurrency) + 
+                                  b.PriceCNY *
+                                  CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
                                       RecalcCurrency);
                     b.SummaCalc = b.SummaEUR *
                                   CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.EUR],
@@ -647,6 +683,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                       RecalcCurrency) +
                                   b.SummaRUB *
                                   CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.RUB],
+                                      RecalcCurrency) +
+                                  b.SummaCNY *
+                                  CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
                                       RecalcCurrency);
                 }
 
@@ -715,6 +754,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         SummaGBP = s.Where(_ => _.CurrencyDC == CurrencyCode.GBP).Sum(_ => _.Summa),
                         SummaCHF = s.Where(_ => _.CurrencyDC == CurrencyCode.CHF).Sum(_ => _.Summa),
                         SummaSEK = s.Where(_ => _.CurrencyDC == CurrencyCode.SEK).Sum(_ => _.Summa),
+                        SummaCNY = s.Where(_ => _.CurrencyDC == CurrencyCode.CNY).Sum(_ => _.Summa),
                         //Tag = BalansSection.ManagementCash,
                         ObjectDC = d
 
@@ -740,6 +780,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 ch.SummaSEK =
                     BalansStructure.Where(_ => _.ParentId == ch.Id)
                         .Sum(_ => _.SummaSEK);
+                ch.SummaCNY =
+                    BalansStructure.Where(_ => _.ParentId == ch.Id)
+                        .Sum(_ => _.SummaCNY);
             }
         }
 
@@ -776,6 +819,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         SummaGBP = bank.Currency.DocCode == CurrencyCode.GBP ? (decimal) rem.SummaEnd : 0,
                         SummaCHF = bank.Currency.DocCode == CurrencyCode.CHF ? (decimal) rem.SummaEnd : 0,
                         SummaSEK = bank.Currency.DocCode == CurrencyCode.SEK ? (decimal) rem.SummaEnd : 0,
+                        SummaCNY = bank.Currency.DocCode == CurrencyCode.CNY ? (decimal) rem.SummaEnd : 0,
                         ObjectDC = d
                         // ReSharper restore PossibleMultipleEnumeration
                     });
@@ -800,6 +844,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             ch.SummaSEK =
                 BalansStructure.Where(_ => _.ParentId == ch.Id)
                     .Sum(_ => _.SummaSEK);
+            ch.SummaCNY =
+                BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    .Sum(_ => _.SummaCNY);
         }
 
         private void GetKontragent()
@@ -814,6 +861,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             cc.SummaGBP = 0;
             cc.SummaCHF = 0;
             cc.SummaSEK = 0;
+            cc.SummaCNY = 0;
             var dd = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
                                                      .Single(t => t.Tag == BalansSection.Debitors)
                                                      .Id);
@@ -824,6 +872,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             dd.SummaGBP = 0;
             dd.SummaCHF = 0;
             dd.SummaSEK = 0;
+            dd.SummaCNY = 0;
             var sql = "SELECT kboab.KONTR_DC as KontrDC, " +
                       "       cast(SUM(isnull(kboab.CRS_KONTR_OUT,0) - isnull(kboab.CRS_KONTR_IN,0)) AS numeric(18,2)) AS Summa, " +
                       " s43.valuta_dc AS KontrCrsDC" +
@@ -849,6 +898,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 cc.SummaGBP += d.KontrCrsDC == CurrencyCode.GBP ? d.Summa : 0;
                 cc.SummaCHF += d.KontrCrsDC == CurrencyCode.CHF ? d.Summa : 0;
                 cc.SummaSEK += d.KontrCrsDC == CurrencyCode.SEK ? d.Summa : 0;
+                cc.SummaCNY += d.KontrCrsDC == CurrencyCode.CNY ? d.Summa : 0;
                 ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                 {
                     GroupId = cc.Id,
@@ -864,6 +914,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaGBP = d.KontrCrsDC == CurrencyCode.GBP ? d.Summa : 0,
                     SummaCHF = d.KontrCrsDC == CurrencyCode.CHF ? d.Summa : 0,
                     SummaSEK = d.KontrCrsDC == CurrencyCode.SEK ? d.Summa : 0,
+                    SummaCNY = d.KontrCrsDC == CurrencyCode.CNY ? d.Summa : 0,
                     Kontragent = k
                 });
             }
@@ -877,6 +928,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 dd.SummaGBP += d.KontrCrsDC == CurrencyCode.GBP ? d.Summa : 0;
                 dd.SummaCHF += d.KontrCrsDC == CurrencyCode.CHF ? d.Summa : 0;
                 dd.SummaSEK += d.KontrCrsDC == CurrencyCode.SEK ? d.Summa : 0;
+                dd.SummaCNY += d.KontrCrsDC == CurrencyCode.CNY ? d.Summa : 0;
                 ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                 {
                     GroupId = dd.Id,
@@ -892,6 +944,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaGBP = d.KontrCrsDC == CurrencyCode.GBP ? d.Summa : 0,
                     SummaCHF = d.KontrCrsDC == CurrencyCode.CHF ? d.Summa : 0,
                     SummaSEK = d.KontrCrsDC == CurrencyCode.SEK ? d.Summa : 0,
+                    SummaCNY = d.KontrCrsDC == CurrencyCode.SEK ? d.Summa : 0,
                     Kontragent = k
                 });
             }
@@ -942,6 +995,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaSEK =
                         data.Where(_ => _.NomCurrencyDC == CurrencyCode.SEK && _.SkladDC == s)
                             .Sum(_ => GetRound(_.Summa)),
+                    SummaCNY =
+                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.CNY && _.SkladDC == s)
+                            .Sum(_ => GetRound(_.Summa)),
                     ObjectDC = n.DocCode
                     //Tag = BalansSection.WarehouseIn
                 });
@@ -966,7 +1022,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         CurrencyName = MainReferences.Currencies[dd.NomCurrencyDC].Name,
                         SummaEUR = dd.NomCurrencyDC == CurrencyCode.EUR ? dd.Summa : 0,
                         SummaUSD = dd.NomCurrencyDC == CurrencyCode.USD ? dd.Summa : 0,
-                        SummaRUB = dd.NomCurrencyDC == CurrencyCode.RUB ? dd.Summa : 0
+                        SummaRUB = dd.NomCurrencyDC == CurrencyCode.RUB ? dd.Summa : 0,
+                        SummaCNY = dd.NomCurrencyDC == CurrencyCode.CNY ? dd.Summa : 0
                     });
             }
 
@@ -991,6 +1048,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             ch.SummaSEK =
                 BalansStructure.Where(_ => _.ParentId == ch.Id)
                     .Sum(_ => _.SummaSEK);
+            ch.SummaCNY =
+                BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    .Sum(_ => _.SummaCNY);
         }
 
         private void GetZarplata()
@@ -1002,6 +1062,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             ch.SummaRUB = 0;
             ch.SummaEUR = 0;
             ch.SummaUSD = 0;
+            ch.SummaCNY = 0;
             var zp = new EmployeePayWindowViewModel(false);
             zp.LoadForAll(CurrentDate);
             foreach (var per in zp.EmployeeMain)
@@ -1018,6 +1079,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     case CurrencyCode.USDName:
                         ch.SummaUSD += -per.DolgSumma;
                         break;
+                    case CurrencyCode.CNYName:
+                        ch.SummaCNY += -per.DolgSumma;
+                        break;
                 }
 
                 ExtendRows.Add(new ManagementBalanceExtendRowViewModel
@@ -1033,6 +1097,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaGBP = per.Employee.crs_dc.Value == CurrencyCode.GBP ? -per.DolgSumma : 0,
                     SummaCHF = per.Employee.crs_dc.Value == CurrencyCode.CHF ? -per.DolgSumma : 0,
                     SummaSEK = per.Employee.crs_dc.Value == CurrencyCode.SEK ? -per.DolgSumma : 0,
+                    SummaCNY = per.Employee.crs_dc.Value == CurrencyCode.CNY ? -per.DolgSumma : 0,
                     Persona = per.Employee
                     // ReSharper restore PossibleInvalidOperationException
                 });

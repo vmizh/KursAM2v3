@@ -28,38 +28,36 @@
             </dxlc:LayoutItem>
         </StackPanel>
         <dxg:TreeListControl x:Name="treeListWarehouse"
-                         AutoGenerateColumns="None"
-                         EnableSmartColumnsGeneration="True"
-                         MaxHeight="10000"
-                         MaxWidth="10000"
-                         VerticalAlignment="Stretch"
-                         HorizontalAlignment="Stretch"
-                         dx:DXSerializer.SerializationID="treeListWarehouse"
-                         dx:DXSerializer.StoreLayoutMode="All"
-                         dxg:DataControlSerializationOptions.AddNewColumns="True"
-                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                         ItemsSource="{Binding WarehouseCollection, Mode=TwoWay}"
-                         CurrentItem="{Binding CurrentWarehouse,Mode=TwoWay}"
-                         SelectionMode="Row">
+                             AutoGenerateColumns="None"
+                             EnableSmartColumnsGeneration="True"
+                             MaxHeight="10000"
+                             MaxWidth="10000"
+                             VerticalAlignment="Stretch"
+                             HorizontalAlignment="Stretch"
+                             dx:DXSerializer.SerializationID="treeListWarehouse"
+                             dx:DXSerializer.StoreLayoutMode="All"
+                             dxg:DataControlSerializationOptions.AddNewColumns="True"
+                             dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                             ItemsSource="{Binding WarehouseCollection, Mode=TwoWay}"
+                             CurrentItem="{Binding CurrentWarehouse,Mode=TwoWay}"
+                             SelectionMode="Row">
             <dxg:TreeListControl.Columns>
                 <dxg:TreeListColumn Name="col_2_1" Header="Наименование" FieldName="Name"
-                                ReadOnly="True" />
+                                    ReadOnly="True" />
                 <dxg:TreeListColumn Name="col_2_2" Header="Кладовщик" FieldName="Eployee"
-                                ReadOnly="True" />
+                                    ReadOnly="True" />
                 <dxg:TreeListColumn Name="col_2_3" Header="Отрицательные остатки" FieldName="SKL_NEGATIVE_REST"
-                                ReadOnly="True" />
+                                    ReadOnly="True" />
                 <dxg:TreeListColumn Name="col_2_4" Header="Регион" FieldName="Region" ReadOnly="True"
-                                SortMode="DisplayText" />
+                                    SortMode="DisplayText" />
             </dxg:TreeListControl.Columns>
             <dxg:TreeListControl.View>
                 <dxg:TreeListView x:Name="tableViewNomenkl"
-                               AllowPerPixelScrolling="True"
-                               ShowTotalSummary="False"
-                               ShowAutoFilterRow="True"
-                            KeyFieldName="Id"
-                                  ParentFieldName="ParentId"
-                               
-                               />
+                                  AllowPerPixelScrolling="True"
+                                  ShowTotalSummary="False"
+                                  ShowAutoFilterRow="True"
+                                  KeyFieldName="Id"
+                                  ParentFieldName="ParentId" />
             </dxg:TreeListControl.View>
         </dxg:TreeListControl>
     </DockPanel>

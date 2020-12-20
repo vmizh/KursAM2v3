@@ -13,7 +13,7 @@ namespace Core.EntityViewModel
     ///     Расходный складской ордер
     /// </summary>
     [MetadataType(typeof(DataAnnotationsWarehouseStorageOrderOut))]
-    public class WarehouseOrderOut : SD_24ViewModel
+    public sealed class WarehouseOrderOut : SD_24ViewModel
     {
         //public string Receiver => KontragentReceiver != null ? KontragentReceiver.Name : WarehouseIn?.Name;
         private WarehouseSenderType myWarehouseSenderType;
@@ -49,6 +49,7 @@ namespace Core.EntityViewModel
         public ObservableCollection<WarehouseOrderOutRow> DeletedRows { get; set; } =
             new ObservableCollection<WarehouseOrderOutRow>();
 
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<WarehouseOrderOutRow> SelectedRows { get; set; } =
             new ObservableCollection<WarehouseOrderOutRow>();
 

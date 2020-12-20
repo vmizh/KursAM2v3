@@ -78,6 +78,20 @@ namespace KursAM2.Dialogs
             return ctx.ListNomenklCollection;
         }
 
+        public static List<WarehouseOrderOutRowSelect> SelectNomenklsFromRashodOrder(Warehouse store)
+        {
+            //MainReferences.UpdateNomenkl();
+            var ctx = new AddNomenklFromRashOrderViewModel(store)
+            {
+                WindowName = "Выбор номенклатур"
+            };
+            var dlg = new SelectDialogView {DataContext = ctx};
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            if (!ctx.DialogResult) return null;
+            return new List<WarehouseOrderOutRowSelect>(ctx.ItemsCollection);
+        }
+
         public static List<EXT_USERSViewModel> SelectUsers()
         {
             var ctx = new UserUCViewModel();

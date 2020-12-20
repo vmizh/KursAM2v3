@@ -424,6 +424,7 @@
     <Compile Include="View\Logistiks\UC\AddNomenklFromInvoiceProviderRowUC.xaml.cs">
       <DependentUpon>AddNomenklFromInvoiceProviderRowUC.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Logistiks\UC\AddNomenklFromRashOrderViewModel.cs" />
     <Compile Include="View\Management\Controls\BalansCompareMoneyInPathUI.xaml.cs">
       <DependentUpon>BalansCompareMoneyInPathUI.xaml</DependentUpon>
     </Compile>

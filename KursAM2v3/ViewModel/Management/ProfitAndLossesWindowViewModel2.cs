@@ -51,6 +51,7 @@ namespace KursAM2.ViewModel.Management
             CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.USD]);
             CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.EUR]);
             CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.GBP]);
+            CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.CNY]);
             StartDate = DateTime.Today;
             EndDate = DateTime.Today;
             var crsrate = new CrossCurrencyRate();
@@ -356,13 +357,21 @@ namespace KursAM2.ViewModel.Management
                                 b.Visible = ExtendActual.Sum(_ => _.ProfitEUR) != 0 ||
                                             ExtendActual.Sum(_ => _.LossEUR) != 0;
                             break;
-                        case "LossUSD":
+                        case "ProfitUSD":
                             b =
                                 frm.GridControlExtend.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "LossUSD"));
+                                    _ => _.Columns.Any(c => c.FieldName == "ProfitUSD"));
                             if (b != null)
                                 b.Visible = ExtendActual.Sum(_ => _.ProfitUSD) != 0 ||
                                             ExtendActual.Sum(_ => _.LossUSD) != 0;
+                            break;
+                        case "ProfitCNY":
+                            b =
+                                frm.GridControlExtend.Bands.FirstOrDefault(
+                                    _ => _.Columns.Any(c => c.FieldName == "ProfitCNY"));
+                            if (b != null)
+                                b.Visible = ExtendActual.Sum(_ => _.ProfitCNY) != 0 ||
+                                            ExtendActual.Sum(_ => _.LossCNY) != 0;
                             break;
                         case "ProfitRUB":
                             b =
@@ -420,25 +429,28 @@ namespace KursAM2.ViewModel.Management
                                 Note = d.Note,
                                 SDRSchet = d.SDRSchet,
                                 Summa = d.ResultCHF + d.ResultEUR + d.ResultGBP + d.ResultRUB + d.ResultSEK +
-                                        d.ResultUSD,
+                                        d.ResultUSD + d.ResultCNY,
                                 ProfitCHF = d.ProfitCHF,
                                 ProfitEUR = d.ProfitEUR,
                                 ProfitGBP = d.ProfitGBP,
                                 ProfitRUB = d.ProfitRUB,
                                 ProfitSEK = d.ProfitSEK,
                                 ProfitUSD = d.ProfitUSD,
+                                ProfitCNY = d.ProfitCNY,
                                 LossCHF = d.LossCHF,
                                 LossEUR = d.LossEUR,
                                 LossGBP = d.LossGBP,
                                 LossRUB = d.LossRUB,
                                 LossSEK = d.LossSEK,
                                 LossUSD = d.LossUSD,
+                                LossCNY = d.LossCNY,
                                 ResultCHF = d.ResultCHF,
                                 ResultEUR = d.ResultEUR,
                                 ResultGBP = d.ResultGBP,
                                 ResultRUB = d.ResultRUB,
                                 ResultSEK = d.ResultSEK,
                                 ResultUSD = d.ResultUSD,
+                                ResultCNY = d.ResultCNY
                             }
                         };
                         ExtendActual.Add(ProfitAndLossesExtendRowViewModel.GetCopy(d));
@@ -451,25 +463,29 @@ namespace KursAM2.ViewModel.Management
                             CurrencyName = d.CurrencyName,
                             Note = d.Note,
                             SDRSchet = d.SDRSchet,
-                            Summa = d.ResultCHF + d.ResultEUR + d.ResultGBP + d.ResultRUB + d.ResultSEK + d.ResultUSD,
+                            Summa = d.ResultCHF + d.ResultEUR + d.ResultGBP + d.ResultRUB + d.ResultSEK +
+                                    d.ResultUSD + d.ResultCNY,
                             ProfitCHF = d.ProfitCHF,
                             ProfitEUR = d.ProfitEUR,
                             ProfitGBP = d.ProfitGBP,
                             ProfitRUB = d.ProfitRUB,
                             ProfitSEK = d.ProfitSEK,
                             ProfitUSD = d.ProfitUSD,
+                            ProfitCNY = d.ProfitCNY,
                             LossCHF = d.LossCHF,
                             LossEUR = d.LossEUR,
                             LossGBP = d.LossGBP,
                             LossRUB = d.LossRUB,
                             LossSEK = d.LossSEK,
                             LossUSD = d.LossUSD,
+                            LossCNY = d.LossCNY,
                             ResultCHF = d.ResultCHF,
                             ResultEUR = d.ResultEUR,
                             ResultGBP = d.ResultGBP,
                             ResultRUB = d.ResultRUB,
                             ResultSEK = d.ResultSEK,
                             ResultUSD = d.ResultUSD,
+                            ResultCNY = d.ResultCNY
                         });
                         f.ProfitCHF += d.ProfitCHF;
                         f.ProfitEUR += d.ProfitEUR;
@@ -477,18 +493,21 @@ namespace KursAM2.ViewModel.Management
                         f.ProfitRUB += d.ProfitRUB;
                         f.ProfitSEK += d.ProfitSEK;
                         f.ProfitUSD += d.ProfitUSD;
+                        f.ProfitCNY += d.ProfitCNY;
                         f.LossCHF += d.LossCHF;
                         f.LossEUR += d.LossEUR;
                         f.LossGBP += d.LossGBP;
                         f.LossRUB += d.LossRUB;
                         f.LossSEK += d.LossSEK;
                         f.LossUSD += d.LossUSD;
+                        f.LossCNY += d.LossCNY;
                         f.ResultCHF = f.VzaimozachetInfo.Sum(_ => _.ProfitCHF - _.LossCHF);
                         f.ResultEUR = f.VzaimozachetInfo.Sum(_ => _.ProfitEUR - _.LossEUR);
                         f.ResultGBP = f.VzaimozachetInfo.Sum(_ => _.ProfitGBP - _.LossGBP);
                         f.ResultRUB = f.VzaimozachetInfo.Sum(_ => _.ProfitRUB - _.LossRUB);
                         f.ResultSEK = f.VzaimozachetInfo.Sum(_ => _.ProfitSEK - _.LossSEK);
                         f.ResultUSD = f.VzaimozachetInfo.Sum(_ => _.ProfitUSD - _.LossUSD);
+                        f.ResultCNY = f.VzaimozachetInfo.Sum(_ => _.ProfitCNY - _.LossCNY);
                     }
                 }
             }
@@ -553,25 +572,29 @@ namespace KursAM2.ViewModel.Management
                             CurrencyName = d.CurrencyName,
                             Note = d.Note,
                             SDRSchet = d.SDRSchet,
-                            Summa = d.ResultCHF + d.ResultEUR + d.ResultGBP + d.ResultRUB + d.ResultSEK + d.ResultUSD,
+                            Summa = d.ResultCHF + d.ResultEUR + d.ResultGBP + d.ResultRUB + d.ResultSEK +
+                                    d.ResultUSD + d.ResultCNY,
                             ProfitCHF = d.ProfitCHF,
                             ProfitEUR = d.ProfitEUR,
                             ProfitGBP = d.ProfitGBP,
                             ProfitRUB = d.ProfitRUB,
                             ProfitSEK = d.ProfitSEK,
                             ProfitUSD = d.ProfitUSD,
+                            ProfitCNY = d.ProfitCNY,
                             LossCHF = d.LossCHF,
                             LossEUR = d.LossEUR,
                             LossGBP = d.LossGBP,
                             LossRUB = d.LossRUB,
                             LossSEK = d.LossSEK,
                             LossUSD = d.LossUSD,
+                            LossCNY = d.LossCNY,
                             ResultCHF = d.ResultCHF,
                             ResultEUR = d.ResultEUR,
                             ResultGBP = d.ResultGBP,
                             ResultRUB = d.ResultRUB,
                             ResultSEK = d.ResultSEK,
                             ResultUSD = d.ResultUSD,
+                            ResultCNY = d.ResultCNY
                         });
                         ExtendActual.Add(ProfitAndLossesExtendRowViewModel.GetCopy(d));
                     }
@@ -583,25 +606,29 @@ namespace KursAM2.ViewModel.Management
                             CurrencyName = d.CurrencyName,
                             Note = d.Note,
                             SDRSchet = d.SDRSchet,
-                            Summa = d.ResultCHF + d.ResultEUR + d.ResultGBP + d.ResultRUB + d.ResultSEK + d.ResultUSD,
+                            Summa = d.ResultCHF + d.ResultEUR + d.ResultGBP + d.ResultRUB + d.ResultSEK +
+                                    d.ResultUSD + d.ResultCNY,
                             ProfitCHF = d.ProfitCHF,
                             ProfitEUR = d.ProfitEUR,
                             ProfitGBP = d.ProfitGBP,
                             ProfitRUB = d.ProfitRUB,
                             ProfitSEK = d.ProfitSEK,
                             ProfitUSD = d.ProfitUSD,
+                            ProfitCNY = d.ProfitCNY,
                             LossCHF = d.LossCHF,
                             LossEUR = d.LossEUR,
                             LossGBP = d.LossGBP,
                             LossRUB = d.LossRUB,
                             LossSEK = d.LossSEK,
                             LossUSD = d.LossUSD,
+                            LossCNY = d.LossCNY,
                             ResultCHF = d.ResultCHF,
                             ResultEUR = d.ResultEUR,
                             ResultGBP = d.ResultGBP,
                             ResultRUB = d.ResultRUB,
                             ResultSEK = d.ResultSEK,
                             ResultUSD = d.ResultUSD,
+                            ResultCNY = d.ResultCNY
                         });
                         f.ProfitCHF += d.ProfitCHF;
                         f.ProfitEUR += d.ProfitEUR;
@@ -609,18 +636,21 @@ namespace KursAM2.ViewModel.Management
                         f.ProfitRUB += d.ProfitRUB;
                         f.ProfitSEK += d.ProfitSEK;
                         f.ProfitUSD += d.ProfitUSD;
+                        f.ProfitCNY += d.ProfitCNY;
                         f.LossCHF += d.LossCHF;
                         f.LossEUR += d.LossEUR;
                         f.LossGBP += d.LossGBP;
                         f.LossRUB += d.LossRUB;
                         f.LossSEK += d.LossSEK;
                         f.LossUSD += d.LossUSD;
+                        f.LossCNY += d.LossCNY;
                         f.ResultCHF += d.ResultCHF;
                         f.ResultEUR += d.ResultEUR;
                         f.ResultGBP += d.ResultGBP;
                         f.ResultRUB += d.ResultRUB;
                         f.ResultSEK += d.ResultSEK;
                         f.ResultUSD += d.ResultUSD;
+                        f.ResultCNY += d.ResultCNY;
                     }
                 }
             }
@@ -729,6 +759,9 @@ namespace KursAM2.ViewModel.Management
                                                RecalcCurrency) +
                                            b.ProfitSEK *
                                            CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.SEK],
+                                               RecalcCurrency) +
+                                           b.ProfitCNY *
+                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
                                                RecalcCurrency), 2);
                     b.RecalcLoss = Round(b.LossRUB *
                                          CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.RUB],
@@ -744,6 +777,9 @@ namespace KursAM2.ViewModel.Management
                                              RecalcCurrency) +
                                          b.LossCHF *
                                          CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CHF],
+                                             RecalcCurrency) +
+                                         b.LossCNY *
+                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
                                              RecalcCurrency) +
                                          b.LossSEK *
                                          CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.SEK],
@@ -768,6 +804,9 @@ namespace KursAM2.ViewModel.Management
                                            b.ProfitCHF *
                                            CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CHF],
                                                RecalcCurrency) +
+                                           b.ProfitCNY *
+                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
+                                               RecalcCurrency) +
                                            b.ProfitSEK *
                                            CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.SEK],
                                                RecalcCurrency), 2);
@@ -785,6 +824,9 @@ namespace KursAM2.ViewModel.Management
                                              RecalcCurrency) +
                                          b.LossCHF *
                                          CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CHF],
+                                             RecalcCurrency) +
+                                         b.LossCNY *
+                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
                                              RecalcCurrency) +
                                          b.LossSEK *
                                          CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.SEK],
@@ -818,6 +860,9 @@ namespace KursAM2.ViewModel.Management
                 m.ProfitSEK = Round(Main.Where(_ => _.ParentId == id).Sum(_ => _.ProfitSEK), 2);
                 m.LossSEK = Round(Main.Where(_ => _.ParentId == id).Sum(_ => _.LossSEK), 2);
                 m.ResultSEK = Round(m.ProfitSEK - m.LossSEK, 2);
+                m.ProfitCNY = Round(Main.Where(_ => _.ParentId == id).Sum(_ => _.ProfitCNY), 2);
+                m.LossCNY = Round(Main.Where(_ => _.ParentId == id).Sum(_ => _.LossCNY), 2);
+                m.ResultCNY = Round(m.ProfitCNY - m.LossCNY, 2);
             }
             else
             {
@@ -875,6 +920,15 @@ namespace KursAM2.ViewModel.Management
                     ? Main.Where(_ => _.ParentId == id).Sum(_ => _.LossSEK)
                     : 0, 2);
                 m.ResultSEK = Round(Main.Where(_ => _.ParentId == id).Sum(_ => _.ResultSEK), 2);
+                m.ProfitCNY = Round(m.CalcType == TypeProfitAndLossCalc.IsProfit ||
+                                    m.CalcType == TypeProfitAndLossCalc.IsAll
+                    ? Main.Where(_ => _.ParentId == id).Sum(_ => _.ProfitCNY)
+                    : 0, 2);
+                m.LossCNY = Round(m.CalcType == TypeProfitAndLossCalc.IsLoss ||
+                                  m.CalcType == TypeProfitAndLossCalc.IsAll
+                    ? Main.Where(_ => _.ParentId == id).Sum(_ => _.LossCNY)
+                    : 0, 2);
+                m.ResultCNY = Round(Main.Where(_ => _.ParentId == id).Sum(_ => _.ResultCNY), 2);
             }
 
             SummaNode(m.ParentId);
@@ -904,6 +958,9 @@ namespace KursAM2.ViewModel.Management
                 m.ProfitSEK = Round(MainNach.Where(_ => _.ParentId == id).Sum(_ => _.ProfitSEK), 2);
                 m.LossSEK = Round(MainNach.Where(_ => _.ParentId == id).Sum(_ => _.LossSEK), 2);
                 m.ResultSEK = Round(m.ProfitSEK - m.LossSEK, 2);
+                m.ProfitCNY = Round(MainNach.Where(_ => _.ParentId == id).Sum(_ => _.ProfitCNY), 2);
+                m.LossCNY = Round(MainNach.Where(_ => _.ParentId == id).Sum(_ => _.LossCNY), 2);
+                m.ResultCNY = Round(m.ProfitCNY - m.LossCNY, 2);
             }
             else
             {
@@ -961,6 +1018,15 @@ namespace KursAM2.ViewModel.Management
                     ? MainNach.Where(_ => _.ParentId == id).Sum(_ => _.LossSEK)
                     : 0, 2);
                 m.ResultSEK = Round(MainNach.Where(_ => _.ParentId == id).Sum(_ => _.ResultSEK), 2);
+                m.ProfitCNY = Round(m.CalcType == TypeProfitAndLossCalc.IsProfit ||
+                                    m.CalcType == TypeProfitAndLossCalc.IsAll
+                    ? MainNach.Where(_ => _.ParentId == id).Sum(_ => _.ProfitCNY)
+                    : 0, 2);
+                m.LossCNY = Round(m.CalcType == TypeProfitAndLossCalc.IsLoss ||
+                                  m.CalcType == TypeProfitAndLossCalc.IsAll
+                    ? MainNach.Where(_ => _.ParentId == id).Sum(_ => _.LossCNY)
+                    : 0, 2);
+                m.ResultCNY = Round(MainNach.Where(_ => _.ParentId == id).Sum(_ => _.ResultCNY), 2);
             }
 
             SummaNodeNach(m.ParentId);
@@ -1026,6 +1092,15 @@ namespace KursAM2.ViewModel.Management
                     ? ExtendNach.Where(_ => _.GroupId == d.Id).Sum(_ => _.LossSEK)
                     : 0, 2);
                 d.ResultSEK = Round(d.ProfitSEK - d.LossSEK, 2);
+                d.ProfitCNY = Round(d.CalcType == TypeProfitAndLossCalc.IsProfit ||
+                                    d.CalcType == TypeProfitAndLossCalc.IsAll
+                    ? ExtendNach.Where(_ => _.GroupId == d.Id).Sum(_ => _.ProfitCNY)
+                    : 0, 2);
+                d.LossCNY = Round(d.CalcType == TypeProfitAndLossCalc.IsLoss ||
+                                  d.CalcType == TypeProfitAndLossCalc.IsAll
+                    ? ExtendNach.Where(_ => _.GroupId == d.Id).Sum(_ => _.LossCNY)
+                    : 0, 2);
+                d.ResultCNY = Round(d.ProfitCNY - d.LossCNY, 2);
                 myTempIdList.Add(d.ParentId);
             }
 
@@ -1088,6 +1163,15 @@ namespace KursAM2.ViewModel.Management
                     ? Extend.Where(_ => _.GroupId == d.Id).Sum(_ => _.LossSEK)
                     : 0, 2);
                 d.ResultSEK = Round(d.ProfitSEK - d.LossSEK, 2);
+                d.ProfitCNY = Round(d.CalcType == TypeProfitAndLossCalc.IsProfit ||
+                                    d.CalcType == TypeProfitAndLossCalc.IsAll
+                    ? Extend.Where(_ => _.GroupId == d.Id).Sum(_ => _.ProfitCNY)
+                    : 0, 2);
+                d.LossCNY = Round(d.CalcType == TypeProfitAndLossCalc.IsLoss ||
+                                  d.CalcType == TypeProfitAndLossCalc.IsAll
+                    ? Extend.Where(_ => _.GroupId == d.Id).Sum(_ => _.LossCNY)
+                    : 0, 2);
+                d.ResultCNY = Round(d.ProfitCNY - d.LossCNY, 2);
                 myTempIdList2.Add(d.ParentId);
             }
 
@@ -1166,7 +1250,8 @@ namespace KursAM2.ViewModel.Management
                                   || Abs(Abs(m.ResultEUR) - Abs(n.ResultEUR)) > 1
                                   || Abs(Abs(m.ResultGBP) - Abs(n.ResultGBP)) > 1
                                   || Abs(Abs(m.ResultCHF) - Abs(n.ResultCHF)) > 1
-                                  || Abs(Abs(m.ResultSEK) - Abs(n.ResultSEK)) > 1)
+                                  || Abs(Abs(m.ResultSEK) - Abs(n.ResultSEK)) > 1
+                                  || Abs(Abs(m.ResultCNY) - Abs(n.ResultCNY)) > 1)
                     {
                         m.IsDiv = true;
                         if (n != null)
@@ -1298,6 +1383,20 @@ namespace KursAM2.ViewModel.Management
                         if (b1 != null)
                             b1.Visible = MainNach.Sum(_ => _.ProfitSEK) != 0 ||
                                          MainNach.Sum(_ => _.LossSEK) != 0;
+                        break;
+                    case "ProfitCNY":
+                        b =
+                            frm.treeListMain.Bands.FirstOrDefault(
+                                _ => _.Columns.Any(c => c.FieldName == "ProfitCNY"));
+                        b1 =
+                            frm.treeListMainNach1.Bands.FirstOrDefault(
+                                _ => _.Columns.Any(c => c.FieldName == "ProfitCNY"));
+                        if (b != null)
+                            b.Visible = Main.Sum(_ => _.ProfitCNY) != 0 ||
+                                        Main.Sum(_ => _.LossCNY) != 0;
+                        if (b1 != null)
+                            b1.Visible = MainNach.Sum(_ => _.ProfitCNY) != 0 ||
+                                         MainNach.Sum(_ => _.LossCNY) != 0;
                         break;
                 }
             }

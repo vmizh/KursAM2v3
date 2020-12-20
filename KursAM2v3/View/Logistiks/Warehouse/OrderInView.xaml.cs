@@ -28,13 +28,13 @@ namespace KursAM2.View.Logistiks.Warehouse
     /// </summary>
     public partial class OrderInView : ILayout
     {
-        public ButtonEdit schetEdit;
-        public ComboBoxEdit warehouseTypeComboBoxEdit;
-        private readonly WindowManager winManager = new WindowManager();
         private readonly LayoutManagerGridAutoGenerationColumns gridRowsLayout;
+        private readonly WindowManager winManager = new WindowManager();
+        public ButtonEdit schetEdit;
 #pragma warning disable 649
         private ButtonEdit senderEdit;
 #pragma warning restore 649
+        public ComboBoxEdit warehouseTypeComboBoxEdit;
 
         public OrderInView()
         {
@@ -47,7 +47,7 @@ namespace KursAM2.View.Logistiks.Warehouse
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        
+
         private void OrderIn_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
@@ -81,7 +81,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     e.Column.ReadOnly = true;
                     e.Column.EditSettings = new TextEditSettings
                     {
-                        HorizontalContentAlignment = EditSettingsHorizontalAlignment.Center 
+                        HorizontalContentAlignment = EditSettingsHorizontalAlignment.Center
                     };
                     break;
                 case nameof(inv.Nomenkl):
@@ -128,9 +128,9 @@ namespace KursAM2.View.Logistiks.Warehouse
                     bandid++;
                 }
             }
+
             gridRows.TotalSummary.Clear();
             foreach (var col in gridRows.Columns)
-            {
                 if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
                 {
                     var summary = new GridSummaryItem
@@ -142,7 +142,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     };
                     gridRows.TotalSummary.Add(summary);
                 }
-            }
+
             var columnsInfo = gridRowsLayout.Load();
             gridRows.TotalSummary.Clear();
             foreach (var col in gridRows.Columns)
@@ -166,6 +166,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                 BindingHelper.CopyBinding(oldContent, newContent, BaseEdit.EditValueProperty);
                 e.Item.Content = newContent;
             }
+
             switch (e.PropertyName)
             {
                 case nameof(doc.DD_IN_NUM):
@@ -264,6 +265,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     e.Item.MinWidth = 300;
                     break;
             }
+
             ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
         }
 
@@ -271,14 +273,14 @@ namespace KursAM2.View.Logistiks.Warehouse
         {
             var dtx = DataContext as OrderInWindowViewModel;
             if (dtx == null || dtx.Document == null || dtx.Document.DD_SPOST_DC == null) return;
-            DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)dtx.Document.DD_SPOST_DC);
+            DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal) dtx.Document.DD_SPOST_DC);
         }
 
         private void DelSchet_Click(object sender, RoutedEventArgs e)
         {
-            if (winManager.ShowWinUIMessageBox(this, 
-                    "Вы хотите удалить счет и связанные с ним строки?",
-                    "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+            if (winManager.ShowWinUIMessageBox(this,
+                "Вы хотите удалить счет и связанные с ним строки?",
+                "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
             var dtx = DataContext as OrderInWindowViewModel;
             if (dtx == null) return;
             var delList =
@@ -288,6 +290,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                 if (r.State != RowStatus.NewRow) dtx.Document.DeletedRows.Add(r);
                 dtx.Document.Rows.Remove(r);
             }
+
             dtx.Document.DD_SPOST_DC = null;
             dtx.Document.DD_SCHET = null;
             var delBtn = schetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Del");
@@ -313,6 +316,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                 doc.WarehouseIn = null;
                 return;
             }
+
             doc.Kladovshik = doc.WarehouseIn.Employee;
         }
 
@@ -345,6 +349,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     MessageBoxImage.Error);
                 return;
             }
+
             var ctx = new AddNomenklFromInvoiceProviderViewModel(dtx.Document.WarehouseIn,
                 dtx.Document.KontragentSender);
             var dlg = new SelectDialogView {DataContext = ctx};
@@ -355,6 +360,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                 dtx.Document.KontragentSender = ctx.CurrentInvoice.Kontragent;
                 senderEdit.AllowDefaultButton = false;
             }
+
             using (var dbctx = GlobalOptions.GetEntities())
             {
                 foreach (var r in ctx.Nomenkls.Where(_ => _.IsChecked && _.Quantity > 0).ToList())
@@ -378,8 +384,8 @@ namespace KursAM2.View.Logistiks.Warehouse
                     });
                 }
             }
+
             if (dtx.Document.DD_SPOST_DC == null)
-            {
                 using (var context = GlobalOptions.GetEntities())
                 {
                     var s26 = context.SD_26.FirstOrDefault(_ => _.DOC_CODE == ctx.CurrentInvoice.DocCode);
@@ -391,7 +397,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                         dtx.Document.DD_SPOST_DC = ctx.CurrentInvoice.DocCode;
                     }
                 }
-            }
+
             var delBtn = schetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Del");
             if (delBtn != null) delBtn.IsEnabled = true;
             var addBtn = schetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Add");
@@ -433,6 +439,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                         doc.WarehouseOut = null;
                         return;
                     }
+
                     warehouseTypeComboBoxEdit.IsEnabled = false;
                     break;
             }

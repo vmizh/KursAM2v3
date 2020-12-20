@@ -251,6 +251,30 @@
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
+                                    <dxg:TreeListControlBand Name="band8" Header="CNY">
+                                        <dxg:TreeListColumn Name="tcol72" FieldName="ProfitCNY" Header="Доход"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
+                                                                      MaskUseAsDisplayFormat="True" />
+                                            </dxg:TreeListColumn.EditSettings>
+
+                                        </dxg:TreeListColumn>
+                                        <dxg:TreeListColumn Name="tcol73" FieldName="LossCNY" Header="Расход"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
+                                                                      MaskUseAsDisplayFormat="True" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
+                                        <dxg:TreeListColumn Name="tcol74" FieldName="ResultCNY" Header="Результат"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
+                                                                      MaskUseAsDisplayFormat="True" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
+                                    </dxg:TreeListControlBand>
                                     <dxg:TreeListControlBand Name="bandRecalc1"
                                                      Header="{Binding RecalcCrsName, UpdateSourceTrigger=PropertyChanged}">
                                         <dxg:TreeListColumn Name="colr14" FieldName="RecalcProfit" Header="Доход"
@@ -474,6 +498,30 @@
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
                                                               MaskUseAsDisplayFormat="True" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
+                                    </dxg:TreeListControlBand>
+                                    <dxg:TreeListControlBand Name="band9" Header="CNY">
+                                        <dxg:TreeListColumn Name="tcol82" FieldName="ProfitCNY" Header="Доход"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
+                                                                      MaskUseAsDisplayFormat="True" />
+                                            </dxg:TreeListColumn.EditSettings>
+
+                                        </dxg:TreeListColumn>
+                                        <dxg:TreeListColumn Name="tcol83" FieldName="LossCNY" Header="Расход"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
+                                                                      MaskUseAsDisplayFormat="True" />
+                                            </dxg:TreeListColumn.EditSettings>
+                                        </dxg:TreeListColumn>
+                                        <dxg:TreeListColumn Name="tcol84" FieldName="ResultCNY" Header="Результат"
+                                                            ReadOnly="True">
+                                            <dxg:TreeListColumn.EditSettings>
+                                                <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
+                                                                      MaskUseAsDisplayFormat="True" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>

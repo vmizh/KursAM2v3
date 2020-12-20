@@ -35,24 +35,32 @@ namespace Core.ViewModel.Common
         {
             if (Equals(first, second)) return 1;
             var rates = GetRate(date);
-            if (first.Equals(GlobalOptions.SystemProfile.NationalCurrency)) return decimal.Round(rates[second], 4);
-            if (second.Equals(GlobalOptions.SystemProfile.NationalCurrency)) return decimal.Round(rates[first], 4);
-            return decimal.Round(rates[first] / rates[second], 4);
+            if (first.Equals(GlobalOptions.SystemProfile.NationalCurrency)) 
+                return rates.ContainsKey(second) ? decimal.Round(rates[second], 4) : 1;
+            if (second.Equals(GlobalOptions.SystemProfile.NationalCurrency)) 
+                return rates.ContainsKey(first) ? decimal.Round(rates[first], 4) : 1;
+            return rates.ContainsKey(first) && rates.ContainsKey(second) ?  
+                decimal.Round(rates[first] / rates[second], 4) : 1;
         }
 
         public static decimal GetCBRate(Currency first, DateTime date)
         {
             if (Equals(first, GlobalOptions.SystemProfile.NationalCurrency)) return 1;
             var rates = GetRate(date);
-            return decimal.Round(rates[first], 4);
+            return rates.ContainsKey(first) ? decimal.Round(rates[first], 4) : 1;
         }
 
         public static decimal GetCBSummaRate(Currency first, Currency second, Dictionary<Currency, decimal> rates)
         {
             if (first.Equals(second)) return 1;
-            if (first.Equals(GlobalOptions.SystemProfile.NationalCurrency)) return decimal.Round(rates[second], 4);
-            if (second.Equals(GlobalOptions.SystemProfile.NationalCurrency)) return decimal.Round(rates[first], 4);
-            return decimal.Round(rates[first] / rates[second], 4);
+            if (first.Equals(GlobalOptions.SystemProfile.NationalCurrency))
+                return rates.ContainsKey(second) ? decimal.Round(rates[second], 4) : 1;
+            if (second.Equals(GlobalOptions.SystemProfile.NationalCurrency))
+                return rates.ContainsKey(first) ? decimal.Round(rates[first], 4) : 1;
+
+            if (rates.ContainsKey(first) && rates.ContainsKey(second))
+                return decimal.Round(rates[first] / rates[second], 4);
+            return 1;
         }
 
         public static Dictionary<Currency, decimal> GetRate(DateTime date)

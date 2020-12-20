@@ -25,7 +25,7 @@ namespace KursAM2.View.Logistiks
         private void NomenklTransferView_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
-       }
+        }
 
         private void NomenklTransferView_Closing(object sender, CancelEventArgs e)
         {
@@ -34,10 +34,7 @@ namespace KursAM2.View.Logistiks
 
         private void tableView_CellValueChanging(object sender, CellValueChangedEventArgs e)
         {
-            if (e.Column.FieldName == "IsAccepted")
-            {
-                RaiseIsRowReadonly((bool)e.Value);
-            }
+            if (e.Column.FieldName == "IsAccepted") RaiseIsRowReadonly((bool) e.Value);
         }
 
         private void RaiseIsRowReadonly(bool isAccepted)

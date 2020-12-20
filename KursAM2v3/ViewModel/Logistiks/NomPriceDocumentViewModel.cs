@@ -16,6 +16,7 @@ namespace KursAM2.ViewModel.Logistiks
         private decimal mySummaIn;
         private decimal mySummaOut;
         private string myTo;
+        private decimal myNakopit;
 
         public string DocumentName
         {
@@ -112,6 +113,17 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 if (mySummaDelta == value) return;
                 mySummaDelta = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal Nakopit
+        {
+            get => myNakopit;
+            set
+            {
+                if (myNakopit == value) return;
+                myNakopit = value;
                 RaisePropertyChanged();
             }
         }

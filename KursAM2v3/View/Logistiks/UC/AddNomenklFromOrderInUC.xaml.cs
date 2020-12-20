@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Windows;
-using DevExpress.Xpf.Core.Serialization;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
@@ -13,8 +12,9 @@ namespace KursAM2.View.Logistiks.UC
     /// </summary>
     public partial class AddNomenklFromOrderInUC : ILayout
     {
-        readonly MemoryStream defaultLayotNomenklItemGrid = new MemoryStream();
-        readonly MemoryStream defaultLayotSelectNomenklItemGrid = new MemoryStream();
+        private readonly MemoryStream defaultLayotNomenklItemGrid = new MemoryStream();
+        private readonly MemoryStream defaultLayotSelectNomenklItemGrid = new MemoryStream();
+
         public AddNomenklFromOrderInUC(string layoutName)
         {
             LayoutName = layoutName;
@@ -29,6 +29,7 @@ namespace KursAM2.View.Logistiks.UC
         public string LayoutName { get; set; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void ResetLayot()
         {
             defaultLayotNomenklItemGrid.Position = 0;

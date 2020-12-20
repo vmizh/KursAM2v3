@@ -50,7 +50,12 @@
                     <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
                 </dxg:TreeListColumn.EditSettings>
             </dxg:TreeListColumn>
-            <dxg:TreeListColumn Name="tcol2_11" FieldName="RecalcCurrency" Header="{Binding RecalcCrsName}"
+            <dxg:TreeListColumn Name="tcol2_15" FieldName="SummaCNY" Header="CNY" ReadOnly="True">
+                <dxg:TreeListColumn.EditSettings>
+                    <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                </dxg:TreeListColumn.EditSettings>
+            </dxg:TreeListColumn>
+            <dxg:TreeListColumn Name="tcol2_12" FieldName="RecalcCurrency" Header="{Binding RecalcCrsName}"
                                 ReadOnly="True">
                 <dxg:TreeListColumn.EditSettings>
                     <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />

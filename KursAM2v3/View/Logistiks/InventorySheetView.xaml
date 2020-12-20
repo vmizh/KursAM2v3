@@ -177,8 +177,8 @@
                         <dxg:GridControl.View>
                             <dxg:TableView AllowPerPixelScrolling="True"
                                            ShowTotalSummary="True"
-                                           
-                                           
+
+
                                            ShowAutoFilterRow="True"
                                            x:Name="gridRowsTableView"
                                            EnableImmediatePosting="True"

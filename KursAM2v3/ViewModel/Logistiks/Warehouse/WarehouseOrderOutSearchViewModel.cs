@@ -44,6 +44,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         #region Commands
 
+        public ICommand DoubleClickCommand
+        {
+            get { return new Command(DoubleClick, _ => true); }
+        }
+
+        private void DoubleClick(object obj)
+        {
+            DocumentOpen(null);
+        }
+
         public override void Search(object obj)
         {
             GetSearchDocument(obj);
@@ -135,7 +145,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             if (CurrentDocument == null) return;
             var ctx = new OrderOutWindowViewModel(
-                new StandartErrorManager(GlobalOptions.GetEntities(), "WarehouseOrderIn", true)
+                new StandartErrorManager(GlobalOptions.GetEntities(), "WarehouseOrderOut", true)
                 , CurrentDocument.DocCode);
             var frm = new OrderOutView
             {

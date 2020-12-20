@@ -32,9 +32,7 @@
                         <dxg:TableView AllowPerPixelScrolling="True"
                                        ShowTotalSummary="True"
                                        ShowGroupPanel="False"
-                                       ShowAutoFilterRow="True"
-                                       
-                                       />
+                                       ShowAutoFilterRow="True" />
                     </dxg:GridControl.View>
                 </dxg:GridControl>
             </dxlc:LayoutGroup>
@@ -56,9 +54,7 @@
                                 AllowPerPixelScrolling="True"
                                 ShowTotalSummary="True"
                                 ShowGroupPanel="False"
-                                ShowAutoFilterRow="True" 
-                                
-                                />
+                                ShowAutoFilterRow="True" />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>
@@ -76,9 +72,7 @@
                                 AllowPerPixelScrolling="True"
                                 ShowTotalSummary="True"
                                 ShowGroupPanel="False"
-                                ShowAutoFilterRow="True"
-                                
-                                />
+                                ShowAutoFilterRow="True" />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>

@@ -57,9 +57,7 @@
                 <dxg:TableView Name="tableView"
                                ShowAutoFilterRow="True"
                                AllowPerPixelScrolling="True"
-                               ShowTotalSummary="False"
-                               
-                               />
+                               ShowTotalSummary="False" />
             </dxg:GridControl.View>
         </dxg:GridControl>
     </DockPanel>

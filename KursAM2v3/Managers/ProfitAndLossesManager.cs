@@ -1271,14 +1271,7 @@ namespace KursAM2.Managers
             Dictionary<decimal, string> co;
             co
                 =
-                new Dictionary<decimal, string>
-                {
-                    {
-                        -1,
-                        "ЦО не указан"
-                    }
-                }
-                ;
+                new Dictionary<decimal, string>();
             foreach (
                 var c
                 in
@@ -1348,7 +1341,8 @@ namespace KursAM2.Managers
                         NomenklDC = sd83.DOC_CODE,
                         Name = sd83.NOM_NAME,
                         // ReSharper disable once MergeConditionalExpression
-                        COName = sd26.SD_40 != null ? sd26.SD_40.CENT_NAME : "ЦО не указан",
+                        //COName =   MainReferences.COList[sd26.SF_CENTR_OTV_DC ?? 0].Name,
+                        CODC = sd26.SF_CENTR_OTV_DC,
                         Quantity = td26.SFT_KOL,
                         Summa = (decimal) td26.SFT_SUMMA_K_OPLATE_KONTR_CRS,
                         KontrCrsDC = sd43.VALUTA_DC,
@@ -1357,6 +1351,10 @@ namespace KursAM2.Managers
                         SDRSchetDC = td26.SFT_SHPZ_DC,
                         IsNaklad = td26.SFT_IS_NAKLAD == 1
                     }).ToList();
+                foreach (var c in dataOut)
+                {
+                    c.COName = MainReferences.COList[c.CODC ?? 0].Name;
+                }
                 var naklad = ent.KONTR_BALANS_OPER_ARC.Where(_ => _.DOC_DATE >= DateStart && _.DOC_DATE <= DateEnd
                                                                                           && _.DOC_NAME ==
                                                                                           "С/ф от поставщика (накладные расходы как услуги)")
@@ -1461,12 +1459,12 @@ namespace KursAM2.Managers
                         var kontr = MainReferences.GetKontragent(nak.KONTR_DC);
                         var sd26 = ent.SD_26.Include(_ => _.SD_40).FirstOrDefault(_ => _.DOC_CODE == nak.DOC_DC);
                         if (sd26 == null) continue;
-                        if (!dictCOOuts.ContainsKey(sd26.SD_40.CENT_NAME))
-                            dictCOOuts.Add(sd26.SD_40.CENT_NAME, Guid.NewGuid());
+                        if (!dictCOOuts.ContainsKey(sd26.SD_40 == null ? MainReferences.COList[0].Name : sd26.SD_40.CENT_NAME))
+                            dictCOOuts.Add(sd26.SD_40 == null ? MainReferences.COList[0].Name : sd26.SD_40.CENT_NAME, Guid.NewGuid());
 
                         var e = new ProfitAndLossesExtendRowViewModel
                         {
-                            GroupId = dictCOOuts[sd26.SD_40.CENT_NAME],
+                            GroupId = dictCOOuts[sd26.SD_40 == null ? MainReferences.COList[0].Name : sd26.SD_40.CENT_NAME],
                             Name = "Накладные расходы как услуги",
                             Note = string.Empty,
                             DocCode = sd26.DOC_CODE,

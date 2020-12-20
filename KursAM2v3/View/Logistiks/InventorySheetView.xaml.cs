@@ -19,7 +19,7 @@ namespace KursAM2.View.Logistiks
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
- 
+
         private void InventorySheetView_Closing(object sender, CancelEventArgs e)
         {
             LayoutManager.Save();

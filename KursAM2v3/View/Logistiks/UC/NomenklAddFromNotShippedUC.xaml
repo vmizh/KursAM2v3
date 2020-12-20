@@ -36,9 +36,7 @@
                                              VerticalAlignment="Stretch"
                                              HorizontalAlignment="Stretch">
                                 <dxg:GridControl.View>
-                                    <dxg:TableView AllowPerPixelScrolling="True" ShowTotalSummary="True" 
-                                                   
-                                                   />
+                                    <dxg:TableView AllowPerPixelScrolling="True" ShowTotalSummary="True" />
                                 </dxg:GridControl.View>
                             </dxg:GridControl>
                         </dxlc:LayoutGroup>
@@ -54,9 +52,7 @@
                                              HorizontalAlignment="Stretch">
                                 <dxg:GridControl.View>
                                     <dxg:TableView AllowPerPixelScrolling="True"
-                                                   ShowTotalSummary="True" 
-                                                   
-                                                   />
+                                                   ShowTotalSummary="True" />
                                 </dxg:GridControl.View>
                             </dxg:GridControl>
                         </dxlc:LayoutGroup>

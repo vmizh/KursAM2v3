@@ -31,8 +31,7 @@
 
                 <dxlc:LayoutGroup Orientation="Vertical" Name="Group4" dxlc:LayoutControl.AllowVerticalSizing="True">
                     <dxlc:LayoutGroup Orientation="Horizontal" x:Name="Group1"
-                                      dxlc:LayoutControl.AllowHorizontalSizing="True"
-                                      >
+                                      dxlc:LayoutControl.AllowHorizontalSizing="True">
                         <dxg:TreeListControl
                             Name="treeListPermissionStruct"
                             AutoGenerateColumns="AddNew"
@@ -73,9 +72,7 @@
                                     <dxg:TableView x:Name="tableView2NomenklItemGrid"
                                                    EnableImmediatePosting="True"
                                                    AllowPerPixelScrolling="True"
-                                                   ShowTotalSummary="False"
-                                                   
-                                                   >
+                                                   ShowTotalSummary="False">
                                         <dxg:TableView.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem Header="Добавить"
@@ -110,9 +107,7 @@
                             <dxg:TableView x:Name="tableView3SelectedNomenklGrid"
                                            EnableImmediatePosting="True"
                                            AllowPerPixelScrolling="True"
-                                           ShowTotalSummary="False"
-                                           
-                                           >
+                                           ShowTotalSummary="False">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Удалить" Command="{Binding DeletedNomenklInSelecktCommand}" />

@@ -211,32 +211,50 @@ namespace KursAM2.Managers.Nomenkl
             }
         }
 
-        public static void RecalcPrice(List<decimal> nomdcs)
+        public static void RecalcPrice(List<decimal> nomdcs, ALFAMEDIAEntities ent = null )
         {
-
-            using (var ctx = GlobalOptions.GetEntities())
+            if (ent != null)
             {
-                using (var transaction = ctx.Database.BeginTransaction())
+                try
                 {
-                    try
+                    foreach (var n in nomdcs)
                     {
-                        foreach (var n in nomdcs)
-                        {
-                            ctx.Database.ExecuteSqlCommand($"INSERT INTO NOMENKL_RECALC (NOM_DC, OPER_DATE) " +
-                                                           $"VALUES ({CustomFormat.DecimalToSqlDecimal(n)}, '20000101');");
-                        }
-
-                        transaction.Commit();
+                        ent.Database.ExecuteSqlCommand($"INSERT INTO NOMENKL_RECALC (NOM_DC, OPER_DATE) " +
+                                                       $"VALUES ({CustomFormat.DecimalToSqlDecimal(n)}, '20000101');");
                     }
-                    catch (Exception ex)
-                    {
-                        if (transaction.UnderlyingTransaction.Connection != null)
-                            transaction.Rollback();
-                        WindowManager.ShowError(ex);
-                    }
+                    
                 }
+                catch (Exception ex)
+                {
+                    WindowManager.ShowError(ex);
+                }
+            }
+            else
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    using (var transaction = ctx.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            foreach (var n in nomdcs)
+                            {
+                                ctx.Database.ExecuteSqlCommand($"INSERT INTO NOMENKL_RECALC (NOM_DC, OPER_DATE) " +
+                                                               $"VALUES ({CustomFormat.DecimalToSqlDecimal(n)}, '20000101');");
+                            }
 
-                RecalcPrice();
+                            transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            if (transaction.UnderlyingTransaction.Connection != null)
+                                transaction.Rollback();
+                            WindowManager.ShowError(ex);
+                        }
+                    }
+
+                    RecalcPrice();
+                }
             }
         }
     }

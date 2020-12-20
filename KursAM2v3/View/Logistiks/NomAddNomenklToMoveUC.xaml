@@ -69,9 +69,7 @@
                         <dxg:GridControl.View>
                             <dxg:TableView x:Name="tableViewNomenkl"
                                            AllowPerPixelScrolling="True"
-                                           ShowTotalSummary="False"
-                                           
-                                           >
+                                           ShowTotalSummary="False">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Создать номенклатуру" Command="{Binding NomenklAddCommand}" />

@@ -90,8 +90,8 @@
                     <dxg:GridControl.View>
                         <dxg:TableView Name="tableView"
                                        NavigationStyle="Row"
-                                       
-                                       
+
+
                                        AllowPerPixelScrolling="True"
                                        ShowTotalSummary="True"
                                        ShowAutoFilterRow="True">

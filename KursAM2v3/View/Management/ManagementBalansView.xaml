@@ -189,6 +189,18 @@
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                         </dxg:GridControlBand>
+                        <dxg:GridControlBand Header="CNY" Name="bandCNY">
+                            <dxg:GridColumn Name="colCNY_1" FieldName="PriceCNY" Header="Цена" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Name="colCNY_2" FieldName="SummasCNY" Header="Сумма" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControlBand>
                         <dxg:GridControlBand Header="{Binding RecalcCrsName, UpdateSourceTrigger=PropertyChanged}"
                                              Name="bandCalc">
                             <dxg:GridColumn Name="colCalc_1" FieldName="PriceCalc" Header="Цена" ReadOnly="True">

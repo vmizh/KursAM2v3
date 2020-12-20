@@ -198,6 +198,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer
                                 };
                                 ctx.NomenklMain.Add(newItem);
+                                var crsDC = GlobalOptions.SystemProfile.NationalCurrency.DocCode;
                                 var newNomItem = new SD_83
                                 {
                                     DOC_CODE = newDC,
@@ -205,7 +206,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     NOM_NOMENKL = newItem.NomenklNumber + " " +
                                                   GlobalOptions.SystemProfile.MainCurrency.Name,
                                     NOM_NOTES = newItem.Note,
-                                    NOM_SALE_CRS_DC = GlobalOptions.SystemProfile.MainCurrency.DocCode,
+                                    NOM_SALE_CRS_DC = crsDC,
                                     NOM_FULL_NAME = newItem.Name,
                                     NOM_ED_IZM_DC = newItem.UnitDC,
                                     NOM_CATEG_DC = newItem.CategoryDC,

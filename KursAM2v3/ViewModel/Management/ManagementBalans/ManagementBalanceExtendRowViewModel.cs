@@ -23,6 +23,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private decimal myPrice;
         private decimal myPriceCalc;
         private decimal myPriceCHF;
+        private decimal myPriceCNY;
         private decimal myPriceEUR;
         private decimal myPriceGBP;
         private decimal myPriceRUB;
@@ -32,6 +33,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private decimal mySumma;
         private decimal mySummaCalc;
         private decimal mySummaCHF;
+        private decimal mySummaCNY;
         private decimal mySummaEUR;
         private decimal mySummaGBP;
         private decimal mySummaRUB;
@@ -345,6 +347,29 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 RaisePropertyChanged();
             }
             get => mySummaUSD;
+        }
+
+        public decimal PriceCNY
+        {
+            set
+            {
+                if (Equals(value, myPriceCNY)) return;
+                myPriceCNY = value;
+                RaisePropertyChanged();
+            }
+            get => myPriceCNY;
+        }
+
+        public decimal SummaCNY
+        {
+            set
+            {
+                if (Equals(value, mySummaCNY)) return;
+                mySummaCNY = value;
+                RaisePropertyChanged();
+            }
+
+            get => mySummaCNY;
         }
     }
 }

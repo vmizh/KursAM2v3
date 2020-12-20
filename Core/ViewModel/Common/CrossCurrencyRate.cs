@@ -19,6 +19,7 @@ namespace Core.ViewModel.Common
         private decimal myCurrencyGBP;
         private decimal myCurrencyRUB;
         private decimal myCurrencyUSD;
+        private decimal myCurrencyCNY;
 
         /// <summary>
         ///     При указании курсов по отношению к рублю,
@@ -101,6 +102,19 @@ namespace Core.ViewModel.Common
             }
         }
 
+        [Display(Name = "CNY")]
+        [DisplayFormat(DataFormatString = "n4")]
+        public decimal CurrencyCNY
+        {
+            get => myCurrencyCNY;
+            set
+            {
+                if (myCurrencyCNY == value) return;
+                myCurrencyCNY = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private void RecalcRate(string fieldName, decimal rate)
         {
             if (Equals(Currency, GlobalOptions.SystemProfile.NationalCurrency))
@@ -132,6 +146,10 @@ namespace Core.ViewModel.Common
                             row = CurrencyList.First(_ => _.Currency.DocCode == CurrencyCode.GBP);
                             row.CurrencyRUB = 1 / rate;
                             return;
+                        case "CurrencyCNY":
+                            row = CurrencyList.First(_ => _.Currency.DocCode == CurrencyCode.CNY);
+                            row.CurrencyRUB = 1 / rate;
+                            return;
                     }
                 }
         }
@@ -154,6 +172,8 @@ namespace Core.ViewModel.Common
                     return row.CurrencyEUR;
                 case CurrencyCode.GBPName:
                     return row.CurrencyGBP;
+                case CurrencyCode.CNYName:
+                    return row.CurrencyCNY;
             }
 
             return -1;
@@ -176,6 +196,8 @@ namespace Core.ViewModel.Common
                     return CurrencyEUR;
                 case CurrencyCode.GBP:
                     return CurrencyGBP;
+                case CurrencyCode.CNY:
+                    return CurrencyCNY;
             }
 
             return -1;
@@ -208,7 +230,8 @@ namespace Core.ViewModel.Common
                     CurrencyRUB = 1,
                     CurrencyEUR = rates[MainReferences.Currencies[CurrencyCode.EUR]],
                     CurrencyGBP = rates[MainReferences.Currencies[CurrencyCode.GBP]],
-                    CurrencyUSD = rates[MainReferences.Currencies[CurrencyCode.USD]]
+                    CurrencyUSD = rates[MainReferences.Currencies[CurrencyCode.USD]],
+                    CurrencyCNY = rates[MainReferences.Currencies[CurrencyCode.CNY]]
                 });
         }
     }

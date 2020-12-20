@@ -36,6 +36,4 @@ namespace KursAM2.View.Logistiks.UC
                 ctx.SearchExecute(null);
         }
     }
-
-
 }

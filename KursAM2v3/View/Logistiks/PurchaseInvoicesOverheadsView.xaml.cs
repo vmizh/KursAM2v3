@@ -20,7 +20,7 @@ namespace KursAM2.View.Logistiks
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
- 
+
         private void PurchaseInvoicesOverheadsView_Closing(object sender, CancelEventArgs e)
         {
             LayoutManager.Save();
@@ -48,6 +48,7 @@ namespace KursAM2.View.Logistiks
                     groupKontrInfo.SelectedTabIndex = 1;
                     break;
             }
+
             e.Handled = true;
         }
     }

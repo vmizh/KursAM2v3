@@ -111,9 +111,7 @@
                         </dxg:GridControl.TotalSummary>
                         <dxg:GridControl.View>
                             <dxg:TableView AllowPerPixelScrolling="True"
-                                           ShowTotalSummary="True"
-                                           
-                                           />
+                                           ShowTotalSummary="True" />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
 
@@ -174,9 +172,7 @@
                             <dxg:GridColumn Header="Примечание" FieldName="Note" ReadOnly="True" />
                         </dxg:GridControl.Columns>
                         <dxg:GridControl.View>
-                            <dxg:TableView AllowPerPixelScrolling="True" ShowTotalSummary="True" 
-                                           
-                                           />
+                            <dxg:TableView AllowPerPixelScrolling="True" ShowTotalSummary="True" />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>

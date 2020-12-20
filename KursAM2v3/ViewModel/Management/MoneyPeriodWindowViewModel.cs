@@ -154,7 +154,7 @@ namespace KursAM2.ViewModel.Management
             var bankManager = new BankOperationsManager();
             foreach (var b in MainReferences.BankAccounts.Values)
             {
-                var rem = bankManager.GetRemains2(b.BankDC, StartDate, EndDate);
+                var rem = bankManager.GetRemains2(b.DocCode, StartDate, EndDate);
                 if (rem.SummaStart != 0 || rem.SummaEnd != 0)
                 {
                     if (rem.Currency.DocCode == CurrencyCode.CHF)
@@ -165,6 +165,15 @@ namespace KursAM2.ViewModel.Management
                             StartSumma = (decimal) rem.SummaStart,
                             EndSumma = (decimal) rem.SummaEnd,
                             Currency = MainReferences.Currencies[CurrencyCode.CHF]
+                        });
+                    if (rem.Currency.DocCode == CurrencyCode.CNY)
+                        Remains.Add(new MoneyRemainsRow
+                        {
+                            Name = b.BankName + " / " + b.Account,
+                            RemainsType = "Банк",
+                            StartSumma = (decimal) rem.SummaStart,
+                            EndSumma = (decimal) rem.SummaEnd,
+                            Currency = MainReferences.Currencies[CurrencyCode.CNY]
                         });
                     if (rem.Currency.DocCode == CurrencyCode.USD)
                         Remains.Add(new MoneyRemainsRow

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
+using Calculates.Materials;
 using Core;
 using Core.EntityViewModel;
 using Core.Menu;
@@ -10,6 +12,8 @@ using Core.ViewModel.Common;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.Managers.Invoices;
+using KursAM2.Managers.Nomenkl;
 using KursAM2.ReportManagers.SFClientAndWayBill;
 using Reports.Base;
 
@@ -23,6 +27,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private WaybillRow myCurrentNomenklRow;
         private Waybill myDocument;
+        private readonly WindowManager winManager = new WindowManager();
+        private readonly NomenklManager nomManager = new NomenklManager();
 
         public WaybillWindowViewModel()
         {
@@ -45,6 +51,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Command = ExportCommand
                 });
             }
+
             Document = docManager.NewWaybill();
         }
 
@@ -69,6 +76,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Command = ExportCommand
                 });
             }
+
             // ReSharper disable once VirtualMemberCallInConstructor
             RefreshData(dc);
         }
@@ -90,9 +98,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
             get => myDocument;
         }
+
         public override string WindowName => Document?.Name;
         public List<Nomenkl> Nomenkls => MainReferences.ALLNomenkls.Values.ToList();
         public List<Kontragent> Kontragents => MainReferences.AllKontragents.Values.ToList();
+
         public WaybillRow CurrentNomenklRow
         {
             get => myCurrentNomenklRow;
@@ -105,7 +115,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         }
 
         // ReSharper disable once CollectionNeverUpdated.Global
-        public ObservableCollection<WaybillRow> SelectedRows { set; get; } 
+        public ObservableCollection<WaybillRow> SelectedRows { set; get; }
             = new ObservableCollection<WaybillRow>();
 
         private void CreateReports()
@@ -134,21 +144,22 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 .Database.SqlQuery<string>("SELECT DISTINCT DD_KOMU_PEREDANO FROM sd_24 (nolock) " +
                                            "WHERE DD_KOMU_PEREDANO IS NOT null")
                 .ToList())
-            {
                 ByWhomLicoList.Add(item);
-            }
         }
 
         #region Command
 
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
+
         public override bool IsCanSaveData => Document != null && Document.WarehouseOut != null
                                                                && (Document.State != RowStatus.NotEdited
                                                                    || Document.Rows.Any(_ =>
                                                                        _.State != RowStatus.NotEdited)
                                                                    || Document.DeletedRows.Count > 0);
+
         public override RowStatus State => Document?.State ?? RowStatus.NewRow;
+
         public ICommand DeleteLinkDocumentCommand
         {
             get { return new Command(DeleteLinkDocument, _ => true); }
@@ -156,6 +167,51 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void DeleteLinkDocument(object obj)
         {
+        }
+
+        public override void DocDelete(object form)
+        {
+            if (Document.State != RowStatus.Edited)
+            {
+                var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?", "Запрос",
+                    MessageBoxButton.YesNoCancel,
+                    MessageBoxImage.Question);
+                if (res != MessageBoxResult.Yes) return;
+                switch (res)
+                {
+                    case MessageBoxResult.Yes:
+                        //InvoicesManager.DeleteProvider(Document.DocCode);
+                        using (var ctx = GlobalOptions.GetEntities())
+                        {
+                            var doc = ctx.SD_24.FirstOrDefault(_ => _.DOC_CODE == Document.DocCode);
+                            if (doc != null)
+                            {
+                                foreach (var d in ctx.TD_24.Where(_ => _.DOC_CODE == doc.DOC_CODE)) ctx.TD_24.Remove(d);
+                                ctx.SD_24.Remove(doc);
+                            }
+
+                            ctx.SaveChanges();
+                        }
+
+                        Form.Close();
+                        return;
+                    // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
+                    case MessageBoxResult.No:
+                        Form.Close();
+                        return;
+                    // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
+                    case MessageBoxResult.Cancel:
+                        return;
+                }
+            }
+            else
+            {
+                InvoicesManager.DeleteProvider(Document.DocCode);
+                Form.Close();
+            }
+
+            InvoicesManager.DeleteProvider(Document.DocCode);
+            Form.Close();
         }
 
         public ICommand AddFromDocumentCommand
@@ -169,15 +225,27 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand AddNomenklCommand
         {
-            get { return new Command(AddNomenkl, _ => true); }
+            get { return new Command(AddNomenkl, _ => Document.Store != null); }
         }
 
         private void AddNomenkl(object obj)
         {
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
-            var nomenkls = StandartDialogs.SelectNomenkls();
+            var nomenkls = StandartDialogs.SelectNomenkls(null, true);
             if (nomenkls == null || nomenkls.Count <= 0) return;
             foreach (var n in nomenkls)
+            {
+                var m = NomenklCalculationManager.NomenklRemain(Document.DD_DATE, n.DocCode,
+                    Document.Store.DocCode);
+                if (m <= 0)
+                {
+                    winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
+                                                   $"{MainReferences.Warehouses[Document.Store.DocCode]}" +
+                                                   $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
+                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    continue;
+                }
+
                 if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode))
                     Document.Rows.Add(new WaybillRow
                     {
@@ -189,6 +257,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         Currency = n.Currency,
                         State = RowStatus.NewRow
                     });
+            }
+
             RaisePropertyChanged(nameof(Document));
         }
 
@@ -240,6 +310,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 if (dc != 0)
                     Document = docManager.GetWaybill(dc);
             }
+
             if (Document != null && Document.State == RowStatus.NewRow)
                 WindowName = Document.ToString();
             else
@@ -255,6 +326,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get => Document.DeletedRows != null && Document.DeletedRows.Count > 0;
             set => base.IsRedoAllow = value;
         }
+
         public Command ExportCommand
         {
             get { return new Command(ExportWayBill, param => true); }
@@ -286,6 +358,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (inv != null)
             {
                 Document.InvoiceClient = inv;
+                Document.Client = inv.Client;
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
@@ -298,6 +371,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 oldf.DDT_KOL_RASHOD = (decimal) r.SFT_KOL;
                             continue;
                         }
+
                         var otgr = ctx.TD_24.Where(_ => _.DDT_SFACT_DC == r.DOC_CODE
                                                         && _.DDT_SFACT_ROW_CODE == r.Code);
                         if (otgr.Any())
@@ -325,6 +399,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         else
                         {
                             var n = MainReferences.GetNomenkl(r.SFT_NEMENKL_DC);
+                            var m = nomManager.GetNomenklCount(Document.DD_DATE, n.DocCode,
+                                Document.Store.DocCode);
+                            if (m <= 0)
+                            {
+                                winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
+                                                               $"{MainReferences.Warehouses[Document.Store.DocCode]}" +
+                                                               $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
+                                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                continue;
+                            }
                             var newItem = new WaybillRow
                             {
                                 DocCode = Document.DocCode,
@@ -359,8 +443,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void SaveData(object data)
         {
-            Document.DD_POLUCH_NAME = Document.Client.Name;
-            Document.DD_OTRPAV_NAME = Document.WarehouseOut.Name;
+            Document.DD_POLUCH_NAME = Document.Client.Name.Length > 50
+                ? Document.Client.Name.Substring(0, 50)
+                : Document.Client.Name;
+            Document.DD_OTRPAV_NAME = Document.WarehouseOut.Name.Length > 50
+                ? Document.WarehouseOut.Name.Substring(0, 50)
+                : Document.WarehouseOut.Name;
             Document.DD_TYPE_DC = 2010000012;
             var dc = docManager.SaveWaybill(Document);
             if (dc > 0) RefreshData(dc);
@@ -372,8 +460,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
     public class ListString
     {
         public decimal DocCode { set; get; }
+
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Name { set; get; }
+
         public override string ToString()
         {
             return Name;

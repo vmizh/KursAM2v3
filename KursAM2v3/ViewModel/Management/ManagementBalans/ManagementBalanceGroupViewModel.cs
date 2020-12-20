@@ -17,6 +17,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         public Currency Currency { set; get; }
         public decimal Summa { set; get; }
         public decimal SummaUSD { set; get; }
+        public decimal SummaCNY { get; set; }
         public decimal SummaEUR { set; get; }
         public decimal SummaGBP { set; get; }
         public decimal SummaCHF { set; get; }
@@ -48,6 +49,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 case CurrencyCode.CHFName:
                     SummaCHF = summa;
                     return;
+                case CurrencyCode.CNYName:
+                    SummaCNY = summa;
+                    return;
             }
         }
 
@@ -74,6 +78,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     return;
                 case CurrencyCode.CHFName:
                     SummaCHF += summa;
+                    return;
+                case CurrencyCode.CNYName:
+                    SummaCNY += summa;
                     return;
             }
         }
@@ -127,9 +134,11 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         public decimal DeltaCHF => SummaCHF2 - SummaCHF;
         public decimal SummaSEK2 { set; get; }
         public decimal DeltaSEK => SummaSEK2 - SummaSEK;
+        public decimal SummaCNY2 { set; get; }
+        public decimal DeltaCNY => SummaCNY2 - SummaCNY;
 
         public bool IsDifferent => DeltaUSD != 0 || DeltaRUB != 0 || DeltaEUR != 0 || DeltaGBP != 0 || DeltaCHF != 0 ||
-                                   DeltaSEK != 0;
+                                   DeltaSEK != 0 || DeltaCNY != 0;
 
         public void SetSumma(Currency crs, decimal summa, decimal summa2)
         {
@@ -161,6 +170,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 case CurrencyCode.CHFName:
                     SummaCHF = summa;
                     SummaCHF2 = summa2;
+                    return;
+                case CurrencyCode.CNYName:
+                    SummaCNY = summa;
+                    SummaCNY2 = summa2;
                     return;
             }
         }
@@ -195,6 +208,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaCHF += summa;
                     SummaCHF2 += summa2;
                     return;
+                case CurrencyCode.CNYName:
+                    SummaCNY += summa;
+                    SummaCNY2 += summa2;
+                    return;
             }
         }
 
@@ -222,6 +239,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     return;
                 case CurrencyCode.CHFName:
                     SummaCHF2 = summa2;
+                    return;
+                case CurrencyCode.CNYName:
+                    SummaCNY2 = summa2;
                     return;
             }
         }
@@ -360,6 +380,22 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 .ContainsProperty(_ => _.SummaSEK)
                 .ContainsProperty(_ => _.SummaSEK2)
                 .ContainsProperty(_ => _.DeltaSEK);
+
+            builder.Property(_ => _.SummaCNY).ReadOnly().DisplayName("На начало").Description("").NumericMask("n2");
+            builder.Property(_ => _.SummaCNY2)
+                .DisplayName("На конец")
+                .Description("На конец CNY")
+                .ReadOnly()
+                .NumericMask("n2");
+            builder.Property(_ => _.DeltaCNY)
+                .DisplayName("Результат")
+                .Description("Результат")
+                .ReadOnly()
+                .NumericMask("n2");
+            builder.Group("CNY")
+                .ContainsProperty(_ => _.SummaCNY)
+                .ContainsProperty(_ => _.SummaCNY2)
+                .ContainsProperty(_ => _.DeltaCNY);
         }
     }
 
@@ -383,7 +419,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
         public bool IsChanged()
         {
-            return DeltaUSD != 0 || DeltaCHF != 0 || DeltaEUR != 0 || DeltaGBP != 0 || DeltaRUB != 0 || DeltaSEK != 0;
+            return DeltaUSD != 0 || DeltaCHF != 0 || DeltaEUR != 0 || DeltaGBP != 0 || DeltaRUB != 0 || DeltaSEK != 0 ||
+                   DeltaCNY != 0;
         }
     }
 
@@ -540,6 +577,22 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 .ContainsProperty(_ => _.SummaSEK)
                 .ContainsProperty(_ => _.SummaSEK2)
                 .ContainsProperty(_ => _.DeltaSEK);
+
+            builder.Property(_ => _.SummaCNY).ReadOnly().DisplayName("На начало").Description("").NumericMask("n4");
+            builder.Property(_ => _.SummaCNY2)
+                .DisplayName("На конец")
+                .Description("На конец CNY")
+                .ReadOnly()
+                .NumericMask("n4");
+            builder.Property(_ => _.DeltaCNY)
+                .DisplayName("Результат")
+                .Description("Результат")
+                .ReadOnly()
+                .NumericMask("n4");
+            builder.Group("CNY")
+                .ContainsProperty(_ => _.SummaCNY)
+                .ContainsProperty(_ => _.SummaCNY2)
+                .ContainsProperty(_ => _.DeltaCNY);
         }
     }
 
@@ -675,6 +728,22 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 .ContainsProperty(_ => _.SummaSEK)
                 .ContainsProperty(_ => _.SummaSEK2)
                 .ContainsProperty(_ => _.DeltaSEK);
+
+            builder.Property(_ => _.SummaCNY).ReadOnly().DisplayName("На начало").Description("").NumericMask("n2");
+            builder.Property(_ => _.SummaCNY2)
+                .DisplayName("На конец")
+                .Description("На конец CNY")
+                .ReadOnly()
+                .NumericMask("n2");
+            builder.Property(_ => _.DeltaCNY)
+                .DisplayName("Результат")
+                .Description("Результат")
+                .ReadOnly()
+                .NumericMask("n2");
+            builder.Group("CNY")
+                .ContainsProperty(_ => _.SummaCNY)
+                .ContainsProperty(_ => _.SummaCNY2)
+                .ContainsProperty(_ => _.DeltaCNY);
         }
     }
 
@@ -685,7 +754,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         public string CurrencyName { set; get; }
         public string Nomenkl { set; get; }
         public BalansSection Tag { set; get; }
-        public decimal Delta => DeltaUSD + DeltaRUB + DeltaEUR + DeltaGBP + DeltaCHF + DeltaSEK;
+        public decimal Delta => DeltaUSD + DeltaRUB + DeltaEUR + DeltaGBP + DeltaCHF + DeltaSEK + DeltaCNY;
     }
 
     public enum BalansSection

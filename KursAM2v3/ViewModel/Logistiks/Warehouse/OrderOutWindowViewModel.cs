@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Calculates.Materials;
 using Core;
 using Core.EntityViewModel;
 using Core.Menu;
@@ -18,12 +19,13 @@ using KursAM2.View.Logistiks.Warehouse;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
-    public class OrderOutWindowViewModel : RSWindowViewModelBase
+    public sealed class OrderOutWindowViewModel : RSWindowViewModelBase
     {
         private readonly WarehouseManager orderManager;
         private WarehouseOrderOutRow myCurrentRow;
         private WarehouseOrderOut myDocument;
         private readonly NomenklManager nomManager = new NomenklManager();
+        private readonly WindowManager winManager = new WindowManager();
 
         [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         public OrderOutWindowViewModel(StandartErrorManager errManager)
@@ -156,9 +158,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void SaveData(object data)
         {
-            //Document.DD_POLUCH_NAME = Document.WarehouseIn.Name;
-            //Document.DD_OTRPAV_NAME = Document.Sender;
-            //Document.DD_TYPE_DC = 2010000003;
             var dc = orderManager.SaveOrderOut(Document);
             if (dc > 0) RefreshData(dc);
         }
@@ -170,13 +169,21 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void AddNomenkl(object obj)
         {
-            var nomenkls = StandartDialogs.SelectNomenkls();
+            var nomenkls = StandartDialogs.SelectNomenkls(null,true);
             if (nomenkls == null || nomenkls.Count <= 0) return;
             foreach (var n in nomenkls)
                 if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode && !n.IsUsluga))
                 {
-                    var m = nomManager.GetNomenklCount(Document.DD_DATE, n.DocCode,
+                    var m = NomenklCalculationManager.NomenklRemain(Document.DD_DATE, n.DocCode,
                         Document.WarehouseOut.DOC_CODE);
+                    if (m <= 0)
+                    {
+                        winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
+                                                       $"{MainReferences.Warehouses[Document.WarehouseOut.DOC_CODE]}" +
+                                                       $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
+                            "Предупреждение",MessageBoxButton.OK,MessageBoxImage.Warning);
+                        continue;
+                    }
                     Document.Rows.Add(new WarehouseOrderOutRow
                     {
                         DocCode = -1,

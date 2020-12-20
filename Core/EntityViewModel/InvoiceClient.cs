@@ -136,7 +136,7 @@ namespace Core.EntityViewModel
             get => myClient;
             set
             {
-                if (value.Equals(myClient)) return;
+                if (myClient == value) return;
                 myClient = value;
                 SF_CLIENT_DC = myClient.DOC_CODE;
                 Entity.SF_CLIENT_NAME = myClient.Name;
@@ -257,9 +257,10 @@ namespace Core.EntityViewModel
         }
 
         public override string Name
-            =>
+            => Entity.DOC_CODE > 0 ?
                 $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +
-                $"от {Entity.SF_DATE.ToShortDateString()} {SF_CRS_SUMMA_K_OPLATE} {Currency} {Note}";
+                $"от {Entity.SF_DATE.ToShortDateString()} {SF_CRS_SUMMA_K_OPLATE} {Currency} {Note}"
+        : null;
 
         public int SF_IN_NUM
         {

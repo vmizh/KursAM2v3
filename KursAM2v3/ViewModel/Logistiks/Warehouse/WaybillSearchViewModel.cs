@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
@@ -9,7 +8,6 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
-using KursAM2.View.Logistiks;
 using KursAM2.View.Logistiks.Warehouse;
 using Reports.Base;
 
@@ -17,9 +15,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public class WaybillSearchViewModel : RSWindowSearchViewModelBase
     {
-        private Waybill myCurrentDocument;
-        private readonly WarehouseManager DocManager = new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),
+        private readonly WarehouseManager DocManager = new WarehouseManager(new StandartErrorManager(
+            GlobalOptions.GetEntities(),
             "WaybillViewModel"));
+
+        private Waybill myCurrentDocument;
 
         public WaybillSearchViewModel()
         {

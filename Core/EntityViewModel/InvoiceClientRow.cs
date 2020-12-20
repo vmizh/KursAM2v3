@@ -34,9 +34,18 @@ namespace Core.EntityViewModel
 
         public InvoiceClientRow(TD_84 entity, bool isNDSInPrice = false)
         {
-            Entity = entity ?? DefaultValue();
+            if (entity == null)
+            {
+                Entity = DefaultValue();
+            }
+            else
+            {
+                Entity = entity;
+                LoadReference();
+            }
+
             IsNDSInPrice = isNDSInPrice;
-            LoadReference();
+            
         }
 
         public string NomNomenkl => Nomenkl?.NOM_NOMENKL;

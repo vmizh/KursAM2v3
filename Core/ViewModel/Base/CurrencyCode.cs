@@ -16,6 +16,8 @@
         public const string CHFName = "CHF";
         public const decimal SEK = 13010000004;
         public const string SEKName = "SEK";
+        public const decimal CNY = 13010000005;
+        public const string CNYName = "CNY";
         public const decimal NOT = 0;
         public const string NOTName = "NOT";
     }

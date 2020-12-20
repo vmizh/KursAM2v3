@@ -428,6 +428,11 @@ namespace KursAM2.ViewModel.Reference
         public override void DocNewEmpty(object obj)
         {
             var form = new KontragentCardView {Owner = Application.Current.MainWindow};
+            if (CurrentGroup == null)
+            {
+                WinManager.ShowWinUIMessageBox("Не выбрана категория.", "Ощибка");
+                return;
+            }
             var ctx = new KontragentCardWindowViewModel(-1, CurrentGroup.EG_ID, false) {Form = form};
             form.DataContext = ctx;
             form.ShowDialog();

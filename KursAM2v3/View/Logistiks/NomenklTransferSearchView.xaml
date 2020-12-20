@@ -89,9 +89,7 @@
 
                                         </dxg:GridControl.Columns>
                                         <dxg:GridControl.View>
-                                            <dxg:TableView AutoWidth="True"
-                                                           
-                                                           />
+                                            <dxg:TableView AutoWidth="True" />
                                         </dxg:GridControl.View>
                                     </dxg:GridControl>
                                 </ControlTemplate>
@@ -199,9 +197,7 @@
                                        AllowPerPixelScrolling="True"
                                        ShowTotalSummary="True"
                                        ShowAutoFilterRow="True"
-                                       EnableImmediatePosting="True"
-                                       
-                                       >
+                                       EnableImmediatePosting="True">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}" />

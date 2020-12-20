@@ -61,9 +61,7 @@
                                                     <dxg:GridColumn Header="Ед.изм" x:Name="coln_41" FieldName="Unit" />
                                                 </dxg:GridControl.Columns>
                                                 <dxg:GridControl.View>
-                                                    <dxg:TableView AutoWidth="True" 
-                                                                   
-                                                                   />
+                                                    <dxg:TableView AutoWidth="True" />
                                                 </dxg:GridControl.View>
                                             </dxg:GridControl>
                                         </ControlTemplate>
@@ -171,13 +169,11 @@
                                 <dxg:GridColumn x:Name="colk_25" Header="Примечание" FieldName="Note" />
                             </dxg:GridControl.Columns>
                             <dxg:GridControl.View>
-                                <dxg:TableView x:Name="tableOstatkiView" 
+                                <dxg:TableView x:Name="tableOstatkiView"
                                                AllowPerPixelScrolling="True"
                                                ShowTotalSummary="True"
-                                               ShowGroupPanel="False" 
-                                               ShowAutoFilterRow="True"
-                                               
-                                               >
+                                               ShowGroupPanel="False"
+                                               ShowAutoFilterRow="True">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
                                             <!--<MenuItem Header="{Binding FinanceDocumentName}"
@@ -223,7 +219,8 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch">
                             <dxg:GridControl.Columns>
-                                <dxg:GridColumn x:Name="cols_1_1" Header="Склад" FieldName="WarehouseInName" ReadOnly="True" />
+                                <dxg:GridColumn x:Name="cols_1_1" Header="Склад" FieldName="WarehouseInName"
+                                                ReadOnly="True" />
                                 <dxg:GridColumn x:Name="cols_2" Header="Кол-во" FieldName="Quantity" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:TextEditSettings DisplayFormat="n2" />
@@ -258,9 +255,7 @@
                                                ShowAutoFilterRow="True"
                                                NavigationStyle="Row"
                                                ScrollingMode="Normal"
-                                               ShowGroupPanel="False" 
-                                               
-                                               />
+                                               ShowGroupPanel="False" />
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </dxlc:LayoutGroup>
@@ -329,9 +324,7 @@
                                 <dxg:TableView x:Name="tableView"
                                                ShowAutoFilterRow="True"
                                                AllowPerPixelScrolling="True"
-                                               ShowTotalSummary="False" 
-                                               
-                                               />
+                                               ShowTotalSummary="False" />
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </DockPanel>
@@ -541,9 +534,7 @@
                                 <dxg:TableView x:Name="operationsTableView"
                                                ShowAutoFilterRow="True"
                                                AllowPerPixelScrolling="True"
-                                               ShowTotalSummary="True"
-                                               
-                                               />
+                                               ShowTotalSummary="True" />
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </DockPanel>

@@ -128,7 +128,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get => myCurrentCategory;
             set
             {
-                if (myCurrentCategory != null && myCurrentCategory.Equals(value)) return;
+                if (myCurrentCategory != null && myCurrentCategory == value) return;
                 if (myCurrentCategory != null && myCurrentCategory.State == RowStatus.Edited)
                     CategorySave(myCurrentCategory);
                 myCurrentCategory = value;

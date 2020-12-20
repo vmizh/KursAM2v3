@@ -104,9 +104,7 @@
                                                    AllowPerPixelScrolling="True"
                                                    ShowTotalSummary="False"
                                                    ShowAutoFilterRow="True"
-                                                   ShowGroupPanel="False"
-                                                   
-                                                   >
+                                                   ShowGroupPanel="False">
                                         <dxmvvm:Interaction.Behaviors>
                                             <dxmvvm:EventToCommand EventName="RowDoubleClick"
                                                                    Command="{Binding AddCurrentCommand}" />
@@ -157,9 +155,7 @@
                                     <dxg:TableView x:Name="tableSelectedViewNomenkl"
                                                    AllowPerPixelScrolling="True"
                                                    ShowTotalSummary="False"
-                                                   ShowGroupPanel="False"
-                                                   
-                                                   >
+                                                   ShowGroupPanel="False">
                                         <dxmvvm:Interaction.Behaviors>
                                             <dxmvvm:EventToCommand EventName="RowDoubleClick"
                                                                    Command="{Binding RemoveCurrentCommand}" />

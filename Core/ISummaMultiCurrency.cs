@@ -1,3 +1,5 @@
+using System;
+
 namespace Core
 {
     public interface ISummaMultiCurrency
@@ -8,5 +10,6 @@ namespace Core
         decimal SummaRUB { set; get; }
         decimal SummaSEK { set; get; }
         decimal SummaUSD { set; get; }
+        decimal SummaCNY { set; get; }
     }
 }

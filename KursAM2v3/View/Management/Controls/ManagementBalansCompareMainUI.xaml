@@ -117,20 +117,20 @@
                     </dxg:TreeListColumn.EditSettings>
                 </dxg:TreeListColumn>
             </dxg:TreeListControlBand>
-            <dxg:TreeListControlBand Header="SEK">
-                <dxg:TreeListColumn Name="colSEK1" FieldName="SummaSEK" Header="{Binding FirstDateName}"
+            <dxg:TreeListControlBand Header="CNY">
+                <dxg:TreeListColumn Name="colCNY1" FieldName="SummaCNY" Header="{Binding FirstDateName}"
                                     ReadOnly="True">
                     <dxg:TreeListColumn.EditSettings>
                         <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
                     </dxg:TreeListColumn.EditSettings>
                 </dxg:TreeListColumn>
-                <dxg:TreeListColumn Name="colSEK2" FieldName="SummaSEK2" Header="{Binding SecondDateName}"
+                <dxg:TreeListColumn Name="colCNY2" FieldName="SummaCNY2" Header="{Binding SecondDateName}"
                                     ReadOnly="True">
                     <dxg:TreeListColumn.EditSettings>
                         <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
                     </dxg:TreeListColumn.EditSettings>
                 </dxg:TreeListColumn>
-                <dxg:TreeListColumn Name="colSEKDelta" FieldName="DeltaSEK" Header="Разница" ReadOnly="True">
+                <dxg:TreeListColumn Name="colCNYDelta" FieldName="DeltaCNY" Header="Разница" ReadOnly="True">
                     <dxg:TreeListColumn.EditSettings>
                         <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
                     </dxg:TreeListColumn.EditSettings>

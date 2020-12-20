@@ -54,9 +54,7 @@
                                AllowPerPixelScrolling="True"
                                ShowTotalSummary="False"
                                ShowAutoFilterRow="True"
-                               ShowGroupPanel="False" 
-                               
-                               />
+                               ShowGroupPanel="False" />
             </dxg:GridControl.View>
         </dxg:GridControl>
     </DockPanel>

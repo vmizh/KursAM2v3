@@ -73,8 +73,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView x:Name="tableView"
                                                NavigationStyle="Row"
-                                               
-                                               
+
+
                                                AllowPerPixelScrolling="True"
                                                ShowTotalSummary="True"
                                                ShowAutoFilterRow="True"
@@ -149,9 +149,7 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView AllowPerPixelScrolling="True"
                                                ShowTotalSummary="True"
-                                               ShowGroupPanel="False" 
-                                               
-                                               />
+                                               ShowGroupPanel="False" />
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </dxlc:LayoutGroup>
@@ -212,9 +210,7 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView AllowPerPixelScrolling="True"
                                                ShowTotalSummary="True"
-                                               ShowGroupPanel="False"
-                                               
-                                               >
+                                               ShowGroupPanel="False">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Добавить накладной расход"
@@ -273,9 +269,7 @@
                                 <dxg:GridControl.View>
                                     <dxg:TableView AllowPerPixelScrolling="True"
                                                    ShowTotalSummary="True"
-                                                   ShowGroupPanel="False" 
-                                                   
-                                                   />
+                                                   ShowGroupPanel="False" />
                                 </dxg:GridControl.View>
                             </dxg:GridControl>
                         </dxlc:LayoutGroup>
@@ -306,9 +300,7 @@
                                 <dxg:GridControl.View>
                                     <dxg:TableView AllowPerPixelScrolling="True"
                                                    ShowTotalSummary="True"
-                                                   ShowGroupPanel="False" 
-                                                   
-                                                   />
+                                                   ShowGroupPanel="False" />
                                 </dxg:GridControl.View>
                             </dxg:GridControl>
                         </dxlc:LayoutGroup>

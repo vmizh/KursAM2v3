@@ -32,5 +32,8 @@ namespace FinanceAnalitic
         public decimal ProfitOther { get; set; }
         public decimal LossOther { get; set; }
         public decimal ResultOther { get; set; }
+        public decimal ProfitCNY { get; set; }
+        public decimal LossCNY { get; set; }
+        public decimal ResultCNY { get; set; }
     }
 }

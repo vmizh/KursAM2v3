@@ -47,9 +47,7 @@
                                         <dxg:GridColumn Header="Ед.изм" Name="coln_41" FieldName="Unit" />
                                     </dxg:GridControl.Columns>
                                     <dxg:GridControl.View>
-                                        <dxg:TableView AutoWidth="True"
-                                                       
-                                                       />
+                                        <dxg:TableView AutoWidth="True" />
                                     </dxg:GridControl.View>
                                 </dxg:GridControl>
                             </ControlTemplate>
@@ -59,14 +57,14 @@
                 </StackPanel>
             </dxlc:LayoutItem>
         </StackPanel>
-        <dxlc:LayoutControl Name="mainLayoutControl" 
-                            Orientation="Vertical" 
+        <dxlc:LayoutControl Name="mainLayoutControl"
+                            Orientation="Vertical"
                             Padding="0"
                             dx:DXSerializer.StoreLayoutMode="All">
             <dxlc:LayoutGroup Orientation="Vertical"
                               Name="LayoutGroupMain">
-                <dxlc:LayoutGroup Header="Операции" 
-                                  View="GroupBox" 
+                <dxlc:LayoutGroup Header="Операции"
+                                  View="GroupBox"
                                   Name="LayoutGroup1"
                                   dxlc:LayoutControl.AllowVerticalSizing="True">
                     <dxg:GridControl Name="operGridControl"
@@ -168,8 +166,8 @@
                                            AllowPerPixelScrolling="True"
                                            ShowTotalSummary="True"
                                            ShowAutoFilterRow="True"
-                                           
-                                           
+
+
                                            NavigationStyle="Row"
                                            ScrollingMode="Normal"
                                            ShowGroupPanel="False">
@@ -200,7 +198,7 @@
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>
-                <dxlc:LayoutGroup Header="Остатки по складам" 
+                <dxlc:LayoutGroup Header="Остатки по складам"
                                   View="GroupBox"
                                   Name="LayoutGroup2"
                                   dxlc:LayoutControl.AllowHorizontalSizing="True">
@@ -254,9 +252,7 @@
                                            ShowAutoFilterRow="True"
                                            NavigationStyle="Row"
                                            ScrollingMode="Normal"
-                                           ShowGroupPanel="False" 
-                                           
-                                           />
+                                           ShowGroupPanel="False" />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>

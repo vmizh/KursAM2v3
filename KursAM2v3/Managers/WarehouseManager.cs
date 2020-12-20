@@ -9,17 +9,18 @@ using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using KursAM2.Managers.Nomenkl;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 
 namespace KursAM2.Managers
 {
     public class WarehouseManager
     {
-        private readonly ErrorMessageBase errorMessager;
+        private readonly ErrorMessageBase myErrorMessager;
 
         public WarehouseManager(ErrorMessageBase errMessager)
         {
-            errorMessager = errMessager;
+            myErrorMessager = errMessager;
         }
 
         #region Справочник складов
@@ -95,6 +96,8 @@ namespace KursAM2.Managers
                         .Include("TD_24.TD_84")
                         .Include("TD_24.TD_26")
                         .Include("TD_24.TD_241")
+                        .Include("TD_24.TD_242")
+                        .Include("TD_24.TD_242.SD_24")
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
                     result = new WarehouseOrderIn(data);
                     foreach (var r in result.Rows) r.myState = RowStatus.NotEdited;
@@ -103,7 +106,7 @@ namespace KursAM2.Managers
             }
             catch (Exception e)
             {
-                errorMessager.WriteErrorMessage(e, "Ошибка", "$WarehouseManager.GetOrderIn {dc}");
+                myErrorMessager.WriteErrorMessage(e, "Ошибка", "$WarehouseManager.GetOrderIn {dc}");
                 return null;
             }
             return result;
@@ -649,14 +652,15 @@ namespace KursAM2.Managers
                             var ops = calc.GetOperations(n);
                             if (ops != null && ops.Count > 0)
                                 calc.Save(ops);
-                            var c = NomenklCalculationManager.GetNomenklStoreRemain(ctx, DateTime.Today, n,
+                            var c = NomenklCalculationManager.NomenklRemain(ctx, DateTime.Today, n,
+                                // ReSharper disable once PossibleInvalidOperationException
                                 (decimal) doc.DD_SKLAD_POL_DC);
-                            if (c.Remain < 0)
+                            if (c < 0)
                             {
                                 transaction.Rollback();
                                 var nom = MainReferences.GetNomenkl(n);
                                 WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
-                                                          $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_POL_DC]} в кол-ве {c.Remain} ",
+                                                          $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_POL_DC]} в кол-ве {c} ",
                                     "Отрицательные остатки", MessageBoxImage.Error);
                                 return -1;
                             }
@@ -706,6 +710,7 @@ namespace KursAM2.Managers
                             if (ops != null && ops.Count > 0)
                                 calc.Save(ops);
                             var c = NomenklCalculationManager.GetNomenklStoreRemain(ctx, DateTime.Today, n,
+                                // ReSharper disable once PossibleInvalidOperationException
                                 (decimal) doc.DD_SKLAD_POL_DC);
                             if (c.Remain < 0)
                             {
@@ -1280,14 +1285,16 @@ namespace KursAM2.Managers
                             var ops = calc.GetOperations(n);
                             if (ops != null && ops.Count > 0)
                                 calc.Save(ops);
-                            var c = NomenklCalculationManager.GetNomenklStoreRemain(ctx, DateTime.Today, n,
+                            var c = NomenklCalculationManager.NomenklRemain(ctx, doc.DD_DATE, n,
+                                // ReSharper disable once PossibleInvalidOperationException
                                 (decimal) doc.DD_SKLAD_OTPR_DC);
-                            if (c.Remain < 0)
+                            if (c < 0)
                             {
                                 transaction.Rollback();
                                 var nom = MainReferences.GetNomenkl(n);
                                 WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
-                                                          $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_POL_DC]} в кол-ве {c.Remain} ",
+                                                          // ReSharper disable once PossibleInvalidOperationException
+                                                          $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_OTPR_DC]} в кол-ве {c} ",
                                     "Отрицательные остатки", MessageBoxImage.Error);
                                 return -1;
                             }
@@ -1498,7 +1505,6 @@ namespace KursAM2.Managers
             var newDC = doc.DocCode;
             using (var ctx = GlobalOptions.GetEntities())
             {
-                ctx.Database.CommandTimeout = 120;
                 using (var transaction = ctx.Database.BeginTransaction())
                 {
                     try
@@ -1926,24 +1932,12 @@ namespace KursAM2.Managers
                             }
                         }
                         ctx.SaveChanges();
-                        var calc = new NomenklCostMediumSliding(ctx);
+                        var nomDCList = new List<decimal>();
                         foreach (var n in doc.Rows.Select(_ => _.Nomenkl.DocCode))
                         {
-                            var ops = calc.GetOperations(n);
-                            if (ops != null && ops.Count > 0)
-                                calc.Save(ops);
-                            var c = NomenklCalculationManager.GetNomenklStoreRemain(ctx, DateTime.Today, n,
-                                (decimal) doc.DD_SKLAD_OTPR_DC);
-                            if (c.Remain < 0)
-                            {
-                                transaction.Rollback();
-                                var nom = MainReferences.GetNomenkl(n);
-                                WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
-                                                          $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_OTPR_DC]} в кол-ве {c.Remain} ",
-                                    "Отрицательные остатки", MessageBoxImage.Error);
-                                return -1;
-                            }
+                            nomDCList.Add(n);
                         }
+                        NomenklManager.RecalcPrice(nomDCList,ctx);
                         transaction.Commit();
                         doc.myState = RowStatus.NotEdited;
                         foreach (var r in doc.Rows) r.myState = RowStatus.NotEdited;

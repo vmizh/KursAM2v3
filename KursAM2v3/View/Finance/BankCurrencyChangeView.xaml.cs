@@ -7,6 +7,7 @@ using Core;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
+using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
@@ -102,7 +103,7 @@ namespace KursAM2.View.Finance
                     {
                         var cb1 = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.BankTo, "BankTo",
                         MainReferences.BankAccounts.Values.Where(_ => _.BankDC == doc.BankFrom.BankDC 
-                                                                      && _.Currency.DocCode != doc.CurrencyFrom.DocCode).ToList());
+                                                                      && _.Currency.DocCode != doc.CurrencyFrom?.DocCode).ToList());
                         cb1.EditValueChanged += Cb_BankToValueChanged;
                     }
                     else
@@ -157,9 +158,10 @@ namespace KursAM2.View.Finance
                         .Where(_ => _.SD_101.VV_ACC_DC == (decimal)e.NewValue)
                         .Select(_ => _.VVT_CRS_DC).Distinct().ToList();
                     if (data.Count > 0)
+                    {
                         if (ctx.Document != null)
                         {
-                            ctx.Document.CurrencyTo = MainReferences.Currencies[data.First()];
+                            ctx.Document.CurrencyTo = MainReferences.Currencies[ctx.Document.BankToDC];
                             var rates = CurrencyRate.GetRate(ctx.Document.DocDate);
                             if (ctx.Document.CurrencyFrom != null && ctx.Document.CurrencyTo != null)
                                 ctx.Document.Rate = CurrencyRate.GetCBSummaRate(ctx.Document.CurrencyFrom,
@@ -169,11 +171,40 @@ namespace KursAM2.View.Finance
 
                             if (ctx.Document.CrsToDC == GlobalOptions.SystemProfile.NationalCurrency.DocCode)
                                 ctx.Document.SummaTo =
-                                    ctx.Document.Rate == 0 ? 0 : decimal.Round((decimal) (ctx.Document.SummaFrom * ctx.Document.Rate), 2);
+                                    ctx.Document.Rate == 0
+                                        ? 0
+                                        : decimal.Round((decimal) (ctx.Document.SummaFrom * ctx.Document.Rate), 2);
                             else
                                 ctx.Document.SummaTo =
-                                    ctx.Document.Rate == 0 ? 0 : decimal.Round((decimal) (ctx.Document.SummaFrom / ctx.Document.Rate), 2);
+                                    ctx.Document.Rate == 0
+                                        ? 0
+                                        : decimal.Round((decimal) (ctx.Document.SummaFrom / ctx.Document.Rate), 2);
                         }
+                    }
+                    else
+                    {
+                        if (ctx.Document.CurrencyTo == null)
+                        {
+                            ctx.Document.CurrencyTo = ctx.Document.BankTo.Currency;
+                        }
+                        var rates = CurrencyRate.GetRate(ctx.Document.DocDate);
+                        if (ctx.Document.CurrencyFrom != null && ctx.Document.CurrencyTo != null)
+                            ctx.Document.Rate = CurrencyRate.GetCBSummaRate(ctx.Document.CurrencyFrom,
+                                ctx.Document.CurrencyTo, rates);
+                        else
+                            ctx.Document.Rate = 1;
+
+                        if (ctx.Document.CrsToDC == GlobalOptions.SystemProfile.NationalCurrency.DocCode)
+                            ctx.Document.SummaTo =
+                                ctx.Document.Rate == 0
+                                    ? 0
+                                    : decimal.Round((decimal) (ctx.Document.SummaFrom * ctx.Document.Rate), 2);
+                        else
+                            ctx.Document.SummaTo =
+                                ctx.Document.Rate == 0
+                                    ? 0
+                                    : decimal.Round((decimal) (ctx.Document.SummaFrom / ctx.Document.Rate), 2);
+                    }
                 }
                 catch (Exception ex)
                 {

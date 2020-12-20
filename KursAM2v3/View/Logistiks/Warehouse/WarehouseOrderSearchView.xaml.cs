@@ -23,7 +23,7 @@ namespace KursAM2.View.Logistiks.Warehouse
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        
+
         private void SearchBaseView_Closing(object sender, CancelEventArgs e)
         {
             LayoutManager.Save();
@@ -58,9 +58,9 @@ namespace KursAM2.View.Logistiks.Warehouse
                     bandid++;
                 }
             }
+
             resultGridControl.TotalSummary.Clear();
             foreach (var col in resultGridControl.Columns)
-            {
                 if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
                 {
                     var summary = new GridSummaryItem
@@ -72,7 +72,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     };
                     resultGridControl.TotalSummary.Add(summary);
                 }
-            }
+
             LayoutManager = new LayoutManager.LayoutManager(LayoutManagerName, this, resultGridControl);
         }
     }

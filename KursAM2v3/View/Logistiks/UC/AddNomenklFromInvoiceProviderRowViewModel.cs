@@ -16,6 +16,7 @@ namespace KursAM2.View.Logistiks.UC
     public class AddNomenklFromInvoiceProviderRowViewModel : RSWindowViewModelBase, IDataUserControl
     {
         private readonly Kontragent Kontragent;
+
         #region Constructors
 
         public AddNomenklFromInvoiceProviderRowViewModel(Core.EntityViewModel.Warehouse warehouse,
@@ -32,7 +33,7 @@ namespace KursAM2.View.Logistiks.UC
         #endregion
 
         #region Commands
-        
+
         public override void RefreshData(object obj)
         {
             try
@@ -47,7 +48,7 @@ namespace KursAM2.View.Logistiks.UC
                         "LEFT OUTER JOIN td_24 t24 ON t24.DDT_SPOST_DC = t26.DOC_CODE AND t24.DDT_SPOST_ROW_CODE = t26.CODE " +
                         "GROUP BY t26.DOC_CODE,t26.CODE,t26.SFT_KOL " +
                         "HAVING t26.SFT_KOL - ISNULL(SUM(t24.DDT_KOL_PRIHOD), 0) > 0 ";
-                        
+
                     var data = ctx.Database.SqlQuery<SelectedTemp>(sql).ToList();
                     foreach (var dc in data.Select(_ => _.DOC_CODE).Distinct())
                     {
@@ -113,6 +114,7 @@ namespace KursAM2.View.Logistiks.UC
 
         public ObservableCollection<InvoiceShortRow> Nomenkls { set; get; } =
             new ObservableCollection<InvoiceShortRow>();
+
         public AddNomenklFromInvoiceProviderRowUC DataUserControl
         {
             get => myDataUserControl;
@@ -123,6 +125,7 @@ namespace KursAM2.View.Logistiks.UC
                 RaisePropertyChanged();
             }
         }
+
         public InvoiceShort CurrentInvoice
         {
             set
@@ -135,6 +138,7 @@ namespace KursAM2.View.Logistiks.UC
             }
             get => myCurrentInvoice;
         }
+
         public InvoiceShortRow CurrentNomenkl
         {
             set
@@ -145,6 +149,7 @@ namespace KursAM2.View.Logistiks.UC
             }
             get => myCurrentNomenkl;
         }
+
         public DependencyObject LayoutControl { get; }
 
         #endregion

@@ -143,6 +143,42 @@ namespace Core
             return false;
         }
 
+        public static void UpdateNomenklForMain(Guid id)
+        {
+            using(var ctx = GlobalOptions.GetEntities())
+            {
+                var noms = ctx.SD_83.Where(_ => _.MainId == id);
+                foreach (var n in noms)
+                {
+                    if (ALLNomenkls.ContainsKey(n.DOC_CODE))
+                    {
+                        ALLNomenkls.Remove(n.DOC_CODE);
+                    }
+                    ALLNomenkls.Add(n.DOC_CODE, new Nomenkl
+                    {
+                        Entity = new SD_83
+                        {
+                            DOC_CODE = n.DOC_CODE,
+                            NOM_NAME = n.NOM_NAME,
+                            NOM_NOMENKL = n.NOM_NOMENKL,
+                            NOM_SALE_CRS_DC = n.NOM_SALE_CRS_DC,
+                            Id = n.Id,
+                            MainId = n.MainId,
+                            UpdateDate = n.UpdateDate,
+                            NOM_0MATER_1USLUGA = n.NOM_0MATER_1USLUGA,
+                            NOM_CATEG_DC = n.NOM_CATEG_DC,
+                            NOM_PRODUCT_DC = n.NOM_PRODUCT_DC,
+                            IsUslugaInRent = false,
+                            IsCurrencyTransfer = n.IsCurrencyTransfer
+                        },
+                        Unit = Units[n.NOM_ED_IZM_DC],
+                        Currency = Currencies[(decimal) n.NOM_SALE_CRS_DC],
+                        Group = NomenklGroups[n.NOM_CATEG_DC]
+                    });
+                }
+            }
+        }
+
         public static Nomenkl GetNomenkl(decimal dc)
         {
             if (ALLNomenkls.ContainsKey(dc))
@@ -285,8 +321,17 @@ namespace Core
 
                 #region центр ответственности SD_40
 
-                var s40 = ent.Set<SD_40>().ToList();
+                var s40 = ent.Set<SD_40>().AsNoTracking().ToList();
+                if (!COList.ContainsKey(0))
+                {
+                    COList.Add(0, new CentrOfResponsibility
+                    {
+                        Entity = new SD_40 {DOC_CODE = 0, CENT_NAME = "Центр ответественности не указан"},
+                    });
+                }
+
                 foreach (var item in s40)
+                {
                     if (COList.ContainsKey(item.DOC_CODE))
                     {
                         var d = COList[item.DOC_CODE];
@@ -297,12 +342,13 @@ namespace Core
                     {
                         COList.Add(item.DOC_CODE, new CentrOfResponsibility(item) {myState = RowStatus.NotEdited});
                     }
-
+                }
                 foreach (var k in COList.Keys)
                 {
-                    if (s40.Any(_ => _.DOC_CODE == k)) continue;
+                    if (s40.Any(_ => _.DOC_CODE == k) || k == 0) continue;
                     COList.Remove(k);
                 }
+                
 
                 #endregion
 

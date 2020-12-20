@@ -1,10 +1,8 @@
-﻿using System.Data.Entity;
-using System.Data.Entity.Core.EntityClient;
-using System.Data.Entity.Infrastructure;
+﻿using System.Data.Entity.Core.EntityClient;
 
 namespace Data
 {
-    public partial class ALFAMEDIAEntities : DbContext
+    public partial class ALFAMEDIAEntities
     {
         public ALFAMEDIAEntities(string connectionString,
             bool validationMode = true,

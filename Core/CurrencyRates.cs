@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.WindowsManager;
 using Data;
 
 namespace Core
@@ -54,12 +55,20 @@ namespace Core
 
         public decimal GetRate(decimal firstDC, decimal secondDC, DateTime date)
         {
-            if (firstDC == secondDC) return 1;
-            var date1 = myRates.Where(_ => _.RATE_DATE <= date).Max(_ => _.RATE_DATE);
-            var f = myRates.SingleOrDefault(_ => _.CRS_DC == firstDC && _.RATE_DATE == date1);
-            var s = myRates.SingleOrDefault(_ => _.CRS_DC == secondDC && _.RATE_DATE == date1);
-            if (f != null && s != null && s.RATE != 0)
-                return f.RATE / f.NOMINAL / (s.RATE / s.NOMINAL);
+            try
+            {
+                if (firstDC == secondDC) return 1;
+                var date1 = myRates.Where(_ => _.RATE_DATE <= date).Max(_ => _.RATE_DATE);
+                var f = myRates.SingleOrDefault(_ => _.CRS_DC == firstDC && _.RATE_DATE == date1);
+                var s = myRates.SingleOrDefault(_ => _.CRS_DC == secondDC && _.RATE_DATE == date1);
+                if (f != null && s != null && s.RATE != 0)
+                    return f.RATE / f.NOMINAL / (s.RATE / s.NOMINAL);
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
+
             return -1;
         }
 
