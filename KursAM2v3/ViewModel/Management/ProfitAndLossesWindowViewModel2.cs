@@ -224,6 +224,8 @@ namespace KursAM2.ViewModel.Management
                     }
                     else
                         frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
+                    
+                    UpdateExtend(myBalansCalc.Id);
                 }
 
                 // ReSharper disable once PossibleNullReferenceException1965569UpdateExtend2(myBalansCalc.Id);
@@ -557,45 +559,47 @@ namespace KursAM2.ViewModel.Management
         public void UpdateExtend(Guid id)
         {
             ExtendActual.Clear();
-            if (myBalansFact.Id == Guid.Parse("{459937df-085f-4825-9ae9-810b054d0276}")
-                || myBalansFact.Id == Guid.Parse("{30e9bd73-9bda-4d75-b897-332f9210b9b1}"))
+            if (myBalansFact?.Id == Guid.Parse("{459937df-085f-4825-9ae9-810b054d0276}")
+                || myBalansFact?.Id == Guid.Parse("{30e9bd73-9bda-4d75-b897-332f9210b9b1}"))
             {
                 foreach (var d in Manager.ExtendNach.Where(d => d.GroupId == id))
                 {
                     var f = ExtendActual.FirstOrDefault(_ => _.DocCode == d.DocCode);
                     if (f == null)
                     {
-                        d.VzaimozachetInfo = new ObservableCollection<VzaimozachetRow>();
-                        d.VzaimozachetInfo.Add(new VzaimozachetRow
+                        d.VzaimozachetInfo = new ObservableCollection<VzaimozachetRow>
                         {
-                            Kontragent = d.KontragentBase?.Name,
-                            CurrencyName = d.CurrencyName,
-                            Note = d.Note,
-                            SDRSchet = d.SDRSchet,
-                            Summa = d.ResultCHF + d.ResultEUR + d.ResultGBP + d.ResultRUB + d.ResultSEK +
-                                    d.ResultUSD + d.ResultCNY,
-                            ProfitCHF = d.ProfitCHF,
-                            ProfitEUR = d.ProfitEUR,
-                            ProfitGBP = d.ProfitGBP,
-                            ProfitRUB = d.ProfitRUB,
-                            ProfitSEK = d.ProfitSEK,
-                            ProfitUSD = d.ProfitUSD,
-                            ProfitCNY = d.ProfitCNY,
-                            LossCHF = d.LossCHF,
-                            LossEUR = d.LossEUR,
-                            LossGBP = d.LossGBP,
-                            LossRUB = d.LossRUB,
-                            LossSEK = d.LossSEK,
-                            LossUSD = d.LossUSD,
-                            LossCNY = d.LossCNY,
-                            ResultCHF = d.ResultCHF,
-                            ResultEUR = d.ResultEUR,
-                            ResultGBP = d.ResultGBP,
-                            ResultRUB = d.ResultRUB,
-                            ResultSEK = d.ResultSEK,
-                            ResultUSD = d.ResultUSD,
-                            ResultCNY = d.ResultCNY
-                        });
+                            new VzaimozachetRow
+                            {
+                                Kontragent = d.KontragentBase?.Name,
+                                CurrencyName = d.CurrencyName,
+                                Note = d.Note,
+                                SDRSchet = d.SDRSchet,
+                                Summa = d.ResultCHF + d.ResultEUR + d.ResultGBP + d.ResultRUB + d.ResultSEK +
+                                        d.ResultUSD + d.ResultCNY,
+                                ProfitCHF = d.ProfitCHF,
+                                ProfitEUR = d.ProfitEUR,
+                                ProfitGBP = d.ProfitGBP,
+                                ProfitRUB = d.ProfitRUB,
+                                ProfitSEK = d.ProfitSEK,
+                                ProfitUSD = d.ProfitUSD,
+                                ProfitCNY = d.ProfitCNY,
+                                LossCHF = d.LossCHF,
+                                LossEUR = d.LossEUR,
+                                LossGBP = d.LossGBP,
+                                LossRUB = d.LossRUB,
+                                LossSEK = d.LossSEK,
+                                LossUSD = d.LossUSD,
+                                LossCNY = d.LossCNY,
+                                ResultCHF = d.ResultCHF,
+                                ResultEUR = d.ResultEUR,
+                                ResultGBP = d.ResultGBP,
+                                ResultRUB = d.ResultRUB,
+                                ResultSEK = d.ResultSEK,
+                                ResultUSD = d.ResultUSD,
+                                ResultCNY = d.ResultCNY
+                            }
+                        };
                         ExtendActual.Add(ProfitAndLossesExtendRowViewModel.GetCopy(d));
                     }
                     else
@@ -1239,6 +1243,7 @@ namespace KursAM2.ViewModel.Management
                 Manager.CalcZarplata();
                 Manager.CalcZarplataNach();
                 Manager.CalcCashPercent();
+                Manager.CalcNomenklCurrencyChanged();
                 //manager.CalcMoneyInWay();
                 //CalcCashAvans();
                 CalcTreeSumm();

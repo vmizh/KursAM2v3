@@ -669,6 +669,63 @@ namespace KursAM2.Managers
             }
         }
 
+        public void CalcNomenklCurrencyChanged()
+        {
+            using (var ent = GlobalOptions.GetEntities())
+            {
+                var nomChanged = ent.TD_26_CurrencyConvert
+                    .Include(_ => _.TD_26)
+                    .Include(_ => _.TD_26.SD_26)
+                    .Where(_ => _.Date >= DateStart && _.Date <= DateEnd).ToList();
+                foreach (var n in nomChanged)
+                {
+                    var nom = MainReferences.GetNomenkl(n.NomenklId);
+                    var kontr = MainReferences.GetKontragent(n.TD_26.SD_26.SF_POST_DC);
+                    var newOp = new ProfitAndLossesExtendRowViewModel
+                    {
+                        GroupId = ProfitAndLossesMainRowViewModel.NomenklCurrencyChanges,
+                        Name = nom.NomenklNumber + " " + nom.Name,
+                        Note = n.Note,
+                        DocCode = n.DOC_CODE ?? 0,
+                        Quantity = n.Quantity,
+                        Price = n.Price,
+                        Date = n.Date,
+                        Kontragent = kontr.Name,
+                        DocTypeCode = 0,
+                        Nomenkl = nom,
+                        KontragentName = kontr.Name,
+                        Currency = MainReferences.GetCurrency(nom.Currency.DOC_CODE),
+                        CurrencyName = MainReferences.GetCurrency(nom.Currency.DOC_CODE).Name
+                    };
+                    SetCurrenciesValue(newOp,nom.Currency.DOC_CODE,n.Summa, 0m);
+                    Extend.Add(newOp);
+                    ExtendNach.Add(newOp);
+
+                    var nom1 = MainReferences.GetNomenkl(n.TD_26.SFT_NEMENKL_DC);
+                    var newOp1 = new ProfitAndLossesExtendRowViewModel
+                    {
+                        GroupId = ProfitAndLossesMainRowViewModel.NomenklCurrencyChanges,
+                        Name = nom1.NomenklNumber + " " + nom1.Name,
+                        Note = n.Note,
+                        DocCode = n.DOC_CODE ?? 0,
+                        Quantity = n.Quantity,
+                        Price = n.TD_26.SFT_ED_CENA ?? 0,
+                        Date = n.Date,
+                        Kontragent = kontr.Name,
+                        DocTypeCode = 0,
+                        Nomenkl = nom1,
+                        KontragentName = kontr.Name,
+                        Currency = MainReferences.GetCurrency(nom1.Currency.DOC_CODE),
+                        CurrencyName = MainReferences.GetCurrency(nom1.Currency.DOC_CODE).Name
+                    };
+                    SetCurrenciesValue(newOp1,nom1.Currency.DOC_CODE,0m, n.TD_26.SFT_ED_CENA*n.Quantity);
+                    Extend.Add(newOp1);
+                    ExtendNach.Add(newOp1);
+                }
+
+            }
+        }
+
         public void CalcCurrencyChange()
         {
             using (var ent = GlobalOptions.GetEntities())
