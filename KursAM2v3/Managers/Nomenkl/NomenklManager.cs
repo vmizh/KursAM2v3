@@ -257,5 +257,28 @@ namespace KursAM2.Managers.Nomenkl
                 }
             }
         }
+
+        public static Tuple<decimal,decimal> NomenklPrice(decimal nomdc, DateTime date, ALFAMEDIAEntities ent = null)
+        {
+            if (ent == null)
+            {
+                using (var ctx = new ALFAMEDIAEntities())
+                {
+                    var data = ctx.NOM_PRICE.Where(_ => _.NOM_DC == nomdc).ToList();
+                    if (data.Count > 0)
+                    {
+                        var d = data.Max(_ => _.DATE);
+                        var pp = data.FirstOrDefault(_ => _.DATE == d);
+                        if (pp != null)
+                            return new Tuple<decimal, decimal>(pp.PRICE_WO_NAKLAD, pp.PRICE);
+                        else 
+                            return new Tuple<decimal, decimal>(0,0);
+                    }
+                    else
+                        return new Tuple<decimal, decimal>(0,0);
+                }
+            }
+            return new Tuple<decimal, decimal>(0,0);
+        }
     }
 }

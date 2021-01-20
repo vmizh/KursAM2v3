@@ -542,6 +542,7 @@ namespace KursAM2.ViewModel.Management
         public class NakladTemp
         {
             public decimal DocCode { set; get; }
+            public int Code { set; get; }
             public Guid Id { set; get; }
             public DateTime Date { set; get; }
             public decimal NomenklDC { set; get; }

@@ -20,6 +20,7 @@ using KursAM2.ViewModel.Management;
 namespace KursAM2.Managers
 {
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
     public class ProfitAndLossesManager : RSWindowViewModelBase
     {
         public DateTime DateEnd;
@@ -348,6 +349,10 @@ namespace KursAM2.Managers
                         Nomenkl = e.Nomenkl,
                         DocTypeCode = DocumentType.None
                     };
+                    if (e.Nomenkl.NomenklNumber == "2571")
+                    {
+                        var i = 1;
+                    }
                     SetCurrenciesValue(newOp,e.Kontr.BalansCurrency.DocCode,e.Profit,
                         e.Loss * GetRate(MyRates, e.Nomenkl.Currency.DocCode,
                             e.Kontr.BalansCurrency.DocCode, newOp.Date));
@@ -707,6 +712,57 @@ namespace KursAM2.Managers
                     
                     Extend.Add(newOp1);
                     ExtendNach.Add(newOp1);
+                }
+                
+                var bankChanged = ent.TD_101.Include(_ => _.SD_101)
+                    .Include(_ => _.SD_101.SD_114)
+                    .Include(_ => _.SD_301)
+                    .Include(_ => _.SD_3011)
+                    .Where(_ => _.IsCurrencyChange == true &&  _.SD_101.VV_START_DATE >= DateStart 
+                                                           && _.SD_101.VV_START_DATE <= DateEnd
+                                                           )
+                    .ToList();
+                foreach (var d in bankChanged)
+                {
+                    if (d.VVT_VAL_PRIHOD > 0)
+                    {
+                        var newOp = new ProfitAndLossesExtendRowViewModel
+                        {
+                            GroupId = Guid.Parse("{10AAC4B7-ECD1-4649-B372-256BA03C27FC}"),
+                            Name = d.SD_101.SD_114.BA_ACC_SHORTNAME,
+                            Note = d.VVT_DOC_NUM,
+                            DocCode = d.DOC_CODE,
+                            Quantity = 0,
+                            Price = 0,
+                            Date = d.SD_101.VV_START_DATE,
+                            Kontragent = d.SD_101.SD_114.BA_ACC_SHORTNAME,
+                            DocTypeCode = (DocumentType) 251
+                        };
+                        SetCurrenciesValue(newOp, d.VVT_CRS_DC, d.VVT_VAL_PRIHOD, 0m);
+
+                        Extend.Add(newOp);
+                        ExtendNach.Add(newOp);
+                    }
+
+                    if (d.VVT_VAL_RASHOD > 0)
+                    {
+                        var newOp1 = new ProfitAndLossesExtendRowViewModel
+                        {
+                            GroupId = Guid.Parse("{04FB505A-651E-4F65-903D-80CB4B6C74D0}"),
+                            Name = d.SD_101.SD_114.BA_ACC_SHORTNAME,
+                            Note = d.VVT_DOC_NUM,
+                            DocCode = d.DOC_CODE,
+                            Quantity = 0,
+                            Price = 0,
+                            Date = d.SD_101.VV_START_DATE,
+                            Kontragent = d.SD_101.SD_114.BA_ACC_SHORTNAME,
+                            DocTypeCode = (DocumentType) 251
+                        };
+                        SetCurrenciesValue(newOp1, d.VVT_CRS_DC, 0m, d.VVT_VAL_RASHOD);
+
+                        Extend.Add(newOp1);
+                        ExtendNach.Add(newOp1);
+                    }
                 }
             }
         }
@@ -1320,22 +1376,22 @@ namespace KursAM2.Managers
                     // ReSharper disable once AccessToDisposedClosure
                     from sd83 in ent.SD_83
                     //from sd40 in ent.SD_40
-                    // ReSharper disable once AccessToDisposedClosure
+                    // ReSharper disable once AccessToDisposedClosure 
                     from sd43 in ent.SD_43
                     where sd26.DOC_CODE == td26.DOC_CODE && sd26.SF_ACCEPTED == 1
                                                          && sd83.DOC_CODE == td26.SFT_NEMENKL_DC
                                                          && sd43.DOC_CODE == sd26.SF_POST_DC
-                                                         && sd26.SF_POSTAV_DATE >= DateStart
-                                                         && sd43.FLAG_BALANS == 1
+                                                         && sd26.SF_POSTAV_DATE >= DateStart && sd26.SF_POSTAV_DATE <= DateEnd
+                                                         && (sd43.FLAG_BALANS ?? 0) == 1
                                                          && sd83.NOM_0MATER_1USLUGA == 1
-                                                         && (td26.SFT_NAKLAD_KONTR_DC == null ||
-                                                             td26.SFT_NAKLAD_KONTR_DC == sd26.SF_POST_DC)
-                                                         && td26.SFT_IS_NAKLAD == 0
-                                                         && sd26.SF_POSTAV_DATE >= DateStart &&
-                                                         sd26.SF_POSTAV_DATE <= DateEnd
+                                                         //&& (td26.SFT_NAKLAD_KONTR_DC == null ||
+                                                         //    td26.SFT_NAKLAD_KONTR_DC == sd26.SF_POST_DC)
+                                                         //&& td26.SFT_IS_NAKLAD == 0
+                                                         //&& sd26.IsInvoiceNakald  == false
                     select new ProfitAndLossesWindowViewModel.NakladTemp
                     {
                         DocCode = sd26.DOC_CODE,
+                        Code = td26.CODE,
                         Id = Guid.NewGuid(),
                         Date = sd26.SF_POSTAV_DATE,
                         NomenklDC = sd83.DOC_CODE,
@@ -1349,16 +1405,16 @@ namespace KursAM2.Managers
                         Kontragent = sd43.NAME,
                         KontragentDC = sd43.DOC_CODE,
                         SDRSchetDC = td26.SFT_SHPZ_DC,
-                        IsNaklad = td26.SFT_IS_NAKLAD == 1
+                        IsNaklad = td26.SFT_IS_NAKLAD == 1 || (sd26.IsInvoiceNakald ?? false)
                     }).ToList();
                 foreach (var c in dataOut)
                 {
                     c.COName = MainReferences.COList[c.CODC ?? 0].Name;
                 }
-                var naklad = ent.KONTR_BALANS_OPER_ARC.Where(_ => _.DOC_DATE >= DateStart && _.DOC_DATE <= DateEnd
-                                                                                          && _.DOC_NAME ==
-                                                                                          "С/ф от поставщика (накладные расходы как услуги)")
-                    .ToList();
+                //var naklad = ent.KONTR_BALANS_OPER_ARC.Where(_ => _.DOC_DATE >= DateStart && _.DOC_DATE <= DateEnd
+                //                                                                          && _.DOC_NAME ==
+                //                                                                          "С/ф от поставщика (накладные расходы как услуги)")
+                //    .ToList();
                 List<string> dictCOIns1, dictCOOut1;
                 Dictionary<string, Guid> dictCOIns, dictCOOuts;
                 if (Project == null)
@@ -1454,31 +1510,31 @@ namespace KursAM2.Managers
                         ExtendNach.Add(e);
                     }
 
-                    foreach (var nak in naklad)
-                    {
-                        var kontr = MainReferences.GetKontragent(nak.KONTR_DC);
-                        var sd26 = ent.SD_26.Include(_ => _.SD_40).FirstOrDefault(_ => _.DOC_CODE == nak.DOC_DC);
-                        if (sd26 == null) continue;
-                        if (!dictCOOuts.ContainsKey(sd26.SD_40 == null ? MainReferences.COList[0].Name : sd26.SD_40.CENT_NAME))
-                            dictCOOuts.Add(sd26.SD_40 == null ? MainReferences.COList[0].Name : sd26.SD_40.CENT_NAME, Guid.NewGuid());
+                    //foreach (var nak in naklad)
+                    //{
+                    //    var kontr = MainReferences.GetKontragent(nak.KONTR_DC);
+                    //    var sd26 = ent.SD_26.Include(_ => _.SD_40).FirstOrDefault(_ => _.DOC_CODE == nak.DOC_DC);
+                    //    if (sd26 == null) continue;
+                    //    if (!dictCOOuts.ContainsKey(sd26.SD_40 == null ? MainReferences.COList[0].Name : sd26.SD_40.CENT_NAME))
+                    //        dictCOOuts.Add(sd26.SD_40 == null ? MainReferences.COList[0].Name : sd26.SD_40.CENT_NAME, Guid.NewGuid());
 
-                        var e = new ProfitAndLossesExtendRowViewModel
-                        {
-                            GroupId = dictCOOuts[sd26.SD_40 == null ? MainReferences.COList[0].Name : sd26.SD_40.CENT_NAME],
-                            Name = "Накладные расходы как услуги",
-                            Note = string.Empty,
-                            DocCode = sd26.DOC_CODE,
-                            Quantity = 1,
-                            Price = (decimal) nak.CRS_KONTR_IN,
-                            Date = nak.DOC_DATE,
-                            Kontragent = kontr.Name,
-                            DocTypeCode = DocumentType.InvoiceProvider
-                        };
-                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, 0m, Convert.ToDecimal(nak.CRS_KONTR_IN));
+                    //    var e = new ProfitAndLossesExtendRowViewModel
+                    //    {
+                    //        GroupId = dictCOOuts[sd26.SD_40 == null ? MainReferences.COList[0].Name : sd26.SD_40.CENT_NAME],
+                    //        Name = "Накладные расходы как услуги",
+                    //        Note = string.Empty,
+                    //        DocCode = sd26.DOC_CODE,
+                    //        Quantity = 1,
+                    //        Price = (decimal) nak.CRS_KONTR_IN,
+                    //        Date = nak.DOC_DATE,
+                    //        Kontragent = kontr.Name,
+                    //        DocTypeCode = DocumentType.InvoiceProvider
+                    //    };
+                    //    SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, 0m, Convert.ToDecimal(nak.CRS_KONTR_IN));
                         
-                        Extend.Add(e);
-                        ExtendNach.Add(e);
-                    }
+                    //    Extend.Add(e);
+                    //    ExtendNach.Add(e);
+                    //}
                 }
                 else
                 {
@@ -2526,8 +2582,10 @@ namespace KursAM2.Managers
                             Note = d.Note,
                             DocCode = d.DocCode,
                             Quantity = d.Quantity,
+                            // ReSharper disable once PossibleInvalidOperationException
                             Price = (decimal) d.Price * (decimal) d.Percent / (100 - (decimal) d.Percent),
                             Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                            // ReSharper disable once PossibleInvalidOperationException
                             Date = (DateTime) d.Date,
                             DocTypeCode = DocumentType.CashIn
                         };
@@ -2546,8 +2604,10 @@ namespace KursAM2.Managers
                             Note = d.Note,
                             DocCode = d.DocCode,
                             Quantity = d.Quantity,
+                            // ReSharper disable once PossibleInvalidOperationException
                             Price = (decimal) d.Price * (decimal) d.Percent / (100 - (decimal) d.Percent),
                             Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                            // ReSharper disable once PossibleInvalidOperationException
                             Date = (DateTime) d.Date,
                             DocTypeCode = DocumentType.CashIn
                         };

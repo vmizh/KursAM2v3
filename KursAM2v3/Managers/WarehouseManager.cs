@@ -627,6 +627,7 @@ namespace KursAM2.Managers
                             }
                         }
                         ctx.SaveChanges();
+                        var wManager = new WindowManager();
                         foreach (var r in doc.Rows)
                             if (r.DDT_SPOST_DC != null)
                             {
@@ -639,13 +640,21 @@ namespace KursAM2.Managers
                                 var schetsum = schets.Count > 0 ? schets.Sum(_ => _.SFT_KOL) : 0;
                                 if (storesum > schetsum)
                                 {
-                                    transaction.Rollback();
-                                    WindowManager.ShowMessage($"По товару {r.NomNomenkl} {r.Nomenkl} " +
-                                                              "Приход превысил кол-во по счету ",
-                                        "Превышение кол-ва прихода над кол-вом в счете", MessageBoxImage.Error);
-                                    return -1;
+                                    var res = wManager.ShowWinUIMessageBox($"По товару {r.NomNomenkl} {r.Nomenkl} " +
+                                                                           "Приход превысил кол-во по счету ",
+                                        "Превышение кол-ва прихода над кол-вом в счете", MessageBoxButton.YesNo,
+                                        MessageBoxImage.Warning);
+                                    switch (res)
+                                    {
+                                        case MessageBoxResult.Yes:
+                                            continue;
+                                        case MessageBoxResult.No:
+                                            transaction.Rollback();
+                                            return -1;
+                                    }
                                 }
                             }
+
                         var calc = new NomenklCostMediumSliding(ctx);
                         foreach (var n in doc.Rows.Select(_ => _.Nomenkl.DocCode))
                         {
@@ -656,13 +665,21 @@ namespace KursAM2.Managers
                                 // ReSharper disable once PossibleInvalidOperationException
                                 (decimal) doc.DD_SKLAD_POL_DC);
                             if (c < 0)
-                            {
-                                transaction.Rollback();
+                            { 
                                 var nom = MainReferences.GetNomenkl(n);
-                                WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
-                                                          $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_POL_DC]} в кол-ве {c} ",
-                                    "Отрицательные остатки", MessageBoxImage.Error);
-                                return -1;
+                                var res = wManager.ShowWinUIMessageBox($"По товару {nom.NomenklNumber} {nom.Name} " +
+                                                                       $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_POL_DC]} в кол-ве {c}." +
+                                                                       $"Все равно сохранить?",
+                                    "Отрицательные остатки", MessageBoxButton.YesNo,
+                                    MessageBoxImage.Warning);
+                                switch (res)
+                                {
+                                    case MessageBoxResult.Yes:
+                                        continue;
+                                    case MessageBoxResult.No:
+                                        transaction.Rollback();
+                                        return -1;
+                                }
                             }
                         }
                         transaction.Commit();

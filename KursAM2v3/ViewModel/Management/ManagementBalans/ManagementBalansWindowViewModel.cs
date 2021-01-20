@@ -507,8 +507,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         public void GetMoneyInPath()
         {
             var ch = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
-                                                     .Single(t => t.Tag == BalansSection.MoneyInPath)
-                                                     .Id);
+                .Single(t => t.Tag == BalansSection.MoneyInPath)
+                .Id);
             ch.Summa = 0;
             ch.SummaRUB = 0;
             ch.SummaEUR = 0;
@@ -564,7 +564,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 foreach (var d in CashIn)
                 {
                     if (d.RASH_ORDER_FROM_DC != null) continue;
-                    if(ent.TD_101.Any(_ => _.VVT_KASS_PRIH_ORDER_DC == d.DOC_CODE && _.SD_101.VV_START_DATE <= CurrentDate)) continue; 
+                    if (ent.TD_101.Any(_ =>
+                        _.VVT_KASS_PRIH_ORDER_DC == d.DOC_CODE && _.SD_101.VV_START_DATE <= CurrentDate)) continue;
                     var kontrName = MainReferences.BankAccounts[d.BANK_RASCH_SCHET_DC.Value].Name;
                     ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                     {
@@ -668,7 +669,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                       RecalcCurrency) +
                                   b.PriceRUB *
                                   CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.RUB],
-                                      RecalcCurrency) + 
+                                      RecalcCurrency) +
                                   b.PriceCNY *
                                   CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
                                       RecalcCurrency);
@@ -713,8 +714,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private void GetCash()
         {
             var ch = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
-                                                     .Single(t => t.Tag == BalansSection.Cash)
-                                                     .Id);
+                .Single(t => t.Tag == BalansSection.Cash)
+                .Id);
             ch.Summa = 0;
             var nn =
                 BalansStructure.Where(_ => _.ParentId == ch.Id).ToList();
@@ -789,8 +790,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private void GetBank()
         {
             var ch = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
-                                                     .Single(t => t.Tag == BalansSection.Bank)
-                                                     .Id);
+                .Single(t => t.Tag == BalansSection.Bank)
+                .Id);
             ch.Summa = 0;
             var nn =
                 BalansStructure.Where(_ => _.ParentId == ch.Id).ToList();
@@ -803,7 +804,6 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 var bank = MainReferences.BankAccounts[d];
                 var rem = bankManager.GetRemains2(d, CurrentDate, CurrentDate);
                 if (rem.SummaEnd != 0)
-                {
                     BalansStructure.Add(new ManagementBalanceGroupViewModel
                     {
                         Id = Guid.NewGuid(),
@@ -823,7 +823,6 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         ObjectDC = d
                         // ReSharper restore PossibleMultipleEnumeration
                     });
-                }
             }
 
             ch.SummaEUR =
@@ -852,8 +851,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private void GetKontragent()
         {
             var cc = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
-                                                     .Single(t => t.Tag == BalansSection.Creditors)
-                                                     .Id);
+                .Single(t => t.Tag == BalansSection.Creditors)
+                .Id);
             cc.Summa = 0;
             cc.SummaRUB = 0;
             cc.SummaUSD = 0;
@@ -863,8 +862,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             cc.SummaSEK = 0;
             cc.SummaCNY = 0;
             var dd = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
-                                                     .Single(t => t.Tag == BalansSection.Debitors)
-                                                     .Id);
+                .Single(t => t.Tag == BalansSection.Debitors)
+                .Id);
             dd.Summa = 0;
             dd.SummaRUB = 0;
             dd.SummaUSD = 0;
@@ -958,8 +957,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private void GetNomenkl()
         {
             var ch = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
-                                                     .Single(t => t.Tag == BalansSection.Store)
-                                                     .Id);
+                .Single(t => t.Tag == BalansSection.Store)
+                .Id);
             ch.Summa = 0;
             var chNach = BalansStructure.Single(_ => _.Id == ch.Id);
             chNach.Summa = 0;
@@ -1010,6 +1009,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     into dd
                     where dd != null
                     select dd).Where(dd => dd.Prihod != dd.Rashod))
+                {
                     ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                     {
                         GroupId = newId,
@@ -1025,6 +1025,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         SummaRUB = dd.NomCurrencyDC == CurrencyCode.RUB ? dd.Summa : 0,
                         SummaCNY = dd.NomCurrencyDC == CurrencyCode.CNY ? dd.Summa : 0
                     });
+                }
             }
 
             ch.Summa =
@@ -1056,8 +1057,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private void GetZarplata()
         {
             var ch = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
-                                                     .Single(t => t.Tag == BalansSection.Salary)
-                                                     .Id);
+                .Single(t => t.Tag == BalansSection.Salary)
+                .Id);
             ch.Summa = 0;
             ch.SummaRUB = 0;
             ch.SummaEUR = 0;

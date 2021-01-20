@@ -248,6 +248,14 @@ namespace KursAM2.View.Logistiks.Warehouse
         private void Schet_DefaultButtonClick(object sender, RoutedEventArgs e)
         {
             if (!(DataContext is WaybillWindowViewModel dtx)) return;
+            WindowManager winManager = new WindowManager();
+            if (dtx.Document.WarehouseOut == null)
+            {
+                winManager.ShowWinUIMessageBox("Не выбран склад. Выбор счета не возможен","Предупреждение",
+                    MessageBoxButton.OK,MessageBoxImage.Warning);
+                return;
+            }
+
             dtx.SFClientSelect(null);
         }
 

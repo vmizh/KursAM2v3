@@ -178,6 +178,8 @@ namespace KursAM2.ViewModel.Personal
                             Note = nach.NOTES,
                             Summa = nach.SUMMA,
                             DocSumma = nach.SUMMA,
+                            SummaEmp = nach.SUMMA,
+                            PlatSummaEmp = 0,
                             PlatDocNotes = nach.NOTES,
                             PlatDocName = "Платежная ведомость",
                             PayType = "Начисление",
@@ -226,6 +228,7 @@ namespace KursAM2.ViewModel.Personal
                                     Math.Round(CalcSummaWithRate(per.Currency.DocCode, p.CRS_DC.Value,
                                         p.SUMM_ORD ?? 0,
                                         p.CRS_KOEF ?? 1), 2),
+                                SummaEmp = 0,
                                 PlatDocNotes = p.NOTES_ORD,
                                 PlatDocName = $"Расходный кассовый ордер № {p.NUM_ORD}",
                                 PayType = "Выплата",
@@ -269,9 +272,12 @@ namespace KursAM2.ViewModel.Personal
 
         public void UpdateDocumentsForPeriod(NachEmployeeForPeriod item)
         {
-            DocumentsForPeriod.Clear();
+            List<EmployeePayDocumentViewModel> tempList = new List<EmployeePayDocumentViewModel>();
+            var data = DocumentsForEmployee
+                .Where(_ => _.DocDate >= item.DateStart && _.DocDate <= item.DateEnd).ToList();
             foreach (
-                var r in DocumentsForEmployee.Where(_ => _.DocDate >= item.DateStart && _.DocDate <= item.DateEnd))
+                var r in DocumentsForEmployee
+                    .Where(_ => _.DocDate >= item.DateStart && _.DocDate <= item.DateEnd))
             {
                 var old = DocumentsForPeriod.FirstOrDefault(_ =>
                     _.PayType == r.PayType && _.DocDate == r.DocDate && _.Crs.DocCode == r.Crs.DocCode);
@@ -300,7 +306,7 @@ namespace KursAM2.ViewModel.Personal
                         USD = r.USD,
                         EUR = r.EUR
                     };
-                    DocumentsForPeriod.Add(newItem);
+                    tempList.Add(newItem);
                 }
                 else 
                 {
@@ -319,8 +325,13 @@ namespace KursAM2.ViewModel.Personal
                     old.PlatSumma += r.PlatSumma;
                     old.PlatSummaEmp += r.PlatSummaEmp;
                     old.Summa += r.Summa;
-                    old.SummaEmp += r.PlatSumma;
+                    old.SummaEmp += r.SummaEmp;
                 }
+            }
+            DocumentsForPeriod.Clear();
+            foreach (var d in tempList)
+            {
+                DocumentsForPeriod.Add(d);
             }
             RaisePropertyChanged(nameof(DocumentsForPeriod));
         }

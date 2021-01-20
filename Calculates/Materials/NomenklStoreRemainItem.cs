@@ -1,9 +1,11 @@
-﻿namespace Calculates.Materials
+﻿using System.Collections;
+
+namespace Calculates.Materials
 {
     /// <summary>
     /// остатки товаров на складе. 
     /// </summary>
-    public class NomenklStoreRemainItem
+    public class NomenklStoreRemainItem 
     {
         public decimal NomenklDC { set; get; }
         public decimal NomCurrencyDC { set; get; }
@@ -16,7 +18,6 @@
         public decimal Price { set; get; }
         public decimal Summa { set; get; }
         public decimal SummaWithNaklad { set; get; }
-
 
     }
 }

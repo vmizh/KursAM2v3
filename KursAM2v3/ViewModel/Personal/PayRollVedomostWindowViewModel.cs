@@ -210,7 +210,7 @@ namespace KursAM2.ViewModel.Personal
                                 Name = item.Name,
                                 State = RowStatus.NewRow,
                                 Employee = item.Persona,
-                                Crs = MainReferences.Currencies[GlobalOptions.SystemProfile.MainCurrency.DocCode],
+                                Crs = MainReferences.Currencies[GlobalOptions.SystemProfile.EmployeeDefaultCurrency.DocCode],
                                 PRType = PayrollTypeCollection.Single(_ =>
                                     _.DocCode == GlobalOptions.SystemProfile.DafaultPayRollType.DocCode),
                                 Summa = 0,

@@ -311,7 +311,7 @@ namespace KursAM2.Managers
                             oldDC = new SD_101
                             {
                                 DOC_CODE = dc,
-                                VV_ACC_DC = item.DocCode,
+                                VV_ACC_DC = item.BankAccount.DOC_CODE,
                                 VV_START_DATE = item.Date,
                                 VV_STOP_DATE = item.Date
                             };

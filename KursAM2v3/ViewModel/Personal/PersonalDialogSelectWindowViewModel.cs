@@ -109,14 +109,15 @@ namespace KursAM2.ViewModel.Personal
                         SelectedCollection.Remove(item);
                     RaisePropertyChanged(nameof(SelectedCollection));
                 }
-
-                return;
             }
-
-            foreach (var s in SelectedItems)
-                if (SelectedCollection.Contains(s))
-                    SelectedCollection.Remove(s);
-            RaisePropertyChanged(nameof(SelectedCollection));
+            else
+            {
+                var tempList = new List<PersonaDialogSelect>(SelectedItems);
+                foreach (var s in tempList)
+                    if (SelectedCollection.Contains(s))
+                        SelectedCollection.Remove(s);
+                RaisePropertyChanged(nameof(SelectedCollection));
+            }
         }
     }
 }

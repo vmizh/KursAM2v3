@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core;
+using Core.ViewModel.Common;
 using Data;
 using Helper;
 
@@ -52,6 +55,8 @@ namespace Calculates.Materials
                 new List<NOM_PRICE>(
                     GlobalOptions.GetEntities().NOM_PRICE.Where(_ => _.NOM_DC == nomDC).OrderBy(_ => _.DATE));
         }
+        public static ObservableCollection<NomenklMoveOnSkladViewModel> NomenklMoveList { set; get; } =
+            new ObservableCollection<NomenklMoveOnSkladViewModel>();
 
         /// <summary>
         ///     Получение остатка товара на складе
@@ -670,103 +675,81 @@ namespace Calculates.Materials
         {
             var ret = new List<NomenklCalcFull>();
             var temp = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
-            var rems = NomenklRemains(start, end, storeDC);
             using (var ctx = GlobalOptions.GetEntities())
             {
-                foreach (var n in rems)
+                var alldata = ctx.NomenklMoveForCalc.Where(_ => _.StoreDC == storeDC && _.Date <= end).ToList();
+                
+                var remDCs = alldata.Select(_ => _.NomDC).Distinct().ToList();
+
+                foreach (var ndc in remDCs)
                 {
                     temp.Clear();
-                    var nitem = new NomenklCalcFull
-                    {
-                        NomDC = n.Item1,
-                        StoreDC = storeDC
-                    };
-                    var data = ctx.NomenklMoveForCalc.Where(_ => _.Date <= end && _.NomDC == n.Item1)
+                    var data = alldata.Where(_ => _.NomDC == ndc)
                         .OrderBy(_ => _.Date).ToList();
-                    if (data.Count == 0) return null;
-                    decimal price = 0, priceWithNaklad = 0, nakopit = 0;
-                    var dates = data.Select(_ => _.Date).Distinct().OrderBy(_ => _)
-                        .ToList();
+                    if (data.Count == 0) continue;
+                    decimal nStart = 0,
+                        nPriceStart = 0,
+                        nPriceStartWithNaklad = 0,
+                        nEnd = 0,
+                        nPriceEnd = 0,
+                        nPriceEndWithNaklad = 0,
+                        nIn = 0,
+                        nOut = 0,
+                        nSumIn = 0,
+                        nSumOut = 0,
+                        nSumInWithNaklad = 0,
+                        nSumOutWithNaklad = 0;
 
-                    foreach (var d in dates)
+                    nStart = data.Where(_ => _.Date < start).Sum(_ => _.Prihod - _.Rashod);
+                    var sdprc = data.FirstOrDefault(_ => _.Date < start);
+                    if (sdprc != null)
                     {
-                        var quanOut = data.Where(_ => _.Date == d && _.OperType == "Rashod").Sum(_ => _.Rashod);
-                        var sQuanOut = data.Where(_ => _.Date == d && _.StoreDC == storeDC
-                                                                   && (_.OperType == "Rashod" ||
-                                                                       _.OperType == "InnerMove"))
-                            .Sum(_ => _.Rashod);
-                        var quanIn = data.Where(_ => _.Date == d && _.OperType == "Prihod").Sum(_ => _.Prihod);
-                        var quanVozvrat = data.Where(_ => _.Date == d && _.OperType == "Vozvrat").Sum(_ => _.Prihod);
-                        var sQuanIn = data.Where(_ => _.Date == d && _.StoreDC == storeDC
-                                                                  && (_.OperType == "Prihod" || _.OperType == "Vozvrat"
-                                                                      || _.OperType ==
-                                                                      "InnerMove"))
-                            .Sum(_ => _.Prihod);
-
-                        var sumIn =
-                            data.Where(_ => _.Date == d && _.OperType == "Prihod").Sum(_ => _.Prihod * _.Price) ??
-                            0;
-                        var sumInWithNaklad = data.Where(_ => _.Date == d && _.OperType == "Prihod")
-                            .Sum(_ => _.Prihod * _.PriceWithNaklad) ?? 0;
-
-                        var oldDate = d;
-                        var priceOld = price;
-                        if (quanVozvrat > 0)
-                        {
-                            var oldDateItems = data.Where(_ => _.Date <= d && _.Prihod > 0).ToList();
-                            if (oldDateItems.Any())
-                                oldDate = oldDateItems.Max(_ => _.Date);
-                            var priceOldItems = data.Where(_ => _.Date == oldDate).ToList();
-
-                            if (priceOldItems.Sum(_ => _.Price ?? 0) > 0)
-                                priceOld = priceOldItems.Sum(_ => _.Prihod) / priceOldItems.Sum(_ => _.Price ?? 0);
-                            else
-                                priceOld = price;
-                        }
-
-                        if (temp.Count == 0 && d >= start && d <= end)
-                        {
-                            nitem.Start = nakopit;
-                            nitem.PriceStart = price;
-                            nitem.PriceStartWithNaklad = priceWithNaklad;
-                        }
-
-                        if (nakopit <= 0) price = priceWithNaklad = 0;
-                        if (nakopit + quanIn + quanVozvrat != 0)
-                        {
-                            price = (nakopit * price + sumIn + quanVozvrat * priceOld) /
-                                    (nakopit + quanIn + quanVozvrat);
-                            priceWithNaklad = (nakopit * priceWithNaklad + sumInWithNaklad + quanVozvrat * priceOld) /
-                                              (nakopit + quanIn + quanVozvrat);
-                        }
-
-                        nakopit += quanIn - quanOut + quanVozvrat;
-
-                        if (d >= start && d <= end)
-                        {
-                            if (temp.Count == dates.Count - 1)
-                            {
-                                nitem.End = nakopit;
-                                nitem.PriceEnd = price;
-                                nitem.PriceEndWithNaklad = priceWithNaklad;
-                            }
-
-                            nitem.In += sQuanIn;
-                            nitem.Out += sQuanOut;
-                            nitem.SumIn += sQuanIn * price;
-                            nitem.SumInWithNaklad += sQuanIn * priceWithNaklad;
-                            nitem.SumOut += sQuanOut * price;
-                            nitem.SumOutWithNaklad += sQuanOut * priceWithNaklad;
-                            temp.Add(Tuple.Create(d, sQuanIn * price, sQuanIn * priceWithNaklad,
-                                sQuanOut * price, sQuanOut * priceWithNaklad));
-                        }
+                        nPriceStart = sdprc.Price ?? 0;
+                        nPriceStartWithNaklad = sdprc.PriceWithNaklad ?? 0;
                     }
 
+                    nEnd = data.Sum(_ => _.Prihod - _.Rashod);
+                    var sdprc1 = data.FirstOrDefault(_ => _.Date <= end);
+                    if (sdprc1 != null)
+                    {
+                        nPriceEnd = sdprc1.Price ?? 0;
+                        nPriceEndWithNaklad = sdprc1.PriceWithNaklad ?? 0;
+                    }
+
+                    var moves = data.Where(_ => _.Date >= start && _.Date <= end).ToList();
+                    if (nStart == 0 && nEnd == 0 && moves.Count == 0)
+                        continue;
+                    if (moves.Count > 0)
+                    {
+                        nIn = moves.Sum(_ => _.Prihod);
+                        nOut = moves.Sum(_ => _.Rashod);
+                        nSumIn = moves.Sum(_ => (_.Price ?? 0) * _.Prihod);
+                        nSumOut = moves.Sum(_ => (_.Price ?? 0) * _.Rashod);
+                        nSumInWithNaklad = moves.Sum(_ => (_.PriceWithNaklad ?? 0) * _.Prihod);
+                        nSumOutWithNaklad = moves.Sum(_ => (_.PriceWithNaklad ?? 0) * _.Rashod);
+                    }
+                    var nitem = new NomenklCalcFull
+                    {
+                        StoreDC = storeDC,
+                        NomDC = ndc,
+                        Start = nStart,
+                        PriceStart = nPriceStart,
+                        PriceStartWithNaklad = nPriceStartWithNaklad,
+                        In = nIn,
+                        SumIn = nSumIn,
+                        SumInWithNaklad = nSumInWithNaklad,
+                        Out = nOut,
+                        SumOut = nSumOut,
+                        SumOutWithNaklad = nSumOutWithNaklad,
+                        End = nEnd,
+                        PriceEnd = nPriceEnd,
+                        PriceEndWithNaklad = nPriceEndWithNaklad,
+                    };
+                    
                     ret.Add(nitem);
                 }
+                return ret;
             }
-
-            return ret;
         }
 
         /// <summary>
@@ -864,79 +847,18 @@ namespace Calculates.Materials
             switch (GlobalOptions.SystemProfile.NomenklCalcType)
             {
                 case NomenklCalcType.NakladSeparately:
-                    sql =
-                        "SELECT tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,SUM(tab.Prihod) AS Prihod, SUM(tab.Rashod)AS Rashod " +
-                        ", SUM(tab.Prihod) - SUM(tab.Rashod) AS Remain, ISNULL(p.Price, 0) AS PriceWithNaklad, ISNULL(p.PRICE_WO_NAKLAD, 0) AS Price " +
-                        ", (SUM(tab.Prihod) - SUM(tab.Rashod)) * ISNULL(p.PRICE_WO_NAKLAD, 0) AS Summa,  " +
-                        "(SUM(tab.Prihod) - SUM(tab.Rashod)) * ISNULL(p.Price, 0) AS SummaWithNaklad  " +
-                        "FROM(SELECT " +
-                        "T24.DDT_NOMENKL_DC AS NomenklDC " +
-                        ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                        ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                        ", S24.DD_SKLAD_POL_DC AS SkladDC " +
-                        ", SUM(T24.DDT_KOL_PRIHOD) AS Prihod " +
-                        ", CAST(0 AS NUMERIC(18, 4)) AS Rashod " +
-                        "FROM TD_24 T24 " +
-                        " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
-                        " INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC " +
-                        $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_POL_DC IS NOT NULL " +
-                        "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_POL_DC " +
-                        "UNION ALL " +
-                        "SELECT T24.DDT_NOMENKL_DC AS NomenklDC " +
-                        ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                        ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                        ", S24.DD_SKLAD_OTPR_DC AS SkladDC " +
-                        ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
-                        ", SUM(DDT_KOL_RASHOD) AS Rashod " +
-                        "FROM TD_24 T24 " +
-                        " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
-                        " INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC " +
-                        $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_OTPR_DC IS NOT NULL " +
-                        "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_OTPR_DC " +
-                        "UNION ALL " +
-                        "SELECT ntr.NomenklInDC AS NomenklDC " +
-                        ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                        ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                        ", nt.SkladDC AS SkladDC " +
-                        ", ntr.Quantity AS Prihod " +
-                        ", CAST(0 AS NUMERIC(18, 4))AS Rashod " +
-                        "FROM NomenklTransfer nt " +
-                        "   INNER JOIN NomenklTransferRow ntr ON ntr.DocId = nt.Id " +
-                        "   INNER JOIN SD_83 S83 ON S83.DOC_CODE = ntr.NomenklInDC " +
-                        $"WHERE NT.Date <= '{CustomFormat.DateToString(date)}' AND ISNULL(NTR.IsAccepted,0) = 1 " +
-                        "UNION all  " +
-                        "SELECT ntr.NomenklOutDC AS NomenklDC " +
-                        ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                        ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                        ", nt.SkladDC AS SkladDC " +
-                        ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
-                        ", ntr.Quantity AS Rashod " +
-                        "FROM NomenklTransfer nt " +
-                        "   INNER JOIN NomenklTransferRow ntr ON ntr.DocId = nt.Id  " +
-                        "   INNER JOIN SD_83 S83 ON S83.DOC_CODE = ntr.NomenklOutDC " +
-                        $"WHERE nt.DATE <= '{CustomFormat.DateToString(date)}' AND ISNULL(NTR.IsAccepted,0) = 1" +
-                        "UNION ALL " +
-                        "SELECT s83.DOC_CODE, s83.NOM_SALE_CRS_DC,s83.nom_name,tcc.StoreDC, tcc.Quantity, 0 " +
-                        "FROM TD_26_CurrencyConvert tcc " +
-                        "INNER JOIN SD_83 s83 ON s83.Id = tcc.NomenklId " +
-                        "INNER JOIN TD_26 t26 ON tcc.DOC_CODE = t26.DOC_CODE AND tcc.CODE = t26.CODE " +
-                        "INNER JOIN SD_26 s26 ON t26.DOC_CODE = s26.DOC_CODE " +
-                        "INNER JOIN TD_24 t24 ON t26.DOC_CODE = t24.DDT_SPOST_DC AND t26.CODE = t24.DDT_SPOST_ROW_CODE " +
-                        "INNER JOIN SD_24 s24 ON t24.DOC_CODE = s24.DOC_CODE " +
-                        $"WHERE tcc.Date <=  '{CustomFormat.DateToString(date)}' " +
-                        "UNION ALL " +
-                        "SELECT s83.DOC_CODE, s83.NOM_SALE_CRS_DC,s83.nom_name,tcc.StoreDC, 0, tcc.Quantity " +
-                        "FROM TD_26_CurrencyConvert tcc " +
-                        "INNER JOIN TD_26 t26 ON tcc.DOC_CODE = t26.DOC_CODE AND tcc.CODE = t26.CODE " +
-                        "INNER JOIN SD_83 s83 ON s83.DOC_CODE = T26.SFT_NEMENKL_DC " +
-                        "INNER JOIN SD_26 s26 ON t26.DOC_CODE = s26.DOC_CODE " +
-                        "INNER JOIN TD_24 t24 ON t26.DOC_CODE = t24.DDT_SPOST_DC AND t26.CODE = t24.DDT_SPOST_ROW_CODE " +
-                        "INNER JOIN SD_24 s24 ON t24.DOC_CODE = s24.DOC_CODE " +
-                        $"WHERE tcc.Date <=  '{CustomFormat.DateToString(date)}') tab " +
-                        "LEFT OUTER JOIN NOM_PRICE p ON p.NOM_DC = tab.NomenklDC " +
-                        $"AND p.DATE = (SELECT MAX(pp.DATE) FROM NOM_PRICE pp WHERE pp.NOM_DC = tab.NomenklDC AND pp.DATE <= '{CustomFormat.DateToString(date)}') " +
-                        "GROUP BY tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,p.PRICE_WO_NAKLAD,p.Price " +
-                        "HAVING SUM(tab.Prihod) - SUM(tab.Rashod) != 0 ";
+                    sql = "SELECT n.NomDC NomenklDC, n.NomCrsDC NomCurrencyDC, n.NomName NomenklName, " +
+                        "n.StoreDC SkladDC, SUM(n.Prihod) Prihod, SUM(n.Rashod) Rashod, SUM(n.Prihod) - SUM(n.Rashod) Remain " +
+                        ",ISNULL(p.Price, 0) AS PriceWithNaklad, ISNULL(p.PRICE_WO_NAKLAD, 0) AS Price, " +
+                        "(SUM(n.Prihod) - SUM(n.Rashod)) * ISNULL(p.PRICE_WO_NAKLAD, 0) AS Summa " +
+                        ",(SUM(n.Prihod) - SUM(n.Rashod)) * ISNULL(p.Price, 0) AS SummaWithNaklad " +
+                        "FROM NomenklMoveForCalc n " +
+                        "inner JOIN NOM_PRICE p " +
+                        "ON p.NOM_DC = n.NomDC AND p.DATE = (SELECT MAX(pp.Date) FROM NOM_PRICE pp " +
+                        $"WHERE pp.NOM_DC = n.NomDC AND pp.Date <= '{CustomFormat.DateToString(date)}' ) " +
+                        $"WHERE n.Date <= '{CustomFormat.DateToString(date)}' " +
+                        "GROUP BY n.NomDC,n.NomCrsDC,n.NomName,n.StoreDC,p.PRICE,p.PRICE_WO_NAKLAD " +
+                        "HAVING SUM(n.Prihod) - SUM(n.Rashod) != 0;";
                     break;
                 case NomenklCalcType.Standart:
                     sql =
@@ -998,7 +920,9 @@ namespace Calculates.Materials
             }
 
             var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>(sql).ToList();
-            return data;
+            var nom50192 = data.FirstOrDefault(_ => _.NomenklDC == 10830053173);
+            return new List<NomenklStoreRemainItem>(data.OrderBy(_ => _.NomenklDC).ThenBy(_ => _.SkladDC)
+                .ThenBy(_ => _.Prihod));
         }
 
         /// <summary>

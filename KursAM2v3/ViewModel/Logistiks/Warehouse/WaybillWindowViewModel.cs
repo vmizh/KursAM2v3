@@ -225,7 +225,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand AddNomenklCommand
         {
-            get { return new Command(AddNomenkl, _ => Document.Store != null); }
+            get { return new Command(AddNomenkl, _ => Document.WarehouseOut != null); }
         }
 
         private void AddNomenkl(object obj)
@@ -236,11 +236,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             foreach (var n in nomenkls)
             {
                 var m = NomenklCalculationManager.NomenklRemain(Document.DD_DATE, n.DocCode,
-                    Document.Store.DocCode);
+                    Document.WarehouseOut.DocCode);
                 if (m <= 0)
                 {
                     winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
-                                                   $"{MainReferences.Warehouses[Document.Store.DocCode]}" +
+                                                   $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
                                                    $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
                         "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                     continue;
@@ -400,15 +400,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         {
                             var n = MainReferences.GetNomenkl(r.SFT_NEMENKL_DC);
                             var m = nomManager.GetNomenklCount(Document.DD_DATE, n.DocCode,
-                                Document.Store.DocCode);
+                                Document.WarehouseOut.DocCode);
                             if (m <= 0)
                             {
                                 winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
-                                                               $"{MainReferences.Warehouses[Document.Store.DocCode]}" +
+                                                               $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
                                                                $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
                                     "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                                 continue;
                             }
+
                             var newItem = new WaybillRow
                             {
                                 DocCode = Document.DocCode,
@@ -418,10 +419,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 Unit = n.Unit,
                                 Currency = n.Currency,
                                 SchetLinkedRow = r,
-                                State = RowStatus.NewRow
+                                State = RowStatus.NewRow,
+                                DDT_SFACT_DC = r.DOC_CODE,
+                                DDT_SFACT_ROW_CODE = r.Code
                             };
-                            newItem.DDT_SFACT_DC = r.DOC_CODE;
-                            newItem.DDT_SFACT_ROW_CODE = r.Code;
                             Document.Rows.Add(newItem);
                         }
                     }

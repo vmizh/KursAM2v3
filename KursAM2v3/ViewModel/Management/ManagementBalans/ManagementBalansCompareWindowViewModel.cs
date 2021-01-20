@@ -60,16 +60,22 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<ManagementBalansCompareGroupViewModel> Data { set; get; } =
             new ObservableCollection<ManagementBalansCompareGroupViewModel>();
+
         public ObservableCollection<ManagementBalansCompareRowViewModel> ExtendRowsActual { set; get; } =
             new ObservableCollection<ManagementBalansCompareRowViewModel>();
+
         public ObservableCollection<ManagementBalansCompareRowViewModel> ExtendRowsTemp { set; get; } =
             new ObservableCollection<ManagementBalansCompareRowViewModel>();
+
         public ObservableCollection<KontragentCompareBalansDeltaItem> KontragentDeltaList { set; get; } =
             new ObservableCollection<KontragentCompareBalansDeltaItem>();
+
         public ObservableCollection<KontragentCompareBalansDeltaItem> KontragentDeltaListTemp { set; get; } =
             new ObservableCollection<KontragentCompareBalansDeltaItem>();
+
         public ObservableCollection<NomenklCompareBalansDeltaItem> NomenklDeltaList { set; get; } =
             new ObservableCollection<NomenklCompareBalansDeltaItem>();
+
         public ObservableCollection<NomenklCompareBalansDeltaItem> NomenklDeltaListTemp { set; get; } =
             new ObservableCollection<NomenklCompareBalansDeltaItem>();
 
@@ -86,6 +92,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 RaisePropertyChanged();
             }
         }
+
         public KontragentCompareBalansDeltaItem CurrentKontragent
         {
             get => myCurrentKontragent;
@@ -98,6 +105,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 RaisePropertyChanged();
             }
         }
+
         public DateTime FirstDate
         {
             get => myFirstDate;
@@ -109,6 +117,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 RaisePropertyChanged(nameof(FirstDateName));
             }
         }
+
         public ManagementBalansCompareGroupViewModel CurrentDataItem
         {
             get => myCurrentDataItem;
@@ -119,8 +128,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 RaisePropertyChanged();
             }
         }
+
         public string FirstDateName => FirstDate.ToShortDateString();
         public string SecondDateName => SecondDate.ToShortDateString();
+
         public DateTime SecondDate
         {
             get => mySecondDate;
@@ -132,6 +143,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 RaisePropertyChanged(nameof(SecondDateName));
             }
         }
+
         public FinanseOperation FinanseCurrentItem
         {
             get => myFinanseCurrentItem;
@@ -142,10 +154,13 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<FinanseOperation> FinanseOperations { set; get; } =
             new ObservableCollection<FinanseOperation>();
+
         public ObservableCollection<MoneyInPathItem> MoneyInPathOperations { set; get; } =
             new ObservableCollection<MoneyInPathItem>();
+
         public ManagementBalansCompareGroupViewModel CurrentBalansRow
         {
             get => myCurrentBalansRow;
@@ -175,6 +190,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     //}
                     return;
                 }
+
                 if (parent.Tag == BalansSection.Store)
                 {
                     LoadNomenklList();
@@ -183,8 +199,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     {
                         view.ResetCurrencyColumns();
                     }
+
                     return;
                 }
+
                 if (parent.Tag == BalansSection.Head && myCurrentBalansRow.Tag == BalansSection.Store)
                 {
                     LoadAllNomenklList();
@@ -193,8 +211,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     {
                         view.ResetCurrencyColumns();
                     }
+
                     return;
                 }
+
                 if (myCurrentBalansRow.Tag == BalansSection.Creditors ||
                     myCurrentBalansRow.Tag == BalansSection.Debitors)
                 {
@@ -207,25 +227,31 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     {
                         view.ResetCurrencyColumns();
                     }
+
                     return;
                 }
+
                 if (myCurrentBalansRow.Tag == BalansSection.Salary)
                 {
                     LoadSalary();
                     frm?.NavigateTo(typeof(BalansCompareSalaryUI));
                     return;
                 }
+
                 if (myCurrentBalansRow.Tag == BalansSection.MoneyInPath)
                 {
                     LoadMoneyInPathOperations();
                     frm?.NavigateTo(typeof(BalansCompareMoneyInPathUI));
                     return;
                 }
+
                 frm?.NavigateTo(typeof(EmptyUI));
             }
         }
+
         public ObservableCollection<EmployeeSalary> EmployeeSalaryList { set; get; } =
             new ObservableCollection<EmployeeSalary>();
+
         public EmployeeSalary CurrentEmployeeSalary
         {
             get { return myCurrentEmployeeSalary; }
@@ -236,6 +262,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 RaisePropertyChanged();
             }
         }
+
         public NomenklCompareBalansDeltaItem CurrentStoreNomenklOperation
         {
             get { return myCurrentStoreNomenklOperation; }
@@ -246,6 +273,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 RaisePropertyChanged();
             }
         }
+
         public ICommand KontragentBalansOpenCommand
         {
             get { return new Command(KontragentBalansOpen, _ => CurrentKontragent != null); }
@@ -286,7 +314,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         SummaInWithNaklad = op.SummaInWithNaklad,
                         SummaOutWithNaklad = op.SummaOutWithNaklad,
                         TovarDocDC = op.TovarDocDC,
-                        TovarDocument = op.TovarDocument,
+                        TovarDocument = op.TovarDocument
                     });
                 }
             }
@@ -305,6 +333,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 if (e != null) continue;
                 emps.Add(p);
             }
+
             foreach (var emp in emps)
             {
                 var e = new EmployeeSalary
@@ -315,8 +344,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaRUB = salaryStart.FirstOrDefault(_ => _.Persona.DocCode == emp.DocCode)?.SummaRUB ?? 0,
                     SummaRUB2 = salaryEnd.FirstOrDefault(_ => _.Persona.DocCode == emp.DocCode)?.SummaRUB ?? 0,
                     SummaUSD = salaryStart.FirstOrDefault(_ => _.Persona.DocCode == emp.DocCode)?.SummaUSD ?? 0,
-                    SummaUSD2 = salaryEnd.FirstOrDefault(_ => _.Persona.DocCode == emp.DocCode)?.SummaUSD ?? 0,
-
+                    SummaUSD2 = salaryEnd.FirstOrDefault(_ => _.Persona.DocCode == emp.DocCode)?.SummaUSD ?? 0
                 };
                 if (e.SummaEUR != 0 || e.SummaEUR2 != 0
                                     || e.SummaRUB != 0 || e.SummaRUB2 != 0
@@ -364,10 +392,12 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 newNom.SetSumma(newNom.Currency, d.Summa, 0);
                 NomenklDeltaListTemp.Add(newNom);
             }
+
             var secId = mySecondBalans.BalansStructure.FirstOrDefault(_ => _.ParentId == CurrentBalansRow.ParentId
                                                                            && _.ObjectDC == CurrentBalansRow.ObjectDC);
             foreach (var d in mySecondBalans.ExtendRows.Where(_ => _.GroupId == secId?.Id))
             {
+               
                 var old = NomenklDeltaListTemp.FirstOrDefault(_ => _.NomenklDC == d.Nom.DocCode);
                 if (old == null)
                 {
@@ -390,9 +420,12 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     old.SetSumma2(old.Currency, d.Summa);
                 }
             }
+
             foreach (var n in NomenklDeltaListTemp)
+            {
                 if (n.IsChanged())
                     NomenklDeltaList.Add(n);
+            }
         }
 
         private void LoadAllNomenklList()
@@ -426,6 +459,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     }
                 }
             }
+
             foreach (var dgrp in mySecondBalans.BalansStructure.Where(_ => _.ParentId == CurrentBalansRow.Id))
             {
                 foreach (var d in mySecondBalans.ExtendRows.Where(_ => _.GroupId == dgrp.Id))
@@ -453,6 +487,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     }
                 }
             }
+
             foreach (var n in NomenklDeltaListTemp)
                 if (n.IsChanged())
                     NomenklDeltaList.Add(n);
@@ -474,6 +509,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 newKontr.SetSumma(newKontr.Currency, d.Summa, 0);
                 KontragentDeltaListTemp.Add(newKontr);
             }
+
             foreach (var d in mySecondBalans.ExtendRows.Where(_ => _.GroupId == CurrentBalansRow.Id))
             {
                 var old = KontragentDeltaListTemp.FirstOrDefault(_ => _.KontragentDC == d.Kontragent.DocCode);
@@ -494,6 +530,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     old.SetSumma2(old.Currency, d.Summa);
                 }
             }
+
             foreach (var k in KontragentDeltaListTemp)
                 if (k.IsDifferent)
                     KontragentDeltaList.Add(k);
@@ -515,6 +552,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 newKontr.SetSumma(newKontr.Currency, d.Summa, 0);
                 KontragentDeltaListTemp.Add(newKontr);
             }
+
             foreach (var d in mySecondBalans.ExtendRows.Where(_ => _.GroupId == CurrentBalansRow.Id))
             {
                 var old = KontragentDeltaListTemp.FirstOrDefault(_ => _.KontragentDC == d.Kontragent.DocCode);
@@ -535,6 +573,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     old.SetSumma2(old.Currency, d.Summa);
                 }
             }
+
             foreach (var k in KontragentDeltaListTemp)
                 if (k.IsDifferent)
                     KontragentDeltaList.Add(k);
@@ -588,6 +627,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                     newDoc.KontragentDC = ch.DOC_CODE;
                                 }
                             }
+
                             if (op.VVT_KASS_PRIH_ORDER_DC != null)
                             {
                                 ch = ctx.SD_33.Include(_ => _.SD_22)
@@ -599,8 +639,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                     newDoc.KontragentDC = ch.DOC_CODE;
                                 }
                             }
+
                             break;
                     }
+
                     if (op.VVT_VAL_PRIHOD > 0)
                         newDoc.SetSumma(MainReferences.Currencies[op.VVT_CRS_DC], (decimal) op.VVT_VAL_PRIHOD, 0);
                     else
@@ -656,6 +698,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                 newDoc.KontragentName = emp.Name;
                                 newDoc.KontragentDC = emp.DocCode;
                             }
+
                             break;
                         case KontragentTypeEnum.Bank:
                             var bank = ctx.SD_114.FirstOrDefault(_ => _.DOC_CODE == op.BANK_RASCH_SCHET_DC);
@@ -664,6 +707,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                 newDoc.KontragentName = bank.BA_RASH_ACC + " " + bank.BA_BANK_NAME;
                                 newDoc.KontragentDC = bank.DOC_CODE;
                             }
+
                             break;
                         case KontragentTypeEnum.Cash:
                             var ch = ctx.SD_34.Include(_ => _.SD_22)
@@ -673,11 +717,14 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                 newDoc.KontragentName = ch.SD_22.CA_NAME;
                                 newDoc.KontragentDC = (decimal) ch.CA_DC;
                             }
+
                             break;
                     }
+
                     newDoc.SetSumma(MainReferences.Currencies[(decimal) op.CRS_DC], (decimal) op.SUMM_ORD, 0);
                     FinanseOperations.Add(newDoc);
                 }
+
                 foreach (var op in operOut)
                 {
                     var newDoc = new FinanseOperation
@@ -709,6 +756,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                 newDoc.KontragentName = emp.Name;
                                 newDoc.KontragentDC = emp.DocCode;
                             }
+
                             break;
                         case KontragentTypeEnum.Bank:
                             var bank = ctx.SD_114.FirstOrDefault(_ => _.DOC_CODE == op.BANK_RASCH_SCHET_DC);
@@ -717,6 +765,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                 newDoc.KontragentName = bank.BA_RASH_ACC + " " + bank.BA_BANK_NAME;
                                 newDoc.KontragentDC = bank.DOC_CODE;
                             }
+
                             break;
                         case KontragentTypeEnum.Unknown:
                             var ch = ctx.SD_33.Include(_ => _.SD_22)
@@ -727,11 +776,14 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                 newDoc.KontragentName = ch.SD_22.CA_NAME;
                                 newDoc.KontragentDC = (decimal) ch.CA_DC;
                             }
+
                             break;
                     }
+
                     newDoc.SetSumma(MainReferences.Currencies[(decimal) op.CRS_DC], 0, (decimal) op.SUMM_ORD);
                     FinanseOperations.Add(newDoc);
                 }
+
                 foreach (var op in crsChange)
                 {
                     var newDocIn = new FinanseOperation
@@ -780,6 +832,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 newItem.SetSumma(f.Currency, f.Summa, 0);
                 MoneyInPathOperations.Add(newItem);
             }
+
             foreach (var s in secondList)
             {
                 var old = MoneyInPathOperations.FirstOrDefault(_ => _.DocCode == s.DocCode && _.Code == s.Code);
@@ -818,6 +871,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 case BalansSection.Salary:
                     return d.Persona.DocCode;
             }
+
             return 0;
         }
 
@@ -892,7 +946,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
             // Касса
             var cashId = Data.Single(_ => _.Id == myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Cash)
-                                              .Id);
+                .Id);
             var cash2 = (from item1 in mySecondBalans.BalansStructure.Where(_ => _.ParentId == cashId.Id)
                 where myFirstBalans.BalansStructure.All(item2 => item2.ObjectDC != item1.ObjectDC)
                 select item1).ToList();
@@ -923,6 +977,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 };
                 Data.Add(newItem);
             }
+
             if (cash2.Count > 0)
                 foreach (var i2 in cash2)
                 {
@@ -950,7 +1005,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
             // банк
             var bankId = Data.Single(_ => _.Id == myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Bank)
-                                              .Id);
+                .Id);
             var bank2 = (from item1 in mySecondBalans.BalansStructure.Where(_ => _.ParentId == bankId.Id)
                 where myFirstBalans.BalansStructure.All(item2 => item2.ObjectDC != item1.ObjectDC)
                 select item1).ToList();
@@ -979,6 +1034,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 };
                 Data.Add(newItem);
             }
+
             if (bank2.Count > 0)
                 foreach (var i2 in bank2)
                 {
@@ -1006,8 +1062,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
             // склады
             var storeId = Data.Single(_ => _.Id == myFirstBalans.BalansStructure
-                                               .Single(t => t.Tag == BalansSection.Store)
-                                               .Id);
+                .Single(t => t.Tag == BalansSection.Store)
+                .Id);
             var store2 = (from item1 in mySecondBalans.BalansStructure.Where(_ => _.ParentId == storeId.Id)
                 where myFirstBalans.BalansStructure.All(item2 => item2.ObjectDC != item1.ObjectDC)
                 select item1).ToList();
@@ -1036,6 +1092,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 };
                 Data.Add(newItem);
             }
+
             if (store2.Count > 0)
                 foreach (var i2 in store2)
                 {
@@ -1060,6 +1117,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     };
                     Data.Add(newItem);
                 }
+
             var ch = myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Head);
             var form = (ManagementBalansCompareView) Form;
             if (form != null)
@@ -1115,6 +1173,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     }
                 }
             }
+
             RaisePropertyChanged(nameof(Data));
         }
 
@@ -1138,9 +1197,11 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         {
             public Kontragent Kontragent { set; get; }
             public Currency Currency => Kontragent?.BalansCurrency;
+
             public bool IsDifferent => ResultUSD != 0 || ResultRUB != 0 || ResultEUR != 0 || ResultGBP != 0 ||
                                        ResultCHF != 0 ||
                                        ResultSEK != 0;
+
             public decimal LossUSD { get; set; }
             public decimal LossEUR { get; set; }
             public decimal LossGBP { get; set; }
@@ -1608,6 +1669,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         {
             get { return new Command(NomenklCalcOpen, _ => NomenklCurrent != null); }
         }
+
         public ICommand KontragentAccountOpenCommand
         {
             get
@@ -1634,6 +1696,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         }
 
         private ManagementBalansCompareRowViewModel myCurrentExtendItem;
+
         public ManagementBalansCompareRowViewModel CurrentExtendItem
         {
             get => myCurrentExtendItem;
