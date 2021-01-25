@@ -563,7 +563,7 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaIn = 0,
                         SummaOut = doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceStart,
                         SummaDelta = -doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceEnd,
-                        Note = doc.SD_24.DD_NOTES + " / " + doc.TD_84.SD_84.SF_NOTE
+                        Note = doc.SD_24.DD_NOTES + " / " + doc.TD_84?.SD_84.SF_NOTE
                     });
                 var docs2 = ctx.NomenklTransferRow
                     .Include(_ => _.NomenklTransfer)

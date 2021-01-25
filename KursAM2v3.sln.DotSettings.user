@@ -41,7 +41,7 @@
     &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.Invoices.ProviderTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a7625467_002Dc0a8_002D4b35_002D9fc4_002D076f286ad9b0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="DataSourceCRUDTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a7625467_002Dc0a8_002D4b35_002D9fc4_002D076f286ad9b0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DataSourceCRUDTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::0ADE9C9B-B276-4FDC-B21C-F35B86817D77::.NETFramework,Version=v4.7.2::KursRepozit.Tests.RepositoryTests.DataSorceRepositoryTests.DataSourceCRUDTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;

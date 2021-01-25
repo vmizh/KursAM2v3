@@ -676,7 +676,7 @@ namespace KursAM2.Managers
                 var nomChanged = ent.TD_26_CurrencyConvert
                     .Include(_ => _.TD_26)
                     .Include(_ => _.TD_26.SD_26)
-                    .Where(_ => _.Date >= DateStart && _.Date <= DateEnd).ToList();
+                    .Where(_ => _.Date >= DateStart && _.Date <= DateEnd && _.DOC_CODE != null).ToList();
                 foreach (var n in nomChanged)
                 {
                     var nom = MainReferences.GetNomenkl(n.NomenklId);

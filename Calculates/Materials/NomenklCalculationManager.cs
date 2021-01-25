@@ -72,7 +72,7 @@ namespace Calculates.Materials
                     "FROM(SELECT " +
                     "T24.DDT_NOMENKL_DC AS NomenklDC " +
                     ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                    ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
+                    ", S83.NOM_NAME  AS NomenklName " +
                     ", S24.DD_SKLAD_POL_DC AS SkladDC " +
                     ", SUM(T24.DDT_KOL_PRIHOD) AS Prihod " +
                     ", CAST(0 AS NUMERIC(18, 4)) AS Rashod " +
@@ -80,11 +80,11 @@ namespace Calculates.Materials
                     " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
                     $" INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
                     $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                    "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_POL_DC " +
+                    "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME , S24.DD_SKLAD_POL_DC " +
                     "UNION ALL " +
                     "SELECT T24.DDT_NOMENKL_DC AS NomenklDC " +
                     ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                    ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
+                    ", S83.NOM_NAME  AS NomenklName " +
                     ", S24.DD_SKLAD_OTPR_DC AS SkladDC " +
                     ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
                     ", SUM(DDT_KOL_RASHOD) AS Rashod " +
@@ -92,11 +92,11 @@ namespace Calculates.Materials
                     " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
                     $" INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
                     $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_OTPR_DC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                    "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_OTPR_DC " +
+                    "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME , S24.DD_SKLAD_OTPR_DC " +
                     "UNION ALL " +
                     "SELECT ntr.NomenklInDC AS NomenklDC " +
                     ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                    ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
+                    ", S83.NOM_NAME  AS NomenklName " +
                     ", nt.SkladDC AS SkladDC " +
                     ", ntr.Quantity AS Prihod " +
                     ", CAST(0 AS NUMERIC(18, 4))AS Rashod " +
@@ -107,7 +107,7 @@ namespace Calculates.Materials
                     "UNION all  " +
                     "SELECT ntr.NomenklOutDC AS NomenklDC " +
                     ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                    ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
+                    ", S83.NOM_NAME  AS NomenklName " +
                     ", nt.SkladDC AS SkladDC " +
                     ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
                     ", ntr.Quantity AS Rashod " +
@@ -135,8 +135,7 @@ namespace Calculates.Materials
                 $"WHERE tcc.Date <=  '{CustomFormat.DateToString(date)}' AND tcc.StoreDC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}') tab " +
                 "LEFT OUTER JOIN NOM_PRICE p ON p.NOM_DC = tab.NomenklDC " +
                 $"AND p.DATE = (SELECT MAX(pp.DATE) FROM NOM_PRICE pp WHERE pp.NOM_DC = tab.NomenklDC AND pp.DATE <= '{CustomFormat.DateToString(date)}') " +
-                "GROUP BY tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,p.PRICE_WO_NAKLAD,p.Price " +
-                "HAVING SUM(tab.Prihod) - SUM(tab.Rashod) != 0 ";
+                "GROUP BY tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,p.PRICE_WO_NAKLAD,p.Price ";
             var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>(sql).ToList();
             if (data.Count == 0)
                 return null;
