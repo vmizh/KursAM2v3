@@ -14,7 +14,8 @@
     </Window.DataContext>
 
     <dxlc:LayoutControl HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch">
+                        VerticalAlignment="Stretch"
+                        >
         
             <dxlc:LayoutGroup Name="RootLayoutGroup"
                               Orientation="Horizontal" 
@@ -24,27 +25,38 @@
                             <dxlc:LayoutGroup Name="LayoutGroupUserList"
                                               Orientation="Vertical"
                                               Margin="5" 
-                                              View="Group" dxlc:LayoutControl.AllowHorizontalSizing="True">
+                                              View="Group" 
+                                              dxlc:LayoutControl.AllowHorizontalSizing="True"
+                                              >
                                 <dxlc:LayoutItem Margin="0 0 0 5">
 
-                                    <StackPanel MaxHeight="30" 
-                                                Orientation="Horizontal">
+                                    <StackPanel 
+                                                Name="ButtonStackPanel"
+                                                Orientation="Horizontal"
+                                                >
 
                                         <Button x:Name="ButtonAddNewUser"
                                                 Content="Add New User"
+                                                Margin="0 0 5 0"
                                                 Background="GhostWhite">
                                         </Button>
                                         <Button x:Name="ButtonSaveChanges"
+                                                Margin="5 0 5 0"
                                                 Content="Save Changes" 
-                                                Background="GhostWhite">
+                                                Background="GhostWhite"
+                                                >
                                         </Button>
                                         <Button  x:Name="ButtonAssignPermissionsForAllCompanies"
+                                                 Margin="5 0 5 0"
                                                  Content="Assign Permissions For All Companies" 
-                                                 Background="GhostWhite">
+                                                 Background="GhostWhite"
+                                                 >
                                         </Button>
                                         <Button  x:Name="ButtonAssignExclusivePermission"
+                                                 Margin="5 0 0 0 "
                                                  Content="Assign Exclusive Permissions" 
-                                                 Background="GhostWhite">
+                                                 Background="GhostWhite"
+                                                 >
                                         </Button>
                                     </StackPanel>
                                 </dxlc:LayoutItem>
@@ -58,7 +70,7 @@
                                              CurrentItem=""
                                              MaxHeight="10000"
                                              MaxWidth="10000"
-                                                         >
+                                             >
                                             <dxg:GridControl.View>
                                                 <dxg:TableView ShowTotalSummary="True" IsSynchronizedWithCurrentItem="True"/>
                                             </dxg:GridControl.View>
@@ -81,9 +93,9 @@
                     <dxlc:LayoutItem>
                         <dxe:ComboBoxEdit x:Name="ComboBoxEditCompany"
                                           Margin="0 0 0 5"
-                                         ItemsSource=""
-                                         NullText="Выберите компанию"
-                                         DisplayMember=""  
+                                          ItemsSource=""
+                                          NullText="Выберите компанию"
+                                          DisplayMember=""  
                                           >
                             <dxe:ComboBoxEdit.StyleSettings>
                                 <dxe:ComboBoxStyleSettings />
