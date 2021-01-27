@@ -7,7 +7,7 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    Title="PermissionsWindow" Height="850" Width="1300"
+    Title="PermissionsWindow" Height="830" Width="1400"
     >
     <Window.DataContext>
         <viewModels:MainWindowPermissionsViewModel/>
@@ -36,25 +36,25 @@
                                                 >
 
                                         <Button x:Name="ButtonAddNewUser"
-                                                Content="Add New User"
+                                                Content="Добавить пользователя"
                                                 Margin="0 0 5 0"
                                                 Background="GhostWhite">
                                         </Button>
                                         <Button x:Name="ButtonSaveChanges"
                                                 Margin="5 0 5 0"
-                                                Content="Save Changes" 
+                                                Content="Создать группу пользователей" 
                                                 Background="GhostWhite"
                                                 >
                                         </Button>
                                         <Button  x:Name="ButtonAssignPermissionsForAllCompanies"
                                                  Margin="5 0 5 0"
-                                                 Content="Assign Permissions For All Companies" 
+                                                 Content="Добавить пользователя в группу" 
                                                  Background="GhostWhite"
                                                  >
                                         </Button>
                                         <Button  x:Name="ButtonAssignExclusivePermission"
                                                  Margin="5 0 0 0 "
-                                                 Content="Assign Exclusive Permissions" 
+                                                 Content="Добавить одиночные права" 
                                                  Background="GhostWhite"
                                                  >
                                         </Button>
@@ -66,9 +66,9 @@
                                         <dxg:GridControl x:Name="UsersGridControl"
                                              AutoGenerateColumns="AddNew"
                                              EnableSmartColumnsGeneration="True" VerticalAlignment="Top"
-                                             ItemsSource=""
-                                             CurrentItem=""
-                                             MaxHeight="10000"
+                                             ItemsSource="{Binding UserList, UpdateSourceTrigger=PropertyChanged}"
+                                             CurrentItem="{Binding UserListCurrentItem, UpdateSourceTrigger=PropertyChanged}"
+                                             MaxHeight="800"
                                              MaxWidth="10000"
                                              >
                                             <dxg:GridControl.View>
@@ -93,9 +93,9 @@
                     <dxlc:LayoutItem>
                         <dxe:ComboBoxEdit x:Name="ComboBoxEditCompany"
                                           Margin="0 0 0 5"
-                                          ItemsSource=""
+                                          ItemsSource="{Binding CompaniesList, UpdateSourceTrigger=PropertyChanged}"
                                           NullText="Выберите компанию"
-                                          DisplayMember=""  
+                                          DisplayMember="ShowName"
                                           >
                             <dxe:ComboBoxEdit.StyleSettings>
                                 <dxe:ComboBoxStyleSettings />
@@ -108,8 +108,8 @@
                                          AutoGenerateColumns="AddNew"
                                          EnableSmartColumnsGeneration="True"
                                          VerticalAlignment="Top"
-                                         ItemsSource=""
-                                         MaxHeight="10000"
+                                         ItemsSource="{Binding PermissionsList, UpdateSourceTrigger=PropertyChanged}"
+                                         MaxHeight="800"
                                          MaxWidth="10000"
                                          >
                             <dxg:GridControl.View>
