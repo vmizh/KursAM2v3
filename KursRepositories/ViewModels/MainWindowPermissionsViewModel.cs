@@ -9,6 +9,7 @@ using System.Windows;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.ExpressApp.Validation.AllContextsView;
+using DevExpress.Xpf.Editors;
 
 namespace KursRepositories.ViewModels
 {
@@ -19,6 +20,7 @@ namespace KursRepositories.ViewModels
         #region Fields
 
         private UsersViewModel myUserListCurrentItem;
+        private DataSourcesViewModel myEditValueComboboxCompany;
 
         #endregion
 
@@ -39,6 +41,18 @@ namespace KursRepositories.ViewModels
         public ObservableCollection<DataSourcesViewModel> CompaniesList { set; get; } =
             new ObservableCollection<DataSourcesViewModel>();
 
+        public string EditValueComboboxCompany
+        {
+            get => myEditValueComboboxCompany.ShowName;
+            set
+            {
+                if(myEditValueComboboxCompany.ShowName == value)
+                    return;
+                myEditValueComboboxCompany.ShowName = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public UsersViewModel UserListCurrentItem
         {
             get => myUserListCurrentItem;
@@ -50,7 +64,6 @@ namespace KursRepositories.ViewModels
                 myUserListCurrentItem = value;
                 RefreshDataPermissionList();
                 RaisePropertyChanged();
-
 
             }
         }
@@ -77,14 +90,15 @@ namespace KursRepositories.ViewModels
                 {
                     CompaniesList.Add(new DataSourcesViewModel(company));
                 }
+
             }
         }
 
         public void RefreshDataPermissionList()
         {
-            if (UserListCurrentItem == null)
+            if (UserListCurrentItem == null && EditValueComboboxCompany == null)
                 return;
-
+            
             using (var ctx = new KursSystemEntities())
             {
                 var permissions = ctx.UserMenuRight.Include(_ => _.DataSources).Where(_ => _.LoginName == UserListCurrentItem.Name)
@@ -95,11 +109,10 @@ namespace KursRepositories.ViewModels
                     var pp = permissions.FirstOrDefault(_ => _.MenuId == p.Id);
                     p.IsSelectedItem = pp != null;
                 }
+
             }
 
-
             #endregion
-
         }
     }
 }

@@ -76,8 +76,8 @@
                                             </dxg:GridControl.View>
                                             <dxg:GridControl.ContextMenu>
                                                 <ContextMenu>
-                                                    <MenuItem Header="AddNewUser" Command="{Binding AddNewUserCommand}"/>
-                                                    <MenuItem Header="SaveChanges" Command="{Binding SaveChangesCommand}"/>
+                                                    <MenuItem Header="Добавить пользователя" />
+                                                    <MenuItem Header="Изменить пользователя" />
                                                 </ContextMenu>
                                             </dxg:GridControl.ContextMenu>
                                         </dxg:GridControl>
@@ -96,6 +96,7 @@
                                           ItemsSource="{Binding CompaniesList, UpdateSourceTrigger=PropertyChanged}"
                                           NullText="Выберите компанию"
                                           DisplayMember="ShowName"
+                                          EditValue="{Binding EditValueComboboxCompany, UpdateSourceTrigger=PropertyChanged}"
                                           >
                             <dxe:ComboBoxEdit.StyleSettings>
                                 <dxe:ComboBoxStyleSettings />
