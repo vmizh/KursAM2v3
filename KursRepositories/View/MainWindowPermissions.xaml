@@ -96,10 +96,9 @@
                                           ItemsSource="{Binding CompaniesList, UpdateSourceTrigger=PropertyChanged}"
                                           NullText="Выберите компанию"
                                           DisplayMember="ShowName"
-                                          EditValue="{Binding EditValueComboboxCompany, UpdateSourceTrigger=PropertyChanged}"
                                           >
                             <dxe:ComboBoxEdit.StyleSettings>
-                                <dxe:ComboBoxStyleSettings />
+                            <dxe:ComboBoxStyleSettings  />
                             </dxe:ComboBoxEdit.StyleSettings>
                         </dxe:ComboBoxEdit>
                     </dxlc:LayoutItem>

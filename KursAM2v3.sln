@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KursAM2.Tests", "KursAM2.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KursRepositories", "KursRepositories\KursRepositories.csproj", "{B61CB1C4-0C5D-4897-B7D4-250D3DB76D0C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KursRepositories.Test", "KursRepositories.Test\KursRepositories.Test.csproj", "{F1C258DF-4AE6-405C-8BE2-80F0AC502086}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -154,6 +156,12 @@ Global
 		{B61CB1C4-0C5D-4897-B7D4-250D3DB76D0C}.Development|Any CPU.Build.0 = Debug|Any CPU
 		{B61CB1C4-0C5D-4897-B7D4-250D3DB76D0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B61CB1C4-0C5D-4897-B7D4-250D3DB76D0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1C258DF-4AE6-405C-8BE2-80F0AC502086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1C258DF-4AE6-405C-8BE2-80F0AC502086}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1C258DF-4AE6-405C-8BE2-80F0AC502086}.Development|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1C258DF-4AE6-405C-8BE2-80F0AC502086}.Development|Any CPU.Build.0 = Debug|Any CPU
+		{F1C258DF-4AE6-405C-8BE2-80F0AC502086}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1C258DF-4AE6-405C-8BE2-80F0AC502086}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

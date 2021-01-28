@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Core.ViewModel.Base;
 using Data;
 
@@ -12,10 +7,18 @@ namespace KursRepositories.ViewModels
 {
     public class KursMenuItemViewModel : RSViewModelBase
     {
+        #region Fields
+
+        private bool myIsSelectedItem;
+
+        #endregion
+
         #region Properties
 
 
-        [Display(AutoGenerateField = false)] public KursMenuItem Entity { get; set; }
+        [Display(AutoGenerateField = false)]
+        public KursMenuItem Entity { get; set; }
+
 
         [Display(AutoGenerateField = false)]
         public int Id
@@ -42,6 +45,20 @@ namespace KursRepositories.ViewModels
                 Entity.GroupId = value;
                 RaisePropertyChanged();
 
+            }
+        }
+
+
+
+        public bool IsSelectedItem
+        {
+            get => myIsSelectedItem;
+            set
+            {
+                if (myIsSelectedItem == value)
+                    return;
+                myIsSelectedItem = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -119,28 +136,6 @@ namespace KursRepositories.ViewModels
         public KursMenuItemViewModel(KursMenuItem entityKursMenuItem)
         {
             Entity = entityKursMenuItem;
-        }
-    }
-
-    public class WrapKursMenuItemViewModel : KursMenuItemViewModel
-    {
-        private bool myIsSelectedItem;
-
-        public bool IsSelectedItem
-        {
-            get => myIsSelectedItem;
-            set
-            {
-                if (myIsSelectedItem == value)
-                    return;
-                myIsSelectedItem = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public WrapKursMenuItemViewModel(KursMenuItem entityKursMenuItem) : base(entityKursMenuItem)
-        {
-            IsSelectedItem = true;
         }
     }
 

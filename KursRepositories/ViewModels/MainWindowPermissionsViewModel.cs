@@ -15,7 +15,7 @@ namespace KursRepositories.ViewModels
 {
 
 
-    public class MainWindowPermissionsViewModel : RSViewModelBase
+    public class MainWindowPermissionsViewModel : RSWindowViewModelBase
     {
         #region Fields
 
@@ -35,20 +35,20 @@ namespace KursRepositories.ViewModels
         public ObservableCollection<UsersViewModel> UserList { set; get; } =
             new ObservableCollection<UsersViewModel>();
 
-        public ObservableCollection<WrapKursMenuItemViewModel> PermissionsList { set; get; } =
-            new ObservableCollection<WrapKursMenuItemViewModel>();
+        public ObservableCollection<KursMenuItemViewModel> PermissionsList { set; get; } =
+            new ObservableCollection<KursMenuItemViewModel>();
 
         public ObservableCollection<DataSourcesViewModel> CompaniesList { set; get; } =
             new ObservableCollection<DataSourcesViewModel>();
 
-        public string EditValueComboboxCompany
+        public DataSourcesViewModel EditValueComboboxCompany
         {
-            get => myEditValueComboboxCompany.ShowName;
+            get => myEditValueComboboxCompany;
             set
             {
-                if(myEditValueComboboxCompany.ShowName == value)
+                if(myEditValueComboboxCompany == value)
                     return;
-                myEditValueComboboxCompany.ShowName = value;
+                myEditValueComboboxCompany = value;
                 RaisePropertyChanged();
             }
         }
@@ -83,7 +83,10 @@ namespace KursRepositories.ViewModels
 
                 foreach (var permission in ctx.KursMenuItem.ToList())
                 {
-                    PermissionsList.Add(new WrapKursMenuItemViewModel(permission));
+                    PermissionsList.Add(new KursMenuItemViewModel(permission)
+                    {
+                        IsSelectedItem = true
+                    });
                 }
 
                 foreach (var company in ctx.DataSources.ToList())
@@ -96,7 +99,7 @@ namespace KursRepositories.ViewModels
 
         public void RefreshDataPermissionList()
         {
-            if (UserListCurrentItem == null && EditValueComboboxCompany == null)
+            if (UserListCurrentItem == null)
                 return;
             
             using (var ctx = new KursSystemEntities())
@@ -111,6 +114,7 @@ namespace KursRepositories.ViewModels
                 }
 
             }
+            
 
             #endregion
         }
