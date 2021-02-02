@@ -11,7 +11,7 @@ namespace KursRepositories.ViewModels
         {
             Entity = usersEntity;
         }
-
+        public UsersViewModel() { }
 
         #region Properties
 
@@ -19,7 +19,7 @@ namespace KursRepositories.ViewModels
         public Users Entity { get; set; }
 
         [Display(AutoGenerateField = false)]
-        public Guid Id
+        public override Guid Id
         {
             get => Entity.Id;
             set
@@ -32,7 +32,7 @@ namespace KursRepositories.ViewModels
         }
 
         [Display(Name = "Имя авторизации")]
-        public string Name
+        public override string Name
         {
             get => Entity.Name;
             set
@@ -58,7 +58,7 @@ namespace KursRepositories.ViewModels
         }
 
         [Display(Name = "Примечание")]
-        public string Note
+        public override string Note
         {
             get => Entity.Note;
             set

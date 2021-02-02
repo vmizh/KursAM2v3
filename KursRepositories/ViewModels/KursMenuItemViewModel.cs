@@ -7,6 +7,14 @@ namespace KursRepositories.ViewModels
 {
     public class KursMenuItemViewModel : RSViewModelBase
     {
+
+     public KursMenuItemViewModel(KursMenuItem entityKursMenuItem)
+     {
+         Entity = entityKursMenuItem;
+     }
+
+     public KursMenuItemViewModel() {}
+
         #region Fields
 
         private bool myIsSelectedItem;
@@ -15,13 +23,11 @@ namespace KursRepositories.ViewModels
 
         #region Properties
 
-
         [Display(AutoGenerateField = false)]
         public KursMenuItem Entity { get; set; }
 
-
         [Display(AutoGenerateField = false)]
-        public int Id
+        public new int Id
         {
             get => Entity.Id;
             set
@@ -30,7 +36,6 @@ namespace KursRepositories.ViewModels
                     return;
                 Entity.Id = value;
                 RaisePropertyChanged();
-
             }
         }
 
@@ -44,11 +49,8 @@ namespace KursRepositories.ViewModels
                     return;
                 Entity.GroupId = value;
                 RaisePropertyChanged();
-
             }
         }
-
-
 
         public bool IsSelectedItem
         {
@@ -63,7 +65,7 @@ namespace KursRepositories.ViewModels
         }
 
         [Display(Name = "Наименование")]
-        public string Name
+        public override string Name
         {
             get => Entity.Name;
             set
@@ -72,13 +74,12 @@ namespace KursRepositories.ViewModels
                     return;
                 Entity.Name = value;
                 RaisePropertyChanged();
-
             }
         }
 
         [DisplayName("Примечание")]
         [Display(AutoGenerateField = false)]
-        public string Note
+        public override string Note
         {
             get => Entity.Note;
             set
@@ -105,7 +106,7 @@ namespace KursRepositories.ViewModels
         }
 
         [Display(AutoGenerateField = false)]
-        public string Code
+        public new string Code
         {
             get => Entity.Code;
             set
@@ -130,13 +131,8 @@ namespace KursRepositories.ViewModels
             }
         }
 
-
         #endregion
 
-        public KursMenuItemViewModel(KursMenuItem entityKursMenuItem)
-        {
-            Entity = entityKursMenuItem;
-        }
     }
 
 

@@ -13,18 +13,17 @@ namespace KursRepositories.ViewModels
     public class DataSourcesViewModel : RSViewModelBase
     {
         public DataSourcesViewModel(DataSources entityDataSources)
-
         {
             Entity = entityDataSources;
-
         }
+        public DataSourcesViewModel() {}
 
         #region Property
 
         public DataSources Entity { get; set; }
 
         [Display(AutoGenerateField = false)]
-        public Guid Id
+        public override Guid Id
         {
             get => Entity.Id;
             set
@@ -37,7 +36,7 @@ namespace KursRepositories.ViewModels
         }
 
         [DisplayName("Наименование")]
-        public string Name
+        public override string Name
         {
             get => Entity.Name;
             set
@@ -102,11 +101,9 @@ namespace KursRepositories.ViewModels
         public string Server
         {
             get => Entity.Server;
-
-
-
-
         }
+
         #endregion
+
     }
 }

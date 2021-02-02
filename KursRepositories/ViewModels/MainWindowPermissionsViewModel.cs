@@ -17,18 +17,18 @@ namespace KursRepositories.ViewModels
 
     public class MainWindowPermissionsViewModel : RSWindowViewModelBase
     {
-        #region Fields
-
-        private UsersViewModel myUserListCurrentItem;
-        private DataSourcesViewModel myEditValueComboboxCompany;
-
-        #endregion
-
-
+        
         public MainWindowPermissionsViewModel()
         {
             LoadView();
         }
+
+        #region Fields
+
+                private UsersViewModel myUserListCurrentItem;
+                private DataSourcesViewModel myEditValueComboboxCompany;
+
+        #endregion
 
         # region Properties
 
@@ -60,7 +60,6 @@ namespace KursRepositories.ViewModels
             {
                 if (myUserListCurrentItem == value)
                     return;
-
                 myUserListCurrentItem = value;
                 RefreshDataPermissionList();
                 RaisePropertyChanged();
@@ -115,8 +114,7 @@ namespace KursRepositories.ViewModels
 
             }
             
-
-            #endregion
         }
+            #endregion
     }
 }
