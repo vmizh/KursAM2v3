@@ -29,6 +29,8 @@
         <EntityTypeShape EntityType="KursSystemModel.UserMenuOrder" Width="1.5" PointX="5.375" PointY="5.75" />
         <EntityTypeShape EntityType="KursSystemModel.Log" Width="1.5" PointX="7.375" PointY="0.75" />
         <EntityTypeShape EntityType="KursSystemModel.TasksLog" Width="1.5" PointX="7.375" PointY="4.75" />
+        <EntityTypeShape EntityType="KursSystemModel.UserRoles" Width="1.5" PointX="3" PointY="12.25" />
+        <AssociationConnector Association="KursSystemModel.UserRolesLinkMenuItem" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

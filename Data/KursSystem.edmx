@@ -119,6 +119,22 @@
           <Property Name="MenuId" Type="int" Nullable="false" />
           <Property Name="IsReadOnly" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="UserRoles">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Note" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="UserRolesLinkMenuItem">
+          <Key>
+            <PropertyRef Name="RolesId" />
+            <PropertyRef Name="MenuId" />
+          </Key>
+          <Property Name="RolesId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="MenuId" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Users">
           <Key>
             <PropertyRef Name="Id" />
@@ -281,6 +297,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UserRolesLinkMenuItem_MenuId">
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="UserRolesLinkMenuItem" Type="Self.UserRolesLinkMenuItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRolesLinkMenuItem">
+              <PropertyRef Name="MenuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRolesLinkMenuItem_RolesId">
+          <End Role="UserRoles" Type="Self.UserRoles" Multiplicity="1" />
+          <End Role="UserRolesLinkMenuItem" Type="Self.UserRolesLinkMenuItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserRoles">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="UserRolesLinkMenuItem">
+              <PropertyRef Name="RolesId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_UsersLinkDB_DBId">
           <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
           <End Role="UsersLinkDB" Type="Self.UsersLinkDB" Multiplicity="*" />
@@ -319,6 +359,8 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <EntitySet Name="TasksLog" EntityType="Self.TasksLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMenuOrder" EntityType="Self.UserMenuOrder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMenuRight" EntityType="Self.UserMenuRight" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserRoles" EntityType="Self.UserRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserRolesLinkMenuItem" EntityType="Self.UserRolesLinkMenuItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UsersLinkDB" EntityType="Self.UsersLinkDB" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Version" EntityType="Self.Version" Schema="dbo" store:Type="Tables" />
@@ -362,6 +404,14 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <AssociationSet Name="FK_UserMenuRight_MenuId" Association="Self.FK_UserMenuRight_MenuId">
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
             <End Role="UserMenuRight" EntitySet="UserMenuRight" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRolesLinkMenuItem_MenuId" Association="Self.FK_UserRolesLinkMenuItem_MenuId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="UserRolesLinkMenuItem" EntitySet="UserRolesLinkMenuItem" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRolesLinkMenuItem_RolesId" Association="Self.FK_UserRolesLinkMenuItem_RolesId">
+            <End Role="UserRoles" EntitySet="UserRoles" />
+            <End Role="UserRolesLinkMenuItem" EntitySet="UserRolesLinkMenuItem" />
           </AssociationSet>
           <AssociationSet Name="FK_UsersLinkDB_DBId" Association="Self.FK_UsersLinkDB_DBId">
             <End Role="DataSources" EntitySet="DataSources" />
@@ -433,6 +483,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <NavigationProperty Name="KursMenuGroup" Relationship="Self.FK_KursMenuItem_GroupId" FromRole="KursMenuItem" ToRole="KursMenuGroup" />
           <NavigationProperty Name="UserMenuRight" Relationship="Self.FK_UserMenuRight_MenuId" FromRole="KursMenuItem" ToRole="UserMenuRight" />
           <NavigationProperty Name="FormLayout" Relationship="KursSystemModel.FK_FormLayout_FormId" FromRole="KursMenuItem" ToRole="FormLayout" />
+          <NavigationProperty Name="UserRoles" Relationship="KursSystemModel.UserRolesLinkMenuItem" FromRole="KursMenuItem" ToRole="UserRoles" />
         </EntityType>
         <EntityType Name="UserMenuRight">
           <Key>
@@ -618,6 +669,11 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <EntitySet Name="UserMenuOrder" EntityType="KursSystemModel.UserMenuOrder" />
           <EntitySet Name="Log" EntityType="KursSystemModel.Log" />
           <EntitySet Name="TasksLog" EntityType="KursSystemModel.TasksLog" />
+          <EntitySet Name="UserRoles" EntityType="KursSystemModel.UserRoles" />
+          <AssociationSet Name="UserRolesLinkMenuItem" Association="KursSystemModel.UserRolesLinkMenuItem">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="UserRoles" EntitySet="UserRoles" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Errors">
           <Key>
@@ -729,6 +785,19 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <Property Name="TaskInfo" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ExecTime" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
+        <EntityType Name="UserRoles">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.UserRolesLinkMenuItem" FromRole="UserRoles" ToRole="KursMenuItem" />
+        </EntityType>
+        <Association Name="UserRolesLinkMenuItem">
+          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="*" />
+          <End Type="KursSystemModel.UserRoles" Role="UserRoles" Multiplicity="*" />
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -904,6 +973,23 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="UserRoles">
+            <EntityTypeMapping TypeName="KursSystemModel.UserRoles">
+              <MappingFragment StoreEntitySet="UserRoles">
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="UserRolesLinkMenuItem" TypeName="KursSystemModel.UserRolesLinkMenuItem" StoreEntitySet="UserRolesLinkMenuItem">
+            <EndProperty Name="UserRoles">
+              <ScalarProperty Name="id" ColumnName="RolesId" />
+            </EndProperty>
+            <EndProperty Name="KursMenuItem">
+              <ScalarProperty Name="Id" ColumnName="MenuId" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

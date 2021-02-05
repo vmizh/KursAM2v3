@@ -2005,6 +2005,9 @@
     <Compile Include="UserProfile.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="UserRoles.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="Users.cs">
       <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>

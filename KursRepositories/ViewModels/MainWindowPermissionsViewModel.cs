@@ -48,6 +48,7 @@ namespace KursRepositories.ViewModels
             {
                 if(myEditValueComboboxCompany == value)
                     return;
+
                 myEditValueComboboxCompany = value;
                 RaisePropertyChanged();
             }
@@ -58,8 +59,9 @@ namespace KursRepositories.ViewModels
             get => myUserListCurrentItem;
             set
             {
-                if (myUserListCurrentItem == value)
+                if(myUserListCurrentItem == value)
                     return;
+
                 myUserListCurrentItem = value;
                 RefreshDataPermissionList();
                 RaisePropertyChanged();
@@ -71,7 +73,7 @@ namespace KursRepositories.ViewModels
 
         #region Methods
 
-        public void LoadView()
+        void LoadView()
         {
             using (var ctx = new KursSystemEntities())
             {
@@ -100,6 +102,7 @@ namespace KursRepositories.ViewModels
         {
             if (UserListCurrentItem == null)
                 return;
+            
             
             using (var ctx = new KursSystemEntities())
             {

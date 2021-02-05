@@ -20,8 +20,7 @@ namespace KursRepositories.Test
         {
 
             var ctx = new MainWindowPermissionsViewModel();
-            var form = new MainWindowPermissions();
-            form.DataContext = ctx;
+            var form = new MainWindowPermissions {DataContext = ctx};
             form.Show();
 
         }

@@ -114,6 +114,7 @@
     <Compile Include="ViewModels\DataSourcesViewModel.cs" />
     <Compile Include="ViewModels\KursMenuItemViewModel.cs" />
     <Compile Include="ViewModels\MainWindowPermissionsViewModel.cs" />
+    <Compile Include="ViewModels\UserRolesViewModel.cs" />
     <Compile Include="ViewModels\UsersViewModel.cs" />
     <Compile Include="View\MainWindowPermissions.xaml.cs">
       <DependentUpon>MainWindowPermissions.xaml</DependentUpon>

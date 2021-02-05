@@ -38,5 +38,6 @@ namespace Data
         public virtual DbSet<UserMenuOrder> UserMenuOrder { get; set; }
         public virtual DbSet<Log> Log { get; set; }
         public virtual DbSet<TasksLog> TasksLog { get; set; }
+        public virtual DbSet<UserRoles> UserRoles { get; set; }
     }
 }
