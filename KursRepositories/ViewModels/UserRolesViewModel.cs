@@ -10,13 +10,13 @@ using Data;
 
 namespace KursRepositories.ViewModels
 {
-    /*class UserRolesViewModel : RSViewModelBase
+    class UserRolesViewModel : RSViewModelBase
     {
         
         #region Constructors
             public UserRolesViewModel() { }
 
-            public UserRolesViewModel(UserRolesViewModel userRolesEntity)
+            public UserRolesViewModel(UserRoles userRolesEntity)
             {
                 Entity = userRolesEntity;
             }
@@ -75,5 +75,5 @@ namespace KursRepositories.ViewModels
 
         #endregion
 
-    }*/
+    }
 }
