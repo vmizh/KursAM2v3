@@ -6,10 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.ExpressApp.Validation.AllContextsView;
 using DevExpress.Xpf.Editors;
+using KursRepositories.View;
 
 namespace KursRepositories.ViewModels
 {
@@ -73,7 +75,7 @@ namespace KursRepositories.ViewModels
 
         #region Methods
 
-        void LoadView()
+        private void LoadView()
         {
             using (var ctx = new KursSystemEntities())
             {
@@ -98,12 +100,11 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        public void RefreshDataPermissionList()
+        private void RefreshDataPermissionList()
         {
             if (UserListCurrentItem == null)
                 return;
-            
-            
+
             using (var ctx = new KursSystemEntities())
             {
                 var permissions = ctx.UserMenuRight.Include(_ => _.DataSources).Where(_ => _.LoginName == UserListCurrentItem.Name)
@@ -118,6 +119,22 @@ namespace KursRepositories.ViewModels
             }
             
         }
-            #endregion
+        #endregion
+
+        #region Commands
+
+        public ICommand OpenWindowCommand
+        {
+            get { return new Command(openWindowCommand, _ => true); }
+        }
+
+        private void openWindowCommand(object obj)
+        {
+            var ctx = new RoleCreationWindowViewModel();
+            var form = new RoleCreationWindow{DataContext = ctx};
+            form.Show();
+        }
+
+        #endregion
     }
 }

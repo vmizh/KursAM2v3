@@ -114,10 +114,14 @@
     <Compile Include="ViewModels\DataSourcesViewModel.cs" />
     <Compile Include="ViewModels\KursMenuItemViewModel.cs" />
     <Compile Include="ViewModels\MainWindowPermissionsViewModel.cs" />
+    <Compile Include="ViewModels\RoleCreationWindowViewModel.cs" />
     <Compile Include="ViewModels\UserRolesViewModel.cs" />
     <Compile Include="ViewModels\UsersViewModel.cs" />
     <Compile Include="View\MainWindowPermissions.xaml.cs">
       <DependentUpon>MainWindowPermissions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RoleCreationWindow.xaml.cs">
+      <DependentUpon>RoleCreationWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +163,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="View\MainWindowPermissions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RoleCreationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

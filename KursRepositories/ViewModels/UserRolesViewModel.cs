@@ -10,7 +10,7 @@ using Data;
 
 namespace KursRepositories.ViewModels
 {
-    class UserRolesViewModel : RSViewModelBase
+     public class UserRolesViewModel : RSViewModelBase
     {
         
         #region Constructors

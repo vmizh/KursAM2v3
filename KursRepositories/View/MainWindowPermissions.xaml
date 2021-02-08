@@ -44,13 +44,14 @@
                                                 Margin="5 0 5 0"
                                                 Content="Создать группу пользователей" 
                                                 Background="GhostWhite"
+                                                Command="{Binding OpenWindowCommand}"
                                                 >
                                         </Button>
                                         <Button  x:Name="ButtonAssignPermissionsForAllCompanies"
                                                  Margin="5 0 5 0"
                                                  Content="Добавить пользователя в группу" 
                                                  Background="GhostWhite"
-                                                 >
+                                        >
                                         </Button>
                                         <Button  x:Name="ButtonAssignExclusivePermission"
                                                  Margin="5 0 0 0 "
@@ -121,10 +122,7 @@
                 </dxlc:LayoutGroup>
 
             </dxlc:LayoutGroup>
-
-
         
-
     </dxlc:LayoutControl>
 
 
