@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using KursRepositories.ViewModels;
 
 
 namespace KursRepositories.View
@@ -23,6 +24,8 @@ namespace KursRepositories.View
         public MainWindowPermissions()
         {
             InitializeComponent();
+            DataContext = new MainWindowPermissionsViewModel();
+
         }
     }
 }

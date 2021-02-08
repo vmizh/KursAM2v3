@@ -7,12 +7,9 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    Title="PermissionsWindow" Height="830" Width="1400"
+    Title="PermissionsWindow" Height="830" Width="1400" Left="20" Top="20"
     >
-    <Window.DataContext>
-        <viewModels:MainWindowPermissionsViewModel/>
-    </Window.DataContext>
-
+    
     <dxlc:LayoutControl HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         >
@@ -42,20 +39,20 @@
                                         </Button>
                                         <Button x:Name="ButtonSaveChanges"
                                                 Margin="5 0 5 0"
-                                                Content="Создать группу пользователей" 
+                                                Content="Создать роль" 
                                                 Background="GhostWhite"
-                                                Command="{Binding OpenWindowCommand}"
+                                                Command="{Binding OpenRoleCreationWindowCommand}"
                                                 >
                                         </Button>
                                         <Button  x:Name="ButtonAssignPermissionsForAllCompanies"
                                                  Margin="5 0 5 0"
-                                                 Content="Добавить пользователя в группу" 
+                                                 Content="Назначить пользователю роль" 
                                                  Background="GhostWhite"
                                         >
                                         </Button>
                                         <Button  x:Name="ButtonAssignExclusivePermission"
                                                  Margin="5 0 0 0 "
-                                                 Content="Добавить одиночные права" 
+                                                 Content="Добавить индивидуальные права" 
                                                  Background="GhostWhite"
                                                  >
                                         </Button>

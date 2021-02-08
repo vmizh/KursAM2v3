@@ -123,15 +123,15 @@ namespace KursRepositories.ViewModels
 
         #region Commands
 
-        public ICommand OpenWindowCommand
+        public ICommand OpenRoleCreationWindowCommand
         {
-            get { return new Command(openWindowCommand, _ => true); }
+            get { return new Command(openRoleCreationWindowCommand, _ => true); }
         }
 
-        private void openWindowCommand(object obj)
+        private void openRoleCreationWindowCommand(object obj)
         {
             var ctx = new RoleCreationWindowViewModel();
-            var form = new RoleCreationWindow{DataContext = ctx};
+            var form = new RoleCreationWindow{ DataContext = ctx };
             form.Show();
         }
 

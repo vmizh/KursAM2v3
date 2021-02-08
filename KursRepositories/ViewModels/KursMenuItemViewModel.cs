@@ -51,7 +51,7 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
-
+        [Display(Name = "Статус")]
         public bool IsSelectedItem
         {
             get => myIsSelectedItem;

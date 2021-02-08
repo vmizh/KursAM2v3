@@ -6,94 +6,90 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    Title="RoleCreationWindow" Height="800" Width="1000"
+    Title="RoleCreationWindow" Height="800" Width="1200" Left="20" Top="20"
     >
 
     <dxlc:LayoutControl HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
+                        dxlc:LayoutControl.AllowHorizontalSizing="True"
+                        dxlc:LayoutControl.AllowVerticalSizing="True"
                         >
 
         <dxlc:LayoutGroup Name="RootLayoutGroup"
-                              Orientation="Horizontal" 
+                              Orientation="Vertical" 
                               View="GroupBox"
                               Header=""
                               >
-            <dxlc:LayoutGroup Name="LayoutGroupUserList"
+                    <dxlc:LayoutGroup Name="LayoutButtonsGroup"
                               Orientation="Vertical"
                               Margin="5" 
                               View="Group" 
-                              dxlc:LayoutControl.AllowHorizontalSizing="True"
-                              >
+                              dxlc:LayoutControl.AllowVerticalSizing="True">
 
-                <dxlc:LayoutItem Margin="0 0 0 5">
+                                <dxlc:LayoutItem Margin="0 0 0 5">
 
-                    <StackPanel Name="ButtonStackPanel"
-                                Orientation="Horizontal">
+                                    <StackPanel Name="ButtonStackPanel"
+                                                Orientation="Horizontal">
 
-                        <Button x:Name="ButtonAddNewUser"
-                                Content="Добавить пользователя"
-                                Margin="0 0 5 0"
-                                Background="GhostWhite">
-                        </Button>
-                        <Button x:Name="ButtonSaveChanges"
-                                Margin="5 0 5 0"
-                                Content="Создать группу пользователей" 
-                                Background="GhostWhite"
-                                Command="{Binding OpenWindowCommand}"
-                                >
-                        </Button>
-                       
-                    </StackPanel>
-                </dxlc:LayoutItem>
+                                        <Button x:Name="ButtonAddNewUser"
+                                                Content="Удалить роль"
+                                                Margin="0 0 5 0"
+                                                Background="GhostWhite">
+                                        </Button>
+                                        <Button x:Name="ButtonSaveChanges"
+                                                Margin="5 0 5 0"
+                                                Content="Создать роль" 
+                                                Background="GhostWhite"
+                                                >
+                                        </Button>
+                                    </StackPanel>
+                                </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
 
-                <dxlc:LayoutItem >
-                    <dxg:GridControl x:Name="UsersGridControl"
-                                     AutoGenerateColumns="AddNew"
-                                     EnableSmartColumnsGeneration="True" VerticalAlignment="Top"
-                                     ItemsSource="{Binding RoleList, UpdateSourceTrigger=PropertyChanged}"
-                                     CurrentItem="{Binding CurrentRole, UpdateSourceTrigger=PropertyChanged}"
-                                     MaxHeight="800"
-                                     MaxWidth="10000"
-                                     >
-                        <dxg:GridControl.View>
-                            <dxg:TableView ShowTotalSummary="True" IsSynchronizedWithCurrentItem="True"/>
-                        </dxg:GridControl.View>
-                        <dxg:GridControl.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Добавить пользователя" />
-                                <MenuItem Header="Изменить пользователя" />
-                            </ContextMenu>
-                        </dxg:GridControl.ContextMenu>
-                    </dxg:GridControl>
-                </dxlc:LayoutItem>
+            <dxlc:LayoutGroup Name="GridsGroup"
+                                      >
+                        <dxlc:LayoutGroup Name="LayoutRoleGroup" 
+                                          Orientation="Horizontal" 
+                                          View="Group"
+                                          dxlc:LayoutControl.AllowHorizontalSizing="True"
+                                          >
+                                <dxg:GridControl x:Name="RolesGridControl"
+                                                         AutoGenerateColumns="AddNew"
+                                                         EnableSmartColumnsGeneration="True"
+                                                         VerticalAlignment="Top"
+                                                         ItemsSource="{Binding RoleList, UpdateSourceTrigger=PropertyChanged}"
+                                                         CurrentItem="{Binding CurrentRole, UpdateSourceTrigger=PropertyChanged}"
+                                                         MaxHeight="1000"
+                                                         MaxWidth="10000">
+                                            <dxg:GridControl.View>
+                                                <dxg:TableView ShowTotalSummary="True" IsSynchronizedWithCurrentItem="True"/>
+                                            </dxg:GridControl.View>
+                                            <dxg:GridControl.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Удалить роль" />
+                                                </ContextMenu>
+                                            </dxg:GridControl.ContextMenu>
+                                </dxg:GridControl>
+                        </dxlc:LayoutGroup>
 
+                            <dxlc:LayoutGroup
+                                dxlc:LayoutControl.AllowHorizontalSizing="True"
+                                            >
+                                <dxg:GridControl x:Name="RoleItemsGridControl"
+                                                     AutoGenerateColumns="AddNew"
+                                                     EnableSmartColumnsGeneration="True"
+                                                     VerticalAlignment="Top"
+                                                     ItemsSource="{Binding RoleItemsList, UpdateSourceTrigger=PropertyChanged}"
+                                                     MaxHeight="1000"
+                                                     MaxWidth="10000"
+                                                     >
+                                        <dxg:GridControl.View>
+                                            <dxg:TableView ShowTotalSummary="True" IsSynchronizedWithCurrentItem="True"/>
+                                        </dxg:GridControl.View>
+                                </dxg:GridControl>
+                            </dxlc:LayoutGroup>
             </dxlc:LayoutGroup>
-
-            <dxlc:LayoutGroup Name="LayoutGroupPermissions" 
-                                  Orientation="Vertical" 
-                                  Margin="5" View="Group" 
-                                  >
-                
-                <dxlc:LayoutItem>
-                    <dxg:GridControl x:Name="PermissionsGridControl"
-                                     AutoGenerateColumns="AddNew"
-                                     EnableSmartColumnsGeneration="True"
-                                     VerticalAlignment="Top"
-                                     ItemsSource="{Binding RoleListItems, UpdateSourceTrigger=PropertyChanged}"
-                                     MaxHeight="800"
-                                     MaxWidth="10000"
-                                     >
-                        <dxg:GridControl.View>
-                            <dxg:TableView ShowTotalSummary="True" IsSynchronizedWithCurrentItem="True"/>
-                        </dxg:GridControl.View>
-
-                    </dxg:GridControl>
-                </dxlc:LayoutItem>
-            </dxlc:LayoutGroup>
-
         </dxlc:LayoutGroup>
-
-
 
 
     </dxlc:LayoutControl>

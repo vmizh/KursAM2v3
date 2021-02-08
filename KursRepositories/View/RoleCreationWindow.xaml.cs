@@ -23,6 +23,7 @@ namespace KursRepositories.View
         public RoleCreationWindow()
         {
             InitializeComponent();
+            
         }
     }
 }

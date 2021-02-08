@@ -38,14 +38,16 @@ namespace KursRepositories.ViewModels
             {
                 if (myCurrentRole == value)
                     return;
+
                 myCurrentRole = value;
+                RefreshRoleItemsList();
                 RaisePropertyChanged();
             }
         }
 
         public ObservableCollection<UserRolesViewModel> RoleList { get; set; } = new ObservableCollection<UserRolesViewModel>();
 
-        public ObservableCollection<KursMenuItemViewModel> RoleListItems { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
+        public ObservableCollection<KursMenuItemViewModel> RoleItemsList { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
 
         #endregion
 
@@ -63,9 +65,10 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        private void RefreshRoles()
+        private void RefreshRoleItemsList()
         {
-            RoleListItems.Clear();
+
+            RoleItemsList.Clear();
 
             using (var ctx = new KursSystemEntities())
             {
@@ -74,9 +77,9 @@ namespace KursRepositories.ViewModels
                 if (data == null)
                     return;
 
-                foreach (var d in data.KursMenuItem)
+                foreach (var item in data.KursMenuItem)
                 {
-                    RoleListItems.Add(new KursMenuItemViewModel(d));
+                    RoleItemsList.Add(new KursMenuItemViewModel(item));
                 }
 
             }
