@@ -32,25 +32,25 @@
                                                 Orientation="Horizontal"
                                                 >
 
-                                        <Button x:Name="ButtonAddNewUser"
+                                        <Button x:Name="AddNewUserButton"
                                                 Content="Добавить пользователя"
                                                 Margin="0 0 5 0"
                                                 Background="GhostWhite">
                                         </Button>
-                                        <Button x:Name="ButtonSaveChanges"
+                                        <Button x:Name="CreateRoleButton"
                                                 Margin="5 0 5 0"
                                                 Content="Создать роль" 
                                                 Background="GhostWhite"
                                                 Command="{Binding OpenRoleCreationWindowCommand}"
                                                 >
                                         </Button>
-                                        <Button  x:Name="ButtonAssignPermissionsForAllCompanies"
+                                        <Button  x:Name="AssignPermissionsForAllCompaniesButton"
                                                  Margin="5 0 5 0"
                                                  Content="Назначить пользователю роль" 
                                                  Background="GhostWhite"
                                         >
                                         </Button>
-                                        <Button  x:Name="ButtonAssignExclusivePermission"
+                                        <Button  x:Name="AssignExclusivePermissionButton"
                                                  Margin="5 0 0 0 "
                                                  Content="Добавить индивидуальные права" 
                                                  Background="GhostWhite"
