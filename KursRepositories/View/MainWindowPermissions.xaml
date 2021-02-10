@@ -87,6 +87,7 @@
                 <dxlc:LayoutGroup Name="LayoutGroupPermissions" 
                                   Orientation="Vertical" 
                                   Margin="5" View="Group" 
+                                  dxlc:LayoutControl.AllowHorizontalSizing="True"
                                   >
                     <dxlc:LayoutItem>
                         <dxe:ComboBoxEdit x:Name="ComboBoxEditCompany"

@@ -5,8 +5,10 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.Xpf.Editors;
 
 namespace KursRepositories.ViewModels
 {
@@ -94,6 +96,21 @@ namespace KursRepositories.ViewModels
             }
         }
 
+        #endregion
+
+        #region Commands
+
+        public ICommand CreateRoleCommand
+        {
+            get { return new Command(createRoleCommand, _ => true); }
+        }
+
+        private void createRoleCommand(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        
         #endregion
     }
 }
