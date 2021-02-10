@@ -49,9 +49,12 @@ namespace KursRepositories.ViewModels
 
         public ObservableCollection<KursMenuItemViewModel> RoleItemsList { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
 
+        public ObservableCollection<KursMenuItemViewModel> PermissionsList { set; get; } =
+            new ObservableCollection<KursMenuItemViewModel>();
+
         #endregion
 
-       
+
         #region Method
 
         private void LoadDataRoleCreationWindow()
@@ -62,7 +65,13 @@ namespace KursRepositories.ViewModels
                 {
                     RoleList.Add(new UserRolesViewModel(role));
                 }
+
+                foreach (var item in ctx.KursMenuItem)
+                {
+                    PermissionsList.Add(new KursMenuItemViewModel(item));
+                }
             }
+
         }
 
         private void RefreshRoleItemsList()
