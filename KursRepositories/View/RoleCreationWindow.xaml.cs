@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Data;
+using DevExpress.Xpf.Editors;
 
 
 namespace KursRepositories.View
@@ -18,12 +20,13 @@ namespace KursRepositories.View
     /// <summary>
     /// Interaction logic for RoleCreationWindow.xaml
     /// </summary>
-    public partial class RoleCreationWindow : ThemedWindow
+    public partial class RoleCreationWindow
     {
         public RoleCreationWindow()
         {
             InitializeComponent();
             
         }
+
     }
 }

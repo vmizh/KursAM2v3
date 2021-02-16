@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
@@ -7,6 +8,7 @@ namespace KursRepositories.ViewModels
 {
     public class KursMenuItemViewModel : RSViewModelBase
     {
+        
 
      public KursMenuItemViewModel(KursMenuItem entityKursMenuItem)
      {
