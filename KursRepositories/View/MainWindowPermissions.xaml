@@ -7,13 +7,12 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    Title="PermissionsWindow" Height="830" Width="1400" Left="20" Top="20"
+    Title="Служба управления правами" Height="830" Width="1400" Left="20" Top="20"
     >
-    
-    <dxlc:LayoutControl HorizontalAlignment="Stretch"
+    <DockPanel>
+        <dxlc:LayoutControl HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         >
-        
             <dxlc:LayoutGroup Name="RootLayoutGroup"
                               Orientation="Horizontal" 
                               View="GroupBox"
@@ -68,10 +67,15 @@
                                              CurrentItem="{Binding UserListCurrentItem, UpdateSourceTrigger=PropertyChanged}"
                                              MaxHeight="800"
                                              MaxWidth="10000"
+                                             
                                              >
                                             <dxg:GridControl.View>
-                                                <dxg:TableView ShowTotalSummary="True" IsSynchronizedWithCurrentItem="True"/>
+                                                 <dxg:TableView ShowTotalSummary="True"
+                                                                IsSynchronizedWithCurrentItem="True"
+                                                                BestFitModeOnSourceChange="AllRows" 
+                                                                />
                                             </dxg:GridControl.View>
+                                            
                                             <dxg:GridControl.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Header="Добавить пользователя" />
@@ -107,26 +111,25 @@
                         <dxg:GridControl x:Name="PermissionsGridControl"
                                          AutoGenerateColumns="AddNew"
                                          EnableSmartColumnsGeneration="True"
-                                         VerticalAlignment="Top"
                                          ItemsSource="{Binding PermissionsList, UpdateSourceTrigger=PropertyChanged}"
                                          MaxHeight="800"
                                          MaxWidth="10000"
                                          >
                             <dxg:GridControl.View>
-                                <dxg:TableView ShowTotalSummary="True" IsSynchronizedWithCurrentItem="True"/>
+                                <dxg:TableView ShowTotalSummary="True"
+                                               IsSynchronizedWithCurrentItem="True"
+                                               BestFitModeOnSourceChange="AllRows"
+                                               />
                             </dxg:GridControl.View>
-                           
+                            
+
                         </dxg:GridControl>
                     </dxlc:LayoutItem>
                 </dxlc:LayoutGroup>
 
             </dxlc:LayoutGroup>
         
-    </dxlc:LayoutControl>
-
-
-
-
-
+         </dxlc:LayoutControl>
+    </DockPanel>
 
 </dx:ThemedWindow>

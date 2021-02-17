@@ -49,6 +49,7 @@ namespace KursRepositories.ViewModels
                     return;
 
                 myEditValueComboboxCompany = value;
+                RefreshDataPermissionList();
                 RaisePropertyChanged();
             }
         }
@@ -99,7 +100,9 @@ namespace KursRepositories.ViewModels
 
         private void RefreshDataPermissionList()
         {
-            if (UserListCurrentItem == null && EditValueComboboxCompany == null)
+            if (UserListCurrentItem == null)
+                return;
+            if(EditValueComboboxCompany == null)
                 return;
             
             using (var ctx = new KursSystemEntities())

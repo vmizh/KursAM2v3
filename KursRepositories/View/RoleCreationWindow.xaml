@@ -43,7 +43,9 @@
                                                          Margin="0 0 10 0"
                                                          >
                                             <dxg:GridControl.View>
-                                                <dxg:TableView ShowTotalSummary="True" IsSynchronizedWithCurrentItem="True"/>
+                                                <dxg:TableView ShowTotalSummary="True"
+                                                               IsSynchronizedWithCurrentItem="True"
+                                                               BestFitModeOnSourceChange="AllRows"/>
                                             </dxg:GridControl.View>
                                             <dxg:GridControl.ContextMenu>
                                                 <ContextMenu>
@@ -115,7 +117,9 @@
                                              MaxWidth="10000"
                                              >
                                 <dxg:GridControl.View>
-                                    <dxg:TableView ShowTotalSummary="True" IsSynchronizedWithCurrentItem="True"/>
+                                    <dxg:TableView ShowTotalSummary="True"
+                                                   IsSynchronizedWithCurrentItem="True"
+                                                   BestFitModeOnSourceChange="AllRows"/>
                                 </dxg:GridControl.View>
 
                             </dxg:GridControl>
