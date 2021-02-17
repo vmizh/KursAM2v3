@@ -15,11 +15,8 @@ using KursRepositories.View;
 
 namespace KursRepositories.ViewModels
 {
-
-
     public class MainWindowPermissionsViewModel : RSWindowViewModelBase
     {
-        
         public MainWindowPermissionsViewModel()
         {
             LoadView();
@@ -102,13 +99,13 @@ namespace KursRepositories.ViewModels
 
         private void RefreshDataPermissionList()
         {
-            if (UserListCurrentItem == null)
+            if (UserListCurrentItem == null && EditValueComboboxCompany == null)
                 return;
-
+            
             using (var ctx = new KursSystemEntities())
             {
-                var permissions = ctx.UserMenuRight.Include(_ => _.DataSources).Where(_ => _.LoginName == UserListCurrentItem.Name)
-                    .ToList();
+                var permissions = ctx.UserMenuRight.Include(_ => _.DataSources).Where(_ =>(_.LoginName == UserListCurrentItem.Name))
+                        .Where(_=>(_.DBId == EditValueComboboxCompany.Id));
 
                 foreach (var p in PermissionsList)
                 {

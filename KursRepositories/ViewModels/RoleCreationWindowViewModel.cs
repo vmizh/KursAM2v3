@@ -7,15 +7,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Xpf.Editors;
 using DevExpress.Mvvm;
+using DevExpress.Office.Utils;
 
 namespace KursRepositories.ViewModels
 {
-    public class RoleCreationWindowViewModel : ViewModelBase
+    public class RoleCreationWindowViewModel : RSViewModelBase
     {
         #region Constructors
         
@@ -150,19 +152,21 @@ namespace KursRepositories.ViewModels
 
         private void createRoleCommand(object obj)
         {
+            var menuIdList = (from permission in PermissionsList
+                    where permission.IsSelectedItem
+                    select permission).ToList();
+            MessageBox.Show(string.Join(Environment.NewLine, menuIdList));
 
-                var menuIdList = (from permission in PermissionsList where permission.IsSelectedItem select permission.Id).ToList();
-                MessageBox.Show(string.Join(Environment.NewLine, menuIdList));
-
-                RoleList.Add(new UserRolesViewModel(new UserRoles()
+                RoleList.Add(new UserRolesViewModel(new UserRoles
                 {
                     id = Guid.NewGuid(),
                     Name = NameRoleTextEdit.Trim(),
                     Note = NoteRoleTextEdit.Trim(),
                     
+                    KursMenuItem = new List<KursMenuItem>()
                 }));
 
-                /*using (var context = new KursSystemEntities())
+                using (var context = new KursSystemEntities())
                 { 
                     var oldRolesList = context.UserRoles.ToList();
 
@@ -170,12 +174,7 @@ namespace KursRepositories.ViewModels
                     {
                         var propertyRoles = oldRolesList.FirstOrDefault(_ => _.id == role.Entity.id);
                         if (propertyRoles != null)
-                        {
-                            propertyRoles.id = role.Id;
-                            propertyRoles.Name = role.Name;
-                            propertyRoles.Note = role.Note;
-                            propertyRoles.KursMenuItem = role.Entity.KursMenuItem;
-                        }
+                            continue;
                         else
                         {
                             context.UserRoles.Add(new UserRoles()
@@ -191,7 +190,7 @@ namespace KursRepositories.ViewModels
                     context.SaveChanges();
                     MessageBox.Show("Новая роль создана. Проверьте список ролей.");
 
-                }*/
+                }
         }
         
         #endregion
