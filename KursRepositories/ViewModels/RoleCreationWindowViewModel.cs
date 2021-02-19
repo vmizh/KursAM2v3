@@ -190,9 +190,10 @@ namespace KursRepositories.ViewModels
 
                     context.SaveChanges();
                     MessageBox.Show("Новая роль создана. Проверьте список ролей.");
+                }
                     */
 
-                }
+                
         }
         
         #endregion
