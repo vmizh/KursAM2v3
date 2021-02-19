@@ -166,6 +166,7 @@ namespace KursRepositories.ViewModels
                     KursMenuItem = new List<KursMenuItem>()
                 }));
 
+                /*
                 using (var context = new KursSystemEntities())
                 { 
                     var oldRolesList = context.UserRoles.ToList();
@@ -189,6 +190,7 @@ namespace KursRepositories.ViewModels
 
                     context.SaveChanges();
                     MessageBox.Show("Новая роль создана. Проверьте список ролей.");
+                    */
 
                 }
         }
