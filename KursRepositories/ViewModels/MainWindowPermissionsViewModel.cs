@@ -135,6 +135,17 @@ namespace KursRepositories.ViewModels
             form.Show();
         }
 
+        public ICommand AddNewUserCommand
+        {
+            get { return new Command(addNewUserCommand, _ => true); }
+        }
+
+        private void addNewUserCommand(object obj)
+        {
+            var ctx = new UserCreationWindowViewModel();
+            var form = new UserCreationWindow {DataContext = ctx};
+            form.Show();
+        }
         #endregion
     }
 }

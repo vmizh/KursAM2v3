@@ -117,6 +117,7 @@
     <Compile Include="ViewModels\KursMenuItemViewModel.cs" />
     <Compile Include="ViewModels\MainWindowPermissionsViewModel.cs" />
     <Compile Include="ViewModels\RoleCreationWindowViewModel.cs" />
+    <Compile Include="ViewModels\UserCreationWindowViewModel.cs" />
     <Compile Include="ViewModels\UserRolesViewModel.cs" />
     <Compile Include="ViewModels\UsersViewModel.cs" />
     <Compile Include="View\MainWindowPermissions.xaml.cs">
@@ -124,6 +125,9 @@
     </Compile>
     <Compile Include="View\RoleCreationWindow.xaml.cs">
       <DependentUpon>RoleCreationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserCreationWindow.xaml.cs">
+      <DependentUpon>UserCreationWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +174,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\RoleCreationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UserCreationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

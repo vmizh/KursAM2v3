@@ -3,11 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-    xmlns:viewModels="clr-namespace:KursRepositories.ViewModels"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    Title="Служба управления правами" Height="830" Width="1400" Left="20" Top="20"
+    Title="Служба управления доступом" Height="830" Width="1400" Left="20" Top="20"
     >
     <DockPanel>
         <dxlc:LayoutControl HorizontalAlignment="Stretch"
@@ -34,7 +33,8 @@
                                         <Button x:Name="AddNewUserButton"
                                                 Content="Добавить пользователя"
                                                 Margin="0 0 5 0"
-                                                Background="GhostWhite">
+                                                Background="GhostWhite"
+                                                Command ="{Binding AddNewUserCommand}">
                                         </Button>
                                         <Button x:Name="CreateRoleButton"
                                                 Margin="5 0 5 0"

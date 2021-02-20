@@ -1,0 +1,49 @@
+﻿<dx:ThemedWindow
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    x:Class="KursRepositories.View.UserCreationWindow"
+    Title="Создание нового пользователя" Height="400" Width="400"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors">
+    <dxlc:LayoutControl>
+        
+        <dxlc:LayoutGroup Orientation="Horizontal">
+            <dxlc:LayoutGroup Orientation ="Horizontal"  View="Group">
+                <dxlc:LayoutItem  Width="150" Height="150">
+                    <Image Source="{Binding Path=Photo}" HorizontalAlignment="Left" Width="150" Height="150" />
+                </dxlc:LayoutItem>
+                
+                    <dxlc:LayoutItem>
+                        <StackPanel Orientation="Vertical">
+                        <dxe:CheckEdit x:Name="AdminCheckEdit"
+                                       Content="Администрато"/>
+                        <dxe:CheckEdit x:Name="TesterCheckEdit"
+                                       Content="Тестировщик"/>
+                        
+                        </StackPanel>
+                </dxlc:LayoutItem>
+                
+                <dxlc:LayoutGroup Orientation="Vertical">
+                    <dxlc:LayoutItem Label="Title">
+                        <dxe:TextEdit Text="{Binding TitleOfCourtesy}" />
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="First name ">
+                            <dxe:TextEdit Text="{Binding FirstName}" />
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Last name ">
+                            <dxe:TextEdit Text="{Binding LastName}" />
+                        </dxlc:LayoutItem>
+                    
+                    <dxlc:LayoutItem Label="Job title">
+                        <dxe:TextEdit Text="{Binding Title}" />
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+               
+                
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutGroup>
+
+    </dxlc:LayoutControl>
+</dx:ThemedWindow>
