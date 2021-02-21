@@ -10,38 +10,51 @@
     <dxlc:LayoutControl>
         
         <dxlc:LayoutGroup Orientation="Horizontal">
-            <dxlc:LayoutGroup Orientation ="Horizontal"  View="Group">
-                <dxlc:LayoutItem  Width="150" Height="150">
+            <dxlc:LayoutGroup Orientation ="Horizontal" 
+                              View="Group">
+                <GroupBox Header="Фотография" 
+                Margin="0 0 10 0">
+                <dxlc:LayoutItem  Width="150"
+                                  Height="150">
                     <Image Source="{Binding Path=Photo}" HorizontalAlignment="Left" Width="150" Height="150" />
                 </dxlc:LayoutItem>
-                
+                </GroupBox>
+
+                <GroupBox Header="Информация о пользователе"
+                          Margin="10 0 10 0">
+                    <dxlc:LayoutGroup Orientation="Vertical">
+                            <dxlc:LayoutItem Label="Фамилия">
+                                <dxe:TextEdit Text="{Binding }" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Имя ">
+                                <dxe:TextEdit Text="{Binding }" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Отчество ">
+                                <dxe:TextEdit Text="{Binding }" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Полное имя">
+                                <dxe:TextEdit Text="{Binding }" />
+                            </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Имя для авторизации">
+                            <dxe:TextEdit Text="{Binding }" />
+                        </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                </GroupBox>
+
+                <GroupBox Header="Доп. возможности">
                     <dxlc:LayoutItem>
-                        <StackPanel Orientation="Vertical">
-                        <dxe:CheckEdit x:Name="AdminCheckEdit"
-                                       Content="Администрато"/>
-                        <dxe:CheckEdit x:Name="TesterCheckEdit"
-                                       Content="Тестировщик"/>
-                        
+                    <StackPanel Orientation="Vertical">
+                            <dxe:CheckEdit x:Name="AdminCheckEdit"
+                                           Content="Администрато"/>
+                            <dxe:CheckEdit x:Name="TesterCheckEdit"
+                                           Content="Тестировщик"/>
                         </StackPanel>
-                </dxlc:LayoutItem>
-                
-                <dxlc:LayoutGroup Orientation="Vertical">
-                    <dxlc:LayoutItem Label="Title">
-                        <dxe:TextEdit Text="{Binding TitleOfCourtesy}" />
                     </dxlc:LayoutItem>
-                    <dxlc:LayoutItem Label="First name ">
-                            <dxe:TextEdit Text="{Binding FirstName}" />
-                        </dxlc:LayoutItem>
-                        <dxlc:LayoutItem Label="Last name ">
-                            <dxe:TextEdit Text="{Binding LastName}" />
-                        </dxlc:LayoutItem>
-                    
-                    <dxlc:LayoutItem Label="Job title">
-                        <dxe:TextEdit Text="{Binding Title}" />
-                    </dxlc:LayoutItem>
-                </dxlc:LayoutGroup>
-               
-                
+                </GroupBox>
+
+
+
+
             </dxlc:LayoutGroup>
         </dxlc:LayoutGroup>
 
