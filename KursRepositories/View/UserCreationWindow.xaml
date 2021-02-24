@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewModels:UserCreationWindowViewModel}"
     d:DesignHeight="300" d:DesignWidth="300"
-    Title="Создание нового пользователя" Height="400" Width="800">
+    Title="Создание нового пользователя" Height="350" Width="800">
     
 
     <dxlc:LayoutControl>
@@ -32,7 +32,7 @@
 
                 <GroupBox Header="Информация о пользователе"
                           Margin="5 0 5 0">
-                    <dxlc:LayoutGroup Orientation="Vertical">
+                    <dxlc:LayoutGroup Orientation="Vertical" >
                         <dxlc:LayoutItem Label="Фамилия" AddColonToLabel="True">
                             <dxe:TextEdit EditValue="{Binding LastName,UpdateSourceTrigger=PropertyChanged }" />
                         </dxlc:LayoutItem>
@@ -49,7 +49,8 @@
                                 <dxe:TextEdit EditValue="{Binding LoginName, UpdateSourceTrigger=PropertyChanged}" />
                             </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Примечание" AddColonToLabel="True">
-                                <dxe:TextEdit EditValue="{Binding Note, UpdateSourceTrigger=PropertyChanged}" />
+                                <dxe:TextEdit EditValue="{Binding Note, UpdateSourceTrigger=PropertyChanged}"
+                                              TextWrapping="Wrap"/>
                             </dxlc:LayoutItem>
                     </dxlc:LayoutGroup>
                 </GroupBox>
@@ -77,25 +78,7 @@
                         Command="{Binding CreateNewUserCommand}"
                                 />
             </dxlc:LayoutItem>
-            <dxlc:LayoutItem >
-                <dxg:GridControl x:Name="UsersGridControl"
-                                 AutoGenerateColumns="AddNew"
-                                 EnableSmartColumnsGeneration="True" VerticalAlignment="Top"
-                                 ItemsSource="{Binding NewUser, UpdateSourceTrigger=PropertyChanged}"
-                                 
-                                 MaxHeight="800"
-                                 MaxWidth="10000"
-                                             
-                >
-                    <dxg:GridControl.View>
-                        <dxg:TableView ShowTotalSummary="True"
-                                       IsSynchronizedWithCurrentItem="True"
-                                       BestFitModeOnSourceChange="AllRows" 
-                        />
-                    </dxg:GridControl.View>
-                </dxg:GridControl>
-            </dxlc:LayoutItem>
-
+           
         </dxlc:LayoutGroup>
 
     </dxlc:LayoutControl>

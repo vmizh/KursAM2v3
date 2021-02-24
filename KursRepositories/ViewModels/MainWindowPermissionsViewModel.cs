@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
-using DevExpress.ExpressApp.Validation.AllContextsView;
-using DevExpress.Xpf.Editors;
 using KursRepositories.View;
 
 namespace KursRepositories.ViewModels
@@ -134,12 +127,12 @@ namespace KursRepositories.ViewModels
             form.Show();
         }
 
-        public ICommand AddNewUserCommand
+        public ICommand AddUserCommand
         {
-            get { return new Command(addNewUserCommand, _ => true); }
+            get { return new Command(addUser, _ => true); }
         }
 
-        private void addNewUserCommand(object obj)
+        private void addUser(object obj)
         {
             var ctx = new UserCreationWindowViewModel();
             var form = new UserCreationWindow {DataContext = ctx};

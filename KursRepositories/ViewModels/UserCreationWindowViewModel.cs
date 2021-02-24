@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
-using DevExpress.Mvvm;
 
 namespace KursRepositories.ViewModels
 {
@@ -71,7 +65,7 @@ namespace KursRepositories.ViewModels
             get => myFirstName;
             set
             {
-                if (myFirstName == null)
+                if (myFirstName == value)
                     return;
                 myFirstName = value;
                 RaiseFullNamePropertyChanged();
@@ -199,10 +193,10 @@ namespace KursRepositories.ViewModels
 
         public ICommand CreateNewUserCommand
         {
-            get { return new Command(createNewUserCommand, _ => true); }
+            get { return new Command(createNewUser, _ => true); }
         }
 
-        private void createNewUserCommand(object obj)
+        private void createNewUser(object obj)
         {
             NewUser.Add(new UsersViewModel(new Users
             {

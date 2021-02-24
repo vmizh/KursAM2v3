@@ -34,7 +34,7 @@
                                                 Content="Добавить пользователя"
                                                 Margin="0 0 5 0"
                                                 Background="GhostWhite"
-                                                Command ="{Binding AddNewUserCommand}">
+                                                Command ="{Binding AddUserCommand}">
                                         </Button>
                                         <Button x:Name="CreateRoleButton"
                                                 Margin="5 0 5 0"

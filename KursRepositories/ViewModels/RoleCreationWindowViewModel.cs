@@ -3,17 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
-using DevExpress.Xpf.Editors;
-using DevExpress.Mvvm;
-using DevExpress.Office.Utils;
 
 namespace KursRepositories.ViewModels
 {

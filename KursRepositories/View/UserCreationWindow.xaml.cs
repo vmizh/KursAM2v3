@@ -24,7 +24,8 @@ namespace KursRepositories.View
         public UserCreationWindow()
         {
             InitializeComponent();
-            
+            DataContext = new UserCreationWindowViewModel();
+
         }
     }
 }
