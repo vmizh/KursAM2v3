@@ -8,10 +8,11 @@ using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.Mvvm;
 
 namespace KursRepositories.ViewModels
 {
-    class UserCreationWindowViewModel : RSViewModelBase
+    public class UserCreationWindowViewModel : RSWindowViewModelBase
     {
         public UserCreationWindowViewModel()
         {
@@ -42,7 +43,7 @@ namespace KursRepositories.ViewModels
         private string myLoginName;
         private bool myAdmin = false;
         private bool myTester = false;
-        private bool myDeleted = false;
+        private readonly bool myDeleted = false;
         private byte[] myAvatar;
         private string myThemeName = "MetropolisLight";
         private new string myNote;
@@ -106,7 +107,8 @@ namespace KursRepositories.ViewModels
 
         public string FullName
         {
-            get => $"{LastName}  {FirstName} {MiddleName}";
+            get => $"{LastName} {FirstName} {MiddleName}";
+
             set
             {
                 if (myFullName == value)
@@ -115,6 +117,7 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
+
 
         public bool Admin
         {
@@ -194,8 +197,10 @@ namespace KursRepositories.ViewModels
 
         #region Command
 
-        public ICommand CreateNewUserCommand =>
-            new Command(createNewUserCommand, _ => LoginName != null && FullName != null);
+        public ICommand CreateNewUserCommand
+        {
+            get { return new Command(createNewUserCommand, _ => true); }
+        }
 
         private void createNewUserCommand(object obj)
         {
@@ -220,10 +225,9 @@ namespace KursRepositories.ViewModels
 
         #region Methods
 
-        void RaiseFullNamePropertyChanged()
+        private void RaiseFullNamePropertyChanged()
         {
             RaisePropertyChanged(nameof(FullName));
-
         }
 
         

@@ -6,31 +6,38 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-    Title="Создание нового пользователя" Height="350" Width="700">
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:viewModels="clr-namespace:KursRepositories.ViewModels"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewModels:UserCreationWindowViewModel}"
+    d:DesignHeight="300" d:DesignWidth="300"
+    Title="Создание нового пользователя" Height="400" Width="800">
+    
 
     <dxlc:LayoutControl>
         
         <dxlc:LayoutGroup Orientation="Vertical">
-            <dxlc:LayoutGroup Orientation ="Horizontal" 
-                              View="Group">
+            <dxlc:LayoutGroup Orientation ="Horizontal">
                 <GroupBox Header="Фотография" 
-                Margin="0 0 10 0">
+                                  Margin="5 0 5 0" 
+                                  HorizontalAlignment="Left">
                 <dxlc:LayoutItem >
                     <dxe:ImageEdit x:Name="PhotoImageEdit"
                                    EditValue="{Binding Avatar,UpdateSourceTrigger=PropertyChanged}" 
-                                   Width="150"
-                                   Height="150" />
+                                   Width="200"
+                                   Height="200" />
                 </dxlc:LayoutItem>
                 </GroupBox>
 
                 <GroupBox Header="Информация о пользователе"
-                          Margin="10 0 10 0">
+                          Margin="5 0 5 0">
                     <dxlc:LayoutGroup Orientation="Vertical">
                         <dxlc:LayoutItem Label="Фамилия" AddColonToLabel="True">
                             <dxe:TextEdit EditValue="{Binding LastName,UpdateSourceTrigger=PropertyChanged }" />
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Имя" AddColonToLabel="True">
-                            <dxe:TextEdit EditValue="{Binding FirstName,UpdateSourceTrigger=PropertyChanged }" />
+                            <dxe:TextEdit EditValue="{Binding FirstName, UpdateSourceTrigger=PropertyChanged }" />
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Отчество" AddColonToLabel="True">
                             <dxe:TextEdit EditValue="{Binding MiddleName,UpdateSourceTrigger=PropertyChanged }" />
@@ -47,8 +54,10 @@
                     </dxlc:LayoutGroup>
                 </GroupBox>
 
-                <GroupBox Header="Доп. возможности">
-                    <dxlc:LayoutItem>
+                <GroupBox Header="Доп. возможности"
+                          HorizontalAlignment="Right"
+                          Margin="5 0 5 0">
+                    <dxlc:LayoutItem VerticalAlignment="Stretch">
                     <StackPanel Orientation="Vertical">
                             <dxe:CheckEdit x:Name="AdminCheckEdit"
                                            Content="Администратор"
@@ -62,9 +71,10 @@
             </dxlc:LayoutGroup>
             
             <dxlc:LayoutItem>
-                <Button x:Name="CreateNewUserButton" 
-                                Content="Создать пользователя"
-                                Command="{Binding CreateNewUserCommand}"
+                <Button x:Name="CreateNewUserButton"
+                        Margin="0 10 0 0"
+                        Content="Создать пользователя"
+                        Command="{Binding CreateNewUserCommand}"
                                 />
             </dxlc:LayoutItem>
             <dxlc:LayoutItem >

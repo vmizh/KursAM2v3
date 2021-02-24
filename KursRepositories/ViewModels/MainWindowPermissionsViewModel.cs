@@ -115,7 +115,6 @@ namespace KursRepositories.ViewModels
                     var pp = permissions.FirstOrDefault(_ => _.MenuId == p.Id);
                     p.IsSelectedItem = pp != null;
                 }
-
             }
             
         }

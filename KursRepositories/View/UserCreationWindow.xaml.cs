@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using KursRepositories.ViewModels;
 
 
 namespace KursRepositories.View
@@ -18,11 +19,12 @@ namespace KursRepositories.View
     /// <summary>
     /// Interaction logic for UserCreationWindow.xaml
     /// </summary>
-    public partial class UserCreationWindow : ThemedWindow
+    public partial class UserCreationWindow
     {
         public UserCreationWindow()
         {
             InitializeComponent();
+            
         }
     }
 }
