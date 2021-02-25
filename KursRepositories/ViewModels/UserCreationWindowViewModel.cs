@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,14 +18,18 @@ namespace KursRepositories.ViewModels
 {
     public class UserCreationWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
     {
+        #region Constructor
         public UserCreationWindowViewModel()
         {
-
-
+            LoadRegisteredUsers();
         }
+        
+        #endregion
+
 
         #region Fields
 
+        private string error;
         private string myFirstName;
         private string myMiddleName;
         private string myLastName;
@@ -36,12 +42,16 @@ namespace KursRepositories.ViewModels
         private string myThemeName = "MetropolisLight";
         private new string myNote;
         private ObservableCollection<UsersViewModel> myNewUser = new ObservableCollection<UsersViewModel>();
+        public List<string> RegisteredUserNames = new List<string>();
+        
 
 
         #endregion
 
         #region Properties
 
+        public string Error => error;
+        
         public ObservableCollection<UsersViewModel> NewUser
         {
             get => myNewUser;
@@ -53,8 +63,9 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
+        public ObservableCollection<UsersViewModel> RegisteredUsers { get; set; } =
+            new ObservableCollection<UsersViewModel>();
 
-        [Required(ErrorMessage = "необходимо ввести имя.")]
         public string FirstName
         {
             get => myFirstName;
@@ -68,7 +79,6 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        [Required(ErrorMessage = "необходимо ввести имя.")]
         public string MiddleName
         {
             get => myMiddleName;
@@ -82,7 +92,6 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        [Required(ErrorMessage = "необходимо ввести имя.")]
         public string LastName
         {
             get => myLastName;
@@ -96,7 +105,6 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        [Required(ErrorMessage = "необходимо ввести имя.")]
         public string FullName
         {
             get => $"{LastName} {FirstName} {MiddleName}";
@@ -172,7 +180,6 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        [Required(ErrorMessage = "необходимо ввести имя.")]
         public override string Note
         {
             get => myNote;
@@ -214,14 +221,41 @@ namespace KursRepositories.ViewModels
             MessageBox.Show("Пользователь успешно зарегистрирован.");
         }
 
-        string IDataErrorInfo.Error => string.Empty;
+        #endregion
 
-        public string Error
+       
+
+
+        #region Methods
+
+        private void LoadRegisteredUsers()
         {
-            get => error;
+            using (var ctx = new KursSystemEntities())
+            {
+                foreach (var user in ctx.Users.ToList())
+                {
+                    RegisteredUsers.Add(new UsersViewModel(user));
+                }
+
+                var uNameList = (from u in RegisteredUsers select u.Name).ToList();
+
+                foreach (var name in uNameList)
+                {
+                    RegisteredUserNames.Add(name);
+                }
+            }
         }
 
-        private string error;
+        private void RaiseFullNamePropertyChanged()
+        {
+            RaisePropertyChanged(nameof(FullName));
+        }
+
+
+        #region InputValidation
+
+        string IDataErrorInfo.Error => Error;
+
 
         string IDataErrorInfo.this[string columnName]
         {
@@ -241,19 +275,6 @@ namespace KursRepositories.ViewModels
                 return string.Empty;
             }
         }
-        
-
-
-        #endregion
-
-        #region Methods
-
-        private void RaiseFullNamePropertyChanged()
-        {
-            RaisePropertyChanged(nameof(FullName));
-        }
-
-        #region ImnputValidation
 
         void SetError(bool isValid, string errorString)
         {
@@ -269,9 +290,18 @@ namespace KursRepositories.ViewModels
 
         public bool ValidateLogin(string login)
         {
-            bool isValid = login != "Test";
-            SetError(isValid, "Такой пользователь уже зарегистрирован.");
-            return isValid;
+            if (login == string.Empty)
+            {
+                bool isValid = true;
+                SetError(true, "Необходимо указать имя для авторизации.");
+                return isValid;
+            }
+            else
+            {
+                bool isValid = login != RegisteredUserNames.FirstOrDefault(_ => _ == login);
+                SetError(isValid, "Такой пользователь уже зарегистрирован.");
+                return isValid;
+            }
         }
 
         #endregion
@@ -279,6 +309,9 @@ namespace KursRepositories.ViewModels
         #endregion
 
     }
+
+
+  
 
 
 }
