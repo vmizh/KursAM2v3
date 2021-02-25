@@ -87,6 +87,7 @@ namespace KursRepositories.ViewModels
                 if (myMiddleName == value)
                     return;
                 myMiddleName = value;
+                
                 RaiseFullNamePropertyChanged();
                 RaisePropertyChanged();
             }
@@ -204,11 +205,18 @@ namespace KursRepositories.ViewModels
 
         private void createNewUser(object obj)
         {
+            if (string.IsNullOrWhiteSpace(FirstName) | string.IsNullOrWhiteSpace(LastName) | string.IsNullOrWhiteSpace(MiddleName) |
+                string.IsNullOrWhiteSpace(LoginName))
+            {
+                MessageBox.Show("Поля Ф.И.О. и Login не могут состоять из пробелов и должны быть обязательно заполнены.");
+                return;
+            }
+
             NewUser.Add(new UsersViewModel(new Users
             {
                 Id = new Guid(),
-                Name = LoginName,
-                FullName = FullName,
+                Name = LoginName.Trim(),
+                FullName = FullName.Trim(),
                 Note = Note,
                 ThemeName = ThemeName,
                 IsAdmin = Admin,
@@ -234,15 +242,9 @@ namespace KursRepositories.ViewModels
             {
                 foreach (var user in ctx.Users.ToList())
                 {
-                    RegisteredUsers.Add(new UsersViewModel(user));
+                    RegisteredUserNames.Add(user.Name);
                 }
 
-                var uNameList = (from u in RegisteredUsers select u.Name).ToList();
-
-                foreach (var name in uNameList)
-                {
-                    RegisteredUserNames.Add(name);
-                }
             }
         }
 
@@ -280,11 +282,11 @@ namespace KursRepositories.ViewModels
         {
             error = isValid ? string.Empty : errorString;
         }
-
+        
         public bool ValidateName(string name)
         {
             bool isValid = !string.IsNullOrEmpty(name);
-            SetError(isValid, $"Поле {name} должно быть заполнено.");
+            SetError(isValid, $"Поле должно быть заполнено.");
             return isValid;
         }
 
@@ -292,8 +294,8 @@ namespace KursRepositories.ViewModels
         {
             if (login == string.Empty)
             {
-                bool isValid = true;
-                SetError(true, "Необходимо указать имя для авторизации.");
+                bool isValid = false;
+                SetError(isValid, "Поле должно быть заполнено.");
                 return isValid;
             }
             else
@@ -302,6 +304,7 @@ namespace KursRepositories.ViewModels
                 SetError(isValid, "Такой пользователь уже зарегистрирован.");
                 return isValid;
             }
+
         }
 
         #endregion

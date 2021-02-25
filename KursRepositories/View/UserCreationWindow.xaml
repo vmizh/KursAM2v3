@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:viewModels="clr-namespace:KursRepositories.ViewModels"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewModels:UserCreationWindowViewModel}"
     d:DesignHeight="300" d:DesignWidth="300"
@@ -33,23 +34,27 @@
                           Margin="5 0 5 0">
                     <dxlc:LayoutGroup Orientation="Vertical" >
                         <dxlc:LayoutItem Label="Фамилия" AddColonToLabel="True">
-                            <dxe:TextEdit EditValue="{Binding LastName,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                            <dxe:TextEdit NullText="Введите фамилюю пользователя"
+                                          EditValue="{Binding LastName,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Имя" AddColonToLabel="True">
-                            <dxe:TextEdit EditValue="{Binding FirstName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True }"/>
+                            <dxe:TextEdit NullText="Введите имя пользователя"
+                                          EditValue="{Binding FirstName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True }"/>
                                 
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Отчество" AddColonToLabel="True">
-                            <dxe:TextEdit EditValue="{Binding MiddleName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
+                            <dxe:TextEdit NullText="Введите отчество пользователя"
+                                          EditValue="{Binding MiddleName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
                             </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Полное имя" AddColonToLabel="True">
                             <dxe:TextEdit EditValue="{Binding FullName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
                             </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Login" AddColonToLabel="True">
-                                <dxe:TextEdit EditValue="{Binding LoginName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                                <dxe:TextEdit NullText ="Введите имя для авторизации в системе"
+                                              EditValue="{Binding LoginName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
                             </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Примечание" AddColonToLabel="True">
-                                <dxe:TextEdit EditValue="{Binding Note, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                <dxe:TextEdit NullText="Поле не обязательное для заполнения" EditValue="{Binding Note, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
                                               TextWrapping="Wrap"/>
                             </dxlc:LayoutItem>
                     </dxlc:LayoutGroup>
@@ -79,7 +84,25 @@
                         Command="{Binding CreateNewUserCommand}"
                                 />
             </dxlc:LayoutItem>
-           
+            <dxlc:LayoutItem >
+                <dxg:GridControl x:Name="UsersGridControl"
+                                 AutoGenerateColumns="AddNew"
+                                 EnableSmartColumnsGeneration="True" VerticalAlignment="Top"
+                                 ItemsSource="{Binding NewUser, UpdateSourceTrigger=PropertyChanged}"
+                                
+                                 MaxHeight="800"
+                                 MaxWidth="10000"
+                                 >
+                    <dxg:GridControl.View>
+                        <dxg:TableView ShowTotalSummary="True"
+                                       IsSynchronizedWithCurrentItem="True"
+                                       BestFitModeOnSourceChange="AllRows" 
+                        />
+                    </dxg:GridControl.View>
+                  
+                </dxg:GridControl>
+            </dxlc:LayoutItem>
+
         </dxlc:LayoutGroup>
 
     </dxlc:LayoutControl>
