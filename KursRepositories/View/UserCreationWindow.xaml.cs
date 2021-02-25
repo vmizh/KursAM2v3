@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using DevExpress.Xpf.Editors;
 using KursRepositories.ViewModels;
 
 
@@ -24,8 +25,10 @@ namespace KursRepositories.View
         public UserCreationWindow()
         {
             InitializeComponent();
-            DataContext = new UserCreationWindowViewModel();
+            
 
         }
+
+      
     }
 }

@@ -1,32 +1,26 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Xpf.Editors;
+using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
+
 
 namespace KursRepositories.ViewModels
 {
-    public class UserCreationWindowViewModel : RSWindowViewModelBase
+    public class UserCreationWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
     {
         public UserCreationWindowViewModel()
         {
-        /*public string Error
-        {
-            get
-            {
-                string error =
-                ["FirstName"] +
-                        this["LastName"] +
-                    this["Title"] +
-                    this["MobilePhone"] +
-                    this["Email"];
-                if (!string.IsNullOrEmpty(error))
-                    return "Please check inputted data.";
-                return null;
-            }
-        }*/
 
-    }
+
+        }
 
         #region Fields
 
@@ -60,6 +54,7 @@ namespace KursRepositories.ViewModels
             }
         }
 
+        [Required(ErrorMessage = "необходимо ввести имя.")]
         public string FirstName
         {
             get => myFirstName;
@@ -73,6 +68,7 @@ namespace KursRepositories.ViewModels
             }
         }
 
+        [Required(ErrorMessage = "необходимо ввести имя.")]
         public string MiddleName
         {
             get => myMiddleName;
@@ -86,6 +82,7 @@ namespace KursRepositories.ViewModels
             }
         }
 
+        [Required(ErrorMessage = "необходимо ввести имя.")]
         public string LastName
         {
             get => myLastName;
@@ -99,6 +96,7 @@ namespace KursRepositories.ViewModels
             }
         }
 
+        [Required(ErrorMessage = "необходимо ввести имя.")]
         public string FullName
         {
             get => $"{LastName} {FirstName} {MiddleName}";
@@ -111,7 +109,6 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
-
 
         public bool Admin
         {
@@ -175,6 +172,7 @@ namespace KursRepositories.ViewModels
             }
         }
 
+        [Required(ErrorMessage = "необходимо ввести имя.")]
         public override string Note
         {
             get => myNote;
@@ -186,6 +184,7 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
+
 
         #endregion
 
@@ -212,8 +211,38 @@ namespace KursRepositories.ViewModels
 
             }));
 
-
+            MessageBox.Show("Пользователь успешно зарегистрирован.");
         }
+
+        string IDataErrorInfo.Error => string.Empty;
+
+        public string Error
+        {
+            get => error;
+        }
+
+        private string error;
+
+        string IDataErrorInfo.this[string columnName]
+        {
+            get
+            {
+                switch (columnName)
+                {
+                    case "FirstName":
+                        return ValidateName(FirstName) ? string.Empty : Error;
+                    case "LastName":
+                        return ValidateName(LastName) ? string.Empty : Error;
+                    case "MiddleName":
+                        return ValidateName(MiddleName) ? string.Empty : Error;
+                    case "LoginName":
+                        return ValidateLogin(LoginName) ? string.Empty : Error;
+                }
+                return string.Empty;
+            }
+        }
+        
+
 
         #endregion
 
@@ -224,8 +253,32 @@ namespace KursRepositories.ViewModels
             RaisePropertyChanged(nameof(FullName));
         }
 
-        
+        #region ImnputValidation
+
+        void SetError(bool isValid, string errorString)
+        {
+            error = isValid ? string.Empty : errorString;
+        }
+
+        public bool ValidateName(string name)
+        {
+            bool isValid = !string.IsNullOrEmpty(name);
+            SetError(isValid, $"Поле {name} должно быть заполнено.");
+            return isValid;
+        }
+
+        public bool ValidateLogin(string login)
+        {
+            bool isValid = login != "Test";
+            SetError(isValid, "Такой пользователь уже зарегистрирован.");
+            return isValid;
+        }
 
         #endregion
+
+        #endregion
+
     }
+
+
 }

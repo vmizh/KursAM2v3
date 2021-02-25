@@ -5,7 +5,6 @@
     x:Class="KursRepositories.View.UserCreationWindow"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:viewModels="clr-namespace:KursRepositories.ViewModels"
@@ -13,9 +12,9 @@
     d:DataContext="{d:DesignInstance Type=viewModels:UserCreationWindowViewModel}"
     d:DesignHeight="300" d:DesignWidth="300"
     Title="Создание нового пользователя" Height="350" Width="800">
-    
 
-    <dxlc:LayoutControl>
+
+    <dxlc:LayoutControl dxe:ValidationService.IsValidationContainer="True" x:Name="validationContainer">
         
         <dxlc:LayoutGroup Orientation="Vertical">
             <dxlc:LayoutGroup Orientation ="Horizontal">
@@ -34,22 +33,23 @@
                           Margin="5 0 5 0">
                     <dxlc:LayoutGroup Orientation="Vertical" >
                         <dxlc:LayoutItem Label="Фамилия" AddColonToLabel="True">
-                            <dxe:TextEdit EditValue="{Binding LastName,UpdateSourceTrigger=PropertyChanged }" />
+                            <dxe:TextEdit EditValue="{Binding LastName,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True }" />
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Имя" AddColonToLabel="True">
-                            <dxe:TextEdit EditValue="{Binding FirstName, UpdateSourceTrigger=PropertyChanged }" />
+                            <dxe:TextEdit EditValue="{Binding FirstName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True }"/>
+                                
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Отчество" AddColonToLabel="True">
-                            <dxe:TextEdit EditValue="{Binding MiddleName,UpdateSourceTrigger=PropertyChanged }" />
+                            <dxe:TextEdit EditValue="{Binding MiddleName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
                             </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Полное имя" AddColonToLabel="True">
-                            <dxe:TextEdit EditValue="{Binding FullName,UpdateSourceTrigger=PropertyChanged }" />
+                            <dxe:TextEdit EditValue="{Binding FullName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
                             </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Login" AddColonToLabel="True">
-                                <dxe:TextEdit EditValue="{Binding LoginName, UpdateSourceTrigger=PropertyChanged}" />
+                                <dxe:TextEdit EditValue="{Binding LoginName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
                             </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Примечание" AddColonToLabel="True">
-                                <dxe:TextEdit EditValue="{Binding Note, UpdateSourceTrigger=PropertyChanged}"
+                                <dxe:TextEdit EditValue="{Binding Note, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
                                               TextWrapping="Wrap"/>
                             </dxlc:LayoutItem>
                     </dxlc:LayoutGroup>
@@ -75,6 +75,7 @@
                 <Button x:Name="CreateNewUserButton"
                         Margin="0 10 0 0"
                         Content="Создать пользователя"
+                        IsEnabled="{Binding Path=(dxe:ValidationService.HasValidationError), ElementName=validationContainer, Converter={dx:NegationConverter}}"
                         Command="{Binding CreateNewUserCommand}"
                                 />
             </dxlc:LayoutItem>
