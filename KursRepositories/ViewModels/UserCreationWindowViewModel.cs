@@ -292,19 +292,9 @@ namespace KursRepositories.ViewModels
 
         public bool ValidateLogin(string login)
         {
-            if (login == string.Empty)
-            {
-                bool isValid = false;
-                SetError(isValid, "Поле должно быть заполнено.");
-                return isValid;
-            }
-            else
-            {
-                bool isValid = login != RegisteredUserNames.FirstOrDefault(_ => _ == login);
-                SetError(isValid, "Такой пользователь уже зарегистрирован.");
-                return isValid;
-            }
-
+            bool isValid = login != RegisteredUserNames.FirstOrDefault(_ => _ == login);
+            SetError(isValid, "Пользователь с таким именем уже зарегистрирован или вы не заполнили поле."); 
+            return isValid;
         }
 
         #endregion

@@ -34,7 +34,7 @@
                           Margin="5 0 5 0">
                     <dxlc:LayoutGroup Orientation="Vertical" >
                         <dxlc:LayoutItem Label="Фамилия" AddColonToLabel="True">
-                            <dxe:TextEdit NullText="Введите фамилюю пользователя"
+                            <dxe:TextEdit NullText="Введите фамилию пользователя"
                                           EditValue="{Binding LastName,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Имя" AddColonToLabel="True">
