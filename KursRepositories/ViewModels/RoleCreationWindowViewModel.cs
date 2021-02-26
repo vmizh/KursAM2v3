@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.Map.Kml;
 
 namespace KursRepositories.ViewModels
 {
@@ -143,20 +144,22 @@ namespace KursRepositories.ViewModels
             get { return new Command(createRoleCommand, _ => NameRoleTextEdit != null); }
         }
 
+        public List<KursMenuItem> NrpList { get; set; } = new List<KursMenuItem>();
+        
+        
         private void createRoleCommand(object obj)
         {
-            var menuIdList = (from permission in PermissionsList
-                    where permission.IsSelectedItem
-                    select permission).ToList();
-            MessageBox.Show(string.Join(Environment.NewLine, menuIdList));
-
+            // List<int> menuIdList = (from permission in PermissionsList
+            //         where permission.IsSelectedItem
+            //         select permission.Id).ToList();
+            // MessageBox.Show(string.Join(Environment.NewLine, menuIdList));
+            
                 RoleList.Add(new UserRolesViewModel(new UserRoles
                 {
                     id = Guid.NewGuid(),
                     Name = NameRoleTextEdit.Trim(),
                     Note = NoteRoleTextEdit.Trim(),
-                    
-                    KursMenuItem = new List<KursMenuItem>()
+                    // KursMenuItem = 
                 }));
 
                 /*

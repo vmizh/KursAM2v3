@@ -27,6 +27,9 @@ namespace KursRepositories.ViewModels
         public ObservableCollection<UsersViewModel> UserList { set; get; } =
             new ObservableCollection<UsersViewModel>();
 
+        public ObservableCollection<UsersViewModel> DeletedUsers { get; set; } =
+            new ObservableCollection<UsersViewModel>();
+
         public ObservableCollection<KursMenuItemViewModel> PermissionsList { set; get; } =
             new ObservableCollection<KursMenuItemViewModel>();
 
@@ -138,6 +141,21 @@ namespace KursRepositories.ViewModels
             var form = new UserCreationWindow {DataContext = ctx};
             form.Show();
         }
+
+        public ICommand DeleteUserCommand
+        {
+            get { return new Command(deleteUser, _ => UserList.Count > 0); }
+        }
+
+        private void deleteUser(object p)
+        {
+            if (UserListCurrentItem == null)
+                return;
+            DeletedUsers.Add(UserListCurrentItem);
+            UserList.Remove(UserListCurrentItem);
+
+        }
+
         #endregion
     }
 }
