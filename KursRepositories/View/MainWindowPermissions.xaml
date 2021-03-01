@@ -6,12 +6,18 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:viewModels="clr-namespace:KursRepositories.ViewModels"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewModels:MainWindowPermissionsViewModel}"
+    d:DesignHeight="300" d:DesignWidth="300"
     Title="Служба управления доступом" Height="830" Width="1400" Left="20" Top="20"
     >
     <DockPanel>
         <dxlc:LayoutControl HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        >
+                            VerticalAlignment="Stretch"
+                            >
             <dxlc:LayoutGroup Name="RootLayoutGroup"
                               Orientation="Horizontal" 
                               View="GroupBox"
@@ -78,8 +84,8 @@
                                             
                                             <dxg:GridControl.ContextMenu>
                                                 <ContextMenu>
-                                                    <MenuItem Header="Добавить пользователя" />
-                                                    <MenuItem Header="Изменить пользователя" />
+                                                     <MenuItem Header="Удалить пользователя" 
+                                                               Command="{Binding DeleteUserCommand}" />
                                                 </ContextMenu>
                                             </dxg:GridControl.ContextMenu>
                                         </dxg:GridControl>
@@ -89,6 +95,7 @@
                              </dxlc:LayoutGroup>
 
                 <dxlc:LayoutGroup Name="LayoutGroupPermissions" 
+                                  HorizontalAlignment="Right"
                                   Orientation="Vertical" 
                                   Margin="5" View="Group" 
                                   dxlc:LayoutControl.AllowHorizontalSizing="True"

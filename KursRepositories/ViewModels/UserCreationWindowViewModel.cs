@@ -229,7 +229,7 @@ namespace KursRepositories.ViewModels
                 var oldUsers = context.Users.ToList();
                 foreach (var user in NewUser)
                 {
-                    var propertyUser = oldUsers.FirstOrDefault(_ => _.Id == user.Entity.Id);
+                    var propertyUser = oldUsers.FirstOrDefault(_ => _.Id == user.Id);
                     if (propertyUser != null)
                     {
                         propertyUser.Id = user.Id;
@@ -246,7 +246,7 @@ namespace KursRepositories.ViewModels
                     {
                         context.Users.Add(new Users()
                         {
-                            Id = user.Entity.Id,
+                            Id = user.Id,
                             Name = user.Name,
                             FullName = user.FullName,
                             Note = user.Note,
@@ -266,9 +266,6 @@ namespace KursRepositories.ViewModels
         }
 
             #endregion
-
-       
-
 
             #region Methods
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
@@ -120,10 +121,10 @@ namespace KursRepositories.ViewModels
 
         public ICommand OpenRoleCreationWindowCommand
         {
-            get { return new Command(openRoleCreationWindowCommand, _ => true); }
+            get { return new Command(openRoleCreationWindow, _ => true); }
         }
 
-        private void openRoleCreationWindowCommand(object obj)
+        private void openRoleCreationWindow(object obj)
         {
             var ctx = new RoleCreationWindowViewModel();
             var form = new RoleCreationWindow{ DataContext = ctx };
@@ -152,7 +153,18 @@ namespace KursRepositories.ViewModels
             if (UserListCurrentItem == null)
                 return;
             DeletedUsers.Add(UserListCurrentItem);
-            UserList.Remove(UserListCurrentItem);
+
+            using (var ctx = new KursSystemEntities())
+            {
+                foreach (var u in UserList)
+                {
+                    var delUser = DeletedUsers.FirstOrDefault(_ => _.Id == u.Id);
+                    u.IsDeleted = delUser != null;
+                }
+
+                ctx.SaveChanges();
+                MessageBox.Show("Пользователю присвоен статус \"Удалён.\"");
+            }
 
         }
 

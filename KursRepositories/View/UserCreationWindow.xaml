@@ -84,25 +84,6 @@
                         Command="{Binding CreateNewUserCommand}"
                                 />
             </dxlc:LayoutItem>
-            <dxlc:LayoutItem >
-                <dxg:GridControl x:Name="UsersGridControl"
-                                 AutoGenerateColumns="AddNew"
-                                 EnableSmartColumnsGeneration="True" VerticalAlignment="Top"
-                                 ItemsSource="{Binding NewUser, UpdateSourceTrigger=PropertyChanged}"
-                                
-                                 MaxHeight="800"
-                                 MaxWidth="10000"
-                                 >
-                    <dxg:GridControl.View>
-                        <dxg:TableView ShowTotalSummary="True"
-                                       IsSynchronizedWithCurrentItem="True"
-                                       BestFitModeOnSourceChange="AllRows" 
-                        />
-                    </dxg:GridControl.View>
-                  
-                </dxg:GridControl>
-            </dxlc:LayoutItem>
-
         </dxlc:LayoutGroup>
 
     </dxlc:LayoutControl>
