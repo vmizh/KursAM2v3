@@ -113,7 +113,6 @@ namespace KursRepositories.ViewModels
                     p.IsSelectedItem = pp != null;
                 }
             }
-            
         }
         #endregion
 
@@ -150,6 +149,7 @@ namespace KursRepositories.ViewModels
 
         private void deleteUser(object p)
         {
+            DeletedUsers.Clear();
             if (UserListCurrentItem == null)
                 return;
             DeletedUsers.Add(UserListCurrentItem);
@@ -161,11 +161,9 @@ namespace KursRepositories.ViewModels
                     var delUser = DeletedUsers.FirstOrDefault(_ => _.Id == u.Id);
                     u.IsDeleted = delUser != null;
                 }
-
                 ctx.SaveChanges();
                 MessageBox.Show("Пользователю присвоен статус \"Удалён.\"");
             }
-
         }
 
         #endregion

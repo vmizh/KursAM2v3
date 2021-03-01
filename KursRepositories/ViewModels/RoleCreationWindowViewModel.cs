@@ -146,7 +146,6 @@ namespace KursRepositories.ViewModels
 
         public List<KursMenuItem> NrpList { get; set; } = new List<KursMenuItem>();
         
-        
         private void createRoleCommand(object obj)
         {
             // List<int> menuIdList = (from permission in PermissionsList

@@ -286,12 +286,10 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged(nameof(FullName));
             }
 
-
             #region InputValidation
 
             string IDataErrorInfo.Error => Error;
-
-
+        
             string IDataErrorInfo.this[string columnName]
             {
                 get
@@ -311,7 +309,7 @@ namespace KursRepositories.ViewModels
                 }
             }
 
-            void SetError(bool isValid, string errorString)
+            private void SetError(bool isValid, string errorString)
             {
                 error = isValid ? string.Empty : errorString;
             }
