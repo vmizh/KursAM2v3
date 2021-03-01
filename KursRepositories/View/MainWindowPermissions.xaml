@@ -10,32 +10,27 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:viewModels="clr-namespace:KursRepositories.ViewModels"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance Type=viewModels:MainWindowPermissionsViewModel}"
+    d:DataContext="{d:DesignInstance viewModels:MainWindowPermissionsViewModel}"
     d:DesignHeight="300" d:DesignWidth="300"
     Title="Служба управления доступом" Height="830" Width="1400" Left="20" Top="20"
     >
     <DockPanel>
         <dxlc:LayoutControl HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
-                            >
+                            DockPanel.Dock="Bottom">
             <dxlc:LayoutGroup Name="RootLayoutGroup"
                               Orientation="Horizontal" 
                               View="GroupBox"
-                              Header=""
-                              >
+                              Header="">
                             <dxlc:LayoutGroup Name="LayoutGroupUserList"
                                               Orientation="Vertical"
                                               Margin="5" 
                                               View="Group" 
-                                              dxlc:LayoutControl.AllowHorizontalSizing="True"
-                                              >
+                                              dxlc:LayoutControl.AllowHorizontalSizing="True">
                                 <dxlc:LayoutItem Margin="0 0 0 5">
-
                                     <StackPanel 
                                                 Name="ButtonStackPanel"
-                                                Orientation="Horizontal"
-                                                >
-
+                                                Orientation="Horizontal">
                                         <Button x:Name="AddNewUserButton"
                                                 Content="Добавить пользователя"
                                                 Margin="0 0 5 0"
@@ -46,25 +41,20 @@
                                                 Margin="5 0 5 0"
                                                 Content="Создать роль" 
                                                 Background="GhostWhite"
-                                                Command="{Binding OpenRoleCreationWindowCommand}"
-                                                >
+                                                Command="{Binding OpenRoleCreationWindowCommand}">
                                         </Button>
                                         <Button  x:Name="AssignPermissionsForAllCompaniesButton"
                                                  Margin="5 0 5 0"
                                                  Content="Назначить пользователю роль" 
-                                                 Background="GhostWhite"
-                                        >
+                                                 Background="GhostWhite">
                                         </Button>
                                         <Button  x:Name="AssignExclusivePermissionButton"
                                                  Margin="5 0 0 0 "
                                                  Content="Добавить индивидуальные права" 
-                                                 Background="GhostWhite"
-                                                 >
+                                                 Background="GhostWhite">
                                         </Button>
                                     </StackPanel>
                                 </dxlc:LayoutItem>
-
-
                                 <dxlc:LayoutItem >
                                         <dxg:GridControl x:Name="UsersGridControl"
                                              AutoGenerateColumns="AddNew"
@@ -72,16 +62,12 @@
                                              ItemsSource="{Binding UserList, UpdateSourceTrigger=PropertyChanged}"
                                              CurrentItem="{Binding UserListCurrentItem, UpdateSourceTrigger=PropertyChanged}"
                                              MaxHeight="800"
-                                             MaxWidth="10000"
-                                             
-                                             >
+                                             MaxWidth="10000">
                                             <dxg:GridControl.View>
                                                  <dxg:TableView ShowTotalSummary="True"
                                                                 IsSynchronizedWithCurrentItem="True"
-                                                                BestFitModeOnSourceChange="AllRows" 
-                                                                />
+                                                                BestFitModeOnSourceChange="AllRows" />
                                             </dxg:GridControl.View>
-                                            
                                             <dxg:GridControl.ContextMenu>
                                                 <ContextMenu>
                                                      <MenuItem Header="Удалить пользователя" 
@@ -90,53 +76,40 @@
                                             </dxg:GridControl.ContextMenu>
                                         </dxg:GridControl>
                                 </dxlc:LayoutItem>
-
-                                
-                             </dxlc:LayoutGroup>
-
+                            </dxlc:LayoutGroup>
                 <dxlc:LayoutGroup Name="LayoutGroupPermissions" 
                                   HorizontalAlignment="Right"
                                   Orientation="Vertical" 
                                   Margin="5" View="Group" 
-                                  dxlc:LayoutControl.AllowHorizontalSizing="True"
-                                  >
+                                  dxlc:LayoutControl.AllowHorizontalSizing="True">
                     <dxlc:LayoutItem>
                         <dxe:ComboBoxEdit x:Name="ComboBoxEditCompany"
                                           Margin="0 0 0 5"
                                           ItemsSource="{Binding CompaniesList, UpdateSourceTrigger=PropertyChanged}"
                                           NullText="Выберите компанию"
                                           DisplayMember="ShowName"
-                                          EditValue="{Binding EditValueComboboxCompany, UpdateSourceTrigger=PropertyChanged}"
-                                          >
+                                          EditValue="{Binding EditValueComboboxCompany, UpdateSourceTrigger=PropertyChanged}">
                             <dxe:ComboBoxEdit.StyleSettings>
                                     <dxe:ComboBoxStyleSettings/>
                             </dxe:ComboBoxEdit.StyleSettings>
                         </dxe:ComboBoxEdit>
                     </dxlc:LayoutItem>
-
                     <dxlc:LayoutItem>
                         <dxg:GridControl x:Name="PermissionsGridControl"
                                          AutoGenerateColumns="AddNew"
                                          EnableSmartColumnsGeneration="True"
                                          ItemsSource="{Binding PermissionsList, UpdateSourceTrigger=PropertyChanged}"
                                          MaxHeight="800"
-                                         MaxWidth="10000"
-                                         >
+                                         MaxWidth="10000">
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
                                                IsSynchronizedWithCurrentItem="True"
-                                               BestFitModeOnSourceChange="AllRows"
-                                               />
+                                               BestFitModeOnSourceChange="AllRows"/>
                             </dxg:GridControl.View>
-                            
-
                         </dxg:GridControl>
                     </dxlc:LayoutItem>
                 </dxlc:LayoutGroup>
-
             </dxlc:LayoutGroup>
-        
-         </dxlc:LayoutControl>
+        </dxlc:LayoutControl>
     </DockPanel>
-
 </dx:ThemedWindow>

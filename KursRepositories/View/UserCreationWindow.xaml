@@ -8,9 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:viewModels="clr-namespace:KursRepositories.ViewModels"
-    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance Type=viewModels:UserCreationWindowViewModel}"
+    d:DataContext="{d:DesignInstance viewModels:UserCreationWindowViewModel}"
     d:DesignHeight="300" d:DesignWidth="300"
     Title="Создание нового пользователя" Height="350" Width="800">
 
@@ -26,65 +25,60 @@
                     <dxe:ImageEdit x:Name="PhotoImageEdit"
                                    EditValue="{Binding Avatar,UpdateSourceTrigger=PropertyChanged}" 
                                    Width="200"
-                                   Height="200" />
+                                   Height="200"/>
                 </dxlc:LayoutItem>
                 </GroupBox>
-
                 <GroupBox Header="Информация о пользователе"
                           Margin="5 0 5 0">
                     <dxlc:LayoutGroup Orientation="Vertical" >
-                        <dxlc:LayoutItem Label="Фамилия" AddColonToLabel="True">
-                            <dxe:TextEdit NullText="Введите фамилию пользователя"
-                                          EditValue="{Binding LastName,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
-                        </dxlc:LayoutItem>
-                        <dxlc:LayoutItem Label="Имя" AddColonToLabel="True">
-                            <dxe:TextEdit NullText="Введите имя пользователя"
-                                          EditValue="{Binding FirstName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True }"/>
-                                
-                        </dxlc:LayoutItem>
-                        <dxlc:LayoutItem Label="Отчество" AddColonToLabel="True">
-                            <dxe:TextEdit NullText="Введите отчество пользователя"
-                                          EditValue="{Binding MiddleName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
-                            </dxlc:LayoutItem>
-                        <dxlc:LayoutItem Label="Полное имя" AddColonToLabel="True">
-                            <dxe:TextEdit EditValue="{Binding FullName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
-                            </dxlc:LayoutItem>
-                        <dxlc:LayoutItem Label="Login" AddColonToLabel="True">
-                                <dxe:TextEdit NullText ="Введите имя для авторизации в системе"
-                                              EditValue="{Binding LoginName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
-                            </dxlc:LayoutItem>
-                        <dxlc:LayoutItem Label="Примечание" AddColonToLabel="True">
-                                <dxe:TextEdit NullText="Поле не обязательное для заполнения" EditValue="{Binding Note, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
-                                              TextWrapping="Wrap"/>
-                            </dxlc:LayoutItem>
+                                <dxlc:LayoutItem Label="Фамилия" AddColonToLabel="True">
+                                    <dxe:TextEdit NullText="Введите фамилию пользователя"
+                                                  EditValue="{Binding LastName,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                                </dxlc:LayoutItem>
+                                <dxlc:LayoutItem Label="Имя" AddColonToLabel="True">
+                                    <dxe:TextEdit NullText="Введите имя пользователя"
+                                                  EditValue="{Binding FirstName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True }"/>
+                                </dxlc:LayoutItem>
+                                <dxlc:LayoutItem Label="Отчество" AddColonToLabel="True">
+                                    <dxe:TextEdit NullText="Введите отчество пользователя"
+                                                  EditValue="{Binding MiddleName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
+                                    </dxlc:LayoutItem>
+                                <dxlc:LayoutItem Label="Полное имя" AddColonToLabel="True">
+                                    <dxe:TextEdit EditValue="{Binding FullName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
+                                    </dxlc:LayoutItem>
+                                <dxlc:LayoutItem Label="Login" AddColonToLabel="True">
+                                        <dxe:TextEdit NullText ="Введите имя для авторизации в системе"
+                                                      EditValue="{Binding LoginName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                                    </dxlc:LayoutItem>
+                                <dxlc:LayoutItem Label="Примечание" AddColonToLabel="True">
+                                        <dxe:TextEdit NullText="Поле не обязательное для заполнения"
+                                                      EditValue="{Binding Note, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                      TextWrapping="Wrap"/>
+                                </dxlc:LayoutItem>
                     </dxlc:LayoutGroup>
                 </GroupBox>
-
                 <GroupBox Header="Доп. возможности"
                           HorizontalAlignment="Right"
                           Margin="5 0 5 0">
                     <dxlc:LayoutItem VerticalAlignment="Stretch">
-                    <StackPanel Orientation="Vertical">
-                            <dxe:CheckEdit x:Name="AdminCheckEdit"
-                                           Content="Администратор"
-                                           EditValue="{Binding Admin, UpdateSourceTrigger=PropertyChanged}"/>
-                            <dxe:CheckEdit x:Name="TesterCheckEdit"
-                                           Content="Тестировщик"
-                                           EditValue="{Binding Tester, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
+                            <StackPanel Orientation="Vertical">
+                                    <dxe:CheckEdit x:Name="AdminCheckEdit"
+                                                   Content="Администратор"
+                                                   EditValue="{Binding Admin, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <dxe:CheckEdit x:Name="TesterCheckEdit"
+                                                   Content="Тестировщик"
+                                                   EditValue="{Binding Tester, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
                     </dxlc:LayoutItem>
                 </GroupBox>
             </dxlc:LayoutGroup>
-            
             <dxlc:LayoutItem>
                 <Button x:Name="CreateNewUserButton"
                         Margin="0 10 0 0"
                         Content="Создать пользователя"
                         IsEnabled="{Binding Path=(dxe:ValidationService.HasValidationError), ElementName=validationContainer, Converter={dx:NegationConverter}}"
-                        Command="{Binding CreateNewUserCommand}"
-                                />
+                        Command="{Binding CreateNewUserCommand}"/>
             </dxlc:LayoutItem>
         </dxlc:LayoutGroup>
-
     </dxlc:LayoutControl>
 </dx:ThemedWindow>
