@@ -8,39 +8,28 @@ namespace KursRepositories.ViewModels
 {
     public class KursMenuItemViewModel : RSViewModelBase
     {
-        
-
-     public KursMenuItemViewModel(KursMenuItem entityKursMenuItem)
-     {
-         Entity = entityKursMenuItem;
-     }
-
-     public KursMenuItemViewModel() {}
-
-        #region Fields
-
-        private bool myIsSelectedItem;
-
-        #endregion
+        private int myIsSelectedItem;
 
         #region Properties
 
-        [Display(AutoGenerateField = false)]
+
+        [Display(AutoGenerateField = false)] 
         public KursMenuItem Entity { get; set; }
 
         [Display(AutoGenerateField = false)]
         public new int Id
         {
-            get => Entity.Id;
+            get => myIsSelectedItem;
             set
             {
-                if (Entity.Id == value)
+                if (myIsSelectedItem == value)
                     return;
-                Entity.Id = value;
+                myIsSelectedItem = value;
                 RaisePropertyChanged();
             }
         }
 
+        
         [Display(AutoGenerateField = false)]
         public int GroupId
         {
@@ -51,18 +40,7 @@ namespace KursRepositories.ViewModels
                     return;
                 Entity.GroupId = value;
                 RaisePropertyChanged();
-            }
-        }
-        [Display(Name = "Статус")]
-        public bool IsSelectedItem
-        {
-            get => myIsSelectedItem;
-            set
-            {
-                if (myIsSelectedItem == value)
-                    return;
-                myIsSelectedItem = value;
-                RaisePropertyChanged();
+
             }
         }
 
@@ -76,6 +54,7 @@ namespace KursRepositories.ViewModels
                     return;
                 Entity.Name = value;
                 RaisePropertyChanged();
+
             }
         }
 
@@ -135,7 +114,33 @@ namespace KursRepositories.ViewModels
 
         #endregion
 
+        public KursMenuItemViewModel(KursMenuItem entityKursMenuItem)
+        {
+            Entity = entityKursMenuItem;
+        }
     }
 
+    public class WrapKursMenuItemViewModel : KursMenuItemViewModel
+    {
+        private bool myIsSelectedItem;
 
+        public bool IsSelectedItem
+        {
+            get => myIsSelectedItem;
+            set
+            {
+                if (myIsSelectedItem == value)
+                    return;
+                myIsSelectedItem = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public WrapKursMenuItemViewModel(KursMenuItem entityKursMenuItem) : base(entityKursMenuItem)
+        {
+            IsSelectedItem = true;
+        }
+    }
+
+    
 }

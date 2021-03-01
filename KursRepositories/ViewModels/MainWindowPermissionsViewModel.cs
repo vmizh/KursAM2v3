@@ -5,11 +5,14 @@ using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
-using KursRepositories.View;
+using DevExpress.ExpressApp.Validation.AllContextsView;
+using DevExpress.Xpf.Editors;
 
 namespace KursRepositories.ViewModels
 {
-    public class MainWindowPermissionsViewModel : RSWindowViewModelBase
+
+
+    public class MainWindowPermissionsViewModel : RSViewModelBase
     {
         public MainWindowPermissionsViewModel()
         {
@@ -26,9 +29,6 @@ namespace KursRepositories.ViewModels
         # region Properties
 
         public ObservableCollection<UsersViewModel> UserList { set; get; } =
-            new ObservableCollection<UsersViewModel>();
-
-        public ObservableCollection<UsersViewModel> DeletedUsers { get; set; } =
             new ObservableCollection<UsersViewModel>();
 
         public ObservableCollection<KursMenuItemViewModel> PermissionsList { set; get; } =
@@ -62,7 +62,6 @@ namespace KursRepositories.ViewModels
                 myUserListCurrentItem = value;
                 RefreshDataPermissionList();
                 RaisePropertyChanged();
-
             }
         }
 
@@ -74,17 +73,11 @@ namespace KursRepositories.ViewModels
         {
             using (var ctx = new KursSystemEntities())
             {
-                foreach (var user in ctx.Users.ToList())
-                {
-                    UserList.Add(new UsersViewModel(user));
-                }
+                foreach (var user in ctx.Users.ToList()) UserList.Add(new UsersViewModel(user));
 
                 foreach (var permission in ctx.KursMenuItem.ToList())
                 {
-                    PermissionsList.Add(new KursMenuItemViewModel(permission)
-                    {
-                        IsSelectedItem = true
-                    });
+                    PermissionsList.Add(new WrapKursMenuItemViewModel(permission));
                 }
 
                 foreach (var company in ctx.DataSources.ToList())
@@ -92,6 +85,7 @@ namespace KursRepositories.ViewModels
                     CompaniesList.Add(new DataSourcesViewModel(company));
                 }
 
+                foreach (var company in ctx.DataSources.ToList()) CompaniesList.Add(new DataSourcesViewModel(company));
             }
         }
 
@@ -99,53 +93,17 @@ namespace KursRepositories.ViewModels
         {
             if (UserListCurrentItem == null)
                 return;
-            if(EditValueComboboxCompany == null)
-                return;
             
             using (var ctx = new KursSystemEntities())
             {
-                var permissions = ctx.UserMenuRight.Include(_ => _.DataSources).Where(_ =>(_.LoginName == UserListCurrentItem.Name))
-                        .Where(_=>(_.DBId == EditValueComboboxCompany.Id));
+                var permissions = ctx.UserMenuRight.Include(_ => _.DataSources).Where(_ => _.LoginName == UserListCurrentItem.Name)
+                    .ToList();
 
                 foreach (var p in PermissionsList)
                 {
                     var pp = permissions.FirstOrDefault(_ => _.MenuId == p.Id);
                     p.IsSelectedItem = pp != null;
                 }
-            }
-        }
-        #endregion
-
-        #region Commands
-
-        public ICommand OpenRoleCreationWindowCommand
-        {
-            get { return new Command(openRoleCreationWindow, _ => true); }
-        }
-
-        private void openRoleCreationWindow(object obj)
-        {
-            var ctx = new RoleCreationWindowViewModel();
-            var form = new RoleCreationWindow{ DataContext = ctx };
-            form.Show();
-        }
-
-        public ICommand AddUserCommand
-        {
-            get { return new Command(addUser, _ => true); }
-        }
-
-        private void addUser(object obj)
-        {
-            var ctx = new UserCreationWindowViewModel();
-            var form = new UserCreationWindow {DataContext = ctx};
-            form.Show();
-        }
-
-        public ICommand DeleteUserCommand
-        {
-            get { return new Command(deleteUser, _ => UserList.Count > 0); }
-        }
 
         private void deleteUser(object p)
         {
@@ -166,6 +124,7 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        #endregion
+            #endregion
+        }
     }
 }

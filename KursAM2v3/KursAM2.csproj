@@ -2189,6 +2189,10 @@
       <Project>{45442b20-578b-4519-a31c-6ba5102b240f}</Project>
       <Name>Helper</Name>
     </ProjectReference>
+    <ProjectReference Include="..\KursRepositories\KursRepositories.csproj">
+      <Project>{b61cb1c4-0c5d-4897-b7d4-250d3db76d0c}</Project>
+      <Name>KursRepositories</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LayoutManager\LayoutManager.csproj">
       <Project>{0ac84fa1-a12e-414a-8d3e-ede48e795908}</Project>
       <Name>LayoutManager</Name>

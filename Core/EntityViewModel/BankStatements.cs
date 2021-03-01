@@ -108,6 +108,19 @@ namespace Core.EntityViewModel
             get => myRemainderCHF;
         }
 
+        private decimal? myRemainderCNY;
+
+        public decimal? RemainderCNY
+        {
+            set
+            {
+                if (myRemainderCNY == value) return;
+                myRemainderCNY = value;
+                RaisePropertyChanged();
+            }
+            get => myRemainderCNY;
+        }
+        
         private decimal? myRemainderEUR;
 
         public decimal? RemainderEUR

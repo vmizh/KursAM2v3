@@ -15,7 +15,7 @@ namespace KursRepositories.ViewModels
 
         #region Properties
 
-        [Display(AutoGenerateField = false)]
+        [Display(AutoGenerateField = false)] 
         public Users Entity { get; set; }
 
         [Display(AutoGenerateField = false)]
@@ -135,6 +135,5 @@ namespace KursRepositories.ViewModels
         }
 
         #endregion
-
     }
 }

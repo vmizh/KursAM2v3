@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Core.ViewModel.Base;
 using Data;
 
@@ -35,30 +31,30 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        [DisplayName("Наименование")]
-        public override string Name
-        {
-            get => Entity.Name;
-            set
+         [DisplayName("Наименование")]
+        public string Name
             {
-                if (Entity.Name == value)
-                    return;
-                Entity.Name = value;
-                RaisePropertyChanged();
+                get => Entity.Name;
+                set
+                {
+                    if (Entity.Name == value)
+                        return;
+                    Entity.Name = value;
+                    RaisePropertyChanged();
+                }
             }
-        }
         [DisplayName("Наименование для вывода")]
         public string ShowName
-        {
-            get => Entity.ShowName;
-            set
             {
-                if (Entity.ShowName == value)
-                    return;
-                Entity.ShowName = value;
-                RaisePropertyChanged();
+                get => Entity.ShowName;
+                set
+                {
+                    if (Entity.ShowName == value)
+                        return;
+                    Entity.ShowName = value;
+                    RaisePropertyChanged();
+                }
             }
-        }
         [DisplayName("Порядок")]
         public int Order
         {
@@ -74,16 +70,16 @@ namespace KursRepositories.ViewModels
 
         [DisplayName("Наименование базы данных")]
         public string DBName
-        {
-            get => Entity.DBName;
-            set
             {
-                if (Entity.DBName == value)
-                    return;
-                Entity.DBName = value;
-                RaisePropertyChanged();
+                get => Entity.DBName;
+                set
+                {
+                    if (Entity.DBName == value)
+                        return;
+                    Entity.DBName = value;
+                    RaisePropertyChanged();
+                }
             }
-        }
         [DisplayName("Цвет")]
         public string Color
         {
@@ -98,12 +94,15 @@ namespace KursRepositories.ViewModels
         }
 
         [DisplayName("Сервер")]
-        public string Server
+        public  string  Server
         {
             get => Entity.Server;
+            
         }
 
-        #endregion
+            #endregion
 
+
+           
     }
 }

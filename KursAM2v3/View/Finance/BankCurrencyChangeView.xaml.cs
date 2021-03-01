@@ -161,7 +161,8 @@ namespace KursAM2.View.Finance
                     {
                         if (ctx.Document != null)
                         {
-                            ctx.Document.CurrencyTo = MainReferences.Currencies[ctx.Document.BankToDC];
+                            var bankTo = MainReferences.BankAccounts[ctx.Document.BankToDC];
+                            ctx.Document.CurrencyTo = bankTo.Currency;
                             var rates = CurrencyRate.GetRate(ctx.Document.DocDate);
                             if (ctx.Document.CurrencyFrom != null && ctx.Document.CurrencyTo != null)
                                 ctx.Document.Rate = CurrencyRate.GetCBSummaRate(ctx.Document.CurrencyFrom,

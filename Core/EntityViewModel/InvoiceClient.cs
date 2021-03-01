@@ -225,13 +225,6 @@ namespace Core.EntityViewModel
             set
             {
                 if (Equals(myCurrency, value)) return;
-                //if (Client != null)
-                //{
-                //    //WindowManager.ShowMessage("Нельзя менять валюту при выбранном контрагенте.",
-                //    //    "Предупреждение", MessageBoxImage.Information);
-                //    //RaisePropertyChanged();
-                //    return;
-                //}
                 myCurrency = value;
                 if (myCurrency != null)
                 {
