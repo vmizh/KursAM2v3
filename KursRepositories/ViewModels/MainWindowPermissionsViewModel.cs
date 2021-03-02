@@ -130,12 +130,12 @@ namespace KursRepositories.ViewModels
             form.Show();
         }
 
-        public ICommand AddUserCommand
+        public ICommand OpenWindowCreationUserCommand
         {
-            get { return new Command(addUser, _ => true); }
+            get { return new Command(operWindowCreationUser, _ => true); }
         }
 
-        private void addUser(object obj)
+        private void operWindowCreationUser(object obj)
         {
             var ctx = new UserCreationWindowViewModel();
             var form = new UserCreationWindow {DataContext = ctx};

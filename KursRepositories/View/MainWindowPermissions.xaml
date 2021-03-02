@@ -21,12 +21,14 @@
             <dxlc:LayoutGroup Name="RootLayoutGroup"
                               Orientation="Horizontal" 
                               View="GroupBox"
-                              Header="">
+                              Header=""
+                              >
                             <dxlc:LayoutGroup Name="LayoutGroupUserList"
                                               Orientation="Vertical"
                                               Margin="5" 
                                               View="Group" 
-                                              dxlc:LayoutControl.AllowHorizontalSizing="True">
+                                              dxlc:LayoutControl.AllowHorizontalSizing="True"
+                                              >
                                 <dxlc:LayoutItem Margin="0 0 0 5">
                                     <StackPanel 
                                                 Name="ButtonStackPanel"
@@ -35,7 +37,7 @@
                                                 Content="Добавить пользователя"
                                                 Margin="0 0 5 0"
                                                 Background="GhostWhite"
-                                                Command ="{Binding AddUserCommand}">
+                                                Command ="{Binding OpenWindowCreationUserCommand}">
                                         </Button>
                                         <Button x:Name="CreateRoleButton"
                                                 Margin="5 0 5 0"
@@ -55,18 +57,21 @@
                                         </Button>
                                     </StackPanel>
                                 </dxlc:LayoutItem>
-                                <dxlc:LayoutItem >
+                    <dxlc:LayoutItem >
                                         <dxg:GridControl x:Name="UsersGridControl"
                                              AutoGenerateColumns="AddNew"
-                                             EnableSmartColumnsGeneration="True" VerticalAlignment="Top"
+                                             EnableSmartColumnsGeneration="True"
+                                             HorizontalAlignment="Stretch" 
+                                             VerticalAlignment="Stretch"
                                              ItemsSource="{Binding UserList, UpdateSourceTrigger=PropertyChanged}"
                                              CurrentItem="{Binding UserListCurrentItem, UpdateSourceTrigger=PropertyChanged}"
-                                             MaxHeight="800"
-                                             MaxWidth="10000">
+                                             MaxHeight="2000"
+                                             MaxWidth="2000">
                                             <dxg:GridControl.View>
                                                  <dxg:TableView ShowTotalSummary="True"
                                                                 IsSynchronizedWithCurrentItem="True"
-                                                                BestFitModeOnSourceChange="AllRows" />
+                                                                BestFitModeOnSourceChange="AllRows"
+                                                                />
                                             </dxg:GridControl.View>
                                             <dxg:GridControl.ContextMenu>
                                                 <ContextMenu>
@@ -98,13 +103,16 @@
                         <dxg:GridControl x:Name="PermissionsGridControl"
                                          AutoGenerateColumns="AddNew"
                                          EnableSmartColumnsGeneration="True"
+                                         HorizontalAlignment="Stretch"
+                                         VerticalAlignment="Stretch"
                                          ItemsSource="{Binding PermissionsList, UpdateSourceTrigger=PropertyChanged}"
-                                         MaxHeight="800"
-                                         MaxWidth="10000">
+                                         MaxHeight="2000"
+                                         MaxWidth="2000">
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
                                                IsSynchronizedWithCurrentItem="True"
-                                               BestFitModeOnSourceChange="AllRows"/>
+                                               BestFitModeOnSourceChange="AllRows"
+                                               />
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </dxlc:LayoutItem>
