@@ -232,15 +232,7 @@ namespace KursRepositories.ViewModels
                     var propertyUser = oldUsers.FirstOrDefault(_ => _.Id == user.Id);
                     if (propertyUser != null)
                     {
-                        propertyUser.Id = user.Id;
-                        propertyUser.Name = user.Name;
-                        propertyUser.FullName = user.FullName;
-                        propertyUser.Note = user.Note;
-                        propertyUser.IsAdmin = user.IsAdmin;
-                        propertyUser.IsTester = user.IsTester;
-                        propertyUser.IsDeleted = user.IsDeleted;
-                        propertyUser.Avatar = user.Avatar;
-                        propertyUser.ThemeName = user.ThemeName;
+                        continue;
                     }
                     else
                     {

@@ -20,6 +20,7 @@ namespace KursRepositories.ViewModels
 
                 private UsersViewModel myUserListCurrentItem;
                 private DataSourcesViewModel myEditValueComboboxCompany;
+                private UsersViewModel myDeletedUser;
 
         #endregion
 
@@ -28,9 +29,7 @@ namespace KursRepositories.ViewModels
         public ObservableCollection<UsersViewModel> UserList { set; get; } =
             new ObservableCollection<UsersViewModel>();
 
-        public ObservableCollection<UsersViewModel> DeletedUsers { get; set; } =
-            new ObservableCollection<UsersViewModel>();
-
+        
         public ObservableCollection<KursMenuItemViewModel> PermissionsList { set; get; } =
             new ObservableCollection<KursMenuItemViewModel>();
 
@@ -65,7 +64,16 @@ namespace KursRepositories.ViewModels
 
             }
         }
-
+        public UsersViewModel DeletedUser
+        {
+            get => myDeletedUser;
+            set
+            {
+                if(myDeletedUser == value)return;
+                myDeletedUser = value;
+                RaisePropertyChanged();
+            }
+        }
         #endregion
 
         #region Methods
@@ -149,18 +157,14 @@ namespace KursRepositories.ViewModels
 
         private void deleteUser(object p)
         {
-            DeletedUsers.Clear();
+           
             if (UserListCurrentItem == null)
                 return;
-            DeletedUsers.Add(UserListCurrentItem);
-
+            
             using (var ctx = new KursSystemEntities())
             {
-                foreach (var u in UserList)
-                {
-                    var delUser = DeletedUsers.FirstOrDefault(_ => _.Id == u.Id);
-                    u.IsDeleted = delUser != null;
-                }
+                DeletedUser = UserListCurrentItem;
+                DeletedUser.IsDeleted = true;
                 ctx.SaveChanges();
                 MessageBox.Show("Пользователю присвоен статус \"Удалён.\"");
             }
