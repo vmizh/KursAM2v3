@@ -166,8 +166,16 @@ namespace KursRepositories.ViewModels
                 DeletedUser = UserListCurrentItem;
                 DeletedUser.IsDeleted = true;
                 ctx.SaveChanges();
+                UserList.Clear();
+                foreach (var user in ctx.Users.ToList())
+                {
+                    UserList.Add(new UsersViewModel(user));
+                }
+
                 MessageBox.Show("Пользователю присвоен статус \"Удалён.\"");
+
             }
+            
         }
 
         #endregion
