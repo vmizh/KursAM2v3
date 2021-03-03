@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
@@ -162,7 +163,38 @@ namespace KursRepositories.ViewModels
                 ctx.SaveChanges();
                 MessageBox.Show("Пользователь присвоен статус \"Удален\"");
             }
-            
+        }
+
+        public ICommand SaveChangesInDatagridCommand
+        {
+            get { return new Command(saveChangesInDatagrid, _ => true); }
+        }
+
+        private void saveChangesInDatagrid(object obj)
+        {
+            using (var ctx = new KursSystemEntities())
+            {
+                var oldUserList = ctx.Users.ToList();
+                foreach (var usr in UserList)
+                {
+                    var rightUser = oldUserList.SingleOrDefault(_ => _.Id == usr.Id);
+
+                    if (rightUser != null)
+                    {
+                        rightUser.Id = usr.Id;
+                        rightUser.Name = usr.Name;
+                        rightUser.FullName = usr.FullName;
+                        rightUser.Note = usr.Note;
+                        rightUser.Avatar = usr.Avatar;
+                        rightUser.IsAdmin = usr.IsAdmin;
+                        rightUser.IsTester = usr.IsTester;
+                        rightUser.IsDeleted = usr.IsDeleted;
+                    }
+                }
+
+                ctx.SaveChanges();
+                MessageBox.Show("Данные сохранены.");
+            }
         }
 
         #endregion
