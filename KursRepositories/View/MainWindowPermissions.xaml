@@ -62,8 +62,8 @@
                                              EnableSmartColumnsGeneration="True"
                                              HorizontalAlignment="Stretch" 
                                              VerticalAlignment="Stretch"
-                                             ItemsSource="{Binding UserList, UpdateSourceTrigger=PropertyChanged}"
-                                             CurrentItem="{Binding UserListCurrentItem, UpdateSourceTrigger=PropertyChanged}"
+                                             ItemsSource="{Binding UserList, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                             CurrentItem="{Binding UserListCurrentItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                              MaxHeight="2000"
                                              MaxWidth="2000">
                             <dxg:GridControl.View>

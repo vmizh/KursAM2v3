@@ -20,7 +20,7 @@ namespace KursRepositories.ViewModels
 
                 private UsersViewModel myUserListCurrentItem;
                 private DataSourcesViewModel myEditValueComboboxCompany;
-                private UsersViewModel myDeletedUser;
+                
 
         #endregion
 
@@ -64,16 +64,7 @@ namespace KursRepositories.ViewModels
 
             }
         }
-        public UsersViewModel DeletedUser
-        {
-            get => myDeletedUser;
-            set
-            {
-                if(myDeletedUser == value)return;
-                myDeletedUser = value;
-                RaisePropertyChanged();
-            }
-        }
+        
         #endregion
 
         #region Methods
@@ -152,28 +143,33 @@ namespace KursRepositories.ViewModels
 
         public ICommand DeleteUserCommand
         {
-            get { return new Command(deleteUser, _ => UserList.Count > 0); }
+            get { return new Command(deleteUser, _ => UserList.Count > 0 | UserListCurrentItem != null); }
         }
 
         private void deleteUser(object p)
         {
-           
-            if (UserListCurrentItem == null)
-                return;
             
             using (var ctx = new KursSystemEntities())
             {
-                DeletedUser = UserListCurrentItem;
-                DeletedUser.IsDeleted = true;
-                ctx.SaveChanges();
-                UserList.Clear();
-                foreach (var user in ctx.Users.ToList())
+                var rightUser = ctx.Users.SingleOrDefault(_ => _.Id == UserListCurrentItem.Id);
+                if (rightUser != null)
                 {
-                    UserList.Add(new UsersViewModel(user));
+                    rightUser.Id = UserListCurrentItem.Id;
+                    rightUser.FullName = UserListCurrentItem.FullName;
+                    rightUser.Name = UserListCurrentItem.Name;
+                    rightUser.Note = UserListCurrentItem.Note;
+                    rightUser.Avatar = UserListCurrentItem.Avatar;
+                    rightUser.ThemeName = UserListCurrentItem.ThemeName;
+                    rightUser.IsAdmin = UserListCurrentItem.IsAdmin;
+                    rightUser.IsTester = UserListCurrentItem.IsTester;
+                    rightUser.IsDeleted = true;
+                    ctx.SaveChanges();
+                    MessageBox.Show("Пользователю присвоен статус \"Удалён.\"");
                 }
-
-                MessageBox.Show("Пользователю присвоен статус \"Удалён.\"");
-
+                else
+                {
+                    MessageBox.Show("Пользователь не найден!");
+                }
             }
             
         }
