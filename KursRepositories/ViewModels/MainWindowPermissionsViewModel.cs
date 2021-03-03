@@ -21,8 +21,8 @@ namespace KursRepositories.ViewModels
 
         #region Fields
 
-                private UsersViewModel myUserListCurrentItem;
-                private DataSourcesViewModel myEditValueComboboxCompany;
+        private UsersViewModel myUserListCurrentItem;
+        private DataSourcesViewModel myEditValueComboboxCompany;
 
         #endregion
 
@@ -42,7 +42,7 @@ namespace KursRepositories.ViewModels
             get => myEditValueComboboxCompany;
             set
             {
-                if(myEditValueComboboxCompany == value)
+                if (myEditValueComboboxCompany == value)
                     return;
 
                 myEditValueComboboxCompany = value;
@@ -56,7 +56,7 @@ namespace KursRepositories.ViewModels
             get => myUserListCurrentItem;
             set
             {
-                if(myUserListCurrentItem == value)
+                if (myUserListCurrentItem == value)
                     return;
 
                 myUserListCurrentItem = value;
@@ -93,38 +93,41 @@ namespace KursRepositories.ViewModels
         {
             if (UserListCurrentItem == null)
                 return;
-            
+
             using (var ctx = new KursSystemEntities())
             {
-                var permissions = ctx.UserMenuRight.Include(_ => _.DataSources).Where(_ => _.LoginName == UserListCurrentItem.Name)
+                var permissions = ctx.UserMenuRight.Include(_ => _.DataSources)
+                    .Where(_ => _.LoginName == UserListCurrentItem.Name)
                     .ToList();
 
                 foreach (var p in PermissionsList)
                 {
                     var pp = permissions.FirstOrDefault(_ => _.MenuId == p.Id);
-                    p.IsSelectedItem = pp != null;
+                    //p.IsSelectedItem = pp != null;
                 }
-
-        private void deleteUser(object p)
-        {
-            DeletedUsers.Clear();
-            if (UserListCurrentItem == null)
-                return;
-            DeletedUsers.Add(UserListCurrentItem);
-
-            using (var ctx = new KursSystemEntities())
-            {
-                foreach (var u in UserList)
-                {
-                    var delUser = DeletedUsers.FirstOrDefault(_ => _.Id == u.Id);
-                    u.IsDeleted = delUser != null;
-                }
-                ctx.SaveChanges();
-                MessageBox.Show("Пользователю присвоен статус \"Удалён.\"");
             }
         }
 
-            #endregion
+        private void deleteUser(object p)
+        {
+            ////DeletedUsers.Clear();
+            //if (UserListCurrentItem == null)
+            //    return;
+            ////DeletedUsers.Add(UserListCurrentItem);
+
+            //using (var ctx = new KursSystemEntities())
+            //{
+            //    foreach (var u in UserList)
+            //    {
+            //        var delUser = DeletedUsers.FirstOrDefault(_ => _.Id == u.Id);
+            //        u.IsDeleted = delUser != null;
+            //    }
+            //    ctx.SaveChanges();
+            //    MessageBox.Show("Пользователю присвоен статус \"Удалён.\"");
+            //}
         }
+
+        #endregion
     }
 }
+

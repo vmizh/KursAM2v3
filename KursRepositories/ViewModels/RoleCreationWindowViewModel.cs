@@ -111,7 +111,7 @@ namespace KursRepositories.ViewModels
                 {
                     PermissionsList.Add(new KursMenuItemViewModel(item)
                     {
-                        IsSelectedItem = false
+                        //IsSelectedItem = false
                     });
                 }
             }
