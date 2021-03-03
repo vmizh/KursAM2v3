@@ -27,7 +27,7 @@ namespace KursRepositories.ViewModels
 
         # region Properties
 
-        public ObservableCollection<UsersViewModel> UserList { set; get; } =
+        public static ObservableCollection<UsersViewModel> UserList { set; get; } =
             new ObservableCollection<UsersViewModel>();
 
         

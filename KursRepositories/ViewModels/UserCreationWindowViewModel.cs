@@ -9,9 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
-using DevExpress.Mvvm.DataAnnotations;
-using DevExpress.Xpf.Editors;
-using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
+using static KursRepositories.ViewModels.MainWindowPermissionsViewModel;
 
 
 namespace KursRepositories.ViewModels
@@ -210,7 +208,7 @@ namespace KursRepositories.ViewModels
                 return;
             }
 
-            NewUser.Add(new UsersViewModel(new Users
+            UserList.Add(new UsersViewModel(new Users //Добавляю пользователя в список UserList в главной моделе
             {
                 Id = new Guid(),
                 Name = LoginName.Trim(),
@@ -227,32 +225,39 @@ namespace KursRepositories.ViewModels
             using (var context = new KursSystemEntities())
             {
                 var oldUsers = context.Users.ToList();
-                foreach (var user in NewUser)
+                foreach (var u in UserList)
                 {
-                    var propertyUser = oldUsers.FirstOrDefault(_ => _.Id == user.Id);
+                    var propertyUser = oldUsers.FirstOrDefault(_ => _.Id == u.Id);
                     if (propertyUser != null)
                     {
-                        continue;
+                        propertyUser.Id = u.Id;
+                        propertyUser.Name = u.Name;
+                        propertyUser.FullName = u.FullName;
+                        propertyUser.Note = u.Note;
+                        propertyUser.IsAdmin = u.IsAdmin;
+                        propertyUser.IsTester = u.IsTester;
+                        propertyUser.IsDeleted = u.IsDeleted;
+                        propertyUser.ThemeName = u.ThemeName;
+                        propertyUser.Avatar = u.Avatar;
                     }
                     else
                     {
                         context.Users.Add(new Users()
                         {
-                            Id = user.Id,
-                            Name = user.Name,
-                            FullName = user.FullName,
-                            Note = user.Note,
-                            IsAdmin = user.IsAdmin,
-                            IsTester = user.IsTester,
-                            IsDeleted = user.IsDeleted,
-                            Avatar = user.Avatar,
-                            ThemeName = user.ThemeName,
+                            Id = u.Id,
+                            Name = u.Name,
+                            FullName = u.FullName,
+                            Note = u.Note,
+                            IsAdmin = u.IsAdmin,
+                            IsTester = u.IsTester,
+                            IsDeleted = u.IsDeleted,
+                            ThemeName = u.ThemeName,
+                            Avatar = u.Avatar
+                            
                         });
                     }
                 }
-
-                context.SaveChanges();
-
+                // TODO: Добавить SaveChanges
                 MessageBox.Show("Пользователь успешно зарегистрирован.");
             }
         }
