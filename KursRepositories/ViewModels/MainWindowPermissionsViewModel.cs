@@ -5,14 +5,11 @@ using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
-using DevExpress.ExpressApp.Validation.AllContextsView;
-using DevExpress.Xpf.Editors;
+using KursRepositories.View;
 
 namespace KursRepositories.ViewModels
 {
-
-
-    public class MainWindowPermissionsViewModel : RSViewModelBase
+    public class MainWindowPermissionsViewModel : RSWindowViewModelBase
     {
         public MainWindowPermissionsViewModel()
         {
@@ -21,8 +18,9 @@ namespace KursRepositories.ViewModels
 
         #region Fields
 
-        private UsersViewModel myUserListCurrentItem;
-        private DataSourcesViewModel myEditValueComboboxCompany;
+                private UsersViewModel myUserListCurrentItem;
+                private DataSourcesViewModel myEditValueComboboxCompany;
+                
 
         #endregion
 
@@ -31,6 +29,7 @@ namespace KursRepositories.ViewModels
         public ObservableCollection<UsersViewModel> UserList { set; get; } =
             new ObservableCollection<UsersViewModel>();
 
+        
         public ObservableCollection<KursMenuItemViewModel> PermissionsList { set; get; } =
             new ObservableCollection<KursMenuItemViewModel>();
 
@@ -42,7 +41,7 @@ namespace KursRepositories.ViewModels
             get => myEditValueComboboxCompany;
             set
             {
-                if (myEditValueComboboxCompany == value)
+                if(myEditValueComboboxCompany == value)
                     return;
 
                 myEditValueComboboxCompany = value;
@@ -56,15 +55,16 @@ namespace KursRepositories.ViewModels
             get => myUserListCurrentItem;
             set
             {
-                if (myUserListCurrentItem == value)
+                if(myUserListCurrentItem == value)
                     return;
 
                 myUserListCurrentItem = value;
                 RefreshDataPermissionList();
                 RaisePropertyChanged();
+
             }
         }
-
+        
         #endregion
 
         #region Methods
@@ -73,11 +73,17 @@ namespace KursRepositories.ViewModels
         {
             using (var ctx = new KursSystemEntities())
             {
-                foreach (var user in ctx.Users.ToList()) UserList.Add(new UsersViewModel(user));
+                foreach (var user in ctx.Users.ToList())
+                {
+                    UserList.Add(new UsersViewModel(user));
+                }
 
                 foreach (var permission in ctx.KursMenuItem.ToList())
                 {
-                    PermissionsList.Add(new WrapKursMenuItemViewModel(permission));
+                    PermissionsList.Add(new KursMenuItemViewModel(permission)
+                    {
+                        IsSelectedItem = true
+                    });
                 }
 
                 foreach (var company in ctx.DataSources.ToList())
@@ -85,7 +91,6 @@ namespace KursRepositories.ViewModels
                     CompaniesList.Add(new DataSourcesViewModel(company));
                 }
 
-                foreach (var company in ctx.DataSources.ToList()) CompaniesList.Add(new DataSourcesViewModel(company));
             }
         }
 
@@ -93,41 +98,82 @@ namespace KursRepositories.ViewModels
         {
             if (UserListCurrentItem == null)
                 return;
-
+            if(EditValueComboboxCompany == null)
+                return;
+            
             using (var ctx = new KursSystemEntities())
             {
-                var permissions = ctx.UserMenuRight.Include(_ => _.DataSources)
-                    .Where(_ => _.LoginName == UserListCurrentItem.Name)
-                    .ToList();
+                var permissions = ctx.UserMenuRight.Include(_ => _.DataSources).Where(_ =>(_.LoginName == UserListCurrentItem.Name))
+                        .Where(_=>(_.DBId == EditValueComboboxCompany.Id));
 
                 foreach (var p in PermissionsList)
                 {
                     var pp = permissions.FirstOrDefault(_ => _.MenuId == p.Id);
-                    //p.IsSelectedItem = pp != null;
+                    p.IsSelectedItem = pp != null;
                 }
             }
+        }
+        #endregion
+
+        #region Commands
+
+        public ICommand OpenRoleCreationWindowCommand
+        {
+            get { return new Command(openRoleCreationWindow, _ => true); }
+        }
+
+        private void openRoleCreationWindow(object obj)
+        {
+            var ctx = new RoleCreationWindowViewModel();
+            var form = new RoleCreationWindow{ DataContext = ctx };
+            form.Show();
+        }
+
+        public ICommand OpenWindowCreationUserCommand
+        {
+            get { return new Command(operWindowCreationUser, _ => true); }
+        }
+
+        private void operWindowCreationUser(object obj)
+        {
+            var ctx = new UserCreationWindowViewModel();
+            var form = new UserCreationWindow {DataContext = ctx};
+            form.Show();
+        }
+
+        public ICommand DeleteUserCommand
+        {
+            get { return new Command(deleteUser, _ => UserList.Count > 0 | UserListCurrentItem != null); }
         }
 
         private void deleteUser(object p)
         {
-            ////DeletedUsers.Clear();
-            //if (UserListCurrentItem == null)
-            //    return;
-            ////DeletedUsers.Add(UserListCurrentItem);
-
-            //using (var ctx = new KursSystemEntities())
-            //{
-            //    foreach (var u in UserList)
-            //    {
-            //        var delUser = DeletedUsers.FirstOrDefault(_ => _.Id == u.Id);
-            //        u.IsDeleted = delUser != null;
-            //    }
-            //    ctx.SaveChanges();
-            //    MessageBox.Show("Пользователю присвоен статус \"Удалён.\"");
-            //}
+            
+            using (var ctx = new KursSystemEntities())
+            {
+                var rightUser = ctx.Users.SingleOrDefault(_ => _.Id == UserListCurrentItem.Id);
+                if (rightUser != null)
+                {
+                    rightUser.Id = UserListCurrentItem.Id;
+                    rightUser.FullName = UserListCurrentItem.FullName;
+                    rightUser.Name = UserListCurrentItem.Name;
+                    rightUser.Note = UserListCurrentItem.Note;
+                    rightUser.Avatar = UserListCurrentItem.Avatar;
+                    rightUser.ThemeName = UserListCurrentItem.ThemeName;
+                    rightUser.IsAdmin = UserListCurrentItem.IsAdmin;
+                    rightUser.IsTester = UserListCurrentItem.IsTester;
+                    rightUser.IsDeleted = true;
+                    ctx.SaveChanges();
+                    MessageBox.Show("Пользователю присвоен статус \"Удалён.\"");
+                }
+                else
+                {
+                    MessageBox.Show("Пользователь не найден!");
+                }
+            }
+            
         }
 
         #endregion
     }
 }
-
