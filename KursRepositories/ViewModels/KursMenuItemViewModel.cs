@@ -8,7 +8,7 @@ namespace KursRepositories.ViewModels
 {
     public class KursMenuItemViewModel : RSViewModelBase
     {
-        private int myIsSelectedItem;
+        private bool myIsSelectedItem;
 
         #region Properties
 
@@ -19,12 +19,12 @@ namespace KursRepositories.ViewModels
         [Display(AutoGenerateField = false)]
         public new int Id
         {
-            get => myIsSelectedItem;
+            get => Entity.Id;
             set
             {
-                if (myIsSelectedItem == value)
+                if (Entity.Id == value)
                     return;
-                myIsSelectedItem = value;
+                Entity.Id = value;
                 RaisePropertyChanged();
             }
         }
@@ -111,6 +111,15 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
+
+        public bool IsSelectedItem { get => myIsSelectedItem;
+            set
+            {
+                if (myIsSelectedItem == value)
+                    return;
+                myIsSelectedItem = value;
+                RaisePropertyChanged();
+            } }
 
         #endregion
 
