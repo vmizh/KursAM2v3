@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Core;
 using Core.ViewModel.Base;
 using Data;
 using KursRepositories.View;
@@ -27,7 +28,7 @@ namespace KursRepositories.ViewModels
 
         # region Properties
 
-        public static ObservableCollection<UsersViewModel> UserList { set; get; } =
+        public ObservableCollection<UsersViewModel> UserList { set; get; } =
             new ObservableCollection<UsersViewModel>();
 
         
@@ -142,7 +143,29 @@ namespace KursRepositories.ViewModels
         {
             var ctx = new UserCreationWindowViewModel();
             var form = new UserCreationWindow {DataContext = ctx};
-            form.Show();
+            form.ShowDialog();
+            if (ctx.NewUser != null)
+            {
+                using (var context = new KursSystemEntities())
+                {
+                    var newUser = new Users //Добавляю пользователя в список UserList в главной моделе
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = ctx.LoginName.Trim(),
+                        FullName = ctx.FullName.Trim(),
+                        Note = ctx.Note,
+                        ThemeName = ctx.ThemeName,
+                        IsAdmin = ctx.Admin,
+                        IsTester = ctx.Tester,
+                        IsDeleted = ctx.Deleted,
+                        Avatar = ctx.Avatar
+                    };
+                    context.Users.Add(newUser);
+                    UserList.Add(new UsersViewModel(newUser));
+                    context.SaveChanges();
+                }
+            }
+
         }
 
         public ICommand DeleteUserCommand

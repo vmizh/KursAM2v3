@@ -45,17 +45,17 @@ namespace KursRepositories.ViewModels
 
         public string Error { get; private set; }
 
-        public ObservableCollection<UsersViewModel> NewUser
-        {
-            get => myNewUser;
-            set
-            {
-                if (myNewUser == value)
-                    return;
-                myNewUser = value;
-                RaisePropertyChanged();
-            }
-        }
+        //public ObservableCollection<UsersViewModel> NewUser
+        //{
+        //    get => myNewUser;
+        //    set
+        //    {
+        //        if (myNewUser == value)
+        //            return;
+        //        myNewUser = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public string FirstName
         {
@@ -203,30 +203,21 @@ namespace KursRepositories.ViewModels
                     "Поля Ф.И.О. и Login не могут состоять из пробелов и должны быть обязательно заполнены.");
                 return;
             }
-
-            using (var context = new KursSystemEntities())
+            NewUser = new Users //Добавляю пользователя в список UserList в главной моделе
             {
-                var newUser = new Users //Добавляю пользователя в список UserList в главной моделе
-                {
-                    Id = Guid.NewGuid(),
-                    Name = LoginName.Trim(),
-                    FullName = FullName.Trim(),
-                    Note = Note,
-                    ThemeName = ThemeName,
-                    IsAdmin = Admin,
-                    IsTester = Tester,
-                    IsDeleted = Deleted,
-                    Avatar = Avatar
-                };
-                context.Users.Add(newUser);
-                UserList.Add(new UsersViewModel(newUser));
-                context.SaveChanges();
-            }
-
-            MessageBox.Show("Пользователь успешно зарегистрирован.");
+                Id = Guid.NewGuid(),
+                Name = LoginName.Trim(),
+                FullName = FullName.Trim(),
+                Note = Note,
+                ThemeName = ThemeName,
+                IsAdmin = Admin,
+                IsTester = Tester,
+                IsDeleted = Deleted,
+                Avatar = Avatar
+            };
         }
 
-        // TODO: Добавить SaveChanges
+        public Users NewUser { get; set; }
 
         #endregion
 
