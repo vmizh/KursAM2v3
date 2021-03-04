@@ -56,7 +56,8 @@
                             </Button>
                         </StackPanel>
                     </dxlc:LayoutItem>
-                    <dxlc:LayoutItem >
+                    <dxlc:LayoutItem VerticalAlignment="Stretch" 
+                                     HorizontalAlignment="Stretch">
                         <dxg:GridControl x:Name="UsersGridControl"
                                              AutoGenerateColumns="AddNew"
                                              EnableSmartColumnsGeneration="True"
@@ -81,7 +82,8 @@
                     </dxlc:LayoutItem>
                 
                 <dxlc:LayoutGroup Name="LayoutGroupPermissions" 
-                                  HorizontalAlignment="Right"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
                                   Orientation="Vertical" 
                                   Margin="5" View="Group" 
                                   dxlc:LayoutControl.AllowHorizontalSizing="True">
@@ -97,7 +99,8 @@
                             </dxe:ComboBoxEdit.StyleSettings>
                         </dxe:ComboBoxEdit>
                     </dxlc:LayoutItem>
-                    <dxlc:LayoutItem>
+                    <dxlc:LayoutItem VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch">
                         <dxg:GridControl x:Name="PermissionsGridControl"
                                          AutoGenerateColumns="AddNew"
                                          EnableSmartColumnsGeneration="True"

@@ -74,6 +74,9 @@ namespace KursRepositories.ViewModels
         {
             using (var ctx = new KursSystemEntities())
             {
+                UserList.Clear();
+                PermissionsList.Clear();
+                CompaniesList.Clear();
                 foreach (var user in ctx.Users.ToList())
                 {
                     UserList.Add(new UsersViewModel(user));
