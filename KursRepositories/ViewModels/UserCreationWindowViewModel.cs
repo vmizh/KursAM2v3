@@ -1,17 +1,13 @@
-﻿using System;
+﻿using Core.ViewModel.Base;
+using Data;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using Core.ViewModel.Base;
-using Data;
-using DevExpress.Mvvm.DataAnnotations;
-using DevExpress.Xpf.Editors;
-using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
+using static KursRepositories.ViewModels.MainWindowPermissionsViewModel;
 
 
 namespace KursRepositories.ViewModels
@@ -23,7 +19,7 @@ namespace KursRepositories.ViewModels
         {
             LoadRegisteredUsers();
         }
-        
+
         #endregion
 
 
@@ -44,14 +40,12 @@ namespace KursRepositories.ViewModels
         private ObservableCollection<UsersViewModel> myNewUser = new ObservableCollection<UsersViewModel>();
         public List<string> RegisteredUserNames = new List<string>();
         
-
-
         #endregion
 
         #region Properties
 
         public string Error => error;
-        
+
         public ObservableCollection<UsersViewModel> NewUser
         {
             get => myNewUser;
@@ -63,7 +57,7 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
-       
+
         public string FirstName
         {
             get => myFirstName;
@@ -85,7 +79,7 @@ namespace KursRepositories.ViewModels
                 if (myMiddleName == value)
                     return;
                 myMiddleName = value;
-                
+
                 RaiseFullNamePropertyChanged();
                 RaisePropertyChanged();
             }
@@ -210,7 +204,7 @@ namespace KursRepositories.ViewModels
                 return;
             }
 
-            NewUser.Add(new UsersViewModel(new Users
+            UserList.Add(new UsersViewModel(new Users //Добавляю пользователя в список UserList в главной моделе
             {
                 Id = new Guid(),
                 Name = LoginName.Trim(),
@@ -227,107 +221,114 @@ namespace KursRepositories.ViewModels
             using (var context = new KursSystemEntities())
             {
                 var oldUsers = context.Users.ToList();
-                foreach (var user in NewUser)
+                foreach (var u in UserList)
                 {
-                    var propertyUser = oldUsers.FirstOrDefault(_ => _.Id == user.Id);
+                    var propertyUser = oldUsers.FirstOrDefault(_ => _.Id == u.Id);
                     if (propertyUser != null)
                     {
-                        continue;
+                        propertyUser.Id = u.Id;
+                        propertyUser.Name = u.Name;
+                        propertyUser.FullName = u.FullName;
+                        propertyUser.Note = u.Note;
+                        propertyUser.IsAdmin = u.IsAdmin;
+                        propertyUser.IsTester = u.IsTester;
+                        propertyUser.IsDeleted = u.IsDeleted;
+                        propertyUser.ThemeName = u.ThemeName;
+                        propertyUser.Avatar = u.Avatar;
                     }
                     else
                     {
                         context.Users.Add(new Users()
                         {
-                            Id = user.Id,
-                            Name = user.Name,
-                            FullName = user.FullName,
-                            Note = user.Note,
-                            IsAdmin = user.IsAdmin,
-                            IsTester = user.IsTester,
-                            IsDeleted = user.IsDeleted,
-                            Avatar = user.Avatar,
-                            ThemeName = user.ThemeName,
+                            Id = u.Id,
+                            Name = u.Name,
+                            FullName = u.FullName,
+                            Note = u.Note,
+                            IsAdmin = u.IsAdmin,
+                            IsTester = u.IsTester,
+                            IsDeleted = u.IsDeleted,
+                            ThemeName = u.ThemeName,
+                            Avatar = u.Avatar
+
                         });
                     }
                 }
-
-                context.SaveChanges();
-
+                // TODO: Добавить SaveChanges
                 MessageBox.Show("Пользователь успешно зарегистрирован.");
             }
         }
 
-            #endregion
+        #endregion
 
-            #region Methods
+        #region Methods
 
-            private void LoadRegisteredUsers()
+        private void LoadRegisteredUsers()
+        {
+            using (var ctx = new KursSystemEntities())
             {
-                using (var ctx = new KursSystemEntities())
+                foreach (var user in ctx.Users.ToList())
                 {
-                    foreach (var user in ctx.Users.ToList())
-                    {
-                        RegisteredUserNames.Add(user.Name);
-                    }
-
+                    RegisteredUserNames.Add(user.Name);
                 }
+
             }
+        }
 
-            private void RaiseFullNamePropertyChanged()
+        private void RaiseFullNamePropertyChanged()
+        {
+            RaisePropertyChanged(nameof(FullName));
+        }
+
+        #region InputValidation
+
+        string IDataErrorInfo.Error => Error;
+
+        string IDataErrorInfo.this[string columnName]
+        {
+            get
             {
-                RaisePropertyChanged(nameof(FullName));
-            }
-
-            #region InputValidation
-
-            string IDataErrorInfo.Error => Error;
-        
-            string IDataErrorInfo.this[string columnName]
-            {
-                get
+                switch (columnName)
                 {
-                    switch (columnName)
-                    {
-                        case "FirstName":
-                            return ValidateName(FirstName) ? string.Empty : Error;
-                        case "LastName":
-                            return ValidateName(LastName) ? string.Empty : Error;
-                        case "MiddleName":
-                            return ValidateName(MiddleName) ? string.Empty : Error;
-                        case "LoginName":
-                            return ValidateLogin(LoginName) ? string.Empty : Error;
-                    }
-                    return string.Empty;
+                    case "FirstName":
+                        return ValidateName(FirstName) ? string.Empty : Error;
+                    case "LastName":
+                        return ValidateName(LastName) ? string.Empty : Error;
+                    case "MiddleName":
+                        return ValidateName(MiddleName) ? string.Empty : Error;
+                    case "LoginName":
+                        return ValidateLogin(LoginName) ? string.Empty : Error;
                 }
+                return string.Empty;
             }
+        }
 
-            private void SetError(bool isValid, string errorString)
-            {
-                error = isValid ? string.Empty : errorString;
-            }
-        
-            public bool ValidateName(string name)
-            {
-                bool isValid = !string.IsNullOrEmpty(name);
-                SetError(isValid, $"Поле должно быть заполнено.");
-                return isValid;
-            }
+        private void SetError(bool isValid, string errorString)
+        {
+            error = isValid ? string.Empty : errorString;
+        }
 
-            public bool ValidateLogin(string login)
-            {
-                bool isValid = login != RegisteredUserNames.FirstOrDefault(_ => _ == login);
-                SetError(isValid, "Пользователь с таким именем уже зарегистрирован или вы не заполнили поле."); 
-                return isValid;
-            }
+        public bool ValidateName(string name)
+        {
+            bool isValid = !string.IsNullOrEmpty(name);
+            SetError(isValid, $"Поле должно быть заполнено.");
+            return isValid;
+        }
 
-            #endregion
+        public bool ValidateLogin(string login)
+        {
+            bool isValid = login != RegisteredUserNames.FirstOrDefault(_ => _ == login);
+            SetError(isValid, "Пользователь с таким именем уже зарегистрирован или вы не заполнили поле.");
+            return isValid;
+        }
 
-            #endregion
+        #endregion
+
+        #endregion
 
     }
 
 
-  
+
 
 
 }

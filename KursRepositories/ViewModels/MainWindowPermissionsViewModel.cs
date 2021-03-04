@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
@@ -26,7 +27,7 @@ namespace KursRepositories.ViewModels
 
         # region Properties
 
-        public ObservableCollection<UsersViewModel> UserList { set; get; } =
+        public static ObservableCollection<UsersViewModel> UserList { set; get; } =
             new ObservableCollection<UsersViewModel>();
 
         
@@ -151,27 +152,49 @@ namespace KursRepositories.ViewModels
             
             using (var ctx = new KursSystemEntities())
             {
-                var rightUser = ctx.Users.SingleOrDefault(_ => _.Id == UserListCurrentItem.Id);
-                if (rightUser != null)
+                var oldUserList = ctx.Users.ToList();
+                foreach (var u in UserList)
                 {
-                    rightUser.Id = UserListCurrentItem.Id;
-                    rightUser.FullName = UserListCurrentItem.FullName;
-                    rightUser.Name = UserListCurrentItem.Name;
-                    rightUser.Note = UserListCurrentItem.Note;
-                    rightUser.Avatar = UserListCurrentItem.Avatar;
-                    rightUser.ThemeName = UserListCurrentItem.ThemeName;
-                    rightUser.IsAdmin = UserListCurrentItem.IsAdmin;
-                    rightUser.IsTester = UserListCurrentItem.IsTester;
-                    rightUser.IsDeleted = true;
-                    ctx.SaveChanges();
-                    MessageBox.Show("Пользователю присвоен статус \"Удалён.\"");
+                    var rightUser = oldUserList.Where(_=>_.Id == u.Id).SingleOrDefault(_ => _.Id == UserListCurrentItem.Id);
+
+                    u.IsDeleted = rightUser != null;
                 }
-                else
-                {
-                    MessageBox.Show("Пользователь не найден!");
-                }
+
+                ctx.SaveChanges();
+                MessageBox.Show("Пользователь присвоен статус \"Удален\"");
             }
-            
+        }
+
+        public ICommand SaveChangesInDatagridCommand
+        {
+            get { return new Command(saveChangesInDatagrid, _ => true); }
+        }
+
+        private void saveChangesInDatagrid(object obj)
+        {
+            using (var ctx = new KursSystemEntities())
+            {
+                var oldUserList = ctx.Users.ToList();
+                foreach (var usr in UserList)
+                {
+                    var rightUser = oldUserList.SingleOrDefault(_ => _.Id == usr.Id);
+
+                    if (rightUser != null)
+                    {
+                        rightUser.Id = usr.Id;
+                        rightUser.Name = usr.Name;
+                        rightUser.FullName = usr.FullName;
+                        rightUser.Note = usr.Note;
+                        rightUser.Avatar = usr.Avatar;
+                        rightUser.IsAdmin = usr.IsAdmin;
+                        rightUser.IsTester = usr.IsTester;
+                        rightUser.IsDeleted = usr.IsDeleted;
+                    }
+                }
+
+                ctx.SaveChanges();
+                MessageBox.Show("Данные сохранены.");
+            }
         }
 
         #endregion

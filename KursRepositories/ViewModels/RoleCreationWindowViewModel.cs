@@ -8,6 +8,7 @@ using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Map.Kml;
+using DevExpress.XtraExport.Helpers;
 
 namespace KursRepositories.ViewModels
 {
@@ -144,51 +145,59 @@ namespace KursRepositories.ViewModels
             get { return new Command(createRoleCommand, _ => NameRoleTextEdit != null); }
         }
 
-        public List<KursMenuItem> NrpList { get; set; } = new List<KursMenuItem>();
-        
+       
         private void createRoleCommand(object obj)
         {
-            // List<int> menuIdList = (from permission in PermissionsList
-            //         where permission.IsSelectedItem
-            //         select permission.Id).ToList();
-            // MessageBox.Show(string.Join(Environment.NewLine, menuIdList));
-            
+            try
+            {
+                var menuIdList = (from permission in PermissionsList
+                    where permission.IsSelectedItem
+                    select permission.Entity).ToList();
+
+
                 RoleList.Add(new UserRolesViewModel(new UserRoles
                 {
                     id = Guid.NewGuid(),
                     Name = NameRoleTextEdit.Trim(),
                     Note = NoteRoleTextEdit.Trim(),
-                    // KursMenuItem = 
+                    KursMenuItem = menuIdList
+
                 }));
 
-                /*
-                using (var context = new KursSystemEntities())
-                { 
-                    var oldRolesList = context.UserRoles.ToList();
+                using (var ctx = new KursSystemEntities())
+                {
+                    var oldRolesList = ctx.UserRoles.ToList();
 
                     foreach (var role in RoleList)
                     {
-                        var propertyRoles = oldRolesList.FirstOrDefault(_ => _.id == role.Entity.id);
+                        var propertyRoles = oldRolesList.FirstOrDefault(_ => _.id == role.Id);
                         if (propertyRoles != null)
+                        {
                             continue;
+                        }
                         else
                         {
-                            context.UserRoles.Add(new UserRoles()
+                            ctx.UserRoles.Add(new UserRoles()
                             {
-                                id = role.Entity.id,
+                                id = role.Id,
                                 Name = role.Name,
                                 Note = role.Note,
-                                KursMenuItem = role.Entity.KursMenuItem
+                                KursMenuItem = role.Itemset
                             });
                         }
                     }
 
-                    context.SaveChanges();
+                    ctx.SaveChanges();
                     MessageBox.Show("Новая роль создана. Проверьте список ролей.");
                 }
-                    */
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
 
-                
+
         }
         
         #endregion
