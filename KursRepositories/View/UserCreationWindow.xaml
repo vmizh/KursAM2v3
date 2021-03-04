@@ -72,6 +72,7 @@
                     </dxlc:LayoutItem>
                 </GroupBox>
             </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup Orientation="Horizontal">
             <dxlc:LayoutItem>
                 <Button x:Name="CreateNewUserButton"
                         Margin="0 10 0 0"
@@ -79,6 +80,13 @@
                         IsEnabled="{Binding Path=(dxe:ValidationService.HasValidationError), ElementName=validationContainer, Converter={dx:NegationConverter}}"
                         Command="{Binding CreateNewUserCommand}"/>
             </dxlc:LayoutItem>
+                <dxlc:LayoutItem>
+                    <Button x:Name="CancelCreateNewUserButton"
+                            Margin="0 10 0 0"
+                            Content="Отмена"
+                            Command="{Binding CancelCreateNewUserCommand}"/>
+                </dxlc:LayoutItem>
+            </dxlc:LayoutGroup>
         </dxlc:LayoutGroup>
     </dxlc:LayoutControl>
 </dx:ThemedWindow>

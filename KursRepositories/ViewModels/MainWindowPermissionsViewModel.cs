@@ -143,6 +143,7 @@ namespace KursRepositories.ViewModels
         {
             var ctx = new UserCreationWindowViewModel();
             var form = new UserCreationWindow {DataContext = ctx};
+            ctx.Form = form;
             form.ShowDialog();
             if (ctx.NewUser != null)
             {
