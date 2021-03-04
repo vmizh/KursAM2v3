@@ -40,7 +40,7 @@ namespace KursRepositories.ViewModels
             get => Entity.id;
             set
             {
-                if(Entity.id == null)
+                if(Entity.id == value)
                     return;
                 Entity.id = value;
                 RaisePropertyChanged();
@@ -53,7 +53,7 @@ namespace KursRepositories.ViewModels
             get => Entity.Name;
             set
             {
-                if(Entity.Name == null)
+                if(Entity.Name == value)
                     return;
                 Entity.Name = value;
                 RaisePropertyChanged();
@@ -65,12 +65,14 @@ namespace KursRepositories.ViewModels
             get => Entity.Note;
             set
             {
-                if(Entity.Note == null)
+                if(Entity.Note == value)
                     return;
                 Entity.Note = value;
                 RaisePropertyChanged();
             }
         }
+
+        public ICollection<KursMenuItem> Itemset { get; set; }
         
 
         #endregion

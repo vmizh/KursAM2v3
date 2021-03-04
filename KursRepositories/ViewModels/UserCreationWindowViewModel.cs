@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Core.ViewModel.Base;
+using Data;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using Core.ViewModel.Base;
-using Data;
 using static KursRepositories.ViewModels.MainWindowPermissionsViewModel;
 
 
@@ -21,7 +19,7 @@ namespace KursRepositories.ViewModels
         {
             LoadRegisteredUsers();
         }
-        
+
         #endregion
 
 
@@ -42,14 +40,12 @@ namespace KursRepositories.ViewModels
         private ObservableCollection<UsersViewModel> myNewUser = new ObservableCollection<UsersViewModel>();
         public List<string> RegisteredUserNames = new List<string>();
         
-
-
         #endregion
 
         #region Properties
 
         public string Error => error;
-        
+
         public ObservableCollection<UsersViewModel> NewUser
         {
             get => myNewUser;
@@ -61,7 +57,7 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
-       
+
         public string FirstName
         {
             get => myFirstName;
@@ -83,7 +79,7 @@ namespace KursRepositories.ViewModels
                 if (myMiddleName == value)
                     return;
                 myMiddleName = value;
-                
+
                 RaiseFullNamePropertyChanged();
                 RaisePropertyChanged();
             }
@@ -253,7 +249,7 @@ namespace KursRepositories.ViewModels
                             IsDeleted = u.IsDeleted,
                             ThemeName = u.ThemeName,
                             Avatar = u.Avatar
-                            
+
                         });
                     }
                 }
@@ -262,77 +258,77 @@ namespace KursRepositories.ViewModels
             }
         }
 
-            #endregion
+        #endregion
 
-            #region Methods
+        #region Methods
 
-            private void LoadRegisteredUsers()
+        private void LoadRegisteredUsers()
+        {
+            using (var ctx = new KursSystemEntities())
             {
-                using (var ctx = new KursSystemEntities())
+                foreach (var user in ctx.Users.ToList())
                 {
-                    foreach (var user in ctx.Users.ToList())
-                    {
-                        RegisteredUserNames.Add(user.Name);
-                    }
-
+                    RegisteredUserNames.Add(user.Name);
                 }
+
             }
+        }
 
-            private void RaiseFullNamePropertyChanged()
+        private void RaiseFullNamePropertyChanged()
+        {
+            RaisePropertyChanged(nameof(FullName));
+        }
+
+        #region InputValidation
+
+        string IDataErrorInfo.Error => Error;
+
+        string IDataErrorInfo.this[string columnName]
+        {
+            get
             {
-                RaisePropertyChanged(nameof(FullName));
-            }
-
-            #region InputValidation
-
-            string IDataErrorInfo.Error => Error;
-        
-            string IDataErrorInfo.this[string columnName]
-            {
-                get
+                switch (columnName)
                 {
-                    switch (columnName)
-                    {
-                        case "FirstName":
-                            return ValidateName(FirstName) ? string.Empty : Error;
-                        case "LastName":
-                            return ValidateName(LastName) ? string.Empty : Error;
-                        case "MiddleName":
-                            return ValidateName(MiddleName) ? string.Empty : Error;
-                        case "LoginName":
-                            return ValidateLogin(LoginName) ? string.Empty : Error;
-                    }
-                    return string.Empty;
+                    case "FirstName":
+                        return ValidateName(FirstName) ? string.Empty : Error;
+                    case "LastName":
+                        return ValidateName(LastName) ? string.Empty : Error;
+                    case "MiddleName":
+                        return ValidateName(MiddleName) ? string.Empty : Error;
+                    case "LoginName":
+                        return ValidateLogin(LoginName) ? string.Empty : Error;
                 }
+                return string.Empty;
             }
+        }
 
-            private void SetError(bool isValid, string errorString)
-            {
-                error = isValid ? string.Empty : errorString;
-            }
-        
-            public bool ValidateName(string name)
-            {
-                bool isValid = !string.IsNullOrEmpty(name);
-                SetError(isValid, $"Поле должно быть заполнено.");
-                return isValid;
-            }
+        private void SetError(bool isValid, string errorString)
+        {
+            error = isValid ? string.Empty : errorString;
+        }
 
-            public bool ValidateLogin(string login)
-            {
-                bool isValid = login != RegisteredUserNames.FirstOrDefault(_ => _ == login);
-                SetError(isValid, "Пользователь с таким именем уже зарегистрирован или вы не заполнили поле."); 
-                return isValid;
-            }
+        public bool ValidateName(string name)
+        {
+            bool isValid = !string.IsNullOrEmpty(name);
+            SetError(isValid, $"Поле должно быть заполнено.");
+            return isValid;
+        }
 
-            #endregion
+        public bool ValidateLogin(string login)
+        {
+            bool isValid = login != RegisteredUserNames.FirstOrDefault(_ => _ == login);
+            SetError(isValid, "Пользователь с таким именем уже зарегистрирован или вы не заполнили поле.");
+            return isValid;
+        }
 
-            #endregion
+        #endregion
+
+        #endregion
 
     }
 
 
-  
+
 
 
 }
