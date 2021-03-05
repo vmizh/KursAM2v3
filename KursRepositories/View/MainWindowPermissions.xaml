@@ -16,16 +16,25 @@
     >
     <DockPanel>
         <dxlc:LayoutControl HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            >
-            <dxlc:LayoutGroup Name="RootLayoutGroup"
+                            VerticalAlignment="Stretch">
+           
+            <dxlc:LayoutGroup Name="RootTabsGroup"
+                              View="Tabs">
+            <dxlc:LayoutGroup Name="UsersGroup"
                               Orientation="Horizontal" 
-                              View="GroupBox"
-                              Header=""
-                              >
+                              View="Group">
+                <dxlc:LayoutGroup.HeaderTemplate>
+                    <DataTemplate>
+                            <StackPanel>
+                                <Image Source="../Images/USers.png"></Image>
+                                <Label HorizontalAlignment="Center" VerticalAlignment="Center">Пользователи</Label>
+                            </StackPanel>
+                    </DataTemplate>
+                   
+                </dxlc:LayoutGroup.HeaderTemplate>
                 
-                    <dxlc:LayoutItem Margin="5 0 5 0"
-                                     HorizontalAlignment="Left">
+                <dxlc:LayoutItem Margin="5 0 5 0"
+                                 HorizontalAlignment="Left">
                         <StackPanel Name="ButtonStackPanel"
                                     Orientation="Vertical">
                             <Image Source="../Images/USers.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -123,6 +132,21 @@
                         </dxg:GridControl>
                     </dxlc:LayoutItem>
                 </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+
+            <dxlc:LayoutGroup Name="RoleGroup"
+                              >
+                    <dxlc:LayoutGroup.HeaderTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <Image Source="../Images/CreateRole.png"></Image>
+                                <Label HorizontalAlignment="Center" VerticalAlignment="Center">Роли</Label>
+                            </StackPanel>
+                        </DataTemplate>
+                    </dxlc:LayoutGroup.HeaderTemplate>
+                        <dxg:GridControl></dxg:GridControl>
+
+            </dxlc:LayoutGroup>
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>
     </DockPanel>
