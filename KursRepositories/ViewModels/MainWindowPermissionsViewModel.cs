@@ -87,7 +87,7 @@ namespace KursRepositories.ViewModels
                 {
                     PermissionsList.Add(new KursMenuItemViewModel(permission)
                     {
-                        IsSelectedItem = true
+                        IsSelectedItem = false
                     });
                 }
 
@@ -99,6 +99,7 @@ namespace KursRepositories.ViewModels
             }
         }
 
+        
         private void RefreshDataPermissionList()
         {
             if (UserListCurrentItem == null)
@@ -149,7 +150,7 @@ namespace KursRepositories.ViewModels
             {
                 using (var context = new KursSystemEntities())
                 {
-                    var newUser = new Users //Добавляю пользователя в список UserList в главной моделе
+                    var newUser = new Users 
                     {
                         Id = Guid.NewGuid(),
                         Name = ctx.LoginName.Trim(),
@@ -191,12 +192,12 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        public ICommand SaveChangesInDatagridUsersCommand
+        public ICommand SaveChangesInUsersGridControlCommand
         {
-            get { return new Command(saveChangesInDatagridUsers, _ => true); }
+            get { return new Command(saveChangesInUsersGridControl, _ => true); }
         }
 
-        private void saveChangesInDatagridUsers(object obj)
+        private void saveChangesInUsersGridControl(object obj)
         {
             using (var ctx = new KursSystemEntities())
             {
@@ -222,12 +223,12 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        public ICommand UpdateViewCommand
+        public ICommand UpdateUsersViewCommand
         {
-            get { return new Command(updateView, _ => true); }
+            get { return new Command(updateUsersView, _ => true); }
         }
 
-        private void updateView(object v)
+        private void updateUsersView(object v)
         {
             LoadView();
         }

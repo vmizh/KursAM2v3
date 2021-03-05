@@ -72,8 +72,6 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        public ICollection<KursMenuItem> Itemset { get; set; }
-        
 
         #endregion
 
