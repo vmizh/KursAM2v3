@@ -12,7 +12,7 @@ using DevExpress.XtraExport.Helpers;
 
 namespace KursRepositories.ViewModels
 {
-    public class RoleCreationWindowViewModel : RSViewModelBase
+    public class RoleCreationWindowViewModel : RSWindowViewModelBase
     {
         #region Constructors
         
@@ -112,7 +112,7 @@ namespace KursRepositories.ViewModels
                 {
                     PermissionsList.Add(new KursMenuItemViewModel(item)
                     {
-                        //IsSelectedItem = false
+                        IsSelectedItem = false
                     });
                 }
             }
@@ -182,7 +182,7 @@ namespace KursRepositories.ViewModels
                                 id = role.Id,
                                 Name = role.Name,
                                 Note = role.Note,
-                                KursMenuItem = role.Itemset
+                                
                             });
                         }
                     }

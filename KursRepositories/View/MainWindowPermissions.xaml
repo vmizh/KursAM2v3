@@ -20,48 +20,51 @@
            
             <dxlc:LayoutGroup Name="RootTabsGroup"
                               View="Tabs">
-            <dxlc:LayoutGroup Name="UsersGroup"
-                              Orientation="Horizontal" 
-                              View="Group">
-                <dxlc:LayoutGroup.HeaderTemplate>
-                    <DataTemplate>
-                            <StackPanel>
-                                <Image Source="../Images/USers.png"></Image>
-                                <Label HorizontalAlignment="Center" VerticalAlignment="Center">Пользователи</Label>
-                            </StackPanel>
-                    </DataTemplate>
-                   
-                </dxlc:LayoutGroup.HeaderTemplate>
-                
+                 <dxlc:LayoutGroup Name="UsersGroup"
+                                  Orientation="Horizontal" 
+                                  View="Group">
+                            <dxlc:LayoutGroup.HeaderTemplate>
+                                <DataTemplate>
+                                        <StackPanel>
+                                            <Image Source="../Images/USers.png"></Image>
+                                            <Label HorizontalAlignment="Center" VerticalAlignment="Center">Пользователи</Label>
+                                        </StackPanel>
+                                </DataTemplate>
+                            </dxlc:LayoutGroup.HeaderTemplate>
+                <dxlc:LayoutGroup x:Name ="UsersGridAndButtonGroup"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
+                                  Orientation="Vertical" 
+                                  Margin="5"
+                                  View="Group" 
+                                  dxlc:LayoutControl.AllowHorizontalSizing="True">
                 <dxlc:LayoutItem Margin="5 0 5 0"
                                  HorizontalAlignment="Left">
                         <StackPanel Name="ButtonStackPanel"
-                                    Orientation="Vertical">
-                            <Image Source="../Images/USers.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    Orientation="Horizontal">
                             <Button x:Name="AddNewUserButton"
-                                    Margin="0 0 0 5"
+                                    Margin="0 0 5 5"
                                     Content="Добавить пользователя"
                                     Background="GhostWhite"
                                     Command ="{Binding OpenWindowCreationUserCommand}">
                             </Button>
-                            <Image Source="../Images/CreateRole.png" />
-                            <Button x:Name="CreateRoleButton"
-                                    Margin="0 0 0 5"
-                                    Content="Создать роль" 
+                            <Button x:Name="SaveChanged"
+                                    Margin="0 0 5 5"
+                                    Content="Сохранить изменения" 
                                     Background="GhostWhite"
-                                    Command="{Binding OpenRoleCreationWindowCommand}">
+                                    Command="{Binding SaveChangesInUsersGridControlCommand}">
                             </Button>
-                            <Image Source="../Images/AssigneRole.png" ></Image>
-                            <Button  x:Name="AssignPermissionsForAllCompaniesButton"
-                                     Margin="0 0 0 5"
-                                     Content="Назначить пользователю роль" 
-                                     Background="GhostWhite">
+                            <Button  x:Name="UpdateUserView"
+                                     Margin="0 0 5 5"
+                                     Content="Обновить список" 
+                                     Background="GhostWhite"
+                                     Command="{Binding UpdateUsersViewCommand}">
                             </Button>
-                            <Image Source="../Images/AssignExclusiveRole.png"/>
-                            <Button  x:Name="AssignExclusivePermissionButton"
+                            <Button  x:Name="DeleteUserButon"
                                      Margin="0 0 0 5"
-                                     Content="Добавить индивидуальные права" 
-                                     Background="GhostWhite">
+                                     Content="Удалить пользователя" 
+                                     Background="GhostWhite"
+                                     Command="{Binding DeleteUserCommand}">
                             </Button>
                         </StackPanel>
                     </dxlc:LayoutItem>
@@ -94,12 +97,14 @@
                             </dxg:GridControl.ContextMenu>
                         </dxg:GridControl>
                     </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
                 
                 <dxlc:LayoutGroup Name="LayoutGroupPermissions" 
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Orientation="Vertical" 
-                                  Margin="5" View="Group" 
+                                  Margin="5"
+                                  View="Group" 
                                   dxlc:LayoutControl.AllowHorizontalSizing="True">
                     <dxlc:LayoutItem>
                         <dxe:ComboBoxEdit x:Name="ComboBoxEditCompany"
@@ -133,9 +138,11 @@
                     </dxlc:LayoutItem>
                 </dxlc:LayoutGroup>
             </dxlc:LayoutGroup>
+            
 
-            <dxlc:LayoutGroup Name="RoleGroup"
-                              >
+        <dxlc:LayoutGroup Name="RoleGroup"
+                          VerticalAlignment="Stretch" 
+                          HorizontalAlignment="Stretch"  >
                     <dxlc:LayoutGroup.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -144,9 +151,61 @@
                             </StackPanel>
                         </DataTemplate>
                     </dxlc:LayoutGroup.HeaderTemplate>
-                        <dxg:GridControl></dxg:GridControl>
-
-            </dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup Name="RoleListGroup"
+                                      View="GroupBox"
+                                      Header="Список ролей">
+                        <dxlc:LayoutGroup Name="GridsGroup"
+                                          Orientation="Horizontal"
+                                          VerticalAlignment="Stretch" 
+                                          HorizontalAlignment="Stretch"
+                                          d:LayoutControl.AllowHorizontalSizing="True">
+                            <dxlc:LayoutGroup Orientation="Vertical">
+                                <dxlc:LayoutItem>
+                                    <Button x:Name="OpenWindowCreationRoleButton"
+                                            Content="Добавить новую роль"
+                                            Command="{Binding OpenWindowCreationRoleCommand}"/>
+                                </dxlc:LayoutItem>
+                                <dxlc:LayoutItem Name="GridRoles"
+                                                 VerticalAlignment="Stretch" 
+                                                 HorizontalAlignment="Stretch"
+                                                 dxlc:LayoutControl.AllowHorizontalSizing="True">
+                                    <dxg:GridControl x:Name="RolesGridControl"
+                                                             AutoGenerateColumns="AddNew"
+                                                             EnableSmartColumnsGeneration="True"
+                                                             VerticalAlignment="Top"
+                                                             ItemsSource="{Binding RoleList, UpdateSourceTrigger=PropertyChanged}"
+                                                             CurrentItem="{Binding CurrentRole, UpdateSourceTrigger=PropertyChanged}"
+                                                             MaxHeight="1000"
+                                                             MaxWidth="10000"
+                                                             Margin="0 0 10 0">
+                                        <dxg:GridControl.View>
+                                            <dxg:TableView ShowTotalSummary="True"
+                                                                   IsSynchronizedWithCurrentItem="True"
+                                                                   BestFitModeOnSourceChange="AllRows"/>
+                                        </dxg:GridControl.View>
+                                        <dxg:GridControl.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Удалить роль" />
+                                            </ContextMenu>
+                                        </dxg:GridControl.ContextMenu>
+                                    </dxg:GridControl>
+                                </dxlc:LayoutItem>
+                            </dxlc:LayoutGroup>
+                            <dxlc:LayoutItem dxlc:LayoutControl.AllowHorizontalSizing="True"
+                                             VerticalAlignment="Stretch" 
+                                             HorizontalAlignment="Stretch">
+                                <dxe:ListBoxEdit x:Name="ListBoxEditRoleItems"
+                                             ItemsSource="{Binding RoleItemsList, UpdateSourceTrigger=PropertyChanged}"
+                                             DisplayMember="Name" 
+                                             MinHeight="{Binding ElementName=RolesGridControl, Path=ActualHeight}">
+                                    <dxe:ListBoxEdit.StyleSettings>
+                                        <dxe:ListBoxEditStyleSettings />
+                                    </dxe:ListBoxEdit.StyleSettings>
+                                </dxe:ListBoxEdit>
+                            </dxlc:LayoutItem>
+                        </dxlc:LayoutGroup>
+                    </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>
     </DockPanel>

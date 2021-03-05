@@ -111,7 +111,7 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
-
+        [DisplayName("Статус")]
         public bool IsSelectedItem { get => myIsSelectedItem;
             set
             {
@@ -129,27 +129,5 @@ namespace KursRepositories.ViewModels
         }
     }
 
-    public class WrapKursMenuItemViewModel : KursMenuItemViewModel
-    {
-        private bool myIsSelectedItem;
-
-        public bool IsSelectedItem
-        {
-            get => myIsSelectedItem;
-            set
-            {
-                if (myIsSelectedItem == value)
-                    return;
-                myIsSelectedItem = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public WrapKursMenuItemViewModel(KursMenuItem entityKursMenuItem) : base(entityKursMenuItem)
-        {
-            IsSelectedItem = true;
-        }
-    }
-
-    
+   
 }

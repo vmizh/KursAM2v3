@@ -20,9 +20,13 @@ namespace KursRepositories.ViewModels
 
         #region Fields
 
-                private UsersViewModel myUserListCurrentItem;
-                private DataSourcesViewModel myEditValueComboboxCompany;
-                
+        private UsersViewModel myUserListCurrentItem;
+        private DataSourcesViewModel myEditValueComboboxCompany;
+        private UserRolesViewModel myCurrentRole;
+        private KursMenuItemViewModel myCurrentPermission;
+        private string myNameRoleTextEdit;
+        private string myNoteRoleTextEdit;
+
 
         #endregion
 
@@ -66,7 +70,41 @@ namespace KursRepositories.ViewModels
 
             }
         }
-        
+
+        public UserRolesViewModel CurrentRole
+
+        {
+            get => myCurrentRole;
+
+            set
+            {
+                if (myCurrentRole == value)
+                    return;
+
+                myCurrentRole = value;
+                RefreshRoleItemsList();
+                RaisePropertyChanged();
+            }
+        }
+
+        public KursMenuItemViewModel CurrentPermission
+        {
+            get => myCurrentPermission;
+            set
+            {
+                if (myCurrentPermission == value)
+                    return;
+                myCurrentPermission = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<UserRolesViewModel> RoleList { get; set; } = new ObservableCollection<UserRolesViewModel>();
+
+        public ObservableCollection<KursMenuItemViewModel> RoleItemsList { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
+
+        public ObservableCollection<KursMenuItemViewModel> PermissionsListForNewRole { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
+
         #endregion
 
         #region Methods
@@ -78,6 +116,7 @@ namespace KursRepositories.ViewModels
                 UserList.Clear();
                 PermissionsList.Clear();
                 CompaniesList.Clear();
+                RoleList.Clear();
                 foreach (var user in ctx.Users.ToList())
                 {
                     UserList.Add(new UsersViewModel(user));
@@ -87,7 +126,7 @@ namespace KursRepositories.ViewModels
                 {
                     PermissionsList.Add(new KursMenuItemViewModel(permission)
                     {
-                        IsSelectedItem = true
+                        IsSelectedItem = false
                     });
                 }
 
@@ -96,9 +135,17 @@ namespace KursRepositories.ViewModels
                     CompaniesList.Add(new DataSourcesViewModel(company));
                 }
 
+                foreach (var role in ctx.UserRoles.ToList())
+                {
+                    RoleList.Add(new UserRolesViewModel(role));
+                }
+
+                
+
             }
         }
 
+        
         private void RefreshDataPermissionList()
         {
             if (UserListCurrentItem == null)
@@ -118,28 +165,48 @@ namespace KursRepositories.ViewModels
                 }
             }
         }
+
+        private void RefreshRoleItemsList()
+        {
+            RoleItemsList.Clear();
+
+            using (var ctx = new KursSystemEntities())
+            {
+                var data = ctx.UserRoles.Include(_ => _.KursMenuItem).FirstOrDefault(_ => _.id == CurrentRole.Id);
+
+                if (data == null)
+                    return;
+
+                foreach (var item in data.KursMenuItem)
+                {
+                    RoleItemsList.Add(new KursMenuItemViewModel(item));
+                }
+            }
+        }
         #endregion
 
         #region Commands
 
-        public ICommand OpenRoleCreationWindowCommand
+        public ICommand OpenWindowCreationRoleCommand
         {
-            get { return new Command(openRoleCreationWindow, _ => true); }
+            get { return new Command(openWindowCreationRole, _ => true); }
         }
 
-        private void openRoleCreationWindow(object obj)
+        private void openWindowCreationRole(object obj)
         {
             var ctx = new RoleCreationWindowViewModel();
             var form = new RoleCreationWindow{ DataContext = ctx };
-            form.Show();
+            ctx.Form = form;
+            form.ShowDialog();
+            
         }
 
         public ICommand OpenWindowCreationUserCommand
         {
-            get { return new Command(operWindowCreationUser, _ => true); }
+            get { return new Command(openWindowCreationUser, _ => true); }
         }
 
-        private void operWindowCreationUser(object obj)
+        private void openWindowCreationUser(object obj)
         {
             var ctx = new UserCreationWindowViewModel();
             var form = new UserCreationWindow {DataContext = ctx};
@@ -149,7 +216,7 @@ namespace KursRepositories.ViewModels
             {
                 using (var context = new KursSystemEntities())
                 {
-                    var newUser = new Users //Добавляю пользователя в список UserList в главной моделе
+                    var newUser = new Users 
                     {
                         Id = Guid.NewGuid(),
                         Name = ctx.LoginName.Trim(),
@@ -191,12 +258,12 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        public ICommand SaveChangesInDatagridUsersCommand
+        public ICommand SaveChangesInUsersGridControlCommand
         {
-            get { return new Command(saveChangesInDatagridUsers, _ => true); }
+            get { return new Command(saveChangesInUsersGridControl, _ => true); }
         }
 
-        private void saveChangesInDatagridUsers(object obj)
+        private void saveChangesInUsersGridControl(object obj)
         {
             using (var ctx = new KursSystemEntities())
             {
@@ -222,12 +289,12 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        public ICommand UpdateViewCommand
+        public ICommand UpdateUsersViewCommand
         {
-            get { return new Command(updateView, _ => true); }
+            get { return new Command(updateUsersView, _ => true); }
         }
 
-        private void updateView(object v)
+        private void updateUsersView(object v)
         {
             LoadView();
         }
