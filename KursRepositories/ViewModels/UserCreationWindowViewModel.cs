@@ -45,17 +45,6 @@ namespace KursRepositories.ViewModels
 
         public string Error { get; private set; }
 
-        //public ObservableCollection<UsersViewModel> NewUser
-        //{
-        //    get => myNewUser;
-        //    set
-        //    {
-        //        if (myNewUser == value)
-        //            return;
-        //        myNewUser = value;
-        //        RaisePropertyChanged();
-        //    }
-        //}
         public Users NewUser
         {
             get => myNewUser;

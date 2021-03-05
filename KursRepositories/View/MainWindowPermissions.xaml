@@ -75,8 +75,13 @@
                             <dxg:GridControl.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Удалить пользователя" 
-                                              Command="{Binding DeleteUserCommand, Mode=OneWay}" />
-                                </ContextMenu>
+                                              Command="{Binding DeleteUserCommand}"/>
+                                    <MenuItem Header ="Сохранить изменения"
+                                          Command="{Binding SaveChangesInDatagridUsersCommand}"/>
+                                    <MenuItem Header="Обновить список"
+                                              Command="{Binding UpdateViewCommand}"/>
+
+                            </ContextMenu>
                             </dxg:GridControl.ContextMenu>
                         </dxg:GridControl>
                     </dxlc:LayoutItem>

@@ -186,18 +186,17 @@ namespace KursRepositories.ViewModels
 
                     u.IsDeleted = rightUser != null;
                 }
-
                 ctx.SaveChanges();
                 MessageBox.Show("Пользователь присвоен статус \"Удален\"");
             }
         }
 
-        public ICommand SaveChangesInDatagridCommand
+        public ICommand SaveChangesInDatagridUsersCommand
         {
-            get { return new Command(saveChangesInDatagrid, _ => true); }
+            get { return new Command(saveChangesInDatagridUsers, _ => true); }
         }
 
-        private void saveChangesInDatagrid(object obj)
+        private void saveChangesInDatagridUsers(object obj)
         {
             using (var ctx = new KursSystemEntities())
             {
@@ -218,10 +217,19 @@ namespace KursRepositories.ViewModels
                         rightUser.IsDeleted = usr.IsDeleted;
                     }
                 }
-
                 ctx.SaveChanges();
                 MessageBox.Show("Данные сохранены.");
             }
+        }
+
+        public ICommand UpdateViewCommand
+        {
+            get { return new Command(updateView, _ => true); }
+        }
+
+        private void updateView(object v)
+        {
+            LoadView();
         }
 
         #endregion
