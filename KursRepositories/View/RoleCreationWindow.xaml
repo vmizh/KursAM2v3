@@ -8,23 +8,18 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:viewModels="clr-namespace:KursRepositories.ViewModels"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance viewModels:RoleCreationWindowViewModel}"
     d:DesignHeight="900" d:DesignWidth="900"
     Title="Создание новой роли" Height="800" Width="800" Left="20" Top="20">
-    
-    <DockPanel>
-    <dxlc:LayoutControl HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        dxlc:LayoutControl.AllowHorizontalSizing="True"
-                        dxlc:LayoutControl.AllowVerticalSizing="True">
-        <dxlc:LayoutGroup Name="RootLayoutGroup">
-            
-                <dxlc:LayoutGroup>
-                    <dxlc:LayoutGroup dxlc:LayoutControl.AllowHorizontalSizing="True"
-                                      Orientation="Horizontal">
+
+        <dxlc:LayoutControl HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+            <dxlc:LayoutGroup dxlc:LayoutControl.AllowHorizontalSizing="True"
+                          Orientation="Horizontal"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch">
                         <dxlc:LayoutItem dxlc:LayoutControl.AllowHorizontalSizing="True">
                             <StackPanel Orientation="Vertical"
                                 Margin="10">
@@ -34,7 +29,7 @@
                                         NullText="Введите наименование новой роли"
                                         MinWidth="200"
                                         MaxWidth="300"
-                                        EditValue="{Binding NameRoleTextEdit}"/>
+                                        EditValue="{Binding NameRole}"/>
                                 </GroupBox>
                                 <GroupBox Header="Краткое описание"
                                           Margin="0 0 0 10">
@@ -42,22 +37,25 @@
                                                   NullText="Введите описание новой роли"
                                                   MinWidth="200"
                                                   MaxWidth="300"
-                                                  EditValue="{Binding NoteRoleTextEdit}"/>
+                                                  EditValue="{Binding NoteRole}"
+                                                  TextWrapping="Wrap"/>
                                 </GroupBox>
                                     <Button x:Name="CreatRoleButton"
                                     Content="Создать роль"
                                     Command="{Binding CreateRoleCommand}"/>
                             </StackPanel>
                         </dxlc:LayoutItem>
-                        <dxlc:LayoutItem>
+                         <dxlc:LayoutItem HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch">
                             <dxg:GridControl x:Name="GridControlPermissionItems"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalAlignment="Stretch"
                                              AutoGenerateColumns="AddNew"
                                              EnableSmartColumnsGeneration="True"
-                                             VerticalAlignment="Top"
                                              ItemsSource="{Binding PermissionsList, UpdateSourceTrigger=PropertyChanged}"
                                              CurrentItem="{Binding CurrentPermission, UpdateSourceTrigger=PropertyChanged}"
-                                             MaxHeight="800"
-                                             MaxWidth="10000">
+                                             MaxHeight="2000"
+                                             MaxWidth="2000">
                                 <dxg:GridControl.View>
                                     <dxg:TableView ShowTotalSummary="True"
                                                    IsSynchronizedWithCurrentItem="True"
@@ -66,8 +64,5 @@
                             </dxg:GridControl>
                             </dxlc:LayoutItem>
                     </dxlc:LayoutGroup>
-                </dxlc:LayoutGroup>
-            </dxlc:LayoutGroup>
-        </dxlc:LayoutControl>
-    </DockPanel>
+                </dxlc:LayoutControl>
 </dx:ThemedWindow>

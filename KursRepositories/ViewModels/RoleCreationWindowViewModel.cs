@@ -7,8 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
-using DevExpress.Map.Kml;
-using DevExpress.XtraExport.Helpers;
+
 
 namespace KursRepositories.ViewModels
 {
@@ -29,50 +28,34 @@ namespace KursRepositories.ViewModels
 
         private UserRolesViewModel myCurrentRole;
         private KursMenuItemViewModel myCurrentPermission;
-        private string myNameRoleTextEdit;
-        private string myNoteRoleTextEdit;
+        private string myNameRole;
+        private string myNoteRole;
 
         #endregion
 
         #region Properties
 
-        public string NameRoleTextEdit
+        public string NameRole
         {
-            get => myNameRoleTextEdit;
+            get => myNameRole;
             set
             {
-                if(myNameRoleTextEdit == value)
+                if(myNameRole == value)
                     return;
-                myNameRoleTextEdit = value;
+                myNameRole = value;
                 RaisePropertyChanged();
             }
 
         }
 
-        public string NoteRoleTextEdit
+        public string NoteRole
         {
-            get => myNoteRoleTextEdit;
+            get => myNoteRole;
             set
             {
-                if(myNoteRoleTextEdit == value)
+                if(myNoteRole == value)
                     return;
-                myNoteRoleTextEdit = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public UserRolesViewModel CurrentRole
-
-        {
-            get => myCurrentRole;
-
-            set
-            {
-                if (myCurrentRole == value)
-                    return;
-
-                myCurrentRole = value;
-                RefreshRoleItemsList();
+                myNoteRole = value;
                 RaisePropertyChanged();
             }
         }
@@ -89,10 +72,6 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        public ObservableCollection<UserRolesViewModel> RoleList { get; set; } = new ObservableCollection<UserRolesViewModel>();
-
-        public ObservableCollection<KursMenuItemViewModel> RoleItemsList { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
-
         public ObservableCollection<KursMenuItemViewModel> PermissionsList { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
 
         #endregion
@@ -103,11 +82,6 @@ namespace KursRepositories.ViewModels
         {
             using (var ctx = new KursSystemEntities())
             {
-                foreach (var role in ctx.UserRoles.ToList())
-                {
-                    RoleList.Add(new UserRolesViewModel(role));
-                }
-
                 foreach (var item in ctx.KursMenuItem.ToList())
                 {
                     PermissionsList.Add(new KursMenuItemViewModel(item)
@@ -118,31 +92,13 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        private void RefreshRoleItemsList()
-        {
-            RoleItemsList.Clear();
-
-            using (var ctx = new KursSystemEntities())
-            {
-                var data = ctx.UserRoles.Include(_ => _.KursMenuItem).FirstOrDefault(_ => _.id == CurrentRole.Id);
-
-                if (data == null)
-                    return;
-
-                foreach (var item in data.KursMenuItem)
-                {
-                    RoleItemsList.Add(new KursMenuItemViewModel(item));
-                }
-            }
-        }
-
         #endregion
 
         #region Commands
 
         public ICommand CreateRoleCommand
         {
-            get { return new Command(createRoleCommand, _ => NameRoleTextEdit != null); }
+            get { return new Command(createRoleCommand, _ => NameRole != null); }
         }
 
        
@@ -158,8 +114,8 @@ namespace KursRepositories.ViewModels
                 RoleList.Add(new UserRolesViewModel(new UserRoles
                 {
                     id = Guid.NewGuid(),
-                    Name = NameRoleTextEdit.Trim(),
-                    Note = NoteRoleTextEdit.Trim(),
+                    Name = NameRole.Trim(),
+                    Note = NoteRole.Trim(),
                     KursMenuItem = menuIdList
 
                 }));

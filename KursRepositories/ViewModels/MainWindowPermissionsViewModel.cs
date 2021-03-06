@@ -34,7 +34,6 @@ namespace KursRepositories.ViewModels
 
         public ObservableCollection<UsersViewModel> UserList { set; get; } =
             new ObservableCollection<UsersViewModel>();
-
         
         public ObservableCollection<KursMenuItemViewModel> PermissionsList { set; get; } =
             new ObservableCollection<KursMenuItemViewModel>();
@@ -87,24 +86,10 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        public KursMenuItemViewModel CurrentPermission
-        {
-            get => myCurrentPermission;
-            set
-            {
-                if (myCurrentPermission == value)
-                    return;
-                myCurrentPermission = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public ObservableCollection<UserRolesViewModel> RoleList { get; set; } = new ObservableCollection<UserRolesViewModel>();
 
         public ObservableCollection<KursMenuItemViewModel> RoleItemsList { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
-
-        public ObservableCollection<KursMenuItemViewModel> PermissionsListForNewRole { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
-
+        
         #endregion
 
         #region Methods
@@ -140,8 +125,6 @@ namespace KursRepositories.ViewModels
                     RoleList.Add(new UserRolesViewModel(role));
                 }
 
-                
-
             }
         }
 
@@ -150,7 +133,7 @@ namespace KursRepositories.ViewModels
         {
             if (UserListCurrentItem == null)
                 return;
-            if(EditValueComboboxCompany == null)
+            if (EditValueComboboxCompany == null)
                 return;
             
             using (var ctx = new KursSystemEntities())
