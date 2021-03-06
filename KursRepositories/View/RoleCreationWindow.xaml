@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance viewModels:RoleCreationWindowViewModel}"
     d:DesignHeight="900" d:DesignWidth="900"
-    Title="Создание новой роли" Height="800" Width="800" Left="20" Top="20">
+    Title="Создание новой роли" Height="500" Width="900" Left="20" Top="20">
 
         <dxlc:LayoutControl HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch">
@@ -22,7 +22,7 @@
                           VerticalAlignment="Stretch">
                         <dxlc:LayoutItem dxlc:LayoutControl.AllowHorizontalSizing="True">
                             <StackPanel Orientation="Vertical"
-                                Margin="10">
+                                        Margin="10 0 10 10">
                                 <GroupBox Header="Наименование роли"
                                     Margin="0 0 0 10">
                                     <dxe:TextEdit x:Name="NameRoleTextEditor"
@@ -41,9 +41,13 @@
                                                   TextWrapping="Wrap"/>
                                 </GroupBox>
                                     <Button x:Name="CreatRoleButton"
-                                    Content="Создать роль"
-                                    Command="{Binding CreateRoleCommand}"/>
-                            </StackPanel>
+                                            Margin="0 0 0 10"
+                                            Content="Создать роль"
+                                            Command="{Binding CreateRoleCommand}"/>
+                                    <Button x:Name="CancelCreatRoleButton"
+                                            Content="Отмена"
+                                            Command="{Binding CancelCreateRoleCommand}"/>
+                </StackPanel>
                         </dxlc:LayoutItem>
                          <dxlc:LayoutItem HorizontalAlignment="Stretch"
                                           VerticalAlignment="Stretch">

@@ -15,18 +15,17 @@ namespace KursRepositories.ViewModels
     {
         public MainWindowPermissionsViewModel()
         {
-            LoadView();
+            LoadUsersData();
+            LoadRoleData();
         }
 
         #region Fields
 
         private UsersViewModel myUserListCurrentItem;
-        private DataSourcesViewModel myEditValueComboboxCompany;
+        private DataSourcesViewModel myCurrentCompany;
         private UserRolesViewModel myCurrentRole;
         private KursMenuItemViewModel myCurrentPermission;
-        private string myNameRoleTextEdit;
-        private string myNoteRoleTextEdit;
-
+        
 
         #endregion
 
@@ -41,15 +40,15 @@ namespace KursRepositories.ViewModels
         public ObservableCollection<DataSourcesViewModel> CompaniesList { set; get; } =
             new ObservableCollection<DataSourcesViewModel>();
 
-        public DataSourcesViewModel EditValueComboboxCompany
+        public DataSourcesViewModel CurrentCompany
         {
-            get => myEditValueComboboxCompany;
+            get => myCurrentCompany;
             set
             {
-                if(myEditValueComboboxCompany == value)
+                if(myCurrentCompany == value)
                     return;
 
-                myEditValueComboboxCompany = value;
+                myCurrentCompany = value;
                 RefreshDataPermissionList();
                 RaisePropertyChanged();
             }
@@ -69,6 +68,17 @@ namespace KursRepositories.ViewModels
 
             }
         }
+        public KursMenuItemViewModel CurrentPermission
+        {
+            get => myCurrentPermission;
+            set
+            {
+                if (myCurrentPermission == value)
+                    return;
+                myCurrentPermission = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public UserRolesViewModel CurrentRole
 
@@ -79,7 +89,6 @@ namespace KursRepositories.ViewModels
             {
                 if (myCurrentRole == value)
                     return;
-
                 myCurrentRole = value;
                 RefreshRoleItemsList();
                 RaisePropertyChanged();
@@ -94,14 +103,14 @@ namespace KursRepositories.ViewModels
 
         #region Methods
 
-        private void LoadView()
+        private void LoadUsersData()
         {
             using (var ctx = new KursSystemEntities())
             {
                 UserList.Clear();
                 PermissionsList.Clear();
                 CompaniesList.Clear();
-                RoleList.Clear();
+               
                 foreach (var user in ctx.Users.ToList())
                 {
                     UserList.Add(new UsersViewModel(user));
@@ -119,7 +128,14 @@ namespace KursRepositories.ViewModels
                 {
                     CompaniesList.Add(new DataSourcesViewModel(company));
                 }
-
+                
+            }
+        }
+        private void LoadRoleData()
+        {
+            using (var ctx = new KursSystemEntities())
+            {
+                RoleList.Clear();
                 foreach (var role in ctx.UserRoles.ToList())
                 {
                     RoleList.Add(new UserRolesViewModel(role));
@@ -128,18 +144,18 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        
+
         private void RefreshDataPermissionList()
         {
             if (UserListCurrentItem == null)
                 return;
-            if (EditValueComboboxCompany == null)
+            if (CurrentCompany == null)
                 return;
             
             using (var ctx = new KursSystemEntities())
             {
                 var permissions = ctx.UserMenuRight.Include(_ => _.DataSources).Where(_ =>(_.LoginName == UserListCurrentItem.Name))
-                        .Where(_=>(_.DBId == EditValueComboboxCompany.Id));
+                        .Where(_=>(_.DBId == CurrentCompany.Id));
 
                 foreach (var p in PermissionsList)
                 {
@@ -178,11 +194,25 @@ namespace KursRepositories.ViewModels
         private void openWindowCreationRole(object obj)
         {
             var ctx = new RoleCreationWindowViewModel();
-            var form = new RoleCreationWindow{ DataContext = ctx };
+            var form = new RoleCreationWindow {DataContext = ctx};
             ctx.Form = form;
             form.ShowDialog();
-            
+            if (ctx.NewRole != null)
+                using (var context = new KursSystemEntities())
+                {
+                    var newRole = new UserRoles()
+                    {
+                        id = ctx.NewRole.Id,
+                        Name = ctx.NewRole.Name,
+                        Note = ctx.NewRole.Note,
+                        KursMenuItem = ctx.NewRole.Entity.KursMenuItem
+                    };
+                    context.UserRoles.Add(newRole);
+                    RoleList.Add(new UserRolesViewModel(newRole));
+                    context.SaveChanges();
+                }
         }
+
 
         public ICommand OpenWindowCreationUserCommand
         {
@@ -201,7 +231,7 @@ namespace KursRepositories.ViewModels
                 {
                     var newUser = new Users 
                     {
-                        Id = Guid.NewGuid(),
+                        Id = ctx.NewUser.Id,
                         Name = ctx.LoginName.Trim(),
                         FullName = ctx.FullName.Trim(),
                         Note = ctx.Note,
@@ -279,7 +309,7 @@ namespace KursRepositories.ViewModels
 
         private void updateUsersView(object v)
         {
-            LoadView();
+            LoadUsersData();
         }
 
         #endregion

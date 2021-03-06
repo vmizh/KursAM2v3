@@ -26,10 +26,10 @@ namespace KursRepositories.ViewModels
 
         #region Fields
 
-        private UserRolesViewModel myCurrentRole;
         private KursMenuItemViewModel myCurrentPermission;
         private string myNameRole;
         private string myNoteRole;
+        private UserRolesViewModel myNewRole;
 
         #endregion
 
@@ -58,6 +58,19 @@ namespace KursRepositories.ViewModels
                 myNoteRole = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public UserRolesViewModel NewRole
+        {
+            get => myNewRole;
+            set
+            {
+                if (myNewRole == value)
+                    return;
+                myNewRole = value;
+                RaisePropertyChanged();
+            }
+
         }
 
         public KursMenuItemViewModel CurrentPermission
@@ -98,65 +111,37 @@ namespace KursRepositories.ViewModels
 
         public ICommand CreateRoleCommand
         {
-            get { return new Command(createRoleCommand, _ => NameRole != null); }
+            get { return new Command(createRoleCommand, _ => NameRole != null | NoteRole != null); }
         }
 
-       
         private void createRoleCommand(object obj)
         {
-            try
+            var isSelectedmenuIdList = (from permission in PermissionsList
+                                        where permission.IsSelectedItem
+                                        select permission.Entity).ToList();
+
+            NewRole = new UserRolesViewModel(new UserRoles()
             {
-                var menuIdList = (from permission in PermissionsList
-                    where permission.IsSelectedItem
-                    select permission.Entity).ToList();
-
-
-                RoleList.Add(new UserRolesViewModel(new UserRoles
-                {
                     id = Guid.NewGuid(),
                     Name = NameRole.Trim(),
                     Note = NoteRole.Trim(),
-                    KursMenuItem = menuIdList
-
-                }));
-
-                using (var ctx = new KursSystemEntities())
-                {
-                    var oldRolesList = ctx.UserRoles.ToList();
-
-                    foreach (var role in RoleList)
-                    {
-                        var propertyRoles = oldRolesList.FirstOrDefault(_ => _.id == role.Id);
-                        if (propertyRoles != null)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            ctx.UserRoles.Add(new UserRoles()
-                            {
-                                id = role.Id,
-                                Name = role.Name,
-                                Note = role.Note,
-                                
-                            });
-                        }
-                    }
-
-                    ctx.SaveChanges();
-                    MessageBox.Show("Новая роль создана. Проверьте список ролей.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
-
-
+                    KursMenuItem = isSelectedmenuIdList
+            });
+            MessageBox.Show("Роль создана.");
+            CloseWindow(Form);
         }
-        
-        #endregion
-    }
 
+        public ICommand CancelCreateRoleCommand
+        {
+            get { return new Command(cancelCreateRole, _ => true); }
+        }
+
+        private void cancelCreateRole(object obj)
+        {
+            NewRole = null;
+            CloseWindow(Form);
+        }
+
+    }
+        #endregion
 }

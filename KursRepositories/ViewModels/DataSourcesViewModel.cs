@@ -32,7 +32,7 @@ namespace KursRepositories.ViewModels
         }
 
          [DisplayName("Наименование")]
-        public string Name
+        public override string Name
             {
                 get => Entity.Name;
                 set
@@ -97,6 +97,13 @@ namespace KursRepositories.ViewModels
         public  string  Server
         {
             get => Entity.Server;
+            set
+            {
+                if(Entity.Server == value)
+                    return;
+                Entity.Server = value;
+                RaisePropertyChanged();
+            }
             
         }
 
