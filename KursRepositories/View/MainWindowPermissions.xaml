@@ -22,15 +22,9 @@
                               View="Tabs">
                  <dxlc:LayoutGroup Name="UsersGroup"
                                   Orientation="Horizontal" 
-                                  View="Group">
-                            <dxlc:LayoutGroup.HeaderTemplate>
-                                <DataTemplate>
-                                        <StackPanel>
-                                            <Image Source="../Images/USers.png"></Image>
-                                            <Label HorizontalAlignment="Center" VerticalAlignment="Center">Пользователи</Label>
-                                        </StackPanel>
-                                </DataTemplate>
-                            </dxlc:LayoutGroup.HeaderTemplate>
+                                  View="Group"
+                                  Header="Пользователи">
+                            
                 <dxlc:LayoutGroup x:Name ="UsersGridAndButtonGroup"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
@@ -131,30 +125,16 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
                                                IsSynchronizedWithCurrentItem="True"
-                                               BestFitModeOnSourceChange="AllRows"
-                                               />
+                                               BestFitModeOnSourceChange="AllRows"/>
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </dxlc:LayoutItem>
                 </dxlc:LayoutGroup>
             </dxlc:LayoutGroup>
-            
-
-        <dxlc:LayoutGroup Name="RoleGroup"
-                              >
-            
-
-        <dxlc:LayoutGroup Name="RoleGroup"
+                <dxlc:LayoutGroup Name="RoleGroup"
                           VerticalAlignment="Stretch" 
-                          HorizontalAlignment="Stretch"  >
-                    <dxlc:LayoutGroup.HeaderTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <Image Source="../Images/CreateRole.png"></Image>
-                                <Label HorizontalAlignment="Center" VerticalAlignment="Center">Роли</Label>
-                            </StackPanel>
-                        </DataTemplate>
-                    </dxlc:LayoutGroup.HeaderTemplate>
+                          HorizontalAlignment="Stretch" 
+                          Header ="Роли">
                     <dxlc:LayoutGroup Name="RoleListGroup"
                                       View="GroupBox"
                                       Header="Список ролей">
