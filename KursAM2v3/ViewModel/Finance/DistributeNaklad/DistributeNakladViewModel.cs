@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -28,7 +29,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {
     [MetadataType(typeof(DataAnnotationDistribNaklad))]
     [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
-    public class DistributeNakladViewModel : KursBaseControlViewModel, IViewModelToEntity<Data.DistributeNaklad>,
+    public sealed class DistributeNakladViewModel : KursBaseControlViewModel, IViewModelToEntity<Data.DistributeNaklad>,
         IKursLayoutManager
     {
         #region Constructors
@@ -267,7 +268,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 t.DistributeSumma = DistributeAllNaklads.Where(_ => _.RowId == t.Id)
                     .Sum(_ => _.DistributeSumma);
-                t.DistributePrice = t.DistributeSumma / t.Quantity;
             }
 
             foreach (var i in NakladInvoices)
@@ -458,7 +458,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
                     });
                 }
-                foreach (var r in Entity.DistributeNakladRow)
+
+                var list = new List<DistributeNakladRow>(Entity.DistributeNakladRow);
+                foreach (var r in list)
                 {
                     InvoiceProvider inv = null;
                     var invrow = InvoiceProviderRepository.GetInvoiceRow(r.TovarInvoiceRowId);
@@ -511,14 +513,33 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     if (r.IsUsluga) continue;
                     if (Tovars.Any(_ => _.DocId == Id && _.TovarInvoiceRowId == r.Entity.Id)) continue;
                     var newRow = DistributeNakladRepository.CreateRowNew(Entity);
-                    newRow.TovarInvoiceRowId = r.Entity.Id;
-                    var newTovar = new DistributeNakladRowViewModel(newRow)
+                    if (r.Entity.TD_26_CurrencyConvert != null && r.Entity.TD_26_CurrencyConvert.Count > 0)
                     {
-                        InvoiceRow = r,
-                        State = RowStatus.NewRow
-                    };
-                    ((ISupportParentViewModel) newTovar).ParentViewModel = this;
+                        foreach (var c in r.Entity.TD_26_CurrencyConvert)
+                        {
+                            newRow.TovarInvoiceRowId = c.Id;
+                            var newTovar = new DistributeNakladRowViewModel(newRow)
+                            {
+                                Convert =  new InvoiceProviderRowCurrencyConvertViewModel(c),
+                                InvoiceRow = r,
+                                State = RowStatus.NewRow
+                            };
+                            ((ISupportParentViewModel) newTovar).ParentViewModel = this;
+                            Tovars.Add(newTovar);
+                        }
+                    }
+                    else
+                    {
+                        newRow.TovarInvoiceRowId = r.Entity.Id;
+                        var newTovar = new DistributeNakladRowViewModel(newRow)
+                        {
+                            InvoiceRow = r,
+                            State = RowStatus.NewRow
+                        };((ISupportParentViewModel) newTovar).ParentViewModel = this;
                     Tovars.Add(newTovar);
+                    }
+
+                    
                     SetChangeStatus();
                 }
 
@@ -551,6 +572,12 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     foreach (var id1 in rids)
                     {
                         var old = DistributeAllNaklads.First(_ => _.Id == id1);
+                        foreach (var inf in unitOfWork.Context.DistributeNakladInfo.Where(_ => _.RowId == id1).ToList())
+                        {
+                            var o = unitOfWork.Context.DistributeNakladInfo.FirstOrDefault(_ => _.Id == inf.Id);
+                            if (o != null)
+                                unitOfWork.Context.DistributeNakladInfo.Remove(o);
+                        }
                         DistributeAllNaklads.Remove(old);
                     }
                     Tovars.Remove(item);

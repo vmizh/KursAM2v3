@@ -177,14 +177,22 @@ namespace KursAM2.Repositories
         {
             foreach (var row in doc.DistributeNakladRow)
             {
+                
                 var t26 = Context.TD_26.FirstOrDefault(_ => _.Id == row.TovarInvoiceRowId);
-                if (t26 == null) continue;
-                var r = Context.DistributeNakladRow
-                    .Where(_ => _.TovarInvoiceRowId == row.TovarInvoiceRowId);
-                if (!r.Any()) continue;
-                var s = r.Sum(_ => _.DistributeSumma);
-                t26.SFT_SUMMA_NAKLAD = s;
-                t26.SFT_ED_CENA_PRIHOD = t26.SFT_ED_CENA + s / t26.SFT_KOL;
+                if (t26 == null)
+                {
+                    var conv = Context.TD_26_CurrencyConvert.FirstOrDefault(_ => _.Id == row.TovarInvoiceRowId);
+                    if (conv == null) continue;
+                    var s = row.DistributeSumma;
+                    conv.PriceWithNaklad = conv.Price + s/conv.Quantity;
+                    conv.SummaWithNaklad = conv.Summa + s;
+                }
+                else
+                {
+                    var s = row.DistributeSumma;
+                    t26.SFT_SUMMA_NAKLAD = s;
+                    t26.SFT_ED_CENA_PRIHOD = t26.SFT_ED_CENA + s / t26.SFT_KOL;
+                }
             }
         }
 

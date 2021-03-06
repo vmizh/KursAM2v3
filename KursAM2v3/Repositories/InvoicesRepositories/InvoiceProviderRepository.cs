@@ -187,6 +187,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                                                               && _.SF_ACCEPTED == 1)
                     .ToList();
             if (dateStart != null && dateEnd != null)
+            {
                 data = Context.SD_26
                     .Include(_ => _.TD_26)
                     .Include("TD_26.TD_24")
@@ -209,7 +210,43 @@ namespace KursAM2.Repositories.InvoicesRepositories
                                                               && _.SF_CRS_DC == crs.DocCode && _.SF_ACCEPTED == 1)
                     .ToList();
 
-            foreach (var d in data) ret.Add(new InvoiceProviderShort(d,new UnitOfWork<ALFAMEDIAEntities>()));
+                var invdc = Context.TD_26_CurrencyConvert
+                    .Include(_ => _.TD_26)
+                    .Include(_ => _.TD_26.SD_26)
+                    .Where(_ => _.TD_26.SD_26.SF_POSTAV_DATE >= dateStart &&
+                                _.TD_26.SD_26.SF_POSTAV_DATE <= dateEnd).ToList();
+                foreach (var dc in invdc)
+                {
+
+                    var doc = Context.SD_26
+                        .Include(_ => _.TD_26)
+                        .Include("TD_26.TD_24")
+                        .Include("TD_26.TD_26_CurrencyConvert")
+                        .Include(_ => _.SD_43)
+                        .Include(_ => _.SD_179)
+                        .Include(_ => _.SD_77)
+                        .Include(_ => _.SD_189)
+                        .Include(_ => _.SD_40)
+                        .Include("TD_26.SD_83")
+                        .Include("TD_26.SD_175")
+                        .Include("TD_26.SD_43")
+                        .Include("TD_26.SD_165")
+                        .Include("TD_26.SD_175")
+                        .Include("TD_26.SD_1751")
+                        .Include("TD_26.SD_26")
+                        .Include("TD_26.SD_261")
+                        .Include("TD_26.SD_301")
+                        .Include("TD_26.SD_303")
+                        .FirstOrDefault(_ => _.DOC_CODE == dc.DOC_CODE);
+                    if (doc != null)
+                    {
+                        ret.Add(new InvoiceProviderShort(doc, new UnitOfWork<ALFAMEDIAEntities>()));
+                    }
+
+                }
+
+                foreach (var d in data) ret.Add(new InvoiceProviderShort(d, new UnitOfWork<ALFAMEDIAEntities>()));
+            }
 
             return ret;
         }

@@ -4,7 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Data;
 using KursRepositories.View;

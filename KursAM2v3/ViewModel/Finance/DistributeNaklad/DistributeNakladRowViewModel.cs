@@ -36,6 +36,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Properties
 
+        public InvoiceProviderRowCurrencyConvertViewModel Convert { set; get; }
+        public Nomenkl ConvertNomenkl => Convert != null ? MainReferences.GetNomenkl(Convert.NomenklId) : null;
+
         [DisplayName("Entity")]
         [Display(AutoGenerateField = false)]
         public DistributeNakladRow Entity
@@ -123,23 +126,23 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         [DisplayName("Ном.№")]
         [Display(AutoGenerateField = true)]
-        public string NomNumber => InvoiceRow?.Nomenkl?.NomenklNumber;
+        public string NomNumber => Convert == null ? InvoiceRow?.Nomenkl?.NomenklNumber : ConvertNomenkl.NomenklNumber;
 
         [DisplayName("Номенклатура")]
         [Display(AutoGenerateField = true)]
-        public Nomenkl Nomenkl => InvoiceRow?.Nomenkl;
+        public Nomenkl Nomenkl => Convert == null ? InvoiceRow?.Nomenkl : ConvertNomenkl;
 
         [DisplayName("Кол-во")]
         [Display(AutoGenerateField = true)]
-        public decimal Quantity => InvoiceRow?.SFT_KOL ?? 0;
+        public decimal Quantity => Convert?.Quantity ?? (InvoiceRow?.SFT_KOL ?? 0);
 
         [DisplayName("Цена")]
         [Display(AutoGenerateField = true)]
-        public decimal Price => Quantity != 0 ? (InvoiceRow?.SFT_SUMMA_K_OPLATE ?? 0) / Quantity : 0;
+        public decimal Price => Convert?.Price ?? (Quantity != 0 ? (InvoiceRow?.SFT_SUMMA_K_OPLATE ?? 0) / Quantity : 0);
 
         [DisplayName("Сумма")]
         [Display(AutoGenerateField = true)]
-        public decimal Summa => InvoiceRow?.SFT_SUMMA_K_OPLATE ?? 0;
+        public decimal Summa => Convert?.Summa ?? InvoiceRow?.SFT_SUMMA_K_OPLATE ?? 0;
 
         [DisplayName("Сумма накладных")]
         [Display(AutoGenerateField = true)]
