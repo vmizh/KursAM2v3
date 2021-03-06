@@ -141,6 +141,10 @@
             
 
         <dxlc:LayoutGroup Name="RoleGroup"
+                              >
+            
+
+        <dxlc:LayoutGroup Name="RoleGroup"
                           VerticalAlignment="Stretch" 
                           HorizontalAlignment="Stretch"  >
                     <dxlc:LayoutGroup.HeaderTemplate>
