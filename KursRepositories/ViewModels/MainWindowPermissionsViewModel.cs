@@ -205,9 +205,14 @@ namespace KursRepositories.ViewModels
                         id = ctx.NewRole.Id,
                         Name = ctx.NewRole.Name,
                         Note = ctx.NewRole.Note,
-                        KursMenuItem = ctx.NewRole.Entity.KursMenuItem
                     };
                     context.UserRoles.Add(newRole);
+                    
+                    foreach (var item in ctx.SelectedMenuIdItems)
+                    {
+                        newRole.KursMenuItem.Add(item);
+                    }
+                    
                     RoleList.Add(new UserRolesViewModel(newRole));
                     context.SaveChanges();
                 }
@@ -319,16 +324,14 @@ namespace KursRepositories.ViewModels
 
         private void deleteRole(object p)
         {
-
             using (var ctx = new KursSystemEntities())
             {
-                var deleteUser = ctx.UserRoles.FirstOrDefault(_ => _.id == CurrentRole.Id);
-                if (deleteUser == null) return;
-                ctx.UserRoles.Remove(deleteUser);
+                var deleteRole = ctx.UserRoles.First(_ => _.id == CurrentRole.Id);
+                if (deleteRole == null) return;
+                ctx.UserRoles.Remove(deleteRole);
                 ctx.SaveChanges();
                 MessageBox.Show("Роль успешно удалена.");
             }
-
         }
 
         #endregion
