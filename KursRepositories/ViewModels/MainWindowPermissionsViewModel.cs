@@ -312,6 +312,25 @@ namespace KursRepositories.ViewModels
             LoadUsersData();
         }
 
+        public ICommand DeleteRoleCommand
+        {
+            get { return new Command(deleteRole, _ => RoleList != null); }
+        }
+
+        private void deleteRole(object p)
+        {
+
+            using (var ctx = new KursSystemEntities())
+            {
+                var deleteUser = ctx.UserRoles.FirstOrDefault(_ => _.id == CurrentRole.Id);
+                if (deleteUser == null) return;
+                ctx.UserRoles.Remove(deleteUser);
+                ctx.SaveChanges();
+                MessageBox.Show("Роль успешно удалена.");
+            }
+
+        }
+
         #endregion
     }
 }
