@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -6,16 +7,20 @@ using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.Map.Kml;
+using DevExpress.XtraExport.Helpers;
 
 namespace KursRepositories.ViewModels
 {
     public class RoleCreationWindowViewModel : RSViewModelBase
     {
         #region Constructors
+        
 
         public RoleCreationWindowViewModel()
         {
             LoadDataRoleCreationWindow();
+            
         }
 
         #endregion
@@ -36,11 +41,12 @@ namespace KursRepositories.ViewModels
             get => myNameRoleTextEdit;
             set
             {
-                if (myNameRoleTextEdit == value)
+                if(myNameRoleTextEdit == value)
                     return;
                 myNameRoleTextEdit = value;
                 RaisePropertyChanged();
             }
+
         }
 
         public string NoteRoleTextEdit
@@ -48,7 +54,7 @@ namespace KursRepositories.ViewModels
             get => myNoteRoleTextEdit;
             set
             {
-                if (myNoteRoleTextEdit == value)
+                if(myNoteRoleTextEdit == value)
                     return;
                 myNoteRoleTextEdit = value;
                 RaisePropertyChanged();
@@ -76,33 +82,39 @@ namespace KursRepositories.ViewModels
             get => myCurrentPermission;
             set
             {
-                if (myCurrentPermission == value)
+                if(myCurrentPermission == value)
                     return;
                 myCurrentPermission = value;
                 RaisePropertyChanged();
             }
         }
 
-        public ObservableCollection<UserRolesViewModel> RoleList { get; set; } =
-            new ObservableCollection<UserRolesViewModel>();
+        public ObservableCollection<UserRolesViewModel> RoleList { get; set; } = new ObservableCollection<UserRolesViewModel>();
 
-        public ObservableCollection<KursMenuItemViewModel> RoleItemsList { get; set; } =
-            new ObservableCollection<KursMenuItemViewModel>();
+        public ObservableCollection<KursMenuItemViewModel> RoleItemsList { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
 
-        public ObservableCollection<KursMenuItemViewModel> PermissionsList { get; set; } =
-            new ObservableCollection<KursMenuItemViewModel>();
+        public ObservableCollection<KursMenuItemViewModel> PermissionsList { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
 
         #endregion
-
+        
         #region Method
 
         private void LoadDataRoleCreationWindow()
         {
             using (var ctx = new KursSystemEntities())
             {
-                foreach (var role in ctx.UserRoles.ToList()) RoleList.Add(new UserRolesViewModel(role));
+                foreach (var role in ctx.UserRoles.ToList())
+                {
+                    RoleList.Add(new UserRolesViewModel(role));
+                }
 
-                foreach (var item in ctx.KursMenuItem.ToList()) PermissionsList.Add(new KursMenuItemViewModel(item));
+                foreach (var item in ctx.KursMenuItem.ToList())
+                {
+                    PermissionsList.Add(new KursMenuItemViewModel(item)
+                    {
+                        IsSelectedItem = false
+                    });
+                }
             }
         }
 
@@ -117,7 +129,10 @@ namespace KursRepositories.ViewModels
                 if (data == null)
                     return;
 
-                foreach (var item in data.KursMenuItem) RoleItemsList.Add(new KursMenuItemViewModel(item));
+                foreach (var item in data.KursMenuItem)
+                {
+                    RoleItemsList.Add(new KursMenuItemViewModel(item));
+                }
             }
         }
 
@@ -130,7 +145,7 @@ namespace KursRepositories.ViewModels
             get { return new Command(createRoleCommand, _ => NameRoleTextEdit != null); }
         }
 
-
+       
         private void createRoleCommand(object obj)
         {
             try
@@ -146,6 +161,7 @@ namespace KursRepositories.ViewModels
                     Name = NameRoleTextEdit.Trim(),
                     Note = NoteRoleTextEdit.Trim(),
                     KursMenuItem = menuIdList
+
                 }));
 
                 using (var ctx = new KursSystemEntities())
@@ -156,14 +172,19 @@ namespace KursRepositories.ViewModels
                     {
                         var propertyRoles = oldRolesList.FirstOrDefault(_ => _.id == role.Id);
                         if (propertyRoles != null)
-                            continue;
-                        ctx.UserRoles.Add(new UserRoles
                         {
-                            id = role.Id,
-                            Name = role.Name,
-                            Note = role.Note,
-                            KursMenuItem = role.Itemset
-                        });
+                            continue;
+                        }
+                        else
+                        {
+                            ctx.UserRoles.Add(new UserRoles()
+                            {
+                                id = role.Id,
+                                Name = role.Name,
+                                Note = role.Note,
+                                
+                            });
+                        }
                     }
 
                     ctx.SaveChanges();
@@ -175,8 +196,11 @@ namespace KursRepositories.ViewModels
                 Console.WriteLine(ex);
                 throw;
             }
-        }
 
+
+        }
+        
         #endregion
     }
+
 }

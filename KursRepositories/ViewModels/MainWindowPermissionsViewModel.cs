@@ -86,7 +86,7 @@ namespace KursRepositories.ViewModels
                 {
                     PermissionsList.Add(new KursMenuItemViewModel(permission)
                     {
-                        IsSelectedItem = true
+                        IsSelectedItem = false
                     });
                 }
 
@@ -98,6 +98,7 @@ namespace KursRepositories.ViewModels
             }
         }
 
+        
         private void RefreshDataPermissionList()
         {
             if (UserListCurrentItem == null)
@@ -142,12 +143,13 @@ namespace KursRepositories.ViewModels
         {
             var ctx = new UserCreationWindowViewModel();
             var form = new UserCreationWindow {DataContext = ctx};
+            ctx.Form = form;
             form.ShowDialog();
             if (ctx.NewUser != null)
             {
                 using (var context = new KursSystemEntities())
                 {
-                    var newUser = new Users //Добавляю пользователя в список UserList в главной моделе
+                    var newUser = new Users 
                     {
                         Id = Guid.NewGuid(),
                         Name = ctx.LoginName.Trim(),
@@ -184,18 +186,17 @@ namespace KursRepositories.ViewModels
 
                     u.IsDeleted = rightUser != null;
                 }
-
                 ctx.SaveChanges();
                 MessageBox.Show("Пользователь присвоен статус \"Удален\"");
             }
         }
 
-        public ICommand SaveChangesInDatagridCommand
+        public ICommand SaveChangesInUsersGridControlCommand
         {
-            get { return new Command(saveChangesInDatagrid, _ => true); }
+            get { return new Command(saveChangesInUsersGridControl, _ => true); }
         }
 
-        private void saveChangesInDatagrid(object obj)
+        private void saveChangesInUsersGridControl(object obj)
         {
             using (var ctx = new KursSystemEntities())
             {
@@ -216,10 +217,19 @@ namespace KursRepositories.ViewModels
                         rightUser.IsDeleted = usr.IsDeleted;
                     }
                 }
-
                 ctx.SaveChanges();
                 MessageBox.Show("Данные сохранены.");
             }
+        }
+
+        public ICommand UpdateUsersViewCommand
+        {
+            get { return new Command(updateUsersView, _ => true); }
+        }
+
+        private void updateUsersView(object v)
+        {
+            LoadView();
         }
 
         #endregion

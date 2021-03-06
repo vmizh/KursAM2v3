@@ -36,7 +36,7 @@ namespace KursRepositories.ViewModels
         private byte[] myAvatar;
         private string myThemeName = "MetropolisLight";
         private new string myNote;
-        private ObservableCollection<UsersViewModel> myNewUser = new ObservableCollection<UsersViewModel>();
+        private Users myNewUser;
         public List<string> RegisteredUserNames = new List<string>();
 
         #endregion
@@ -45,17 +45,17 @@ namespace KursRepositories.ViewModels
 
         public string Error { get; private set; }
 
-        //public ObservableCollection<UsersViewModel> NewUser
-        //{
-        //    get => myNewUser;
-        //    set
-        //    {
-        //        if (myNewUser == value)
-        //            return;
-        //        myNewUser = value;
-        //        RaisePropertyChanged();
-        //    }
-        //}
+        public Users NewUser
+        {
+            get => myNewUser;
+            set
+            {
+                if (myNewUser == value)
+                    return;
+                myNewUser = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public string FirstName
         {
@@ -199,11 +199,10 @@ namespace KursRepositories.ViewModels
                 string.IsNullOrWhiteSpace(MiddleName) |
                 string.IsNullOrWhiteSpace(LoginName))
             {
-                MessageBox.Show(
-                    "Поля Ф.И.О. и Login не могут состоять из пробелов и должны быть обязательно заполнены.");
+                MessageBox.Show("Поля Ф.И.О. и Login не могут состоять из пробелов и должны быть обязательно заполнены.");
                 return;
             }
-            NewUser = new Users //Добавляю пользователя в список UserList в главной моделе
+            NewUser = new Users 
             {
                 Id = Guid.NewGuid(),
                 Name = LoginName.Trim(),
@@ -215,15 +214,26 @@ namespace KursRepositories.ViewModels
                 IsDeleted = Deleted,
                 Avatar = Avatar
             };
+            MessageBox.Show("Пользователь создан.");
+            CloseWindow(Form);
         }
 
-        public Users NewUser { get; set; }
+        public ICommand CancelCreateNewUserCommand
+        {
+            get { return new Command(cancelCreateNewUser, _ => true); }
+        }
+
+        private void cancelCreateNewUser(object obj)
+        {
+            NewUser = null;
+            CloseWindow(Form);
+        }
 
         #endregion
 
-        #region Methods
+            #region Methods
 
-        private void LoadRegisteredUsers()
+            private void LoadRegisteredUsers()
         {
             using (var ctx = new KursSystemEntities())
             {
