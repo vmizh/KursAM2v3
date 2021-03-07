@@ -206,13 +206,12 @@ namespace KursRepositories.ViewModels
                         Name = ctx.NewRole.Name,
                         Note = ctx.NewRole.Note,
                     };
-                    context.UserRoles.Add(newRole);
                     
                     foreach (var item in ctx.SelectedMenuIdItems)
                     {
                         newRole.KursMenuItem.Add(item);
                     }
-                    
+                    context.UserRoles.Add(newRole);
                     RoleList.Add(new UserRolesViewModel(newRole));
                     context.SaveChanges();
                 }

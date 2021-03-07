@@ -118,9 +118,10 @@ namespace KursRepositories.ViewModels
 
         private void createRoleCommand(object obj)
         {
-            var SelectedMenuIdItems = (from permission in PermissionsList
-                                        where permission.IsSelectedItem
-                                        select permission.Entity).ToList();
+            foreach (var item in from permission in PermissionsList
+                where permission.IsSelectedItem
+                select permission.Entity)
+                SelectedMenuIdItems.Add(item);
 
             NewRole = new UserRolesViewModel(new UserRoles()
             {
