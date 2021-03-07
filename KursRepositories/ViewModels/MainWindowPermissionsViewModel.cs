@@ -14,14 +14,17 @@ namespace KursRepositories.ViewModels
     {
         public MainWindowPermissionsViewModel()
         {
-            LoadView();
+            LoadUsersData();
+            LoadRoleData();
         }
 
         #region Fields
 
-                private UsersViewModel myUserListCurrentItem;
-                private DataSourcesViewModel myEditValueComboboxCompany;
-                
+        private UsersViewModel myUserListCurrentItem;
+        private DataSourcesViewModel myCurrentCompany;
+        private UserRolesViewModel myCurrentRole;
+        private KursMenuItemViewModel myCurrentPermission;
+        
 
         #endregion
 
@@ -29,7 +32,6 @@ namespace KursRepositories.ViewModels
 
         public ObservableCollection<UsersViewModel> UserList { set; get; } =
             new ObservableCollection<UsersViewModel>();
-
         
         public ObservableCollection<KursMenuItemViewModel> PermissionsList { set; get; } =
             new ObservableCollection<KursMenuItemViewModel>();
@@ -37,15 +39,15 @@ namespace KursRepositories.ViewModels
         public ObservableCollection<DataSourcesViewModel> CompaniesList { set; get; } =
             new ObservableCollection<DataSourcesViewModel>();
 
-        public DataSourcesViewModel EditValueComboboxCompany
+        public DataSourcesViewModel CurrentCompany
         {
-            get => myEditValueComboboxCompany;
+            get => myCurrentCompany;
             set
             {
-                if(myEditValueComboboxCompany == value)
+                if(myCurrentCompany == value)
                     return;
 
-                myEditValueComboboxCompany = value;
+                myCurrentCompany = value;
                 RefreshDataPermissionList();
                 RaisePropertyChanged();
             }
@@ -65,18 +67,49 @@ namespace KursRepositories.ViewModels
 
             }
         }
+        public KursMenuItemViewModel CurrentPermission
+        {
+            get => myCurrentPermission;
+            set
+            {
+                if (myCurrentPermission == value)
+                    return;
+                myCurrentPermission = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public UserRolesViewModel CurrentRole
+
+        {
+            get => myCurrentRole;
+
+            set
+            {
+                if (myCurrentRole == value)
+                    return;
+                myCurrentRole = value;
+                RefreshRoleItemsList();
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<UserRolesViewModel> RoleList { get; set; } = new ObservableCollection<UserRolesViewModel>();
+
+        public ObservableCollection<KursMenuItemViewModel> RoleItemsList { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
         
         #endregion
 
         #region Methods
 
-        private void LoadView()
+        private void LoadUsersData()
         {
             using (var ctx = new KursSystemEntities())
             {
                 UserList.Clear();
                 PermissionsList.Clear();
                 CompaniesList.Clear();
+               
                 foreach (var user in ctx.Users.ToList())
                 {
                     UserList.Add(new UsersViewModel(user));
@@ -94,22 +127,34 @@ namespace KursRepositories.ViewModels
                 {
                     CompaniesList.Add(new DataSourcesViewModel(company));
                 }
+                
+            }
+        }
+        private void LoadRoleData()
+        {
+            using (var ctx = new KursSystemEntities())
+            {
+                RoleList.Clear();
+                foreach (var role in ctx.UserRoles.ToList())
+                {
+                    RoleList.Add(new UserRolesViewModel(role));
+                }
 
             }
         }
 
-        
+
         private void RefreshDataPermissionList()
         {
             if (UserListCurrentItem == null)
                 return;
-            if(EditValueComboboxCompany == null)
+            if (CurrentCompany == null)
                 return;
             
             using (var ctx = new KursSystemEntities())
             {
                 var permissions = ctx.UserMenuRight.Include(_ => _.DataSources).Where(_ =>(_.LoginName == UserListCurrentItem.Name))
-                        .Where(_=>(_.DBId == EditValueComboboxCompany.Id));
+                        .Where(_=>(_.DBId == CurrentCompany.Id));
 
                 foreach (var p in PermissionsList)
                 {
@@ -118,28 +163,66 @@ namespace KursRepositories.ViewModels
                 }
             }
         }
+
+        private void RefreshRoleItemsList()
+        {
+            RoleItemsList.Clear();
+
+            using (var ctx = new KursSystemEntities())
+            {
+                var data = ctx.UserRoles.Include(_ => _.KursMenuItem).FirstOrDefault(_ => _.id == CurrentRole.Id);
+
+                if (data == null)
+                    return;
+
+                foreach (var item in data.KursMenuItem)
+                {
+                    RoleItemsList.Add(new KursMenuItemViewModel(item));
+                }
+            }
+        }
         #endregion
 
         #region Commands
 
-        public ICommand OpenRoleCreationWindowCommand
+        public ICommand OpenWindowCreationRoleCommand
         {
-            get { return new Command(openRoleCreationWindow, _ => true); }
+            get { return new Command(openWindowCreationRole, _ => true); }
         }
 
-        private void openRoleCreationWindow(object obj)
+        private void openWindowCreationRole(object obj)
         {
             var ctx = new RoleCreationWindowViewModel();
-            var form = new RoleCreationWindow{ DataContext = ctx };
-            form.Show();
+            var form = new RoleCreationWindow {DataContext = ctx};
+            ctx.Form = form;
+            form.ShowDialog();
+            if (ctx.NewRole != null)
+                using (var context = new KursSystemEntities())
+                {
+                    var newRole = new UserRoles()
+                    {
+                        id = ctx.NewRole.Id,
+                        Name = ctx.NewRole.Name,
+                        Note = ctx.NewRole.Note,
+                    };
+                    
+                    foreach (var item in ctx.SelectedMenuIdItems)
+                    {
+                        newRole.KursMenuItem.Add(item);
+                    }
+                    context.UserRoles.Add(newRole);
+                    RoleList.Add(new UserRolesViewModel(newRole));
+                    context.SaveChanges();
+                }
         }
+
 
         public ICommand OpenWindowCreationUserCommand
         {
-            get { return new Command(operWindowCreationUser, _ => true); }
+            get { return new Command(openWindowCreationUser, _ => true); }
         }
 
-        private void operWindowCreationUser(object obj)
+        private void openWindowCreationUser(object obj)
         {
             var ctx = new UserCreationWindowViewModel();
             var form = new UserCreationWindow {DataContext = ctx};
@@ -151,7 +234,7 @@ namespace KursRepositories.ViewModels
                 {
                     var newUser = new Users 
                     {
-                        Id = Guid.NewGuid(),
+                        Id = ctx.NewUser.Id,
                         Name = ctx.LoginName.Trim(),
                         FullName = ctx.FullName.Trim(),
                         Note = ctx.Note,
@@ -229,7 +312,24 @@ namespace KursRepositories.ViewModels
 
         private void updateUsersView(object v)
         {
-            LoadView();
+            LoadUsersData();
+        }
+
+        public ICommand DeleteRoleCommand
+        {
+            get { return new Command(deleteRole, _ => RoleList != null); }
+        }
+
+        private void deleteRole(object p)
+        {
+            using (var ctx = new KursSystemEntities())
+            {
+                var deleteRole = ctx.UserRoles.First(_ => _.id == CurrentRole.Id);
+                if (deleteRole == null) return;
+                ctx.UserRoles.Remove(deleteRole);
+                ctx.SaveChanges();
+                MessageBox.Show("Роль успешно удалена.");
+            }
         }
 
         #endregion
