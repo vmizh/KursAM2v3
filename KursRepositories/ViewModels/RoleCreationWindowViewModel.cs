@@ -113,24 +113,31 @@ namespace KursRepositories.ViewModels
 
         public ICommand CreateRoleCommand
         {
-            get { return new Command(createRoleCommand, _ => NameRole != null & CurrentPermission != null); }
+            get { return new Command(createRoleCommand, _ => NameRole != null & NoteRole != null); }
         }
 
         private void createRoleCommand(object obj)
         {
+            SelectedMenuIdItems.Clear();
             foreach (var item in from permission in PermissionsList
                 where permission.IsSelectedItem
                 select permission.Entity)
                 SelectedMenuIdItems.Add(item);
-
-            NewRole = new UserRolesViewModel(new UserRoles()
+            if (SelectedMenuIdItems != null)
             {
+                NewRole = new UserRolesViewModel(new UserRoles()
+                {
                     id = Guid.NewGuid(),
                     Name = NameRole.Trim(),
                     Note = NoteRole.Trim(),
-            });
-            MessageBox.Show("Роль создана.");
-            CloseWindow(Form);
+                });
+                MessageBox.Show("Роль создана.");
+                CloseWindow(Form);
+            }
+            else
+            {
+                MessageBox.Show("Вы не выбрали разрешения для роли.");
+            }
         }
 
         public ICommand CancelCreateRoleCommand

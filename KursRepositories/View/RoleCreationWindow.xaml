@@ -15,11 +15,11 @@
     Title="Создание новой роли" Height="500" Width="900" Left="20" Top="20">
 
         <dxlc:LayoutControl HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch">
+                            VerticalAlignment="Stretch">
             <dxlc:LayoutGroup dxlc:LayoutControl.AllowHorizontalSizing="True"
-                          Orientation="Horizontal"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch">
+                              Orientation="Horizontal"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch">
                         <dxlc:LayoutItem dxlc:LayoutControl.AllowHorizontalSizing="True">
                             <StackPanel Orientation="Vertical"
                                         Margin="10 0 10 10">
@@ -29,7 +29,7 @@
                                         NullText="Введите наименование новой роли"
                                         MinWidth="200"
                                         MaxWidth="300"
-                                        EditValue="{Binding NameRole}"/>
+                                        EditValue="{Binding NameRole, UpdateSourceTrigger=PropertyChanged}"/>
                                 </GroupBox>
                                 <GroupBox Header="Краткое описание"
                                           Margin="0 0 0 10">
@@ -37,7 +37,7 @@
                                                   NullText="Введите описание новой роли"
                                                   MinWidth="200"
                                                   MaxWidth="300"
-                                                  EditValue="{Binding NoteRole}"
+                                                  EditValue="{Binding NoteRole, UpdateSourceTrigger=PropertyChanged}"
                                                   TextWrapping="Wrap"/>
                                 </GroupBox>
                                     <Button x:Name="CreatRoleButton"
@@ -47,10 +47,11 @@
                                     <Button x:Name="CancelCreatRoleButton"
                                             Content="Отмена"
                                             Command="{Binding CancelCreateRoleCommand}"/>
-                </StackPanel>
+                                    </StackPanel>
                         </dxlc:LayoutItem>
                          <dxlc:LayoutItem HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch">
+                                          VerticalAlignment="Stretch"
+                                          LabelVerticalAlignment="Top">
                             <dxg:GridControl x:Name="GridControlPermissionItems"
                                              HorizontalAlignment="Stretch"
                                              VerticalAlignment="Stretch"

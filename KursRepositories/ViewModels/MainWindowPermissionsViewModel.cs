@@ -211,7 +211,6 @@ namespace KursRepositories.ViewModels
                     foreach (var item in ctx.SelectedMenuIdItems)
                     {
                         newRole.KursMenuItem.Add(item);
-                        context.SaveChanges();
                     }
                     context.UserRoles.Add(newRole);
                     RoleList.Add(new UserRolesViewModel(newRole));
@@ -332,6 +331,7 @@ namespace KursRepositories.ViewModels
                 ctx.UserRoles.Remove(deleteRole);
                 ctx.SaveChanges();
                 MessageBox.Show("Роль успешно удалена.");
+                LoadRoleData();
             }
         }
 
