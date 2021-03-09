@@ -123,18 +123,15 @@ namespace KursRepositories.ViewModels
                 where permission.IsSelectedItem
                 select permission.Entity)
                 SelectedMenuIdItems.Add(item);
-
-            {
-                NewRole = new UserRolesViewModel(new UserRoles()
-                {
-                    id = Guid.NewGuid(),
-                    Name = NameRole.Trim(),
-                    Note = NoteRole.Trim(),
-                });
-                MessageBox.Show("Роль успешно создана.");
-                CloseWindow(Form);
-            }
             
+            NewRole = new UserRolesViewModel(new UserRoles()
+            {
+                id = Guid.NewGuid(),
+                Name = NameRole.Trim(),
+                Note = NoteRole.Trim(),
+            });
+            MessageBox.Show("Роль успешно создана.");
+            CloseWindow(Form);
         }
 
         public ICommand CancelCreateRoleCommand

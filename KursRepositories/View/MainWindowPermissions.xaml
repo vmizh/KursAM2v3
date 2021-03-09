@@ -185,13 +185,21 @@
                                              VerticalAlignment="Stretch" 
                                              HorizontalAlignment="Stretch" LabelVerticalAlignment="Top" LabelPosition="Top"
                                              Label="Список разрешений для роли">
-                                <dxe:ListBoxEdit x:Name="ListBoxEditRoleItems"
+                                <dxg:GridControl x:Name="GridControlPermissionItems"
+                                                 HorizontalAlignment="Stretch"
+                                                 VerticalAlignment="Stretch"
+                                                 AutoGenerateColumns="AddNew"
+                                                 EnableSmartColumnsGeneration="True"
                                                  ItemsSource="{Binding RoleItemsList, UpdateSourceTrigger=PropertyChanged}"
-                                                 DisplayMember="Name" VerticalAlignment="Top">
-                                    <dxe:ListBoxEdit.StyleSettings>
-                                        <dxe:ListBoxEditStyleSettings />
-                                    </dxe:ListBoxEdit.StyleSettings>
-                                </dxe:ListBoxEdit>
+                                                 CurrentItem="{Binding CurrentPermission, UpdateSourceTrigger=PropertyChanged}"
+                                                 MaxHeight="2000"
+                                                 MaxWidth="2000">
+                                    <dxg:GridControl.View>
+                                        <dxg:TableView ShowTotalSummary="True"
+                                                       IsSynchronizedWithCurrentItem="True"
+                                                       BestFitModeOnSourceChange="AllRows"/>
+                                    </dxg:GridControl.View>
+                                </dxg:GridControl>
                             </dxlc:LayoutItem>
                         </dxlc:LayoutGroup>
                     </dxlc:LayoutGroup>
