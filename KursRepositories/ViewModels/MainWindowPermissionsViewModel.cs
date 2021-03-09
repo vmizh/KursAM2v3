@@ -167,8 +167,9 @@ namespace KursRepositories.ViewModels
 
         private void RefreshRoleItemsList()
         {
-            RoleItemsList.Clear();
+            if(CurrentRole == null) return;
 
+                RoleItemsList.Clear();
             using (var ctx = new KursSystemEntities())
             {
                 var data = ctx.UserRoles.Include(_ => _.KursMenuItem).FirstOrDefault(_ => _.id == CurrentRole.Id);
@@ -210,6 +211,7 @@ namespace KursRepositories.ViewModels
                     foreach (var item in ctx.SelectedMenuIdItems)
                     {
                         newRole.KursMenuItem.Add(item);
+                        context.SaveChanges();
                     }
                     context.UserRoles.Add(newRole);
                     RoleList.Add(new UserRolesViewModel(newRole));
