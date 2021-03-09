@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -207,6 +208,8 @@ namespace KursRepositories.ViewModels
                         Name = ctx.NewRole.Name,
                         Note = ctx.NewRole.Note,
                     };
+                    
+                    newRole.KursMenuItem.Clear();
                     
                     foreach (var item in ctx.SelectedMenuIdItems)
                     {

@@ -87,7 +87,7 @@ namespace KursRepositories.ViewModels
 
         public ObservableCollection<KursMenuItemViewModel> PermissionsList { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
 
-        public ObservableCollection<KursMenuItem> SelectedMenuIdItems { get; set; } = new ObservableCollection<KursMenuItem>();
+        public List<KursMenuItem> SelectedMenuIdItems { get; set; } = new List<KursMenuItem>();
 
         #endregion
         
@@ -123,7 +123,7 @@ namespace KursRepositories.ViewModels
                 where permission.IsSelectedItem
                 select permission.Entity)
                 SelectedMenuIdItems.Add(item);
-            if (SelectedMenuIdItems != null)
+
             {
                 NewRole = new UserRolesViewModel(new UserRoles()
                 {
@@ -131,13 +131,10 @@ namespace KursRepositories.ViewModels
                     Name = NameRole.Trim(),
                     Note = NoteRole.Trim(),
                 });
-                MessageBox.Show("Роль создана.");
+                MessageBox.Show("Роль успешно создана.");
                 CloseWindow(Form);
             }
-            else
-            {
-                MessageBox.Show("Вы не выбрали разрешения для роли.");
-            }
+            
         }
 
         public ICommand CancelCreateRoleCommand
