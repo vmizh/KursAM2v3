@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -166,8 +167,9 @@ namespace KursRepositories.ViewModels
 
         private void RefreshRoleItemsList()
         {
-            RoleItemsList.Clear();
+            if(CurrentRole == null) return;
 
+                RoleItemsList.Clear();
             using (var ctx = new KursSystemEntities())
             {
                 var data = ctx.UserRoles.Include(_ => _.KursMenuItem).FirstOrDefault(_ => _.id == CurrentRole.Id);
@@ -205,6 +207,8 @@ namespace KursRepositories.ViewModels
                         Name = ctx.NewRole.Name,
                         Note = ctx.NewRole.Note,
                     };
+                    
+                    newRole.KursMenuItem.Clear();
                     
                     foreach (var item in ctx.SelectedMenuIdItems)
                     {
@@ -329,6 +333,7 @@ namespace KursRepositories.ViewModels
                 ctx.UserRoles.Remove(deleteRole);
                 ctx.SaveChanges();
                 MessageBox.Show("Роль успешно удалена.");
+                LoadRoleData();
             }
         }
 
