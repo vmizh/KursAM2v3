@@ -8,10 +8,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:viewModels="clr-namespace:KursRepositories.ViewModels"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance viewModels:UserCreationWindowViewModel}"
     d:DesignHeight="300" d:DesignWidth="300"
-    Title="Создание нового пользователя" Height="350" Width="800">
+    Title="Создание нового пользователя" Height="750" Width="900">
 
 
     <dxlc:LayoutControl dxe:ValidationService.IsValidationContainer="True" x:Name="validationContainer">
@@ -71,6 +72,46 @@
                                 </StackPanel>
                     </dxlc:LayoutItem>
                 </GroupBox>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup>
+                <dxlc:LayoutItem VerticalAlignment="Stretch" 
+                                 HorizontalAlignment="Stretch">
+                    <dxg:GridControl x:Name="DatasourceGrid"
+                                             AutoGenerateColumns="AddNew"
+                                             EnableSmartColumnsGeneration="True"
+                                             HorizontalAlignment="Stretch" 
+                                             VerticalAlignment="Stretch"
+                                             ItemsSource="{Binding Companies, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                             CurrentItem="{Binding CurrentCompanie, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                             MaxHeight="2000"
+                                             MaxWidth="2000">
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowTotalSummary="True"
+                                               IsSynchronizedWithCurrentItem="True"
+                                               BestFitModeOnSourceChange="AllRows"/>
+                        </dxg:GridControl.View>
+                        
+                    </dxg:GridControl>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem VerticalAlignment="Stretch" 
+                                 HorizontalAlignment="Stretch"
+                                 dxlc:LayoutControl.AllowHorizontalSizing="True">
+                    <dxg:GridControl x:Name="RoleGrid"
+                                             AutoGenerateColumns="AddNew"
+                                             EnableSmartColumnsGeneration="True"
+                                             HorizontalAlignment="Stretch" 
+                                             VerticalAlignment="Stretch"
+                                             ItemsSource="{Binding Roles, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                             CurrentItem="{Binding CurrentRole, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                             MaxHeight="2000"
+                                             MaxWidth="2000">
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowTotalSummary="True"
+                                               IsSynchronizedWithCurrentItem="True"
+                                               BestFitModeOnSourceChange="AllRows"/>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutItem>
             </dxlc:LayoutGroup>
             <dxlc:LayoutGroup Orientation="Horizontal">
             <dxlc:LayoutItem>

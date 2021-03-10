@@ -19,6 +19,7 @@ namespace KursRepositories.ViewModels
         public UserCreationWindowViewModel()
         {
             LoadRegisteredUsers();
+            LoadDataSourceAndRoleList();
         }
 
         #endregion
@@ -37,11 +38,102 @@ namespace KursRepositories.ViewModels
         private string myThemeName = "MetropolisLight";
         private new string myNote;
         private Users myNewUser;
-        public List<string> RegisteredUserNames = new List<string>();
+        private List<string> _myRegisteredUsersNames = new List<string>();
+        private ObservableCollection<DataSourcesViewModel> myCompanies = new ObservableCollection<DataSourcesViewModel>();
+        private ObservableCollection<UserRolesViewModel> myRoles = new ObservableCollection<UserRolesViewModel>();
+        private ObservableCollection<DataSourcesViewModel> myIsSelectedCompanies = new ObservableCollection<DataSourcesViewModel>();
+        private ObservableCollection<UserRolesViewModel> myIsSelectedRoles = new ObservableCollection<UserRolesViewModel>();
+        private DataSourcesViewModel myCurrentCompany;
+        private UserRolesViewModel myCurrentRole;
 
         #endregion
 
         #region Properties
+
+        public List<string> RegisteredUsersNames
+        {
+            get => _myRegisteredUsersNames;
+            set
+            {
+                if (_myRegisteredUsersNames == value)
+                    return;
+                _myRegisteredUsersNames = value;
+                RaisePropertyChanged();
+            }
+            
+        }
+
+        public ObservableCollection<DataSourcesViewModel> IsSelectedCompanies
+        {
+            get => myIsSelectedCompanies;
+            set
+            {
+                if (myIsSelectedCompanies == value)
+                    return;
+                myIsSelectedCompanies = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<DataSourcesViewModel> Companies
+        {
+            get => myCompanies;
+            set
+            {
+                if (myCompanies == value)
+                    return;
+                myCompanies = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<UserRolesViewModel> IsSelectedRoles
+        {
+            get => myIsSelectedRoles;
+            set
+            {
+                if (myIsSelectedRoles == value)
+                    return;
+                myIsSelectedRoles = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<UserRolesViewModel> Roles
+        {
+            get => myRoles;
+            set
+            {
+                if (myRoles == value) 
+                    return;
+                myRoles = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public DataSourcesViewModel CurrentCompany
+        {
+            get => myCurrentCompany;
+            set
+            {
+                if (myCurrentCompany == value)
+                    return;
+                myCurrentCompany = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public UserRolesViewModel CurrentRole
+        {
+            get => myCurrentRole;
+            set
+            {
+                if (myCurrentRole == value) 
+                    return;
+                myCurrentRole = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public string Error { get; private set; }
 
@@ -233,11 +325,32 @@ namespace KursRepositories.ViewModels
 
             #region Methods
 
+            private void LoadDataSourceAndRoleList()
+            {
+                using (var ctx = new KursSystemEntities())
+                {
+                    foreach (var company in ctx.DataSources.ToList())
+                    {
+                        Companies.Add(new DataSourcesViewModel(company)
+                        {
+                            IsSelectedItem = false
+                        });
+                    }
+
+                    foreach (var role in ctx.UserRoles.ToList())
+                    {
+                        Roles.Add(new UserRolesViewModel(role)
+                        {
+                            IsSelectedItem = false
+                        });
+                    }
+                }
+            }
             private void LoadRegisteredUsers()
         {
             using (var ctx = new KursSystemEntities())
             {
-                foreach (var user in ctx.Users.ToList()) RegisteredUserNames.Add(user.Name);
+                foreach (var user in ctx.Users.ToList()) RegisteredUsersNames.Add(user.Name);
             }
         }
 
@@ -284,7 +397,7 @@ namespace KursRepositories.ViewModels
 
         public bool ValidateLogin(string login)
         {
-            var isValid = login != RegisteredUserNames.FirstOrDefault(_ => _ == login);
+            var isValid = login != RegisteredUsersNames.FirstOrDefault(_ => _ == login);
             SetError(isValid, "Пользователь с таким именем уже зарегистрирован или вы не заполнили поле.");
             return isValid;
         }

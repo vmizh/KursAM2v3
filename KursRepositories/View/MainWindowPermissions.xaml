@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance viewModels:MainWindowPermissionsViewModel}"
     d:DesignHeight="300" d:DesignWidth="300"
-    Title="Служба управления доступом" Height="830" Width="1400" Left="20" Top="20"
+    Title="Служба управления доступом" Height="830" Width="1250" Left="20" Top="20"
     >
     <DockPanel>
         <dxlc:LayoutControl HorizontalAlignment="Stretch"

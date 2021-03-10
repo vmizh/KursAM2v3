@@ -215,22 +215,24 @@ namespace KursRepositories.ViewModels
             if (ctx.NewRole != null)
                 using (var context = new KursSystemEntities())
                 {
-                    var newRole = new UserRoles()
+                    /*var newRole = new UserRoles()
                     {
                         id = ctx.NewRole.Id,
                         Name = ctx.NewRole.Name,
                         Note = ctx.NewRole.Note,
+                        KursMenuItem = new List<KursMenuItem>()
                     };
                     
+                    context.SaveChanges();
                     newRole.KursMenuItem.Clear();
-                    
                     foreach (var item in ctx.SelectedMenuIdItems)
                     {
                         newRole.KursMenuItem.Add(item);
                     }
+                    
                     context.UserRoles.Add(newRole);
                     RoleList.Add(new UserRolesViewModel(newRole));
-                    context.SaveChanges();
+                    context.SaveChanges();*/
                 }
         }
 

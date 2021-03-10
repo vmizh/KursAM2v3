@@ -118,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ViewModels\DataSourcesViewModel.cs" />
+    <Compile Include="ViewModels\KursMenuGroupViewModel.cs" />
     <Compile Include="ViewModels\KursMenuItemViewModel.cs" />
     <Compile Include="ViewModels\MainWindowPermissionsViewModel.cs" />
     <Compile Include="ViewModels\RoleAssignmentWindowViewModel.cs" />

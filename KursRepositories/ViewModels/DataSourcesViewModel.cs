@@ -8,15 +8,36 @@ namespace KursRepositories.ViewModels
 {
     public class DataSourcesViewModel : RSViewModelBase
     {
+       
         public DataSourcesViewModel(DataSources entityDataSources)
         {
             Entity = entityDataSources;
         }
         public DataSourcesViewModel() {}
 
+        #region Fields
+
+        private bool myIsSelectedItem;
+
+        #endregion
+
         #region Property
 
+        [Display(AutoGenerateField = false)]
         public DataSources Entity { get; set; }
+
+        [DisplayName("Статус")]
+        public bool IsSelectedItem
+        {
+            get => myIsSelectedItem;
+            set
+            {
+                if (myIsSelectedItem == value)
+                    return;
+                myIsSelectedItem = value;
+                RaisePropertyChanged();
+            }
+        }
 
         [Display(AutoGenerateField = false)]
         public override Guid Id
@@ -30,8 +51,8 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
-
-         [DisplayName("Наименование")]
+        [Display(AutoGenerateField = false)]
+        [DisplayName("Наименование")]
         public override string Name
             {
                 get => Entity.Name;
@@ -43,7 +64,7 @@ namespace KursRepositories.ViewModels
                     RaisePropertyChanged();
                 }
             }
-        [DisplayName("Наименование для вывода")]
+        [DisplayName("Наименоване комании")]
         public string ShowName
             {
                 get => Entity.ShowName;
@@ -55,6 +76,8 @@ namespace KursRepositories.ViewModels
                     RaisePropertyChanged();
                 }
             }
+
+        [Display(AutoGenerateField = false)]
         [DisplayName("Порядок")]
         public int Order
         {
@@ -67,7 +90,7 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         [DisplayName("Наименование базы данных")]
         public string DBName
             {
@@ -80,6 +103,8 @@ namespace KursRepositories.ViewModels
                     RaisePropertyChanged();
                 }
             }
+
+        [Display(AutoGenerateField = false)]
         [DisplayName("Цвет")]
         public string Color
         {
@@ -92,7 +117,7 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         [DisplayName("Сервер")]
         public  string  Server
         {
@@ -106,10 +131,10 @@ namespace KursRepositories.ViewModels
             }
             
         }
+        
+        #endregion
 
-            #endregion
 
 
-           
     }
 }

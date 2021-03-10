@@ -8,13 +8,39 @@ namespace KursRepositories.ViewModels
 {
     public class KursMenuItemViewModel : RSViewModelBase
     {
+        #region Constructor
+
+        public KursMenuItemViewModel(KursMenuItem entityKursMenuItem)
+        {
+            Entity = entityKursMenuItem;
+        }
+
+        #endregion
+
+        #region Fields
+
         private bool myIsSelectedItem;
 
+        #endregion
+        
         #region Properties
 
 
         [Display(AutoGenerateField = false)] 
         public KursMenuItem Entity { get; set; }
+
+        [DisplayName("Статус")]
+        public bool IsSelectedItem
+        {
+            get => myIsSelectedItem;
+            set
+            {
+                if (myIsSelectedItem == value)
+                    return;
+                myIsSelectedItem = value;
+                RaisePropertyChanged();
+            }
+        }
 
         [Display(AutoGenerateField = false)]
         public new int Id
@@ -111,22 +137,11 @@ namespace KursRepositories.ViewModels
                 RaisePropertyChanged();
             }
         }
-        [DisplayName("Статус")]
-        public bool IsSelectedItem { get => myIsSelectedItem;
-            set
-            {
-                if (myIsSelectedItem == value)
-                    return;
-                myIsSelectedItem = value;
-                RaisePropertyChanged();
-            } }
+       
 
         #endregion
 
-        public KursMenuItemViewModel(KursMenuItem entityKursMenuItem)
-        {
-            Entity = entityKursMenuItem;
-        }
+        
     }
 
    
