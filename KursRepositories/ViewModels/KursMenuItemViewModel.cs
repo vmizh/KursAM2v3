@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
@@ -43,6 +42,8 @@ namespace KursRepositories.ViewModels
 
             }
         }
+
+
 
         [Display(Name = "Наименование")]
         public override string Name
