@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using DevExpress.Xpf.Grid;
 using KursRepositories.ViewModels;
 
 
@@ -26,6 +27,16 @@ namespace KursRepositories.View
             InitializeComponent();
             DataContext = new MainWindowPermissionsViewModel();
 
+        }
+
+        private void RolesGridControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+        {
+            foreach (GridColumn column in RolesGridControl.Columns)
+            {
+                if (column.FieldName == "IsSelectedItem")
+                    column.Visible = false;
+
+            }
         }
     }
 }
