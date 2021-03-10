@@ -7,14 +7,12 @@ using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
-using DevExpress.Mvvm.DataAnnotations;
-using DevExpress.Mvvm.POCO;
-using static KursRepositories.ViewModels.MainWindowPermissionsViewModel;
+
 
 
 namespace KursRepositories.ViewModels
 {
-    [POCOViewModel(ImplementIDataErrorInfo = true)]
+    
     public class UserCreationWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
     {
         #region Constructor
@@ -30,6 +28,7 @@ namespace KursRepositories.ViewModels
 
         #region Fields
 
+        
         private string myFirstName;
         private string myMiddleName;
         private string myLastName;
@@ -410,7 +409,7 @@ namespace KursRepositories.ViewModels
         #region InputValidation
 
 
-            string IDataErrorInfo.Error => Error;
+        string IDataErrorInfo.Error => Error;
 
         string IDataErrorInfo.this[string columnName]
         {

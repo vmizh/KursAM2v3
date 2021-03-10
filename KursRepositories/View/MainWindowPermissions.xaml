@@ -70,7 +70,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
                                                IsSynchronizedWithCurrentItem="True"
-                                               BestFitModeOnSourceChange="AllRows"/>
+                                               BestFitModeOnSourceChange="AllRows"
+                                               AllowEditing="False"/>
                             </dxg:GridControl.View>
                             <dxg:GridControl.ContextMenu>
                                 <ContextMenu>
@@ -118,7 +119,8 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
                                                IsSynchronizedWithCurrentItem="True"
-                                               BestFitModeOnSourceChange="AllRows"/>
+                                               BestFitModeOnSourceChange="AllRows"
+                                               AllowEditing="False"/>
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </dxlc:LayoutItem>
