@@ -47,11 +47,21 @@
                                 <dxlc:LayoutItem Label="Полное имя" AddColonToLabel="True">
                                     <dxe:TextEdit EditValue="{Binding FullName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
                                     </dxlc:LayoutItem>
-                                <dxlc:LayoutItem Label="Login" AddColonToLabel="True">
+                                <dxlc:LayoutItem Label="Имя для авторизации" AddColonToLabel="True">
                                         <dxe:TextEdit NullText ="Введите имя для авторизации в системе"
                                                       EditValue="{Binding LoginName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
                                     </dxlc:LayoutItem>
-                                <dxlc:LayoutItem Label="Примечание" AddColonToLabel="True">
+                                <dxlc:LayoutItem Label ="Пароль" AddColonToLabel="True">
+                                    <dxe:PasswordBoxEdit x:Name="Password" 
+                                                         NullText="Введите пароль"
+                                                         EditValue="{Binding Password, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+                                </dxlc:LayoutItem>
+                                <dxlc:LayoutItem Label ="Подтвердите пароль" AddColonToLabel="True">
+                                    <dxe:PasswordBoxEdit x:Name="PasswordConfirm" 
+                                                         NullText="Повторите введенный пароль"
+                                                         EditValue="{Binding PasswordConfirm, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                                </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Примечание" AddColonToLabel="True">
                                         <dxe:TextEdit NullText="Поле не обязательное для заполнения"
                                                       EditValue="{Binding Note, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
                                                       TextWrapping="Wrap"/>
