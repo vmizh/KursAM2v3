@@ -7,11 +7,14 @@ using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Mvvm.POCO;
 using static KursRepositories.ViewModels.MainWindowPermissionsViewModel;
 
 
 namespace KursRepositories.ViewModels
 {
+    [POCOViewModel(ImplementIDataErrorInfo = true)]
     public class UserCreationWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
     {
         #region Constructor
@@ -39,12 +42,22 @@ namespace KursRepositories.ViewModels
         private new string myNote;
         private Users myNewUser;
         private List<string> _myRegisteredUsersNames = new List<string>();
-        private ObservableCollection<DataSourcesViewModel> myCompanies = new ObservableCollection<DataSourcesViewModel>();
+
+        private ObservableCollection<DataSourcesViewModel> myCompanies =
+            new ObservableCollection<DataSourcesViewModel>();
+
         private ObservableCollection<UserRolesViewModel> myRoles = new ObservableCollection<UserRolesViewModel>();
-        private ObservableCollection<DataSourcesViewModel> myIsSelectedCompanies = new ObservableCollection<DataSourcesViewModel>();
-        private ObservableCollection<UserRolesViewModel> myIsSelectedRoles = new ObservableCollection<UserRolesViewModel>();
+
+        private ObservableCollection<DataSourcesViewModel> myIsSelectedCompanies =
+            new ObservableCollection<DataSourcesViewModel>();
+
+        private ObservableCollection<UserRolesViewModel> myIsSelectedRoles =
+            new ObservableCollection<UserRolesViewModel>();
+
         private DataSourcesViewModel myCurrentCompany;
         private UserRolesViewModel myCurrentRole;
+        private string myPassword;
+        private string myPasswordConfirm;
 
         #endregion
 
@@ -60,7 +73,7 @@ namespace KursRepositories.ViewModels
                 _myRegisteredUsersNames = value;
                 RaisePropertyChanged();
             }
-            
+
         }
 
         public ObservableCollection<DataSourcesViewModel> IsSelectedCompanies
@@ -104,7 +117,7 @@ namespace KursRepositories.ViewModels
             get => myRoles;
             set
             {
-                if (myRoles == value) 
+                if (myRoles == value)
                     return;
                 myRoles = value;
                 RaisePropertyChanged();
@@ -128,9 +141,33 @@ namespace KursRepositories.ViewModels
             get => myCurrentRole;
             set
             {
-                if (myCurrentRole == value) 
+                if (myCurrentRole == value)
                     return;
                 myCurrentRole = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string Password
+        {
+            get => myPassword;
+            set
+            {
+                if (myPassword == value) return;
+                myPassword = value;
+                RaisePassword();
+                RaisePropertiesChanged();
+            }
+        }
+
+        public string PasswordConfirm
+        {
+            get => myPasswordConfirm;
+            set
+            {
+                if (myPasswordConfirm == value) return;
+                myPasswordConfirm = value;
+                RaisePasswordConfirm();
                 RaisePropertyChanged();
             }
         }
@@ -289,12 +326,14 @@ namespace KursRepositories.ViewModels
         {
             if (string.IsNullOrWhiteSpace(FirstName) | string.IsNullOrWhiteSpace(LastName) |
                 string.IsNullOrWhiteSpace(MiddleName) |
-                string.IsNullOrWhiteSpace(LoginName))
+                string.IsNullOrWhiteSpace(LoginName) | string.IsNullOrWhiteSpace(Password) | string.IsNullOrWhiteSpace(PasswordConfirm))
             {
-                MessageBox.Show("Поля Ф.И.О. и Login не могут состоять из пробелов и должны быть обязательно заполнены.");
+                MessageBox.Show(
+                    "Поля не могут состоять из пробелов и должны быть обязательно заполнены.");
                 return;
             }
-            NewUser = new Users 
+
+            NewUser = new Users
             {
                 Id = Guid.NewGuid(),
                 Name = LoginName.Trim(),
@@ -323,30 +362,31 @@ namespace KursRepositories.ViewModels
 
         #endregion
 
-            #region Methods
+        #region Methods
 
-            private void LoadDataSourceAndRoleList()
+        private void LoadDataSourceAndRoleList()
+        {
+            using (var ctx = new KursSystemEntities())
             {
-                using (var ctx = new KursSystemEntities())
+                foreach (var company in ctx.DataSources.ToList())
                 {
-                    foreach (var company in ctx.DataSources.ToList())
+                    Companies.Add(new DataSourcesViewModel(company)
                     {
-                        Companies.Add(new DataSourcesViewModel(company)
-                        {
-                            IsSelectedItem = false
-                        });
-                    }
+                        IsSelectedItem = false
+                    });
+                }
 
-                    foreach (var role in ctx.UserRoles.ToList())
+                foreach (var role in ctx.UserRoles.ToList())
+                {
+                    Roles.Add(new UserRolesViewModel(role)
                     {
-                        Roles.Add(new UserRolesViewModel(role)
-                        {
-                            IsSelectedItem = false
-                        });
-                    }
+                        IsSelectedItem = false
+                    });
                 }
             }
-            private void LoadRegisteredUsers()
+        }
+
+        private void LoadRegisteredUsers()
         {
             using (var ctx = new KursSystemEntities())
             {
@@ -358,10 +398,19 @@ namespace KursRepositories.ViewModels
         {
             RaisePropertyChanged(nameof(FullName));
         }
-
+        private void RaisePassword()
+        {
+            RaisePropertyChanged(nameof(PasswordConfirm));
+        }
+        private void RaisePasswordConfirm()
+        {
+            RaisePropertyChanged(nameof(Password));
+        }
+        
         #region InputValidation
 
-        string IDataErrorInfo.Error => Error;
+
+            string IDataErrorInfo.Error => Error;
 
         string IDataErrorInfo.this[string columnName]
         {
@@ -377,6 +426,10 @@ namespace KursRepositories.ViewModels
                         return ValidateName(MiddleName) ? string.Empty : Error;
                     case "LoginName":
                         return ValidateLogin(LoginName) ? string.Empty : Error;
+                    case "Password":
+                        return ValidatePassword(Password, PasswordConfirm) ? string.Empty : Error;
+                    case "PasswordConfirm":
+                        return ValidatePassword(Password, PasswordConfirm) ? string.Empty : Error;
                 }
 
                 return string.Empty;
@@ -402,8 +455,15 @@ namespace KursRepositories.ViewModels
             return isValid;
         }
 
-        #endregion
+        public bool ValidatePassword(string Password, string PasswordConfirm)
+        {
+            bool isValid = Equals(Password, PasswordConfirm);
+            SetError(isValid, "Введенные пароли не совпадают, повторите ввод.");
+            return isValid;
+            
+        }
+         #endregion
 
-        #endregion
+                    #endregion
     }
 }

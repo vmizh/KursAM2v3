@@ -42,19 +42,13 @@
                                     Background="GhostWhite"
                                     Command ="{Binding OpenWindowCreationUserCommand}">
                             </Button>
-                            <Button x:Name="SaveChanged"
-                                    Margin="0 0 5 5"
-                                    Content="Сохранить изменения" 
-                                    Background="GhostWhite"
-                                    Command="{Binding SaveChangesInUsersGridControlCommand}">
-                            </Button>
                             <Button  x:Name="UpdateUserView"
                                      Margin="0 0 5 5"
                                      Content="Обновить список" 
                                      Background="GhostWhite"
                                      Command="{Binding UpdateUsersViewCommand}">
                             </Button>
-                            <Button  x:Name="DeleteUserButon"
+                            <Button  x:Name="DeleteUserButton"
                                      Margin="0 0 0 5"
                                      Content="Удалить пользователя" 
                                      Background="GhostWhite"
@@ -82,8 +76,7 @@
                                 <ContextMenu>
                                     <MenuItem Header="Удалить пользователя" 
                                               Command="{Binding DeleteUserCommand}"/>
-                                    <MenuItem Header ="Сохранить изменения"
-                                          Command="{Binding SaveChangesInDatagridUsersCommand}"/>
+                                    <MenuItem Header ="Свойства пользователя"/>
                                     <MenuItem Header="Обновить список"
                                               Command="{Binding UpdateViewCommand}"/>
 

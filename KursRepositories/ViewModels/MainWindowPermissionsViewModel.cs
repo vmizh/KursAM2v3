@@ -264,6 +264,7 @@ namespace KursRepositories.ViewModels
                         IsDeleted = ctx.Deleted,
                         Avatar = ctx.Avatar
                     };
+                    
                     context.Users.Add(newUser);
                     UserList.Add(new UsersViewModel(newUser));
                     context.SaveChanges();
@@ -294,7 +295,7 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        public ICommand SaveChangesInUsersGridControlCommand
+        /*public ICommand SaveChangesInUsersGridControlCommand
         {
             get { return new Command(saveChangesInUsersGridControl, _ => true); }
         }
@@ -323,7 +324,7 @@ namespace KursRepositories.ViewModels
                 ctx.SaveChanges();
                 MessageBox.Show("Данные сохранены.");
             }
-        }
+        }*/
 
         public ICommand UpdateUsersViewCommand
         {
