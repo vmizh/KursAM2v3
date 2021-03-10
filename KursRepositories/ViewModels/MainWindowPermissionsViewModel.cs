@@ -68,6 +68,7 @@ namespace KursRepositories.ViewModels
 
             }
         }
+
         public KursMenuItemViewModel CurrentPermission
         {
             get => myCurrentPermission;
@@ -136,15 +137,24 @@ namespace KursRepositories.ViewModels
             using (var ctx = new KursSystemEntities())
             {
                 RoleList.Clear();
+                RoleItemsList.Clear();
+
                 foreach (var role in ctx.UserRoles.ToList())
                 {
                     RoleList.Add(new UserRolesViewModel(role));
                 }
 
+                foreach (var item in ctx.KursMenuItem.ToList())
+                {
+                    RoleItemsList.Add(new KursMenuItemViewModel(item)
+                    {
+                      IsSelectedItem  = false
+                    });
+                }
+
             }
         }
-
-
+        
         private void RefreshDataPermissionList()
         {
             if (UserListCurrentItem == null)
@@ -167,22 +177,25 @@ namespace KursRepositories.ViewModels
 
         private void RefreshRoleItemsList()
         {
-            if(CurrentRole == null) return;
+            if (CurrentRole == null) return;
 
-                RoleItemsList.Clear();
             using (var ctx = new KursSystemEntities())
             {
-                var data = ctx.UserRoles.Include(_ => _.KursMenuItem).FirstOrDefault(_ => _.id == CurrentRole.Id);
 
-                if (data == null)
+                var userPermission = ctx.UserRoles.Include(_ => _.KursMenuItem)
+                    .FirstOrDefault(_ => _.id == CurrentRole.Id);
+
+                if (userPermission == null)
                     return;
 
-                foreach (var item in data.KursMenuItem)
+                foreach (var v in RoleItemsList)
                 {
-                    RoleItemsList.Add(new KursMenuItemViewModel(item));
+                    var rPermission = userPermission.KursMenuItem.FirstOrDefault(_ => _.Id == v.Id);
+                    v.IsSelectedItem = rPermission != null;
                 }
             }
         }
+
         #endregion
 
         #region Commands
@@ -201,22 +214,24 @@ namespace KursRepositories.ViewModels
             if (ctx.NewRole != null)
                 using (var context = new KursSystemEntities())
                 {
-                    var newRole = new UserRoles()
+                    /*var newRole = new UserRoles()
                     {
                         id = ctx.NewRole.Id,
                         Name = ctx.NewRole.Name,
                         Note = ctx.NewRole.Note,
+                        KursMenuItem = new List<KursMenuItem>()
                     };
                     
+                    context.SaveChanges();
                     newRole.KursMenuItem.Clear();
-                    
                     foreach (var item in ctx.SelectedMenuIdItems)
                     {
                         newRole.KursMenuItem.Add(item);
                     }
+                    
                     context.UserRoles.Add(newRole);
                     RoleList.Add(new UserRolesViewModel(newRole));
-                    context.SaveChanges();
+                    context.SaveChanges();*/
                 }
         }
 

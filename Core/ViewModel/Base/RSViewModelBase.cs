@@ -64,7 +64,8 @@ namespace Core.ViewModel.Base
             }
         }
 
-        [Display(AutoGenerateField = false)] public virtual bool IsNewDocument => myState == RowStatus.NewRow;
+        [Display(AutoGenerateField = false)] 
+        public virtual bool IsNewDocument => myState == RowStatus.NewRow;
 
         [Display(AutoGenerateField = false)]
         public virtual decimal? ParentDC
@@ -84,7 +85,7 @@ namespace Core.ViewModel.Base
             set => Id = Guid.Parse(value);
             get => Id.ToString();
         }
-
+        [Display(AutoGenerateField = false)]
         public virtual RowStatus State
         {
             set

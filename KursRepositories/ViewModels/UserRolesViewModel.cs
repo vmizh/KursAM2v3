@@ -13,6 +13,7 @@ namespace KursRepositories.ViewModels
      public class UserRolesViewModel : RSViewModelBase
     {
         
+
         #region Constructors
             public UserRolesViewModel() { }
 
@@ -25,14 +26,28 @@ namespace KursRepositories.ViewModels
 
         #region Fields
 
+        private bool myIsSelectedItem;
+
         #endregion
-
-
+        
 
         #region Properties
 
         [Display(AutoGenerateField = false)]
         public UserRoles Entity { get; set; }
+
+        [DisplayName("Статус")]
+        public bool IsSelectedItem
+        {
+            get => myIsSelectedItem;
+            set
+            {
+                if (myIsSelectedItem == value)
+                    return;
+                myIsSelectedItem = value;
+                RaisePropertyChanged();
+            }
+        }
 
         [Display(AutoGenerateField = false)]
         public override Guid Id
@@ -72,8 +87,8 @@ namespace KursRepositories.ViewModels
             }
         }
 
-
+        
         #endregion
 
-    }
+     }
 }

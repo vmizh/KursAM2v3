@@ -67,7 +67,7 @@
                                                    BestFitModeOnSourceChange="AllRows"/>
                                 </dxg:GridControl.View>
                             </dxg:GridControl>
-                            </dxlc:LayoutItem>
+                         </dxlc:LayoutItem>
                     </dxlc:LayoutGroup>
                 </dxlc:LayoutControl>
 </dx:ThemedWindow>
