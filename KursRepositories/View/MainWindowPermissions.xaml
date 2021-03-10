@@ -161,6 +161,7 @@
                                                  HorizontalAlignment="Stretch">
                                     <dxg:GridControl x:Name="RolesGridControl"
                                                              AutoGenerateColumns="AddNew"
+                                                             AutoGeneratingColumn="RolesGridControl_OnAutoGeneratingColumn"
                                                              EnableSmartColumnsGeneration="True"
                                                              VerticalAlignment="Top"
                                                              ItemsSource="{Binding RoleList, UpdateSourceTrigger=PropertyChanged}"

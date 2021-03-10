@@ -82,7 +82,7 @@
                                              HorizontalAlignment="Stretch" 
                                              VerticalAlignment="Stretch"
                                              ItemsSource="{Binding Companies, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
-                                             CurrentItem="{Binding CurrentCompanie, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                             CurrentItem="{Binding CurrentCompany, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                              MaxHeight="2000"
                                              MaxWidth="2000">
                         <dxg:GridControl.View>
