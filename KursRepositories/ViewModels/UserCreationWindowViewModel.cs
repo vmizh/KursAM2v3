@@ -460,7 +460,6 @@ namespace KursRepositories.ViewModels
             bool isValid = Equals(Password, PasswordConfirm);
             SetError(isValid, "Введенные пароли не совпадают, повторите ввод.");
             return isValid;
-            
         }
          #endregion
 
