@@ -366,6 +366,8 @@
     <Compile Include="ViewModel\Reference\RegionRefViewModel.cs" />
     <Compile Include="ViewModel\Reference\SDRReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\UsagePayReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Repozit\UserOptionsWindowViewModel.cs" />
+    <Compile Include="ViewModel\Repozit\UsersManagerViewModel.cs" />
     <Compile Include="View\Base\IOnAutoGeneratingColumn.cs" />
     <Compile Include="View\Base\KursBaseDialog.xaml.cs">
       <DependentUpon>KursBaseDialog.xaml</DependentUpon>
@@ -896,6 +898,9 @@
     </Compile>
     <Compile Include="View\Personal\PersonaAddUserRightsUC.xaml.cs">
       <DependentUpon>PersonaAddUserRightsUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Repozit\UserOptionsWindow.xaml.cs">
+      <DependentUpon>UserOptionsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Repozit\UsersHorizontalRight.xaml.cs">
       <DependentUpon>UsersHorizontalRight.xaml</DependentUpon>
@@ -1571,6 +1576,10 @@
     <Page Include="View\Personal\PersonaAddUserRightsUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Repozit\UserOptionsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Repozit\UsersHorizontalRight.xaml">
       <SubType>Designer</SubType>

@@ -6,14 +6,15 @@ using System.Windows.Input;
 using Core;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Data;
+using KursAM2.View.Repozit;
 using KursRepositories.View;
+using KursRepositories.ViewModels;
 
-namespace KursRepositories.ViewModels
+namespace KursAM2.ViewModel.Repozit
 {
-    public sealed class MainWindowPermissionsViewModel : RSWindowViewModelBase
+    public sealed class UsersManagerViewModel : RSWindowViewModelBase
     {
-        public MainWindowPermissionsViewModel()
+        public UsersManagerViewModel()
         {
             WindowName = "Управление пользователями и доступом";
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -204,8 +205,8 @@ namespace KursRepositories.ViewModels
 
         private void EditUser(object obj)
         {
-            var ctx = new UserCreationWindowViewModel(UserListCurrentItem.Name);
-            var form = new UserCreationWindow {DataContext = ctx};
+            var ctx = new UserOptionsWindowViewModel(UserListCurrentItem.Name);
+            var form = new UserOptionsWindow {DataContext = ctx};
             ctx.Form = form;
             form.ShowDialog();
         }
@@ -218,31 +219,9 @@ namespace KursRepositories.ViewModels
         private void openWindowCreationRole(object obj)
         {
             var ctx = new RoleCreationWindowViewModel();
-            var form = new RoleCreationWindow {DataContext = ctx};
+            var form = new UserOptionsWindow {DataContext = ctx};
             ctx.Form = form;
             form.ShowDialog();
-            if (ctx.NewRole != null)
-                using (var context = GlobalOptions.KursSystem())
-                {
-                    /*var newRole = new UserRoles()
-                    {
-                        id = ctx.NewRole.Id,
-                        Name = ctx.NewRole.Name,
-                        Note = ctx.NewRole.Note,
-                        KursMenuItem = new List<KursMenuItem>()
-                    };
-                    
-                    context.SaveChanges();
-                    newRole.KursMenuItem.Clear();
-                    foreach (var item in ctx.SelectedMenuIdItems)
-                    {
-                        newRole.KursMenuItem.Add(item);
-                    }
-                    
-                    context.UserRoles.Add(newRole);
-                    RoleList.Add(new UserRolesViewModel(newRole));
-                    context.SaveChanges();*/
-                }
         }
 
         public ICommand OpenWindowCreationUserCommand
@@ -252,31 +231,10 @@ namespace KursRepositories.ViewModels
 
         private void openWindowCreationUser(object obj)
         {
-            var ctx = new UserCreationWindowViewModel();
-            var form = new UserCreationWindow {DataContext = ctx};
+            var ctx = new UserOptionsWindowViewModel();
+            var form = new UserOptionsWindow {DataContext = ctx};
             ctx.Form = form;
             form.ShowDialog();
-            // Чистой воды перепрограммирование
-            //if (ctx.NewUser != null)
-            //    using (var context = GlobalOptions.KursSystem())
-            //    {
-            //        var newUser = new Users
-            //        {
-            //            Id = ctx.NewUser.Id,
-            //            Name = ctx.LoginName.Trim(),
-            //            FullName = ctx.FullName.Trim(),
-            //            Note = ctx.Note,
-            //            ThemeName = ctx.ThemeName,
-            //            IsAdmin = ctx.Admin,
-            //            IsTester = ctx.Tester,
-            //            IsDeleted = ctx.Deleted,
-            //            Avatar = ctx.Avatar
-            //        };
-
-            //        context.Users.Add(newUser);
-            //        UserList.Add(new UsersViewModel(newUser));
-            //        context.SaveChanges();
-            //    }
         }
 
         public ICommand DeleteUserCommand
@@ -294,45 +252,15 @@ namespace KursRepositories.ViewModels
                     var rightUser = oldUserList.Where(_ => _.Id == u.Id)
                         .SingleOrDefault(_ => _.Id == UserListCurrentItem.Id);
 
-                    u.IsDeleted = rightUser != null;
+                    u.IsDeleted = UserListCurrentItem.IsDeleted;
                 }
 
                 ctx.SaveChanges();
-                MessageBox.Show("Пользователь присвоен статус \"Удален\"");
+                MessageBox.Show("Пользователь изменен статус \"Удален\"");
             }
         }
 
-        /*public ICommand SaveChangesInUsersGridControlCommand
-        {
-            get { return new Command(saveChangesInUsersGridControl, _ => true); }
-        }
-
-        private void saveChangesInUsersGridControl(object obj)
-        {
-            using (var ctx = GlobalOptions.KursSystem())
-            {
-                var oldUserList = ctx.Users.ToList();
-                foreach (var usr in UserList)
-                {
-                    var rightUser = oldUserList.SingleOrDefault(_ => _.Id == usr.Id);
-
-                    if (rightUser != null)
-                    {
-                        rightUser.Id = usr.Id;
-                        rightUser.Name = usr.Name;
-                        rightUser.FullName = usr.FullName;
-                        rightUser.Note = usr.Note;
-                        rightUser.Avatar = usr.Avatar;
-                        rightUser.IsAdmin = usr.IsAdmin;
-                        rightUser.IsTester = usr.IsTester;
-                        rightUser.IsDeleted = usr.IsDeleted;
-                    }
-                }
-                ctx.SaveChanges();
-                MessageBox.Show("Данные сохранены.");
-            }
-        }*/
-
+        
         public ICommand UpdateUsersViewCommand
         {
             get { return new Command(updateUsersView, _ => true); }

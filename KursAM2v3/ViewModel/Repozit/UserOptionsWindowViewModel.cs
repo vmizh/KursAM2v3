@@ -4,28 +4,36 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.ViewModel.Base;
+using Core.WindowsManager;
 using Data;
+using DevExpress.Spreadsheet;
+using DevExpress.Xpf.Editors;
+using DevExpress.Xpf.Grid;
+using DevExpress.XtraSpreadsheet.Export;
+using KursRepositories.ViewModels;
 
-namespace KursRepositories.ViewModels
+namespace KursAM2.ViewModel.Repozit
 {
-    public class UserCreationWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
+    public sealed class UserOptionsWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
     {
         #region Constructor
 
-        public UserCreationWindowViewModel()
+        public UserOptionsWindowViewModel()
         {
             LoadRegisteredUsers();
             LoadDataSourceAndRoleList();
+            IsNewUser = true;
         }
 
-        public UserCreationWindowViewModel(string loginName) : this()
+        public UserOptionsWindowViewModel(string loginName) : this()
         {
-            if (!string.IsNullOrWhiteSpace(loginName)) IsNewUser = false;
-
+            if (!string.IsNullOrWhiteSpace(loginName)) 
+                IsNewUser = false;
             LoadExistingUser(loginName);
         }
 
@@ -34,6 +42,7 @@ namespace KursRepositories.ViewModels
 
         #region Fields
 
+        private Guid userId = Guid.Empty;
         private string myFirstName;
         private string myMiddleName;
         private string myLastName;
@@ -62,12 +71,41 @@ namespace KursRepositories.ViewModels
         private UserRolesViewModel myCurrentRole;
         private string myPassword;
         private string myPasswordConfirm;
+        private bool myIsLoginEnable;
+        private bool myIsNewUser;
 
         #endregion
 
         #region Properties
 
-        public bool IsNewUser { set; get; } = true;
+        public override string WindowName => IsNewUser
+            ? "Создание нового пользователя"
+            : $"Изменение пользователя {LoginName} ({FullName})";
+
+        public bool IsNewUser
+        {
+            get => myIsNewUser;
+            set
+            {
+                if (myIsNewUser == value)
+                    return;
+                myIsNewUser = value;
+                IsLoginEnable = myIsNewUser;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsLoginEnable
+        {
+            get => myIsLoginEnable;
+            set
+            {
+                if (myIsLoginEnable == value)
+                    return;
+                myIsLoginEnable = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public List<string> RegisteredUsersNames
         {
@@ -160,8 +198,7 @@ namespace KursRepositories.ViewModels
             {
                 if (myPassword == value) return;
                 myPassword = value;
-                RaisePassword();
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -172,7 +209,6 @@ namespace KursRepositories.ViewModels
             {
                 if (myPasswordConfirm == value) return;
                 myPasswordConfirm = value;
-                RaisePasswordConfirm();
                 RaisePropertyChanged();
             }
         }
@@ -245,15 +281,10 @@ namespace KursRepositories.ViewModels
                 if (fnames.Length > 0)
                 {
                     LastName = fnames[0];
-                    if (fnames.Length >= 2)
-                    {
-                        MiddleName = fnames[1];
-                    }
-                    if (fnames.Length >= 3)
-                    {
-                        FirstName = fnames[2];
-                    }
+                    if (fnames.Length >= 2) MiddleName = fnames[1];
+                    if (fnames.Length >= 3) FirstName = fnames[2];
                 }
+
                 RaisePropertyChanged();
             }
         }
@@ -294,7 +325,7 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        public bool Deleted { get; set; } = false;
+        public bool Deleted { get; set; }
 
         public byte[] Avatar
         {
@@ -336,6 +367,151 @@ namespace KursRepositories.ViewModels
 
         #region Command
 
+        public ICommand AdminStatusChangeCommand
+        {
+            get { return new Command(AdminStatusChange, _ => true); }
+        }
+
+        private void AdminStatusChange(object obj)
+        {
+            if (obj is EditValueChangingEventArgs e)
+            {
+                if ((bool) e.NewValue)
+                {
+                    using (var ctx = GlobalOptions.KursSystem())
+                    {
+                        var sql = $"ALTER SERVER ROLE [sysadmin] ADD MEMBER [{LoginName}]; "
+                                  + $"ALTER SERVER ROLE [securityadmin] ADD MEMBER [{LoginName}]; ";
+                        ctx.Database.ExecuteSqlCommand(sql);
+
+                    }
+                }
+                else
+                {
+                    using (var ctx = GlobalOptions.KursSystem())
+                    {
+                        var sql = $"ALTER SERVER ROLE [sysadmin] DROP MEMBER [{LoginName}]; "
+                                  + $"ALTER SERVER ROLE [securityadmin] DROP MEMBER [{LoginName}]; ";
+                        ctx.Database.ExecuteSqlCommand(sql);
+                    }
+                }
+            }
+        }
+
+        public ICommand UpdateLinkDataSourceCommand
+        {
+            get
+            {
+                return new Command(UpdateLinkDataSource, _ => CurrentCompany != null);
+            }
+        }
+
+        private void UpdateLinkDataSource(object obj)
+        {
+            if(!(obj is CellValueChangedEventArgs e)) return;
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                var usr = ctx.Users.Include(_ => _.DataSources).FirstOrDefault(_ => _.Id == userId);
+                var ds = ctx.DataSources.FirstOrDefault(_ => _.Id == CurrentCompany.Id);
+                if (usr != null && ds != null)
+                {
+                    if ((bool) e.Value)
+                    {
+                        usr.DataSources.Add(ds);
+                    }
+                    else
+                    {
+                        usr.DataSources.Remove(ds);
+                    }
+                }
+                ctx.SaveChanges();
+            }
+        }
+
+        public override void SaveData(object data)
+        {
+            if (IsNewUser)
+            {
+                if (!string.IsNullOrWhiteSpace(LoginName) && !string.IsNullOrWhiteSpace(Password) &&
+                    !string.IsNullOrWhiteSpace(PasswordConfirm)
+                    && Password == PasswordConfirm)
+                    try
+                    {
+                        using (var ctx = GlobalOptions.KursSystem())
+                        {
+                            var sql = "USE MASTER " +
+                                      $"CREATE LOGIN {LoginName} WITH PASSWORD=N'{Password}', " +
+                                      "DEFAULT_DATABASE = MASTER, " +
+                                      "DEFAULT_LANGUAGE = US_ENGLISH " +
+                                      $"ALTER LOGIN {LoginName} ENABLE ";
+                            ctx.Database.ExecuteSqlCommand(sql);
+                            foreach (var c in Companies.Where(_ => _.IsSelectedItem))
+                            {
+                                var usrsql = $"USE [{c.DBName}] " +
+                                             $"CREATE USER {LoginName} FOR LOGIN {LoginName} WITH DEFAULT_SCHEMA = [DBO] ";
+                                ctx.Database.ExecuteSqlCommand(usrsql);
+                            }
+
+                            var newUser = new Users
+                            {
+                                Id = Guid.NewGuid(),
+                                Name = LoginName.Trim(),
+                                FullName = FullName.Trim(),
+                                Note = Note,
+                                ThemeName = ThemeName,
+                                IsAdmin = Admin,
+                                IsTester = Tester,
+                                IsDeleted = Deleted,
+                                Avatar = Avatar
+                            };
+                            ctx.Users.Add(newUser);
+
+                            foreach (var c in Companies)
+                                if (c.IsSelectedItem)
+                                {
+                                    var old = ctx.DataSources.Include(_ => _.Users).FirstOrDefault(_ => _.Id == c.Id);
+                                    old?.Users.Add(newUser);
+                                }
+
+                            ctx.SaveChanges();
+                        }
+
+                        IsNewUser = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        WindowManager.ShowError(ex);
+                    }
+            }
+            else
+            {
+                using (var ctx = GlobalOptions.KursSystem())
+                {
+                    var olduser = ctx.Users.FirstOrDefault(_ => _.Id == userId);
+                    if (olduser != null)
+                    {
+                        olduser.FullName = FullName.Trim();
+                        olduser.Note = Note;
+                        olduser.ThemeName = ThemeName;
+                        olduser.IsAdmin = Admin;
+                        olduser.IsTester = Tester;
+                        olduser.IsDeleted = Deleted;
+                        olduser.Avatar = Avatar;
+                    }
+                    ctx.SaveChanges();
+                    if (Admin)
+                    {
+                        if (!string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(PasswordConfirm)
+                                                                 && Password == PasswordConfirm)
+                        {
+                            var sql = $"ALTER LOGIN {LoginName} WITH PASSWORD = '{Password}'";
+                            ctx.Database.ExecuteSqlCommand(sql);
+                        }
+                    }
+                }
+            }
+        }
+
         public ICommand CreateNewUserCommand
         {
             get { return new Command(createNewUser, _ => true); }
@@ -353,9 +529,10 @@ namespace KursRepositories.ViewModels
                 return;
             }
 
+            userId = Guid.NewGuid();
             NewUser = new Users
             {
-                Id = Guid.NewGuid(),
+                Id = userId,
                 Name = LoginName.Trim(),
                 FullName = FullName.Trim(),
                 Note = Note,
@@ -367,6 +544,20 @@ namespace KursRepositories.ViewModels
             };
             MessageBox.Show("Пользователь создан.");
             CloseWindow(Form);
+        }
+
+        public override bool IsCanSaveData => isCanSave();
+
+        private bool isCanSave()
+        {
+            if (IsNewUser)
+            {
+                return !string.IsNullOrWhiteSpace(LoginName) && !string.IsNullOrWhiteSpace(Password)
+                                                             && !string.IsNullOrWhiteSpace(PasswordConfirm)
+                                                             && Password == PasswordConfirm;
+            }
+
+            return true;
         }
 
         public ICommand CancelCreateNewUserCommand
@@ -395,28 +586,24 @@ namespace KursRepositories.ViewModels
                     return;
                 }
 
-                string[] fnames = {};
+                string[] fnames = { };
                 if (!string.IsNullOrWhiteSpace(usr.FullName))
                 {
-                    var s = System.Text.RegularExpressions.Regex.Replace(usr.FullName, @"\s+", " ");
+                    var s = Regex.Replace(usr.FullName, @"\s+", " ");
                     fnames = s.Split(' ');
                 }
 
                 //{LastName} {FirstName} {MiddleName}"
                 Id = usr.Id;
+                userId = usr.Id;
                 LoginName = usr.Name;
                 if (fnames.Length > 0)
                 {
                     LastName = fnames[0];
-                    if (fnames.Length >= 2)
-                    {
-                        MiddleName = fnames[1];
-                    }
-                    if (fnames.Length >= 3)
-                    {
-                        FirstName = fnames[2];
-                    }
+                    if (fnames.Length >= 2) MiddleName = fnames[1];
+                    if (fnames.Length >= 3) FirstName = fnames[2];
                 }
+
                 Note = usr.Note;
                 ThemeName = usr.ThemeName;
                 Admin = usr.IsAdmin;
@@ -424,22 +611,14 @@ namespace KursRepositories.ViewModels
                 Deleted = usr.IsDeleted;
                 Avatar = usr.Avatar;
 
-                foreach (var c in Companies)
-                {
-                    c.IsSelectedItem = false;
-                }
-                var data = ctx.Users.Include(_ => _.DataSources).FirstOrDefault(_ => _.Name == usr.Name)?.DataSources.ToList();
+                foreach (var c in Companies) c.IsSelectedItem = false;
+                var data = ctx.Users.Include(_ => _.DataSources).FirstOrDefault(_ => _.Name == usr.Name)?.DataSources
+                    .ToList();
                 if (data != null && data.Count > 0)
-                {
                     foreach (var d in data)
-                    {
-                        foreach (var c in Companies)
-                        {
-                            if (c.Id == d.Id)
-                                c.IsSelectedItem = true;
-                        }
-                    }
-                }
+                    foreach (var c in Companies)
+                        if (c.Id == d.Id)
+                            c.IsSelectedItem = true;
             }
         }
 
@@ -469,15 +648,6 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        private void RaisePassword()
-        {
-            RaisePropertyChanged(nameof(PasswordConfirm));
-        }
-
-        private void RaisePasswordConfirm()
-        {
-            RaisePropertyChanged(nameof(Password));
-        }
         #endregion
 
         #region InputValidation
@@ -488,6 +658,7 @@ namespace KursRepositories.ViewModels
         {
             get
             {
+                if(!IsNewUser) return string.Empty;
                 switch (columnName)
                 {
                     case "FirstName":
@@ -498,10 +669,6 @@ namespace KursRepositories.ViewModels
                         return ValidateName(MiddleName) ? string.Empty : Error;
                     case "LoginName":
                         return ValidateLogin(LoginName) ? string.Empty : Error;
-                    case "Password":
-                        return ValidatePassword(Password, PasswordConfirm) ? string.Empty : Error;
-                    case "PasswordConfirm":
-                        return ValidatePassword(Password, PasswordConfirm) ? string.Empty : Error;
                 }
 
                 return string.Empty;

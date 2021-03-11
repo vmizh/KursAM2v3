@@ -589,7 +589,7 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Настройка прав доступа":
-                        var ctxAccessRight = new MainWindowPermissionsViewModel();
+                        var ctxAccessRight = new UsersManagerViewModel();
                         var form2 = new UsersManagerView()
                         {
                             Owner = Application.Current.MainWindow,
