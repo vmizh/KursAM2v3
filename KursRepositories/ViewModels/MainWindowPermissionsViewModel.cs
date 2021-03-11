@@ -5,18 +5,22 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Core;
+using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using KursRepositories.View;
 
 namespace KursRepositories.ViewModels
 {
-    public class MainWindowPermissionsViewModel : RSWindowViewModelBase
+    public sealed class MainWindowPermissionsViewModel : RSWindowViewModelBase
     {
         public MainWindowPermissionsViewModel()
         {
-            LoadUsersData();
-            LoadRoleData();
+            WindowName = "Управление пользователями и доступом";
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
+            RefreshData(null);
         }
 
         #region Fields
@@ -40,6 +44,8 @@ namespace KursRepositories.ViewModels
         public ObservableCollection<DataSourcesViewModel> CompaniesList { set; get; } =
             new ObservableCollection<DataSourcesViewModel>();
 
+        public bool IsPermissionEnable => CurrentCompany != null;
+
         public DataSourcesViewModel CurrentCompany
         {
             get => myCurrentCompany;
@@ -50,6 +56,7 @@ namespace KursRepositories.ViewModels
 
                 myCurrentCompany = value;
                 RefreshDataPermissionList();
+                RaisePropertyChanged(nameof(IsPermissionEnable));
                 RaisePropertyChanged();
             }
         }
@@ -106,7 +113,7 @@ namespace KursRepositories.ViewModels
 
         private void LoadUsersData()
         {
-            using (var ctx = new KursSystemEntities())
+            using (var ctx = GlobalOptions.KursSystem())
             {
                 UserList.Clear();
                 PermissionsList.Clear();
@@ -134,7 +141,7 @@ namespace KursRepositories.ViewModels
         }
         private void LoadRoleData()
         {
-            using (var ctx = new KursSystemEntities())
+            using (var ctx = GlobalOptions.KursSystem())
             {
                 RoleList.Clear();
                 RoleItemsList.Clear();
@@ -162,7 +169,7 @@ namespace KursRepositories.ViewModels
             if (CurrentCompany == null)
                 return;
             
-            using (var ctx = new KursSystemEntities())
+            using (var ctx = GlobalOptions.KursSystem())
             {
                 var permissions = ctx.UserMenuRight.Include(_ => _.DataSources).Where(_ =>(_.LoginName == UserListCurrentItem.Name))
                         .Where(_=>(_.DBId == CurrentCompany.Id));
@@ -179,7 +186,7 @@ namespace KursRepositories.ViewModels
         {
             if (CurrentRole == null) return;
 
-            using (var ctx = new KursSystemEntities())
+            using (var ctx = GlobalOptions.KursSystem())
             {
 
                 var userPermission = ctx.UserRoles.Include(_ => _.KursMenuItem)
@@ -200,6 +207,12 @@ namespace KursRepositories.ViewModels
 
         #region Commands
 
+        public override void RefreshData(object obj)
+        {
+            LoadUsersData();
+            LoadRoleData();
+        }
+
         public ICommand OpenWindowCreationRoleCommand
         {
             get { return new Command(openWindowCreationRole, _ => true); }
@@ -212,7 +225,7 @@ namespace KursRepositories.ViewModels
             ctx.Form = form;
             form.ShowDialog();
             if (ctx.NewRole != null)
-                using (var context = new KursSystemEntities())
+                using (var context = GlobalOptions.KursSystem())
                 {
                     /*var newRole = new UserRoles()
                     {
@@ -235,7 +248,6 @@ namespace KursRepositories.ViewModels
                 }
         }
 
-
         public ICommand OpenWindowCreationUserCommand
         {
             get { return new Command(openWindowCreationUser, _ => true); }
@@ -249,7 +261,7 @@ namespace KursRepositories.ViewModels
             form.ShowDialog();
             if (ctx.NewUser != null)
             {
-                using (var context = new KursSystemEntities())
+                using (var context = GlobalOptions.KursSystem())
                 {
                     var newUser = new Users 
                     {
@@ -280,7 +292,7 @@ namespace KursRepositories.ViewModels
         private void deleteUser(object p)
         {
             
-            using (var ctx = new KursSystemEntities())
+            using (var ctx = GlobalOptions.KursSystem())
             {
                 var oldUserList = ctx.Users.ToList();
                 foreach (var u in UserList)
@@ -301,7 +313,7 @@ namespace KursRepositories.ViewModels
 
         private void saveChangesInUsersGridControl(object obj)
         {
-            using (var ctx = new KursSystemEntities())
+            using (var ctx = GlobalOptions.KursSystem())
             {
                 var oldUserList = ctx.Users.ToList();
                 foreach (var usr in UserList)
@@ -342,7 +354,7 @@ namespace KursRepositories.ViewModels
 
         private void deleteRole(object p)
         {
-            using (var ctx = new KursSystemEntities())
+            using (var ctx = GlobalOptions.KursSystem())
             {
                 var deleteRole = ctx.UserRoles.First(_ => _.id == CurrentRole.Id);
                 if (deleteRole == null) return;

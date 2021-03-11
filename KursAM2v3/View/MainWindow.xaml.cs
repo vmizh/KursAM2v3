@@ -45,6 +45,7 @@ using KursAM2.ViewModel.Reconcilation;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.Reference.Nomenkl;
 using KursAM2.ViewModel.Repozit;
+using KursRepositories.ViewModels;
 using LayoutManager;
 using NomenklCostReset = KursAM2.View.Logistiks.NomenklCostReset;
 
@@ -385,6 +386,7 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Права доступа для пользователей":
+
                         var ctxost4 = new UsersHorizontalRightWindowViewModel();
                         form = new UsersHorizontalRight
                         {
@@ -587,14 +589,20 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Настройка прав доступа":
-                        var ctxAccessRight = new AccessRightsViewModel();
-                        form = new AccessRightsView
+                        var ctxAccessRight = new MainWindowPermissionsViewModel();
+                        var form2 = new UsersManagerView()
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = ctxAccessRight
                         };
-                        ctxAccessRight.Form = form;
-                        form.Show();
+                        //var ctxAccessRight = new AccessRightsViewModel();
+                        //form = new AccessRightsView
+                        //{
+                        //    Owner = Application.Current.MainWindow,
+                        //    DataContext = ctxAccessRight
+                        //};
+                        ctxAccessRight.Form = form2;
+                        form2.Show();
                         break;
                     case "Распределение приходов":
                         var ctxProjectPrihod = new ProjectProviderPrihodWindowViewModel();

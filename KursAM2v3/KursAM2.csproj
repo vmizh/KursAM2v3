@@ -900,6 +900,9 @@
     <Compile Include="View\Repozit\UsersHorizontalRight.xaml.cs">
       <DependentUpon>UsersHorizontalRight.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Repozit\UsersManagerView.xaml.cs">
+      <DependentUpon>UsersManagerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Search\SearchNakladForClientView.xaml.cs">
       <DependentUpon>SearchNakladForClientView.xaml</DependentUpon>
     </Compile>
@@ -1570,6 +1573,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Repozit\UsersHorizontalRight.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Repozit\UsersManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

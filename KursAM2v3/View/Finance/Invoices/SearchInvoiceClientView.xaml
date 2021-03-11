@@ -43,25 +43,6 @@
                             UpdateSourceTrigger=PropertyChanged}" />
                 </dxlc:LayoutItem>
             </StackPanel>
-            <!-- <dxlc:LayoutItem Label="Поиск" -->
-            <!--                  ToolTip="Строка поиска по полям документов" -->
-            <!--                  Height="26" -->
-            <!--                  Name="TextSearch" -->
-            <!--                  Width="350" -->
-            <!--                  HorizontalAlignment="Right"> -->
-            <!--     <dxe:ButtonEdit AllowDefaultButton="False" -->
-            <!--                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" -->
-            <!--                     IsEnabled="{Binding IsSearchEnabled}"> -->
-            <!--         <dxe:ButtonEdit.Buttons> -->
-            <!--             <dxe:ButtonInfo GlyphKind="Search" Command="{Binding SearchCommand}" /> -->
-            <!--             <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding SearchClearCommand}" /> -->
-            <!--         </dxe:ButtonEdit.Buttons> -->
-            <!--         <dxmvvm:Interaction.Behaviors> -->
-            <!--             <dxmvvm:KeyToCommand Command="{Binding SearchKeyDownCommand}" -->
-            <!--                                  KeyGesture="Enter" /> -->
-            <!--         </dxmvvm:Interaction.Behaviors> -->
-            <!--     </dxe:ButtonEdit> -->
-            <!-- </dxlc:LayoutItem> -->
         </DockPanel>
         <dxlc:LayoutControl Name="mainLayoutControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                             Padding="0">

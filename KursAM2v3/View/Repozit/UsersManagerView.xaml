@@ -1,0 +1,211 @@
+﻿<dx:ThemedWindow x:Class="KursAM2.View.Repozit.UsersManagerView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:control="clr-namespace:Core.Control;assembly=Core"
+                 xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+                 xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 mc:Ignorable="d"
+                 Title="{Binding WindowName}" MinHeight="450" MinWidth="800"
+                 >
+    <DockPanel>
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0" DockPanel.Dock="Top"
+               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}"/>
+        <dxlc:LayoutControl HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch">
+           
+            <dxlc:LayoutGroup Name="RootTabsGroup"
+                              View="Tabs">
+                 <dxlc:LayoutGroup Name="UsersGroup"
+                                  Orientation="Horizontal" 
+                                  View="Group"
+                                  Header="Пользователи">
+                            
+                <dxlc:LayoutGroup x:Name ="UsersGridAndButtonGroup"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
+                                  Orientation="Vertical" 
+                                  Margin="5"
+                                  View="Group" 
+                                  dxlc:LayoutControl.AllowHorizontalSizing="True">
+                <dxlc:LayoutItem Margin="5 0 5 0"
+                                 HorizontalAlignment="Left">
+                        <!--<StackPanel Name="ButtonStackPanel"
+                                    Orientation="Horizontal">
+                            <Button x:Name="AddNewUserButton"
+                                    Margin="0 0 5 5"
+                                    Content="Добавить пользователя"
+                                    Background="GhostWhite"
+                                    Command ="{Binding OpenWindowCreationUserCommand}">
+                            </Button>
+                            <Button  x:Name="UpdateUserView"
+                                     Margin="0 0 5 5"
+                                     Content="Обновить список" 
+                                     Background="GhostWhite"
+                                     Command="{Binding UpdateUsersViewCommand}">
+                            </Button>
+                            <Button  x:Name="DeleteUserButton"
+                                     Margin="0 0 0 5"
+                                     Content="Удалить пользователя" 
+                                     Background="GhostWhite"
+                                     Command="{Binding DeleteUserCommand}">
+                            </Button>
+                        </StackPanel>-->
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem VerticalAlignment="Stretch" 
+                                     HorizontalAlignment="Stretch">
+                        <dxg:GridControl x:Name="UsersGridControl"
+                                             AutoGenerateColumns="AddNew"
+                                             EnableSmartColumnsGeneration="True"
+                                             HorizontalAlignment="Stretch" 
+                                             VerticalAlignment="Stretch"
+                                             ItemsSource="{Binding UserList, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                             CurrentItem="{Binding UserListCurrentItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                             MaxHeight="10000"
+                                             MaxWidth="10000"
+                                            AutoGeneratingColumn="UsersGridControl_OnAutoGeneratingColumn">
+                            <dxg:GridControl.View>
+                                <dxg:TableView ShowTotalSummary="False"
+                                               IsSynchronizedWithCurrentItem="True"
+                                               BestFitModeOnSourceChange="AllRows"/>
+                            </dxg:GridControl.View>
+                            <dxg:GridControl.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Создать пользователя" 
+                                              Command="{Binding OpenWindowCreationUserCommand}"/>
+                                    <MenuItem Header="Создать копию пользователя" 
+                                              Command="{Binding OpenWindowCreationCopyUserCommand}"/>
+                                    <MenuItem Header="Удалить пользователя" 
+                                              Command="{Binding DeleteUserCommand}"/>
+                                    <MenuItem Header ="Свойства пользователя" Command="{Binding EditUserCommand}"/>
+                                    <!--<MenuItem Header="Обновить список"
+                                              Command="{Binding UpdateViewCommand}"/>-->
+
+                            </ContextMenu>
+                            </dxg:GridControl.ContextMenu>
+                        </dxg:GridControl>
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+                
+                <dxlc:LayoutGroup Name="LayoutGroupPermissions" 
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
+                                  Orientation="Vertical" 
+                                  Margin="5"
+                                  View="Group" 
+                                  dxlc:LayoutControl.AllowHorizontalSizing="True">
+                    <dxlc:LayoutItem>
+                        <dxe:ComboBoxEdit x:Name="ComboBoxEditCompany"
+                                          Margin="0 0 0 5"
+                                          ItemsSource="{Binding CompaniesList, UpdateSourceTrigger=PropertyChanged}"
+                                          NullText="Выберите компанию"
+                                          DisplayMember="ShowName"
+                                          EditValue="{Binding CurrentCompany, UpdateSourceTrigger=PropertyChanged}">
+                            <dxe:ComboBoxEdit.StyleSettings>
+                                <dxe:ComboBoxStyleSettings/>
+                            </dxe:ComboBoxEdit.StyleSettings>
+                        </dxe:ComboBoxEdit>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch">
+                        <dxg:GridControl x:Name="PermissionsGridControl"
+                                         AutoGenerateColumns="AddNew"
+                                         EnableSmartColumnsGeneration="True"
+                                         HorizontalAlignment="Stretch"
+                                         VerticalAlignment="Stretch"
+                                         ItemsSource="{Binding PermissionsList, UpdateSourceTrigger=PropertyChanged}"
+                                         MaxHeight="10000"
+                                         MaxWidth="10000"
+                                         IsEnabled="{Binding IsPermissionEnable, UpdateSourceTrigger=PropertyChanged}"
+                                         AutoGeneratingColumn="PermissionsGridControl_OnAutoGeneratingColumn">
+                            <dxg:GridControl.View>
+                                <dxg:TableView ShowTotalSummary="True"
+                                               IsSynchronizedWithCurrentItem="True"
+                                               BestFitModeOnSourceChange="AllRows"/>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Name="RoleGroup"
+                                  VerticalAlignment="Stretch" 
+                                  HorizontalAlignment="Stretch" 
+                                  Header ="Роли">
+                    <dxlc:LayoutGroup Name="RoleListGroup"
+                                      >
+                        <dxlc:LayoutGroup Name="GridsGroup"
+                                          Orientation="Horizontal"
+                                          VerticalAlignment="Stretch" 
+                                          HorizontalAlignment="Stretch">
+                            <dxlc:LayoutGroup Orientation="Vertical"
+                                              Margin="5 0 5 0"
+                                              dxlc:LayoutControl.AllowHorizontalSizing="True">
+                                <dxlc:LayoutItem Margin="0 0 0 7">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="OpenWindowCreationRoleButton"
+                                                Margin="0 0 5 0"
+                                                Content="Создать роль"
+                                                Command="{Binding OpenWindowCreationRoleCommand}"/>
+                                        <Button x:Name="DeleteRoleButton"
+                                                Margin="5 0 5 0"
+                                                Content="Удалить роль"
+                                                Command="{Binding DeleteRoleCommand}"/>
+                                    </StackPanel>
+                                </dxlc:LayoutItem>
+                                <dxlc:LayoutItem Name="GridRoles"
+                                                 VerticalAlignment="Stretch" 
+                                                 HorizontalAlignment="Stretch">
+                                    <dxg:GridControl x:Name="RolesGridControl"
+                                                             AutoGenerateColumns="AddNew"
+                                                             AutoGeneratingColumn="RolesGridControl_OnAutoGeneratingColumn"
+                                                             EnableSmartColumnsGeneration="True"
+                                                             VerticalAlignment="Top"
+                                                             ItemsSource="{Binding RoleList, UpdateSourceTrigger=PropertyChanged}"
+                                                             CurrentItem="{Binding CurrentRole, UpdateSourceTrigger=PropertyChanged}"
+                                                             MaxHeight="10000"
+                                                             MaxWidth="10000">
+                                        <dxg:GridControl.View>
+                                            <dxg:TableView ShowTotalSummary="True"
+                                                           IsSynchronizedWithCurrentItem="True"
+                                                           BestFitModeOnSourceChange="AllRows"/>
+                                        </dxg:GridControl.View>
+                                        <dxg:GridControl.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Удалить роль" 
+                                                          Command="{Binding DeleteRoleCommand}"/>
+                                            </ContextMenu>
+                                        </dxg:GridControl.ContextMenu>
+                                    </dxg:GridControl>
+                                </dxlc:LayoutItem>
+                            </dxlc:LayoutGroup>
+                            <dxlc:LayoutItem Margin="5 0 5 0"
+                                             VerticalAlignment="Stretch" 
+                                             HorizontalAlignment="Stretch" LabelVerticalAlignment="Top" LabelPosition="Top"
+                                             Label="Список разрешений для роли">
+                                <dxg:GridControl x:Name="GridControlPermissionItems"
+                                                 HorizontalAlignment="Stretch"
+                                                 VerticalAlignment="Stretch"
+                                                 AutoGenerateColumns="AddNew"
+                                                 EnableSmartColumnsGeneration="True"
+                                                 ItemsSource="{Binding RoleItemsList, UpdateSourceTrigger=PropertyChanged}"
+                                                 CurrentItem="{Binding CurrentPermission, UpdateSourceTrigger=PropertyChanged}"
+                                                 MaxHeight="2000"
+                                                 MaxWidth="2000">
+                                    <dxg:GridControl.View>
+                                        <dxg:TableView ShowTotalSummary="True"
+                                                       IsSynchronizedWithCurrentItem="True"
+                                                       BestFitModeOnSourceChange="AllRows"/>
+                                    </dxg:GridControl.View>
+                                </dxg:GridControl>
+                            </dxlc:LayoutItem>
+                        </dxlc:LayoutGroup>
+                    </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:ThemedWindow>
