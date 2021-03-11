@@ -59,7 +59,9 @@
                                 <dxlc:LayoutItem Label ="Подтвердите пароль" AddColonToLabel="True">
                                     <dxe:PasswordBoxEdit x:Name="PasswordConfirm" 
                                                          NullText="Повторите введенный пароль"
-                                                         EditValue="{Binding PasswordConfirm, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                                                         EditValue="{Binding PasswordConfirm, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}">
+                                    </dxe:PasswordBoxEdit>
+                                    
                                 </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Примечание" AddColonToLabel="True">
                                         <dxe:TextEdit NullText="Поле не обязательное для заполнения"
