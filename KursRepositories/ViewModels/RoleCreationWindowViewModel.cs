@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Core;
 using Core.ViewModel.Base;
 using Data;
 
@@ -95,7 +96,7 @@ namespace KursRepositories.ViewModels
 
         private void LoadDataRoleCreationWindow()
         {
-            using (var ctx = new KursSystemEntities())
+            using (var ctx =  GlobalOptions.KursSystem())
             {
                 foreach (var item in ctx.KursMenuItem.ToList())
                 {
@@ -113,23 +114,42 @@ namespace KursRepositories.ViewModels
 
         public ICommand CreateRoleCommand
         {
-            get { return new Command(createRoleCommand, _ => NameRole != null & NoteRole != null); }
+            get { return new Command(CreateRole, _ => NewRole.Name != null & NewRole.Note != null); }
         }
 
-        private void createRoleCommand(object obj)
+        private void CreateRole(object obj)
         {
-            SelectedMenuIdItems.Clear();
-            foreach (var item in from permission in PermissionsList
-                where permission.IsSelectedItem
-                select permission.Entity)
-                SelectedMenuIdItems.Add(item);
-            
-            NewRole = new UserRolesViewModel(new UserRoles()
+            using (var ctx = GlobalOptions.KursSystem())
             {
-                id = Guid.NewGuid(),
-                Name = NameRole.Trim(),
-                Note = NoteRole.Trim(),
-            });
+                SelectedMenuIdItems.Clear();
+                foreach (var item in from permission in PermissionsList
+                    where permission.IsSelectedItem
+                    select permission.Entity)
+                    SelectedMenuIdItems.Add(item);
+
+                var newRole = new UserRoles()
+                {
+                    id = Guid.NewGuid(),
+                    Name = NewRole.Name.Trim(),
+                    Note = NewRole.Note.Trim(),
+                    KursMenuItem = new List<KursMenuItem>()
+                };
+                
+                
+                newRole.KursMenuItem.Clear();
+
+                foreach (var item in SelectedMenuIdItems)
+                {
+                    newRole.KursMenuItem.Add(item);
+                }
+
+                ctx.UserRoles.Add(newRole);
+                ctx.SaveChanges();
+
+            }
+            
+           
+
             MessageBox.Show("Роль успешно создана.");
             CloseWindow(Form);
         }
