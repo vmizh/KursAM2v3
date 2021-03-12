@@ -19,6 +19,7 @@ namespace KursRepositories.ViewModels
         #region Fields
 
         private bool myIsSelectedItem;
+        private string myGroupName;
 
         #endregion
         
@@ -69,7 +70,19 @@ namespace KursRepositories.ViewModels
             }
         }
 
+        [Display(Name = "Группа")]
+        public string GroupName
+        {
+            get => myGroupName;
+            set
+            {
+                if (myGroupName == value)
+                    return;
+                myGroupName = value;
+                RaisePropertyChanged();
 
+            }
+        }
 
         [Display(Name = "Наименование")]
         public override string Name

@@ -44,7 +44,8 @@
                                                   EditValue="{Binding MiddleName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
                                     </dxlc:LayoutItem>
                                 <dxlc:LayoutItem Label="Полное имя" AddColonToLabel="True">
-                                    <dxe:TextEdit EditValue="{Binding FullName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
+                                    <dxe:TextEdit EditValue="{Binding FullName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" 
+                                                  IsReadOnly="True"/>
                                     </dxlc:LayoutItem>
                                 <dxlc:LayoutItem Label="Имя для авторизации" AddColonToLabel="True">
                                         <dxe:TextEdit NullText ="Введите имя для авторизации в системе"

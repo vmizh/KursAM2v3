@@ -37,6 +37,15 @@ namespace KursAM2.ViewModel.Repozit
             LoadExistingUser(loginName);
         }
 
+        public UserOptionsWindowViewModel(string loginName, bool isCopy = false) : this(loginName)
+        {
+            if (!string.IsNullOrWhiteSpace(loginName)) 
+                IsNewUser = true;
+            LoadExistingUser(loginName);
+            LoginName = null;
+            FullName = null;
+        }
+
         #endregion
 
 
@@ -274,17 +283,10 @@ namespace KursAM2.ViewModel.Repozit
             get => $"{myLastName} {myFirstName} {myMiddleName}";
             set
             {
-                if (myLastName == value)
+                if (myFullName == value)
                     return;
                 myFullName = value;
-                var fnames = myFullName.Split(' ');
-                if (fnames.Length > 0)
-                {
-                    LastName = fnames[0];
-                    if (fnames.Length >= 2) MiddleName = fnames[1];
-                    if (fnames.Length >= 3) FirstName = fnames[2];
-                }
-
+                setNamesFromFullName(value);
                 RaisePropertyChanged();
             }
         }
@@ -374,6 +376,7 @@ namespace KursAM2.ViewModel.Repozit
 
         private void AdminStatusChange(object obj)
         {
+            if (string.IsNullOrWhiteSpace(LoginName)) return;
             if (obj is EditValueChangingEventArgs e)
             {
                 if ((bool) e.NewValue)
@@ -418,6 +421,24 @@ namespace KursAM2.ViewModel.Repozit
                     if ((bool) e.Value)
                     {
                         usr.DataSources.Add(ds);
+                        List<int> dbcount = ctx.Database.SqlQuery<int>($"SELECT count(*) FROM sys.databases d WHERE d.name = '{ds.DBName}'").ToList();
+                        if (dbcount[0] > 0)
+                        {
+                            var usrsql = $"USE [{ds.DBName}] " +
+                                         $"if  (select  count(*) from sys.database_principals where name = '{LoginName}') = 0 " +
+                                         "begin " +
+                                         $"CREATE USER {LoginName} FOR LOGIN {LoginName} WITH DEFAULT_SCHEMA = [{LoginName}] " +
+                                         "end " +
+                                         $"if (SELECT COUNT(*) FROM EXT_USERS WHERE USR_NICKNAME ='{LoginName}' ) = 0 " +
+                                         "BEGIN " +
+                                         "DECLARE @maxId int; " +
+                                         "SELECT @maxId = isnull(MAX(USR_ID),1)+1 FROM EXT_USERS; " +
+                                         "INSERT INTO dbo.EXT_USERS (USR_ID,USR_NICKNAME,USR_FULLNAME,TABELNUMBER, " +
+                                         "USR_PHONE  ,USR_NOTES  ,USR_PASSWORD  ,USR_PROVODKY  ,USR_ABORT_CONNECT) " +
+                                         $"VALUES ( @maxId, '{LoginName}','{FullName}',null,null,null,null,null,null ); " +
+                                         "END;";
+                            ctx.Database.ExecuteSqlCommand(usrsql);
+                        }
                     }
                     else
                     {
@@ -448,7 +469,15 @@ namespace KursAM2.ViewModel.Repozit
                             foreach (var c in Companies.Where(_ => _.IsSelectedItem))
                             {
                                 var usrsql = $"USE [{c.DBName}] " +
-                                             $"CREATE USER {LoginName} FOR LOGIN {LoginName} WITH DEFAULT_SCHEMA = [DBO] ";
+                                             $"CREATE USER {LoginName} FOR LOGIN {LoginName} WITH DEFAULT_SCHEMA = [{LoginName}] " +
+                                             $"if (SELECT COUNT(*) FROM EXT_USERS WHERE USR_NICKNAME ='{LoginName}' ) = 0" +
+                                             "BEGIN " +
+                                             "DECLARE @maxId int; " +
+                                             "SELECT @maxId =isnull(MAX(USR_ID),1) + 1 FROM EXT_USERS; " +
+                                             "INSERT INTO dbo.EXT_USERS (USR_ID,USR_NICKNAME,USR_FULLNAME,TABELNUMBER, " +
+                                             "USR_PHONE  ,USR_NOTES  ,USR_PASSWORD  ,USR_PROVODKY  ,USR_ABORT_CONNECT) " +
+                                             $"VALUES ( @maxId, '{LoginName}','{FullName}',null,null,null,null,null,null );" +
+                                             "END;";
                                 ctx.Database.ExecuteSqlCommand(usrsql);
                             }
 
@@ -475,7 +504,6 @@ namespace KursAM2.ViewModel.Repozit
 
                             ctx.SaveChanges();
                         }
-
                         IsNewUser = false;
                     }
                     catch (Exception ex)
@@ -586,24 +614,13 @@ namespace KursAM2.ViewModel.Repozit
                     return;
                 }
 
-                string[] fnames = { };
-                if (!string.IsNullOrWhiteSpace(usr.FullName))
-                {
-                    var s = Regex.Replace(usr.FullName, @"\s+", " ");
-                    fnames = s.Split(' ');
-                }
+                
 
                 //{LastName} {FirstName} {MiddleName}"
                 Id = usr.Id;
                 userId = usr.Id;
                 LoginName = usr.Name;
-                if (fnames.Length > 0)
-                {
-                    LastName = fnames[0];
-                    if (fnames.Length >= 2) MiddleName = fnames[1];
-                    if (fnames.Length >= 3) FirstName = fnames[2];
-                }
-
+                setNamesFromFullName(usr.FullName);
                 Note = usr.Note;
                 ThemeName = usr.ThemeName;
                 Admin = usr.IsAdmin;
@@ -619,6 +636,22 @@ namespace KursAM2.ViewModel.Repozit
                     foreach (var c in Companies)
                         if (c.Id == d.Id)
                             c.IsSelectedItem = true;
+            }
+        }
+
+        private void setNamesFromFullName(string fname)
+        {
+            string[] fnames = { };
+            if (!string.IsNullOrWhiteSpace(fname))
+            {
+                var s = Regex.Replace(fname, @"\s+", " ");
+                fnames = s.Split(' ');
+            }
+            if (fnames.Length > 0)
+            {
+                LastName = fnames[0];
+                if (fnames.Length >= 2) FirstName = fnames[1];
+                if (fnames.Length >= 3) MiddleName = fnames[2];
             }
         }
 

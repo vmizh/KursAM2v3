@@ -8,6 +8,7 @@
                  xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                  mc:Ignorable="d"
                  Title="{Binding WindowName}" MinHeight="450" MinWidth="800"
                  >
@@ -34,27 +35,7 @@
                                   dxlc:LayoutControl.AllowHorizontalSizing="True">
                 <dxlc:LayoutItem Margin="5 0 5 0"
                                  HorizontalAlignment="Left">
-                        <!--<StackPanel Name="ButtonStackPanel"
-                                    Orientation="Horizontal">
-                            <Button x:Name="AddNewUserButton"
-                                    Margin="0 0 5 5"
-                                    Content="Добавить пользователя"
-                                    Background="GhostWhite"
-                                    Command ="{Binding OpenWindowCreationUserCommand}">
-                            </Button>
-                            <Button  x:Name="UpdateUserView"
-                                     Margin="0 0 5 5"
-                                     Content="Обновить список" 
-                                     Background="GhostWhite"
-                                     Command="{Binding UpdateUsersViewCommand}">
-                            </Button>
-                            <Button  x:Name="DeleteUserButton"
-                                     Margin="0 0 0 5"
-                                     Content="Удалить пользователя" 
-                                     Background="GhostWhite"
-                                     Command="{Binding DeleteUserCommand}">
-                            </Button>
-                        </StackPanel>-->
+                        
                     </dxlc:LayoutItem>
                     <dxlc:LayoutItem VerticalAlignment="Stretch" 
                                      HorizontalAlignment="Stretch">
@@ -71,17 +52,23 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="False"
                                                IsSynchronizedWithCurrentItem="True"
-                                               BestFitModeOnSourceChange="AllRows"/>
+                                               BestFitModeOnSourceChange="AllRows">
+                                    <dxmvvm:Interaction.Behaviors> 
+                                        <dxmvvm:EventToCommand EventName="CellValueChanging" 
+                                                               Command="{Binding UpdateLinkToDocumentCommand}"
+                                                               PassEventArgsToCommand="True"/> 
+                                    </dxmvvm:Interaction.Behaviors> 
+                                </dxg:TableView>
                             </dxg:GridControl.View>
                             <dxg:GridControl.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Создать пользователя" 
-                                              Command="{Binding OpenWindowCreationUserCommand}"/>
+                                              Command="{Binding DocNewEmptyCommand}"/>
                                     <MenuItem Header="Создать копию пользователя" 
-                                              Command="{Binding OpenWindowCreationCopyUserCommand}"/>
+                                              Command="{Binding DocNewCopyCommand}"/>
                                     <MenuItem Header="Удалить пользователя" 
                                               Command="{Binding DeleteUserCommand}"/>
-                                    <MenuItem Header ="Свойства пользователя" Command="{Binding EditUserCommand}"/>
+                                    <MenuItem Header ="Свойства пользователя" Command="{Binding DocumentOpenCommand}"/>
                                     <!--<MenuItem Header="Обновить список"
                                               Command="{Binding UpdateViewCommand}"/>-->
 
@@ -118,6 +105,7 @@
                                          HorizontalAlignment="Stretch"
                                          VerticalAlignment="Stretch"
                                          ItemsSource="{Binding PermissionsList, UpdateSourceTrigger=PropertyChanged}"
+                                         CurrentItem="{Binding CurrentPermission, UpdateSourceTrigger=PropertyChanged}"
                                          MaxHeight="10000"
                                          MaxWidth="10000"
                                          IsEnabled="{Binding IsPermissionEnable, UpdateSourceTrigger=PropertyChanged}"
@@ -125,7 +113,13 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
                                                IsSynchronizedWithCurrentItem="True"
-                                               BestFitModeOnSourceChange="AllRows"/>
+                                               BestFitModeOnSourceChange="AllRows">
+                                    <dxmvvm:Interaction.Behaviors> 
+                                        <dxmvvm:EventToCommand EventName="CellValueChanging" 
+                                                               Command="{Binding UpdateLinkToDocumentCommand}"
+                                                               PassEventArgsToCommand="True"/> 
+                                    </dxmvvm:Interaction.Behaviors> 
+                                </dxg:TableView>
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </dxlc:LayoutItem>

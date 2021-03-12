@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
@@ -6,8 +7,9 @@ using System.Windows.Input;
 using Core;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Data;
+using DevExpress.Xpf.Grid;
 using KursAM2.View.Repozit;
-using KursRepositories.View;
 using KursRepositories.ViewModels;
 
 namespace KursAM2.ViewModel.Repozit
@@ -68,7 +70,22 @@ namespace KursAM2.ViewModel.Repozit
                     return;
 
                 myUserListCurrentItem = value;
-                RefreshDataPermissionList();
+                if (myUserListCurrentItem != null)
+                {
+                    CompaniesList.Clear();
+                    using (var ctx = GlobalOptions.KursSystem())
+                    {
+                        var usr = ctx.Users.Include(_ => _.DataSources)
+                            .FirstOrDefault(_ => _.Id == myUserListCurrentItem.Id);
+                        if (usr != null)
+                        {
+                            foreach (var company in usr.DataSources.ToList())
+                                CompaniesList.Add(new DataSourcesViewModel(company));
+                            RefreshDataPermissionList();
+                        }
+                    }
+                }
+
                 RaisePropertyChanged();
             }
         }
@@ -118,15 +135,19 @@ namespace KursAM2.ViewModel.Repozit
                 PermissionsList.Clear();
                 CompaniesList.Clear();
 
-                foreach (var user in ctx.Users.ToList()) UserList.Add(new UsersViewModel(user));
+                foreach (var user in ctx.Users.OrderBy(_ => _.Name).ToList()) UserList.Add(new UsersViewModel(user));
 
-                foreach (var permission in ctx.KursMenuItem.ToList())
+                if (CurrentCompany == null || UserListCurrentItem == null) return;
+                var userdbright = ctx.UserMenuRight.Where(_ => _.DBId == CurrentCompany.Id
+                                                               && _.LoginName == UserListCurrentItem.Name).ToList();
+                foreach (var permission in ctx.KursMenuItem.Include(_ => _.KursMenuGroup).ToList())
+                {
                     PermissionsList.Add(new KursMenuItemViewModel(permission)
                     {
-                        IsSelectedItem = false
+                        IsSelectedItem = userdbright.FirstOrDefault(_ => _.MenuId == permission.Id) != null
                     });
 
-                foreach (var company in ctx.DataSources.ToList()) CompaniesList.Add(new DataSourcesViewModel(company));
+                }
             }
         }
 
@@ -149,21 +170,22 @@ namespace KursAM2.ViewModel.Repozit
 
         private void RefreshDataPermissionList()
         {
-            if (UserListCurrentItem == null)
-                return;
-            if (CurrentCompany == null)
+            if (UserListCurrentItem == null || CurrentCompany == null)
                 return;
 
             using (var ctx = GlobalOptions.KursSystem())
             {
-                var permissions = ctx.UserMenuRight.Include(_ => _.DataSources)
-                    .Where(_ => _.LoginName == UserListCurrentItem.Name)
-                    .Where(_ => _.DBId == CurrentCompany.Id);
-
-                foreach (var p in PermissionsList)
+                PermissionsList.Clear();
+                var userdbright = ctx.UserMenuRight.Where(_ => _.DBId == CurrentCompany.Id
+                                                               && _.LoginName == UserListCurrentItem.Name).ToList();
+                foreach (var permission in ctx.KursMenuItem.Include(_ => _.KursMenuGroup).ToList())
                 {
-                    var pp = permissions.FirstOrDefault(_ => _.MenuId == p.Id);
-                    p.IsSelectedItem = pp != null;
+                    PermissionsList.Add(new KursMenuItemViewModel(permission)
+                    {
+                        GroupName = permission.KursMenuGroup != null ? permission.KursMenuGroup.Name : null,
+                        IsSelectedItem = userdbright.FirstOrDefault(_ => _.MenuId == permission.Id) != null
+                    });
+
                 }
             }
         }
@@ -192,18 +214,16 @@ namespace KursAM2.ViewModel.Repozit
 
         #region Commands
 
+        public override bool IsDocumentOpenAllow => UserListCurrentItem != null;
+        public override bool IsDocNewCopyAllow => UserListCurrentItem != null;
+
         public override void RefreshData(object obj)
         {
             LoadUsersData();
             LoadRoleData();
         }
 
-        public ICommand EditUserCommand
-        {
-            get { return new Command(EditUser, _ => UserListCurrentItem != null); }
-        }
-
-        private void EditUser(object obj)
+        public override void DocumentOpen(object obj)
         {
             var ctx = new UserOptionsWindowViewModel(UserListCurrentItem.Name);
             var form = new UserOptionsWindow {DataContext = ctx};
@@ -224,17 +244,57 @@ namespace KursAM2.ViewModel.Repozit
             form.ShowDialog();
         }
 
-        public ICommand OpenWindowCreationUserCommand
-        {
-            get { return new Command(openWindowCreationUser, _ => true); }
-        }
-
-        private void openWindowCreationUser(object obj)
+        public override void DocNewEmpty(object obj)
         {
             var ctx = new UserOptionsWindowViewModel();
             var form = new UserOptionsWindow {DataContext = ctx};
             ctx.Form = form;
             form.ShowDialog();
+        }
+
+        public override void DocNewCopy(object obj)
+        {
+            var ctx = new UserOptionsWindowViewModel(UserListCurrentItem.Name, true);
+            var form = new UserOptionsWindow {DataContext = ctx};
+            ctx.Form = form;
+            form.ShowDialog();
+        }
+
+        public ICommand UpdateLinkToDocumentCommand
+        {
+            get { return new Command(UpdateLinkToDocument, _ => true); }
+        }
+
+        private void UpdateLinkToDocument(object obj)
+        {
+            if (!(obj is CellValueChangedEventArgs e)) return;
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                if ((bool) e.Value)
+                {
+                    var newItem = new UserMenuRight
+                    {
+                        Id = Guid.NewGuid(),
+                        LoginName = UserListCurrentItem.Name,
+                        DBId = CurrentCompany.Id,
+                        MenuId = CurrentPermission.Id,
+                        IsReadOnly = false
+                    };
+                    ctx.UserMenuRight.Add(newItem);
+                }
+                else
+                {
+                    var linkdoc = ctx.UserMenuRight.FirstOrDefault(_ => _.LoginName == UserListCurrentItem.Name
+                                                                        && _.DBId == CurrentCompany.Id &&
+                                                                        _.MenuId == CurrentPermission.Id);
+                    if (linkdoc != null)
+                    {
+                        ctx.UserMenuRight.Remove(linkdoc);
+                    }
+                }
+
+                ctx.SaveChanges();
+            }
         }
 
         public ICommand DeleteUserCommand
@@ -260,7 +320,7 @@ namespace KursAM2.ViewModel.Repozit
             }
         }
 
-        
+
         public ICommand UpdateUsersViewCommand
         {
             get { return new Command(updateUsersView, _ => true); }
