@@ -7,6 +7,7 @@ using Core;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.Xpf.Grid;
 using KursRepositories.View;
 
 namespace KursRepositories.ViewModels
@@ -221,10 +222,10 @@ namespace KursRepositories.ViewModels
             var form = new RoleCreationWindow {DataContext = ctx};
             ctx.Form = form;
             form.ShowDialog();
-            if (ctx.NewRole != null)
+            /*if (ctx.NewRole != null)
                 using (var context = GlobalOptions.KursSystem())
                 {
-                    /*var newRole = new UserRoles()
+                    var newRole = new UserRoles()
                     {
                         id = ctx.NewRole.Id,
                         Name = ctx.NewRole.Name,
@@ -241,8 +242,38 @@ namespace KursRepositories.ViewModels
                     
                     context.UserRoles.Add(newRole);
                     RoleList.Add(new UserRolesViewModel(newRole));
-                    context.SaveChanges();*/
+                    context.SaveChanges();
+                }*/
+        }
+
+        public ICommand UpdateLinkKursMenuItemCommand
+        {
+            get
+            {
+                return new Command(UpdateLinkKursMenuItem, _ => CurrentRole != null);
+            }
+        }
+
+        private void UpdateLinkKursMenuItem(object obj)
+        {
+            if (!(obj is CellValueChangedEventArgs e)) return;
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                var role = ctx.UserRoles.Include(_ => _.KursMenuItem).FirstOrDefault(_ => _.id == CurrentRole.Id);
+                var menuItem = ctx.KursMenuItem.FirstOrDefault(_ => _.Id == CurrentPermission.Id);
+                if (role != null && menuItem != null)
+                {
+                    if ((bool)e.Value)
+                    {
+                        role.KursMenuItem.Add(menuItem);
+                    }
+                    else
+                    {
+                        role.KursMenuItem.Remove(menuItem);
+                    }
                 }
+                ctx.SaveChanges();
+            }
         }
 
         public ICommand OpenWindowCreationUserCommand

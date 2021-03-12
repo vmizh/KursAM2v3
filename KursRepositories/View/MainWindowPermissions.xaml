@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:viewModels="clr-namespace:KursRepositories.ViewModels"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance viewModels:MainWindowPermissionsViewModel}"
     d:DesignHeight="300" d:DesignWidth="300"
@@ -193,9 +194,17 @@
                                     <dxg:GridControl.View>
                                         <dxg:TableView ShowTotalSummary="True"
                                                        IsSynchronizedWithCurrentItem="True"
-                                                       BestFitModeOnSourceChange="AllRows"/>
+                                                       BestFitModeOnSourceChange="AllRows">
+                                        <dxmvvm:Interaction.Behaviors>
+                                            <dxmvvm:EventToCommand EventName="CellValueChanging" 
+                                                                   Command="{Binding UpdateLinkKursMenuItemCommand}"
+                                                                   PassEventArgsToCommand="True"/>
+                                            
+                                        </dxmvvm:Interaction.Behaviors>
+                                        </dxg:TableView>
                                     </dxg:GridControl.View>
-                                </dxg:GridControl>
+                                    
+</dxg:GridControl>
                             </dxlc:LayoutItem>
                         </dxlc:LayoutGroup>
                     </dxlc:LayoutGroup>
