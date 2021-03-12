@@ -29,7 +29,7 @@
                                         NullText="Введите наименование новой роли"
                                         MinWidth="200"
                                         MaxWidth="300"
-                                        EditValue="{Binding NewRole.Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                        EditValue="{Binding NameRole, UpdateSourceTrigger=PropertyChanged}"/>
                                 </GroupBox>
                                 <GroupBox Header="Краткое описание"
                                           Margin="0 0 0 10">
@@ -37,7 +37,7 @@
                                                   NullText="Введите описание новой роли"
                                                   MinWidth="200"
                                                   MaxWidth="300"
-                                                  EditValue="{Binding NewRole.Note, UpdateSourceTrigger=PropertyChanged}"
+                                                  EditValue="{Binding NoteRole, UpdateSourceTrigger=PropertyChanged}"
                                                   TextWrapping="Wrap"/>
                                 </GroupBox>
                                     <Button x:Name="CreatRoleButton"

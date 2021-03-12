@@ -66,6 +66,7 @@ namespace KursRepositories.ViewModels
             get => myNewRole;
             set
             {
+                
                 if (myNewRole == value)
                     return;
                 myNewRole = value;
@@ -114,7 +115,7 @@ namespace KursRepositories.ViewModels
 
         public ICommand CreateRoleCommand
         {
-            get { return new Command(CreateRole, _ => NewRole.Name != null & NewRole.Note != null); }
+            get { return new Command(CreateRole, _ => NameRole != null & NoteRole != null); }
         }
 
         private void CreateRole(object obj)
@@ -130,8 +131,8 @@ namespace KursRepositories.ViewModels
                 var newRole = new UserRoles()
                 {
                     id = Guid.NewGuid(),
-                    Name = NewRole.Name.Trim(),
-                    Note = NewRole.Note.Trim(),
+                    Name = NameRole.Trim(),
+                    Note = NoteRole.Trim(),
                     KursMenuItem = new List<KursMenuItem>()
                 };
                 

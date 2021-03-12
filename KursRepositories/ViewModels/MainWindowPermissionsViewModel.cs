@@ -222,10 +222,10 @@ namespace KursRepositories.ViewModels
             var form = new RoleCreationWindow {DataContext = ctx};
             ctx.Form = form;
             form.ShowDialog();
-            if (ctx.NewRole != null)
+            /*if (ctx.NewRole != null)
                 using (var context = GlobalOptions.KursSystem())
                 {
-                    /*var newRole = new UserRoles()
+                    var newRole = new UserRoles()
                     {
                         id = ctx.NewRole.Id,
                         Name = ctx.NewRole.Name,
@@ -242,8 +242,8 @@ namespace KursRepositories.ViewModels
                     
                     context.UserRoles.Add(newRole);
                     RoleList.Add(new UserRolesViewModel(newRole));
-                    context.SaveChanges();*/
-                }
+                    context.SaveChanges();
+                }*/
         }
 
         public ICommand UpdateLinkKursMenuItemCommand
