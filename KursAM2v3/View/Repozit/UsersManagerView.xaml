@@ -17,42 +17,47 @@
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0" DockPanel.Dock="Top"
                Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}"/>
         <dxlc:LayoutControl HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch">
+                            VerticalAlignment="Stretch"
+                            Name="LayoutControlMain"
+                            dx:DXSerializer.SerializationID="LayoutControlMain"
+                            dx:DXSerializer.StoreLayoutMode="All">
            
             <dxlc:LayoutGroup Name="RootTabsGroup"
-                              View="Tabs">
+                              View="Tabs"
+                              dx:DXSerializer.SerializationID="RootTabsGroup"
+                              dx:DXSerializer.StoreLayoutMode="All">
                  <dxlc:LayoutGroup Name="UsersGroup"
                                   Orientation="Horizontal" 
                                   View="Group"
-                                  Header="Пользователи">
-                            
+                                  Header="Пользователи"
+                                  dx:DXSerializer.SerializationID="UsersGroup"
+                                  dx:DXSerializer.StoreLayoutMode="All">
                 <dxlc:LayoutGroup x:Name ="UsersGridAndButtonGroup"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Orientation="Vertical" 
                                   Margin="5"
                                   View="Group" 
-                                  dxlc:LayoutControl.AllowHorizontalSizing="True">
-                <dxlc:LayoutItem Margin="5 0 5 0"
-                                 HorizontalAlignment="Left">
-                        
-                    </dxlc:LayoutItem>
-                    <dxlc:LayoutItem VerticalAlignment="Stretch" 
-                                     HorizontalAlignment="Stretch">
-                        <dxg:GridControl x:Name="UsersGridControl"
+                                  dxlc:LayoutControl.AllowHorizontalSizing="True"
+                                  dx:DXSerializer.SerializationID="UsersGridAndButtonGroup"
+                                  dx:DXSerializer.StoreLayoutMode="All">
+                <dxg:GridControl x:Name="UsersGridControl"
                                              AutoGenerateColumns="AddNew"
                                              EnableSmartColumnsGeneration="True"
+                                             dx:DXSerializer.SerializationID="UsersGridControl"
+                                             dx:DXSerializer.StoreLayoutMode="All"
+                                             dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                             dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                              HorizontalAlignment="Stretch" 
                                              VerticalAlignment="Stretch"
                                              ItemsSource="{Binding UserList, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                              CurrentItem="{Binding UserListCurrentItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                              MaxHeight="10000"
                                              MaxWidth="10000"
-                                            AutoGeneratingColumn="UsersGridControl_OnAutoGeneratingColumn">
+                                             AutoGeneratingColumn="UsersGridControl_OnAutoGeneratingColumn">
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="False"
-                                               IsSynchronizedWithCurrentItem="True"
-                                               BestFitModeOnSourceChange="AllRows">
+                                               ShowAutoFilterRow="True">
                                     <dxmvvm:Interaction.Behaviors> 
                                         <dxmvvm:EventToCommand EventName="CellValueChanging" 
                                                                Command="{Binding UpdateLinkToDocumentCommand}"
@@ -69,14 +74,10 @@
                                     <MenuItem Header="Удалить пользователя" 
                                               Command="{Binding DeleteUserCommand}"/>
                                     <MenuItem Header ="Свойства пользователя" Command="{Binding DocumentOpenCommand}"/>
-                                    <!--<MenuItem Header="Обновить список"
-                                              Command="{Binding UpdateViewCommand}"/>-->
-
-                            </ContextMenu>
+                                </ContextMenu>
                             </dxg:GridControl.ContextMenu>
                         </dxg:GridControl>
-                    </dxlc:LayoutItem>
-                </dxlc:LayoutGroup>
+                    </dxlc:LayoutGroup>
                 
                 <dxlc:LayoutGroup Name="LayoutGroupPermissions" 
                                   HorizontalAlignment="Stretch"
@@ -84,9 +85,13 @@
                                   Orientation="Vertical" 
                                   Margin="5"
                                   View="Group" 
-                                  dxlc:LayoutControl.AllowHorizontalSizing="True">
-                    <dxlc:LayoutItem>
+                                  dxlc:LayoutControl.AllowHorizontalSizing="True"
+                                  dx:DXSerializer.SerializationID="LayoutGroupPermissions"
+                                  dx:DXSerializer.StoreLayoutMode="All">
+                    <DockPanel>
+                    <!--<dxlc:LayoutItem>-->
                         <dxe:ComboBoxEdit x:Name="ComboBoxEditCompany"
+                                          DockPanel.Dock="Top"
                                           Margin="0 0 0 5"
                                           ItemsSource="{Binding CompaniesList, UpdateSourceTrigger=PropertyChanged}"
                                           NullText="Выберите компанию"
@@ -96,12 +101,16 @@
                                 <dxe:ComboBoxStyleSettings/>
                             </dxe:ComboBoxEdit.StyleSettings>
                         </dxe:ComboBoxEdit>
-                    </dxlc:LayoutItem>
-                    <dxlc:LayoutItem VerticalAlignment="Stretch"
-                                     HorizontalAlignment="Stretch">
+                    <!--</dxlc:LayoutItem>-->
+                    <!--<dxlc:LayoutItem VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch">-->
                         <dxg:GridControl x:Name="PermissionsGridControl"
                                          AutoGenerateColumns="AddNew"
                                          EnableSmartColumnsGeneration="True"
+                                         dx:DXSerializer.SerializationID="PermissionsGridControl"
+                                         dx:DXSerializer.StoreLayoutMode="All"
+                                         dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                          HorizontalAlignment="Stretch"
                                          VerticalAlignment="Stretch"
                                          ItemsSource="{Binding PermissionsList, UpdateSourceTrigger=PropertyChanged}"
@@ -112,8 +121,8 @@
                                          AutoGeneratingColumn="PermissionsGridControl_OnAutoGeneratingColumn">
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
-                                               IsSynchronizedWithCurrentItem="True"
-                                               BestFitModeOnSourceChange="AllRows">
+                                               
+                                               >
                                     <dxmvvm:Interaction.Behaviors> 
                                         <dxmvvm:EventToCommand EventName="CellValueChanging" 
                                                                Command="{Binding UpdateLinkToDocumentCommand}"
@@ -122,7 +131,8 @@
                                 </dxg:TableView>
                             </dxg:GridControl.View>
                         </dxg:GridControl>
-                    </dxlc:LayoutItem>
+                    <!--</dxlc:LayoutItem>-->
+                    </DockPanel>
                 </dxlc:LayoutGroup>
             </dxlc:LayoutGroup>
                 <dxlc:LayoutGroup Name="RoleGroup"
@@ -157,15 +167,17 @@
                                                              AutoGenerateColumns="AddNew"
                                                              AutoGeneratingColumn="RolesGridControl_OnAutoGeneratingColumn"
                                                              EnableSmartColumnsGeneration="True"
+                                                             dx:DXSerializer.SerializationID="RolesGridControl"
+                                                             dx:DXSerializer.StoreLayoutMode="All"
+                                                             dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                                             dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                                              VerticalAlignment="Top"
                                                              ItemsSource="{Binding RoleList, UpdateSourceTrigger=PropertyChanged}"
                                                              CurrentItem="{Binding CurrentRole, UpdateSourceTrigger=PropertyChanged}"
                                                              MaxHeight="10000"
                                                              MaxWidth="10000">
                                         <dxg:GridControl.View>
-                                            <dxg:TableView ShowTotalSummary="True"
-                                                           IsSynchronizedWithCurrentItem="True"
-                                                           BestFitModeOnSourceChange="AllRows"/>
+                                            <dxg:TableView ShowTotalSummary="True"/>
                                         </dxg:GridControl.View>
                                         <dxg:GridControl.ContextMenu>
                                             <ContextMenu>
@@ -185,14 +197,19 @@
                                                  VerticalAlignment="Stretch"
                                                  AutoGenerateColumns="AddNew"
                                                  EnableSmartColumnsGeneration="True"
+                                                 dx:DXSerializer.SerializationID="GridControlPermissionItems"
+                                                 dx:DXSerializer.StoreLayoutMode="All"
+                                                 dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                                 dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                                  ItemsSource="{Binding RoleItemsList, UpdateSourceTrigger=PropertyChanged}"
                                                  CurrentItem="{Binding CurrentPermission, UpdateSourceTrigger=PropertyChanged}"
                                                  MaxHeight="2000"
-                                                 MaxWidth="2000">
+                                                 MaxWidth="2000"
+                                                 AutoGeneratingColumn="GridControlPermissionItems_OnAutoGeneratingColumn">
                                     <dxg:GridControl.View>
                                         <dxg:TableView ShowTotalSummary="True"
-                                                       IsSynchronizedWithCurrentItem="True"
-                                                       BestFitModeOnSourceChange="AllRows"/>
+                                                       
+                                                       />
                                     </dxg:GridControl.View>
                                 </dxg:GridControl>
                             </dxlc:LayoutItem>
