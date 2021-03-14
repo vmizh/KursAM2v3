@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using LayoutManager;
 
 
 namespace KursAM2.View.Repozit
@@ -6,7 +7,7 @@ namespace KursAM2.View.Repozit
     /// <summary>
     /// Interaction logic for RoleCreationWindow.xaml
     /// </summary>
-    public partial class RoleCreationWindow 
+    public partial class RoleCreationWindow  : ILayout
     {
         public RoleCreationWindow()
         {

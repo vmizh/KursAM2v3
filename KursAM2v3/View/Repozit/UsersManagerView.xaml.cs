@@ -1,5 +1,5 @@
-﻿using System.Windows;
-using DevExpress.Xpf.Editors.Settings;
+﻿using System.ComponentModel;
+using System.Windows;
 using DevExpress.Xpf.Grid;
 using LayoutManager;
 
@@ -8,7 +8,7 @@ namespace KursAM2.View.Repozit
     /// <summary>
     ///     Interaction logic for UsersManagerView.xaml
     /// </summary>
-    public partial class UsersManagerView
+    public partial class UsersManagerView : ILayout
     {
         public UsersManagerView()
         {
@@ -18,7 +18,10 @@ namespace KursAM2.View.Repozit
             Closing += UsersManagerView_Closing;
         }
 
-        private void UsersManagerView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
+        public string LayoutManagerName { get; set; }
+
+        private void UsersManagerView_Closing(object sender, CancelEventArgs e)
         {
             LayoutManager.Save();
         }
@@ -28,12 +31,9 @@ namespace KursAM2.View.Repozit
             LayoutManager.Load();
         }
 
-        public LayoutManager.LayoutManager LayoutManager { get; set; }
-        public string LayoutManagerName { get; set; }
-
         private void RolesGridControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
-            foreach (GridColumn column in RolesGridControl.Columns)
+            foreach (var column in RolesGridControl.Columns)
             {
                 e.Column.Name = e.Column.FieldName;
                 if (column.FieldName == "IsSelectedItem")
@@ -50,7 +50,7 @@ namespace KursAM2.View.Repozit
         private void PermissionsGridControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
             e.Column.Name = e.Column.FieldName;
-            if(e.Column.FieldName != "IsSelectedItem")
+            if (e.Column.FieldName != "IsSelectedItem")
                 e.Column.ReadOnly = true;
         }
 
