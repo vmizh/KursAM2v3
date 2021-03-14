@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
 using Core;
@@ -31,10 +32,12 @@ namespace KursAM2.ViewModel.Repozit
         private string myNameRole;
         private string myNoteRole;
         private UserRolesViewModel myNewRole;
-
+        
         #endregion
 
         #region Properties
+
+        public bool RoleIsCreate { get; set; }
 
         public string NameRole
         {
@@ -89,7 +92,6 @@ namespace KursAM2.ViewModel.Repozit
 
         public ObservableCollection<KursMenuItemViewModel> PermissionsList { get; set; } = new ObservableCollection<KursMenuItemViewModel>();
 
-        public List<KursMenuItem> SelectedMenuIdItems { get; set; } = new List<KursMenuItem>();
 
         #endregion
 
@@ -122,37 +124,29 @@ namespace KursAM2.ViewModel.Repozit
         {
             using (var ctx = GlobalOptions.KursSystem())
             {
-                SelectedMenuIdItems.Clear();
-                foreach (var item in from permission in PermissionsList
-                                     where permission.IsSelectedItem
-                                     select permission.Entity)
-                    SelectedMenuIdItems.Add(item);
-
+                
                 var newRole = new UserRoles()
                 {
                     id = Guid.NewGuid(),
                     Name = NameRole.Trim(),
                     Note = NoteRole.Trim(),
-                    KursMenuItem = new List<KursMenuItem>()
                 };
-
-
-                newRole.KursMenuItem.Clear();
-
-                foreach (var item in SelectedMenuIdItems)
-                {
-                    newRole.KursMenuItem.Add(item);
-                }
-
                 ctx.UserRoles.Add(newRole);
+                
+                foreach (var item in PermissionsList) 
+                    if (item.IsSelectedItem)
+                    {
+                        var selectedPermissions = ctx.KursMenuItem.Include(_ => _.UserRoles)
+                            .FirstOrDefault(_ => _.Id == item.Id);
+                        selectedPermissions?.UserRoles.Add(newRole);
+                    }
+                
                 ctx.SaveChanges();
-
+                RoleIsCreate = true;
+                MessageBox.Show("Роль успешно создана.");
+                CloseWindow(Form);
             }
 
-
-
-            MessageBox.Show("Роль успешно создана.");
-            CloseWindow(Form);
         }
 
         public ICommand CancelCreateRoleCommand
@@ -162,7 +156,7 @@ namespace KursAM2.ViewModel.Repozit
 
         private void cancelCreateRole(object obj)
         {
-            NewRole = null;
+            RoleIsCreate = false;
             CloseWindow(Form);
         }
 

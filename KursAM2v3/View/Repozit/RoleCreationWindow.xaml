@@ -14,13 +14,23 @@
     d:DesignHeight="900" d:DesignWidth="900"
     Title="{Binding WindowName}" Height="500" Width="900" Left="20" Top="20">
 
-    <dxlc:LayoutControl HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch">
-        <dxlc:LayoutGroup dxlc:LayoutControl.AllowHorizontalSizing="True"
-                              Orientation="Horizontal"
+    <dxlc:LayoutControl Name ="LayoutControl" 
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        dx:DXSerializer.SerializationID="LayoutControl"
+                        dx:DXSerializer.StoreLayoutMode="All">
+        <dxlc:LayoutGroup Name ="RootGroup"
+                          Orientation="Horizontal"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          dx:DXSerializer.SerializationID="RootGroup"
+                          dx:DXSerializer.StoreLayoutMode="All" >
+            <dxlc:LayoutGroup Name ="ButtonAndTextGroup"
                               HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch">
-            <dxlc:LayoutItem dxlc:LayoutControl.AllowHorizontalSizing="True">
+                              VerticalAlignment="Stretch"
+                              dx:DXSerializer.SerializationID="ButtonAndTextGroup"
+                              dx:DXSerializer.StoreLayoutMode="All" 
+                              dxlc:LayoutControl.AllowHorizontalSizing="True">
                 <StackPanel Orientation="Vertical"
                                         Margin="10 0 10 10">
                     <GroupBox Header="Наименование роли"
@@ -48,24 +58,30 @@
                                             Content="Отмена"
                                             Command="{Binding CancelCreateRoleCommand}"/>
                 </StackPanel>
-            </dxlc:LayoutItem>
-            <dxlc:LayoutItem HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch"
-                                          LabelVerticalAlignment="Top">
-                <dxg:GridControl x:Name="GridControlPermissionItems"
-                                             HorizontalAlignment="Stretch"
-                                             VerticalAlignment="Stretch"
-                                             AutoGenerateColumns="AddNew"
-                                             EnableSmartColumnsGeneration="True"
-                                             ItemsSource="{Binding PermissionsList, UpdateSourceTrigger=PropertyChanged}"
-                                             CurrentItem="{Binding CurrentPermission, UpdateSourceTrigger=PropertyChanged}"
-                                             MaxHeight="2000"
-                                             MaxWidth="2000">
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup Name="GridGroup"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"
+                              dx:DXSerializer.SerializationID="GridGroup"
+                              dx:DXSerializer.StoreLayoutMode="All">
+                <dxg:GridControl Name="GridControlPermissionItems"
+                                 dx:DXSerializer.SerializationID="GridControlPermissionItems"
+                                 dx:DXSerializer.StoreLayoutMode="All"
+                                 dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                 dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch"
+                                 AutoGenerateColumns="AddNew"
+                                 EnableSmartColumnsGeneration="True"
+                                 ItemsSource="{Binding PermissionsList, UpdateSourceTrigger=PropertyChanged}"
+                                 CurrentItem="{Binding CurrentPermission, UpdateSourceTrigger=PropertyChanged}"
+                                 MaxHeight="2000"
+                                 MaxWidth="2000">
                     <dxg:GridControl.View>
                         <dxg:TableView ShowTotalSummary="True"/>
                     </dxg:GridControl.View>
                 </dxg:GridControl>
-            </dxlc:LayoutItem>
+            </dxlc:LayoutGroup>
         </dxlc:LayoutGroup>
     </dxlc:LayoutControl>
 

@@ -120,9 +120,7 @@
                                          IsEnabled="{Binding IsPermissionEnable, UpdateSourceTrigger=PropertyChanged}"
                                          AutoGeneratingColumn="PermissionsGridControl_OnAutoGeneratingColumn">
                             <dxg:GridControl.View>
-                                <dxg:TableView ShowTotalSummary="True"
-                                               
-                                               >
+                                <dxg:TableView ShowTotalSummary="True">
                                     <dxmvvm:Interaction.Behaviors> 
                                         <dxmvvm:EventToCommand EventName="CellValueChanging" 
                                                                Command="{Binding UpdateLinkToDocumentCommand}"

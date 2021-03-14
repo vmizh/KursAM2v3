@@ -204,8 +204,8 @@ namespace KursAM2.ViewModel.Repozit
 
                 foreach (var v in RoleItemsList)
                 {
-                    var rPermission = userPermission.KursMenuItem.FirstOrDefault(_ => _.Id == v.Id);
-                    v.IsSelectedItem = rPermission != null;
+                    var rightPermission = userPermission.KursMenuItem.FirstOrDefault(_ => _.Id == v.Id);
+                    v.IsSelectedItem = rightPermission != null;
                 }
             }
         }
@@ -239,9 +239,11 @@ namespace KursAM2.ViewModel.Repozit
         private void openWindowCreationRole(object obj)
         {
             var ctx = new RoleCreationWindowViewModel();
-            var form = new UserOptionsWindow {DataContext = ctx};
+            var form = new RoleCreationWindow() {DataContext = ctx};
             ctx.Form = form;
             form.ShowDialog();
+            if(ctx.RoleIsCreate)
+                LoadRoleData();
         }
 
         public override void DocNewEmpty(object obj)
@@ -370,7 +372,7 @@ namespace KursAM2.ViewModel.Repozit
         {
             using (var ctx = GlobalOptions.KursSystem())
             {
-                var deleteRole = ctx.UserRoles.First(_ => _.id == CurrentRole.Id);
+                var deleteRole = ctx.UserRoles.Include(_=>_.KursMenuItem).First(_ => _.id == CurrentRole.Id);
                 if (deleteRole == null) return;
                 ctx.UserRoles.Remove(deleteRole);
                 ctx.SaveChanges();
