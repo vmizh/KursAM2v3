@@ -18,52 +18,37 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         dx:DXSerializer.SerializationID="LayoutControl"
-                        dx:DXSerializer.StoreLayoutMode="All">
-        <dxlc:LayoutGroup Name ="RootGroup"
-                          Orientation="Horizontal"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          dx:DXSerializer.SerializationID="RootGroup"
-                          dx:DXSerializer.StoreLayoutMode="All" >
-            <dxlc:LayoutGroup Name ="ButtonAndTextGroup"
-                              HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch"
-                              dx:DXSerializer.SerializationID="ButtonAndTextGroup"
-                              dx:DXSerializer.StoreLayoutMode="All" 
-                              dxlc:LayoutControl.AllowHorizontalSizing="True">
-                <StackPanel Orientation="Vertical"
-                                        Margin="10 0 10 10">
-                    <GroupBox Header="Наименование роли"
-                                    Margin="0 0 0 10">
-                        <dxe:TextEdit x:Name="NameRoleTextEditor"
-                                        NullText="Введите наименование новой роли"
-                                        MinWidth="200"
-                                        MaxWidth="300"
-                                        EditValue="{Binding NameRole, UpdateSourceTrigger=PropertyChanged}"/>
-                    </GroupBox>
-                    <GroupBox Header="Краткое описание"
-                                          Margin="0 0 0 10">
+                        dx:DXSerializer.StoreLayoutMode="All"
+                        Orientation="Vertical">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top">
+                    <StackPanel Orientation="Vertical"
+                                Margin="10 0 10 10">
+                   <DockPanel>
+                       <Label Content="Наименование роли"
+                              DockPanel.Dock="Left"
+                              Margin="0 0 10 5"
+                              VerticalAlignment="Center"/>
+                       <dxe:TextEdit x:Name="NameRoleTextEditor"
+                                     NullText="Введите наименование новой роли"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalAlignment="Center"
+                                     EditValue="{Binding NameRole, UpdateSourceTrigger=PropertyChanged}"/>
+                   </DockPanel>
+                    <DockPanel>
+                        <Label Content="Краткое описание"
+                               DockPanel.Dock="Left"
+                               Margin="0 0 24 5"
+                               VerticalAlignment="Center"/>
                         <dxe:TextEdit x:Name="NoteRoleTextEditor"
-                                                  NullText="Введите описание новой роли"
-                                                  MinWidth="200"
-                                                  MaxWidth="300"
-                                                  EditValue="{Binding NoteRole, UpdateSourceTrigger=PropertyChanged}"
-                                                  TextWrapping="Wrap"/>
-                    </GroupBox>
-                    <Button x:Name="CreatRoleButton"
-                                            Margin="0 0 0 10"
-                                            Content="Создать роль"
-                                            Command="{Binding CreateRoleCommand}"/>
-                    <Button x:Name="CancelCreatRoleButton"
-                                            Content="Отмена"
-                                            Command="{Binding CancelCreateRoleCommand}"/>
+                                      NullText="Введите описание новой роли"
+                                      EditValue="{Binding NoteRole, UpdateSourceTrigger=PropertyChanged}"
+                                      TextWrapping="Wrap"/>
+                    </DockPanel>
+                        
                 </StackPanel>
-            </dxlc:LayoutGroup>
-            <dxlc:LayoutGroup Name="GridGroup"
-                              HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch"
-                              dx:DXSerializer.SerializationID="GridGroup"
-                              dx:DXSerializer.StoreLayoutMode="All">
+                    </DockPanel>
+            
                 <dxg:GridControl Name="GridControlPermissionItems"
                                  dx:DXSerializer.SerializationID="GridControlPermissionItems"
                                  dx:DXSerializer.StoreLayoutMode="All"
@@ -81,8 +66,23 @@
                         <dxg:TableView ShowTotalSummary="True"/>
                     </dxg:GridControl.View>
                 </dxg:GridControl>
-            </dxlc:LayoutGroup>
-        </dxlc:LayoutGroup>
+                </DockPanel>
+        <DockPanel LastChildFill="False"
+                   DockPanel.Dock="Bottom"
+                   Height="30">
+            <Button x:Name="CreatRoleButton"
+                    Margin="40 0 0 0"
+                    Content="Создать роль"
+                    Width="200"
+                    Command="{Binding CreateRoleCommand}"
+                    DockPanel.Dock="Left"/>
+            <Button x:Name="CancelCreatRoleButton"
+                    Margin="0 0 40 0"
+                    DockPanel.Dock="Right"
+                    Width="200"
+                    Content="Отмена"
+                    Command="{Binding CancelCreateRoleCommand}"/>
+        </DockPanel>
     </dxlc:LayoutControl>
 
 </dx:ThemedWindow>
