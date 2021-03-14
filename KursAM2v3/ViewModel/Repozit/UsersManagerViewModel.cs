@@ -160,10 +160,11 @@ namespace KursAM2.ViewModel.Repozit
 
                 foreach (var role in ctx.UserRoles.ToList()) RoleList.Add(new UserRolesViewModel(role));
 
-                foreach (var item in ctx.KursMenuItem.ToList())
+                foreach (var item in ctx.KursMenuItem.Include(_ => _.KursMenuGroup).ToList())
                     RoleItemsList.Add(new KursMenuItemViewModel(item)
                     {
-                        IsSelectedItem = false
+                        GroupName = item.KursMenuGroup?.Name,
+                        IsSelectedItem = false,
                     });
             }
         }
