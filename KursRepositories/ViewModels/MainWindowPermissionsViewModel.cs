@@ -218,7 +218,7 @@ namespace KursRepositories.ViewModels
 
         private void openWindowCreationRole(object obj)
         {
-            var ctx = new RoleCreationWindowViewModel();
+            var ctx = new RoleCreationWindowViewModel1();
             var form = new RoleCreationWindow {DataContext = ctx};
             ctx.Form = form;
             form.ShowDialog();

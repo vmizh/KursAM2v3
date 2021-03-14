@@ -297,6 +297,36 @@ namespace KursAM2.ViewModel.Repozit
             }
         }
 
+        public ICommand UpdateLinkKursMenuItemCommand
+        {
+            get
+            {
+                return new Command(UpdateLinkKursMenuItem, _ => CurrentRole != null);
+            }
+        }
+
+        private void UpdateLinkKursMenuItem(object obj)
+        {
+            if (!(obj is CellValueChangedEventArgs e)) return;
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                var role = ctx.UserRoles.Include(_ => _.KursMenuItem).FirstOrDefault(_ => _.id == CurrentRole.Id);
+                var menuItem = ctx.KursMenuItem.FirstOrDefault(_ => _.Id == CurrentPermission.Id);
+                if (role != null && menuItem != null)
+                {
+                    if ((bool)e.Value)
+                    {
+                        role.KursMenuItem.Add(menuItem);
+                    }
+                    else
+                    {
+                        role.KursMenuItem.Remove(menuItem);
+                    }
+                }
+                ctx.SaveChanges();
+            }
+        }
+
         public ICommand DeleteUserCommand
         {
             get { return new Command(deleteUser, _ => (UserList.Count > 0) | (UserListCurrentItem != null)); }
