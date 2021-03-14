@@ -613,10 +613,6 @@ namespace KursAM2.ViewModel.Repozit
                     IsNewUser = true;
                     return;
                 }
-
-                
-
-                //{LastName} {FirstName} {MiddleName}"
                 Id = usr.Id;
                 userId = usr.Id;
                 LoginName = usr.Name;
