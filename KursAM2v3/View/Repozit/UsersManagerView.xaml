@@ -146,18 +146,6 @@
                             <dxlc:LayoutGroup Orientation="Vertical"
                                               Margin="5 0 5 0"
                                               dxlc:LayoutControl.AllowHorizontalSizing="True">
-                                <dxlc:LayoutItem Margin="0 0 0 7">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button x:Name="OpenWindowCreationRoleButton"
-                                                Margin="0 0 5 0"
-                                                Content="Создать роль"
-                                                Command="{Binding OpenWindowCreationRoleCommand}"/>
-                                        <Button x:Name="DeleteRoleButton"
-                                                Margin="5 0 5 0"
-                                                Content="Удалить роль"
-                                                Command="{Binding DeleteRoleCommand}"/>
-                                    </StackPanel>
-                                </dxlc:LayoutItem>
                                 <dxlc:LayoutItem Name="GridRoles"
                                                  VerticalAlignment="Stretch" 
                                                  HorizontalAlignment="Stretch">
@@ -169,7 +157,8 @@
                                                              dx:DXSerializer.StoreLayoutMode="All"
                                                              dxg:DataControlSerializationOptions.AddNewColumns="True"
                                                              dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                                                             VerticalAlignment="Top"
+                                                             HorizontalAlignment="Stretch"
+                                                             VerticalAlignment="Stretch"
                                                              ItemsSource="{Binding RoleList, UpdateSourceTrigger=PropertyChanged}"
                                                              CurrentItem="{Binding CurrentRole, UpdateSourceTrigger=PropertyChanged}"
                                                              MaxHeight="10000"
@@ -179,6 +168,8 @@
                                         </dxg:GridControl.View>
                                         <dxg:GridControl.ContextMenu>
                                             <ContextMenu>
+                                                <MenuItem Header="Создать роль" 
+                                                          Command="{Binding OpenWindowCreationRoleCommand}"/>
                                                 <MenuItem Header="Удалить роль" 
                                                           Command="{Binding DeleteRoleCommand}"/>
                                             </ContextMenu>
@@ -188,7 +179,9 @@
                             </dxlc:LayoutGroup>
                             <dxlc:LayoutItem Margin="5 0 5 0"
                                              VerticalAlignment="Stretch" 
-                                             HorizontalAlignment="Stretch" LabelVerticalAlignment="Top" LabelPosition="Top"
+                                             HorizontalAlignment="Stretch"
+                                             LabelVerticalAlignment="Top"
+                                             LabelPosition="Top"
                                              Label="Список разрешений для роли">
                                 <dxg:GridControl x:Name="GridControlPermissionItems"
                                                  HorizontalAlignment="Stretch"
