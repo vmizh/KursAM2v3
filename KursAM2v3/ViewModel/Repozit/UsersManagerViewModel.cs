@@ -194,19 +194,22 @@ namespace KursAM2.ViewModel.Repozit
         private void RefreshRoleItemsList()
         {
             if (CurrentRole == null) return;
-
+            RoleItemsList.Clear();
             using (var ctx = GlobalOptions.KursSystem())
             {
-                var userPermission = ctx.UserRoles.Include(_ => _.KursMenuItem)
-                    .FirstOrDefault(_ => _.id == CurrentRole.Id);
+                var rolePermission = ctx.UserRoles.Include(_=>_.KursMenuItem).FirstOrDefault(_ => _.id == CurrentRole.Id);
 
-                if (userPermission == null)
+                if (rolePermission == null)
                     return;
-
-                foreach (var v in RoleItemsList)
+                foreach (var i in ctx.KursMenuItem.Include(_=>_.KursMenuGroup).ToList())
                 {
-                    var rightPermission = userPermission.KursMenuItem.FirstOrDefault(_ => _.Id == v.Id);
-                    v.IsSelectedItem = rightPermission != null;
+                    RoleItemsList.Add(new KursMenuItemViewModel(i)
+                    {
+                        GroupName = i.KursMenuGroup?.Name,
+                        IsSelectedItem = rolePermission.KursMenuItem.FirstOrDefault(_=>_.Id == i.Id) !=null
+                        
+                    });
+
                 }
             }
         }
