@@ -899,5 +899,10 @@ namespace KursAM2.View
         {
             LayoutManager.ResetLayout();
         }
+
+        private void BarButtonItem1_OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            
+        }
     }
 }
