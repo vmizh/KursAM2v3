@@ -17,7 +17,7 @@
                 <dxb:BarButtonItemLink BarItemName="barButtonItem4" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem3" />
             </dxb:BarSubItem>
-            <dxb:BarButtonItem x:Name="barButtonItem1" Content="Настройки пользователя" />
+            <dxb:BarButtonItem x:Name="barButtonItem1" Content="Настройки пользователя" ItemClick="BarButtonItem1_OnItemClick"/>
             <dxb:BarButtonItem x:Name="barButtonItem2" Content="Обновить справочники"
                                ItemClick="BarButtonItem2_OnItemClick" />
             <dxb:BarButtonItem x:Name="barButtonItem4" Content="Сбросить разметку"
