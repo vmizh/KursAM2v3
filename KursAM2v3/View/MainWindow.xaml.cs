@@ -604,6 +604,17 @@ namespace KursAM2.View
                         ctxAccessRight.Form = form2;
                         form2.Show();
                         break;
+                    //TODO: Профиль пользователя
+                    // case "Профиль пользователя":
+                    //     var ctxUserProfile = new UserProfileWindowViewModel();
+                    //     var formUserProfile = new UserProfileWindow()
+                    //     {
+                    //         Owner = Application.Current.MainWindow,
+                    //         DataContext = ctxUserProfile
+                    //     };
+                    //     ctxUserProfile.Form = formUserProfile;
+                    //     formUserProfile.Show();
+                    //     break;
                     case "Распределение приходов":
                         var ctxProjectPrihod = new ProjectProviderPrihodWindowViewModel();
                         form = new ProjectProviderPrihodView

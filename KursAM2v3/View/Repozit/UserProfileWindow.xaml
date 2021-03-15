@@ -1,0 +1,85 @@
+﻿<dx:ThemedWindow
+    x:Class="KursAM2.View.Repozit.UserProfileWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    Title="{Binding WindowName}" 
+    Height="400" Width="700">
+    <dxlc:LayoutControl dxe:ValidationService.IsValidationContainer="True" x:Name="validationContainer">
+        <dxlc:LayoutGroup Orientation="Vertical">
+            <dxlc:LayoutGroup Orientation ="Horizontal">
+                <GroupBox Header="Фотография" 
+                                  Margin="5 0 5 0" 
+                                  HorizontalAlignment="Left">
+                    <dxlc:LayoutItem >
+                        <dxe:ImageEdit x:Name="PhotoImageEdit"
+                                   EditValue="{Binding Avatar,UpdateSourceTrigger=PropertyChanged}" 
+                                   Width="200"
+                                   Height="200"/>
+                    </dxlc:LayoutItem>
+                </GroupBox>
+                <GroupBox Header="Информация о пользователе"
+                          Margin="5 0 5 0">
+                    <dxlc:LayoutGroup Orientation="Vertical" >
+                        <dxlc:LayoutItem Label="Фамилия" AddColonToLabel="True">
+                            <dxe:TextEdit NullText="Введите фамилию пользователя"
+                                                  EditValue="{Binding LastName,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Имя" AddColonToLabel="True">
+                            <dxe:TextEdit NullText="Введите имя пользователя"
+                                                  EditValue="{Binding FirstName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True }"/>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Отчество" AddColonToLabel="True">
+                            <dxe:TextEdit NullText="Введите отчество пользователя"
+                                                  EditValue="{Binding MiddleName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" />
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Полное имя" 
+                                         AddColonToLabel="True">
+                            <dxe:TextEdit EditValue="{Binding FullName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" 
+                                                  IsReadOnly="True"/>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Имя для авторизации" AddColonToLabel="True">
+                            <dxe:TextEdit NullText ="Введите имя для авторизации в системе"
+                                                      IsEnabled="{Binding IsLoginEnable, Mode=TwoWay}"
+                                                      EditValue="{Binding LoginName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label ="Пароль" AddColonToLabel="True">
+                            <dxe:PasswordBoxEdit x:Name="Password" 
+                                                         NullText="Введите пароль"
+                                                         EditValue="{Binding Password, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label ="Подтвердите пароль" AddColonToLabel="True">
+                            <dxe:PasswordBoxEdit x:Name="PasswordConfirm" 
+                                                         NullText="Повторите введенный пароль"
+                                                         EditValue="{Binding PasswordConfirm, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}">
+                            </dxe:PasswordBoxEdit>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Примечание"
+                                         AddColonToLabel="True">
+                            <dxe:TextEdit NullText="Поле не обязательное для заполнения"
+                                                      EditValue="{Binding Note, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                      TextWrapping="Wrap"/>
+                        </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                </GroupBox>
+            </dxlc:LayoutGroup>
+         <dxlc:LayoutGroup Orientation="Horizontal">
+            <dxlc:LayoutItem>
+                <Button x:Name="SaveChangesButton"
+                        Margin="0 10 0 0"
+                        Content="Сохранить изменения"
+                        IsEnabled="{Binding Path=IsSaveEnabled}"
+                        Command="{Binding SaveDataCommand}"/>
+            </dxlc:LayoutItem>
+                <dxlc:LayoutItem>
+                    <Button x:Name="CancelButton"
+                            Margin="0 10 0 0"
+                            Content="Отменить изменения"
+                            Command="{Binding CancelChangesCommand}"/>
+                </dxlc:LayoutItem>
+            </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+</dx:ThemedWindow>
