@@ -45,6 +45,7 @@ using KursAM2.ViewModel.Reconcilation;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.Reference.Nomenkl;
 using KursAM2.ViewModel.Repozit;
+using KursAM2.ViewModel.StartLogin;
 using KursRepositories.ViewModels;
 using LayoutManager;
 using NomenklCostReset = KursAM2.View.Logistiks.NomenklCostReset;
@@ -604,17 +605,7 @@ namespace KursAM2.View
                         ctxAccessRight.Form = form2;
                         form2.Show();
                         break;
-                    //TODO: Профиль пользователя
-                    // case "Профиль пользователя":
-                    //     var ctxUserProfile = new UserProfileWindowViewModel();
-                    //     var formUserProfile = new UserProfileWindow()
-                    //     {
-                    //         Owner = Application.Current.MainWindow,
-                    //         DataContext = ctxUserProfile
-                    //     };
-                    //     ctxUserProfile.Form = formUserProfile;
-                    //     formUserProfile.Show();
-                    //     break;
+                   
                     case "Распределение приходов":
                         var ctxProjectPrihod = new ProjectProviderPrihodWindowViewModel();
                         form = new ProjectProviderPrihodView
@@ -913,7 +904,15 @@ namespace KursAM2.View
 
         private void BarButtonItem1_OnItemClick(object sender, ItemClickEventArgs e)
         {
-            
+            var ctxUserProfile = new UserOptionsWindowViewModel(false, GlobalOptions.UserInfo.NickName );
+            var formUserProfile = new UserOptionsWindow()
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctxUserProfile
+            };
+            ctxUserProfile.Form = formUserProfile;
+            formUserProfile.Show();
+                 
         }
     }
 }

@@ -30,6 +30,15 @@ namespace KursAM2.ViewModel.Repozit
             IsNewUser = true;
         }
 
+        public UserOptionsWindowViewModel(bool editOldUser, string loginName) : this()
+        {
+            if (!string.IsNullOrWhiteSpace(loginName))
+                IsNewUser = false;
+            IsEditOldUser = editOldUser;
+            LoadExistingUser(loginName);
+        }
+
+        
         public UserOptionsWindowViewModel(string loginName) : this()
         {
             if (!string.IsNullOrWhiteSpace(loginName)) 
@@ -86,6 +95,7 @@ namespace KursAM2.ViewModel.Repozit
         #endregion
 
         #region Properties
+        public bool IsEditOldUser { get; set; }
 
         public override string WindowName => IsNewUser
             ? "Создание нового пользователя"
