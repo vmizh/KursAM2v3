@@ -904,7 +904,7 @@ namespace KursAM2.View
 
         private void BarButtonItem1_OnItemClick(object sender, ItemClickEventArgs e)
         {
-            var ctxUserProfile = new UserOptionsWindowViewModel(false, GlobalOptions.UserInfo.NickName );
+            var ctxUserProfile = new UserOptionsWindowViewModel(TypeChangeUser.UserSelfUpdate, GlobalOptions.UserInfo.NickName );
             var formUserProfile = new UserOptionsWindow()
             {
                 Owner = Application.Current.MainWindow,

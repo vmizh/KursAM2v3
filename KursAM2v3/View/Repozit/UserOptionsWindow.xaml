@@ -75,7 +75,7 @@
                           HorizontalAlignment="Right"
                           Margin="5 0 5 0">
                     <dxlc:LayoutItem VerticalAlignment="Stretch"
-                                     IsEnabled="{Binding IsEditOldUser, UpdateSourceTrigger=PropertyChanged}">
+                                     IsEnabled="{Binding IsUserSelfChanges, UpdateSourceTrigger=PropertyChanged}">
                             <StackPanel Orientation="Vertical">
                                     <dxe:CheckEdit x:Name="AdminCheckEdit"
                                                    Content="Администратор"
@@ -93,7 +93,7 @@
                     </dxlc:LayoutItem>
                 </GroupBox>
             </dxlc:LayoutGroup>
-            <dxlc:LayoutGroup IsEnabled="{Binding IsEditOldUser, UpdateSourceTrigger=PropertyChanged}">
+            <dxlc:LayoutGroup IsEnabled="{Binding IsUserSelfChanges, UpdateSourceTrigger=PropertyChanged}">
                 <dxlc:LayoutItem VerticalAlignment="Stretch" 
                                  HorizontalAlignment="Stretch">
                     <dxg:GridControl x:Name="DatasourceGrid"

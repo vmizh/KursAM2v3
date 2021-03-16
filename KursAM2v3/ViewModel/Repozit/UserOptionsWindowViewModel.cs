@@ -1,4 +1,11 @@
-﻿using System;
+﻿using Core;
+using Core.ViewModel.Base;
+using Core.WindowsManager;
+using Data;
+using DevExpress.Xpf.Editors;
+using DevExpress.Xpf.Grid;
+using KursRepositories.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -7,53 +14,92 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
-using Core;
-using Core.ViewModel.Base;
-using Core.WindowsManager;
-using Data;
-using DevExpress.Spreadsheet;
-using DevExpress.Xpf.Editors;
-using DevExpress.Xpf.Grid;
-using DevExpress.XtraSpreadsheet.Export;
-using KursRepositories.ViewModels;
+using JetBrains.Annotations;
 
 namespace KursAM2.ViewModel.Repozit
 {
+    public enum TypeChangeUser
+        {
+            CreateUser = 0,
+            AdminUpdateUser = 1,
+            UserSelfUpdate = 2,
+            CopyUser = 3
+        }
+
     public sealed class UserOptionsWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
     {
         #region Constructor
 
-        public UserOptionsWindowViewModel()
+        public UserOptionsWindowViewModel() 
         {
             LoadRegisteredUsers();
             LoadDataSourceAndRoleList();
-            IsNewUser = true;
+            TypeChangeUser = TypeChangeUser.CreateUser;
+            IsUserSelfChanges = true;
         }
 
-        public UserOptionsWindowViewModel(bool editOldUser, string loginName) : this()
+        public UserOptionsWindowViewModel(TypeChangeUser typeOfChange, string loginName) 
         {
-            if (!string.IsNullOrWhiteSpace(loginName))
-                IsNewUser = false;
-            IsEditOldUser = editOldUser;
-            LoadExistingUser(loginName);
+            switch (typeOfChange)
+            {
+                case TypeChangeUser.CopyUser:
+                {
+                        // IsNewUser = true
+                    LoadRegisteredUsers();
+                    LoadDataSourceAndRoleList();
+                    TypeChangeUser = TypeChangeUser.CopyUser;
+                    LoadExistingUser(loginName);
+                    LoginName = null;
+                    FullName = null;
+                    WindowName = "Создание пользователя";
+                    IsUserSelfChanges = true;
+                    break;
+                }
+                case TypeChangeUser.UserSelfUpdate:
+                {
+                    //IsNewUser = false;
+                    LoadRegisteredUsers();
+                    LoadDataSourceAndRoleList();
+                    TypeChangeUser = TypeChangeUser.UserSelfUpdate;
+                    LoadExistingUser(loginName);
+                    WindowName = $"Изменение пользователя {LoginName} ({FullName})";
+                    IsUserSelfChanges = false;
+                    break;
+                }
+                case TypeChangeUser.AdminUpdateUser:
+                {
+                    //IsNewUser = false;
+                    LoadRegisteredUsers();
+                    LoadDataSourceAndRoleList();
+                    LoadExistingUser(loginName);
+                    WindowName = $"Изменение пользователя {LoginName} ({FullName})";
+                    IsUserSelfChanges = true;
+                    break;
+                }
+            }
+            // if (!string.IsNullOrWhiteSpace(loginName))
+            //     IsNewUser = false;
+            // IsEditOldUser = editOldUser;
+            // LoadExistingUser(loginName);
         }
 
-        
-        public UserOptionsWindowViewModel(string loginName) : this()
-        {
-            if (!string.IsNullOrWhiteSpace(loginName)) 
-                IsNewUser = false;
-            LoadExistingUser(loginName);
-        }
 
-        public UserOptionsWindowViewModel(string loginName, bool isCopy = false) : this(loginName)
-        {
-            if (!string.IsNullOrWhiteSpace(loginName)) 
-                IsNewUser = true;
-            LoadExistingUser(loginName);
-            LoginName = null;
-            FullName = null;
-        }
+        // public UserOptionsWindowViewModel(string loginName) : this() // редактирование пользователя админом
+        // {
+        //     if (!string.IsNullOrWhiteSpace(loginName) && TypeChangeUser == TypeChangeUser.AdminUpdateUser)
+        //         IsNewUser = false;
+        //     LoadExistingUser(loginName);
+        // }
+
+        // public UserOptionsWindowViewModel(string loginName, bool isCopy = false) :
+        //     this(loginName) //создание пользователя копированием
+        // {
+        //     if (!string.IsNullOrWhiteSpace(loginName))
+        //         IsNewUser = true;
+        //     LoadExistingUser(loginName);
+        //     LoginName = null;
+        //     FullName = null;
+        // }
 
         #endregion
 
@@ -89,39 +135,40 @@ namespace KursAM2.ViewModel.Repozit
         private UserRolesViewModel myCurrentRole;
         private string myPassword;
         private string myPasswordConfirm;
-        private bool myIsLoginEnable;
+        private bool myIsUserSelfChanges;
         private bool myIsNewUser;
+        private TypeChangeUser myTypeChangeUser;
 
         #endregion
 
         #region Properties
-        public bool IsEditOldUser { get; set; }
 
-        public override string WindowName => IsNewUser
-            ? "Создание нового пользователя"
-            : $"Изменение пользователя {LoginName} ({FullName})";
 
-        public bool IsNewUser
+        public TypeChangeUser TypeChangeUser
         {
-            get => myIsNewUser;
+            get => myTypeChangeUser;
             set
             {
-                if (myIsNewUser == value)
+                if (myTypeChangeUser == value)
                     return;
-                myIsNewUser = value;
-                IsLoginEnable = myIsNewUser;
+                myTypeChangeUser = value;
                 RaisePropertyChanged();
+                
             }
         }
 
-        public bool IsLoginEnable
+        public override string WindowName { get; set; }
+    
+
+
+        public bool IsUserSelfChanges
         {
-            get => myIsLoginEnable;
+            get => myIsUserSelfChanges;
             set
             {
-                if (myIsLoginEnable == value)
+                if (myIsUserSelfChanges == value)
                     return;
-                myIsLoginEnable = value;
+                myIsUserSelfChanges = value;
                 RaisePropertyChanged();
             }
         }
@@ -389,7 +436,7 @@ namespace KursAM2.ViewModel.Repozit
             if (string.IsNullOrWhiteSpace(LoginName)) return;
             if (obj is EditValueChangingEventArgs e)
             {
-                if ((bool) e.NewValue)
+                if ((bool)e.NewValue)
                 {
                     using (var ctx = GlobalOptions.KursSystem())
                     {
@@ -421,14 +468,14 @@ namespace KursAM2.ViewModel.Repozit
 
         private void UpdateLinkDataSource(object obj)
         {
-            if(!(obj is CellValueChangedEventArgs e)) return;
+            if (!(obj is CellValueChangedEventArgs e)) return;
             using (var ctx = GlobalOptions.KursSystem())
             {
                 var usr = ctx.Users.Include(_ => _.DataSources).FirstOrDefault(_ => _.Id == userId);
                 var ds = ctx.DataSources.FirstOrDefault(_ => _.Id == CurrentCompany.Id);
                 if (usr != null && ds != null)
                 {
-                    if ((bool) e.Value)
+                    if ((bool)e.Value)
                     {
                         usr.DataSources.Add(ds);
                         List<int> dbcount = ctx.Database.SqlQuery<int>($"SELECT count(*) FROM sys.databases d WHERE d.name = '{ds.DBName}'").ToList();
@@ -461,7 +508,7 @@ namespace KursAM2.ViewModel.Repozit
 
         public override void SaveData(object data)
         {
-            if (IsNewUser)
+            if (TypeChangeUser == TypeChangeUser.CreateUser | TypeChangeUser == TypeChangeUser.CopyUser)
             {
                 if (!string.IsNullOrWhiteSpace(LoginName) && !string.IsNullOrWhiteSpace(Password) &&
                     !string.IsNullOrWhiteSpace(PasswordConfirm)
@@ -514,7 +561,7 @@ namespace KursAM2.ViewModel.Repozit
 
                             ctx.SaveChanges();
                         }
-                        IsNewUser = false;
+                        //IsNewUser = false;
                     }
                     catch (Exception ex)
                     {
@@ -588,7 +635,7 @@ namespace KursAM2.ViewModel.Repozit
 
         private bool isCanSave()
         {
-            if (IsNewUser)
+            if (TypeChangeUser == TypeChangeUser.CreateUser | TypeChangeUser == TypeChangeUser.CopyUser)
             {
                 return !string.IsNullOrWhiteSpace(LoginName) && !string.IsNullOrWhiteSpace(Password)
                                                              && !string.IsNullOrWhiteSpace(PasswordConfirm)
@@ -600,12 +647,12 @@ namespace KursAM2.ViewModel.Repozit
 
         public ICommand CancelCreateNewUserCommand
         {
-            get { return new Command(cancelCreateNewUser, _ => true); }
+            get { return new Command(CancelCreateNewUser, _ => true); }
         }
 
-        private void cancelCreateNewUser(object obj)
+        private void CancelCreateNewUser(object obj)
         {
-            NewUser = null;
+            
             CloseWindow(Form);
         }
 
@@ -620,7 +667,6 @@ namespace KursAM2.ViewModel.Repozit
                 var usr = ctx.Users.FirstOrDefault(_ => _.Name == loginName);
                 if (usr == null)
                 {
-                    IsNewUser = true;
                     return;
                 }
                 Id = usr.Id;
@@ -639,9 +685,9 @@ namespace KursAM2.ViewModel.Repozit
                     .ToList();
                 if (data != null && data.Count > 0)
                     foreach (var d in data)
-                    foreach (var c in Companies)
-                        if (c.Id == d.Id)
-                            c.IsSelectedItem = true;
+                        foreach (var c in Companies)
+                            if (c.Id == d.Id)
+                                c.IsSelectedItem = true;
             }
         }
 
@@ -697,7 +743,7 @@ namespace KursAM2.ViewModel.Repozit
         {
             get
             {
-                if(!IsNewUser) return string.Empty;
+                if (TypeChangeUser == TypeChangeUser.AdminUpdateUser | TypeChangeUser == TypeChangeUser.UserSelfUpdate) return string.Empty;
                 switch (columnName)
                 {
                     case "FirstName":

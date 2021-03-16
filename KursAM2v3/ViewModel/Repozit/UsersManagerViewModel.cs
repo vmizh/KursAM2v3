@@ -229,7 +229,7 @@ namespace KursAM2.ViewModel.Repozit
 
         public override void DocumentOpen(object obj)
         {
-            var ctx = new UserOptionsWindowViewModel(UserListCurrentItem.Name);
+            var ctx = new UserOptionsWindowViewModel(TypeChangeUser.AdminUpdateUser, UserListCurrentItem.Name);
             var form = new UserOptionsWindow {DataContext = ctx};
             ctx.Form = form;
             form.ShowDialog();
@@ -237,10 +237,10 @@ namespace KursAM2.ViewModel.Repozit
 
         public ICommand OpenWindowCreationRoleCommand
         {
-            get { return new Command(openWindowCreationRole, _ => true); }
+            get { return new Command(OpenWindowCreationRole, _ => true); }
         }
 
-        private void openWindowCreationRole(object obj)
+        private void OpenWindowCreationRole(object obj)
         {
             var ctx = new RoleCreationWindowViewModel();
             var form = new RoleCreationWindow() {DataContext = ctx};
@@ -260,7 +260,7 @@ namespace KursAM2.ViewModel.Repozit
 
         public override void DocNewCopy(object obj)
         {
-            var ctx = new UserOptionsWindowViewModel(UserListCurrentItem.Name, true);
+            var ctx = new UserOptionsWindowViewModel(TypeChangeUser.CopyUser, UserListCurrentItem.Name);
             var form = new UserOptionsWindow {DataContext = ctx};
             ctx.Form = form;
             form.ShowDialog();
