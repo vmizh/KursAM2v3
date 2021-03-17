@@ -14,7 +14,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
-using JetBrains.Annotations;
 
 namespace KursAM2.ViewModel.Repozit
 {
@@ -35,6 +34,7 @@ namespace KursAM2.ViewModel.Repozit
             LoadRegisteredUsers();
             LoadDataSourceAndRoleList();
             TypeChangeUser = TypeChangeUser.CreateUser;
+            WindowName = "Создание пользователя";
             IsUserSelfChanges = true;
         }
 
@@ -153,14 +153,11 @@ namespace KursAM2.ViewModel.Repozit
                     return;
                 myTypeChangeUser = value;
                 RaisePropertyChanged();
-                
             }
         }
 
         public override string WindowName { get; set; }
-    
-
-
+        
         public bool IsUserSelfChanges
         {
             get => myIsUserSelfChanges;
@@ -743,7 +740,7 @@ namespace KursAM2.ViewModel.Repozit
         {
             get
             {
-                if (TypeChangeUser == TypeChangeUser.AdminUpdateUser | TypeChangeUser == TypeChangeUser.UserSelfUpdate) return string.Empty;
+                if (TypeChangeUser == TypeChangeUser.UserSelfUpdate | TypeChangeUser == TypeChangeUser.AdminUpdateUser) return string.Empty;
                 switch (columnName)
                 {
                     case "FirstName":

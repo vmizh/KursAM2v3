@@ -49,7 +49,7 @@
                                     </dxlc:LayoutItem>
                                 <dxlc:LayoutItem Label="Имя для авторизации" AddColonToLabel="True">
                                         <dxe:TextEdit NullText ="Введите имя для авторизации в системе"
-                                                      IsEnabled="{Binding IsLoginEnable, Mode=TwoWay}"
+                                                      IsEnabled="{Binding IsUserSelfChanges, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                       EditValue="{Binding LoginName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
                                     </dxlc:LayoutItem>
                                 <dxlc:LayoutItem Label ="Пароль" AddColonToLabel="True">
@@ -89,11 +89,11 @@
                                     <dxe:CheckEdit x:Name="TesterCheckEdit"
                                                    Content="Тестировщик"
                                                    EditValue="{Binding Tester, UpdateSourceTrigger=PropertyChanged}"/>
-                                </StackPanel>
+                            </StackPanel>
                     </dxlc:LayoutItem>
                 </GroupBox>
             </dxlc:LayoutGroup>
-            <dxlc:LayoutGroup IsEnabled="{Binding IsUserSelfChanges, UpdateSourceTrigger=PropertyChanged}">
+            <dxlc:LayoutGroup>
                 <dxlc:LayoutItem VerticalAlignment="Stretch" 
                                  HorizontalAlignment="Stretch">
                     <dxg:GridControl x:Name="DatasourceGrid"
@@ -108,8 +108,9 @@
                                              AutoGeneratingColumn="DatasourceGrid_OnAutoGeneratingColumn">
                         <dxg:GridControl.View>
                             <dxg:TableView ShowTotalSummary="True"
-                                               IsSynchronizedWithCurrentItem="True"
-                                               BestFitModeOnSourceChange="AllRows">
+                                           IsSynchronizedWithCurrentItem="True"
+                                           BestFitModeOnSourceChange="AllRows"
+                                           AllowEditing="{Binding IsUserSelfChanges, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                                 <dxmvvm:Interaction.Behaviors> 
                                     <dxmvvm:EventToCommand EventName="CellValueChanging" 
                                                            Command="{Binding UpdateLinkDataSourceCommand}"
@@ -135,7 +136,8 @@
                         <dxg:GridControl.View>
                             <dxg:TableView ShowTotalSummary="True"
                                                IsSynchronizedWithCurrentItem="True"
-                                               BestFitModeOnSourceChange="AllRows"/>
+                                               BestFitModeOnSourceChange="AllRows"
+                                               AllowEditing="{Binding IsUserSelfChanges, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutItem>
