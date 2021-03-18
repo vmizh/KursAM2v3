@@ -49,7 +49,7 @@
                                     </dxlc:LayoutItem>
                                 <dxlc:LayoutItem Label="Имя для авторизации" AddColonToLabel="True">
                                         <dxe:TextEdit NullText ="Введите имя для авторизации в системе"
-                                                      IsEnabled="{Binding IsUserSelfChanges, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                      IsEnabled="{Binding IsLoginEnable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                       EditValue="{Binding LoginName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
                                     </dxlc:LayoutItem>
                                 <dxlc:LayoutItem Label ="Пароль" AddColonToLabel="True">

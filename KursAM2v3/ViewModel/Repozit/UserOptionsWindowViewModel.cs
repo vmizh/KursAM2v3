@@ -34,8 +34,9 @@ namespace KursAM2.ViewModel.Repozit
             LoadRegisteredUsers();
             LoadDataSourceAndRoleList();
             TypeChangeUser = TypeChangeUser.CreateUser;
-            WindowName = "Создание пользователя";
+            WindowName = "Создание нового пользователя";
             IsUserSelfChanges = true;
+            IsLoginEnable = true;
         }
 
         public UserOptionsWindowViewModel(TypeChangeUser typeOfChange, string loginName) 
@@ -51,8 +52,9 @@ namespace KursAM2.ViewModel.Repozit
                     LoadExistingUser(loginName);
                     LoginName = null;
                     FullName = null;
-                    WindowName = "Создание пользователя";
+                    WindowName = "Создание нового пользователя";
                     IsUserSelfChanges = true;
+                    IsLoginEnable = true;
                     break;
                 }
                 case TypeChangeUser.UserSelfUpdate:
@@ -60,11 +62,12 @@ namespace KursAM2.ViewModel.Repozit
                     //IsNewUser = false;
                     LoadRegisteredUsers();
                     LoadDataSourceAndRoleList();
-                    TypeChangeUser = TypeChangeUser.UserSelfUpdate;
                     LoadExistingUser(loginName);
+                    TypeChangeUser = TypeChangeUser.UserSelfUpdate;
                     WindowName = $"Изменение пользователя {LoginName} ({FullName})";
                     IsUserSelfChanges = false;
-                    break;
+                    IsLoginEnable = false;
+                        break;
                 }
                 case TypeChangeUser.AdminUpdateUser:
                 {
@@ -72,37 +75,16 @@ namespace KursAM2.ViewModel.Repozit
                     LoadRegisteredUsers();
                     LoadDataSourceAndRoleList();
                     LoadExistingUser(loginName);
+                    TypeChangeUser = TypeChangeUser.AdminUpdateUser; 
                     WindowName = $"Изменение пользователя {LoginName} ({FullName})";
                     IsUserSelfChanges = true;
+                    IsLoginEnable = false;
                     break;
                 }
             }
-            // if (!string.IsNullOrWhiteSpace(loginName))
-            //     IsNewUser = false;
-            // IsEditOldUser = editOldUser;
-            // LoadExistingUser(loginName);
         }
 
-
-        // public UserOptionsWindowViewModel(string loginName) : this() // редактирование пользователя админом
-        // {
-        //     if (!string.IsNullOrWhiteSpace(loginName) && TypeChangeUser == TypeChangeUser.AdminUpdateUser)
-        //         IsNewUser = false;
-        //     LoadExistingUser(loginName);
-        // }
-
-        // public UserOptionsWindowViewModel(string loginName, bool isCopy = false) :
-        //     this(loginName) //создание пользователя копированием
-        // {
-        //     if (!string.IsNullOrWhiteSpace(loginName))
-        //         IsNewUser = true;
-        //     LoadExistingUser(loginName);
-        //     LoginName = null;
-        //     FullName = null;
-        // }
-
         #endregion
-
 
         #region Fields
 
@@ -117,26 +99,22 @@ namespace KursAM2.ViewModel.Repozit
         private byte[] myAvatar;
         private string myThemeName = "MetropolisLight";
         private new string myNote;
+        private string myPassword;
+        private string myPasswordConfirm;
         private Users myNewUser;
-        private List<string> _myRegisteredUsersNames = new List<string>();
+        private List<string> myRegisteredUsersNames = new List<string>();
 
         private ObservableCollection<DataSourcesViewModel> myCompanies =
             new ObservableCollection<DataSourcesViewModel>();
 
-        private ObservableCollection<UserRolesViewModel> myRoles = new ObservableCollection<UserRolesViewModel>();
-
-        private ObservableCollection<DataSourcesViewModel> myIsSelectedCompanies =
-            new ObservableCollection<DataSourcesViewModel>();
-
-        private ObservableCollection<UserRolesViewModel> myIsSelectedRoles =
+        private ObservableCollection<UserRolesViewModel> myRoles = 
             new ObservableCollection<UserRolesViewModel>();
-
+        
         private DataSourcesViewModel myCurrentCompany;
         private UserRolesViewModel myCurrentRole;
-        private string myPassword;
-        private string myPasswordConfirm;
+        
         private bool myIsUserSelfChanges;
-        private bool myIsNewUser;
+        private bool myIsLoginEnable;
         private TypeChangeUser myTypeChangeUser;
 
         #endregion
@@ -156,6 +134,19 @@ namespace KursAM2.ViewModel.Repozit
             }
         }
 
+        public bool IsLoginEnable
+        {
+            get => myIsLoginEnable;
+
+            set
+            {
+                if (myIsLoginEnable == value)
+                    return;
+                myIsLoginEnable = value;
+                RaisePropertiesChanged();
+            }
+        }
+
         public override string WindowName { get; set; }
         
         public bool IsUserSelfChanges
@@ -172,24 +163,12 @@ namespace KursAM2.ViewModel.Repozit
 
         public List<string> RegisteredUsersNames
         {
-            get => _myRegisteredUsersNames;
+            get => myRegisteredUsersNames;
             set
             {
-                if (_myRegisteredUsersNames == value)
+                if (myRegisteredUsersNames == value)
                     return;
-                _myRegisteredUsersNames = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public ObservableCollection<DataSourcesViewModel> IsSelectedCompanies
-        {
-            get => myIsSelectedCompanies;
-            set
-            {
-                if (myIsSelectedCompanies == value)
-                    return;
-                myIsSelectedCompanies = value;
+                myRegisteredUsersNames = value;
                 RaisePropertyChanged();
             }
         }
@@ -202,18 +181,6 @@ namespace KursAM2.ViewModel.Repozit
                 if (myCompanies == value)
                     return;
                 myCompanies = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public ObservableCollection<UserRolesViewModel> IsSelectedRoles
-        {
-            get => myIsSelectedRoles;
-            set
-            {
-                if (myIsSelectedRoles == value)
-                    return;
-                myIsSelectedRoles = value;
                 RaisePropertyChanged();
             }
         }
@@ -558,7 +525,8 @@ namespace KursAM2.ViewModel.Repozit
 
                             ctx.SaveChanges();
                         }
-                        //IsNewUser = false;
+
+                        TypeChangeUser = TypeChangeUser.AdminUpdateUser;
                     }
                     catch (Exception ex)
                     {
@@ -664,6 +632,7 @@ namespace KursAM2.ViewModel.Repozit
                 var usr = ctx.Users.FirstOrDefault(_ => _.Name == loginName);
                 if (usr == null)
                 {
+                    TypeChangeUser = TypeChangeUser.CreateUser;
                     return;
                 }
                 Id = usr.Id;
@@ -740,7 +709,8 @@ namespace KursAM2.ViewModel.Repozit
         {
             get
             {
-                if (TypeChangeUser == TypeChangeUser.UserSelfUpdate | TypeChangeUser == TypeChangeUser.AdminUpdateUser) return string.Empty;
+                if (TypeChangeUser == TypeChangeUser.UserSelfUpdate || TypeChangeUser == TypeChangeUser.AdminUpdateUser)
+                    return string.Empty;
                 switch (columnName)
                 {
                     case "FirstName":
