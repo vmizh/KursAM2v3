@@ -276,24 +276,21 @@ namespace KursAM2.ViewModel.Repozit
         }
         public ICommand DeleteUserCommand
         {
-            get { return new Command(deleteUser, _ => UserList.Count > 0 && UserListCurrentItem != null && IsAdminUser); }
+            get { return new Command(DeleteUser, _ => UserList.Count > 0 && UserListCurrentItem != null && IsAdminUser); }
         }
 
-        private void deleteUser(object p)
+        private void DeleteUser(object p)
         {
             using (var ctx = GlobalOptions.KursSystem())
             {
                 var oldUserList = ctx.Users.ToList();
-                foreach (var u in UserList)
-                {
-                    var rightUser = oldUserList.Where(_ => _.Id == u.Id)
-                        .SingleOrDefault(_ => _.Id == UserListCurrentItem.Id);
-
-                    u.IsDeleted = UserListCurrentItem.IsDeleted;
-                }
-
+                var rightUser = oldUserList.FirstOrDefault(_ => _.Id == UserListCurrentItem.Id);
+                    if(rightUser != null)
+                        rightUser.IsDeleted = true;
+                
                 ctx.SaveChanges();
                 MessageBox.Show("Пользователю присвоен статус \"Удален\"");
+                LoadUsersData();
             }
         }
 
@@ -381,20 +378,20 @@ namespace KursAM2.ViewModel.Repozit
 
         public ICommand UpdateUsersViewCommand
         {
-            get { return new Command(updateUsersView, _ => true); }
+            get { return new Command(UpdateUsersView, _ => true); }
         }
 
-        private void updateUsersView(object v)
+        private void UpdateUsersView(object v)
         {
             LoadUsersData();
         }
 
         public ICommand DeleteRoleCommand
         {
-            get { return new Command(deleteRole, _ => RoleList.Count > 0 && IsAdminUser); }
+            get { return new Command(DeleteRole, _ => RoleList.Count > 0 && IsAdminUser); }
         }
 
-        private void deleteRole(object p)
+        private void DeleteRole(object p)
         {
             using (var ctx = GlobalOptions.KursSystem())
             {
