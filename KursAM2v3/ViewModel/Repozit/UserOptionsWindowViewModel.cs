@@ -35,7 +35,7 @@ namespace KursAM2.ViewModel.Repozit
             LoadDataSourceAndRoleList();
             TypeChangeUser = TypeChangeUser.CreateUser;
             WindowName = "Создание нового пользователя";
-            IsUserSelfChanges = true;
+            ChangesViewAvailable = true;
             IsLoginEnable = true;
         }
 
@@ -53,7 +53,7 @@ namespace KursAM2.ViewModel.Repozit
                     LoginName = null;
                     FullName = null;
                     WindowName = "Создание нового пользователя";
-                    IsUserSelfChanges = true;
+                    ChangesViewAvailable = true;
                     IsLoginEnable = true;
                     break;
                 }
@@ -65,7 +65,7 @@ namespace KursAM2.ViewModel.Repozit
                     LoadExistingUser(loginName);
                     TypeChangeUser = TypeChangeUser.UserSelfUpdate;
                     WindowName = $"Изменение пользователя {LoginName} ({FullName})";
-                    IsUserSelfChanges = false;
+                    ChangesViewAvailable = false;
                     IsLoginEnable = false;
                         break;
                 }
@@ -77,7 +77,7 @@ namespace KursAM2.ViewModel.Repozit
                     LoadExistingUser(loginName);
                     TypeChangeUser = TypeChangeUser.AdminUpdateUser; 
                     WindowName = $"Изменение пользователя {LoginName} ({FullName})";
-                    IsUserSelfChanges = true;
+                    ChangesViewAvailable = true;
                     IsLoginEnable = false;
                     break;
                 }
@@ -113,7 +113,7 @@ namespace KursAM2.ViewModel.Repozit
         private DataSourcesViewModel myCurrentCompany;
         private UserRolesViewModel myCurrentRole;
         
-        private bool myIsUserSelfChanges;
+        private bool myChangesViewAvailable;
         private bool myIsLoginEnable;
         private TypeChangeUser myTypeChangeUser;
 
@@ -149,14 +149,14 @@ namespace KursAM2.ViewModel.Repozit
 
         public override string WindowName { get; set; }
         
-        public bool IsUserSelfChanges
+        public bool ChangesViewAvailable
         {
-            get => myIsUserSelfChanges;
+            get => myChangesViewAvailable;
             set
             {
-                if (myIsUserSelfChanges == value)
+                if (myChangesViewAvailable == value)
                     return;
-                myIsUserSelfChanges = value;
+                myChangesViewAvailable = value;
                 RaisePropertyChanged();
             }
         }

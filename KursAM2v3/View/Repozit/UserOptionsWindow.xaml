@@ -75,7 +75,7 @@
                           HorizontalAlignment="Right"
                           Margin="5 0 5 0">
                     <dxlc:LayoutItem VerticalAlignment="Stretch"
-                                     IsEnabled="{Binding IsUserSelfChanges, UpdateSourceTrigger=PropertyChanged}">
+                                     IsEnabled="{Binding ChangesViewAvailable, UpdateSourceTrigger=PropertyChanged}">
                             <StackPanel Orientation="Vertical">
                                     <dxe:CheckEdit x:Name="AdminCheckEdit"
                                                    Content="Администратор"
@@ -110,7 +110,7 @@
                             <dxg:TableView ShowTotalSummary="True"
                                            IsSynchronizedWithCurrentItem="True"
                                            BestFitModeOnSourceChange="AllRows"
-                                           AllowEditing="{Binding IsUserSelfChanges, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                                           AllowEditing="{Binding ChangesViewAvailable, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                                 <dxmvvm:Interaction.Behaviors> 
                                     <dxmvvm:EventToCommand EventName="CellValueChanging" 
                                                            Command="{Binding UpdateLinkDataSourceCommand}"
@@ -137,7 +137,7 @@
                             <dxg:TableView ShowTotalSummary="True"
                                                IsSynchronizedWithCurrentItem="True"
                                                BestFitModeOnSourceChange="AllRows"
-                                               AllowEditing="{Binding IsUserSelfChanges, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                               AllowEditing="{Binding ChangesViewAvailable, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutItem>
