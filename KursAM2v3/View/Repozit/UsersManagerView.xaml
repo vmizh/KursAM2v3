@@ -120,7 +120,8 @@
                                          IsEnabled="{Binding IsPermissionEnable, UpdateSourceTrigger=PropertyChanged}"
                                          AutoGeneratingColumn="PermissionsGridControl_OnAutoGeneratingColumn">
                             <dxg:GridControl.View>
-                                <dxg:TableView ShowTotalSummary="True">
+                                <dxg:TableView ShowTotalSummary="True"
+                                               AllowEditing="{Binding IsAdminUser, UpdateSourceTrigger=PropertyChanged}">
                                     <dxmvvm:Interaction.Behaviors> 
                                         <dxmvvm:EventToCommand EventName="CellValueChanging" 
                                                                Command="{Binding UpdateLinkToDocumentCommand}"
@@ -136,7 +137,8 @@
                 <dxlc:LayoutGroup Name="RoleGroup"
                                   VerticalAlignment="Stretch" 
                                   HorizontalAlignment="Stretch" 
-                                  Header ="Роли">
+                                  Header ="Роли"
+                                  IsEnabled="{Binding IsAdminUser,UpdateSourceTrigger=PropertyChanged}">
                     <dxlc:LayoutGroup Name="RoleListGroup"
                                       >
                         <dxlc:LayoutGroup Name="GridsGroup"

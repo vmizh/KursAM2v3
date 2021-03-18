@@ -710,7 +710,9 @@ namespace KursAM2.ViewModel.Repozit
             get
             {
                 if (TypeChangeUser == TypeChangeUser.UserSelfUpdate || TypeChangeUser == TypeChangeUser.AdminUpdateUser)
+                {
                     return string.Empty;
+                }
                 switch (columnName)
                 {
                     case "FirstName":
@@ -719,11 +721,11 @@ namespace KursAM2.ViewModel.Repozit
                         return ValidateName(LastName) ? string.Empty : Error;
                     case "MiddleName":
                         return ValidateName(MiddleName) ? string.Empty : Error;
-                    case "LoginName":
+                    case "LoginName": 
                         return ValidateLogin(LoginName) ? string.Empty : Error;
+                    
                 }
-
-                return string.Empty;
+                    return string.Empty;
             }
         }
 

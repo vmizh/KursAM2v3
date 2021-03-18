@@ -22,6 +22,7 @@ namespace KursAM2.ViewModel.Repozit
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             RefreshData(null);
+            CheckUserForAdmin(GlobalOptions.UserInfo.NickName);
         }
 
         #region Fields
@@ -30,10 +31,22 @@ namespace KursAM2.ViewModel.Repozit
         private DataSourcesViewModel myCurrentCompany;
         private UserRolesViewModel myCurrentRole;
         private KursMenuItemViewModel myCurrentPermission;
+        private bool myIsAdminUser;
 
         #endregion
 
         # region Properties
+
+        public bool IsAdminUser
+        {
+            get => myIsAdminUser;
+            set
+            {
+                if (value == myIsAdminUser) return;
+                myIsAdminUser = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public ObservableCollection<UsersViewModel> UserList { set; get; } =
             new ObservableCollection<UsersViewModel>();
@@ -127,6 +140,17 @@ namespace KursAM2.ViewModel.Repozit
 
         #region Methods
 
+        private void CheckUserForAdmin(string user)
+        {
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                var verifiedUser = ctx.Users.FirstOrDefault(_ => _.Name == user);
+                if (verifiedUser != null)
+                {
+                    IsAdminUser = verifiedUser.IsAdmin;
+                }
+            }
+        }
         private void LoadUsersData()
         {
             using (var ctx = GlobalOptions.KursSystem())
@@ -218,13 +242,29 @@ namespace KursAM2.ViewModel.Repozit
 
         #region Commands
 
+        public override bool IsDocNewEmptyAllow => UserListCurrentItem != null && IsAdminUser;
+        public override bool IsDocNewCopyAllow => UserListCurrentItem != null && IsAdminUser;
         public override bool IsDocumentOpenAllow => UserListCurrentItem != null;
-        public override bool IsDocNewCopyAllow => UserListCurrentItem != null;
 
         public override void RefreshData(object obj)
         {
             LoadUsersData();
             LoadRoleData();
+        }
+
+        public override void DocNewEmpty(object obj)
+        {
+            var ctx = new UserOptionsWindowViewModel();
+            var form = new UserOptionsWindow { DataContext = ctx };
+            ctx.Form = form;
+            form.ShowDialog();
+        }
+        public override void DocNewCopy(object obj)
+        {
+            var ctx = new UserOptionsWindowViewModel(TypeChangeUser.CopyUser, UserListCurrentItem.Name);
+            var form = new UserOptionsWindow { DataContext = ctx };
+            ctx.Form = form;
+            form.ShowDialog();
         }
 
         public override void DocumentOpen(object obj)
@@ -234,36 +274,42 @@ namespace KursAM2.ViewModel.Repozit
             ctx.Form = form;
             form.ShowDialog();
         }
+        public ICommand DeleteUserCommand
+        {
+            get { return new Command(deleteUser, _ => UserList.Count > 0 && UserListCurrentItem != null && IsAdminUser); }
+        }
+
+        private void deleteUser(object p)
+        {
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                var oldUserList = ctx.Users.ToList();
+                foreach (var u in UserList)
+                {
+                    var rightUser = oldUserList.Where(_ => _.Id == u.Id)
+                        .SingleOrDefault(_ => _.Id == UserListCurrentItem.Id);
+
+                    u.IsDeleted = UserListCurrentItem.IsDeleted;
+                }
+
+                ctx.SaveChanges();
+                MessageBox.Show("Пользователю присвоен статус \"Удален\"");
+            }
+        }
 
         public ICommand OpenWindowCreationRoleCommand
         {
-            get { return new Command(OpenWindowCreationRole, _ => true); }
+            get { return new Command(OpenWindowCreationRole, _ => IsAdminUser); }
         }
 
         private void OpenWindowCreationRole(object obj)
         {
             var ctx = new RoleCreationWindowViewModel();
-            var form = new RoleCreationWindow() {DataContext = ctx};
+            var form = new RoleCreationWindow() { DataContext = ctx };
             ctx.Form = form;
             form.ShowDialog();
-            if(ctx.RoleIsCreate)
+            if (ctx.RoleIsCreate)
                 LoadRoleData();
-        }
-
-        public override void DocNewEmpty(object obj)
-        {
-            var ctx = new UserOptionsWindowViewModel();
-            var form = new UserOptionsWindow {DataContext = ctx};
-            ctx.Form = form;
-            form.ShowDialog();
-        }
-
-        public override void DocNewCopy(object obj)
-        {
-            var ctx = new UserOptionsWindowViewModel(TypeChangeUser.CopyUser, UserListCurrentItem.Name);
-            var form = new UserOptionsWindow {DataContext = ctx};
-            ctx.Form = form;
-            form.ShowDialog();
         }
 
         public ICommand UpdateLinkToDocumentCommand
@@ -333,30 +379,6 @@ namespace KursAM2.ViewModel.Repozit
             }
         }
 
-        public ICommand DeleteUserCommand
-        {
-            get { return new Command(deleteUser, _ => (UserList.Count > 0) | (UserListCurrentItem != null)); }
-        }
-
-        private void deleteUser(object p)
-        {
-            using (var ctx = GlobalOptions.KursSystem())
-            {
-                var oldUserList = ctx.Users.ToList();
-                foreach (var u in UserList)
-                {
-                    var rightUser = oldUserList.Where(_ => _.Id == u.Id)
-                        .SingleOrDefault(_ => _.Id == UserListCurrentItem.Id);
-
-                    u.IsDeleted = UserListCurrentItem.IsDeleted;
-                }
-
-                ctx.SaveChanges();
-                MessageBox.Show("Пользователь изменен статус \"Удален\"");
-            }
-        }
-
-
         public ICommand UpdateUsersViewCommand
         {
             get { return new Command(updateUsersView, _ => true); }
@@ -369,7 +391,7 @@ namespace KursAM2.ViewModel.Repozit
 
         public ICommand DeleteRoleCommand
         {
-            get { return new Command(deleteRole, _ => RoleList != null); }
+            get { return new Command(deleteRole, _ => RoleList.Count > 0 && IsAdminUser); }
         }
 
         private void deleteRole(object p)
