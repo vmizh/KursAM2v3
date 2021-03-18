@@ -36,7 +36,12 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Properties
 
+        [DisplayName("Convert")]
+        [Display(AutoGenerateField = false)]
         public InvoiceProviderRowCurrencyConvertViewModel Convert { set; get; }
+        
+        [DisplayName("ConvertNomenkl")]
+        [Display(AutoGenerateField = false)]
         public Nomenkl ConvertNomenkl => Convert != null ? MainReferences.GetNomenkl(Convert.NomenklId) : null;
 
         [DisplayName("Entity")]
@@ -75,7 +80,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         [DisplayName("TovarInvoiceRowId")]
         [Display(AutoGenerateField = false)]
-        public Guid TovarInvoiceRowId
+        public Guid? TovarInvoiceRowId
         {
             get => Entity.TovarInvoiceRowId;
             set

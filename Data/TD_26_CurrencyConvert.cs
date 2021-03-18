@@ -14,6 +14,12 @@ namespace Data
     
     public partial class TD_26_CurrencyConvert
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TD_26_CurrencyConvert()
+        {
+            this.DistributeNakladRow = new HashSet<DistributeNakladRow>();
+        }
+    
         public System.Guid Id { get; set; }
         public System.Guid NomenklId { get; set; }
         public System.DateTime Date { get; set; }
@@ -30,5 +36,7 @@ namespace Data
     
         public virtual TD_26 TD_26 { get; set; }
         public virtual SD_27 SD_27 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DistributeNakladRow> DistributeNakladRow { get; set; }
     }
 }

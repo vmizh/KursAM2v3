@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 
@@ -24,14 +22,6 @@ namespace Data.Repository
         {
             isDisposed = false;
             Context = context;
-        }
-
-        public void DetachObjects()
-        {
-            foreach (var en in Context.ChangeTracker.Entries())
-            {
-                en.State = EntityState.Detached;
-            }
         }
 
         public ALFAMEDIAEntities Context { get; set; }
@@ -68,9 +58,9 @@ namespace Data.Repository
             catch (DbEntityValidationException dbEx)
             {
                 foreach (var validationErrors in dbEx.EntityValidationErrors)
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                        errorMessage += $"Property: {validationError.PropertyName} Error: {validationError.ErrorMessage}" +
-                                        Environment.NewLine;
+                foreach (var validationError in validationErrors.ValidationErrors)
+                    errorMessage += $"Property: {validationError.PropertyName} Error: {validationError.ErrorMessage}" +
+                                    Environment.NewLine;
                 throw new Exception(errorMessage, dbEx);
             }
         }
@@ -88,9 +78,9 @@ namespace Data.Repository
             catch (DbEntityValidationException dbEx)
             {
                 foreach (var validationErrors in dbEx.EntityValidationErrors)
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                        errorMessage += Environment.NewLine +
-                                        $"Property: {validationError.PropertyName} Error: {validationError.ErrorMessage}";
+                foreach (var validationError in validationErrors.ValidationErrors)
+                    errorMessage += Environment.NewLine +
+                                    $"Property: {validationError.PropertyName} Error: {validationError.ErrorMessage}";
                 throw new Exception(errorMessage, dbEx);
             }
         }
@@ -109,9 +99,9 @@ namespace Data.Repository
             catch (DbEntityValidationException dbEx)
             {
                 foreach (var validationErrors in dbEx.EntityValidationErrors)
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                        errorMessage += Environment.NewLine +
-                                        $"Property: {validationError.PropertyName} Error: {validationError.ErrorMessage}";
+                foreach (var validationError in validationErrors.ValidationErrors)
+                    errorMessage += Environment.NewLine +
+                                    $"Property: {validationError.PropertyName} Error: {validationError.ErrorMessage}";
                 throw new Exception(errorMessage, dbEx);
             }
         }
@@ -120,6 +110,11 @@ namespace Data.Repository
         {
             if (entity == null) return;
             Context.Entry(entity).Reload();
+        }
+
+        public void DetachObjects()
+        {
+            foreach (var en in Context.ChangeTracker.Entries()) en.State = EntityState.Detached;
         }
 
         // ReSharper disable once ParameterHidesMember
@@ -135,9 +130,9 @@ namespace Data.Repository
             catch (DbEntityValidationException dbEx)
             {
                 foreach (var validationErrors in dbEx.EntityValidationErrors)
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                        errorMessage += $"Property: {validationError.PropertyName} Error: {validationError.ErrorMessage}"
-                                        + Environment.NewLine;
+                foreach (var validationError in validationErrors.ValidationErrors)
+                    errorMessage += $"Property: {validationError.PropertyName} Error: {validationError.ErrorMessage}"
+                                    + Environment.NewLine;
                 throw new Exception(errorMessage, dbEx);
             }
         }

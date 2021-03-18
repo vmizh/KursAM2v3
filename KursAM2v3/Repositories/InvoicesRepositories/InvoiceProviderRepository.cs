@@ -28,6 +28,8 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         InvoiceProviderRowShort GetInvoiceRow(Guid id);
 
+        InvoiceProviderRowCurrencyConvertViewModel GetTransferRow(Guid id);
+
         InvoiceProviderShort GetInvoiceHead(Guid id);
 
         //InvoiceProviderDialogs Dialogs { set; get; }
@@ -351,6 +353,14 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 .SingleOrDefault(_ => _.Id == id);
             if (item != null) return new InvoiceProviderRowShort(item);
             return null;
+        }
+
+        public InvoiceProviderRowCurrencyConvertViewModel GetTransferRow(Guid id)
+        {
+            DetachObjects();
+            var item = Context.TD_26_CurrencyConvert.Include(_ => _.TD_26)
+                .SingleOrDefault(_ => _.Id == id);
+            return new InvoiceProviderRowCurrencyConvertViewModel(item);
         }
 
         public InvoiceProviderShort GetInvoiceHead(Guid id)

@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using Core;
@@ -463,13 +464,26 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 foreach (var r in list)
                 {
                     InvoiceProvider inv = null;
-                    var invrow = InvoiceProviderRepository.GetInvoiceRow(r.TovarInvoiceRowId);
+                    // ReSharper disable once PossibleInvalidOperationException
+                    InvoiceProviderRowShort invrow = null;
+                    InvoiceProviderRowCurrencyConvertViewModel conv = null;
+                    if(r.TovarInvoiceRowId != null)
+                        invrow = InvoiceProviderRepository.GetInvoiceRow(r.TovarInvoiceRowId.Value);
+                    if (r.TransferRowId != null)
+                    {
+                        conv = InvoiceProviderRepository.GetTransferRow(r.TransferRowId.Value);
+                        if(conv.Entity.TD_26 != null)
+                            // ReSharper disable once PossibleInvalidOperationException
+                            invrow = InvoiceProviderRepository.GetInvoiceRow(conv.Entity.TD_26.DocId.Value);
+                    }
+
                     if (invrow != null)
                         // ReSharper disable once PossibleInvalidOperationException
                         inv = InvoiceProviderRepository.GetInvoiceHead((Guid) invrow.DocId);
                     Tovars.Add(new DistributeNakladRowViewModel(r)
                     {
                         InvoiceRow = invrow,
+                        Convert = conv,
                         Invoice = inv,
                         State = RowStatus.NotEdited
                     });
@@ -517,7 +531,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     {
                         foreach (var c in r.Entity.TD_26_CurrencyConvert)
                         {
-                            newRow.TovarInvoiceRowId = c.Id;
+                            newRow.TransferRowId = c.Id;
                             var newTovar = new DistributeNakladRowViewModel(newRow)
                             {
                                 Convert =  new InvoiceProviderRowCurrencyConvertViewModel(c),
@@ -538,11 +552,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                         };((ISupportParentViewModel) newTovar).ParentViewModel = this;
                     Tovars.Add(newTovar);
                     }
-
-                    
                     SetChangeStatus();
                 }
-
             SelectedTovars.Clear();
             RaisePropertiesChanged(nameof(Tovars));
             RaisePropertiesChanged(nameof(SelectedTovars));

@@ -22,16 +22,18 @@ namespace Data
     
         public System.Guid Id { get; set; }
         public System.Guid DocId { get; set; }
-        public System.Guid TovarInvoiceRowId { get; set; }
+        public Nullable<System.Guid> TovarInvoiceRowId { get; set; }
         public string Note { get; set; }
         public decimal Quantity { get; set; }
         public decimal Price { get; set; }
         public decimal Summa { get; set; }
         public decimal DistributeSumma { get; set; }
         public decimal DistributePrice { get; set; }
+        public Nullable<System.Guid> TransferRowId { get; set; }
     
         public virtual DistributeNaklad DistributeNaklad { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DistributeNakladInfo> DistributeNakladInfo { get; set; }
+        public virtual TD_26_CurrencyConvert TD_26_CurrencyConvert { get; set; }
     }
 }

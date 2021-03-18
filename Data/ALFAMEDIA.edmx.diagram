@@ -2050,6 +2050,7 @@
         <AssociationConnector Association="ALFAMEDIA.FK_ProviderInvoicePay_CashDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProviderInvoicePay_SD_26" />
         <AssociationConnector Association="ALFAMEDIA.FK_TD_26_CurrencyConvert_SD_27" />
+        <AssociationConnector Association="ALFAMEDIA.FK_DistributeNakladRow_TransferRowId" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
