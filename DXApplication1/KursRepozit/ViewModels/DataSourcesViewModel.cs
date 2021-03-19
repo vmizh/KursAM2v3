@@ -110,7 +110,7 @@ namespace KursRepozit.ViewModels
             }
         }
 
-        public override bool IsCanRefresh { get; } = true;
+        public override bool IsCanRefresh { set; get; } = true;
 
         public override bool CanSave()
         {

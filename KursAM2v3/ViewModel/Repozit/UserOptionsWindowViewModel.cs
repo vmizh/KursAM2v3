@@ -549,15 +549,31 @@ namespace KursAM2.ViewModel.Repozit
                         olduser.Avatar = Avatar;
                     }
                     ctx.SaveChanges();
-                    if (Admin)
+                    if (!string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(PasswordConfirm)
+                                                             && Password == PasswordConfirm)
                     {
-                        if (!string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(PasswordConfirm)
-                                                                 && Password == PasswordConfirm)
+                        if (Admin)
                         {
-                            var sql = $"ALTER LOGIN {LoginName} WITH PASSWORD = '{Password}'";
-                            ctx.Database.ExecuteSqlCommand(sql);
+
+                            {
+                                var sql = $"ALTER LOGIN {LoginName} WITH PASSWORD = '{Password}'";
+                                ctx.Database.ExecuteSqlCommand(sql);
+                            }
+                        }
+                        else
+                        {
+                            // Здесь вставь диалог на старый пароль
+                            //using (var utx = GlobalOptions.GetEntities())
+                            //{
+                            //    {
+                            //        var sql = $"ALTER LOGIN {GlobalOptions.UserInfo.NickName} WITH PASSWORD = '{Password}' OLD_PASSWORD = '{пароль из диалога}'";
+                            //        ctx.Database.ExecuteSqlCommand(sql);
+                            //    }
+                            //}
+
                         }
                     }
+
                 }
             }
         }

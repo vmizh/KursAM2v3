@@ -115,7 +115,7 @@ namespace KursAM2.Dialogs
             }
         }
 
-        public override bool IsCanRefresh { get; } = true;
+        public override bool IsCanRefresh { set; get; } = true;
 
         public bool? ShowDialog()
         {

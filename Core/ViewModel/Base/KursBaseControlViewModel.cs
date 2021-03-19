@@ -97,6 +97,22 @@ namespace Core.ViewModel.Base
             get { return new Command(Load, param => CanLoad(null)); }
         }
 
+        public virtual bool IsCanRefresh
+        {
+            get => myIsCanRefresh;
+            set
+            {
+                if (myIsCanRefresh == value) return;
+                myIsCanRefresh = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public virtual void RefreshData(object obj)
+        {
+            MainReferences.Refresh();
+        }
+
         public virtual bool CanLoad(object o)
         {
             return true;
@@ -392,6 +408,7 @@ namespace Core.ViewModel.Base
         }
 
         private bool myIsPrintAllow = true;
+        private bool myIsCanRefresh;
 
         [Display(AutoGenerateField = false)]
         public virtual bool IsPrintAllow
@@ -439,8 +456,10 @@ namespace Core.ViewModel.Base
             layman?.LayoutManager?.ResetLayout();
         }
 
-        [Display(AutoGenerateField = false)] public DialogResult Result { get; set; }
-        public abstract bool IsCanRefresh { get; }
+        [Display(AutoGenerateField = false)] 
+        public DialogResult Result { get; set; }
+
+
 
         [Command]
         public virtual void Ok()

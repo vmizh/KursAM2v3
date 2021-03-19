@@ -6,7 +6,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using Core;
@@ -68,7 +67,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         {
             BaseRepository = new GenericKursDBRepository<Data.DistributeNaklad>(unitOfWork);
             DistributeNakladRepository = new DistributeNakladRepository(unitOfWork);
-            InvoiceProviderRepository = new InvoiceProviderRepository(unitOfWork);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             WindowName = "Распределение накладных расходов";
@@ -95,7 +93,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         // ReSharper disable once NotAccessedField.Local
         public readonly IDistributeNakladRepository DistributeNakladRepository;
 
-        public readonly IInvoiceProviderRepository InvoiceProviderRepository;
+        //public readonly IInvoiceProviderRepository InvoiceProviderRepository;
 
         #endregion
 
@@ -282,7 +280,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         {
             foreach (var n in Tovars)
             {
-                var old = DistributeAllNaklads.FirstOrDefault(_ => _.RowId == n.Id);
+                var old = DistributeAllNaklads.FirstOrDefault(_ => _.InvoiceNakladId == inv.Invoice.Id
+                && _.RowId == n.Id);
                 if (old != null)
                 {
                     old.NakladSumma = 0;
@@ -348,11 +347,12 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     break;
             }
 
-            foreach (var inf in DistributeAllNaklads)
+            foreach (var inf in DistributeAllNaklads
+                .Where(_ => _.InvoiceNakladId == CurrentNakladInvoice.Invoice.Id))
             {
                 if (allSumma == 0)
                 {
-                    inf.NakladSumma = allSumma / Tovars.Count;
+                    inf.NakladSumma = 0;
                 }
                 else
                 {
@@ -434,7 +434,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
-        public override bool IsCanRefresh { get; } = true;
+        public override bool IsCanRefresh { set; get; } = true;
 
         public override bool CanSave()
         {
@@ -451,7 +451,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 DistributeAllNaklads.Clear();
                 foreach (var inv in Entity.DistributeNakladInvoices)
                 {
-                    var invoice = InvoiceProviderRepository.GetByGuidId(inv.InvoiceId);
+                    var invoice = DistributeNakladRepository.GetInvoiceProviderById(inv.InvoiceId);
                     NakladInvoices.Add(new DistributeNakladInvoiceViewModel(inv)
                     {
                         Invoice = invoice.Entity,
@@ -468,18 +468,18 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     InvoiceProviderRowShort invrow = null;
                     InvoiceProviderRowCurrencyConvertViewModel conv = null;
                     if(r.TovarInvoiceRowId != null)
-                        invrow = InvoiceProviderRepository.GetInvoiceRow(r.TovarInvoiceRowId.Value);
+                        invrow = DistributeNakladRepository.GetInvoiceRow(r.TovarInvoiceRowId.Value);
                     if (r.TransferRowId != null)
                     {
-                        conv = InvoiceProviderRepository.GetTransferRow(r.TransferRowId.Value);
+                        conv = DistributeNakladRepository.GetTransferRow(r.TransferRowId.Value);
                         if(conv.Entity.TD_26 != null)
                             // ReSharper disable once PossibleInvalidOperationException
-                            invrow = InvoiceProviderRepository.GetInvoiceRow(conv.Entity.TD_26.DocId.Value);
+                            invrow = DistributeNakladRepository.GetInvoiceRow(conv.Entity.TD_26.Id);
                     }
 
                     if (invrow != null)
                         // ReSharper disable once PossibleInvalidOperationException
-                        inv = InvoiceProviderRepository.GetInvoiceHead((Guid) invrow.DocId);
+                        inv = DistributeNakladRepository.GetInvoiceHead((Guid) invrow.DocId);
                     Tovars.Add(new DistributeNakladRowViewModel(r)
                     {
                         InvoiceRow = invrow,
@@ -607,6 +607,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             return CurrentTovar != null;
         }
 
+        
+
         [Command]
         public void DeleteNakladInvoice()
         {
@@ -621,10 +623,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     var o = DistributeAllNaklads.First(_ => _.Id == id);
                     var r = Tovars.First(_ => _.Id == o.RowId);
                     r.DistributePrice -= o.DistributeSumma;
-                    r.Entity.DistributeNakladInfo.Remove(o.Entity);
+                    unitOfWork.Context.DistributeNakladInfo.Remove(o.Entity);
                     DistributeAllNaklads.Remove(o);
                 }
-                //Entity.DistributeNakladInvoices.Remove(CurrentNakladInvoice.Entity);
+                unitOfWork.Context.DistributeNakladInvoices.Remove(CurrentNakladInvoice.Entity);
                 NakladInvoices.Remove(CurrentNakladInvoice);
                 State = RowStatus.Edited;
             }
