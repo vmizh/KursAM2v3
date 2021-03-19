@@ -11,9 +11,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
+using KursAM2.View.Repozit;
 
 namespace KursAM2.ViewModel.Repozit
 {
@@ -533,6 +535,7 @@ namespace KursAM2.ViewModel.Repozit
                         WindowManager.ShowError(ex);
                     }
             }
+
             else
             {
                 using (var ctx = GlobalOptions.KursSystem())
@@ -549,13 +552,46 @@ namespace KursAM2.ViewModel.Repozit
                         olduser.Avatar = Avatar;
                     }
                     ctx.SaveChanges();
-                    if (Admin)
+                    if (!string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(PasswordConfirm)
+                                                             && Password == PasswordConfirm)
                     {
-                        if (!string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(PasswordConfirm)
-                                                                 && Password == PasswordConfirm)
+                        if (Admin)
                         {
-                            var sql = $"ALTER LOGIN {LoginName} WITH PASSWORD = '{Password}'";
-                            ctx.Database.ExecuteSqlCommand(sql);
+                            {
+                                var sql = $"ALTER LOGIN {LoginName} WITH PASSWORD = '{Password}'";
+                                ctx.Database.ExecuteSqlCommand(sql);
+                            }
+                        }
+
+                        else
+                        {
+                            var ctxCheckOldPass = new PasswordVerificationViewModel();
+                            var formOldPass = new PasswordVerificationView()
+                            {
+                                Owner = Application.Current.MainWindow,
+                                DataContext = ctxCheckOldPass
+                            };
+                            ctxCheckOldPass.Form = formOldPass;
+                            formOldPass.ShowDialog();
+                            try
+                            {
+                                using (var utx = GlobalOptions.GetEntities())
+                                {
+                                    {
+                                        var sql = $"ALTER LOGIN {GlobalOptions.UserInfo.NickName} WITH PASSWORD = '{Password}' OLD_PASSWORD = '{ctxCheckOldPass.OldPassword}'";
+                                        utx.Database.ExecuteSqlCommand(sql);
+                                    }
+                                }
+
+                                MessageBox.Show("Изменения подтверждены.");
+                            }
+                            catch (Exception ex)
+                            {
+                                var errText = new StringBuilder(ex.Message);
+                                while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
+                                MessageBox.Show("Ошибка ввода пароля.\n" + errText);
+                            }
+
                         }
                     }
                 }
