@@ -244,7 +244,7 @@ namespace KursAM2.ViewModel.Repozit
 
         public override bool IsDocNewEmptyAllow => UserListCurrentItem != null && IsAdminUser;
         public override bool IsDocNewCopyAllow => UserListCurrentItem != null && IsAdminUser;
-        public override bool IsDocumentOpenAllow => UserListCurrentItem != null;
+        public override bool IsDocumentOpenAllow => UserListCurrentItem != null && UserListCurrentItem.Name == GlobalOptions.UserInfo.NickName;
 
         public override void RefreshData(object obj)
         {
@@ -269,8 +269,8 @@ namespace KursAM2.ViewModel.Repozit
 
         public override void DocumentOpen(object obj)
         {
-            var ctx = IsAdminUser ? new UserOptionsWindowViewModel(TypeChangeUser.AdminUpdateUser, UserListCurrentItem.Name)
-                    : new UserOptionsWindowViewModel(TypeChangeUser.UserSelfUpdate, UserListCurrentItem.Name);
+            var ctx = IsAdminUser? new UserOptionsWindowViewModel(TypeChangeUser.AdminUpdateUser, UserListCurrentItem.Name) : 
+                new UserOptionsWindowViewModel(TypeChangeUser.UserSelfUpdate, UserListCurrentItem.Name);
             var form = new UserOptionsWindow {DataContext = ctx};
             ctx.Form = form;
             form.ShowDialog();

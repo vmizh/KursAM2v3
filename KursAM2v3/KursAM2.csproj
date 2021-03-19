@@ -366,6 +366,7 @@
     <Compile Include="ViewModel\Reference\RegionRefViewModel.cs" />
     <Compile Include="ViewModel\Reference\SDRReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\UsagePayReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Repozit\PasswordVerificationViewModel.cs" />
     <Compile Include="ViewModel\Repozit\RoleCreationWindowViewModel.cs" />
     <Compile Include="ViewModel\Repozit\UserOptionsWindowViewModel.cs" />
     <Compile Include="ViewModel\Repozit\UserProfileWindowViewModel.cs" />
@@ -900,6 +901,9 @@
     </Compile>
     <Compile Include="View\Personal\PersonaAddUserRightsUC.xaml.cs">
       <DependentUpon>PersonaAddUserRightsUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Repozit\PasswordVerificationView.xaml.cs">
+      <DependentUpon>PasswordVerificationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Repozit\RoleCreationWindow.xaml.cs">
       <DependentUpon>RoleCreationWindow.xaml</DependentUpon>
@@ -1582,6 +1586,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Personal\PersonaAddUserRightsUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Repozit\PasswordVerificationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
