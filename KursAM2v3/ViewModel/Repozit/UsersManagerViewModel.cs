@@ -244,7 +244,7 @@ namespace KursAM2.ViewModel.Repozit
 
         public override bool IsDocNewEmptyAllow => UserListCurrentItem != null && IsAdminUser;
         public override bool IsDocNewCopyAllow => UserListCurrentItem != null && IsAdminUser;
-        public override bool IsDocumentOpenAllow => UserListCurrentItem != null && UserListCurrentItem.Name == GlobalOptions.UserInfo.NickName;
+        public override bool IsDocumentOpenAllow => UserListCurrentItem != null && UserListCurrentItem.Name == GlobalOptions.UserInfo.NickName || IsAdminUser;
 
         public override void RefreshData(object obj)
         {
