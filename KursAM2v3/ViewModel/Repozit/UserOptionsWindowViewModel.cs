@@ -617,7 +617,6 @@ namespace KursAM2.ViewModel.Repozit
 
         private void CancelCreateNewUser(object obj)
         {
-            
             CloseWindow(Form);
         }
 
