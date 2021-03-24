@@ -200,7 +200,9 @@
                                                  MaxWidth="2000"
                                                  AutoGeneratingColumn="GridControlPermissionItems_OnAutoGeneratingColumn">
                                     <dxg:GridControl.View>
-                                        <dxg:TableView ShowTotalSummary="True">
+                                        <dxg:TableView ShowTotalSummary="False"
+                                                       ShowAutoFilterRow="True"
+                                                       ShowBandsPanel="True">
                                             <dxmvvm:Interaction.Behaviors>
                                             <dxmvvm:EventToCommand EventName="CellValueChanging" 
                                                                    Command="{Binding UpdateLinkKursMenuItemCommand}"

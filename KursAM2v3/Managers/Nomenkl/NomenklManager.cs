@@ -110,16 +110,330 @@ namespace KursAM2.Managers.Nomenkl
             return ret;
         }
 
-        public decimal GetNomenklCount(decimal nomDC, decimal storeDC)
+        /// <summary>
+        /// Текущий остаток товара на конкретном складе
+        /// </summary>
+        /// <param name="nomDC"></param>
+        /// <param name="storeDC"></param>
+        /// <returns></returns>
+        public static decimal GetNomenklCount(decimal nomDC, decimal storeDC)
         {
-            var item = NomenklCalculationManager.GetNomenklStoreRemain(DateTime.Today, nomDC, storeDC);
-            return item?.Remain ?? 0;
+            return NomenklCalculationManager.GetNomenklStoreRemain(DateTime.Today, nomDC, storeDC);
         }
 
-        public decimal GetNomenklCount(DateTime date, decimal nomDC, decimal storeDC)
+        /// <summary>
+        /// Остаток товара на конкретном складе на дату
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="nomDC"></param>
+        /// <param name="storeDC"></param>
+        /// <returns></returns>
+        public static decimal GetNomenklCount(DateTime date, decimal nomDC, decimal storeDC)
         {
-            var item = NomenklCalculationManager.GetNomenklStoreRemain(date, nomDC, storeDC);
-            return item?.Remain ?? 0;
+            return NomenklCalculationManager.GetNomenklStoreRemain(date, nomDC, storeDC);
+        }
+        /// <summary>
+        /// Текущий остаток товара на всех складах
+        /// </summary>
+        /// <param name="nomDC"></param>
+        /// <returns></returns>
+        public static decimal GetNomenklCount(decimal nomDC)
+        {
+            return NomenklCalculationManager.GetNomenklStoreRemain(nomDC);
+        }
+
+        public static decimal GetNomenklCount(DateTime date, decimal nomDC)
+        {
+            return NomenklCalculationManager.GetNomenklStoreRemain(date, nomDC);
+        }
+
+        public static List<NomenklCalcMove> GetNomenklMove(decimal nomDC, DateTime dateStart, DateTime dateEnd, out decimal startQuantity)
+        {
+            var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
+                      ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
+                      ",OrderBy INT ,SumPrihod NUMERIC(18, 4) ,SumRashod NUMERIC(18, 4) );  " +
+                      "INSERT INTO @tab  SELECT    NomDC   ,Date   ,Prihod   ,Rashod   " +
+                      ",CASE      WHEN Prihod > 0 THEN 0      ELSE 1    END OrderBy   " +
+                      ",SUM(Prihod) OVER (PARTITION BY NomDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumPrihod   " +
+                      ",SUM(Rashod) OVER (PARTITION BY NomDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumRashod  " +
+                      "FROM NomenklMoveForCalc  " +
+                      $"WHERE NomDC = {CustomFormat.DecimalToSqlDecimal(nomDC)}  " +
+                      "ORDER BY NomDC, OrderBy;  " +
+                      "SELECT  NomDC ,NOM_NOMENKL AS NomNumber ,NOM_NAME AS NomName ,Date " +
+                      ",Prihod ,Rashod " +
+                      ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC ORDER BY Date, OrderBy  " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
+                      "FROM @tab " +
+                      "INNER JOIN SD_83  ON NomDC = SD_83.DOC_CODE " + 
+                      $"WHERE Date <= '{CustomFormat.DateToString(dateEnd)}' " +
+                      "ORDER BY Date;";
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                startQuantity = 0;
+                var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
+                if (data.Count == 0)
+                {
+                    return null;
+                }
+
+                if (data.Any(_ => _.Date < dateStart))
+                {
+                    var d = data.Where(_ => _.Date < dateStart).Max(_ => _.Date);
+                    var item = data.Last(_ => _.Date == d);
+                    startQuantity = item.Ostatok;
+                }
+                return data.Where(_ => _.Date >= dateStart).ToList();
+            }
+        }
+
+        public static List<NomenklCalcMove> GetNomenklMove(decimal nomDC, decimal storeDC, DateTime dateStart, DateTime dateEnd, out decimal startQuantity)
+        {
+            var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
+                      ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
+                      ",OrderBy INT ,SumPrihod NUMERIC(18, 4) ,SumRashod NUMERIC(18, 4) );  " +
+                      "INSERT INTO @tab  SELECT    NomDC   ,Date   ,Prihod   ,Rashod   " +
+                      ",CASE      WHEN Prihod > 0 THEN 0      ELSE 1    END OrderBy   " +
+                      ",SUM(Prihod) OVER (PARTITION BY NomDC, StoreDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumPrihod   " +
+                      ",SUM(Rashod) OVER (PARTITION BY NomDC, StoreDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumRashod  " +
+                      "FROM NomenklMoveForCalc  " +
+                      $"WHERE NomDC = {CustomFormat.DecimalToSqlDecimal(nomDC)}  " +
+                      $"AND StoreDC = {CustomFormat.DecimalToSqlDecimal(storeDC)}" +
+                      "ORDER BY NomDC,StoreDC,OrderBy;  " +
+                      "SELECT  NomDC ,NOM_NOMENKL AS NomNumber ,NOM_NAME AS NomName ,t.Date " +
+                      ",Prihod ,Rashod " +
+                      ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC ORDER BY t.Date, OrderBy  " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
+                      "FROM @tab t " +
+                      "INNER JOIN sd_83  ON NomDC = SD_83.DOC_CODE " +
+                      $"WHERE t.Date <= '{CustomFormat.DateToString(dateEnd)}' " + 
+                      "ORDER BY t.Date";
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                startQuantity = 0;
+                var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
+                if (data.Count == 0)
+                {
+                    return null;
+                }
+
+                if (data.Any(_ => _.Date < dateStart))
+                {
+                    var d = data.Where(_ => _.Date < dateStart).Max(_ => _.Date);
+                    var item = data.Last(_ => _.Date == d);
+                    startQuantity = item.Ostatok;
+                }
+                return data.Where(_ => _.Date >= dateStart).ToList();
+            }
+        }
+
+
+        public static List<NomenklCalcMove> GetNomenklMoveWithPrice(decimal nomDC, DateTime dateStart,
+            DateTime dateEnd, out decimal startQuantity, out decimal startPrice, out decimal startPriceWithNaklad)
+        {
+            var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
+                      ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
+                      ",OrderBy INT ,SumPrihod NUMERIC(18, 4) ,SumRashod NUMERIC(18, 4) );  " +
+                      "INSERT INTO @tab  SELECT    NomDC   ,Date   ,Prihod   ,Rashod   " +
+                      ",CASE      WHEN Prihod > 0 THEN 0      ELSE 1    END OrderBy   " +
+                      ",SUM(Prihod) OVER (PARTITION BY NomDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumPrihod   " +
+                      ",SUM(Rashod) OVER (PARTITION BY NomDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumRashod  " +
+                      "FROM NomenklMoveForCalc  " +
+                      $"WHERE NomDC = {CustomFormat.DecimalToSqlDecimal(nomDC)}  " +
+                      "ORDER BY NomDC, OrderBy;  " +
+                      "SELECT  NomDC ,NOM_NOMENKL AS NomNumber ,NOM_NAME AS NomName ,t.Date " +
+                      ",Prihod ,Rashod " +
+                      ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC ORDER BY t.Date, OrderBy  " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
+                      ",np.PRICE_WO_NAKLAD AS Price " +
+                      ",np.PRICE AS PriceWithNaklad " +
+                      "FROM @tab t " +
+                      "INNER JOIN sd_83  ON NomDC = SD_83.DOC_CODE " +
+                      "INNER JOIN NOM_PRICE np ON SD_83.DOC_CODE = np.NOM_DC " +
+                      "AND np.DATE = (SELECT MAX(np1.DATE) FROM NOM_PRICE np1 WHERE np1.NOM_DC = SD_83.DOC_CODE AND np1.Date <= t.Date) " +
+                      $"WHERE t.Date <= '{CustomFormat.DateToString(dateEnd)}'" +
+                      "ORDER BY t.Date ";
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                startQuantity = 0;
+                startPrice = 0;
+                startPriceWithNaklad = 0;
+                var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
+                if (data.Count == 0)
+                {
+                    return null;
+                }
+
+                if (data.Any(_ => _.Date < dateStart))
+                {
+                    var d = data.Where(_ => _.Date < dateStart).Max(_ => _.Date);
+                    var item = data.Last(_ => _.Date == d);
+                    startQuantity = item.Ostatok;
+                    startPrice = item.Price;
+                    startPriceWithNaklad = item.PriceWithNaklad;
+                }
+                return data.Where(_ => _.Date >= dateStart).ToList();
+            }
+        }
+
+        public static List<NomenklCalcMove> GetNomenklMoveWithPrice(decimal nomDC, decimal storeDC, DateTime dateStart,
+            DateTime dateEnd, out decimal startQuantity, out decimal startPrice, out decimal startPriceWithNaklad)
+        {
+            var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
+                      ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
+                      ",OrderBy INT ,SumPrihod NUMERIC(18, 4) ,SumRashod NUMERIC(18, 4) );  " +
+                      "INSERT INTO @tab  SELECT    NomDC   ,Date   ,Prihod   ,Rashod   " +
+                      ",CASE      WHEN Prihod > 0 THEN 0      ELSE 1    END OrderBy   " +
+                      ",SUM(Prihod) OVER (PARTITION BY NomDC, StoreDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumPrihod   " +
+                      ",SUM(Rashod) OVER (PARTITION BY NomDC, StoreDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumRashod  " +
+                      "FROM NomenklMoveForCalc  " +
+                      $"WHERE NomDC = {CustomFormat.DecimalToSqlDecimal(nomDC)}  " +
+                      $"AND StoreDC = {CustomFormat.DecimalToSqlDecimal(storeDC)}" +
+                      "ORDER BY NomDC, OrderBy;  " +
+                      "SELECT  NomDC ,NOM_NOMENKL AS NomNumber ,NOM_NAME AS NomName ,t.Date " +
+                      ",Prihod ,Rashod " +
+                      ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC ORDER BY t.Date, OrderBy  " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
+                      ",np.PRICE_WO_NAKLAD AS Price " +
+                      ",np.PRICE AS PriceWithNaklad " +
+                      "FROM @tab t " +
+                      "INNER JOIN sd_83  ON NomDC = DOC_CODE " +
+                      "INNER JOIN NOM_PRICE np ON SD_83.DOC_CODE = np.NOM_DC " +
+                      "AND np.DATE = (SELECT MAX(np1.DATE) FROM NOM_PRICE np1 WHERE  np1.NOM_DC = SD_83.DOC_CODE AND np1.Date <= t.Date)" +
+                       $"WHERE t.Date <= '{CustomFormat.DateToString(dateEnd)}' " +
+                      "ORDER BY t.Date";
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                startQuantity = 0;
+                startPrice = 0;
+                startPriceWithNaklad = 0;
+                var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
+                if (data.Count == 0)
+                {
+                    return null;
+                }
+
+                if (data.Any(_ => _.Date < dateStart))
+                {
+                    var d = data.Where(_ => _.Date < dateStart).Max(_ => _.Date);
+                    var item = data.Last(_ => _.Date == d);
+                    startQuantity = item.Ostatok;
+                    startPrice = item.Price;
+                    startPriceWithNaklad = item.PriceWithNaklad;
+                }
+                return data.Where(_ => _.Date >= dateStart).ToList();
+            }
+        }
+
+        public static List<NomenklCalcMove> GetStoreMove(DateTime dateStart, DateTime dateEnd, decimal storeDC)
+        {
+            var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
+                      ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
+                      ",OrderBy INT ,SumPrihod NUMERIC(18, 4) ,SumRashod NUMERIC(18, 4) );  " +
+                      "INSERT INTO @tab  SELECT    NomDC, Date   ,Prihod   ,Rashod   " +
+                      ",CASE      WHEN Prihod > 0 THEN 0      ELSE 1    END OrderBy   " +
+                      ",SUM(Prihod) OVER (PARTITION BY NomDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumPrihod   " +
+                      ",SUM(Rashod) OVER (PARTITION BY NomDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumRashod  " +
+                      "FROM NomenklMoveForCalc  " +
+                      $"WHERE Date <= '{CustomFormat.DateToString(dateEnd)}' " +
+                      $"AND StoreDC = {CustomFormat.DecimalToSqlDecimal(storeDC)} " +
+                      "ORDER BY NomDC, OrderBy;  " +
+                      "SELECT  NomDC, NOM_NOMENKL AS NomNumber ,NOM_NAME AS NomName , t.Date " +
+                      ",Prihod ,Rashod " +
+                      ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC ORDER BY t.Date, OrderBy  " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
+                      "FROM @tab t " +
+                      "INNER JOIN sd_83  ON NomDC = SD_83.DOC_CODE " +
+                      $"WHERE t.Date <= '{CustomFormat.DateToString(dateEnd)}' " +
+                      "ORDER BY NomDC, t.Date";
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
+                if (data.Count == 0)
+                {
+                    return null;
+                }
+
+                var ndc = data.Select(_ => _.NomDC).Distinct().ToList();
+                foreach (var dc in ndc)
+                {
+                    decimal startost = 0;
+                    if (data.Any(_ => _.NomDC == dc && _.Date < dateStart))
+                    {
+                        var d = data.Where(_ => _.NomDC == dc && _.Date < dateStart).Max(_ => _.Date);
+                        startost = data.Last(_ => _.NomDC == dc && _.Date == d).Ostatok;
+                    }
+                    foreach (var r in data.Where(_ => _.NomDC == dc && _.Date >= dateStart))
+                    {
+                        r.Start = startost;
+                        startost = r.Ostatok;
+                    }
+                }
+                return data.Where(_ => _.Date >= dateStart).ToList();
+            }
+        }
+
+        public static List<NomenklCalcMove> GetStoreMoveWithPrice(DateTime dateStart, DateTime dateEnd, decimal storeDC)
+        {
+            var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
+                      ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
+                      ",OrderBy INT ,SumPrihod NUMERIC(18, 4) ,SumRashod NUMERIC(18, 4) );  " +
+                      "INSERT INTO @tab  SELECT    NomDC, Date   ,Prihod   ,Rashod   " +
+                      ",CASE      WHEN Prihod > 0 THEN 0      ELSE 1    END OrderBy   " +
+                      ",SUM(Prihod) OVER (PARTITION BY NomDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumPrihod   " +
+                      ",SUM(Rashod) OVER (PARTITION BY NomDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumRashod  " +
+                      "FROM NomenklMoveForCalc  " +
+                      $"WHERE Date <= '{CustomFormat.DateToString(dateEnd)}' " +
+                      $"AND StoreDC = {CustomFormat.DecimalToSqlDecimal(storeDC)} " +
+                      "ORDER BY NomDC, OrderBy;  " +
+                      "SELECT  NomDC, NOM_NOMENKL AS NomNumber ,NOM_NAME AS NomName , t.Date " +
+                      ",Prihod ,Rashod " +
+                      ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC ORDER BY t.Date, OrderBy  " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
+                      ",np.PRICE_WO_NAKLAD AS Price " +
+                      ",np.PRICE AS PriceWithNaklad " +
+                      "FROM @tab t " +
+                      "INNER JOIN sd_83  ON NomDC = SD_83.DOC_CODE " +
+                      "INNER JOIN NOM_PRICE np ON SD_83.DOC_CODE = np.NOM_DC " +
+                      "AND np.DATE = (SELECT MAX(np1.DATE) FROM NOM_PRICE np1 WHERE np1.NOM_DC = SD_83.DOC_CODE AND np1.Date <= t.Date)" +
+                      $"WHERE t.Date <= '{CustomFormat.DateToString(dateEnd)}' " +
+                      "ORDER BY NomDC, t.Date";
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
+                if (data.Count == 0)
+                {
+                    return null;
+                }
+
+                var ndc = data.Select(_ => _.NomDC).Distinct().ToList();
+                foreach (var dc in ndc)
+                {
+                    decimal startost = 0;
+                    if (data.Any(_ => _.NomDC == dc && _.Date < dateStart))
+                    {
+                        var d = data.Where(_ => _.NomDC == dc && _.Date < dateStart).Max(_ => _.Date);
+                        startost = data.Last(_ => _.NomDC == dc && _.Date == d).Ostatok;
+                    }
+                    foreach (var r in data.Where(_ => _.NomDC == dc && _.Date >= dateStart))
+                    {
+                        r.Start = startost;
+                        startost = r.Ostatok;
+                    }
+                }
+                return data.Where(_ => _.Date >= dateStart).ToList();
+            }
         }
 
         public static NomenklGroup CategoryAdd(NameNoteViewModel cat, decimal? parentDC)
@@ -271,11 +585,10 @@ namespace KursAM2.Managers.Nomenkl
                         var pp = data.FirstOrDefault(_ => _.DATE == d);
                         if (pp != null)
                             return new Tuple<decimal, decimal>(pp.PRICE_WO_NAKLAD, pp.PRICE);
-                        else 
-                            return new Tuple<decimal, decimal>(0,0);
-                    }
-                    else
                         return new Tuple<decimal, decimal>(0,0);
+                    }
+
+                    return new Tuple<decimal, decimal>(0,0);
                 }
             }
             return new Tuple<decimal, decimal>(0,0);

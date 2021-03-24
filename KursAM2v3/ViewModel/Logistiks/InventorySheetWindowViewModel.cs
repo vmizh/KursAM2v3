@@ -355,9 +355,9 @@ namespace KursAM2.ViewModel.Logistiks
                     DocCode = Document.DocCode,
                     Nomenkl = MainReferences.GetNomenkl(nom.DocCode),
                     QuantityFact =
-                        myNomenklManager.GetNomenklCount(Document.Date, nom.DocCode, Document.Warehouse.DocCode),
+                        NomenklManager.GetNomenklCount(Document.Date, nom.DocCode, Document.Warehouse.DocCode),
                     QuantityCalc =
-                        myNomenklManager.GetNomenklCount(Document.Date, nom.DocCode, Document.Warehouse.DocCode),
+                        NomenklManager.GetNomenklCount(Document.Date, nom.DocCode, Document.Warehouse.DocCode),
                     State = RowStatus.NewRow
                 });
         }

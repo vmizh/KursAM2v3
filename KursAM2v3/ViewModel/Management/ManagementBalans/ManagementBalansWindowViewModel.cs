@@ -964,8 +964,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             chNach.Summa = 0;
             var data = NomenklCalculationManager.GetNomenklStoreRemains(CurrentDate);
             if (data.Count == 0) return;
-            if (data.Select(_ => _.SkladDC).ToList().Count == 0) return;
-            var skl = data.Select(_ => _.SkladDC).Distinct().ToList();
+            if (data.Select(_ => _.StoreDC).ToList().Count == 0) return;
+            var skl = data.Select(_ => _.StoreDC).Distinct().ToList();
             foreach (var s in skl)
             {
                 var n = MainReferences.Warehouses[s];
@@ -977,35 +977,35 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     Name = n.SKL_NAME,
                     Order = 1,
                     SummaRUB =
-                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.RUB && _.SkladDC == s)
+                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.RUB && _.StoreDC == s)
                             .Sum(_ => GetRound(_.Summa)),
                     SummaUSD =
-                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.USD && _.SkladDC == s)
+                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.USD && _.StoreDC == s)
                             .Sum(_ => GetRound(_.Summa)),
                     SummaEUR =
-                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.EUR && _.SkladDC == s)
+                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.EUR && _.StoreDC == s)
                             .Sum(_ => GetRound(_.Summa)),
                     SummaGBP =
-                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.GBP && _.SkladDC == s)
+                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.GBP && _.StoreDC == s)
                             .Sum(_ => GetRound(_.Summa)),
                     SummaCHF =
-                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.CHF && _.SkladDC == s)
+                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.CHF && _.StoreDC == s)
                             .Sum(_ => GetRound(_.Summa)),
                     SummaSEK =
-                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.SEK && _.SkladDC == s)
+                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.SEK && _.StoreDC == s)
                             .Sum(_ => GetRound(_.Summa)),
                     SummaCNY =
-                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.CNY && _.SkladDC == s)
+                        data.Where(_ => _.NomCurrencyDC == CurrencyCode.CNY && _.StoreDC == s)
                             .Sum(_ => GetRound(_.Summa)),
                     ObjectDC = n.DocCode
                     //Tag = BalansSection.WarehouseIn
                 });
                 var s1 = s;
-                var nomsDC = data.Where(_ => _.SkladDC == s1).Select(_ => _.NomenklDC).Distinct();
+                var nomsDC = data.Where(_ => _.StoreDC == s1).Select(_ => _.NomenklDC).Distinct();
                 foreach (var dd in (from nDC in nomsDC
                     let s2 = s
                     let dc = nDC
-                    select data.FirstOrDefault(_ => _.SkladDC == s2 && _.NomenklDC == dc)
+                    select data.FirstOrDefault(_ => _.StoreDC == s2 && _.NomenklDC == dc)
                     into dd
                     where dd != null
                     select dd).Where(dd => dd.Prihod != dd.Rashod))

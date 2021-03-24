@@ -83,7 +83,7 @@ namespace KursAM2.View.Logistiks.UC
                                 AlreadyShippedSumma =
                                     (decimal) (r.SFT_SUMMA_K_OPLATE / r.SFT_KOL) * (decimal) s.Shipped,
                                 IsChecked = false,
-                                QuantityOnSklad = nomManager.GetNomenklCount(r.SFT_NEMENKL_DC, Warehouse.DocCode),
+                                QuantityOnSklad = NomenklManager.GetNomenklCount(r.SFT_NEMENKL_DC, Warehouse.DocCode),
                                 Quantity = r.SFT_KOL - (decimal) s.Shipped,
                                 Invoice = doc
                             };

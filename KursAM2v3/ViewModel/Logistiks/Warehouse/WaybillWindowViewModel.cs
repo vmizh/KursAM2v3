@@ -399,7 +399,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         else
                         {
                             var n = MainReferences.GetNomenkl(r.SFT_NEMENKL_DC);
-                            var m = nomManager.GetNomenklCount(Document.DD_DATE, n.DocCode,
+                            var m = NomenklManager.GetNomenklCount(Document.DD_DATE, n.DocCode,
                                 Document.WarehouseOut.DocCode);
                             if (m <= 0)
                             {

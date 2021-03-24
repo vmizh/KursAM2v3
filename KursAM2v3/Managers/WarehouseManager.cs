@@ -729,12 +729,12 @@ namespace KursAM2.Managers
                             var c = NomenklCalculationManager.GetNomenklStoreRemain(ctx, DateTime.Today, n,
                                 // ReSharper disable once PossibleInvalidOperationException
                                 (decimal) doc.DD_SKLAD_POL_DC);
-                            if (c.Remain < 0)
+                            if (c < 0)
                             {
                                 transaction.Rollback();
                                 var nom = MainReferences.GetNomenkl(n);
                                 WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
-                                                          $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_POL_DC]} в кол-ве {c.Remain} ",
+                                                          $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_POL_DC]} в кол-ве {c} ",
                                     "Отрицательные остатки", MessageBoxImage.Error);
                                 return;
                             }

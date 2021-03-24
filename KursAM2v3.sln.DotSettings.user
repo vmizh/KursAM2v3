@@ -51,5 +51,6 @@
     &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.Invoices.ProviderTests.GetByDC&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.Invoices.ProviderTests.NewInvoice&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.Invoices.ProviderTests.TestCopy&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.NomenklManager.NomenklManagerMoveAndRest.CountTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

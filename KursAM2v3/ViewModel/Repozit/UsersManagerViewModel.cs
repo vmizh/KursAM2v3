@@ -191,6 +191,7 @@ namespace KursAM2.ViewModel.Repozit
                         IsSelectedItem = false,
                     });
             }
+
         }
 
         private void RefreshDataPermissionList()

@@ -62,185 +62,103 @@ namespace Calculates.Materials
         ///     Получение остатка товара на складе
         /// </summary>
         /// <returns></returns>
-        public static NomenklStoreRemainItem GetNomenklStoreRemain(DateTime date, decimal nomDC, decimal storeDC)
+        public static decimal GetNomenklStoreRemain(DateTime date, decimal nomDC, decimal storeDC)
         {
-            var sql =
-                    "SELECT tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,SUM(tab.Prihod) AS Prihod, SUM(tab.Rashod)AS Rashod " +
-                    ", SUM(tab.Prihod) - SUM(tab.Rashod) AS Remain, ROUND(ISNULL(p.Price, 0), 2) AS PriceWithNaklad, ROUND(ISNULL(p.PRICE_WO_NAKLAD, 0), 2) AS Price " +
-                    ", ROUND((SUM(tab.Prihod) - SUM(tab.Rashod)), 2) * ROUND(ISNULL(p.PRICE_WO_NAKLAD, 0), 2) AS Summa,  " +
-                    "ROUND((SUM(tab.Prihod) - SUM(tab.Rashod)), 2) * ROUND(ISNULL(p.Price, 0), 2) AS SummaWithNaklad  " +
-                    "FROM(SELECT " +
-                    "T24.DDT_NOMENKL_DC AS NomenklDC " +
-                    ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                    ", S83.NOM_NAME  AS NomenklName " +
-                    ", S24.DD_SKLAD_POL_DC AS SkladDC " +
-                    ", SUM(T24.DDT_KOL_PRIHOD) AS Prihod " +
-                    ", CAST(0 AS NUMERIC(18, 4)) AS Rashod " +
-                    "FROM TD_24 T24 " +
-                    " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
-                    $" INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                    $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                    "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME , S24.DD_SKLAD_POL_DC " +
-                    "UNION ALL " +
-                    "SELECT T24.DDT_NOMENKL_DC AS NomenklDC " +
-                    ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                    ", S83.NOM_NAME  AS NomenklName " +
-                    ", S24.DD_SKLAD_OTPR_DC AS SkladDC " +
-                    ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
-                    ", SUM(DDT_KOL_RASHOD) AS Rashod " +
-                    "FROM TD_24 T24 " +
-                    " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
-                    $" INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                    $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_OTPR_DC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                    "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME , S24.DD_SKLAD_OTPR_DC " +
-                    "UNION ALL " +
-                    "SELECT ntr.NomenklInDC AS NomenklDC " +
-                    ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                    ", S83.NOM_NAME  AS NomenklName " +
-                    ", nt.SkladDC AS SkladDC " +
-                    ", ntr.Quantity AS Prihod " +
-                    ", CAST(0 AS NUMERIC(18, 4))AS Rashod " +
-                    "FROM NomenklTransfer nt " +
-                    "   INNER JOIN NomenklTransferRow ntr ON ntr.DocId = nt.Id " +
-                    $"   INNER JOIN SD_83 S83 ON S83.DOC_CODE = ntr.NomenklInDC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                    $"WHERE NT.Date <= '{CustomFormat.DateToString(date)}' AND ISNULL(NTR.IsAccepted,0) = 1  AND nt.SkladDC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                    "UNION all  " +
-                    "SELECT ntr.NomenklOutDC AS NomenklDC " +
-                    ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                    ", S83.NOM_NAME  AS NomenklName " +
-                    ", nt.SkladDC AS SkladDC " +
-                    ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
-                    ", ntr.Quantity AS Rashod " +
-                    "FROM NomenklTransfer nt " +
-                    "   INNER JOIN NomenklTransferRow ntr ON ntr.DocId = nt.Id  " +
-                    $"   INNER JOIN SD_83 S83 ON S83.DOC_CODE = ntr.NomenklOutDC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                    $"WHERE nt.DATE <= '{CustomFormat.DateToString(date)}' AND ISNULL(NTR.IsAccepted,0) = 1  AND nt.SkladDC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                    "UNION ALL " +
-                    "SELECT s83.DOC_CODE, s83.NOM_SALE_CRS_DC,s83.nom_name,tcc.StoreDC, tcc.Quantity, 0 " +
-                    "FROM TD_26_CurrencyConvert tcc " +
-                $"INNER JOIN SD_83 s83 ON s83.Id = tcc.NomenklId  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                "INNER JOIN TD_26 t26 ON tcc.DOC_CODE = t26.DOC_CODE AND tcc.CODE = t26.CODE " +
-                "INNER JOIN SD_26 s26 ON t26.DOC_CODE = s26.DOC_CODE " +
-                "INNER JOIN TD_24 t24 ON t26.DOC_CODE = t24.DDT_SPOST_DC AND t26.CODE = t24.DDT_SPOST_ROW_CODE " +
-                "INNER JOIN SD_24 s24 ON t24.DOC_CODE = s24.DOC_CODE " +
-                $"WHERE tcc.Date <=  '{CustomFormat.DateToString(date)}' AND tcc.StoreDC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}'" +
-                "UNION ALL " +
-                "SELECT s83.DOC_CODE, s83.NOM_SALE_CRS_DC,s83.nom_name,tcc.StoreDC, 0, tcc.Quantity " +
-                "FROM TD_26_CurrencyConvert tcc " +
-                "INNER JOIN TD_26 t26 ON tcc.DOC_CODE = t26.DOC_CODE AND tcc.CODE = t26.CODE " +
-                $"INNER JOIN SD_83 s83 ON s83.DOC_CODE = T26.SFT_NEMENKL_DC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                "INNER JOIN SD_26 s26 ON t26.DOC_CODE = s26.DOC_CODE " +
-                "INNER JOIN TD_24 t24 ON t26.DOC_CODE = t24.DDT_SPOST_DC AND t26.CODE = t24.DDT_SPOST_ROW_CODE " +
-                "INNER JOIN SD_24 s24 ON t24.DOC_CODE = s24.DOC_CODE " +
-                $"WHERE tcc.Date <=  '{CustomFormat.DateToString(date)}' AND tcc.StoreDC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}') tab " +
-                "LEFT OUTER JOIN NOM_PRICE p ON p.NOM_DC = tab.NomenklDC " +
-                $"AND p.DATE = (SELECT MAX(pp.DATE) FROM NOM_PRICE pp WHERE pp.NOM_DC = tab.NomenklDC AND pp.DATE <= '{CustomFormat.DateToString(date)}') " +
-                "GROUP BY tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,p.PRICE_WO_NAKLAD,p.Price ";
-            var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>(sql).ToList();
+            var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
+                      ",StoreDC NUMERIC(18, 0) " +
+                      ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
+                      ",OrderBy INT ,SumPrihod NUMERIC(18, 4) ,SumRashod NUMERIC(18, 4) );  " +
+                      "INSERT INTO @tab  SELECT    NomDC   ,StoreDC   ,Date   ,Prihod   ,Rashod   " +
+                      ",CASE      WHEN Prihod > 0 THEN 0      ELSE 1    END OrderBy   " +
+                      ",SUM(Prihod) OVER (PARTITION BY NomDC, StoreDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumPrihod   " +
+                      ",SUM(Rashod) OVER (PARTITION BY NomDC, StoreDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumRashod  " +
+                      "FROM NomenklMoveForCalc  " +
+                      $"WHERE NomDC = {CustomFormat.DecimalToSqlDecimal(nomDC)} " +
+                      $"AND StoreDC = {CustomFormat.DecimalToSqlDecimal(storeDC)}  " +
+                      "ORDER BY NomDC, OrderBy;  " +
+                      "SELECT  NomDC ,NOM_NOMENKL AS NomNumber ,NOM_NAME AS NomName ,StoreDC ,SD_27.SKL_NAME as StoreName ,Date " +
+                      ",Prihod ,Rashod " +
+                      ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC,StoreDC  ORDER BY Date, OrderBy  " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
+                      "FROM @tab " +
+                      "INNER JOIN SD_83  ON NomDC = SD_83.DOC_CODE " +
+                      "INNER JOIN SD_27  ON SD_27.DOC_CODE = StoreDC " +
+                      $"WHERE Date <= '{CustomFormat.DateToString(date)}' " +
+                      "ORDER BY Date;";
+            var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklCalcMove>(sql).ToList();
             if (data.Count == 0)
-                return null;
-            return data.Last();
+                return 0;
+            return data.Last().Ostatok;
         }
 
-        public static NomenklStoreRemainItem GetNomenklStoreRemain(ALFAMEDIAEntities ctx, DateTime date, decimal nomDC,
+        public static decimal GetNomenklStoreRemain(ALFAMEDIAEntities ctx, DateTime date, decimal nomDC,
             decimal storeDC)
         {
-            //return new NomenklStoreRemainItem();
-            var sql =
-                "SELECT tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,SUM(tab.Prihod) AS Prihod, SUM(tab.Rashod)AS Rashod " +
-                ", SUM(tab.Prihod) - SUM(tab.Rashod) AS Remain, ROUND(ISNULL(p.Price, 0), 2) AS PriceWithNaklad, ROUND(ISNULL(p.PRICE_WO_NAKLAD, 0), 2) AS Price " +
-                ", ROUND((SUM(tab.Prihod) - SUM(tab.Rashod)), 2) * ROUND(ISNULL(p.PRICE_WO_NAKLAD, 0), 2) AS Summa,  " +
-                "ROUND((SUM(tab.Prihod) - SUM(tab.Rashod)), 2) * ROUND(ISNULL(p.Price, 0), 2) AS SummaWithNaklad  " +
-                "FROM(SELECT " +
-                "T24.DDT_NOMENKL_DC AS NomenklDC " +
-                ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                ", S24.DD_SKLAD_POL_DC AS SkladDC " +
-                ", SUM(T24.DDT_KOL_PRIHOD) AS Prihod " +
-                ", CAST(0 AS NUMERIC(18, 4)) AS Rashod " +
-                "FROM TD_24 T24 " +
-                " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
-                $" INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_POL_DC " +
-                "UNION ALL " +
-                "SELECT T24.DDT_NOMENKL_DC AS NomenklDC " +
-                ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                ", S24.DD_SKLAD_OTPR_DC AS SkladDC " +
-                ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
-                ", SUM(DDT_KOL_RASHOD) AS Rashod " +
-                "FROM TD_24 T24 " +
-                " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
-                $" INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_OTPR_DC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_OTPR_DC " +
-                "UNION ALL " +
-                "SELECT ntr.NomenklInDC AS NomenklDC " +
-                ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                ", nt.SkladDC AS SkladDC " +
-                ", ntr.Quantity AS Prihod " +
-                ", CAST(0 AS NUMERIC(18, 4))AS Rashod " +
-                "FROM NomenklTransfer nt " +
-                "   INNER JOIN NomenklTransferRow ntr ON ntr.DocId = nt.Id " +
-                $"   INNER JOIN SD_83 S83 ON S83.DOC_CODE = ntr.NomenklInDC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                $"WHERE NT.Date <= '{CustomFormat.DateToString(date)}' AND ISNULL(NTR.IsAccepted,0) = 1  AND nt.SkladDC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                "UNION all  " +
-                "SELECT ntr.NomenklOutDC AS NomenklDC " +
-                ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                ", nt.SkladDC AS SkladDC " +
-                ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
-                ", ntr.Quantity AS Rashod " +
-                "FROM NomenklTransfer nt " +
-                "   INNER JOIN NomenklTransferRow ntr ON ntr.DocId = nt.Id  " +
-                $"   INNER JOIN SD_83 S83 ON S83.DOC_CODE = ntr.NomenklOutDC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                $"WHERE nt.DATE <= '{CustomFormat.DateToString(date)}' AND ISNULL(NTR.IsAccepted,0) = 1  AND nt.SkladDC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                "UNION ALL " +
-                "SELECT s83.DOC_CODE, s83.NOM_SALE_CRS_DC,s83.nom_name,tcc.StoreDC, tcc.Quantity, 0 " +
-                "FROM TD_26_CurrencyConvert tcc " +
-                $"INNER JOIN SD_83 s83 ON s83.Id = tcc.NomenklId  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                "INNER JOIN TD_26 t26 ON tcc.DOC_CODE = t26.DOC_CODE AND tcc.CODE = t26.CODE " +
-                "INNER JOIN SD_26 s26 ON t26.DOC_CODE = s26.DOC_CODE " +
-                "INNER JOIN TD_24 t24 ON t26.DOC_CODE = t24.DDT_SPOST_DC AND t26.CODE = t24.DDT_SPOST_ROW_CODE " +
-                "INNER JOIN SD_24 s24 ON t24.DOC_CODE = s24.DOC_CODE " +
-                $"WHERE tcc.Date <=  '{CustomFormat.DateToString(date)}' AND tcc.StoreDC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                "UNION ALL " +
-                "SELECT s83.DOC_CODE, s83.NOM_SALE_CRS_DC,s83.nom_name,tcc.StoreDC, 0, tcc.Quantity " +
-                "FROM TD_26_CurrencyConvert tcc " +
-                "INNER JOIN TD_26 t26 ON tcc.DOC_CODE = t26.DOC_CODE AND tcc.CODE = t26.CODE " +
-                $"INNER JOIN SD_83 s83 ON s83.DOC_CODE = T26.SFT_NEMENKL_DC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                "INNER JOIN SD_26 s26 ON t26.DOC_CODE = s26.DOC_CODE " +
-                "INNER JOIN TD_24 t24 ON t26.DOC_CODE = t24.DDT_SPOST_DC AND t26.CODE = t24.DDT_SPOST_ROW_CODE " +
-                "INNER JOIN SD_24 s24 ON t24.DOC_CODE = s24.DOC_CODE " +
-                $"WHERE tcc.Date <=  '{CustomFormat.DateToString(date)}' AND tcc.StoreDC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}') tab " +
-                "LEFT OUTER JOIN NOM_PRICE p ON p.NOM_DC = tab.NomenklDC " +
-                $"AND p.DATE = (SELECT MAX(pp.DATE) FROM NOM_PRICE pp WHERE pp.NOM_DC = tab.NomenklDC AND pp.DATE <= '{CustomFormat.DateToString(date)}') " +
-                "GROUP BY tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,p.PRICE_WO_NAKLAD,p.Price " +
-                "HAVING SUM(tab.Prihod) - SUM(tab.Rashod) != 0 ";
-            var data = ctx.Database.SqlQuery<NomenklStoreRemainItem>(sql).ToList();
+            var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
+                      ",StoreDC NUMERIC(18, 0) " +
+                      ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
+                      ",OrderBy INT ,SumPrihod NUMERIC(18, 4) ,SumRashod NUMERIC(18, 4) );  " +
+                      "INSERT INTO @tab  SELECT    NomDC   ,StoreDC   ,Date   ,Prihod   ,Rashod   " +
+                      ",CASE      WHEN Prihod > 0 THEN 0      ELSE 1    END OrderBy   " +
+                      ",SUM(Prihod) OVER (PARTITION BY NomDC, StoreDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumPrihod   " +
+                      ",SUM(Rashod) OVER (PARTITION BY NomDC, StoreDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumRashod  " +
+                      "FROM NomenklMoveForCalc  " +
+                      $"WHERE NomDC = {CustomFormat.DecimalToSqlDecimal(nomDC)} " +
+                      $"AND StoreDC = {CustomFormat.DecimalToSqlDecimal(storeDC)}  " +
+                      "ORDER BY NomDC, OrderBy;  " +
+                      "SELECT  NomDC ,NOM_NOMENKL AS NomNumber ,NOM_NAME AS NomName ,StoreDC ,SD_27.SKL_NAME as StoreName ,Date " +
+                      ",Prihod ,Rashod " +
+                      ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC,StoreDC  ORDER BY Date, OrderBy  " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
+                      "FROM @tab INNER JOIN sd_83  ON NomDC = DOC_CODE " +
+                      $"WHERE Date <= {CustomFormat.DateToString(date)} " +
+                      "INNER JOIN SD_27  ON SD_27.DOC_CODE = StoreDC ORDER BY NomDC, StoreDC;";
+            var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
             if (data.Count == 0)
             {
-                var nom = MainReferences.GetNomenkl(nomDC);
-                return new NomenklStoreRemainItem
-                {
-                    NomenklDC = nomDC,
-                    Summa = 0,
-                    NomCurrencyDC = nom.Currency.DocCode,
-                    NomenklName = nom.Name,
-                    Price = 0,
-                    PriceWithNaklad = 0,
-                    Prihod = 0,
-                    Rashod = 0,
-                    Remain = 0,
-                    SkladDC = storeDC,
-                    SummaWithNaklad = 0
-                };
+                return 0;
             }
-
-            return data.Last();
+            return data.Last().Ostatok;
         }
+
+        public static decimal GetNomenklStoreRemain(DateTime date, decimal nomDC)
+        {
+            var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
+                      ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
+                      ",OrderBy INT ,SumPrihod NUMERIC(18, 4) ,SumRashod NUMERIC(18, 4) );  " +
+                      "INSERT INTO @tab  SELECT    NomDC   ,Date   ,Prihod   ,Rashod   " +
+                      ",CASE      WHEN Prihod > 0 THEN 0      ELSE 1    END OrderBy   " +
+                      ",SUM(Prihod) OVER (PARTITION BY NomDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumPrihod   " +
+                      ",SUM(Rashod) OVER (PARTITION BY NomDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumRashod  " +
+                      "FROM NomenklMoveForCalc  " +
+                      $"WHERE NomDC = {CustomFormat.DecimalToSqlDecimal(nomDC)}  " +
+                      "ORDER BY NomDC, OrderBy;  " +
+                      "SELECT  NomDC ,NOM_NOMENKL AS NomNumber ,NOM_NAME AS NomName ,Date " +
+                      ",Prihod ,Rashod " +
+                      ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC ORDER BY Date, OrderBy  " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
+                      "FROM @tab " +
+                      "INNER JOIN sd_83  ON NomDC = DOC_CODE " +
+                      $"WHERE Date <= '{CustomFormat.DateToString(date)}' " +
+                      "ORDER BY Date ;";
+            var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklCalcMove>(sql).ToList();
+            if (data.Count == 0)
+                return 0;
+            return data.Last().Ostatok;
+        }
+
+        public static decimal GetNomenklStoreRemain(decimal nomDC)
+        {
+            return GetNomenklStoreRemain(DateTime.Today, nomDC);
+        }
+
+
 
         /// <summary>
         ///     Возвращает остатки по товару на складах в форме
@@ -920,7 +838,7 @@ namespace Calculates.Materials
 
             var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>(sql).ToList();
             var nom50192 = data.FirstOrDefault(_ => _.NomenklDC == 10830053173);
-            return new List<NomenklStoreRemainItem>(data.OrderBy(_ => _.NomenklDC).ThenBy(_ => _.SkladDC)
+            return new List<NomenklStoreRemainItem>(data.OrderBy(_ => _.NomenklDC).ThenBy(_ => _.StoreDC)
                 .ThenBy(_ => _.Prihod));
         }
 
