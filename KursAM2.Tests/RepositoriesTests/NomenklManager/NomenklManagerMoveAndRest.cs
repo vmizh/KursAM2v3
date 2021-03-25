@@ -68,10 +68,10 @@ namespace KursAM2.Tests.RepositoriesTests.NomenklManager
             ////        $@"{n.NomDC} {n.NomNomenkl} {n.NomName} {n.Prihod} {n.Rashod} {n.Ostatok} {n.Price} {n.PriceWithNaklad}");
             ////}
 
-            var storeMove =
-                Managers.Nomenkl.NomenklManager.GetStoreMove(new DateTime(2021, 2, 15), DateTime.Today,
-                    StoreDC);
-            Assert.AreNotEqual(storeMove.Count, 0, "Данные не вернулись");
+            //var storeMove =
+            //    Managers.Nomenkl.NomenklManager.GetStoreMove(new DateTime(2021, 2, 15), DateTime.Today,
+            //        StoreDC);
+            //Assert.AreNotEqual(storeMove.Count, 0, "Данные не вернулись");
             //var storsnames = storeMove.Select(_ => _.StoreName).Distinct();
             //foreach (var n in storeMove.OrderBy(_ => _.NomDC).ThenBy(_ => _.Date))
             //    Console.WriteLine(

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Controls;
@@ -24,8 +25,7 @@ namespace Core.EntityViewModel
 
         public WarehouseOrderIn(SD_24 entity) : base(entity)
         {
-            Rows = new ObservableCollection<WarehouseOrderInRow>();
-            Rows.CollectionChanged += (o, args) => State = RowStatus.Edited;
+           
             biling = new ObservableCollection<InvoiceProviderRow>();
             if (DD_SKLAD_POL_DC != null)
                 WarehouseIn = MainReferences.Warehouses[DD_SKLAD_POL_DC.Value];
@@ -37,10 +37,13 @@ namespace Core.EntityViewModel
                 WarehouseSenderType = WarehouseSenderType.Store;
             if (KontragentSender != null)
                 WarehouseSenderType = WarehouseSenderType.Kontragent;
-            var data = entity.TD_24;
-            if (data != null && data.Count != 0)
-                foreach (var item in data)
-                    Rows.Add(new WarehouseOrderInRow(item) {Parent = this});
+            var rtemp = new List<WarehouseOrderInRow>(); 
+            if (entity.TD_24 != null && entity.TD_24.Count != 0)
+            {
+                foreach (var item in entity.TD_24)
+                    rtemp.Add(new WarehouseOrderInRow(item) {Parent = this});
+            }
+            Rows = new ObservableCollection<WarehouseOrderInRow>(rtemp);
         }
 
         public ObservableCollection<WarehouseOrderInRow> Rows { set; get; } =

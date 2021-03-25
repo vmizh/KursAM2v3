@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -124,17 +125,19 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void RefreshData(object data)
         {
-            Documents.Clear();
             //Documents = new ObservableCollection<WarehouseOrderIn>();
             try
             {
+                var rows = new List<WarehouseOrderIn>();
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var d = ctx.SD_24.Where(_ =>
                         _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
                         _.DD_TYPE_DC == 2010000001).ToList(); /*приходный складской ордер*/
                     foreach (var item in d)
-                        Documents.Add(new WarehouseOrderIn(item) {State = RowStatus.NotEdited});
+                        rows.Add(new WarehouseOrderIn(item) {State = RowStatus.NotEdited});
+                    Documents = new ObservableCollection<WarehouseOrderIn>(rows);
+                    RaisePropertyChanged(nameof(Documents));
                 }
             }
             catch (Exception e)
