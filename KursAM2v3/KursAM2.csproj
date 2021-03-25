@@ -196,9 +196,12 @@
     <Reference Include="DevExpress.Xpf.Themes.VS2017Blue.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Themes.VS2017Dark.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Themes.VS2017Light.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraCharts.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraEditors.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraGauges.v20.1.Core, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraPrinting.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraLayout.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraReports.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -283,6 +286,12 @@
     <Compile Include="ReportManagers\SFClientAndWayBill\SFClientReportManager.cs" />
     <Compile Include="ReportManagers\SFClientAndWayBill\SFClientZakazReport.cs" />
     <Compile Include="ReportManagers\SFClientAndWayBill\WaybillReportManager.cs" />
+    <Compile Include="Reports\WarehouseOrderInReport.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reports\WarehouseOrderInReport.Designer.cs">
+      <DependentUpon>WarehouseOrderInReport.cs</DependentUpon>
+    </Compile>
     <Compile Include="Repositories\DistributeNakladRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceClientRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
@@ -959,9 +968,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\WarehouseOrderInReport.resx">
+      <DependentUpon>WarehouseOrderInReport.cs</DependentUpon>
     </EmbeddedResource>
     <Resource Include="Font\Roboto-Black.ttf" />
     <Resource Include="Font\Roboto-BlackItalic.ttf" />
