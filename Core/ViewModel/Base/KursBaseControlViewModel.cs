@@ -164,6 +164,13 @@ namespace Core.ViewModel.Base
         }
 
         [Display(AutoGenerateField = false)]
+        public UserControl Control
+        {
+            get => GetValue<UserControl>();
+            set => SetValue(value);
+        }
+
+        [Display(AutoGenerateField = false)]
         public virtual ICommand SaveDataCommand
         {
             get { return new Command(SaveData, param => CanSave()); }

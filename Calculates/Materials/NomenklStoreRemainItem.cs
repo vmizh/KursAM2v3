@@ -39,5 +39,11 @@ namespace Calculates.Materials
         public decimal Ostatok { set; get; }
         public decimal Price { set; get; }
         public decimal PriceWithNaklad { set; get; }
+        public decimal MoneyPrihod { set; get; }
+        public decimal MoneyPrihodWithNaklad { set; get; }
+        public decimal MoneyRashod { set; get; }
+        public decimal MoneyRashodWithNaklad { set; get; }
+        public decimal StartPrice { set; get; }
+        public decimal StartPriceWithNaklad { set; get; }
     }
 }
