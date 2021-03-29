@@ -218,6 +218,9 @@
     <Reference Include="Microsoft.Expression.Drawing, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Expression.Drawing.3.0.0\lib\net45\Microsoft.Expression.Drawing.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -293,6 +296,12 @@
     </Compile>
     <Compile Include="Reports\WarehouseOrderInReport.Designer.cs">
       <DependentUpon>WarehouseOrderInReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\WarehouseOrderOut.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reports\WarehouseOrderOut.Designer.cs">
+      <DependentUpon>WarehouseOrderOut.cs</DependentUpon>
     </Compile>
     <Compile Include="Repositories\DistributeNakladRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceClientRepository.cs" />
@@ -977,6 +986,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\WarehouseOrderInReport.resx">
       <DependentUpon>WarehouseOrderInReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\WarehouseOrderOut.resx">
+      <DependentUpon>WarehouseOrderOut.cs</DependentUpon>
     </EmbeddedResource>
     <Resource Include="Font\Roboto-Black.ttf" />
     <Resource Include="Font\Roboto-BlackItalic.ttf" />
