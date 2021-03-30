@@ -121,6 +121,6 @@
     <value>17, 17</value>
   </metadata>
   <data name="customJsonSource1.Json" xml:space="preserve">
-    <value>[{"Num":"      1514","DD_DATE":"2021-03-03T00:00:00","Poluchatel":"Офис","Corporate":"Альфа-Медиа","NomName":"STBOARD Double- Splicing LX860(848)E52","EdIzmName":"шт","NumberItems":1.00000000,"KladovschikName":"Стефанов Анатолий Борисович","SkladName":"Основной"}]</value>
+    <value>[{"LineNumber":1,"NumberOrder":"      1514","DocumentDate":"2021-03-03T00:00:00","Poluchatel":"Офис","Postavshik":"Альфа-Медиа","Tovar":"STBOARD Double- Splicing LX860(848)E52","EdIzmName":"шт","NumberItems":1.00000000,"KladovschikName":"Стефанов Анатолий Борисович","SkladName":"Основной"}]</value>
   </data>
 </root>
