@@ -295,6 +295,24 @@
     <Compile Include="ReportManagers\SFClientAndWayBill\SFClientReportManager.cs" />
     <Compile Include="ReportManagers\SFClientAndWayBill\SFClientZakazReport.cs" />
     <Compile Include="ReportManagers\SFClientAndWayBill\WaybillReportManager.cs" />
+    <Compile Include="Reports\HeadReport.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reports\HeadReport.Designer.cs">
+      <DependentUpon>HeadReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\WarehouseOrderInReport.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reports\WarehouseOrderInReport.Designer.cs">
+      <DependentUpon>WarehouseOrderInReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\XtraReport1.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reports\XtraReport1.Designer.cs">
+      <DependentUpon>XtraReport1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Repositories\DistributeNakladRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceClientRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
@@ -976,6 +994,15 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Reports\HeadReport.resx">
+      <DependentUpon>HeadReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\WarehouseOrderInReport.resx">
+      <DependentUpon>WarehouseOrderInReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\XtraReport1.resx">
+      <DependentUpon>XtraReport1.cs</DependentUpon>
+    </EmbeddedResource>
     <Resource Include="Font\Roboto-Black.ttf" />
     <Resource Include="Font\Roboto-BlackItalic.ttf" />
     <Resource Include="Font\Roboto-Bold.ttf" />
@@ -1000,6 +1027,9 @@
     <None Include="Reports\Account2.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\HeadReport.repx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Reports\SFClient.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -1007,6 +1037,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\torg12.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\WarehouseOrderOut.repx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\WarehouseOrderIn.repx">
