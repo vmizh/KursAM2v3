@@ -1784,38 +1784,33 @@ namespace KursAM2.Managers.Invoices
                 {
                     List<SD_84> data;
                     if (isAccepted)
-                        data = (from sd84 in ctx.SD_84
-                                .Include(_ => _.TD_84)
-                                .Include("TD_84.TD_24")
-                                .Include(_ => _.SD_432)
-                                .Include(_ => _.SD_179)
-                                .Include(_ => _.SD_77)
-                                .Include(_ => _.SD_189)
-                                .Include(_ => _.SD_40)
-                                .Where(_ => _.SF_DATE >= dateStart && _.SF_DATE <= dateEnd
-                                                                   && _.SF_ACCEPTED == 1)
-                            join td84 in ctx.TD_84
-                                    .Include(_ => _.SD_83)
-                                    .Include(_ => _.SD_175)
-                                on sd84.DOC_CODE equals td84.DOC_CODE
-                            where sd84.SF_CLIENT_DC == kontragentDC
-                            select sd84).ToList();
+                        data = ctx.SD_84
+                            .Include(_ => _.TD_84)
+                            .Include("TD_84.TD_24")
+                            .Include(_ => _.SD_432)
+                            .Include(_ => _.SD_179)
+                            .Include(_ => _.SD_77)
+                            .Include(_ => _.SD_189)
+                            .Include(_ => _.SD_40)
+                            .Include("TD_84.SD_83")
+                            .Include("TD_84.SD_175")
+                                .Where(_ =>_.SF_CLIENT_DC == kontragentDC &&  _.SF_DATE >= dateStart && _.SF_DATE <= dateEnd
+                                           && _.SF_ACCEPTED == 1)
+                            .ToList();
                     else
-                        data = (from sd84 in ctx.SD_84
-                                .Include(_ => _.TD_84)
-                                .Include("TD_84.TD_24")
-                                .Include(_ => _.SD_432)
-                                .Include(_ => _.SD_179)
-                                .Include(_ => _.SD_77)
-                                .Include(_ => _.SD_189)
-                                .Include(_ => _.SD_40)
-                                .Where(_ => _.SF_DATE >= dateStart && _.SF_DATE <= dateEnd)
-                            join td84 in ctx.TD_84
-                                    .Include(_ => _.SD_83)
-                                    .Include(_ => _.SD_175)
-                                on sd84.DOC_CODE equals td84.DOC_CODE
-                            where sd84.SF_CLIENT_DC == kontragentDC
-                            select sd84).ToList();
+                        data = ctx.SD_84
+                            .Include(_ => _.TD_84)
+                            .Include("TD_84.TD_24")
+                            .Include(_ => _.SD_432)
+                            .Include(_ => _.SD_179)
+                            .Include(_ => _.SD_77)
+                            .Include(_ => _.SD_189)
+                            .Include(_ => _.SD_40)
+                            .Include("TD_84.SD_83")
+                            .Include("TD_84.SD_175")
+                            .Where(_ => _.SF_CLIENT_DC == kontragentDC && _.SF_DATE >= dateStart &&
+                                        _.SF_DATE <= dateEnd).ToList();
+                            
                     var sql =
                         "SELECT s84.doc_code as DocCode, s84.SF_CRS_SUMMA_K_OPLATE as Summa, SUM(ISNULL(s33.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_PRIHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                         "FROM sd_84 s84 " +
