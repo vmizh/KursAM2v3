@@ -301,18 +301,6 @@
     <Compile Include="Reports\HeadReport.Designer.cs">
       <DependentUpon>HeadReport.cs</DependentUpon>
     </Compile>
-    <Compile Include="Reports\WarehouseOrderInReport.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Reports\WarehouseOrderInReport.Designer.cs">
-      <DependentUpon>WarehouseOrderInReport.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\XtraReport1.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Reports\XtraReport1.Designer.cs">
-      <DependentUpon>XtraReport1.cs</DependentUpon>
-    </Compile>
     <Compile Include="Repositories\DistributeNakladRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceClientRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
@@ -996,12 +984,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\HeadReport.resx">
       <DependentUpon>HeadReport.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\WarehouseOrderInReport.resx">
-      <DependentUpon>WarehouseOrderInReport.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\XtraReport1.resx">
-      <DependentUpon>XtraReport1.cs</DependentUpon>
     </EmbeddedResource>
     <Resource Include="Font\Roboto-Black.ttf" />
     <Resource Include="Font\Roboto-BlackItalic.ttf" />

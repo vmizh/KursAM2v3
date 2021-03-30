@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Windows;
 using Core;
+using DevExpress.DataProcessing.InMemoryDataProcessor;
 using DevExpress.Xpf.Printing;
 using DevExpress.XtraReports.UI;
 
@@ -48,6 +53,47 @@ namespace KursAM2.ReportManagers
                         OtKogoPolucheno = s24.DD_OT_KOGO_POLUCHENO
                     }).ToList();
                 OpenReport(data,"..\\..\\Reports\\WarehouseOrderIn.repx");
+            }
+        }
+
+        private static int LineNum = 0;
+        private static int LineNumber()
+        {
+            return LineNum++;
+        }
+
+        public static void WarehouseOrderOutReport(decimal dc)
+        {
+            LineNum = 0;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var data = ctx.TD_24.Include(_ => _.SD_24)
+                        .Include(_ => _.SD_83)
+                        .Include(_ => _.SD_175)
+                        .Include(_ => _.SD_24.SD_43)
+                        .Include(_ => _.SD_24.SD_27)
+                        .Include(_ => _.SD_24.SD_271)
+                        .Include(_ => _.SD_24.SD_272)
+                        .Include(_ => _.SD_24.SD_273)
+                        .Where(_ => _.DOC_CODE == dc).ToList();
+                var repdata = (from d in data
+                              select new
+                              {
+                                  LineNumber = d.CODE,
+                                  NumberOrder = d.SD_24.DD_IN_NUM + d.SD_24.DD_EXT_NUM != null
+                                      ? " / " + d.SD_24.DD_EXT_NUM
+                                      : string.Empty,
+                                  DocumentDate = d.SD_24.DD_DATE,
+                                  Poluchatel = d.SD_24.SD_271.SKL_NAME,
+                                  Postavshik = GlobalOptions.SystemProfile.OwnerKontragent.Name,
+                                  Tovar = d.SD_83.NOM_NAME,
+                                  EdIzmName = d.SD_175.ED_IZM_NAME,
+                                  NumberItems = d.DDT_KOL_RASHOD,
+                                  KladovschikName = MainReferences.Warehouses[d.SD_24.DD_SKLAD_OTPR_DC.Value].Employee.Name,
+                                  SkladName = d.SD_24.SD_273.SKL_NAME
+                              }).OrderBy(_ => _.LineNumber).ToList();
+
+                OpenReport(repdata,"..\\..\\Reports\\WarehouseOrderOut.repx");
             }
         }
     }

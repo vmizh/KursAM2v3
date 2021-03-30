@@ -59,7 +59,7 @@
         </Item10>
       </Controls>
     </Item3>
-    <Item4 Ref="34" ControlType="DetailBand" Name="Detail" HeightF="92.37127" Dpi="254">
+    <Item4 Ref="34" ControlType="DetailBand" Name="Detail" HeightF="63.42" Dpi="254">
       <HierarchyPrintOptions Ref="35" Indent="50.8" />
       <Controls>
         <Item1 Ref="36" ControlType="XRTable" Name="table2" SizeF="2696.58838,63.42" LocationFloat="0,0" Dpi="254" OddStyleName="DetailData3_Odd" Font="Arial, 12pt" BackColor="White" BorderColor="Black" Borders="All">
@@ -144,7 +144,7 @@
     </Item6>
     <Item7 Ref="74" ControlType="PageFooterBand" Name="PageFooter" HeightF="113.913589" Dpi="254">
       <Controls>
-        <Item1 Ref="75" ControlType="XRPageInfo" Name="xrPageInfo1" TextAlignment="MiddleCenter" SizeF="254,58.42" LocationFloat="1082.6875,24.9999275" Dpi="254" Padding="2,2,0,0,96">
+        <Item1 Ref="75" ControlType="XRPageInfo" Name="xrPageInfo1" TextAlignment="MiddleCenter" SizeF="254,58.42" LocationFloat="1082.6875,24.9999275" Dpi="254" Padding="5,5,0,0,254">
           <StylePriority Ref="76" UseTextAlignment="false" />
         </Item1>
       </Controls>
@@ -152,10 +152,10 @@
   </Bands>
   <StyleSheet>
     <Item1 Ref="77" Name="Title" BorderStyle="Inset" Font="Arial, 14.25pt" ForeColor="255,75,75,75" BackColor="Transparent" BorderColor="Black" Sides="None" StringFormat="Near;Near;0;None;Character;Default" BorderWidthSerializable="1" />
-    <Item2 Ref="78" Name="DetailCaption1" BorderStyle="Inset" Padding="6,6,0,0,100" Font="Arial, 8.25pt, style=Bold" ForeColor="White" BackColor="255,75,75,75" BorderColor="White" Sides="Left" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
-    <Item3 Ref="79" Name="DetailData1" BorderStyle="Inset" Padding="6,6,0,0,100" Font="Arial, 8.25pt" ForeColor="Black" BorderColor="Transparent" Sides="Left" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
-    <Item4 Ref="80" Name="DetailData3_Odd" BorderStyle="Inset" Padding="6,6,0,0,100" Font="Arial, 8.25pt" ForeColor="Black" BackColor="255,231,231,231" BorderColor="Transparent" Sides="None" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="1" />
-    <Item5 Ref="81" Name="PageInfo" BorderStyle="Inset" Padding="2,2,0,0,100" Font="Arial, 8.25pt, style=Bold" ForeColor="255,75,75,75" StringFormat="Near;Near;0;None;Character;Default" />
+    <Item2 Ref="78" Name="DetailCaption1" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt, style=Bold" ForeColor="White" BackColor="255,75,75,75" BorderColor="White" Sides="Left" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
+    <Item3 Ref="79" Name="DetailData1" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt" ForeColor="Black" BorderColor="Transparent" Sides="Left" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
+    <Item4 Ref="80" Name="DetailData3_Odd" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt" ForeColor="Black" BackColor="255,231,231,231" BorderColor="Transparent" Sides="None" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="1" />
+    <Item5 Ref="81" Name="PageInfo" BorderStyle="Inset" Padding="5,5,0,0,254" Font="Arial, 8.25pt, style=Bold" ForeColor="255,75,75,75" StringFormat="Near;Near;0;None;Character;Default" />
   </StyleSheet>
   <ComponentStorage>
     <Item1 Ref="0" ObjectType="DevExpress.DataAccess.Json.JsonDataSource,DevExpress.DataAccess.v20.1" Name="jsonDataSource2" Base64="PEpzb25EYXRhU291cmNlIE5hbWU9Impzb25EYXRhU291cmNlMiI+PFNvdXJjZSBTb3VyY2VUeXBlPSJEZXZFeHByZXNzLkRhdGFBY2Nlc3MuSnNvbi5DdXN0b21Kc29uU291cmNlIiBKc29uPSJbeyZxdW90O0xpbmVOdW1iZXImcXVvdDs6MSwmcXVvdDtOdW1iZXJPcmRlciZxdW90OzomcXVvdDsgICAgICAxNTE0JnF1b3Q7LCZxdW90O0RvY3VtZW50RGF0ZSZxdW90OzomcXVvdDsyMDIxLTAzLTAzVDAwOjAwOjAwJnF1b3Q7LCZxdW90O1BvbHVjaGF0ZWwmcXVvdDs6JnF1b3Q70J7RhNC40YEmcXVvdDssJnF1b3Q7UG9zdGF2c2hpayZxdW90OzomcXVvdDvQkNC70YzRhNCwLdCc0LXQtNC40LAmcXVvdDssJnF1b3Q7VG92YXImcXVvdDs6JnF1b3Q7U1RCT0FSRCBEb3VibGUtIFNwbGljaW5nIExYODYwKDg0OClFNTImcXVvdDssJnF1b3Q7RWRJem1OYW1lJnF1b3Q7OiZxdW90O9GI0YImcXVvdDssJnF1b3Q7TnVtYmVySXRlbXMmcXVvdDs6MS4wMDAwMDAwMCwmcXVvdDtLbGFkb3ZzY2hpa05hbWUmcXVvdDs6JnF1b3Q70KHRgtC10YTQsNC90L7QsiDQkNC90LDRgtC+0LvQuNC5INCR0L7RgNC40YHQvtCy0LjRhyZxdW90OywmcXVvdDtTa2xhZE5hbWUmcXVvdDs6JnF1b3Q70J7RgdC90L7QstC90L7QuSZxdW90O31dIiAvPjxTY2hlbWE+PE5vZGUgTmFtZT0icm9vdCIgU2VsZWN0ZWQ9InRydWUiIE5vZGVUeXBlPSJBcnJheSI+PE5vZGUgTmFtZT0iTGluZU51bWJlciIgVHlwZT0iU3lzdGVtLk51bGxhYmxlYDFbU3lzdGVtLkludDY0XSIgU2VsZWN0ZWQ9InRydWUiIE5vZGVUeXBlPSJQcm9wZXJ0eSIgLz48Tm9kZSBOYW1lPSJOdW1iZXJPcmRlciIgVHlwZT0iU3lzdGVtLlN0cmluZyIgU2VsZWN0ZWQ9InRydWUiIE5vZGVUeXBlPSJQcm9wZXJ0eSIgLz48Tm9kZSBOYW1lPSJEb2N1bWVudERhdGUiIFR5cGU9IlN5c3RlbS5OdWxsYWJsZWAxW1N5c3RlbS5EYXRlVGltZV0iIFNlbGVjdGVkPSJ0cnVlIiBOb2RlVHlwZT0iUHJvcGVydHkiIC8+PE5vZGUgTmFtZT0iUG9sdWNoYXRlbCIgVHlwZT0iU3lzdGVtLlN0cmluZyIgU2VsZWN0ZWQ9InRydWUiIE5vZGVUeXBlPSJQcm9wZXJ0eSIgLz48Tm9kZSBOYW1lPSJQb3N0YXZzaGlrIiBUeXBlPSJTeXN0ZW0uU3RyaW5nIiBTZWxlY3RlZD0idHJ1ZSIgTm9kZVR5cGU9IlByb3BlcnR5IiAvPjxOb2RlIE5hbWU9IlRvdmFyIiBUeXBlPSJTeXN0ZW0uU3RyaW5nIiBTZWxlY3RlZD0idHJ1ZSIgTm9kZVR5cGU9IlByb3BlcnR5IiAvPjxOb2RlIE5hbWU9IkVkSXptTmFtZSIgVHlwZT0iU3lzdGVtLlN0cmluZyIgU2VsZWN0ZWQ9InRydWUiIE5vZGVUeXBlPSJQcm9wZXJ0eSIgLz48Tm9kZSBOYW1lPSJOdW1iZXJJdGVtcyIgVHlwZT0iU3lzdGVtLk51bGxhYmxlYDFbU3lzdGVtLkRvdWJsZV0iIFNlbGVjdGVkPSJ0cnVlIiBOb2RlVHlwZT0iUHJvcGVydHkiIC8+PE5vZGUgTmFtZT0iS2xhZG92c2NoaWtOYW1lIiBUeXBlPSJTeXN0ZW0uU3RyaW5nIiBTZWxlY3RlZD0idHJ1ZSIgTm9kZVR5cGU9IlByb3BlcnR5IiAvPjxOb2RlIE5hbWU9IlNrbGFkTmFtZSIgVHlwZT0iU3lzdGVtLlN0cmluZyIgU2VsZWN0ZWQ9InRydWUiIE5vZGVUeXBlPSJQcm9wZXJ0eSIgLz48L05vZGU+PC9TY2hlbWE+PC9Kc29uRGF0YVNvdXJjZT4=" />

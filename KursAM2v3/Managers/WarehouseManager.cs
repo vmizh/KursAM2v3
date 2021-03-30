@@ -1396,6 +1396,7 @@ namespace KursAM2.Managers
                 {
                     var data = ctx.SD_24
                         .Include(_ => _.TD_24)
+                        .Include(_ => _.SD_84)
                         .Include("TD_24.TD_26")
                         .Include("TD_24.TD_26.SD_26")
                         .Include("TD_24.SD_175")

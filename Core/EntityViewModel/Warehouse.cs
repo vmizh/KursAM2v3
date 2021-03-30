@@ -277,6 +277,13 @@ namespace Core.EntityViewModel
         {
             if (MainReferences.Employees.Values.Any(_ => _.TabelNumber == Entity.TABELNUMBER))
                 Employee = MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == Entity.TABELNUMBER);
+            else
+                Employee = new Employee
+                {
+                    DocCode = 0,
+                    TabelNumber = 0,
+                    Name = ""
+                };
             if (MainReferences.Regions.ContainsKey(Entity.SKL_REGION_DC))
                 Region = MainReferences.Regions[Entity.SKL_REGION_DC];
         }
