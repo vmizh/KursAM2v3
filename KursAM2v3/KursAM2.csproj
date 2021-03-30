@@ -1027,6 +1027,9 @@
     <None Include="Reports\torg12.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\WarehouseOrderOut.repx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Reports\WarehouseOrderIn.repx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
