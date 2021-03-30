@@ -1,20 +1,26 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Text.Json;
 using Core;
-using Core.Repository.Base;
+using Core.EntityViewModel;
+using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using Helper;
-using NUnit.Framework;
+using KursAM2.Managers;
 
-namespace KursAM2.Tests
+namespace JSONGenerate
 {
-    [TestFixture]
-    public class TestBase
+    internal class Program
     {
-        [SetUp]
-        public void SetcConnect()
+
+
+        private static void Main(string[] args)
         {
+            ALFAMEDIAEntities entities;
+            UnitOfWork<ALFAMEDIAEntities> UnitOfWork = new UnitOfWork<ALFAMEDIAEntities>();
+
             var sqlConnectionString = new SqlConnectionStringBuilder
             {
                 DataSource = "127.0.0.1",
@@ -41,17 +47,12 @@ namespace KursAM2.Tests
             };
             entities = GlobalOptions.GetEntities();
             UnitOfWork = new UnitOfWork<ALFAMEDIAEntities>(entities);
+            var manager = new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),"Test"));
+            var order = manager.GetOrderIn(10240036770);
+            var s = JsonSerializer.Serialize<WarehouseOrderIn>(order);
+            Console.Write(s);
+            Console.ReadLine();
+
         }
-
-        [TearDown]
-        public void DeleteDocument()
-        {
-            //manager.Delete(DocDC);
-        }
-
-        public decimal DocDC = -1;
-        protected UnitOfWork<ALFAMEDIAEntities> UnitOfWork = new UnitOfWork<ALFAMEDIAEntities>();
-
-        private ALFAMEDIAEntities entities;
     }
 }

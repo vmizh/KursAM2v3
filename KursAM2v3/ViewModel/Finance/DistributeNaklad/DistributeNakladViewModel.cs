@@ -494,7 +494,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         public override bool CanSave()
         {
-            return State != RowStatus.NotEdited;
+            return State != RowStatus.NotEdited || Tovars.Any(_ => _.State != RowStatus.NotEdited);
         }
 
         public override void Load(object o)

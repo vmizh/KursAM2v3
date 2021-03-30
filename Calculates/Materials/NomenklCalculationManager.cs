@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core;
@@ -157,8 +156,6 @@ namespace Calculates.Materials
         {
             return GetNomenklStoreRemain(DateTime.Today, nomDC);
         }
-
-
 
         /// <summary>
         ///     Возвращает остатки по товару на складах в форме
@@ -591,6 +588,7 @@ namespace Calculates.Materials
             DateTime end, decimal storeDC)
         {
             var ret = new List<NomenklCalcFull>();
+            // ReSharper disable once CollectionNeverUpdated.Local
             var temp = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -604,10 +602,8 @@ namespace Calculates.Materials
                     var data = alldata.Where(_ => _.NomDC == ndc)
                         .OrderBy(_ => _.Date).ToList();
                     if (data.Count == 0) continue;
-                    decimal nStart = 0,
-                        nPriceStart = 0,
+                    decimal nPriceStart = 0,
                         nPriceStartWithNaklad = 0,
-                        nEnd = 0,
                         nPriceEnd = 0,
                         nPriceEndWithNaklad = 0,
                         nIn = 0,
@@ -617,7 +613,7 @@ namespace Calculates.Materials
                         nSumInWithNaklad = 0,
                         nSumOutWithNaklad = 0;
 
-                    nStart = data.Where(_ => _.Date < start).Sum(_ => _.Prihod - _.Rashod);
+                    var nStart = data.Where(_ => _.Date < start).Sum(_ => _.Prihod - _.Rashod);
                     var sdprc = data.FirstOrDefault(_ => _.Date < start);
                     if (sdprc != null)
                     {
@@ -625,7 +621,7 @@ namespace Calculates.Materials
                         nPriceStartWithNaklad = sdprc.PriceWithNaklad ?? 0;
                     }
 
-                    nEnd = data.Sum(_ => _.Prihod - _.Rashod);
+                    var nEnd = data.Sum(_ => _.Prihod - _.Rashod);
                     var sdprc1 = data.FirstOrDefault(_ => _.Date <= end);
                     if (sdprc1 != null)
                     {
@@ -678,7 +674,7 @@ namespace Calculates.Materials
         public static List<NomenklStoreRemainItem> GetNomenklStoreRemains(DateTime date, decimal storeDC)
         {
             var sql =
-                "SELECT tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,SUM(tab.Prihod) AS Prihod, SUM(tab.Rashod)AS Rashod " +
+                "SELECT tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC StoreDC,SUM(tab.Prihod) AS Prihod, SUM(tab.Rashod)AS Rashod " +
                 ", SUM(tab.Prihod) - SUM(tab.Rashod) AS Remain, ROUND(ISNULL(p.Price, 0), 2) AS PriceWithNaklad, ROUND(ISNULL(p.PRICE_WO_NAKLAD, 0), 2) AS Price " +
                 ", ROUND((SUM(tab.Prihod) - SUM(tab.Rashod)), 2) * ROUND(ISNULL(p.PRICE_WO_NAKLAD, 0), 2) AS Summa,  " +
                 "ROUND((SUM(tab.Prihod) - SUM(tab.Rashod)), 2) * ROUND(ISNULL(p.Price, 0), 2) AS SummaWithNaklad  " +
@@ -765,7 +761,7 @@ namespace Calculates.Materials
             {
                 case NomenklCalcType.NakladSeparately:
                     sql = "SELECT n.NomDC NomenklDC, n.NomCrsDC NomCurrencyDC, n.NomName NomenklName, " +
-                        "n.StoreDC SkladDC, SUM(n.Prihod) Prihod, SUM(n.Rashod) Rashod, SUM(n.Prihod) - SUM(n.Rashod) Remain " +
+                        "n.StoreDC StoreDC, SUM(n.Prihod) Prihod, SUM(n.Rashod) Rashod, SUM(n.Prihod) - SUM(n.Rashod) Remain " +
                         ",ISNULL(p.Price, 0) AS PriceWithNaklad, ISNULL(p.PRICE_WO_NAKLAD, 0) AS Price, " +
                         "(SUM(n.Prihod) - SUM(n.Rashod)) * ISNULL(p.PRICE_WO_NAKLAD, 0) AS Summa " +
                         ",(SUM(n.Prihod) - SUM(n.Rashod)) * ISNULL(p.Price, 0) AS SummaWithNaklad " +
@@ -779,7 +775,7 @@ namespace Calculates.Materials
                     break;
                 case NomenklCalcType.Standart:
                     sql =
-                        "SELECT tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,SUM(tab.Prihod) AS Prihod, SUM(tab.Rashod)AS Rashod " +
+                        "SELECT tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC as StoreDC,SUM(tab.Prihod) AS Prihod, SUM(tab.Rashod)AS Rashod " +
                         ", SUM(tab.Prihod) - SUM(tab.Rashod) AS Remain, ISNULL(p.Price, 0) AS PriceWithNaklad, ISNULL(p.PRICE_WO_NAKLAD, 0) AS Price " +
                         ", (SUM(tab.Prihod) - SUM(tab.Rashod)) * ISNULL(p.PRICE_WO_NAKLAD, 0) AS Summa,  " +
                         "(SUM(tab.Prihod) - SUM(tab.Rashod)) * ISNULL(p.Price, 0) AS SummaWithNaklad  " +
@@ -837,7 +833,6 @@ namespace Calculates.Materials
             }
 
             var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>(sql).ToList();
-            var nom50192 = data.FirstOrDefault(_ => _.NomenklDC == 10830053173);
             return new List<NomenklStoreRemainItem>(data.OrderBy(_ => _.NomenklDC).ThenBy(_ => _.StoreDC)
                 .ThenBy(_ => _.Prihod));
         }
@@ -849,7 +844,7 @@ namespace Calculates.Materials
         public static List<NomenklStoreRemainItem> GetNomenklAllStoreRemains(DateTime date, decimal nomDC)
         {
             var sql =
-                "SELECT tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,SUM(tab.Prihod) AS Prihod, SUM(tab.Rashod)AS Rashod " +
+                "SELECT tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC StoreDC,SUM(tab.Prihod) AS Prihod, SUM(tab.Rashod)AS Rashod " +
                 ", SUM(tab.Prihod) - SUM(tab.Rashod) AS Remain, ROUND(ISNULL(p.Price, 0), 2) AS PriceWithNaklad, ROUND(ISNULL(p.PRICE_WO_NAKLAD, 0), 2) AS Price " +
                 ", ROUND((SUM(tab.Prihod) - SUM(tab.Rashod)), 2) * ROUND(ISNULL(p.PRICE_WO_NAKLAD, 0), 2) AS Summa,  " +
                 "ROUND((SUM(tab.Prihod) - SUM(tab.Rashod)), 2) * ROUND(ISNULL(p.Price, 0), 2) AS SummaWithNaklad  " +

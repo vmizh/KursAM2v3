@@ -98,6 +98,7 @@ namespace KursAM2.Managers
                         .Include("TD_24.TD_241")
                         .Include("TD_24.TD_242")
                         .Include("TD_24.TD_242.SD_24")
+                        .AsNoTracking()
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
                     result = new WarehouseOrderIn(data);
                     foreach (var r in result.Rows) r.myState = RowStatus.NotEdited;

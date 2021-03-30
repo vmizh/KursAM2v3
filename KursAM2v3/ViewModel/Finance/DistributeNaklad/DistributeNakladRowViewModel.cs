@@ -146,11 +146,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         public decimal Price => Convert?.Price ?? (Quantity != 0 ? (InvoiceRow?.SFT_SUMMA_K_OPLATE ?? 0) / Quantity : 0);
 
         [DisplayName("Сумма")]
-        [Display(AutoGenerateField = true)]
+        [Display(AutoGenerateField = true),ReadOnly(true)]
         public decimal Summa => Convert?.Summa ?? InvoiceRow?.SFT_SUMMA_K_OPLATE ?? 0;
 
         [DisplayName("Сумма накладных")]
-        [Display(AutoGenerateField = true)]
+        [Display(AutoGenerateField = true),ReadOnly(true)]
         public decimal DistributeSumma
         {
             get => Entity.DistributeSumma;
@@ -162,7 +162,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
-        [DisplayName("Цена с накладными")]
+        [DisplayName("Цена с накладными"),ReadOnly(true)]
         [Display(AutoGenerateField = true)]
         public decimal DistributePrice
         {

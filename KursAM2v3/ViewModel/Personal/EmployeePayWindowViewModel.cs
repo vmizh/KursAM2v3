@@ -164,13 +164,14 @@ namespace KursAM2.ViewModel.Personal
                                     t => t.USER.ToUpper() == GlobalOptions.UserInfo.Name.ToUpper())
                                 .Select(d => d.EMP_DC)
                                 .ToList();
-                    foreach (var newItem in ent.EMP_PR_ROWS.Include(_ => _.EMP_PR_DOC)
+                    foreach (var nach in ent.EMP_PR_ROWS.Include(_ => _.EMP_PR_DOC)
                         .Where(
                             d =>
                                 d.EMP_PR_DOC.IS_TEMPLATE == 0 && persRight.Any(t => t == d.EMP_DC) &&
                                 d.NachDate <= dt)
-                        .ToList()
-                        .Select(nach => new EmployeePayDocumentViewModel
+                        .ToList())
+                    {
+                        var newItem = new EmployeePayDocumentViewModel
                         {
                             Employee = MainReferences.Employees[nach.EMP_DC],
                             Crs = MainReferences.Currencies[nach.CRS_DC],
@@ -185,7 +186,7 @@ namespace KursAM2.ViewModel.Personal
                             PayType = "Начисление",
                             NachRUB =
                                 MainReferences.Currencies[nach.CRS_DC].Name == "RUB" ||
-                                nach.SD_301.CRS_SHORTNAME == "RUR"
+                                MainReferences.Currencies[nach.CRS_DC].Name == "RUR"
                                     ? nach.SUMMA
                                     : 0,
                             NachUSD = MainReferences.Currencies[nach.CRS_DC].Name == "USD" ? nach.SUMMA : 0,
@@ -194,8 +195,9 @@ namespace KursAM2.ViewModel.Personal
                             USD = 0,
                             EUR = 0,
                             Id = nach.ID
-                        }))
+                        };
                         Documents.Add(newItem);
+                    }
                     foreach (var p in ent.SD_34.AsNoTracking()
                         .Where(t => t.NCODE == 100 && t.DATE_ORD <= dt)
                         .Where(p => p.TABELNUMBER != null)

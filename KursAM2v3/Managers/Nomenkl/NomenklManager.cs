@@ -132,6 +132,7 @@ namespace KursAM2.Managers.Nomenkl
         {
             return NomenklCalculationManager.GetNomenklStoreRemain(date, nomDC, storeDC);
         }
+
         /// <summary>
         /// Текущий остаток товара на всех складах
         /// </summary>
@@ -147,7 +148,73 @@ namespace KursAM2.Managers.Nomenkl
             return NomenklCalculationManager.GetNomenklStoreRemain(date, nomDC);
         }
 
-        public static List<NomenklCalcMove> GetNomenklMove(decimal nomDC, DateTime dateStart, DateTime dateEnd, out decimal startQuantity)
+        public static List<NomenklCalcMove> GetAllStoreRemain(DateTime date)
+        {
+            var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
+                      ",StoreDC  NUMERIC(18, 0) " +
+                      ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
+                      ",OrderBy INT ,SumPrihod NUMERIC(18, 4) ,SumRashod NUMERIC(18, 4) );  " +
+                      "INSERT INTO @tab  SELECT    NomDC, StoreDC, Date   ,Prihod   ,Rashod   " +
+                      ",CASE      WHEN Prihod > 0 THEN 0      ELSE 1    END OrderBy   " +
+                      ",SUM(Prihod) OVER (PARTITION BY StoreDC, NomDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumPrihod   " +
+                      ",SUM(Rashod) OVER (PARTITION BY StoreDC, NomDC    ORDER BY Date    " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumRashod  " +
+                      "FROM NomenklMoveForCalc  " +
+                      //$"WHERE NomDC = {CustomFormat.DecimalToSqlDecimal(nomDC)}  " +
+                      "ORDER BY StoreDC, NomDC, OrderBy;  " +
+                      "SELECT  NomDC ,NOM_NOMENKL AS NomNumber ,NOM_NAME AS NomName ,t.Date " +
+                      ",Prihod ,Rashod " +
+                      ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC ORDER BY t.Date, OrderBy  " +
+                      "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
+                      ",np.PRICE_WO_NAKLAD AS Price " +
+                      ",np.PRICE AS PriceWithNaklad " +
+                      ",StoreDC " +
+                      ",s27.SKL_NAME as StoreName " +
+                      "FROM @tab t " +
+                      "INNER JOIN sd_83  ON NomDC = sd_83.DOC_CODE " +
+                      "INNER JOIN sd_27 s27 ON StoreDC = s27.DOC_CODE " +
+                      "INNER JOIN NOM_PRICE np ON np.NOM_DC = NomDC " +
+                      "AND np.DATE = (SELECT MAX(np1.DATE) FROM NOM_PRICE np1 WHERE np1.NOM_DC = SD_83.DOC_CODE AND np1.Date <= t.Date) " +
+                      $"WHERE t.Date <= '{CustomFormat.DateToString(date)}' " +
+                      "ORDER BY NomDC, t.Date ;";
+            var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklCalcMove>(sql).ToList();
+            if (data.Count == 0)
+                return new List<NomenklCalcMove>();
+            var res = new List<NomenklCalcMove>();
+            foreach (var storedc in data.Select(_ => _.StoreDC).Distinct())
+            {
+                var storedate = data.Where(_ => _.StoreDC == storedc).ToList();
+                foreach (var nomdc in storedate.Select(_ => _.NomDC).Distinct())
+                {
+                    var nomLast = storedate.Last(_ => _.NomDC == nomdc);
+                    if (nomLast.Ostatok == 0) continue;
+                    res.Add(new NomenklCalcMove
+                    {
+                        Date = nomLast.Date,
+                        NomDC = nomdc,
+                        NomName = nomLast.NomName,
+                        NomNomenkl = nomLast.NomNomenkl,
+                        Ostatok = nomLast.Ostatok,
+                        Price = nomLast.Price,
+                        PriceWithNaklad = nomLast.PriceWithNaklad,
+                        StoreDC = storedc,
+                        StoreName = nomLast.StoreName
+                    });
+                }
+            }
+
+            return res;
+        }
+
+        public static List<NomenklCalcMove> GetStoreRemain(DateTime date, decimal storeDC)
+        {
+            var res = new List<NomenklCalcMove>();
+            return res;
+        }
+
+        public static List<NomenklCalcMove> GetNomenklMove(decimal nomDC, DateTime dateStart, DateTime dateEnd,
+            out decimal startQuantity)
         {
             var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
                       ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
@@ -166,7 +233,7 @@ namespace KursAM2.Managers.Nomenkl
                       ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC ORDER BY Date, OrderBy  " +
                       "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
                       "FROM @tab " +
-                      "INNER JOIN SD_83  ON NomDC = SD_83.DOC_CODE " + 
+                      "INNER JOIN SD_83  ON NomDC = SD_83.DOC_CODE " +
                       $"WHERE Date <= '{CustomFormat.DateToString(dateEnd)}' " +
                       "ORDER BY Date;";
             using (var ctx = GlobalOptions.GetEntities())
@@ -184,11 +251,13 @@ namespace KursAM2.Managers.Nomenkl
                     var item = data.Last(_ => _.Date == d);
                     startQuantity = item.Ostatok;
                 }
+
                 return data.Where(_ => _.Date >= dateStart).ToList();
             }
         }
 
-        public static List<NomenklCalcMove> GetNomenklMove(decimal nomDC, decimal storeDC, DateTime dateStart, DateTime dateEnd, out decimal startQuantity)
+        public static List<NomenklCalcMove> GetNomenklMove(decimal nomDC, decimal storeDC, DateTime dateStart,
+            DateTime dateEnd, out decimal startQuantity)
         {
             var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
                       ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
@@ -209,7 +278,7 @@ namespace KursAM2.Managers.Nomenkl
                       "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
                       "FROM @tab t " +
                       "INNER JOIN sd_83  ON NomDC = SD_83.DOC_CODE " +
-                      $"WHERE t.Date <= '{CustomFormat.DateToString(dateEnd)}' " + 
+                      $"WHERE t.Date <= '{CustomFormat.DateToString(dateEnd)}' " +
                       "ORDER BY t.Date";
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -226,6 +295,7 @@ namespace KursAM2.Managers.Nomenkl
                     var item = data.Last(_ => _.Date == d);
                     startQuantity = item.Ostatok;
                 }
+
                 return data.Where(_ => _.Date >= dateStart).ToList();
             }
         }
@@ -277,6 +347,7 @@ namespace KursAM2.Managers.Nomenkl
                     startPrice = item.Price;
                     startPriceWithNaklad = item.PriceWithNaklad;
                 }
+
                 return data.Where(_ => _.Date >= dateStart).ToList();
             }
         }
@@ -307,7 +378,7 @@ namespace KursAM2.Managers.Nomenkl
                       "INNER JOIN sd_83  ON NomDC = DOC_CODE " +
                       "INNER JOIN NOM_PRICE np ON SD_83.DOC_CODE = np.NOM_DC " +
                       "AND np.DATE = (SELECT MAX(np1.DATE) FROM NOM_PRICE np1 WHERE  np1.NOM_DC = SD_83.DOC_CODE AND np1.Date <= t.Date)" +
-                       $"WHERE t.Date <= '{CustomFormat.DateToString(dateEnd)}' " +
+                      $"WHERE t.Date <= '{CustomFormat.DateToString(dateEnd)}' " +
                       "ORDER BY t.Date";
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -328,6 +399,7 @@ namespace KursAM2.Managers.Nomenkl
                     startPrice = item.Price;
                     startPriceWithNaklad = item.PriceWithNaklad;
                 }
+
                 return data.Where(_ => _.Date >= dateStart).ToList();
             }
         }
@@ -372,12 +444,14 @@ namespace KursAM2.Managers.Nomenkl
                         var d = data.Where(_ => _.NomDC == dc && _.Date < dateStart).Max(_ => _.Date);
                         startost = data.Last(_ => _.NomDC == dc && _.Date == d).Ostatok;
                     }
+
                     foreach (var r in data.Where(_ => _.NomDC == dc && _.Date >= dateStart))
                     {
                         r.Start = startost;
                         startost = r.Ostatok;
                     }
                 }
+
                 return data.Where(_ => _.Date >= dateStart).ToList();
             }
         }
@@ -426,12 +500,14 @@ namespace KursAM2.Managers.Nomenkl
                         var d = data.Where(_ => _.NomDC == dc && _.Date < dateStart).Max(_ => _.Date);
                         startost = data.Last(_ => _.NomDC == dc && _.Date == d).Ostatok;
                     }
+
                     foreach (var r in data.Where(_ => _.NomDC == dc && _.Date >= dateStart))
                     {
                         r.Start = startost;
                         startost = r.Ostatok;
                     }
                 }
+
                 return data.Where(_ => _.Date >= dateStart).ToList();
             }
         }
@@ -525,7 +601,7 @@ namespace KursAM2.Managers.Nomenkl
             }
         }
 
-        public static void RecalcPrice(List<decimal> nomdcs, ALFAMEDIAEntities ent = null )
+        public static void RecalcPrice(List<decimal> nomdcs, ALFAMEDIAEntities ent = null)
         {
             if (ent != null)
             {
@@ -536,7 +612,7 @@ namespace KursAM2.Managers.Nomenkl
                         ent.Database.ExecuteSqlCommand($"INSERT INTO NOMENKL_RECALC (NOM_DC, OPER_DATE) " +
                                                        $"VALUES ({CustomFormat.DecimalToSqlDecimal(n)}, '20000101');");
                     }
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -572,26 +648,38 @@ namespace KursAM2.Managers.Nomenkl
             }
         }
 
-        public static Tuple<decimal,decimal> NomenklPrice(decimal nomdc, DateTime date, ALFAMEDIAEntities ent = null)
+        public static Prices NomenklPrice(decimal nomdc, DateTime date, ALFAMEDIAEntities ent = null)
         {
+            var sql = "SELECT np.PRICE_WO_NAKLAD as Price, np.PRICE as PriceWithNaklad FROM nom_price np " +
+                      $"WHERE np.nom_dc = {CustomFormat.DecimalToSqlDecimal(nomdc)} " +
+                      "AND Date = (select MAX(np1.Date) " +
+                      $"FROM NOM_PRICE np1 WHERE np1.NOM_DC = np.NOM_DC AND np1.DATE <= '{CustomFormat.DateToString(date)}')";
             if (ent == null)
             {
                 using (var ctx = new ALFAMEDIAEntities())
                 {
-                    var data = ctx.NOM_PRICE.Where(_ => _.NOM_DC == nomdc).ToList();
-                    if (data.Count > 0)
+                    var data = ctx.Database.SqlQuery<Prices>(sql).ToList();
+                    if (data.Count == 0) return null;
+                    else
                     {
-                        var d = data.Max(_ => _.DATE);
-                        var pp = data.FirstOrDefault(_ => _.DATE == d);
-                        if (pp != null)
-                            return new Tuple<decimal, decimal>(pp.PRICE_WO_NAKLAD, pp.PRICE);
-                        return new Tuple<decimal, decimal>(0,0);
+                        return data.First();
                     }
-
-                    return new Tuple<decimal, decimal>(0,0);
                 }
             }
-            return new Tuple<decimal, decimal>(0,0);
+
+            var data1 = ent.Database.SqlQuery<Prices>(sql).ToList();
+            if (data1.Count == 0) return null;
+            else
+            {
+                return data1.First();
+            }
         }
+    }
+
+    // ReSharper disable once ClassNeverInstantiated.Global
+    public class Prices
+    {
+        public decimal Price { set; get; }
+        public decimal PriceWithNaklad { set; get; }
     }
 }

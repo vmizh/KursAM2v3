@@ -11,6 +11,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.ReportManagers;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.View.Logistiks.Warehouse;
@@ -31,6 +32,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             orderManager = new WarehouseManager(errManager);
             Document = orderManager.NewOrderIn();
+            var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
+            prn?.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "Ордер",
+                Command = PrintOrderCommand
+            });
         }
 
         public OrderInWindowViewModel(StandartErrorManager errManager, decimal dc)
@@ -41,6 +48,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             orderManager = new WarehouseManager(errManager);
             RefreshData(dc);
+            var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
+            prn?.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "Ордер",
+                Command = PrintOrderCommand
+            });
         }
 
         #region Properties
@@ -78,6 +91,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         #endregion
 
         #region Command
+
+        public ICommand PrintOrderCommand
+        {
+            get { return new Command(PrintOrder, param => State != RowStatus.NewRow); }
+        }
+
+        private void PrintOrder(object obj)
+        {
+            ReportManager.WarehouseOrderInReport(Document.DocCode);
+        }
 
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NotEdited;
