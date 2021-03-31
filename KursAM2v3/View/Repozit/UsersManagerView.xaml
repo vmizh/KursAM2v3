@@ -166,7 +166,8 @@
                                                              MaxHeight="10000"
                                                              MaxWidth="10000">
                                         <dxg:GridControl.View>
-                                            <dxg:TableView ShowTotalSummary="True"/>
+                                            <dxg:TableView ShowTotalSummary="True"
+                                                           AllowEditing="False"/>
                                         </dxg:GridControl.View>
                                         <dxg:GridControl.ContextMenu>
                                             <ContextMenu>
