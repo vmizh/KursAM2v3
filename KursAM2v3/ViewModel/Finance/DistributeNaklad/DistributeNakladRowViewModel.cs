@@ -172,8 +172,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 if (Entity.DistributePrice == value) return;
                 Entity.DistributePrice = value;
                 SetChangeStatus();
+                RaisePropertyChanged(nameof(DistributeSummaWithNaklad));
             }
         }
+
+        [DisplayName("Сумма с накладными"),ReadOnly(true)]
+        [Display(AutoGenerateField = true)]
+        public decimal DistributeSummaWithNaklad => Quantity * Entity.DistributePrice;
 
 
         [DisplayName("Примечания")]
