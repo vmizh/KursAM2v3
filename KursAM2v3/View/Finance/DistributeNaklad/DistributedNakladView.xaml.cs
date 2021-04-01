@@ -10,7 +10,6 @@ using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
-using LayoutManager;
 
 namespace KursAM2.View.Finance.DistributeNaklad
 {
@@ -19,7 +18,6 @@ namespace KursAM2.View.Finance.DistributeNaklad
     /// </summary>
     public partial class DistributedNakladView
     {
-        public GridColumn NakladSummaColumn { set; get; }
         public DistributedNakladView(Window parentForm, IDocumentOpenType openType)
         {
             InitializeComponent();
@@ -29,6 +27,8 @@ namespace KursAM2.View.Finance.DistributeNaklad
                 Control = this
             };
         }
+
+        public GridColumn NakladSummaColumn { set; get; }
         public ComboBoxEdit CurrencyItem { set; get; }
 
         private void DataLayoutControlHeader_OnAutoGeneratingItem(object sender,
@@ -44,7 +44,7 @@ namespace KursAM2.View.Finance.DistributeNaklad
             }
 
             switch (e.PropertyName)
-            { 
+            {
                 case nameof(DistributeNakladViewModel.DocNum):
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     var edit = new TextEdit();
@@ -75,9 +75,10 @@ namespace KursAM2.View.Finance.DistributeNaklad
                     e.Item.IsEnabled = false;
                     break;
                 case nameof(DistributeNakladViewModel.Note):
-                    ViewFluentHelper.SetDefaultTextEdit(e.Item,HorizontalAlignment.Left,600, 50);
+                    ViewFluentHelper.SetDefaultTextEdit(e.Item, HorizontalAlignment.Left, 600, 50);
                     break;
             }
+
             ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
         }
 
@@ -103,15 +104,17 @@ namespace KursAM2.View.Finance.DistributeNaklad
                         Name = col.FieldName + "Calc",
                         AllowDefaultButton = !col.ReadOnly
                     };
-                    var summary = new GridSummaryItem
+                    if (!col.FieldName.Contains("Price"))
                     {
-                        SummaryType = SummaryItemType.Sum,
-                        ShowInColumn = col.FieldName,
-                        DisplayFormat = "{0:n2}",
-                        FieldName = col.FieldName
-                    };
-                    gridTovar.TotalSummary.Add(summary);
-
+                        var summary = new GridSummaryItem
+                        {
+                            SummaryType = SummaryItemType.Sum,
+                            ShowInColumn = col.FieldName,
+                            DisplayFormat = "{0:n2}",
+                            FieldName = col.FieldName
+                        };
+                        gridTovar.TotalSummary.Add(summary);
+                    }
                 }
         }
 
@@ -119,7 +122,7 @@ namespace KursAM2.View.Finance.DistributeNaklad
         {
             e.Column.Name = e.Column.FieldName;
             KursGridControlHelper.DefaultAutoGeneratingColumn(e.Column);
-            if(e.Column.FieldName != "DistributeType")
+            if (e.Column.FieldName != "DistributeType")
                 e.Column.ReadOnly = true;
         }
 
@@ -178,7 +181,6 @@ namespace KursAM2.View.Finance.DistributeNaklad
                         FieldName = col.FieldName
                     };
                     gridDistributeSumma.TotalSummary.Add(summary);
-
                 }
         }
     }
