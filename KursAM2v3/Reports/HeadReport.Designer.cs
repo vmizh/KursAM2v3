@@ -46,6 +46,8 @@ namespace KursAM2.Reports
             this.TopMargin = new DevExpress.XtraReports.UI.TopMarginBand();
             this.BottomMargin = new DevExpress.XtraReports.UI.BottomMarginBand();
             this.ReportHeader = new DevExpress.XtraReports.UI.ReportHeaderBand();
+            this.xrLabel2 = new DevExpress.XtraReports.UI.XRLabel();
+            this.xrLabel1 = new DevExpress.XtraReports.UI.XRLabel();
             this.table1 = new DevExpress.XtraReports.UI.XRTable();
             this.tableRow1 = new DevExpress.XtraReports.UI.XRTableRow();
             this.xrTableCell1 = new DevExpress.XtraReports.UI.XRTableCell();
@@ -89,8 +91,6 @@ namespace KursAM2.Reports
             this.DetailData1 = new DevExpress.XtraReports.UI.XRControlStyle();
             this.DetailData3_Odd = new DevExpress.XtraReports.UI.XRControlStyle();
             this.PageInfo = new DevExpress.XtraReports.UI.XRControlStyle();
-            this.xrLabel1 = new DevExpress.XtraReports.UI.XRLabel();
-            this.xrLabel2 = new DevExpress.XtraReports.UI.XRLabel();
             ((System.ComponentModel.ISupportInitialize)(this.table1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.table2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.xrTable1)).BeginInit();
@@ -123,6 +123,40 @@ namespace KursAM2.Reports
             this.ReportHeader.Dpi = 254F;
             this.ReportHeader.HeightF = 408.0713F;
             this.ReportHeader.Name = "ReportHeader";
+            // 
+            // xrLabel2
+            // 
+            this.xrLabel2.CanGrow = false;
+            this.xrLabel2.Dpi = 254F;
+            this.xrLabel2.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
+            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[NumberOrder]")});
+            this.xrLabel2.Font = new System.Drawing.Font("Arial", 18F);
+            this.xrLabel2.LocationFloat = new DevExpress.Utils.PointFloat(970.7082F, 15.99999F);
+            this.xrLabel2.Name = "xrLabel2";
+            this.xrLabel2.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
+            this.xrLabel2.SizeF = new System.Drawing.SizeF(436.5626F, 84.2036F);
+            this.xrLabel2.StylePriority.UseFont = false;
+            this.xrLabel2.StylePriority.UseTextAlignment = false;
+            this.xrLabel2.Text = "xrLabel2";
+            this.xrLabel2.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
+            this.xrLabel2.WordWrap = false;
+            // 
+            // xrLabel1
+            // 
+            this.xrLabel1.Dpi = 254F;
+            this.xrLabel1.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
+            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[DocumentDate]")});
+            this.xrLabel1.Font = new System.Drawing.Font("Arial", 18F);
+            this.xrLabel1.LocationFloat = new DevExpress.Utils.PointFloat(1540.359F, 15.99999F);
+            this.xrLabel1.Multiline = true;
+            this.xrLabel1.Name = "xrLabel1";
+            this.xrLabel1.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
+            this.xrLabel1.SizeF = new System.Drawing.SizeF(1156.229F, 84.2036F);
+            this.xrLabel1.StylePriority.UseFont = false;
+            this.xrLabel1.StylePriority.UseTextAlignment = false;
+            this.xrLabel1.Text = "xrLabel1";
+            this.xrLabel1.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleLeft;
+            this.xrLabel1.TextFormatString = "{0:dd MMMM yyyy \'г.\'}";
             // 
             // table1
             // 
@@ -191,11 +225,11 @@ namespace KursAM2.Reports
             this.xrLabel7.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
             new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[Poluchatel]")});
             this.xrLabel7.Font = new System.Drawing.Font("Arial", 14F);
-            this.xrLabel7.LocationFloat = new DevExpress.Utils.PointFloat(355.0833F, 250.1269F);
+            this.xrLabel7.LocationFloat = new DevExpress.Utils.PointFloat(384.1875F, 250.1269F);
             this.xrLabel7.Multiline = true;
             this.xrLabel7.Name = "xrLabel7";
             this.xrLabel7.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
-            this.xrLabel7.SizeF = new System.Drawing.SizeF(2197.5F, 75.38409F);
+            this.xrLabel7.SizeF = new System.Drawing.SizeF(2168.396F, 75.38409F);
             this.xrLabel7.StylePriority.UseFont = false;
             this.xrLabel7.Text = "xrLabel7";
             // 
@@ -203,13 +237,13 @@ namespace KursAM2.Reports
             // 
             this.xrLabel6.Dpi = 254F;
             this.xrLabel6.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
-            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[Postavshik]")});
+            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[SkladName]")});
             this.xrLabel6.Font = new System.Drawing.Font("Arial", 14F);
-            this.xrLabel6.LocationFloat = new DevExpress.Utils.PointFloat(355.0833F, 153.113F);
+            this.xrLabel6.LocationFloat = new DevExpress.Utils.PointFloat(384.1875F, 153.113F);
             this.xrLabel6.Multiline = true;
             this.xrLabel6.Name = "xrLabel6";
             this.xrLabel6.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
-            this.xrLabel6.SizeF = new System.Drawing.SizeF(2197.5F, 70.07854F);
+            this.xrLabel6.SizeF = new System.Drawing.SizeF(2168.396F, 70.07852F);
             this.xrLabel6.StylePriority.UseFont = false;
             this.xrLabel6.Text = "xrLabel6";
             // 
@@ -217,23 +251,23 @@ namespace KursAM2.Reports
             // 
             this.xrLabel5.Dpi = 254F;
             this.xrLabel5.Font = new System.Drawing.Font("Arial", 14F);
-            this.xrLabel5.LocationFloat = new DevExpress.Utils.PointFloat(25F, 250.1269F);
+            this.xrLabel5.LocationFloat = new DevExpress.Utils.PointFloat(24.99993F, 250.1269F);
             this.xrLabel5.Name = "xrLabel5";
-            this.xrLabel5.SizeF = new System.Drawing.SizeF(296.2503F, 75.38409F);
+            this.xrLabel5.SizeF = new System.Drawing.SizeF(341.2295F, 75.38406F);
             this.xrLabel5.StyleName = "Title";
             this.xrLabel5.StylePriority.UseFont = false;
-            this.xrLabel5.Text = "Покупатель:";
+            this.xrLabel5.Text = "Получатель:";
             // 
             // xrLabel4
             // 
             this.xrLabel4.Dpi = 254F;
             this.xrLabel4.Font = new System.Drawing.Font("Arial", 14F);
-            this.xrLabel4.LocationFloat = new DevExpress.Utils.PointFloat(25F, 153.113F);
+            this.xrLabel4.LocationFloat = new DevExpress.Utils.PointFloat(24.99993F, 153.113F);
             this.xrLabel4.Name = "xrLabel4";
-            this.xrLabel4.SizeF = new System.Drawing.SizeF(296.2503F, 70.07854F);
+            this.xrLabel4.SizeF = new System.Drawing.SizeF(341.2295F, 70.07852F);
             this.xrLabel4.StyleName = "Title";
             this.xrLabel4.StylePriority.UseFont = false;
-            this.xrLabel4.Text = "Поставщик:";
+            this.xrLabel4.Text = "Отправитель:";
             // 
             // xrLine1
             // 
@@ -310,6 +344,7 @@ namespace KursAM2.Reports
             this.tableCell8.Borders = ((DevExpress.XtraPrinting.BorderSide)((((DevExpress.XtraPrinting.BorderSide.Left | DevExpress.XtraPrinting.BorderSide.Top) 
             | DevExpress.XtraPrinting.BorderSide.Right) 
             | DevExpress.XtraPrinting.BorderSide.Bottom)));
+            this.tableCell8.BorderWidth = 1F;
             this.tableCell8.Dpi = 254F;
             this.tableCell8.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
             new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[LineNumber]")});
@@ -317,14 +352,15 @@ namespace KursAM2.Reports
             this.tableCell8.StyleName = "DetailData1";
             this.tableCell8.StylePriority.UseBorderColor = false;
             this.tableCell8.StylePriority.UseBorders = false;
+            this.tableCell8.StylePriority.UseBorderWidth = false;
             this.tableCell8.Weight = 0.043960253422911308D;
             // 
             // tableCell11
             // 
             this.tableCell11.BorderColor = System.Drawing.Color.Black;
-            this.tableCell11.Borders = ((DevExpress.XtraPrinting.BorderSide)((((DevExpress.XtraPrinting.BorderSide.Left | DevExpress.XtraPrinting.BorderSide.Top) 
-            | DevExpress.XtraPrinting.BorderSide.Right) 
+            this.tableCell11.Borders = ((DevExpress.XtraPrinting.BorderSide)(((DevExpress.XtraPrinting.BorderSide.Top | DevExpress.XtraPrinting.BorderSide.Right) 
             | DevExpress.XtraPrinting.BorderSide.Bottom)));
+            this.tableCell11.BorderWidth = 1F;
             this.tableCell11.Dpi = 254F;
             this.tableCell11.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
             new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[Tovar]")});
@@ -332,15 +368,16 @@ namespace KursAM2.Reports
             this.tableCell11.StyleName = "DetailData1";
             this.tableCell11.StylePriority.UseBorderColor = false;
             this.tableCell11.StylePriority.UseBorders = false;
+            this.tableCell11.StylePriority.UseBorderWidth = false;
             this.tableCell11.Weight = 0.61082492226010909D;
             // 
             // xrTableCell3
             // 
             this.xrTableCell3.BackColor = System.Drawing.Color.White;
             this.xrTableCell3.BorderColor = System.Drawing.Color.Black;
-            this.xrTableCell3.Borders = ((DevExpress.XtraPrinting.BorderSide)((((DevExpress.XtraPrinting.BorderSide.Left | DevExpress.XtraPrinting.BorderSide.Top) 
-            | DevExpress.XtraPrinting.BorderSide.Right) 
+            this.xrTableCell3.Borders = ((DevExpress.XtraPrinting.BorderSide)(((DevExpress.XtraPrinting.BorderSide.Top | DevExpress.XtraPrinting.BorderSide.Right) 
             | DevExpress.XtraPrinting.BorderSide.Bottom)));
+            this.xrTableCell3.BorderWidth = 1F;
             this.xrTableCell3.Dpi = 254F;
             this.xrTableCell3.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
             new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[NumberItems]")});
@@ -350,6 +387,7 @@ namespace KursAM2.Reports
             this.xrTableCell3.StylePriority.UseBackColor = false;
             this.xrTableCell3.StylePriority.UseBorderColor = false;
             this.xrTableCell3.StylePriority.UseBorders = false;
+            this.xrTableCell3.StylePriority.UseBorderWidth = false;
             this.xrTableCell3.StylePriority.UseTextAlignment = false;
             this.xrTableCell3.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
             this.xrTableCell3.Weight = 0.1339875672601975D;
@@ -358,9 +396,9 @@ namespace KursAM2.Reports
             // 
             this.xrTableCell4.BackColor = System.Drawing.Color.White;
             this.xrTableCell4.BorderColor = System.Drawing.Color.Black;
-            this.xrTableCell4.Borders = ((DevExpress.XtraPrinting.BorderSide)((((DevExpress.XtraPrinting.BorderSide.Left | DevExpress.XtraPrinting.BorderSide.Top) 
-            | DevExpress.XtraPrinting.BorderSide.Right) 
+            this.xrTableCell4.Borders = ((DevExpress.XtraPrinting.BorderSide)(((DevExpress.XtraPrinting.BorderSide.Top | DevExpress.XtraPrinting.BorderSide.Right) 
             | DevExpress.XtraPrinting.BorderSide.Bottom)));
+            this.xrTableCell4.BorderWidth = 1F;
             this.xrTableCell4.Dpi = 254F;
             this.xrTableCell4.Multiline = true;
             this.xrTableCell4.Name = "xrTableCell4";
@@ -368,15 +406,16 @@ namespace KursAM2.Reports
             this.xrTableCell4.StylePriority.UseBackColor = false;
             this.xrTableCell4.StylePriority.UseBorderColor = false;
             this.xrTableCell4.StylePriority.UseBorders = false;
+            this.xrTableCell4.StylePriority.UseBorderWidth = false;
             this.xrTableCell4.Weight = 0.12519191186004328D;
             // 
             // xrTableCell2
             // 
             this.xrTableCell2.BackColor = System.Drawing.Color.White;
             this.xrTableCell2.BorderColor = System.Drawing.Color.Black;
-            this.xrTableCell2.Borders = ((DevExpress.XtraPrinting.BorderSide)((((DevExpress.XtraPrinting.BorderSide.Left | DevExpress.XtraPrinting.BorderSide.Top) 
-            | DevExpress.XtraPrinting.BorderSide.Right) 
+            this.xrTableCell2.Borders = ((DevExpress.XtraPrinting.BorderSide)(((DevExpress.XtraPrinting.BorderSide.Top | DevExpress.XtraPrinting.BorderSide.Right) 
             | DevExpress.XtraPrinting.BorderSide.Bottom)));
+            this.xrTableCell2.BorderWidth = 1F;
             this.xrTableCell2.Dpi = 254F;
             this.xrTableCell2.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
             new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[NumberItems]")});
@@ -386,6 +425,7 @@ namespace KursAM2.Reports
             this.xrTableCell2.StylePriority.UseBackColor = false;
             this.xrTableCell2.StylePriority.UseBorderColor = false;
             this.xrTableCell2.StylePriority.UseBorders = false;
+            this.xrTableCell2.StylePriority.UseBorderWidth = false;
             this.xrTableCell2.StylePriority.UseTextAlignment = false;
             this.xrTableCell2.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
             this.xrTableCell2.Weight = 0.097251260009437776D;
@@ -393,9 +433,9 @@ namespace KursAM2.Reports
             // tableCell12
             // 
             this.tableCell12.BorderColor = System.Drawing.Color.Black;
-            this.tableCell12.Borders = ((DevExpress.XtraPrinting.BorderSide)((((DevExpress.XtraPrinting.BorderSide.Left | DevExpress.XtraPrinting.BorderSide.Top) 
-            | DevExpress.XtraPrinting.BorderSide.Right) 
+            this.tableCell12.Borders = ((DevExpress.XtraPrinting.BorderSide)(((DevExpress.XtraPrinting.BorderSide.Top | DevExpress.XtraPrinting.BorderSide.Right) 
             | DevExpress.XtraPrinting.BorderSide.Bottom)));
+            this.tableCell12.BorderWidth = 1F;
             this.tableCell12.Dpi = 254F;
             this.tableCell12.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
             new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[EdIzmName]")});
@@ -403,6 +443,7 @@ namespace KursAM2.Reports
             this.tableCell12.StyleName = "DetailData1";
             this.tableCell12.StylePriority.UseBorderColor = false;
             this.tableCell12.StylePriority.UseBorders = false;
+            this.tableCell12.StylePriority.UseBorderWidth = false;
             this.tableCell12.StylePriority.UseTextAlignment = false;
             this.tableCell12.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
             this.tableCell12.Weight = 0.090441200737556168D;
@@ -472,7 +513,7 @@ namespace KursAM2.Reports
             this.PageHeader.Controls.AddRange(new DevExpress.XtraReports.UI.XRControl[] {
             this.xrTable1});
             this.PageHeader.Dpi = 254F;
-            this.PageHeader.HeightF = 97.82454F;
+            this.PageHeader.HeightF = 71.12F;
             this.PageHeader.Name = "PageHeader";
             this.PageHeader.PrintOn = DevExpress.XtraReports.UI.PrintOnPages.NotWithReportHeader;
             // 
@@ -484,7 +525,7 @@ namespace KursAM2.Reports
             | DevExpress.XtraPrinting.BorderSide.Right) 
             | DevExpress.XtraPrinting.BorderSide.Bottom)));
             this.xrTable1.Dpi = 254F;
-            this.xrTable1.LocationFloat = new DevExpress.Utils.PointFloat(2.893557F, 25F);
+            this.xrTable1.LocationFloat = new DevExpress.Utils.PointFloat(2.893557F, 0F);
             this.xrTable1.Name = "xrTable1";
             this.xrTable1.Rows.AddRange(new DevExpress.XtraReports.UI.XRTableRow[] {
             this.xrTableRow1});
@@ -623,38 +664,6 @@ namespace KursAM2.Reports
             this.PageInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(75)))), ((int)(((byte)(75)))));
             this.PageInfo.Name = "PageInfo";
             this.PageInfo.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
-            // 
-            // xrLabel1
-            // 
-            this.xrLabel1.Dpi = 254F;
-            this.xrLabel1.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
-            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[DocumentDate]")});
-            this.xrLabel1.Font = new System.Drawing.Font("Arial", 18F);
-            this.xrLabel1.LocationFloat = new DevExpress.Utils.PointFloat(1540.359F, 15.99999F);
-            this.xrLabel1.Multiline = true;
-            this.xrLabel1.Name = "xrLabel1";
-            this.xrLabel1.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 96F);
-            this.xrLabel1.SizeF = new System.Drawing.SizeF(1156.229F, 84.2036F);
-            this.xrLabel1.StylePriority.UseFont = false;
-            this.xrLabel1.StylePriority.UseTextAlignment = false;
-            this.xrLabel1.Text = "xrLabel1";
-            this.xrLabel1.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleLeft;
-            // 
-            // xrLabel2
-            // 
-            this.xrLabel2.Dpi = 254F;
-            this.xrLabel2.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
-            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[NumberOrder]")});
-            this.xrLabel2.Font = new System.Drawing.Font("Arial", 18F);
-            this.xrLabel2.LocationFloat = new DevExpress.Utils.PointFloat(970.7082F, 15.99999F);
-            this.xrLabel2.Multiline = true;
-            this.xrLabel2.Name = "xrLabel2";
-            this.xrLabel2.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 96F);
-            this.xrLabel2.SizeF = new System.Drawing.SizeF(436.5626F, 84.2036F);
-            this.xrLabel2.StylePriority.UseFont = false;
-            this.xrLabel2.StylePriority.UseTextAlignment = false;
-            this.xrLabel2.Text = "xrLabel2";
-            this.xrLabel2.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
             // 
             // HeadReport
             // 
