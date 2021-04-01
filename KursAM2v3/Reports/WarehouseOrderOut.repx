@@ -1,161 +1,186 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <XtraReportsLayoutSerializer SerializerVersion="20.1.4.0" Ref="1" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="HeadReport" SnapGridSize="25" ReportUnit="TenthsOfAMillimeter" Landscape="true" Margins="100, 100, 100, 133" PaperKind="A4" PageWidth="2970" PageHeight="2100" Version="20.1" DataSource="#Ref-0" Dpi="254" Font="Arial, 9.75pt">
+  <CalculatedFields>
+    <Item1 Ref="2" Name="VSEGO_MEST" Expression="[][[NumberItems] &gt; 0].Sum([NumberItems])" />
+    <Item2 Ref="3" Name="VSEGO_NAIMENOVANIY" Expression="[][[LineNumber]&gt;0].Count()&#xA;" />
+  </CalculatedFields>
   <Bands>
-    <Item1 Ref="2" ControlType="TopMarginBand" Name="TopMargin" Dpi="254" />
-    <Item2 Ref="3" ControlType="BottomMarginBand" Name="BottomMargin" HeightF="133.4645" Dpi="254" />
-    <Item3 Ref="4" ControlType="ReportHeaderBand" Name="ReportHeader" HeightF="408.0713" Dpi="254">
+    <Item1 Ref="4" ControlType="TopMarginBand" Name="TopMargin" Dpi="254" />
+    <Item2 Ref="5" ControlType="BottomMarginBand" Name="BottomMargin" HeightF="133.4645" Dpi="254" />
+    <Item3 Ref="6" ControlType="ReportHeaderBand" Name="ReportHeader" HeightF="408.0713" Dpi="254">
       <Controls>
-        <Item1 Ref="5" ControlType="XRLabel" Name="xrLabel2" CanGrow="false" Text="xrLabel2" TextAlignment="MiddleCenter" WordWrap="false" SizeF="436.5626,84.2036" LocationFloat="970.7082,15.99999" Dpi="254" Font="Arial, 18pt" Padding="5,5,0,0,254">
+        <Item1 Ref="7" ControlType="XRLabel" Name="xrLabel2" CanGrow="false" Text="xrLabel2" TextAlignment="MiddleCenter" WordWrap="false" SizeF="436.5626,84.2036" LocationFloat="970.7082,15.99999" Dpi="254" Font="Arial, 18pt" Padding="5,5,0,0,254">
           <ExpressionBindings>
-            <Item1 Ref="6" EventName="BeforePrint" PropertyName="Text" Expression="[NumberOrder]" />
+            <Item1 Ref="8" EventName="BeforePrint" PropertyName="Text" Expression="[NumberOrder]" />
           </ExpressionBindings>
-          <StylePriority Ref="7" UseFont="false" UseTextAlignment="false" />
+          <StylePriority Ref="9" UseFont="false" UseTextAlignment="false" />
         </Item1>
-        <Item2 Ref="8" ControlType="XRLabel" Name="xrLabel1" TextFormatString="{0:dd MMMM yyyy 'г.'}" Multiline="true" Text="xrLabel1" TextAlignment="MiddleLeft" SizeF="1156.229,84.2036" LocationFloat="1540.359,15.99999" Dpi="254" Font="Arial, 18pt" Padding="5,5,0,0,254">
+        <Item2 Ref="10" ControlType="XRLabel" Name="xrLabel1" TextFormatString="{0:dd MMMM yyyy 'г.'}" Multiline="true" Text="xrLabel1" TextAlignment="MiddleLeft" SizeF="1156.229,84.2036" LocationFloat="1540.359,15.99999" Dpi="254" Font="Arial, 18pt" Padding="5,5,0,0,254">
           <ExpressionBindings>
-            <Item1 Ref="9" EventName="BeforePrint" PropertyName="Text" Expression="[DocumentDate]" />
+            <Item1 Ref="11" EventName="BeforePrint" PropertyName="Text" Expression="[DocumentDate]" />
           </ExpressionBindings>
-          <StylePriority Ref="10" UseFont="false" UseTextAlignment="false" />
+          <StylePriority Ref="12" UseFont="false" UseTextAlignment="false" />
         </Item2>
-        <Item3 Ref="11" ControlType="XRTable" Name="table1" TextAlignment="MiddleCenter" SizeF="2693.695,71.12" LocationFloat="2.893557,336.9513" Dpi="254" BackColor="White" BorderColor="Black" Borders="All">
+        <Item3 Ref="13" ControlType="XRTable" Name="table1" TextAlignment="MiddleCenter" SizeF="2693.695,71.12" LocationFloat="2.893557,336.9513" Dpi="254" BackColor="White" BorderColor="Black" Borders="All">
           <Rows>
-            <Item1 Ref="12" ControlType="XRTableRow" Name="tableRow1" Weight="1" Dpi="254">
+            <Item1 Ref="14" ControlType="XRTableRow" Name="tableRow1" Weight="1" Dpi="254">
               <Cells>
-                <Item1 Ref="13" ControlType="XRTableCell" Name="xrTableCell1" Weight="0.038276088984832118" Multiline="true" Text="№" Dpi="254" />
-                <Item2 Ref="14" ControlType="XRTableCell" Name="tableCell2" Weight="0.54654119310298976" Text="Товар" TextAlignment="MiddleCenter" Dpi="254">
-                  <StylePriority Ref="15" UseTextAlignment="false" />
+                <Item1 Ref="15" ControlType="XRTableCell" Name="xrTableCell1" Weight="0.038276088984832118" Multiline="true" Text="№" Dpi="254" />
+                <Item2 Ref="16" ControlType="XRTableCell" Name="tableCell2" Weight="0.54654119310298976" Text="Товар" TextAlignment="MiddleCenter" Dpi="254">
+                  <StylePriority Ref="17" UseTextAlignment="false" />
                 </Item2>
-                <Item3 Ref="16" ControlType="XRTableCell" Name="tableCell6" Weight="0.23296088843343021" Text="Мест" Dpi="254" />
-                <Item4 Ref="17" ControlType="XRTableCell" Name="tableCell7" Weight="0.16688210727122116" Text="Количество" Dpi="254" />
+                <Item3 Ref="18" ControlType="XRTableCell" Name="tableCell6" Weight="0.23296088843343021" Text="Мест" Dpi="254" />
+                <Item4 Ref="19" ControlType="XRTableCell" Name="tableCell7" Weight="0.16688210727122116" Text="Количество" Dpi="254" />
               </Cells>
             </Item1>
           </Rows>
-          <StylePriority Ref="18" UseBackColor="false" UseBorderColor="false" UseBorders="false" UseTextAlignment="false" />
+          <StylePriority Ref="20" UseBackColor="false" UseBorderColor="false" UseBorders="false" UseTextAlignment="false" />
         </Item3>
-        <Item4 Ref="19" ControlType="XRLabel" Name="xrLabel7" Multiline="true" Text="xrLabel7" SizeF="2168.39575,75.3840942" LocationFloat="384.187469,250.126892" Dpi="254" Font="Arial, 14pt" Padding="5,5,0,0,254">
+        <Item4 Ref="21" ControlType="XRLabel" Name="xrLabel7" Multiline="true" Text="xrLabel7" SizeF="2168.396,75.38409" LocationFloat="384.1875,250.1269" Dpi="254" Font="Arial, 14pt" Padding="5,5,0,0,254">
           <ExpressionBindings>
-            <Item1 Ref="20" EventName="BeforePrint" PropertyName="Text" Expression="[Poluchatel]" />
+            <Item1 Ref="22" EventName="BeforePrint" PropertyName="Text" Expression="[Poluchatel]" />
           </ExpressionBindings>
-          <StylePriority Ref="21" UseFont="false" />
+          <StylePriority Ref="23" UseFont="false" />
         </Item4>
-        <Item5 Ref="22" ControlType="XRLabel" Name="xrLabel6" Multiline="true" Text="xrLabel6" SizeF="2168.39575,70.07852" LocationFloat="384.187469,153.113037" Dpi="254" Font="Arial, 14pt" Padding="5,5,0,0,254">
+        <Item5 Ref="24" ControlType="XRLabel" Name="xrLabel6" Multiline="true" Text="xrLabel6" SizeF="2168.396,70.07852" LocationFloat="384.1875,153.113" Dpi="254" Font="Arial, 14pt" Padding="5,5,0,0,254">
           <ExpressionBindings>
-            <Item1 Ref="23" EventName="BeforePrint" PropertyName="Text" Expression="[SkladName]" />
+            <Item1 Ref="25" EventName="BeforePrint" PropertyName="Text" Expression="[SkladName]" />
           </ExpressionBindings>
-          <StylePriority Ref="24" UseFont="false" />
-        </Item5>
-        <Item6 Ref="25" ControlType="XRLabel" Name="xrLabel5" Text="Получатель:" SizeF="341.2295,75.38406" LocationFloat="24.9999275,250.126892" Dpi="254" StyleName="Title" Font="Arial, 14pt">
           <StylePriority Ref="26" UseFont="false" />
-        </Item6>
-        <Item7 Ref="27" ControlType="XRLabel" Name="xrLabel4" Text="Отправитель:" SizeF="341.2295,70.07852" LocationFloat="24.9999275,153.113037" Dpi="254" StyleName="Title" Font="Arial, 14pt">
+        </Item5>
+        <Item6 Ref="27" ControlType="XRLabel" Name="xrLabel5" Text="Получатель:" SizeF="341.2295,75.38406" LocationFloat="24.99993,250.1269" Dpi="254" StyleName="Title" Font="Arial, 14pt">
           <StylePriority Ref="28" UseFont="false" />
+        </Item6>
+        <Item7 Ref="29" ControlType="XRLabel" Name="xrLabel4" Text="Отправитель:" SizeF="341.2295,70.07852" LocationFloat="24.99993,153.113" Dpi="254" StyleName="Title" Font="Arial, 14pt">
+          <StylePriority Ref="30" UseFont="false" />
         </Item7>
-        <Item8 Ref="29" ControlType="XRLine" Name="xrLine1" SizeF="2754.607,12.79351" LocationFloat="2.893522,114.6065" Dpi="254" />
-        <Item9 Ref="30" ControlType="XRLabel" Name="xrLabel3" Multiline="true" Text="от" SizeF="89.05347,84.2036" LocationFloat="1422.682,15.99999" Dpi="254" StyleName="Title" Font="Arial, 18pt">
-          <StylePriority Ref="31" UseFont="false" />
-        </Item9>
-        <Item10 Ref="32" ControlType="XRLabel" Name="label1" Text="Расходный ордер на товары №" SizeF="945.7082,84.2036" LocationFloat="25.00001,15.99999" Dpi="254" StyleName="Title" Font="Arial, 18pt">
+        <Item8 Ref="31" ControlType="XRLine" Name="xrLine1" SizeF="2754.607,12.79351" LocationFloat="2.893522,114.6065" Dpi="254" />
+        <Item9 Ref="32" ControlType="XRLabel" Name="xrLabel3" Multiline="true" Text="от" SizeF="89.05347,84.2036" LocationFloat="1422.682,15.99999" Dpi="254" StyleName="Title" Font="Arial, 18pt">
           <StylePriority Ref="33" UseFont="false" />
+        </Item9>
+        <Item10 Ref="34" ControlType="XRLabel" Name="label1" Text="Расходный ордер на товары №" SizeF="945.7082,84.2036" LocationFloat="25.00001,15.99999" Dpi="254" StyleName="Title" Font="Arial, 18pt">
+          <StylePriority Ref="35" UseFont="false" />
         </Item10>
       </Controls>
     </Item3>
-    <Item4 Ref="34" ControlType="DetailBand" Name="Detail" HeightF="63.42" Dpi="254">
-      <HierarchyPrintOptions Ref="35" Indent="50.8" />
+    <Item4 Ref="36" ControlType="DetailBand" Name="Detail" HeightF="63.42" Dpi="254">
+      <HierarchyPrintOptions Ref="37" Indent="50.8" />
       <Controls>
-        <Item1 Ref="36" ControlType="XRTable" Name="table2" SizeF="2696.588,63.42" LocationFloat="0,0" Dpi="254" OddStyleName="DetailData3_Odd" Font="Arial, 12pt" BackColor="White" BorderColor="Black" Borders="All">
+        <Item1 Ref="38" ControlType="XRTable" Name="table2" SizeF="2696.588,63.42" LocationFloat="0,0" Dpi="254" OddStyleName="DetailData3_Odd" Font="Arial, 12pt" BackColor="White" BorderColor="Black" Borders="All">
           <Rows>
-            <Item1 Ref="37" ControlType="XRTableRow" Name="tableRow2" Weight="11.683999633789062" Dpi="254">
+            <Item1 Ref="39" ControlType="XRTableRow" Name="tableRow2" Weight="11.683999633789062" Dpi="254">
               <Cells>
-                <Item1 Ref="38" ControlType="XRTableCell" Name="tableCell8" Weight="0.043960253422911308" Dpi="254" StyleName="DetailData1" BorderColor="Black" Borders="All" BorderWidth="1">
+                <Item1 Ref="40" ControlType="XRTableCell" Name="tableCell8" Weight="0.043960253422911308" TextAlignment="MiddleCenter" Dpi="254" StyleName="DetailData1" Font="Arial, 9pt" BorderColor="Black" Borders="All" BorderWidth="1">
                   <ExpressionBindings>
-                    <Item1 Ref="39" EventName="BeforePrint" PropertyName="Text" Expression="[LineNumber]" />
+                    <Item1 Ref="41" EventName="BeforePrint" PropertyName="Text" Expression="[LineNumber]" />
                   </ExpressionBindings>
-                  <StylePriority Ref="40" UseBorderColor="false" UseBorders="false" UseBorderWidth="false" />
+                  <StylePriority Ref="42" UseFont="false" UseBorderColor="false" UseBorders="false" UseBorderWidth="false" UseTextAlignment="false" />
                 </Item1>
-                <Item2 Ref="41" ControlType="XRTableCell" Name="tableCell11" Weight="0.61082492226010909" Dpi="254" StyleName="DetailData1" BorderColor="Black" Borders="Top, Right, Bottom" BorderWidth="1">
+                <Item2 Ref="43" ControlType="XRTableCell" Name="tableCell11" Weight="0.61082492226010909" Dpi="254" StyleName="DetailData1" BorderColor="Black" Borders="Top, Right, Bottom" BorderWidth="1">
                   <ExpressionBindings>
-                    <Item1 Ref="42" EventName="BeforePrint" PropertyName="Text" Expression="[Tovar]" />
+                    <Item1 Ref="44" EventName="BeforePrint" PropertyName="Text" Expression="[Tovar]" />
                   </ExpressionBindings>
-                  <StylePriority Ref="43" UseBorderColor="false" UseBorders="false" UseBorderWidth="false" />
+                  <StylePriority Ref="45" UseBorderColor="false" UseBorders="false" UseBorderWidth="false" />
                 </Item2>
-                <Item3 Ref="44" ControlType="XRTableCell" Name="xrTableCell3" Weight="0.1339875672601975" Multiline="true" TextAlignment="MiddleCenter" Dpi="254" StyleName="DetailData1" BackColor="White" BorderColor="Black" Borders="Top, Right, Bottom" BorderWidth="1">
+                <Item3 Ref="46" ControlType="XRTableCell" Name="xrTableCell3" Weight="0.1339875672601975" Multiline="true" TextAlignment="MiddleCenter" Dpi="254" StyleName="DetailData1" Font="Arial, 9pt" BackColor="White" BorderColor="Black" Borders="Top, Right, Bottom" BorderWidth="1">
                   <ExpressionBindings>
-                    <Item1 Ref="45" EventName="BeforePrint" PropertyName="Text" Expression="[NumberItems]" />
+                    <Item1 Ref="47" EventName="BeforePrint" PropertyName="Text" Expression="[NumberItems]" />
                   </ExpressionBindings>
-                  <StylePriority Ref="46" UseBackColor="false" UseBorderColor="false" UseBorders="false" UseBorderWidth="false" UseTextAlignment="false" />
+                  <StylePriority Ref="48" UseFont="false" UseBackColor="false" UseBorderColor="false" UseBorders="false" UseBorderWidth="false" UseTextAlignment="false" />
                 </Item3>
-                <Item4 Ref="47" ControlType="XRTableCell" Name="xrTableCell4" Weight="0.12519191186004328" Multiline="true" Dpi="254" StyleName="DetailData1" BackColor="White" BorderColor="Black" Borders="Top, Right, Bottom" BorderWidth="1">
-                  <StylePriority Ref="48" UseBackColor="false" UseBorderColor="false" UseBorders="false" UseBorderWidth="false" />
+                <Item4 Ref="49" ControlType="XRTableCell" Name="xrTableCell4" Weight="0.12519191186004328" Multiline="true" Dpi="254" StyleName="DetailData1" BackColor="White" BorderColor="Black" Borders="Top, Right, Bottom" BorderWidth="1">
+                  <StylePriority Ref="50" UseBackColor="false" UseBorderColor="false" UseBorders="false" UseBorderWidth="false" />
                 </Item4>
-                <Item5 Ref="49" ControlType="XRTableCell" Name="xrTableCell2" Weight="0.097251260009437776" Multiline="true" TextAlignment="MiddleCenter" Dpi="254" StyleName="DetailData1" BackColor="White" BorderColor="Black" Borders="Top, Right, Bottom" BorderWidth="1">
+                <Item5 Ref="51" ControlType="XRTableCell" Name="xrTableCell2" Weight="0.097251260009437776" Multiline="true" TextAlignment="MiddleCenter" Dpi="254" StyleName="DetailData1" Font="Arial, 9pt" BackColor="White" BorderColor="Black" Borders="Top, Right, Bottom" BorderWidth="1">
                   <ExpressionBindings>
-                    <Item1 Ref="50" EventName="BeforePrint" PropertyName="Text" Expression="[NumberItems]" />
+                    <Item1 Ref="52" EventName="BeforePrint" PropertyName="Text" Expression="[NumberItems]" />
                   </ExpressionBindings>
-                  <StylePriority Ref="51" UseBackColor="false" UseBorderColor="false" UseBorders="false" UseBorderWidth="false" UseTextAlignment="false" />
+                  <StylePriority Ref="53" UseFont="false" UseBackColor="false" UseBorderColor="false" UseBorders="false" UseBorderWidth="false" UseTextAlignment="false" />
                 </Item5>
-                <Item6 Ref="52" ControlType="XRTableCell" Name="tableCell12" Weight="0.090441200737556168" TextAlignment="MiddleCenter" Dpi="254" StyleName="DetailData1" BorderColor="Black" Borders="Top, Right, Bottom" BorderWidth="1">
+                <Item6 Ref="54" ControlType="XRTableCell" Name="tableCell12" Weight="0.090441200737556168" TextAlignment="MiddleCenter" Dpi="254" StyleName="DetailData1" Font="Arial, 9pt" BorderColor="Black" Borders="Top, Right, Bottom" BorderWidth="1">
                   <ExpressionBindings>
-                    <Item1 Ref="53" EventName="BeforePrint" PropertyName="Text" Expression="[EdIzmName]" />
+                    <Item1 Ref="55" EventName="BeforePrint" PropertyName="Text" Expression="[EdIzmName]" />
                   </ExpressionBindings>
-                  <StylePriority Ref="54" UseBorderColor="false" UseBorders="false" UseBorderWidth="false" UseTextAlignment="false" />
+                  <StylePriority Ref="56" UseFont="false" UseBorderColor="false" UseBorders="false" UseBorderWidth="false" UseTextAlignment="false" />
                 </Item6>
               </Cells>
             </Item1>
           </Rows>
-          <StylePriority Ref="55" UseBackColor="false" />
+          <StylePriority Ref="57" UseBackColor="false" />
         </Item1>
       </Controls>
     </Item4>
-    <Item5 Ref="56" ControlType="ReportFooterBand" Name="ReportFooter" HeightF="164.2032" Dpi="254">
+    <Item5 Ref="58" ControlType="ReportFooterBand" Name="ReportFooter" HeightF="209.50853" Dpi="254">
       <Controls>
-        <Item1 Ref="57" ControlType="XRLine" Name="xrLine3" SizeF="925.38,29.64644" LocationFloat="268.3336,85.4913" Dpi="254" />
-        <Item2 Ref="58" ControlType="XRLabel" Name="xrLabel8" Text="Отпустил:" SizeF="243.3336,70.07854" LocationFloat="25,45.05931" Dpi="254" StyleName="Title" Font="Arial, 14pt">
-          <StylePriority Ref="59" UseFont="false" />
-        </Item2>
-        <Item3 Ref="60" ControlType="XRLine" Name="xrLine4" SizeF="938.6094,40.22987" LocationFloat="1577.845,74.90781" Dpi="254" />
-        <Item4 Ref="61" ControlType="XRLabel" Name="xrLabel9" Text="Получил:" SizeF="243.3336,70.07854" LocationFloat="1334.511,45.05931" Dpi="254" StyleName="Title" Font="Arial, 14pt">
-          <StylePriority Ref="62" UseFont="false" />
-        </Item4>
-        <Item5 Ref="63" ControlType="XRLabel" Name="xrLabel10" Multiline="true" Text="xrLabel10" SizeF="814.9167,42.54504" LocationFloat="310.1041,42.94626" Dpi="254" Padding="5,5,0,0,254">
+        <Item1 Ref="59" ControlType="XRLabel" Name="xrLabel14" Multiline="true" Text="xrLabel14" TextAlignment="MiddleCenter" SizeF="238.047363,58.42" LocationFloat="2237.1626,3.8333416" Dpi="254" Font="Arial, 9pt" Padding="2,2,0,0,96">
           <ExpressionBindings>
-            <Item1 Ref="64" EventName="BeforePrint" PropertyName="Text" Expression="[KladovschikName]" />
+            <Item1 Ref="60" EventName="BeforePrint" PropertyName="Text" Expression="[VSEGO_MEST]" />
           </ExpressionBindings>
-        </Item5>
+          <StylePriority Ref="61" UseFont="false" UseTextAlignment="false" />
+        </Item1>
+        <Item2 Ref="62" ControlType="XRLabel" Name="xrLabel13" Multiline="true" Text="Всего наименований:" TextAlignment="MiddleLeft" SizeF="366.229431,58.4199944" LocationFloat="24.9999275,25.0000076" Dpi="254" Font="Arial, 9pt" Padding="2,2,0,0,96">
+          <StylePriority Ref="63" UseFont="false" UseTextAlignment="false" />
+        </Item2>
+        <Item3 Ref="64" ControlType="XRLabel" Name="xrLabel12" Multiline="true" Text="xrLabel12" TextAlignment="MiddleLeft" SizeF="104.710426,58.42" LocationFloat="391.22934,25.0000076" Dpi="254" Font="Arial, 9pt" Padding="2,2,0,0,96">
+          <ExpressionBindings>
+            <Item1 Ref="65" EventName="BeforePrint" PropertyName="Text" Expression="[VSEGO_NAIMENOVANIY]" />
+          </ExpressionBindings>
+          <StylePriority Ref="66" UseFont="false" UseTextAlignment="false" />
+        </Item3>
+        <Item4 Ref="67" ControlType="XRLabel" Name="xrLabel11" Multiline="true" Text="xrLabel11" TextAlignment="MiddleCenter" SizeF="327.968872,62.2533073" LocationFloat="1602.75439,0" Dpi="254" Font="Arial, 9pt" Padding="2,2,0,0,96">
+          <ExpressionBindings>
+            <Item1 Ref="68" EventName="BeforePrint" PropertyName="Text" Expression="[VSEGO_MEST]" />
+          </ExpressionBindings>
+          <StylePriority Ref="69" UseFont="false" UseTextAlignment="false" />
+        </Item4>
+        <Item5 Ref="70" ControlType="XRLine" Name="xrLine3" SizeF="925.38,29.64644" LocationFloat="270.979431,154.862" Dpi="254" />
+        <Item6 Ref="71" ControlType="XRLabel" Name="xrLabel8" Text="Отпустил:" SizeF="243.3336,70.07854" LocationFloat="27.6457615,114.430031" Dpi="254" StyleName="Title" Font="Arial, 14pt">
+          <StylePriority Ref="72" UseFont="false" />
+        </Item6>
+        <Item7 Ref="73" ControlType="XRLine" Name="xrLine4" SizeF="938.6094,40.22987" LocationFloat="1580.49072,144.2785" Dpi="254" />
+        <Item8 Ref="74" ControlType="XRLabel" Name="xrLabel9" Text="Получил:" SizeF="243.3336,70.07854" LocationFloat="1337.15674,114.430031" Dpi="254" StyleName="Title" Font="Arial, 14pt">
+          <StylePriority Ref="75" UseFont="false" />
+        </Item8>
+        <Item9 Ref="76" ControlType="XRLabel" Name="xrLabel10" Multiline="true" Text="xrLabel10" SizeF="814.9167,42.54504" LocationFloat="312.749878,112.316948" Dpi="254" Padding="5,5,0,0,254">
+          <ExpressionBindings>
+            <Item1 Ref="77" EventName="BeforePrint" PropertyName="Text" Expression="[KladovschikName]" />
+          </ExpressionBindings>
+        </Item9>
       </Controls>
     </Item5>
-    <Item6 Ref="65" ControlType="PageHeaderBand" Name="PageHeader" PrintOn="NotWithReportHeader" HeightF="71.12" Dpi="254">
+    <Item6 Ref="78" ControlType="PageHeaderBand" Name="PageHeader" PrintOn="NotWithReportHeader" HeightF="71.12" Dpi="254">
       <Controls>
-        <Item1 Ref="66" ControlType="XRTable" Name="xrTable1" TextAlignment="MiddleCenter" SizeF="2693.695,71.12" LocationFloat="2.893557,0" Dpi="254" BackColor="White" BorderColor="Black" Borders="All">
+        <Item1 Ref="79" ControlType="XRTable" Name="xrTable1" TextAlignment="MiddleCenter" SizeF="2693.695,71.12" LocationFloat="2.893557,0" Dpi="254" BackColor="White" BorderColor="Black" Borders="All">
           <Rows>
-            <Item1 Ref="67" ControlType="XRTableRow" Name="xrTableRow1" Weight="1" Dpi="254">
+            <Item1 Ref="80" ControlType="XRTableRow" Name="xrTableRow1" Weight="1" Dpi="254">
               <Cells>
-                <Item1 Ref="68" ControlType="XRTableCell" Name="xrTableCell5" Weight="0.038276088984832118" Multiline="true" Text="№" Dpi="254" />
-                <Item2 Ref="69" ControlType="XRTableCell" Name="xrTableCell6" Weight="0.54654119310298976" Text="Товар" TextAlignment="MiddleCenter" Dpi="254">
-                  <StylePriority Ref="70" UseTextAlignment="false" />
+                <Item1 Ref="81" ControlType="XRTableCell" Name="xrTableCell5" Weight="0.038276088984832118" Multiline="true" Text="№" Dpi="254" />
+                <Item2 Ref="82" ControlType="XRTableCell" Name="xrTableCell6" Weight="0.54654119310298976" Text="Товар" TextAlignment="MiddleCenter" Dpi="254">
+                  <StylePriority Ref="83" UseTextAlignment="false" />
                 </Item2>
-                <Item3 Ref="71" ControlType="XRTableCell" Name="xrTableCell7" Weight="0.23296088843343021" Text="Мест" Dpi="254" />
-                <Item4 Ref="72" ControlType="XRTableCell" Name="xrTableCell8" Weight="0.16688210727122116" Text="Количество" Dpi="254" />
+                <Item3 Ref="84" ControlType="XRTableCell" Name="xrTableCell7" Weight="0.23296088843343021" Text="Мест" Dpi="254" />
+                <Item4 Ref="85" ControlType="XRTableCell" Name="xrTableCell8" Weight="0.16688210727122116" Text="Количество" Dpi="254" />
               </Cells>
             </Item1>
           </Rows>
-          <StylePriority Ref="73" UseBackColor="false" UseBorderColor="false" UseBorders="false" UseTextAlignment="false" />
+          <StylePriority Ref="86" UseBackColor="false" UseBorderColor="false" UseBorders="false" UseTextAlignment="false" />
         </Item1>
       </Controls>
     </Item6>
-    <Item7 Ref="74" ControlType="PageFooterBand" Name="PageFooter" HeightF="113.9136" Dpi="254">
+    <Item7 Ref="87" ControlType="PageFooterBand" Name="PageFooter" HeightF="113.9136" Dpi="254">
       <Controls>
-        <Item1 Ref="75" ControlType="XRPageInfo" Name="xrPageInfo1" TextAlignment="MiddleCenter" SizeF="254,58.42" LocationFloat="1082.688,24.99993" Dpi="254" Padding="5,5,0,0,254">
-          <StylePriority Ref="76" UseTextAlignment="false" />
+        <Item1 Ref="88" ControlType="XRPageInfo" Name="xrPageInfo1" TextAlignment="MiddleCenter" SizeF="254,58.42" LocationFloat="1082.688,24.99993" Dpi="254" Padding="5,5,0,0,254">
+          <StylePriority Ref="89" UseTextAlignment="false" />
         </Item1>
       </Controls>
     </Item7>
   </Bands>
   <StyleSheet>
-    <Item1 Ref="77" Name="Title" BorderStyle="Inset" Font="Arial, 14.25pt" ForeColor="255,75,75,75" BackColor="Transparent" BorderColor="Black" Sides="None" StringFormat="Near;Near;0;None;Character;Default" BorderWidthSerializable="1" />
-    <Item2 Ref="78" Name="DetailCaption1" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt, style=Bold" ForeColor="White" BackColor="255,75,75,75" BorderColor="White" Sides="Left" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
-    <Item3 Ref="79" Name="DetailData1" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt" ForeColor="Black" BorderColor="Transparent" Sides="Left" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
-    <Item4 Ref="80" Name="DetailData3_Odd" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt" ForeColor="Black" BackColor="255,231,231,231" BorderColor="Transparent" Sides="None" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="1" />
-    <Item5 Ref="81" Name="PageInfo" BorderStyle="Inset" Padding="5,5,0,0,254" Font="Arial, 8.25pt, style=Bold" ForeColor="255,75,75,75" StringFormat="Near;Near;0;None;Character;Default" />
+    <Item1 Ref="90" Name="Title" BorderStyle="Inset" Font="Arial, 14.25pt" ForeColor="255,75,75,75" BackColor="Transparent" BorderColor="Black" Sides="None" StringFormat="Near;Near;0;None;Character;Default" BorderWidthSerializable="1" />
+    <Item2 Ref="91" Name="DetailCaption1" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt, style=Bold" ForeColor="White" BackColor="255,75,75,75" BorderColor="White" Sides="Left" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
+    <Item3 Ref="92" Name="DetailData1" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt" ForeColor="Black" BorderColor="Transparent" Sides="Left" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
+    <Item4 Ref="93" Name="DetailData3_Odd" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt" ForeColor="Black" BackColor="255,231,231,231" BorderColor="Transparent" Sides="None" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="1" />
+    <Item5 Ref="94" Name="PageInfo" BorderStyle="Inset" Padding="5,5,0,0,254" Font="Arial, 8.25pt, style=Bold" ForeColor="255,75,75,75" StringFormat="Near;Near;0;None;Character;Default" />
   </StyleSheet>
   <ComponentStorage>
     <Item1 Ref="0" ObjectType="DevExpress.DataAccess.Json.JsonDataSource,DevExpress.DataAccess.v20.1" Name="jsonDataSource2" Base64="PEpzb25EYXRhU291cmNlIE5hbWU9Impzb25EYXRhU291cmNlMiI+PFNvdXJjZSBTb3VyY2VUeXBlPSJEZXZFeHByZXNzLkRhdGFBY2Nlc3MuSnNvbi5DdXN0b21Kc29uU291cmNlIiBKc29uPSJbeyZxdW90O0xpbmVOdW1iZXImcXVvdDs6MSwmcXVvdDtOdW1iZXJPcmRlciZxdW90OzomcXVvdDsgICAgICAxNTE0JnF1b3Q7LCZxdW90O0RvY3VtZW50RGF0ZSZxdW90OzomcXVvdDsyMDIxLTAzLTAzVDAwOjAwOjAwJnF1b3Q7LCZxdW90O1BvbHVjaGF0ZWwmcXVvdDs6JnF1b3Q70J7RhNC40YEmcXVvdDssJnF1b3Q7UG9zdGF2c2hpayZxdW90OzomcXVvdDvQkNC70YzRhNCwLdCc0LXQtNC40LAmcXVvdDssJnF1b3Q7VG92YXImcXVvdDs6JnF1b3Q7U1RCT0FSRCBEb3VibGUtIFNwbGljaW5nIExYODYwKDg0OClFNTImcXVvdDssJnF1b3Q7RWRJem1OYW1lJnF1b3Q7OiZxdW90O9GI0YImcXVvdDssJnF1b3Q7TnVtYmVySXRlbXMmcXVvdDs6MS4wMDAwMDAwMCwmcXVvdDtLbGFkb3ZzY2hpa05hbWUmcXVvdDs6JnF1b3Q70KHRgtC10YTQsNC90L7QsiDQkNC90LDRgtC+0LvQuNC5INCR0L7RgNC40YHQvtCy0LjRhyZxdW90OywmcXVvdDtTa2xhZE5hbWUmcXVvdDs6JnF1b3Q70J7RgdC90L7QstC90L7QuSZxdW90O31dIiAvPjxTY2hlbWE+PE5vZGUgTmFtZT0icm9vdCIgU2VsZWN0ZWQ9InRydWUiIE5vZGVUeXBlPSJBcnJheSI+PE5vZGUgTmFtZT0iTGluZU51bWJlciIgVHlwZT0iU3lzdGVtLk51bGxhYmxlYDFbU3lzdGVtLkludDY0XSIgU2VsZWN0ZWQ9InRydWUiIE5vZGVUeXBlPSJQcm9wZXJ0eSIgLz48Tm9kZSBOYW1lPSJOdW1iZXJPcmRlciIgVHlwZT0iU3lzdGVtLlN0cmluZyIgU2VsZWN0ZWQ9InRydWUiIE5vZGVUeXBlPSJQcm9wZXJ0eSIgLz48Tm9kZSBOYW1lPSJEb2N1bWVudERhdGUiIFR5cGU9IlN5c3RlbS5OdWxsYWJsZWAxW1N5c3RlbS5EYXRlVGltZV0iIFNlbGVjdGVkPSJ0cnVlIiBOb2RlVHlwZT0iUHJvcGVydHkiIC8+PE5vZGUgTmFtZT0iUG9sdWNoYXRlbCIgVHlwZT0iU3lzdGVtLlN0cmluZyIgU2VsZWN0ZWQ9InRydWUiIE5vZGVUeXBlPSJQcm9wZXJ0eSIgLz48Tm9kZSBOYW1lPSJQb3N0YXZzaGlrIiBUeXBlPSJTeXN0ZW0uU3RyaW5nIiBTZWxlY3RlZD0idHJ1ZSIgTm9kZVR5cGU9IlByb3BlcnR5IiAvPjxOb2RlIE5hbWU9IlRvdmFyIiBUeXBlPSJTeXN0ZW0uU3RyaW5nIiBTZWxlY3RlZD0idHJ1ZSIgTm9kZVR5cGU9IlByb3BlcnR5IiAvPjxOb2RlIE5hbWU9IkVkSXptTmFtZSIgVHlwZT0iU3lzdGVtLlN0cmluZyIgU2VsZWN0ZWQ9InRydWUiIE5vZGVUeXBlPSJQcm9wZXJ0eSIgLz48Tm9kZSBOYW1lPSJOdW1iZXJJdGVtcyIgVHlwZT0iU3lzdGVtLk51bGxhYmxlYDFbU3lzdGVtLkRvdWJsZV0iIFNlbGVjdGVkPSJ0cnVlIiBOb2RlVHlwZT0iUHJvcGVydHkiIC8+PE5vZGUgTmFtZT0iS2xhZG92c2NoaWtOYW1lIiBUeXBlPSJTeXN0ZW0uU3RyaW5nIiBTZWxlY3RlZD0idHJ1ZSIgTm9kZVR5cGU9IlByb3BlcnR5IiAvPjxOb2RlIE5hbWU9IlNrbGFkTmFtZSIgVHlwZT0iU3lzdGVtLlN0cmluZyIgU2VsZWN0ZWQ9InRydWUiIE5vZGVUeXBlPSJQcm9wZXJ0eSIgLz48L05vZGU+PC9TY2hlbWE+PC9Kc29uRGF0YVNvdXJjZT4=" />
