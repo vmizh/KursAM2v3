@@ -8,6 +8,7 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
+using Data;
 using KursAM2.Dialogs;
 using KursAM2.View.KursReferences;
 
@@ -57,18 +58,17 @@ namespace KursAM2.ViewModel.Reference
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     CenterCollection.Clear();
-                    foreach (var p in ctx.Projects.ToList())
-                        CenterCollection.Add(new Project(p) {State = RowStatus.NotEdited});
+                    foreach (var p in ctx.SD_40.ToList())
+                        CenterCollection.Add(new CentrOfResponsibility(p) {State = RowStatus.NotEdited});
                     if (CenterCollection.Count == 0)
                     {
-                        var newRow = new Project
+                        var newRow = new CentrOfResponsibility()
                         {
-                            Id = Guid.NewGuid(),
-                            Name = "Новый проект",
-                            DateStart = DateTime.Today,
-                            DateEnd = null,
-                            IsClosed = false,
+                            DocCode = 1,
+                            Name = "Новый центр",
+                            FullName = "Новый центр",
                             IsDeleted = false,
+                            CENT_PARENT_DC = 1,
                             State = RowStatus.NotEdited
                         };
                         CenterCollection.Add(newRow);
@@ -91,7 +91,7 @@ namespace KursAM2.ViewModel.Reference
                 foreach (var p in DeletedCenterCollection)
                     p.Delete();
                 foreach (var p in CenterCollection.Where(_ => _.State != RowStatus.NotEdited))
-                    p.Save(p);
+                    p.Save();
                 DeletedCenterCollection.Clear();
                 foreach (var p in CenterCollection.Where(_ => _.State != RowStatus.NotEdited))
                     p.myState = RowStatus.NotEdited;
