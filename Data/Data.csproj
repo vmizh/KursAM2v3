@@ -92,6 +92,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ALFAMEDIA.edmx</DependentUpon>
     </Compile>
+    <Compile Include="ALFAMEDIAEntities.cs" />
     <Compile Include="BALANS_KONTR_OPER.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -137,8 +138,6 @@
     <Compile Include="CD_2.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="ALFAMEDIAEntities.cs" />
-    <Compile Include="KursSystemEntities.cs" />
     <Compile Include="CLOSED_DOC_TYPE.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -162,9 +161,6 @@
     </Compile>
     <Compile Include="DataForRequirement.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataSources.cs">
-      <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="DD_2.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
@@ -204,9 +200,6 @@
     </Compile>
     <Compile Include="ErrorMessages.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Errors.cs">
-      <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="EXEC_CALC_BALANS.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
@@ -463,9 +456,6 @@
     <Compile Include="FK_REFERENCE_VIEW.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="FormLayout.cs">
-      <DependentUpon>KursSystem.tt</DependentUpon>
-    </Compile>
     <Compile Include="GROZO_REQUISITE.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -523,9 +513,6 @@
     <Compile Include="INVOICE_SEARCH_VIEW.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="KontragentCashes.cs">
-      <DependentUpon>KursSystem.tt</DependentUpon>
-    </Compile>
     <Compile Include="KontragentGroups.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -549,6 +536,19 @@
     </Compile>
     <Compile Include="KONTR_IS_CALC_EXECUTING.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KursSystemEntities.cs" />
+    <Compile Include="DataSources.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Errors.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FormLayout.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KontragentCashes.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="KursMenuGroup.cs">
       <DependentUpon>KursSystem.tt</DependentUpon>
@@ -1430,6 +1430,9 @@
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="SD_99.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ShopTablesTemplate.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="SHOP_NOMENKL_MOVE_VIEW.cs">

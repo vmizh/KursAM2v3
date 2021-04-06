@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using Core;
 using Core.EntityViewModel;
 using Core.Repository.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
-using KursAM2.Repositories.InvoicesRepositories;
 
 namespace KursAM2.Repositories
 {
@@ -28,7 +26,7 @@ namespace KursAM2.Repositories
         void Delete(DistributeNaklad doc);
 
         void UpdateSFNaklad(DistributeNaklad doc);
-     
+
         DistributeNakladInvoices CreateNewInvoice(DistributeNaklad doc);
 
         void DistributeNakladRecalc(DistributeNaklad doc, List<DistributeNakladInvoices> invoices);
@@ -74,7 +72,6 @@ namespace KursAM2.Repositories
         }
 
 
-
         public DistributeNaklad GetById(Guid id)
         {
             return Context.DistributeNaklad.Include(_ => _.DistributeNakladRow)
@@ -103,7 +100,7 @@ namespace KursAM2.Repositories
                 .Include("TD_26.SD_261")
                 .Include("TD_26.SD_301")
                 .Include("TD_26.SD_303")
-                .FirstOrDefault(_ => _.Id == id),new UnitOfWork<ALFAMEDIAEntities>());
+                .FirstOrDefault(_ => _.Id == id), new UnitOfWork<ALFAMEDIAEntities>());
         }
 
         public List<DistributeNaklad> GetAllByDates(DateTime dateStart, DateTime dateEnd)
@@ -136,73 +133,6 @@ namespace KursAM2.Repositories
             return ret;
         }
 
-        public List<InvoiceProviderShort> GetAllForNakladDistribute(Currency crs, DateTime dateStart,
-            DateTime dateEnd)
-        {
-            var data = new List<SD_26>();
-            var ret = new List<InvoiceProviderShort>();
-            data = Context.SD_26
-                    .Include(_ => _.TD_26)
-                    .Include("TD_26.TD_24")
-                    .Include(_ => _.SD_43)
-                    .Include(_ => _.SD_179)
-                    .Include(_ => _.SD_77)
-                    .Include(_ => _.SD_189)
-                    .Include(_ => _.SD_40)
-                    .Include("TD_26.SD_83")
-                    .Include("TD_26.SD_175")
-                    .Include("TD_26.SD_43")
-                    .Include("TD_26.SD_165")
-                    .Include("TD_26.SD_175")
-                    .Include("TD_26.SD_1751")
-                    .Include("TD_26.SD_26")
-                    .Include("TD_26.SD_261")
-                    .Include("TD_26.SD_301")
-                    .Include("TD_26.SD_303")
-                    .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
-                                                              && _.SF_CRS_DC == crs.DocCode && _.SF_ACCEPTED == 1)
-                    .ToList();
-
-                var invdc = Context.TD_26_CurrencyConvert
-                    .Include(_ => _.TD_26)
-                    .Include(_ => _.TD_26.SD_26)
-                    .Where(_ => _.TD_26.SD_26.SF_POSTAV_DATE >= dateStart &&
-                                _.TD_26.SD_26.SF_POSTAV_DATE <= dateEnd).ToList();
-                foreach (var dc in invdc)
-                {
-
-                    var doc = Context.SD_26
-                        .Include(_ => _.TD_26)
-                        .Include("TD_26.TD_24")
-                        .Include("TD_26.TD_26_CurrencyConvert")
-                        .Include(_ => _.SD_43)
-                        .Include(_ => _.SD_179)
-                        .Include(_ => _.SD_77)
-                        .Include(_ => _.SD_189)
-                        .Include(_ => _.SD_40)
-                        .Include("TD_26.SD_83")
-                        .Include("TD_26.SD_175")
-                        .Include("TD_26.SD_43")
-                        .Include("TD_26.SD_165")
-                        .Include("TD_26.SD_175")
-                        .Include("TD_26.SD_1751")
-                        .Include("TD_26.SD_26")
-                        .Include("TD_26.SD_261")
-                        .Include("TD_26.SD_301")
-                        .Include("TD_26.SD_303")
-                        .FirstOrDefault(_ => _.DOC_CODE == dc.DOC_CODE);
-                    if (doc != null)
-                    {
-                        ret.Add(new InvoiceProviderShort(doc, UnitOfWork));
-                    }
-
-                }
-
-                foreach (var d in data) ret.Add(new InvoiceProviderShort(d, new UnitOfWork<ALFAMEDIAEntities>()));
-
-            return ret;
-        }
-
         public List<DistributeNakladRow> GetTovarFromInvoiceProviders(DistributeNaklad ent, DateTime start,
             DateTime end)
         {
@@ -221,21 +151,6 @@ namespace KursAM2.Repositories
                     Note = r.Note
                 });
             }
-
-            return ret;
-        }
-
-         public List<InvoiceProviderShort> GetNakladInvoices(DateTime dateStart,
-            DateTime dateEnd)
-        {
-            var ret = new List<InvoiceProviderShort>();
-            var data = Context.SD_26
-                    .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
-                                                              && _.IsInvoiceNakald == true
-                                                              && (_.NakladDistributedSumma ?? 0) <
-                                                              _.SF_KONTR_CRS_SUMMA && _.SF_ACCEPTED == 1)
-                    .ToList();
-            foreach (var d in data) ret.Add(new InvoiceProviderShort(d,UnitOfWork));
 
             return ret;
         }
@@ -304,23 +219,53 @@ namespace KursAM2.Repositories
             var rlist = new List<DistributeNakladInfo>();
             foreach (var r in doc.DistributeNakladRow) rlist.AddRange(r.DistributeNakladInfo);
             Context.DistributeNakladInfo.RemoveRange(rlist);
+            foreach (var r in doc.DistributeNakladRow)
+            {
+                if (r.TransferRowId != null)
+                {
+                    var old = Context.TD_26_CurrencyConvert.FirstOrDefault(_ => _.Id == r.TransferRowId);
+                    if (old != null)
+                    {
+                        if (old.SummaWithNaklad - r.DistributeSumma >= old.Summa)
+                        {
+                            old.SummaWithNaklad = old.SummaWithNaklad - r.DistributeSumma;
+                        }
+                        else old.SummaWithNaklad = old.Summa;
+
+                        old.PriceWithNaklad = old.SummaWithNaklad / old.Quantity;
+                    }
+                }
+
+                if (r.TovarInvoiceRowId != null)
+                {
+                    var old = Context.TD_26.FirstOrDefault(_ => _.Id == r.TovarInvoiceRowId);
+                    if (old != null)
+                    {
+                        if (old.SFT_SUMMA_NAKLAD - r.DistributeSumma >= 0)
+                        {
+                            old.SFT_SUMMA_NAKLAD = old.SFT_SUMMA_NAKLAD - r.DistributeSumma;
+                        }
+                        else old.SFT_SUMMA_NAKLAD = 0;
+                    }
+                }
+            }
             Context.DistributeNakladRow.RemoveRange(doc.DistributeNakladRow);
             Context.DistributeNakladInvoices.RemoveRange(doc.DistributeNakladInvoices);
             Context.DistributeNaklad.Remove(doc);
+            Context.SaveChanges();
         }
 
         public void UpdateSFNaklad(DistributeNaklad doc)
         {
             foreach (var row in doc.DistributeNakladRow)
             {
-                
                 var t26 = Context.TD_26.FirstOrDefault(_ => _.Id == row.TovarInvoiceRowId);
                 if (t26 == null)
                 {
-                    var conv = Context.TD_26_CurrencyConvert.FirstOrDefault(_ => _.Id == row.TovarInvoiceRowId);
+                    var conv = Context.TD_26_CurrencyConvert.FirstOrDefault(_ => _.Id == row.TransferRowId);
                     if (conv == null) continue;
                     var s = row.DistributeSumma;
-                    conv.PriceWithNaklad = conv.Price + s/conv.Quantity;
+                    conv.PriceWithNaklad = conv.Price + s / conv.Quantity;
                     conv.SummaWithNaklad = conv.Summa + s;
                 }
                 else
@@ -445,7 +390,7 @@ namespace KursAM2.Repositories
                 .Include(_ => _.SD_189)
                 .Include(_ => _.SD_40)
                 .SingleOrDefault(_ => _.Id == id);
-            return new InvoiceProviderShort(item,new UnitOfWork<ALFAMEDIAEntities>());
+            return new InvoiceProviderShort(item, new UnitOfWork<ALFAMEDIAEntities>());
         }
 
         public DistributeNaklad CreateNew()
@@ -540,6 +485,82 @@ namespace KursAM2.Repositories
         public void LoadRow(DistributeNaklad ent, DistributeNakladRow rowent)
         {
             throw new NotImplementedException();
+        }
+
+        public List<InvoiceProviderShort> GetAllForNakladDistribute(Currency crs, DateTime dateStart,
+            DateTime dateEnd)
+        {
+            var ret = new List<InvoiceProviderShort>();
+            var data = Context.SD_26
+                .Include(_ => _.TD_26)
+                .Include("TD_26.TD_24")
+                .Include(_ => _.SD_43)
+                .Include(_ => _.SD_179)
+                .Include(_ => _.SD_77)
+                .Include(_ => _.SD_189)
+                .Include(_ => _.SD_40)
+                .Include("TD_26.SD_83")
+                .Include("TD_26.SD_175")
+                .Include("TD_26.SD_43")
+                .Include("TD_26.SD_165")
+                .Include("TD_26.SD_175")
+                .Include("TD_26.SD_1751")
+                .Include("TD_26.SD_26")
+                .Include("TD_26.SD_261")
+                .Include("TD_26.SD_301")
+                .Include("TD_26.SD_303")
+                .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
+                                                          && _.SF_CRS_DC == crs.DocCode && _.SF_ACCEPTED == 1)
+                .ToList();
+
+            var invdc = Context.TD_26_CurrencyConvert
+                .Include(_ => _.TD_26)
+                .Include(_ => _.TD_26.SD_26)
+                .Where(_ => _.TD_26.SD_26.SF_POSTAV_DATE >= dateStart &&
+                            _.TD_26.SD_26.SF_POSTAV_DATE <= dateEnd).ToList();
+            foreach (var dc in invdc)
+            {
+                var doc = Context.SD_26
+                    .Include(_ => _.TD_26)
+                    .Include("TD_26.TD_24")
+                    .Include("TD_26.TD_26_CurrencyConvert")
+                    .Include(_ => _.SD_43)
+                    .Include(_ => _.SD_179)
+                    .Include(_ => _.SD_77)
+                    .Include(_ => _.SD_189)
+                    .Include(_ => _.SD_40)
+                    .Include("TD_26.SD_83")
+                    .Include("TD_26.SD_175")
+                    .Include("TD_26.SD_43")
+                    .Include("TD_26.SD_165")
+                    .Include("TD_26.SD_175")
+                    .Include("TD_26.SD_1751")
+                    .Include("TD_26.SD_26")
+                    .Include("TD_26.SD_261")
+                    .Include("TD_26.SD_301")
+                    .Include("TD_26.SD_303")
+                    .FirstOrDefault(_ => _.DOC_CODE == dc.DOC_CODE);
+                if (doc != null) ret.Add(new InvoiceProviderShort(doc, UnitOfWork));
+            }
+
+            foreach (var d in data) ret.Add(new InvoiceProviderShort(d, new UnitOfWork<ALFAMEDIAEntities>()));
+
+            return ret;
+        }
+
+        public List<InvoiceProviderShort> GetNakladInvoices(DateTime dateStart,
+            DateTime dateEnd)
+        {
+            var ret = new List<InvoiceProviderShort>();
+            var data = Context.SD_26
+                .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
+                                                          && _.IsInvoiceNakald == true
+                                                          && (_.NakladDistributedSumma ?? 0) <
+                                                          _.SF_KONTR_CRS_SUMMA && _.SF_ACCEPTED == 1)
+                .ToList();
+            foreach (var d in data) ret.Add(new InvoiceProviderShort(d, UnitOfWork));
+
+            return ret;
         }
     }
 }

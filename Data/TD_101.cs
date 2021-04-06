@@ -17,11 +17,11 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TD_101()
         {
+            this.ProviderInvoicePay = new HashSet<ProviderInvoicePay>();
             this.TD_1011 = new HashSet<TD_101>();
             this.TD_397 = new HashSet<TD_397>();
             this.TD_60 = new HashSet<TD_60>();
             this.VD_60 = new HashSet<VD_60>();
-            this.ProviderInvoicePay = new HashSet<ProviderInvoicePay>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -56,6 +56,8 @@ namespace Data
         public Nullable<int> BankFromTransactionCode { get; set; }
         public Nullable<bool> IsCurrencyChange { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProviderInvoicePay> ProviderInvoicePay { get; set; }
         public virtual SD_101 SD_101 { get; set; }
         public virtual SD_114 SD_114 { get; set; }
         public virtual SD_26 SD_26 { get; set; }
@@ -80,7 +82,5 @@ namespace Data
         public virtual ICollection<TD_60> TD_60 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VD_60> VD_60 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProviderInvoicePay> ProviderInvoicePay { get; set; }
     }
 }

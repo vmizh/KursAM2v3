@@ -29,5 +29,6 @@ namespace Data
         public Nullable<decimal> OPER_CRS_DC { get; set; }
         public Nullable<double> OPER_CRS_RATE { get; set; }
         public Nullable<double> UCH_CRS_RATE { get; set; }
+        public string DOC_EXT_NUM { get; set; }
     }
 }

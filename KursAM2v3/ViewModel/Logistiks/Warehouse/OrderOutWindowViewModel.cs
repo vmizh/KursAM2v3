@@ -70,7 +70,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 if (myDocument != null && myDocument.Equals(value)) return;
                 myDocument = value;
                 Rows.Clear();
-                foreach (var r in Document.Rows) Rows.Add(r);
+                if (myDocument != null)
+                {
+                    foreach (var r in Document.Rows) Rows.Add(r);
+                }
+
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Rows));
             }

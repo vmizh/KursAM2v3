@@ -17,12 +17,12 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public SD_34()
         {
+            this.ProviderInvoicePay = new HashSet<ProviderInvoicePay>();
             this.SD_170 = new HashSet<SD_170>();
             this.SD_312 = new HashSet<SD_312>();
             this.SD_33 = new HashSet<SD_33>();
             this.TD_101 = new HashSet<TD_101>();
             this.UD_281 = new HashSet<UD_281>();
-            this.ProviderInvoicePay = new HashSet<ProviderInvoicePay>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -69,6 +69,8 @@ namespace Data
         public Nullable<decimal> PLAT_VED_DC { get; set; }
         public Nullable<int> PLAT_VED_ROW_CODE { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProviderInvoicePay> ProviderInvoicePay { get; set; }
         public virtual SD_114 SD_114 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_170> SD_170 { get; set; }
@@ -90,7 +92,5 @@ namespace Data
         public virtual ICollection<TD_101> TD_101 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UD_281> UD_281 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProviderInvoicePay> ProviderInvoicePay { get; set; }
     }
 }

@@ -30,6 +30,7 @@ namespace Data
         public decimal KONTR_DC { get; set; }
         public string ID { get; set; }
         public int NEW_CALC { get; set; }
+        public string DOC_EXT_NUM { get; set; }
     
         public virtual SD_301 SD_301 { get; set; }
         public virtual SD_43 SD_43 { get; set; }

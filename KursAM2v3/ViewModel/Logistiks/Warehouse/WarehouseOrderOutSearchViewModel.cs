@@ -9,6 +9,7 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
+using KursAM2.ReportManagers;
 using KursAM2.View.Logistiks.Warehouse;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
@@ -26,6 +27,22 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderSearchViewModel"));
             WindowName = "Расходные складские ордера";
+            var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
+            prn?.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "Ордер",
+                Command = PrintOrderCommand
+            });
+        }
+
+        public ICommand PrintOrderCommand
+        {
+            get { return new Command(PrintOrder, param => CurrentDocument != null); }
+        }
+
+        private void PrintOrder(object obj)
+        {
+            ReportManager.WarehouseOrderOutReport(CurrentDocument.DocCode);
         }
 
         public ObservableCollection<WarehouseOrderOut> Documents { set; get; } =

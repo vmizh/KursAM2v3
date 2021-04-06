@@ -26,8 +26,8 @@ namespace Data
         public decimal Rashod { get; set; }
         public Nullable<decimal> Price { get; set; }
         public Nullable<decimal> PriceWithNaklad { get; set; }
-        public decimal DocDC { get; set; }
-        public int RowCode { get; set; }
+        public Nullable<decimal> DocDC { get; set; }
+        public Nullable<int> RowCode { get; set; }
         public Nullable<System.Guid> DocId { get; set; }
         public Nullable<System.Guid> RowId { get; set; }
         public string DocNum { get; set; }
