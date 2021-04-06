@@ -184,7 +184,8 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                     DocNum = op.DOC_NUM,
                     DocRowCode = op.DOC_ROW_CODE,
                     DocTypeCode = (DocumentType) op.DOC_TYPE_CODE,
-                    Nakopit = start
+                    Nakopit = start,
+                    DocExtNum = op.DOC_EXT_NUM
                 });
             }
 
@@ -416,7 +417,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                 }
                 catch (Exception ex)
                 {
-                    var exx = ex;
+                    WindowManager.ShowError(ex);
                 }
             }
 

@@ -16,6 +16,8 @@ namespace KursAM2.ViewModel.Management
 
         [DataMember] public string DocNum { get; set; }
 
+        [DataMember] public string DocExtNum { get; set; }
+
         [DataMember] public DateTime DocDate { get; set; }
 
         [DataMember] public decimal CrsKontrIn { get; set; }

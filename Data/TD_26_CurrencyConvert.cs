@@ -34,9 +34,9 @@ namespace Data
         public Nullable<int> CODE { get; set; }
         public decimal StoreDC { get; set; }
     
-        public virtual TD_26 TD_26 { get; set; }
-        public virtual SD_27 SD_27 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DistributeNakladRow> DistributeNakladRow { get; set; }
+        public virtual SD_27 SD_27 { get; set; }
+        public virtual TD_26 TD_26 { get; set; }
     }
 }

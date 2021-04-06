@@ -44,6 +44,7 @@ namespace Data
             this.TD_236 = new HashSet<TD_236>();
             this.TD_24_2 = new HashSet<TD_24_2>();
             this.TD_24 = new HashSet<TD_24>();
+            this.TD_26_CurrencyConvert = new HashSet<TD_26_CurrencyConvert>();
             this.TD_27 = new HashSet<TD_27>();
             this.UD_27 = new HashSet<UD_27>();
             this.WD_138 = new HashSet<WD_138>();
@@ -55,7 +56,6 @@ namespace Data
             this.EXT_USERS1 = new HashSet<EXT_USERS>();
             this.EXT_USERS2 = new HashSet<EXT_USERS>();
             this.SD_40 = new HashSet<SD_40>();
-            this.TD_26_CurrencyConvert = new HashSet<TD_26_CurrencyConvert>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -130,6 +130,8 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TD_24> TD_24 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TD_26_CurrencyConvert> TD_26_CurrencyConvert { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TD_27> TD_27 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UD_27> UD_27 { get; set; }
@@ -151,7 +153,5 @@ namespace Data
         public virtual ICollection<EXT_USERS> EXT_USERS2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_40> SD_40 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TD_26_CurrencyConvert> TD_26_CurrencyConvert { get; set; }
     }
 }

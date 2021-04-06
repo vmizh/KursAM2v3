@@ -189,6 +189,7 @@ namespace Data
         public virtual DbSet<ProjectProviderUslugi> ProjectProviderUslugi { get; set; }
         public virtual DbSet<Projects> Projects { get; set; }
         public virtual DbSet<ProjectsDocs> ProjectsDocs { get; set; }
+        public virtual DbSet<ProviderInvoicePay> ProviderInvoicePay { get; set; }
         public virtual DbSet<REMAINS> REMAINS { get; set; }
         public virtual DbSet<RequirementForShipping> RequirementForShipping { get; set; }
         public virtual DbSet<RequirementForShippingRows> RequirementForShippingRows { get; set; }
@@ -473,6 +474,7 @@ namespace Data
         public virtual DbSet<TD_254> TD_254 { get; set; }
         public virtual DbSet<TD_259> TD_259 { get; set; }
         public virtual DbSet<TD_26> TD_26 { get; set; }
+        public virtual DbSet<TD_26_CurrencyConvert> TD_26_CurrencyConvert { get; set; }
         public virtual DbSet<TD_266> TD_266 { get; set; }
         public virtual DbSet<TD_27> TD_27 { get; set; }
         public virtual DbSet<TD_281> TD_281 { get; set; }
@@ -682,6 +684,7 @@ namespace Data
         public virtual DbSet<SD_43_1> SD_43_1 { get; set; }
         public virtual DbSet<SD_54> SD_54 { get; set; }
         public virtual DbSet<SD_91> SD_91 { get; set; }
+        public virtual DbSet<ShopTablesTemplate> ShopTablesTemplate { get; set; }
         public virtual DbSet<SONY_REPORT> SONY_REPORT { get; set; }
         public virtual DbSet<SONY_REPROT> SONY_REPROT { get; set; }
         public virtual DbSet<tmp_SD_24> tmp_SD_24 { get; set; }
@@ -766,8 +769,6 @@ namespace Data
         public virtual DbSet<VH_SD_77> VH_SD_77 { get; set; }
         public virtual DbSet<VH_SD_82> VH_SD_82 { get; set; }
         public virtual DbSet<VVD_24> VVD_24 { get; set; }
-        public virtual DbSet<TD_26_CurrencyConvert> TD_26_CurrencyConvert { get; set; }
-        public virtual DbSet<ProviderInvoicePay> ProviderInvoicePay { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

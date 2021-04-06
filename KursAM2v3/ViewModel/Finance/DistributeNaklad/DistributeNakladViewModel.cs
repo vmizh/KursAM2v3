@@ -468,6 +468,24 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             LayoutManager.Load();
         }
 
+        public override void DocDelete(object form)
+        {
+            var res = MessageBox.Show("Удалить текущий документ?", "Запрос",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+            switch (res)
+            {
+                case MessageBoxResult.Yes:
+                    unitOfWork.CreateTransaction();
+                    DistributeNakladRepository.Delete(Entity);
+                    unitOfWork.Commit();
+                    Form?.Close();
+                    break;
+                case MessageBoxResult.No:
+                    return;
+            }
+        }
+
         public override void Save()
         {
             try
@@ -490,6 +508,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
+        [Display(AutoGenerateField = false)]
         public override bool IsCanRefresh { set; get; } = true;
 
         public override bool CanSave()

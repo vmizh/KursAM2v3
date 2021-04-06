@@ -68,7 +68,8 @@ namespace KursAM2.ViewModel.Management.Calculations
                             OPER_CRS_DC = Convert.ToDecimal(d.OPER_CRS_DC),
                             OPER_CRS_RATE = Convert.ToDouble(d.OPER_CRS_RATE),
                             UCH_CRS_RATE = Convert.ToDouble(d.UCH_CRS_RATE),
-                            ID = Guid.NewGuid().ToString().ToUpper().Replace("-", string.Empty)
+                            ID = Guid.NewGuid().ToString().ToUpper().Replace("-", string.Empty),
+                            DOC_EXT_NUM = d.DOC_EXT_NUM
                         }));
             }
 
@@ -106,7 +107,8 @@ namespace KursAM2.ViewModel.Management.Calculations
                         CRS_OPER_OUT = 0,
                         OPER_CRS_DC = kontr.SD_301.DOC_CODE,
                         OPER_CRS_RATE = 0,
-                        UCH_CRS_RATE = 0
+                        UCH_CRS_RATE = 0,
+                        DOC_EXT_NUM = null
                     });
 
                 // банковские операции
@@ -142,7 +144,8 @@ namespace KursAM2.ViewModel.Management.Calculations
                         CRS_OPER_OUT = (double) (op.VVT_VAL_RASHOD ?? 0),
                         OPER_CRS_DC = op.VVT_CRS_DC,
                         OPER_CRS_RATE = op.VVT_KONTR_CRS_RATE ?? 0,
-                        UCH_CRS_RATE = op.VVT_UCHET_VALUTA_RATE ?? 0
+                        UCH_CRS_RATE = op.VVT_UCHET_VALUTA_RATE ?? 0,
+                        DOC_EXT_NUM = op.VVT_DOC_NUM
                     });
 
                 // приходный кассовый ордер
@@ -1016,7 +1019,7 @@ namespace KursAM2.ViewModel.Management.Calculations
                                     .Select(o =>
                                         "INSERT INTO dbo.KONTR_BALANS_OPER_ARC " +
                                         "(DOC_NAME ,DOC_NUM ,DOC_DATE ,CRS_KONTR_IN ,CRS_KONTR_OUT, DOC_DC, DOC_ROW_CODE, DOC_TYPE_CODE, CRS_OPER_IN " +
-                                        ",CRS_OPER_OUT, OPER_CRS_DC, OPER_CRS_RATE, UCH_CRS_RATE, KONTR_DC, ID, NEW_CALC) " +
+                                        ",CRS_OPER_OUT, OPER_CRS_DC, OPER_CRS_RATE, UCH_CRS_RATE, KONTR_DC, ID, NEW_CALC, DOC_EXT_NUM) " +
                                         "VALUES( " + $"'{o.DOC_NAME}', " + $"'{removeChars(o.DOC_NUM)}' " +
                                         $",'{CustomFormat.DateToString(o.DOC_DATE)}' " +
                                         $",{CustomFormat.DecimalToSqlDecimal((decimal) o.CRS_KONTR_IN)} " +
@@ -1029,7 +1032,8 @@ namespace KursAM2.ViewModel.Management.Calculations
                                         $",{CustomFormat.DecimalToSqlDecimal((decimal) o.OPER_CRS_RATE)}  " +
                                         $",{CustomFormat.DecimalToSqlDecimal((decimal) o.UCH_CRS_RATE)} " +
                                         $",{o.KONTR_DC} " +
-                                        $",'{o.ID}',1 )"))
+                                        $",'{o.ID}',1 " +
+                                        $",'{o.DOC_EXT_NUM}' )"))
                                 sqlQuery.Append(query + "; " + "\n ");
                             ent.Database.ExecuteSqlCommand(sqlQuery.ToString());
                         }
