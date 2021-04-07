@@ -518,6 +518,7 @@
                     <dxg:GridControl.Columns>
                         <dxg:GridColumn x:Name="DocName1" FieldName="DocName" Header="Документ" ReadOnly="True" />
                         <dxg:GridColumn x:Name="DocNum1" FieldName="DocNum" Header="№" ReadOnly="True" />
+                        <dxg:GridColumn x:Name="DocExtNum" FieldName="DocExtNum" Header="Внеш.№" ReadOnly="True" />
                         <dxg:GridColumn x:Name="DocDateColumn1" FieldName="DocDate" Header="Дата"
                                         ReadOnly="True" />
                         <dxg:GridColumn x:Name="CrsKontrIn6_3" FieldName="CrsKontrOut" Header="Баланс(+)"

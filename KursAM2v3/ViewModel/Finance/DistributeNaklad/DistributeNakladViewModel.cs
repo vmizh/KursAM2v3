@@ -477,12 +477,42 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 case MessageBoxResult.Yes:
                     unitOfWork.CreateTransaction();
+                    var noms = Tovars.Select(_ => _.Nomenkl).ToList();
                     DistributeNakladRepository.Delete(Entity);
+                    foreach (var n in noms)
+                    {
+                        var sql = $"exec dbo.NomenklCalculateCostsForOne {CustomFormat.DecimalToSqlDecimal(n.DocCode)}";
+                        unitOfWork.Context.Database.ExecuteSqlCommand(sql);
+                    }
                     unitOfWork.Commit();
-                    Form?.Close();
+                    Form.Close();
                     break;
                 case MessageBoxResult.No:
                     return;
+            }
+        }
+
+        private void CalcNomenkls(List<Nomenkl> noms)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                if (noms == null)
+                {
+                    foreach (var n in Tovars)
+                    {
+                        var sql = $"exec dbo.NomenklCalculateCostsForOne {CustomFormat.DecimalToSqlDecimal(n.Nomenkl.DocCode)}";
+                        ctx.Database.ExecuteSqlCommand(sql);
+                    }
+                    return;
+                }
+
+                foreach (var n in noms)
+                {
+                    {
+                        var sql = $"exec dbo.NomenklCalculateCostsForOne {CustomFormat.DecimalToSqlDecimal(n.DocCode)}";
+                        ctx.Database.ExecuteSqlCommand(sql);
+                    }
+                }
             }
         }
 
@@ -494,6 +524,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 DistributeNakladRepository.UpdateSFNaklad(Entity);
                 unitOfWork.Save();
                 unitOfWork.Commit();
+                CalcNomenkls(null);
                 State = RowStatus.NotEdited;
                 RaisePropertiesChanged(nameof(State));
                 RaisePropertiesChanged(nameof(Tovars));
@@ -669,6 +700,12 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
                     Tovars.Remove(item);
                 }
+            }
+            
+            foreach (var n in Tovars)
+            {
+                var sql = $"exec dbo.NomenklCalculateCostsForOne {CustomFormat.DecimalToSqlDecimal(n.Nomenkl.DocCode)}";
+                unitOfWork.Context.Database.ExecuteSqlCommand(sql);
             }
 
             SelectedTovars.Clear();

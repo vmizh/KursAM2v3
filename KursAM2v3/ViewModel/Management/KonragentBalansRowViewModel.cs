@@ -73,7 +73,8 @@ namespace KursAM2.ViewModel.Management
                 DocRowCode = db.DOC_ROW_CODE,
                 CrsOperRate = (decimal) db.OPER_CRS_RATE,
                 Nakopit = 0,
-                CrsUchRate = (decimal) db.UCH_CRS_RATE
+                CrsUchRate = (decimal) db.UCH_CRS_RATE,
+                DocExtNum = db.DOC_EXT_NUM
             };
         }
 

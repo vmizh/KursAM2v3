@@ -134,7 +134,10 @@ namespace KursAM2.ViewModel.Management
 
         [DataMember] public ObservableCollection<KonragentBalansRowViewModel> Operations { set; get; }
 
-        [DataMember] public ObservableCollection<KontragentPeriod> Periods { set; get; } = new ObservableCollection<KontragentPeriod>();
+        [DataMember]
+        public ObservableCollection<KontragentPeriod> Periods { set; get; } =
+            // ReSharper disable once MemberInitializerValueIgnored
+            new ObservableCollection<KontragentPeriod>();
 
         public Brush BalansBrush
             => LastBalansSumma < 0 ? new SolidColorBrush(Colors.Red) : new SolidColorBrush(Colors.Black);

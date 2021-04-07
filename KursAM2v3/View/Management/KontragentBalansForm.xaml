@@ -189,8 +189,8 @@
                                          VerticalAlignment="Stretch"
                                          dx:DXSerializer.SerializationID="grid"
                                          dx:DXSerializer.StoreLayoutMode="All"
-                                         dxg:DataControlSerializationOptions.AddNewColumns="False"
-                                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                         dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                          SelectionMode="Row"
                                          SelectedItems="{Binding SelectedDocs, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                                          ItemsSource="{Binding Documents, NotifyOnSourceUpdated=True}"
@@ -199,6 +199,7 @@
                             <dxg:GridControl.Columns>
                                 <dxg:GridColumn Name="col_1" FieldName="DocName" Header="Документ" ReadOnly="True" />
                                 <dxg:GridColumn Name="col_2" FieldName="DocNum" Header="№" ReadOnly="True" />
+                                <dxg:GridColumn Name="col_2_1" FieldName="DocExtNum" Header="Внеш.№" ReadOnly="True" />
                                 <dxg:GridColumn Name="col_3" FieldName="DocDate" Header="Дата" ReadOnly="True" />
                                 <dxg:GridColumn Name="col_4" FieldName="CrsKontrIn" Header="Баланс (-)"
                                                 ReadOnly="True">
