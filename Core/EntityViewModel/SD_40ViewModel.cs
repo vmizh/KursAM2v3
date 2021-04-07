@@ -96,6 +96,11 @@ namespace Core.EntityViewModel
             }
         }
 
+        public bool Check()
+        {
+            return !string.IsNullOrWhiteSpace(Name) && !DOC_CODE.Equals(null) && !CENT_PARENT_DC.Equals(null);
+        }
+
         public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_40> LoadList()

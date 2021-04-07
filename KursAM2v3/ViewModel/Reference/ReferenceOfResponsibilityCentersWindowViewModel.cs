@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
+using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -16,8 +17,8 @@ namespace KursAM2.ViewModel.Reference
 {
     public class ReferenceOfResponsibilityCentersWindowViewModel : RSWindowViewModelBase
     {
-        private CentrOfResponsibility myCurrentCenter;
-
+        private SD_40ViewModel myCurrentCenter;
+        
         public ReferenceOfResponsibilityCentersWindowViewModel()
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -31,14 +32,14 @@ namespace KursAM2.ViewModel.Reference
             Form = win;
         }
 
-        public ObservableCollection<CentrOfResponsibility> CenterCollection { set; get; } =
-            new ObservableCollection<CentrOfResponsibility>();
+        public ObservableCollection<SD_40ViewModel> CenterCollection { set; get; } =
+            new ObservableCollection<SD_40ViewModel>();
 
-        public ObservableCollection<CentrOfResponsibility> DeletedCenterCollection { set; get; } =
-            new ObservableCollection<CentrOfResponsibility>();
+        public ObservableCollection<SD_40ViewModel> DeletedCenterCollection { set; get; } =
+            new ObservableCollection<SD_40ViewModel>();
 
 
-        public CentrOfResponsibility CurrentCenter
+        public SD_40ViewModel CurrentCenter
         {
             get => myCurrentCenter;
             set
@@ -59,16 +60,16 @@ namespace KursAM2.ViewModel.Reference
                 {
                     CenterCollection.Clear();
                     foreach (var p in ctx.SD_40.ToList())
-                        CenterCollection.Add(new CentrOfResponsibility(p) {State = RowStatus.NotEdited});
+                        CenterCollection.Add(new SD_40ViewModel(p) {State = RowStatus.NotEdited});
                     if (CenterCollection.Count == 0)
                     {
-                        var newRow = new CentrOfResponsibility()
+                        var newRow = new SD_40ViewModel()
                         {
-                            DocCode = 1,
-                            Name = "Новый центр",
-                            FullName = "Новый центр",
-                            IsDeleted = false,
+                            DOC_CODE = 1,
+                            CENT_FULLNAME = "Новый центр",
+                            CENT_NAME = "Новый центр",
                             CENT_PARENT_DC = 1,
+                            IS_DELETED = 0,
                             State = RowStatus.NotEdited
                         };
                         CenterCollection.Add(newRow);
@@ -110,31 +111,25 @@ namespace KursAM2.ViewModel.Reference
             return false;
         }
 
-        public void SetResponsible()
-        {
-            var f = StandartDialogs.SelectEmployee();
-            if (f != null)
-                CurrentCenter.Responsible = f;
-        }
-
+       
         #region Commands
 
         public ICommand MoveToTopProjectCommand
         {
-            get { return new Command(MoveToTopProject, _ => CurrentCenter?.ParentId != null); }
+            get { return new Command(MoveToTopProject, _ => CurrentCenter?.CENT_PARENT_DC != null); }
         }
 
         private void MoveToTopProject(object obj)
         {
-            CurrentCenter.ParentId = null;
+            CurrentCenter.CENT_PARENT_DC = null;
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var tx = ctx.Database.BeginTransaction();
                 try
                 {
-                    var prj = ctx.Projects.FirstOrDefault(_ => _.Id == CurrentCenter.Id);
+                    var centr = ctx.SD_40.FirstOrDefault(_ => _.CENT_PARENT_DC == CurrentCenter.CENT_PARENT_DC);
                     {
-                        if (prj != null) prj.ParentId = null;
+                        if (centr != null) centr.CENT_PARENT_DC = null;
                     }
                     ctx.SaveChanges();
                     tx.Commit();
@@ -147,42 +142,46 @@ namespace KursAM2.ViewModel.Reference
             }
         }
 
-        public ICommand AddNewProjectCommand
+        public ICommand AddNewCenterCommand
         {
-            get { return new Command(AddNewProject, _ => CurrentCenter != null); }
+            get { return new Command(AddNewCenter, _ => CurrentCenter != null); }
         }
 
-        private void AddNewProject(object obj)
+        private void AddNewCenter(object obj)
         {
-            var newRow = new Project
+            var newRow = new SD_40ViewModel()
             {
                 State = RowStatus.NewRow,
-                Id = Guid.NewGuid(),
-                ParentId = CurrentCenter.ParentId,
-                DateStart = DateTime.Today
+                CENT_FULLNAME = CurrentCenter.CENT_FULLNAME,
+                CENT_NAME = CurrentCenter.CENT_NAME,
+                CENT_PARENT_DC = CurrentCenter.CENT_PARENT_DC,
+                DOC_CODE = CurrentCenter.DOC_CODE,
+                IS_DELETED = 0
             };
             CenterCollection.Add(newRow);
             CurrentCenter = newRow;
         }
 
-        private bool IsCanAddProject()
+        private bool IsCanAddCenter()
         {
-            var pitem = CenterCollection.FirstOrDefault(_ => _.Id == CurrentCenter?.ParentId);
-            if (pitem == null) return true;
-            var pitem2 = CenterCollection.FirstOrDefault(_ => _.ParentId == pitem.Id);
+            var pitem = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == CurrentCenter?.CENT_PARENT_DC);
+            if (pitem == null)
+                return true;
+            var pitem2 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == pitem.CENT_PARENT_DC);
             if (pitem2 == null)
                 return true;
-            var pitem3 = CenterCollection.FirstOrDefault(_ => _.Id == pitem2.ParentId);
-            if (pitem3 == null) return true;
-            var pitem4 = CenterCollection.FirstOrDefault(_ => _.Id == pitem3.ParentId);
-            if (pitem4 != null) return false;
-            //var pitem3 = ProjectCollection.FirstOrDefault(_ => _.Id == pitem2.ParentId);
+            var pitem3 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == pitem2.CENT_PARENT_DC);
+            if (pitem3 == null)
+                return true;
+            var pitem4 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == pitem3.CENT_PARENT_DC);
+            if (pitem4 != null) 
+                return false;
             return false;
         }
 
-        public ICommand AddNewChildProjectCommand
+        /*public ICommand AddNewChildProjectCommand
         {
-            get { return new Command(AddNewChildProject, _ => IsCanAddProject() && CurrentCenter != null); }
+            get { return new Command(AddNewChildProject, _ => IsCanAddCenter() && CurrentCenter != null); }
         }
 
         private void AddNewChildProject(object obj)
@@ -198,22 +197,22 @@ namespace KursAM2.ViewModel.Reference
             if (Form is ProjectReferenceView win)
                 win.treeListView.FocusedNode.IsExpanded = true;
             CurrentCenter = newRow;
-        }
+        }*/
 
-        public ICommand DeleteProjectCommand
+        public ICommand DeleteCenterCommand
         {
             get
             {
-                return new Command(DeleteProject,
-                    _ => CurrentCenter != null && CenterCollection.All(p => p.ParentId != CurrentCenter.Id));
+                return new Command(DeleteCenter,
+                    _ => CurrentCenter != null && CenterCollection.All(p => p.CENT_PARENT_DC != CurrentCenter.CENT_PARENT_DC));
             }
         }
 
-        private void DeleteProject(object obj)
+        private void DeleteCenter(object obj)
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var docs = ctx.ProjectsDocs.Where(_ => _.ProjectId == CurrentCenter.Id);
+                var docs = ctx.SD_40.Where(_ => _.CENT_PARENT_DC == CurrentCenter.CENT_PARENT_DC);
                 if (docs.Any())
                 {
                     WinManager.ShowWinUIMessageBox("По проекту есть привязанные документы. Удалить проект нельзя.",

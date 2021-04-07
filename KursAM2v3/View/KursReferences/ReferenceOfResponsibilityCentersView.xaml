@@ -9,7 +9,7 @@
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     x:Class="KursAM2.View.KursReferences.ReferenceOfResponsibilityCentersView"
     mc:Ignorable="d"
-    Title="Справочник проектов" Height="300" Width="300">
+    Title="Справочник центров ответственности" Height="300" Width="300">
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
@@ -21,9 +21,9 @@
                              dx:DXSerializer.StoreLayoutMode="All"
                              dxg:DataControlSerializationOptions.AddNewColumns="True"
                              dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                             ItemsSource="{Binding ProjectCollection, NotifyOnSourceUpdated=True, 
+                             ItemsSource="{Binding CenterCollection, NotifyOnSourceUpdated=True, 
             NotifyOnTargetUpdated=True}"
-                             CurrentItem="{Binding CurrentProject, UpdateSourceTrigger=PropertyChanged, 
+                             CurrentItem="{Binding CurrentCenter, UpdateSourceTrigger=PropertyChanged, 
             NotifyOnSourceUpdated=True, 
             NotifyOnTargetUpdated=True}"
                              AutoGeneratingColumn="TreeListControl_OnAutoGeneratingColumn"
@@ -34,15 +34,15 @@
                                   EnableImmediatePosting="True"
                                   AllowPerPixelScrolling="True"
                                   ShowTotalSummary="False"
-                                  KeyFieldName="Id"
-                                  ParentFieldName="ParentId"
+                                  KeyFieldName="DOC_CODE"
+                                  ParentFieldName="CENT_PARENT_DC"
                                   EditorButtonShowMode="ShowForFocusedRow">
                    <dxg:TreeListView.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Добавить проект на текущем уровне"
-                                      Command="{Binding AddNewProjectCommand}" />
+                            <MenuItem Header="Добавить новый центр"
+                                      Command="{Binding AddNewCenterCommand}" />
                             <MenuItem Header="Добавить подпроект" Command="{Binding AddNewChildProjectCommand}" />
-                            <MenuItem Header="Удалить проект" Command="{Binding DeleteProjectCommand}" />
+                            <MenuItem Header="Удалить центр" Command="{Binding DeleteCenterCommand}" />
                             <MenuItem Header="Перевести на верхний уровень" Command="{Binding MoveToTopProjectCommand}" />
                             <Separator />
                             <MenuItem Header="Экспорт"

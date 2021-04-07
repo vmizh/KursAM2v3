@@ -13,7 +13,7 @@ using LayoutManager;
 namespace KursAM2.View.KursReferences
 {
     /// <summary>
-    ///     Interaction logic for ProjectReferenceView.xaml
+    ///     Interaction logic for ReferenceOfResponsibilityCentersView.xaml
     /// </summary>
     public partial class ReferenceOfResponsibilityCentersView : ILayout
     {
@@ -28,8 +28,8 @@ namespace KursAM2.View.KursReferences
             };
             myBnEditor.DefaultButtonClick += MyBnEditor_DefaultButtonClick;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, treeListControl);
-            Loaded += ProjectReferenceView_Loaded;
-            Unloaded += ProjectReferenceView_Unloaded;
+            Loaded += ReferenceOfResponsibilityCentersView_Loaded;
+            Unloaded += ReferenceOfResponsibilityCentersView_Unloaded;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
@@ -37,37 +37,19 @@ namespace KursAM2.View.KursReferences
  
         private void MyBnEditor_DefaultButtonClick(object sender, RoutedEventArgs e)
         {
-            var ctx = DataContext as ProjectReferenceWindowViewModel;
+            var ctx = DataContext as ReferenceOfResponsibilityCentersWindowViewModel;
             ctx?.SetResponsible();
             treeListView.CloseEditor();
         }
 
-        private void ProjectReferenceView_Unloaded(object sender, RoutedEventArgs e)
+        private void ReferenceOfResponsibilityCentersView_Unloaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Save();
         }
 
-        private void ProjectReferenceView_Loaded(object sender, RoutedEventArgs e)
+        private void ReferenceOfResponsibilityCentersView_Loaded(object sender, RoutedEventArgs e)
         {
-            var i = 0;
-            foreach (var band in treeListControl.Bands)
-            {
-                band.Name = "band" + i;
-                ++i;
-            }
             LayoutManager.Load();
-            foreach (var band in treeListControl.Bands)
-                switch (band.Header)
-                {
-                    case "CHF":
-                    case "SEK":
-                    case "EUR":
-                    case "RUB":
-                    case "GBP":
-                    case "USD":
-                        band.Visible = false;
-                        break;
-                }
         }
 
         private void TreeListControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
