@@ -381,6 +381,7 @@
     <Compile Include="ViewModel\Reference\CountriesRefWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\Nomenkl\TypeOfProductReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\OffBalansSheetTypeReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\ReferenceOfResponsibilityCentersWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\RegionRefViewModel.cs" />
     <Compile Include="ViewModel\Reference\SDRReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\UsagePayReferenceWindowViewModel.cs" />
@@ -431,6 +432,9 @@
     </Compile>
     <Compile Include="View\KursReferences\OffBalanseSheetTypeReferenceView.xaml.cs">
       <DependentUpon>OffBalanseSheetTypeReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\ReferenceOfResponsibilityCentersView.xaml.cs">
+      <DependentUpon>ReferenceOfResponsibilityCentersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\KursReferences\SDRReferenceView.xaml.cs">
       <DependentUpon>SDRReferenceView.xaml</DependentUpon>
@@ -1128,6 +1132,10 @@
     <Page Include="View\KursReferences\OffBalanseSheetTypeReferenceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\ReferenceOfResponsibilityCentersView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\KursReferences\SDRReferenceView.xaml">
       <SubType>Designer</SubType>

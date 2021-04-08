@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
 
@@ -18,7 +20,7 @@ namespace Core.EntityViewModel
         {
             Entity = entity ?? DefaultValue();
         }
-
+        [Display(Name = "Код")]
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -29,7 +31,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-
+        [Display(Name = "Полное наименование")]
         public string CENT_FULLNAME
         {
             get => Entity.CENT_FULLNAME;
@@ -40,7 +42,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-
+        [Display(Name = "Наименование")]
         public string CENT_NAME
         {
             get => Entity.CENT_NAME;
@@ -51,7 +53,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-
+        [Display(Name = "Код подраздела")]
         public decimal? CENT_PARENT_DC
         {
             get => Entity.CENT_PARENT_DC;
@@ -62,7 +64,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public int? IS_DELETED
         {
             get => Entity.IS_DELETED;
@@ -73,7 +75,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public SD_40 SD_402
         {
             get => Entity.SD_402;
@@ -84,7 +86,7 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public SD_40 Entity
         {
             get => myEntity;
@@ -96,13 +98,18 @@ namespace Core.EntityViewModel
             }
         }
 
+        public bool Check()
+        {
+            return !string.IsNullOrWhiteSpace(CENT_NAME) && !DOC_CODE.Equals(null);
+        }
+        [Display(AutoGenerateField = false)]
         public EntityLoadCodition LoadCondition { get; set; }
-
+        [Display(AutoGenerateField = false)]
         public List<SD_40> LoadList()
         {
             throw new NotImplementedException();
         }
-
+        [Display(AutoGenerateField = false)]
         public bool IsAccessRight { get; set; }
 
         public virtual void Save(SD_40 doc)
