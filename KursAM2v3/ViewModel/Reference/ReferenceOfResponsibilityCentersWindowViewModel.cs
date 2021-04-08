@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Data;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -40,7 +41,7 @@ namespace KursAM2.ViewModel.Reference
         public ObservableCollection<SD_40ViewModel> CenterCollection { set; get; } =
             new ObservableCollection<SD_40ViewModel>();
 
-        
+
         public SD_40ViewModel CurrentCenter
         {
             get => myCurrentCenter;
@@ -52,16 +53,9 @@ namespace KursAM2.ViewModel.Reference
             }
         }
 
+        public override bool IsCanSaveData => CenterCollection.Any(_ => _.State != RowStatus.NotEdited);
+
         #endregion
-
-
-        public override bool IsCanSaveData => IsCanSave();
-        private new bool IsCanSave()
-        {
-            if (CenterCollection.Any(_ => _.State != RowStatus.NotEdited))
-                return CenterCollection.All(p => p.Check());
-            return false;
-        }
 
         public override void RefreshData(object obj)
         {
@@ -114,46 +108,83 @@ namespace KursAM2.ViewModel.Reference
 
         public override void SaveData(object data)
         {
-            try
+            using (var ctx = GlobalOptions.GetEntities())
             {
-                foreach (var p in CenterCollection.Where(_ => _.State != RowStatus.NotEdited))
-                    p.Save();
-                
-                foreach (var p in CenterCollection.Where(_ => _.State != RowStatus.NotEdited))
-                    p.myState = RowStatus.NotEdited;
-            }
-            catch (Exception ex)
-            {
-                WindowManager.ShowError(ex);
+                using (var transaction = ctx.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var newNumDocCode = ctx.SD_40.Max(_ => _.DOC_CODE) == 0
+                            ? 10400000001
+                            : ctx.SD_40.Max(_ => _.DOC_CODE) + 1;
+                        foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited))
+                            switch (c.State)
+                            {
+                                case RowStatus.NewRow:
+                                    addNewCenter(ctx, c, newNumDocCode);
+                                    newNumDocCode++;
+                                    break;
+                                case RowStatus.Edited:
+                                    updateCenter(ctx, c );
+                                    break;
+                            }
+                        ctx.SaveChanges();
+                        transaction.Commit();
+
+                        foreach (var с in CenterCollection)
+                            с.myState = RowStatus.NotEdited;
+                        MainReferences.Refresh();
+                        RaisePropertiesChanged(nameof(IsCanSaveData));
+                    }
+                    catch (Exception ex)
+                    {
+                        WindowManager.ShowError(ex);
+                    }
+                }
             }
         }
 
+        private void updateCenter(ALFAMEDIAEntities ctx, SD_40ViewModel c)
+        {
+            var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DOC_CODE);
+            if (old == null) return;
+            old.DOC_CODE = c.DOC_CODE;
+            old.CENT_PARENT_DC = c.CENT_PARENT_DC;
+            old.CENT_FULLNAME = c.CENT_FULLNAME;
+            old.CENT_NAME = c.CENT_NAME;
+            old.IS_DELETED = c.IS_DELETED;
+        }
 
-
+        private void addNewCenter(ALFAMEDIAEntities ctx, SD_40ViewModel c, decimal newNumDocCode)
+        {
+            ctx.SD_40.Add(new SD_40
+            {
+                DOC_CODE = newNumDocCode,
+                CENT_FULLNAME = c.CENT_FULLNAME,
+                CENT_NAME = c.CENT_NAME,
+                IS_DELETED = c.IS_DELETED,
+                CENT_PARENT_DC = c.CENT_PARENT_DC
+            });
+        }
 
         #region Commands
 
         public ICommand AddNewCenterCommand
         {
-            get { return new Command(AddNewCenter, _ => CurrentCenter != null); }
+            get { return new Command(AddNewCenter, _ => true); }
         }
 
         private void AddNewCenter(object obj)
         {
-            using (var ctx = GlobalOptions.GetEntities())
+            var newRow = new SD_40ViewModel()
             {
-
-                var numEmptyDocCode = ctx.SD_40.Max(_ => _.DOC_CODE) == 0 ? 10400000001 : ctx.SD_40.Max(_ => _.DOC_CODE) + 1;
-                var newRow = new SD_40ViewModel()
-                {
-                    State = RowStatus.NewRow,
-                    CENT_NAME = "Новый центр",
-                    DOC_CODE = numEmptyDocCode,
-                    IS_DELETED = 0
-                };
-                CenterCollection.Add(newRow);
-                CurrentCenter = newRow;
-            }
+                State = RowStatus.NewRow,
+                CENT_NAME = "Новый центр",
+                IS_DELETED = 0
+            };
+            CenterCollection.Add(newRow);
+            CurrentCenter = newRow;
+            RaisePropertiesChanged(nameof(CenterCollection));
         }
 
         private bool IsCanAddCenter()
@@ -195,8 +226,6 @@ namespace KursAM2.ViewModel.Reference
         }
 
 
-
-
         public ICommand MoveToTopCenterCommand
         {
             get { return new Command(MoveToTopCenter, _ => CurrentCenter?.DOC_CODE != null); }
@@ -225,9 +254,9 @@ namespace KursAM2.ViewModel.Reference
             }
         }
 
-        
 
-        public ICommand DeleteCenterCommand => new Command(DeleteCenter, _ => CurrentCenter != null );
+
+        public ICommand DeleteCenterCommand => new Command(DeleteCenter, _ => CurrentCenter != null);
 
         private void DeleteCenter(object obj)
         {
@@ -276,7 +305,7 @@ namespace KursAM2.ViewModel.Reference
                     break;
             }
         }
-        
+
         #endregion
     }
 }

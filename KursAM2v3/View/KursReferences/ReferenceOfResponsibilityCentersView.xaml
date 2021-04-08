@@ -9,7 +9,7 @@
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     x:Class="KursAM2.View.KursReferences.ReferenceOfResponsibilityCentersView"
     mc:Ignorable="d"
-    Title="Справочник центров ответственности" Height="600" Width="800">
+    Title="Справочник центров ответственности" Height="700" Width="800">
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"

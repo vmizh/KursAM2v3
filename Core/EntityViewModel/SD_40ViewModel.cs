@@ -98,10 +98,6 @@ namespace Core.EntityViewModel
             }
         }
 
-        public bool Check()
-        {
-            return !string.IsNullOrWhiteSpace(CENT_NAME) && !DOC_CODE.Equals(null);
-        }
         [Display(AutoGenerateField = false)]
         public EntityLoadCodition LoadCondition { get; set; }
         [Display(AutoGenerateField = false)]
