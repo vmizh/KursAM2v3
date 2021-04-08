@@ -9,7 +9,7 @@
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     x:Class="KursAM2.View.KursReferences.ReferenceOfResponsibilityCentersView"
     mc:Ignorable="d"
-    Title="Справочник центров ответственности" Height="300" Width="300">
+    Title="Справочник центров ответственности" Height="600" Width="800">
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
@@ -40,7 +40,7 @@
                         <ContextMenu>
                             <MenuItem Header="Добавить новый центр"
                                       Command="{Binding AddNewCenterCommand}" />
-                            <MenuItem Header="Добавить подпроект" Command="{Binding AddNewChildCenterCommand}" />
+                            <MenuItem Header="Добавить элемент центра" Command="{Binding AddNewSectionCenterCommand}" />
                             <MenuItem Header="Удалить центр" Command="{Binding DeleteCenterCommand}" />
                             <MenuItem Header="Перевести на верхний уровень" Command="{Binding MoveToTopCenterCommand}" />
                             <Separator />

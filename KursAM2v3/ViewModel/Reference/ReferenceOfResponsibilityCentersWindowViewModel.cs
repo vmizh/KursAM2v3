@@ -59,16 +59,16 @@ namespace KursAM2.ViewModel.Reference
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     CenterCollection.Clear();
+                    var numEmptyDocCode = ctx.SD_40.Max(_ => _.DOC_CODE) == 0 ? 10400000001 : ctx.SD_40.Max( _=>_ .DOC_CODE) + 1;
                     foreach (var p in ctx.SD_40.ToList())
                         CenterCollection.Add(new SD_40ViewModel(p) {State = RowStatus.NotEdited});
                     if (CenterCollection.Count == 0)
                     {
                         var newRow = new SD_40ViewModel()
                         {
-                            DOC_CODE = 1,
+                            DOC_CODE = numEmptyDocCode,
                             CENT_FULLNAME = "Новый центр",
                             CENT_NAME = "Новый центр",
-                            CENT_PARENT_DC = 2,
                             IS_DELETED = 0,
                             State = RowStatus.NotEdited
                         };
@@ -116,20 +116,20 @@ namespace KursAM2.ViewModel.Reference
 
         public ICommand MoveToTopCenterCommand
         {
-            get { return new Command(MoveToTopProject, _ => CurrentCenter?.DOC_CODE != null); }
+            get { return new Command(MoveToTopCenter, _ => CurrentCenter?.DOC_CODE != null); }
         }
 
-        private void MoveToTopProject(object obj)
+        private void MoveToTopCenter(object obj)
         {
-            CurrentCenter.DOC_CODE = new decimal(null);
+            CurrentCenter.CENT_PARENT_DC = null;
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var tx = ctx.Database.BeginTransaction();
                 try
                 {
-                    var centr = ctx.SD_40.FirstOrDefault(_ => _.CENT_PARENT_DC == CurrentCenter.CENT_PARENT_DC);
+                    var centr = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
                     {
-                        if (centr != null) centr.DOC_CODE = new decimal(null);
+                        if (centr != null) centr.CENT_PARENT_DC = null;
                     }
                     ctx.SaveChanges();
                     tx.Commit();
@@ -149,45 +149,51 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewCenter(object obj)
         {
-            var newRow = new SD_40ViewModel()
+            using (var ctx = GlobalOptions.GetEntities())
             {
-                State = RowStatus.NewRow,
-                CENT_NAME = "Новый центр",
-                DOC_CODE = CurrentCenter.DOC_CODE, // Где брать  doc-code для нового центра?
-                IS_DELETED = 0
-            };
-            CenterCollection.Add(newRow);
-            CurrentCenter = newRow;
+
+                var numEmptyDocCode = ctx.SD_40.Max(_ => _.DOC_CODE) == 0 ? 10400000001 : ctx.SD_40.Max(_ => _.DOC_CODE) + 1;
+                var newRow = new SD_40ViewModel()
+                {
+                    State = RowStatus.NewRow,
+                    CENT_NAME = "Новый центр",
+                    DOC_CODE = numEmptyDocCode,
+                    IS_DELETED = 0
+                };
+                CenterCollection.Add(newRow);
+                CurrentCenter = newRow;
+            }
         }
 
         private bool IsCanAddCenter()
         {
-            var pitem = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == CurrentCenter.DOC_CODE);
+            var pitem = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.CENT_PARENT_DC);
             if (pitem == null)
                 return true;
-            var pitem2 = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == pitem.CENT_PARENT_DC);
+            var pitem2 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == pitem.DOC_CODE);
             if (pitem2 == null)
                 return true;
-            var pitem3 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == pitem2.DOC_CODE);
+            var pitem3 = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == pitem2.CENT_PARENT_DC);
             if (pitem3 == null)
                 return true;
-            var pitem4 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == pitem3.DOC_CODE);
+            var pitem4 = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == pitem3.CENT_PARENT_DC);
             if (pitem4 != null) 
                 return false;
             return false;
         }
 
-        public ICommand AddNewChildCenterCommand
+        public ICommand AddNewSectionCenterCommand
         {
-            get { return new Command(AddNewChildCenter, _ => IsCanAddCenter() && CurrentCenter != null); }
+            get { return new Command(AddNewSectionCenter, _ => IsCanAddCenter() && CurrentCenter != null); }
         }
 
-        private void AddNewChildCenter(object obj)
+        private void AddNewSectionCenter(object obj)
         {
             var newRow = new SD_40ViewModel()
             {
                 State = RowStatus.NewRow,
                 CENT_NAME = "Новый центр",
+                CENT_FULLNAME = "Новый центр",
                 CENT_PARENT_DC = CurrentCenter.DOC_CODE,
                 IS_DELETED = 0
             };
