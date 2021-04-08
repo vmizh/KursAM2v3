@@ -463,6 +463,16 @@ namespace KursAM2.View
                         prjCtx.Form = form;
                         form.Show();
                         break;
+                    case "Справочник центров ответственности":
+                        var centerCtx = new ReferenceOfResponsibilityCentersWindowViewModel();
+                        form = new ReferenceOfResponsibilityCentersView()
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = centerCtx
+                        };
+                        centerCtx.Form = form;
+                        form.Show();
+                        break;
                     case "Справочник стран":
                         var countryCtx = new CountriesRefWindowViewModel();
                         form = new CountryReferenceView
