@@ -68,7 +68,7 @@ namespace KursAM2.ViewModel.Reference
                             DOC_CODE = 1,
                             CENT_FULLNAME = "Новый центр",
                             CENT_NAME = "Новый центр",
-                            CENT_PARENT_DC = 1,
+                            CENT_PARENT_DC = 2,
                             IS_DELETED = 0,
                             State = RowStatus.NotEdited
                         };
@@ -114,14 +114,14 @@ namespace KursAM2.ViewModel.Reference
        
         #region Commands
 
-        public ICommand MoveToTopProjectCommand
+        public ICommand MoveToTopCenterCommand
         {
-            get { return new Command(MoveToTopProject, _ => CurrentCenter?.CENT_PARENT_DC != null); }
+            get { return new Command(MoveToTopProject, _ => CurrentCenter?.DOC_CODE != null); }
         }
 
         private void MoveToTopProject(object obj)
         {
-            CurrentCenter.CENT_PARENT_DC = null;
+            CurrentCenter.DOC_CODE = new decimal(null);
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var tx = ctx.Database.BeginTransaction();
@@ -129,7 +129,7 @@ namespace KursAM2.ViewModel.Reference
                 {
                     var centr = ctx.SD_40.FirstOrDefault(_ => _.CENT_PARENT_DC == CurrentCenter.CENT_PARENT_DC);
                     {
-                        if (centr != null) centr.CENT_PARENT_DC = null;
+                        if (centr != null) centr.DOC_CODE = new decimal(null);
                     }
                     ctx.SaveChanges();
                     tx.Commit();
@@ -152,10 +152,8 @@ namespace KursAM2.ViewModel.Reference
             var newRow = new SD_40ViewModel()
             {
                 State = RowStatus.NewRow,
-                CENT_FULLNAME = CurrentCenter.CENT_FULLNAME,
-                CENT_NAME = CurrentCenter.CENT_NAME,
-                CENT_PARENT_DC = CurrentCenter.CENT_PARENT_DC,
-                DOC_CODE = CurrentCenter.DOC_CODE,
+                CENT_NAME = "Новый центр",
+                DOC_CODE = CurrentCenter.DOC_CODE, // Где брать  doc-code для нового центра?
                 IS_DELETED = 0
             };
             CenterCollection.Add(newRow);
@@ -164,73 +162,58 @@ namespace KursAM2.ViewModel.Reference
 
         private bool IsCanAddCenter()
         {
-            var pitem = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == CurrentCenter?.CENT_PARENT_DC);
+            var pitem = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == CurrentCenter.DOC_CODE);
             if (pitem == null)
                 return true;
-            var pitem2 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == pitem.CENT_PARENT_DC);
+            var pitem2 = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == pitem.CENT_PARENT_DC);
             if (pitem2 == null)
                 return true;
-            var pitem3 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == pitem2.CENT_PARENT_DC);
+            var pitem3 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == pitem2.DOC_CODE);
             if (pitem3 == null)
                 return true;
-            var pitem4 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == pitem3.CENT_PARENT_DC);
+            var pitem4 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == pitem3.DOC_CODE);
             if (pitem4 != null) 
                 return false;
             return false;
         }
 
-        /*public ICommand AddNewChildProjectCommand
+        public ICommand AddNewChildCenterCommand
         {
-            get { return new Command(AddNewChildProject, _ => IsCanAddCenter() && CurrentCenter != null); }
+            get { return new Command(AddNewChildCenter, _ => IsCanAddCenter() && CurrentCenter != null); }
         }
 
-        private void AddNewChildProject(object obj)
+        private void AddNewChildCenter(object obj)
         {
-            var newRow = new Project
+            var newRow = new SD_40ViewModel()
             {
                 State = RowStatus.NewRow,
-                Id = Guid.NewGuid(),
-                ParentId = CurrentCenter.Id,
-                DateStart = DateTime.Today
+                CENT_NAME = "Новый центр",
+                CENT_PARENT_DC = CurrentCenter.DOC_CODE,
+                IS_DELETED = 0
             };
             CenterCollection.Add(newRow);
-            if (Form is ProjectReferenceView win)
+            if (Form is ReferenceOfResponsibilityCentersView win)
                 win.treeListView.FocusedNode.IsExpanded = true;
             CurrentCenter = newRow;
-        }*/
+        }
 
         public ICommand DeleteCenterCommand
         {
             get
             {
                 return new Command(DeleteCenter,
-                    _ => CurrentCenter != null && CenterCollection.All(p => p.CENT_PARENT_DC != CurrentCenter.CENT_PARENT_DC));
+                    _ => CurrentCenter != null && CenterCollection.All(p => p.DOC_CODE != CurrentCenter.CENT_PARENT_DC));
             }
         }
 
         private void DeleteCenter(object obj)
         {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var docs = ctx.SD_40.Where(_ => _.CENT_PARENT_DC == CurrentCenter.CENT_PARENT_DC);
-                if (docs.Any())
-                {
-                    WinManager.ShowWinUIMessageBox("По проекту есть привязанные документы. Удалить проект нельзя.",
-                        "Предупреждение"
-                        , MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.None,
-                        MessageBoxOptions.None);
-                    return;
-                }
-            }
 
             if (CurrentCenter.State != RowStatus.NewRow)
                 DeletedCenterCollection.Add(CurrentCenter);
             CenterCollection.Remove(CurrentCenter);
         }
 
-        //    <MenuItem Header = "Добавить проект на текущем уровне" Command="{Binding AddNewProject}" />
-        //<MenuItem Header = "Добавить подпроект" Command="{Binding AddNewChildProject}" />
-        //<MenuItem Header = "Удалить проект" Command="{Binding DeleteProject}" />
 
         #endregion
     }
