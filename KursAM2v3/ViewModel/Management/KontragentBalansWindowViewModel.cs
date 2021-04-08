@@ -12,6 +12,7 @@ using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
+using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Management.Calculations;
@@ -208,23 +209,55 @@ namespace KursAM2.ViewModel.Management
                             .Where(_ => _.KONTR_DC == dc)
                             .OrderBy(_ => _.DOC_DATE)
                             .ToList();
-                    double sum = 0;
+                    var sql = "SELECT DOC_NAME as DocName, " +
+                      "ISNULL(CONVERT(VARCHAR, td_101.CODE), DOC_NUM) AS DocNum, " +
+                      "DOC_DATE as DocDate, " +
+                      "cast(CRS_KONTR_IN as numeric(18,4)) as CrsKontrIn, " +
+                      "cast(CRS_KONTR_OUT as numeric(18,4)) as CrsKontrOut, " +
+                      "DOC_DC as DocDC, " +
+                      "DOC_ROW_CODE as DocRowCode, " +
+                      "DOC_TYPE_CODE as DocTypeCode, " +
+                      "cast(CRS_OPER_IN as numeric(18,4)) as CrsOperIn, " +
+                      "cast(CRS_OPER_OUT as numeric(18,4)) as CrsOperOut, " +
+                      "OPER_CRS_DC as CrsOperDC, " +
+                      "cast(OPER_CRS_RATE as numeric(18,4)) as CrsOperRate, " +
+                      "cast(UCH_CRS_RATE as numeric(18,4)) as CrsUchRate, " +
+                      "KONTR_DC as DocCode, " +
+                      "DOC_EXT_NUM as DocExtNum, " +
+                      "ISNULL(sd_24.DD_NOTES, ISNULL(Sd_26.SF_NOTES, ISNULL(SD_33.NOTES_ORD, " +
+                      "ISNULL(SD_34.NOTES_ORD, ISNULL(sd_84.SF_NOTE, ISNULL(td_101.VVT_DOC_NUM, " +
+                      "ISNULL(td_110.VZT_DOC_NOTES, ISNULL(sd_430.ASV_NOTES,'')))))))) AS Notes " +
+                      "FROM dbo.KONTR_BALANS_OPER_ARC kboa " +
+                      "LEFT OUTER JOIN sd_24 ON DOC_DC = sd_24.DOC_CODE " +
+                      "LEFT OUTER JOIN sd_26 ON DOC_DC = sd_26.DOC_CODE " +
+                      "LEFT OUTER JOIN SD_33 ON DOC_DC = sd_33.DOC_CODE " +
+                      "LEFT OUTER JOIN SD_34 ON DOC_DC = sd_34.DOC_CODE " +
+                      "LEFT OUTER JOIN SD_84 ON DOC_DC = sd_84.DOC_CODE " +
+                      "LEFT OUTER JOIN td_101 ON DOC_ROW_CODE = td_101.code " +
+                      "LEFT OUTER JOIN td_110 ON DOC_DC = td_110.DOC_CODE AND kboa.DOC_ROW_CODE = td_110.code " +
+                      "LEFT OUTER JOIN sd_430 ON doc_dc = sd_430.DOC_CODE " +
+                      $"WHERE KONTR_DC = {CustomFormat.DecimalToSqlDecimal(dc)} " +
+                      "ORDER BY kboa.DOC_DATE;";
+                    var data1 = ent.Database.SqlQuery<KonragentBalansRowViewModel>(sql).ToList();
+                    decimal sum = 0;
                     Operations.Clear();
-                    var sn = data.FirstOrDefault(_ => _.DOC_NAME == " На начало учета");
+                    var sn = data1.FirstOrDefault(_ => _.DocName == " На начало учета");
                     if (sn != null)
                     {
-                        if ((decimal) sn.CRS_KONTR_IN == 0)
-                            sum = sn.CRS_KONTR_OUT;
+                        if ((decimal) sn.CrsKontrIn == 0)
+                            sum = sn.CrsKontrIn;
                         else
-                            sum = -sn.CRS_KONTR_IN;
-                        Operations.Add(KonragentBalansRowViewModel.DbToViewModel(sn, (decimal) Math.Round(sum, 2)));
-                        data.Remove(sn);
+                            sum = -sn.CrsKontrOut;
+                        //Operations.Add(KonragentBalansRowViewModel.DbToViewModel(sn, (decimal) Math.Round(sum, 2)));
+                        Operations.Add(sn);
+                        data1.Remove(sn);
                     }
 
-                    foreach (var d in data)
+                    foreach (var d in data1)
                     {
-                        sum += d.CRS_KONTR_OUT - d.CRS_KONTR_IN;
-                        Operations.Add(KonragentBalansRowViewModel.DbToViewModel(d, (decimal) Math.Round(sum, 2)));
+                        sum += d.CrsKontrOut - d.CrsKontrIn;
+                        d.Nakopit = sum;
+                        Operations.Add(d);
                     }
 
                     LastBalansSumma = (decimal) Math.Round(sum, 2);
@@ -276,10 +309,6 @@ namespace KursAM2.ViewModel.Management
             var curKontr = Kontragent;
             base.ResetLayout(form);
             Kontragent = curKontr;
-        }
-
-        private void setPrihod(decimal dc)
-        {
         }
 
         private void DocumentLinkToProject(object obj)

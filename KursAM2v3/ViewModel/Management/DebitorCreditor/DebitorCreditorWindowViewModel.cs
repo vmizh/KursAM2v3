@@ -161,34 +161,46 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             if (debitorCreditorRow == null) return;
             var start = debitorCreditorRow.KontrStart;
             Operations = new ObservableCollection<KonragentBalansRowViewModel>();
-            foreach (var op in GlobalOptions.GetEntities()
-                .KONTR_BALANS_OPER_ARC.Where(_ => _.KONTR_DC == kontrDC
-                                                  &&
-                                                  _.DOC_DATE >= Start &&
-                                                  _.DOC_DATE <= End))
+            var sql = "SELECT DOC_NAME as DocName, " +
+                      "ISNULL(CONVERT(VARCHAR, td_101.CODE), DOC_NUM) AS DocNum, " +
+                      "DOC_DATE as DocDate, " +
+                      "cast(CRS_KONTR_IN as numeric(18,4)) as CrsKontrIn, " +
+                      "cast(CRS_KONTR_OUT as numeric(18,4)) as CrsKontrOut, " +
+                      "DOC_DC as DocDC, " +
+                      "DOC_ROW_CODE as DocRowCode, " +
+                      "DOC_TYPE_CODE as DocTypeCode, " +
+                      "cast(CRS_OPER_IN as numeric(18,4)) as CrsOperIn, " +
+                      "cast(CRS_OPER_OUT as numeric(18,4)) as CrsOperOut, " +
+                      "OPER_CRS_DC as CrsOperDC, " +
+                      "cast(OPER_CRS_RATE as numeric(18,4)) as CrsOperRate, " +
+                      "cast(UCH_CRS_RATE as numeric(18,4)) as CrsUchRate, " +
+                      "KONTR_DC as DocCode, " +
+                      "DOC_EXT_NUM as DocExtNum, " +
+                      "ISNULL(sd_24.DD_NOTES, ISNULL(Sd_26.SF_NOTES, ISNULL(SD_33.NOTES_ORD, " +
+                      "ISNULL(SD_34.NOTES_ORD, ISNULL(sd_84.SF_NOTE, ISNULL(td_101.VVT_DOC_NUM, " +
+                      "ISNULL(td_110.VZT_DOC_NOTES, ISNULL(sd_430.ASV_NOTES,'')))))))) AS Notes " +
+                      "FROM dbo.KONTR_BALANS_OPER_ARC kboa " +
+                      "LEFT OUTER JOIN sd_24 ON DOC_DC = sd_24.DOC_CODE " +
+                      "LEFT OUTER JOIN sd_26 ON DOC_DC = sd_26.DOC_CODE " +
+                      "LEFT OUTER JOIN SD_33 ON DOC_DC = sd_33.DOC_CODE " +
+                      "LEFT OUTER JOIN SD_34 ON DOC_DC = sd_34.DOC_CODE " +
+                      "LEFT OUTER JOIN SD_84 ON DOC_DC = sd_84.DOC_CODE " +
+                      "LEFT OUTER JOIN td_101 ON DOC_ROW_CODE = td_101.code " +
+                      "LEFT OUTER JOIN td_110 ON DOC_DC = td_110.DOC_CODE AND kboa.DOC_ROW_CODE = td_110.code " +
+                      "LEFT OUTER JOIN sd_430 ON doc_dc = sd_430.DOC_CODE " +
+                      $"WHERE KONTR_DC = {CustomFormat.DecimalToSqlDecimal(kontrDC)} " +
+                      $"AND DOC_DATE >= '{CustomFormat.DateToString(Start)}' AND DOC_DATE <= '{CustomFormat.DateToString(End)}' " +
+                      "ORDER BY kboa.KONTR_DC,kboa.DOC_DATE;";
+            using (var ctx = GlobalOptions.GetEntities())
             {
-                start += Convert.ToDecimal(op.CRS_KONTR_OUT) - Convert.ToDecimal(op.CRS_KONTR_IN);
-                Operations.Add(new KonragentBalansRowViewModel
+                var data = ctx.Database.SqlQuery<KonragentBalansRowViewModel>(sql);
+                foreach (var op in data)
                 {
-                    DocCode = kontrDC,
-                    DocDC = Convert.ToDecimal(op.DOC_DC),
-                    CrsKontrIn = Convert.ToDecimal(op.CRS_KONTR_IN),
-                    CrsKontrOut = Convert.ToDecimal(op.CRS_KONTR_OUT),
-                    CrsOperDC = Convert.ToDecimal(op.OPER_CRS_DC),
-                    CrsOperIn = Convert.ToDecimal(op.CRS_OPER_IN),
-                    CrsOperOut = Convert.ToDecimal(op.CRS_OPER_OUT),
-                    CrsOperRate = Convert.ToDecimal(op.OPER_CRS_RATE),
-                    CrsUchRate = Convert.ToDecimal(op.UCH_CRS_RATE),
-                    DocDate = op.DOC_DATE,
-                    DocName = op.DOC_NAME,
-                    DocNum = op.DOC_NUM,
-                    DocRowCode = op.DOC_ROW_CODE,
-                    DocTypeCode = (DocumentType) op.DOC_TYPE_CODE,
-                    Nakopit = start,
-                    DocExtNum = op.DOC_EXT_NUM
-                });
+                    start += Convert.ToDecimal(op.CrsKontrIn) - Convert.ToDecimal(op.CrsKontrIn);
+                    op.Nakopit = start;
+                    Operations.Add(op);
+                }
             }
-
             RaisePropertyChanged(nameof(Operations));
         }
 

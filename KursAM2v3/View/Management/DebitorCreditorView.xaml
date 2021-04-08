@@ -563,6 +563,10 @@
                                 <dxe:TextEditSettings DisplayFormat="n2" />
                             </dxg:GridColumn.EditSettings>
                         </dxg:GridColumn>
+                        <dxg:GridColumn x:Name="Notes"
+                                        FieldName="Notes"
+                                        ReadOnly="True"
+                                        />
                         <dxg:GridColumn x:Name="Nakopit" FieldName="Nakopit" Header="Накопительно"
                                         ReadOnly="True">
                             <dxg:GridColumn.EditSettings>

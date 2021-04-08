@@ -42,6 +42,8 @@ namespace KursAM2.ViewModel.Management
 
         [DataMember] public decimal Nakopit { set; get; }
 
+        [DataMember] public new string  Id { set; get; }
+
         [DataMember]
         public Project Project
         {
@@ -53,6 +55,8 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
+
+        [DataMember] public string Notes { set; get; }
 
         public override decimal DocCode => DocDC;
 
