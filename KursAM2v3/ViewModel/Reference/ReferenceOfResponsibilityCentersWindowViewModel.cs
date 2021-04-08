@@ -3,13 +3,13 @@ using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using Data;
 using KursAM2.View.KursReferences;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Data;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -33,6 +33,7 @@ namespace KursAM2.ViewModel.Reference
         #region Fields
 
         private SD_40ViewModel myCurrentCenter;
+        private decimal myCenterCount;
 
         #endregion
 
@@ -54,6 +55,18 @@ namespace KursAM2.ViewModel.Reference
         }
 
         public override bool IsCanSaveData => CenterCollection.Any(_ => _.State != RowStatus.NotEdited);
+
+        public decimal CenterCount
+        {
+            get => myCenterCount + CenterCollection.Count(_ => _.State != RowStatus.NotEdited);
+            set
+            {
+                if (myCenterCount == value)
+                    myCenterCount++;
+                myCenterCount = value;
+                RaisePropertyChanged();
+            }
+        }
 
         #endregion
 
@@ -79,8 +92,8 @@ namespace KursAM2.ViewModel.Reference
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     CenterCollection.Clear();
-                    var newNumDocCode = ctx.SD_40.Max(_ => _.DOC_CODE) == 0 ? 10400000001 : ctx.SD_40.Max(_ => _.DOC_CODE) + 1;
-
+                    var newNumDocCode = ctx.SD_40.Any() ? ctx.SD_40.Max(_ => _.DOC_CODE) + 1 : 10400000001;
+                    CenterCount = newNumDocCode;
                     foreach (var p in ctx.SD_40.ToList())
                         CenterCollection.Add(new SD_40ViewModel(p) { State = RowStatus.NotEdited });
                     if (CenterCollection.Count == 0)
@@ -94,7 +107,6 @@ namespace KursAM2.ViewModel.Reference
                             State = RowStatus.NotEdited
                         };
                         CenterCollection.Add(newRow);
-                        CurrentCenter = newRow;
                     }
                 }
 
@@ -114,18 +126,29 @@ namespace KursAM2.ViewModel.Reference
                 {
                     try
                     {
-                        var newNumDocCode = ctx.SD_40.Max(_ => _.DOC_CODE) == 0
-                            ? 10400000001
-                            : ctx.SD_40.Max(_ => _.DOC_CODE) + 1;
+                        var newNumDocCode = ctx.SD_40.Any() ? ctx.SD_40.Max(_ => _.DOC_CODE) + 1 : 10400000001;
                         foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited))
                             switch (c.State)
                             {
                                 case RowStatus.NewRow:
-                                    addNewCenter(ctx, c, newNumDocCode);
+                                    ctx.SD_40.Add(new SD_40
+                                    {
+                                        DOC_CODE = newNumDocCode,
+                                        CENT_FULLNAME = c.CENT_FULLNAME,
+                                        CENT_NAME = c.CENT_NAME,
+                                        IS_DELETED = c.IS_DELETED,
+                                        CENT_PARENT_DC = c.CENT_PARENT_DC
+                                    });
                                     newNumDocCode++;
                                     break;
                                 case RowStatus.Edited:
-                                    updateCenter(ctx, c );
+                                    var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DOC_CODE);
+                                    if (old == null) return;
+                                    old.DOC_CODE = c.DOC_CODE;
+                                    old.CENT_PARENT_DC = c.CENT_PARENT_DC;
+                                    old.CENT_FULLNAME = c.CENT_FULLNAME;
+                                    old.CENT_NAME = c.CENT_NAME;
+                                    old.IS_DELETED = c.IS_DELETED;
                                     break;
                             }
                         ctx.SaveChanges();
@@ -133,6 +156,7 @@ namespace KursAM2.ViewModel.Reference
 
                         foreach (var с in CenterCollection)
                             с.myState = RowStatus.NotEdited;
+                        CenterCount = 0;
                         MainReferences.Refresh();
                         RaisePropertiesChanged(nameof(IsCanSaveData));
                     }
@@ -142,30 +166,9 @@ namespace KursAM2.ViewModel.Reference
                     }
                 }
             }
+            RefreshData();
         }
 
-        private void updateCenter(ALFAMEDIAEntities ctx, SD_40ViewModel c)
-        {
-            var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DOC_CODE);
-            if (old == null) return;
-            old.DOC_CODE = c.DOC_CODE;
-            old.CENT_PARENT_DC = c.CENT_PARENT_DC;
-            old.CENT_FULLNAME = c.CENT_FULLNAME;
-            old.CENT_NAME = c.CENT_NAME;
-            old.IS_DELETED = c.IS_DELETED;
-        }
-
-        private void addNewCenter(ALFAMEDIAEntities ctx, SD_40ViewModel c, decimal newNumDocCode)
-        {
-            ctx.SD_40.Add(new SD_40
-            {
-                DOC_CODE = newNumDocCode,
-                CENT_FULLNAME = c.CENT_FULLNAME,
-                CENT_NAME = c.CENT_NAME,
-                IS_DELETED = c.IS_DELETED,
-                CENT_PARENT_DC = c.CENT_PARENT_DC
-            });
-        }
 
         #region Commands
 
@@ -179,11 +182,12 @@ namespace KursAM2.ViewModel.Reference
             var newRow = new SD_40ViewModel()
             {
                 State = RowStatus.NewRow,
-                CENT_NAME = "Новый центр",
-                IS_DELETED = 0
+                DOC_CODE = CenterCount,
+                CENT_NAME = "Новый центр"
+
             };
             CenterCollection.Add(newRow);
-            CurrentCenter = newRow;
+
             RaisePropertiesChanged(nameof(CenterCollection));
         }
 
@@ -215,11 +219,12 @@ namespace KursAM2.ViewModel.Reference
             {
                 State = RowStatus.NewRow,
                 CENT_NAME = "Новый центр",
-                CENT_FULLNAME = "Новый центр",
+                DOC_CODE = CenterCount,
                 CENT_PARENT_DC = CurrentCenter.DOC_CODE,
-                IS_DELETED = 0
+
             };
             CenterCollection.Add(newRow);
+
             if (Form is ReferenceOfResponsibilityCentersView win)
                 win.treeListView.FocusedNode.IsExpanded = true;
             CurrentCenter = newRow;
@@ -260,7 +265,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void DeleteCenter(object obj)
         {
-            var res = MessageBox.Show($"Вы уверены, что хотите удалить данный банк {CurrentCenter}?", "Запрос",
+            var res = MessageBox.Show($"Вы уверены, что хотите удалить данный центр {CurrentCenter}?", "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             switch (res)
@@ -268,41 +273,62 @@ namespace KursAM2.ViewModel.Reference
                 case MessageBoxResult.Yes:
                     using (var ctx = GlobalOptions.GetEntities())
                     {
-                        using (var transaction = ctx.Database.BeginTransaction())
+                        try
                         {
-                            try
+                            if (ctx.SD_40.Any(_ => _.CENT_PARENT_DC == CurrentCenter.DocCode))
                             {
-                                if (ctx.SD_40.Any(_ => _.CENT_PARENT_DC == CurrentCenter.DocCode))
-                                {
-                                    WinManager.ShowWinUIMessageBox(
-                                        $"В {CurrentCenter} существуют вложеные разделы. Удаление не возможно.",
-                                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Stop);
-                                    return;
-                                }
+                                WinManager.ShowWinUIMessageBox(
+                                    $"В {CurrentCenter} существуют вложеные разделы. Удаление не возможно.",
+                                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Stop);
+                                return;
+                            }
 
-                                ctx.Database.ExecuteSqlCommand("DELETE FROM SD_40 WHERE DOC_CODE = {0}",
-                                    CurrentCenter.DOC_CODE);
-                                var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
-                                if (old == null) return;
-                                ctx.SD_40.Remove(old);
-                                ctx.SaveChanges();
-                                transaction.Commit();
-                                CenterCollection.Remove(CurrentCenter);
-                            }
-                            catch (Exception ex)
-                            {
-                                if (transaction.UnderlyingTransaction.Connection != null)
-                                    transaction.Rollback();
-                                else
-                                    transaction.Rollback();
-                                WindowManager.ShowError(ex);
-                            }
+                            var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
+                            if (old == null) return;
+                            ctx.SD_40.Remove(old);
+                            ctx.SaveChanges();
+                            CenterCollection.Remove(CurrentCenter);
                         }
+                        catch (Exception ex)
+                        {
+                            WindowManager.ShowError(ex);
+                        }
+
                     }
 
                     break;
                 case MessageBoxResult.No:
                     break;
+            }
+        }
+
+        public override void CloseWindow(object form)
+        {
+            var vin = form as Window;
+            if (IsCanSaveData)
+            {
+                var res = MessageBox.Show("Были внесены изменения, сохранить?", "Запрос",
+                    MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+                if (res == MessageBoxResult.Cancel)
+                    return;
+                if (res == MessageBoxResult.No)
+                    vin?.Close();
+                if (res != MessageBoxResult.Yes)
+                    return;
+                try
+                {
+                    SaveData(null);
+                    vin?.Close();
+                }
+                catch (Exception ex)
+                {
+                    WinManager.ShowWinUIMessageBox(ex.Message, "Ошибка");
+                }
+            }
+            else
+            {
+                vin?.Close();
             }
         }
 
