@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using Core;
+using Core.EntityViewModel;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors.Settings;
@@ -46,23 +47,22 @@ namespace KursAM2.View.KursReferences
         }
 
         
-
-        public Project dropProject { set; get; } 
+        public SD_40ViewModel dropCenter { set; get; } 
 
         private void TreeListDragDropManager_Drop(object sender, TreeListDropEventArgs e)
         {
-            if (!(e.TargetNode.Content is Project t) || dropProject == null) return;
-            dropProject.ParentId = t.Id;
+            if (!(e.TargetNode.Content is SD_40ViewModel t) || dropCenter == null) return;
+            dropCenter.DOC_CODE = t.DOC_CODE;
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var tx = ctx.Database.BeginTransaction();
                 try
                 {
-                    var prj = ctx.Projects.FirstOrDefault(_ => _.Id == dropProject.Id);
+                    var centr = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == dropCenter.DOC_CODE);
                     {
-                        if (prj != null)
+                        if (centr != null)
                         {
-                            prj.ParentId = t.Id;
+                            centr.CENT_PARENT_DC = t.DOC_CODE;
                         }
                     }
                     ctx.SaveChanges();
@@ -80,8 +80,8 @@ namespace KursAM2.View.KursReferences
 
         private void TreeListDragDropManager_DragOver(object sender, TreeListDragOverEventArgs e)
         {
-            if (!(DataContext is ProjectReferenceWindowViewModel dtx)) return;
-            dropProject = dtx.CurrentProject;
+            if (!(DataContext is ReferenceOfResponsibilityCentersWindowViewModel dtx)) return;
+            dropCenter = dtx.CurrentCenter;
         }
     }
 }
