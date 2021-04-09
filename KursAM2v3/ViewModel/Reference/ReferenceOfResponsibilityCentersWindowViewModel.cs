@@ -122,46 +122,50 @@ namespace KursAM2.ViewModel.Reference
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                try
+                using (var transaction = ctx.Database.BeginTransaction())
                 {
-                    var newNumDocCode = ctx.SD_40.Any() ? ctx.SD_40.Max(_ => _.DOC_CODE) + 1 : 10400000001;
-                    foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited))
-                        switch (c.State)
-                        {
-                            case RowStatus.NewRow:
-                                ctx.SD_40.Add(new SD_40
-                                {
-                                    DOC_CODE = newNumDocCode,
-                                    CENT_FULLNAME = c.CENT_FULLNAME,
-                                    CENT_NAME = c.CENT_NAME,
-                                    IS_DELETED = c.IS_DELETED,
-                                    CENT_PARENT_DC = c.CENT_PARENT_DC
-                                });
-                                newNumDocCode++;
-                                break;
-                            case RowStatus.Edited:
-                                var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DOC_CODE);
-                                if (old == null) return;
-                                old.DOC_CODE = c.DOC_CODE;
-                                old.CENT_PARENT_DC = c.CENT_PARENT_DC;
-                                old.CENT_FULLNAME = c.CENT_FULLNAME;
-                                old.CENT_NAME = c.CENT_NAME;
-                                old.IS_DELETED = c.IS_DELETED;
-                                break;
+                    try
+                    {
+                        var newNumDocCode = ctx.SD_40.Any() ? ctx.SD_40.Max(_ => _.DOC_CODE) + 1 : 10400000001;
+                        foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited))
+                            switch (c.State)
+                            {
+                                case RowStatus.NewRow:
+                                    ctx.SD_40.Add(new SD_40
+                                    {
+                                        DOC_CODE = newNumDocCode,
+                                        CENT_FULLNAME = c.CENT_FULLNAME,
+                                        CENT_NAME = c.CENT_NAME,
+                                        IS_DELETED = c.IS_DELETED,
+                                        CENT_PARENT_DC = c.CENT_PARENT_DC
+                                    });
+                                    newNumDocCode++;
+                                    break;
+                                case RowStatus.Edited:
+                                    var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DOC_CODE);
+                                    if (old == null) return;
+                                    old.DOC_CODE = c.DOC_CODE;
+                                    old.CENT_PARENT_DC = c.CENT_PARENT_DC;
+                                    old.CENT_FULLNAME = c.CENT_FULLNAME;
+                                    old.CENT_NAME = c.CENT_NAME;
+                                    old.IS_DELETED = c.IS_DELETED;
+                                    break;
+                            }
 
-                        }
-                    ctx.SaveChanges();
+                        ctx.SaveChanges();
+                        transaction.Commit();
 
-
-                    foreach (var с in CenterCollection)
-                        с.myState = RowStatus.NotEdited;
-                    RaisePropertyChanged(nameof(IsCanSaveData));
+                        foreach (var с in CenterCollection)
+                            с.myState = RowStatus.NotEdited;
+                        RaisePropertyChanged(nameof(IsCanSaveData));
+                    }
+                    catch (Exception ex)
+                    {
+                        if (transaction.UnderlyingTransaction.Connection != null)
+                            transaction.Rollback();
+                        WindowManager.ShowError(ex);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    WindowManager.ShowError(ex);
-                }
-
             }
             RefreshData();
         }
