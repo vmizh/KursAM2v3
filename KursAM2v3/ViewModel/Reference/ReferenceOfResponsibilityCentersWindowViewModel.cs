@@ -295,28 +295,37 @@ namespace KursAM2.ViewModel.Reference
                 case MessageBoxResult.Yes:
                     using (var ctx = GlobalOptions.GetEntities())
                     {
-                        try
+                        using (var transaction = ctx.Database.BeginTransaction())
                         {
-                            if (ctx.SD_40.Any(_ => _.CENT_PARENT_DC == CurrentCenter.DocCode))
+                            try
                             {
-                                WinManager.ShowWinUIMessageBox(
-                                    $"В {CurrentCenter} существуют вложеные разделы. Удаление не возможно.",
-                                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Stop);
-                                return;
+                                if (ctx.SD_40.Any(_ => _.CENT_PARENT_DC == CurrentCenter.DocCode))
+                                {
+                                    WinManager.ShowWinUIMessageBox(
+                                        $"В {CurrentCenter} существуют вложеные разделы. Удаление не возможно.",
+                                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Stop);
+                                    return;
+                                }
+
+                                var delCenter = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
+                                if (delCenter == null)
+                                    return;
+                                ctx.SD_40.Remove(delCenter);
+                                ctx.SaveChanges();
+                                transaction.Commit();
+                                CenterCollection.Remove(CurrentCenter);
+                            }
+                            catch (Exception ex)
+                            {
+                                if (transaction.UnderlyingTransaction.Connection != null)
+                                    transaction.Rollback();
+                                else
+                                    transaction.Rollback();
+                                WindowManager.ShowError(ex);
                             }
 
-                            var delCenter = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
-                            if (delCenter == null)
-                                return;
-                            ctx.SD_40.Remove(delCenter);
-                            ctx.SaveChanges();
-                            CenterCollection.Remove(CurrentCenter);
+                            RaisePropertyChanged(nameof(CenterCollection));
                         }
-                        catch (Exception ex)
-                        {
-                            WindowManager.ShowError(ex);
-                        }
-                        RaisePropertyChanged(nameof(CenterCollection));
                     }
 
                     break;
