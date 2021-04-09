@@ -7,9 +7,11 @@ using Data;
 using KursAM2.View.KursReferences;
 using System;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Helper;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -33,7 +35,7 @@ namespace KursAM2.ViewModel.Reference
         #region Fields
 
         private SD_40ViewModel myCurrentCenter;
-        private decimal myCenterCount;
+        private decimal myDocCodeCounter;
 
         #endregion
 
@@ -56,14 +58,14 @@ namespace KursAM2.ViewModel.Reference
 
         public override bool IsCanSaveData => CenterCollection.Any(_ => _.State != RowStatus.NotEdited);
 
-        public decimal CenterCount
+        public decimal DocCodeCounter
         {
-            get => myCenterCount + CenterCollection.Count(_ => _.State != RowStatus.NotEdited);
+            get => myDocCodeCounter - CenterCollection.Count(_ => _.State != RowStatus.NotEdited);
             set
             {
-                if (myCenterCount == value)
+                if (myDocCodeCounter == value)
                     return;
-                myCenterCount = value;
+                myDocCodeCounter = value;
                 RaisePropertyChanged();
             }
         }
@@ -92,15 +94,14 @@ namespace KursAM2.ViewModel.Reference
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     CenterCollection.Clear();
-                    var newNumDocCode = ctx.SD_40.Any() ? ctx.SD_40.Max(_ => _.DOC_CODE) + 1 : 10400000001;
-                    CenterCount = newNumDocCode;
+                    DocCodeCounter = -1;
                     foreach (var p in ctx.SD_40.ToList())
                         CenterCollection.Add(new SD_40ViewModel(p) { State = RowStatus.NotEdited });
                     if (CenterCollection.Count == 0)
                     {
                         var newRow = new SD_40ViewModel()
                         {
-                            DOC_CODE = newNumDocCode,
+                            DOC_CODE = DocCodeCounter,
                             CENT_FULLNAME = "Новый центр",
                             CENT_NAME = "Новый центр",
                             IS_DELETED = 0,
@@ -109,7 +110,6 @@ namespace KursAM2.ViewModel.Reference
                         CenterCollection.Add(newRow);
                     }
                 }
-
                 RaisePropertyChanged(nameof(CenterCollection));
             }
             catch (Exception ex)
@@ -157,6 +157,7 @@ namespace KursAM2.ViewModel.Reference
 
                         foreach (var с in CenterCollection)
                             с.myState = RowStatus.NotEdited;
+                        MainReferences.Refresh();
                         RaisePropertyChanged(nameof(IsCanSaveData));
                     }
                     catch (Exception ex)
@@ -205,7 +206,7 @@ namespace KursAM2.ViewModel.Reference
             var newRow = new SD_40ViewModel()
             {
                 State = RowStatus.NewRow,
-                DOC_CODE = CenterCount,
+                DOC_CODE = DocCodeCounter,
                 CENT_NAME = "Новый центр"
 
             };
@@ -242,7 +243,7 @@ namespace KursAM2.ViewModel.Reference
             {
                 State = RowStatus.NewRow,
                 CENT_NAME = "Новый центр",
-                DOC_CODE = CenterCount,
+                DOC_CODE = DocCodeCounter,
                 CENT_PARENT_DC = CurrentCenter.DOC_CODE,
 
             };
@@ -264,7 +265,6 @@ namespace KursAM2.ViewModel.Reference
             CurrentCenter.CENT_PARENT_DC = null;
             using (var ctx = GlobalOptions.GetEntities())
             {
-
                 try
                 {
                     var centr = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
@@ -310,6 +310,8 @@ namespace KursAM2.ViewModel.Reference
                                 var delCenter = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
                                 if (delCenter == null)
                                     return;
+                                ctx.Database.ExecuteSqlCommand(
+                                    $"DELETE FROM HD_40 WHERE DOC_CODE = {CustomFormat.DecimalToSqlDecimal(delCenter.DOC_CODE)}");
                                 ctx.SD_40.Remove(delCenter);
                                 ctx.SaveChanges();
                                 transaction.Commit();
