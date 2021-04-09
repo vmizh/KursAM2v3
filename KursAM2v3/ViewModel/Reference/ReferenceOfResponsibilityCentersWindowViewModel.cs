@@ -62,7 +62,7 @@ namespace KursAM2.ViewModel.Reference
             set
             {
                 if (myCenterCount == value)
-                    myCenterCount++;
+                    return;
                 myCenterCount = value;
                 RaisePropertyChanged();
             }
@@ -110,7 +110,7 @@ namespace KursAM2.ViewModel.Reference
                     }
                 }
 
-                RaisePropertiesChanged(nameof(CenterCollection));
+                RaisePropertyChanged(nameof(CenterCollection));
             }
             catch (Exception ex)
             {
@@ -122,53 +122,72 @@ namespace KursAM2.ViewModel.Reference
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                using (var transaction = ctx.Database.BeginTransaction())
+                try
                 {
-                    try
-                    {
-                        var newNumDocCode = ctx.SD_40.Any() ? ctx.SD_40.Max(_ => _.DOC_CODE) + 1 : 10400000001;
-                        foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited))
-                            switch (c.State)
-                            {
-                                case RowStatus.NewRow:
-                                    ctx.SD_40.Add(new SD_40
-                                    {
-                                        DOC_CODE = newNumDocCode,
-                                        CENT_FULLNAME = c.CENT_FULLNAME,
-                                        CENT_NAME = c.CENT_NAME,
-                                        IS_DELETED = c.IS_DELETED,
-                                        CENT_PARENT_DC = c.CENT_PARENT_DC
-                                    });
-                                    newNumDocCode++;
-                                    break;
-                                case RowStatus.Edited:
-                                    var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DOC_CODE);
-                                    if (old == null) return;
-                                    old.DOC_CODE = c.DOC_CODE;
-                                    old.CENT_PARENT_DC = c.CENT_PARENT_DC;
-                                    old.CENT_FULLNAME = c.CENT_FULLNAME;
-                                    old.CENT_NAME = c.CENT_NAME;
-                                    old.IS_DELETED = c.IS_DELETED;
-                                    break;
-                            }
-                        ctx.SaveChanges();
-                        transaction.Commit();
+                    var newNumDocCode = ctx.SD_40.Any() ? ctx.SD_40.Max(_ => _.DOC_CODE) + 1 : 10400000001;
+                    foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited))
+                        switch (c.State)
+                        {
+                            case RowStatus.NewRow:
+                                ctx.SD_40.Add(new SD_40
+                                {
+                                    DOC_CODE = newNumDocCode,
+                                    CENT_FULLNAME = c.CENT_FULLNAME,
+                                    CENT_NAME = c.CENT_NAME,
+                                    IS_DELETED = c.IS_DELETED,
+                                    CENT_PARENT_DC = c.CENT_PARENT_DC
+                                });
+                                newNumDocCode++;
+                                break;
+                            case RowStatus.Edited:
+                                var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DOC_CODE);
+                                if (old == null) return;
+                                old.DOC_CODE = c.DOC_CODE;
+                                old.CENT_PARENT_DC = c.CENT_PARENT_DC;
+                                old.CENT_FULLNAME = c.CENT_FULLNAME;
+                                old.CENT_NAME = c.CENT_NAME;
+                                old.IS_DELETED = c.IS_DELETED;
+                                break;
 
-                        foreach (var с in CenterCollection)
-                            с.myState = RowStatus.NotEdited;
-                        CenterCount = 0;
-                        MainReferences.Refresh();
-                        RaisePropertiesChanged(nameof(IsCanSaveData));
-                    }
-                    catch (Exception ex)
-                    {
-                        WindowManager.ShowError(ex);
-                    }
+                        }
+                    ctx.SaveChanges();
+
+
+                    foreach (var с in CenterCollection)
+                        с.myState = RowStatus.NotEdited;
+                    RaisePropertyChanged(nameof(IsCanSaveData));
                 }
+                catch (Exception ex)
+                {
+                    WindowManager.ShowError(ex);
+                }
+
             }
             RefreshData();
         }
 
+        // private void updateCenter(ALFAMEDIAEntities ctx, SD_40ViewModel c)
+        // {
+        //     var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DOC_CODE);
+        //     if (old == null) return;
+        //     old.DOC_CODE = c.DOC_CODE;
+        //     old.CENT_PARENT_DC = c.CENT_PARENT_DC;
+        //     old.CENT_FULLNAME = c.CENT_FULLNAME;
+        //     old.CENT_NAME = c.CENT_NAME;
+        //     old.IS_DELETED = c.IS_DELETED;
+        // }
+
+        // private void addNewCenter(ALFAMEDIAEntities ctx, SD_40ViewModel c, decimal newNumDocCode)
+        // {
+        //     ctx.SD_40.Add(new SD_40
+        //     {
+        //         DOC_CODE = newNumDocCode,
+        //         CENT_FULLNAME = c.CENT_FULLNAME,
+        //         CENT_NAME = c.CENT_NAME,
+        //         IS_DELETED = c.IS_DELETED,
+        //         CENT_PARENT_DC = c.CENT_PARENT_DC
+        //     });
+        // }
 
         #region Commands
 
@@ -188,7 +207,7 @@ namespace KursAM2.ViewModel.Reference
             };
             CenterCollection.Add(newRow);
 
-            RaisePropertiesChanged(nameof(CenterCollection));
+            RaisePropertyChanged(nameof(CenterCollection));
         }
 
         private bool IsCanAddCenter()
@@ -241,7 +260,7 @@ namespace KursAM2.ViewModel.Reference
             CurrentCenter.CENT_PARENT_DC = null;
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var tx = ctx.Database.BeginTransaction();
+
                 try
                 {
                     var centr = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
@@ -249,11 +268,10 @@ namespace KursAM2.ViewModel.Reference
                         if (centr != null) centr.CENT_PARENT_DC = null;
                     }
                     ctx.SaveChanges();
-                    tx.Commit();
+
                 }
                 catch (Exception ex)
                 {
-                    tx.Rollback();
                     WindowManager.ShowError(ex);
                 }
             }
@@ -265,10 +283,10 @@ namespace KursAM2.ViewModel.Reference
 
         private void DeleteCenter(object obj)
         {
-            var res = MessageBox.Show($"Вы уверены, что хотите удалить данный центр {CurrentCenter}?", "Запрос",
+            var info = MessageBox.Show($"Вы уверены, что хотите удалить данный центр {CurrentCenter}?", "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
-            switch (res)
+            switch (info)
             {
                 case MessageBoxResult.Yes:
                     using (var ctx = GlobalOptions.GetEntities())
@@ -283,9 +301,10 @@ namespace KursAM2.ViewModel.Reference
                                 return;
                             }
 
-                            var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
-                            if (old == null) return;
-                            ctx.SD_40.Remove(old);
+                            var delCenter = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
+                            if (delCenter == null)
+                                return;
+                            ctx.SD_40.Remove(delCenter);
                             ctx.SaveChanges();
                             CenterCollection.Remove(CurrentCenter);
                         }
@@ -293,13 +312,14 @@ namespace KursAM2.ViewModel.Reference
                         {
                             WindowManager.ShowError(ex);
                         }
-
+                        RaisePropertyChanged(nameof(CenterCollection));
                     }
 
                     break;
                 case MessageBoxResult.No:
                     break;
             }
+
         }
 
         public override void CloseWindow(object form)
