@@ -1,24 +1,21 @@
-﻿using Core;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using Core;
 using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using KursAM2.View.KursReferences;
-using System;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
 using Helper;
+using KursAM2.View.KursReferences;
 
 namespace KursAM2.ViewModel.Reference
 {
     public class ReferenceOfResponsibilityCentersWindowViewModel : RSWindowViewModelBase
     {
-
-
         public ReferenceOfResponsibilityCentersWindowViewModel()
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -31,46 +28,6 @@ namespace KursAM2.ViewModel.Reference
         {
             Form = win;
         }
-
-        #region Fields
-
-        private SD_40ViewModel myCurrentCenter;
-        private decimal myDocCodeCounter;
-
-        #endregion
-
-        #region Properties
-
-        public ObservableCollection<SD_40ViewModel> CenterCollection { set; get; } =
-            new ObservableCollection<SD_40ViewModel>();
-
-
-        public SD_40ViewModel CurrentCenter
-        {
-            get => myCurrentCenter;
-            set
-            {
-                if (myCurrentCenter != null && myCurrentCenter.Equals(value)) return;
-                myCurrentCenter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public override bool IsCanSaveData => CenterCollection.Any(_ => _.State != RowStatus.NotEdited);
-
-        public decimal DocCodeCounter
-        {
-            get => myDocCodeCounter - CenterCollection.Count(_ => _.State != RowStatus.NotEdited);
-            set
-            {
-                if (myDocCodeCounter == value)
-                    return;
-                myDocCodeCounter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        #endregion
 
         public override void RefreshData(object obj)
         {
@@ -89,6 +46,7 @@ namespace KursAM2.ViewModel.Reference
                         WinManager.ShowWinUIMessageBox(ex.Message, "Ошибка");
                     }
             }
+
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -96,10 +54,10 @@ namespace KursAM2.ViewModel.Reference
                     CenterCollection.Clear();
                     DocCodeCounter = -1;
                     foreach (var p in ctx.SD_40.ToList())
-                        CenterCollection.Add(new SD_40ViewModel(p) { State = RowStatus.NotEdited });
+                        CenterCollection.Add(new SD_40ViewModel(p) {State = RowStatus.NotEdited});
                     if (CenterCollection.Count == 0)
                     {
-                        var newRow = new SD_40ViewModel()
+                        var newRow = new SD_40ViewModel
                         {
                             DOC_CODE = DocCodeCounter,
                             CENT_FULLNAME = "Новый центр",
@@ -110,6 +68,7 @@ namespace KursAM2.ViewModel.Reference
                         CenterCollection.Add(newRow);
                     }
                 }
+
                 RaisePropertyChanged(nameof(CenterCollection));
             }
             catch (Exception ex)
@@ -168,8 +127,39 @@ namespace KursAM2.ViewModel.Reference
                     }
                 }
             }
+
             RefreshData();
         }
+
+        #region Fields
+
+        private SD_40ViewModel myCurrentCenter;
+        private decimal myDocCodeCounter;
+
+        #endregion
+
+        #region Properties
+
+        public ObservableCollection<SD_40ViewModel> CenterCollection { set; get; } =
+            new ObservableCollection<SD_40ViewModel>();
+
+
+        public SD_40ViewModel CurrentCenter
+        {
+            get => myCurrentCenter;
+            set
+            {
+                if (myCurrentCenter != null && myCurrentCenter.Equals(value)) return;
+                myCurrentCenter = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public override bool IsCanSaveData => CenterCollection.Any(_ => _.State != RowStatus.NotEdited);
+
+        private decimal DocCodeCounter = -1;
+
+        #endregion
 
         // private void updateCenter(ALFAMEDIAEntities ctx, SD_40ViewModel c)
         // {
@@ -203,15 +193,14 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewCenter(object obj)
         {
-            var newRow = new SD_40ViewModel()
+            var newRow = new SD_40ViewModel
             {
                 State = RowStatus.NewRow,
                 DOC_CODE = DocCodeCounter,
-                CENT_NAME = "Новый центр"
-
+                CENT_NAME = ""
             };
+            DocCodeCounter--;
             CenterCollection.Add(newRow);
-
             RaisePropertyChanged(nameof(CenterCollection));
         }
 
@@ -239,13 +228,12 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewSectionCenter(object obj)
         {
-            var newRow = new SD_40ViewModel()
+            var newRow = new SD_40ViewModel
             {
                 State = RowStatus.NewRow,
                 CENT_NAME = "Новый центр",
-                DOC_CODE = DocCodeCounter,
-                CENT_PARENT_DC = CurrentCenter.DOC_CODE,
-
+                DOC_CODE = --DocCodeCounter,
+                CENT_PARENT_DC = CurrentCenter.DOC_CODE
             };
             CenterCollection.Add(newRow);
 
@@ -272,7 +260,6 @@ namespace KursAM2.ViewModel.Reference
                         if (centr != null) centr.CENT_PARENT_DC = null;
                     }
                     ctx.SaveChanges();
-
                 }
                 catch (Exception ex)
                 {
@@ -280,7 +267,6 @@ namespace KursAM2.ViewModel.Reference
                 }
             }
         }
-
 
 
         public ICommand DeleteCenterCommand => new Command(DeleteCenter, _ => CurrentCenter != null);
@@ -334,7 +320,6 @@ namespace KursAM2.ViewModel.Reference
                 case MessageBoxResult.No:
                     break;
             }
-
         }
 
         public override void CloseWindow(object form)
