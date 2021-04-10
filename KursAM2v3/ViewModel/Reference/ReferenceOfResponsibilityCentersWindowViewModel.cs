@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using Core;
+﻿using Core;
 using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
@@ -11,11 +6,17 @@ using Core.WindowsManager;
 using Data;
 using Helper;
 using KursAM2.View.KursReferences;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 
 namespace KursAM2.ViewModel.Reference
 {
     public class ReferenceOfResponsibilityCentersWindowViewModel : RSWindowViewModelBase
     {
+
         public ReferenceOfResponsibilityCentersWindowViewModel()
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -28,6 +29,36 @@ namespace KursAM2.ViewModel.Reference
         {
             Form = win;
         }
+
+        #region Fields
+
+        private SD_40ViewModel myCurrentCenter;
+
+
+        #endregion
+
+        #region Properties
+
+        public ObservableCollection<SD_40ViewModel> CenterCollection { set; get; } =
+            new ObservableCollection<SD_40ViewModel>();
+
+
+        public SD_40ViewModel CurrentCenter
+        {
+            get => myCurrentCenter;
+            set
+            {
+                if (myCurrentCenter == value) return;
+                myCurrentCenter = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public override bool IsCanSaveData => CenterCollection.Any(_ => _.State != RowStatus.NotEdited);
+
+        public decimal DocCodeCounter = -1;
+
+        #endregion
 
         public override void RefreshData(object obj)
         {
@@ -46,30 +77,20 @@ namespace KursAM2.ViewModel.Reference
                         WinManager.ShowWinUIMessageBox(ex.Message, "Ошибка");
                     }
             }
-
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     CenterCollection.Clear();
-                    DocCodeCounter = -1;
-                    foreach (var p in ctx.SD_40.ToList())
-                        CenterCollection.Add(new SD_40ViewModel(p) {State = RowStatus.NotEdited});
-                    if (CenterCollection.Count == 0)
-                    {
-                        var newRow = new SD_40ViewModel
+                    foreach (var cent in ctx.SD_40.ToList())
+                        CenterCollection.Add(new SD_40ViewModel(cent)
                         {
-                            DOC_CODE = DocCodeCounter,
-                            CENT_FULLNAME = "Новый центр",
-                            CENT_NAME = "Новый центр",
-                            IS_DELETED = 0,
                             State = RowStatus.NotEdited
-                        };
-                        CenterCollection.Add(newRow);
-                    }
-                }
+                        });
 
+                }
                 RaisePropertyChanged(nameof(CenterCollection));
+
             }
             catch (Exception ex)
             {
@@ -117,6 +138,7 @@ namespace KursAM2.ViewModel.Reference
                         foreach (var с in CenterCollection)
                             с.myState = RowStatus.NotEdited;
                         MainReferences.Refresh();
+                        DocCodeCounter = -1;
                         RaisePropertyChanged(nameof(IsCanSaveData));
                     }
                     catch (Exception ex)
@@ -127,62 +149,9 @@ namespace KursAM2.ViewModel.Reference
                     }
                 }
             }
-
             RefreshData();
         }
 
-        #region Fields
-
-        private SD_40ViewModel myCurrentCenter;
-        private decimal myDocCodeCounter;
-
-        #endregion
-
-        #region Properties
-
-        public ObservableCollection<SD_40ViewModel> CenterCollection { set; get; } =
-            new ObservableCollection<SD_40ViewModel>();
-
-
-        public SD_40ViewModel CurrentCenter
-        {
-            get => myCurrentCenter;
-            set
-            {
-                if (myCurrentCenter != null && myCurrentCenter.Equals(value)) return;
-                myCurrentCenter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public override bool IsCanSaveData => CenterCollection.Any(_ => _.State != RowStatus.NotEdited);
-
-        private decimal DocCodeCounter = -1;
-
-        #endregion
-
-        // private void updateCenter(ALFAMEDIAEntities ctx, SD_40ViewModel c)
-        // {
-        //     var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DOC_CODE);
-        //     if (old == null) return;
-        //     old.DOC_CODE = c.DOC_CODE;
-        //     old.CENT_PARENT_DC = c.CENT_PARENT_DC;
-        //     old.CENT_FULLNAME = c.CENT_FULLNAME;
-        //     old.CENT_NAME = c.CENT_NAME;
-        //     old.IS_DELETED = c.IS_DELETED;
-        // }
-
-        // private void addNewCenter(ALFAMEDIAEntities ctx, SD_40ViewModel c, decimal newNumDocCode)
-        // {
-        //     ctx.SD_40.Add(new SD_40
-        //     {
-        //         DOC_CODE = newNumDocCode,
-        //         CENT_FULLNAME = c.CENT_FULLNAME,
-        //         CENT_NAME = c.CENT_NAME,
-        //         IS_DELETED = c.IS_DELETED,
-        //         CENT_PARENT_DC = c.CENT_PARENT_DC
-        //     });
-        // }
 
         #region Commands
 
@@ -193,48 +162,50 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewCenter(object obj)
         {
-            var newRow = new SD_40ViewModel
+            var newRow = new SD_40ViewModel()
             {
                 State = RowStatus.NewRow,
                 DOC_CODE = DocCodeCounter,
-                CENT_NAME = ""
+                CENT_NAME = "Новый центр"
             };
             DocCodeCounter--;
             CenterCollection.Add(newRow);
+
             RaisePropertyChanged(nameof(CenterCollection));
         }
 
         private bool IsCanAddCenter()
         {
-            var pitem = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.CENT_PARENT_DC);
-            if (pitem == null)
+            var centerItem = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.CENT_PARENT_DC);
+            if (centerItem == null)
                 return true;
-            var pitem2 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == pitem.DOC_CODE);
-            if (pitem2 == null)
+            var centerItem2 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == centerItem.DOC_CODE);
+            if (centerItem2 == null)
                 return true;
-            var pitem3 = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == pitem2.CENT_PARENT_DC);
-            if (pitem3 == null)
+            var centerItem3 = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == centerItem2.CENT_PARENT_DC);
+            if (centerItem3 == null)
                 return true;
-            var pitem4 = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == pitem3.CENT_PARENT_DC);
-            if (pitem4 != null)
+            var centerItem4 = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == centerItem3.CENT_PARENT_DC);
+            if (centerItem4 != null)
                 return false;
             return false;
         }
 
         public ICommand AddNewSectionCenterCommand
         {
-            get { return new Command(AddNewSectionCenter, _ => IsCanAddCenter() && CurrentCenter != null); }
+            get { return new Command(AddNewSectionCenter, _ =>  CurrentCenter != null); }
         }
 
         private void AddNewSectionCenter(object obj)
         {
-            var newRow = new SD_40ViewModel
+            var newRow = new SD_40ViewModel()
             {
                 State = RowStatus.NewRow,
                 CENT_NAME = "Новый центр",
-                DOC_CODE = --DocCodeCounter,
-                CENT_PARENT_DC = CurrentCenter.DOC_CODE
+                DOC_CODE = DocCodeCounter,
+                CENT_PARENT_DC = CurrentCenter.DOC_CODE,
             };
+            DocCodeCounter--;
             CenterCollection.Add(newRow);
 
             if (Form is ReferenceOfResponsibilityCentersView win)
@@ -250,23 +221,28 @@ namespace KursAM2.ViewModel.Reference
 
         private void MoveToTopCenter(object obj)
         {
-            CurrentCenter.CENT_PARENT_DC = null;
             using (var ctx = GlobalOptions.GetEntities())
             {
+                var tx = ctx.Database.BeginTransaction();
                 try
                 {
                     var centr = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
                     {
-                        if (centr != null) centr.CENT_PARENT_DC = null;
+                        if (centr != null)
+                            centr.CENT_PARENT_DC = null;
                     }
                     ctx.SaveChanges();
+                    tx.Commit();
                 }
                 catch (Exception ex)
                 {
+                    tx.Rollback();
                     WindowManager.ShowError(ex);
                 }
             }
+            RefreshData();
         }
+
 
 
         public ICommand DeleteCenterCommand => new Command(DeleteCenter, _ => CurrentCenter != null);
@@ -315,7 +291,7 @@ namespace KursAM2.ViewModel.Reference
                             RaisePropertyChanged(nameof(CenterCollection));
                         }
                     }
-
+                    RefreshData();
                     break;
                 case MessageBoxResult.No:
                     break;
