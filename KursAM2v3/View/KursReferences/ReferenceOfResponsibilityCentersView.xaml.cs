@@ -1,15 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Windows;
-using Core;
+﻿using Core;
 using Core.EntityViewModel;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
-using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.DragDrop;
 using KursAM2.ViewModel.Reference;
 using LayoutManager;
+using System;
+using System.Linq;
+using System.Windows;
 
 namespace KursAM2.View.KursReferences
 {
@@ -18,19 +16,21 @@ namespace KursAM2.View.KursReferences
     /// </summary>
     public partial class ReferenceOfResponsibilityCentersView : ILayout
     {
-        
+
 
         public ReferenceOfResponsibilityCentersView()
         {
             InitializeComponent();
+
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, treeListControl);
             Loaded += ReferenceOfResponsibilityCentersView_Loaded;
             Unloaded += ReferenceOfResponsibilityCentersView_Unloaded;
+            
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
- 
+
         private void ReferenceOfResponsibilityCentersView_Unloaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Save();
@@ -44,15 +44,16 @@ namespace KursAM2.View.KursReferences
         private void TreeListControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
             e.Column.Name = e.Column.FieldName;
+           
         }
 
-        
-        public SD_40ViewModel dropCenter { set; get; } 
+
+        public SD_40ViewModel dropCenter { set; get; }
 
         private void TreeListDragDropManager_Drop(object sender, TreeListDropEventArgs e)
         {
             if (!(e.TargetNode.Content is SD_40ViewModel t) || dropCenter == null) return;
-            dropCenter.DOC_CODE = t.DOC_CODE;
+            dropCenter.CENT_PARENT_DC = t.DOC_CODE;
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var tx = ctx.Database.BeginTransaction();

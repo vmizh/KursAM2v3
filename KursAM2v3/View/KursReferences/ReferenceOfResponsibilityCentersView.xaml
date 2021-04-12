@@ -49,7 +49,8 @@
                 </dxg:TreeListView>
             </dxg:TreeListControl.View>
             <dxmvvm:Interaction.Behaviors>
-                <dxg:TreeListDragDropManager AllowDrag="True" AllowDrop="True"
+                <dxg:TreeListDragDropManager 
+                                             AllowDrag="True" AllowDrop="True"
                                              Drop="TreeListDragDropManager_Drop"
                                              DragOver="TreeListDragDropManager_DragOver"/>
             </dxmvvm:Interaction.Behaviors>

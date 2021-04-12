@@ -52,7 +52,7 @@ namespace KursAM2.ViewModel.Reference
                     return;
                 myCurrentCenter = value;
                 RaisePropertyChanged();
-                RaisePropertyChanged(nameof(CenterCollection));
+                
             }
         }
 
@@ -89,10 +89,8 @@ namespace KursAM2.ViewModel.Reference
                         {
                             State = RowStatus.NotEdited
                         });
-
+                    RaisePropertyChanged(nameof(CenterCollection));
                 }
-                RaisePropertyChanged(nameof(CenterCollection));
-
             }
             catch (Exception ex)
             {
@@ -189,8 +187,6 @@ namespace KursAM2.ViewModel.Reference
             var centerItem4 = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == centerItem3.CENT_PARENT_DC);
             if (centerItem4 != null)
                 return false;
-            
-
             return true;
         }
 
@@ -210,6 +206,7 @@ namespace KursAM2.ViewModel.Reference
             };
             
             CenterCollection.Add(newRow);
+            RaisePropertyChanged(nameof(CenterCollection));
 
             if (Form is ReferenceOfResponsibilityCentersView win)
                 win.treeListView.FocusedNode.IsExpanded = true;
@@ -246,13 +243,11 @@ namespace KursAM2.ViewModel.Reference
             RefreshData(null);
         }
 
-
-
         public ICommand DeleteCenterCommand => new Command(DeleteCenter, _ => CurrentCenter != null);
 
         private void DeleteCenter(object obj)
         {
-            var info = MessageBox.Show($"Вы уверены, что хотите удалить данный центр {CurrentCenter}?", "Запрос",
+            var info = MessageBox.Show($"Вы уверены, что хотите удалить данный центр?", "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             switch (info)
