@@ -48,9 +48,11 @@ namespace KursAM2.ViewModel.Reference
             get => myCurrentCenter;
             set
             {
-                if (myCurrentCenter == value) return;
+                if (myCurrentCenter == value) 
+                    return;
                 myCurrentCenter = value;
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(CenterCollection));
             }
         }
 
@@ -138,7 +140,6 @@ namespace KursAM2.ViewModel.Reference
                         foreach (var с in CenterCollection)
                             с.myState = RowStatus.NotEdited;
                         MainReferences.Refresh();
-                        DocCodeCounter = -1;
                         RaisePropertyChanged(nameof(IsCanSaveData));
                     }
                     catch (Exception ex)
@@ -149,7 +150,7 @@ namespace KursAM2.ViewModel.Reference
                     }
                 }
             }
-            RefreshData();
+            RefreshData(null);
         }
 
 
@@ -165,10 +166,10 @@ namespace KursAM2.ViewModel.Reference
             var newRow = new SD_40ViewModel()
             {
                 State = RowStatus.NewRow,
-                DOC_CODE = DocCodeCounter,
+                DOC_CODE = --DocCodeCounter,
                 CENT_NAME = "Новый центр"
             };
-            DocCodeCounter--;
+            
             CenterCollection.Add(newRow);
 
             RaisePropertyChanged(nameof(CenterCollection));
@@ -188,12 +189,14 @@ namespace KursAM2.ViewModel.Reference
             var centerItem4 = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == centerItem3.CENT_PARENT_DC);
             if (centerItem4 != null)
                 return false;
-            return false;
+            
+
+            return true;
         }
 
         public ICommand AddNewSectionCenterCommand
         {
-            get { return new Command(AddNewSectionCenter, _ =>  CurrentCenter != null); }
+            get { return new Command(AddNewSectionCenter, _ => IsCanAddCenter() &&  CurrentCenter != null); }
         }
 
         private void AddNewSectionCenter(object obj)
@@ -202,10 +205,10 @@ namespace KursAM2.ViewModel.Reference
             {
                 State = RowStatus.NewRow,
                 CENT_NAME = "Новый центр",
-                DOC_CODE = DocCodeCounter,
+                DOC_CODE = --DocCodeCounter,
                 CENT_PARENT_DC = CurrentCenter.DOC_CODE,
             };
-            DocCodeCounter--;
+            
             CenterCollection.Add(newRow);
 
             if (Form is ReferenceOfResponsibilityCentersView win)
@@ -240,7 +243,7 @@ namespace KursAM2.ViewModel.Reference
                     WindowManager.ShowError(ex);
                 }
             }
-            RefreshData();
+            RefreshData(null);
         }
 
 
@@ -261,10 +264,10 @@ namespace KursAM2.ViewModel.Reference
                         {
                             try
                             {
-                                if (ctx.SD_40.Any(_ => _.CENT_PARENT_DC == CurrentCenter.DocCode))
+                                if (ctx.SD_40.Any(_ => _.CENT_PARENT_DC == CurrentCenter.DOC_CODE))
                                 {
                                     WinManager.ShowWinUIMessageBox(
-                                        $"В {CurrentCenter} существуют вложеные разделы. Удаление не возможно.",
+                                        $"В данном центре существуют вложеные разделы. Удаление не возможно.",
                                         "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Stop);
                                     return;
                                 }
@@ -287,14 +290,14 @@ namespace KursAM2.ViewModel.Reference
                                     transaction.Rollback();
                                 WindowManager.ShowError(ex);
                             }
-
-                            RaisePropertyChanged(nameof(CenterCollection));
                         }
                     }
-                    RefreshData();
+                    RaisePropertyChanged(nameof(CenterCollection));
+                
                     break;
                 case MessageBoxResult.No:
                     break;
+                
             }
         }
 
