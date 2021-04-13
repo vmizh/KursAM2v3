@@ -60,12 +60,12 @@ namespace KursAM2.ViewModel.Reference
         public override bool IsCanSaveData => CenterCollection.Any(_ => _.State != RowStatus.NotEdited);
 
         public decimal DocCodeCounter = -1;
-        private Dictionary<decimal?, decimal> DCvsChildNum = new Dictionary<decimal?, decimal>();
+        private Dictionary<decimal?, decimal> DocCodeToParentDC = new Dictionary<decimal?, decimal>();
         #endregion
 
         public override void RefreshData(object obj)
         {
-            DCvsChildNum.Clear();
+            
             if (IsCanSaveData)
             {
                 var res = MessageBox.Show("Были внесены изменения, сохранить?", "Запрос",
@@ -85,6 +85,7 @@ namespace KursAM2.ViewModel.Reference
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
+                    DocCodeToParentDC.Clear();
                     CenterCollection.Clear();
                     foreach (var cent in ctx.SD_40.ToList())
                         CenterCollection.Add(new CentrOfResponsibility(cent)
@@ -109,45 +110,45 @@ namespace KursAM2.ViewModel.Reference
                     try
                     {
                         var newNumDocCode = ctx.SD_40.Any() ? ctx.SD_40.Max(_ => _.DOC_CODE) + 1 : 10400000001;
-                        foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited).OrderByDescending(_ => _.DOC_CODE).ThenBy(_=>_.CENT_PARENT_DC))
-                            if (c.CENT_PARENT_DC == null || c.CENT_PARENT_DC > 0)
+                        foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited).OrderByDescending(_ => _.DocCode).ThenBy(_=>_.CentParentDC))
+                            if (c.CentParentDC == null || c.CentParentDC > 0)
                             {
                                 switch (c.State)
                                 {
                                     case RowStatus.NewRow:
-                                        DCvsChildNum.Add(c.DOC_CODE, newNumDocCode);
+                                        DocCodeToParentDC.Add(c.DocCode, newNumDocCode);
                                         ctx.SD_40.Add(new SD_40
                                         {
                                             DOC_CODE = newNumDocCode,
-                                            CENT_FULLNAME = c.CENT_FULLNAME,
-                                            CENT_NAME = c.CENT_NAME,
-                                            IS_DELETED = c.IS_DELETED,
-                                            CENT_PARENT_DC = c.CENT_PARENT_DC
+                                            CENT_FULLNAME = c.FullName,
+                                            CENT_NAME = c.Name,
+                                            IS_DELETED = c.IsDeleted,
+                                            CENT_PARENT_DC = c.CentParentDC
                                         });
                                         newNumDocCode++;
                                         break;
                                     case RowStatus.Edited:
-                                        var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DOC_CODE);
+                                        var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DocCode);
                                         if (old == null) return;
-                                        old.DOC_CODE = c.DOC_CODE;
-                                        old.CENT_PARENT_DC = c.CENT_PARENT_DC;
-                                        old.CENT_FULLNAME = c.CENT_FULLNAME;
-                                        old.CENT_NAME = c.CENT_NAME;
-                                        old.IS_DELETED = c.IS_DELETED;
+                                        old.DOC_CODE = c.DocCode;
+                                        old.CENT_PARENT_DC = c.CentParentDC;
+                                        old.CENT_FULLNAME = c.FullName;
+                                        old.CENT_NAME = c.Name;
+                                        old.IS_DELETED = c.IsDeleted;
                                         break;
                                 }
 
                             }
                             else
                             {
-                                DCvsChildNum.Add(c.DOC_CODE, newNumDocCode);
+                                DocCodeToParentDC.Add(c.DocCode, newNumDocCode);
                                 ctx.SD_40.Add(new SD_40
                                 {
                                     DOC_CODE = newNumDocCode,
-                                    CENT_FULLNAME = c.CENT_FULLNAME,
-                                    CENT_NAME = c.CENT_NAME,
-                                    IS_DELETED = c.IS_DELETED,
-                                    CENT_PARENT_DC = DCvsChildNum[c.CENT_PARENT_DC]
+                                    CENT_FULLNAME = c.FullName,
+                                    CENT_NAME = c.Name,
+                                    IS_DELETED = c.IsDeleted,
+                                    CENT_PARENT_DC = DocCodeToParentDC[c.CentParentDC]
                                 });
                                 newNumDocCode++;
                                 
@@ -185,8 +186,8 @@ namespace KursAM2.ViewModel.Reference
             var newRow = new CentrOfResponsibility()
             {
                 State = RowStatus.NewRow,
-                DOC_CODE = --DocCodeCounter,
-                CENT_NAME = "Новый центр"
+                DocCode = --DocCodeCounter,
+                Name = "Новый центр"
             };
 
             CenterCollection.Add(newRow);
@@ -198,16 +199,16 @@ namespace KursAM2.ViewModel.Reference
         {
             if (CurrentCenter == null)
                 return false;
-            var centerItem = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.CENT_PARENT_DC);
+            var centerItem = CenterCollection.FirstOrDefault(_ => _.DocCode == CurrentCenter.CentParentDC);
             if (centerItem == null)
                 return true;
-            var centerItem2 = CenterCollection.FirstOrDefault(_ => _.CENT_PARENT_DC == centerItem.DOC_CODE);
+            var centerItem2 = CenterCollection.FirstOrDefault(_ => _.CentParentDC == centerItem.DocCode);
             if (centerItem2 == null)
                 return true;
-            var centerItem3 = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == centerItem2.CENT_PARENT_DC);
+            var centerItem3 = CenterCollection.FirstOrDefault(_ => _.DocCode == centerItem2.CentParentDC);
             if (centerItem3 == null)
                 return true;
-            var centerItem4 = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == centerItem3.CENT_PARENT_DC);
+            var centerItem4 = CenterCollection.FirstOrDefault(_ => _.DocCode == centerItem3.CentParentDC);
             if (centerItem4 != null)
                 return false;
             return true;
@@ -223,9 +224,9 @@ namespace KursAM2.ViewModel.Reference
             var newRow = new CentrOfResponsibility()
             {
                 State = RowStatus.NewRow,
-                CENT_NAME = "Новый центр",
-                DOC_CODE = --DocCodeCounter,
-                CENT_PARENT_DC = CurrentCenter.DOC_CODE,
+                Name = "Новый центр",
+                DocCode = --DocCodeCounter,
+                CentParentDC = CurrentCenter.DocCode,
             };
 
             CenterCollection.Add(newRow);
@@ -239,7 +240,7 @@ namespace KursAM2.ViewModel.Reference
 
         public ICommand MoveToTopCenterCommand
         {
-            get { return new Command(MoveToTopCenter, _ => CurrentCenter?.DOC_CODE != null); }
+            get { return new Command(MoveToTopCenter, _ => CurrentCenter?.DocCode != null); }
         }
 
         private void MoveToTopCenter(object obj)
@@ -249,7 +250,7 @@ namespace KursAM2.ViewModel.Reference
                 var tx = ctx.Database.BeginTransaction();
                 try
                 {
-                    var centr = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
+                    var centr = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DocCode);
                     {
                         if (centr != null)
                             centr.CENT_PARENT_DC = null;
@@ -285,7 +286,7 @@ namespace KursAM2.ViewModel.Reference
                         {
                             try
                             {
-                                if (ctx.SD_40.Any(_ => _.CENT_PARENT_DC == CurrentCenter.DOC_CODE))
+                                if (ctx.SD_40.Any(_ => _.CENT_PARENT_DC == CurrentCenter.DocCode))
                                 {
                                     WinManager.ShowWinUIMessageBox(
                                         $"В данном центре существуют вложеные разделы. Удаление не возможно.",
@@ -293,7 +294,7 @@ namespace KursAM2.ViewModel.Reference
                                     return;
                                 }
 
-                                var delCenter = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DOC_CODE);
+                                var delCenter = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.DocCode);
                                 if (delCenter == null)
                                     return;
                                 ctx.Database.ExecuteSqlCommand(

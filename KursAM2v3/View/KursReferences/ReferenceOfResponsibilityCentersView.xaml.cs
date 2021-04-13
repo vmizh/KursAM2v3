@@ -8,6 +8,7 @@ using LayoutManager;
 using System;
 using System.Linq;
 using System.Windows;
+using Core.ViewModel.Common;
 
 namespace KursAM2.View.KursReferences
 {
@@ -46,24 +47,23 @@ namespace KursAM2.View.KursReferences
             e.Column.Name = e.Column.FieldName;
            
         }
-
-
-        public SD_40ViewModel dropCenter { set; get; }
+        
+        public CentrOfResponsibility dropCenter { set; get; }
 
         private void TreeListDragDropManager_Drop(object sender, TreeListDropEventArgs e)
         {
-            if (!(e.TargetNode.Content is SD_40ViewModel t) || dropCenter == null) return;
-            dropCenter.CENT_PARENT_DC = t.DOC_CODE;
+            if (!(e.TargetNode.Content is CentrOfResponsibility t) || dropCenter == null) return;
+            dropCenter.CentParentDC = t.DocCode;
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var tx = ctx.Database.BeginTransaction();
                 try
                 {
-                    var centr = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == dropCenter.DOC_CODE);
+                    var centr = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == dropCenter.DocCode);
                     {
                         if (centr != null)
                         {
-                            centr.CENT_PARENT_DC = t.DOC_CODE;
+                            centr.CENT_PARENT_DC = t.DocCode;
                         }
                     }
                     ctx.SaveChanges();
