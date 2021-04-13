@@ -1,12 +1,13 @@
 ﻿using Core;
-using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using Helper;
 using KursAM2.View.KursReferences;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -32,38 +33,39 @@ namespace KursAM2.ViewModel.Reference
 
         #region Fields
 
-        private SD_40ViewModel myCurrentCenter;
+        private CentrOfResponsibility myCurrentCenter;
 
 
         #endregion
 
         #region Properties
 
-        public ObservableCollection<SD_40ViewModel> CenterCollection { set; get; } =
-            new ObservableCollection<SD_40ViewModel>();
+        public ObservableCollection<CentrOfResponsibility> CenterCollection { set; get; } =
+            new ObservableCollection<CentrOfResponsibility>();
 
 
-        public SD_40ViewModel CurrentCenter
+        public CentrOfResponsibility CurrentCenter
         {
             get => myCurrentCenter;
             set
             {
-                if (myCurrentCenter == value) 
+                if (myCurrentCenter == value)
                     return;
                 myCurrentCenter = value;
                 RaisePropertyChanged();
-                
+
             }
         }
 
         public override bool IsCanSaveData => CenterCollection.Any(_ => _.State != RowStatus.NotEdited);
 
         public decimal DocCodeCounter = -1;
-
+        private Dictionary<decimal?, decimal> DCvsChildNum = new Dictionary<decimal?, decimal>();
         #endregion
 
         public override void RefreshData(object obj)
         {
+            DCvsChildNum.Clear();
             if (IsCanSaveData)
             {
                 var res = MessageBox.Show("Были внесены изменения, сохранить?", "Запрос",
@@ -85,7 +87,7 @@ namespace KursAM2.ViewModel.Reference
                 {
                     CenterCollection.Clear();
                     foreach (var cent in ctx.SD_40.ToList())
-                        CenterCollection.Add(new SD_40ViewModel(cent)
+                        CenterCollection.Add(new CentrOfResponsibility(cent)
                         {
                             State = RowStatus.NotEdited
                         });
@@ -107,29 +109,48 @@ namespace KursAM2.ViewModel.Reference
                     try
                     {
                         var newNumDocCode = ctx.SD_40.Any() ? ctx.SD_40.Max(_ => _.DOC_CODE) + 1 : 10400000001;
-                        foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited))
-                            switch (c.State)
+                        foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited).OrderByDescending(_ => _.DOC_CODE).ThenBy(_=>_.CENT_PARENT_DC))
+                            if (c.CENT_PARENT_DC == null || c.CENT_PARENT_DC > 0)
                             {
-                                case RowStatus.NewRow:
-                                    ctx.SD_40.Add(new SD_40
-                                    {
-                                        DOC_CODE = newNumDocCode,
-                                        CENT_FULLNAME = c.CENT_FULLNAME,
-                                        CENT_NAME = c.CENT_NAME,
-                                        IS_DELETED = c.IS_DELETED,
-                                        CENT_PARENT_DC = c.CENT_PARENT_DC
-                                    });
-                                    newNumDocCode++;
-                                    break;
-                                case RowStatus.Edited:
-                                    var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DOC_CODE);
-                                    if (old == null) return;
-                                    old.DOC_CODE = c.DOC_CODE;
-                                    old.CENT_PARENT_DC = c.CENT_PARENT_DC;
-                                    old.CENT_FULLNAME = c.CENT_FULLNAME;
-                                    old.CENT_NAME = c.CENT_NAME;
-                                    old.IS_DELETED = c.IS_DELETED;
-                                    break;
+                                switch (c.State)
+                                {
+                                    case RowStatus.NewRow:
+                                        DCvsChildNum.Add(c.DOC_CODE, newNumDocCode);
+                                        ctx.SD_40.Add(new SD_40
+                                        {
+                                            DOC_CODE = newNumDocCode,
+                                            CENT_FULLNAME = c.CENT_FULLNAME,
+                                            CENT_NAME = c.CENT_NAME,
+                                            IS_DELETED = c.IS_DELETED,
+                                            CENT_PARENT_DC = c.CENT_PARENT_DC
+                                        });
+                                        newNumDocCode++;
+                                        break;
+                                    case RowStatus.Edited:
+                                        var old = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == c.DOC_CODE);
+                                        if (old == null) return;
+                                        old.DOC_CODE = c.DOC_CODE;
+                                        old.CENT_PARENT_DC = c.CENT_PARENT_DC;
+                                        old.CENT_FULLNAME = c.CENT_FULLNAME;
+                                        old.CENT_NAME = c.CENT_NAME;
+                                        old.IS_DELETED = c.IS_DELETED;
+                                        break;
+                                }
+
+                            }
+                            else
+                            {
+                                DCvsChildNum.Add(c.DOC_CODE, newNumDocCode);
+                                ctx.SD_40.Add(new SD_40
+                                {
+                                    DOC_CODE = newNumDocCode,
+                                    CENT_FULLNAME = c.CENT_FULLNAME,
+                                    CENT_NAME = c.CENT_NAME,
+                                    IS_DELETED = c.IS_DELETED,
+                                    CENT_PARENT_DC = DCvsChildNum[c.CENT_PARENT_DC]
+                                });
+                                newNumDocCode++;
+                                
                             }
 
                         ctx.SaveChanges();
@@ -161,13 +182,13 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewCenter(object obj)
         {
-            var newRow = new SD_40ViewModel()
+            var newRow = new CentrOfResponsibility()
             {
                 State = RowStatus.NewRow,
                 DOC_CODE = --DocCodeCounter,
                 CENT_NAME = "Новый центр"
             };
-            
+
             CenterCollection.Add(newRow);
 
             RaisePropertyChanged(nameof(CenterCollection));
@@ -175,6 +196,8 @@ namespace KursAM2.ViewModel.Reference
 
         private bool IsCanAddCenter()
         {
+            if (CurrentCenter == null)
+                return false;
             var centerItem = CenterCollection.FirstOrDefault(_ => _.DOC_CODE == CurrentCenter.CENT_PARENT_DC);
             if (centerItem == null)
                 return true;
@@ -192,19 +215,19 @@ namespace KursAM2.ViewModel.Reference
 
         public ICommand AddNewSectionCenterCommand
         {
-            get { return new Command(AddNewSectionCenter, _ => IsCanAddCenter() &&  CurrentCenter != null); }
+            get { return new Command(AddNewSectionCenter, _ => IsCanAddCenter() && CurrentCenter != null); }
         }
 
         private void AddNewSectionCenter(object obj)
         {
-            var newRow = new SD_40ViewModel()
+            var newRow = new CentrOfResponsibility()
             {
                 State = RowStatus.NewRow,
                 CENT_NAME = "Новый центр",
                 DOC_CODE = --DocCodeCounter,
                 CENT_PARENT_DC = CurrentCenter.DOC_CODE,
             };
-            
+
             CenterCollection.Add(newRow);
             RaisePropertyChanged(nameof(CenterCollection));
 
@@ -243,7 +266,10 @@ namespace KursAM2.ViewModel.Reference
             RefreshData(null);
         }
 
-        public ICommand DeleteCenterCommand => new Command(DeleteCenter, _ => CurrentCenter != null);
+        public ICommand DeleteCenterCommand
+        {
+            get { return new Command(DeleteCenter, _ => CurrentCenter != null); }
+        }
 
         private void DeleteCenter(object obj)
         {
@@ -288,11 +314,11 @@ namespace KursAM2.ViewModel.Reference
                         }
                     }
                     RaisePropertyChanged(nameof(CenterCollection));
-                
+
                     break;
                 case MessageBoxResult.No:
                     break;
-                
+
             }
         }
 
