@@ -101,7 +101,9 @@ namespace Core.EntityViewModel
 
         [Display(AutoGenerateField = false)]
         public EntityLoadCodition LoadCondition { get; set; }
+
         [Display(AutoGenerateField = false)]
+
         public List<SD_40> LoadList()
         {
             throw new NotImplementedException();

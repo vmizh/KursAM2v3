@@ -30,6 +30,7 @@ namespace KursAM2.View.KursReferences
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
+
         public string LayoutManagerName { get; set; }
 
         private void ReferenceOfResponsibilityCentersView_Unloaded(object sender, RoutedEventArgs e)
