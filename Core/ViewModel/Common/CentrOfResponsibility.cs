@@ -13,6 +13,8 @@ namespace Core.ViewModel.Common
     [DataContract]
     public class CentrOfResponsibility : SD_40ViewModel
     {
+        #region Constructor
+
         public CentrOfResponsibility()
         {
         }
@@ -21,6 +23,10 @@ namespace Core.ViewModel.Common
             : base(doc)
         {
         }
+
+        #endregion
+
+
         /*public CentrOfResponsibility(SD_40 entity)
         {
             Entity = entity;
@@ -38,6 +44,9 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }*/
+
+        #region Properties
+
         [Display(AutoGenerateField = false)]
         public override decimal DocCode
         {
@@ -75,7 +84,6 @@ namespace Core.ViewModel.Common
             }
         }
 
-
         [Display(Name = "Полное наименование")]
         public string FullName
         {
@@ -88,7 +96,6 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
-
 
         [Display(Name = "Удален")]
         public int? IsDeleted
@@ -103,6 +110,33 @@ namespace Core.ViewModel.Common
             }
         }
 
+        [Display(AutoGenerateField = false)]
+        public SD_40 SD_402
+        {
+            get => Entity.SD_402;
+            set
+            {
+                if (Entity.SD_402 == value) return;
+                Entity.SD_402 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+         public void UpdateFrom(SD_40 ent)
+        {
+            CENT_FULLNAME = ent.CENT_FULLNAME;
+            CENT_NAME = ent.CENT_NAME;
+            CENT_PARENT_DC = ent.CENT_PARENT_DC;
+            IS_DELETED = ent.IS_DELETED;
+            SD_402 = ent.SD_402;
+        }
+
+        #endregion
+       
         public override string ToString()
         {
             return Name;
