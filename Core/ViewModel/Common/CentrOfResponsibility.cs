@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
+using Core.ViewModel.Base;
 
 namespace Core.ViewModel.Common
 {
@@ -11,29 +12,24 @@ namespace Core.ViewModel.Common
     ///     Класс контракта для Центров ответственности
     /// </summary>
     [DataContract]
-    public class CentrOfResponsibility : SD_40ViewModel
+    public class CentrOfResponsibility : RSViewModelBase
     {
         #region Constructor
 
         public CentrOfResponsibility()
         {
+            Entity = DefaultValue();
         }
 
-        public CentrOfResponsibility(SD_40 doc)
-            : base(doc)
+        public CentrOfResponsibility(SD_40 entity)
         {
+            Entity = entity ?? DefaultValue();
         }
 
         #endregion
 
-
-        /*public CentrOfResponsibility(SD_40 entity)
-        {
-            Entity = entity;
-        }
-
         private SD_40 myEntity;
-
+        [Display(AutoGenerateField = false)]
         public SD_40 Entity
         {
             get => myEntity;
@@ -43,7 +39,7 @@ namespace Core.ViewModel.Common
                 myEntity = value;
                 RaisePropertyChanged();
             }
-        }*/
+        }
 
         #region Properties
 
@@ -59,6 +55,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         [Display(AutoGenerateField = false)]
         public decimal? CentParentDC
         {
@@ -71,6 +68,7 @@ namespace Core.ViewModel.Common
                 RaisePropertyChanged();
             }
         }
+
         [Display(Name = "Код")]
         public override string Name
         {
@@ -128,15 +126,23 @@ namespace Core.ViewModel.Common
 
          public void UpdateFrom(SD_40 ent)
         {
-            CENT_FULLNAME = ent.CENT_FULLNAME;
-            CENT_NAME = ent.CENT_NAME;
-            CENT_PARENT_DC = ent.CENT_PARENT_DC;
-            IS_DELETED = ent.IS_DELETED;
+            FullName = ent.CENT_FULLNAME;
+            Name = ent.CENT_NAME;
+            CentParentDC = ent.CENT_PARENT_DC;
+            IsDeleted= ent.IS_DELETED;
             SD_402 = ent.SD_402;
         }
 
+         public SD_40 DefaultValue()
+         {
+             return new SD_40
+             {
+                 DOC_CODE = -1
+             };
+         }
+
         #endregion
-       
+
         public override string ToString()
         {
             return Name;
