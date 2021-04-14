@@ -30,7 +30,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells["A4"].Value = "Контрагент";
             sheet.Cells["B4"].Value = document.Client != null ? document.Client.Name : "";
             sheet.Cells["A5"].Value = "Центр ответственности";
-            sheet.Cells["B5"].Value = document.CO != null ? document.CO.CENT_NAME : "";
+            sheet.Cells["B5"].Value = document.CO != null ? document.CO.Name : "";
             sheet.Cells["A6"].Value = "К оплате";
             sheet.Cells["B6"].Value = Convert.ToDouble(document.SF_CRS_SUMMA_K_OPLATE);
             sheet.Cells["B6"].NumberFormat = "#`##0.00";

@@ -33,8 +33,8 @@
                                   EnableImmediatePosting="True"
                                   AllowPerPixelScrolling="True"
                                   ShowTotalSummary="False"
-                                  KeyFieldName="DOC_CODE"
-                                  ParentFieldName="CENT_PARENT_DC"
+                                  KeyFieldName="DocCode"
+                                  ParentFieldName="CentParentDC"
                                   EditorButtonShowMode="ShowForFocusedRow">
                    <dxg:TreeListView.ContextMenu>
                         <ContextMenu>

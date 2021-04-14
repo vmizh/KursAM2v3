@@ -20,7 +20,7 @@ namespace Core.EntityViewModel
         {
             Entity = entity ?? DefaultValue();
         }
-        [Display(Name = "Код")]
+        
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;
@@ -31,29 +31,6 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-        [Display(Name = "Полное наименование")]
-        public string CENT_FULLNAME
-        {
-            get => Entity.CENT_FULLNAME;
-            set
-            {
-                if (Entity.CENT_FULLNAME == value) return;
-                Entity.CENT_FULLNAME = value;
-                RaisePropertyChanged();
-            }
-        }
-        [Display(Name = "Наименование")]
-        public string CENT_NAME
-        {
-            get => Entity.CENT_NAME;
-            set
-            {
-                if (Entity.CENT_NAME == value) return;
-                Entity.CENT_NAME = value;
-                RaisePropertyChanged();
-            }
-        }
-        [Display(Name = "Код подраздела")]
         public decimal? CENT_PARENT_DC
         {
             get => Entity.CENT_PARENT_DC;
@@ -64,6 +41,30 @@ namespace Core.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
+        [Display(AutoGenerateField = false)]
+        public string CENT_NAME
+        {
+            get => Entity.CENT_NAME;
+            set
+            {
+                if (Entity.CENT_NAME == value) return;
+                Entity.CENT_NAME = value;
+                RaisePropertyChanged();
+            }
+        }
+        [Display(AutoGenerateField = false)]
+        public string CENT_FULLNAME
+        {
+            get => Entity.CENT_FULLNAME;
+            set
+            {
+                if (Entity.CENT_FULLNAME == value) return;
+                Entity.CENT_FULLNAME = value;
+                RaisePropertyChanged();
+            }
+        }
+
         [Display(AutoGenerateField = false)]
         public int? IS_DELETED
         {
@@ -100,7 +101,9 @@ namespace Core.EntityViewModel
 
         [Display(AutoGenerateField = false)]
         public EntityLoadCodition LoadCondition { get; set; }
+
         [Display(AutoGenerateField = false)]
+
         public List<SD_40> LoadList()
         {
             throw new NotImplementedException();

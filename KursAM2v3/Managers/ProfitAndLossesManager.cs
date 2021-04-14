@@ -1390,7 +1390,7 @@ namespace KursAM2.Managers
                 in
                 MainReferences.COList.Values
             )
-                co.Add(c.DOC_CODE, c.CENT_NAME);
+                co.Add(c.DocCode, c.Name);
             using (
                 var ent = GlobalOptions.GetEntities())
             {
