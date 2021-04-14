@@ -123,7 +123,7 @@ namespace KursAM2.ViewModel.Reference
                                             DOC_CODE = newNumDocCode,
                                             CENT_FULLNAME = c.FullName,
                                             CENT_NAME = c.Name,
-                                            IS_DELETED = c.IsDeleted,
+                                            IS_DELETED = c.IsDeleted ? 1 : 0,
                                             CENT_PARENT_DC = c.CentParentDC
                                         });
                                         newNumDocCode++;
@@ -135,7 +135,7 @@ namespace KursAM2.ViewModel.Reference
                                         old.CENT_PARENT_DC = c.CentParentDC;
                                         old.CENT_FULLNAME = c.FullName;
                                         old.CENT_NAME = c.Name;
-                                        old.IS_DELETED = c.IsDeleted;
+                                        old.IS_DELETED = c.IsDeleted  ? 1 : 0;
                                         break;
                                 }
 
@@ -148,7 +148,7 @@ namespace KursAM2.ViewModel.Reference
                                     DOC_CODE = newNumDocCode,
                                     CENT_FULLNAME = c.FullName,
                                     CENT_NAME = c.Name,
-                                    IS_DELETED = c.IsDeleted,
+                                    IS_DELETED = c.IsDeleted  ? 1 : 0,
                                     CENT_PARENT_DC = DocCodeToParentDC[c.CentParentDC]
                                 });
                                 newNumDocCode++;
