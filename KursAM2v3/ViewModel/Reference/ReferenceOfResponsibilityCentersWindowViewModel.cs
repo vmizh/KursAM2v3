@@ -268,9 +268,16 @@ namespace KursAM2.ViewModel.Reference
             RefreshData(null);
         }
 
+        private bool IsCanDeleteCenter()
+        {
+            if (CurrentCenter == null)
+                return false;
+            var delCenter = CenterCollection.Any(_ => _.CentParentDC == CurrentCenter.DocCode);
+            return !delCenter;
+        }
         public ICommand DeleteCenterCommand
         {
-            get { return new Command(DeleteCenter, _ => CurrentCenter != null); }
+            get { return new Command(DeleteCenter, _ => IsCanDeleteCenter() && CurrentCenter != null); }
         }
 
         private void DeleteCenter(object obj)
