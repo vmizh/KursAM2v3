@@ -27,6 +27,7 @@
             NotifyOnSourceUpdated=True, 
             NotifyOnTargetUpdated=True}"
                              AutoGeneratingColumn="TreeListControl_OnAutoGeneratingColumn"
+                             
                              >
             <dxg:TreeListControl.View>
                 <dxg:TreeListView x:Name="treeListView"
