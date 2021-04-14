@@ -244,10 +244,10 @@ namespace KursAM2.ViewModel.Management
                     var sn = data1.FirstOrDefault(_ => _.DocName == " На начало учета");
                     if (sn != null)
                     {
-                        if ((decimal) sn.CrsKontrIn == 0)
-                            sum = sn.CrsKontrIn;
+                        if ((decimal) sn.CrsKontrIn > 0)
+                            sum = -sn.CrsKontrIn;
                         else
-                            sum = -sn.CrsKontrOut;
+                            sum = sn.CrsKontrOut;
                         //Operations.Add(KonragentBalansRowViewModel.DbToViewModel(sn, (decimal) Math.Round(sum, 2)));
                         Operations.Add(sn);
                         data1.Remove(sn);
