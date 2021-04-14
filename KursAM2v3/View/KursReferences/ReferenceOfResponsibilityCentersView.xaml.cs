@@ -8,6 +8,7 @@ using LayoutManager;
 using System;
 using System.Linq;
 using System.Windows;
+using Core.ViewModel.Common;
 
 namespace KursAM2.View.KursReferences
 {
@@ -47,8 +48,7 @@ namespace KursAM2.View.KursReferences
            
         }
 
-
-        public SD_40ViewModel dropCenter { set; get; }
+        public CentrOfResponsibility  dropCenter { set; get; }
 
         private void TreeListDragDropManager_Drop(object sender, TreeListDropEventArgs e)
         {
@@ -76,7 +76,7 @@ namespace KursAM2.View.KursReferences
                     WindowManager.ShowError(ex);
                 }
             }
-
+            treeListControl.RefreshData();
         }
 
         private void TreeListDragDropManager_DragOver(object sender, TreeListDragOverEventArgs e)

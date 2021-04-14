@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Core.ViewModel.Common;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -32,18 +33,18 @@ namespace KursAM2.ViewModel.Reference
 
         #region Fields
 
-        private SD_40ViewModel myCurrentCenter;
+        private CentrOfResponsibility myCurrentCenter;
 
 
         #endregion
 
         #region Properties
 
-        public ObservableCollection<SD_40ViewModel> CenterCollection { set; get; } =
-            new ObservableCollection<SD_40ViewModel>();
+        public ObservableCollection<CentrOfResponsibility> CenterCollection { set; get; } =
+            new ObservableCollection<CentrOfResponsibility>();
 
 
-        public SD_40ViewModel CurrentCenter
+        public CentrOfResponsibility CurrentCenter
         {
             get => myCurrentCenter;
             set
@@ -85,7 +86,7 @@ namespace KursAM2.ViewModel.Reference
                 {
                     CenterCollection.Clear();
                     foreach (var cent in ctx.SD_40.ToList())
-                        CenterCollection.Add(new SD_40ViewModel(cent)
+                        CenterCollection.Add(new CentrOfResponsibility(cent)
                         {
                             State = RowStatus.NotEdited
                         });
@@ -161,7 +162,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewCenter(object obj)
         {
-            var newRow = new SD_40ViewModel()
+            var newRow = new CentrOfResponsibility()
             {
                 State = RowStatus.NewRow,
                 DOC_CODE = --DocCodeCounter,
@@ -197,7 +198,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewSectionCenter(object obj)
         {
-            var newRow = new SD_40ViewModel()
+            var newRow = new CentrOfResponsibility()
             {
                 State = RowStatus.NewRow,
                 CENT_NAME = "Новый центр",
