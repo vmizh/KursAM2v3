@@ -1,23 +1,29 @@
-﻿using Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using Core;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Mvvm.Native;
 using Helper;
 using KursAM2.View.KursReferences;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using Core.ViewModel.Common;
 
 namespace KursAM2.ViewModel.Reference
 {
     public class ReferenceOfResponsibilityCentersWindowViewModel : RSWindowViewModelBase
     {
+        #region Fields
+
+        private CentrOfResponsibility myCurrentCenter;
+
+        #endregion
 
         public ReferenceOfResponsibilityCentersWindowViewModel()
         {
@@ -32,41 +38,8 @@ namespace KursAM2.ViewModel.Reference
             Form = win;
         }
 
-        #region Fields
-
-        private CentrOfResponsibility myCurrentCenter;
-
-
-        #endregion
-
-        #region Properties
-
-        public ObservableCollection<CentrOfResponsibility> CenterCollection { set; get; } =
-            new ObservableCollection<CentrOfResponsibility>();
-
-
-        public CentrOfResponsibility CurrentCenter
-        {
-            get => myCurrentCenter;
-            set
-            {
-                if (myCurrentCenter == value)
-                    return;
-                myCurrentCenter = value;
-                RaisePropertyChanged();
-
-            }
-        }
-
-        public override bool IsCanSaveData => CenterCollection.Any(_ => _.State != RowStatus.NotEdited);
-
-        public decimal DocCodeCounter = -1;
-        private Dictionary<decimal?, decimal> DocCodeToParentDC = new Dictionary<decimal?, decimal>();
-        #endregion
-
         public override void RefreshData(object obj)
         {
-            
             if (IsCanSaveData)
             {
                 var res = MessageBox.Show("Были внесены изменения, сохранить?", "Запрос",
@@ -82,6 +55,7 @@ namespace KursAM2.ViewModel.Reference
                         WinManager.ShowWinUIMessageBox(ex.Message, "Ошибка");
                     }
             }
+
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -111,7 +85,8 @@ namespace KursAM2.ViewModel.Reference
                     try
                     {
                         var newNumDocCode = ctx.SD_40.Any() ? ctx.SD_40.Max(_ => _.DOC_CODE) + 1 : 10400000001;
-                        foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited).OrderByDescending(_ => _.DocCode).ThenBy(_=>_.CentParentDC))
+                        foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited)
+                            .OrderByDescending(_ => _.DocCode).ThenBy(_ => _.CentParentDC))
                             if (c.CentParentDC == null || c.CentParentDC > 0)
                             {
                                 switch (c.State)
@@ -135,10 +110,9 @@ namespace KursAM2.ViewModel.Reference
                                         old.CENT_PARENT_DC = c.CentParentDC;
                                         old.CENT_FULLNAME = c.FullName;
                                         old.CENT_NAME = c.Name;
-                                        old.IS_DELETED = c.IsDeleted  ? 1 : 0;
+                                        old.IS_DELETED = c.IsDeleted ? 1 : 0;
                                         break;
                                 }
-
                             }
                             else
                             {
@@ -148,11 +122,10 @@ namespace KursAM2.ViewModel.Reference
                                     DOC_CODE = newNumDocCode,
                                     CENT_FULLNAME = c.FullName,
                                     CENT_NAME = c.Name,
-                                    IS_DELETED = c.IsDeleted  ? 1 : 0,
+                                    IS_DELETED = c.IsDeleted ? 1 : 0,
                                     CENT_PARENT_DC = DocCodeToParentDC[c.CentParentDC]
                                 });
                                 newNumDocCode++;
-                                
                             }
 
                         ctx.SaveChanges();
@@ -171,8 +144,34 @@ namespace KursAM2.ViewModel.Reference
                     }
                 }
             }
+
             RefreshData(null);
         }
+
+        #region Properties
+
+        public ObservableCollection<CentrOfResponsibility> CenterCollection { set; get; } =
+            new ObservableCollection<CentrOfResponsibility>();
+
+
+        public CentrOfResponsibility CurrentCenter
+        {
+            get => myCurrentCenter;
+            set
+            {
+                if (myCurrentCenter == value)
+                    return;
+                myCurrentCenter = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public override bool IsCanSaveData => CenterCollection.Any(_ => _.State != RowStatus.NotEdited);
+
+        public decimal DocCodeCounter = -1;
+        private readonly Dictionary<decimal?, decimal> DocCodeToParentDC = new Dictionary<decimal?, decimal>();
+
+        #endregion
 
 
         #region Commands
@@ -184,7 +183,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewCenter(object obj)
         {
-            var newRow = new CentrOfResponsibility()
+            var newRow = new CentrOfResponsibility
             {
                 State = RowStatus.NewRow,
                 DocCode = --DocCodeCounter,
@@ -222,12 +221,12 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewSectionCenter(object obj)
         {
-            var newRow = new CentrOfResponsibility()
+            var newRow = new CentrOfResponsibility
             {
                 State = RowStatus.NewRow,
                 Name = "Новый центр",
                 DocCode = --DocCodeCounter,
-                CentParentDC = CurrentCenter.DocCode,
+                CentParentDC = CurrentCenter.DocCode
             };
 
             CenterCollection.Add(newRow);
@@ -265,6 +264,7 @@ namespace KursAM2.ViewModel.Reference
                     WindowManager.ShowError(ex);
                 }
             }
+
             RefreshData(null);
         }
 
@@ -275,7 +275,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void DeleteCenter(object obj)
         {
-            var info = MessageBox.Show($"Вы уверены, что хотите удалить данный центр?", "Запрос",
+            var info = MessageBox.Show("Вы уверены, что хотите удалить данный центр?", "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             switch (info)
@@ -290,7 +290,7 @@ namespace KursAM2.ViewModel.Reference
                                 if (ctx.SD_40.Any(_ => _.CENT_PARENT_DC == CurrentCenter.DocCode))
                                 {
                                     WinManager.ShowWinUIMessageBox(
-                                        $"В данном центре существуют вложеные разделы. Удаление не возможно.",
+                                        "В данном центре существуют вложеные разделы. Удаление не возможно.",
                                         "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Stop);
                                     return;
                                 }
@@ -315,12 +315,12 @@ namespace KursAM2.ViewModel.Reference
                             }
                         }
                     }
+
                     RaisePropertyChanged(nameof(CenterCollection));
 
                     break;
                 case MessageBoxResult.No:
                     break;
-
             }
         }
 
@@ -351,6 +351,20 @@ namespace KursAM2.ViewModel.Reference
             else
             {
                 vin?.Close();
+            }
+        }
+
+        public override void ResetLayout(object form)
+        {
+            base.ResetLayout(form);
+            if (!(form is ReferenceOfResponsibilityCentersView frm)) return;
+            foreach (var c in frm.treeListControl.Columns)
+            {
+                var propertyAttributes =
+                    MetadataHelper.GetFluentAPIAttributes(typeof(DataAnnotationCentrOfResponsibility),
+                        typeof(CentrOfResponsibility), c.FieldName).ToList();
+                var attr = (DisplayAttribute) propertyAttributes[0];
+                c.Header = attr.Name;
             }
         }
 

@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Windows;
-using System.Xml;
+using Data;
 using DevExpress.Xpf.Core.Serialization;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
+using Helper;
 
 namespace LayoutManager
 {
@@ -36,7 +39,7 @@ namespace LayoutManager
                 {
                     ControlLayouts.Add(l);
                     var m = new MemoryStream();
-                    ((DataControlBase)l.LayoutControl).SaveLayoutToStream(m);
+                    ((DataControlBase) l.LayoutControl).SaveLayoutToStream(m);
                     BaseControlLayouts.Add(l.LayoutControl, m);
                 }
         }
@@ -67,7 +70,7 @@ namespace LayoutManager
                 return;
             ControlLayouts.Add(layout);
             var m = new MemoryStream();
-            ((DataControlBase)layout.LayoutControl).SaveLayoutToStream(m);
+            ((DataControlBase) layout.LayoutControl).SaveLayoutToStream(m);
             BaseControlLayouts.Add(layout.LayoutControl, m);
         }
 
@@ -85,18 +88,38 @@ namespace LayoutManager
                 BaseLayout.Position = 0;
                 if (LayoutControl != null) DXSerializer.Deserialize(LayoutControl, BaseLayout, "Kurs", null);
                 BaseLayout.Position = 0;
-                if (BaseControlLayouts.Count > 0)
-                    foreach (var l in BaseControlLayouts)
-                    {
-                        l.Value.Position = 0;
-                        //((DataControlBase)l.Key).BeginInit();
-                        ((DataControlBase)l.Key).RestoreLayoutFromStream(l.Value);
-                        //((DataControlBase)l.Key).EndInit();
-                    }
+                if (BaseControlLayouts.Count <= 0) return;
+                foreach (var l in BaseControlLayouts)
+                {
+                    l.Value.Position = 0;
+                    //((DataControlBase)l.Key).BeginInit();
+                    ((DataControlBase) l.Key).RestoreLayoutFromStream(l.Value);
+                    //((DataControlBase)l.Key).EndInit();
+                }
+
+                //var connString = new SqlConnectionStringBuilder
+                //{
+                //    DataSource = "172.16.0.1",
+                //    InitialCatalog = "KursSystem",
+                //    UserID = "sa",
+                //    Password = "CbvrfFhntvrf65"
+                //}.ToString();
+                //using (var ctx = new KursSystemEntities(connString))
+                //{
+                //    if (CurrentUser.UserInfo == null) return;
+                //    var w = Win != null ? Win.GetType().Name : "Control";
+                //    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
+                //                                               && _.FormName == w && _.ControlName == FileName);
+                //    if (l == null) return;
+                //    ctx.FormLayout.Remove(l);
+                //    ctx.SaveChanges();
+                //}
             }
+#pragma warning disable 168
+            // ReSharper disable once EmptyGeneralCatchClause
             catch (Exception ex)
+#pragma warning restore 168
             {
-                MessageBox.Show(ex.Message);
             }
         }
     }
