@@ -177,6 +177,9 @@
     <Compile Include="DistributeNakladRow.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="DocHistory.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="DOC_FILES.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

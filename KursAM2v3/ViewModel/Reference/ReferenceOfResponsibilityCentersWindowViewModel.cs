@@ -17,7 +17,7 @@ using KursAM2.View.KursReferences;
 
 namespace KursAM2.ViewModel.Reference
 {
-    public class ReferenceOfResponsibilityCentersWindowViewModel : RSWindowViewModelBase
+    public sealed class ReferenceOfResponsibilityCentersWindowViewModel : RSWindowViewModelBase
     {
         #region Fields
 

@@ -2052,6 +2052,7 @@
         <AssociationConnector Association="ALFAMEDIAModel.WD_108" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.WD_40" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.HD_17" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.DocHistory" Width="1.5" PointX="47.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
