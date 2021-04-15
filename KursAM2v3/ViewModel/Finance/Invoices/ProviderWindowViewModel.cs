@@ -671,7 +671,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand DeleteRowCommand
         {
-            get { return new Command(deleteRow, _ => CurrentRow != null); }
+            get
+            {
+                return new Command(deleteRow,
+                    _ => CurrentRow != null && (CurrentRow.CurrencyConvertRows == null ||
+                                                CurrentRow.CurrencyConvertRows.Count == 0));
+            }
         }
 
         private void deleteRow(object obj)

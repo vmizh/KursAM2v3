@@ -23,6 +23,7 @@ using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.Dialogs;
+using KursAM2.Managers;
 using KursAM2.Repositories;
 using KursAM2.View.Finance.DistributeNaklad;
 
@@ -397,6 +398,34 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         #endregion
 
         #region Commands
+
+        /* <MenuItem Header="Открыть документ" Command="{Binding OpenDocumentCommand}" />
+                                                <Separator/>
+                                                <MenuItem Header="Пересчитать" Command="{Binding RecalcCommand}" /> */
+
+        [Display(AutoGenerateField = false)]
+        public ICommand OpenDocumentCommand
+        {
+            get { return new Command(OpenDocument, _ => CurrentTovar != null && CurrentTovar.Invoice?.DOC_CODE != null); }
+        }
+
+        private void OpenDocument(object obj)
+        {
+            DocumentsOpenManager.Open(
+                DocumentType.InvoiceProvider, CurrentTovar.Invoice.DOC_CODE);
+        }
+
+        [Display(AutoGenerateField = false)]
+        public ICommand RecalcCommand
+        {
+            get { return new Command(Recalc, _ => true); }
+        }
+
+        private void Recalc(object obj)
+        {
+            recalcAllResult();
+        }
+
         [Display(AutoGenerateField = false)]
         public ICommand NakladRowChangedCommand
         {
@@ -684,11 +713,12 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 if (item != null)
                 {
                     var rids = DistributeAllNaklads.Where(_ => _.RowId == item.Id)
-                        .Select(_ => _.Id);
+                        .Select(_ => _.Id).ToList();
                     foreach (var id1 in rids)
                     {
                         var old = DistributeAllNaklads.First(_ => _.Id == id1);
-                        foreach (var inf in unitOfWork.Context.DistributeNakladInfo.Where(_ => _.RowId == id1).ToList())
+                        foreach (var inf in unitOfWork.Context.DistributeNakladInfo
+                            .Where(_ => _.RowId == item.Id).ToList())
                         {
                             var o = unitOfWork.Context.DistributeNakladInfo.FirstOrDefault(_ => _.Id == inf.Id);
                             if (o != null)
@@ -701,7 +731,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     Tovars.Remove(item);
                 }
             }
-            
+
             foreach (var n in Tovars)
             {
                 var sql = $"exec dbo.NomenklCalculateCostsForOne {CustomFormat.DecimalToSqlDecimal(n.Nomenkl.DocCode)}";

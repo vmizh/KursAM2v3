@@ -1033,7 +1033,7 @@ namespace KursAM2.ViewModel.Management.Calculations
                                         $",{CustomFormat.DecimalToSqlDecimal((decimal) o.UCH_CRS_RATE)} " +
                                         $",{o.KONTR_DC} " +
                                         $",'{o.ID}',1 " +
-                                        $",'{o.DOC_EXT_NUM}' )"))
+                                        $",'{removeChars(o.DOC_EXT_NUM)}')"))
                                 sqlQuery.Append(query + "; " + "\n ");
                             ent.Database.ExecuteSqlCommand(sqlQuery.ToString());
                         }

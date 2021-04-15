@@ -84,6 +84,9 @@
                                             <ContextMenu>
                                                 <MenuItem Header="Добавить номенклатуру" Command="{Binding AddNomenklCommand}" />
                                                 <MenuItem Header="Удалить номенклатуру" Command="{Binding DeleteNomenklCommand}" />
+                                                <MenuItem Header="Открыть документ" Command="{Binding OpenDocumentCommand}" />
+                                                <Separator/>
+                                                <MenuItem Header="Пересчитать" Command="{Binding RecalcCommand}" />
                                                 <Separator/>
                                                 <MenuItem Header="Экспорт"
 													Command="{Binding VisualControlExportCommand}"

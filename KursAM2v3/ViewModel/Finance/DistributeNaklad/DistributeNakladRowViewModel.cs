@@ -162,6 +162,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
+        [DisplayName("Сумма накл. на ед.")]
+        [Display(AutoGenerateField = true),ReadOnly(true)]
+        public decimal DistributeItemSumma => Quantity == 0 ? 0 : DistributeSumma / Quantity;
+
         [DisplayName("Цена с накладными"),ReadOnly(true)]
         [Display(AutoGenerateField = true)]
         public decimal DistributePrice
