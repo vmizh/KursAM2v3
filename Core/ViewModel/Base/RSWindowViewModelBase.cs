@@ -19,6 +19,7 @@ namespace Core.ViewModel.Base
     [POCOViewModel]
     public abstract class RSWindowViewModelBase : RSViewModelBase
     {
+        // ReSharper disable once ArrangeObjectCreationWhenTypeEvident
         public readonly WindowManager WinManager = new WindowManager();
         private bool myDialogResult;
         private Window myForm;
@@ -222,6 +223,7 @@ namespace Core.ViewModel.Base
             MainReferences.Refresh();
         }
 
+        // ReSharper disable once ArrangeObjectCreationWhenTypeEvident
         public AsyncCommand AsyncRefreshDataCommand => new AsyncCommand(AsyncTaskRefresh, IsCanRefresh);
 
 
@@ -554,6 +556,18 @@ namespace Core.ViewModel.Base
             var layman = Form as ILayout;
             layman?.LayoutManager?.ResetLayout();
         }
+
+        [Display(AutoGenerateField = false)]
+        public virtual ICommand ShowHistoryCommand
+        {
+            get { return new Command(ShowHistory, param => IsAllowHistoryShow); }
+        }
+
+        public virtual void ShowHistory(object data)
+        {
+        }
+
+        public virtual bool IsAllowHistoryShow { set; get; } = true;
 
         public virtual string SearchText
         {

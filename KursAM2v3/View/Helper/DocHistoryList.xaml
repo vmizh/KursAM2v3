@@ -1,0 +1,49 @@
+﻿<dx:ThemedWindow
+    x:Class="KursAM2.View.Helper.DocHistoryList"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    Title="История изменений" Height="800" Width="1000"
+    >
+    <Grid>
+        <dxg:GridControl 
+            AutoGenerateColumns="AddNew"
+            EnableSmartColumnsGeneration="True"
+            Name="gridControl"
+            AutoGeneratingColumn="GridControl_OnAutoGeneratingColumn"
+            CurrentItem="{Binding CurrentItem, UpdateSourceTrigger=PropertyChanged}"
+            ItemsSource="{Binding DocumentList, UpdateSourceTrigger=PropertyChanged}"
+            >
+            <dxg:GridControl.View>
+                <dxg:TableView ShowTotalSummary="False"
+                               Name="tableViewRows"
+                               ShowAutoFilterRow="True"
+                               EnableImmediatePosting="True">
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}"/>
+                            <Separator/>
+                            <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                      CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}">
+                                <MenuItem.Icon>
+                                    <Image
+                                        Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:KeyToCommand Command="{Binding DocumentOpenCommand}"
+                                             KeyGesture="Enter" />
+                        <dxmvvm:EventToCommand EventName="MouseDoubleClick" 
+                                               Command="{Binding DocumentOpenCommand}"/>
+                    </dxmvvm:Interaction.Behaviors>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+        </dxg:GridControl> 
+    </Grid>
+</dx:ThemedWindow>

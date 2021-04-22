@@ -170,6 +170,20 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
+    <DrawingImage x:Key="imageDone">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="Black"
+                                     Geometry="M483.002,64.219L469.87,52.936c-21.798-18.732-54.554-16.643-73.799,4.698L176.389,301.218l-66.312-57.113
+	c-21.775-18.753-54.536-16.707-73.804,4.612l-11.611,12.847c-9.416,10.413-14.305,24.15-13.595,38.18
+	c0.717,14.023,6.973,27.188,17.402,36.6l121.553,111.31c10.524,9.883,24.628,15.037,39.044,14.273
+	c14.416-0.763,27.894-7.386,37.311-18.329l262.245-304.71c9.162-10.646,13.717-24.495,12.661-38.497
+	C500.229,86.381,493.654,73.371,483.002,64.219z" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
     <Style x:Key="ellipseStandartStyle" TargetType="Ellipse">
         <Setter Property="Fill" Value="Transparent" />
         <Setter Property="Stroke" Value="Black" />

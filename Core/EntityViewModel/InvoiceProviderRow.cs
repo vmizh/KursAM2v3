@@ -225,7 +225,7 @@ namespace Core.EntityViewModel
                     foreach (var r in CurrencyConvertRows)
                     {
                         r.Price = (decimal) SFT_ED_CENA;
-                        r.PriceWithNaklad = (decimal) (SFT_ED_CENA + SFT_SUMMA_NAKLAD / SFT_KOL);
+                        r.PriceWithNaklad = (decimal) (SFT_ED_CENA + (SFT_SUMMA_NAKLAD ?? 0) / SFT_KOL);
                         r.CalcRow();
                     }
 

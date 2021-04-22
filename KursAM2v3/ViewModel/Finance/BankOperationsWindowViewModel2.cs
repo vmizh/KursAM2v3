@@ -15,6 +15,7 @@ using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.View.Finance;
+using KursAM2.View.Helper;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -106,6 +107,12 @@ namespace KursAM2.ViewModel.Finance
             }
         }
 
+        public override bool IsAllowHistoryShow => CurrentBankOperations != null;
+
+        public override void ShowHistory(object data)
+        {
+            DocumentHistoryManager.LoadHistory(DocumentType.Bank,null,CurrentBankOperations.DocCode, CurrentBankOperations.Code);
+        }
         public override void RefreshData(object obj)
         {
             base.RefreshData(obj);

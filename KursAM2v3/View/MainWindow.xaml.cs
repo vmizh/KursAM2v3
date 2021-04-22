@@ -30,7 +30,6 @@ using KursAM2.View.Repozit;
 using KursAM2.View.Search;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.Cash;
-using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Logistiks.Warehouse;
@@ -45,8 +44,6 @@ using KursAM2.ViewModel.Reconcilation;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.Reference.Nomenkl;
 using KursAM2.ViewModel.Repozit;
-using KursAM2.ViewModel.StartLogin;
-using KursRepositories.ViewModels;
 using LayoutManager;
 using NomenklCostReset = KursAM2.View.Logistiks.NomenklCostReset;
 
@@ -88,14 +85,6 @@ namespace KursAM2.View
             }
         }
 
-        private void CheckUpdateVersion()
-        {
-            myVersionUpdateTimer.Dispose();
-            var ver = new VersionManager();
-            ver.CheckVersion();
-            myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, 1000 * 60, Timeout.Infinite);
-        }
-
         public ICommand ProgramCloseCommnd
         {
             get { return new Command(ProgramClose, _ => true); }
@@ -103,6 +92,14 @@ namespace KursAM2.View
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
+        private void CheckUpdateVersion()
+        {
+            myVersionUpdateTimer.Dispose();
+            var ver = new VersionManager();
+            ver.CheckVersion();
+            myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, 1000 * 60, Timeout.Infinite);
+        }
 
         private void ProgramClose(object obj)
         {
@@ -465,7 +462,7 @@ namespace KursAM2.View
                         break;
                     case "Справочник центров ответственности":
                         var centerCtx = new ReferenceOfResponsibilityCentersWindowViewModel();
-                        form = new ReferenceOfResponsibilityCentersView()
+                        form = new ReferenceOfResponsibilityCentersView
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = centerCtx
@@ -494,9 +491,9 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Распределение накладных расходов":
-                        var dnakForm = new KursBaseSearchWindow()
+                        var dnakForm = new KursBaseSearchWindow
                         {
-                            Owner = Application.Current.MainWindow,
+                            Owner = Application.Current.MainWindow
                         };
                         var v = new DistributeNakladSearchView(dnakForm);
                         dnakForm.modelViewControl.Content = v;
@@ -601,7 +598,7 @@ namespace KursAM2.View
                         break;
                     case "Настройка прав доступа":
                         var ctxAccessRight = new UsersManagerViewModel();
-                        var form2 = new UsersManagerView()
+                        var form2 = new UsersManagerView
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = ctxAccessRight
@@ -615,7 +612,7 @@ namespace KursAM2.View
                         ctxAccessRight.Form = form2;
                         form2.Show();
                         break;
-                   
+
                     case "Распределение приходов":
                         var ctxProjectPrihod = new ProjectProviderPrihodWindowViewModel();
                         form = new ProjectProviderPrihodView
@@ -914,15 +911,15 @@ namespace KursAM2.View
 
         private void BarButtonItem1_OnItemClick(object sender, ItemClickEventArgs e)
         {
-            var ctxUserProfile = new UserOptionsWindowViewModel(TypeChangeUser.UserSelfUpdate, GlobalOptions.UserInfo.NickName );
-            var formUserProfile = new UserOptionsWindow()
+            var ctxUserProfile =
+                new UserOptionsWindowViewModel(TypeChangeUser.UserSelfUpdate, GlobalOptions.UserInfo.NickName);
+            var formUserProfile = new UserOptionsWindow
             {
                 Owner = Application.Current.MainWindow,
                 DataContext = ctxUserProfile
             };
             ctxUserProfile.Form = formUserProfile;
             formUserProfile.Show();
-                 
         }
     }
 }

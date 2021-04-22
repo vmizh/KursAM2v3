@@ -201,6 +201,7 @@
     <Compile Include="ViewModel\Base\KursBaseViewModel.cs" />
     <Compile Include="ViewModel\Base\KursWindowSearchBaseViewModel.cs" />
     <Compile Include="ViewModel\Common\BankAccount.cs" />
+    <Compile Include="ViewModel\Common\DocHistoryViewModel.cs" />
     <Compile Include="ViewModel\KursButton.cs" />
     <Compile Include="ViewModel\Common\ICheckViewModel.cs" />
     <Compile Include="ViewModel\Common\Money.cs" />

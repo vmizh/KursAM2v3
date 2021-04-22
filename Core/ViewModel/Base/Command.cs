@@ -17,9 +17,7 @@ namespace Core.ViewModel.Base
 
         public Command(Action<object> execute, Func<object, bool> canExecute)
         {
-            if (execute == null)
-                throw new ArgumentNullException("execute");
-            commandExecute = execute;
+            commandExecute = execute ?? throw new ArgumentNullException("execute");
             commandCanExecute = canExecute;
         }
 

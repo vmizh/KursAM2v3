@@ -263,7 +263,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Methods
 
-        private void recalcAllResult()
+        public void RecalcAllResult()
         {
             foreach (var t in Tovars)
             {
@@ -389,7 +389,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     $"С/ф №{CurrentNakladInvoice.DocNum} от {CurrentNakladInvoice.DocDate} пост.:{CurrentNakladInvoice.ProviderName}";
             }
 
-            recalcAllResult();
+            RecalcAllResult();
             SetChangeStatus();
             RaisePropertiesChanged(nameof(Tovars));
             RaisePropertiesChanged(nameof(NakladInvoices));
@@ -423,7 +423,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         private void Recalc(object obj)
         {
-            recalcAllResult();
+            RecalcAllResult();
         }
 
         [Display(AutoGenerateField = false)]
@@ -475,7 +475,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
             CurrentDistributeNaklad.DistributeSumma =
                 CurrentDistributeNaklad.NakladSumma * CurrentDistributeNaklad.Rate;
-            recalcAllResult();
+            RecalcAllResult();
             if (State != RowStatus.NewRow)
                 State = RowStatus.Edited;
             RaisePropertyChanged(nameof(Tovars));
@@ -635,7 +635,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                             .Sum(_ => _.NakladSumma);
                 }
 
-                recalcAllResult();
+                RecalcAllResult();
                 State = RowStatus.NotEdited;
             }
         }
@@ -739,7 +739,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
 
             SelectedTovars.Clear();
-            recalcAllResult();
+            RecalcAllResult();
             SetChangeStatus();
             RaisePropertiesChanged(nameof(Tovars));
             RaisePropertiesChanged(nameof(SelectedTovars));

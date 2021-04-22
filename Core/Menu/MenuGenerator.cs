@@ -450,6 +450,12 @@ namespace Core.Menu
                             Image = Application.Current.Resources["imageResetLayout"] as DrawingImage,
                             Caption = "Переустановить разметку",
                             Command = vm.ResetLayoutCommand
+                        },
+                        new MenuButtonInfo
+                        {
+                            Image = Application.Current.Resources["imageDone"] as DrawingImage,
+                            Caption = "Показать историю изменений",
+                            Command = vm.ShowHistoryCommand
                         }
                     }
                 }

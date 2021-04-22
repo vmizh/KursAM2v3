@@ -137,6 +137,7 @@
                                               Command="{Binding DocNewCopyCommand}" />
                                     <MenuItem Header="Удалить"
                                               Command="{Binding RemoveCommand}" />
+                                    <MenuItem Header="Показать историю" Command="{Binding ShowHistoryCommand}"/>
                                     <Separator/>
                                     <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                               CommandParameter="{Binding Path=PlacementTarget, 

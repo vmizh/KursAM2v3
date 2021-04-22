@@ -424,6 +424,13 @@
     <Compile Include="View\Finance\DistributeNaklad\DistributeNakladSearchView.xaml.cs">
       <DependentUpon>DistributeNakladSearchView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Helper\DocHistoryWindowViewModel.cs" />
+    <Compile Include="View\Helper\DocHistoryList.xaml.cs">
+      <DependentUpon>DocHistoryList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Helper\DocumentHistory.xaml.cs">
+      <DependentUpon>DocumentHistory.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\KursReferences\KontragentCategoryReferenceView.xaml.cs">
       <DependentUpon>KontragentCategoryReferenceView.xaml</DependentUpon>
     </Compile>
@@ -1045,7 +1052,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\DataSources\" />
-    <Folder Include="ViewModel\Fabric\Base\" />
     <Folder Include="ViewModel\Logistiks\Helper\" />
   </ItemGroup>
   <ItemGroup>
@@ -1118,6 +1124,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Finance\DistributeNaklad\DistributeNakladSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Helper\DocHistoryList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Helper\DocumentHistory.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

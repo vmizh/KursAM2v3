@@ -23,6 +23,7 @@ using KursAM2.View.DialogUserControl;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.View.Logistiks.Warehouse;
+using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management.Calculations;
 using Reports.Base;
@@ -200,6 +201,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
         #endregion
 
         #region Properties
+
+        public List<InvoiceProviderRowCurrencyConvertViewModel> DeletedCrsConvertItems { set; get; } =
+            new List<InvoiceProviderRowCurrencyConvertViewModel>();
 
         public InvoiceProvider Document
         {
@@ -805,6 +809,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var row = Document.Rows.FirstOrDefault(_ => _.DocCode == CurrentCrsConvertItem.DocCode
                                                         && _.Code == CurrentCrsConvertItem.Code);
             if (CurrentCrsConvertItem == null || row == null) return;
+            DeletedCrsConvertItems.Add(CurrentCrsConvertItem);
             if (CurrentRow == null)
             {
                 row.Entity.TD_26_CurrencyConvert.Remove(CurrentCrsConvertItem.Entity);
@@ -817,6 +822,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 CurrentRow.CurrencyConvertRows.Remove(CurrentCrsConvertItem);
                 CurrentRow.State = RowStatus.Edited;
             }
+            
         }
 
         public ICommand AddNomenklCommand
@@ -1026,7 +1032,46 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         row.SFT_NOM_CRS_RATE = 1;
                     }
                 }
+                List<Guid> DistributeDocs = new List<Guid>();
+                foreach (var crsitem in DeletedCrsConvertItems)
+                {
+                    var olditems = UnitOfWork.Context.DistributeNakladRow
+                        .Include(_ => _.DistributeNakladInfo)
+                        .Where(_ => _.TransferRowId == crsitem.Id).ToList();
+                    foreach (var old in olditems)
+                    {
+                        if (DistributeDocs.All(_ => _ != old.DocId))
+                            DistributeDocs.Add(old.DocId);
+                        UnitOfWork.Context.DistributeNakladInfo.RemoveRange(old.DistributeNakladInfo);
+                        UnitOfWork.Context.DistributeNakladRow.Remove(old);
+                    }
+                }
 
+                foreach (var row in Document.Rows)
+                {
+                    foreach (var crs in row.CurrencyConvertRows)
+                    {
+                        var distr = UnitOfWork.Context.DistributeNakladRow
+                            .Include(_ => _.DistributeNakladInfo)
+                            .FirstOrDefault(_ => _.TransferRowId == crs.Id);
+                        if (distr != null)
+                        {
+                            if (DistributeDocs.All(_ => _ != distr.DocId))
+                                DistributeDocs.Add(distr.DocId);
+                        }
+                    }
+                }
+                foreach (var id in DistributeDocs)
+                {
+                    var doc = UnitOfWork.Context.DistributeNaklad.FirstOrDefault(_ => _.Id == id);
+                    if (doc != null)
+                    {
+                        var vm = new DistributeNakladViewModel(doc);
+                        vm.Load(doc.Id);
+                        vm.RecalcAllResult();
+                        vm.Save();
+                    }
+                }
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
                 RecalcKontragentBalans.CalcBalans(Document.SF_POST_DC, Document.SF_POSTAV_DATE);
