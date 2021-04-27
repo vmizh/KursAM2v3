@@ -30,6 +30,7 @@ using KursAM2.View.Repozit;
 using KursAM2.View.Search;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.Cash;
+using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Logistiks.Warehouse;
@@ -92,6 +93,10 @@ namespace KursAM2.View
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
 
         private void CheckUpdateVersion()
         {
@@ -108,14 +113,40 @@ namespace KursAM2.View
 
         private void MainWindow_Closed(object sender, EventArgs e)
         {
-            foreach (var f in from Window f in Application.Current.Windows where f != null select f)
-                f.Close();
+            
         }
 
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
             LayoutManager.Save();
+            foreach (var f in from Window f in Application.Current.Windows where f != null select f)
+            {
+                if (f is KursBaseSearchWindow s)
+                {
+                    var ctx = s.DataContext as DistributeNakladSearchViewModel;
+                    if (ctx != null)
+                    {
+                        ctx.OnWindowClosing();
+                    }
+                }
+
+                if (f is KursBaseWindow b)
+                {
+                    var ctx = b.DataContext as DistributeNakladViewModel;
+                    if (ctx != null)
+                    {
+                        ctx.OnWindowClosing();
+                    }
+                }
+
+                if (f is ILayout l)
+                {
+                    l.SaveLayout();
+                }
+                f.Close();
+            }
         }
+
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using DevExpress.Xpf.Core;
+using LayoutManager;
 
 namespace KursAM2
 {
@@ -40,5 +41,4 @@ namespace KursAM2
             baseStart();
         }
     }
-
 }

@@ -29,6 +29,11 @@ namespace KursAM2.View.Management.Controls
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
+
         public void ResetLayot()
         {
             throw new System.NotImplementedException();

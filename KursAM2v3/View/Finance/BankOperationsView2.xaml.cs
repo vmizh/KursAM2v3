@@ -31,6 +31,13 @@ namespace KursAM2.View.Finance
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            gridDocumentsLayout.Save();
+            groupLayout.Save();
+            treePeriodsLayout.Save();
+            LayoutManager.Save();
+        }
 
         private void Bank_Closing(object sender, CancelEventArgs e)
         {

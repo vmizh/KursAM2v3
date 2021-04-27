@@ -28,5 +28,9 @@ namespace KursAM2.View.KursReferences
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-     }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
+    }
 }

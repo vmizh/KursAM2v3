@@ -34,7 +34,11 @@ namespace KursAM2.View.KursReferences
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
- 
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
+
         private void MyBnEditor_DefaultButtonClick(object sender, RoutedEventArgs e)
         {
             var ctx = DataContext as ProjectReferenceWindowViewModel;

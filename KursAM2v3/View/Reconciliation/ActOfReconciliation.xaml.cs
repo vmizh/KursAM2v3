@@ -22,6 +22,10 @@ namespace KursAM2.View.Reconciliation
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
 
         private void ActOfReconciliation_Loaded(object sender, RoutedEventArgs e)
         {

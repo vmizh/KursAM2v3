@@ -30,6 +30,10 @@ namespace KursAM2.View.Finance
         private SaleTaxNomenklWindowViewModel dataContext => DataContext as SaleTaxNomenklWindowViewModel;
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
 
         private void SaleTaxNomenklView_Closing(object sender, CancelEventArgs e)
         {

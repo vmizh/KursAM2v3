@@ -27,9 +27,9 @@ namespace KursAM2.View.DialogUserControl
         public DependencyObject LayoutControl { get; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        public void ResetLayot()
+        public void SaveLayout()
         {
-            throw new NotImplementedException();
+            LayoutManager.Save();
         }
 
         private void CashSelectDialogUC_Unloaded(object sender, RoutedEventArgs e)

@@ -27,6 +27,11 @@ namespace KursAM2.View.Finance.Invoices
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            myResultGridControlLayout.Save();
+            LayoutManager.Save();
+        }
 
         private void ProviderSearchView_Closing(object sender, CancelEventArgs e)
         {

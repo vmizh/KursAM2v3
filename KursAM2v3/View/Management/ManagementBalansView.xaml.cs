@@ -35,7 +35,11 @@ namespace KursAM2.View.Management
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
+
         private void ManagementBalansView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (DataContext is ManagementBalansWindowViewModel ctx)

@@ -41,6 +41,11 @@ namespace PeriodManager.View
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void ResetLayot()
         {
             throw new System.NotImplementedException();

@@ -44,7 +44,13 @@ namespace KursAM2.View.Helper
                             .OrderBy(_ => _.Date)
                             .ToList()
                             .Select(d => new DocHistoryViewModel(d)));
-
+                        break;
+                    case DocumentType.CashIn:
+                        if (dc == null) return;
+                        hdoclist.AddRange(ctx.DocHistory.Where(_ => _.DocDC == dc)
+                            .OrderBy(_ => _.Date)
+                            .ToList()
+                            .Select(d => new DocHistoryViewModel(d)));
                         break;
                 }
             }

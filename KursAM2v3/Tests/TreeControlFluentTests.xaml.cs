@@ -21,6 +21,10 @@ namespace KursAM2.Tests
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
 
         private void GridProjects_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {

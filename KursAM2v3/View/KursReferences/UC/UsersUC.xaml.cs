@@ -18,6 +18,10 @@ namespace KursAM2.View.KursReferences.UC
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {

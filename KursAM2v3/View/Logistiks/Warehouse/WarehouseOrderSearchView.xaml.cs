@@ -23,6 +23,10 @@ namespace KursAM2.View.Logistiks.Warehouse
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
 
         private void SearchBaseView_Closing(object sender, CancelEventArgs e)
         {

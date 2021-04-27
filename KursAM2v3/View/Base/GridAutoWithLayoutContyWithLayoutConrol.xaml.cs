@@ -26,6 +26,11 @@ namespace KursAM2.View.Base
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
+
         private void GridAutoWithLayoutConrol_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager?.Load();

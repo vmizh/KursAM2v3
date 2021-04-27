@@ -20,6 +20,10 @@ namespace KursAM2.View.Management.ProfitAndLossesControls
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
 
         private void BalansCompareFinanseUI_Unloaded(object sender, RoutedEventArgs e)
         {

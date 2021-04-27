@@ -3,13 +3,14 @@ using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
+using LayoutManager;
 
 namespace KursAM2.View.Finance.DistributeNaklad
 {
     /// <summary>
     ///     Interaction logic for DistributeNakladSearchView.xaml
     /// </summary>
-    public partial class DistributeNakladSearchView
+    public partial class DistributeNakladSearchView : ILayout
     {
         public DistributeNakladSearchView(Window parentForm)
         {
@@ -30,6 +31,13 @@ namespace KursAM2.View.Finance.DistributeNaklad
                     DisplayFormat = "n2",
                     Name = e.Column.FieldName + "Calc"
                 };
+        }
+
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
+        public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
         }
     }
 }

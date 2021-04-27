@@ -40,6 +40,11 @@ namespace KursAM2.View.Logistiks.Warehouse
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            gridRowsLayout.Save();
+            LayoutManager.Save();
+        }
 
         private void WaybillClientView_Closing(object sender, CancelEventArgs e)
         {

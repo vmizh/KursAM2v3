@@ -20,6 +20,10 @@ namespace KursAM2.View.Logistiks
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
 
         private void PART_GridControlNomenkl_Loaded(object sender, RoutedEventArgs e)
         {

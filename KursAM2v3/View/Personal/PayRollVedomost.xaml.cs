@@ -17,6 +17,10 @@ namespace KursAM2.View.Personal
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
 
         private void PayRollVedomost_Closing(object sender, CancelEventArgs e)
         {

@@ -34,6 +34,11 @@ namespace KursAM2.View.Finance
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
+
         public PopupCalcEdit Sumordcont = new PopupCalcEdit();
 
         private void BankCurrencyChangeView_Unloaded(object sender, RoutedEventArgs e)

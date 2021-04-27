@@ -30,7 +30,11 @@ namespace KursAM2.View.Finance
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
- 
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
+
         private void MutualAccountingView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (!(DataContext is MutualAcountingWindowViewModel ctx))

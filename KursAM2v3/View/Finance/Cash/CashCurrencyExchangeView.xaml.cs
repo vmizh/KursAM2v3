@@ -35,6 +35,10 @@ namespace KursAM2.View.Finance.Cash
         public List<Currency> CurrencyList { set; get; } = new List<Currency>();
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
 
         private void CashCurrencyExchangeView_Unloaded(object sender, RoutedEventArgs e)
         {

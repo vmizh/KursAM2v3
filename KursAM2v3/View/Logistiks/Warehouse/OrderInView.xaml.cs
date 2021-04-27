@@ -47,6 +47,11 @@ namespace KursAM2.View.Logistiks.Warehouse
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            gridRowsLayout.Save();
+            LayoutManager.Save();
+        }
 
         private void OrderIn_Loaded(object sender, RoutedEventArgs e)
         {

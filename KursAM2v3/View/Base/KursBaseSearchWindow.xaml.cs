@@ -12,27 +12,10 @@ namespace KursAM2.View.Base
         public KursBaseSearchWindow()
         {
             InitializeComponent();
-            //LayoutManagerName = layoutName;
-            //LayoutManager = new global::Helper.LayoutManager(LayoutSerializationService, 
-            //    LayoutManagerName, ctrlName);
-            //Loaded += KursBaseWindow_Loaded;
-            //Closing += KursBaseWindow_Closing;
         }
 
         //public ILayoutSerializationService LayoutSerializationService
         //    => this.GetService<ILayoutSerializationService>();
-        public string LayoutManagerName { get; set; }
-
-        //private void KursBaseWindow_Closing(object sender, CancelEventArgs e)
-        //{
-        //    LayoutManager.Save();
-        //}
-
-        //private void KursBaseWindow_Loaded(object sender, RoutedEventArgs e)
-        //{
-
-        //    LayoutManager.Load();
-        //}
 
         private void MenuButton_OnClick(object sender, RoutedEventArgs e)
         {

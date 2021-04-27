@@ -1,14 +1,13 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using Core.Menu;
-using LayoutManager;
 
 namespace KursAM2.View.Base
 {
     /// <summary>
     ///     Interaction logic for KursBaseWindow.xaml
     /// </summary>
-    public partial class KursBaseWindow 
+    public partial class KursBaseWindow
     {
         public KursBaseWindow()
         {

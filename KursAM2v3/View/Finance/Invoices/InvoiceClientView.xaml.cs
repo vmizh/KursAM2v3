@@ -42,7 +42,14 @@ namespace KursAM2.View.Finance.Invoices
         public LayoutManagerGridAutoGenerationColumns LayoutGroup { get; set; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
- 
+        public void SaveLayout()
+        {
+            gridFactsLayout.Save();
+            gridPaysLayout.Save();
+            gridRowsLayout.Save();
+            LayoutManager.Save();
+        }
+
         private void InvoiceForm_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, null);

@@ -5,5 +5,7 @@ namespace LayoutManager
     {
         LayoutManager LayoutManager { set; get; }
         string LayoutManagerName { set; get; }
+
+        void SaveLayout();
     }
 }

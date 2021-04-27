@@ -20,6 +20,10 @@ namespace KursAM2.View.Logistiks
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
 
         private void PurchaseInvoicesOverheadsView_Closing(object sender, CancelEventArgs e)
         {

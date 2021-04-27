@@ -7,6 +7,7 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
 using KursAM2.View.Finance.Cash;
+using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
 
 namespace KursAM2.ViewModel.Finance.Cash
@@ -108,6 +109,14 @@ namespace KursAM2.ViewModel.Finance.Cash
         #endregion
 
         #region Command
+
+        public override bool IsAllowHistoryShow => State != RowStatus.NewRow;
+
+        public override void ShowHistory(object data)
+        {
+            DocumentHistoryManager.LoadHistory(DocumentType.CashIn,null,Document.DocCode, null);
+
+        }
 
         public override void CloseWindow(object form)
         {

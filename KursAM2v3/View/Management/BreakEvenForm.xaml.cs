@@ -35,7 +35,11 @@ namespace KursAM2.View.Management
         public BreakEvenNomGroupViewModel NomGroup { set; get; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
- 
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
+
         private void BreakEvenForm_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
