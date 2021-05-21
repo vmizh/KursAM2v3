@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
+using Core.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -217,14 +218,17 @@ namespace KursAM2.ViewModel.Finance
                         {
                             Id = Guid.NewGuid(),
                             Rate = 1,
+                            // ReSharper disable once PossibleInvalidOperationException
                             Summa = (decimal) CurrentCreditor.VZT_CRS_SUMMA,
                             VZDC = CurrentCreditor.DocCode,
                             VZCode = CurrentCreditor.Code,
+                            // ReSharper disable once PossibleInvalidOperationException
                             DocDC = (decimal) CurrentCreditor.VZT_SPOST_DC
                         });
                     }
                     else
                     {
+                        // ReSharper disable once PossibleInvalidOperationException
                         old.Summa = (decimal) CurrentCreditor.VZT_CRS_SUMMA;
                     }
 

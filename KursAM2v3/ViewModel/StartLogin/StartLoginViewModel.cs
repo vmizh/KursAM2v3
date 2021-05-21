@@ -33,12 +33,13 @@ namespace KursAM2.ViewModel.StartLogin
         private string myCurrentUser;
         private bool myIsThemeAllow;
         private string myVersionValue;
+        private DataSource mySelectedDataSource;
 
         public StartLoginViewModel(Window formWindow)
         {
             Form = formWindow;
-            CurrentUser = ConfigurationManager.AppSettings.Get("Login");
-            GetDefaultCache();
+            CurrentUser = Properties.Settings.Default.Login;
+            //GetDefaultCache();
         }
 
         private ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
@@ -46,7 +47,13 @@ namespace KursAM2.ViewModel.StartLogin
         public ObservableCollection<DataSource> ComboBoxItemSource { set; get; } =
             new ObservableCollection<DataSource>();
 
-        public DataSource SelectedDataSource { set; get; }
+        public DataSource SelectedDataSource { set
+            {
+                if (mySelectedDataSource == value) return;
+                mySelectedDataSource = value;
+                RaisePropertiesChanged();
+            }
+            get => mySelectedDataSource; }
 
         public string VersionValue
         {
@@ -65,7 +72,7 @@ namespace KursAM2.ViewModel.StartLogin
             {
                 if (myCurrentUser == value) return;
                 myCurrentUser = value;
-                if (string.IsNullOrEmpty(myCurrentUser) || string.IsNullOrEmpty(myCurrentUser)) return;
+                if (string.IsNullOrWhiteSpace(myCurrentUser)) return;
                 LoadDataSources();
                 GetDefaultCache();
                 RaisePropertiesChanged();
@@ -119,7 +126,9 @@ namespace KursAM2.ViewModel.StartLogin
                     MessageBoxImage.Question);
                 return;
             }
-
+            Properties.Settings.Default.LastDataBase = SelectedDataSource.ShowName;
+            Properties.Settings.Default.Login = CurrentUser;
+            Properties.Settings.Default.Save();
             SplashLoadBar();
             User newUser;
             if (!CheckAndSetUser(out newUser)) return;
@@ -484,6 +493,8 @@ namespace KursAM2.ViewModel.StartLogin
                         ApplicationThemeHelper.ApplicationThemeName = user.ThemeName;
                         ApplicationThemeHelper.UpdateApplicationThemeName();
                     }
+                    if(!string.IsNullOrWhiteSpace(Properties.Settings.Default.LastDataBase))
+                        CurrentBoxItem = Properties.Settings.Default.LastDataBase;
                 }
             }
             catch (Exception ex)
@@ -503,6 +514,10 @@ namespace KursAM2.ViewModel.StartLogin
             }
 
             LoadDataSources();
+            if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.LastDataBase))
+                SelectedDataSource =
+                    ComboBoxItemSource.FirstOrDefault(_ => _.ShowName == Properties.Settings.Default.LastDataBase);
+
         }
 
         public void SaveСache(ImageSource data)

@@ -7,7 +7,7 @@
     <DataTemplate
         x:Key="{themes:FloatingContainerThemeKey ResourceKey=FloatingContainerCaptionTemplate, ThemeName=MetropolisLight}">
         <DockPanel Width="Auto" Height="24" Cursor="Arrow">
-            <!--<Image DockPanel.Dock="Right" Margin="6,0" Stretch="None" Source="../../Images/VerticalSeparator.png" />-->
+            <Image DockPanel.Dock="Right" Margin="6,0" Stretch="None" Source="../../Images/VerticalSeparator.png" />
             <TextBlock DockPanel.Dock="Right" x:Name="PART2_Text" Background="{x:Null}"
                        TextWrapping="Wrap" Margin="6,3,6,3" VerticalAlignment="Center" IsHitTestVisible="False"
                        Text="{Binding Content, ElementName=PART6_Text}" FontSize="16" FontStyle="Italic"
@@ -32,4 +32,18 @@
         </Setter>
     </Style>
     <dxmvvm:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" HiddenInsteadOfCollapsed="True" />
+    <Style x:Key="DXServices" TargetType="FrameworkElement">
+        <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <ItemsControl>
+                        <dxmvvm:LayoutSerializationService/>
+                        <dxmvvm:CurrentWindowService ClosingCommand="{Binding OnWindowClosingCommand}"/>
+                        <dxmvvm:EventToCommand Event="Loaded" Command="{Binding OnWindowLoadedCommand}" />
+                        <dx:DXMessageBoxService />
+                    </ItemsControl>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

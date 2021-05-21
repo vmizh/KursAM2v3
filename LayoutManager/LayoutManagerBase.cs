@@ -9,6 +9,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Data;
 using DevExpress.Data;
+using DevExpress.Mvvm;
 using DevExpress.Xpf.Core.Serialization;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;

@@ -62,18 +62,18 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         #region Properties
 
-        public ObservableCollection<SD_77ViewModel> Rows { set; get; } =
-            new ObservableCollection<SD_77ViewModel>();
+        public ObservableCollection<VzaimoraschetType> Rows { set; get; } =
+            new ObservableCollection<VzaimoraschetType>();
 
-        public ObservableCollection<SD_77ViewModel> DeletedRows { set; get; } =
-            new ObservableCollection<SD_77ViewModel>();
+        public ObservableCollection<VzaimoraschetType> DeletedRows { set; get; } =
+            new ObservableCollection<VzaimoraschetType>();
 
-        public ObservableCollection<SD_77ViewModel> SelectedRows { set; get; } =
-            new ObservableCollection<SD_77ViewModel>();
+        public ObservableCollection<VzaimoraschetType> SelectedRows { set; get; } =
+            new ObservableCollection<VzaimoraschetType>();
 
-        private SD_77ViewModel myCurrentRow;
+        private VzaimoraschetType myCurrentRow;
 
-        public SD_77ViewModel CurrentRow
+        public VzaimoraschetType CurrentRow
         {
             get => myCurrentRow;
             set
@@ -154,7 +154,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         private void ItemNewEmpty(object obj)
         {
-            Rows.Add(new SD_77ViewModel
+            Rows.Add(new VzaimoraschetType
             {
                 State = RowStatus.NewRow
             });
@@ -167,7 +167,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             {
                 foreach (var u in ctx.SD_77.Include(_ => _.SD_303))
                 {
-                    var newDoc = new SD_77ViewModel(u) {myState = RowStatus.NotEdited};
+                    var newDoc = new VzaimoraschetType(u) {myState = RowStatus.NotEdited};
                     Rows.Add(newDoc);
                 }
             }
@@ -188,7 +188,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         private void ItemNewCopy(object obj)
         {
-            Rows.Add(new SD_77ViewModel
+            Rows.Add(new VzaimoraschetType
                 {
                     DOC_CODE = -1,
                     State = RowStatus.NewRow,

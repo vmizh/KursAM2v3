@@ -997,22 +997,22 @@ namespace KursAM2.Managers.Invoices
                                 ret.Add(newDoc);
                                 continue;
                             }
-                            // if (newDoc.SF_CRS_SUMMA > pd.PaySumma)
-                            // {
-                            //     newDoc.PaymentDocs.Add(new InvoicePaymentDocument
-                            //     {
-                            //         Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
-                            //     });
-                            //     ret.Add(newDoc);
-                            // }
+                            if (newDoc.SF_CRS_SUMMA > pd.PaySumma)
+                            {
+                                newDoc.PaymentDocs.Add(new ProviderInvoicePayViewModel
+                                {
+                                    Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
+                                });
+                                ret.Add(newDoc);
+                            }
                         }
                         else
                         {
-                            // newDoc.PaymentDocs.Add(new InvoicePaymentDocument
-                            // {
-                            //     Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
-                            // });
-                            // ret.Add(newDoc);
+                            newDoc.PaymentDocs.Add(new ProviderInvoicePayViewModel
+                            {
+                                Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
+                            });
+                            ret.Add(newDoc);
                         }
                     }
                 }

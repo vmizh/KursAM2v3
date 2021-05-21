@@ -13,7 +13,7 @@ namespace KursAM2.Tests
     public class TestBase
     {
         [SetUp]
-        public void SetcConnect()
+        public void SetConnect()
         {
             var sqlConnectionString = new SqlConnectionStringBuilder
             {

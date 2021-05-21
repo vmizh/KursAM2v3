@@ -10,7 +10,7 @@ using KursAM2.View.Finance;
 
 namespace KursAM2.ViewModel.Finance
 {
-    public class BankCurrencyChangeWindowViewModel : RSWindowViewModelBase
+    public sealed class BankCurrencyChangeWindowViewModel : RSWindowViewModelBase
     {
         #region Fields
 

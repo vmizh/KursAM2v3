@@ -207,12 +207,6 @@ namespace KursAM2.Managers.Nomenkl
             return res;
         }
 
-        public static List<NomenklCalcMove> GetStoreRemain(DateTime date, decimal storeDC)
-        {
-            var res = new List<NomenklCalcMove>();
-            return res;
-        }
-
         public static List<NomenklCalcMove> GetNomenklMove(decimal nomDC, DateTime dateStart, DateTime dateEnd,
             out decimal startQuantity)
         {

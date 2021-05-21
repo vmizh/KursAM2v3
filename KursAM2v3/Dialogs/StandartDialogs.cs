@@ -325,7 +325,7 @@ namespace KursAM2.Dialogs
             if (cashOut.Document.KONTRAGENT_DC != null)
             {
                 var ctx = new InvoiceProviderSearchDialog((decimal) cashOut.Document.KONTRAGENT_DC, isUsePayment,
-                    isUseAccepted,true);
+                    isUseAccepted,isOnlyLastYear);
                 var dlg = new SelectDialogView {DataContext = ctx};
                 ctx.Form = dlg;
                 dlg.ShowDialog();
@@ -333,7 +333,7 @@ namespace KursAM2.Dialogs
             }
             else
             {
-                var ctx = new InvoiceProviderSearchDialog(isUsePayment, isUseAccepted);
+                var ctx = new InvoiceProviderSearchDialog(isUsePayment, isUseAccepted, isOnlyLastYear);
                 var dlg = new SelectDialogView {DataContext = ctx};
                 ctx.Form = dlg;
                 dlg.ShowDialog();

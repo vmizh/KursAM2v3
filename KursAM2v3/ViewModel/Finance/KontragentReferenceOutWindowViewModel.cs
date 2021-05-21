@@ -14,7 +14,7 @@ using Reports.Base;
 
 namespace KursAM2.ViewModel.Finance
 {
-    public class KontragentReferenceOutWindowViewModel : RSWindowViewModelBase
+    public sealed class KontragentReferenceOutWindowViewModel : RSWindowViewModelBase
     {
         private readonly List<KontragentRefOut> Deleted = new List<KontragentRefOut>();
         private KontragentRefOut myCurrentKontr;
@@ -76,7 +76,7 @@ namespace KursAM2.ViewModel.Finance
             get { return new Command(AddNewRequisite, param => true); }
         }
 
-        public virtual void AddNewRequisite(object form)
+        public void AddNewRequisite(object form)
         {
             var newReq = new KontragentRefOutRow
             {

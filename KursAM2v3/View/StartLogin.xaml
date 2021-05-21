@@ -108,7 +108,7 @@
                                   Height="35"
                                   MaxLength="15"
                                   ItemsSource="{Binding ComboBoxItemSource, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}"
-                                  EditValue="{Binding myCurrentBoxItem}"
+                                  EditValue="{Binding SelectedDataSource, UpdateSourceTrigger=PropertyChanged}"
                                   EditValueChanged="dataSources_EditValueChanged"
                                   IsTextEditable="False" RenderTransformOrigin="10,50">
                     <dxe:ComboBoxEdit.ItemTemplate>

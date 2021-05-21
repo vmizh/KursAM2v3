@@ -10,7 +10,7 @@ namespace KursAM2.View.Finance.Cash
     /// <summary>
     ///     Interaction logic for CashBookView.xaml
     /// </summary>
-    public partial class CashBookView : ILayout
+    public partial class CashBookView
     {
         // ReSharper disable once FieldCanBeMadeReadOnly.Global
         public MemoEditSettings baseMemo = new MemoEditSettings
@@ -21,9 +21,9 @@ namespace KursAM2.View.Finance.Cash
         public CashBookView()
         {
             InitializeComponent();
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
-            Loaded += CashBookView_Loaded;
-            Closing += CashBookView_Closing;
+            //LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            //Loaded += CashBookView_Loaded;
+            //Closing += CashBookView_Closing;
         }
         
         public LayoutManager.LayoutManager LayoutManager { get; set; }

@@ -349,10 +349,6 @@ namespace KursAM2.Managers
                         Nomenkl = e.Nomenkl,
                         DocTypeCode = DocumentType.None
                     };
-                    if (e.Nomenkl.NomenklNumber == "2571")
-                    {
-                        var i = 1;
-                    }
                     SetCurrenciesValue(newOp,e.Kontr.BalansCurrency.DocCode,e.Profit,
                         e.Loss * GetRate(MyRates, e.Nomenkl.Currency.DocCode,
                             e.Kontr.BalansCurrency.DocCode, newOp.Date));

@@ -9,7 +9,6 @@ using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
@@ -258,14 +257,14 @@ namespace KursAM2.View.Finance.Cash
         private void SFPostEdit_DefaultButtonClick(object sender, RoutedEventArgs e)
         {
             if (!(DataContext is CashOutWindowViewModel dtx)) return;
-            if (dtx.Document.State == RowStatus.NewRow)
-            {
-                var wManager = new WindowManager();
-                wManager.ShowWinUIMessageBox("Нельзя првязать оплату к счету для нового документа." +
-                                             "Сначала сохрание ордер.", "Предупреждение",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
+            //if (dtx.Document.State == RowStatus.NewRow)
+            //{
+            //    var wManager = new WindowManager();
+            //    wManager.ShowWinUIMessageBox("Нельзя првязать оплату к счету для нового документа." +
+            //                                 "Сначала сохрание ордер.", "Предупреждение",
+            //        MessageBoxButton.OK, MessageBoxImage.Information);
+            //    return;
+            //}
 
             var doc = dtx.Document;
             var item = StandartDialogs.SelectInvoiceProvider(dtx, true, true,true);
@@ -312,34 +311,39 @@ namespace KursAM2.View.Finance.Cash
                 doc.NOTES_ORD = item.SF_NOTES;
             }
 
-
-            using (var ctx = GlobalOptions.GetEntities())
+            if (dtx.Document.DocCode > 0)
             {
-                try
+                using (var ctx = GlobalOptions.GetEntities())
                 {
-                    var old = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.CashDC == dtx.Document.DocCode
-                                                                         && _.DocDC == dtx.Document.SPOST_DC);
-                    if (old == null)
+                    try
                     {
-                        ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
+                        var old = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.CashDC == dtx.Document.DocCode
+                                                                             && _.DocDC == dtx.Document.SPOST_DC);
+                        if (old == null)
                         {
-                            Id = Guid.NewGuid(),
-                            Rate = 1,
-                            Summa = (decimal) dtx.Document.SUMM_ORD,
-                            CashDC = dtx.Document.DocCode,
-                            DocDC = (decimal)dtx.Document.SPOST_DC
-                        });
-                    }
-                    else
-                    {
-                        old.Summa = (decimal) dtx.Document.SUMM_ORD;
-                    }
+                            ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
+                            {
+                                Id = Guid.NewGuid(),
+                                Rate = 1,
+                                // ReSharper disable once PossibleInvalidOperationException
+                                Summa = (decimal) dtx.Document.SUMM_ORD,
+                                CashDC = dtx.Document.DocCode,
+                                // ReSharper disable once PossibleInvalidOperationException
+                                DocDC = (decimal) dtx.Document.SPOST_DC
+                            });
+                        }
+                        else
+                        {
+                            // ReSharper disable once PossibleInvalidOperationException
+                            old.Summa = (decimal) dtx.Document.SUMM_ORD;
+                        }
 
-                    ctx.SaveChanges();
-                }
-                catch(Exception ex)
-                {
-                    WindowManager.ShowError(ex);
+                        ctx.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        WindowManager.ShowError(ex);
+                    }
                 }
             }
         }

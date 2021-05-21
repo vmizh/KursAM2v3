@@ -10,7 +10,7 @@ using KursAM2.View.Finance.UC;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
-    public class SchetSupplierSelectViewModel : RSWindowViewModelBase
+    public sealed class SchetSupplierSelectViewModel : RSWindowViewModelBase
     {
         private InvoiceProvider myCurrentInvoice;
         private SchetFacturaProviderSelectUC myDataUserControl;

@@ -48,14 +48,18 @@ namespace KursAM2.ViewModel.Finance
                     var row = Docs.FirstOrDefault(_ => _.DocCode == d.DOC_CODE);
                     if (row != null)
                     {
+                        // ReSharper disable PossibleInvalidOperationException
                         row.CreditSumma += (decimal) d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1)
                             .Sum(_ => _.VZT_CRS_SUMMA);
+                       
                         row.DebetSumma += (decimal) d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0)
                             .Sum(_ => _.VZT_CRS_SUMMA);
                         row.Rate = calcRate(row.DebetCurrency, row.CreditCurrency, row.DebetSumma, row.CreditSumma);
+                     // ReSharper restore PossibleInvalidOperationException
                     }
                     else
                     {
+                        // ReSharper disable PossibleInvalidOperationException
                         var newrow = new MutualAcountingInfoDocumentViewModel
                         {
                             DocCode = d.DOC_CODE,
@@ -69,6 +73,7 @@ namespace KursAM2.ViewModel.Finance
                             DebetSumma =
                                 (decimal) d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA)
                         };
+                        // ReSharper restore PossibleInvalidOperationException
                         foreach (var s in d.TD_110)
                             if (!string.IsNullOrEmpty(s.VZT_DOC_NOTES))
                                 newrow.Note += " / " + s.VZT_DOC_NOTES;
@@ -200,8 +205,8 @@ namespace KursAM2.ViewModel.Finance
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var data = ctx.SD_110.Include(_ => _.TD_110)
-                    .Include(_ => _.SD_111).Where(_ => _.VZ_DATE >= DateStart && _.VZ_DATE <= DateEnd
-                                                                              && _.SD_111.IsCurrencyConvert).ToList();
+                    .Include(_ => _.SD_111).Where(_ => _.VZ_DATE >= DateStart && _.VZ_DATE <= DateEnd).ToList();
+                // ReSharper disable PossibleInvalidOperationException                                                              && _.SD_111.IsCurrencyConvert).ToList();
                 foreach (var d in data)
                 {
                     var row = Rates.FirstOrDefault(_ => _.CreditCurrency?.DOC_CODE == d.CurrencyToDC
@@ -230,6 +235,7 @@ namespace KursAM2.ViewModel.Finance
                         Rates.Add(newrow);
                     }
                 }
+                // ReSharper restore PossibleInvalidOperationException
             }
         }
 

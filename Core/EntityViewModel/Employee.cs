@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Core.Helper;
@@ -27,7 +28,7 @@ namespace Core.EntityViewModel
         }
     }
 
-    public class Employee : RSViewModelBase, IEntity<SD_2>
+    public class Employee : RSViewModelBase, IDataErrorInfo, IEntity<SD_2>
     {
         private SD_2 myEntity;
 
@@ -476,6 +477,21 @@ namespace Core.EntityViewModel
             return
                 $"{LastName} {(!string.IsNullOrEmpty(FirstName) ? FirstName.ToUpper().First() + "." : null)}" +
                 $"{(!string.IsNullOrEmpty(SecondName) ? SecondName.ToUpper().First() + "." : null)}";
+        }
+
+        public string Error => string.Empty;
+
+        public string this[string columnName]
+        {
+            get
+            {
+                if(columnName == "Name") {
+                    return string.IsNullOrWhiteSpace(Name) ?  "Имя сотрудника должно быть обязательно заполнено!" : string.Empty;
+                } else {
+
+                    return null;
+                }
+            }
         }
     }
 }

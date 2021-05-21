@@ -547,8 +547,30 @@ namespace KursAM2.Managers
                                         MessageBoxImage.Error);
                                     return;
                                 }
+
                                 if (updateCashOut.SPOST_DC != null)
                                 {
+                                    var old = ctx.ProviderInvoicePay.FirstOrDefault(_ =>
+                                        _.CashDC == updateCashOut.DocCode
+                                        && _.DocDC == updateCashOut.SPOST_DC);
+                                    if (old == null)
+                                    {
+                                        ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
+                                        {
+                                            Id = Guid.NewGuid(),
+                                            Rate = 1,
+                                            // ReSharper disable once PossibleInvalidOperationException
+                                            Summa = (decimal) updateCashOut.SUMM_ORD,
+                                            CashDC = updateCashOut.DocCode,
+                                            // ReSharper disable once PossibleInvalidOperationException
+                                            DocDC = (decimal) updateCashOut.SPOST_DC
+                                        });
+                                    }
+                                    else
+                                    {
+                                        // ReSharper disable once PossibleInvalidOperationException
+                                        old.Summa = (decimal) updateCashOut.SUMM_ORD;
+                                    }
                                     var sql =
                                         "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                         "FROM sd_26 s26 " +
@@ -557,7 +579,8 @@ namespace KursAM2.Managers
                                         "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SPOST_DC = s26.DOC_CODE " +
                                         $"WHERE s26.DOC_CODE = {Helper.CustomFormat.DecimalToSqlDecimal(updateCashOut.SPOST_DC)} " +
                                         "GROUP BY s26.doc_code, s26.SF_CRS_SUMMA ";
-                                    var pays = ctx.Database.SqlQuery<InvoicesManager.InvoicePayment>(sql).FirstOrDefault();
+                                    var pays = ctx.Database.SqlQuery<InvoicesManager.InvoicePayment>(sql)
+                                        .FirstOrDefault();
                                     if (pays != null)
                                     {
                                         if (pays.Summa < pays.PaySumma + updateCashOut.SUMM_ORD)
@@ -577,6 +600,7 @@ namespace KursAM2.Managers
                                         }
                                     }
                                 }
+
                                 ctx.Entry(CashOutViewModelToEntity(updateCashOut)).State = EntityState.Modified;
                                 ctx.SaveChanges();
                                 break;
@@ -798,6 +822,27 @@ namespace KursAM2.Managers
 
                                 if (insertCashOut.SPOST_DC != null)
                                 {
+                                    var old = ctx.ProviderInvoicePay.FirstOrDefault(_ =>
+                                        _.CashDC == insertCashOut.DocCode
+                                        && _.DocDC == insertCashOut.SPOST_DC);
+                                    if (old == null)
+                                    {
+                                        ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
+                                        {
+                                            Id = Guid.NewGuid(),
+                                            Rate = 1,
+                                            // ReSharper disable once PossibleInvalidOperationException
+                                            Summa = (decimal) insertCashOut.SUMM_ORD,
+                                            CashDC = ent1.DOC_CODE,
+                                            // ReSharper disable once PossibleInvalidOperationException
+                                            DocDC = (decimal) insertCashOut.SPOST_DC
+                                        });
+                                    }
+                                    else
+                                    {
+                                        // ReSharper disable once PossibleInvalidOperationException
+                                        old.Summa = (decimal) insertCashOut.SUMM_ORD;
+                                    }
                                     var sql =
                                         "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                         "FROM sd_26 s26 " +

@@ -13,6 +13,7 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.XtraEditors.DXErrorProvider;
 using KursAM2.View.Base;
+using KursAM2.View.KursReferences;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
@@ -24,7 +25,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         public MainCardWindowViewModel()
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
-            RightMenuBar = MenuGenerator.ReferenceRightBar(this);
+            RightMenuBar = MenuGenerator.NomenklCardRightBar(this);
             LoadReferences();
         }
 
@@ -45,6 +46,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                     NomenklMain.CategoryDC = grp.DocCode;
                 }
             }
+
+            State = RowStatus.NotEdited;
         }
 
         public MainCardWindowViewModel(NomenklMainViewModel nom) : this()
@@ -275,6 +278,38 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                     MainReferences.GetNomenkl(newDC);
             }
         }
+
+        public override void DocNewCopy(object obj)
+        {
+            var newNom = new NomenklMainViewModel
+            {
+                State = RowStatus.NewRow,
+                NomenklNumber = null,
+                Id = Guid.NewGuid(),
+                Name = NomenklMain.Name,
+                FullName = NomenklMain.FullName,
+                NomenklCategory = NomenklMain.NomenklCategory,
+                NomenklType = NomenklMain.NomenklType,
+                Country = NomenklMain.Country,
+                Note = NomenklMain.Note,
+                IsComplex = false,
+                IsNakladExpense = NomenklMain.IsNakladExpense,
+                IsUsluga = NomenklMain.IsUsluga,
+                Unit = NomenklMain.Unit,
+                ProductType = NomenklMain.ProductType,
+                IsRentabelnost = NomenklMain.IsRentabelnost
+            };
+            var ctx = new MainCardWindowViewModel
+            {
+                ParentReference = this.ParentReference,
+                NomenklMain = newNom
+            };
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var form = new NomenklMainCardView {Owner = Application.Current.MainWindow, DataContext = ctx};
+            //form.DataContext = ctx;
+            form.Show();
+        }
+        
 
         public void GetPropertyError(string propertyName, ErrorInfo info)
         {

@@ -908,6 +908,53 @@ namespace Core.Menu
             return ret;
         }
 
+         public static ObservableCollection<MenuButtonInfo> NomenklCardRightBar(RSWindowViewModelBase vm)
+        {
+            var docNew = new MenuButtonInfo
+            {
+                Name = "New",
+                Alignment = Dock.Right,
+                HAlignment = HorizontalAlignment.Right,
+                Content = Application.Current.Resources["menuDocumentAdd"] as ControlTemplate,
+                ToolTip = "Новый документ"
+            };
+            docNew.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "Копия текущего",
+                Image = Application.Current.Resources["imageDocumentNewCopy"] as DrawingImage,
+                Command = vm.DocNewCopyCommand
+            });
+            var ret = new ObservableCollection<MenuButtonInfo>
+            {
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuRefresh"] as ControlTemplate,
+                    ToolTip = "Обновить",
+                    Command = vm.RefreshDataCommand
+                },
+                docNew,
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuSave"] as ControlTemplate,
+                    ToolTip = "Сохранить изменения",
+                    Command = vm.SaveDataCommand
+                },
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuExit"] as ControlTemplate,
+                    ToolTip = "Закрыть документ",
+                    Command = vm.CloseWindowCommand
+                }
+            };
+            return ret;
+        }
+
         public static ObservableCollection<MenuButtonInfo> BankOpertionsRightBar(KursBaseControlViewModel vm)
         {
             var docNew = new MenuButtonInfo

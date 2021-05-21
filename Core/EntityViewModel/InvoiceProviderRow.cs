@@ -307,8 +307,7 @@ namespace Core.EntityViewModel
             get => Entity.SFT_SUMMA_K_OPLATE;
             set
             {
-                if (Entity.SFT_SUMMA_K_OPLATE == value) return;
-                Entity.SFT_SUMMA_K_OPLATE = value;
+                if (Entity.SFT_SUMMA_K_OPLATE == value) return; Entity.SFT_SUMMA_K_OPLATE = value;
                 Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
                 RaisePropertyChanged();
             }

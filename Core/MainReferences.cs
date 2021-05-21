@@ -46,11 +46,14 @@ namespace Core
             MutualTypes = new Dictionary<decimal, SD_111ViewModel>();
             BankAccounts = new Dictionary<decimal, BankAccount>();
             Cashs = new Dictionary<decimal, Cash>();
+            CashsAll = new Dictionary<decimal, Cash>();
             Projects = new Dictionary<Guid, Project>();
             ContractTypes = new Dictionary<decimal, ContractType>();
             DeliveryConditions = new Dictionary<decimal, DeliveryCondition>();
             Regions = new Dictionary<decimal, Region>();
         }
+
+        public static Dictionary<decimal, Cash> CashsAll { get; set; }
 
         public static bool IsCheckedForUpdate { set; get; } = false;
 
@@ -744,6 +747,7 @@ namespace Core
                         $"SELECT DOC_CODE AS DocCode, USR_ID as UserId FROM HD_22 WHERE USR_ID = {GlobalOptions.UserInfo.Id}")
                     .ToList();
                 foreach (var item in s22)
+                {
                     if (Cashs.ContainsKey(item.DOC_CODE))
                     {
                         var d = Cashs[item.DOC_CODE];
@@ -759,6 +763,22 @@ namespace Core
                                 myState = RowStatus.Deleted
                             });
                     }
+                    if (CashsAll.ContainsKey(item.DOC_CODE))
+                    {
+                        var d = CashsAll[item.DOC_CODE];
+                        d.UpdateFrom(item);
+                        d.myState = RowStatus.NotEdited;
+                    }
+                    else
+                    {
+                        CashsAll.Add(item.DOC_CODE,
+                            new Cash(item)
+                            {
+                                IsAccessRight = cashAcc.Any(_ => item.DOC_CODE == _.DocCode),
+                                myState = RowStatus.Deleted
+                            });
+                    }
+                }
 
                 keys = Cashs.Keys.ToList();
                 foreach (var k in keys)

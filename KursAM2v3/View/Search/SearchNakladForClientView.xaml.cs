@@ -9,8 +9,6 @@ namespace KursAM2.View.Search
     /// </summary>
     public partial class SearchNakladForClientView : ILayout
     {
-        private ILayout myLayoutImplementation;
-
         public SearchNakladForClientView()
         {
             InitializeComponent();

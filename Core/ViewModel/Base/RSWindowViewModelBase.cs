@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -23,6 +22,8 @@ namespace Core.ViewModel.Base
         public readonly WindowManager WinManager = new WindowManager();
         private bool myDialogResult;
         private Window myForm;
+
+        // ReSharper disable once MemberInitializerValueIgnored
         private bool myIsCanRefresh = true;
 
         private bool myIsLoading = true;
@@ -39,6 +40,7 @@ namespace Core.ViewModel.Base
 
         public RSWindowViewModelBase(Window form)
         {
+            // ReSharper disable once VirtualMemberCallInConstructor
             Form = form;
             myIsCanRefresh = true;
         }
@@ -54,6 +56,12 @@ namespace Core.ViewModel.Base
             }
         }
 
+        [Display(AutoGenerateField = false)] public global::Helper.LayoutManager LayoutManager { get; set; }
+
+        private ILayoutSerializationService LayoutSerializationService
+            => GetService<ILayoutSerializationService>(ServiceSearchMode.LocalOnly);
+
+        public virtual string LayoutName { set; get; }
         public StandartErrorManager ErrorManager { set; get; }
         public ObservableCollection<MenuButtonInfo> RightMenuBar { set; get; }
 
@@ -96,6 +104,20 @@ namespace Core.ViewModel.Base
 
         public bool IsCanSave { get; set; }
 
+        [Command]
+        public void OnWindowClosing()
+        {
+            LayoutManager?.Save();
+        }
+
+        [Command]
+        public void OnWindowLoaded()
+        {
+            LayoutManager = new global::Helper.LayoutManager(Form, LayoutSerializationService,
+                LayoutName, null);
+            LayoutManager.Load();
+        }
+
         public void RefreshData()
         {
             //throw new System.NotImplementedException();
@@ -131,7 +153,6 @@ namespace Core.ViewModel.Base
             throw new NotImplementedException();
         }
 
-        [SuppressMessage("ReSharper", "NotResolvedInText")]
         public virtual void UpdatePropertyChangies()
         {
             RaisePropertyChanged("Document");
@@ -167,6 +188,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand CloseWindowCommand
         {
+            // ReSharper disable once UnusedParameter.Local
             get { return new Command(CloseWindow, param => true); }
         }
 
@@ -237,11 +259,8 @@ namespace Core.ViewModel.Base
             return null;
         }
 
-#pragma warning disable 693
-
         // ReSharper disable once InconsistentNaming
         public virtual void ObservableCollection<MenuButtonInfo>(object data)
-#pragma warning restore 693
         {
         }
 
@@ -553,8 +572,10 @@ namespace Core.ViewModel.Base
 
         public virtual void ResetLayout(object form)
         {
-            var layman = Form as ILayout;
-            layman?.LayoutManager?.ResetLayout();
+            if (Form is ILayout layman)
+                layman.LayoutManager?.ResetLayout();
+            else
+                LayoutManager.ResetLayout();
         }
 
         [Display(AutoGenerateField = false)]

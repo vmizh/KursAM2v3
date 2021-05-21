@@ -92,6 +92,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public ObservableCollection<InvoiceProvider> SelectedDocs { set; get; }
 
+        public override string LayoutName => "SearchInvoiceProviderViewModel";
+
         public InvoiceProvider CurrentDocument
         {
             get => myCurrentDocument;

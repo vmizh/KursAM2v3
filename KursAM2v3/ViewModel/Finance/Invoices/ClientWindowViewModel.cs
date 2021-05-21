@@ -609,7 +609,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void AddUsluga(object obj)
         {
-            var k = StandartDialogs.SelectNomenkls(null);
+            var k = StandartDialogs.SelectNomenkls();
             if (k != null)
             {
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;

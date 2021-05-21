@@ -104,6 +104,7 @@ namespace KursAM2.Managers
                     OpenCurrencyChange(dc, parent);
                     break;
                 case DocumentType.NomenklTransfer:
+                    // ReSharper disable once PossibleInvalidOperationException
                     OpenNomenklTransfer(id.Value);
                     break;
                 case DocumentType.StoreOrderIn:
@@ -304,10 +305,15 @@ namespace KursAM2.Managers
         private static void OpenSFProvider(decimal docCode)
         {
             var ctx = new ProviderWindowViewModel(docCode);
-            var view = new InvoiceProviderView{Owner = Application.Current.MainWindow};
-            ctx.Form = view;
+            var view = new InvoiceProviderView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = view; 
             view.Show();
-            view.DataContext = ctx;
+            ctx.Document.State = RowStatus.NotEdited;
+            ctx.RaisePropertyChanged(nameof(ctx.IsCanSaveData));
         }
 
         /// <summary>

@@ -185,6 +185,7 @@
     <Compile Include="Helper\KursConvert.cs" />
     <Compile Include="Helper\TypeProfitAndLossCalc.cs" />
     <Compile Include="Helper\MultyCurrencyHelper.cs" />
+    <Compile Include="Helper\ValidationError.cs" />
     <Compile Include="Logger\LoggerHelper.cs" />
     <Compile Include="Logger\LogLevelEnum.cs" />
     <Compile Include="Repository\Base\DocumentCreateTypeEnum.cs" />
@@ -287,7 +288,7 @@
     <Compile Include="EntityViewModel\SD_40ViewModel.cs" />
     <Compile Include="EntityViewModel\SD_43_GRUZOViewModel.cs" />
     <Compile Include="EntityViewModel\Bank.cs" />
-    <Compile Include="EntityViewModel\SD_77ViewModel.cs" />
+    <Compile Include="EntityViewModel\VzaimoraschetType.cs" />
     <Compile Include="EntityViewModel\SD_82ViewModel.cs" />
     <Compile Include="EntityViewModel\SD_83_TransferViewModel.cs" />
     <Compile Include="EntityViewModel\SD_99ViewModel.cs" />
@@ -343,7 +344,6 @@
     <Compile Include="ViewModel\Common\SDRState.cs" />
     <Compile Include="ViewModel\Common\User.cs" />
     <Compile Include="ViewModel\Common\UserViewModel.cs" />
-    <Compile Include="ViewModel\Common\VzaimoraschetType.cs" />
     <Compile Include="ViewModel\KontragentTypeEnum.cs" />
     <Compile Include="ViewModel\MutualAccounting\TD_110ViewModel.cs" />
     <Compile Include="ViewModel\MutualAccounting\SD_110ViewModel.cs" />

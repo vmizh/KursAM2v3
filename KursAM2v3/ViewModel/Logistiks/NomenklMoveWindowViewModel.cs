@@ -29,20 +29,6 @@ namespace KursAM2.ViewModel.Logistiks
             Operations = new List<NomenklCalcCostOperation>();
         }
 
-        public NomenklMoveWindowViewModel(NomenklMove form)  
-        {
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
-            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            LoadReference();
-            DateForSklad = DateTime.Today;
-            Operations = new List<NomenklCalcCostOperation>();
-            //var gridHelp = new KursGridControlHelper(form.sklad);
-            //foreach (var skl in StoreCollection)
-            //{
-            //    gridHelp.GenerateNumericColumn("col" + skl.DocCode.ToString(CultureInfo.InvariantCulture), skl.Name, "sklad" + skl.DocCode, true, 2);
-            //}
-        }
-
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<Core.EntityViewModel.Warehouse> StoreCollection { set; get; } =
             new ObservableCollection<Core.EntityViewModel.Warehouse>();

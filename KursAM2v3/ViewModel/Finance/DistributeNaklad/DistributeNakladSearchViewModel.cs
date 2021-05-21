@@ -18,7 +18,7 @@ using KursAM2.View.Finance.DistributeNaklad;
 namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {
     [POCOViewModel]
-    public class DistributeNakladSearchViewModel : KursWindowSearchBaseViewModel,
+    public sealed class DistributeNakladSearchViewModel : KursWindowSearchBaseViewModel,
         ISearchWindowViewModel<DistributeNakladViewModel>, IKursLayoutManager
     {
         #region Constructors

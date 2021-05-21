@@ -21,7 +21,7 @@ namespace Core.ViewModel.MutualAccounting
         private InvoiceClient mySFClient;
         private InvoiceProvider mySFProvider;
         private SDRSchet mySHPZ;
-        private SD_77ViewModel myVzaimoraschType;
+        private VzaimoraschetType myVzaimoraschType;
 
         public TD_110ViewModel()
         {
@@ -281,7 +281,7 @@ namespace Core.ViewModel.MutualAccounting
             }
         }
 
-        public SD_77ViewModel VzaimoraschType
+        public VzaimoraschetType VzaimoraschType
         {
             get => myVzaimoraschType;
             set
@@ -559,7 +559,7 @@ namespace Core.ViewModel.MutualAccounting
             VZT_VZAIMOR_TYPE_DC = ent.VZT_VZAIMOR_TYPE_DC;
             VzaimoraschType = ent.SD_77 != null
                 ?
-                //new SD_77ViewModel(ent.SD_77) 
+                //new VzaimoraschetType(ent.SD_77) 
                 MainReferences.VzaimoraschetTypes[ent.SD_77.DOC_CODE]
                 : null;
             VZT_1MYDOLZH_0NAMDOLZH = ent.VZT_1MYDOLZH_0NAMDOLZH;

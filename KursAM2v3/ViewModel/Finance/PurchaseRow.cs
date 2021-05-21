@@ -18,6 +18,7 @@ namespace KursAM2.ViewModel.Finance
         public decimal AveragePrice { set; get; }
         public decimal CBRate { set; get; }
         public string PostName => MainReferences.GetKontragent(TD_26.SD_26.SF_POST_DC).Name;
+        // ReSharper disable once PossibleInvalidOperationException
         public string CurrencyName => MainReferences.Currencies[TD_26.SD_26.SF_CRS_DC.Value].Name;
 
         public decimal SummaPurchase

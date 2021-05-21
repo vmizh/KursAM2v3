@@ -22,11 +22,10 @@ using KursAM2.View.Finance.Cash;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {
-    public class CashBookWindowViewModel : RSWindowViewModelBase
+    public sealed class CashBookWindowViewModel : RSWindowViewModelBase
     {
         #region Fields
 
-        private static readonly WindowManager winManager = new WindowManager();
         private Core.EntityViewModel.Cash myCurrentCash;
         private CashBookDocument myCurrentDocument;
         private DatePeriod myCurrentPeriod;
@@ -131,14 +130,14 @@ namespace KursAM2.ViewModel.Finance.Cash
                     var d1 = ctx.TD_22.Where(_ => _.DOC_CODE == CurrentCash.DocCode && _.CRS_DC == crs)
                         .Select(_ => _.SUMMA_START).ToList();
                     var dIn = ctx.SD_33.Where(_ => _.CA_DC == CurrentCash.DOC_CODE && _.CRS_DC == crs
-                                                                                   && _.DATE_ORD >=
-                                                                                   CurrentPeriod.DateStart &&
-                                                                                   _.DATE_ORD <=
-                                                                                   CurrentPeriod.DateEnd)
+                            && _.DATE_ORD >=
+                            CurrentPeriod.DateStart &&
+                            _.DATE_ORD <=
+                            CurrentPeriod.DateEnd)
                         .Select(_ => _.SUMM_ORD).ToList();
                     var dIn1 = ctx.SD_33.Where(_ => _.CA_DC == CurrentCash.DOC_CODE && _.CRS_DC == crs
-                                                                                    && _.DATE_ORD <
-                                                                                    CurrentPeriod.DateStart)
+                            && _.DATE_ORD <
+                            CurrentPeriod.DateStart)
                         .Select(_ => _.SUMM_ORD).ToList();
                     var dOut = ctx.SD_34.Where(_ =>
                             _.CA_DC == CurrentCash.DOC_CODE && _.CRS_DC == crs && _.DATE_ORD >=
@@ -179,6 +178,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                              - dOut1.Sum()
                              + dCrs11.Sum()
                              - dCrs21.Sum();
+                    // ReSharper disable once PossibleInvalidOperationException
                     var p2 = (decimal) (dIn == null ? 0 : dIn.Sum()) +
                              dCrs1.Sum();
                     var p3 = dOut.Sum()
@@ -186,10 +186,12 @@ namespace KursAM2.ViewModel.Finance.Cash
                     MoneyRemains.Add(new MoneyRemains
                         {
                             CurrencyName = MainReferences.Currencies[crs].Name,
+                            // ReSharper disable PossibleInvalidOperationException
                             Start = (decimal) p1,
                             In = (decimal) p2,
                             Out = (decimal) p3,
                             End = (decimal) (p1 + p2 - p3)
+                            // ReSharper restore PossibleInvalidOperationException
                         }
                     );
                 }
@@ -200,8 +202,8 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             while (!MainReferences.IsReferenceLoadComplete)
             {
-
             }
+
             Documents.Clear();
             foreach (var d in CashManager.LoadDocuments(CurrentCash, CurrentPeriod.DateStart, CurrentPeriod.DateEnd))
                 Documents.Add(d);
@@ -260,7 +262,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         #endregion
 
-        #region Commands 
+        #region Commands
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
@@ -487,9 +489,11 @@ namespace KursAM2.ViewModel.Finance.Cash
                     foreach (var i in d1) dates.Add(i);
                     foreach (var i in dIn)
                         if (dates.All(_ => _ != i))
+                            // ReSharper disable once PossibleInvalidOperationException
                             dates.Add((DateTime) i);
                     foreach (var i in dOut)
                         if (dates.All(_ => _ != i))
+                            // ReSharper disable once PossibleInvalidOperationException
                             dates.Add((DateTime) i);
                     foreach (var i in dCrs)
                         if (dates.All(_ => _ != i))
@@ -512,10 +516,10 @@ namespace KursAM2.ViewModel.Finance.Cash
         public void RefreshActual(RSViewModelBase vm)
         {
             if (vm == null) return;
-            var cashIn = vm as CashIn;
             var cashOut = vm as CashOut;
             var cashExch = vm as SD_251ViewModel;
-            var date = (DateTime) (cashIn != null ? cashIn.DATE_ORD :
+            // ReSharper disable once PossibleInvalidOperationException
+            var date = (DateTime) (vm is CashIn cashIn ? cashIn.DATE_ORD :
                 cashOut != null ? cashOut.DATE_ORD :
                 cashExch?.CH_DATE ?? DateTime.Today);
             RefreshData(null);
@@ -559,7 +563,8 @@ namespace KursAM2.ViewModel.Finance.Cash
             while (iteratorYear.MoveNext())
             {
                 if (iteratorYear.Current == null) continue;
-                if (!(iteratorYear.Current.Content is DatePeriod year)) return;
+                var year = iteratorYear.Current.Content as DatePeriod;
+                if (year == null) return;
                 if (year.DateStart.Year != date.Year) continue;
                 if (year.PeriodType == dateType)
                 {

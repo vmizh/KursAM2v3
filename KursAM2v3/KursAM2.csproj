@@ -305,6 +305,7 @@
     <Compile Include="Repositories\InvoicesRepositories\InvoiceClientRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />
+    <Compile Include="Resource\ErrorContentConverter.cs" />
     <Compile Include="Resource\ErrorToBrushConverter.cs" />
     <Compile Include="Tests\TreeControlFluentTests.xaml.cs">
       <DependentUpon>TreeControlFluentTests.xaml</DependentUpon>

@@ -102,6 +102,7 @@ namespace Helper
                         writer.Flush();
                     }
 
+                    var s = layoutService.Serialize();
                     if (l == null)
                     {
                         ctx.FormLayout.Add(new FormLayout
@@ -171,6 +172,7 @@ namespace Helper
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Ошибка загрузки разметки {FormName} " + ex.Message);
+                    //layoutService.Deserialize(null);
                 }
             }
             

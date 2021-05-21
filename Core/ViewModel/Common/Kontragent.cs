@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace Core.ViewModel.Common
     }
 
     [MetadataType(typeof(DataAnnotationsKontragent))]
-    public class Kontragent : RSViewModelBase, IEntity<SD_43>
+    public class Kontragent : RSViewModelBase, IEntity<SD_43>, IDataErrorInfo
     {
         private KontragentCategory myCategory;
         private Currency myCurrency;
@@ -919,6 +920,11 @@ namespace Core.ViewModel.Common
         }
 
         public EntityLoadCodition LoadCondition { get; set; }
+
+        public string this[string columnName] =>
+            string.IsNullOrWhiteSpace(Name) ? ValidationError.GetErrorMan("Контрагент") : null;
+
+        public string Error => null;
 
         public List<SD_43> LoadList()
         {

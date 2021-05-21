@@ -2,19 +2,19 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using DevExpress.Utils.Filtering.Internal;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
+using DevExpress.XtraEditors.DXErrorProvider;
 using Dock = System.Windows.Controls.Dock;
 
 namespace Helper
 {
     public class ViewFluentHelper
     {
-        public static MemoEdit SetDefaultMemoEdit(DataLayoutItem item, 
-            HorizontalAlignment hrzAlign = HorizontalAlignment.Stretch, float? width = null,float height = 80)
+        public static MemoEdit SetDefaultMemoEdit(DataLayoutItem item,
+            HorizontalAlignment hrzAlign = HorizontalAlignment.Stretch, float? width = null, float height = 80)
         {
             var oldContent = item.Content as BaseEdit;
             var defaultMemo = new MemoEdit
@@ -32,7 +32,7 @@ namespace Helper
             };
             BindingHelper.CopyBinding(oldContent, defaultMemo, BaseEdit.EditValueProperty);
             item.Content = defaultMemo;
-            if (defaultMemo.EditValue != null && !string.IsNullOrWhiteSpace((string)defaultMemo.EditValue))
+            if (defaultMemo.EditValue != null && !string.IsNullOrWhiteSpace((string) defaultMemo.EditValue))
                 item.Height = height;
             item.HorizontalAlignment = hrzAlign;
             if (width != null)
@@ -40,9 +40,9 @@ namespace Helper
             return defaultMemo;
         }
 
-        public static TextEdit SetDefaultTextEdit(DataLayoutItem item, 
-            HorizontalAlignment hrzAlign = HorizontalAlignment.Left, 
-        float? width = null, float? height = null)
+        public static TextEdit SetDefaultTextEdit(DataLayoutItem item,
+            HorizontalAlignment hrzAlign = HorizontalAlignment.Left,
+            float? width = null, float? height = null)
         {
             var oldContent = item.Content as BaseEdit;
             var defaultText = new TextEdit
@@ -103,12 +103,13 @@ namespace Helper
             }
         }
 
-        public static ComboBoxEdit SetComboBoxEdit(DataLayoutItem item, object field, string nameField, object list,
+        public static ComboBoxEdit SetComboBoxEditNotNull(DataLayoutItem item, object field, string nameField,
+            object list,
             string displayMember = "Name", string displayValue = "DocCode",
             double width = 300)
         {
             //item.c = width;
-            var dockPanel = new DockPanel()
+            var dockPanel = new DockPanel
             {
                 LastChildFill = false,
                 Width = width,
@@ -122,11 +123,54 @@ namespace Helper
                 DisplayMember = displayMember,
                 ValueMember = displayValue,
                 AutoComplete = true,
-                Width = width
+                Width = width,
+                ValidateOnTextInput = true,
+                ValidateOnEnterKeyPressed = true,
+                ShowError = true
+            };
+            cbCashs.Validate += (s, e) =>
+            {
+                if (e.Value != null) return;
+                e.IsValid = false;
+                e.ErrorType = ErrorType.Critical;
+                e.ErrorContent = "Поле не может быть пустым";
             };
             DockPanel.SetDock(cbCashs, Dock.Left);
             cbCashs.SetBinding(LookUpEditBase.SelectedItemProperty,
-                new Binding { Path = new PropertyPath(nameField) });
+                new Binding {Path = new PropertyPath(nameField)});
+            dockPanel.Children.Add(cbCashs);
+            item.Content = dockPanel;
+            item.Width = dockPanel.Width + 150;
+            return cbCashs;
+        }
+
+        public static ComboBoxEdit SetComboBoxEdit(DataLayoutItem item, object field, string nameField, object list,
+            string displayMember = "Name", string displayValue = "DocCode",
+            double width = 300)
+        {
+            //item.c = width;
+            var dockPanel = new DockPanel
+            {
+                LastChildFill = false,
+                Width = width,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            var cbCashs = new ComboBoxEdit
+            {
+                Name = nameField,
+                EditValue = field,
+                ItemsSource = list,
+                DisplayMember = displayMember,
+                ValueMember = displayValue,
+                AutoComplete = true,
+                Width = width,
+                ValidateOnTextInput = true,
+                ValidateOnEnterKeyPressed = true,
+                ShowError = true
+            };
+            DockPanel.SetDock(cbCashs, Dock.Left);
+            cbCashs.SetBinding(LookUpEditBase.SelectedItemProperty,
+                new Binding {Path = new PropertyPath(nameField)});
             dockPanel.Children.Add(cbCashs);
             item.Content = dockPanel;
             item.Width = dockPanel.Width + 150;

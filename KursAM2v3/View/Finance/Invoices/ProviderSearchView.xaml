@@ -7,83 +7,14 @@
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:control="clr-namespace:Core.Control;assembly=Core"
              mc:Ignorable="d"
              Title="Выбор счетов-фактур поставщиков" Height="450" Width="800">
-    <DockPanel>
-        <DockPanel DockPanel.Dock="Top" LastChildFill="False">
-            <ItemsControl VerticalAlignment="Center"
-                          VerticalContentAlignment="Center"
-                          DockPanel.Dock="Left"
-                          Height="60"
-                          ItemsSource="{Binding LeftMenuBar, Mode=TwoWay}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
-                        <Button Template="{Binding Content}"
-                                ToolTip="{Binding ToolTip}"
-                                Height="48"
-                                Width="48"
-                                FontSize="12"
-                                FontWeight="Bold"
-                                Style="{StaticResource circleButton}"
-                                Click="MenuButton_OnClick"
-                                Margin="10,0,0,0" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <DockPanel LastChildFill="True" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-            <ItemsControl VerticalAlignment="Center" VerticalContentAlignment="Center" DockPanel.Dock="Right"
-                          Height="60"
-                          ItemsSource="{Binding RightMenuBar, Mode=TwoWay}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
-                        <Button Template="{Binding Content}"
-                                ToolTip="{Binding ToolTip}"
-                                Height="48"
-                                Width="48"
-                                FontSize="12"
-                                FontWeight="Bold"
-                                Style="{StaticResource circleButton}"
-                                Click="MenuButton_OnClick"
-                                Margin="10,0,0,0" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <DockPanel LastChildFill="True" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </DockPanel>
+    <DockPanel Style="{StaticResource DXServices}">
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
-               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
-        <!-- <DockPanel DockPanel.Dock="Top"> -->
-        <!--     <dxlc:LayoutItem Label="Поиск" -->
-        <!--                      Margin="0,10,0,0" -->
-        <!--                      ToolTip="Строка поиска по полям документов" -->
-        <!--                      Height="26" -->
-        <!--                      Name="TextSearch" -->
-        <!--                      Width="350" -->
-        <!--                      HorizontalAlignment="Right"> -->
-        <!--         <dxe:ButtonEdit AllowDefaultButton="False" -->
-        <!--                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" -->
-        <!--                         IsEnabled="{Binding IsSearchEnabled}"> -->
-        <!--             <dxe:ButtonEdit.Buttons> -->
-        <!--                 <dxe:ButtonInfo GlyphKind="Search" Command="{Binding SearchCommand}" /> -->
-        <!--                 <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding SearchClearCommand}" /> -->
-        <!--             </dxe:ButtonEdit.Buttons> -->
-        <!--             <dxmvvm:Interaction.Behaviors> -->
-        <!--                 <dxmvvm:KeyToCommand Command="{Binding SearchKeyDownCommand}" -->
-        <!--                                      KeyGesture="Enter" /> -->
-        <!--             </dxmvvm:Interaction.Behaviors> -->
-        <!--         </dxe:ButtonEdit> -->
-        <!--     </dxlc:LayoutItem> -->
-        <!-- </DockPanel> -->
+               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" 
+               Foreground="{Binding DatabaseColor}" />
         <StackPanel Orientation="Horizontal"
                     DockPanel.Dock="Top">
             <dxe:DateEdit Width="120" EditValue="{Binding DateStart}" IsEnabled="{Binding IsDateEnabled}" />
