@@ -23,7 +23,7 @@ namespace Core.EntityViewModel
     [MetadataType(typeof(SD_26LayoutData_FluentAPI))]
     public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo
     {
-        private UnitOfWork<ALFAMEDIAEntities> context;
+        private readonly UnitOfWork<ALFAMEDIAEntities> context;
 
         protected string SFact(decimal dc)
         {
@@ -1397,8 +1397,6 @@ namespace Core.EntityViewModel
 
         #endregion Methods
 
-        private Dictionary<string, object> fieldsNotNull = new Dictionary<string, object>();
-
         public string this[string columnName]
         {
             get
@@ -1441,7 +1439,7 @@ namespace Core.EntityViewModel
 
     public class SD_26LayoutData_FluentAPI : DataAnnotationForFluentApiBase, IMetadataProvider<InvoiceProvider>
     {
-        private string notNullMessage = "Поле должно быть заполнено";
+        private readonly string notNullMessage = "Поле должно быть заполнено";
         void IMetadataProvider<InvoiceProvider>.BuildMetadata(
             MetadataBuilder<InvoiceProvider> builder)
         {

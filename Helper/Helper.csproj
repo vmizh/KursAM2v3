@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BindingHelper.cs" />
+    <Compile Include="IniFileManager.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="ThemeHelper.cs" />
     <Compile Include="ViewFluentHelper.cs" />

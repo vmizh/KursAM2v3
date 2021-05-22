@@ -21,6 +21,7 @@ using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using Helper;
 using KursAM2.Managers;
+using KursAM2.Properties;
 using KursAM2.ViewModel.Splash;
 using User = Helper.User;
 
@@ -32,28 +33,34 @@ namespace KursAM2.ViewModel.StartLogin
         private string myCurrentPassword;
         private string myCurrentUser;
         private bool myIsThemeAllow;
-        private string myVersionValue;
         private DataSource mySelectedDataSource;
+        private string myVersionValue;
 
         public StartLoginViewModel(Window formWindow)
         {
+            UserIniFile = new IniFileManager(Application.Current.Properties["DataPath"] + "\\User.ini");
+            InitIniFile(UserIniFile);
             Form = formWindow;
-            CurrentUser = Properties.Settings.Default.Login;
+            CurrentUser = UserIniFile.ReadINI("Start", "Login");
             //GetDefaultCache();
         }
 
         private ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
+        public IniFileManager UserIniFile { set; get; }
 
         public ObservableCollection<DataSource> ComboBoxItemSource { set; get; } =
             new ObservableCollection<DataSource>();
 
-        public DataSource SelectedDataSource { set
+        public DataSource SelectedDataSource
+        {
+            set
             {
                 if (mySelectedDataSource == value) return;
                 mySelectedDataSource = value;
                 RaisePropertiesChanged();
             }
-            get => mySelectedDataSource; }
+            get => mySelectedDataSource;
+        }
 
         public string VersionValue
         {
@@ -106,6 +113,13 @@ namespace KursAM2.ViewModel.StartLogin
         public ObservableCollection<string> ThemeNameList { set; get; } =
             new ObservableCollection<string>();
 
+        private void InitIniFile(IniFileManager userIni)
+        {
+            if (!userIni.KeyExists("Login", "Start")) userIni.Write("Start", "Login", "");
+            if (!userIni.KeyExists("LastDataBase", "Start")) userIni.Write("Start", "LastDataBase", "");
+            if (!userIni.KeyExists("DefaultDataBase", "Start")) userIni.Write("Start", "DefaultDataBase", "");
+        }
+
         #region command
 
         // ReSharper disable once InconsistentNaming
@@ -126,10 +140,11 @@ namespace KursAM2.ViewModel.StartLogin
                     MessageBoxImage.Question);
                 return;
             }
-            Properties.Settings.Default.LastDataBase = SelectedDataSource.ShowName;
-            Properties.Settings.Default.Login = CurrentUser;
-            Properties.Settings.Default.Save();
+
+            UserIniFile.Write("Start", "Login", CurrentUser);
+            UserIniFile.Write("Start", "LastDataBase", SelectedDataSource.ShowName);
             SplashLoadBar();
+            // ReSharper disable once InlineOutVariableDeclaration
             User newUser;
             if (!CheckAndSetUser(out newUser)) return;
             using (var ctx = GlobalOptions.KursSystem())
@@ -493,8 +508,9 @@ namespace KursAM2.ViewModel.StartLogin
                         ApplicationThemeHelper.ApplicationThemeName = user.ThemeName;
                         ApplicationThemeHelper.UpdateApplicationThemeName();
                     }
-                    if(!string.IsNullOrWhiteSpace(Properties.Settings.Default.LastDataBase))
-                        CurrentBoxItem = Properties.Settings.Default.LastDataBase;
+
+                    if (!string.IsNullOrWhiteSpace(Settings.Default.LastDataBase))
+                        CurrentBoxItem = Settings.Default.LastDataBase;
                 }
             }
             catch (Exception ex)
@@ -514,10 +530,9 @@ namespace KursAM2.ViewModel.StartLogin
             }
 
             LoadDataSources();
-            if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.LastDataBase))
+            if (!string.IsNullOrWhiteSpace(UserIniFile.ReadINI("Start", "LastDataBase")))
                 SelectedDataSource =
-                    ComboBoxItemSource.FirstOrDefault(_ => _.ShowName == Properties.Settings.Default.LastDataBase);
-
+                    ComboBoxItemSource.FirstOrDefault(_ => _.ShowName == UserIniFile.ReadINI("Start", "LastDataBase"));
         }
 
         public void SaveСache(ImageSource data)

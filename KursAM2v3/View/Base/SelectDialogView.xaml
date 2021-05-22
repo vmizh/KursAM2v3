@@ -1,4 +1,4 @@
-﻿<dx:DXWindow
+﻿<dx:ThemedWindow
     x:Class="KursAM2.View.Base.SelectDialogView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -30,4 +30,4 @@
                     Command="{Binding OkCommand}" Click="Ok_OnClick" />
         </DockPanel>
     </Grid>
-</dx:DXWindow>
+</dx:ThemedWindow>
