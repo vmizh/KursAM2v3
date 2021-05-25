@@ -103,6 +103,10 @@ namespace Core.EntityViewModel
             $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {SF_POSTAV_DATE.ToShortDateString()} " +
             $"{SF_NOTES}";
 
+        public override string Description => $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {SF_POSTAV_DATE.ToShortDateString()} " +
+                                              $"{Kontragent} на {SF_CRS_SUMMA} {Currency} "  +
+                                              $"{SF_NOTES}";
+
         public decimal DOC_CODE
         {
             get => Entity.DOC_CODE;

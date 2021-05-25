@@ -43,6 +43,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             RightMenuBar = SetMenuBar();
             Periods = new ObservableCollection<DatePeriod>();
             IsPeriodEnabled = true;
+            LayoutName = "CashBookWindow";
         }
 
         public CashBookWindowViewModel(decimal cashDC) : this()

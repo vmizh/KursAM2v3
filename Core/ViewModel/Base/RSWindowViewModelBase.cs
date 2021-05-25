@@ -153,6 +153,11 @@ namespace Core.ViewModel.Base
             throw new NotImplementedException();
         }
 
+        public virtual void UpdateDocumentOpen()
+        {
+
+        }
+
         public virtual void UpdatePropertyChangies()
         {
             RaisePropertyChanged("Document");

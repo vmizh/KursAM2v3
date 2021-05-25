@@ -70,6 +70,11 @@ namespace KursAM2.ViewModel.Finance
             }
         }
 
+        public override void UpdateDocumentOpen()
+        {
+            
+        }
+
         public SD_110ViewModel Document { set; get; }
         public bool IsNotOld => !Document.IsOld;
         public bool IsCanDebitorCrsChanged => DebitorCollection.Count == 0;

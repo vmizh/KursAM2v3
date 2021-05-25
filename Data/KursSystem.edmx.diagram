@@ -10,7 +10,7 @@
         <EntityTypeShape EntityType="KursSystemModel.KursMenuGroup" Width="1.5" PointX="1.5" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="KursSystemModel.KursMenuItem" Width="1.5" PointX="0.75" PointY="4.625" IsExpanded="true" />
         <EntityTypeShape EntityType="KursSystemModel.UserMenuRight" Width="1.5" PointX="3" PointY="9" IsExpanded="true" />
-        <EntityTypeShape EntityType="KursSystemModel.Users" Width="1.5" PointX="3" PointY="18.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="KursSystemModel.Users" Width="1.5" PointX="2.25" PointY="16.375" IsExpanded="true" />
         <EntityTypeShape EntityType="KursSystemModel.Version" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="KursSystemModel.VersionInfo" Width="1.5" PointX="4.75" PointY="2.75" IsExpanded="true" />
         <AssociationConnector Association="KursSystemModel.FK_KontragentCashes_DBId" ManuallyRouted="false" />
@@ -31,6 +31,9 @@
         <EntityTypeShape EntityType="KursSystemModel.TasksLog" Width="1.5" PointX="7.375" PointY="4.75" />
         <EntityTypeShape EntityType="KursSystemModel.UserRoles" Width="1.5" PointX="3" PointY="12.25" />
         <AssociationConnector Association="KursSystemModel.UserRolesLinkMenuItem" />
+        <EntityTypeShape EntityType="KursSystemModel.LastDocument" Width="1.5" PointX="7.5" PointY="9.875" />
+        <AssociationConnector Association="KursSystemModel.FK_LastDocument_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_LastDocument_UserId" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

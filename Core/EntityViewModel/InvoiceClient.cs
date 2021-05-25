@@ -249,6 +249,10 @@ namespace Core.EntityViewModel
             }
         }
 
+        public override string Description => Entity != null ?
+            $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " + 
+            $"от {Entity.SF_DATE.ToShortDateString()} {MainReferences.GetKontragent(SF_CLIENT_DC)} {SF_CRS_SUMMA_K_OPLATE} {Currency} {Note} " : null;
+
         public override string Name
             => Entity.DOC_CODE > 0 ?
                 $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +

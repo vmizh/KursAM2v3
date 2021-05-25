@@ -334,10 +334,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             get
             {
-                return new Command(KontragentSelect,  _ => true);
+                return new Command(ReceiverSelect,  _ => true);
             }
         }
 
+        // ReSharper disable once UnusedMember.Local
+        // ReSharper disable once UnusedParameter.Local
         private void ReceiverSelect(object obj)
         {
             var kontr = StandartDialogs.SelectKontragent();
@@ -972,10 +974,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public Command AddUslugaCommand
         {
-            get { return new Command(addUsluga, _ => true); }
+            get { return new Command(AddUsluga, _ => true); }
         }
 
-        private void addUsluga(object obj)
+        private void AddUsluga(object obj)
         {
             var k = StandartDialogs.SelectNomenkls();
             if (k != null)
@@ -1019,10 +1021,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand UpdateCalcRowSummaCommand
         {
-            get { return new Command(updateCalcRowSumma, _ => true); }
+            get { return new Command(UpdateCalcRowSumma, _ => true); }
         }
 
-        private void updateCalcRowSumma(object obj)
+        private void UpdateCalcRowSumma(object obj)
         {
             CurrentRow?.Calc();
         }
@@ -1044,7 +1046,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             UnitOfWork.CreateTransaction();
             try
             {
-                if (Document.State == RowStatus.NewRow)
+                if (Document.State == RowStatus.NewRow || Document.DocCode < 0)
                 {
                     Document.SF_IN_NUM = UnitOfWork.Context.SD_26.Any()
                         ? UnitOfWork.Context.SD_26.Max(_ => _.SF_IN_NUM) + 1
@@ -1481,7 +1483,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         /// <summary>
         ///     удаление зависших связей с платежами
         /// </summary>
-        private void deletePayments()
+        private void DeletePayments()
         {
             //TODO Добавить для кассы и акта взаимозачета
             if (Document.PaymentDocs.All(_ => _.State != RowStatus.NewRow)) return;
@@ -1517,7 +1519,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         SaveData(null);
                         break;
                     case MessageBoxResult.No:
-                        deletePayments();
+                        DeletePayments();
                         break;
                     case MessageBoxResult.Cancel:
                         return;

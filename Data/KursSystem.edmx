@@ -76,6 +76,21 @@
           <Property Name="OrderBy" Type="int" />
           <Property Name="Code" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="LastDocument">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DbId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DocType" Type="int" Nullable="false" />
+          <Property Name="DocDC" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="DocId" Type="uniqueidentifier" />
+          <Property Name="Creator" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="LastChanger" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="LastOpen" Type="datetime" Nullable="false" />
+          <Property Name="Description" Type="varchar(max)" />
+        </EntityType>
         <EntityType Name="Log">
           <Key>
             <PropertyRef Name="Id" />
@@ -273,6 +288,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_LastDocument_DbId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="LastDocument" Type="Self.LastDocument" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastDocument">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LastDocument_UserId">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="LastDocument" Type="Self.LastDocument" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastDocument">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_UserMenuRight_DBId">
           <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
           <End Role="UserMenuRight" Type="Self.UserMenuRight" Multiplicity="*" />
@@ -355,6 +394,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <EntitySet Name="KontragentCashes" EntityType="Self.KontragentCashes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KursMenuGroup" EntityType="Self.KursMenuGroup" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KursMenuItem" EntityType="Self.KursMenuItem" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LastDocument" EntityType="Self.LastDocument" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Log" EntityType="Self.Log" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TasksLog" EntityType="Self.TasksLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMenuOrder" EntityType="Self.UserMenuOrder" Schema="dbo" store:Type="Tables" />
@@ -396,6 +436,14 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <AssociationSet Name="FK_KursMenuItem_GroupId" Association="Self.FK_KursMenuItem_GroupId">
             <End Role="KursMenuGroup" EntitySet="KursMenuGroup" />
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastDocument_DbId" Association="Self.FK_LastDocument_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="LastDocument" EntitySet="LastDocument" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastDocument_UserId" Association="Self.FK_LastDocument_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="LastDocument" EntitySet="LastDocument" />
           </AssociationSet>
           <AssociationSet Name="FK_UserMenuRight_DBId" Association="Self.FK_UserMenuRight_DBId">
             <End Role="DataSources" EntitySet="DataSources" />
@@ -441,6 +489,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <NavigationProperty Name="UserMenuRight" Relationship="Self.FK_UserMenuRight_DBId" FromRole="DataSources" ToRole="UserMenuRight" />
           <NavigationProperty Name="Users" Relationship="Self.UsersLinkDB" FromRole="DataSources" ToRole="Users" />
           <NavigationProperty Name="Errors" Relationship="KursSystemModel.FK_Errors_DbId" FromRole="DataSources" ToRole="Errors" />
+          <NavigationProperty Name="LastDocument" Relationship="KursSystemModel.FK_LastDocument_DbId" FromRole="DataSources" ToRole="LastDocument" />
         </EntityType>
         <EntityType Name="KontragentCashes">
           <Key>
@@ -514,6 +563,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <NavigationProperty Name="Errors" Relationship="KursSystemModel.FK_Errors_UserId" FromRole="Users" ToRole="Errors" />
           <NavigationProperty Name="FormLayout" Relationship="KursSystemModel.FK_FormLayout_UserId" FromRole="Users" ToRole="FormLayout" />
           <Property Name="ThemeName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="LastDocument" Relationship="KursSystemModel.FK_LastDocument_UserId" FromRole="Users" ToRole="LastDocument" />
         </EntityType>
         <EntityType Name="Version">
           <Key>
@@ -674,6 +724,15 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
             <End Role="UserRoles" EntitySet="UserRoles" />
           </AssociationSet>
+          <EntitySet Name="LastDocument" EntityType="KursSystemModel.LastDocument" />
+          <AssociationSet Name="FK_LastDocument_DbId" Association="KursSystemModel.FK_LastDocument_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="LastDocument" EntitySet="LastDocument" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastDocument_UserId" Association="KursSystemModel.FK_LastDocument_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="LastDocument" EntitySet="LastDocument" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Errors">
           <Key>
@@ -797,6 +856,47 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
         <Association Name="UserRolesLinkMenuItem">
           <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="*" />
           <End Type="KursSystemModel.UserRoles" Role="UserRoles" Multiplicity="*" />
+        </Association>
+        <EntityType Name="LastDocument">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <Property Name="DbId" Type="Guid" Nullable="false" />
+          <Property Name="DocType" Type="Int32" Nullable="false" />
+          <Property Name="DocDC" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="DocId" Type="Guid" />
+          <Property Name="Creator" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="LastChanger" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_LastDocument_DbId" FromRole="LastDocument" ToRole="DataSources" />
+          <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_LastDocument_UserId" FromRole="LastDocument" ToRole="Users" />
+          <Property Name="LastOpen" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_LastDocument_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.LastDocument" Role="LastDocument" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastDocument">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LastDocument_UserId">
+          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
+          <End Type="KursSystemModel.LastDocument" Role="LastDocument" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastDocument">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -990,6 +1090,22 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
               <ScalarProperty Name="Id" ColumnName="MenuId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="LastDocument">
+            <EntityTypeMapping TypeName="KursSystemModel.LastDocument">
+              <MappingFragment StoreEntitySet="LastDocument">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="LastOpen" ColumnName="LastOpen" />
+                <ScalarProperty Name="LastChanger" ColumnName="LastChanger" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
+                <ScalarProperty Name="DocId" ColumnName="DocId" />
+                <ScalarProperty Name="DocDC" ColumnName="DocDC" />
+                <ScalarProperty Name="DocType" ColumnName="DocType" />
+                <ScalarProperty Name="DbId" ColumnName="DbId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

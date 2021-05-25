@@ -48,6 +48,14 @@ namespace Core.Menu
                 {
                     Alignment = Dock.Right,
                     HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuDocumentOpen"] as ControlTemplate,
+                    ToolTip = "Открыть выбранный документ",
+                    Command = vm.DocumentOpenCommand
+                },
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
                     Content = Application.Current.Resources["menuExit"] as ControlTemplate,
                     ToolTip = "Закрыть диалог без выбора",
                     Command = vm.CloseWindowCommand
@@ -818,6 +826,36 @@ namespace Core.Menu
                     Content = Application.Current.Resources["menuSave"] as ControlTemplate,
                     ToolTip = "Сохранить изменения",
                     Command = vm.SaveDataCommand
+                },
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuExit"] as ControlTemplate,
+                    ToolTip = "Закрыть форму",
+                    Command = vm.CloseWindowCommand
+                }
+            };
+        }
+        public static ObservableCollection<MenuButtonInfo> DialogRightBar(RSWindowViewModelBase vm)
+        {
+            return new ObservableCollection<MenuButtonInfo>
+            {
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuRefresh"] as ControlTemplate,
+                    ToolTip = "Обновить",
+                    Command = vm.RefreshDataCommand
+                },
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuDocumentOpen"] as ControlTemplate,
+                    ToolTip = "Открыть выбранный документ",
+                    Command = vm.DocumentOpenCommand
                 },
                 new MenuButtonInfo
                 {

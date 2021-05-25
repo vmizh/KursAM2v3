@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Controls;
+using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Data;
@@ -58,6 +59,12 @@ namespace Core.EntityViewModel
         #endregion
 
         #region Properties
+
+        public override string Description =>
+            $"Обмен валюты №{CH_NUM_ORD} от {CH_DATE.ToShortDateString()} Касса: {Cash} " +
+            $"от {Kontragent} ({KontragentType.GetDisplayAttributesFrom(typeof(CashKontragentType)).Name}) " +
+            $"приход: {CH_CRS_IN_SUM} {CurrencyIn} расход: {CH_CRS_OUT_SUM} {CurrencyOut} {CH_NOTE}";
+
 
         public Kontragent Kontragent
         {
@@ -203,9 +210,11 @@ namespace Core.EntityViewModel
                     Entity.CH_CRS_IN_SUM = 0;
                 else if (CH_CRS_IN_DC == GlobalOptions.SystemProfile.NationalCurrency.DocCode)
                     Entity.CH_CRS_IN_SUM =
+                        // ReSharper disable once PossibleInvalidOperationException
                         CrossRate == 0 ? 0 : decimal.Round((decimal) (Entity.CH_CRS_OUT_SUM * CrossRate), 2);
                 else
                     Entity.CH_CRS_IN_SUM =
+                        // ReSharper disable once PossibleInvalidOperationException
                         CrossRate == 0 ? 0 : decimal.Round((decimal) (Entity.CH_CRS_OUT_SUM / CrossRate), 2);
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(CH_CRS_IN_SUM));
@@ -270,6 +279,7 @@ namespace Core.EntityViewModel
                 else
                     Entity.CH_CRS_OUT_SUM =
                         decimal.Round(
+                            // ReSharper disable once PossibleInvalidOperationException
                             (decimal) (Entity.CH_CRS_IN_SUM *
                                        (CurrencyIn.DocCode == CurrencyCode.RUB ? 1m / CrossRate : CrossRate)), 2);
                 RaisePropertyChanged();
@@ -326,6 +336,7 @@ namespace Core.EntityViewModel
             get => Entity.CH_CROSS_RATE;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.CH_CROSS_RATE == value) return;
                 Entity.CH_CROSS_RATE = value;
                 RaisePropertyChanged();
@@ -346,6 +357,7 @@ namespace Core.EntityViewModel
                     else if (Entity.CH_CRS_OUT_SUM == 0 || CurrencyIn == null) Entity.CH_CRS_IN_SUM = 0;
                     {
                         Entity.CH_CRS_IN_SUM =
+                            // ReSharper disable once PossibleInvalidOperationException
                             CrossRate == 0 ? 0 : decimal.Round((decimal) (Entity.CH_CRS_OUT_SUM / CrossRate), 2);
                     }
                 }
@@ -359,6 +371,7 @@ namespace Core.EntityViewModel
                             CrossRate == 0
                                 ? 0
                                 : decimal.Round(
+                                    // ReSharper disable once PossibleInvalidOperationException
                                     (decimal) (Entity.CH_CRS_IN_SUM * (CurrencyIn.DocCode == CurrencyCode.RUB
                                         ? 1m / CrossRate
                                         : CrossRate)), 2);
@@ -435,6 +448,7 @@ namespace Core.EntityViewModel
             get => Entity.CH_IN_UCHET_VALUTA_RATE;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.CH_IN_UCHET_VALUTA_RATE == value) return;
                 Entity.CH_IN_UCHET_VALUTA_RATE = value;
                 RaisePropertyChanged();
@@ -446,6 +460,7 @@ namespace Core.EntityViewModel
             get => Entity.CH_OUT_UCHET_VALUTA;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.CH_OUT_UCHET_VALUTA == value) return;
                 Entity.CH_OUT_UCHET_VALUTA = value;
                 RaisePropertyChanged();

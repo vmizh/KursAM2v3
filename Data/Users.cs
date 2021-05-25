@@ -21,6 +21,7 @@ namespace Data
             this.DataSources = new HashSet<DataSources>();
             this.Errors = new HashSet<Errors>();
             this.FormLayout = new HashSet<FormLayout>();
+            this.LastDocument = new HashSet<LastDocument>();
         }
     
         public System.Guid Id { get; set; }
@@ -41,5 +42,7 @@ namespace Data
         public virtual ICollection<Errors> Errors { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FormLayout> FormLayout { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LastDocument> LastDocument { get; set; }
     }
 }

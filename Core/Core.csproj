@@ -152,6 +152,7 @@
     <Compile Include="EntityViewModel\CashStartRemains.cs" />
     <Compile Include="EntityViewModel\BankAccountReference.cs" />
     <Compile Include="EntityViewModel\BankCurrencyChangeViewModel.cs" />
+    <Compile Include="EntityViewModel\LastDocumentViewModel.cs" />
     <Compile Include="EntityViewModel\ProviderInvoicePayViewModel.cs" />
     <Compile Include="EntityViewModel\InvoiceProviderRowCurrencyConvertViewModel.cs" />
     <Compile Include="EntityViewModel\FormPay.cs" />
@@ -182,6 +183,7 @@
     <Compile Include="EntityViewModel\WaybillRow.cs" />
     <Compile Include="Finance\CurrencySumma.cs" />
     <Compile Include="Finance\InvoicePaymentDocument.cs" />
+    <Compile Include="Helper\EnumExtensions.cs" />
     <Compile Include="Helper\KursConvert.cs" />
     <Compile Include="Helper\TypeProfitAndLossCalc.cs" />
     <Compile Include="Helper\MultyCurrencyHelper.cs" />

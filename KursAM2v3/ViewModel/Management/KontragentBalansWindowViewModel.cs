@@ -15,6 +15,7 @@ using Data;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.View.Management;
 using KursAM2.ViewModel.Management.Calculations;
 
 namespace KursAM2.ViewModel.Management
@@ -95,6 +96,9 @@ namespace KursAM2.ViewModel.Management
                     KontragentManager.UpdateSelectCount(myKontragent.DOC_CODE);
                     LoadOperations(myKontragent.DOC_CODE);
                     RaisePropertyChanged(nameof(Kontragents));
+                    var form = Form as KontragentBalansForm;
+                    if(form != null)
+                        form.treePeriods.View.ExpandAllNodes();
                 }
 
                 RaisePropertyChanged();
@@ -204,11 +208,11 @@ namespace KursAM2.ViewModel.Management
                         throw new Exception($"Контрагент {dc} не найден. RecalcKontragentBalans.CalcBalans");
                     RecalcKontragentBalans.CalcBalans(dc,
                         MainReferences.GetKontragent(dc).START_BALANS ?? new DateTime(2000, 1, 1));
-                    var data =
-                        ent.KONTR_BALANS_OPER_ARC.AsNoTracking()
-                            .Where(_ => _.KONTR_DC == dc)
-                            .OrderBy(_ => _.DOC_DATE)
-                            .ToList();
+                    //var data =
+                    //    ent.KONTR_BALANS_OPER_ARC.AsNoTracking()
+                    //        .Where(_ => _.KONTR_DC == dc)
+                    //        .OrderBy(_ => _.DOC_DATE)
+                    //        .ToList();
                     var sql = "SELECT DOC_NAME as DocName, " +
                       "ISNULL(CONVERT(VARCHAR, td_101.CODE), DOC_NUM) AS DocNum, " +
                       "DOC_DATE as DocDate, " +
@@ -244,7 +248,7 @@ namespace KursAM2.ViewModel.Management
                     var sn = data1.FirstOrDefault(_ => _.DocName == " На начало учета");
                     if (sn != null)
                     {
-                        if ((decimal) sn.CrsKontrIn > 0)
+                        if (sn.CrsKontrIn > 0)
                             sum = -sn.CrsKontrIn;
                         else
                             sum = sn.CrsKontrOut;
@@ -260,7 +264,7 @@ namespace KursAM2.ViewModel.Management
                         Operations.Add(d);
                     }
 
-                    LastBalansSumma = (decimal) Math.Round(sum, 2);
+                    LastBalansSumma = Math.Round(sum, 2);
                     LastOperationDate = Operations.Count > 0 ? Operations.Max(_ => _.DocDate) : DateTime.MinValue;
                     var prjcts = ent.ProjectsDocs.Include(_ => _.Projects).ToList();
                     foreach (var o in Operations)

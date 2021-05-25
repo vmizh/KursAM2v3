@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Controls;
+using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Data;
@@ -38,6 +39,10 @@ namespace Core.EntityViewModel
             Entity = entity ?? DefaultValue();
             LoadReferences();
         }
+
+        public override string Description => $"Расходный кассовый ордер №{NUM_ORD} от {DATE_ORD?.ToShortDateString()} Касса: {Cash} " +
+                                              $" {Kontragent} ({KontragentType.GetDisplayAttributesFrom(typeof(CashKontragentType)).Name}) сумма {CRS_SUMMA} {Currency} {NOTES_ORD}";
+
 
         public decimal DOC_CODE
         {

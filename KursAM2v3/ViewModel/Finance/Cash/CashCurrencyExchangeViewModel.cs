@@ -45,6 +45,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         #region Properties
 
+
         public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited &&
                                               CashManager.CheckCashCurrencyExchange(Document);
 

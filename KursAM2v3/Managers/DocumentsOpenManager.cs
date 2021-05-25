@@ -6,6 +6,7 @@ using Core;
 using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using Data;
 using KursAM2.Managers.Base;
 using KursAM2.View.Finance;
 using KursAM2.View.Finance.Cash;
@@ -70,7 +71,39 @@ namespace KursAM2.Managers
                 case 2010000012:
                     return DocumentType.Waybill;
             }
+
             return DocumentType.None;
+        }
+
+        public static void SaveLastOpenInfo(DocumentType docType, Guid? docId, decimal? docDC,
+            string creator, string lastChanger,
+            string desc)
+        {
+            try
+            {
+                using (var ctx = GlobalOptions.KursSystem())
+                {
+                    var newItem = new LastDocument
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = GlobalOptions.UserInfo.KursId,
+                        DbId = GlobalOptions.DataBaseId,
+                        DocId = docId,
+                        Creator = creator,
+                        DocDC = docDC,
+                        DocType = (int) docType,
+                        LastChanger = lastChanger,
+                        LastOpen = DateTime.Now,
+                        Description = desc
+                    };
+                    ctx.LastDocument.Add(newItem);
+                    ctx.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
         }
 
         public static void Open(DocumentType docType, decimal dc, Guid? id = null,
@@ -80,28 +113,42 @@ namespace KursAM2.Managers
             switch (docType)
             {
                 case DocumentType.MutualAccounting:
-                    OpenMutualAccounting(dc);
+                    var mut = OpenMutualAccounting(dc);
+                    SaveLastOpenInfo(docType, mut.Document.Id, mut.Document.DocCode, mut.Document.CREATOR,
+                        "", mut.Document.Description);
                     break;
                 case DocumentType.CurrencyConvertAccounting:
-                    OpenCurrencyConvertAccounting(dc);
+                    var conv = OpenCurrencyConvertAccounting(dc);
+                    SaveLastOpenInfo(docType, conv.Document.Id, conv.Document.DocCode, conv.Document.CREATOR,
+                        "", conv.Document.Description);
                     break;
                 case DocumentType.InvoiceClient:
-                    OpenSFClient(dc);
+                    var invcl = OpenSFClient(dc);
+                    SaveLastOpenInfo(docType, invcl.Document.Id, invcl.Document.DocCode, invcl.Document.CREATOR,
+                        "", invcl.Document.Description);
                     break;
                 case DocumentType.InvoiceProvider:
-                    OpenSFProvider(dc);
+                    var sfp = OpenSFProvider(dc);
+                    SaveLastOpenInfo(docType, sfp.Document.Id, sfp.Document.DocCode, sfp.Document.CREATOR,
+                        "", sfp.Document.Description);
                     break;
                 case DocumentType.ProjectsReference:
                     OpenProjectsReferences();
                     break;
                 case DocumentType.CashIn:
-                    OpenCashIn(dc, parent);
+                    var cashIn = OpenCashIn(dc, parent);
+                    SaveLastOpenInfo(docType, cashIn.Document.Id, cashIn.Document.DocCode, cashIn.Document.CREATOR,
+                        "", cashIn.Document.Description);
                     break;
                 case DocumentType.CashOut:
-                    OpenCashOut(dc, parent);
+                    var cashOut = OpenCashOut(dc, parent);
+                    SaveLastOpenInfo(docType, cashOut.Document.Id, cashOut.Document.DocCode, cashOut.Document.CREATOR,
+                        "", cashOut.Document.Description);
                     break;
                 case DocumentType.CurrencyChange:
-                    OpenCurrencyChange(dc, parent);
+                    var cc = OpenCurrencyChange(dc, parent);
+                    SaveLastOpenInfo(docType, cc.Document.Id, cc.Document.DocCode, cc.Document.CREATOR,
+                        "", cc.Document.Description);
                     break;
                 case DocumentType.NomenklTransfer:
                     // ReSharper disable once PossibleInvalidOperationException
@@ -171,8 +218,8 @@ namespace KursAM2.Managers
                     //OpenStoreIn(dc);
                     break;
                 case DocumentType.Waybill:
-                    if(vm is WaybillWindowViewModel wayBill)
-                     OpenWayBill(wayBill);
+                    if (vm is WaybillWindowViewModel wayBill)
+                        OpenWayBill(wayBill);
                     break;
                 case DocumentType.Bank:
                     OpenBank(vm);
@@ -198,6 +245,7 @@ namespace KursAM2.Managers
                     _.DateStart.Year == d.SD_101.VV_START_DATE.Year && _.PeriodType == PeriodType.Year);
                 dtx.CurrentBankOperations = dtx.BankOperationsCollection.FirstOrDefault(_ => _.Code == vm.Code);
             }
+
             form.DataContext = dtx;
             dtx.Form = form;
             form.Show();
@@ -225,6 +273,7 @@ namespace KursAM2.Managers
                     _.DateStart.Year == d.SD_101.VV_START_DATE.Year && _.PeriodType == PeriodType.Year);
                 dtx.CurrentBankOperations = dtx.BankOperationsCollection.FirstOrDefault(_ => _.Code == dc);
             }
+
             form.DataContext = dtx;
             dtx.Form = form;
             form.Show();
@@ -236,7 +285,7 @@ namespace KursAM2.Managers
             }
         }
 
-        private static void OpenCurrencyChange(decimal dc, object parent)
+        private static CashCurrencyExchangeViewModel OpenCurrencyChange(decimal dc, object parent)
         {
             var ctx = new CashCurrencyExchangeViewModel(dc)
             {
@@ -251,6 +300,7 @@ namespace KursAM2.Managers
             ctx.Form = form;
             form.Show();
             form.DataContext = ctx;
+            return ctx;
         }
 
         private static void OpenCurrencyChange(CashCurrencyExchangeViewModel vm, object parent)
@@ -293,16 +343,17 @@ namespace KursAM2.Managers
             frm.Show();
         }
 
-        private static void OpenSFClient(decimal docCode)
+        private static ClientWindowViewModel OpenSFClient(decimal docCode)
         {
             var view = new InvoiceClientView {Owner = Application.Current.MainWindow};
             var ctx = new ClientWindowViewModel(docCode);
             ctx.Form = view;
             view.Show();
             view.DataContext = ctx;
+            return ctx;
         }
 
-        private static void OpenSFProvider(decimal docCode)
+        private static ProviderWindowViewModel OpenSFProvider(decimal docCode)
         {
             var ctx = new ProviderWindowViewModel(docCode);
             var view = new InvoiceProviderView
@@ -310,36 +361,37 @@ namespace KursAM2.Managers
                 Owner = Application.Current.MainWindow,
                 DataContext = ctx
             };
-            ctx.Form = view; 
+            ctx.Form = view;
             view.Show();
             ctx.Document.State = RowStatus.NotEdited;
             ctx.RaisePropertyChanged(nameof(ctx.IsCanSaveData));
+            return ctx;
         }
 
         /// <summary>
         ///     Открывает акт взаимозачета
         /// </summary>
         /// <param name="docCode"></param>
-        private static void OpenMutualAccounting(decimal docCode)
+        private static MutualAcountingWindowViewModel OpenMutualAccounting(decimal docCode)
         {
             var frm = new MutualAccountingView {Owner = Application.Current.MainWindow};
             var ctx = new MutualAcountingWindowViewModel(docCode)
             {
                 IsCurrencyConvert = false,
                 Form = frm
-
             };
-            if (ctx.Document == null) return;
+            if (ctx.Document == null) return null;
             ctx.CreateMenu();
             frm.Show();
             frm.DataContext = ctx;
+            return ctx;
         }
 
         /// <summary>
         ///     Открывает акт конвертации
         /// </summary>
         /// <param name="docCode"></param>
-        private static void OpenCurrencyConvertAccounting(decimal docCode)
+        private static MutualAcountingWindowViewModel OpenCurrencyConvertAccounting(decimal docCode)
         {
             var frm = new MutualAccountingView {Owner = Application.Current.MainWindow};
             var ctx = new MutualAcountingWindowViewModel(docCode)
@@ -347,12 +399,13 @@ namespace KursAM2.Managers
                 IsCurrencyConvert = true,
                 Form = frm
             };
-            if (ctx.Document == null) return;
+            if (ctx.Document == null) return null;
             ctx.CreateMenu();
             frm.Show();
             frm.DataContext = ctx;
             var dtx = (MutualAcountingWindowViewModel) frm.DataContext;
             dtx.Document.State = RowStatus.NotEdited;
+            return ctx;
         }
 
         private static void OpenProjectsReferences()
@@ -368,7 +421,7 @@ namespace KursAM2.Managers
             form.Show();
         }
 
-        private static void OpenCashOut(decimal dc, object parent)
+        private static CashOutWindowViewModel OpenCashOut(decimal dc, object parent)
         {
             var ctx = new CashOutWindowViewModel(dc)
             {
@@ -383,6 +436,7 @@ namespace KursAM2.Managers
             ctx.CreateMenu();
             form.Show();
             form.DataContext = ctx;
+            return ctx;
         }
 
         private static void OpenCashOut(CashOutWindowViewModel vm, object parent)
@@ -400,7 +454,7 @@ namespace KursAM2.Managers
             form.DataContext = ctx;
         }
 
-        private static void OpenCashIn(decimal dc, object parent)
+        private static CashInWindowViewModel OpenCashIn(decimal dc, object parent)
         {
             var ctx = new CashInWindowViewModel(dc)
             {
@@ -414,6 +468,7 @@ namespace KursAM2.Managers
             ctx.Form = form;
             ctx.CreateMenu();
             form.Show();
+            return ctx;
             //form.DataContext = ctx;
         }
 
@@ -442,7 +497,8 @@ namespace KursAM2.Managers
             {
                 Owner = Application.Current.MainWindow
             };
-            var ctx = new OrderInWindowViewModel( new StandartErrorManager(GlobalOptions.GetEntities(),form.Name),dc) {Form = form};
+            var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(), form.Name), dc)
+                {Form = form};
             form.Show();
             form.DataContext = ctx;
         }

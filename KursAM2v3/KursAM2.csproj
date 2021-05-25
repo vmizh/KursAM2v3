@@ -312,6 +312,7 @@
     <Compile Include="Tests\TreeControlFluentTests.xaml.cs">
       <DependentUpon>TreeControlFluentTests.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOut.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOutRow.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorClientHead.cs" />
@@ -393,6 +394,7 @@
     <Compile Include="ViewModel\Repozit\UserOptionsWindowViewModel.cs" />
     <Compile Include="ViewModel\Repozit\UserProfileWindowViewModel.cs" />
     <Compile Include="ViewModel\Repozit\UsersManagerViewModel.cs" />
+    <Compile Include="ViewModel\StartLogin\LastDocumentWindowViewModel.cs" />
     <Compile Include="View\Base\IOnAutoGeneratingColumn.cs" />
     <Compile Include="View\Base\KursBaseDialog.xaml.cs">
       <DependentUpon>KursBaseDialog.xaml</DependentUpon>
@@ -448,6 +450,9 @@
     </Compile>
     <Compile Include="View\KursReferences\SDRReferenceView.xaml.cs">
       <DependentUpon>SDRReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\LastDocumentView.xaml.cs">
+      <DependentUpon>LastDocumentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\UC\AddNomenklFromOrderInViewModel.cs" />
     <Compile Include="View\Logistiks\UC\AddNomenklFromOrderInUC.xaml.cs">
@@ -1155,6 +1160,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\KursReferences\SDRReferenceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\LastDocumentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

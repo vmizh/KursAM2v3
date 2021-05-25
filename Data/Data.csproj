@@ -577,6 +577,9 @@
     <Compile Include="KURS_RAZNICA.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="LastDocument.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="LIC_SCHET_KONTR_Result.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

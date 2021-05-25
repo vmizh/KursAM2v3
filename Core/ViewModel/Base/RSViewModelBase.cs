@@ -39,6 +39,7 @@ namespace Core.ViewModel.Base
         // ReSharper disable once CollectionNeverQueried.Global
         // ReSharper disable once MemberCanBePrivate.Global
         public IList<string> NotifyProtocol = new List<string>();
+        private string myDescription;
 
         [Display(AutoGenerateField = false)]
         public RSWindowViewModelBase WindowViewModel
@@ -196,6 +197,18 @@ namespace Core.ViewModel.Base
         ///     Событие изменения значения свойства представления
         /// </summary>
         public new virtual event PropertyChangedEventHandler PropertyChanged;
+
+        [DataMember]
+        public virtual string Description
+        {
+            get => myDescription;
+            set
+            {
+                if (myDescription == value) return;
+                myDescription = value;
+                RaisePropertyChanged();
+            }
+        }
 
         [DataMember]
         public virtual string Name

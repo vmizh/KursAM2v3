@@ -4,8 +4,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
+using System.Runtime.Versioning;
 using Core.EntityViewModel;
 using Core.ViewModel.Base;
+using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
@@ -16,7 +18,7 @@ namespace Core.ViewModel.MutualAccounting
     // ReSharper disable once InconsistentNaming
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     [MetadataType(typeof(DataAnnotationsSD_110ViewModel))]
-    public class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, TD_110ViewModel>
+    public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, TD_110ViewModel>
     {
         private Currency myCreditorCurrency;
         private Currency myDebitorCurrency;
@@ -84,6 +86,25 @@ namespace Core.ViewModel.MutualAccounting
         public decimal? CreditorSumma
         {
             get { return Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0; }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                var ds = $"Дебиторы: {DebitorSumma} {DebitorCurrency} (";
+                var debList = Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Select(_ => _.Kontragent).Distinct().ToList();
+                ds = debList.Aggregate(ds, (current, cred) => current + $" {cred},");
+                ds = ds.Remove(ds.Length-1);
+                ds += ")";
+                var cs = $"Кредиторы: {CreditorSumma} {CreditorCurrency} (";
+                var gredList = Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Select(_ => _.Kontragent).Distinct().ToList();
+                cs = gredList.Aggregate(cs, (current, cred) => current + $" {cred},");
+                cs = cs.Remove(cs.Length-1);
+                cs += ")";
+                var type = SD_111?.IsCurrencyConvert ?? false ? "Акт конвертации" : "Акт взаимозачета";
+                return $"{type} №{VZ_NUM} от {VZ_DATE.ToShortDateString()} {ds} {cs} {VZ_NOTES}";
+            }
         }
 
         public override decimal DocCode
@@ -294,17 +315,8 @@ namespace Core.ViewModel.MutualAccounting
             }
         }
 
-        //public UD_110ViewModel MutualAccountingType
-        //{
-        //    get => myMutualAccountingType;
-        //    set
-        //    {
-        //        if (myMutualAccountingType == value) return;
-        //        myMutualAccountingType = value;
-        //        UD_110 = myMutualAccountingType.Entity;
-        //        RaisePropertyChanged();
-        //    }
-        //}
+        
+        
         public SD_110 Entity
         {
             get => myEntity;
@@ -355,7 +367,7 @@ namespace Core.ViewModel.MutualAccounting
 
         public bool IsAccessRight { get; set; }
 
-        public virtual SD_110 Load(decimal dc)
+        public SD_110 Load(decimal dc)
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -378,12 +390,12 @@ namespace Core.ViewModel.MutualAccounting
             }
         }
 
-        public virtual SD_110 Load(Guid id)
+        public SD_110 Load(Guid id)
         {
             return DefaultValue();
         }
 
-        public virtual void Save(SD_110 doc)
+        public void Save(SD_110 doc)
         {
             try
             {
