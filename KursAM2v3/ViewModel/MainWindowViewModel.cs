@@ -4,7 +4,6 @@ using System.Windows.Input;
 using Core;
 using Core.EntityViewModel;
 using Core.ViewModel.Base;
-using DevExpress.Data.ODataLinq.Helpers;
 using KursAM2.View;
 using KursAM2.ViewModel.StartLogin;
 
@@ -14,6 +13,7 @@ namespace KursAM2.ViewModel
     {
         private LastDocumentViewModel myCurrentcLastDocument;
 
+        // ReSharper disable once EmptyConstructor
         public MainWindowViewModel()
         {
 
@@ -40,13 +40,13 @@ namespace KursAM2.ViewModel
 
         private void OpenLastDocumentDialog(object obj)
         {
-            var dlg = new LastDocumentView();
+            var dlg = new LastUsersDocumentView();
             var ctx = new LastDocumentWindowViewModel
             {
                 Form = dlg
             };
             dlg.DataContext = ctx;
-            dlg.ShowDialog();
+            dlg.Show();
 
         }
 

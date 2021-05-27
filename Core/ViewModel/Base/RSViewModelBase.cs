@@ -33,13 +33,14 @@ namespace Core.ViewModel.Base
 
         // ReSharper disable once InconsistentNaming
         public RowStatus myState = RowStatus.NotEdited;
-        private RSWindowViewModelBase myWindowViewModel;
+        //private RSWindowViewModelBase myWindowViewModel;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Global
         // ReSharper disable once CollectionNeverQueried.Global
         // ReSharper disable once MemberCanBePrivate.Global
         public IList<string> NotifyProtocol = new List<string>();
         private string myDescription;
+        private RSWindowViewModelBase myWindowViewModel;
 
         [Display(AutoGenerateField = false)]
         public RSWindowViewModelBase WindowViewModel

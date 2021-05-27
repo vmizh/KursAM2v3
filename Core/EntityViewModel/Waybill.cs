@@ -45,6 +45,9 @@ namespace Core.EntityViewModel
             }
         }
 
+        public override string Description => $"Расходная накладная №{DD_IN_NUM}/{DD_EXT_NUM} от {DD_DATE.ToShortDateString()} " +
+        $"со склада {WarehouseOut} контрагенту {KontragentReceiver} {DD_NOTES}";
+
         public Warehouse Store
         {
             get => myStore;

@@ -535,12 +535,14 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         .FirstOrDefault(_ => _.VVT_RASH_KASS_ORDER_DC == d.DOC_CODE);
                     var name = d.CASH_TO_DC != null
                         ? MainReferences.Cashs[d.CASH_TO_DC.Value].Name
+                        // ReSharper disable once PossibleInvalidOperationException
                         : MainReferences.BankAccounts[d.BANK_RASCH_SCHET_DC.Value].Name;
                     if (pay != null || bankpay != null) continue;
                     ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                     {
                         DocCode = d.DOC_CODE,
                         GroupId = ManagemenentBalansStructrue.MoneyInPah,
+                        // ReSharper disable once PossibleInvalidOperationException
                         Date = d.DATE_ORD.Value,
                         DocumentType = DocumentTypes.CashOut,
                         DocNum = d.NUM_ORD.ToString(),
@@ -548,13 +550,16 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Name =
                             $"Расходный кассовый ордер №{d.NUM_ORD} от {d.DATE_ORD.Value.ToShortDateString()} в {name}",
                         Quantity = 1,
+                        // ReSharper disable once PossibleInvalidOperationException
                         Price = (decimal) d.SUMM_ORD,
                         Summa = (decimal) d.SUMM_ORD,
                         Nom = null,
                         Nomenkl = null,
-                        CurrencyName = MainReferences.Currencies[d.CRS_DC.Value].Name,
-                        Currency = MainReferences.Currencies[d.CRS_DC.Value],
+                        CurrencyName = MainReferences.GetCurrency(d.CRS_DC)?.Name,
+                        Currency = MainReferences.GetCurrency(d.CRS_DC),
+                        // ReSharper disable PossibleInvalidOperationException
                         SummaEUR = d.CRS_DC.Value == CurrencyCode.EUR ? (decimal) d.SUMM_ORD : 0,
+                        // ReSharper restore PossibleInvalidOperationException
                         SummaUSD = d.CRS_DC.Value == CurrencyCode.USD ? (decimal) d.SUMM_ORD : 0,
                         SummaRUB = d.CRS_DC.Value == CurrencyCode.RUB ? (decimal) d.SUMM_ORD : 0,
                         SummaCNY = d.CRS_DC.Value == CurrencyCode.CNY ? (decimal) d.SUMM_ORD : 0
@@ -566,11 +571,13 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     if (d.RASH_ORDER_FROM_DC != null) continue;
                     if (ent.TD_101.Any(_ =>
                         _.VVT_KASS_PRIH_ORDER_DC == d.DOC_CODE && _.SD_101.VV_START_DATE <= CurrentDate)) continue;
+                    // ReSharper disable once PossibleInvalidOperationException
                     var kontrName = MainReferences.BankAccounts[d.BANK_RASCH_SCHET_DC.Value].Name;
                     ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                     {
                         DocCode = d.DOC_CODE,
                         GroupId = ManagemenentBalansStructrue.MoneyInPah,
+                        // ReSharper disable once PossibleInvalidOperationException
                         Date = d.DATE_ORD.Value,
                         DocumentType = DocumentTypes.CashIn,
                         DocNum = d.NUM_ORD.ToString(),
@@ -578,10 +585,12 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Name =
                             $"Приходный кассовый ордер №{d.NUM_ORD} от {d.DATE_ORD.Value.ToShortDateString()} из {kontrName}",
                         Quantity = 1,
+                        // ReSharper disable once PossibleInvalidOperationException
                         Price = (decimal) d.SUMM_ORD,
                         Summa = (decimal) d.SUMM_ORD,
                         Nom = null,
                         Nomenkl = null,
+                        // ReSharper disable once PossibleInvalidOperationException
                         CurrencyName = MainReferences.Currencies[d.CRS_DC.Value].Name,
                         Currency = MainReferences.Currencies[d.CRS_DC.Value],
                         SummaEUR = d.CRS_DC.Value == CurrencyCode.EUR ? (decimal) d.SUMM_ORD : 0,
@@ -595,6 +604,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 {
                     var tr = ent.TD_101.FirstOrDefault(_ => _.BankFromTransactionCode == d.CODE);
                     if (tr != null) continue;
+                    // ReSharper disable once PossibleInvalidOperationException
                     var name = MainReferences.BankAccounts[d.BankAccountDC.Value].Name;
                     ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                     {
@@ -607,6 +617,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         KontragentName = name,
                         Name = $"Банковская транзакция от {d.SD_101.VV_START_DATE.ToShortDateString()} в {name}",
                         Quantity = 1,
+                        // ReSharper disable once PossibleInvalidOperationException
                         Price = (decimal) d.VVT_VAL_RASHOD,
                         Summa = (decimal) d.VVT_VAL_RASHOD,
                         Nom = null,
@@ -813,6 +824,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                             myBanks.Single(_ => _.DOC_CODE == d).BA_RASH_ACC,
                         Order = 1,
                         // ReSharper disable PossibleMultipleEnumeration
+                        // ReSharper disable PossibleInvalidOperationException
                         SummaEUR = bank.Currency.DocCode == CurrencyCode.EUR ? (decimal) rem.SummaEnd : 0,
                         SummaUSD = bank.Currency.DocCode == CurrencyCode.USD ? (decimal) rem.SummaEnd : 0,
                         SummaRUB = bank.Currency.DocCode == CurrencyCode.RUB ? (decimal) rem.SummaEnd : 0,
@@ -822,6 +834,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         SummaCNY = bank.Currency.DocCode == CurrencyCode.CNY ? (decimal) rem.SummaEnd : 0,
                         ObjectDC = d
                         // ReSharper restore PossibleMultipleEnumeration
+                        // ReSharper restore PossibleInvalidOperationException
                     });
             }
 

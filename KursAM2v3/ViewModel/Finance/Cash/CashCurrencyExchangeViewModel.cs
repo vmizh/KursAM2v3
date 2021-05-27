@@ -10,7 +10,7 @@ using KursAM2.View.Finance.Cash;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {
-    public class CashCurrencyExchangeViewModel : RSWindowViewModelBase
+    public sealed class CashCurrencyExchangeViewModel : RSWindowViewModelBase
     {
         #region Fields
 
@@ -74,6 +74,8 @@ namespace KursAM2.ViewModel.Finance.Cash
                 CashManager.InsertDocument(CashDocumentType.CurrencyExchange, Document);
             if (BookView?.DataContext is CashBookWindowViewModel ctx)
                 ctx.RefreshActual(Document);
+            DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CurrencyConvertAccounting, Document.Id, Document.DocCode, Document.CREATOR,
+                "", Document.Description);
         }
 
         public override void DocDelete(object form)

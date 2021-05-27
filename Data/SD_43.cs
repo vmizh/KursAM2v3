@@ -105,6 +105,7 @@ namespace Data
             this.SD_246 = new HashSet<SD_246>();
             this.SD_2461 = new HashSet<SD_246>();
             this.SD_396 = new HashSet<SD_396>();
+            this.DogovorClient = new HashSet<DogovorClient>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -346,5 +347,7 @@ namespace Data
         public virtual ICollection<SD_246> SD_2461 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_396> SD_396 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DogovorClient> DogovorClient { get; set; }
     }
 }

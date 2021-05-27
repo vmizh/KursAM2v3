@@ -16,15 +16,13 @@ namespace KursAM2.View.Personal
 
         private void tableViewEmployee_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var item = gridEmp.CurrentItem as PersonaDialogSelect;
-            if (item != null)
+            if (gridEmp.CurrentItem is PersonaDialogSelect item)
                 AddToSelect(item);
         }
 
         private void EmployeeAddToSelect_OnClick(object sender, RoutedEventArgs e)
         {
-            var item = gridEmp.CurrentItem as PersonaDialogSelect;
-            if (item != null)
+            if (gridEmp.CurrentItem is PersonaDialogSelect item)
                 AddToSelect(item);
         }
 

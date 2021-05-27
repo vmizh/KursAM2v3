@@ -96,8 +96,7 @@ namespace KursAM2.ViewModel.Management
                     KontragentManager.UpdateSelectCount(myKontragent.DOC_CODE);
                     LoadOperations(myKontragent.DOC_CODE);
                     RaisePropertyChanged(nameof(Kontragents));
-                    var form = Form as KontragentBalansForm;
-                    if(form != null)
+                    if(Form is KontragentBalansForm form)
                         form.treePeriods.View.ExpandAllNodes();
                 }
 
@@ -158,7 +157,7 @@ namespace KursAM2.ViewModel.Management
             }
 
             foreach (
-                var item in
+                KonragentBalansRowViewModel item in
                 Operations.Where(_ => _.DocDate >= CurrentPeriod.DateStart && _.DocDate <= CurrentPeriod.DateEnd))
                 Documents.Add(item);
             RaisePropertyChanged(nameof(Documents));
@@ -167,7 +166,7 @@ namespace KursAM2.ViewModel.Management
         private void LoadAllDocuments()
         {
             Documents.Clear();
-            foreach (var item in Operations)
+            foreach (KonragentBalansRowViewModel item in Operations)
                 Documents.Add(item);
             RaisePropertyChanged(nameof(Documents));
         }
@@ -175,9 +174,9 @@ namespace KursAM2.ViewModel.Management
         private void LoadPeriod(IEnumerable<KonragentBalansRowViewModel> rows)
         {
             if (rows == null) return;
-            var periods = DatePeriod.GenerateIerarhy(rows.Select(_ => _.DocDate).Distinct(), PeriodIerarhy.YearMonth);
+            IEnumerable<DatePeriod> periods = DatePeriod.GenerateIerarhy(rows.Select(_ => _.DocDate).Distinct(), PeriodIerarhy.YearMonth);
             Periods.Clear();
-            var localperiods = periods.Select(d => new KontragentPeriod
+            List<KontragentPeriod> localperiods = periods.Select(d => new KontragentPeriod
                 {
                     DateStart = d.DateStart,
                     DateEnd = d.DateEnd,
@@ -202,7 +201,7 @@ namespace KursAM2.ViewModel.Management
         {
             try
             {
-                using (var ent = GlobalOptions.GetEntities())
+                using (ALFAMEDIAEntities ent = GlobalOptions.GetEntities())
                 {
                     if (!MainReferences.AllKontragents.Keys.Contains(dc))
                         throw new Exception($"Контрагент {dc} не найден. RecalcKontragentBalans.CalcBalans");
@@ -213,39 +212,39 @@ namespace KursAM2.ViewModel.Management
                     //        .Where(_ => _.KONTR_DC == dc)
                     //        .OrderBy(_ => _.DOC_DATE)
                     //        .ToList();
-                    var sql = "SELECT DOC_NAME as DocName, " +
-                      "ISNULL(CONVERT(VARCHAR, td_101.CODE), DOC_NUM) AS DocNum, " +
-                      "DOC_DATE as DocDate, " +
-                      "cast(CRS_KONTR_IN as numeric(18,4)) as CrsKontrIn, " +
-                      "cast(CRS_KONTR_OUT as numeric(18,4)) as CrsKontrOut, " +
-                      "DOC_DC as DocDC, " +
-                      "DOC_ROW_CODE as DocRowCode, " +
-                      "DOC_TYPE_CODE as DocTypeCode, " +
-                      "cast(CRS_OPER_IN as numeric(18,4)) as CrsOperIn, " +
-                      "cast(CRS_OPER_OUT as numeric(18,4)) as CrsOperOut, " +
-                      "OPER_CRS_DC as CrsOperDC, " +
-                      "cast(OPER_CRS_RATE as numeric(18,4)) as CrsOperRate, " +
-                      "cast(UCH_CRS_RATE as numeric(18,4)) as CrsUchRate, " +
-                      "KONTR_DC as DocCode, " +
-                      "DOC_EXT_NUM as DocExtNum, " +
-                      "ISNULL(sd_24.DD_NOTES, ISNULL(Sd_26.SF_NOTES, ISNULL(SD_33.NOTES_ORD, " +
-                      "ISNULL(SD_34.NOTES_ORD, ISNULL(sd_84.SF_NOTE, ISNULL(td_101.VVT_DOC_NUM, " +
-                      "ISNULL(td_110.VZT_DOC_NOTES, ISNULL(sd_430.ASV_NOTES,'')))))))) AS Notes " +
-                      "FROM dbo.KONTR_BALANS_OPER_ARC kboa " +
-                      "LEFT OUTER JOIN sd_24 ON DOC_DC = sd_24.DOC_CODE " +
-                      "LEFT OUTER JOIN sd_26 ON DOC_DC = sd_26.DOC_CODE " +
-                      "LEFT OUTER JOIN SD_33 ON DOC_DC = sd_33.DOC_CODE " +
-                      "LEFT OUTER JOIN SD_34 ON DOC_DC = sd_34.DOC_CODE " +
-                      "LEFT OUTER JOIN SD_84 ON DOC_DC = sd_84.DOC_CODE " +
-                      "LEFT OUTER JOIN td_101 ON DOC_ROW_CODE = td_101.code " +
-                      "LEFT OUTER JOIN td_110 ON DOC_DC = td_110.DOC_CODE AND kboa.DOC_ROW_CODE = td_110.code " +
-                      "LEFT OUTER JOIN sd_430 ON doc_dc = sd_430.DOC_CODE " +
-                      $"WHERE KONTR_DC = {CustomFormat.DecimalToSqlDecimal(dc)} " +
-                      "ORDER BY kboa.DOC_DATE;";
-                    var data1 = ent.Database.SqlQuery<KonragentBalansRowViewModel>(sql).ToList();
+                    string sql = "SELECT DOC_NAME as DocName, " +
+                                 "ISNULL(CONVERT(VARCHAR, td_101.CODE), DOC_NUM) AS DocNum, " +
+                                 "DOC_DATE as DocDate, " +
+                                 "cast(CRS_KONTR_IN as numeric(18,4)) as CrsKontrIn, " +
+                                 "cast(CRS_KONTR_OUT as numeric(18,4)) as CrsKontrOut, " +
+                                 "DOC_DC as DocDC, " +
+                                 "DOC_ROW_CODE as DocRowCode, " +
+                                 "DOC_TYPE_CODE as DocTypeCode, " +
+                                 "cast(CRS_OPER_IN as numeric(18,4)) as CrsOperIn, " +
+                                 "cast(CRS_OPER_OUT as numeric(18,4)) as CrsOperOut, " +
+                                 "OPER_CRS_DC as CrsOperDC, " +
+                                 "cast(OPER_CRS_RATE as numeric(18,4)) as CrsOperRate, " +
+                                 "cast(UCH_CRS_RATE as numeric(18,4)) as CrsUchRate, " +
+                                 "KONTR_DC as DocCode, " +
+                                 "DOC_EXT_NUM as DocExtNum, " +
+                                 "ISNULL(sd_24.DD_NOTES, ISNULL(Sd_26.SF_NOTES, ISNULL(SD_33.NOTES_ORD, " +
+                                 "ISNULL(SD_34.NOTES_ORD, ISNULL(sd_84.SF_NOTE, ISNULL(td_101.VVT_DOC_NUM, " +
+                                 "ISNULL(td_110.VZT_DOC_NOTES, ISNULL(sd_430.ASV_NOTES,'')))))))) AS Notes " +
+                                 "FROM dbo.KONTR_BALANS_OPER_ARC kboa " +
+                                 "LEFT OUTER JOIN sd_24 ON DOC_DC = sd_24.DOC_CODE " +
+                                 "LEFT OUTER JOIN sd_26 ON DOC_DC = sd_26.DOC_CODE " +
+                                 "LEFT OUTER JOIN SD_33 ON DOC_DC = sd_33.DOC_CODE " +
+                                 "LEFT OUTER JOIN SD_34 ON DOC_DC = sd_34.DOC_CODE " +
+                                 "LEFT OUTER JOIN SD_84 ON DOC_DC = sd_84.DOC_CODE " +
+                                 "LEFT OUTER JOIN td_101 ON DOC_ROW_CODE = td_101.code " +
+                                 "LEFT OUTER JOIN td_110 ON DOC_DC = td_110.DOC_CODE AND kboa.DOC_ROW_CODE = td_110.code " +
+                                 "LEFT OUTER JOIN sd_430 ON doc_dc = sd_430.DOC_CODE " +
+                                 $"WHERE KONTR_DC = {CustomFormat.DecimalToSqlDecimal(dc)} " +
+                                 "ORDER BY kboa.DOC_DATE;";
+                    List<KonragentBalansRowViewModel> data1 = ent.Database.SqlQuery<KonragentBalansRowViewModel>(sql).ToList();
                     decimal sum = 0;
                     Operations.Clear();
-                    var sn = data1.FirstOrDefault(_ => _.DocName == " На начало учета");
+                    KonragentBalansRowViewModel sn = data1.FirstOrDefault(_ => _.DocName == " На начало учета");
                     if (sn != null)
                     {
                         if (sn.CrsKontrIn > 0)
@@ -257,7 +256,7 @@ namespace KursAM2.ViewModel.Management
                         data1.Remove(sn);
                     }
 
-                    foreach (var d in data1)
+                    foreach (KonragentBalansRowViewModel d in data1)
                     {
                         sum += d.CrsKontrOut - d.CrsKontrIn;
                         d.Nakopit = sum;
@@ -266,18 +265,18 @@ namespace KursAM2.ViewModel.Management
 
                     LastBalansSumma = Math.Round(sum, 2);
                     LastOperationDate = Operations.Count > 0 ? Operations.Max(_ => _.DocDate) : DateTime.MinValue;
-                    var prjcts = ent.ProjectsDocs.Include(_ => _.Projects).ToList();
-                    foreach (var o in Operations)
+                    List<ProjectsDocs> prjcts = ent.ProjectsDocs.Include(_ => _.Projects).ToList();
+                    foreach (KonragentBalansRowViewModel o in Operations)
                         switch (o.DocName)
                         {
                             case "Акт в/з ":
                             case "Акт конвертации ":
-                                var prj1 = prjcts.FirstOrDefault(_ => _.DocDC == o.DocDC && _.DocRowId == o.DocRowCode);
+                                ProjectsDocs prj1 = prjcts.FirstOrDefault(_ => _.DocDC == o.DocDC && _.DocRowId == o.DocRowCode);
                                 if (prj1 != null)
                                     o.Project = MainReferences.Projects[prj1.Projects.Id];
                                 break;
                             default:
-                                var prj = prjcts.FirstOrDefault(_ => _.DocDC == o.DocDC);
+                                ProjectsDocs prj = prjcts.FirstOrDefault(_ => _.DocDC == o.DocDC);
                                 if (prj != null)
                                     o.Project = MainReferences.Projects[prj.Projects.Id];
                                 break;
@@ -310,7 +309,7 @@ namespace KursAM2.ViewModel.Management
 
         public override void ResetLayout(object form)
         {
-            var curKontr = Kontragent;
+            Kontragent curKontr = Kontragent;
             base.ResetLayout(form);
             Kontragent = curKontr;
         }
@@ -319,11 +318,11 @@ namespace KursAM2.ViewModel.Management
         {
             try
             {
-                using (var ctx = GlobalOptions.GetEntities())
+                using (ALFAMEDIAEntities ctx = GlobalOptions.GetEntities())
                 {
-                    var prj = StandartDialogs.SelectProject();
+                    Project prj = StandartDialogs.SelectProject();
                     if (prj == null) return;
-                    foreach (var d in SelectedDocs)
+                    foreach (KonragentBalansRowViewModel d in SelectedDocs)
                     {
                         switch (d.DocName)
                         {
@@ -472,11 +471,11 @@ namespace KursAM2.ViewModel.Management
         {
             try
             {
-                using (var ctx = GlobalOptions.GetEntities())
+                using (ALFAMEDIAEntities ctx = GlobalOptions.GetEntities())
                 {
-                    foreach (var d in SelectedDocs.Where(_ => _.Project != null))
+                    foreach (KonragentBalansRowViewModel d in SelectedDocs.Where(_ => _.Project != null))
                     {
-                        var p = ctx.ProjectsDocs.FirstOrDefault(_ =>
+                        ProjectsDocs p = ctx.ProjectsDocs.FirstOrDefault(_ =>
                             _.ProjectId == d.Project.Id && _.DocDC == d.DocDC);
                         if (p != null) ctx.ProjectsDocs.Remove(p);
                         d.Project = null;

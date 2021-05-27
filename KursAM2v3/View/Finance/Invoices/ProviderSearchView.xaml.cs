@@ -18,31 +18,7 @@ namespace KursAM2.View.Finance.Invoices
         public ProviderSearchView()
         {
             InitializeComponent();
-            //LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, null);
-            //Loaded += ProviderSearchView_Loaded;
-            //Closing += ProviderSearchView_Closing;
         }
-
-        //public string LayoutName { set; get; }
-
-        //public LayoutManager.LayoutManager LayoutManager { get; set; }
-        //public string LayoutManagerName { get; set; }
-        //public void SaveLayout()
-        //{
-        //    myResultGridControlLayout.Save();
-        //    LayoutManager.Save();
-        //}
-
-        //private void ProviderSearchView_Closing(object sender, CancelEventArgs e)
-        //{
-        //    LayoutManager.Save();
-        //    myResultGridControlLayout.Save();
-        //}
-
-        //private void ProviderSearchView_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    LayoutManager.Load();
-        //}
 
         private void GridDocuments_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {

@@ -45,7 +45,6 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>0436;</NoWarn>
-    <LangVersion>7.0</LangVersion>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
@@ -58,12 +57,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>7.0</LangVersion>
     <NoWarn>0436</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>
     </ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>7.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
@@ -304,6 +305,7 @@
       <DependentUpon>HeadReport.cs</DependentUpon>
     </Compile>
     <Compile Include="Repositories\DistributeNakladRepository.cs" />
+    <Compile Include="Repositories\DogovorsRepositories\DogovorClientRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceClientRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />
@@ -312,11 +314,11 @@
     <Compile Include="Tests\TreeControlFluentTests.xaml.cs">
       <DependentUpon>TreeControlFluentTests.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\Dogovora\DogovorClientWindowViewModel.cs" />
+    <Compile Include="ViewModel\Dogovora\DogovorClientSearchViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOut.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOutRow.cs" />
-    <Compile Include="ViewModel\Dogovora\DogovorClientHead.cs" />
-    <Compile Include="ViewModel\Dogovora\DogovorClientRow.cs" />
     <Compile Include="Managers\Base\MutualAccountingManager.cs" />
     <Compile Include="ViewModel\Finance\BankOperationsWindowViewModel2.cs" />
     <Compile Include="ViewModel\Finance\Cash\CashBookWindowViewModel.cs" />
@@ -380,6 +382,8 @@
     <Compile Include="ViewModel\Logistiks\Warehouse\WarehouseOrderOutSearchViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\Warehouse\WarehouseOrderInSearchViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\Warehouse\OrderInWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\Dogovors\SearchDogovorClientViewModel.cs" />
+    <Compile Include="ViewModel\Management\Dogovors\SearchDogovorProviderViewModel.cs" />
     <Compile Include="ViewModel\Reference\FormPayReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\KontragentCategoryRefWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\CountriesRefWindowViewModel.cs" />
@@ -395,6 +399,7 @@
     <Compile Include="ViewModel\Repozit\UserProfileWindowViewModel.cs" />
     <Compile Include="ViewModel\Repozit\UsersManagerViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastDocumentWindowViewModel.cs" />
+    <Compile Include="ViewModel\StartLogin\LastUsersDocumentWindowViewModel.cs" />
     <Compile Include="View\Base\IOnAutoGeneratingColumn.cs" />
     <Compile Include="View\Base\KursBaseDialog.xaml.cs">
       <DependentUpon>KursBaseDialog.xaml</DependentUpon>
@@ -416,6 +421,12 @@
     </Compile>
     <Compile Include="View\DialogUserControl\StandartDialogSelectWithDateUC.xaml.cs">
       <DependentUpon>StandartDialogSelectWithDateUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dogovors\DogovorClientSearchView.xaml.cs">
+      <DependentUpon>DogovorClientSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dogovors\DogovorClientView.xaml.cs">
+      <DependentUpon>DogovorClientView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Finance\BankCurrencyChangeView.xaml.cs">
       <DependentUpon>BankCurrencyChangeView.xaml</DependentUpon>
@@ -450,6 +461,9 @@
     </Compile>
     <Compile Include="View\KursReferences\SDRReferenceView.xaml.cs">
       <DependentUpon>SDRReferenceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\LastUsersDocumentView.xaml.cs">
+      <DependentUpon>LastUsersDocumentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\LastDocumentView.xaml.cs">
       <DependentUpon>LastDocumentView.xaml</DependentUpon>
@@ -652,8 +666,6 @@
     </Compile>
     <Compile Include="ViewModel\Logistiks\Warehouse\WaybillSearchViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\PostInvoiceRow.cs" />
-    <Compile Include="ViewModel\Logistiks\DogovorForClientViewModel.cs" />
-    <Compile Include="ViewModel\Logistiks\DogovorForClientSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\Invoices\ClientWindowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\DocumentRowSearchViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\DocumentSearchViewModel.cs" />
@@ -1119,6 +1131,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\Dogovors\DogovorClientSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dogovors\DogovorClientView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Finance\BankCurrencyChangeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1162,6 +1182,10 @@
     <Page Include="View\KursReferences\SDRReferenceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\LastUsersDocumentView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\LastDocumentView.xaml">
       <SubType>Designer</SubType>

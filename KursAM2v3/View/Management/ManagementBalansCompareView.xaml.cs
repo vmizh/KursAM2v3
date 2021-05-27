@@ -4,8 +4,6 @@ using System.Windows;
 using System.Windows.Input;
 using DevExpress.Xpf.WindowsUI.Navigation;
 using KursAM2.View.Behaviors;
-using KursAM2.View.Management.Controls;
-using KursAM2.ViewModel.Management.ManagementBalans;
 using LayoutManager;
 
 namespace KursAM2.View.Management
@@ -26,6 +24,7 @@ namespace KursAM2.View.Management
         public object CurrentDetailView { set; get; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -45,7 +44,7 @@ namespace KursAM2.View.Management
         {
             //throw new System.NotImplementedException();
         }
-        
+
 
         public void NavigateTo(Type view)
         {

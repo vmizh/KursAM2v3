@@ -26,7 +26,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0436;</NoWarn>
-    <LangVersion>7.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,7 +35,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0436</NoWarn>
-    <LangVersion>7.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DevExpress.Data.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
@@ -152,6 +150,10 @@
     <Compile Include="EntityViewModel\CashStartRemains.cs" />
     <Compile Include="EntityViewModel\BankAccountReference.cs" />
     <Compile Include="EntityViewModel\BankCurrencyChangeViewModel.cs" />
+    <Compile Include="EntityViewModel\Dogovora\DogovorClientFactViewModel.cs" />
+    <Compile Include="EntityViewModel\Dogovora\DogovorClientRowViewModel.cs" />
+    <Compile Include="EntityViewModel\Dogovora\DogovorClientViewModel.cs" />
+    <Compile Include="EntityViewModel\KursUser.cs" />
     <Compile Include="EntityViewModel\LastDocumentViewModel.cs" />
     <Compile Include="EntityViewModel\ProviderInvoicePayViewModel.cs" />
     <Compile Include="EntityViewModel\InvoiceProviderRowCurrencyConvertViewModel.cs" />
@@ -275,9 +277,9 @@
     <Compile Include="EntityViewModel\SCHET_FACT_KONTR_OUTViewModel.cs" />
     <Compile Include="EntityViewModel\SCHET_FACT_KONTR_OUT_ROWSViewModel.cs" />
     <Compile Include="EntityViewModel\NomenklProductType.cs" />
-    <Compile Include="EntityViewModel\SD_148ViewModel.cs" />
+    <Compile Include="EntityViewModel\CategoryClientTypeViewModel.cs" />
     <Compile Include="EntityViewModel\Unit.cs" />
-    <Compile Include="EntityViewModel\UsagePay.cs" />
+    <Compile Include="EntityViewModel\PayCondition.cs" />
     <Compile Include="EntityViewModel\Cash.cs" />
     <Compile Include="EntityViewModel\Region.cs" />
     <Compile Include="EntityViewModel\SD_24ViewModel.cs" />
@@ -393,6 +395,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

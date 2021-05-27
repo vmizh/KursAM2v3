@@ -168,7 +168,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             Document.DD_OTRPAV_NAME = Document.Sender;
             Document.DD_TYPE_DC = 2010000001;
             var dc = orderManager.SaveOrderIn(Document);
-            if (dc > 0) RefreshData(dc);
+            if (dc > 0)
+            {
+                RefreshData(dc);
+                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.StoreOrderIn, Document.Id, Document.DocCode, Document.CREATOR,
+                    "", Document.Description);
+            }
         }
 
         public ICommand DeleteLinkDocumentCommand

@@ -58,6 +58,9 @@ namespace KursAM2.ViewModel.Logistiks
         public ObservableCollection<NomenklTransferRowViewModelExt> Rows { set; get; } =
             new ObservableCollection<NomenklTransferRowViewModelExt>();
 
+        public override string Description => $"Акт валютной таксировки номенклатур {Entity.DucNum} от {Entity.Date} " +
+                                              $"{Warehouse} {Entity.Note}";
+
         public Core.EntityViewModel.Warehouse Warehouse
         {
             get => myWarehouse;

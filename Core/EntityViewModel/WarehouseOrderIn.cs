@@ -58,6 +58,9 @@ namespace Core.EntityViewModel
         public ObservableCollection<WarehouseOrderInRow> DeletedRows { set; get; } =
             new ObservableCollection<WarehouseOrderInRow>();
 
+        public override string Description => $"Приходный складской ордер №{DD_IN_NUM}/{DD_EXT_NUM} от {DD_DATE.ToShortDateString()} " +
+                                              $"на склад {WarehouseOut} от {KontragentSender} {DD_NOTES}";
+
         public WarehouseSenderType WarehouseSenderType
         {
             get => myWarehouseSenderType;

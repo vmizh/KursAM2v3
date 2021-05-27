@@ -7,7 +7,9 @@ using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using Helper;
 using KursAM2.Managers.Base;
+using KursAM2.View.Dogovors;
 using KursAM2.View.Finance;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Finance.Invoices;
@@ -15,6 +17,7 @@ using KursAM2.View.KursReferences;
 using KursAM2.View.Logistiks;
 using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.View.Personal;
+using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Finance.Invoices;
@@ -50,6 +53,7 @@ namespace KursAM2.Managers
                 case DocumentType.Waybill:
                 case DocumentType.NomenklTransfer:
                 case DocumentType.PayRollVedomost:
+                case DocumentType.DogovorClient:
                     return true;
                 default:
                     return false;
@@ -83,6 +87,22 @@ namespace KursAM2.Managers
             {
                 using (var ctx = GlobalOptions.KursSystem())
                 {
+                    if (docDC != null)
+                        ctx.Database.ExecuteSqlCommand(
+                            $"DELETE FROM LastDocument WHERE DocDC = {CustomFormat.DecimalToSqlDecimal(docDC)} " +
+                            $"AND UserId = '{CustomFormat.GuidToSqlString(GlobalOptions.UserInfo.KursId)}' " +
+                            $"AND DbId = '{CustomFormat.GuidToSqlString(GlobalOptions.DataBaseId)}' ");
+                    if (docId != null && docId != Guid.Empty)
+                        ctx.Database.ExecuteSqlCommand(
+                            $"DELETE FROM LastDocument WHERE DocId = '{CustomFormat.GuidToSqlString(docId.Value)}' "  +
+                            $"AND UserId = '{CustomFormat.GuidToSqlString(GlobalOptions.UserInfo.KursId)}' " +
+                            $"AND DbId = '{CustomFormat.GuidToSqlString(GlobalOptions.DataBaseId)}' ");
+
+                    ctx.Database.ExecuteSqlCommand(
+                        $"DELETE FROM LastDocument WHERE UserId = '{CustomFormat.GuidToSqlString(GlobalOptions.UserInfo.KursId)}' " +
+                        $"AND DbId = '{CustomFormat.GuidToSqlString(GlobalOptions.DataBaseId)}' " +
+                        $"AND LastOpen < '{CustomFormat.DateToString(DateTime.Today.AddDays(-60))}'");
+
                     var newItem = new LastDocument
                     {
                         Id = Guid.NewGuid(),
@@ -112,6 +132,11 @@ namespace KursAM2.Managers
             if (!IsDocumentOpen(docType)) return;
             switch (docType)
             {
+                case DocumentType.DogovorClient:
+                    var dog = OpenDogovorClient(id);
+                    SaveLastOpenInfo(docType, dog.Document.Id, null, dog.Document.Creator,
+                        "", dog.Document.Description);
+                    break;
                 case DocumentType.MutualAccounting:
                     var mut = OpenMutualAccounting(dc);
                     SaveLastOpenInfo(docType, mut.Document.Id, mut.Document.DocCode, mut.Document.CREATOR,
@@ -152,31 +177,40 @@ namespace KursAM2.Managers
                     break;
                 case DocumentType.NomenklTransfer:
                     // ReSharper disable once PossibleInvalidOperationException
-                    OpenNomenklTransfer(id.Value);
+                    var ont = OpenNomenklTransfer(id.Value);
+                    SaveLastOpenInfo(docType, ont.Document.Id, ont.Document.DocCode, ont.Document.Creator,
+                        "", ont.Document.Description);
                     break;
                 case DocumentType.StoreOrderIn:
-                    OpenStoreIn(dc);
+                    var osi = OpenStoreIn(dc);
+                    SaveLastOpenInfo(docType, osi.Document.Id, osi.Document.DocCode, osi.Document.CREATOR,
+                        "", osi.Document.Description);
                     break;
                 case DocumentType.Bank:
                     OpenBank(dc);
                     break;
                 case DocumentType.Waybill:
-                    OpenWayBill(dc);
+                    var owb =OpenWayBill(dc);
+                    SaveLastOpenInfo(docType, owb.Document.Id, owb.Document.DocCode, owb.Document.CREATOR,
+                        "", owb.Document.Description);
                     break;
                 case DocumentType.PayRollVedomost:
-                    OpenPayroll(id);
+                    var op = OpenPayroll(id);
+                    SaveLastOpenInfo(docType, op.Id, op.DocCode, op.Creator,
+                        "", op.Description);
                     break;
                 default:
                     return;
             }
         }
 
-        private static void OpenPayroll(Guid? id)
+        private static PayRollVedomostWindowViewModel OpenPayroll(Guid? id)
         {
             var ctx = new PayRollVedomostWindowViewModel(id.ToString());
             var form = new PayRollVedomost();
             form.Show();
             form.DataContext = ctx;
+            return ctx;
         }
 
         public static void Open(DocumentType docType, RSWindowViewModelBase vm, object parent = null)
@@ -332,7 +366,7 @@ namespace KursAM2.Managers
             }
         }
 
-        private static void OpenNomenklTransfer(Guid id)
+        private static NomenklTransferWindowViewModel OpenNomenklTransfer(Guid id)
         {
             var frm = new NomenklTransferView
             {
@@ -341,13 +375,13 @@ namespace KursAM2.Managers
             var ctx = new NomenklTransferWindowViewModel(id) {Form = frm};
             frm.DataContext = ctx;
             frm.Show();
+            return ctx;
         }
 
         private static ClientWindowViewModel OpenSFClient(decimal docCode)
         {
             var view = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            var ctx = new ClientWindowViewModel(docCode);
-            ctx.Form = view;
+            var ctx = new ClientWindowViewModel(docCode) {Form = view};
             view.Show();
             view.DataContext = ctx;
             return ctx;
@@ -365,6 +399,22 @@ namespace KursAM2.Managers
             view.Show();
             ctx.Document.State = RowStatus.NotEdited;
             ctx.RaisePropertyChanged(nameof(ctx.IsCanSaveData));
+            return ctx;
+        }
+
+        private static DogovorClientWindowViewModel OpenDogovorClient(Guid? id)
+        {
+            if (id == null) return null;
+            var form = new DogovorClientView()
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctx = new DogovorClientWindowViewModel(id.Value)
+            {
+                Form = form
+            };
+            form.DataContext = ctx;
+            form.Show();
             return ctx;
         }
 
@@ -491,7 +541,7 @@ namespace KursAM2.Managers
         ///     Приходный складской ордер
         /// </summary>
         /// <param name="dc"></param>
-        private static void OpenStoreIn(decimal dc)
+        private static OrderInWindowViewModel OpenStoreIn(decimal dc)
         {
             var form = new OrderInView
             {
@@ -501,13 +551,14 @@ namespace KursAM2.Managers
                 {Form = form};
             form.Show();
             form.DataContext = ctx;
+            return ctx;
         }
 
         /// <summary>
         ///     Расходная накладная
         /// </summary>
         /// <param name="dc"></param>
-        private static void OpenWayBill(decimal dc)
+        private static WaybillWindowViewModel OpenWayBill(decimal dc)
         {
             var form = new WaybillView
             {
@@ -516,6 +567,8 @@ namespace KursAM2.Managers
             var ctx = new WaybillWindowViewModel(dc) {Form = form};
             form.Show();
             form.DataContext = ctx;
+            return ctx;
+
         }
 
         private static void OpenWayBill(WaybillWindowViewModel vm)

@@ -31,7 +31,7 @@ namespace Core
             ActiveKontragents = new Dictionary<decimal, Kontragent>();
             ActiveNomenkls = new Dictionary<decimal, Nomenkl>();
             COList = new Dictionary<decimal, CentrOfResponsibility>();
-            PayConditions = new Dictionary<decimal, UsagePay>();
+            PayConditions = new Dictionary<decimal, PayCondition>();
             VzaimoraschetTypes = new Dictionary<decimal, VzaimoraschetType>();
             FormRaschets = new Dictionary<decimal, FormPay>();
             Countries = new Dictionary<decimal, Country>();
@@ -51,6 +51,37 @@ namespace Core
             ContractTypes = new Dictionary<decimal, ContractType>();
             DeliveryConditions = new Dictionary<decimal, DeliveryCondition>();
             Regions = new Dictionary<decimal, Region>();
+            ClientKategory = new Dictionary<decimal, CategoryClientTypeViewModel>();
+        }
+
+        private static void Clear()
+        {
+            AllKontragents.Clear();
+            ALLNomenkls.Clear();
+            ActiveKontragents.Clear();
+            ActiveNomenkls.Clear();
+            COList.Clear();
+            PayConditions.Clear();
+            VzaimoraschetTypes.Clear();
+            FormRaschets.Clear();
+            Countries.Clear();
+            Currencies.Clear();
+            Units.Clear();
+            NomenklGroups.Clear();
+            NomenklTypes.Clear();
+            Employees.Clear();
+            Warehouses.Clear();
+            SDRSchets.Clear();
+            SDRStates.Clear();
+            MutualTypes.Clear();
+            BankAccounts.Clear();
+            Cashs.Clear();
+            CashsAll.Clear();
+            Projects.Clear();
+            ContractTypes.Clear();
+            DeliveryConditions.Clear();
+            Regions.Clear();
+            ClientKategory.Clear();
         }
 
         public static Dictionary<decimal, Cash> CashsAll { get; set; }
@@ -59,20 +90,75 @@ namespace Core
 
         public static List<string> ThemeNames { set; get; }
         public static Dictionary<decimal, Region> Regions { set; get; }
+        
+        public static Dictionary<decimal,CategoryClientTypeViewModel> ClientKategory { set; get; }
         public static Dictionary<decimal, DeliveryCondition> DeliveryConditions { set; get; }
+
+        public static DeliveryCondition GetDeliveryCondition(decimal dc)
+        {
+            if (DeliveryConditions.ContainsKey(dc)) 
+                return DeliveryConditions[dc];
+            return null;
+        }
+        public static DeliveryCondition GetDeliveryCondition(decimal? dc)
+        {
+            if (dc == null) return null;
+            if (DeliveryConditions.ContainsKey(dc.Value)) 
+                return DeliveryConditions[dc.Value];
+            return null;
+        }
         public static Dictionary<decimal, ContractType> ContractTypes { set; get; }
+        public static ContractType GetContractType(decimal dc)
+        {
+            if (DeliveryConditions.ContainsKey(dc)) 
+                return ContractTypes[dc];
+            return null;
+        }
+        public static ContractType GetContractType(decimal? dc)
+        {
+            if (dc == null) return null;
+            if (DeliveryConditions.ContainsKey(dc.Value)) 
+                return ContractTypes[dc.Value];
+            return null;
+        }
         public static Dictionary<Guid, Project> Projects { set; get; }
         public static Dictionary<decimal, Cash> Cashs { set; get; }
         public static Dictionary<decimal, BankAccount> BankAccounts { set; get; }
-        public static DateTime NomenklLastUpdate { set; get; } = new DateTime(1900, 1, 1);
-        public static DateTime KontragentLastUpdate { set; get; } = new DateTime(1900, 1, 1);
+        public static DateTime NomenklLastUpdate { set; get; } = new(1900, 1, 1);
+        public static DateTime KontragentLastUpdate { set; get; } = new(1900, 1, 1);
         public static Dictionary<decimal, SD_111ViewModel> MutualTypes { private set; get; }
         public static Dictionary<decimal, SDRSchet> SDRSchets { private set; get; }
         public static Dictionary<decimal, SDRState> SDRStates { private set; get; }
         public static Dictionary<decimal, CentrOfResponsibility> COList { private set; get; }
-        public static Dictionary<decimal, UsagePay> PayConditions { private set; get; }
+        public static Dictionary<decimal, PayCondition> PayConditions { private set; get; }
+        public static PayCondition GetPayCondition(decimal dc)
+        {
+            if (DeliveryConditions.ContainsKey(dc)) 
+                return PayConditions[dc];
+            return null;
+        }
+        public static PayCondition GetPayCondition(decimal? dc)
+        {
+            if (dc == null) return null;
+            if (PayConditions.ContainsKey(dc.Value)) 
+                return PayConditions[dc.Value];
+            return null;
+        }
         public static Dictionary<decimal, VzaimoraschetType> VzaimoraschetTypes { private set; get; }
         public static Dictionary<decimal, FormPay> FormRaschets { private set; get; }
+        public static FormPay GetFormPay(decimal dc)
+        {
+            if (DeliveryConditions.ContainsKey(dc)) 
+                return FormRaschets[dc];
+            return null;
+        }
+        public static FormPay GetFormPay(decimal? dc)
+        {
+            if (dc == null) return null;
+            if (DeliveryConditions.ContainsKey(dc.Value)) 
+                return FormRaschets[dc.Value];
+            return null;
+        }
         public static Dictionary<decimal, Country> Countries { set; get; }
         public static Dictionary<decimal, Currency> Currencies { private set; get; }
         public static Dictionary<decimal, Unit> Units { private set; get; }
@@ -100,7 +186,7 @@ namespace Core
 
         private List<string> getThemeNames()
         {
-            return new List<string>(new[]
+            return new(new[]
             {
                 "MetropolisLight",
                 "MetropolisDark", "Office2019Black", "Office2019Colorful",
@@ -143,20 +229,18 @@ namespace Core
                 var d = GlobalOptions.GetEntities().Database.SqlQuery<DateTime>(sql).ToList();
                 if (d.Count == 0 || d[0] != nom.UpdateDate) return true;
             }
+
             return false;
         }
 
         public static void UpdateNomenklForMain(Guid id)
         {
-            using(var ctx = GlobalOptions.GetEntities())
+            using (var ctx = GlobalOptions.GetEntities())
             {
                 var noms = ctx.SD_83.Where(_ => _.MainId == id);
                 foreach (var n in noms)
                 {
-                    if (ALLNomenkls.ContainsKey(n.DOC_CODE))
-                    {
-                        ALLNomenkls.Remove(n.DOC_CODE);
-                    }
+                    if (ALLNomenkls.ContainsKey(n.DOC_CODE)) ALLNomenkls.Remove(n.DOC_CODE);
                     ALLNomenkls.Add(n.DOC_CODE, new Nomenkl
                     {
                         Entity = new SD_83
@@ -175,6 +259,7 @@ namespace Core
                             IsCurrencyTransfer = n.IsCurrencyTransfer
                         },
                         Unit = Units[n.NOM_ED_IZM_DC],
+                        // ReSharper disable once PossibleInvalidOperationException
                         Currency = Currencies[(decimal) n.NOM_SALE_CRS_DC],
                         Group = NomenklGroups[n.NOM_CATEG_DC]
                     });
@@ -265,7 +350,6 @@ namespace Core
 
                 // ReSharper disable once PossibleInvalidOperationException
                 KontragentLastUpdate = (DateTime) AllKontragents.Values.Select(_ => _.UpdateDate).Max();
-
             }
             catch (Exception)
             {
@@ -322,19 +406,49 @@ namespace Core
             {
                 var ent = GlobalOptions.GetEntities();
 
+                #region Типы договоров/контрактов sd_102
+                
+                var s102 = ent.SD_102.AsNoTracking().ToList();
+                foreach (var item in s102)
+                    if (ContractTypes.ContainsKey(item.DOC_CODE))
+                    {
+                        var d = ContractTypes[item.DOC_CODE];
+                        d.UpdateFrom(item);
+                        d.myState = RowStatus.NotEdited;
+                    }
+                    else
+                    {
+                        ContractTypes.Add(item.DOC_CODE, new ContractType(item) {myState = RowStatus.NotEdited});
+                    } 
+                #endregion
+
+                #region Категории контрагентов
+
+                var s148 = ent.SD_148.AsNoTracking().ToList();
+                foreach (var item in s148)
+                    if (ClientKategory.ContainsKey(item.DOC_CODE))
+                    {
+                        var d = ClientKategory[item.DOC_CODE];
+                        d.UpdateFrom(item);
+                        d.myState = RowStatus.NotEdited;
+                    }
+                    else
+                    {
+                        ClientKategory.Add(item.DOC_CODE, new  CategoryClientTypeViewModel(item) {myState = RowStatus.NotEdited});
+                    }
+
+                #endregion
+
                 #region центр ответственности SD_40
 
                 var s40 = ent.Set<SD_40>().AsNoTracking().ToList();
                 if (!COList.ContainsKey(0))
-                {
                     COList.Add(0, new CentrOfResponsibility
                     {
-                        Entity = new SD_40 {DOC_CODE = 0, CENT_NAME = "Центр ответественности не указан"},
+                        Entity = new SD_40 {DOC_CODE = 0, CENT_NAME = "Центр ответественности не указан"}
                     });
-                }
 
                 foreach (var item in s40)
-                {
                     if (COList.ContainsKey(item.DOC_CODE))
                     {
                         var d = COList[item.DOC_CODE];
@@ -345,13 +459,12 @@ namespace Core
                     {
                         COList.Add(item.DOC_CODE, new CentrOfResponsibility(item) {myState = RowStatus.NotEdited});
                     }
-                }
+
                 foreach (var k in COList.Keys)
                 {
                     if (s40.Any(_ => _.DOC_CODE == k) || k == 0) continue;
                     COList.Remove(k);
                 }
-                
 
                 #endregion
 
@@ -439,7 +552,7 @@ namespace Core
                     }
                     else
                     {
-                        PayConditions.Add(item.DOC_CODE, new UsagePay(item) {myState = RowStatus.NotEdited});
+                        PayConditions.Add(item.DOC_CODE, new PayCondition(item) {myState = RowStatus.NotEdited});
                     }
 
                 keys = PayConditions.Keys.ToList();
@@ -476,7 +589,7 @@ namespace Core
 
                 #endregion
 
-                #region Форма расчетов
+                #region Форма расчетов sd_189
 
                 var s189 = ent.SD_189.Include(_ => _.SD_179).AsNoTracking().ToList();
                 foreach (var item in s189)
@@ -763,6 +876,7 @@ namespace Core
                                 myState = RowStatus.Deleted
                             });
                     }
+
                     if (CashsAll.ContainsKey(item.DOC_CODE))
                     {
                         var d = CashsAll[item.DOC_CODE];
@@ -812,7 +926,6 @@ namespace Core
                 }
 
                 #endregion
-
             }
             catch (Exception ex)
             {
@@ -881,76 +994,76 @@ namespace Core
         {
             var ent = GlobalOptions.GetEntities();
             var data = ent.Database.SqlQuery<NomenklShort>(
-                    " SELECT SD_83.DOC_CODE as DOC_CODE, NOM_NAME, NOM_NOMENKL, NOM_CATEG_DC, " +
-                    " SD_175.DOC_CODE as UNIT_DC, SD_175.ED_IZM_NAME AS UNIT_NAME, SD_175.ED_IZM_OKEI_CODE as UNIT_CODE, " +
-                    " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, SD_83.Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
-                    " isnull(sd_83.NOM_PRODUCT_DC,0) as NOM_PRODUCT_DC, isnull(sd_83.IsUslugaInRent,0) as IsRentabelnost, " +
-                    " ISNULL(IsCurrencyTransfer,0) as IsCurrencyTransfer " +
-                    " FROM SD_83 " +
-                    " INNER JOIN SD_175 ON SD_175.DOC_CODE = SD_83.NOM_ED_IZM_DC " +
-                    " and SD_83.DOC_CODE = '" + CustomFormat.DecimalToSqlDecimal(dc) + "'").ToList();
-                if (data.Count == 0) return;
-                var d = data[0];
-                if (ALLNomenkls.ContainsKey(d.DOC_CODE)) ALLNomenkls.Remove(d.DOC_CODE);
-                ALLNomenkls.Add(d.DOC_CODE, new Nomenkl
+                " SELECT SD_83.DOC_CODE as DOC_CODE, NOM_NAME, NOM_NOMENKL, NOM_CATEG_DC, " +
+                " SD_175.DOC_CODE as UNIT_DC, SD_175.ED_IZM_NAME AS UNIT_NAME, SD_175.ED_IZM_OKEI_CODE as UNIT_CODE, " +
+                " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, SD_83.Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
+                " isnull(sd_83.NOM_PRODUCT_DC,0) as NOM_PRODUCT_DC, isnull(sd_83.IsUslugaInRent,0) as IsRentabelnost, " +
+                " ISNULL(IsCurrencyTransfer,0) as IsCurrencyTransfer " +
+                " FROM SD_83 " +
+                " INNER JOIN SD_175 ON SD_175.DOC_CODE = SD_83.NOM_ED_IZM_DC " +
+                " and SD_83.DOC_CODE = '" + CustomFormat.DecimalToSqlDecimal(dc) + "'").ToList();
+            if (data.Count == 0) return;
+            var d = data[0];
+            if (ALLNomenkls.ContainsKey(d.DOC_CODE)) ALLNomenkls.Remove(d.DOC_CODE);
+            ALLNomenkls.Add(d.DOC_CODE, new Nomenkl
+            {
+                Entity = new SD_83
                 {
-                    Entity = new SD_83
-                    {
-                        DOC_CODE = d.DOC_CODE,
-                        NOM_NAME = d.NOM_NAME,
-                        NOM_NOMENKL = d.NOM_NOMENKL,
-                        NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
-                        Id = d.Id,
-                        MainId = d.MainId,
-                        UpdateDate = d.UpdateDate,
-                        NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
-                        NOM_CATEG_DC = d.NOM_CATEG_DC,
-                        NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
-                        IsUslugaInRent = d.IsRentabelnost,
-                        IsCurrencyTransfer = d.IsCurrencyTransfer
-                    },
-                    Unit = Units[d.UNIT_DC],
-                    Currency = Currencies[d.NOM_SALE_CRS_DC],
-                    Group = NomenklGroups[d.NOM_CATEG_DC]
-                });
+                    DOC_CODE = d.DOC_CODE,
+                    NOM_NAME = d.NOM_NAME,
+                    NOM_NOMENKL = d.NOM_NOMENKL,
+                    NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
+                    Id = d.Id,
+                    MainId = d.MainId,
+                    UpdateDate = d.UpdateDate,
+                    NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
+                    NOM_CATEG_DC = d.NOM_CATEG_DC,
+                    NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
+                    IsUslugaInRent = d.IsRentabelnost,
+                    IsCurrencyTransfer = d.IsCurrencyTransfer
+                },
+                Unit = Units[d.UNIT_DC],
+                Currency = Currencies[d.NOM_SALE_CRS_DC],
+                Group = NomenklGroups[d.NOM_CATEG_DC]
+            });
         }
 
         public static void LoadNomenkl(Guid id)
         {
             var ent = GlobalOptions.GetEntities();
             var data = ent.Database.SqlQuery<NomenklShort>(
-                    " SELECT SD_83.DOC_CODE as DOC_CODE, NOM_NAME, NOM_NOMENKL, NOM_CATEG_DC, " +
-                    " SD_175.DOC_CODE as UNIT_DC, SD_175.ED_IZM_NAME AS UNIT_NAME, SD_175.ED_IZM_OKEI_CODE as UNIT_CODE, " +
-                    " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, SD_83.Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
-                    " isnull(sd_83.NOM_PRODUCT_DC,0) as NOM_PRODUCT_DC, isnull(sd_83.IsUslugaInRent,0) as IsRentabelnost, " +
-                    " ISNULL(IsCurrencyTransfer,0) as IsCurrencyTransfer " +
-                    " FROM SD_83 " +
-                    " INNER JOIN SD_175 ON SD_175.DOC_CODE = SD_83.NOM_ED_IZM_DC " +
-                    $" and SD_83.Id = '{id}'").ToList();
-                if (data.Count == 0) return;
-                var d = data[0];
-                if (ALLNomenkls.ContainsKey(d.DOC_CODE)) ALLNomenkls.Remove(d.DOC_CODE);
-                ALLNomenkls.Add(d.DOC_CODE, new Nomenkl
+                " SELECT SD_83.DOC_CODE as DOC_CODE, NOM_NAME, NOM_NOMENKL, NOM_CATEG_DC, " +
+                " SD_175.DOC_CODE as UNIT_DC, SD_175.ED_IZM_NAME AS UNIT_NAME, SD_175.ED_IZM_OKEI_CODE as UNIT_CODE, " +
+                " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, SD_83.Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
+                " isnull(sd_83.NOM_PRODUCT_DC,0) as NOM_PRODUCT_DC, isnull(sd_83.IsUslugaInRent,0) as IsRentabelnost, " +
+                " ISNULL(IsCurrencyTransfer,0) as IsCurrencyTransfer " +
+                " FROM SD_83 " +
+                " INNER JOIN SD_175 ON SD_175.DOC_CODE = SD_83.NOM_ED_IZM_DC " +
+                $" and SD_83.Id = '{id}'").ToList();
+            if (data.Count == 0) return;
+            var d = data[0];
+            if (ALLNomenkls.ContainsKey(d.DOC_CODE)) ALLNomenkls.Remove(d.DOC_CODE);
+            ALLNomenkls.Add(d.DOC_CODE, new Nomenkl
+            {
+                Entity = new SD_83
                 {
-                    Entity = new SD_83
-                    {
-                        DOC_CODE = d.DOC_CODE,
-                        NOM_NAME = d.NOM_NAME,
-                        NOM_NOMENKL = d.NOM_NOMENKL,
-                        NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
-                        Id = d.Id,
-                        MainId = d.MainId,
-                        UpdateDate = d.UpdateDate,
-                        NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
-                        NOM_CATEG_DC = d.NOM_CATEG_DC,
-                        NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
-                        IsUslugaInRent = d.IsRentabelnost,
-                        IsCurrencyTransfer = d.IsCurrencyTransfer
-                    },
-                    Unit = Units[d.UNIT_DC],
-                    Currency = Currencies[d.NOM_SALE_CRS_DC],
-                    Group = NomenklGroups[d.NOM_CATEG_DC]
-                });
+                    DOC_CODE = d.DOC_CODE,
+                    NOM_NAME = d.NOM_NAME,
+                    NOM_NOMENKL = d.NOM_NOMENKL,
+                    NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
+                    Id = d.Id,
+                    MainId = d.MainId,
+                    UpdateDate = d.UpdateDate,
+                    NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
+                    NOM_CATEG_DC = d.NOM_CATEG_DC,
+                    NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
+                    IsUslugaInRent = d.IsRentabelnost,
+                    IsCurrencyTransfer = d.IsCurrencyTransfer
+                },
+                Unit = Units[d.UNIT_DC],
+                Currency = Currencies[d.NOM_SALE_CRS_DC],
+                Group = NomenklGroups[d.NOM_CATEG_DC]
+            });
         }
 
         public static void LoadNomenkl()

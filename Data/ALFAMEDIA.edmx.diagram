@@ -2053,6 +2053,16 @@
         <AssociationConnector Association="ALFAMEDIAModel.WD_40" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.HD_17" ManuallyRouted="false" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.DocHistory" Width="1.5" PointX="47.375" PointY="0.75" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.DogovorClient" Width="1.5" PointX="64.5" PointY="709" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.DogovorClientFact" Width="1.5" PointX="66" PointY="683" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.DogovorClientRow" Width="1.5" PointX="66.75" PointY="709.875" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorClient_DeliveryConditions" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorClient_DogType" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorClient_FormOfPayment" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorClient_KontrDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorClientRow_DocId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorClientFact" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorClientFact_RowId" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

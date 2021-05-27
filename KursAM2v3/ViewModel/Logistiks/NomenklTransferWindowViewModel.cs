@@ -12,6 +12,7 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
 using KursAM2.ViewModel.Finance.Invoices;
@@ -555,6 +556,8 @@ namespace KursAM2.ViewModel.Logistiks
                 calc.Calc(null);
                 Refresh();
                 RaisePropertyChanged(nameof(Document));
+                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.NomenklTransfer, Document.Id, Document.DocCode, Document.Creator,
+                    "", Document.Description);
             }
             catch (Exception ex)
             {

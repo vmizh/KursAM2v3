@@ -47,6 +47,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         public CashOutWindowViewModel(decimal dc) : this()
         {
             RefreshData(dc);
+            // ReSharper disable once PossibleInvalidOperationException
             oldDate = (DateTime) Document.DATE_ORD;
         }
 
@@ -125,7 +126,10 @@ namespace KursAM2.ViewModel.Finance.Cash
             if (BookView?.DataContext is CashBookWindowViewModel ctx)
                 ctx.RefreshActual(Document);
             if (Document.KONTRAGENT_DC != null)
+                // ReSharper disable once PossibleInvalidOperationException
                 RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC, (DateTime) Document.DATE_ORD);
+            DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CashOut, Document.Id, Document.DocCode, Document.CREATOR,
+                "", Document.Description);
         }
 
         public override void DocDelete(object form)
@@ -149,6 +153,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                                 CashManager.DeleteDocument(CashDocumentType.CashOut, Document);
                                 if (Document.KONTRAGENT_DC != null)
                                     RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC,
+                                        // ReSharper disable once PossibleInvalidOperationException
                                         (DateTime) Document.DATE_ORD);
                                 ctx?.RefreshActual(Document);
                                 CloseWindow(Form);
@@ -163,6 +168,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                     ctx1?.RefreshActual(Document);
                     CloseWindow(Form);
                     return;
+                // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
                 case MessageBoxResult.No:
                     return;
             }

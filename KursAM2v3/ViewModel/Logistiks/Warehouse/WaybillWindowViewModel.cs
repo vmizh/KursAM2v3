@@ -28,7 +28,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private WaybillRow myCurrentNomenklRow;
         private Waybill myDocument;
         private readonly WindowManager winManager = new WindowManager();
-        private readonly NomenklManager nomManager = new NomenklManager();
 
         public WaybillWindowViewModel()
         {
@@ -452,7 +451,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 : Document.WarehouseOut.Name;
             Document.DD_TYPE_DC = 2010000012;
             var dc = docManager.SaveWaybill(Document);
-            if (dc > 0) RefreshData(dc);
+            if (dc > 0)
+            {
+                RefreshData(dc);
+                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.Waybill, Document.Id, Document.DocCode, Document.CREATOR,
+                    "", Document.Description);
+            }
         }
 
         #endregion

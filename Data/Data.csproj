@@ -4,9 +4,6 @@
   <Import Project="..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <LangVersion>7.0</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{AE6BDC42-9B1E-4F09-8923-2295B1C87212}</ProjectGuid>
@@ -20,6 +17,9 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>7.0</LangVersion>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -29,7 +29,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>7.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -39,7 +38,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>7.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -181,6 +179,15 @@
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="DOC_FILES.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DogovorClient.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DogovorClientFact.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DogovorClientRow.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="dtproperties.cs">

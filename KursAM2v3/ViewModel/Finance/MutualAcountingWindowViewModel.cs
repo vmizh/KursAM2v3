@@ -70,11 +70,6 @@ namespace KursAM2.ViewModel.Finance
             }
         }
 
-        public override void UpdateDocumentOpen()
-        {
-            
-        }
-
         public SD_110ViewModel Document { set; get; }
         public bool IsNotOld => !Document.IsOld;
         public bool IsCanDebitorCrsChanged => DebitorCollection.Count == 0;
@@ -117,6 +112,10 @@ namespace KursAM2.ViewModel.Finance
                 myIsCurrencyConvert = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public override void UpdateDocumentOpen()
+        {
         }
 
         /// <summary>
@@ -218,7 +217,6 @@ namespace KursAM2.ViewModel.Finance
                     var old = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.VZDC == CurrentCreditor.DocCode
                                                                          && _.VZCode == CurrentCreditor.Code);
                     if (old == null)
-                    {
                         ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
                         {
                             Id = Guid.NewGuid(),
@@ -230,12 +228,9 @@ namespace KursAM2.ViewModel.Finance
                             // ReSharper disable once PossibleInvalidOperationException
                             DocDC = (decimal) CurrentCreditor.VZT_SPOST_DC
                         });
-                    }
                     else
-                    {
                         // ReSharper disable once PossibleInvalidOperationException
                         old.Summa = (decimal) CurrentCreditor.VZT_CRS_SUMMA;
-                    }
 
                     ctx.SaveChanges();
                 }
@@ -454,6 +449,10 @@ namespace KursAM2.ViewModel.Finance
                     RecalcKontragentBalans.CalcBalans(d, Document.VZ_DATE);
                 Document.DeletedRows.Clear();
             }
+
+            DocumentsOpenManager.SaveLastOpenInfo(
+                IsCurrencyConvert ? DocumentType.CurrencyConvertAccounting : DocumentType.MutualAccounting, Document.Id,
+                Document.DocCode, Document.CREATOR,"",Document.Description);
         }
 
         private void UpdateDebitorCreditorCollections(TD_110ViewModel vm, bool isDebitor = true)

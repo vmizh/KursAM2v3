@@ -7,7 +7,7 @@ using DevExpress.Mvvm.DataAnnotations;
 namespace Core.ViewModel.Common
 {
     [MetadataType(typeof(DataAnnotationsKontragentCategory))]
-    public class KontragentCategory : SD_148ViewModel
+    public class KontragentCategory : CategoryClientTypeViewModel
     {
         public KontragentCategory()
         {

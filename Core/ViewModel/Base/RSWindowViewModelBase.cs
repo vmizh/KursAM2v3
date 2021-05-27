@@ -62,6 +62,7 @@ namespace Core.ViewModel.Base
             => GetService<ILayoutSerializationService>(ServiceSearchMode.LocalOnly);
 
         public virtual string LayoutName { set; get; }
+        [Display(AutoGenerateField = false)]
         public StandartErrorManager ErrorManager { set; get; }
         public ObservableCollection<MenuButtonInfo> RightMenuBar { set; get; }
 
@@ -69,6 +70,7 @@ namespace Core.ViewModel.Base
         public ObservableCollection<MenuButtonInfo> LeftMenuBar { set; get; }
 
         //public ReportManager ReportManager { set; get; }
+        [Display(AutoGenerateField = false)]
         public virtual Window Form
         {
             get => myForm;
@@ -251,6 +253,7 @@ namespace Core.ViewModel.Base
         }
 
         // ReSharper disable once ArrangeObjectCreationWhenTypeEvident
+        [Display(AutoGenerateField = false)]
         public AsyncCommand AsyncRefreshDataCommand => new AsyncCommand(AsyncTaskRefresh, IsCanRefresh);
 
 

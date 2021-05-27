@@ -19,7 +19,7 @@ namespace Core.EntityViewModel
             Entity = entity ?? DefaultValue();
         }
 
-        public decimal DOC_CODE
+        public override decimal DocCode
         {
             get => Entity.DOC_CODE;
             set
@@ -41,75 +41,66 @@ namespace Core.EntityViewModel
             }
         }
 
-        public decimal? ZAKT_PARENT_DC
+        //public decimal ZAKT_NOMENKL_DC
+        //{
+        //    get => Entity.ZAKT_NOMENKL_DC;
+        //    set
+        //    {
+        //        if (Entity.ZAKT_NOMENKL_DC == value) return;
+        //        Entity.ZAKT_NOMENKL_DC = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
+
+        public Nomenkl Nomenkl
         {
-            get => Entity.ZAKT_PARENT_DC;
+            get => MainReferences.GetNomenkl(Entity.ZAKT_NOMENKL_DC);
             set
             {
-                if (Entity.ZAKT_PARENT_DC == value) return;
-                Entity.ZAKT_PARENT_DC = value;
+                if (MainReferences.GetNomenkl(Entity.ZAKT_NOMENKL_DC) == value) return;
+                Entity.ZAKT_NOMENKL_DC = value.DocCode;
                 RaisePropertyChanged();
             }
         }
 
-        public int? ZAKT_PARENT_CODE
+        public Unit NomenklNumber => Nomenkl?.Unit;
+
+        //public double ZAKT_KOL_IN_ONE
+        //{
+        //    get => Entity.ZAKT_KOL_IN_ONE;
+        //    set
+        //    {
+        //        if (Entity.ZAKT_KOL_IN_ONE == value) return;
+        //        Entity.ZAKT_KOL_IN_ONE = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
+
+        public decimal Quantity
         {
-            get => Entity.ZAKT_PARENT_CODE;
+            get => (decimal) Entity.ZAKT_KOL_ALL;
             set
             {
-                if (Entity.ZAKT_PARENT_CODE == value) return;
-                Entity.ZAKT_PARENT_CODE = value;
+                if (Math.Abs(Entity.ZAKT_KOL_ALL - (double) value) < 0.0001) return;
+                Entity.ZAKT_KOL_ALL = (double) value;
                 RaisePropertyChanged();
             }
         }
 
-        public decimal ZAKT_NOMENKL_DC
+        public decimal QuantityFact
         {
-            get => Entity.ZAKT_NOMENKL_DC;
+            get => (decimal) Entity.ZAKT_KOL_ALL_FACT;
             set
             {
-                if (Entity.ZAKT_NOMENKL_DC == value) return;
-                Entity.ZAKT_NOMENKL_DC = value;
+                if (Math.Abs(Entity.ZAKT_KOL_ALL_FACT - (double) value) < 0.0001) return;
+                Entity.ZAKT_KOL_ALL_FACT = (double) value;
                 RaisePropertyChanged();
             }
         }
 
-        public double ZAKT_KOL_IN_ONE
+        public decimal Price
         {
-            get => Entity.ZAKT_KOL_IN_ONE;
-            set
-            {
-                if (Entity.ZAKT_KOL_IN_ONE == value) return;
-                Entity.ZAKT_KOL_IN_ONE = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public double ZAKT_KOL_ALL
-        {
-            get => Entity.ZAKT_KOL_ALL;
-            set
-            {
-                if (Entity.ZAKT_KOL_ALL == value) return;
-                Entity.ZAKT_KOL_ALL = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public double ZAKT_KOL_ALL_FACT
-        {
-            get => Entity.ZAKT_KOL_ALL_FACT;
-            set
-            {
-                if (Entity.ZAKT_KOL_ALL_FACT == value) return;
-                Entity.ZAKT_KOL_ALL_FACT = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? ZAKT_CRS_PRICE
-        {
-            get => Entity.ZAKT_CRS_PRICE;
+            get => Entity.ZAKT_CRS_PRICE ?? 0;
             set
             {
                 if (Entity.ZAKT_CRS_PRICE == value) return;
@@ -118,95 +109,95 @@ namespace Core.EntityViewModel
             }
         }
 
-        public short ZAKT_CAT_REMOVE
+        //public short ZAKT_CAT_REMOVE
+        //{
+        //    get => Entity.ZAKT_CAT_REMOVE;
+        //    set
+        //    {
+        //        if (Entity.ZAKT_CAT_REMOVE == value) return;
+        //        Entity.ZAKT_CAT_REMOVE = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
+
+        //public short? ZAKT_MANUAL_PRICE
+        //{
+        //    get => Entity.ZAKT_MANUAL_PRICE;
+        //    set
+        //    {
+        //        if (Entity.ZAKT_MANUAL_PRICE == value) return;
+        //        Entity.ZAKT_MANUAL_PRICE = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
+
+        //public decimal? ZAKT_ZAK_ED_IZM_DC
+        //{
+        //    get => Entity.ZAKT_ZAK_ED_IZM_DC;
+        //    set
+        //    {
+        //        if (Entity.ZAKT_ZAK_ED_IZM_DC == value) return;
+        //        Entity.ZAKT_ZAK_ED_IZM_DC = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
+
+        //public double? ZAKT_ZAK_KOL_ALL
+        //{
+        //    get => Entity.ZAKT_ZAK_KOL_ALL;
+        //    set
+        //    {
+        //        if (Entity.ZAKT_ZAK_KOL_ALL == value) return;
+        //        Entity.ZAKT_ZAK_KOL_ALL = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
+
+        //public decimal? ZAKT_CRS_DC
+        //{
+        //    get => Entity.ZAKT_CRS_DC;
+        //    set
+        //    {
+        //        if (Entity.ZAKT_CRS_DC == value) return;
+        //        Entity.ZAKT_CRS_DC = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
+
+        //public decimal? ZAKT_CRS_RATE
+        //{
+        //    get => Entity.ZAKT_CRS_RATE;
+        //    set
+        //    {
+        //        if (Entity.ZAKT_CRS_RATE == value) return;
+        //        Entity.ZAKT_CRS_RATE = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
+
+        public decimal NDSPercent
         {
-            get => Entity.ZAKT_CAT_REMOVE;
+            get => (decimal) (Entity.ZAKT_NDS_PERCENT ?? 0);
             set
             {
-                if (Entity.ZAKT_CAT_REMOVE == value) return;
-                Entity.ZAKT_CAT_REMOVE = value;
+                if (Entity.ZAKT_NDS_PERCENT == (float?) value) return;
+                Entity.ZAKT_NDS_PERCENT = (float?) value;
                 RaisePropertyChanged();
             }
         }
 
-        public short? ZAKT_MANUAL_PRICE
-        {
-            get => Entity.ZAKT_MANUAL_PRICE;
-            set
-            {
-                if (Entity.ZAKT_MANUAL_PRICE == value) return;
-                Entity.ZAKT_MANUAL_PRICE = value;
-                RaisePropertyChanged();
-            }
-        }
+        //public decimal? ZAKT_BASE_PRICE
+        //{
+        //    get => Entity.ZAKT_BASE_PRICE;
+        //    set
+        //    {
+        //        if (Entity.ZAKT_BASE_PRICE == value) return;
+        //        Entity.ZAKT_BASE_PRICE = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
-        public decimal? ZAKT_ZAK_ED_IZM_DC
-        {
-            get => Entity.ZAKT_ZAK_ED_IZM_DC;
-            set
-            {
-                if (Entity.ZAKT_ZAK_ED_IZM_DC == value) return;
-                Entity.ZAKT_ZAK_ED_IZM_DC = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public double? ZAKT_ZAK_KOL_ALL
-        {
-            get => Entity.ZAKT_ZAK_KOL_ALL;
-            set
-            {
-                if (Entity.ZAKT_ZAK_KOL_ALL == value) return;
-                Entity.ZAKT_ZAK_KOL_ALL = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? ZAKT_CRS_DC
-        {
-            get => Entity.ZAKT_CRS_DC;
-            set
-            {
-                if (Entity.ZAKT_CRS_DC == value) return;
-                Entity.ZAKT_CRS_DC = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? ZAKT_CRS_RATE
-        {
-            get => Entity.ZAKT_CRS_RATE;
-            set
-            {
-                if (Entity.ZAKT_CRS_RATE == value) return;
-                Entity.ZAKT_CRS_RATE = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public float? ZAKT_NDS_PERCENT
-        {
-            get => Entity.ZAKT_NDS_PERCENT;
-            set
-            {
-                if (Entity.ZAKT_NDS_PERCENT == value) return;
-                Entity.ZAKT_NDS_PERCENT = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? ZAKT_BASE_PRICE
-        {
-            get => Entity.ZAKT_BASE_PRICE;
-            set
-            {
-                if (Entity.ZAKT_BASE_PRICE == value) return;
-                Entity.ZAKT_BASE_PRICE = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? ZAKT_NACENKA_DILERA
+        public decimal? NacenkaDilera
         {
             get => Entity.ZAKT_NACENKA_DILERA;
             set
@@ -217,9 +208,9 @@ namespace Core.EntityViewModel
             }
         }
 
-        public decimal? ZAKT_DOG_CRS_ITOG_CENA
+        public decimal Summa
         {
-            get => Entity.ZAKT_DOG_CRS_ITOG_CENA;
+            get => (decimal) Entity.ZAKT_DOG_CRS_ITOG_CENA;
             set
             {
                 if (Entity.ZAKT_DOG_CRS_ITOG_CENA == value) return;
@@ -228,27 +219,27 @@ namespace Core.EntityViewModel
             }
         }
 
-        public decimal? ZAKT_RUB_SUMMA
-        {
-            get => Entity.ZAKT_RUB_SUMMA;
-            set
-            {
-                if (Entity.ZAKT_RUB_SUMMA == value) return;
-                Entity.ZAKT_RUB_SUMMA = value;
-                RaisePropertyChanged();
-            }
-        }
+        //public decimal? ZAKT_RUB_SUMMA
+        //{
+        //    get => Entity.ZAKT_RUB_SUMMA;
+        //    set
+        //    {
+        //        if (Entity.ZAKT_RUB_SUMMA == value) return;
+        //        Entity.ZAKT_RUB_SUMMA = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
-        public short? ZAKT_PERERAB_PRODUKT
-        {
-            get => Entity.ZAKT_PERERAB_PRODUKT;
-            set
-            {
-                if (Entity.ZAKT_PERERAB_PRODUKT == value) return;
-                Entity.ZAKT_PERERAB_PRODUKT = value;
-                RaisePropertyChanged();
-            }
-        }
+        //public short? ZAKT_PERERAB_PRODUKT
+        //{
+        //    get => Entity.ZAKT_PERERAB_PRODUKT;
+        //    set
+        //    {
+        //        if (Entity.ZAKT_PERERAB_PRODUKT == value) return;
+        //        Entity.ZAKT_PERERAB_PRODUKT = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public SD_301 SD_301
         {
@@ -341,58 +332,10 @@ namespace Core.EntityViewModel
 
         public void UpdateFrom(TD_9 ent)
         {
-            Code = ent.CODE;
-            ZAKT_PARENT_DC = ent.ZAKT_PARENT_DC;
-            ZAKT_PARENT_CODE = ent.ZAKT_PARENT_CODE;
-            ZAKT_NOMENKL_DC = ent.ZAKT_NOMENKL_DC;
-            ZAKT_KOL_IN_ONE = ent.ZAKT_KOL_IN_ONE;
-            ZAKT_KOL_ALL = ent.ZAKT_KOL_ALL;
-            ZAKT_KOL_ALL_FACT = ent.ZAKT_KOL_ALL_FACT;
-            ZAKT_CRS_PRICE = ent.ZAKT_CRS_PRICE;
-            ZAKT_CAT_REMOVE = ent.ZAKT_CAT_REMOVE;
-            ZAKT_MANUAL_PRICE = ent.ZAKT_MANUAL_PRICE;
-            ZAKT_ZAK_ED_IZM_DC = ent.ZAKT_ZAK_ED_IZM_DC;
-            ZAKT_ZAK_KOL_ALL = ent.ZAKT_ZAK_KOL_ALL;
-            ZAKT_CRS_DC = ent.ZAKT_CRS_DC;
-            ZAKT_CRS_RATE = ent.ZAKT_CRS_RATE;
-            ZAKT_NDS_PERCENT = ent.ZAKT_NDS_PERCENT;
-            ZAKT_BASE_PRICE = ent.ZAKT_BASE_PRICE;
-            ZAKT_NACENKA_DILERA = ent.ZAKT_NACENKA_DILERA;
-            ZAKT_DOG_CRS_ITOG_CENA = ent.ZAKT_DOG_CRS_ITOG_CENA;
-            ZAKT_RUB_SUMMA = ent.ZAKT_RUB_SUMMA;
-            ZAKT_PERERAB_PRODUKT = ent.ZAKT_PERERAB_PRODUKT;
-            SD_301 = ent.SD_301;
-            SD_83 = ent.SD_83;
-            SD_9 = ent.SD_9;
-            TD_92 = ent.TD_92;
         }
 
         public void UpdateTo(TD_9 ent)
         {
-            ent.CODE = Code;
-            ent.ZAKT_PARENT_DC = ZAKT_PARENT_DC;
-            ent.ZAKT_PARENT_CODE = ZAKT_PARENT_CODE;
-            ent.ZAKT_NOMENKL_DC = ZAKT_NOMENKL_DC;
-            ent.ZAKT_KOL_IN_ONE = ZAKT_KOL_IN_ONE;
-            ent.ZAKT_KOL_ALL = ZAKT_KOL_ALL;
-            ent.ZAKT_KOL_ALL_FACT = ZAKT_KOL_ALL_FACT;
-            ent.ZAKT_CRS_PRICE = ZAKT_CRS_PRICE;
-            ent.ZAKT_CAT_REMOVE = ZAKT_CAT_REMOVE;
-            ent.ZAKT_MANUAL_PRICE = ZAKT_MANUAL_PRICE;
-            ent.ZAKT_ZAK_ED_IZM_DC = ZAKT_ZAK_ED_IZM_DC;
-            ent.ZAKT_ZAK_KOL_ALL = ZAKT_ZAK_KOL_ALL;
-            ent.ZAKT_CRS_DC = ZAKT_CRS_DC;
-            ent.ZAKT_CRS_RATE = ZAKT_CRS_RATE;
-            ent.ZAKT_NDS_PERCENT = ZAKT_NDS_PERCENT;
-            ent.ZAKT_BASE_PRICE = ZAKT_BASE_PRICE;
-            ent.ZAKT_NACENKA_DILERA = ZAKT_NACENKA_DILERA;
-            ent.ZAKT_DOG_CRS_ITOG_CENA = ZAKT_DOG_CRS_ITOG_CENA;
-            ent.ZAKT_RUB_SUMMA = ZAKT_RUB_SUMMA;
-            ent.ZAKT_PERERAB_PRODUKT = ZAKT_PERERAB_PRODUKT;
-            ent.SD_301 = SD_301;
-            ent.SD_83 = SD_83;
-            ent.SD_9 = SD_9;
-            ent.TD_92 = TD_92;
         }
 
         public TD_9 DefaultValue()

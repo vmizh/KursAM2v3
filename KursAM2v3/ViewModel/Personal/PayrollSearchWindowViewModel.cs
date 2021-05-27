@@ -6,6 +6,7 @@ using Core;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using KursAM2.Managers;
 using KursAM2.View.Personal;
 
 namespace KursAM2.ViewModel.Personal
@@ -185,6 +186,8 @@ namespace KursAM2.ViewModel.Personal
             var form = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = pr};
             form.Show();
             pr.RefreshData(null);
+            DocumentsOpenManager.SaveLastOpenInfo(DocumentType.PayRollVedomost, pr.Id, pr.DocCode, pr.Creator,
+                "", pr.Description);
         }
 
         public override void DocNewEmpty(object form)

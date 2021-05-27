@@ -15,6 +15,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.LayoutControl;
 using KursAM2.Managers;
 using KursAM2.View.Base;
+using KursAM2.View.Dogovors;
 using KursAM2.View.Finance;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Finance.DistributeNaklad;
@@ -28,6 +29,7 @@ using KursAM2.View.Personal;
 using KursAM2.View.Reconciliation;
 using KursAM2.View.Repozit;
 using KursAM2.View.Search;
+using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
@@ -45,6 +47,7 @@ using KursAM2.ViewModel.Reconcilation;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.Reference.Nomenkl;
 using KursAM2.ViewModel.Repozit;
+using KursAM2.ViewModel.StartLogin;
 using LayoutManager;
 using NomenklCostReset = KursAM2.View.Logistiks.NomenklCostReset;
 
@@ -163,9 +166,20 @@ namespace KursAM2.View
             try
             {
                 // ReSharper disable once TooWideLocalVariableScope
-                DXWindow form;
+                Window form;
                 switch (formName)
                 {
+                    //Договра клиентам (новый)
+                    case "Последние документы пользователей":
+                        var ldoc = new LastUsersDocumentWindowViewModel();
+                        form = new LastUsersDocumentView
+                        {
+                            Owner = Application.Current.MainWindow
+                        };
+                        form.DataContext = ldoc;
+                        ldoc.Form = form;
+                        form.Show();
+                        break;
                     case "  Дебиторы / Кредиторы":
                         var dbctx = new DebitorCreditorWindowViewModel();
                         form = new DebitorCreditorView {Owner = Application.Current.MainWindow};
@@ -180,10 +194,15 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Договора для клиентов":
-                        form = new SearchDogovorForClientView {Owner = Application.Current.MainWindow};
-                        var ctxdog = new DogovorForClientSearchViewModel(form);
-                        form.DataContext = ctxdog;
-                        form.Show();
+                        var ctxdog = new DogovorClientSearchViewModel
+                        {
+                            Form = new DogovorClientSearchView
+                            {
+                                Owner = Application.Current.MainWindow,
+                            }
+                        };
+                        ctxdog.Form.DataContext = ctxdog;
+                        ctxdog.Form.Show();
                         break;
                     case "Лицевые счета контрагентов":
                         var ctxk = new KontragentBalansWindowViewModel();
@@ -690,7 +709,7 @@ namespace KursAM2.View
                         form = new GridFormBaseView
                         {
                             DataContext = ctxUsuagePay,
-                            LayoutManagerName = "UsagePay",
+                            LayoutManagerName = "PayCondition",
                             Owner = Application.Current.MainWindow
                         };
                         ctxUsuagePay.Form = form;

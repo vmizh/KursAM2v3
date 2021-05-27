@@ -211,7 +211,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public List<VzaimoraschetType> VzaimoraschetTypeList => MainReferences.VzaimoraschetTypes.Values.ToList();
         public List<Currency> CurrencyList => MainReferences.Currencies.Values.ToList();
         public List<CentrOfResponsibility> COList => MainReferences.COList.Values.ToList();
-        public List<UsagePay> PayConditionList => MainReferences.PayConditions.Values.ToList();
+        public List<PayCondition> PayConditionList => MainReferences.PayConditions.Values.ToList();
         public List<FormPay> FormRaschetList => MainReferences.FormRaschets.Values.ToList();
         public List<Employee> EmployeeList => MainReferences.Employees.Values.ToList();
  
@@ -1134,6 +1134,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var p in Document.PaymentDocs) p.State = RowStatus.NotEdited;
 
                 RefreshData(null);
+                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceProvider, Document.Id, Document.DocCode, Document.CREATOR,
+                    "", Document.Description);
             }
             catch (Exception ex)
             {

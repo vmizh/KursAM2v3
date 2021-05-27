@@ -14,6 +14,7 @@ namespace Core.Helper
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class DataAnnotationForFluentApiBase
     {
+        protected readonly string notNullMessage = "Поле должно быть заполнено";
         public static Expression<Func<T, TProperty>> Lambda<T, TProperty>(string memberName)
         {
             var parameterExpression = Expression.Parameter(typeof(T), "x");

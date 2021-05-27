@@ -401,7 +401,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public List<CentrOfResponsibility> COList => MainReferences.COList.Values.ToList();
         public List<FormPay> FormRaschets => MainReferences.FormRaschets.Values.ToList();
         public List<VzaimoraschetType> VzaimoraschetTypes => MainReferences.VzaimoraschetTypes.Values.ToList();
-        public List<UsagePay> PayConditions => MainReferences.PayConditions.Values.ToList();
+        public List<PayCondition> PayConditions => MainReferences.PayConditions.Values.ToList();
         public List<Country> Countries => MainReferences.Countries.Values.ToList();
         // ReSharper restore UnusedMember.Global
 
@@ -467,6 +467,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
                 RefreshData(null);
+                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceClient, Document.Id, Document.DocCode, Document.CREATOR,
+                    "", Document.Description);
             }
         }
         public ICommand OpenStoreLinkDocumentCommand

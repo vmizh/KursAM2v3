@@ -17,6 +17,7 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
+using KursAM2.Managers;
 using KursAM2.View.Personal;
 
 namespace KursAM2.ViewModel.Personal
@@ -31,6 +32,7 @@ namespace KursAM2.ViewModel.Personal
         private bool myIsTemplate;
         private PayrollType myMyCurrentPayrollType;
         private Visibility myIsCanDateChange;
+        private string myCreator;
 
         public PayRollVedomostWindowViewModel()
         {
@@ -111,6 +113,7 @@ namespace KursAM2.ViewModel.Personal
             get => myCurrentNach;
         }
 
+        public override string Description => $"Платежная ведомость от {Date.ToShortDateString()} {Name} ";
         public override bool IsDocDeleteAllow => true;
 
         public override string Name
@@ -123,6 +126,17 @@ namespace KursAM2.ViewModel.Personal
                 isChange = true;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(IsCanSaveData));
+            }
+        }
+
+        public string Creator
+        {
+            get => myCreator;
+            set
+            {
+                if (myCreator == value) return;
+                myCreator = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -467,6 +481,7 @@ namespace KursAM2.ViewModel.Personal
                 Date = doc.Date;
                 IsTemplate = doc.IS_TEMPLATE == 1;
                 CurrencyRate.LoadCBrates(Date.AddDays(-1), Date);
+                Creator = doc.Creator;
                 Employees.Clear();
                 try
                 {
@@ -695,6 +710,8 @@ namespace KursAM2.ViewModel.Personal
 
                             emp.RaisePropertyChanged("Rows");
                         }
+                        DocumentsOpenManager.SaveLastOpenInfo(DocumentType.PayRollVedomost, Id, DocCode, Creator,
+                            "", Description);
                     }
                     catch (Exception ex)
                     {

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Core;
 using Core.EntityViewModel;
@@ -35,8 +36,10 @@ namespace KursAM2.ViewModel.StartLogin
             using (var ctx = GlobalOptions.KursSystem())
             {
                 LastDocuments.Clear();
+                var d = DateTime.Today.AddDays(-15);
                 foreach (var h in ctx.LastDocument.Where(_ => _.UserId == GlobalOptions.UserInfo.KursId
-                                                              && _.DbId == GlobalOptions.DataBaseId)
+                                                              && _.DbId == GlobalOptions.DataBaseId
+                                                              && _.LastOpen > d)
                     .OrderByDescending(_ => _.LastOpen))
                 {
                     LastDocuments.Add(new LastDocumentViewModel(h));

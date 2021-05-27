@@ -44,7 +44,7 @@ namespace Core.EntityViewModel
         private FormPay myFormRaschet;
         private Kontragent myKontragent;
         private Kontragent myKontrReceiver;
-        private UsagePay myPayCondition;
+        private PayCondition myPayConditionCondition;
         private VzaimoraschetType myVzaimoraschetType;
         private ContractProvider myContract;
         private Employee myPersonaResponsible;
@@ -414,7 +414,7 @@ namespace Core.EntityViewModel
             {
                 if (Entity.SF_PAY_COND_DC == value) return;
                 Entity.SF_PAY_COND_DC = value;
-                myPayCondition = MainReferences.PayConditions.ContainsKey(Entity.SF_PAY_COND_DC)
+                myPayConditionCondition = MainReferences.PayConditions.ContainsKey(Entity.SF_PAY_COND_DC)
                     ? MainReferences.PayConditions[Entity.SF_PAY_COND_DC]
                     : null;
                 RaisePropertyChanged(nameof(PayCondition));
@@ -422,14 +422,14 @@ namespace Core.EntityViewModel
             }
         }
 
-        public UsagePay PayCondition
+        public PayCondition PayCondition
         {
-            get => myPayCondition;
+            get => myPayConditionCondition;
             set
             {
-                if (myPayCondition != null && myPayCondition.Equals(value)) return;
-                myPayCondition = value;
-                if (myPayCondition != null)
+                if (myPayConditionCondition != null && myPayConditionCondition.Equals(value)) return;
+                myPayConditionCondition = value;
+                if (myPayConditionCondition != null)
                     Entity.SF_PAY_COND_DC = value.DOC_CODE;
                 else
                     Entity.SF_PAY_COND_DC = -1;

@@ -26,7 +26,7 @@ namespace Core.EntityViewModel
         private SD_84 myEntity;
         private FormPay myFormRaschet;
         private Employee myPersonaResponsible;
-        private UsagePay myPyCondition;
+        private PayCondition myPyCondition;
         private Kontragent myReceiver;
         private decimal mySummaOtgruz;
         private VzaimoraschetType myVzaimoraschetType;
@@ -195,7 +195,7 @@ namespace Core.EntityViewModel
             }
         }
 
-        public UsagePay PayCondition
+        public PayCondition PayCondition
         {
             get => myPyCondition;
             set

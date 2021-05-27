@@ -40,6 +40,9 @@ namespace Core
         NomenklTransfer = 10001,
 
         [Display(Name = "Справочник проектов")]
-        ProjectsReference = 10002
+        ProjectsReference = 10002,
+
+        [Display(Name = "Договор для клиентов")]
+        DogovorClient = 9
     }
 }
