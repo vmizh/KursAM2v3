@@ -37,17 +37,6 @@ namespace Core.EntityViewModel
             }
         }
 
-        public decimal DOC_CODE
-        {
-            get => Entity.DOC_CODE;
-            set
-            {
-                if (Entity.DOC_CODE == value) return;
-                Entity.DOC_CODE = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;

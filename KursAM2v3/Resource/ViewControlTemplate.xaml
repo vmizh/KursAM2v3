@@ -5,7 +5,8 @@
                     xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                     xmlns:system="clr-namespace:System;assembly=mscorlib"
-                    xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys">
+                    xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
+                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors">
     <DataTemplate x:Key="summaryTemplate" DataType="dxg:GridSummaryItem">
         <ContentControl>
             <dxg:GridSummaryItem
@@ -174,4 +175,5 @@
             </Trigger>
         </Style.Triggers>
     </Style>-->
+     
 </ResourceDictionary>

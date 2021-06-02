@@ -193,6 +193,11 @@ namespace Core.ViewModel.Base
                    myRowId.Equals(other.RowId);
         }
 
+        public virtual bool IsCorrect()
+        {
+            return false;
+        }
+
 
         /// <summary>
         ///     Событие изменения значения свойства представления
@@ -252,7 +257,10 @@ namespace Core.ViewModel.Base
                     State = RowStatus.Edited;
             if (Parent != null && myState != RowStatus.NotEdited)
                 if (Parent.State != RowStatus.NewRow)
+                {
                     Parent.State = RowStatus.Edited;
+                }
+
             NotifyProtocol.Add(propertyName);
             handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

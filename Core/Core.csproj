@@ -153,6 +153,7 @@
     <Compile Include="EntityViewModel\Dogovora\DogovorClientFactViewModel.cs" />
     <Compile Include="EntityViewModel\Dogovora\DogovorClientRowViewModel.cs" />
     <Compile Include="EntityViewModel\Dogovora\DogovorClientViewModel.cs" />
+    <Compile Include="EntityViewModel\Dogovora\LinkDocumentInfo.cs" />
     <Compile Include="EntityViewModel\KursUser.cs" />
     <Compile Include="EntityViewModel\LastDocumentViewModel.cs" />
     <Compile Include="EntityViewModel\ProviderInvoicePayViewModel.cs" />

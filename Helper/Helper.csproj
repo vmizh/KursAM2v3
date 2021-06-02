@@ -18,8 +18,8 @@
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup>
-   <LangVersion>7.0</LangVersion>
-</PropertyGroup>
+    <LangVersion>7.0</LangVersion>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BindingHelper.cs" />
+    <Compile Include="EntityManager.cs" />
     <Compile Include="IniFileManager.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="ThemeHelper.cs" />

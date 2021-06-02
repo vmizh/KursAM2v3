@@ -771,7 +771,6 @@ namespace Data
         public virtual DbSet<VVD_24> VVD_24 { get; set; }
         public virtual DbSet<DocHistory> DocHistory { get; set; }
         public virtual DbSet<DogovorClient> DogovorClient { get; set; }
-        public virtual DbSet<DogovorClientFact> DogovorClientFact { get; set; }
         public virtual DbSet<DogovorClientRow> DogovorClientRow { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]

@@ -184,9 +184,6 @@
     <Compile Include="DogovorClient.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="DogovorClientFact.cs">
-      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
-    </Compile>
     <Compile Include="DogovorClientRow.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

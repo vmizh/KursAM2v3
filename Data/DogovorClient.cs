@@ -18,6 +18,7 @@ namespace Data
         public DogovorClient()
         {
             this.DogovorClientRow = new HashSet<DogovorClientRow>();
+            this.SD_84 = new HashSet<SD_84>();
         }
     
         public System.Guid Id { get; set; }
@@ -29,18 +30,19 @@ namespace Data
         public bool IsExecuted { get; set; }
         public string Creator { get; set; }
         public string Note { get; set; }
-        public decimal DeliveryConditions { get; set; }
+        public decimal PayCondition { get; set; }
         public decimal FormOfPayment { get; set; }
         public decimal DogType { get; set; }
-        public bool NDSInPrice { get; set; }
-        public bool CalckBack { get; set; }
+        public bool IsCalckBack { get; set; }
         public string DogText { get; set; }
     
-        public virtual SD_179 SD_179 { get; set; }
         public virtual SD_102 SD_102 { get; set; }
         public virtual SD_189 SD_189 { get; set; }
         public virtual SD_43 SD_43 { get; set; }
+        public virtual SD_179 SD_179 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DogovorClientRow> DogovorClientRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SD_84> SD_84 { get; set; }
     }
 }

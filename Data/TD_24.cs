@@ -32,7 +32,6 @@ namespace Data
             this.WD_241 = new HashSet<WD_24>();
             this.XD_24 = new HashSet<XD_24>();
             this.SD_226 = new HashSet<SD_226>();
-            this.DogovorClientFact = new HashSet<DogovorClientFact>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -181,7 +180,5 @@ namespace Data
         public virtual ICollection<XD_24> XD_24 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_226> SD_226 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DogovorClientFact> DogovorClientFact { get; set; }
     }
 }

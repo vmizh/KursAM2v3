@@ -14,24 +14,17 @@ namespace Data
     
     public partial class DogovorClientRow
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public DogovorClientRow()
-        {
-            this.DogovorClientFact = new HashSet<DogovorClientFact>();
-        }
-    
         public System.Guid Id { get; set; }
         public System.Guid DocId { get; set; }
         public decimal NomenklDC { get; set; }
         public decimal Quantity { get; set; }
         public decimal Price { get; set; }
         public decimal NDSPercent { get; set; }
+        public decimal NDSSumma { get; set; }
         public decimal Summa { get; set; }
         public string Note { get; set; }
-        public bool IsNDSInPrice { get; set; }
+        public bool IsCalckBack { get; set; }
     
         public virtual DogovorClient DogovorClient { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DogovorClientFact> DogovorClientFact { get; set; }
     }
 }

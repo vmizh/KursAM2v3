@@ -9,6 +9,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using KursAM2.Managers;
 using KursAM2.Repositories.DogovorsRepositories;
 using KursAM2.View.Dogovors;
 
@@ -102,7 +103,7 @@ namespace KursAM2.ViewModel.Dogovora
 
         public override void DocumentOpen(object obj)
         {
-            WindowManager.ShowFunctionNotReleased();
+            DocumentsOpenManager.Open(DocumentType.DogovorClient,0,CurrentDocument.Id);
         }
 
         public override void DocNewCopy(object form)

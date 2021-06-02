@@ -110,14 +110,14 @@ namespace Core
         public static Dictionary<decimal, ContractType> ContractTypes { set; get; }
         public static ContractType GetContractType(decimal dc)
         {
-            if (DeliveryConditions.ContainsKey(dc)) 
+            if (ContractTypes.ContainsKey(dc)) 
                 return ContractTypes[dc];
             return null;
         }
         public static ContractType GetContractType(decimal? dc)
         {
             if (dc == null) return null;
-            if (DeliveryConditions.ContainsKey(dc.Value)) 
+            if (ContractTypes.ContainsKey(dc.Value)) 
                 return ContractTypes[dc.Value];
             return null;
         }
@@ -133,7 +133,7 @@ namespace Core
         public static Dictionary<decimal, PayCondition> PayConditions { private set; get; }
         public static PayCondition GetPayCondition(decimal dc)
         {
-            if (DeliveryConditions.ContainsKey(dc)) 
+            if (PayConditions.ContainsKey(dc)) 
                 return PayConditions[dc];
             return null;
         }
@@ -148,14 +148,14 @@ namespace Core
         public static Dictionary<decimal, FormPay> FormRaschets { private set; get; }
         public static FormPay GetFormPay(decimal dc)
         {
-            if (DeliveryConditions.ContainsKey(dc)) 
+            if (FormRaschets.ContainsKey(dc)) 
                 return FormRaschets[dc];
             return null;
         }
         public static FormPay GetFormPay(decimal? dc)
         {
             if (dc == null) return null;
-            if (DeliveryConditions.ContainsKey(dc.Value)) 
+            if (FormRaschets.ContainsKey(dc.Value)) 
                 return FormRaschets[dc.Value];
             return null;
         }

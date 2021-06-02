@@ -57,7 +57,7 @@ namespace Core.EntityViewModel
             }
         }
 
-        public string TD_NAME
+        public override string Name
         {
             get => Entity.TD_NAME;
             set
@@ -183,7 +183,7 @@ namespace Core.EntityViewModel
 
         public void UpdateFrom(SD_102 ent)
         {
-            TD_NAME = ent.TD_NAME;
+            Name = ent.TD_NAME;
             TD_0BUY_1SALE = ent.TD_0BUY_1SALE;
             TD_DOP_SOGL = ent.TD_DOP_SOGL;
             TD_DILER = ent.TD_DILER;
@@ -195,7 +195,7 @@ namespace Core.EntityViewModel
 
         public void UpdateTo(SD_102 ent)
         {
-            ent.TD_NAME = TD_NAME;
+            ent.TD_NAME = Name;
             ent.TD_0BUY_1SALE = TD_0BUY_1SALE;
             ent.TD_DOP_SOGL = TD_DOP_SOGL;
             ent.TD_DILER = TD_DILER;

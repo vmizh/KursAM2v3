@@ -73,8 +73,7 @@
                                     EditValue="{Binding Document.Kontragent, 
                                     ValidatesOnDataErrors=True, 
                                     UpdateSourceTrigger=PropertyChanged}"
-                                    IsTextEditable="False"
-                                    >
+                                    IsTextEditable="False">
                                     <dxmvvm:Interaction.Behaviors>
                                         <dxmvvm:EventToCommand EventName="DefaultButtonClick" 
                                                                Command="{Binding KontragentSelectCommand}" />
