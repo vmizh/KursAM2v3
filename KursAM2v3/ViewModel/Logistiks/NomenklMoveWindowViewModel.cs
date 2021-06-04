@@ -5,7 +5,8 @@ using System.Linq;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -16,7 +17,7 @@ namespace KursAM2.ViewModel.Logistiks
     public class NomenklMoveWindowViewModel : RSWindowViewModelBase
     {
         private NomenklCalcCostOperation myCurrentOperation;
-        private Core.EntityViewModel.Warehouse myCurrentWarehouse;
+        private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentWarehouse;
         private DateTime myDateForSklad;
         private Nomenkl mySelectedNomenkl;
 
@@ -30,15 +31,15 @@ namespace KursAM2.ViewModel.Logistiks
         }
 
         // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<Core.EntityViewModel.Warehouse> StoreCollection { set; get; } =
-            new ObservableCollection<Core.EntityViewModel.Warehouse>();
+        public ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse> StoreCollection { set; get; } =
+            new ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse>();
 
         public List<Nomenkl> Nomenkls =>
             MainReferences.ALLNomenkls.Values.Where(_ => _.IsUsluga == false).ToList();
 
         public List<NomenklCalcCostOperation> Operations { set; get; }
 
-        public Core.EntityViewModel.Warehouse CurrentWarehouse
+        public Core.EntityViewModel.NomenklManagement.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set
@@ -168,7 +169,7 @@ namespace KursAM2.ViewModel.Logistiks
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     foreach (var c in ctx.SD_27)
-                        StoreCollection.Add(new Core.EntityViewModel.Warehouse(c));
+                        StoreCollection.Add(new Core.EntityViewModel.NomenklManagement.Warehouse(c));
                 }
             }
             catch (Exception ex)

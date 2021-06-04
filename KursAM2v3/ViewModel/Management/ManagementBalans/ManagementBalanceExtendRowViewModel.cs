@@ -1,7 +1,9 @@
 using System;
 using Core;
-using Core.EntityViewModel;
-using Core.Finance;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.Employee;
+using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 
@@ -13,7 +15,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private string myCurrencyName;
         private DateTime myDate;
         private string myDocNum;
-        private DocumentTypes myDocumentType;
+        private DocumentType myDocumentType;
         private Guid myGroupId;
         private Kontragent myKontragent;
         private string myKontragentName;
@@ -40,7 +42,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private decimal mySummaSEK;
         private decimal mySummaUSD;
 
-        public DocumentTypes DocumentType
+        public DocumentType DocumentType
         {
             get => myDocumentType;
             set

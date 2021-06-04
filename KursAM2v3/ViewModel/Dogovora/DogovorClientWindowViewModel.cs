@@ -9,9 +9,10 @@ using System.Windows;
 using System.Windows.Input;
 using AutoMapper.Internal;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Dogovora;
-using Core.Finance;
+using Core.EntityViewModel.Invoices;
+using Core.Invoices.EntityViewModel.Dogovora;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -92,8 +93,12 @@ namespace KursAM2.ViewModel.Dogovora
         public ObservableCollection<InvoicePaymentDocument> PaymentList { set; get; } =
             new ObservableCollection<InvoicePaymentDocument>();
 
+        public ObservableCollection<DogovorResult> Results { set; get; } =
+            new ObservableCollection<DogovorResult>();
 
-        public override string WindowName => Document == null ? "Договор клиенту" 
+
+        public override string WindowName => Document == null
+            ? "Договор клиенту"
             : $"{Document} Отгружено: {FactsAll.Sum(_ => _.Summa)} Оплачено: {PaymentList.Sum(_ => _.Summa)}";
 
         public DogovorClientViewModel Document
@@ -165,6 +170,15 @@ namespace KursAM2.ViewModel.Dogovora
 
         public override bool IsCanSaveData =>
             Document != null && Document.State != RowStatus.NotEdited && Document.IsCorrect();
+
+        public ICommand CalcResultCommand
+        {
+            get { return new Command(CalcResult, _ => true); }
+        }
+
+        private void CalcResult(object obj)
+        {
+        }
 
         public ICommand OpenSFactCommand
         {
@@ -294,47 +308,36 @@ namespace KursAM2.ViewModel.Dogovora
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-               var list = SelectedRows.Select(_ => _.Id).ToList();
-               foreach (var id in list)
-               {
-                   var row = Document.Rows.Single(_ => _.Id == id);
-                   if (FactsAll.All(_ => _.Nomenkl.DocCode != row.Nomenkl.DocCode))
-                   {
-                       Document.Rows.Remove(row);
-                       unitOfWork.Context.Entry(row.Entity).State = unitOfWork.Context.Entry(row.Entity).State == EntityState.Added
-                           ? EntityState.Detached
-                           : EntityState.Deleted;
-                   }
-               }
+                var list = SelectedRows.Select(_ => _.Id).ToList();
+                foreach (var id in list)
+                {
+                    var row = Document.Rows.Single(_ => _.Id == id);
+                    if (FactsAll.All(_ => _.Nomenkl.DocCode != row.Nomenkl.DocCode))
+                    {
+                        Document.Rows.Remove(row);
+                        unitOfWork.Context.Entry(row.Entity).State =
+                            unitOfWork.Context.Entry(row.Entity).State == EntityState.Added
+                                ? EntityState.Detached
+                                : EntityState.Deleted;
+                    }
+                }
 
-               Document.State = RowStatus.Edited;
+                Document.State = RowStatus.Edited;
             }
         }
 
 
         public override void RefreshData(object obj)
         {
-            if (Document != null)
-            {
-                EntityManager.ContextClear(unitOfWork.Context);
-            }
+            if (Document != null) EntityManager.ContextClear(unitOfWork.Context);
             Document = new DogovorClientViewModel(DogovorClientRepository.GetByGuidId(Id));
             DogovorClientRepository.Dogovor = Document.Entity;
             FactsAll.Clear();
-            foreach (var f in DogovorClientRepository.GetOtgruzkaInfo().ToList())
-            {
-                FactsAll.Add(f);
-            }
+            foreach (var f in DogovorClientRepository.GetOtgruzkaInfo().ToList()) FactsAll.Add(f);
             Documents.Clear();
-            foreach (var d in DogovorClientRepository.GetLinkDocuments().ToList())
-            {
-                Documents.Add(d);
-            }
+            foreach (var d in DogovorClientRepository.GetLinkDocuments().ToList()) Documents.Add(d);
             PaymentList.Clear();
-            foreach (var p in DogovorClientRepository.GetPayments())
-            {
-                PaymentList.Add(p);
-            }
+            foreach (var p in DogovorClientRepository.GetPayments()) PaymentList.Add(p);
             if (Document.IsCalcBack) return;
             var factNoms = FactsAll.Select(_ => _.Nomenkl.DocCode).Distinct().ToList();
             var dogNoms = Document.Rows.Select(_ => _.Nomenkl.DocCode).ToList();

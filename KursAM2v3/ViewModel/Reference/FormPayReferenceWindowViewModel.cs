@@ -5,6 +5,8 @@ using System.Linq;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;

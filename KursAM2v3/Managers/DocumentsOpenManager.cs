@@ -3,7 +3,10 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Bank;
+using Core.EntityViewModel.Cash;
+using Core.EntityViewModel.CommonReferences;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -242,7 +245,7 @@ namespace KursAM2.Managers
                         OpenCashOut(cashOutVM, parent);
                     break;
                 case DocumentType.CurrencyChange:
-                    if (vm is CashCurrencyExchangeViewModel cashExch)
+                    if (vm is CashCurrencyExchangeWindowViewModel cashExch)
                         OpenCurrencyChange(cashExch, parent);
                     break;
                 case DocumentType.NomenklTransfer:
@@ -319,9 +322,9 @@ namespace KursAM2.Managers
             }
         }
 
-        private static CashCurrencyExchangeViewModel OpenCurrencyChange(decimal dc, object parent)
+        private static CashCurrencyExchangeWindowViewModel OpenCurrencyChange(decimal dc, object parent)
         {
-            var ctx = new CashCurrencyExchangeViewModel(dc)
+            var ctx = new CashCurrencyExchangeWindowViewModel(dc)
             {
                 BookView = parent as CashBookView
             };
@@ -337,7 +340,7 @@ namespace KursAM2.Managers
             return ctx;
         }
 
-        private static void OpenCurrencyChange(CashCurrencyExchangeViewModel vm, object parent)
+        private static void OpenCurrencyChange(CashCurrencyExchangeWindowViewModel vm, object parent)
         {
             var ctx = vm;
             ctx.BookView = parent as CashBookView;

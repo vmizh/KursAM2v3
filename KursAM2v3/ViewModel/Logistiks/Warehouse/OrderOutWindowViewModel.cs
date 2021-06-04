@@ -7,7 +7,9 @@ using System.Windows;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -96,7 +98,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         #region Справочники
 
         public List<Kontragent> Kontragents => MainReferences.ActiveKontragents.Values.ToList();
-        public List<Core.EntityViewModel.Warehouse> StoreDictionary => MainReferences.Warehouses.Values.ToList();
+        public List<Core.EntityViewModel.NomenklManagement.Warehouse> StoreDictionary => MainReferences.Warehouses.Values.ToList();
 
         #endregion
 

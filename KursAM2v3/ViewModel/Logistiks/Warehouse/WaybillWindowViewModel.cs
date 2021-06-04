@@ -5,7 +5,10 @@ using System.Windows;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -85,7 +88,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<string> ByWhomLicoList { set; get; } = new ObservableCollection<string>();
-        public List<Core.EntityViewModel.Warehouse> Sklads => MainReferences.Warehouses.Values.ToList();
+        public List<Core.EntityViewModel.NomenklManagement.Warehouse> Sklads => MainReferences.Warehouses.Values.ToList();
 
         public Waybill Document
         {

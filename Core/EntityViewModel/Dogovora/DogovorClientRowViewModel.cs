@@ -2,13 +2,15 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using static System.Math;
 
-namespace Core.EntityViewModel.Dogovora
+namespace Core.Invoices.EntityViewModel.Dogovora
 {
     public class DogovorClientRowViewModel_FluentAPI : DataAnnotationForFluentApiBase,
         IMetadataProvider<DogovorClientRowViewModel>

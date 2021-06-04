@@ -2,7 +2,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using DevExpress.Utils;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Reference.Nomenkl;

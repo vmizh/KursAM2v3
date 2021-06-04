@@ -2,7 +2,8 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
 

@@ -2,7 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Cash;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 
 namespace KursAM2.View.DialogUserControl

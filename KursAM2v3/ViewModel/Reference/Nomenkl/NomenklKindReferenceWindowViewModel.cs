@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers.Nomenkl;

@@ -4,7 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Data;
 //using Core.ViewModel.Common;
 

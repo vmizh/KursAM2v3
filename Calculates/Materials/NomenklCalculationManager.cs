@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core;
+using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Common;
 using Data;
 using Helper;

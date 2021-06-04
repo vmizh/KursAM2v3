@@ -4,7 +4,10 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Bank;
+using Core.EntityViewModel.Cash;
+using Core.EntityViewModel.Invoices;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors;
@@ -351,46 +354,50 @@ namespace KursAM2.View.Finance.UC
             {
                 if (dtx != null)
                 {
-                    if (d2.SF_DATE != dtx.Date)
+                    if (d2.DocDate != dtx.Date)
                     {
                         if (winMan.ShowWinUIMessageBox(
                             "Даты операции и счета не совпадают. Переустановить дату, как в счете?",
                             "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                         {
-                            dtx.Date = d2.SF_DATE;
+                            dtx.Date = d2.DocDate;
                         }
                     }
+
                     // ReSharper disable once PossibleInvalidOperationException
-                    dtx.VVT_VAL_PRIHOD =  (decimal)d2.SF_CRS_SUMMA_K_OPLATE - d2.PaySumma;
+                    dtx.VVT_VAL_PRIHOD = (decimal) d2.Summa - d2.PaySumma;
                     dtx.VVT_DOC_NUM = d2.ToString();
                     dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC = d2.DocCode;
                     dtx.Payment = d2.Client;
                     dtx.SFName = d2.ToString();
                     Payment.Text = dtx.Payment.Name;
-                    dtx.Currency = MainReferences.Currencies[d2.SF_CRS_DC];
+                    dtx.Currency = MainReferences.Currencies[d2.Entity.SF_CRS_DC];
                     dtx.BankOperationType = BankOperationType.Kontragent;
                     dtx.Kontragent = d2.Client;
                     Kontragent.Text = dtx.Kontragent.Name;
-                    dtx.CurrentBankOperations.SFName = $"С/ф №{d2.SF_IN_NUM}/{d2.SF_OUT_NUM} от {d2.SF_DATE.ToShortDateString()} на {d2.SF_CRS_SUMMA_K_OPLATE} {MainReferences.Currencies[d2.SF_CRS_DC]}";
+                    dtx.CurrentBankOperations.SFName =
+                        $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa} {MainReferences.Currencies[d2.Entity.SF_CRS_DC]}";
 
                 }
+
                 if (dtx2 != null)
                 {
-                    if (d2.SF_DATE != dtx2.Date)
+                    if (d2.DocDate != dtx2.Date)
                     {
-                        dtx2.Date = d2.SF_DATE;
+                        dtx2.Date = d2.DocDate;
                     }
                     // ReSharper disable once PossibleInvalidOperationException
-                    dtx2.VVT_VAL_PRIHOD =  (decimal)d2.SF_CRS_SUMMA_K_OPLATE - d2.PaySumma;
+                    dtx2.VVT_VAL_PRIHOD =  (decimal)d2.Summa - d2.PaySumma;
                     dtx2.VVT_DOC_NUM = d2.ToString();
                     dtx2.VVT_SFACT_CLIENT_DC = d2.DocCode;
                     dtx2.Payment = d2.Client;
                     Payment.Text = dtx2.Payment.Name;
                     dtx2.SFName = d2.ToString();
-                    dtx2.Currency = MainReferences.Currencies[d2.SF_CRS_DC];
+                    dtx2.Currency = MainReferences.Currencies[d2.Entity.SF_CRS_DC];
                     dtx2.Kontragent = d2.Client;
                     Kontragent.Text = dtx2.Kontragent.Name;
-                    dtx2.SFName = $"С/ф №{d2.SF_IN_NUM}/{d2.SF_OUT_NUM} от {d2.SF_DATE.ToShortDateString()} на {d2.SF_CRS_SUMMA_K_OPLATE} {MainReferences.Currencies[d2.SF_CRS_DC]}";
+                    dtx2.SFName = $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa} " +
+                                  $"{MainReferences.Currencies[d2.Entity.SF_CRS_DC]}";
                 }
             }
             if (d1 != null)

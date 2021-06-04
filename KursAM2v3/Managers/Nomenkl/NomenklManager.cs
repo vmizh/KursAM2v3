@@ -4,7 +4,8 @@ using System.Linq;
 using System.Transactions;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -84,9 +85,9 @@ namespace KursAM2.Managers.Nomenkl
             return ret;
         }
 
-        public static List<Core.EntityViewModel.Nomenkl> GetNomenklsSearch(string searchText, bool isDeleted = false)
+        public static List<Core.EntityViewModel.NomenklManagement.Nomenkl> GetNomenklsSearch(string searchText, bool isDeleted = false)
         {
-            var ret = new List<Core.EntityViewModel.Nomenkl>();
+            var ret = new List<Core.EntityViewModel.NomenklManagement.Nomenkl>();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var n in ctx.SD_83.Where(_ => (_.NOM_NAME.ToUpper().Contains(searchText.ToUpper())
@@ -94,7 +95,7 @@ namespace KursAM2.Managers.Nomenkl
                                                         || _.NOM_FULL_NAME.ToUpper().Contains(searchText.ToUpper())
                                                         || _.NOM_NOTES.ToUpper().Contains(searchText.ToUpper())) &&
                                                        _.NOM_DELETED == (isDeleted ? 1 : 0)))
-                    ret.Add(new Core.EntityViewModel.Nomenkl
+                    ret.Add(new Core.EntityViewModel.NomenklManagement.Nomenkl
                     {
                         DocCode = n.DOC_CODE,
                         Name = n.NOM_NAME,

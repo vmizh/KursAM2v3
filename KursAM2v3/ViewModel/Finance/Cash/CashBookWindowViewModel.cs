@@ -8,7 +8,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Cash;
+using Core.EntityViewModel.CommonReferences;
+using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
@@ -26,7 +28,7 @@ namespace KursAM2.ViewModel.Finance.Cash
     {
         #region Fields
 
-        private Core.EntityViewModel.Cash myCurrentCash;
+        private Core.EntityViewModel.Cash.Cash myCurrentCash;
         private CashBookDocument myCurrentDocument;
         private DatePeriod myCurrentPeriod;
         private bool myIsPeriodEnabled;
@@ -56,8 +58,8 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         #region Properties
 
-        public ObservableCollection<Core.EntityViewModel.Cash> CashList { set; get; }
-            = new ObservableCollection<Core.EntityViewModel.Cash>(
+        public ObservableCollection<Core.EntityViewModel.Cash.Cash> CashList { set; get; }
+            = new ObservableCollection<Core.EntityViewModel.Cash.Cash>(
                 MainReferences.Cashs.Values.Where(_ => _.IsAccessRight));
 
         public ObservableCollection<CashBookDocument> Documents { set; get; }
@@ -87,7 +89,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             }
         }
 
-        public Core.EntityViewModel.Cash CurrentCash
+        public Core.EntityViewModel.Cash.Cash CurrentCash
         {
             get => myCurrentCash;
             set
@@ -363,7 +365,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                         DocumentsOpenManager.Open(DocumentType.CashOut, vm1, Form);
                         break;
                     case "2":
-                        var vm2 = new CashCurrencyExchangeViewModel
+                        var vm2 = new CashCurrencyExchangeWindowViewModel
                         {
                             Document = CashManager.NewCashCurrencyEchange()
                         };
@@ -518,7 +520,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             if (vm == null) return;
             var cashOut = vm as CashOut;
-            var cashExch = vm as SD_251ViewModel;
+            var cashExch = vm as CashCurrencyExchange;
             // ReSharper disable once PossibleInvalidOperationException
             var date = (DateTime) (vm is CashIn cashIn ? cashIn.DATE_ORD :
                 cashOut != null ? cashOut.DATE_ORD :

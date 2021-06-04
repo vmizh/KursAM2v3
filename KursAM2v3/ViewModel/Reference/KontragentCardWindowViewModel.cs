@@ -6,7 +6,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Bank;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.Employee;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -73,7 +77,7 @@ namespace KursAM2.ViewModel.Reference
         public ObservableCollection<BankAndAccounts> BankAndAccounts { set; get; } =
             new ObservableCollection<BankAndAccounts>();
 
-        public ObservableCollection<TD_43ViewModel> Accounts { set; get; } = new ObservableCollection<TD_43ViewModel>();
+        public ObservableCollection<KontragentBank> Accounts { set; get; } = new ObservableCollection<KontragentBank>();
         public ObservableCollection<Bank> AllBanks { set; get; } = new ObservableCollection<Bank>();
         public List<Region> Regions { set; get; } = new List<Region>();
 
@@ -289,22 +293,22 @@ namespace KursAM2.ViewModel.Reference
             {
                 if (ctx.TD_43.FirstOrDefault(_ => _.DOC_CODE == Kontragent.DOC_CODE) != null)
                     foreach (var item in ctx.TD_43)
-                        Accounts.Add(new TD_43ViewModel(item));
+                        Accounts.Add(new KontragentBank(item));
             }
 
             BankAndAccounts.Clear();
             foreach (var item in Accounts)
             {
-                if (item.DELETED == 1) continue;
-                if (item.DOC_CODE != Kontragent.DocCode) continue;
+                if (item.Entity.DELETED == 1) continue;
+                if (item.DocCode != Kontragent.DocCode) continue;
                 BankAndAccounts.Add(new BankAndAccounts
                 {
                     Id = Guid.NewGuid(),
-                    RASCH_ACC = item.RASCH_ACC,
-                    DISABLED = item.DISABLED,
-                    BankDC = item.BANK_DC,
+                    RASCH_ACC = item.Entity.RASCH_ACC,
+                    DISABLED = item.Entity.DISABLED,
+                    BankDC = item.Entity.BANK_DC,
                     Code = item.Code,
-                    Bank = AllBanks.FirstOrDefault(_ => _.DOC_CODE == item.BANK_DC),
+                    Bank = AllBanks.FirstOrDefault(_ => _.DOC_CODE == item.Entity.BANK_DC),
                     State = RowStatus.NotEdited
                 });
             }

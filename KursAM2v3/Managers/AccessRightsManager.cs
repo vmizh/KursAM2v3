@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Systems;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;

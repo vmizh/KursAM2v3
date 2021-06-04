@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.Dogovora;
-using Core.Finance;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.Invoices;
+using Core.Invoices.EntityViewModel.Dogovora;
 using Data;
 using Data.Repository;
+using KursAM2.ViewModel.Dogovora;
 
 namespace KursAM2.Repositories.DogovorsRepositories
 {
@@ -23,6 +25,8 @@ namespace KursAM2.Repositories.DogovorsRepositories
 
         List<LinkDocumentInfo> GetLinkDocuments();
         List<InvoicePaymentDocument> GetPayments();
+
+        List<DogovorResult> GetResults();
     }
 
     public class DogovorClientRepository : GenericKursDBRepository<DogovorClient>, IDogovorClientRepository
@@ -224,6 +228,13 @@ namespace KursAM2.Repositories.DogovorsRepositories
                         Note = c.VZT_DOC_NOTES
                     });
             }
+
+            return ret;
+        }
+
+        public List<DogovorResult> GetResults()
+        {
+            var ret = new List<DogovorResult>();
 
             return ret;
         }

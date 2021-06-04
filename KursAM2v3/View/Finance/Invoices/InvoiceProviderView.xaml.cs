@@ -4,7 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Invoices;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Data;
@@ -107,13 +108,13 @@ namespace KursAM2.View.Finance.Invoices
                 case nameof(doc.SF_CRS_SUMMA):
                 case nameof(doc.SummaFact):
                 case nameof(doc.SF_KONTR_CRS_SUMMA):
-                case nameof(doc.NakladAll):
-                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
-                    e.Item.IsReadOnly = true;
-                    e.Item.Width = 300;
-                    if (e.Item.Content is PopupCalcEdit ed) ed.IsReadOnly = true;
+                //case nameof(doc.NakladAll):
+                //    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                //    e.Item.IsReadOnly = true;
+                //    e.Item.Width = 300;
+                //    if (e.Item.Content is PopupCalcEdit ed) ed.IsReadOnly = true;
 
-                    break;
+                //    break;
                 case nameof(doc.Overheads):
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     break;

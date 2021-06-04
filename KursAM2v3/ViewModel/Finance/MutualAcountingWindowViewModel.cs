@@ -6,11 +6,13 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.Vzaimozachet;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
-using Core.ViewModel.MutualAccounting;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Editors;
@@ -257,13 +259,13 @@ namespace KursAM2.ViewModel.Finance
                     : StandartDialogs.SelectInvoiceClient(true, true);
                 if (item == null) return;
                 CurrentDebitor.VZT_DOC_NUM = (Document.Rows.Count + 1).ToString();
-                CurrentDebitor.VZT_CRS_POGASHENO = item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma;
-                CurrentDebitor.VZT_UCH_CRS_POGASHENO = item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma;
-                CurrentDebitor.VZT_CRS_SUMMA = item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma;
-                CurrentDebitor.VZT_KONTR_CRS_SUMMA = -(item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma);
+                CurrentDebitor.VZT_CRS_POGASHENO = item.Summa - item.PaySumma;
+                CurrentDebitor.VZT_UCH_CRS_POGASHENO = item.Summa - item.PaySumma;
+                CurrentDebitor.VZT_CRS_SUMMA = item.Summa - item.PaySumma;
+                CurrentDebitor.VZT_KONTR_CRS_SUMMA = -(item.Summa - item.PaySumma);
                 CurrentDebitor.VZT_UCH_CRS_RATE = 1;
                 CurrentDebitor.VZT_SFACT_DC = item.DocCode;
-                CurrentDebitor.Kontragent = MainReferences.GetKontragent(item.SF_CLIENT_DC);
+                CurrentDebitor.Kontragent = MainReferences.GetKontragent(item.Entity.SF_CLIENT_DC);
                 CurrentDebitor.SFClient = item;
                 if (CurrentDebitor.State == RowStatus.NotEdited) CurrentDebitor.myState = RowStatus.Edited;
                 KontragentManager.UpdateSelectCount(CurrentDebitor.Kontragent.DocCode);
@@ -285,15 +287,15 @@ namespace KursAM2.ViewModel.Finance
                     VZT_DOC_DATE = Document.VZ_DATE,
                     VZT_DOC_NUM = (Document.Rows.Count + 1).ToString(),
                     VZT_1MYDOLZH_0NAMDOLZH = 0,
-                    VZT_CRS_POGASHENO = item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma,
-                    VZT_UCH_CRS_POGASHENO = item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma,
-                    VZT_CRS_SUMMA = item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma,
-                    VZT_KONTR_CRS_SUMMA = -(item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma),
+                    VZT_CRS_POGASHENO = item.Summa - item.PaySumma,
+                    VZT_UCH_CRS_POGASHENO = item.Summa - item.PaySumma,
+                    VZT_CRS_SUMMA = item.Summa - item.PaySumma,
+                    VZT_KONTR_CRS_SUMMA = -(item.Summa - item.PaySumma),
                     VZT_UCH_CRS_RATE = 1,
                     State = RowStatus.NewRow,
                     VzaimoraschType = vzdefault,
                     Parent = Document,
-                    Kontragent = MainReferences.GetKontragent(item.SF_CLIENT_DC),
+                    Kontragent = MainReferences.GetKontragent(item.Entity.SF_CLIENT_DC),
                     SFClient = item
                 };
                 Document.Rows.Add(newdeb);

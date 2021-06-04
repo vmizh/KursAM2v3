@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using Core;
+using Core.EntityViewModel.Bank;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;

@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Common;
 
 namespace ServerCalculate

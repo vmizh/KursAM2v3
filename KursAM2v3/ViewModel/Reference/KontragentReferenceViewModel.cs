@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using Core.EntityViewModel.Bank;
+using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.ViewModel.Common;
 using Data;
 

@@ -24,14 +24,14 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             var document = vm.Document;
             sheet.Cells["G1"].Value = GlobalOptions.SystemProfile.OwnerKontragent.Name;
             sheet.Cells["G2"].Value = GlobalOptions.SystemProfile.OwnerKontragent.ADDRESS;
-            sheet.Cells["C5"].Value = string.IsNullOrWhiteSpace(document.SF_OUT_NUM)
-                ? document.SF_IN_NUM.ToString()
-                : document.SF_OUT_NUM;
+            sheet.Cells["C5"].Value = string.IsNullOrWhiteSpace(document.OuterNumber)
+                ? document.InnerNumber.ToString()
+                : document.OuterNumber;
             sheet.Cells["C7"].Value = document.Client?.Name;
             sheet.Cells["C9"].Value =
-                Convert.ToDouble(document.SF_CRS_SUMMA_K_OPLATE);
+                Convert.ToDouble(document.Summa);
             sheet.Cells["C9"].NumberFormat = "#,##0.00";
-            sheet.Cells["H6"].Value = $"{document.SF_DATE.ToShortDateString()}";
+            sheet.Cells["H6"].Value = $"{document.DocDate.ToShortDateString()}";
             sheet.Cells["H7"].Value = $"{DateTime.Today:d}";
             sheet.Cells["I7"].Value = $"{DateTime.Now.ToShortTimeString()}";
             if (IsManagerPrint)
@@ -65,7 +65,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"H{document.Rows.Count + startTableRow + 1}"].NumberFormat = "#,##0.00";
             if (document.Currency != null)
                 sheet.Cells[$"H{document.Rows.Count + startTableRow + 3}"].Value =
-                    RuDateAndMoneyConverter.CurrencyToTxt(Convert.ToDouble(document.SF_CRS_SUMMA_K_OPLATE),
+                    RuDateAndMoneyConverter.CurrencyToTxt(Convert.ToDouble(document.Summa),
                         document.Currency.Name, true);
         }
     }

@@ -4,7 +4,8 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using JetBrains.Annotations;
 
 namespace Calculates.Materials

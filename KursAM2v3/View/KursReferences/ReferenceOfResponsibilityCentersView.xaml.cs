@@ -8,6 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Common;
 
 namespace KursAM2.View.KursReferences

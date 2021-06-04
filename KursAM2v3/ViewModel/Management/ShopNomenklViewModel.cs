@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 
 namespace KursAM2.ViewModel.Management

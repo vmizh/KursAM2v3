@@ -10,7 +10,6 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Core.Helper;
 using Core.Logger;
-using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;

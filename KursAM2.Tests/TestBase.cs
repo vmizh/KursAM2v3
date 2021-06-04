@@ -1,7 +1,6 @@
 ﻿using System.Data.SqlClient;
 using System.Linq;
 using Core;
-using Core.Repository.Base;
 using Data;
 using Data.Repository;
 using Helper;

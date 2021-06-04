@@ -4,6 +4,10 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Input;
+using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.Dogovora;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -11,7 +15,7 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 
-namespace Core.EntityViewModel.Dogovora
+namespace Core.Invoices.EntityViewModel.Dogovora
 {
     [MetadataType(typeof(DogovorClientViewModel_FluentAPI))]
     public sealed class DogovorClientViewModel : RSWindowViewModelBase, IDataErrorInfo

@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Core;
+using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using KursAM2.View.Personal;
 
 namespace KursAM2.ViewModel.Personal

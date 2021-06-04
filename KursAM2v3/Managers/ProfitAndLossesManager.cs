@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Calculates.Materials;
 using Core;
+using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -504,12 +505,12 @@ namespace KursAM2.Managers
                         // ReSharper disable once PossibleInvalidOperationException
                         Profit = d.DDT_KOL_PRIHOD * (decimal) d.DDT_TAX_CENA,
                         Loss = d.DDT_KOL_RASHOD *
-                               Core.EntityViewModel.Nomenkl.PriceWithOutNaklad(d.DDT_NOMENKL_DC, d.SD_24.DD_DATE),
+                               Core.EntityViewModel.NomenklManagement.Nomenkl.PriceWithOutNaklad(d.DDT_NOMENKL_DC, d.SD_24.DD_DATE),
                         Result =
                             // ReSharper disable once PossibleInvalidOperationException
                             d.DDT_KOL_PRIHOD * (decimal) d.DDT_TAX_CENA -
                             d.DDT_KOL_RASHOD *
-                            Core.EntityViewModel.Nomenkl.PriceWithOutNaklad(d.DDT_NOMENKL_DC, d.SD_24.DD_DATE),
+                            Core.EntityViewModel.NomenklManagement.Nomenkl.PriceWithOutNaklad(d.DDT_NOMENKL_DC, d.SD_24.DD_DATE),
                         Date = d.SD_24.DD_DATE,
                         Kontragent = "Приход",
                         Nomenkl = nom
@@ -906,7 +907,7 @@ namespace KursAM2.Managers
                     .ToList();
                 foreach (var d in spisano)
                 {
-                    var nomPrice = Core.EntityViewModel.Nomenkl.PriceWithOutNaklad(d.DDT_NOMENKL_DC, d.SD_24.DD_DATE);
+                    var nomPrice = Core.EntityViewModel.NomenklManagement.Nomenkl.PriceWithOutNaklad(d.DDT_NOMENKL_DC, d.SD_24.DD_DATE);
                     var nom = MainReferences.GetNomenkl(d.DDT_NOMENKL_DC);
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
@@ -1237,7 +1238,7 @@ namespace KursAM2.Managers
                         Nomenkl = MainReferences.GetNomenkl(row.SD_83.DOC_CODE),
                     };
                     SetCurrenciesValue(newOp,crs.DocCode,row.PriceIn*row.Quantity,0m);
-                    var price = Core.EntityViewModel.Nomenkl.PriceWithOutNaklad(row.SD_83.DOC_CODE,
+                    var price = Core.EntityViewModel.NomenklManagement.Nomenkl.PriceWithOutNaklad(row.SD_83.DOC_CODE,
                         row.NomenklTransfer.Date);
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
                     {

@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 
@@ -12,14 +12,14 @@ namespace Core.ViewModel.Common
     public class CrossCurrencyRate : RSViewModelBase
     {
         public readonly ObservableCollection<CrossCurrencyRate> CurrencyList =
-            new ObservableCollection<CrossCurrencyRate>();
+            new();
 
         private Currency myCurrency;
+        private decimal myCurrencyCNY;
         private decimal myCurrencyEUR;
         private decimal myCurrencyGBP;
         private decimal myCurrencyRUB;
         private decimal myCurrencyUSD;
-        private decimal myCurrencyCNY;
 
         /// <summary>
         ///     При указании курсов по отношению к рублю,

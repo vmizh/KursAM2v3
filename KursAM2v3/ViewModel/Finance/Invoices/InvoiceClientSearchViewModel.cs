@@ -5,7 +5,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.Invoices;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -171,13 +173,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                 i.TD_24.Sum(i2 => i.SFT_ED_CENA * i2.DDT_KOL_RASHOD ?? 0));
                         string d;
                         d = newItem.Diler != null ? newItem.Diler.Name : "";
-                        if (newItem.SF_IN_NUM.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
-                            newItem.SF_OUT_NUM.ToUpper().Contains(SearchText.ToUpper()) ||
+                        if (newItem.InnerNumber.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
+                            newItem.OuterNumber.ToUpper().Contains(SearchText.ToUpper()) ||
                             newItem.SF_CLIENT_NAME.ToUpper().Contains(SearchText.ToUpper()) ||
                             newItem.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
                             newItem.SF_DILER_SUMMA.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
                             newItem.CO.Name.ToUpper().Contains(SearchText.ToUpper()) ||
-                            newItem.SF_CRS_SUMMA_K_OPLATE.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
+                            newItem.Summa.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
                             d.ToUpper().Contains(SearchText.ToUpper()))
                             Documents.Add(newItem);
                     }

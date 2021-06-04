@@ -1,5 +1,6 @@
 using System;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.Employee;
 using Data;
 
 namespace Core.ViewModel.Common

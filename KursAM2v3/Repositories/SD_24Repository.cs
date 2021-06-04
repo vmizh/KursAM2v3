@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using Core.Repository.Base;
+using Core.EntityViewModel.Base;
 using Data;
 using Data.Repository;
 

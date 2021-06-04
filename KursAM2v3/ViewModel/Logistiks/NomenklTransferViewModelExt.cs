@@ -5,7 +5,8 @@ using System.Data.Entity;
 using System.Linq;
 using System.Transactions;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -16,7 +17,7 @@ namespace KursAM2.ViewModel.Logistiks
     {
         private string mySchetFactura;
         private SD_26 mySchetFacturaBase;
-        private Core.EntityViewModel.Warehouse myWarehouse;
+        private Core.EntityViewModel.NomenklManagement.Warehouse myWarehouse;
 
         public NomenklTransferViewModelExt(NomenklTransfer entity) : base(entity)
         {
@@ -48,7 +49,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
 
             if (entity.SD_27 != null)
-                myWarehouse = new Core.EntityViewModel.Warehouse(entity.SD_27);
+                myWarehouse = new Core.EntityViewModel.NomenklManagement.Warehouse(entity.SD_27);
         }
 
         private NomenklTransferViewModelExt()
@@ -61,7 +62,7 @@ namespace KursAM2.ViewModel.Logistiks
         public override string Description => $"Акт валютной таксировки номенклатур {Entity.DucNum} от {Entity.Date} " +
                                               $"{Warehouse} {Entity.Note}";
 
-        public Core.EntityViewModel.Warehouse Warehouse
+        public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse
         {
             get => myWarehouse;
             set

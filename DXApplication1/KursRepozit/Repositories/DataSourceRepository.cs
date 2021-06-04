@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
-using Core.Repository.Base;
 using Data;
 using Data.Repository;
 

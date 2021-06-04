@@ -1,4 +1,6 @@
-﻿using Core.EntityViewModel;
+﻿using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.Employee;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 
 namespace KursAM2.ViewModel.Personal

@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using Core.ViewModel.Base;
 using Data;
 
-namespace Core.EntityViewModel
+namespace Core.Invoices.EntityViewModel
 {
     [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
     public class ProjectsInfoViewModel : RSViewModelBase, IEntity<ProjectsInfo>

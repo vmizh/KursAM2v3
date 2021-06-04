@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Bank;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.LookUp;

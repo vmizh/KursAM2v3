@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Core.EntityViewModel.Vzaimozachet;
 using Core.Helper;
-using Core.ViewModel.MutualAccounting;
 using DevExpress.Mvvm.DataAnnotations;
 
 namespace KursAM2.ViewModel.Finance

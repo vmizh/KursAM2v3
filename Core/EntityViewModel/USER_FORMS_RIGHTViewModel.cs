@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Core.ViewModel.Base;
 using Data;
 
-namespace Core.EntityViewModel
+namespace Core.Invoices.EntityViewModel
 {
     public class USER_FORMS_RIGHTViewModel : RSViewModelBase, IEntity<USER_FORMS_RIGHT>
     {

@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 
-namespace Core.EntityViewModel
+namespace Core.Invoices.EntityViewModel
 {
     [MetadataType(typeof(DataAnnotationsShipmentRowViewModel))]
     public class ShipmentRowViewModel : TD_24ViewModel

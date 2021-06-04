@@ -4,7 +4,7 @@ using Core.ViewModel.Base;
 using Data;
 
 // ReSharper disable InconsistentNaming
-namespace Core.EntityViewModel
+namespace Core.Invoices.EntityViewModel
 {
     public class SCHET_FACT_KONTR_OUTViewModel : RSViewModelBase, IEntity<SCHET_FACT_KONTR_OUT>
     {

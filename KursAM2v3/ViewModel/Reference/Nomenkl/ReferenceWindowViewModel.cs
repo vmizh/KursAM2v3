@@ -6,7 +6,9 @@ using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -23,7 +25,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
     public sealed class ReferenceWindowViewModel : RSWindowViewModelBase
     {
         private NomenklGroup myCurrentCategory;
-        private Core.EntityViewModel.Nomenkl myCurrentNomenkl;
+        private Core.EntityViewModel.NomenklManagement.Nomenkl myCurrentNomenkl;
         private NomenklMainViewModel myCurrentNomenklMain;
         private bool myIsCanChangeCurrency;
         private bool myIsCategoryEnabled;
@@ -66,7 +68,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get { return new Command(FocusedRowChanged, _ => true); }
         }
 
-        public Core.EntityViewModel.Nomenkl CurrentNomenkl
+        public Core.EntityViewModel.NomenklManagement.Nomenkl CurrentNomenkl
         {
             get => myCurrentNomenkl;
             set
@@ -156,7 +158,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         private void FocusedRowChanged(object obj)
         {
-            var d = obj as Core.EntityViewModel.Nomenkl;
+            var d = obj as Core.EntityViewModel.NomenklManagement.Nomenkl;
             if (d == null) return;
             if (d.State != RowStatus.NotEdited)
                 SaveNomenkl(d);
@@ -184,7 +186,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                     var noms = (from n in ctx.SD_83
                         join sd301 in ctx.SD_301 on n.NOM_SALE_CRS_DC equals sd301.DOC_CODE
                         where n.MainId == main.Id
-                        select new Core.EntityViewModel.Nomenkl
+                        select new Core.EntityViewModel.NomenklManagement.Nomenkl
                         {
                             DocCode = n.DOC_CODE,
                             Name = n.NOM_NAME,
@@ -271,7 +273,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             }
         }
 
-        private void SaveNomenkl(Core.EntityViewModel.Nomenkl nom)
+        private void SaveNomenkl(Core.EntityViewModel.NomenklManagement.Nomenkl nom)
         {
             decimal newDC = 0;
             var state = nom.State;
@@ -441,7 +443,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         private void NomenklAdd(object obj)
         {
-            var newItem = new Core.EntityViewModel.Nomenkl
+            var newItem = new Core.EntityViewModel.NomenklManagement.Nomenkl
             {
                 DOC_CODE = -1,
                 Name = CurrentNomenklMain.Name,

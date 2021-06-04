@@ -1,7 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Bank;
+using Core.EntityViewModel.Cash;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.Employee;
+using Core.EntityViewModel.Invoices;
+using Core.EntityViewModel.NomenklManagement;
+using Core.EntityViewModel.Periods;
+using Core.EntityViewModel.Systems;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using KursAM2.View.Base;
@@ -307,9 +316,9 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
-        public static List<TD_22ViewModel> SetCashRemains(Cash cash)
+        public static List<CashStartRemains> SetCashRemains(Cash cash)
         {
-            var ret = new List<TD_22ViewModel>();
+            var ret = new List<CashStartRemains>();
             var ctx = new CashSetRemainsDialog(cash);
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;

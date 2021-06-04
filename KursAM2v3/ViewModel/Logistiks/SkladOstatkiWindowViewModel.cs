@@ -7,7 +7,9 @@ using System.Windows;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
@@ -23,7 +25,7 @@ namespace KursAM2.ViewModel.Logistiks
         private NomenklOstatkiForSklad myCurrentNomenklForSklad;
         private NomenklOstatkiWithPrice myCurrentNomenklStore;
         private NomenklCalcCostOperation myCurrentOperation;
-        private Core.EntityViewModel.Warehouse myCurrentWarehouse;
+        private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentWarehouse;
         private bool myIsPeriodSet;
         private DateTime myOstatokDate;
         private DateTime? myPeriodDateEnd;
@@ -41,8 +43,8 @@ namespace KursAM2.ViewModel.Logistiks
             RefreshReferences();
         }
 
-        public ObservableCollection<Core.EntityViewModel.Warehouse> Sklads { set; get; } =
-            new ObservableCollection<Core.EntityViewModel.Warehouse>();
+        public ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse> Sklads { set; get; } =
+            new ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse>();
 
         // ReSharper disable once CollectionNeverUpdated.Global
         public List<NomPrice> Prices { set; get; } = new List<NomPrice>();
@@ -112,7 +114,7 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
             }
         }
-        public Core.EntityViewModel.Warehouse CurrentWarehouse
+        public Core.EntityViewModel.NomenklManagement.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set
@@ -436,7 +438,7 @@ namespace KursAM2.ViewModel.Logistiks
 
     public class SkladQuantity
     {
-        public Core.EntityViewModel.Warehouse Warehouse { set; get; }
+        public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse { set; get; }
         public string Name => Warehouse?.Name;
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
@@ -447,7 +449,7 @@ namespace KursAM2.ViewModel.Logistiks
     {
         public Nomenkl Nomenkl { set; get; }
         public string NomenklName { set; get; }
-        public Core.EntityViewModel.Warehouse Warehouse { set; get; }
+        public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse { set; get; }
         public string StoreName { set; get; }
         public string NomenklNumber => Nomenkl?.NomenklNumber;
         public string Name => Nomenkl?.Name;

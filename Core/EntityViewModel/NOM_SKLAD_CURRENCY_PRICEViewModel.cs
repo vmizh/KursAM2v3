@@ -4,7 +4,7 @@ using Core.ViewModel.Base;
 using Data;
 
 // ReSharper disable InconsistentNaming
-namespace Core.EntityViewModel
+namespace Core.Invoices.EntityViewModel
 {
     public class NOM_SKLAD_CURRENCY_PRICEViewModel : RSViewModelBase, IEntity<NOM_SKLAD_CURRENCY_PRICE>
     {

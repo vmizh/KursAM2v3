@@ -1,12 +1,10 @@
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 
 namespace KursAM2.ViewModel.Logistiks
 {
     public class InventorySheetRowViewModel : RSViewModelData
     {
-        private IncomeExpenseSchet myExpenseSchet;
         private bool myIsTaxExecuted;
         private Nomenkl myNomenkl;
         private decimal myPrice;
@@ -85,17 +83,6 @@ namespace KursAM2.ViewModel.Logistiks
                 myPrice = value;
                 RaisePropertyChanged();
                 RaisePropertiesChanged(nameof(Summa));
-            }
-        }
-
-        public IncomeExpenseSchet ExpenseSchet
-        {
-            get => myExpenseSchet;
-            set
-            {
-                if (myExpenseSchet != null && myExpenseSchet.Equals(value)) return;
-                myExpenseSchet = value;
-                RaisePropertyChanged();
             }
         }
     }

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Cash;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;

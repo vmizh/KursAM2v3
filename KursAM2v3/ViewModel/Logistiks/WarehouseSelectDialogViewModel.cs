@@ -11,7 +11,7 @@ namespace KursAM2.ViewModel.Logistiks
 {
     public class WarehouseSelectDialogViewModel : RSWindowViewModelBase
     {
-        private Core.EntityViewModel.Warehouse myCurrentWarehouse;
+        private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentWarehouse;
         private SelectWarehouse myDataUserControl;
 
         public WarehouseSelectDialogViewModel()
@@ -19,7 +19,7 @@ namespace KursAM2.ViewModel.Logistiks
             myDataUserControl = new SelectWarehouse();
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
             WarehouseCollection =
-                new ObservableCollection<Core.EntityViewModel.Warehouse>(MainReferences.Warehouses.Values);
+                new ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse>(MainReferences.Warehouses.Values);
             WindowName = "Выбор склада";
         }
 
@@ -34,15 +34,15 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public ObservableCollection<Core.EntityViewModel.Warehouse> WarehouseCollection { set; get; } =
-            new ObservableCollection<Core.EntityViewModel.Warehouse>();
+        public ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse> WarehouseCollection { set; get; } =
+            new ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse>();
 
         public ICommand SearchExecuteCommand
         {
             get { return new Command(SearchExecute, _ => !string.IsNullOrWhiteSpace(SearchText)); }
         }
 
-        public Core.EntityViewModel.Warehouse CurrentWarehouse
+        public Core.EntityViewModel.NomenklManagement.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set

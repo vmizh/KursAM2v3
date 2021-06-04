@@ -1,7 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.Employee;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using KursAM2.View.DialogUserControl;
 

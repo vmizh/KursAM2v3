@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Core.Repository.Base;
 using Data;
 using Data.Repository;
 using KursRepozit.Repositories;

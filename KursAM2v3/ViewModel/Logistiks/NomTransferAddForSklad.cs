@@ -3,7 +3,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.View.Logistiks;
@@ -15,9 +16,9 @@ namespace KursAM2.ViewModel.Logistiks
         private Currency myCurrency;
         private NomTransferAddForSkladUC myDataUserControl;
         private DateTime myDate;
-        private Core.EntityViewModel.Warehouse myWarehouse;
+        private Core.EntityViewModel.NomenklManagement.Warehouse myWarehouse;
 
-        public NomTransferAddForSklad(Core.EntityViewModel.Warehouse warehouse)
+        public NomTransferAddForSklad(Core.EntityViewModel.NomenklManagement.Warehouse warehouse)
         {
             myDataUserControl = new NomTransferAddForSkladUC();
             Warehouse = warehouse;
@@ -25,7 +26,7 @@ namespace KursAM2.ViewModel.Logistiks
             LoadReference();
         }
 
-        public NomTransferAddForSklad(Core.EntityViewModel.Warehouse warehouse, DateTime date)
+        public NomTransferAddForSklad(Core.EntityViewModel.NomenklManagement.Warehouse warehouse, DateTime date)
         {
             myDataUserControl = new NomTransferAddForSkladUC();
             Warehouse = warehouse;
@@ -36,7 +37,7 @@ namespace KursAM2.ViewModel.Logistiks
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<Currency> CurrencyCollection { set; get; } = new ObservableCollection<Currency>();
 
-        public Core.EntityViewModel.Warehouse Warehouse
+        public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse
         {
             get => myWarehouse;
             set
@@ -105,7 +106,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        private void LoadOstatki(Core.EntityViewModel.Warehouse warehouse, Currency crs)
+        private void LoadOstatki(Core.EntityViewModel.NomenklManagement.Warehouse warehouse, Currency crs)
         {
             Rows.Clear();
             foreach (

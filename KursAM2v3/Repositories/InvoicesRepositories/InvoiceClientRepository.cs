@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core.EntityViewModel;
-using Core.Repository.Base;
+using Core.EntityViewModel.Invoices;
+using Core.Invoices.EntityViewModel;
 using Data;
 using Data.Repository;
 

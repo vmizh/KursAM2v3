@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Invoices;
+using Core.Invoices.EntityViewModel;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Finance.Invoices;
@@ -27,15 +28,15 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             var document = vm.Document;
             sheet.Cells["F1"].Value = GlobalOptions.SystemProfile.OwnerKontragent.Name;
             sheet.Cells["F2"].Value = GlobalOptions.SystemProfile.OwnerKontragent.ADDRESS;
-            var sNum = (string.IsNullOrWhiteSpace(document.SF_OUT_NUM)
-                           ? document.SF_IN_NUM.ToString()
-                           : document.SF_OUT_NUM) + " от " + document.SF_DATE.ToShortDateString();
+            var sNum = (string.IsNullOrWhiteSpace(document.OuterNumber)
+                           ? document.InnerNumber.ToString()
+                           : document.OuterNumber) + " от " + document.DocDate.ToShortDateString();
             sheet.Cells["A5"].Value = $"Заявка на отгрузку по счету {sNum}";
             sheet.Cells["B7"].Value = document.Client?.Name;
             //sheet.Cells["B9"].Value =
             //    Convert.ToDouble(document.SF_CRS_SUMMA_K_OPLATE);
             //sheet.Cells["B9"].NumberFormat = "#,##0.00";
-            sheet.Cells["G6"].Value = $"{document.SF_DATE.ToShortDateString()}";
+            sheet.Cells["G6"].Value = $"{document.DocDate.ToShortDateString()}";
             sheet.Cells["G7"].Value = $"{DateTime.Today:d}";
             sheet.Cells["H7"].Value = $"{DateTime.Now.ToShortTimeString()}";
             if (IsManagerPrint)
@@ -89,7 +90,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             if (document.Currency != null)
                 sheet.Cells[$"G{notOtgruzhenoRows.Count + startTableRow + 3}"].Value =
                     RuDateAndMoneyConverter.CurrencyToTxt(
-                        Convert.ToDouble(notOtgruzhenoRows.Sum(_ => (double) _.SFT_ED_CENA * _.SFT_KOL)),
+                        Convert.ToDouble(notOtgruzhenoRows.Sum(_ => (double) (_.SFT_ED_CENA ?? 0) * _.SFT_KOL)),
                         document.Currency.Name, true);
         }
     }

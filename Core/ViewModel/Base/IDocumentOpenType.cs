@@ -1,5 +1,4 @@
 ﻿using System;
-using Core.Repository.Base;
 
 namespace Core.ViewModel.Base
 {

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Invoices;
+using Core.Invoices.EntityViewModel;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Finance.Invoices;
@@ -22,17 +23,17 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             if (vm == null) return;
             var document = vm.Document;
             sheet.Cells["A1"].Value = "Внутренний номер";
-            sheet.Cells["B1"].Value = document.SF_IN_NUM;
+            sheet.Cells["B1"].Value = document.InnerNumber;
             sheet.Cells["A2"].Value = "Внешний номер";
-            sheet.Cells["B2"].Value = document.SF_OUT_NUM;
+            sheet.Cells["B2"].Value = document.OuterNumber;
             sheet.Cells["A3"].Value = "Дата счета";
-            sheet.Cells["B3"].Value = document.REGISTER_DATE ?? document.SF_DATE;
+            sheet.Cells["B3"].Value = document.REGISTER_DATE ?? document.DocDate;
             sheet.Cells["A4"].Value = "Контрагент";
             sheet.Cells["B4"].Value = document.Client != null ? document.Client.Name : "";
             sheet.Cells["A5"].Value = "Центр ответственности";
             sheet.Cells["B5"].Value = document.CO != null ? document.CO.Name : "";
             sheet.Cells["A6"].Value = "К оплате";
-            sheet.Cells["B6"].Value = Convert.ToDouble(document.SF_CRS_SUMMA_K_OPLATE);
+            sheet.Cells["B6"].Value = Convert.ToDouble(document.Summa);
             sheet.Cells["B6"].NumberFormat = "#`##0.00";
             sheet.Cells["A7"].Value = "Валюта";
             sheet.Cells["B7"].Value = document.Currency != null ? document.Currency.Name : "";
@@ -100,7 +101,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 ? document.Client.Name
                 : document.Client.FullName;
             sheet.Cells["B11"].Value =
-                $"Счет на оплату № {document.SF_OUT_NUM} от {document.SF_DATE.ToLongDateString()}";
+                $"Счет на оплату № {document.OuterNumber} от {document.DocDate.ToLongDateString()}";
             sheet.Cells["D6"].Value = document.Receiver.INN;
             sheet.Cells["M6"].Value = document.Receiver.KPP;
             sheet.Cells["B7"].Value = document.Receiver.FullName;
@@ -120,7 +121,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells["B3"].Value = k.Bank.Name;
                 sheet.Cells["W3"].Value = k.Bank.POST_CODE;
                 sheet.Cells["W4"].Value = k.Bank.CORRESP_ACC;
-                sheet.Cells["W6"].Value = k.RASCH_ACC;
+                sheet.Cells["W6"].Value = k.Entity.RASCH_ACC;
             }
             sheet.Cells["AC29"].Value = document.Receiver.Header;
             sheet.Cells["AC32"].Value = document.Receiver.GlavBuh;
@@ -151,15 +152,15 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 row++;
             }
             sheet.Cells[$"AH{document.Rows.Count + startTableRow + 2}"].Value =
-                Convert.ToDouble(document.SF_CRS_SUMMA_K_OPLATE);
+                Convert.ToDouble(document.Summa);
             sheet.Cells[$"AH{document.Rows.Count + startTableRow + 3}"].Value =
                 Convert.ToDouble(document.Rows.Sum(_ => _.SFT_SUMMA_NDS));
             //sheet.Cells[$"AH{document.Rows.Count + startTableRow + 4}"].Value =
             //    Convert.ToDouble(document.SF_CRS_SUMMA_K_OPLATE);
             sheet.Cells[$"B{document.Rows.Count + startTableRow + 5}"].Value =
-                $"Всего наименований {document.Rows.Count()}, на сумму {document.SF_CRS_SUMMA_K_OPLATE:n2} {document.Currency.FullName}";
+                $"Всего наименований {document.Rows.Count()}, на сумму {document.Summa:n2} {document.Currency.FullName}";
             sheet.Cells[$"B{document.Rows.Count + startTableRow + 6}"].Value =
-                $"{RuDateAndMoneyConverter.CurrencyToTxt(Convert.ToDouble(document.SF_CRS_SUMMA_K_OPLATE), document.Currency.Name, true)} , в т.ч. НДС {Math.Round((double) (document.Rows.Sum(_ => _.SFT_SUMMA_NDS) ?? 0), 2)}";
+                $"{RuDateAndMoneyConverter.CurrencyToTxt(Convert.ToDouble(document.Summa), document.Currency.Name, true)} , в т.ч. НДС {Math.Round((double) (document.Rows.Sum(_ => _.SFT_SUMMA_NDS) ?? 0), 2)}";
         }
     }
 
@@ -175,10 +176,10 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             var vm = ViewModel as ClientWindowViewModel;
             if (vm == null) return;
             var document = vm.Document;
-            sheet.Cells["J1"].Value = string.IsNullOrWhiteSpace(document.SF_OUT_NUM)
-                ? document.SF_IN_NUM.ToString()
-                : document.SF_OUT_NUM;
-            sheet.Cells["M1"].Value = $"от {document.SF_DATE:d}";
+            sheet.Cells["J1"].Value = string.IsNullOrWhiteSpace(document.OuterNumber)
+                ? document.InnerNumber.ToString()
+                : document.OuterNumber;
+            sheet.Cells["M1"].Value = $"от {document.DocDate:d}";
             sheet.Cells["B3"].Value = document.Receiver != null
                 ? document.Receiver.FullName
                 : "";
@@ -299,14 +300,14 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells["K12"].Value = vm.Document.Client.GruzoRequisiteForWaybill;
             sheet.Cells["K19"].Value = vm.Document.Receiver.GruzoRequisiteForWaybill;
             sheet.Cells["K24"].Value = vm.Document.Client.GruzoRequisiteForWaybill;
-            sheet["AE33"].Value = vm.Document.SF_OUT_NUM;
-            sheet["AR33"].Value = vm.Document.SF_DATE.ToShortDateString();
+            sheet["AE33"].Value = vm.Document.OuterNumber;
+            sheet["AR33"].Value = vm.Document.DocDate.ToShortDateString();
             sheet["BX5"].Value = vm.Document.Receiver.OKPO;
             sheet["BX14"].Value = vm.Document.Client.OKPO;
             sheet["BX17"].Value = vm.Document.Receiver.OKPO;
             sheet["BX22"].Value = vm.Document.Client.OKPO;
-            sheet["P79"].Value = vm.Document.SF_DATE.ToLongDateString();
-            sheet["AZ79"].Value = vm.Document.SF_DATE.ToLongDateString();
+            sheet["P79"].Value = vm.Document.DocDate.ToLongDateString();
+            sheet["AZ79"].Value = vm.Document.DocDate.ToLongDateString();
             //var itog = sheet.Range["A41:CA41"];
             var startTableRow = 40;
             var row = 1;

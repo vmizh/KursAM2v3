@@ -9,10 +9,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.Employee;
 using Core.Helper;
 using Core.Menu;
-using Core.ViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
@@ -397,7 +398,6 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                                                                            && _.ObjectDC == CurrentBalansRow.ObjectDC);
             foreach (var d in mySecondBalans.ExtendRows.Where(_ => _.GroupId == secId?.Id))
             {
-               
                 var old = NomenklDeltaListTemp.FirstOrDefault(_ => _.NomenklDC == d.Nom.DocCode);
                 if (old == null)
                 {

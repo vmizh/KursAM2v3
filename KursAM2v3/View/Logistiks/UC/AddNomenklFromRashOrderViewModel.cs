@@ -4,7 +4,8 @@ using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -40,9 +41,9 @@ namespace KursAM2.View.Logistiks.UC
         private WarehouseOrderOutRowSelect myCurrentNomenkl;
         private WarehouseOrderOutRowSelect myCurrentSelectNomenkl;
         private StandartDialogSelectUC myDataUserControl;
-        private Core.EntityViewModel.Warehouse myStore;
+        private Core.EntityViewModel.NomenklManagement.Warehouse myStore;
 
-        public AddNomenklFromRashOrderViewModel(Core.EntityViewModel.Warehouse store)
+        public AddNomenklFromRashOrderViewModel(Core.EntityViewModel.NomenklManagement.Warehouse store)
         {
             myStore = store;
             myDataUserControl = new StandartDialogSelectUC("AddNomenklFromRashOrder");
@@ -83,7 +84,7 @@ namespace KursAM2.View.Logistiks.UC
             get => myCurrentNomenkl;
         }
 
-        public Core.EntityViewModel.Warehouse Store
+        public Core.EntityViewModel.NomenklManagement.Warehouse Store
         {
             set
             {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Core.ViewModel.Base;
 using Data;
 
-namespace Core.EntityViewModel
+namespace Core.Invoices.EntityViewModel
 {
     public class SD_375ViewModel : RSViewModelBase, IEntity<SD_375>
     {

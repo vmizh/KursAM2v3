@@ -6,6 +6,8 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;

@@ -1,6 +1,7 @@
 ﻿using System;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 

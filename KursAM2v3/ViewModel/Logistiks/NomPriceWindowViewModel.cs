@@ -4,7 +4,8 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using KursAM2.View.Logistiks.UC;
 

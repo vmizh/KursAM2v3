@@ -1,8 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
-using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Cash;
+using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
@@ -10,12 +10,12 @@ using KursAM2.View.Finance.Cash;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {
-    public sealed class CashCurrencyExchangeViewModel : RSWindowViewModelBase
+    public sealed class CashCurrencyExchangeWindowViewModel : RSWindowViewModelBase
     {
         #region Fields
 
         public CashBookView BookView;
-        private SD_251ViewModel myDocument;
+        private CashCurrencyExchange myDocument;
         public ObservableCollection<Currency> CurrencyList { get; set; } = new ObservableCollection<Currency>();
         private readonly DateTime oldDate = DateTime.MaxValue;
         private readonly DateTime oldDate2 = DateTime.MaxValue;
@@ -24,7 +24,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         #region Constructors
 
-        public CashCurrencyExchangeViewModel()
+        public CashCurrencyExchangeWindowViewModel()
         {
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = false;
@@ -33,7 +33,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             WindowName = $"Обмен валюты для {Document?.Kontragent} в {Document?.Cash.Name}";
         }
 
-        public CashCurrencyExchangeViewModel(decimal dc) : this()
+        public CashCurrencyExchangeWindowViewModel(decimal dc) : this()
         {
             DocCode = dc;
             RefreshData(dc);
@@ -51,7 +51,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
 
-        public SD_251ViewModel Document
+        public CashCurrencyExchange Document
         {
             get => myDocument;
             set
@@ -100,7 +100,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         public override void DocNewEmpty(object form)
         {
-            var vm = new CashCurrencyExchangeViewModel
+            var vm = new CashCurrencyExchangeWindowViewModel
             {
                 Document = CashManager.NewCashCurrencyEchange()
             };
@@ -112,7 +112,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         public override void DocNewCopy(object form)
         {
             if (Document == null) return;
-            var vm = new CashCurrencyExchangeViewModel
+            var vm = new CashCurrencyExchangeWindowViewModel
             {
                 Document = CashManager.NewCopyCashCurrencyExchange(Document.DocCode)
             };
@@ -159,7 +159,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                     case decimal dec:
                         dc = dec;
                         break;
-                    case SD_251ViewModel model:
+                    case CashCurrencyExchange model:
                         dc = model.DocCode;
                         break;
                 }

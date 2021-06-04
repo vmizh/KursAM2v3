@@ -6,7 +6,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.Systems;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -49,9 +50,9 @@ namespace KursAM2.ViewModel.Personal
             set
             {
                 // ReSharper disable once PossibleUnintendedReferenceComparison
-                if(CurrentPersona?.State == RowStatus.Edited)
+                if (CurrentPersona?.State == RowStatus.Edited)
                     SaveData(myCurrentPersona);
-                if (myCurrentPersona == value) return; 
+                if (myCurrentPersona == value) return;
                 myCurrentPersona = value;
                 loadUsersForPersona();
                 RaisePropertyChanged();
@@ -170,7 +171,7 @@ namespace KursAM2.ViewModel.Personal
                         foreach (var u in UserCollection)
                         {
                             var old = ctxsave.EMP_USER_RIGHTS.FirstOrDefault(_ => _.EMP_DC == CurrentPersona.DocCode
-                                                                                  && _.USER == u.NickName);
+                                && _.USER == u.NickName);
                             if (old != null) continue;
                             ctxsave.EMP_USER_RIGHTS.Add(new EMP_USER_RIGHTS
                             {
@@ -178,6 +179,7 @@ namespace KursAM2.ViewModel.Personal
                                 USER = u.NickName
                             });
                         }
+
                         ctxsave.SaveChanges();
                         tnx.Commit();
                         MainReferences.Refresh();

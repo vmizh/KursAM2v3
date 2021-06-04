@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Core.Finance;
+using Core.EntityViewModel.CommonReferences;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.ViewModel.Management.ManagementBalans;
 
@@ -9,7 +9,7 @@ namespace KursAM2.ViewModel.Finance
     [MetadataType(typeof(DataAnnotationsMoneyInPathItem))]
     public class MoneyInPathItem : SummaCompareCurrencies
     {
-        public DocumentTypes DocumentType { set; get; }
+        public DocumentType DocumentType { set; get; }
         public string KontragentFromName { set; get; }
         public DateTime Date { set; get; }
         public string DocumentNum { set; get; }

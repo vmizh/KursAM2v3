@@ -5,7 +5,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Cash;
+using Core.EntityViewModel.CommonReferences;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -386,7 +388,7 @@ namespace KursAM2.View.Finance.Cash
                     ctx.Document.SPOST_DC = null;
                     break;
                 case CashKontragentType.Cash:
-                    var ch = StandartDialogs.SelectCash(new List<Core.EntityViewModel.Cash> {ctx.Document.Cash});
+                    var ch = StandartDialogs.SelectCash(new List<Core.EntityViewModel.Cash.Cash> {ctx.Document.Cash});
                     if (ch != null) ctx.Document.CashTo = ch;
                     ctx.Document.NAME_ORD = ch?.Name;
                     ctx.Document.SPostName = null;

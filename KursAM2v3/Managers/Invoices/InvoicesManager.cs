@@ -5,8 +5,10 @@ using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core;
-using Core.EntityViewModel;
-using Core.Finance;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.Invoices;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -1377,12 +1379,12 @@ namespace KursAM2.Managers.Invoices
             var ret = new InvoiceClient(null)
             {
                 DocCode = -1,
-                SF_DATE = DateTime.Today,
+                DocDate = DateTime.Today,
                 REGISTER_DATE = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name,
                 //Currency = GlobalOptions.SystemProfile.MainCurrency,
-                SF_IN_NUM = -1,
-                SF_OUT_NUM = null,
+                InnerNumber = -1,
+                OuterNumber = null,
                 myState = RowStatus.NewRow,
                 IsAccepted = false,
                 Rows = new ObservableCollection<InvoiceClientRow>()
@@ -1413,11 +1415,11 @@ namespace KursAM2.Managers.Invoices
                 document = new InvoiceClient(data)
                 {
                     DocCode = -1,
-                    SF_DATE = DateTime.Today,
+                    DocDate = DateTime.Today,
                     REGISTER_DATE = DateTime.Today,
                     CREATOR = GlobalOptions.UserInfo.Name,
-                    SF_IN_NUM = -1,
-                    SF_OUT_NUM = null,
+                    InnerNumber = -1,
+                    OuterNumber = null,
                     IsAccepted = false,
                     myState = RowStatus.NewRow
                 };
@@ -1478,8 +1480,8 @@ namespace KursAM2.Managers.Invoices
                 var ret = new InvoiceClient(d)
                 {
                     DocCode = -1,
-                    SF_OUT_NUM = null,
-                    SF_IN_NUM = -1,
+                    OuterNumber = null,
+                    InnerNumber = -1,
                     REGISTER_DATE = DateTime.Today,
                     CREATOR = GlobalOptions.UserInfo.Name,
                     IsAccepted = false,
@@ -1689,7 +1691,7 @@ namespace KursAM2.Managers.Invoices
                                 ret.Add(newDoc);
                                 continue;
                             }
-                            if (newDoc.SF_CRS_SUMMA_K_OPLATE > pd.PaySumma)
+                            if (newDoc.Summa > pd.PaySumma)
                             {
                                 newDoc.PaymentDocs.Add(new InvoicePaymentDocument
                                 {
@@ -1715,7 +1717,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
-            return ret.OrderByDescending(_ => _.SF_DATE).ToList();
+            return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
         public static List<InvoiceClient> GetInvoicesClient(Waybill waybill)
@@ -1770,7 +1772,7 @@ namespace KursAM2.Managers.Invoices
                 WindowManager.ShowError(ex);
                 return null;
             }
-            return ret.OrderByDescending(_ => _.SF_DATE).ToList();
+            return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
         public static List<InvoiceClient> GetInvoicesClient(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
@@ -1835,7 +1837,7 @@ namespace KursAM2.Managers.Invoices
                                 ret.Add(newDoc);
                                 continue;
                             }
-                            if (newDoc.SF_CRS_SUMMA_K_OPLATE > pd.PaySumma)
+                            if (newDoc.Summa > pd.PaySumma)
                             {
                                 newDoc.PaymentDocs.Add(new InvoicePaymentDocument
                                 {
@@ -1859,7 +1861,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
-            return ret.OrderByDescending(_ => _.SF_DATE).ToList();
+            return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
         public static void DeleteClient(decimal dc, SearchInvoiceClientView searchWindow = null)
@@ -1907,22 +1909,22 @@ namespace KursAM2.Managers.Invoices
                                 Id = guidId,
                                 DOC_CODE = dc,
                                 SF_IN_NUM = inNum,
-                                SF_OUT_NUM = doc.SF_OUT_NUM,
-                                SF_DATE = doc.SF_DATE,
+                                SF_OUT_NUM = doc.OuterNumber,
+                                SF_DATE = doc.DocDate,
                                 REGISTER_DATE = doc.REGISTER_DATE,
                                 SF_PAY_COND_DC = doc.SF_PAY_COND_DC,
-                                SF_CRS_SUMMA_K_OPLATE = doc.SF_CRS_SUMMA_K_OPLATE,
+                                SF_CRS_SUMMA_K_OPLATE = doc.Summa,
                                 SF_KONTR_CRS_DC = doc.SF_KONTR_CRS_DC,
                                 SF_KONTR_CRS_RATE = 1,
-                                SF_KONTR_CRS_SUMMA = doc.SF_CRS_SUMMA_K_OPLATE,
-                                SF_CRS_DC = doc.SF_CRS_DC,
+                                SF_KONTR_CRS_SUMMA = doc.Summa,
+                                SF_CRS_DC = doc.Entity.SF_CRS_DC,
                                 SF_CRS_RATE = doc.SF_CRS_RATE,
-                                SF_CLIENT_DC = doc.SF_CLIENT_DC,
+                                SF_CLIENT_DC = doc.Client.DOC_CODE,
                                 SF_CLIENT_NAME = doc.SF_CLIENT_NAME,
                                 SF_DILER_SUMMA = doc.SF_DILER_SUMMA,
                                 SF_DILER_DC = doc.SF_DILER_DC,
                                 SF_DILER_RATE = 1,
-                                SF_DILER_CRS_DC = doc.SF_CRS_DC,
+                                SF_DILER_CRS_DC = doc.Entity.SF_CRS_DC,
                                 SF_ACCEPTED = doc.SF_ACCEPTED,
                                 SF_CENTR_OTV_DC = doc.SF_CENTR_OTV_DC,
                                 CREATOR = GlobalOptions.UserInfo.NickName,
@@ -1991,18 +1993,18 @@ namespace KursAM2.Managers.Invoices
                             dc = doc.DocCode;
                             var item = ctx.SD_84.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
                             // ReSharper disable once PossibleNullReferenceException
-                            item.SF_OUT_NUM = doc.SF_OUT_NUM;
-                            item.SF_DATE = doc.SF_DATE;
+                            item.SF_OUT_NUM = doc.OuterNumber;
+                            item.SF_DATE = doc.DocDate;
                             item.REGISTER_DATE = doc.REGISTER_DATE;
                             item.SF_PAY_COND_DC = doc.SF_PAY_COND_DC;
-                            item.SF_CRS_SUMMA_K_OPLATE = doc.SF_CRS_SUMMA_K_OPLATE;
-                            item.SF_CRS_DC = doc.SF_CRS_DC;
+                            item.SF_CRS_SUMMA_K_OPLATE = doc.Summa;
+                            item.SF_CRS_DC = doc.Entity.SF_CRS_DC;
                             item.SF_CRS_RATE = doc.SF_CRS_RATE;
-                            item.SF_CLIENT_DC = doc.SF_CLIENT_DC;
+                            item.SF_CLIENT_DC = doc.Client.DocCode;
                             item.SF_CLIENT_NAME = doc.SF_CLIENT_NAME;
                             item.SF_KONTR_CRS_DC = doc.SF_KONTR_CRS_DC;
                             item.SF_KONTR_CRS_RATE = 1;
-                            item.SF_KONTR_CRS_SUMMA = doc.SF_CRS_SUMMA_K_OPLATE;
+                            item.SF_KONTR_CRS_SUMMA = doc.Summa;
                             item.SF_DILER_SUMMA = doc.SF_DILER_SUMMA;
                             item.SF_DILER_DC = doc.SF_DILER_DC;
                             item.SF_DILER_SUMMA = doc.SF_DILER_SUMMA;

@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-             xmlns:entityViewModel="clr-namespace:Core.EntityViewModel;assembly=Core"
+             xmlns:entityViewModel="clr-namespace:Core.Invoices.EntityViewModel;assembly=Core"
+             xmlns:bank="clr-namespace:Core.EntityViewModel.Bank;assembly=Core"
              mc:Ignorable="d"
              d:DesignHeight="250" d:DesignWidth="500"
              >
@@ -57,7 +58,7 @@
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Тип контрагента">
                     <dxe:ComboBoxEdit HorizontalAlignment="Stretch"
-                              ItemsSource="{dxe:EnumItemsSource EnumType=entityViewModel:BankOperationType}"
+                              ItemsSource="{dxe:EnumItemsSource EnumType=bank:BankOperationType}"
                               Height="25"
                               EditValue="{Binding BankOperationType, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                               Margin="0 0 0 5" 

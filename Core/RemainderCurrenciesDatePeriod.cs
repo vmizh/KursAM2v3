@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using DevExpress.Mvvm.DataAnnotations;
 

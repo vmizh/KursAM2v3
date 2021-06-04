@@ -8,8 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel;
-using Core.Finance;
+using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
@@ -544,7 +543,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         GroupId = ManagemenentBalansStructrue.MoneyInPah,
                         // ReSharper disable once PossibleInvalidOperationException
                         Date = d.DATE_ORD.Value,
-                        DocumentType = DocumentTypes.CashOut,
+                        DocumentType = DocumentType.CashOut,
                         DocNum = d.NUM_ORD.ToString(),
                         KontragentName = name,
                         Name =
@@ -579,7 +578,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         GroupId = ManagemenentBalansStructrue.MoneyInPah,
                         // ReSharper disable once PossibleInvalidOperationException
                         Date = d.DATE_ORD.Value,
-                        DocumentType = DocumentTypes.CashIn,
+                        DocumentType = DocumentType.CashIn,
                         DocNum = d.NUM_ORD.ToString(),
                         KontragentName = kontrName,
                         Name =
@@ -612,7 +611,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Code = d.CODE,
                         GroupId = ManagemenentBalansStructrue.MoneyInPah,
                         Date = d.SD_101.VV_START_DATE,
-                        DocumentType = DocumentTypes.Bank,
+                        DocumentType = DocumentType.Bank,
                         DocNum = "",
                         KontragentName = name,
                         Name = $"Банковская транзакция от {d.SD_101.VV_START_DATE.ToShortDateString()} в {name}",
@@ -709,10 +708,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             if (CurrentExtendItem == null) return;
             switch (CurrentExtendItem.DocumentType)
             {
-                case DocumentTypes.CashIn:
+                case DocumentType.CashIn:
                     DocumentsOpenManager.Open(DocumentType.CashIn, CurrentExtendItem.DocCode);
                     break;
-                case DocumentTypes.CashOut:
+                case DocumentType.CashOut:
                     DocumentsOpenManager.Open(DocumentType.CashOut, CurrentExtendItem.DocCode);
                     break;
             }

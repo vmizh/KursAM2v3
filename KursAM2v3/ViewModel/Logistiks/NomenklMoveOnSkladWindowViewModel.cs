@@ -7,7 +7,9 @@ using System.Windows;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -22,7 +24,7 @@ namespace KursAM2.ViewModel.Logistiks
     {
         private NomPriceDocumentViewModel myCurrentDocument;
         private NomenklMoveOnSkladViewModel myCurrentNomenklMoveItem;
-        private Core.EntityViewModel.Warehouse myCurrentSklad;
+        private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentSklad;
         private DateTime myEndDate;
         private bool myIsShowAll;
         private DateTime myStartDate;
@@ -62,7 +64,7 @@ namespace KursAM2.ViewModel.Logistiks
         public ObservableCollection<NomPriceDocumentViewModel> DocumentList { get; set; } =
             new ObservableCollection<NomPriceDocumentViewModel>();
 
-        public List<Core.EntityViewModel.Warehouse> Sklads { set; get; } = new List<Core.EntityViewModel.Warehouse>();
+        public List<Core.EntityViewModel.NomenklManagement.Warehouse> Sklads { set; get; } = new List<Core.EntityViewModel.NomenklManagement.Warehouse>();
 
         public NomenklMoveOnSkladViewModel CurrentNomenklMoveItem
         {
@@ -103,7 +105,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public Core.EntityViewModel.Warehouse CurrentSklad
+        public Core.EntityViewModel.NomenklManagement.Warehouse CurrentSklad
         {
             get => myCurrentSklad;
             set

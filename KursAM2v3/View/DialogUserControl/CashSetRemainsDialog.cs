@@ -6,7 +6,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Cash;
+using Core.EntityViewModel.CommonReferences;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 
@@ -16,7 +18,7 @@ namespace KursAM2.View.DialogUserControl
     {
         private readonly Cash Cash;
         private readonly List<Currency> CashCurrencies = new List<Currency>();
-        private TD_22ViewModel myCurrentRemain;
+        private CashStartRemains myCurrentRemain;
         private CashSetRemainsUC myDataUserControl;
 
         public CashSetRemainsDialog(Cash cash)
@@ -27,13 +29,13 @@ namespace KursAM2.View.DialogUserControl
             WindowName = "Ввод остатков";
         }
 
-        public ObservableCollection<TD_22ViewModel> CashRemainsCollection { set; get; } =
-            new ObservableCollection<TD_22ViewModel>();
+        public ObservableCollection<CashStartRemains> CashRemainsCollection { set; get; } =
+            new ObservableCollection<CashStartRemains>();
 
         public ObservableCollection<Currency> CurrencyList { set; get; } =
             new ObservableCollection<Currency>(MainReferences.Currencies.Values);
 
-        public TD_22ViewModel CurrentRemain
+        public CashStartRemains CurrentRemain
         {
             get => myCurrentRemain;
             set
@@ -70,7 +72,7 @@ namespace KursAM2.View.DialogUserControl
                 {
                     CashCurrencies.Add(MainReferences.Currencies[d.CRS_DC]);
                     // ReSharper disable once UseObjectOrCollectionInitializer
-                    var item = new TD_22ViewModel(d);
+                    var item = new CashStartRemains(d);
                     CashRemainsCollection.Add(item);
                 }
                 foreach (var d in CashRemainsCollection)
@@ -98,7 +100,7 @@ namespace KursAM2.View.DialogUserControl
 
         private void AddNewCrs(object obj)
         {
-            var newItem = new TD_22ViewModel
+            var newItem = new CashStartRemains
             {
                 DATE_START = DateTime.Today,
                 SUMMA_START = 0,

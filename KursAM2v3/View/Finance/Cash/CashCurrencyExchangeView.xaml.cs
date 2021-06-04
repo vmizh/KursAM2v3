@@ -4,7 +4,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Cash;
+using Core.EntityViewModel.CommonReferences;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors;
@@ -28,7 +30,7 @@ namespace KursAM2.View.Finance.Cash
             Loaded += CashCurrencyExchangeView_Loaded;
             Unloaded += CashCurrencyExchangeView_Unloaded;
             MinWidth = 1000;
-            if (DataContext is CashCurrencyExchangeViewModel ctx)
+            if (DataContext is CashCurrencyExchangeWindowViewModel ctx)
                 ctx.WindowName = $"Обмен валюты в {ctx.Document?.Cash?.Name} для {ctx.Document?.Kontragent}";
         }
 
@@ -48,7 +50,7 @@ namespace KursAM2.View.Finance.Cash
         private void CashCurrencyExchangeView_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
-            var ctx = DataContext as CashCurrencyExchangeViewModel;
+            var ctx = DataContext as CashCurrencyExchangeWindowViewModel;
             var doc = ctx?.Document;
             if (doc == null) return;
             ctx.WindowName = $"Обмен валюты в {doc.Cash?.Name}";
@@ -69,7 +71,7 @@ namespace KursAM2.View.Finance.Cash
 
         private void LayoutItems_OnAutoGeneratingItem(object sender, DataLayoutControlAutoGeneratingItemEventArgs e)
         {
-            var ctx = DataContext as CashCurrencyExchangeViewModel;
+            var ctx = DataContext as CashCurrencyExchangeWindowViewModel;
             var doc = ctx?.Document;
             if (doc == null) return;
 
@@ -231,7 +233,7 @@ namespace KursAM2.View.Finance.Cash
 
         private void KontrEdit_DefaultButtonClick(object sender, RoutedEventArgs e)
         {
-            var ctx = DataContext as CashCurrencyExchangeViewModel;
+            var ctx = DataContext as CashCurrencyExchangeWindowViewModel;
             var doc = ctx?.Document;
             if (doc == null)
                 return;

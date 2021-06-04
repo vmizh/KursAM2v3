@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Bank;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;

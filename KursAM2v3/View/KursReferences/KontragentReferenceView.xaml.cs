@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;

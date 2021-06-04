@@ -1,5 +1,6 @@
 ﻿using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.Invoices.EntityViewModel;
 using Data;
 
 namespace KursAM2.ViewModel.Finance

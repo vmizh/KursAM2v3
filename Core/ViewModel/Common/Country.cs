@@ -1,4 +1,5 @@
-﻿using Core.EntityViewModel;
+﻿using Core.EntityViewModel.CommonReferences;
+using Core.Invoices.EntityViewModel;
 using Data;
 
 namespace Core.ViewModel.Common

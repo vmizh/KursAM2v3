@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Windows;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -33,7 +35,7 @@ namespace KursAM2.ViewModel.Logistiks
         private string mySchetInfo;
         private decimal mySummaIn;
         private decimal mySummaOut;
-        private Core.EntityViewModel.Warehouse myWarehouse;
+        private Core.EntityViewModel.NomenklManagement.Warehouse myWarehouse;
 
         public NomenklTransferRowViewModelExt(NomenklTransferRow entity) : base(entity)
         {
@@ -56,7 +58,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public Core.EntityViewModel.Warehouse Warehouse
+        public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse
         {
             get => myWarehouse;
             set

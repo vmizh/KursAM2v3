@@ -2,7 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Data;

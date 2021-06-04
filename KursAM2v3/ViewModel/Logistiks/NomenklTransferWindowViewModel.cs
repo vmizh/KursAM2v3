@@ -7,7 +7,9 @@ using System.Windows;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -25,7 +27,7 @@ namespace KursAM2.ViewModel.Logistiks
         public readonly List<NomenklTransferRowViewModelExt> DeletedRows = new List<NomenklTransferRowViewModelExt>();
         private readonly DbContext myDBContext = GlobalOptions.GetEntities();
         private NomenklTransferRowViewModelExt myCurrentRow;
-        private Core.EntityViewModel.Warehouse myCurrentWarehouse;
+        private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentWarehouse;
 
         // public bool IsCannotChangeStore => Document.State == RowStatus.NewRow || Document.SchetFacturaBase == null;
         private bool myIsCanChangeStore;
@@ -75,8 +77,8 @@ namespace KursAM2.ViewModel.Logistiks
         public override bool IsDocDeleteAllow => true;
         public NomenklTransferViewModelExt Document { set; get; }
 
-        public ObservableCollection<Core.EntityViewModel.Warehouse> StoreCollection { set; get; } =
-            new ObservableCollection<Core.EntityViewModel.Warehouse>();
+        public ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse> StoreCollection { set; get; } =
+            new ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse>();
 
         //private IDialogService DialogService => GetService<IDialogService>();
         //private IMessageBoxService MessageBoxService => GetService<IMessageBoxService>();
@@ -148,7 +150,7 @@ namespace KursAM2.ViewModel.Logistiks
         public bool IsRowReadOnly => CurrentRow != null && CurrentRow.IsAccepted;
 
         //public bool IsCannotChangeStore => Document.;
-        public Core.EntityViewModel.Warehouse CurrentWarehouse
+        public Core.EntityViewModel.NomenklManagement.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set
@@ -355,7 +357,7 @@ namespace KursAM2.ViewModel.Logistiks
             var dlg = new SelectDialogView {DataContext = ctxTransf};
             dlg.ShowDialog();
             if (!ctxTransf.DialogResult) return;
-            if (ctxTransf.CurrentObject is Core.EntityViewModel.Warehouse skl)
+            if (ctxTransf.CurrentObject is Core.EntityViewModel.NomenklManagement.Warehouse skl)
                 Document.Warehouse = skl;
         }
 
@@ -365,7 +367,7 @@ namespace KursAM2.ViewModel.Logistiks
             var dlg = new SelectDialogView {DataContext = ctxTransf};
             dlg.ShowDialog();
             if (!ctxTransf.DialogResult) return;
-            if (ctxTransf.CurrentObject is Core.EntityViewModel.Warehouse skl)
+            if (ctxTransf.CurrentObject is Core.EntityViewModel.NomenklManagement.Warehouse skl)
                 CurrentRow.Warehouse = skl;
         }
 
@@ -530,7 +532,7 @@ namespace KursAM2.ViewModel.Logistiks
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     foreach (var c in ctx.SD_27)
-                        StoreCollection.Add(new Core.EntityViewModel.Warehouse(c));
+                        StoreCollection.Add(new Core.EntityViewModel.NomenklManagement.Warehouse(c));
                 }
             }
             catch (Exception ex)

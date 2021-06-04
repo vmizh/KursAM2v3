@@ -6,9 +6,9 @@ using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
 using Core;
+using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 

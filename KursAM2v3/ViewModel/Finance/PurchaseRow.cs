@@ -1,6 +1,7 @@
 using System;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Data;
 
 namespace KursAM2.ViewModel.Finance

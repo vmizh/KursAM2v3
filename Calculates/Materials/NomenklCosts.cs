@@ -1,5 +1,7 @@
 ﻿using System;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Common;
 
 namespace Calculates.Materials

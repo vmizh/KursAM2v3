@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Core.Logger;
-using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;

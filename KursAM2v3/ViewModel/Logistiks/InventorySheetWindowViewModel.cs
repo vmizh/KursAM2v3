@@ -6,7 +6,8 @@ using System.Windows;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Dialogs;
@@ -158,7 +159,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         public override bool IsRedoAllow => Document != null && Document.DeletedRows.Count > 0;
         public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited;
-        public List<Core.EntityViewModel.Warehouse> StoreCollection => myManager.StoreCollection;
+        public List<Core.EntityViewModel.NomenklManagement.Warehouse> StoreCollection => myManager.StoreCollection;
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
         public override bool IsDocDeleteAllow => true;
 

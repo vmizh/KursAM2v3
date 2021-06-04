@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using Core;
+using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using DevExpress.Data;
 using DevExpress.Xpf.Editors.Settings;

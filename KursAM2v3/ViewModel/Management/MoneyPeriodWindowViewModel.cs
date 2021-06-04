@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
+using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -353,12 +354,12 @@ namespace KursAM2.ViewModel.Management
                             SDRState = av.SD_303 != null && av.SD_303.SD_99 != null
                                 ? new SDRState
                                 {
-                                    DOC_CODE = av.SD_303.SD_99.DOC_CODE,
+                                    DocCode = av.SD_303.SD_99.DOC_CODE,
                                     Name = av.SD_303.SD_99.SZ_NAME
                                 }
                                 : new SDRState
                                 {
-                                    DOC_CODE = -1,
+                                    DocCode = -1,
                                     Name = "Статья не указана"
                                 },
                             DocumentType = DocumentType.MutualAccounting
@@ -401,12 +402,12 @@ namespace KursAM2.ViewModel.Management
                                 SDRState = d.SD_303 != null && d.SD_303.SD_99 != null
                                     ? new SDRState
                                     {
-                                        DOC_CODE = d.SD_303.SD_99.DOC_CODE,
+                                        DocCode = d.SD_303.SD_99.DOC_CODE,
                                         Name = d.SD_303.SD_99.SZ_NAME
                                     }
                                     : new SDRState
                                     {
-                                        DOC_CODE = -1,
+                                        DocCode = -1,
                                         Name = "Статья не указана"
                                     },
                                 DocumentType = DocumentType.Bank
@@ -452,12 +453,12 @@ namespace KursAM2.ViewModel.Management
                                 SDRState = d.SD_303 != null && d.SD_303.SD_99 != null
                                     ? new SDRState
                                     {
-                                        DOC_CODE = d.SD_303.SD_99.DOC_CODE,
+                                        DocCode = d.SD_303.SD_99.DOC_CODE,
                                         Name = d.SD_303.SD_99.SZ_NAME
                                     }
                                     : new SDRState
                                     {
-                                        DOC_CODE = -1,
+                                        DocCode = -1,
                                         Name = "Статья не указана"
                                     },
                                 DocumentType = DocumentType.CashIn
@@ -500,12 +501,12 @@ namespace KursAM2.ViewModel.Management
                                 SDRState = d.SD_303 != null && d.SD_303.SD_99 != null
                                     ? new SDRState
                                     {
-                                        DOC_CODE = d.SD_303.SD_99.DOC_CODE,
+                                        DocCode = d.SD_303.SD_99.DOC_CODE,
                                         Name = d.SD_303.SD_99.SZ_NAME
                                     }
                                     : new SDRState
                                     {
-                                        DOC_CODE = -1,
+                                        DocCode = -1,
                                         Name = "Статья не указана"
                                     },
                                 DocumentType = DocumentType.CashOut

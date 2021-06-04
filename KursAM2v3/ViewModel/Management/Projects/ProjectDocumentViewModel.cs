@@ -2,7 +2,11 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.Employee;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;

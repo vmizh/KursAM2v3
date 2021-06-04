@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Bank;
+using Core.Invoices.EntityViewModel;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;

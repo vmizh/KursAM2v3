@@ -6,7 +6,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Bank;
+using Core.EntityViewModel.Cash;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.Dogovora;
+using Core.EntityViewModel.Employee;
+using Core.EntityViewModel.NomenklManagement;
+using Core.EntityViewModel.Vzaimozachet;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;
@@ -54,6 +61,53 @@ namespace Core
             ClientKategory = new Dictionary<decimal, CategoryClientTypeViewModel>();
         }
 
+        public static Dictionary<decimal, Cash> CashsAll { get; set; }
+
+        public static bool IsCheckedForUpdate { set; get; } = false;
+
+        public static List<string> ThemeNames { set; get; }
+        public static Dictionary<decimal, Region> Regions { set; get; }
+
+        public static Dictionary<decimal, CategoryClientTypeViewModel> ClientKategory { set; get; }
+        public static Dictionary<decimal, DeliveryCondition> DeliveryConditions { set; get; }
+        public static Dictionary<decimal, ContractType> ContractTypes { set; get; }
+        public static Dictionary<Guid, Project> Projects { set; get; }
+        public static Dictionary<decimal, Cash> Cashs { set; get; }
+        public static Dictionary<decimal, BankAccount> BankAccounts { set; get; }
+        public static DateTime NomenklLastUpdate { set; get; } = new(1900, 1, 1);
+        public static DateTime KontragentLastUpdate { set; get; } = new(1900, 1, 1);
+        public static Dictionary<decimal, SD_111ViewModel> MutualTypes { private set; get; }
+        public static Dictionary<decimal, SDRSchet> SDRSchets { private set; get; }
+        public static Dictionary<decimal, SDRState> SDRStates { private set; get; }
+        public static Dictionary<decimal, CentrOfResponsibility> COList { private set; get; }
+        public static Dictionary<decimal, PayCondition> PayConditions { private set; get; }
+        public static Dictionary<decimal, VzaimoraschetType> VzaimoraschetTypes { private set; get; }
+        public static Dictionary<decimal, FormPay> FormRaschets { private set; get; }
+        public static Dictionary<decimal, Country> Countries { set; get; }
+        public static Dictionary<decimal, Currency> Currencies { private set; get; }
+        public static Dictionary<decimal, Unit> Units { private set; get; }
+        public static Dictionary<decimal, NomenklGroup> NomenklGroups { private set; get; }
+        public static Dictionary<decimal, NomenklProductType> NomenklTypes { private set; get; }
+        public static Dictionary<decimal, Employee> Employees { private set; get; }
+        public static Dictionary<decimal, Kontragent> AllKontragents { set; get; }
+
+        // ReSharper disable once InconsistentNaming
+        public static Dictionary<decimal, Nomenkl> ALLNomenkls { set; get; }
+        public static Dictionary<decimal, Kontragent> ActiveKontragents { set; get; }
+        public static Dictionary<decimal, Nomenkl> ActiveNomenkls { set; get; }
+        public static Dictionary<decimal, Warehouse> Warehouses { set; get; }
+
+        public static bool IsReferenceLoadComplete
+        {
+            get => myIsNomComplete && myIsKontrComplete;
+            // ReSharper disable once ValueParameterNotUsed
+            set
+            {
+                myIsNomComplete = false;
+                myIsKontrComplete = false;
+            }
+        }
+
         private static void Clear()
         {
             AllKontragents.Clear();
@@ -84,104 +138,64 @@ namespace Core
             ClientKategory.Clear();
         }
 
-        public static Dictionary<decimal, Cash> CashsAll { get; set; }
-
-        public static bool IsCheckedForUpdate { set; get; } = false;
-
-        public static List<string> ThemeNames { set; get; }
-        public static Dictionary<decimal, Region> Regions { set; get; }
-        
-        public static Dictionary<decimal,CategoryClientTypeViewModel> ClientKategory { set; get; }
-        public static Dictionary<decimal, DeliveryCondition> DeliveryConditions { set; get; }
-
         public static DeliveryCondition GetDeliveryCondition(decimal dc)
         {
-            if (DeliveryConditions.ContainsKey(dc)) 
+            if (DeliveryConditions.ContainsKey(dc))
                 return DeliveryConditions[dc];
             return null;
         }
+
         public static DeliveryCondition GetDeliveryCondition(decimal? dc)
         {
             if (dc == null) return null;
-            if (DeliveryConditions.ContainsKey(dc.Value)) 
+            if (DeliveryConditions.ContainsKey(dc.Value))
                 return DeliveryConditions[dc.Value];
             return null;
         }
-        public static Dictionary<decimal, ContractType> ContractTypes { set; get; }
+
         public static ContractType GetContractType(decimal dc)
         {
-            if (ContractTypes.ContainsKey(dc)) 
+            if (ContractTypes.ContainsKey(dc))
                 return ContractTypes[dc];
             return null;
         }
+
         public static ContractType GetContractType(decimal? dc)
         {
             if (dc == null) return null;
-            if (ContractTypes.ContainsKey(dc.Value)) 
+            if (ContractTypes.ContainsKey(dc.Value))
                 return ContractTypes[dc.Value];
             return null;
         }
-        public static Dictionary<Guid, Project> Projects { set; get; }
-        public static Dictionary<decimal, Cash> Cashs { set; get; }
-        public static Dictionary<decimal, BankAccount> BankAccounts { set; get; }
-        public static DateTime NomenklLastUpdate { set; get; } = new(1900, 1, 1);
-        public static DateTime KontragentLastUpdate { set; get; } = new(1900, 1, 1);
-        public static Dictionary<decimal, SD_111ViewModel> MutualTypes { private set; get; }
-        public static Dictionary<decimal, SDRSchet> SDRSchets { private set; get; }
-        public static Dictionary<decimal, SDRState> SDRStates { private set; get; }
-        public static Dictionary<decimal, CentrOfResponsibility> COList { private set; get; }
-        public static Dictionary<decimal, PayCondition> PayConditions { private set; get; }
+
         public static PayCondition GetPayCondition(decimal dc)
         {
-            if (PayConditions.ContainsKey(dc)) 
+            if (PayConditions.ContainsKey(dc))
                 return PayConditions[dc];
             return null;
         }
+
         public static PayCondition GetPayCondition(decimal? dc)
         {
             if (dc == null) return null;
-            if (PayConditions.ContainsKey(dc.Value)) 
+            if (PayConditions.ContainsKey(dc.Value))
                 return PayConditions[dc.Value];
             return null;
         }
-        public static Dictionary<decimal, VzaimoraschetType> VzaimoraschetTypes { private set; get; }
-        public static Dictionary<decimal, FormPay> FormRaschets { private set; get; }
+
         public static FormPay GetFormPay(decimal dc)
         {
-            if (FormRaschets.ContainsKey(dc)) 
+            if (FormRaschets.ContainsKey(dc))
                 return FormRaschets[dc];
             return null;
         }
+
         public static FormPay GetFormPay(decimal? dc)
         {
             if (dc == null) return null;
-            if (FormRaschets.ContainsKey(dc.Value)) 
+            if (FormRaschets.ContainsKey(dc.Value))
                 return FormRaschets[dc.Value];
             return null;
-        }
-        public static Dictionary<decimal, Country> Countries { set; get; }
-        public static Dictionary<decimal, Currency> Currencies { private set; get; }
-        public static Dictionary<decimal, Unit> Units { private set; get; }
-        public static Dictionary<decimal, NomenklGroup> NomenklGroups { private set; get; }
-        public static Dictionary<decimal, NomenklProductType> NomenklTypes { private set; get; }
-        public static Dictionary<decimal, Employee> Employees { private set; get; }
-        public static Dictionary<decimal, Kontragent> AllKontragents { set; get; }
-
-        // ReSharper disable once InconsistentNaming
-        public static Dictionary<decimal, Nomenkl> ALLNomenkls { set; get; }
-        public static Dictionary<decimal, Kontragent> ActiveKontragents { set; get; }
-        public static Dictionary<decimal, Nomenkl> ActiveNomenkls { set; get; }
-        public static Dictionary<decimal, Warehouse> Warehouses { set; get; }
-
-        public static bool IsReferenceLoadComplete
-        {
-            get => myIsNomComplete && myIsKontrComplete;
-            // ReSharper disable once ValueParameterNotUsed
-            set
-            {
-                myIsNomComplete = false;
-                myIsKontrComplete = false;
-            }
         }
 
         private List<string> getThemeNames()
@@ -407,7 +421,7 @@ namespace Core
                 var ent = GlobalOptions.GetEntities();
 
                 #region Типы договоров/контрактов sd_102
-                
+
                 var s102 = ent.SD_102.AsNoTracking().ToList();
                 foreach (var item in s102)
                     if (ContractTypes.ContainsKey(item.DOC_CODE))
@@ -419,7 +433,8 @@ namespace Core
                     else
                     {
                         ContractTypes.Add(item.DOC_CODE, new ContractType(item) {myState = RowStatus.NotEdited});
-                    } 
+                    }
+
                 #endregion
 
                 #region Категории контрагентов
@@ -434,7 +449,8 @@ namespace Core
                     }
                     else
                     {
-                        ClientKategory.Add(item.DOC_CODE, new  CategoryClientTypeViewModel(item) {myState = RowStatus.NotEdited});
+                        ClientKategory.Add(item.DOC_CODE,
+                            new CategoryClientTypeViewModel(item) {myState = RowStatus.NotEdited});
                     }
 
                 #endregion
@@ -499,7 +515,6 @@ namespace Core
                     if (SDRSchets.ContainsKey(l.DOC_CODE))
                     {
                         var d = SDRSchets[l.DOC_CODE];
-                        d.UpdateFrom(l);
                         d.myState = RowStatus.NotEdited;
                     }
                     else
@@ -523,7 +538,6 @@ namespace Core
                     if (SDRStates.ContainsKey(item.DOC_CODE))
                     {
                         var d = SDRStates[item.DOC_CODE];
-                        d.UpdateFrom(item);
                         d.myState = RowStatus.NotEdited;
                     }
                     else

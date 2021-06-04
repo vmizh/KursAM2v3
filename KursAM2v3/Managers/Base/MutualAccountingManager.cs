@@ -5,8 +5,8 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using Core;
+using Core.EntityViewModel.Vzaimozachet;
 using Core.ViewModel.Base;
-using Core.ViewModel.MutualAccounting;
 using Core.WindowsManager;
 using Data;
 

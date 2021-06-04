@@ -5,11 +5,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel;
-using Core.Finance;
+using Core.EntityViewModel.Cash;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.Invoices;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using Helper;
 using KursAM2.Managers.Invoices;
 using KursAM2.ViewModel.Finance.Cash;
 
@@ -35,9 +37,9 @@ namespace KursAM2.Managers
                         {
                             case CashDocumentType.CashIn:
                                 if (!(doc is CashIn delCashIn)) return;
-                                docDate = (DateTime)delCashIn.DATE_ORD;
-                                docCRS = (decimal)delCashIn.CRS_DC;
-                                cashDC = (decimal)delCashIn.CA_DC;
+                                docDate = (DateTime) delCashIn.DATE_ORD;
+                                docCRS = (decimal) delCashIn.CRS_DC;
+                                cashDC = (decimal) delCashIn.CA_DC;
                                 var delIn = ctx.SD_33.FirstOrDefault(_ => _.DOC_CODE == delCashIn.DocCode);
                                 if (delIn == null) return;
                                 ctx.SD_33.Remove(delIn);
@@ -49,15 +51,16 @@ namespace KursAM2.Managers
                                 ctx.SD_34.Remove(delOut);
                                 break;
                             case CashDocumentType.CurrencyExchange:
-                                if (!(doc is SD_251ViewModel delCrsExch)) return;
+                                if (!(doc is CashCurrencyExchange delCrsExch)) return;
                                 docDate = delCrsExch.CH_DATE;
-                                docCRS = (decimal)delCrsExch.CH_CRS_IN_DC;
+                                docCRS = (decimal) delCrsExch.CH_CRS_IN_DC;
                                 cashDC = delCrsExch.CH_CASH_DC;
                                 var delCe = new SD_251 {DOC_CODE = delCrsExch.DocCode};
                                 ctx.SD_251.Attach(delCe);
                                 ctx.SD_251.Remove(delCe);
                                 break;
                         }
+
                         ctx.SaveChanges();
                         if (docCRS != 0)
                         {
@@ -67,16 +70,18 @@ namespace KursAM2.Managers
                                 .Select(k => k.DATE_ORD)
                                 .Distinct().ToList())
                             {
-                                if (daterems.Contains((DateTime)d)) continue;
+                                if (daterems.Contains((DateTime) d)) continue;
                                 daterems.Add(d.Value);
                             }
+
                             foreach (var d in ctx.SD_33.Where(_ => _.DATE_ORD >= docDate)
                                 .Select(k => k.DATE_ORD)
                                 .Distinct().ToList())
                             {
-                                if (daterems.Contains((DateTime)d)) continue;
+                                if (daterems.Contains((DateTime) d)) continue;
                                 daterems.Add(d.Value);
                             }
+
                             foreach (var r in daterems)
                                 if (GetCashCurrencyRemains(ctx, cashDC, docCRS, r) < 0)
                                 {
@@ -87,6 +92,7 @@ namespace KursAM2.Managers
                                     return;
                                 }
                         }
+
                         transaction.Commit();
                         if (doc is RSViewModelBase dd)
                             dd.myState = RowStatus.Deleted;
@@ -179,7 +185,7 @@ namespace KursAM2.Managers
                     if (doc.SFACT_DC != null)
                     {
                         var inv = ctx.SD_84.FirstOrDefault(_ => _.DOC_CODE == doc.SFACT_DC);
-                        if(inv == null) return doc;
+                        if (inv == null) return doc;
                         var pDocs = new List<InvoicePaymentDocument>();
                         foreach (var c in ctx.SD_33.Where(_ => _.SFACT_DC == doc.SFACT_DC).ToList())
                             pDocs.Add(new InvoicePaymentDocument
@@ -189,10 +195,10 @@ namespace KursAM2.Managers
                                 DocumentType = DocumentType.CashIn,
                                 DocumentName =
                                     // ReSharper disable once PossibleInvalidOperationException
-                                    $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
+                                    $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
                                 // ReSharper disable once PossibleInvalidOperationException
-                                Summa = (decimal)c.SUMM_ORD,
-                                Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
+                                Summa = (decimal) c.SUMM_ORD,
+                                Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
                                 Note = c.NOTES_ORD
                             });
                         foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
@@ -204,14 +210,15 @@ namespace KursAM2.Managers
                                 DocumentType = DocumentType.Bank,
                                 DocumentName =
                                     // ReSharper disable once PossibleInvalidOperationException
-                                    $"{c.SD_101.VV_START_DATE} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
-                                Summa = (decimal)c.VVT_VAL_PRIHOD,
+                                    $"{c.SD_101.VV_START_DATE} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                                Summa = (decimal) c.VVT_VAL_PRIHOD,
                                 Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                                 Note = c.VVT_DOC_NUM
                             });
                         // ReSharper disable once PossibleInvalidOperationException
-                        doc.MaxSumma = (decimal) (doc.SUMM_ORD + inv.SF_CRS_SUMMA_K_OPLATE - pDocs.Sum(_ => _.Summa)) ;
+                        doc.MaxSumma = (decimal) (doc.SUMM_ORD + inv.SF_CRS_SUMMA_K_OPLATE - pDocs.Sum(_ => _.Summa));
                     }
+
                     doc.RaisePropertyChanged("IsSummaEnabled");
                     return doc;
                 }
@@ -220,6 +227,7 @@ namespace KursAM2.Managers
             {
                 WindowManager.ShowError(ex);
             }
+
             return null;
         }
 
@@ -237,7 +245,7 @@ namespace KursAM2.Managers
                    && doc.CA_DC != null && doc.CRS_DC != null && doc.DATE_ORD != null && doc.SHPZ_DC != null;
         }
 
-        public static bool CheckCashCurrencyExchange(SD_251ViewModel doc)
+        public static bool CheckCashCurrencyExchange(CashCurrencyExchange doc)
         {
             return doc.Cash != null && !string.IsNullOrWhiteSpace(doc.KontragentName)
                                     && doc.SDRSchet != null;
@@ -314,7 +322,7 @@ namespace KursAM2.Managers
             ret.RashodOrderFromName = null;
             ret.CRS_KOEF = ret.CRS_KOEF ?? 1;
             ret.State = RowStatus.NewRow;
-            ret.Id = Guid.NewGuid(); 
+            ret.Id = Guid.NewGuid();
             ret.RaisePropertyChanged("Kontragent");
             ret.RaisePropertyChanged("State");
             return ret;
@@ -416,9 +424,9 @@ namespace KursAM2.Managers
             return ret;
         }
 
-        public static SD_251ViewModel NewCashCurrencyEchange()
+        public static CashCurrencyExchange NewCashCurrencyEchange()
         {
-            var doc = new SD_251ViewModel
+            var doc = new CashCurrencyExchange
             {
                 DocCode = -1,
                 CH_DATE = DateTime.Today,
@@ -434,24 +442,7 @@ namespace KursAM2.Managers
             return doc;
         }
 
-        //public static SD_251ViewModel NewCopyCashCurrencyExchange(SD_251 entity)
-        //{
-        //    var ret = new SD_251ViewModel(entity)
-        //    {
-        //        DocCode = -1,
-        //        CH_DATE = DateTime.Today,
-        //        CH_DATE_IN = DateTime.Today,
-        //        CH_DATE_OUT = DateTime.Today,
-        //        Note = null,
-        //        CREATOR = string.IsNullOrEmpty(GlobalOptions.UserInfo.NickName)
-        //            ? GlobalOptions.UserInfo.FullName
-        //            : GlobalOptions.UserInfo.NickName,
-        //        State = RowStatus.NewRow
-        //    };
-        //    return ret;
-        //}
-
-        public static SD_251ViewModel NewCopyCashCurrencyExchange(decimal dc)
+        public static CashCurrencyExchange NewCopyCashCurrencyExchange(decimal dc)
         {
             var ret = LoadCurrencyExchange(dc);
             ret.DocCode = -1;
@@ -498,19 +489,20 @@ namespace KursAM2.Managers
                                         MessageBoxImage.Error);
                                     return;
                                 }
+
                                 if (updateCashIn.SFACT_DC != null)
                                 {
                                     var sql =
                                         "SELECT s84.doc_code as DocCode, s84.SF_CRS_SUMMA_K_OPLATE as Summa, SUM(ISNULL(s33.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_PRIHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                         "FROM sd_84 s84 " +
-                                        $"LEFT OUTER JOIN sd_33 s33 ON s33.SFACT_DC = s84.DOC_CODE AND s33.DOC_CODE != {Helper.CustomFormat.DecimalToSqlDecimal(updateCashIn.DOC_CODE)} " +
+                                        $"LEFT OUTER JOIN sd_33 s33 ON s33.SFACT_DC = s84.DOC_CODE AND s33.DOC_CODE != {CustomFormat.DecimalToSqlDecimal(updateCashIn.DOC_CODE)} " +
                                         "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_CLIENT_DC = s84.DOC_CODE " +
                                         "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SFACT_DC = s84.DOC_CODE " +
-                                        $"WHERE s84.DOC_CODE = {Helper.CustomFormat.DecimalToSqlDecimal(updateCashIn.SFACT_DC)} " +
+                                        $"WHERE s84.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(updateCashIn.SFACT_DC)} " +
                                         "GROUP BY s84.doc_code, s84.SF_CRS_SUMMA_K_OPLATE ";
-                                    var pays = ctx.Database.SqlQuery<InvoicesManager.InvoicePayment>(sql).FirstOrDefault();
+                                    var pays = ctx.Database.SqlQuery<InvoicesManager.InvoicePayment>(sql)
+                                        .FirstOrDefault();
                                     if (pays != null)
-                                    {
                                         if (pays.Summa < pays.PaySumma + updateCashIn.SUMM_ORD)
                                         {
                                             var res = winManager.ShowWinUIMessageBox(
@@ -526,8 +518,8 @@ namespace KursAM2.Managers
                                                     return;
                                             }
                                         }
-                                    }
                                 }
+
                                 ctx.Entry(CashInViewModelToEntity(updateCashIn)).State = EntityState.Modified;
                                 ctx.SaveChanges();
                                 break;
@@ -554,7 +546,6 @@ namespace KursAM2.Managers
                                         _.CashDC == updateCashOut.DocCode
                                         && _.DocDC == updateCashOut.SPOST_DC);
                                     if (old == null)
-                                    {
                                         ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
                                         {
                                             Id = Guid.NewGuid(),
@@ -565,24 +556,20 @@ namespace KursAM2.Managers
                                             // ReSharper disable once PossibleInvalidOperationException
                                             DocDC = (decimal) updateCashOut.SPOST_DC
                                         });
-                                    }
                                     else
-                                    {
                                         // ReSharper disable once PossibleInvalidOperationException
                                         old.Summa = (decimal) updateCashOut.SUMM_ORD;
-                                    }
                                     var sql =
                                         "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                         "FROM sd_26 s26 " +
-                                        $"LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DOC_CODE AND s34.DOC_CODE != {Helper.CustomFormat.DecimalToSqlDecimal(updateCashOut.DOC_CODE)} " +
+                                        $"LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DOC_CODE AND s34.DOC_CODE != {CustomFormat.DecimalToSqlDecimal(updateCashOut.DOC_CODE)} " +
                                         "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_POSTAV_DC = s26.DOC_CODE " +
                                         "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SPOST_DC = s26.DOC_CODE " +
-                                        $"WHERE s26.DOC_CODE = {Helper.CustomFormat.DecimalToSqlDecimal(updateCashOut.SPOST_DC)} " +
+                                        $"WHERE s26.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(updateCashOut.SPOST_DC)} " +
                                         "GROUP BY s26.doc_code, s26.SF_CRS_SUMMA ";
                                     var pays = ctx.Database.SqlQuery<InvoicesManager.InvoicePayment>(sql)
                                         .FirstOrDefault();
                                     if (pays != null)
-                                    {
                                         if (pays.Summa < pays.PaySumma + updateCashOut.SUMM_ORD)
                                         {
                                             var res = winManager.ShowWinUIMessageBox(
@@ -598,14 +585,13 @@ namespace KursAM2.Managers
                                                     return;
                                             }
                                         }
-                                    }
                                 }
 
                                 ctx.Entry(CashOutViewModelToEntity(updateCashOut)).State = EntityState.Modified;
                                 ctx.SaveChanges();
                                 break;
                             case CashDocumentType.CurrencyExchange:
-                                if (!(doc is SD_251ViewModel udateCrsExch)) return;
+                                if (!(doc is CashCurrencyExchange udateCrsExch)) return;
                                 docDate = udateCrsExch.CH_DATE;
                                 docCRS = (decimal) udateCrsExch.CH_CRS_OUT_DC;
                                 cashDC = udateCrsExch.CH_CASH_DC;
@@ -624,6 +610,7 @@ namespace KursAM2.Managers
                                         MessageBoxImage.Error);
                                     return;
                                 }
+
                                 if (cashstartOut == null || udateCrsExch.CH_DATE_IN < cashstartOut.DATE_START)
                                 {
                                     transaction.Rollback();
@@ -633,10 +620,12 @@ namespace KursAM2.Managers
                                         MessageBoxImage.Error);
                                     return;
                                 }
+
                                 ctx.Entry(CurrencyExchangeViewModelToEntity(udateCrsExch)).State = EntityState.Modified;
                                 ctx.SaveChanges();
                                 break;
                         }
+
                         if (docCRS != 0)
                         {
                             var daterems = ctx.SD_251.Where(_ => _.CH_DATE >= docDate).Select(_ => _.CH_DATE).Distinct()
@@ -648,6 +637,7 @@ namespace KursAM2.Managers
                                 if (daterems.Contains((DateTime) d)) continue;
                                 daterems.Add(d.Value);
                             }
+
                             foreach (var d in ctx.SD_33.Where(_ => _.DATE_ORD >= docDate)
                                 .Select(k => k.DATE_ORD)
                                 .Distinct().ToList())
@@ -655,6 +645,7 @@ namespace KursAM2.Managers
                                 if (daterems.Contains((DateTime) d)) continue;
                                 daterems.Add(d.Value);
                             }
+
                             foreach (var r in daterems)
                                 if (GetCashCurrencyRemains(ctx, cashDC, docCRS, r) < 0)
                                 {
@@ -665,6 +656,7 @@ namespace KursAM2.Managers
                                     return;
                                 }
                         }
+
                         transaction.Commit();
                         if (doc is RSViewModelBase dd)
                         {
@@ -696,9 +688,9 @@ namespace KursAM2.Managers
                     .Where(_ => _.CA_DC == cashDC && _.CRS_DC == crs.CRS_DC && _.DATE_CASS < date)
                     .Max(_ => _.DATE_CASS);
                 var ssum = ctx.SD_39
-                               .FirstOrDefault(
-                                   _ => _.CA_DC == cashDC && _.CRS_DC == crs.CRS_DC && _.DATE_CASS == sdate)
-                               ?.MONEY_STOP ?? 0;
+                    .FirstOrDefault(
+                        _ => _.CA_DC == cashDC && _.CRS_DC == crs.CRS_DC && _.DATE_CASS == sdate)
+                    ?.MONEY_STOP ?? 0;
                 var newItem = new SD_39
                 {
                     DOC_CODE = newDC,
@@ -710,6 +702,7 @@ namespace KursAM2.Managers
                 };
                 ctx.SD_39.Add(newItem);
             }
+
             ctx.SaveChanges();
         }
 
@@ -741,6 +734,7 @@ namespace KursAM2.Managers
                                         MessageBoxImage.Error);
                                     return;
                                 }
+
                                 var ent = CashInViewModelToEntity(insertCashIn);
                                 if (ent.DOC_CODE < 0)
                                 {
@@ -757,14 +751,14 @@ namespace KursAM2.Managers
                                     var sql =
                                         "SELECT s84.doc_code as DocCode, s84.SF_CRS_SUMMA_K_OPLATE as Summa, SUM(ISNULL(s33.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_PRIHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                         "FROM sd_84 s84 " +
-                                        $"LEFT OUTER JOIN sd_33 s33 ON s33.SFACT_DC = s84.DOC_CODE AND s33.DOC_CODE != {Helper.CustomFormat.DecimalToSqlDecimal(ent.DOC_CODE)} " +
+                                        $"LEFT OUTER JOIN sd_33 s33 ON s33.SFACT_DC = s84.DOC_CODE AND s33.DOC_CODE != {CustomFormat.DecimalToSqlDecimal(ent.DOC_CODE)} " +
                                         "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_CLIENT_DC = s84.DOC_CODE " +
                                         "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SFACT_DC = s84.DOC_CODE " +
-                                        $"WHERE s84.DOC_CODE = {Helper.CustomFormat.DecimalToSqlDecimal(insertCashIn.SFACT_DC)} " +
+                                        $"WHERE s84.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(insertCashIn.SFACT_DC)} " +
                                         "GROUP BY s84.doc_code, s84.SF_CRS_SUMMA_K_OPLATE ";
-                                    var pays = ctx.Database.SqlQuery<InvoicesManager.InvoicePayment>(sql).FirstOrDefault();
+                                    var pays = ctx.Database.SqlQuery<InvoicesManager.InvoicePayment>(sql)
+                                        .FirstOrDefault();
                                     if (pays != null)
-                                    {
                                         if (pays.Summa < pays.PaySumma + insertCashIn.SUMM_ORD)
                                         {
                                             var res = winManager.ShowWinUIMessageBox(
@@ -782,8 +776,8 @@ namespace KursAM2.Managers
                                                     return;
                                             }
                                         }
-                                    }
                                 }
+
                                 ctx.Entry(ent).State = EntityState.Added;
                                 ctx.SaveChanges();
                                 if (insertCashIn.DOC_CODE < 0)
@@ -809,6 +803,7 @@ namespace KursAM2.Managers
                                         MessageBoxImage.Error);
                                     return;
                                 }
+
                                 var ent1 = CashOutViewModelToEntity(insertCashOut);
                                 if (insertCashOut.DOC_CODE < 0)
                                 {
@@ -826,7 +821,6 @@ namespace KursAM2.Managers
                                         _.CashDC == insertCashOut.DocCode
                                         && _.DocDC == insertCashOut.SPOST_DC);
                                     if (old == null)
-                                    {
                                         ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
                                         {
                                             Id = Guid.NewGuid(),
@@ -837,23 +831,20 @@ namespace KursAM2.Managers
                                             // ReSharper disable once PossibleInvalidOperationException
                                             DocDC = (decimal) insertCashOut.SPOST_DC
                                         });
-                                    }
                                     else
-                                    {
                                         // ReSharper disable once PossibleInvalidOperationException
                                         old.Summa = (decimal) insertCashOut.SUMM_ORD;
-                                    }
                                     var sql =
                                         "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                         "FROM sd_26 s26 " +
-                                        $"LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DOC_CODE AND s34.DOC_CODE != {Helper.CustomFormat.DecimalToSqlDecimal(ent1.DOC_CODE)} " +
+                                        $"LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DOC_CODE AND s34.DOC_CODE != {CustomFormat.DecimalToSqlDecimal(ent1.DOC_CODE)} " +
                                         "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_POSTAV_DC = s26.DOC_CODE " +
                                         "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SPOST_DC = s26.DOC_CODE " +
-                                        $"WHERE s26.DOC_CODE = {Helper.CustomFormat.DecimalToSqlDecimal(insertCashOut.SPOST_DC)} " +
+                                        $"WHERE s26.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(insertCashOut.SPOST_DC)} " +
                                         "GROUP BY s26.doc_code, s26.SF_CRS_SUMMA ";
-                                    var pays = ctx.Database.SqlQuery<InvoicesManager.InvoicePayment>(sql).FirstOrDefault();
+                                    var pays = ctx.Database.SqlQuery<InvoicesManager.InvoicePayment>(sql)
+                                        .FirstOrDefault();
                                     if (pays != null)
-                                    {
                                         if (pays.Summa < pays.PaySumma + insertCashOut.SUMM_ORD)
                                         {
                                             var res = winManager.ShowWinUIMessageBox(
@@ -871,8 +862,8 @@ namespace KursAM2.Managers
                                                     return;
                                             }
                                         }
-                                    }
                                 }
+
                                 ctx.Entry(ent1).State = EntityState.Added;
                                 ctx.SaveChanges();
                                 if (insertCashOut.DOC_CODE < 0)
@@ -883,7 +874,7 @@ namespace KursAM2.Managers
 
                                 break;
                             case CashDocumentType.CurrencyExchange:
-                                if (!(doc is SD_251ViewModel insCrsExch)) return;
+                                if (!(doc is CashCurrencyExchange insCrsExch)) return;
                                 docDate = insCrsExch.CH_DATE;
                                 docCRS = (decimal) insCrsExch.CH_CRS_OUT_DC;
                                 cashDC = insCrsExch.CH_CASH_DC;
@@ -902,6 +893,7 @@ namespace KursAM2.Managers
                                         MessageBoxImage.Error);
                                     return;
                                 }
+
                                 if (cashstartOut == null || insCrsExch.CH_DATE_IN < cashstartOut.DATE_START)
                                 {
                                     transaction.Rollback();
@@ -911,6 +903,7 @@ namespace KursAM2.Managers
                                         MessageBoxImage.Error);
                                     return;
                                 }
+
                                 var ent2 = CurrencyExchangeViewModelToEntity(insCrsExch);
                                 insCrsExch.DOC_CODE =
                                     ctx.SD_251.Any() ? ctx.SD_251.Max(_ => _.DOC_CODE) + 1 : 12510000001;
@@ -924,6 +917,7 @@ namespace KursAM2.Managers
                                 insCrsExch.CH_NUM_ORD = ent2.CH_NUM_ORD;
                                 break;
                         }
+
                         if (docCRS != 0)
                         {
                             var daterems = ctx.SD_251.Where(_ => _.CH_DATE >= docDate).Select(_ => _.CH_DATE)
@@ -935,6 +929,7 @@ namespace KursAM2.Managers
                                 if (daterems.Contains((DateTime) d)) continue;
                                 daterems.Add(d.Value);
                             }
+
                             foreach (var d in ctx.SD_33.Where(_ => _.DATE_ORD >= docDate)
                                 .Select(k => k.DATE_ORD)
                                 .Distinct().ToList())
@@ -942,6 +937,7 @@ namespace KursAM2.Managers
                                 if (daterems.Contains((DateTime) d)) continue;
                                 daterems.Add(d.Value);
                             }
+
                             foreach (var r in daterems)
                                 if (GetCashCurrencyRemains(ctx, cashDC, docCRS, r) < 0)
                                 {
@@ -952,6 +948,7 @@ namespace KursAM2.Managers
                                     return;
                                 }
                         }
+
                         transaction.Commit();
                         if (doc is RSViewModelBase dd)
                         {
@@ -1051,10 +1048,11 @@ namespace KursAM2.Managers
             {
                 WindowManager.ShowError(e);
             }
+
             return null;
         }
 
-        public static SD_251 CurrencyExchangeViewModelToEntity(SD_251ViewModel ent)
+        public static SD_251 CurrencyExchangeViewModelToEntity(CashCurrencyExchange ent)
         {
             var ret = new SD_251
             {
@@ -1087,13 +1085,13 @@ namespace KursAM2.Managers
             return ret;
         }
 
-        public static SD_251ViewModel LoadCurrencyExchange(decimal dc)
+        public static CashCurrencyExchange LoadCurrencyExchange(decimal dc)
         {
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    var doc = new SD_251ViewModel(ctx.SD_251.FirstOrDefault(_ => _.DOC_CODE == dc));
+                    var doc = new CashCurrencyExchange(ctx.SD_251.FirstOrDefault(_ => _.DOC_CODE == dc));
                     var rateDate = ctx.CURRENCY_RATES_CB.Where(_ => _.RATE_DATE <= doc.CH_DATE).Max(_ => _.RATE_DATE);
                     var rate = ctx.CURRENCY_RATES_CB.Where(_ => _.RATE_DATE == rateDate);
                     doc.CrsInCBRate = doc.CH_CRS_IN_DC == GlobalOptions.SystemProfile.NationalCurrency.DocCode
@@ -1109,6 +1107,7 @@ namespace KursAM2.Managers
             {
                 WindowManager.ShowError(ex);
             }
+
             return null;
         }
 
@@ -1250,12 +1249,14 @@ namespace KursAM2.Managers
                             doc.KontragnetTypeName = "Контрагент";
                             doc.KontragnetName = MainReferences.GetKontragent(d.KONTRAGENT_DC).Name;
                         }
+
                         if (d.TABELNUMBER != null)
                         {
                             doc.KontragnetTypeName = "Сотрудник";
                             doc.KontragnetName = MainReferences.Employees.Values
                                 .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)?.Name;
                         }
+
                         if (d.BANK_RASCH_SCHET_DC != null)
                         {
                             doc.KontragnetTypeName = "Банковский (расчетный) счет";
@@ -1263,21 +1264,25 @@ namespace KursAM2.Managers
                             if (bank != null)
                                 doc.KontragnetName = bank.BA_ACC_SHORTNAME + " - " + bank.BA_RASH_ACC;
                         }
+
                         if (d.RASH_ORDER_FROM_DC != null)
                         {
                             doc.KontragnetTypeName = "Расходный кассовый ордер";
                             var c = ctx.SD_34.FirstOrDefault(_ => _.DOC_CODE == d.RASH_ORDER_FROM_DC);
                             if (c != null) doc.KontragnetName = MainReferences.Cashs[(decimal) c.CA_DC].Name;
                         }
+
                         ret.Add(doc);
                     }
                 }
+
                 return ret;
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
             }
+
             return null;
         }
 
@@ -1336,12 +1341,14 @@ namespace KursAM2.Managers
                             doc.KontragnetTypeName = "Контрагент";
                             doc.KontragnetName = MainReferences.GetKontragent(d.KONTRAGENT_DC).Name;
                         }
+
                         if (d.TABELNUMBER != null)
                         {
                             doc.KontragnetTypeName = "Сотрудник";
                             doc.KontragnetName = MainReferences.Employees.Values
                                 .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)?.Name;
                         }
+
                         if (d.BANK_RASCH_SCHET_DC != null)
                         {
                             doc.KontragnetTypeName = "Банковский (расчетный) счет";
@@ -1349,6 +1356,7 @@ namespace KursAM2.Managers
                             if (bank != null)
                                 doc.KontragnetName = bank.BA_ACC_SHORTNAME + " - " + bank.BA_RASH_ACC;
                         }
+
                         if (d.CASH_TO_DC != null)
                         {
                             doc.KontragnetTypeName = "Касса";
@@ -1356,15 +1364,18 @@ namespace KursAM2.Managers
                             if (prihOrder != null)
                                 doc.KontragnetName = MainReferences.Cashs[(decimal) prihOrder.CA_DC].Name;
                         }
+
                         ret.Add(doc);
                     }
                 }
+
                 return ret;
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
             }
+
             return null;
         }
 
@@ -1408,14 +1419,17 @@ namespace KursAM2.Managers
                                 doc.KontragnetTypeName = "Контрагент";
                                 doc.KontragnetName = MainReferences.GetKontragent(d.CH_KONTRAGENT_DC).Name;
                             }
+
                             if (d.TABELNUMBER != null)
                             {
                                 doc.KontragnetTypeName = "Сотрудник";
                                 doc.KontragnetName = MainReferences.Employees.Values
                                     .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)?.Name;
                             }
+
                             ret.Add(doc);
                         }
+
                         foreach (var d in dataOut.ToList())
                         {
                             var doc = new CashBookDocument
@@ -1435,12 +1449,14 @@ namespace KursAM2.Managers
                                 doc.KontragnetTypeName = "Контрагент";
                                 doc.KontragnetName = MainReferences.GetKontragent(d.CH_KONTRAGENT_DC).Name;
                             }
+
                             if (d.TABELNUMBER != null)
                             {
                                 doc.KontragnetTypeName = "Сотрудник";
                                 doc.KontragnetName = MainReferences.Employees.Values
                                     .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)?.Name;
                             }
+
                             ret.Add(doc);
                         }
                     }
@@ -1474,12 +1490,14 @@ namespace KursAM2.Managers
                                 doc.KontragnetTypeName = "Контрагент";
                                 doc.KontragnetName = MainReferences.GetKontragent(d.CH_KONTRAGENT_DC).Name;
                             }
+
                             if (d.TABELNUMBER != null)
                             {
                                 doc.KontragnetTypeName = "Сотрудник";
                                 doc.KontragnetName = MainReferences.Employees.Values
                                     .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)?.Name;
                             }
+
                             ret.Add(doc);
                             var doc1 = new CashBookDocument
                             {
@@ -1498,22 +1516,26 @@ namespace KursAM2.Managers
                                 doc.KontragnetTypeName = "Контрагент";
                                 doc.KontragnetName = MainReferences.GetKontragent(d.CH_KONTRAGENT_DC).Name;
                             }
+
                             if (d.TABELNUMBER != null)
                             {
                                 doc.KontragnetTypeName = "Сотрудник";
                                 doc.KontragnetName = MainReferences.Employees.Values
                                     .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)?.Name;
                             }
+
                             ret.Add(doc1);
                         }
                     }
                 }
+
                 return ret;
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
             }
+
             return null;
         }
 
@@ -1558,6 +1580,7 @@ namespace KursAM2.Managers
                             Out = documents.Where(_ => _.CurrencyName == crsName).Sum(_ => _.SummaOut)
                         });
                     }
+
                     if (startDate != endDate)
                         foreach (var m in ret)
                         {
@@ -1568,15 +1591,18 @@ namespace KursAM2.Managers
                                 first = d;
                                 break;
                             }
+
                             m.End = first?.MONEY_STOP ?? 0;
                         }
                 }
+
                 return ret;
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
             }
+
             return new List<MoneyRemains>();
         }
 
@@ -1622,7 +1648,6 @@ namespace KursAM2.Managers
                             _.CH_DATE <= date).ToList();
             var crsChangeOut = crsChangeOutRow.Sum(_ => _.CH_CRS_OUT_SUM);
             return start.SUMMA_START + (cashIn ?? 0) - (cashOut ?? 0) + (crsChangeIn ?? 0) - crsChangeOut;
-
         }
 
         public class MoneySum

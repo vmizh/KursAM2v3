@@ -2,8 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using Core;
+using Core.EntityViewModel.Base;
 using Core.Menu;
-using Core.Repository.Base;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;

@@ -5,7 +5,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.NomenklManagement;
+using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
@@ -21,7 +24,7 @@ namespace KursAM2.View.Logistiks.UC
     {
         #region Constructors
 
-        public AddNomenklFromInvoiceProviderViewModel(Core.EntityViewModel.Warehouse warehouse, Kontragent kontr = null)
+        public AddNomenklFromInvoiceProviderViewModel(Core.EntityViewModel.NomenklManagement.Warehouse warehouse, Kontragent kontr = null)
         {
             Kontragent = kontr;
             Warehouse = warehouse;
@@ -114,7 +117,7 @@ namespace KursAM2.View.Logistiks.UC
         private InvoiceShort myCurrentInvoice;
         private InvoiceShortRow myCurrentNomenkl;
         private readonly NomenklManager nomManager = new NomenklManager();
-        private readonly Core.EntityViewModel.Warehouse Warehouse;
+        private readonly Core.EntityViewModel.NomenklManagement.Warehouse Warehouse;
         private AddNomenklFromInvoiceProviderUC myDataUserControl;
 
         #endregion

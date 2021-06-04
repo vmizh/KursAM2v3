@@ -7,6 +7,8 @@ using System.Runtime.Serialization;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;

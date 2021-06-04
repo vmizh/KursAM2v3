@@ -3,7 +3,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using Core;
-using Core.EntityViewModel;
+using Core.EntityViewModel.Cash;
+using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors;
@@ -290,32 +291,32 @@ namespace KursAM2.View.Finance.Cash
             var item = StandartDialogs.SelectInvoiceClient(dtx, true, true);
             if (item == null) return;
             var winManager = new WindowManager();
-            if (item.SF_DATE != doc.DATE_ORD)
+            if (item.DocDate != doc.DATE_ORD)
             {
                 var res = winManager.ShowWinUIMessageBox(
-                    $"Дата счета {item.SF_DATE.ToShortDateString()} не совпадает с датой ордера {doc.DATE_ORD}." +
+                    $"Дата счета {item.DocDate.ToShortDateString()} не совпадает с датой ордера {doc.DATE_ORD}." +
                     "Установить дату ордера равной дате счета?", "Запрос", MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
                 if (res == MessageBoxResult.Yes)
                 {
-                    doc.MaxSumma = (decimal) (item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma);
-                    doc.KONTRAGENT_DC = item.SF_CLIENT_DC;
-                    doc.DATE_ORD = item.SF_DATE;
-                    doc.SUMM_ORD = item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma;
-                    doc.KONTR_CRS_DC = item.SF_CRS_DC;
-                    doc.Currency = MainReferences.Currencies[item.SF_CRS_DC];
+                    doc.MaxSumma = (decimal) (item.Summa - item.PaySumma);
+                    doc.KONTRAGENT_DC = item.Entity.SF_CLIENT_DC;
+                    doc.DATE_ORD = item.DocDate;
+                    doc.SUMM_ORD = item.Summa - item.PaySumma;
+                    doc.KONTR_CRS_DC = item.Entity.SF_CRS_DC;
+                    doc.Currency = MainReferences.Currencies[item.Entity.SF_CRS_DC];
                     doc.SFactName = item.ToString();
                     doc.SFACT_DC = item.DocCode;
                     doc.NOTES_ORD = item.SF_NOTE;
                 }
                 else
                 {
-                    doc.MaxSumma = (decimal) (item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma);
-                    doc.KONTRAGENT_DC = item.SF_CLIENT_DC;
-                    doc.SUMM_ORD = item.SF_CRS_SUMMA_K_OPLATE;
-                    doc.KONTR_CRS_DC = item.SF_CRS_DC;
-                    doc.Currency = MainReferences.Currencies[item.SF_CRS_DC];
-                    doc.SUMM_ORD = item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma;
+                    doc.MaxSumma = (decimal) (item.Summa - item.PaySumma);
+                    doc.KONTRAGENT_DC = item.Entity.SF_CLIENT_DC;
+                    doc.SUMM_ORD = item.Summa;
+                    doc.KONTR_CRS_DC = item.Entity.SF_CRS_DC;
+                    doc.Currency = MainReferences.Currencies[item.Entity.SF_CRS_DC];
+                    doc.SUMM_ORD = item.Summa - item.PaySumma;
                     doc.SFactName = item.ToString();
                     doc.SFACT_DC = item.DocCode;
                     doc.NOTES_ORD = item.SF_NOTE;
@@ -323,12 +324,12 @@ namespace KursAM2.View.Finance.Cash
             }
             else
             {
-                doc.MaxSumma = (decimal) (item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma);
-                doc.KONTRAGENT_DC = item.SF_CLIENT_DC;
-                doc.SUMM_ORD = item.SF_CRS_SUMMA_K_OPLATE;
-                doc.KONTR_CRS_DC = item.SF_CRS_DC;
-                doc.Currency = MainReferences.Currencies[item.SF_CRS_DC];
-                doc.SUMM_ORD = item.SF_CRS_SUMMA_K_OPLATE - item.PaySumma;
+                doc.MaxSumma = (decimal) (item.Summa - item.PaySumma);
+                doc.KONTRAGENT_DC = item.Entity.SF_CLIENT_DC;
+                doc.SUMM_ORD = item.Summa;
+                doc.KONTR_CRS_DC = item.Entity.SF_CRS_DC;
+                doc.Currency = MainReferences.Currencies[item.Entity.SF_CRS_DC];
+                doc.SUMM_ORD = item.Summa - item.PaySumma;
                 doc.SFactName = item.ToString();
                 doc.SFACT_DC = item.DocCode;
                 doc.NOTES_ORD = item.SF_NOTE;

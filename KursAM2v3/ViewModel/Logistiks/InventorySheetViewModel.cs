@@ -12,7 +12,7 @@ namespace KursAM2.ViewModel.Logistiks
         private bool myIsClosed;
         private int myNum;
         private ObservableCollection<InventorySheetRowViewModel> myRows;
-        private Core.EntityViewModel.Warehouse myWarehouse;
+        private Core.EntityViewModel.NomenklManagement.Warehouse myWarehouse;
 
         public InventorySheetViewModel()
         {
@@ -46,7 +46,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public Core.EntityViewModel.Warehouse Warehouse
+        public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse
         {
             get => myWarehouse;
             set

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Core;
+using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -79,7 +80,7 @@ namespace KursAM2.ViewModel.Reference
                 if (myCurrentSDRSchet != null)
                     if (myCurrentSDRSchet.State == RowStatus.Edited)
                     {
-                        var old = SDRSchetCollectionEdited.FirstOrDefault(_ => _.DOC_CODE == myCurrentSDRSchet.DocCode);
+                        var old = SDRSchetCollectionEdited.FirstOrDefault(_ => _.DocCode == myCurrentSDRSchet.DocCode);
                         if (old != null)
                         {
                             SDRSchetCollectionEdited.Remove(old);
@@ -292,17 +293,17 @@ namespace KursAM2.ViewModel.Reference
                             {
                                 DOC_CODE = newSchetDC,
                                 SHPZ_NAME = sch.Name,
-                                SHPZ_DELETED = sch.SHPZ_DELETED,
-                                OP_CODE = sch.OP_CODE,
-                                SHPZ_SHIRF = sch.SHPZ_SHIRF,
-                                SHPZ_1OSN_0NO = sch.SHPZ_1OSN_0NO,
+                                SHPZ_DELETED = sch.Entity.SHPZ_DELETED,
+                                OP_CODE = sch.Entity.OP_CODE,
+                                SHPZ_SHIRF = sch.Entity.SHPZ_SHIRF,
+                                SHPZ_1OSN_0NO = sch.Entity.SHPZ_1OSN_0NO,
                                 SHPZ_STATIA_DC = newStateDC,
-                                SHPZ_ELEMENT_DC = sch.SHPZ_ELEMENT_DC,
-                                SHPZ_PODOTCHET = sch.SHPZ_PODOTCHET,
-                                SHPZ_1DOHOD_0_RASHOD = sch.SHPZ_1DOHOD_0_RASHOD,
-                                SHPZ_1TARIFIC_0NO = sch.SHPZ_1TARIFIC_0NO,
-                                SHPZ_1ZARPLATA_0NO = sch.SHPZ_1ZARPLATA_0NO,
-                                SHPZ_NOT_USE_IN_OTCH_DDS = sch.SHPZ_NOT_USE_IN_OTCH_DDS
+                                SHPZ_ELEMENT_DC = sch.Entity.SHPZ_ELEMENT_DC,
+                                SHPZ_PODOTCHET = sch.Entity.SHPZ_PODOTCHET,
+                                SHPZ_1DOHOD_0_RASHOD = sch.Entity.SHPZ_1DOHOD_0_RASHOD,
+                                SHPZ_1TARIFIC_0NO = sch.Entity.SHPZ_1TARIFIC_0NO,
+                                SHPZ_1ZARPLATA_0NO = sch.Entity.SHPZ_1ZARPLATA_0NO,
+                                SHPZ_NOT_USE_IN_OTCH_DDS = sch.Entity.SHPZ_NOT_USE_IN_OTCH_DDS
                             });
                             newSchetDC++;
                         }
@@ -348,7 +349,7 @@ namespace KursAM2.ViewModel.Reference
 
         private bool IsHasChilds(SDRState sdr)
         {
-            return SDRStateCollection.Any(_ => _.SZ_PARENT_DC == sdr.DOC_CODE);
+            return SDRStateCollection.Any(_ => _.SZ_PARENT_DC == sdr.DocCode);
         }
         
         #endregion
