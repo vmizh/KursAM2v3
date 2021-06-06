@@ -271,13 +271,13 @@ namespace KursAM2.ViewModel.Reference
                 CO = MainReferences.COList.Count == 1 ? MainReferences.COList.Values.First() : null,
                 BA_CURRENCY = 1,
                 IsNegative = false,
-                BA_BANK_NAME = bank.BANK_NAME,
+                BA_BANK_NAME = bank.Name,
                 BA_TRANSIT = 0,
                 BA_BANK_AS_KONTRAGENT_DC = null,
                 Bank = bank
             };
             if (string.IsNullOrWhiteSpace(newBank.Name))
-                newBank.Name = bank.BANK_NAME;
+                newBank.Name = bank.Name;
             Banks.Add(newBank);
             RaisePropertiesChanged(nameof(IsCanUserRight));
         }

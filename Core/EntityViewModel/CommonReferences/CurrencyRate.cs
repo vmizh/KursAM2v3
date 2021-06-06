@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 
-namespace Core.ViewModel.Common
+namespace Core.EntityViewModel.CommonReferences
 {
     public class CurrencyRate
     {

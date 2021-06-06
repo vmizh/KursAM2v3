@@ -78,8 +78,7 @@ namespace ServerCalculate
                         GlobalOptions.SystemProfile.NomenklCalcType = NomenklCalcType.NakladSeparately;
                         break;
                 }
-                GlobalOptions.MainReferences = new MainReferences();
-                GlobalOptions.MainReferences.Reset();
+                MainReferences.Reset();
                 while (!MainReferences.IsReferenceLoadComplete)
                 {
                 }

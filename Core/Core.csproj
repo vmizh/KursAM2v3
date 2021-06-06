@@ -203,9 +203,9 @@
     <Compile Include="ViewModel\Base\KursBaseViewModel.cs" />
     <Compile Include="ViewModel\Base\KursWindowSearchBaseViewModel.cs" />
     <Compile Include="EntityViewModel\Bank\BankAccount.cs" />
-    <Compile Include="ViewModel\Common\DocHistoryViewModel.cs" />
-    <Compile Include="ViewModel\KursButton.cs" />
-    <Compile Include="ViewModel\Common\ICheckViewModel.cs" />
+    <Compile Include="EntityViewModel\Systems\DocHistoryViewModel.cs" />
+    <Compile Include="Menu\KursButton.cs" />
+    <Compile Include="EntityViewModel\ICheckViewModel.cs" />
     <Compile Include="WindowsManager\ErrorMessageBase.cs" />
     <Compile Include="WindowsManager\StandartErrorManager.cs" />
     <Compile Include="RemainderCurrenciesDatePeriod.cs" />
@@ -244,12 +244,11 @@
     <Compile Include="ViewModel\Base\CurrencyCode.cs" />
     <Compile Include="ViewModel\Base\EntityLoadCodition.cs" />
     <Compile Include="ViewModel\Base\IDataUserControl.cs" />
-    <Compile Include="ViewModel\Common\CrossCurrencyRate.cs" />
+    <Compile Include="EntityViewModel\CommonReferences\CrossCurrencyRate.cs" />
     <Compile Include="Helper\DataAnnotationForFluentApiBase.cs" />
     <Compile Include="EntityViewModel\NomenklManagement\NomenklMoveOnSkladViewModel.cs" />
     <Compile Include="EntityViewModel\Systems\UserProfileViewModel.cs" />
-    <Compile Include="ViewModel\Common\ProjectsDocsViewModel.cs" />
-    <Compile Include="ViewModel\Common\Project.cs" />
+    <Compile Include="EntityViewModel\CommonReferences\Project.cs" />
     <Compile Include="EntityViewModel\NomenklManagement\NomenklMainViewModel.cs" />
     <Compile Include="Errors.cs" />
     <Compile Include="Control\SearchButtonEditor.xaml.cs">
@@ -319,13 +318,10 @@
     <Compile Include="ViewModel\Base\RSWindowSearchViewModelBase.cs" />
     <Compile Include="ViewModel\Base\RSWindowViewModelBase.cs" />
     <Compile Include="EntityViewModel\CommonReferences\CentrOfResponsibility.cs" />
-    <Compile Include="ViewModel\Common\Country.cs" />
-    <Compile Include="ViewModel\Common\CountryDialogViewModel.cs" />
-    <Compile Include="ViewModel\Common\CurrencyRate.cs" />
+    <Compile Include="EntityViewModel\CommonReferences\CurrencyRate.cs" />
     <Compile Include="EntityViewModel\NomenklManagement\NomenklRemains.cs" />
     <Compile Include="EntityViewModel\NomenklManagement\NomenklSkladRemain.cs" />
     <Compile Include="EntityViewModel\NomenklManagement\NomenklSkladRemains.cs" />
-    <Compile Include="ViewModel\Common\Persona.cs" />
     <Compile Include="EntityViewModel\CommonReferences\SDRSchet.cs" />
     <Compile Include="EntityViewModel\CommonReferences\SDRState.cs" />
     <Compile Include="EntityViewModel\Systems\User.cs" />
@@ -334,7 +330,6 @@
     <Compile Include="EntityViewModel\Vzaimozachet\TD_110ViewModel.cs" />
     <Compile Include="EntityViewModel\Vzaimozachet\SD_110ViewModel.cs" />
     <Compile Include="EntityViewModel\Vzaimozachet\UD_110ViewModel.cs" />
-    <Compile Include="ViewModel\StateEventArgs.cs" />
     <Compile Include="WindowsManager\IWindowManager.cs" />
     <Compile Include="WindowsManager\WindowManager.cs" />
   </ItemGroup>

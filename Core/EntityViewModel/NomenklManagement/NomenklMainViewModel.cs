@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Data;
@@ -10,7 +11,7 @@ namespace Core.EntityViewModel.NomenklManagement
 {
     public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>
     {
-        private Country myCountry;
+        private CountriesViewModel myCountry;
         private NomenklMain myEntity;
         private NomenklGroup myNomenklCategory;
         public NomenklProductType myNomenklType;
@@ -184,7 +185,7 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
-        public Country Country
+        public CountriesViewModel Country
         {
             get => myCountry;
             set
@@ -384,7 +385,7 @@ namespace Core.EntityViewModel.NomenklManagement
 
         private void LoadReference()
         {
-            myCountry = new Country(Entity.Countries);
+            myCountry = new CountriesViewModel(Entity.Countries);
             myNomenklType = new NomenklProductType(Entity.SD_119);
             myNomenklCategory = new NomenklGroup(Entity.SD_82);
             myUnit = new Unit(Entity.SD_175);

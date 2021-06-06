@@ -27,8 +27,7 @@ namespace KursAM2.Tests
                 Name = "sysadm",
                 NickName = "sysadm"
             };
-            GlobalOptions.MainReferences = new MainReferences();
-            GlobalOptions.MainReferences.Reset();
+            MainReferences.Reset();
             while (!MainReferences.IsReferenceLoadComplete)
             {
             }

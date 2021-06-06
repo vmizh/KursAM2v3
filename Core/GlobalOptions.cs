@@ -33,7 +33,7 @@ namespace Core
         public static Guid DataBaseId { set; get; }
         public static Brush DatabaseColor { set; get; }
         public static SystemProfile SystemProfile { set; get; }
-        public static MainReferences MainReferences { set; get; }
+        //public static MainReferences MainReferences { set; get; }
         public static string Version { set; get; }
 
         public static KursSystemEntities KursSystem()
@@ -73,9 +73,8 @@ namespace Core
                 Password = ",juk.,bnyfc"
             }.ConnectionString;
             ret.Database.Connection.ConnectionString = SqlConnectionString;
-            if (MainReferences != null && MainReferences.IsReferenceLoadComplete)
+            if (MainReferences.IsReferenceLoadComplete)
                 return ret;
-            MainReferences = new MainReferences();
             MainReferences.Reset();
             while (!MainReferences.IsReferenceLoadComplete)
             {

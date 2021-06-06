@@ -308,7 +308,7 @@ namespace KursAM2.ViewModel.Reference
                     DISABLED = item.Entity.DISABLED,
                     BankDC = item.Entity.BANK_DC,
                     Code = item.Code,
-                    Bank = AllBanks.FirstOrDefault(_ => _.DOC_CODE == item.Entity.BANK_DC),
+                    Bank = AllBanks.FirstOrDefault(_ => _.DocCode == item.Entity.BANK_DC),
                     State = RowStatus.NotEdited
                 });
             }

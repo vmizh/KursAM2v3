@@ -121,7 +121,7 @@ namespace KursAM2.ViewModel.Reference.Dialogs
                     ctx.SD_44.Add(new SD_44
                     {
                         DOC_CODE = newBank.DocCode,
-                        BANK_NAME = newBank.BANK_NAME,
+                        BANK_NAME = newBank.Name,
                         CORRESP_ACC = newBank.CORRESP_ACC,
                         ADDRESS = newBank.ADDRESS,
                         POST_CODE = newBank.POST_CODE

@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Core.ViewModel
+namespace Core.Menu
 {
     public class KursButton : Button
     {

@@ -935,7 +935,10 @@ namespace Core.EntityViewModel.CommonReferences.Kontragent
 
         private void LoadReference()
         {
-            if (MainReferences.Currencies == null) return;
+            if (MainReferences.Currencies == null)
+            {
+              return;
+            }
             if (Entity.VALUTA_DC != null && MainReferences.Currencies != null)
                 BalansCurrency = MainReferences.Currencies[Entity.VALUTA_DC.Value];
             Group = new KontragentGroup(Entity.UD_43);
@@ -952,7 +955,10 @@ namespace Core.EntityViewModel.CommonReferences.Kontragent
                     GruzoRequisities.Add(new KontragentGruzoRequisite(item));
             if (Entity.TD_43 != null && Entity.TD_43.Count > 0)
                 foreach (var item in Entity.TD_43.ToList())
-                    KontragentBanks.Add(new KontragentBank(item));
+                {
+                    var newItem = new KontragentBank(item);
+                    KontragentBanks.Add(newItem);
+                }
 
             // ReSharper disable once VirtualMemberCallInConstructor
             State = RowStatus.NotEdited;

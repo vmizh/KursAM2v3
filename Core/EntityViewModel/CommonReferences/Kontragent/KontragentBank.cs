@@ -21,8 +21,15 @@ namespace Core.EntityViewModel.CommonReferences.Kontragent
                 {
                     DOC_CODE = -1, CODE = -1
                 };
-            else if (entity.SD_44 != null)
-                Bank = new Bank.Bank(entity.SD_44);
+            else
+            {
+                Entity = entity;
+                if (entity.SD_44 != null)
+                {
+                    Bank = new Bank.Bank(entity.SD_44);
+                }
+            }
+
         }
 
         public TD_43 Entity
@@ -41,7 +48,7 @@ namespace Core.EntityViewModel.CommonReferences.Kontragent
             get => myBank;
             set
             {
-                if (myBank != null && myBank.Equals(value)) return;
+                if (myBank == value) return;
                 myBank = value;
                 Entity.BANK_DC = value?.DocCode;
                 RaisePropertyChanged();

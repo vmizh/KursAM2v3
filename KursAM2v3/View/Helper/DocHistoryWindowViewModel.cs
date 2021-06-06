@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
+using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 

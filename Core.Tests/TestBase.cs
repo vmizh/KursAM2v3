@@ -24,8 +24,7 @@ namespace Core.Tests
                 Name = "sysadm",
                 NickName = "sysadm"
             };
-            GlobalOptions.MainReferences = new MainReferences();
-            GlobalOptions.MainReferences.Reset(LoadReferenceStrategy.WithoutKontragentAndNomenkl);
+            MainReferences.Reset(LoadReferenceStrategy.WithoutKontragentAndNomenkl);
             while (!MainReferences.IsReferenceLoadComplete)
             {
             }

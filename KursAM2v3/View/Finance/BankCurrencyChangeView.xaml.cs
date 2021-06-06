@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.Bank;
+using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Core.WindowsManager;

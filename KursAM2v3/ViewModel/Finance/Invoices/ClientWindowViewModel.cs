@@ -8,13 +8,12 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.Employee;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.Vzaimozachet;
 using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Dialogs;
@@ -70,6 +69,17 @@ namespace KursAM2.ViewModel.Finance.Invoices
         #endregion
 
         #region Properties
+
+        public List<Currency> CurrencyList => MainReferences.Currencies.Values.ToList();
+        public List<CentrOfResponsibility> COList => MainReferences.COList.Values.ToList();
+        public List<Employee> EmployeeList => MainReferences.Employees.Values.ToList();
+        public List<FormPay> FormRaschets => MainReferences.FormRaschets.Values.ToList();
+        public List<VzaimoraschetType> VzaimoraschetTypes => MainReferences.VzaimoraschetTypes.Values.ToList();
+        public List<PayCondition> PayConditions => MainReferences.PayConditions.Values.ToList();
+
+        public List<CountriesViewModel> Countries => MainReferences.Countries.Values.ToList();
+
+        public override string LayoutName => "InvoiceClientView2";
 
         public RSWindowViewModelBase ParentForm
         {
@@ -136,6 +146,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             get
             {
+                if (Document == null) return false;
                 FooterText = string.Empty;
                 if (Document.State != RowStatus.NotEdited)
                 {
@@ -162,21 +173,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                                                Document.SF_VZAIMOR_TYPE_DC != null
                                                                && Document.SF_FORM_RASCH_DC != null
                           || Document.DeletedRows.Count > 0 || Document.Rows.Any(_ => _.State != RowStatus.NotEdited);
-                if (!res)
-                {
-                    if (Document.Entity.SF_CLIENT_DC == 0)
-                        FooterText += "Не выбран контрагент. ";
-                    if (Document.Entity.SF_CRS_DC == 0)
-                        FooterText += "Не выбрана валюта документа. ";
-                    if (Document.SF_CENTR_OTV_DC == null)
-                        FooterText += "Не выбран Центр ответственности. ";
-                    if (Document.PayCondition == null)
-                        FooterText += "Не выбрано условие оплаты. ";
-                    if (Document.SF_VZAIMOR_TYPE_DC == null)
-                        FooterText += "Не выбран тип продукции. ";
-                    if (Document.SF_FORM_RASCH_DC == null)
-                        FooterText += "Не выбрана форма расчетов. ";
-                }
+                //if (!res)
+                //{
+                //    if (Document.Entity.SF_CLIENT_DC == 0)
+                //        FooterText += "Не выбран контрагент. ";
+                //    if (Document.Entity.SF_CRS_DC == 0)
+                //        FooterText += "Не выбрана валюта документа. ";
+                //    if (Document.SF_CENTR_OTV_DC == null)
+                //        FooterText += "Не выбран Центр ответственности. ";
+                //    if (Document.PayCondition == null)
+                //        FooterText += "Не выбрано условие оплаты. ";
+                //    if (Document.SF_VZAIMOR_TYPE_DC == null)
+                //        FooterText += "Не выбран тип продукции. ";
+                //    if (Document.SF_FORM_RASCH_DC == null)
+                //        FooterText += "Не выбрана форма расчетов. ";
+                //}
 
                 return res;
             }
@@ -410,21 +421,92 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #endregion
 
-        #region Справочники
-
-        // ReSharper disable UnusedMember.Global
-        public List<Kontragent> Kontragents => MainReferences.ActiveKontragents.Values.ToList();
-        public List<CentrOfResponsibility> COList => MainReferences.COList.Values.ToList();
-        public List<FormPay> FormRaschets => MainReferences.FormRaschets.Values.ToList();
-        public List<VzaimoraschetType> VzaimoraschetTypes => MainReferences.VzaimoraschetTypes.Values.ToList();
-        public List<PayCondition> PayConditions => MainReferences.PayConditions.Values.ToList();
-
-        public List<Country> Countries => MainReferences.Countries.Values.ToList();
-        // ReSharper restore UnusedMember.Global
-
-        #endregion
-
         #region Command
+
+        public ICommand ClientSelectCommand
+        {
+            get { return new Command(ClientSelect, _ => true); }
+        }
+
+        private void ClientSelect(object obj)
+        {
+            if (Document == null)
+                return;
+            if (Document.ShipmentRows.Count > 0)
+            {
+                WindowManager.ShowMessage("По счету есть расходные накладные. Изменить контрагента нельзя.",
+                    "Предупреждение", MessageBoxImage.Information);
+                return;
+            }
+
+            if (Document.PaySumma != 0)
+            {
+                WindowManager.ShowMessage("По счету есть Оплата. Изменить контрагента нельзя.",
+                    "Предупреждение", MessageBoxImage.Information);
+                return;
+            }
+
+            var kontr = StandartDialogs.SelectKontragent(Document.Currency);
+            if (kontr == null) return;
+            if (Document.Rows.Any(_ => !_.IsUsluga && _.Nomenkl.Currency.DocCode != kontr.BalansCurrency.DocCode))
+            {
+                WindowManager.ShowMessage(
+                    "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
+                    "Предупреждение", MessageBoxImage.Information);
+                return;
+            }
+
+            Document.Client = kontr;
+            Document.Currency = kontr.BalansCurrency;
+            Document.SF_KONTR_CRS_RATE = 1;
+        }
+
+        public ICommand DilerSelectCommand
+        {
+            get { return new Command(DilerSelect, _ => true); }
+        }
+
+        private void DilerSelect(object obj)
+        {
+            if (Document == null)
+                return;
+            var kontr = StandartDialogs.SelectKontragent(Document.Currency);
+            if (kontr == null) return;
+            if (Document.Rows.Any(_ => !_.IsUsluga && _.Nomenkl.Currency.DocCode != kontr.BalansCurrency.DocCode))
+            {
+                WindowManager.ShowMessage(
+                    "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
+                    "Предупреждение", MessageBoxImage.Information);
+                return;
+            }
+
+            Document.Diler = kontr;
+            Document.SF_DILER_CRS_DC = kontr.BalansCurrency.DocCode;
+            Document.SF_DILER_SUMMA = 0;
+            Document.SF_DILER_RATE = 1;
+        }
+
+        public ICommand ReceiverSelectCommand
+        {
+            get { return new Command(ReceiverSelect, _ => true); }
+        }
+
+        private void ReceiverSelect(object obj)
+        {
+            if (Document == null)
+                return;
+            var kontr = StandartDialogs.SelectKontragent(Document.Currency);
+            if (kontr == null) return;
+            if (Document.Rows.Any(_ => !_.IsUsluga && _.Nomenkl.Currency.DocCode != kontr.BalansCurrency.DocCode))
+            {
+                WindowManager.ShowMessage(
+                    "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
+                    "Предупреждение", MessageBoxImage.Information);
+                return;
+            }
+
+            Document.Receiver = kontr;
+        }
 
         public override void RefreshData(object obj)
         {

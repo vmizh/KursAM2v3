@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
+using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using DevExpress.Xpf.Editors.Settings;

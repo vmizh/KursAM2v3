@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 
-namespace Core.ViewModel.Common
+namespace Core.EntityViewModel.CommonReferences
 {
     [MetadataType(typeof(DataAnnotationsCrossCurrencyRate))]
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class CrossCurrencyRate : RSViewModelBase
     {
         public readonly ObservableCollection<CrossCurrencyRate> CurrencyList =

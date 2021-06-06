@@ -21,17 +21,9 @@ namespace Core.EntityViewModel.Invoices
     [SuppressMessage("ReSharper", "MemberInitializerValueIgnored")]
     [SuppressMessage("ReSharper", "MethodOverloadWithOptionalParameter")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class InvoiceClient : RSViewModelBase, IEntity<SD_84>,IDataErrorInfo
+    public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>,IDataErrorInfo
     {
-        private CentrOfResponsibility myCO;
-        private Currency myCurrency;
         private SD_84 myEntity;
-        private FormPay myFormRaschet;
-        private Employee.Employee myPersonaResponsible;
-        private PayCondition myPyCondition;
-        private Kontragent myReceiver;
-        private decimal mySummaOtgruz;
-        private VzaimoraschetType myVzaimoraschetType;
 
         public InvoiceClient()
         {
@@ -120,15 +112,16 @@ namespace Core.EntityViewModel.Invoices
         public ObservableCollection<InvoicePaymentDocument> PaymentDocs { set; get; } =
             new ObservableCollection<InvoicePaymentDocument>();
 
+        public decimal DilerSumma => (decimal) Rows.Sum(_ => _.SFT_NACENKA_DILERA ?? 0);
+
         public Kontragent Receiver
         {
             //SF_RECEIVER_KONTR_DC
-            get => myReceiver;
+            get => MainReferences.GetKontragent(Entity.SF_RECEIVER_KONTR_DC);
             set
             {
-                if (myReceiver != null && myReceiver.Equals(value)) return;
-                myReceiver = value;
-                Entity.SF_RECEIVER_KONTR_DC = myReceiver?.DOC_CODE;
+                if (MainReferences.GetKontragent(Entity.SF_RECEIVER_KONTR_DC) == value) return;
+                Entity.SF_RECEIVER_KONTR_DC = value?.DOC_CODE;
                 RaisePropertyChanged();
             }
         }
@@ -150,87 +143,86 @@ namespace Core.EntityViewModel.Invoices
         /// </summary>
         public Employee.Employee PersonaResponsible
         {
-            get => myPersonaResponsible;
+            get => MainReferences.GetEmployee(Entity.PersonalResponsibleDC);
             set
             {
-                if (myPersonaResponsible != null && myPersonaResponsible.Equals(value)) return;
-                myPersonaResponsible = value;
-                Entity.PersonalResponsibleDC = myPersonaResponsible?.DocCode;
+                if (MainReferences.GetEmployee(Entity.PersonalResponsibleDC) == value) return;
+                Entity.PersonalResponsibleDC = value?.DocCode;
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(EmployeeTabelNumber));
             }
         }
 
+        public int? EmployeeTabelNumber => PersonaResponsible?.TabelNumber;
+
         public CentrOfResponsibility CO
         {
-            get => myCO;
+            get => MainReferences.GetCO(Entity.SF_CENTR_OTV_DC);
             set
             {
-                if (myCO != null && myCO.Equals(value)) return;
-                myCO = value;
-                Entity.SF_CENTR_OTV_DC = myCO?.DocCode;
+                if (MainReferences.GetCO(Entity.SF_CENTR_OTV_DC) == value) return;
+                Entity.SF_CENTR_OTV_DC = value?.DocCode;
                 RaisePropertyChanged();
             }
         }
 
         public VzaimoraschetType VzaimoraschetType
         {
-            get => myVzaimoraschetType;
+            get => MainReferences.GetVzaimoraschetType(Entity.SF_VZAIMOR_TYPE_DC);
             set
             {
-                if (myVzaimoraschetType != null && myVzaimoraschetType.Equals(value)) return;
-                myVzaimoraschetType = value;
-                Entity.SF_VZAIMOR_TYPE_DC = myVzaimoraschetType?.DocCode;
+                if (MainReferences.GetVzaimoraschetType(Entity.SF_VZAIMOR_TYPE_DC) == value) return;
+                Entity.SF_VZAIMOR_TYPE_DC = value?.DocCode;
                 RaisePropertyChanged();
             }
         }
 
         public FormPay FormRaschet
         {
-            get => myFormRaschet;
+            get => MainReferences.GetFormPay(Entity.SF_FORM_RASCH_DC);
             set
             {
-                if (myFormRaschet != null && myFormRaschet.Equals(value)) return;
-                myFormRaschet = value;
-                Entity.SF_FORM_RASCH_DC = myFormRaschet?.DocCode;
+                if (MainReferences.GetFormPay(Entity.SF_FORM_RASCH_DC) == value) return;
+                Entity.SF_FORM_RASCH_DC = value?.DocCode;
                 RaisePropertyChanged();
             }
         }
 
         public PayCondition PayCondition
         {
-            get => myPyCondition;
+            get => MainReferences.GetPayCondition(Entity.SF_PAY_COND_DC);
             set
             {
-                if (myPyCondition != null && myPyCondition.Equals(value)) return;
-                myPyCondition = value;
-                if (myPyCondition != null)
-                    Entity.SF_PAY_COND_DC = myPyCondition.DocCode;
+                if (MainReferences.GetPayCondition(Entity.SF_PAY_COND_DC) == value) return;
+                if (value != null)
+                    Entity.SF_PAY_COND_DC = value.DocCode;
                 RaisePropertyChanged();
             }
         }
 
         public decimal SummaOtgruz
         {
-            get => mySummaOtgruz;
-            set
+            get
             {
-                if (mySummaOtgruz == value) return;
-                mySummaOtgruz = value;
-                RaisePropertyChanged();
+                decimal sum = 0;
+                if (Entity.TD_84 is {Count: > 0})
+                    sum += (from d in Entity.TD_84
+                        from o in d.TD_24
+                        select o.DDT_KOL_RASHOD * ((d.SFT_SUMMA_K_OPLATE ?? 0) / (decimal) d.SFT_KOL)).Sum();
+                return sum;
             }
         }
 
         public Currency Currency
         {
-            get => myCurrency;
+            get => MainReferences.GetCurrency(Entity.SF_CRS_DC);
             set
             {
-                if (Equals(myCurrency, value)) return;
-                myCurrency = value;
-                if (myCurrency != null)
+                if (MainReferences.GetCurrency(Entity.SF_CRS_DC) == value) return;
+                if (value != null)
                 {
-                    Entity.SF_CRS_DC = myCurrency.DocCode;
-                    Entity.SF_KONTR_CRS_DC = myCurrency.DocCode;
+                    Entity.SF_CRS_DC = value.DocCode;
+                    Entity.SF_KONTR_CRS_DC = value.DocCode;
                 }
 
                 RaisePropertyChanged();
@@ -1108,14 +1100,9 @@ namespace Core.EntityViewModel.Invoices
                 CO = MainReferences.COList[Entity.SF_CENTR_OTV_DC.Value];
             if (Entity.PersonalResponsibleDC != null)
                 PersonaResponsible = MainReferences.Employees[Entity.PersonalResponsibleDC.Value];
-            SummaOtgruz = 0;
-            if (Entity.TD_84 != null && Entity.TD_84.Count > 0)
-                foreach (var d in Entity.TD_84)
-                foreach (var o in d.TD_24)
-                    SummaOtgruz += o.DDT_KOL_RASHOD * ((d.SFT_SUMMA_K_OPLATE ?? 0) / (decimal) d.SFT_KOL);
         }
 
-        public virtual void Save(SD_84 doc)
+        public void Save(SD_84 doc)
         {
             throw new NotImplementedException();
         }
@@ -1167,12 +1154,12 @@ namespace Core.EntityViewModel.Invoices
             throw new NotImplementedException();
         }
 
-        public virtual SD_84 Load(decimal dc)
+        public SD_84 Load(decimal dc)
         {
             throw new NotImplementedException();
         }
 
-        public virtual SD_84 Load(Guid id)
+        public SD_84 Load(Guid id)
         {
             throw new NotImplementedException();
         }

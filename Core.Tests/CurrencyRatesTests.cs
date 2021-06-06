@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Core.EntityViewModel.CommonReferences;
 using NUnit.Framework;
 using Core.ViewModel.Common;
 

@@ -10,7 +10,7 @@ using DevExpress.Mvvm.DataAnnotations;
 namespace Core.EntityViewModel.CommonReferences
 {
     [MetadataType(typeof(DataAnnotationsCurrency))]
-    public class Currency : RSViewModelBase, IEntity<SD_301>, IEquatable<Currency>
+    public sealed class Currency : RSViewModelBase, IEntity<SD_301>, IEquatable<Currency>
     {
         private SD_301 myEntity;
 
@@ -227,7 +227,7 @@ namespace Core.EntityViewModel.CommonReferences
             return DocCode.GetHashCode() ^ 397;
         }
 
-        public virtual void Save(SD_301 doc)
+        public void Save(SD_301 doc)
         {
             throw new NotImplementedException();
         }
@@ -298,12 +298,12 @@ namespace Core.EntityViewModel.CommonReferences
             throw new NotImplementedException();
         }
 
-        public virtual SD_301 Load(decimal dc)
+        public SD_301 Load(decimal dc)
         {
             throw new NotImplementedException();
         }
 
-        public virtual SD_301 Load(Guid id)
+        public SD_301 Load(Guid id)
         {
             throw new NotImplementedException();
         }

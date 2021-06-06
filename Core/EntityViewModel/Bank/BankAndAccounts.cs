@@ -109,7 +109,7 @@ namespace Core.EntityViewModel.Bank
                 if (myBank != null && myBank.Equals(value)) return;
                 myBank = value;
                 if (myBank != null)
-                    BankDC = myBank.DOC_CODE;
+                    BankDC = myBank.DocCode;
                 RaisePropertyChanged();
             }
         }

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using Core;
+using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Common;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;

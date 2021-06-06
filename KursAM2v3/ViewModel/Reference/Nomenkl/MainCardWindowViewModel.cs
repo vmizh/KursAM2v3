@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel;
+using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.NomenklManagement;
 using Core.Invoices.EntityViewModel;
 using Core.Menu;
@@ -73,7 +74,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         public ObservableCollection<NomenklGroup> NomenklCategoryCollection { set; get; } =
             new ObservableCollection<NomenklGroup>();
 
-        public ObservableCollection<Country> CountryCollection { set; get; } = new ObservableCollection<Country>();
+        public ObservableCollection<CountriesViewModel> CountryCollection { set; get; } 
+            = new ObservableCollection<CountriesViewModel>();
         public ObservableCollection<Unit> UnitCollection { set; get; } = new ObservableCollection<Unit>();
 
         public override bool IsCanSaveData => NomenklMain != null && NomenklMain.State != RowStatus.NotEdited &&
@@ -114,7 +116,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 UnitCollection.Clear();
                 NomenklProductCollection.Clear();
                 foreach (var t in ctx.Countries.ToList())
-                    CountryCollection.Add(new Country(t));
+                    CountryCollection.Add(new CountriesViewModel(t));
                 foreach (var t in ctx.SD_119.ToList())
                     NomenklTypeCollection.Add(new NomenklProductType(t));
                 foreach (var c in ctx.SD_82.ToList())

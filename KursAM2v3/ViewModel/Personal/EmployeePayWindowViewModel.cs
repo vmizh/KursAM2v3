@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Core;
+using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;

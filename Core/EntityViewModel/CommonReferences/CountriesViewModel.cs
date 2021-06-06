@@ -11,7 +11,7 @@ namespace Core.EntityViewModel.CommonReferences
 {
     [SuppressMessage("ReSharper", "MethodOverloadWithOptionalParameter")]
     [MetadataType(typeof(CountriesLayoutData_FluentAPI))]
-    public class CountriesViewModel : RSViewModelBase, IEntity<Countries>
+    public sealed class CountriesViewModel : RSViewModelBase, IEntity<Countries>
     {
         private Countries myEntity;
 
@@ -103,6 +103,21 @@ namespace Core.EntityViewModel.CommonReferences
                 RaisePropertyChanged();
             }
         }
+        public override int Code
+        {
+            set
+            {
+                if (Entity.Iso == value) return;
+                Entity.Iso = value;
+                RaisePropertyChanged();
+            }
+            get => (int) Entity.Iso;
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
 
         public ObservableCollection<Countries> Countries { get; set; }
 
@@ -131,7 +146,7 @@ namespace Core.EntityViewModel.CommonReferences
             throw new NotImplementedException();
         }
 
-        public virtual void Save(Countries doc)
+        public void Save(Countries doc)
         {
             throw new NotImplementedException();
         }
@@ -185,12 +200,12 @@ namespace Core.EntityViewModel.CommonReferences
             throw new NotImplementedException();
         }
 
-        public virtual Countries Load(decimal dc, bool isShort = true)
+        public Countries Load(decimal dc, bool isShort = true)
         {
             throw new NotImplementedException();
         }
 
-        public virtual Countries Load(Guid id, bool isShort = true)
+        public Countries Load(Guid id, bool isShort = true)
         {
             throw new NotImplementedException();
         }

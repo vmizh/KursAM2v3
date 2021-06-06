@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.Employee;
 using Core.EntityViewModel.Systems;
 using Core.Menu;
 using Core.ViewModel.Base;
@@ -20,7 +21,7 @@ namespace KursAM2.ViewModel.Personal
     public class PersonaReferenceWindowViewModel : RSWindowViewModelBase
     {
         private readonly ALFAMEDIAEntities myCtx = GlobalOptions.GetEntities();
-        private Persona myCurrentPersona;
+        private Employee myCurrentPersona;
         private User myCurrentUser;
 
         public PersonaReferenceWindowViewModel()
@@ -31,7 +32,7 @@ namespace KursAM2.ViewModel.Personal
             RefreshData(null);
         }
 
-        public ObservableCollection<Persona> PersonaCollection { set; get; } = new ObservableCollection<Persona>();
+        public ObservableCollection<Employee> PersonaCollection { set; get; } = new ObservableCollection<Employee>();
         public ObservableCollection<User> UserCollection { set; get; } = new ObservableCollection<User>();
         public ObservableCollection<User> UserDeleteCollection { set; get; } = new ObservableCollection<User>();
 
@@ -44,7 +45,7 @@ namespace KursAM2.ViewModel.Personal
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public List<Currency> CurenciesCollection { set; get; }
 
-        public Persona CurrentPersona
+        public Employee CurrentPersona
         {
             get => myCurrentPersona;
             set
@@ -77,7 +78,7 @@ namespace KursAM2.ViewModel.Personal
             try
             {
                 foreach (var s in myCtx.SD_2.Include(_ => _.SD_301).ToList())
-                    PersonaCollection.Add(new Persona(s) {State = RowStatus.NotEdited});
+                    PersonaCollection.Add(new Employee(s) {State = RowStatus.NotEdited});
             }
             catch (Exception ex)
             {
@@ -204,7 +205,7 @@ namespace KursAM2.ViewModel.Personal
         // ReSharper disable once InconsistentNaming
         private void addNewPersona(object obj)
         {
-            var newPersona = new Persona
+            var newPersona = new Employee
             {
                 IsDeleted = false,
                 CHANGE_DATE = DateTime.Now,

@@ -1,4 +1,5 @@
-﻿using Core.ViewModel.Base;
+﻿using Core.EntityViewModel.CommonReferences;
+using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 
 namespace KursAM2.ViewModel.Logistiks
@@ -10,6 +11,6 @@ namespace KursAM2.ViewModel.Logistiks
         public decimal Price { set; get; }
         public decimal Summa { set; get; }
         public bool IsUsluga { set; get; }
-        public Country Country { set; get; }
+        public CountriesViewModel Country { set; get; }
     }
 }

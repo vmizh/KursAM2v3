@@ -23,9 +23,9 @@
                            FontSize="15" FontStyle="Italic" FontWeight="Bold" 
                            VerticalAlignment="Center" HorizontalAlignment="Right"/>
     </dx:ThemedWindow.HeaderItems>
-    <d:ThemedWindow.DataContext>
+    <!--<d:ThemedWindow.DataContext>
         <d:DesignInstance Type="invoices:ProviderWindowViewModel" IsDesignTimeCreatable="False" />
-    </d:ThemedWindow.DataContext>
+    </d:ThemedWindow.DataContext>-->
     <DockPanel Style="{StaticResource DXServices}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top"/>
         <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Vertical" DockPanel.Dock="Top"

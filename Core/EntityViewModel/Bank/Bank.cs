@@ -23,7 +23,7 @@ namespace Core.EntityViewModel.Bank
             Entity = entity ?? DefaultValue();
         }
 
-        public decimal DOC_CODE
+        public override decimal DocCode
         {
             get => Entity.DOC_CODE;
             set
@@ -34,29 +34,7 @@ namespace Core.EntityViewModel.Bank
             }
         }
 
-        public override decimal DocCode
-        {
-            get => DOC_CODE;
-            set
-            {
-                if (DOC_CODE == value) return;
-                DOC_CODE = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public override string Name
-        {
-            get => BANK_NAME;
-            set
-            {
-                if (BANK_NAME == value) return;
-                BANK_NAME = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string BANK_NAME
         {
             get => Entity.BANK_NAME;
             set
@@ -156,7 +134,7 @@ namespace Core.EntityViewModel.Bank
         }
 
         public EntityLoadCodition LoadCondition { get; set; }
-        public string Info => $"{BANK_NAME} БИК {POST_CODE} К/счет {CORRESP_ACC}";
+        public string Info => $"{Name} БИК {POST_CODE} К/счет {CORRESP_ACC}";
 
         public List<SD_44> LoadList()
         {
@@ -192,7 +170,7 @@ namespace Core.EntityViewModel.Bank
 
         public void UpdateFrom(SD_44 ent)
         {
-            BANK_NAME = ent.BANK_NAME;
+            Name = ent.BANK_NAME;
             CORRESP_ACC = ent.CORRESP_ACC;
             MFO_NEW = ent.MFO_NEW;
             MFO_OLD = ent.MFO_OLD;
@@ -204,7 +182,7 @@ namespace Core.EntityViewModel.Bank
 
         public void UpdateTo(SD_44 ent)
         {
-            ent.BANK_NAME = BANK_NAME;
+            ent.BANK_NAME = Name;
             ent.CORRESP_ACC = CORRESP_ACC;
             ent.MFO_NEW = MFO_NEW;
             ent.MFO_OLD = MFO_OLD;
@@ -222,11 +200,13 @@ namespace Core.EntityViewModel.Bank
             };
         }
 
+        // ReSharper disable once UnusedParameter.Global
         public SD_44 Load(decimal dc, bool isShort = true)
         {
             throw new NotImplementedException();
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public SD_44 Load(Guid id, bool isShort = true)
         {
             throw new NotImplementedException();

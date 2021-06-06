@@ -4,23 +4,20 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 
-namespace Core.ViewModel.Common
+namespace Core.EntityViewModel.CommonReferences
 {
     [MetadataType(typeof(DataAnnotationsProjectsViewModel))]
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class Project : RSViewModelBase, IEntity<Projects>, ICheckViewModel
     {
         private Projects myEntity;
-        private Employee myResponsible;
+        private Employee.Employee myResponsible;
 
         public Project()
         {
@@ -83,7 +80,7 @@ namespace Core.ViewModel.Common
         /// <summary>
         ///     Ответственный
         /// </summary>
-        public Employee Responsible
+        public Employee.Employee Responsible
         {
             get => myResponsible;
             set
@@ -128,7 +125,7 @@ namespace Core.ViewModel.Common
             }
         }
 
-        public EntityLoadCodition LoadCondition { get; set; } = new EntityLoadCodition();
+        public EntityLoadCodition LoadCondition { get; set; } = new();
 
         public bool Check()
         {
@@ -385,7 +382,7 @@ namespace Core.ViewModel.Common
 
         public Projects DefaultValue()
         {
-            return new Projects
+            return new()
             {
                 Id = Guid.NewGuid(),
                 ProjectsDocs = new List<ProjectsDocs>()

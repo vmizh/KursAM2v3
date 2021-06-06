@@ -11,13 +11,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Core;
-using Core.EntityViewModel;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
@@ -27,7 +24,6 @@ using Helper;
 using KursAM2.Managers;
 using KursAM2.Properties;
 using KursAM2.ViewModel.Splash;
-using User = Helper.User;
 
 namespace KursAM2.ViewModel.StartLogin
 {
@@ -212,7 +208,7 @@ namespace KursAM2.ViewModel.StartLogin
                 Helper.CurrentUser.UserInfo = newUser;
                 GlobalOptions.SystemProfile = new SystemProfile();
             }
-
+            MainReferences.Reset();
             SetUserProfile(newUser.NickName.ToUpper());
             SetGlobalProfile();
             // ReSharper disable once PossibleNullReferenceException
@@ -237,7 +233,9 @@ namespace KursAM2.ViewModel.StartLogin
                     // ReSharper disable once InconsistentNaming
                     var DC = Convert.ToDecimal(ownKontrDC.ITEM_VALUE);
                     var ownKontr =
-                        GlobalOptions.GetEntities().SD_43.Single(_ => _.DOC_CODE == DC);
+                        GlobalOptions.GetEntities().SD_43.Include(_ => _.TD_43).
+                            Include(_ => _.TD_43.Select(x => x.SD_44))
+                            .Single(_ => _.DOC_CODE == DC);
                     GlobalOptions.SystemProfile.OwnerKontragent =
                         new Kontragent(ownKontr);
                 }

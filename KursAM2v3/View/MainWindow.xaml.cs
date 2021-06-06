@@ -872,8 +872,6 @@ namespace KursAM2.View
                     }
 
                     Title = $"Курс АМ2. {GlobalOptions.DataBaseName} Версия {GlobalOptions.Version}";
-                    GlobalOptions.MainReferences = new MainReferences();
-                    GlobalOptions.MainReferences.Reset();
                 }
             }
             catch (Exception ex)

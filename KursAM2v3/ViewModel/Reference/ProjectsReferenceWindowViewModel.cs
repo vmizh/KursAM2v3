@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
+using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.Employee;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
@@ -36,7 +38,7 @@ namespace KursAM2.ViewModel.Reference
         public ObservableCollection<Project> DeletedProjectCollection { set; get; } =
             new ObservableCollection<Project>();
 
-        public ObservableCollection<Persona> PersonaCollection { set; get; } = new ObservableCollection<Persona>();
+        public ObservableCollection<Employee> PersonaCollection { set; get; } = new ObservableCollection<Employee>();
 
         public Project CurrentProject
         {

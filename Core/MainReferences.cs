@@ -15,7 +15,6 @@ using Core.EntityViewModel.Employee;
 using Core.EntityViewModel.NomenklManagement;
 using Core.EntityViewModel.Vzaimozachet;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using Helper;
@@ -24,13 +23,13 @@ namespace Core
 {
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     [SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
-    public class MainReferences
+    public static class MainReferences
     {
         private static bool myIsNomComplete;
         private static bool myIsKontrComplete;
-        private Timer myUpdateTimer;
+        private static Timer myUpdateTimer;
 
-        public MainReferences()
+        static MainReferences()
         {
             ThemeNames = getThemeNames();
             AllKontragents = new Dictionary<decimal, Kontragent>();
@@ -41,7 +40,7 @@ namespace Core
             PayConditions = new Dictionary<decimal, PayCondition>();
             VzaimoraschetTypes = new Dictionary<decimal, VzaimoraschetType>();
             FormRaschets = new Dictionary<decimal, FormPay>();
-            Countries = new Dictionary<decimal, Country>();
+            Countries = new Dictionary<decimal, CountriesViewModel>();
             Currencies = new Dictionary<decimal, Currency>();
             Units = new Dictionary<decimal, Unit>();
             NomenklGroups = new Dictionary<decimal, NomenklGroup>();
@@ -61,6 +60,7 @@ namespace Core
             ClientKategory = new Dictionary<decimal, CategoryClientTypeViewModel>();
         }
 
+        
         public static Dictionary<decimal, Cash> CashsAll { get; set; }
 
         public static bool IsCheckedForUpdate { set; get; } = false;
@@ -83,7 +83,7 @@ namespace Core
         public static Dictionary<decimal, PayCondition> PayConditions { private set; get; }
         public static Dictionary<decimal, VzaimoraschetType> VzaimoraschetTypes { private set; get; }
         public static Dictionary<decimal, FormPay> FormRaschets { private set; get; }
-        public static Dictionary<decimal, Country> Countries { set; get; }
+        public static Dictionary<decimal, CountriesViewModel> Countries { set; get; }
         public static Dictionary<decimal, Currency> Currencies { private set; get; }
         public static Dictionary<decimal, Unit> Units { private set; get; }
         public static Dictionary<decimal, NomenklGroup> NomenklGroups { private set; get; }
@@ -138,6 +138,21 @@ namespace Core
             ClientKategory.Clear();
         }
 
+        public static Employee GetEmployee(decimal dc)
+        {
+            if (Employees.ContainsKey(dc))
+                return Employees[dc];
+            return null;
+        }
+
+        public static Employee GetEmployee(decimal? dc)
+        {
+            if (dc == null) return null;
+            if (Employees.ContainsKey(dc.Value))
+                return Employees[dc.Value];
+            return null;
+        }
+
         public static DeliveryCondition GetDeliveryCondition(decimal dc)
         {
             if (DeliveryConditions.ContainsKey(dc))
@@ -190,6 +205,22 @@ namespace Core
             return null;
         }
 
+        public static VzaimoraschetType GetVzaimoraschetType(decimal? dc)
+        {
+            if (dc == null) return null;
+            if (VzaimoraschetTypes.ContainsKey(dc.Value))
+                return VzaimoraschetTypes[dc.Value];
+            return null;
+        }
+
+
+        public static VzaimoraschetType GetVzaimoraschetType(decimal dc)
+        {
+            if (VzaimoraschetTypes.ContainsKey(dc))
+                return VzaimoraschetTypes[dc];
+            return null;
+        }
+
         public static FormPay GetFormPay(decimal? dc)
         {
             if (dc == null) return null;
@@ -198,7 +229,8 @@ namespace Core
             return null;
         }
 
-        private List<string> getThemeNames()
+
+        private static List<string> getThemeNames()
         {
             return new(new[]
             {
@@ -639,7 +671,7 @@ namespace Core
                     }
                     else
                     {
-                        Countries.Add(item.Iso, new Country(item) {myState = RowStatus.NotEdited});
+                        Countries.Add(item.Iso, new CountriesViewModel(item) {myState = RowStatus.NotEdited});
                     }
 
                 keys = Countries.Keys.ToList();
@@ -1082,7 +1114,7 @@ namespace Core
 
         public static void LoadNomenkl()
         {
-            ALLNomenkls.Clear();
+            //ALLNomenkls.Clear();
             try
             {
                 var ent = GlobalOptions.GetEntities();
@@ -1140,7 +1172,7 @@ namespace Core
 
         private static void LoadKontragents()
         {
-            AllKontragents.Clear();
+            //AllKontragents.Clear();
             try
             {
                 var ent = GlobalOptions.GetEntities();
@@ -1166,19 +1198,24 @@ namespace Core
             }
         }
 
-        public void Reset(LoadReferenceStrategy strategy = LoadReferenceStrategy.Full)
+        public static void Reset(LoadReferenceStrategy strategy = LoadReferenceStrategy.Full, bool isRefresh = true)
         {
-            Refresh();
+            if(isRefresh)
+                Refresh();
             switch (strategy)
             {
                 case LoadReferenceStrategy.Full:
+                    ALLNomenkls.Clear();
+                    AllKontragents.Clear();
                     Task.Run(() => LoadNomenkl()).ContinueWith(_ => SetNomComplete());
                     Task.Run(() => LoadKontragents()).ContinueWith(_ => SetKontrComplete());
                     break;
                 case LoadReferenceStrategy.WithoutKontragent:
+                    ALLNomenkls.Clear();
                     Task.Run(() => LoadNomenkl()).ContinueWith(_ => SetNomComplete());
                     break;
                 case LoadReferenceStrategy.WithoutNomenkl:
+                    AllKontragents.Clear();
                     Task.Run(() => LoadKontragents()).ContinueWith(_ => SetKontrComplete());
                     break;
                 case LoadReferenceStrategy.WithoutKontragentAndNomenkl:
@@ -1187,7 +1224,7 @@ namespace Core
             }
         }
 
-        private void SetNomComplete()
+        private static void SetNomComplete()
         {
             myIsNomComplete = true;
             if (myIsKontrComplete && myUpdateTimer == null)
@@ -1199,7 +1236,7 @@ namespace Core
                 }, null, 1000 * 60, Timeout.Infinite);
         }
 
-        private void SetKontrComplete()
+        private static void SetKontrComplete()
         {
             myIsKontrComplete = true;
             if (myIsNomComplete && myUpdateTimer == null)

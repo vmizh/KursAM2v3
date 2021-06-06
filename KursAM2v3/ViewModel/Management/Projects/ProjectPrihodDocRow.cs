@@ -1,4 +1,5 @@
 ﻿using System;
+using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 

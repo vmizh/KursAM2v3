@@ -1,4 +1,4 @@
-﻿namespace Core.ViewModel.Common
+﻿namespace Core.EntityViewModel
 {
     internal interface ICheckViewModel
     {

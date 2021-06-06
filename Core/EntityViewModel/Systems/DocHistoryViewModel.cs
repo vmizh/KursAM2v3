@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
 
-namespace Core.ViewModel.Common
+namespace Core.EntityViewModel.Systems
 {
     public class DocHistoryViewModel : RSViewModelBase, IEntity<DocHistory>
     {

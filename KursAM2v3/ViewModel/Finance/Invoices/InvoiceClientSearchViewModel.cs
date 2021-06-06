@@ -168,9 +168,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     foreach (var item in query.ToList())
                     {
                         var newItem = new InvoiceClient(item);
-                        if (item.TD_84 != null && item.TD_84.Count > 0)
-                            newItem.SummaOtgruz = item.TD_84.Sum(i =>
-                                i.TD_24.Sum(i2 => i.SFT_ED_CENA * i2.DDT_KOL_RASHOD ?? 0));
                         string d;
                         d = newItem.Diler != null ? newItem.Diler.Name : "";
                         if (newItem.InnerNumber.ToString().ToUpper().Contains(SearchText.ToUpper()) ||

@@ -142,17 +142,7 @@ namespace Core.EntityViewModel.Employee
             }
         }
 
-        //public string ID
-        //{
-        //    get => Entity.ID;
-        //    set
-        //    {
-        //        if (Entity.ID == value) return;
-        //        Entity.ID = value;
-        //        RaisePropertyChanged();
-        //    }
-        //}
-        public byte[] PHOTO
+      public byte[] PHOTO
         {
             get => Entity.PHOTO;
             set

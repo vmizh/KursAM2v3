@@ -385,8 +385,8 @@ namespace KursAM2.Managers
         {
             var view = new InvoiceClientView {Owner = Application.Current.MainWindow};
             var ctx = new ClientWindowViewModel(docCode) {Form = view};
-            view.Show();
             view.DataContext = ctx;
+            view.Show();
             return ctx;
         }
 
