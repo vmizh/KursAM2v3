@@ -12,7 +12,6 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Dogovora;
 using Core.EntityViewModel.Invoices;
-using Core.Invoices.EntityViewModel.Dogovora;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;

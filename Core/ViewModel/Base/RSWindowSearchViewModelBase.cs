@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using DevExpress.Mvvm;
 
 namespace Core.ViewModel.Base
 {
@@ -9,7 +10,7 @@ namespace Core.ViewModel.Base
         private string myFirstSearchName;
         private string mySecondSearchName;
         private DateTime myStartDate;
-
+        
         public RSWindowSearchViewModelBase()
         {
             StartDate = DateTime.Today.AddDays(-14);
@@ -66,5 +67,7 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
+
+        public virtual string SplashCaption { set; get; } = "Загрузка...";
     }
 }

@@ -10,7 +10,10 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
     x:Class="KursAM2.View.Dogovors.DogovorClientSearchView" mc:Ignorable="d"
-    Title="{Binding WindowName}" MinHeight="450" Height="600" MinWidth="800">
+    Title="{Binding WindowName}" MinHeight="450" Height="600" MinWidth="800"
+    Icon="{Binding Source={StaticResource imageStandartSearch},
+    Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
+    Style="{StaticResource DXSplashServices}">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}" Foreground="{Binding DatabaseColor}"
             FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"

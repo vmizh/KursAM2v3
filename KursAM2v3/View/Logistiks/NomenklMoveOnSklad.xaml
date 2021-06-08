@@ -6,7 +6,8 @@
              xmlns:control="clr-namespace:Core.Control;assembly=Core"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-             Title="Движение товаров на складах" Height="350" Width="525">
+             Title="Движение товаров на складах" Height="350" Width="5"
+             Style="{StaticResource DXSplashServices}">
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
             <control:WindowMenu Height="60" DockPanel.Dock="Top" />

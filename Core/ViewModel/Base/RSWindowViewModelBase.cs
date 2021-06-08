@@ -27,11 +27,13 @@ namespace Core.ViewModel.Base
         // ReSharper disable once MemberInitializerValueIgnored
         private bool myIsCanRefresh = true;
 
-        private bool myIsLoading = true;
+        private bool myIsLoading = false;
 
         // ReSharper disable once InconsistentNaming
         protected string mySearchText;
         private string myWindowName;
+        protected IDispatcherService DispatcherService => GetService<IDispatcherService>();
+        protected ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
 
         public RSWindowViewModelBase()
         {
@@ -248,7 +250,7 @@ namespace Core.ViewModel.Base
             }
         }
 
-        public virtual void RefreshData(object obj)
+        public virtual async void RefreshData(object obj)
         {
             MainReferences.Refresh();
         }

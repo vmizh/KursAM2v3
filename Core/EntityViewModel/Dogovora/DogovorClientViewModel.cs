@@ -1,24 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Input;
-using Core.EntityViewModel;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Dogovora;
+using Core.EntityViewModel.Invoices;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 
-namespace Core.Invoices.EntityViewModel.Dogovora
+namespace Core.EntityViewModel.Dogovora
 {
     [MetadataType(typeof(DogovorClientViewModel_FluentAPI))]
-    public sealed class DogovorClientViewModel : RSWindowViewModelBase, IDataErrorInfo
+    public sealed class DogovorClientViewModel : RSWindowViewModelBase, IDataErrorInfo, IEntity<DogovorClient>
     {
         #region Fields
 
@@ -61,6 +60,7 @@ namespace Core.Invoices.EntityViewModel.Dogovora
         public DogovorClientViewModel(DogovorClient entity, RowStatus state = RowStatus.NotEdited)
         {
             Entity = entity ?? DefaultValue();
+
             foreach (var r in Entity.DogovorClientRow)
             {
                 Rows.Add(new DogovorClientRowViewModel(r)
@@ -77,6 +77,12 @@ namespace Core.Invoices.EntityViewModel.Dogovora
         #region Properties
 
         public ObservableCollection<DogovorClientRowViewModel> Rows { set; get; } = new();
+        public ObservableCollection<DogovorClientFactViewModel> FactsAll { set; get; } =
+            new ObservableCollection<DogovorClientFactViewModel>();
+        public ObservableCollection<InvoicePaymentDocument> PaymentList { set; get; } =
+            new ObservableCollection<InvoicePaymentDocument>();
+        
+        public bool IsAccessRight { get; set; }
 
         public DogovorClient Entity
         {
@@ -87,6 +93,11 @@ namespace Core.Invoices.EntityViewModel.Dogovora
                 myEntity = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public List<DogovorClient> LoadList()
+        {
+            throw new NotImplementedException();
         }
 
         public override Guid Id

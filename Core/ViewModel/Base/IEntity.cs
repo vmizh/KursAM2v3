@@ -9,7 +9,7 @@ namespace Core.ViewModel.Base
     public interface IEntity<T>
     {
         bool IsAccessRight { set; get; }
-        
+        T Entity { set; get; }
         List<T> LoadList();
 
     }

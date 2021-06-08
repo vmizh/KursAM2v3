@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Invoices;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.View.Finance.Invoices;
@@ -21,6 +23,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
     public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
     {
         private InvoiceClient myCurrentDocument;
+        //private IDispatcherService DispatcherService => GetService<IDispatcherService>();
+        //private ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
 
         public InvoiceClientSearchViewModel()
         {
@@ -199,9 +203,24 @@ namespace KursAM2.ViewModel.Finance.Invoices
             RefreshData(null);
         }
 
-        public override void RefreshData(object data)
+        public override async void RefreshData(object data)
         {
-            base.RefreshData(data);
+            SplashScreenService.ShowSplashScreen();
+            await Load();
+        }
+
+        private Task Load()
+        {
+            var res = Task.Factory.StartNew(LoadCore);
+            Documents.Clear();
+            foreach (var d in res.Result) Documents.Add(d);
+            return res;
+        }
+
+        private List<InvoiceClient> LoadCore()
+        {
+            var ret = new List<InvoiceClient>();
+            base.RefreshData(null);
             IsDocumentOpenAllow = false;
             IsDocNewCopyAllow = false;
             IsDocNewCopyRequisiteAllow = false;
@@ -212,9 +231,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             try
             {
-                Documents.Clear();
                 foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, false, SearchText))
-                    Documents.Add(d);
+                    ret.Add(d);
             }
             catch (Exception ex)
             {
@@ -223,6 +241,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             RaisePropertyChanged(nameof(Documents));
             SearchText = "";
+            DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
+            return ret;
         }
 
         public override void DocumentOpen(object form)
@@ -234,8 +254,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewEmpty(object form)
         {
             var frm = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            var ctx = new ClientWindowViewModel {Form = frm};
-            ctx.Document = InvoicesManager.NewClient();
+            var ctx = new ClientWindowViewModel {Form = frm, Document = InvoicesManager.NewClient()};
             frm.Show();
             frm.DataContext = ctx;
         }

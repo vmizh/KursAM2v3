@@ -1,34 +1,38 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel.Dogovora;
+using Core.EntityViewModel.Dogovora;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.Repositories.DogovorsRepositories;
 using KursAM2.View.Dogovors;
 
 namespace KursAM2.ViewModel.Dogovora
 {
-    public sealed class DogovorClientSearchViewModel : RSWindowSearchViewModelBase
+    public sealed class DogovorClientSearchViewModel : RSWindowViewModelBase
     {
-        private DogovorClientViewModel myCurrentDocument;
-        private DateTime myDateEnd;
-        private DateTime myDateStart;
-        private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork
-            = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
-
         // ReSharper disable once NotAccessedField.Local
         public readonly GenericKursDBRepository<DogovorClient> BaseRepository;
 
         // ReSharper disable once NotAccessedField.Local
         public readonly IDogovorClientRepository DogovorClientRepository;
+
+        private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork
+            = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+
+        private DogovorClientViewModel myCurrentDocument;
+        private DateTime myDateEnd;
+        private DateTime myDateStart;
 
         #region Constructors
 
@@ -44,7 +48,6 @@ namespace KursAM2.ViewModel.Dogovora
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
             LayoutName = "DogovorClientSearchView";
-            RefreshData(null);
         }
 
         #endregion
@@ -104,7 +107,7 @@ namespace KursAM2.ViewModel.Dogovora
 
         public override void DocumentOpen(object obj)
         {
-            DocumentsOpenManager.Open(DocumentType.DogovorClient,0,CurrentDocument.Id);
+            DocumentsOpenManager.Open(DocumentType.DogovorClient, 0, CurrentDocument.Id);
         }
 
         public override void DocNewCopy(object form)
@@ -123,7 +126,7 @@ namespace KursAM2.ViewModel.Dogovora
             {
                 Owner = Application.Current.MainWindow
             };
-            var ctx = new DogovorClientWindowViewModel()
+            var ctx = new DogovorClientWindowViewModel
             {
                 Form = frm
             };
@@ -131,17 +134,29 @@ namespace KursAM2.ViewModel.Dogovora
             frm.Show();
         }
 
-        
+
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
-        public override void RefreshData(object obj)
+        private Task Load()
         {
+            var ctx = GlobalOptions.GetEntities();
+            var res = Task.Factory.StartNew(() =>
+                new List<DogovorClient>(ctx.DogovorClient.Where(_ => _.DogDate >= DateStart && _.DogDate <= DateEnd)));
             Documents.Clear();
-            using (var ctx = GlobalOptions.GetEntities())
+            foreach (var d in res.Result) Documents.Add(new DogovorClientViewModel(d));
+            RaisePropertyChanged(nameof(Documents));
+            DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
+            return res;
+        }
+
+        public override async void RefreshData(object data)
+        {
+            SplashScreenService.ShowSplashScreen();
+            while (!MainReferences.IsReferenceLoadComplete)
             {
-                var data = ctx.DogovorClient.Where(_ => _.DogDate >= DateStart && _.DogDate <= DateEnd).ToList();
-                foreach (var d in data) Documents.Add(new DogovorClientViewModel(d));
             }
+            base.RefreshData(null);
+            await Load();
         }
 
         #endregion

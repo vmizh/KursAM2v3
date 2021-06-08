@@ -5,7 +5,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 
-namespace Core.Invoices.EntityViewModel.Dogovora
+namespace Core.EntityViewModel.Dogovora
 {
     public class LinkDocumentInfo_FluentAPI : DataAnnotationForFluentApiBase,
         IMetadataProvider<LinkDocumentInfo>

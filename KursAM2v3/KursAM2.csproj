@@ -410,6 +410,7 @@
     <Compile Include="View\Base\KursBaseWindow.xaml.cs">
       <DependentUpon>KursBaseWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Behaviors\SelectAllOnGotFocusBehavior.cs" />
     <Compile Include="View\DialogUserControl\AddNomenklFromInvoiceClientUC.xaml.cs">
       <DependentUpon>AddNomenklFromInvoiceClientUC.xaml</DependentUpon>
     </Compile>
@@ -1075,6 +1076,10 @@
     <Folder Include="ViewModel\Logistiks\Helper\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Resource\DXControlStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resource\Error.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

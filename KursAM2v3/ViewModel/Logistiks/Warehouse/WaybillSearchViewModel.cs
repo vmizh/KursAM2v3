@@ -1,20 +1,21 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.View.Logistiks.Warehouse;
 using Reports.Base;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
-    public class WaybillSearchViewModel : RSWindowSearchViewModelBase
+    public sealed class WaybillSearchViewModel : RSWindowSearchViewModelBase
     {
         private readonly WarehouseManager DocManager = new WarehouseManager(new StandartErrorManager(
             GlobalOptions.GetEntities(),
@@ -115,30 +116,49 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         #region Commands
 
-        public override void RefreshData(object data)
+        //public override void RefreshData(object data)
+        //{
+        //    try
+        //    {
+
+
+        //        DocumentCollection.Clear();
+
+        //        var d = DocManager.GetWaybills(StartDate, EndDate);
+        //        foreach (var item in d)
+        //            DocumentCollection.Add(item);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        WindowManager.ShowError(ex);
+        //    }
+
+        //    RaisePropertyChanged();
+        //}
+
+        private Task Load()
         {
-            try
+            var res = Task.Factory.StartNew(() =>
+                new List<Waybill>(DocManager.GetWaybills(StartDate, EndDate)));
+            DocumentCollection.Clear();
+            foreach (var d in res.Result) DocumentCollection.Add(d);
+            RaisePropertyChanged(nameof(DocumentCollection));
+            DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
+            return res;
+        }
+
+        public override async void RefreshData(object data)
+        {
+            SplashScreenService.ShowSplashScreen();
+            IsDocumentOpenAllow = false;
+            IsDocNewCopyAllow = false;
+            IsDocNewCopyRequisiteAllow = false;
+            IsPrintAllow = false;
+            while (!MainReferences.IsReferenceLoadComplete)
             {
-                IsDocumentOpenAllow = false;
-                IsDocNewCopyAllow = false;
-                IsDocNewCopyRequisiteAllow = false;
-                IsPrintAllow = false;
-                while (!MainReferences.IsReferenceLoadComplete)
-                {
-                }
-
-                DocumentCollection.Clear();
-
-                var d = DocManager.GetWaybills(StartDate, EndDate);
-                foreach (var item in d)
-                    DocumentCollection.Add(item);
             }
-            catch (Exception ex)
-            {
-                WindowManager.ShowError(ex);
-            }
-
-            RaisePropertyChanged();
+            base.RefreshData(null);
+            await Load();
         }
 
         public override void DocumentOpen(object form)

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
@@ -8,6 +10,7 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
+using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
@@ -115,19 +118,26 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
-        public override void RefreshData(object data)
+        private Task Load()
         {
-            base.RefreshData(null);
-            IsPrintAllow = false;
+            var res = Task.Factory.StartNew(() =>
+                new List<InvoiceProvider>(InvoiceProviderRepository.GetAllByDates(DateStart, DateEnd)));
+            Documents.Clear();
+            foreach (var d in res.Result) Documents.Add(d);
+            RaisePropertyChanged(nameof(Documents));
+            DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
+            return res;
+        }
+
+        public override async void RefreshData(object data)
+        {
+            SplashScreenService.ShowSplashScreen();
             while (!MainReferences.IsReferenceLoadComplete)
             {
             }
 
-            Documents.Clear();
-            foreach (var d in InvoiceProviderRepository.GetAllByDates(DateStart, DateEnd))
-                Documents.Add(d);
-
-            RaisePropertyChanged(nameof(Documents));
+            base.RefreshData(null);
+            await Load();
         }
 
         public override void DocumentOpen(object obj)

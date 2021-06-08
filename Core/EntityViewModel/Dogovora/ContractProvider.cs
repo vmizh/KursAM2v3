@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 
 namespace Core.EntityViewModel.Dogovora

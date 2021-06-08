@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="Resource\Error.xaml" />
                 <ResourceDictionary Source="Resource\ViewControlTemplate.xaml" />
                 <ResourceDictionary Source="Resource\Window.xaml" />
+                <ResourceDictionary Source="Resource\DXControlStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

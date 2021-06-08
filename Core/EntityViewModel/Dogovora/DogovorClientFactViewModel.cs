@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Core.EntityViewModel;
 using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 
-namespace Core.Invoices.EntityViewModel.Dogovora
+namespace Core.EntityViewModel.Dogovora
 {
     public class DogovorClientFactViewModel_FluentAPI : DataAnnotationForFluentApiBase,
         IMetadataProvider<DogovorClientFactViewModel>

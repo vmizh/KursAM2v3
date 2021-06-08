@@ -3,7 +3,9 @@
                     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                     xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-                    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm">
+                    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                    xmlns:behaviors="clr-namespace:KursAM2.View.Behaviors">
     <DataTemplate
         x:Key="{themes:FloatingContainerThemeKey ResourceKey=FloatingContainerCaptionTemplate, ThemeName=MetropolisLight}">
         <DockPanel Width="Auto" Height="24" Cursor="Arrow">
@@ -32,6 +34,19 @@
         </Setter>
     </Style>
     <dxmvvm:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" HiddenInsteadOfCollapsed="True" />
+    <Style x:Key="NoteStyle" TargetType="dxe:TextEdit">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="SelectAllOnMouseUp" Value="True"/>
+        <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <ItemsControl>
+                        <behaviors:SelectAllOnGotFocusBehavior/>
+                    </ItemsControl>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <Style x:Key="DXServices" TargetType="FrameworkElement">
         <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
             <Setter.Value>
@@ -40,6 +55,34 @@
                         <dxmvvm:LayoutSerializationService/>
                         <dxmvvm:CurrentWindowService ClosingCommand="{Binding OnWindowClosingCommand}"/>
                         <dxmvvm:EventToCommand Event="Loaded" Command="{Binding OnWindowLoadedCommand}" />
+                        <dx:DXMessageBoxService />
+                    </ItemsControl>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="DXSplashServices" TargetType="FrameworkElement">
+        <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <ItemsControl>
+                        <dx:DXSplashScreenService>
+                            <dx:DXSplashScreenService.ViewTemplate>
+                                <DataTemplate>
+                                    <dx:WaitIndicator Focusable="False" DeferedVisibility="True">
+                                        <dx:WaitIndicator.ContentTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock Text="Подождите." FontSize="16"/>
+                                                    <TextBlock Text="Загружаю..." FontSize="13"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </dx:WaitIndicator.ContentTemplate>
+                                    </dx:WaitIndicator>
+                                </DataTemplate>
+                            </dx:DXSplashScreenService.ViewTemplate>
+                        </dx:DXSplashScreenService>
+                        <dxmvvm:DispatcherService/>
                         <dx:DXMessageBoxService />
                     </ItemsControl>
                 </DataTemplate>

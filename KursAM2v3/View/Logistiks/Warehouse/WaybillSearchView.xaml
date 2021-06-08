@@ -9,7 +9,10 @@
              xmlns:control="clr-namespace:Core.Control;assembly=Core"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              mc:Ignorable="d"
-             Title="Поиск расходных накладных" Height="450" Width="800">
+             Title="Поиск расходных накладных" Height="450" Width="800"
+             Icon="{Binding Source={StaticResource imageStandartSearch},
+    Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
+             Style="{StaticResource DXSplashServices}">
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"

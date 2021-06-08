@@ -9,8 +9,6 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm" 
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    xmlns:invoices="clr-namespace:KursAM2.ViewModel.Finance.Invoices"
-    xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
     x:Class="KursAM2.View.Finance.Invoices.InvoiceProviderView" 
     mc:Ignorable="d"
     Title="{Binding WindowName}" 
@@ -35,7 +33,7 @@
                 dxlc:LayoutControl.AllowVerticalSizing="True" MinHeight="200"
                 x:Name="mainLayoutControl1"
                 dx:DXSerializer.SerializationID="mainLayoutControl1">
-                <dxlc:LayoutGroup Orientation="Vertical">
+                <dxlc:LayoutGroup Orientation="Vertical" dxlc:LayoutControl.AllowVerticalSizing="True">
                     <dxlc:LayoutGroup Header="Основные" View="Group">
                         <dxlc:LayoutItem Label="№:"
                             Width="80"
@@ -120,7 +118,6 @@
                                     ValidatesOnDataErrors=True}"
                                 />
                             </dxlc:LayoutItem>
-
                             <dxlc:LayoutItem Label="Договор поставки:">
                                 <dxe:ButtonEdit/>
                             </dxlc:LayoutItem>
@@ -218,9 +215,9 @@
                         </dxlc:LayoutGroup>
                             <dxlc:LayoutItem VerticalAlignment="Stretch" Label="Примечание:">
                                 <dxe:TextEdit 
+                                    Style="{StaticResource NoteStyle}"
                                     EditValue="{Binding Document.SF_NOTES,
                                     UpdateSourceTrigger=PropertyChanged}"
-                                    VerticalContentAlignment="Center"
                                     />
                             </dxlc:LayoutItem>
                     </dxlc:LayoutGroup>
