@@ -252,19 +252,25 @@ namespace KursAM2.ViewModel.Finance.Invoices
         }
 
         public override void DocNewEmpty(object form)
-        {
-            var frm = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            var ctx = new ClientWindowViewModel {Form = frm, Document = InvoicesManager.NewClient()};
+        { 
+            var ctx = new ClientWindowViewModel {Document = InvoicesManager.NewClient()};
+            var frm = new InvoiceClientView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
             frm.Show();
             frm.DataContext = ctx;
         }
 
         public override void DocNewCopy(object obj)
         {
-            if (CurrentDocument == null) return;
+            if (CurrentDocument == null) return; 
+            var ctx = new ClientWindowViewModel();
             var frm = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            var ctx = new ClientWindowViewModel {Form = frm};
             ctx.Document = InvoicesManager.NewClientCopy(CurrentDocument);
+            ctx.Form = frm;
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -272,9 +278,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewCopyRequisite(object obj)
         {
             if (CurrentDocument == null) return;
+            var ctx = new ClientWindowViewModel();
             var frm = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            var ctx = new ClientWindowViewModel {Form = frm};
             ctx.Document = InvoicesManager.NewClientRequisite(CurrentDocument);
+            ctx.Form = frm;
             frm.Show();
             frm.DataContext = ctx;
         }

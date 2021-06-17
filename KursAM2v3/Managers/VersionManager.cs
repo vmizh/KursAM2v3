@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Xml;
-using Core;
 
 namespace KursAM2.Managers
 {

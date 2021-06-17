@@ -142,12 +142,14 @@
                         </dxlc:LayoutGroup>
                         <dxlc:LayoutItem>
                         <DockPanel LastChildFill="False">
-                            <Label Content="  Условия оплаты:" DockPanel.Dock="Left"/>
+                            <Label Content="  Условия оплаты: " DockPanel.Dock="Left"/>
                             <dxe:ComboBoxEdit MinWidth="150" 
+                                              Margin="2 0 0 0"
                                                   DockPanel.Dock="Left"
-                                                  ItemsSource="{Binding PayConditionList, UpdateSourceTrigger=PropertyChanged}"
+                                                  ItemsSource="{Binding PayConditions, UpdateSourceTrigger=PropertyChanged}"
                                                   EditValue="{Binding Document.PayCondition, UpdateSourceTrigger=PropertyChanged,
-                                    NotifyOnValidationError=True,  ValidatesOnDataErrors=True}"/>
+                                    NotifyOnValidationError=True,  ValidatesOnDataErrors=True}">
+                            </dxe:ComboBoxEdit>
                             <Label Content="  Тип продукции: " DockPanel.Dock="Left"/>
                             <dxe:ComboBoxEdit MinWidth="150" 
                                               DockPanel.Dock="Left"

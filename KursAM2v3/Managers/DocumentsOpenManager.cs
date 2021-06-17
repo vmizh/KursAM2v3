@@ -383,10 +383,16 @@ namespace KursAM2.Managers
 
         private static ClientWindowViewModel OpenSFClient(decimal docCode)
         {
-            var view = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            var ctx = new ClientWindowViewModel(docCode) {Form = view};
-            view.DataContext = ctx;
+            var ctx = new ClientWindowViewModel(docCode);
+            var view = new InvoiceClientView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = view;
             view.Show();
+            ctx.Document.State = RowStatus.NotEdited;
+            ctx.RaisePropertyChanged(nameof(ctx.IsCanSaveData));
             return ctx;
         }
 

@@ -7,6 +7,7 @@
                     xmlns:system="clr-namespace:System;assembly=mscorlib"
                     xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
                     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors">
+    <dx:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     <DataTemplate x:Key="summaryTemplate" DataType="dxg:GridSummaryItem">
         <ContentControl>
             <dxg:GridSummaryItem
@@ -153,6 +154,110 @@
                 <Setter Property="Foreground" Value="Black" />
             </Trigger>
         </Style.Triggers>
+    </Style>
+    <ControlTemplate x:Key="CustomComboBoxEditTemplate" TargetType="{x:Type dxe:ComboBoxEdit}">
+            <Border Name="PART_ErrorBorder">
+                <ContentControl Template="{TemplateBinding ActualBorderTemplate}">
+                    <!--<dxe:EditorControl x:Name="PART_Content" SnapsToDevicePixels="True" Template="{TemplateBinding ActualEditorControlTemplate}"/>-->
+                    <Grid x:Name="ButtonEditGrid" SnapsToDevicePixels="True">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!--<dxe:ErrorControl x:Name="PART_ErrorPresenter" />-->
+                        <dxe:ButtonsControl x:Name="PART_LeftButtons" Grid.Column="1" ItemsSource="{TemplateBinding LeftButtons}" Visibility="{Binding ShowEditorButtons, Converter={StaticResource BoolToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
+                        <dxe:EditorControl x:Name="PART_Content" VerticalAlignment="Stretch" Grid.Column="2" dx:FocusHelper2.Focusable="False" Template="{TemplateBinding ActualEditorControlTemplate}" />
+                        <dxe:ButtonsControl x:Name="PART_RightButtons" Grid.Column="3" ItemsSource="{TemplateBinding RightButtons}" Visibility="{Binding ShowEditorButtons, Converter={StaticResource BoolToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}"
+                />
+                    </Grid>
+                </ContentControl>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="HasValidationError" Value="True">
+                    <Setter TargetName="PART_ErrorBorder" Property="BorderThickness" Value="1"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding Path=ValidationError.ErrorType, RelativeSource={RelativeSource Self}}" Value="Critical">
+                    <Setter TargetName="PART_ErrorBorder" Property="BorderBrush" Value="Red"/>
+                </DataTrigger>
+            </ControlTemplate.Triggers>
+     </ControlTemplate>
+    <ControlTemplate x:Key="CustomButtonEditTemplate" TargetType="{x:Type dxe:ButtonEdit}">
+            <Border Name="PART_ErrorBorder">
+                <ContentControl Template="{TemplateBinding ActualBorderTemplate}">
+                    <!--<dxe:EditorControl x:Name="PART_Content" SnapsToDevicePixels="True" Template="{TemplateBinding ActualEditorControlTemplate}"/>-->
+                    <Grid x:Name="ButtonEditGrid" SnapsToDevicePixels="True">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!--<dxe:ErrorControl x:Name="PART_ErrorPresenter" />-->
+                        <dxe:ButtonsControl x:Name="PART_LeftButtons" Grid.Column="1" ItemsSource="{TemplateBinding LeftButtons}" Visibility="{Binding ShowEditorButtons, Converter={StaticResource BoolToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
+                        <dxe:EditorControl x:Name="PART_Content" VerticalAlignment="Stretch" Grid.Column="2" dx:FocusHelper2.Focusable="False" Template="{TemplateBinding ActualEditorControlTemplate}" />
+                        <dxe:ButtonsControl x:Name="PART_RightButtons" Grid.Column="3" ItemsSource="{TemplateBinding RightButtons}" Visibility="{Binding ShowEditorButtons, Converter={StaticResource BoolToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}"
+                />
+                    </Grid>
+                </ContentControl>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="HasValidationError" Value="True">
+                    <Setter TargetName="PART_ErrorBorder" Property="BorderThickness" Value="1"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding Path=ValidationError.ErrorType, RelativeSource={RelativeSource Self}}" Value="Critical">
+                    <Setter TargetName="PART_ErrorBorder" Property="BorderBrush" Value="Red"/>
+                </DataTrigger>
+            </ControlTemplate.Triggers>
+     </ControlTemplate>
+    <Style TargetType="{x:Type dxe:ComboBoxEdit}">
+        <Setter Property="ValidationErrorTemplate">
+            <Setter.Value>
+                <DataTemplate>  
+                    <Image
+                        Source="pack://siteoforigin:,,,/Images/DeleteBlack.png"  
+                        Width="12" Height="12"/> 
+                </DataTemplate>  
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template" Value="{StaticResource CustomComboBoxEditTemplate}"/>
+    </Style>
+    <Style TargetType="{x:Type dxe:ButtonEdit}">
+        <Setter Property="ValidationErrorTemplate">
+            <Setter.Value>
+                <DataTemplate>  
+                    <Image
+                        Source="pack://siteoforigin:,,,/Images/DeleteBlack.png"  
+                        Width="12" Height="12"/> 
+                </DataTemplate>  
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template" Value="{StaticResource CustomButtonEditTemplate}"/>
+    </Style>
+    <Style TargetType="{x:Type dxe:TextEdit}">
+        <Setter Property="ValidationErrorTemplate">
+            <Setter.Value>
+                <DataTemplate>  
+                    <Image
+                        Source="pack://siteoforigin:,,,/Images/DeleteBlack.png"  
+                        HorizontalAlignment="Right" 
+                        Width="12" Height="12"/> 
+                </DataTemplate>  
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="{x:Type dxe:TextEditSettings}">
+        <Setter Property="ValidationErrorTemplate">
+            <Setter.Value>
+                <DataTemplate>  
+                    <Image
+                        Source="pack://siteoforigin:,,,/Images/DeleteBlack.png"  
+                        HorizontalAlignment="Right" 
+                        Width="12" Height="12"/> 
+                </DataTemplate>  
+            </Setter.Value>
+        </Setter>
     </Style>
     <!--<Style TargetType="dxg:RowControl">
             <Style.Triggers>

@@ -172,23 +172,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                                                && Document.PayCondition != null &&
                                                                Document.SF_VZAIMOR_TYPE_DC != null
                                                                && Document.SF_FORM_RASCH_DC != null
-                          || Document.DeletedRows.Count > 0 || Document.Rows.Any(_ => _.State != RowStatus.NotEdited);
-                //if (!res)
-                //{
-                //    if (Document.Entity.SF_CLIENT_DC == 0)
-                //        FooterText += "Не выбран контрагент. ";
-                //    if (Document.Entity.SF_CRS_DC == 0)
-                //        FooterText += "Не выбрана валюта документа. ";
-                //    if (Document.SF_CENTR_OTV_DC == null)
-                //        FooterText += "Не выбран Центр ответственности. ";
-                //    if (Document.PayCondition == null)
-                //        FooterText += "Не выбрано условие оплаты. ";
-                //    if (Document.SF_VZAIMOR_TYPE_DC == null)
-                //        FooterText += "Не выбран тип продукции. ";
-                //    if (Document.SF_FORM_RASCH_DC == null)
-                //        FooterText += "Не выбрана форма расчетов. ";
-                //}
-
+                          && Document.DeletedRows.Count > 0 && (Document.Rows.Count == 0 || Document.Rows.Any(_ => _.State != RowStatus.NotEdited));
                 return res;
             }
         }
@@ -224,7 +208,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Document.SF_DILER_SUMMA = Document.Rows.Sum(_ => _.SFT_NACENKA_DILERA);
             if (Form is InvoiceClientView frm)
             {
-                frm.KontrSelectButton.IsEnabled = Document.PaymentDocs.Count == 0 && Document.ShipmentRows.Count == 0;
+                //frm.KontrSelectButton.IsEnabled = Document.PaymentDocs.Count == 0 && Document.ShipmentRows.Count == 0;
                 if (Document.IsNDSIncludeInPrice)
                 {
                     var colPrice = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SFT_ED_CENA");

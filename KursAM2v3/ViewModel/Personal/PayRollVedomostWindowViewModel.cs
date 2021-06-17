@@ -563,71 +563,96 @@ namespace KursAM2.ViewModel.Personal
         {
             using (var ent = GlobalOptions.GetEntities())
             {
-                using (var tnx = new TransactionScope())
-                {
-                    try
-                    {
-                        var id = Id.ToString().Replace("-", string.Empty).ToUpper();
-                        var deletesNach = new List<PayRollVedomostEmployeeRowViewModel>();
-                        foreach (var e in RemoveEmployees) deletesNach.AddRange(e.RemoveRows);
-                        foreach (
-                            var e in
-                            Employees.Where(_ => _.State != RowStatus.NotEdited).Where(e => e.RemoveRows.Count > 0)
-                        )
-                            deletesNach.AddRange(e.RemoveRows);
-                        foreach (var dn in deletesNach)
-                        {
-                            var delNach = ent.EMP_PR_ROWS.FirstOrDefault(_ =>
-                                _.ROW_ID == dn.RowId.ToString().Replace("-", string.Empty).ToUpper());
-                            if (delNach != null)
-                                ent.EMP_PR_ROWS.Remove(delNach);
-                        }
 
-                        var doc = ent.EMP_PR_DOC.SingleOrDefault(_ => _.ID == id);
-                        if (doc == null)
+                try
+                {
+                    var id = Id.ToString().Replace("-", string.Empty).ToUpper();
+                    var deletesNach = new List<PayRollVedomostEmployeeRowViewModel>();
+                    foreach (var e in RemoveEmployees) deletesNach.AddRange(e.RemoveRows);
+                    foreach (
+                        var e in
+                        Employees.Where(_ => _.State != RowStatus.NotEdited).Where(e => e.RemoveRows.Count > 0)
+                    )
+                        deletesNach.AddRange(e.RemoveRows);
+                    foreach (var dn in deletesNach)
+                    {
+                        var delNach = ent.EMP_PR_ROWS.FirstOrDefault(_ =>
+                            _.ROW_ID == dn.RowId.ToString().Replace("-", string.Empty).ToUpper());
+                        if (delNach != null)
+                            ent.EMP_PR_ROWS.Remove(delNach);
+                    }
+
+                    var doc = ent.EMP_PR_DOC.SingleOrDefault(_ => _.ID == id);
+                    if (doc == null)
+                    {
+                        var newDoc = new EMP_PR_DOC
                         {
-                            var newDoc = new EMP_PR_DOC
+                            Creator = GlobalOptions.UserInfo.NickName,
+                            Notes = Name,
+                            Date = Date,
+                            ID = id,
+                            IS_TEMPLATE = IsTemplate ? 1 : 0,
+                            CrsRates = "",
+                            DCOld = null,
+                            EXT_Notes = Name,
+                            EMP_PR_ROWS = new Collection<EMP_PR_ROWS>()
+                        };
+                        ent.EMP_PR_DOC.Add(newDoc);
+                        foreach (var e in Employees)
+                        foreach (var item in e.Rows)
+                            ent.EMP_PR_ROWS.Add(new EMP_PR_ROWS
                             {
-                                Creator = GlobalOptions.UserInfo.NickName,
-                                Notes = Name,
-                                Date = Date,
                                 ID = id,
-                                IS_TEMPLATE = IsTemplate ? 1 : 0,
-                                CrsRates = "",
-                                DCOld = null,
-                                EXT_Notes = Name,
-                                EMP_PR_ROWS = new Collection<EMP_PR_ROWS>()
-                            };
-                            ent.EMP_PR_DOC.Add(newDoc);
-                            foreach (var e in Employees)
-                            foreach (var item in e.Rows)
-                                ent.EMP_PR_ROWS.Add(new EMP_PR_ROWS
-                                {
-                                    ID = id,
-                                    ROW_ID = item.RowId.ToString().Replace("-", string.Empty).ToUpper(),
+                                ROW_ID = item.RowId.ToString().Replace("-", string.Empty).ToUpper(),
+                                // ReSharper disable PossibleInvalidOperationException
+                                CRS_DC = item.Crs.DocCode,
+                                EMP_DC = e.Employee.DocCode,
+                                PR_TYPE_DC = item.PRType.DocCode,
+                                // ReSharper restore PossibleInvalidOperationException
+                                NOTES = item.Note,
+                                SUMMA = item.Summa,
+                                RATE = item.Rate,
+                                RR = "",
+                                NachDate = item.NachDate
+                            });
+                    }
+                    else
+                    {
+                        doc.IS_TEMPLATE = IsTemplate ? 1 : 0;
+                        doc.Date = Date;
+                        doc.Notes = Name;
+                        doc.EXT_Notes = Name;
+                        foreach (var e in Employees.Where(t => t.State != RowStatus.NotEdited))
+                        foreach (var item in e.Rows)
+                            switch (item.State)
+                            {
+                                case RowStatus.NewRow:
+                                    ent.EMP_PR_ROWS.Add(new EMP_PR_ROWS
+                                    {
+                                        ID = id,
+                                        ROW_ID = item.RowId.ToString().Replace("-", string.Empty)
+                                            .ToUpper(),
+                                        // ReSharper disable PossibleInvalidOperationException
+                                        CRS_DC = item.Crs.DocCode,
+                                        EMP_DC = e.Employee.DocCode,
+                                        PR_TYPE_DC = item.PRType.DocCode,
+                                        // ReSharper restore PossibleInvalidOperationException
+                                        NOTES = item.Note,
+                                        SUMMA = item.Summa,
+                                        RATE = item.Rate,
+                                        RR = "",
+                                        NachDate = item.NachDate
+                                    });
+                                    break;
+                                case RowStatus.Edited:
+                                    var empType =
+                                        ent.EMP_PR_ROWS.ToList()
+                                            .SingleOrDefault(t =>
+                                                t.ID == id && Guid.Parse(t.ROW_ID) == item.RowId);
+                                    // ReSharper disable PossibleNullReferenceException
                                     // ReSharper disable PossibleInvalidOperationException
-                                    CRS_DC = item.Crs.DocCode,
-                                    EMP_DC = e.Employee.DocCode,
-                                    PR_TYPE_DC = item.PRType.DocCode,
-                                    // ReSharper restore PossibleInvalidOperationException
-                                    NOTES = item.Note,
-                                    SUMMA = item.Summa,
-                                    RATE = item.Rate,
-                                    RR = "",
-                                    NachDate = item.NachDate
-                                });
-                        }
-                        else
-                        {
-                            doc.IS_TEMPLATE = IsTemplate ? 1 : 0;
-                            doc.Date = Date;
-                            doc.Notes = Name;
-                            doc.EXT_Notes = Name;
-                            foreach (var e in Employees.Where(t => t.State != RowStatus.NotEdited))
-                            foreach (var item in e.Rows)
-                                switch (item.State)
-                                {
-                                    case RowStatus.NewRow:
+                                    if (empType == null)
+                                    {
                                         ent.EMP_PR_ROWS.Add(new EMP_PR_ROWS
                                         {
                                             ID = id,
@@ -644,99 +669,71 @@ namespace KursAM2.ViewModel.Personal
                                             RR = "",
                                             NachDate = item.NachDate
                                         });
-                                        break;
-                                    case RowStatus.Edited:
-                                        var empType =
-                                            ent.EMP_PR_ROWS.ToList()
-                                                .SingleOrDefault(t =>
-                                                    t.ID == id && Guid.Parse(t.ROW_ID) == item.RowId);
-                                        // ReSharper disable PossibleNullReferenceException
-                                        // ReSharper disable PossibleInvalidOperationException
-                                        if (empType == null)
-                                        {
-                                            ent.EMP_PR_ROWS.Add(new EMP_PR_ROWS
-                                            {
-                                                ID = id,
-                                                ROW_ID = item.RowId.ToString().Replace("-", string.Empty)
-                                                    .ToUpper(),
-                                                // ReSharper disable PossibleInvalidOperationException
-                                                CRS_DC = item.Crs.DocCode,
-                                                EMP_DC = e.Employee.DocCode,
-                                                PR_TYPE_DC = item.PRType.DocCode,
-                                                // ReSharper restore PossibleInvalidOperationException
-                                                NOTES = item.Note,
-                                                SUMMA = item.Summa,
-                                                RATE = item.Rate,
-                                                RR = "",
-                                                NachDate = item.NachDate
-                                            });
-                                        }
-                                        else
-                                        {
-                                            empType.CRS_DC = item.Crs.DocCode;
-                                            empType.EMP_DC = e.Employee.DocCode;
-                                            empType.PR_TYPE_DC = item.PRType.DocCode;
-                                            // ReSharper restore PossibleInvalidOperationException
-                                            empType.NOTES = item.Note;
-                                            empType.SUMMA = item.Summa;
-                                            empType.RATE = item.Rate;
-                                            empType.RR = "";
-                                            empType.NachDate = item.NachDate;
-                                            // ReSharper restore PossibleNullReferenceException
-                                            //ctx.UpdateObject(empType);
-                                        }
+                                    }
+                                    else
+                                    {
+                                        empType.CRS_DC = item.Crs.DocCode;
+                                        empType.EMP_DC = e.Employee.DocCode;
+                                        empType.PR_TYPE_DC = item.PRType.DocCode;
+                                        // ReSharper restore PossibleInvalidOperationException
+                                        empType.NOTES = item.Note;
+                                        empType.SUMMA = item.Summa;
+                                        empType.RATE = item.Rate;
+                                        empType.RR = "";
+                                        empType.NachDate = item.NachDate;
+                                        // ReSharper restore PossibleNullReferenceException
+                                        //ctx.UpdateObject(empType);
+                                    }
 
-                                        break;
-                                    case RowStatus.NotEdited:
-                                        break;
-                                    case RowStatus.Deleted:
-                                        break;
-                                    default:
-                                        throw new ArgumentOutOfRangeException();
-                                }
-                        }
-
-                        ent.SaveChanges();
-                        tnx.Complete();
-                        RaisePropertiesChanged(nameof(Employees));
-                        isChange = false;
-                        myState = RowStatus.NotEdited;
-                        foreach (var emp in Employees)
-                        {
-                            emp.myState = RowStatus.NotEdited;
-
-                            foreach (var n in emp.Rows)
-                            {
-                                n.myState = RowStatus.NotEdited;
-                                n.RaisePropertyChanged("State");
+                                    break;
+                                case RowStatus.NotEdited:
+                                    break;
+                                case RowStatus.Deleted:
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
                             }
+                    }
 
-                            emp.RaisePropertyChanged("Rows");
-                        }
-                        DocumentsOpenManager.SaveLastOpenInfo(DocumentType.PayRollVedomost, Id, DocCode, Creator,
-                            "", Description);
-                    }
-                    catch (Exception ex)
+                    ent.SaveChanges();
+                    RaisePropertiesChanged(nameof(Employees));
+                    isChange = false;
+                    myState = RowStatus.NotEdited;
+                    foreach (var emp in Employees)
                     {
-                        WindowManager.ShowError(ex);
+                        emp.myState = RowStatus.NotEdited;
+
+                        foreach (var n in emp.Rows)
+                        {
+                            n.myState = RowStatus.NotEdited;
+                            n.RaisePropertyChanged("State");
+                        }
+
+                        emp.RaisePropertyChanged("Rows");
                     }
+
+                    DocumentsOpenManager.SaveLastOpenInfo(DocumentType.PayRollVedomost, Id, DocCode, Creator,
+                        "", Description);
+                    RemoveEmployees.Clear();
+                    foreach (var e in Employees)
+                    {
+                        e.State = RowStatus.NotEdited;
+                        e.RemoveRows.Clear();
+                        foreach (var r in e.Rows)
+                            r.State = RowStatus.NotEdited;
+                    }
+
+                    myState = RowStatus.NotEdited;
+                    foreach (var e in Employees)
+                        e.myState = RowStatus.NotEdited;
+                    RaisePropertyChanged(nameof(Employees));
+                    RaisePropertyChanged(nameof(IsCanSaveData));
+                }
+                catch (Exception ex)
+                {
+                    WindowManager.ShowError(ex);
                 }
             }
-
-            RemoveEmployees.Clear();
-            foreach (var e in Employees)
-            {
-                e.State = RowStatus.NotEdited;
-                e.RemoveRows.Clear();
-                foreach (var r in e.Rows)
-                    r.State = RowStatus.NotEdited;
-            }
-
-            myState = RowStatus.NotEdited;
-            foreach (var e in Employees)
-                e.myState = RowStatus.NotEdited;
-            RaisePropertyChanged(nameof(Employees));
-            RaisePropertyChanged(nameof(IsCanSaveData));
         }
 
         public override bool IsCanSaveData => isChange || Employees.Any(_ => _.State != RowStatus.NotEdited) ||

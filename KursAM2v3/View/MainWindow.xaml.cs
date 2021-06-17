@@ -28,7 +28,6 @@ using KursAM2.View.Period;
 using KursAM2.View.Personal;
 using KursAM2.View.Reconciliation;
 using KursAM2.View.Repozit;
-using KursAM2.View.Search;
 using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.Cash;
@@ -101,6 +100,7 @@ namespace KursAM2.View
             LayoutManager.Save();
         }
 
+        // ReSharper disable once UnusedMember.Local
         private void CheckUpdateVersion()
         {
             myVersionUpdateTimer.Dispose();

@@ -62,7 +62,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)] public global::Helper.LayoutManager LayoutManager { get; set; }
 
         private ILayoutSerializationService LayoutSerializationService
-            => GetService<ILayoutSerializationService>(ServiceSearchMode.LocalOnly);
+            => GetService<ILayoutSerializationService>();
 
         public virtual string LayoutName { set; get; }
         [Display(AutoGenerateField = false)]
@@ -586,7 +586,7 @@ namespace Core.ViewModel.Base
             if (Form is ILayout layman)
                 layman.LayoutManager?.ResetLayout();
             else
-                LayoutManager.ResetLayout();
+                LayoutManager?.ResetLayout();
         }
 
         [Display(AutoGenerateField = false)]
