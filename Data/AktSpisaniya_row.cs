@@ -15,9 +15,9 @@ namespace Data
     public partial class AktSpisaniya_row
     {
         public System.Guid Id { get; set; }
-        public Nullable<System.Guid> Doc_Id { get; set; }
-        public Nullable<decimal> Nomenkl_DC { get; set; }
-        public Nullable<decimal> Quantity { get; set; }
+        public System.Guid Doc_Id { get; set; }
+        public decimal Nomenkl_DC { get; set; }
+        public decimal Quantity { get; set; }
         public string Note { get; set; }
     
         public virtual AktSpisaniyaNomenkl_Title AktSpisaniyaNomenkl_Title { get; set; }

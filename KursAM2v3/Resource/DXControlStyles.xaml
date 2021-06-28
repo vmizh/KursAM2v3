@@ -32,20 +32,6 @@
         <Setter Property="dxg:DataControlSerializationOptions.RemoveOldColumns" Value="True"/>
         <Setter Property="SelectionMode" Value="Row"/>
         <Setter Property="ShowLoadingPanel" Value="{Binding IsLoading, UpdateSourceTrigger=PropertyChanged}" />
-        <!--<Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
-            <Setter.Value>
-                <DataTemplate>
-                    <ItemsControl>
-                        <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding EditCommand}"
-                                               PassEventArgsToCommand="True" MarkRoutedEventsAsHandled="True">
-                            <dxmvvm:EventToCommand.EventArgsConverter>
-                                <dx:EventArgsToDataRowConverter />
-                            </dxmvvm:EventToCommand.EventArgsConverter>
-                        </dxmvvm:EventToCommand>
-                    </ItemsControl>
-                </DataTemplate>
-            </Setter.Value>
-        </Setter>-->
     </Style>
 
     <Style x:Key="TableView.Search" TargetType="dxg:TableView">
@@ -95,6 +81,13 @@
                 </DataTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="TableView.Standart" TargetType="dxg:TableView">
+        <Setter Property="ShowTotalSummary" Value="True"/>
+        <Setter Property="ShowAutoFilterRow" Value="True"/>
+        <Setter Property="EnableImmediatePosting" Value="True"/> 
+        <Setter Property="EditFormPostMode" Value="Immediate"/>
     </Style>
     <dx:DXSplashScreenService x:Key="WaitIndicatorService">
         <dx:DXSplashScreenService.ViewTemplate>

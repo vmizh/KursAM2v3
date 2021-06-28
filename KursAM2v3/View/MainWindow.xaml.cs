@@ -28,6 +28,7 @@ using KursAM2.View.Period;
 using KursAM2.View.Personal;
 using KursAM2.View.Reconciliation;
 using KursAM2.View.Repozit;
+using KursAM2.View.Shop;
 using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.Cash;
@@ -46,6 +47,7 @@ using KursAM2.ViewModel.Reconcilation;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.Reference.Nomenkl;
 using KursAM2.ViewModel.Repozit;
+using KursAM2.ViewModel.Shop;
 using KursAM2.ViewModel.StartLogin;
 using LayoutManager;
 using NomenklCostReset = KursAM2.View.Logistiks.NomenklCostReset;
@@ -169,6 +171,17 @@ namespace KursAM2.View
                 Window form;
                 switch (formName)
                 {
+                    //Разбор данных для Shop
+                    case "Разбор данных для Shop":
+                        var shopCTX = new ShopParserExtFilesWindowViewModel();
+                        form = new ShopParserExtFiles()
+                        {
+                            Owner = Application.Current.MainWindow
+                        };
+                        form.DataContext = shopCTX;
+                        shopCTX.Form = form;
+                        form.Show();
+                        break;
                     //Договра клиентам (новый)
                     case "Последние документы пользователей":
                         var ldoc = new LastUsersDocumentWindowViewModel();

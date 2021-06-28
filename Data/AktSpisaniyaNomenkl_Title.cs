@@ -21,9 +21,9 @@ namespace Data
         }
     
         public System.Guid Id { get; set; }
-        public Nullable<decimal> Warehouse_DC { get; set; }
-        public Nullable<int> Num_Doc { get; set; }
-        public Nullable<System.DateTime> Date_Doc { get; set; }
+        public decimal Warehouse_DC { get; set; }
+        public int Num_Doc { get; set; }
+        public System.DateTime Date_Doc { get; set; }
         public string Creator { get; set; }
         public string Reason_Creation { get; set; }
         public string Note { get; set; }

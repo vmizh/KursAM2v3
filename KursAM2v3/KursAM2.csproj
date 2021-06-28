@@ -398,6 +398,9 @@
     <Compile Include="ViewModel\Repozit\UserOptionsWindowViewModel.cs" />
     <Compile Include="ViewModel\Repozit\UserProfileWindowViewModel.cs" />
     <Compile Include="ViewModel\Repozit\UsersManagerViewModel.cs" />
+    <Compile Include="ViewModel\Shop\ShopParserExtFilesWindowViewModel.cs" />
+    <Compile Include="ViewModel\Shop\NomenklInfo.cs" />
+    <Compile Include="ViewModel\Shop\ShopExtFileOrderItem.cs" />
     <Compile Include="ViewModel\StartLogin\LastDocumentWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastUsersDocumentWindowViewModel.cs" />
     <Compile Include="View\Base\IOnAutoGeneratingColumn.cs" />
@@ -979,6 +982,9 @@
     <Compile Include="View\Search\SearchDogovorForClientView.xaml.cs">
       <DependentUpon>SearchDogovorForClientView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Shop\ShopParserExtFiles.xaml.cs">
+      <DependentUpon>ShopParserExtFiles.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SplashWindow\DebitorCreditorKontrCalcSplashView.xaml.cs">
       <DependentUpon>DebitorCreditorKontrCalcSplashView.xaml</DependentUpon>
     </Compile>
@@ -1074,7 +1080,6 @@
   <ItemGroup>
     <Folder Include="Properties\DataSources\" />
     <Folder Include="ViewModel\Logistiks\Helper\" />
-    <Folder Include="View\Shop\" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Resource\DXControlStyles.xaml">
@@ -1718,6 +1723,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Search\SearchDogovorForClientView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Shop\ShopParserExtFiles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
