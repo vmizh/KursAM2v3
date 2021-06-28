@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core.EntityViewModel.Dogovora;
+using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Charts.Native;
@@ -80,6 +81,31 @@ namespace Core.EntityViewModel.AktSpisaniya
                 RaisePropertiesChanged();
             }
         }
+
+        public Warehouse Warehouse
+        {
+            get => MainReferences.g
+            set
+            {
+                if(Entity.Warehouse_DC == value)
+                    return;
+                Entity.Warehouse_DC = value;
+                RaisePropertiesChanged();
+            }
+        }
+
+        public override string Note
+        {
+            get => Entity.Note;
+            set
+            {
+                if (Entity.Note == value) return;
+                Entity.Note = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
 
 
 
