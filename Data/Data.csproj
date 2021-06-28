@@ -75,6 +75,12 @@
     <Compile Include="AD_83.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="AktSpisaniyaNomenkl_Title.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AktSpisaniya_row.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="ALFAMEDIA.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

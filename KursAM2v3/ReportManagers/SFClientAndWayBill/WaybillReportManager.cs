@@ -53,7 +53,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 Math.Round(
                     Convert.ToDouble((item.SchetLinkedRow.SFT_SUMMA_K_OPLATE - item.SchetLinkedRow.SFT_SUMMA_NDS) /
                                      (decimal) item.SchetLinkedRow.SFT_KOL * item.DDT_KOL_RASHOD), 2);
-            sheet.Cells[$"BG{rowId}"].Value = item.SchetLinkedRow.SFT_NDS_PERCENT;
+            sheet.Cells[$"BG{rowId}"].Value = item.SchetLinkedRow.NDSPercent;
             sheet.Cells[$"BQ{rowId}"].Value =
                 Math.Round(
                     Convert.ToDouble(item.SchetLinkedRow.SFT_SUMMA_NDS *

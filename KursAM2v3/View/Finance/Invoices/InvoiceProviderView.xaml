@@ -48,7 +48,7 @@
                         <dxlc:LayoutItem Label="Дата:" 
                             Width="120"
                             HorizontalAlignment="Left">
-                            <dxe:TextEdit EditValue="{Binding Document.SF_POSTAV_DATE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <dxe:DateEdit EditValue="{Binding Document.SF_POSTAV_DATE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Создатель:"
                             Width="200"

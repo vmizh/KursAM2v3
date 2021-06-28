@@ -2061,6 +2061,11 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorClient_PayCondition" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorClientRow_DocId" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_84_DogovorClientId" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.AktSpisaniya_row" Width="1.5" PointX="39.75" PointY="764.625" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.AktSpisaniyaNomenkl_Title" Width="1.5" PointX="20.75" PointY="790.625" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AktSpisaniya_row_Doc_Id" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AktSpisaniya_row_Nomenkl_DC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AktSpisaniyaNomenkl_Title_Warehouse_DC" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

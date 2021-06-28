@@ -42,10 +42,8 @@ namespace KursAM2.ViewModel.StartLogin
             InitIniFile(UserIniFile);
             Form = formWindow;
             CurrentUser = UserIniFile.ReadINI("Start", "Login");
-            //GetDefaultCache();
         }
 
-        private ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
         public IniFileManager UserIniFile { set; get; }
 
         public ObservableCollection<DataSource> ComboBoxItemSource { set; get; } =
@@ -235,9 +233,9 @@ namespace KursAM2.ViewModel.StartLogin
                     var ownKontr =
                         GlobalOptions.GetEntities().SD_43.Include(_ => _.TD_43).
                             Include(_ => _.TD_43.Select(x => x.SD_44))
-                            .Single(_ => _.DOC_CODE == DC);
-                    GlobalOptions.SystemProfile.OwnerKontragent =
-                        new Kontragent(ownKontr);
+                            .SingleOrDefault(_ => _.DOC_CODE == DC);
+                    if(ownKontr != null)
+                        GlobalOptions.SystemProfile.OwnerKontragent = new Kontragent(ownKontr);
                 }
 
                 var mainCrsDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(

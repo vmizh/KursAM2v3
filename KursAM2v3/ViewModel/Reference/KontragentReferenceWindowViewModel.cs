@@ -377,7 +377,7 @@ namespace KursAM2.ViewModel.Reference
                                 oldcat.EG_PARENT_ID = cat.EG_PARENT_ID;
                                 break;
                             case RowStatus.NewRow:
-                                newId = ctx.UD_43.Max(_ => _.EG_ID);
+                                newId = ctx.UD_43.Any() ? ctx.UD_43.Max(_ => _.EG_ID) : 0;
                                 if (newId == 0)
                                     newId = 1;
                                 else newId = newId + 1;

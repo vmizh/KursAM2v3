@@ -179,7 +179,7 @@
                     <Setter TargetName="PART_ErrorBorder" Property="BorderThickness" Value="1"/>
                 </Trigger>
                 <DataTrigger Binding="{Binding Path=ValidationError.ErrorType, RelativeSource={RelativeSource Self}}" Value="Critical">
-                    <Setter TargetName="PART_ErrorBorder" Property="BorderBrush" Value="Red"/>
+                    <Setter TargetName="PART_ErrorBorder" Property="BorderBrush" Value="Black"/>
                 </DataTrigger>
             </ControlTemplate.Triggers>
      </ControlTemplate>
@@ -207,7 +207,31 @@
                     <Setter TargetName="PART_ErrorBorder" Property="BorderThickness" Value="1"/>
                 </Trigger>
                 <DataTrigger Binding="{Binding Path=ValidationError.ErrorType, RelativeSource={RelativeSource Self}}" Value="Critical">
-                    <Setter TargetName="PART_ErrorBorder" Property="BorderBrush" Value="Red"/>
+                    <Setter TargetName="PART_ErrorBorder" Property="BorderBrush" Value="Black"/>
+                </DataTrigger>
+            </ControlTemplate.Triggers>
+     </ControlTemplate>
+    <ControlTemplate x:Key="CustomTextEditTemplate" TargetType="{x:Type dxe:TextEdit}">
+            <Border Name="PART_ErrorBorder">
+                <ContentControl Template="{TemplateBinding ActualBorderTemplate}">
+                    <!--<dxe:EditorControl x:Name="PART_Content" SnapsToDevicePixels="True" Template="{TemplateBinding ActualEditorControlTemplate}"/>-->
+                    <Grid x:Name="ButtonEditGrid" SnapsToDevicePixels="True">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!--<dxe:ErrorControl x:Name="PART_ErrorPresenter" />-->
+                    </Grid>
+                </ContentControl>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="HasValidationError" Value="True">
+                    <Setter TargetName="PART_ErrorBorder" Property="BorderThickness" Value="1"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding Path=ValidationError.ErrorType, RelativeSource={RelativeSource Self}}" Value="Critical">
+                    <Setter TargetName="PART_ErrorBorder" Property="BorderBrush" Value="Black"/>
                 </DataTrigger>
             </ControlTemplate.Triggers>
      </ControlTemplate>

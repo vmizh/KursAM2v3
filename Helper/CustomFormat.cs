@@ -33,5 +33,18 @@ namespace Helper
         {
             return Convert.ToString(d, CultureInfo.InvariantCulture)?.Replace("{", "").Replace("}", "");
         }
+
+        /// <summary>
+        /// Перевожит строку в decimal, не зависимо от токчки или запятой, в качестве разделения
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        public static decimal StringToDecimal(string d)
+        {
+            return Convert.ToDecimal(d, new NumberFormatInfo
+            {
+                CurrencyDecimalSeparator = ".,"
+            });
+        }
     }
 }

@@ -231,7 +231,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells[$"O{startTableRow + row}"].Value =
                     Convert.ToDouble(item.SFT_SUMMA_K_OPLATE - item.SFT_SUMMA_NDS);
                 sheet.Cells[$"O{startTableRow + row}"].NumberFormat = "#,##0.00";
-                sheet.Cells[$"S{startTableRow + row}"].Value = item.SFT_NDS_PERCENT;
+                sheet.Cells[$"S{startTableRow + row}"].Value = item.NDSPercent;
                 sheet.Cells[$"U{startTableRow + row}"].Value =
                     Convert.ToDouble(item.SFT_SUMMA_NDS);
                 sheet.Cells[$"U{startTableRow + row}"].NumberFormat = "#,##0.00";
@@ -280,7 +280,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 Math.Round(
                     Convert.ToDouble((item.SFT_SUMMA_K_OPLATE - item.SFT_SUMMA_NDS) / (decimal) item.SFT_KOL *
                                      (decimal) item.SFT_KOL), 2);
-            sheet.Cells[$"BG{rowId}"].Value = item.SFT_NDS_PERCENT;
+            sheet.Cells[$"BG{rowId}"].Value = item.NDSPercent;
             sheet.Cells[$"BQ{rowId}"].Value =
                 Math.Round(
                     Convert.ToDouble(item.SFT_SUMMA_NDS *

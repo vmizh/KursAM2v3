@@ -1190,7 +1190,12 @@ namespace Core
                 }
 
                 // ReSharper disable once PossibleInvalidOperationException
-                KontragentLastUpdate = (DateTime) AllKontragents.Values.Select(_ => _.UpdateDate).Max();
+                if(AllKontragents.Count > 0)
+                    KontragentLastUpdate = (DateTime) AllKontragents.Values.Select(_ => _.UpdateDate).Max();
+                else
+                {
+                    KontragentLastUpdate = DateTime.Now;
+                }
             }
             catch (Exception ex)
             {

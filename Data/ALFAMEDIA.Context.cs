@@ -772,6 +772,8 @@ namespace Data
         public virtual DbSet<DocHistory> DocHistory { get; set; }
         public virtual DbSet<DogovorClient> DogovorClient { get; set; }
         public virtual DbSet<DogovorClientRow> DogovorClientRow { get; set; }
+        public virtual DbSet<AktSpisaniya_row> AktSpisaniya_row { get; set; }
+        public virtual DbSet<AktSpisaniyaNomenkl_Title> AktSpisaniyaNomenkl_Title { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

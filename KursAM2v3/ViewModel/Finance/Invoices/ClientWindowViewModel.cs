@@ -172,7 +172,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                                                && Document.PayCondition != null &&
                                                                Document.SF_VZAIMOR_TYPE_DC != null
                                                                && Document.SF_FORM_RASCH_DC != null
-                          && Document.DeletedRows.Count > 0 && (Document.Rows.Count == 0 || Document.Rows.Any(_ => _.State != RowStatus.NotEdited));
+                          || Document.DeletedRows.Count >= 0 && (Document.Rows.Count == 0 || Document.Rows.Any(_ => _.State != RowStatus.NotEdited));
                 return res;
             }
         }
@@ -718,7 +718,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         DOC_CODE = Document.DocCode,
                         Code = newCode,
                         SFT_NEMENKL_DC = item.DOC_CODE,
-                        SFT_NDS_PERCENT = (double) nds,
+                        NDSPercent = nds,
                         SFT_KOL = 1,
                         SFT_ED_CENA = 0
                     });
@@ -774,7 +774,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         DOC_CODE = Document.DocCode,
                         Code = newCode,
                         SFT_NEMENKL_DC = item.DOC_CODE,
-                        SFT_NDS_PERCENT = (double) nds,
+                        NDSPercent = nds,
                         SFT_KOL = 1,
                         SFT_ED_CENA = 0
                     });

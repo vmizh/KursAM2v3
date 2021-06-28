@@ -408,7 +408,7 @@ namespace KursAM2.ViewModel.Reference
                 try
                 {
                     var CurrentCategory = Category?.DocCode;
-                    var newDC = ctx.SD_43.Max(_ => _.DOC_CODE) + 1;
+                    var newDC = ctx.SD_43.Any() ? ctx.SD_43.Max(_ => _.DOC_CODE) + 1 : 10430000001;
                     var OtvetstvennojeLico = OtvetstLico?.TabelNumber;
                     var myValuteDC = CurrentCurrencies?.DocCode;
                     var myTabelnumber = Employee?.TabelNumber;
@@ -522,27 +522,30 @@ namespace KursAM2.ViewModel.Reference
                         }
                     }
 
-                    foreach (var item in BankAndAccounts)
+                    if (ctx.TD_43.Any())
                     {
-                        var getCode = ctx.TD_43.Max(_ => _.CODE) + 1;
-                        if (item.State == RowStatus.NewRow)
-                            ctx.TD_43.Add(new TD_43
-                            {
-                                RASCH_ACC = item.RASCH_ACC,
-                                DOC_CODE = Kontragent.DOC_CODE,
-                                DISABLED = item.DISABLED,
-                                BANK_DC = item.BankDC,
-                                CODE = getCode
-                            });
-                        if (item.State == RowStatus.Edited)
+                        foreach (var item in BankAndAccounts)
                         {
-                            var i = ctx.TD_43.FirstOrDefault(_ => _.CODE == item.Code);
-                            if (i != null)
+                            var getCode = ctx.TD_43.Max(_ => _.CODE) + 1;
+                            if (item.State == RowStatus.NewRow)
+                                ctx.TD_43.Add(new TD_43
+                                {
+                                    RASCH_ACC = item.RASCH_ACC,
+                                    DOC_CODE = Kontragent.DOC_CODE,
+                                    DISABLED = item.DISABLED,
+                                    BANK_DC = item.BankDC,
+                                    CODE = getCode
+                                });
+                            if (item.State == RowStatus.Edited)
                             {
-                                i.BANK_DC = item.BankDC;
-                                i.DISABLED = item.DISABLED;
-                                i.DELETED = item.DELETED;
-                                i.RASCH_ACC = item.RASCH_ACC;
+                                var i = ctx.TD_43.FirstOrDefault(_ => _.CODE == item.Code);
+                                if (i != null)
+                                {
+                                    i.BANK_DC = item.BankDC;
+                                    i.DISABLED = item.DISABLED;
+                                    i.DELETED = item.DELETED;
+                                    i.RASCH_ACC = item.RASCH_ACC;
+                                }
                             }
                         }
                     }
@@ -558,21 +561,21 @@ namespace KursAM2.ViewModel.Reference
                     // ReSharper disable once PossibleNullReferenceException
                     DeletedBankAndAccountses.Clear();
                     ctx.SaveChanges();
-                    if (IsNewDoc)
-                    {
-                        Kontragent.DocCode = newDC;
-                        MainReferences.AllKontragents.Add(Kontragent.DocCode, Kontragent);
-                        MainReferences.ActiveKontragents.Add(Kontragent.DocCode, Kontragent);
-                        MainReferences.KontragentLastUpdate =
-                            (DateTime) MainReferences.AllKontragents.Values.Select(_ => _.UpdateDate).Max();
-                    }
-                    else
-                    {
-                        MainReferences.AllKontragents[Kontragent.DocCode] = Kontragent;
-                        MainReferences.ActiveKontragents[Kontragent.DocCode] = Kontragent;
-                        MainReferences.KontragentLastUpdate =
-                            (DateTime)MainReferences.AllKontragents.Values.Select(_ => _.UpdateDate).Max();
-                    }
+                    //if (IsNewDoc && !MainReferences.AllKontragents.ContainsKey(Kontragent.DocCode))
+                    //{
+                    //    Kontragent.DocCode = newDC;
+                    //    MainReferences.AllKontragents.Add(Kontragent.DocCode, Kontragent);
+                    //    MainReferences.ActiveKontragents.Add(Kontragent.DocCode, Kontragent);
+                    //    MainReferences.KontragentLastUpdate =
+                    //        (DateTime) MainReferences.AllKontragents.Values.Select(_ => _.UpdateDate).Max();
+                    //}
+                    //else
+                    //{
+                    //    MainReferences.AllKontragents[Kontragent.DocCode] = Kontragent;
+                    //    MainReferences.ActiveKontragents[Kontragent.DocCode] = Kontragent;
+                    //    MainReferences.KontragentLastUpdate =
+                    //        (DateTime)MainReferences.AllKontragents.Values.Select(_ => _.UpdateDate).Max();
+                    //}
 
                     Kontragent.myState = RowStatus.NotEdited;
                 }

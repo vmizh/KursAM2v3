@@ -259,19 +259,19 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
-        public double SFT_NDS_PERCENT
-        {
-            get => Entity.SFT_NDS_PERCENT;
-            set
-            {
-                if (Math.Abs(Entity.SFT_NDS_PERCENT - value) < 0.00001) return;
-                Entity.SFT_NDS_PERCENT = value;
-                CalcRow(FieldChangeType.NDS);
-                RaisePropertyChanged(nameof(SFT_SUMMA_K_OPLATE));
-                RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
-                RaisePropertyChanged();
-            }
-        }
+        //public double SFT_NDS_PERCENT
+        //{
+        //    get => Entity.SFT_NDS_PERCENT;
+        //    set
+        //    {
+        //        if (Math.Abs(Entity.SFT_NDS_PERCENT - value) < 0.00001) return;
+        //        Entity.SFT_NDS_PERCENT = value;
+        //        CalcRow(FieldChangeType.NDS);
+        //        RaisePropertyChanged(nameof(SFT_SUMMA_K_OPLATE));
+        //        RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public decimal NDSPercent
         {
@@ -316,7 +316,7 @@ namespace Core.EntityViewModel.Invoices
                 Entity.SFT_SUMMA_K_OPLATE = value;
                 CalcRow(FieldChangeType.Summa);
                 RaisePropertyChanged(nameof(SFT_ED_CENA));
-                RaisePropertyChanged(nameof(SFT_NDS_PERCENT));
+                RaisePropertyChanged(nameof(NDSPercent));
                 RaisePropertyChanged();
             }
         }
@@ -864,7 +864,6 @@ namespace Core.EntityViewModel.Invoices
             SFT_KOL = ent.SFT_KOL;
             SFT_ED_CENA = ent.SFT_ED_CENA;
             SFT_ACCIZ = ent.SFT_ACCIZ;
-            SFT_NDS_PERCENT = ent.SFT_NDS_PERCENT;
             SFT_SUMMA_NDS = ent.SFT_SUMMA_NDS;
             SFT_SUMMA_K_OPLATE = ent.SFT_SUMMA_K_OPLATE;
             SFT_STDP_DC = ent.SFT_STDP_DC;
@@ -909,7 +908,6 @@ namespace Core.EntityViewModel.Invoices
             ent.SFT_KOL = SFT_KOL;
             ent.SFT_ED_CENA = SFT_ED_CENA;
             ent.SFT_ACCIZ = SFT_ACCIZ;
-            ent.SFT_NDS_PERCENT = SFT_NDS_PERCENT;
             ent.SFT_SUMMA_NDS = SFT_SUMMA_NDS;
             ent.SFT_SUMMA_K_OPLATE = SFT_SUMMA_K_OPLATE;
             ent.SFT_STDP_DC = SFT_STDP_DC;

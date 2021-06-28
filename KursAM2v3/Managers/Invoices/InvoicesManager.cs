@@ -1949,7 +1949,7 @@ namespace KursAM2.Managers.Invoices
                                         SFT_TEXT = items.SFT_TEXT ?? " ",
                                         SFT_NEMENKL_DC = items.SFT_NEMENKL_DC,
                                         SFT_KOL = items.SFT_KOL,
-                                        SFT_NDS_PERCENT = items.SFT_NDS_PERCENT,
+                                        SFT_NDS_PERCENT = (double) items.NDSPercent,
                                         OLD_NOM_NAME = items.OLD_NOM_NAME,
                                         OLD_NOM_NOMENKL = items.OLD_NOM_NOMENKL,
                                         OLD_OVERHEAD_CRS_NAME = items.OLD_OVERHEAD_CRS_NAME,
@@ -2038,7 +2038,7 @@ namespace KursAM2.Managers.Invoices
                                             SFT_TEXT = items.SFT_TEXT ?? " ",
                                             SFT_NEMENKL_DC = items.SFT_NEMENKL_DC,
                                             SFT_KOL = items.SFT_KOL,
-                                            SFT_NDS_PERCENT = items.SFT_NDS_PERCENT,
+                                            SFT_NDS_PERCENT = (double) items.NDSPercent,
                                             Id = Guid.NewGuid(),
                                             OLD_NOM_NAME = items.OLD_NOM_NAME,
                                             OLD_NOM_NOMENKL = items.OLD_NOM_NOMENKL,
@@ -2074,7 +2074,7 @@ namespace KursAM2.Managers.Invoices
                                         data.SFT_TEXT = items.SFT_TEXT ?? " ";
                                         data.SFT_NEMENKL_DC = items.SFT_NEMENKL_DC;
                                         data.SFT_KOL = items.SFT_KOL;
-                                        data.SFT_NDS_PERCENT = items.SFT_NDS_PERCENT;
+                                        data.SFT_NDS_PERCENT = (double) items.NDSPercent;
                                         data.OLD_NOM_NAME = items.OLD_NOM_NAME;
                                         data.OLD_NOM_NOMENKL = items.OLD_NOM_NOMENKL;
                                         data.OLD_OVERHEAD_CRS_NAME = items.OLD_OVERHEAD_CRS_NAME;
