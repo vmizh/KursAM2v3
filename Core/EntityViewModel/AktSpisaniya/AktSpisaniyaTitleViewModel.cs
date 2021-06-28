@@ -84,12 +84,12 @@ namespace Core.EntityViewModel.AktSpisaniya
 
         public Warehouse Warehouse
         {
-            get => MainReferences.g
+            get => MainReferences.GetWarehouse(Entity.Warehouse_DC);
             set
             {
-                if(Entity.Warehouse_DC == value)
+                if(MainReferences.GetWarehouse(Entity.Warehouse_DC) == value)
                     return;
-                Entity.Warehouse_DC = value;
+                Entity.Warehouse_DC = value.DocCode;
                 RaisePropertiesChanged();
             }
         }

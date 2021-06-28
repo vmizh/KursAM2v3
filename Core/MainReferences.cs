@@ -168,6 +168,34 @@ namespace Core
             return null;
         }
 
+        public static Unit GetUnit(decimal dc)
+        {
+            if (Units.ContainsKey(dc))
+                return Units[dc];
+            return null;
+        }
+        public static Unit GetUnit(decimal? dc)
+        {
+            if (dc == null) return null;
+            if (Units.ContainsKey(dc.Value))
+                return Units[dc.Value];
+            return null;
+        }
+
+        public static Warehouse GetWarehouse(decimal dc)
+        {
+            if (Warehouses.ContainsKey(dc))
+                return Warehouses[dc];
+            return null;
+        }
+        public static Warehouse GetWarehouse(decimal? dc)
+        {
+            if (dc == null) return null;
+            if (Warehouses.ContainsKey(dc.Value))
+                return Warehouses[dc.Value];
+            return null;
+        }
+
         public static ContractType GetContractType(decimal dc)
         {
             if (ContractTypes.ContainsKey(dc))
