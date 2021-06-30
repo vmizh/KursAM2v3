@@ -145,7 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityViewModel\AktSpisaniya\AktSpisaniyaRowViewModel.cs" />
-    <Compile Include="EntityViewModel\AktSpisaniya\AktSpisaniyaTitleViewModel.cs" />
+    <Compile Include="EntityViewModel\AktSpisaniya\AktSpisaniyaNomenkl_TitleViewModel.cs" />
     <Compile Include="EntityViewModel\Bank\BankOperationType.cs" />
     <Compile Include="EntityViewModel\Cash\CashCurrencyExchangeKontragentType.cs" />
     <Compile Include="EntityViewModel\Cash\CashOrder.cs" />
