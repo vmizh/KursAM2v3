@@ -11,7 +11,6 @@ using Core.EntityViewModel.Vzaimozachet;
 using Core.Helper;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 
@@ -298,7 +297,7 @@ namespace Core.EntityViewModel.Invoices
         }
 
         public decimal? Summa =>
-            Rows == null || Rows.Count == 0 ? 0 : Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE);
+            Rows == null || Rows.Count == 0 ? 0 : Rows.Sum(_ => _.Summa);
 
         public double SF_CRS_RATE
         {

@@ -67,18 +67,19 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 Code = 1,
                 Id = Guid.NewGuid(),
                 DocId = newDoc.Id,
-                SFT_POST_ED_IZM_DC = MainReferences.Units.First().Key,
-                SFT_UCHET_ED_IZM_DC = MainReferences.Units.First().Key,
+                
                 SFT_ED_CENA = 1000,
-                SFT_NEMENKL_DC = MainReferences.ALLNomenkls.Values
-                    .FirstOrDefault(_ => _.Currency.DocCode == newDoc.Currency.DocCode).DocCode,
                 SFT_KOL = 1,
                 SFT_NDS_PERCENT = 18,
                 SFT_IS_NAKLAD = 0,
                 SFT_VKLUCH_V_CENU = 1,
                 SFT_AUTO_FLAG = 0,
-                SFT_TEXT = "test"
+                Note = "test"
             };
+            newRow.Entity.SFT_UCHET_ED_IZM_DC = MainReferences.Units.First().Key;
+            newRow.Entity.SFT_NEMENKL_DC = MainReferences.ALLNomenkls.Values
+                .FirstOrDefault(_ => _.Currency.DocCode == newDoc.Currency.DocCode).DocCode;
+            newRow.Entity.SFT_POST_ED_IZM_DC = MainReferences.Units.First().Key;
             newDoc.Rows.Add(newRow);
             newDoc.Entity.TD_26.Add(newRow.Entity);
             UnitOfWork.CreateTransaction();

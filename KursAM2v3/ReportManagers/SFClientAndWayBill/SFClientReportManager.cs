@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Linq;
 using Core.EntityViewModel.Invoices;
-using Core.Invoices.EntityViewModel;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Finance.Invoices;
@@ -61,16 +60,17 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             {
                 sheet.Cells[$"A{startTableRow + row}"].Value = item.Nomenkl.NomenklNumber;
                 sheet.Cells[$"B{startTableRow + row}"].Value = item.Nomenkl.Name;
-                sheet.Cells[$"C{startTableRow + row}"].Value = item.SFT_KOL;
+                sheet.Cells[$"C{startTableRow + row}"].Value = item.Quantity;
                 sheet.Cells[$"C{startTableRow + row}"].NumberFormat = "#,##0.00";
-                sheet.Cells[$"D{startTableRow + row}"].Value = Convert.ToDouble(item.SFT_ED_CENA);
+                sheet.Cells[$"D{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
                 sheet.Cells[$"D{startTableRow + row}"].NumberFormat = "#,##0.00";
-                sheet.Cells[$"E{startTableRow + row}"].Value = Convert.ToDouble(item.SFT_SUMMA_K_OPLATE);
+                sheet.Cells[$"E{startTableRow + row}"].Value = Convert.ToDouble(item.Summa);
                 sheet.Cells[$"E{startTableRow + row}"].NumberFormat = "#,##0.00";
                 sheet.Cells[$"F{startTableRow + row}"].Value = item.SFT_STRANA_PROIS;
-                sheet.Cells[$"G{startTableRow + row}"].Value = item.SFT_TEXT;
+                sheet.Cells[$"G{startTableRow + row}"].Value = item.Note;
                 row++;
             }
+
             sheet.Cells[$"E{document.Rows.Count + startTableRow + 1}"].Formula =
                 $"SUM(E{startTableRow}:E{document.Rows.Count + startTableRow})";
             sheet.Cells[$"E{document.Rows.Count + startTableRow + 1}"].NumberFormat = "#,##0.00";
@@ -123,6 +123,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells["W4"].Value = k.Bank.CORRESP_ACC;
                 sheet.Cells["W6"].Value = k.Entity.RASCH_ACC;
             }
+
             sheet.Cells["AC29"].Value = document.Receiver.Header;
             sheet.Cells["AC32"].Value = document.Receiver.GlavBuh;
             sheet.Cells["AC35"].Value = document.Receiver.Header;
@@ -133,6 +134,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     InsertCellsMode.ShiftCellsDown);
                 sheet.Rows[$"{startTableRow + i}"].CopyFrom(sheet.Rows["22"]);
             }
+
             var row = 1;
             foreach (var item in document.Rows)
             {
@@ -142,15 +144,16 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                         ? item.Nomenkl.NOM_FULL_NAME
                         : item.Nomenkl.Name;
                 sheet.Cells[$"AB{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_NAME;
-                sheet.Cells[$"Y{startTableRow + row}"].Value = item.SFT_KOL;
+                sheet.Cells[$"Y{startTableRow + row}"].Value = item.Quantity;
                 sheet.Cells[$"Y{startTableRow + row}"].NumberFormat = "#,##0.00";
-                sheet.Cells[$"AD{startTableRow + row}"].Value = Convert.ToDouble(item.SFT_ED_CENA);
+                sheet.Cells[$"AD{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
                 sheet.Cells[$"AD{startTableRow + row}"].NumberFormat = "#,##0.00";
                 sheet.Cells[$"AH{startTableRow + row}"].Value =
-                    Convert.ToDouble(item.SFT_SUMMA_K_OPLATE);
+                    Convert.ToDouble(item.Summa);
                 sheet.Cells[$"AH{startTableRow + row}"].NumberFormat = "#,##0.00";
                 row++;
             }
+
             sheet.Cells[$"AH{document.Rows.Count + startTableRow + 2}"].Value =
                 Convert.ToDouble(document.Summa);
             sheet.Cells[$"AH{document.Rows.Count + startTableRow + 3}"].Value =
@@ -195,6 +198,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     ? document.SF_GROZOOTPRAVITEL
                     : document.Receiver.GruzoRequisiteForSchet;
             }
+
             if (document.Client != null)
             {
                 sheet.Cells["B9"].Value = document.Client?.FullName;
@@ -206,6 +210,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells["B10"].Value = document.Client.ADDRESS;
                 sheet.Cells["B11"].Value = $"ИНН {document.Client.INN} / КПП {document.Client.KPP}";
             }
+
             sheet.Cells["J20"].Value = document.Receiver?.Header;
             sheet.Cells["AB20"].Value = document.Receiver?.GlavBuh;
             var startTableRow = 15;
@@ -215,6 +220,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     InsertCellsMode.ShiftCellsDown);
                 sheet.Rows[$"{startTableRow + i}"].CopyFrom(sheet.Rows["16"]);
             }
+
             var row = 1;
             foreach (var item in document.Rows)
             {
@@ -224,25 +230,26 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                         : item.Nomenkl.Name;
                 sheet[startTableRow + row - 1, 6].Value = item.Nomenkl.Unit?.ED_IZM_OKEI_CODE;
                 sheet.Cells[$"H{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_NAME;
-                sheet.Cells[$"K{startTableRow + row}"].Value = item.SFT_KOL;
+                sheet.Cells[$"K{startTableRow + row}"].Value = item.Quantity;
                 sheet.Cells[$"K{startTableRow + row}"].NumberFormat = "#,##0.00";
-                sheet.Cells[$"M{startTableRow + row}"].Value = Convert.ToDouble(item.SFT_ED_CENA);
+                sheet.Cells[$"M{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
                 sheet.Cells[$"M{startTableRow + row}"].NumberFormat = "#,##0.00";
                 sheet.Cells[$"O{startTableRow + row}"].Value =
-                    Convert.ToDouble(item.SFT_SUMMA_K_OPLATE - item.SFT_SUMMA_NDS);
+                    Convert.ToDouble(item.Summa - item.SFT_SUMMA_NDS);
                 sheet.Cells[$"O{startTableRow + row}"].NumberFormat = "#,##0.00";
                 sheet.Cells[$"S{startTableRow + row}"].Value = item.NDSPercent;
                 sheet.Cells[$"U{startTableRow + row}"].Value =
                     Convert.ToDouble(item.SFT_SUMMA_NDS);
                 sheet.Cells[$"U{startTableRow + row}"].NumberFormat = "#,##0.00";
                 sheet.Cells[$"V{startTableRow + row}"].Value =
-                    Convert.ToDouble(item.SFT_SUMMA_K_OPLATE);
+                    Convert.ToDouble(item.Summa);
                 sheet.Cells[$"V{startTableRow + row}"].NumberFormat = "#,##0.00";
                 sheet.Cells[$"Y{startTableRow + row}"].Value = item.SFT_COUNTRY_CODE;
                 sheet[startTableRow + row - 1, 26].Value = item.SFT_STRANA_PROIS;
                 sheet[startTableRow + row - 1, 28].Value = item.SFT_N_GRUZ_DECLAR;
                 row++;
             }
+
             sheet.Cells[$"O{document.Rows.Count + startTableRow + 1}"].Formula =
                 $"SUM(O{startTableRow}:O{document.Rows.Count + startTableRow})";
             sheet.Cells[$"O{document.Rows.Count + startTableRow + 1}"].NumberFormat = "#,##0.00";
@@ -270,25 +277,25 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 : item.Nomenkl.NameFull;
             sheet.Cells[$"V{rowId}"].Value = item.Nomenkl.Unit.Name;
             sheet.Cells[$"X{rowId}"].Value = item.Nomenkl.Unit.ED_IZM_OKEI_CODE;
-            sheet.Cells[$"AD{rowId}"].Value = Convert.ToDouble(item.SFT_KOL);
-            sheet.Cells[$"AH{rowId}"].Value = Convert.ToDouble(item.SFT_KOL);
-            sheet.Cells[$"AQ{rowId}"].Value = Convert.ToDouble(item.SFT_KOL);
+            sheet.Cells[$"AD{rowId}"].Value = Convert.ToDouble(item.Quantity);
+            sheet.Cells[$"AH{rowId}"].Value = Convert.ToDouble(item.Quantity);
+            sheet.Cells[$"AQ{rowId}"].Value = Convert.ToDouble(item.Quantity);
             sheet.Cells[$"AV{rowId}"].Value =
                 Math.Round(
-                    Convert.ToDouble(item.SFT_SUMMA_K_OPLATE / (decimal) item.SFT_KOL), 2);
+                    Convert.ToDouble(item.Summa / item.Quantity), 2);
             sheet.Cells[$"BB{rowId}"].Value =
                 Math.Round(
-                    Convert.ToDouble((item.SFT_SUMMA_K_OPLATE - item.SFT_SUMMA_NDS) / (decimal) item.SFT_KOL *
-                                     (decimal) item.SFT_KOL), 2);
+                    Convert.ToDouble((item.Summa - item.SFT_SUMMA_NDS) / item.Quantity *
+                                     item.Quantity), 2);
             sheet.Cells[$"BG{rowId}"].Value = item.NDSPercent;
             sheet.Cells[$"BQ{rowId}"].Value =
                 Math.Round(
                     Convert.ToDouble(item.SFT_SUMMA_NDS *
-                                     ((decimal) item.SFT_KOL / (decimal) item.SFT_KOL)), 2);
+                                     (item.Quantity / item.Quantity)), 2);
             sheet.Cells[$"BV{rowId}"].Value =
                 Math.Round(
-                    Convert.ToDouble(item.SFT_SUMMA_K_OPLATE *
-                                     ((decimal) item.SFT_KOL / (decimal) item.SFT_KOL)), 2);
+                    Convert.ToDouble(item.Summa *
+                                     (item.Quantity / item.Quantity)), 2);
         }
 
         public override void GenerateReport(Worksheet sheet)
@@ -317,6 +324,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     InsertCellsMode.EntireRow);
                 sheet.Rows[$"{startTableRow + i}"].CopyFrom(sheet.Rows[startTableRow.ToString()]);
             }
+
             if (document.Rows.Count > 3 && document.Rows.Count <= 20)
                 sheet.HorizontalPageBreaks.Add(startTableRow + document.Rows.Count - 2);
             foreach (var item in document.Rows)
@@ -324,6 +332,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 WaibillSetRow(sheet, row, startTableRow + row - 1, item);
                 row++;
             }
+
             sheet.Cells[$"AH{document.Rows.Count + startTableRow}"].Formula =
                 $"SUM(AH{startTableRow}:AH{document.Rows.Count + startTableRow - 1})";
             sheet.Cells[$"BB{document.Rows.Count + startTableRow}"].Formula =
@@ -335,16 +344,16 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"AH{document.Rows.Count + startTableRow + 1}"].Value = document.Rows.Count;
             sheet.Cells[$"BB{document.Rows.Count + startTableRow + 1}"].Value =
                 Math.Round(Convert.ToDouble(
-                    document.Rows.Sum(_ => (_.SFT_SUMMA_K_OPLATE - _.SFT_SUMMA_NDS) *
-                                           ((decimal) _.SFT_KOL / (decimal) _.SFT_KOL))), 2);
+                    document.Rows.Sum(_ => (_.Summa - _.SFT_SUMMA_NDS) *
+                                           (_.Quantity / _.Quantity))), 2);
             sheet.Cells[$"BQ{document.Rows.Count + startTableRow + 1}"].Value =
                 Math.Round(Convert.ToDouble(
                     document.Rows.Sum(_ => _.SFT_SUMMA_NDS *
-                                           ((decimal) _.SFT_KOL / (decimal) _.SFT_KOL))), 2);
+                                           (_.Quantity / _.Quantity))), 2);
             sheet.Cells[$"BV{document.Rows.Count + startTableRow + 1}"].Value =
                 Math.Round(Convert.ToDouble(
-                    document.Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE *
-                                           ((decimal) _.SFT_KOL / (decimal) _.SFT_KOL))), 2);
+                    document.Rows.Sum(_ => _.Summa *
+                                           (_.Quantity / _.Quantity))), 2);
             sheet.Cells[$"AB{document.Rows.Count + startTableRow + 4}"].Value = vm.Document.Rows.Count;
             sheet.Cells[$"O{document.Rows.Count + startTableRow + 30}"].Value = vm.Document.Receiver.GlavBuh;
             sheet.Cells[$"J{document.Rows.Count + startTableRow + 9}"].Value =

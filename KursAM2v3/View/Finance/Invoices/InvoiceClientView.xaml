@@ -92,7 +92,7 @@
                         </DockPanel>
                         </dxlc:LayoutItem>
                     <dxlc:LayoutItem Label="Поставщик:" HorizontalAlignment="Left">
-                        <dxe:ButtonEdit         EditValue="{Binding Document.Diler, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                        <dxe:ButtonEdit         EditValue="{Binding Document.Receiver, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
                                                 IsTextEditable="False" MinWidth="300">
                             <dxmvvm:Interaction.Behaviors>
                                 <dxmvvm:EventToCommand EventName="DefaultButtonClick"

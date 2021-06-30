@@ -9,6 +9,7 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm" 
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=Core"
     x:Class="KursAM2.View.Finance.Invoices.InvoiceProviderView" 
     mc:Ignorable="d"
     Title="{Binding WindowName}" 
@@ -43,12 +44,12 @@
                         <dxlc:LayoutItem Label="Внеш.№:" 
                             Width="150"
                             HorizontalAlignment="Left">
-                            <dxe:TextEdit EditValue="{Binding Document.SF_POSTAV_NUM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }"/>
+                            <dxe:TextEdit EditValue="{Binding Document.SF_POSTAV_NUM, UpdateSourceTrigger=PropertyChanged }"/>
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Дата:" 
                             Width="120"
                             HorizontalAlignment="Left">
-                            <dxe:DateEdit EditValue="{Binding Document.SF_POSTAV_DATE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <dxe:DateEdit EditValue="{Binding Document.SF_POSTAV_DATE, UpdateSourceTrigger=PropertyChanged}"/>
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Создатель:"
                             Width="200"
@@ -58,10 +59,13 @@
                         <dxlc:LayoutItem Label="Статус:" 
                             Width="100"
                             HorizontalAlignment="Right">
-                            <dxe:ComboBoxEdit
-                                IsEnabled="False"
-                                EditValue="{Binding State }"
-                                />
+                            <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
+                                              IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EnumItemsSourceBehavior
+                                        EnumType="{x:Type base:RowStatus}"/>
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:ComboBoxEdit>
                         </dxlc:LayoutItem>
                     </dxlc:LayoutGroup>
                     <dxlc:LayoutGroup Header="Основные данные" View="GroupBox" Orientation="Vertical">

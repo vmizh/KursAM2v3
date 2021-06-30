@@ -707,21 +707,23 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var item in k)
                 {
                     // ReSharper disable once PossibleNullReferenceException
-                    if (Document.Rows.Any(_ => _.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    if (Document.Rows.Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
                     else
                         nds = (decimal) item.NOM_NDS_PERCENT;
-                    Document.Rows.Add(new InvoiceClientRow
+                    // ReSharper disable once UseObjectOrCollectionInitializer
+                    var r = new InvoiceClientRow
                     {
-                        DOC_CODE = Document.DocCode,
+                        DocCode = Document.DocCode,
                         Code = newCode,
-                        SFT_NEMENKL_DC = item.DOC_CODE,
                         NDSPercent = nds,
-                        SFT_KOL = 1,
-                        SFT_ED_CENA = 0
-                    });
+                        Quantity = 1,
+                        Price = 0
+                    };
+                    r.Entity.SFT_NEMENKL_DC = item.DocCode;
+                    Document.Rows.Add(r);
                     newCode++;
                 }
             }
@@ -763,21 +765,24 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                 foreach (var item in k)
                 {
-                    if (Document != null && Document.Rows.Any(_ => _.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    if (Document != null && Document.Rows.Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
                     else
                         nds = (decimal) item.NOM_NDS_PERCENT;
-                    Document?.Rows.Add(new InvoiceClientRow
+                    // ReSharper disable once UseObjectOrCollectionInitializer
+                    var r = new InvoiceClientRow
                     {
-                        DOC_CODE = Document.DocCode,
+                        DocCode = Document.DocCode,
                         Code = newCode,
-                        SFT_NEMENKL_DC = item.DOC_CODE,
+                        
                         NDSPercent = nds,
-                        SFT_KOL = 1,
-                        SFT_ED_CENA = 0
-                    });
+                        Quantity = 1,
+                        Price = 0
+                    };
+                    r.Entity.SFT_NEMENKL_DC = item.DOC_CODE;
+                    Document?.Rows.Add(r);
                     newCode++;
                 }
             }
