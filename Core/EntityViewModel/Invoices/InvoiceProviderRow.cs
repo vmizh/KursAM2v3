@@ -11,7 +11,6 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
@@ -44,18 +43,7 @@ namespace Core.EntityViewModel.Invoices
         }
 
         public ObservableCollection<InvoiceProviderRowCurrencyConvertViewModel>
-            CurrencyConvertRows { set; get; } = new ObservableCollection<InvoiceProviderRowCurrencyConvertViewModel>();
-
-        public decimal DOC_CODE
-        {
-            get => Entity.DOC_CODE;
-            set
-            {
-                if (Entity.DOC_CODE == value) return;
-                Entity.DOC_CODE = value;
-                RaisePropertyChanged();
-            }
-        }
+            CurrencyConvertRows { set; get; } = new();
 
         public override decimal DocCode
         {
@@ -90,7 +78,18 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
-        public string SFT_TEXT
+        //public string SFT_TEXT
+        //{
+        //    get => Entity.SFT_TEXT;
+        //    set
+        //    {
+        //        if (Entity.SFT_TEXT == value) return;
+        //        Entity.SFT_TEXT = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
+
+        public override string Note
         {
             get => Entity.SFT_TEXT;
             set
@@ -101,30 +100,19 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
-        public override string Note
-        {
-            get => SFT_TEXT;
-            set
-            {
-                if (SFT_TEXT == value) return;
-                SFT_TEXT = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal SFT_POST_ED_IZM_DC
-        {
-            get => Entity.SFT_POST_ED_IZM_DC;
-            set
-            {
-                if (Entity.SFT_POST_ED_IZM_DC == value) return;
-                Entity.SFT_POST_ED_IZM_DC = value;
-                if (MainReferences.Units.ContainsKey(Entity.SFT_POST_ED_IZM_DC))
-                    myPostUnit = MainReferences.Units[Entity.SFT_POST_ED_IZM_DC];
-                RaisePropertyChanged(nameof(PostUnit));
-                RaisePropertyChanged();
-            }
-        }
+        //public decimal SFT_POST_ED_IZM_DC
+        //{
+        //    get => Entity.SFT_POST_ED_IZM_DC;
+        //    set
+        //    {
+        //        if (Entity.SFT_POST_ED_IZM_DC == value) return;
+        //        Entity.SFT_POST_ED_IZM_DC = value;
+        //        if (MainReferences.Units.ContainsKey(Entity.SFT_POST_ED_IZM_DC))
+        //            myPostUnit = MainReferences.Units[Entity.SFT_POST_ED_IZM_DC];
+        //        RaisePropertyChanged(nameof(PostUnit));
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public Unit PostUnit
         {
@@ -135,7 +123,6 @@ namespace Core.EntityViewModel.Invoices
                 myPostUnit = value;
                 if (myPostUnit != null)
                     Entity.SFT_POST_ED_IZM_DC = myPostUnit.DocCode;
-                RaisePropertyChanged(nameof(SFT_POST_ED_IZM_DC));
                 RaisePropertyChanged();
             }
         }
@@ -163,18 +150,18 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
-        public decimal SFT_NEMENKL_DC
-        {
-            get => Entity.SFT_NEMENKL_DC;
-            set
-            {
-                if (Entity.SFT_NEMENKL_DC == value) return;
-                Entity.SFT_NEMENKL_DC = value;
-                myNomenkl = MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
-                RaisePropertyChanged(nameof(Nomenkl));
-                RaisePropertyChanged();
-            }
-        }
+        //public decimal SFT_NEMENKL_DC
+        //{
+        //    get => Entity.SFT_NEMENKL_DC;
+        //    set
+        //    {
+        //        if (Entity.SFT_NEMENKL_DC == value) return;
+        //        Entity.SFT_NEMENKL_DC = value;
+        //        myNomenkl = MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
+        //        RaisePropertyChanged(nameof(Nomenkl));
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public Nomenkl Nomenkl
         {
@@ -192,16 +179,16 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
-        public decimal SFT_UCHET_ED_IZM_DC
-        {
-            get => Entity.SFT_UCHET_ED_IZM_DC;
-            set
-            {
-                if (Entity.SFT_UCHET_ED_IZM_DC == value) return;
-                Entity.SFT_UCHET_ED_IZM_DC = value;
-                RaisePropertyChanged();
-            }
-        }
+        //public decimal SFT_UCHET_ED_IZM_DC
+        //{
+        //    get => Entity.SFT_UCHET_ED_IZM_DC;
+        //    set
+        //    {
+        //        if (Entity.SFT_UCHET_ED_IZM_DC == value) return;
+        //        Entity.SFT_UCHET_ED_IZM_DC = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public Unit UchUnit
         {
@@ -212,7 +199,7 @@ namespace Core.EntityViewModel.Invoices
                 myUchUnit = value;
                 if (myUchUnit != null)
                     Entity.SFT_UCHET_ED_IZM_DC = myUchUnit.DocCode;
-                RaisePropertyChanged(nameof(SFT_UCHET_ED_IZM_DC));
+                RaisePropertyChanged(nameof(Entity.SFT_UCHET_ED_IZM_DC));
                 RaisePropertyChanged();
             }
         }
@@ -245,7 +232,7 @@ namespace Core.EntityViewModel.Invoices
                 if (Entity.SFT_KOL == value) return;
                 if (Parent is InvoiceProvider p && p.Facts.Count > 0)
                 {
-                    var s = p.Facts.Where(_ => _.DDT_SPOST_DC == DOC_CODE
+                    var s = p.Facts.Where(_ => _.DDT_SPOST_DC == DocCode
                                                && _.DDT_SPOST_ROW_CODE == Code).Sum(_ => _.DDT_KOL_PRIHOD);
                     if (value < s)
                     {
@@ -311,7 +298,8 @@ namespace Core.EntityViewModel.Invoices
             get => Entity.SFT_SUMMA_K_OPLATE;
             set
             {
-                if (Entity.SFT_SUMMA_K_OPLATE == value) return; Entity.SFT_SUMMA_K_OPLATE = value;
+                if (Entity.SFT_SUMMA_K_OPLATE == value) return;
+                Entity.SFT_SUMMA_K_OPLATE = value;
                 Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
                 RaisePropertyChanged();
             }
@@ -491,19 +479,19 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
-        public decimal? SFT_SHPZ_DC
-        {
-            get => Entity.SFT_SHPZ_DC;
-            set
-            {
-                if (Entity.SFT_SHPZ_DC == value) return;
-                Entity.SFT_SHPZ_DC = value;
-                if (Entity.SFT_SHPZ_DC != null && MainReferences.SDRSchets.ContainsKey(Entity.SFT_SHPZ_DC.Value))
-                    mySDRSchet = MainReferences.SDRSchets[Entity.SFT_SHPZ_DC.Value];
-                RaisePropertyChanged(nameof(SFT_SHPZ_DC.Value));
-                RaisePropertyChanged();
-            }
-        }
+        //public decimal? SFT_SHPZ_DC
+        //{
+        //    get => Entity.SFT_SHPZ_DC;
+        //    set
+        //    {
+        //        if (Entity.SFT_SHPZ_DC == value) return;
+        //        Entity.SFT_SHPZ_DC = value;
+        //        if (Entity.SFT_SHPZ_DC != null && MainReferences.SDRSchets.ContainsKey(Entity.SFT_SHPZ_DC.Value))
+        //            mySDRSchet = MainReferences.SDRSchets[Entity.SFT_SHPZ_DC.Value];
+        //        RaisePropertyChanged(nameof(SFT_SHPZ_DC.Value));
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public SDRSchet SDRSchet
         {
@@ -514,7 +502,7 @@ namespace Core.EntityViewModel.Invoices
                 mySDRSchet = value;
                 if (mySDRSchet != null)
                     Entity.SFT_SHPZ_DC = mySDRSchet.DocCode;
-                RaisePropertyChanged(nameof(SFT_SHPZ_DC));
+                RaisePropertyChanged(nameof(Entity.SFT_SHPZ_DC));
                 RaisePropertyChanged();
             }
         }
@@ -856,6 +844,9 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
+        public EntityLoadCodition LoadCondition { get; set; }
+        public string NomenklNumber => Nomenkl?.NomenklNumber;
+
         public TD_26 Entity
         {
             get => myEntity;
@@ -866,9 +857,6 @@ namespace Core.EntityViewModel.Invoices
                 RaisePropertyChanged();
             }
         }
-
-        public EntityLoadCodition LoadCondition { get; set; }
-        public string NomenklNumber => Nomenkl?.NomenklNumber;
 
         public List<TD_26> LoadList()
         {
@@ -884,7 +872,6 @@ namespace Core.EntityViewModel.Invoices
             {
                 Entity.SFT_SUMMA_K_OPLATE = 0;
                 Entity.SFT_SUMMA_NDS = 0;
-
             }
             else
             {
@@ -902,10 +889,8 @@ namespace Core.EntityViewModel.Invoices
             }
 
             if (Parent is InvoiceProvider p)
-            {
                 // ReSharper disable once PossibleInvalidOperationException
                 p.SF_CRS_SUMMA = (decimal) p.Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE);
-            }
 
             Entity.SFT_NOM_CRS_RATE = 1;
             Entity.SFT_SUMMA_V_UCHET_VALUTE = Entity.SFT_SUMMA_K_OPLATE;
@@ -949,6 +934,7 @@ namespace Core.EntityViewModel.Invoices
                 myKontragentForNaklad = MainReferences.GetKontragent(Entity.SFT_NAKLAD_KONTR_DC);
                 RaisePropertyChanged(nameof(KontragentForNaklad));
             }
+
             if (Entity.TD_26_CurrencyConvert?.Count > 0)
                 foreach (var d in Entity.TD_26_CurrencyConvert)
                 {
@@ -990,108 +976,12 @@ namespace Core.EntityViewModel.Invoices
 
         public void UpdateFrom(TD_26 ent)
         {
-            Code = ent.CODE;
-            SFT_TEXT = ent.SFT_TEXT;
-            SFT_POST_ED_IZM_DC = ent.SFT_POST_ED_IZM_DC;
-            SFT_POST_ED_CENA = ent.SFT_POST_ED_CENA;
-            SFT_POST_KOL = ent.SFT_POST_KOL;
-            SFT_NEMENKL_DC = ent.SFT_NEMENKL_DC;
-            SFT_UCHET_ED_IZM_DC = ent.SFT_UCHET_ED_IZM_DC;
-            SFT_ED_CENA = ent.SFT_ED_CENA;
-            SFT_KOL = ent.SFT_KOL;
-            SFT_SUMMA_CBOROV = ent.SFT_SUMMA_CBOROV;
-            SFT_NDS_PERCENT = ent.SFT_NDS_PERCENT;
-            SFT_SUMMA_NAKLAD = ent.SFT_SUMMA_NAKLAD;
-            SFT_SUMMA_NDS = ent.SFT_SUMMA_NDS;
-            SFT_SUMMA_K_OPLATE = ent.SFT_SUMMA_K_OPLATE;
-            SFT_ED_CENA_PRIHOD = ent.SFT_ED_CENA_PRIHOD;
-            SFT_IS_NAKLAD = ent.SFT_IS_NAKLAD;
-            SFT_VKLUCH_V_CENU = ent.SFT_VKLUCH_V_CENU;
-            SFT_AUTO_FLAG = ent.SFT_AUTO_FLAG;
-            SFT_STDP_DC = ent.SFT_STDP_DC;
-            SFT_NOM_CRS_DC = ent.SFT_NOM_CRS_DC;
-            SFT_NOM_CRS_RATE = ent.SFT_NOM_CRS_RATE;
-            SFT_NOM_CRS_CENA = ent.SFT_NOM_CRS_CENA;
-            SFT_CENA_V_UCHET_VALUTE = ent.SFT_CENA_V_UCHET_VALUTE;
-            SFT_SUMMA_V_UCHET_VALUTE = ent.SFT_SUMMA_V_UCHET_VALUTE;
-            SFT_DOG_POKUP_DC = ent.SFT_DOG_POKUP_DC;
-            SFT_DOG_POKUP_PLAN_ROW_CODE = ent.SFT_DOG_POKUP_PLAN_ROW_CODE;
-            SFT_SUMMA_K_OPLATE_KONTR_CRS = ent.SFT_SUMMA_K_OPLATE_KONTR_CRS;
-            SFT_SHPZ_DC = ent.SFT_SHPZ_DC;
-            SFT_STRANA_PROIS = ent.SFT_STRANA_PROIS;
-            SFT_N_GRUZ_DECLAR = ent.SFT_N_GRUZ_DECLAR;
-            SFT_PEREVOZCHIK_POZITION = ent.SFT_PEREVOZCHIK_POZITION;
-            SFT_NAKLAD_KONTR_DC = ent.SFT_NAKLAD_KONTR_DC;
-            SFT_SALE_PRICE_IN_UCH_VAL = ent.SFT_SALE_PRICE_IN_UCH_VAL;
-            SFT_PERCENT = ent.SFT_PERCENT;
-            TSTAMP = ent.TSTAMP;
-            Id = ent.Id;
-            DocId = ent.DocId;
-            SchetRowNakladRashodId = ent.SchetRowNakladRashodId;
-            SchetRowNakladSumma = ent.SchetRowNakladSumma;
-            SchetRowNakladRate = ent.SchetRowNakladRate;
-            SD_165 = ent.SD_165;
-            SD_175 = ent.SD_175;
-            SD_1751 = ent.SD_1751;
-            SD_26 = ent.SD_26;
-            SD_261 = ent.SD_261;
-            SD_301 = ent.SD_301;
-            SD_303 = ent.SD_303;
-            SD_43 = ent.SD_43;
-            SD_83 = ent.SD_83;
+            
         }
 
         public void UpdateTo(TD_26 ent)
         {
-            ent.CODE = Code;
-            ent.SFT_TEXT = SFT_TEXT;
-            ent.SFT_POST_ED_IZM_DC = SFT_POST_ED_IZM_DC;
-            ent.SFT_POST_ED_CENA = SFT_POST_ED_CENA;
-            ent.SFT_POST_KOL = SFT_POST_KOL;
-            ent.SFT_NEMENKL_DC = SFT_NEMENKL_DC;
-            ent.SFT_UCHET_ED_IZM_DC = SFT_UCHET_ED_IZM_DC;
-            ent.SFT_ED_CENA = SFT_ED_CENA;
-            ent.SFT_KOL = SFT_KOL;
-            ent.SFT_SUMMA_CBOROV = SFT_SUMMA_CBOROV;
-            ent.SFT_NDS_PERCENT = SFT_NDS_PERCENT;
-            ent.SFT_SUMMA_NAKLAD = SFT_SUMMA_NAKLAD;
-            ent.SFT_SUMMA_NDS = SFT_SUMMA_NDS;
-            ent.SFT_SUMMA_K_OPLATE = SFT_SUMMA_K_OPLATE;
-            ent.SFT_ED_CENA_PRIHOD = SFT_ED_CENA_PRIHOD;
-            ent.SFT_IS_NAKLAD = SFT_IS_NAKLAD;
-            ent.SFT_VKLUCH_V_CENU = SFT_VKLUCH_V_CENU;
-            ent.SFT_AUTO_FLAG = SFT_AUTO_FLAG;
-            ent.SFT_STDP_DC = SFT_STDP_DC;
-            ent.SFT_NOM_CRS_DC = SFT_NOM_CRS_DC;
-            ent.SFT_NOM_CRS_RATE = SFT_NOM_CRS_RATE;
-            ent.SFT_NOM_CRS_CENA = SFT_NOM_CRS_CENA;
-            ent.SFT_CENA_V_UCHET_VALUTE = SFT_CENA_V_UCHET_VALUTE;
-            ent.SFT_SUMMA_V_UCHET_VALUTE = SFT_SUMMA_V_UCHET_VALUTE;
-            ent.SFT_DOG_POKUP_DC = SFT_DOG_POKUP_DC;
-            ent.SFT_DOG_POKUP_PLAN_ROW_CODE = SFT_DOG_POKUP_PLAN_ROW_CODE;
-            ent.SFT_SUMMA_K_OPLATE_KONTR_CRS = SFT_SUMMA_K_OPLATE_KONTR_CRS;
-            ent.SFT_SHPZ_DC = SFT_SHPZ_DC;
-            ent.SFT_STRANA_PROIS = SFT_STRANA_PROIS;
-            ent.SFT_N_GRUZ_DECLAR = SFT_N_GRUZ_DECLAR;
-            ent.SFT_PEREVOZCHIK_POZITION = SFT_PEREVOZCHIK_POZITION;
-            ent.SFT_NAKLAD_KONTR_DC = SFT_NAKLAD_KONTR_DC;
-            ent.SFT_SALE_PRICE_IN_UCH_VAL = SFT_SALE_PRICE_IN_UCH_VAL;
-            ent.SFT_PERCENT = SFT_PERCENT;
-            ent.TSTAMP = TSTAMP;
-            ent.Id = Id;
-            ent.DocId = DocId;
-            ent.SchetRowNakladRashodId = SchetRowNakladRashodId;
-            ent.SchetRowNakladSumma = SchetRowNakladSumma;
-            ent.SchetRowNakladRate = SchetRowNakladRate;
-            ent.SD_165 = SD_165;
-            ent.SD_175 = SD_175;
-            ent.SD_1751 = SD_1751;
-            ent.SD_26 = SD_26;
-            ent.SD_261 = SD_261;
-            ent.SD_301 = SD_301;
-            ent.SD_303 = SD_303;
-            ent.SD_43 = SD_43;
-            ent.SD_83 = SD_83;
+            
         }
 
         public override string ToString()
@@ -1104,7 +994,7 @@ namespace Core.EntityViewModel.Invoices
 
         public TD_26 DefaultValue()
         {
-            return new TD_26
+            return new()
             {
                 DOC_CODE = -1,
                 CODE = -1,

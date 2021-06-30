@@ -45,16 +45,16 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             var notOtgruzhenoRows = new List<InvoiceClientRow>();
             foreach (var item in document.Rows)
             {
-                var r = GlobalOptions.GetEntities().TD_24.Where(_ => _.DDT_SFACT_DC == item.DOC_CODE &&
+                var r = GlobalOptions.GetEntities().TD_24.Where(_ => _.DDT_SFACT_DC == item.DocCode &&
                                                                      _.DDT_SFACT_ROW_CODE == item.Code).ToList();
-                if (r.Sum(_ => _.DDT_KOL_RASHOD) < (decimal) item.SFT_KOL)
+                if (r.Sum(_ => _.DDT_KOL_RASHOD) < (decimal) item.Quantity)
                     notOtgruzhenoRows.Add(new InvoiceClientRow
                     {
                         Nomenkl = item.Nomenkl,
-                        SFT_KOL = item.SFT_KOL - (double) r.Sum(_ => _.DDT_KOL_RASHOD),
-                        SFT_ED_CENA = item.SFT_ED_CENA,
-                        SFT_SUMMA_K_OPLATE = item.SFT_ED_CENA * (decimal) item.SFT_KOL - r.Sum(_ => _.DDT_KOL_RASHOD),
-                        SFT_TEXT = item.SFT_TEXT
+                        Quantity = item.Quantity - r.Sum(_ => _.DDT_KOL_RASHOD),
+                        Price = item.Price,
+                        Summa = item.Price * (decimal) item.Quantity - r.Sum(_ => _.DDT_KOL_RASHOD),
+                        Name = item.Note
                     });
             }
             var startTableRow = 13;
@@ -72,13 +72,13 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells[$"B{startTableRow + row - 1}"].Value = item.Nomenkl.Name;
                 sheet.Cells[$"J{startTableRow + row - 1}"].Value = item.Nomenkl.Name;
                 sheet.Cells[$"D{startTableRow + row - 1}"].Value = item.Nomenkl.Unit?.ED_IZM_NAME;
-                sheet.Cells[$"E{startTableRow + row - 1}"].Value = item.SFT_KOL;
+                sheet.Cells[$"E{startTableRow + row - 1}"].Value = item.Quantity;
                 sheet.Cells[$"E{startTableRow + row - 1}"].NumberFormat = "#,##0.00";
-                sheet.Cells[$"F{startTableRow + row - 1}"].Value = Convert.ToDouble(item.SFT_ED_CENA);
+                sheet.Cells[$"F{startTableRow + row - 1}"].Value = Convert.ToDouble(item.Price);
                 sheet.Cells[$"F{startTableRow + row - 1}"].NumberFormat = "#,##0.00";
-                sheet.Cells[$"G{startTableRow + row - 1}"].Value = Convert.ToDouble(item.SFT_SUMMA_K_OPLATE);
+                sheet.Cells[$"G{startTableRow + row - 1}"].Value = Convert.ToDouble(item.Summa);
                 sheet.Cells[$"G{startTableRow + row - 1}"].NumberFormat = "#,##0.00";
-                sheet.Cells[$"H{startTableRow + row - 1}"].Value = item.SFT_TEXT;
+                sheet.Cells[$"H{startTableRow + row - 1}"].Value = item.Note;
                 sheet.Rows[startTableRow + row - 1].AutoFit();
                 sheet.Cells[$"J{startTableRow + row - 1}"].Font.Color = Color.White;
                 row++;
@@ -90,7 +90,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             if (document.Currency != null)
                 sheet.Cells[$"G{notOtgruzhenoRows.Count + startTableRow + 3}"].Value =
                     RuDateAndMoneyConverter.CurrencyToTxt(
-                        Convert.ToDouble(notOtgruzhenoRows.Sum(_ => (double) (_.SFT_ED_CENA ?? 0) * _.SFT_KOL)),
+                        Convert.ToDouble(notOtgruzhenoRows.Sum(_ => _.Price  * _.Quantity)),
                         document.Currency.Name, true);
         }
     }

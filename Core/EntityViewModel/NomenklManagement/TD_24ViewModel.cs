@@ -224,7 +224,7 @@ namespace Core.EntityViewModel.NomenklManagement
                 myInvoiceProviderRow = value;
                 if (myInvoiceProviderRow != null)
                 {
-                    DDT_SPOST_DC = myInvoiceProviderRow.DOC_CODE;
+                    DDT_SPOST_DC = myInvoiceProviderRow.DocCode;
                     DDT_SPOST_ROW_CODE = myInvoiceProviderRow.Code;
                 }
 

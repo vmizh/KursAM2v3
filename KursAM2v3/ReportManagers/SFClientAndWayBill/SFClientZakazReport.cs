@@ -51,13 +51,13 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells[$"B{startTableRow + row}"].Value = item.Nomenkl.NomenklNumber;
                 sheet.Cells[$"C{startTableRow + row}"].Value = item.Nomenkl.Name;
                 sheet.Cells[$"E{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_NAME;
-                sheet.Cells[$"F{startTableRow + row}"].Value = item.SFT_KOL;
+                sheet.Cells[$"F{startTableRow + row}"].Value = item.Quantity;
                 sheet.Cells[$"F{startTableRow + row}"].NumberFormat = "#,##0.00";
-                sheet.Cells[$"G{startTableRow + row}"].Value = Convert.ToDouble(item.SFT_ED_CENA);
+                sheet.Cells[$"G{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
                 sheet.Cells[$"G{startTableRow + row}"].NumberFormat = "#,##0.00";
-                sheet.Cells[$"H{startTableRow + row}"].Value = Convert.ToDouble(item.SFT_SUMMA_K_OPLATE);
+                sheet.Cells[$"H{startTableRow + row}"].Value = Convert.ToDouble(item.Summa);
                 sheet.Cells[$"H{startTableRow + row}"].NumberFormat = "#,##0.00";
-                sheet.Cells[$"I{startTableRow + row}"].Value = item.SFT_TEXT;
+                sheet.Cells[$"I{startTableRow + row}"].Value = item.Note;
                 row++;
             }
             sheet.Cells[$"H{document.Rows.Count + startTableRow + 1}"].Formula =

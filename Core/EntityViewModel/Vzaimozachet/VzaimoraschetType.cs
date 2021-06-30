@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 

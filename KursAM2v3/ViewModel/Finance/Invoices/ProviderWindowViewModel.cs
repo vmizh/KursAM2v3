@@ -377,7 +377,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (srow == null)
                     {
                         var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
-                        Document.Rows.Add(new InvoiceProviderRow
+                        var r = new InvoiceProviderRow
                         {
                             DocCode = Document.DocCode,
                             Code = newCode,
@@ -387,11 +387,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             SFT_KOL = item.Quantity,
                             SFT_ED_CENA = 0,
                             SFT_NDS_PERCENT = item.Nomenkl.NDSPercent ?? defaultNDS,
-                            SFT_POST_ED_IZM_DC = item.Nomenkl.Unit.DocCode,
                             PostUnit = item.Nomenkl.Unit,
                             UchUnit = item.Nomenkl.Unit,
                             State = RowStatus.NewRow
-                        });
+                        };
+                        r.Entity.SFT_POST_ED_IZM_DC = item.Nomenkl.Unit.DocCode;
+                        Document.Rows.Add(r);
                         var oldOrdRow = GenericProviderRepository.Context.TD_24.Include(_ => _.SD_24).FirstOrDefault(
                             _ =>
                                 _.DOC_CODE == item.DocCode
@@ -701,20 +702,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (k != null)
                 foreach (var item in k)
                 {
-                    if (Document.Rows.Any(_ => _.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    if (Document.Rows.Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
                     else
                         nds = (decimal) item.NOM_NDS_PERCENT;
-                    Document.Rows.Add(new InvoiceProviderRow
+                    var r = new InvoiceProviderRow
                     {
-                        DOC_CODE = -1,
-                        SFT_NEMENKL_DC = item.DOC_CODE,
+                        DocCode = -1,
                         SFT_NDS_PERCENT = nds,
                         SFT_KOL = 1,
                         SFT_ED_CENA = 0
-                    });
+                    };
+                    r.Entity.SFT_NEMENKL_DC = item.DOC_CODE;
+                    Document.Rows.Add(r);
                 }
 
             UpdateVisualData();
@@ -923,14 +925,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     SFT_KOL = 1,
                     SFT_ED_CENA = 0,
                     SFT_NDS_PERCENT = n.NDSPercent ?? defaultNDS,
-                    SFT_POST_ED_IZM_DC = n.Unit.DocCode,
+                    
                     PostUnit = n.Unit,
                     UchUnit = n.Unit,
-                    SFT_TEXT = " ",
+                    Note = " ",
                     State = RowStatus.NewRow,
                     IsIncludeInPrice = Document.IsNDSInPrice,
                     Parent = Document
                 };
+                newRow.Entity.SFT_POST_ED_IZM_DC = n.Unit.DocCode;
                 switch (Document.Currency.DocCode)
                 {
                     case CurrencyCode.EUR:
@@ -977,7 +980,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                 foreach (var item in k)
                 {
-                    if (Document.Rows.Any(_ => _.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    if (Document.Rows.Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
@@ -989,18 +992,18 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Code = newCode,
                         Id = Guid.NewGuid(),
                         DocId = Document.Id,
-                        SFT_NEMENKL_DC = item.DOC_CODE,
                         SFT_NDS_PERCENT = nds,
                         SFT_KOL = 1,
                         SFT_ED_CENA = 0,
-                        SFT_POST_ED_IZM_DC = item.Unit.DocCode,
                         PostUnit = item.Unit,
                         UchUnit = item.Unit,
                         State = RowStatus.NewRow,
-                        SFT_TEXT = " ",
+                        Note = " ",
                         IsIncludeInPrice = Document.IsNDSInPrice,
                         Parent = Document
                     };
+                    newRow.Entity.SFT_NEMENKL_DC = item.DOC_CODE;
+                    newRow.Entity.SFT_POST_ED_IZM_DC = item.Unit.DocCode;
                     Document.Rows.Add(newRow);
                     Document.Entity.TD_26.Add(newRow.Entity);
                     newCode++;

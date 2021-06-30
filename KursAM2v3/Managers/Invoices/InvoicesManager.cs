@@ -439,12 +439,12 @@ namespace KursAM2.Managers.Invoices
                                     {
                                         DOC_CODE = newDC,
                                         CODE = code,
-                                        SFT_TEXT = items.SFT_TEXT ?? " ",
-                                        SFT_POST_ED_IZM_DC = items.SFT_POST_ED_IZM_DC,
+                                        SFT_TEXT = items.Note ?? " ",
+                                        SFT_POST_ED_IZM_DC = items.Entity.SFT_POST_ED_IZM_DC,
                                         SFT_POST_ED_CENA = items.SFT_POST_ED_CENA,
                                         SFT_POST_KOL = items.SFT_POST_KOL,
-                                        SFT_NEMENKL_DC = items.SFT_NEMENKL_DC,
-                                        SFT_UCHET_ED_IZM_DC = items.SFT_UCHET_ED_IZM_DC,
+                                        SFT_NEMENKL_DC = items.Entity.SFT_NEMENKL_DC,
+                                        SFT_UCHET_ED_IZM_DC = items.Entity.SFT_UCHET_ED_IZM_DC,
                                         SFT_ED_CENA = items.SFT_ED_CENA,
                                         SFT_KOL = items.SFT_KOL,
                                         SFT_SUMMA_CBOROV = items.SFT_SUMMA_CBOROV,
@@ -465,7 +465,7 @@ namespace KursAM2.Managers.Invoices
                                         SFT_DOG_POKUP_DC = items.SFT_DOG_POKUP_DC,
                                         SFT_DOG_POKUP_PLAN_ROW_CODE = items.SFT_DOG_POKUP_PLAN_ROW_CODE,
                                         SFT_SUMMA_K_OPLATE_KONTR_CRS = items.SFT_SUMMA_K_OPLATE,
-                                        SFT_SHPZ_DC = items.SFT_SHPZ_DC,
+                                        SFT_SHPZ_DC = items.Entity.SFT_SHPZ_DC,
                                         SFT_STRANA_PROIS = items.SFT_STRANA_PROIS,
                                         SFT_N_GRUZ_DECLAR = items.SFT_N_GRUZ_DECLAR,
                                         SFT_PEREVOZCHIK_POZITION = items.SFT_PEREVOZCHIK_POZITION,
@@ -543,12 +543,12 @@ namespace KursAM2.Managers.Invoices
                                     {
                                         DOC_CODE = r.DocCode,
                                         CODE = r.Code,
-                                        SFT_TEXT = r.SFT_TEXT ?? " ",
-                                        SFT_POST_ED_IZM_DC = r.SFT_POST_ED_IZM_DC,
+                                        SFT_TEXT = r.Note ?? " ",
+                                        SFT_POST_ED_IZM_DC = r.Entity.SFT_POST_ED_IZM_DC,
                                         SFT_POST_ED_CENA = r.SFT_POST_ED_CENA,
                                         SFT_POST_KOL = r.SFT_POST_KOL,
-                                        SFT_NEMENKL_DC = r.SFT_NEMENKL_DC,
-                                        SFT_UCHET_ED_IZM_DC = r.SFT_UCHET_ED_IZM_DC,
+                                        SFT_NEMENKL_DC = r.Entity.SFT_NEMENKL_DC,
+                                        SFT_UCHET_ED_IZM_DC = r.Entity.SFT_UCHET_ED_IZM_DC,
                                         SFT_ED_CENA = r.SFT_ED_CENA,
                                         SFT_KOL = r.SFT_KOL,
                                         SFT_SUMMA_CBOROV = r.SFT_SUMMA_CBOROV,
@@ -569,7 +569,7 @@ namespace KursAM2.Managers.Invoices
                                         SFT_DOG_POKUP_DC = r.SFT_DOG_POKUP_DC,
                                         SFT_DOG_POKUP_PLAN_ROW_CODE = r.SFT_DOG_POKUP_PLAN_ROW_CODE,
                                         SFT_SUMMA_K_OPLATE_KONTR_CRS = r.SFT_SUMMA_K_OPLATE,
-                                        SFT_SHPZ_DC = r.SFT_SHPZ_DC,
+                                        SFT_SHPZ_DC = r.Entity.SFT_SHPZ_DC,
                                         SFT_STRANA_PROIS = r.SFT_STRANA_PROIS,
                                         SFT_N_GRUZ_DECLAR = r.SFT_N_GRUZ_DECLAR,
                                         SFT_PEREVOZCHIK_POZITION = r.SFT_PEREVOZCHIK_POZITION,
@@ -585,12 +585,12 @@ namespace KursAM2.Managers.Invoices
                                 }
                                 else
                                 {
-                                    oldRow.SFT_TEXT = r.SFT_TEXT ?? " ";
-                                    oldRow.SFT_POST_ED_IZM_DC = r.SFT_POST_ED_IZM_DC;
+                                    oldRow.SFT_TEXT = r.Note ?? " ";
+                                    oldRow.SFT_POST_ED_IZM_DC = r.Entity.SFT_POST_ED_IZM_DC;
                                     oldRow.SFT_POST_ED_CENA = r.SFT_POST_ED_CENA;
                                     oldRow.SFT_POST_KOL = r.SFT_POST_KOL;
-                                    oldRow.SFT_NEMENKL_DC = r.SFT_NEMENKL_DC;
-                                    oldRow.SFT_UCHET_ED_IZM_DC = r.SFT_UCHET_ED_IZM_DC;
+                                    oldRow.SFT_NEMENKL_DC = r.Entity.SFT_NEMENKL_DC;
+                                    oldRow.SFT_UCHET_ED_IZM_DC = r.Entity.SFT_UCHET_ED_IZM_DC;
                                     oldRow.SFT_ED_CENA = r.SFT_ED_CENA;
                                     oldRow.SFT_KOL = r.SFT_KOL;
                                     oldRow.SFT_SUMMA_CBOROV = r.SFT_SUMMA_CBOROV;
@@ -611,7 +611,7 @@ namespace KursAM2.Managers.Invoices
                                     oldRow.SFT_DOG_POKUP_DC = r.SFT_DOG_POKUP_DC;
                                     oldRow.SFT_DOG_POKUP_PLAN_ROW_CODE = r.SFT_DOG_POKUP_PLAN_ROW_CODE;
                                     oldRow.SFT_SUMMA_K_OPLATE_KONTR_CRS = r.SFT_SUMMA_K_OPLATE;
-                                    oldRow.SFT_SHPZ_DC = r.SFT_SHPZ_DC;
+                                    oldRow.SFT_SHPZ_DC = r.Entity.SFT_SHPZ_DC;
                                     oldRow.SFT_STRANA_PROIS = r.SFT_STRANA_PROIS;
                                     oldRow.SFT_N_GRUZ_DECLAR = r.SFT_N_GRUZ_DECLAR;
                                     oldRow.SFT_PEREVOZCHIK_POZITION = r.SFT_PEREVOZCHIK_POZITION;
@@ -686,7 +686,7 @@ namespace KursAM2.Managers.Invoices
                         foreach (var r in doc.Rows)
                         {
                             var sql = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
-                                      $" VALUES({CustomFormat.DecimalToSqlDecimal(r.SFT_NEMENKL_DC)},'20000101')";
+                                      $" VALUES({CustomFormat.DecimalToSqlDecimal(r.Entity.SFT_NEMENKL_DC)},'20000101')";
                             ctx.Database.ExecuteSqlCommand(sql);
                             if (r.CurrencyConvertRows.Count > 0)
                             {
@@ -728,7 +728,7 @@ namespace KursAM2.Managers.Invoices
                 doc.SF_IN_NUM = inNum;
                 foreach (var r in doc.Rows)
                 {
-                    r.DOC_CODE = newDC;
+                    r.DocCode = newDC;
                 }
             }
             else
@@ -754,7 +754,7 @@ namespace KursAM2.Managers.Invoices
                 foreach (var r in doc.Rows)
                 {
                     var sql = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
-                              $" VALUES({CustomFormat.DecimalToSqlDecimal(r.SFT_NEMENKL_DC)},'20000101')";
+                              $" VALUES({CustomFormat.DecimalToSqlDecimal(r.Entity.SFT_NEMENKL_DC)},'20000101')";
                     UnitOfWork.Context.Database.ExecuteSqlCommand(sql);
                     if (r.CurrencyConvertRows.Count > 0)
                     {
@@ -1349,7 +1349,7 @@ namespace KursAM2.Managers.Invoices
                 foreach (var item in document.Rows)
                 {
                     var r = GlobalOptions.GetEntities()
-                        .TD_24.Where(_ => _.DDT_SFACT_DC == item.DOC_CODE &&
+                        .TD_24.Where(_ => _.DDT_SFACT_DC == item.DocCode &&
                                           _.DDT_SFACT_ROW_CODE == item.Code)
                         .ToList();
                     item.Shipped = r.Sum(_ => _.DDT_KOL_RASHOD);
@@ -1427,17 +1427,17 @@ namespace KursAM2.Managers.Invoices
                 var newCode = 1;
                 foreach (var item in document.Rows)
                 {
-                    item.DOC_CODE = -1;
-                    item.DOC_CODE = newCode;
+                    item.DocCode = -1;
+                    item.DocCode = newCode;
                     item.Shipped = 0;
                     var q =
                         GlobalOptions.GetEntities()
-                            .NOM_PRICE.Where(_ => _.NOM_DC == item.SFT_NEMENKL_DC && _.DATE <= DateTime.Today)
+                            .NOM_PRICE.Where(_ => _.NOM_DC == item.Entity.SFT_NEMENKL_DC && _.DATE <= DateTime.Today)
                             .ToList();
                     if (q.Count == 0) continue;
                     var quanDate = q.Max(_ => _.DATE);
                     var firstOrDefault = GlobalOptions.GetEntities()
-                        .NOM_PRICE.FirstOrDefault(_ => _.NOM_DC == item.SFT_NEMENKL_DC && _.DATE == quanDate);
+                        .NOM_PRICE.FirstOrDefault(_ => _.NOM_DC == item.Entity.SFT_NEMENKL_DC && _.DATE == quanDate);
                     if (firstOrDefault != null)
                     {
                         var quan =
@@ -1496,12 +1496,12 @@ namespace KursAM2.Managers.Invoices
                     row.Shipped = 0;
                     var q =
                         GlobalOptions.GetEntities()
-                            .NOM_PRICE.Where(_ => _.NOM_DC == row.SFT_NEMENKL_DC && _.DATE <= DateTime.Today)
+                            .NOM_PRICE.Where(_ => _.NOM_DC == row.Entity.SFT_NEMENKL_DC && _.DATE <= DateTime.Today)
                             .ToList();
                     if (q.Count == 0) continue;
                     var quanDate = q.Max(_ => _.DATE);
                     var firstOrDefault = GlobalOptions.GetEntities()
-                        .NOM_PRICE.FirstOrDefault(_ => _.NOM_DC == row.SFT_NEMENKL_DC && _.DATE == quanDate);
+                        .NOM_PRICE.FirstOrDefault(_ => _.NOM_DC == row.Entity.SFT_NEMENKL_DC && _.DATE == quanDate);
                     if (firstOrDefault != null)
                     {
                         var quan =
@@ -1946,9 +1946,9 @@ namespace KursAM2.Managers.Invoices
                                         CODE = code,
                                         DocId = guidId,
                                         Id = Guid.NewGuid(),
-                                        SFT_TEXT = items.SFT_TEXT ?? " ",
-                                        SFT_NEMENKL_DC = items.SFT_NEMENKL_DC,
-                                        SFT_KOL = items.SFT_KOL,
+                                        SFT_TEXT = items.Note ?? " ",
+                                        SFT_NEMENKL_DC = items.Entity.SFT_NEMENKL_DC,
+                                        SFT_KOL = (double) items.Quantity,
                                         SFT_NDS_PERCENT = (double) items.NDSPercent,
                                         OLD_NOM_NAME = items.OLD_NOM_NAME,
                                         OLD_NOM_NOMENKL = items.OLD_NOM_NOMENKL,
@@ -1959,18 +1959,18 @@ namespace KursAM2.Managers.Invoices
                                         SFT_COUNTRY_CODE = items.SFT_COUNTRY_CODE,
                                         SFT_DOG_OTGR_DC = items.SFT_DOG_OTGR_DC,
                                         SFT_DOG_OTGR_PLAN_CODE = items.SFT_DOG_OTGR_PLAN_CODE,
-                                        SFT_ED_CENA = items.SFT_ED_CENA,
+                                        SFT_ED_CENA = items.Price,
                                         SFT_KOMPLEKT = items.SFT_KOMPLEKT,
                                         SFT_UCHET_ED_IZM_DC = items.SFT_UCHET_ED_IZM_DC,
                                         SFT_NACENKA_DILERA = items.SFT_NACENKA_DILERA,
                                         SFT_NALOG_NA_PROD = items.SFT_NALOG_NA_PROD,
                                         SFT_N_GRUZ_DECLAR = items.SFT_N_GRUZ_DECLAR,
                                         SFT_PROCENT_ZS_RASHODOV = items.SFT_PROCENT_ZS_RASHODOV,
-                                        SFT_SHPZ_DC = items.SFT_SHPZ_DC,
+                                        SFT_SHPZ_DC = items.SDRSchet?.DocCode,
                                         SFT_STDP_DC = items.SFT_STDP_DC,
                                         SFT_STRANA_PROIS = items.SFT_STRANA_PROIS,
-                                        SFT_SUMMA_K_OPLATE = items.SFT_SUMMA_K_OPLATE,
-                                        SFT_SUMMA_K_OPLATE_KONTR_CRS = items.SFT_SUMMA_K_OPLATE_KONTR_CRS,
+                                        SFT_SUMMA_K_OPLATE = items.Summa,
+                                        SFT_SUMMA_K_OPLATE_KONTR_CRS = items.Summa,
                                         SFT_SUMMA_NDS = items.SFT_SUMMA_NDS,
                                         SFT_TARA_DC = items.SFT_TARA_DC,
                                         SFT_TARA_FLAG = items.SFT_TARA_FLAG,
@@ -2027,7 +2027,7 @@ namespace KursAM2.Managers.Invoices
                                     // ReSharper disable once PossibleNullReferenceException
                                     var docGuid = ctx.SD_84.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode).Id;
                                     var data = ctx.TD_84.FirstOrDefault(_ =>
-                                        _.DOC_CODE == items.DOC_CODE && _.CODE == items.Code);
+                                        _.DOC_CODE == items.DocCode && _.CODE == items.Code);
                                     if (data == null)
                                     {
                                         ctx.TD_84.Add(new TD_84
@@ -2035,9 +2035,9 @@ namespace KursAM2.Managers.Invoices
                                             DOC_CODE = doc.DocCode,
                                             CODE = code,
                                             DocId = docGuid,
-                                            SFT_TEXT = items.SFT_TEXT ?? " ",
-                                            SFT_NEMENKL_DC = items.SFT_NEMENKL_DC,
-                                            SFT_KOL = items.SFT_KOL,
+                                            SFT_TEXT = items.Note ?? " ",
+                                            SFT_NEMENKL_DC = items.Entity.SFT_NEMENKL_DC,
+                                            SFT_KOL = (double) items.Quantity,
                                             SFT_NDS_PERCENT = (double) items.NDSPercent,
                                             Id = Guid.NewGuid(),
                                             OLD_NOM_NAME = items.OLD_NOM_NAME,
@@ -2049,18 +2049,18 @@ namespace KursAM2.Managers.Invoices
                                             SFT_COUNTRY_CODE = items.SFT_COUNTRY_CODE,
                                             SFT_DOG_OTGR_DC = items.SFT_DOG_OTGR_DC,
                                             SFT_DOG_OTGR_PLAN_CODE = items.SFT_DOG_OTGR_PLAN_CODE,
-                                            SFT_ED_CENA = items.SFT_ED_CENA,
+                                            SFT_ED_CENA = items.Price,
                                             SFT_KOMPLEKT = items.SFT_KOMPLEKT,
                                             SFT_UCHET_ED_IZM_DC = items.SFT_UCHET_ED_IZM_DC,
                                             SFT_NACENKA_DILERA = items.SFT_NACENKA_DILERA,
                                             SFT_NALOG_NA_PROD = items.SFT_NALOG_NA_PROD,
                                             SFT_N_GRUZ_DECLAR = items.SFT_N_GRUZ_DECLAR,
                                             SFT_PROCENT_ZS_RASHODOV = items.SFT_PROCENT_ZS_RASHODOV,
-                                            SFT_SHPZ_DC = items.SFT_SHPZ_DC,
+                                            SFT_SHPZ_DC = items.SDRSchet?.DocCode,
                                             SFT_STDP_DC = items.SFT_STDP_DC,
                                             SFT_STRANA_PROIS = items.SFT_STRANA_PROIS,
-                                            SFT_SUMMA_K_OPLATE = items.SFT_SUMMA_K_OPLATE,
-                                            SFT_SUMMA_K_OPLATE_KONTR_CRS = items.SFT_SUMMA_K_OPLATE_KONTR_CRS,
+                                            SFT_SUMMA_K_OPLATE = items.Summa,
+                                            SFT_SUMMA_K_OPLATE_KONTR_CRS = items.Summa,
                                             SFT_SUMMA_NDS = items.SFT_SUMMA_NDS,
                                             SFT_TARA_DC = items.SFT_TARA_DC,
                                             SFT_TARA_FLAG = items.SFT_TARA_FLAG,
@@ -2071,9 +2071,9 @@ namespace KursAM2.Managers.Invoices
                                     else
                                     {
                                         // ReSharper disable once PossibleNullReferenceException
-                                        data.SFT_TEXT = items.SFT_TEXT ?? " ";
-                                        data.SFT_NEMENKL_DC = items.SFT_NEMENKL_DC;
-                                        data.SFT_KOL = items.SFT_KOL;
+                                        data.SFT_TEXT = items.Note ?? " ";
+                                        data.SFT_NEMENKL_DC = items.Entity.SFT_NEMENKL_DC;
+                                        data.SFT_KOL = (double) items.Quantity;
                                         data.SFT_NDS_PERCENT = (double) items.NDSPercent;
                                         data.OLD_NOM_NAME = items.OLD_NOM_NAME;
                                         data.OLD_NOM_NOMENKL = items.OLD_NOM_NOMENKL;
@@ -2084,18 +2084,18 @@ namespace KursAM2.Managers.Invoices
                                         data.SFT_COUNTRY_CODE = items.SFT_COUNTRY_CODE;
                                         data.SFT_DOG_OTGR_DC = items.SFT_DOG_OTGR_DC;
                                         data.SFT_DOG_OTGR_PLAN_CODE = items.SFT_DOG_OTGR_PLAN_CODE;
-                                        data.SFT_ED_CENA = items.SFT_ED_CENA;
+                                        data.SFT_ED_CENA = items.Price;
                                         data.SFT_KOMPLEKT = items.SFT_KOMPLEKT;
                                         data.SFT_UCHET_ED_IZM_DC = items.SFT_UCHET_ED_IZM_DC;
                                         data.SFT_NACENKA_DILERA = items.SFT_NACENKA_DILERA;
                                         data.SFT_NALOG_NA_PROD = items.SFT_NALOG_NA_PROD;
                                         data.SFT_N_GRUZ_DECLAR = items.SFT_N_GRUZ_DECLAR;
                                         data.SFT_PROCENT_ZS_RASHODOV = items.SFT_PROCENT_ZS_RASHODOV;
-                                        data.SFT_SHPZ_DC = items.SFT_SHPZ_DC;
+                                        data.SFT_SHPZ_DC = items.SDRSchet?.DocCode;
                                         data.SFT_STDP_DC = items.SFT_STDP_DC;
                                         data.SFT_STRANA_PROIS = items.SFT_STRANA_PROIS;
-                                        data.SFT_SUMMA_K_OPLATE = items.SFT_SUMMA_K_OPLATE;
-                                        data.SFT_SUMMA_K_OPLATE_KONTR_CRS = items.SFT_SUMMA_K_OPLATE_KONTR_CRS;
+                                        data.SFT_SUMMA_K_OPLATE = items.Summa;
+                                        data.SFT_SUMMA_K_OPLATE_KONTR_CRS = items.Summa;
                                         data.SFT_SUMMA_NDS = items.SFT_SUMMA_NDS;
                                         data.SFT_TARA_DC = items.SFT_TARA_DC;
                                         data.SFT_TARA_FLAG = items.SFT_TARA_FLAG;
@@ -2107,7 +2107,7 @@ namespace KursAM2.Managers.Invoices
                                 foreach (var i in doc.DeletedRows)
                                 {
                                     var deletedItem =
-                                        ctx.TD_84.FirstOrDefault(_ => _.CODE == i.Code && _.DOC_CODE == i.DOC_CODE);
+                                        ctx.TD_84.FirstOrDefault(_ => _.CODE == i.Code && _.DOC_CODE == i.DocCode);
                                     if (deletedItem != null)
                                         ctx.TD_84.Remove(deletedItem);
                                 }
@@ -2119,7 +2119,7 @@ namespace KursAM2.Managers.Invoices
                         foreach (var r in doc.Rows)
                         {
                             var sql = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
-                                      $" VALUES({CustomFormat.DecimalToSqlDecimal(r.SFT_NEMENKL_DC)},'20000101')";
+                                      $" VALUES({CustomFormat.DecimalToSqlDecimal(r.Entity.SFT_NEMENKL_DC)},'20000101')";
                             ctx.Database.ExecuteSqlCommand(sql);
                         }
                         ctx.SaveChanges();

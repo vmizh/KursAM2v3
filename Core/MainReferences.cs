@@ -144,6 +144,10 @@ namespace Core
                 return Employees[dc];
             return null;
         }
+        public static Employee GetEmployee(int tabelnumber)
+        {
+            return Employees.Values.FirstOrDefault(_ => _.TabelNumber == tabelnumber);
+        }
 
         public static Employee GetEmployee(decimal? dc)
         {
@@ -179,6 +183,34 @@ namespace Core
             if (dc == null) return null;
             if (Units.ContainsKey(dc.Value))
                 return Units[dc.Value];
+            return null;
+        }
+
+        public static NomenklProductType GetNomenklProductType(decimal dc)
+        {
+            if (NomenklTypes.ContainsKey(dc))
+                return NomenklTypes[dc];
+            return null;
+        }
+        public static NomenklProductType GetNomenklProductType(decimal? dc)
+        {
+            if (dc == null) return null;
+            if (NomenklTypes.ContainsKey(dc.Value))
+                return NomenklTypes[dc.Value];
+            return null;
+        }
+
+        public static NomenklGroup GetNomenklGroup(decimal dc)
+        {
+            if (NomenklGroups.ContainsKey(dc))
+                return NomenklGroups[dc];
+            return null;
+        }
+        public static NomenklGroup GetNomenklGroup(decimal? dc)
+        {
+            if (dc == null) return null;
+            if (NomenklGroups.ContainsKey(dc.Value))
+                return NomenklGroups[dc.Value];
             return null;
         }
 

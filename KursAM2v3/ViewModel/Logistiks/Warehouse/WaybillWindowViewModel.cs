@@ -366,41 +366,41 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                     foreach (var r in inv.Rows)
                     {
-                        var oldf = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.SFT_NEMENKL_DC);
+                        var oldf = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Entity.SFT_NEMENKL_DC);
                         if (oldf != null)
                         {
-                            if (oldf.DDT_SFACT_DC == r.DOC_CODE && oldf.DDT_SFACT_ROW_CODE == r.Code)
-                                oldf.DDT_KOL_RASHOD = (decimal) r.SFT_KOL;
+                            if (oldf.DDT_SFACT_DC == r.DocCode && oldf.DDT_SFACT_ROW_CODE == r.Code)
+                                oldf.DDT_KOL_RASHOD = (decimal) r.Quantity;
                             continue;
                         }
 
-                        var otgr = ctx.TD_24.Where(_ => _.DDT_SFACT_DC == r.DOC_CODE
+                        var otgr = ctx.TD_24.Where(_ => _.DDT_SFACT_DC == r.DocCode
                                                         && _.DDT_SFACT_ROW_CODE == r.Code);
                         if (otgr.Any())
                         {
                             var kol = otgr.Sum(_ => _.DDT_KOL_RASHOD);
-                            if (kol < (decimal) r.SFT_KOL)
+                            if (kol < (decimal) r.Quantity)
                             {
-                                var n = MainReferences.GetNomenkl(r.SFT_NEMENKL_DC);
+                                var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
                                 var newItem = new WaybillRow
                                 {
                                     DocCode = Document.DocCode,
                                     Code = newCode,
                                     Nomenkl = n,
-                                    DDT_KOL_RASHOD = (decimal) r.SFT_KOL - kol,
+                                    DDT_KOL_RASHOD = (decimal) r.Quantity - kol,
                                     Unit = n.Unit,
                                     Currency = n.Currency,
                                     SchetLinkedRow = r,
                                     State = RowStatus.NewRow
                                 };
-                                newItem.DDT_SFACT_DC = r.DOC_CODE;
+                                newItem.DDT_SFACT_DC = r.DocCode;
                                 newItem.DDT_SFACT_ROW_CODE = r.Code;
                                 Document.Rows.Add(newItem);
                             }
                         }
                         else
                         {
-                            var n = MainReferences.GetNomenkl(r.SFT_NEMENKL_DC);
+                            var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
                             var m = NomenklManager.GetNomenklCount(Document.DD_DATE, n.DocCode,
                                 Document.WarehouseOut.DocCode);
                             if (m <= 0)
@@ -417,12 +417,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 DocCode = Document.DocCode,
                                 Code = newCode,
                                 Nomenkl = n,
-                                DDT_KOL_RASHOD = (decimal) r.SFT_KOL,
+                                DDT_KOL_RASHOD = (decimal) r.Quantity,
                                 Unit = n.Unit,
                                 Currency = n.Currency,
                                 SchetLinkedRow = r,
                                 State = RowStatus.NewRow,
-                                DDT_SFACT_DC = r.DOC_CODE,
+                                DDT_SFACT_DC = r.DocCode,
                                 DDT_SFACT_ROW_CODE = r.Code
                             };
                             Document.Rows.Add(newItem);
