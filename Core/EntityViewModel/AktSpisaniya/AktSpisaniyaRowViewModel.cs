@@ -23,7 +23,7 @@ namespace Core.EntityViewModel.AktSpisaniya
         }
     }
     [MetadataType(typeof(AktSpisaniyaRowViewModel_FluentAPI))]
-    class AktSpisaniyaRowViewModel : RSViewModelBase, IDataErrorInfo
+    public class AktSpisaniyaRowViewModel : RSViewModelBase, IDataErrorInfo
     {
         #region Fields
 
@@ -39,6 +39,12 @@ namespace Core.EntityViewModel.AktSpisaniya
             {
                 Id = Guid.NewGuid()
             };
+        }
+        public override bool IsCorrect()
+        {
+            if (this.Nomenkl != null && Quantity >= 0)
+                return true;
+            return false;
         }
 
         #endregion

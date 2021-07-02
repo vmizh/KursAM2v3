@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Core.EntityViewModel.AktSpisaniya
 {
@@ -26,8 +27,9 @@ namespace Core.EntityViewModel.AktSpisaniya
 
         }
     }
+
     [MetadataType(typeof(AktSpisaniyaNomenkl_TitleViewModel_FluentAPI))]
-    class AktSpisaniyaNomenkl_TitleViewModel : RSWindowViewModelBase, IEntity<AktSpisaniyaNomenkl_Title>, IDataErrorInfo
+    public class AktSpisaniyaNomenkl_TitleViewModel : RSWindowViewModelBase, IEntity<AktSpisaniyaNomenkl_Title>, IDataErrorInfo
     {
         #region Fields
 
@@ -43,6 +45,13 @@ namespace Core.EntityViewModel.AktSpisaniya
             {
                 Id = Guid.NewGuid()
             };
+        }
+
+        public override bool IsCorrect()
+        {
+            if (this.Warehouse != null && DocNumber >= 0 && DocCreator != null && Rows.All(_ =>_.IsCorrect()))
+                return true;
+            return false;
         }
 
 

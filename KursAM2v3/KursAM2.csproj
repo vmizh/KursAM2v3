@@ -304,6 +304,7 @@
     <Compile Include="Reports\HeadReport.Designer.cs">
       <DependentUpon>HeadReport.cs</DependentUpon>
     </Compile>
+    <Compile Include="Repositories\AktSpisaniyaNomenkl_TitleRepository.cs" />
     <Compile Include="Repositories\DistributeNakladRepository.cs" />
     <Compile Include="Repositories\DogovorsRepositories\DogovorClientRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceClientRepository.cs" />
@@ -317,6 +318,7 @@
     <Compile Include="ViewModel\Dogovora\DogovorResult.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorClientWindowViewModel.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorClientSearchViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenkl_TitleWIndowViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOut.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOutRow.cs" />
