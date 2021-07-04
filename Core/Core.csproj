@@ -160,6 +160,7 @@
     <Compile Include="EntityViewModel\Dogovora\DogovorClientRowViewModel.cs" />
     <Compile Include="EntityViewModel\Dogovora\DogovorClientViewModel.cs" />
     <Compile Include="EntityViewModel\Dogovora\LinkDocumentInfo.cs" />
+    <Compile Include="EntityViewModel\FieldChangeType.cs" />
     <Compile Include="EntityViewModel\Systems\KursUser.cs" />
     <Compile Include="EntityViewModel\Systems\LastDocumentViewModel.cs" />
     <Compile Include="EntityViewModel\Invoices\ProviderInvoicePayViewModel.cs" />
@@ -192,6 +193,7 @@
     <Compile Include="Logger\LoggerHelper.cs" />
     <Compile Include="Logger\LogLevelEnum.cs" />
     <Compile Include="ViewModel\Base\DocumentCreateTypeEnum.cs" />
+    <Compile Include="ViewModel\Base\IDocumentCopy.cs" />
     <Compile Include="ViewModel\Base\IDocumentOperations.cs" />
     <Compile Include="ViewModel\Base\IDocumentOpenType.cs" />
     <Compile Include="ViewModel\Base\SplashScreenView.xaml.cs">

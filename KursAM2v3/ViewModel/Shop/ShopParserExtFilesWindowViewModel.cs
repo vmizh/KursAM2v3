@@ -88,7 +88,11 @@ namespace KursAM2.ViewModel.Shop
                         IsNDSInPrice = true,
                         CREATOR = GlobalOptions.UserInfo.NickName,
                         PersonaResponsible = MainReferences.GetEmployee(104),
-                        Currency = GlobalOptions.SystemProfile.NationalCurrency
+                        Currency = GlobalOptions.SystemProfile.NationalCurrency,
+                        State = RowStatus.NewRow,
+                        DocCode = -1,
+                        SF_POSTAV_DATE = DateTime.Today
+
                     }
                 };
 
@@ -100,21 +104,27 @@ namespace KursAM2.ViewModel.Shop
                         _.MainId == n.Id && _.NOM_SALE_CRS_DC == GlobalOptions.SystemProfile.NationalCurrency.DocCode);
                     if (nom != null)
                     {
+                        var nomenkl = MainReferences.GetNomenkl(nom.DOC_CODE);
                         var r = new InvoiceProviderRow
                         {
                             DocCode = invoice.Document.DocCode,
+                            DocId = invoice.Document.Id,
+                            Id = Guid.NewGuid(),
                             Code = Code,
                             SFT_NDS_PERCENT = (decimal) (nom.NOM_NDS_PERCENT ?? Convert.ToDouble(GlobalOptions
                                 .SystemProfile.Profile
                                 .FirstOrDefault(_ => _.SECTION == @"НОМЕНКЛАТУРА" && _.ITEM == @"НДС")
                                 ?.ITEM_VALUE)),
-                            SFT_KOL = n.Count,
+                            Quantity = n.Count,
                             IsIncludeInPrice = true,
-                            SFT_ED_CENA = n.Price,
+                            Price = n.Price,
                             SFT_SUMMA_K_OPLATE = n.Summa,
-                            State = RowStatus.NewRow
+                            State = RowStatus.NewRow,
+                            Nomenkl = nomenkl,
+                            Parent = invoice.Document
                         };
                         r.Entity.SFT_NEMENKL_DC = nom.DOC_CODE;
+                        invoice.Document.Entity.TD_26.Add(r.Entity);
                         invoice.Document.Rows.Add(r);
                         Code++;
                     }
@@ -126,6 +136,7 @@ namespace KursAM2.ViewModel.Shop
                     DataContext = invoice
                 };
                 invoice.Form = frm;
+                invoice.Document.SF_CRS_SUMMA = (decimal) invoice.Document.Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE);
                 frm.Show();
                 frm.DataContext = invoice;
 

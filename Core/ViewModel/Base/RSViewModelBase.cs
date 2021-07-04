@@ -40,18 +40,18 @@ namespace Core.ViewModel.Base
         // ReSharper disable once MemberCanBePrivate.Global
         public IList<string> NotifyProtocol = new List<string>();
         private string myDescription;
-        private RSWindowViewModelBase myWindowViewModel;
+        //private RSWindowViewModelBase myWindowViewModel;
 
-        [Display(AutoGenerateField = false)]
-        public RSWindowViewModelBase WindowViewModel
-        {
-            get => myWindowViewModel;
-            set
-            {
-                if (Equals(myWindowViewModel, value)) return;
-                myWindowViewModel = value;
-            }
-        }
+        //[Display(AutoGenerateField = false)]
+        //public RSWindowViewModelBase WindowViewModel
+        //{
+        //    get => myWindowViewModel;
+        //    set
+        //    {
+        //        if (Equals(myWindowViewModel, value)) return;
+        //        myWindowViewModel = value;
+        //    }
+        //}
 
         //[Display(Name = "Родитель", Description = "Родительский объект",AutoGenerateField = false), ReadOnly(true)]
 
@@ -284,6 +284,14 @@ namespace Core.ViewModel.Base
             unchecked
             {
                 return (myDocCode.GetHashCode() * 397) ^ myId.GetHashCode();
+            }
+        }
+
+        public void RaisePropertyAllChanged()
+        {
+            foreach (var prop in this.GetType().GetProperties())
+            {
+                RaisePropertyChanged(prop.Name);
             }
         }
     }

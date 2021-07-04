@@ -28,10 +28,8 @@
             <StackPanel Orientation="Horizontal">
                 <Label>Наименование</Label>
                 <dxe:TextEdit
-                    EditValue="{Binding NomenklMain.Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                    Validate="TextEdit_Validate"
-                    ValidateOnTextInput="True"
-                    InvalidValueBehavior="AllowLeaveEditor"
+                    EditValue="{Binding NomenklMain.Name, UpdateSourceTrigger=PropertyChanged, 
+                    ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
                     DockPanel.Dock="Left"
                     Margin="67,0,0,0"
                     HorizontalAlignment="Left"
@@ -119,47 +117,18 @@
                         </dxe:ComboBoxEdit.Buttons>
                     </dxe:ComboBoxEdit>
                     <Label Margin="10,0,5,0" VerticalAlignment="Center">Вид продукции</Label>
-                    <dxg:LookUpEdit Name="prodeuctLookUpEdit"
-                                    dx:DXSerializer.StoreLayoutMode="None"
-                                    AutoPopulateColumns="False"
+                    <dxe:ComboBoxEdit Name="prodeuctLookUpEdit"
                                     VerticalAlignment="Center"
                                     DisplayMember="Name"
                                     ValueMember="DocCode"
                                     Width="250"
                                     PopupMinWidth="400"
-                                    InvalidValueBehavior="AllowLeaveEditor"
                                     ItemsSource="{Binding NomenklProductCollection}"
-                                    EditValue="{Binding NomenklMain.ProductTypeDC,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
-                                    SelectedItem="{Binding NomenklMain.ProductType, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
-                        <dxg:LookUpEdit.Buttons>
-                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Edit" Command="{Binding VidProductEditCommand}" />
-                        </dxg:LookUpEdit.Buttons>
-                        <dxg:LookUpEdit.StyleSettings>
-                            <dxg:SearchLookUpEditStyleSettings />
-                        </dxg:LookUpEdit.StyleSettings>
-                        <dxg:LookUpEdit.PopupContentTemplate>
-                            <ControlTemplate>
-                                <dxg:GridControl Name="PART_GridControl"
-                                                 dx:DXSerializer.SerializationID="PART_GridControlProduct"
-                                                 dx:DXSerializer.StoreLayoutMode="All"
-                                                 dxg:DataControlSerializationOptions.AddNewColumns="True"
-                                                 dxg:DataControlSerializationOptions.RemoveOldColumns="True">
-                                    <dxg:GridControl.Columns>
-                                        <dxg:GridColumn Name="colk_1" Header="Наименование" FieldName="Name" />
-                                    </dxg:GridControl.Columns>
-                                    <dxg:GridControl.View>
-                                        <dxg:TreeListView AutoWidth="True"
-                                                          KeyFieldName="DocCode"
-                                                          ParentFieldName="ParentDC"
-                                                          NavigationStyle="Row" 
-                                                          ShowHorizontalLines="False"
-                                                          ShowSearchPanelFindButton="True"
-                                                          AutoExpandAllNodes="True"/>
-                                    </dxg:GridControl.View>
-                                </dxg:GridControl>
-                            </ControlTemplate>
-                        </dxg:LookUpEdit.PopupContentTemplate>
-                    </dxg:LookUpEdit>
+                                    EditValue="{Binding NomenklMain.ProductTypeDC,
+                                        UpdateSourceTrigger=PropertyChanged, 
+                        ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
+                                    SelectedItem="{Binding NomenklMain.ProductType, UpdateSourceTrigger=PropertyChanged}">
+                    </dxe:ComboBoxEdit>
                 </StackPanel>
             </DockPanel>
             <DockPanel Height="30">
@@ -180,47 +149,17 @@
                     </dxe:ComboBoxEdit.Buttons>
                 </dxe:ComboBoxEdit>
                 <Label DockPanel.Dock="Left">Страна происхождения</Label>
-                <dxg:LookUpEdit Name="lookUpEditCountry"
+                <dxe:ComboBoxEdit Name="EditCountry"
                                 Margin="20,0,0,0"
-                                AutoPopulateColumns="False"
+                                AutoComplete="True"
                                 DisplayMember="Name"
                                 ValueMember="Id"
                                 Width="250"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Left"
-                                PopupMinWidth="600"
                                 ItemsSource="{Binding CountryCollection}"
-                                EditValue="{Binding NomenklMain.Country.Id,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                SelectedItem="{Binding NomenklMain.Country, UpdateSourceTrigger=PropertyChanged}">
-                    <dxg:LookUpEdit.Buttons>
-                        <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Edit" Command="{Binding CountryEditCommand}" />
-                    </dxg:LookUpEdit.Buttons>
-                    <dxg:LookUpEdit.StyleSettings>
-                        <dxg:SearchLookUpEditStyleSettings />
-                    </dxg:LookUpEdit.StyleSettings>
-                    <dxg:LookUpEdit.PopupContentTemplate>
-                        <ControlTemplate>
-                            <dxg:GridControl Name="PART_GridControl"
-                                             dx:DXSerializer.SerializationID="PART_GridControlCountry"
-                                             dx:DXSerializer.StoreLayoutMode="All"
-                                             dxg:DataControlSerializationOptions.AddNewColumns="True"
-                                             dxg:DataControlSerializationOptions.RemoveOldColumns="True">
-                                <dxg:GridControl.Columns>
-                                    <dxg:GridColumn Name="colk_1" Header="Наименование" FieldName="Name" />
-                                    <dxg:GridColumn Name="colk_5" Header="Иностранное наименование"
-                                                    FieldName="ForeignName" />
-                                    <dxg:GridColumn Name="colk_2" Header="Sign2" FieldName="Sign2" />
-                                    <dxg:GridColumn Name="colk_3" Header="Sign3" FieldName="Sign3" />
-                                    <dxg:GridColumn Name="colk_4" Header="Iso" FieldName="Iso" />
-                                </dxg:GridControl.Columns>
-                                <dxg:GridControl.View>
-                                    <dxg:TableView AutoWidth="True"
-                                                   NavigationStyle="Row"/>
-                                </dxg:GridControl.View>
-                            </dxg:GridControl>
-                        </ControlTemplate>
-                    </dxg:LookUpEdit.PopupContentTemplate>
-                </dxg:LookUpEdit>
+                                EditValue="{Binding NomenklMain.Country.Id,UpdateSourceTrigger=PropertyChanged}"
+                                SelectedItem="{Binding NomenklMain.Country, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
             <DockPanel Height="90">
                 <Label DockPanel.Dock="Left" VerticalAlignment="Center">Примечание</Label>

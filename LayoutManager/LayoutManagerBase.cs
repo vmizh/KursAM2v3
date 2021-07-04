@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -9,7 +10,6 @@ using System.Xml;
 using System.Xml.Linq;
 using Data;
 using DevExpress.Data;
-using DevExpress.Mvvm;
 using DevExpress.Xpf.Core.Serialization;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -20,6 +20,7 @@ using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace LayoutManager
 {
+    [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
     public abstract class LayoutManagerBase
     {
         protected string AppDataPath
@@ -369,6 +370,11 @@ namespace LayoutManager
                 }
 
                 ms.Close();
+                if (Win.ActualHeight <= 50 || Win.ActualWidth <= 160)
+                {
+                    Win.Height = 400;
+                    Win.Width = 800;
+                }
             }
             catch
             {

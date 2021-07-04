@@ -289,7 +289,7 @@ namespace KursAM2.View.Finance.Cash
                     doc.Currency = item.Currency;
                     doc.KontragentType = CashKontragentType.Kontragent;
                     doc.KONTRAGENT_DC = item.Kontragent.DocCode;
-                    doc.NOTES_ORD = item.SF_NOTES;
+                    doc.NOTES_ORD = item.Note;
                 }
                 else
                 {
@@ -299,7 +299,7 @@ namespace KursAM2.View.Finance.Cash
                     doc.Currency = item.Currency;
                     doc.KontragentType = CashKontragentType.Kontragent;
                     doc.KONTRAGENT_DC = item.Kontragent.DocCode;
-                    doc.NOTES_ORD = item.SF_NOTES;
+                    doc.NOTES_ORD = item.Note;
                 }
             }
             else
@@ -310,7 +310,7 @@ namespace KursAM2.View.Finance.Cash
                 doc.Currency = item.Currency;
                 doc.KontragentType = CashKontragentType.Kontragent;
                 doc.KONTRAGENT_DC = item.Kontragent.DocCode;
-                doc.NOTES_ORD = item.SF_NOTES;
+                doc.NOTES_ORD = item.Note;
             }
 
             if (dtx.Document.DocCode > 0)

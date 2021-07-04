@@ -37,8 +37,10 @@
                     <dxlc:LayoutGroup Orientation="Vertical">
                         <dxlc:LayoutItem>
                             <DockPanel LastChildFill="False">
-                                <Label Content="№: " DockPanel.Dock="Left"/>
+                                <Label Content="№: " DockPanel.Dock="Left"
+                                       />
                                 <dxe:TextEdit MinWidth="80"
+                                              Margin="48,0,0,0"
                                     EditValue="{Binding Document.InnerNumber, 
                                     UpdateSourceTrigger=PropertyChanged}"
                                     DockPanel.Dock="Left"/>
@@ -65,9 +67,11 @@
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem>
                             <DockPanel LastChildFill="False">
-                                <Label Content="  Клиент: " DockPanel.Dock="Left"/>
+                                <Label Content="Клиент: " DockPanel.Dock="Left"/>
                                 <dxe:ButtonEdit DockPanel.Dock="Left"
-                                    EditValue="{Binding Document.Client, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                Margin="23,0,0,0"
+                                    EditValue="{Binding Document.Client, 
+                                    UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
                                     IsTextEditable="False" MinWidth="300">
                                     <dxmvvm:Interaction.Behaviors>
                                         <dxmvvm:EventToCommand EventName="DefaultButtonClick"
@@ -85,10 +89,11 @@
                                 </dxe:ButtonEdit>
                                     <Label Content=" НДС вкл. в цену: " />
                                 <dxe:CheckEdit EditValue="{Binding Document.IsNDSIncludeInPrice}"  
-                                               DockPanel.Dock="Left" EditValueChanged="CheckEdit_EditValueChanged" />
+                                               EditValueChanged="BaseEdit_OnEditValueChanged"
+                                               DockPanel.Dock="Left" />
                             <Label Content=" Акцептован: " />
                             <dxe:CheckEdit EditValue="{Binding Document.IsAccepted}"  
-                                               DockPanel.Dock="Left" EditValueChanged="CheckEdit_EditValueChanged" />
+                                               DockPanel.Dock="Left" />
                         </DockPanel>
                         </dxlc:LayoutItem>
                     <dxlc:LayoutItem Label="Поставщик:" HorizontalAlignment="Left">
@@ -113,6 +118,7 @@
                                 <dxe:ComboBoxEdit
                                     AutoComplete = "True"
                                     Width="60"
+                                    IsEnabled="{Binding IsCurrencyEnabled, UpdateSourceTrigger=PropertyChanged}"
                                     ItemsSource="{Binding CurrencyList, UpdateSourceTrigger=PropertyChanged}"
                                     EditValue="{Binding Document.Currency, Mode=TwoWay,
                                     UpdateSourceTrigger=PropertyChanged,
@@ -152,6 +158,7 @@
                             </dxe:ComboBoxEdit>
                             <Label Content="  Тип продукции: " DockPanel.Dock="Left"/>
                             <dxe:ComboBoxEdit MinWidth="150" 
+                                              Margin="45,0,0,0"
                                               DockPanel.Dock="Left"
                                               ItemsSource="{Binding VzaimoraschetTypes, UpdateSourceTrigger=PropertyChanged}"
                                               EditValue="{Binding Document.VzaimoraschetType, UpdateSourceTrigger=PropertyChanged,
@@ -196,13 +203,13 @@
                                     ValidatesOnDataErrors=True}"
                                 />
                             </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Примечание">
+                                <dxe:TextEdit EditValue="{Binding Document.Note,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                              MinHeight="60"
+                                              AcceptsReturn="True"
+                                              AcceptsTab="True"/>
+                            </dxlc:LayoutItem>
                         </dxlc:LayoutGroup>
-                    <dxlc:LayoutItem Margin="0 5 0 0">
-                        <dxe:TextEdit EditValue="{Binding Document.Note,UpdateSourceTrigger=PropertyChanged}"
-                                      MinHeight="60"
-                                      AcceptsReturn="True"
-                                      AcceptsTab="True"/>
-                    </dxlc:LayoutItem>
                     </dxlc:LayoutGroup>
                     </dxlc:LayoutGroup>
                     <dxlc:LayoutGroup View="Tabs"
@@ -214,13 +221,13 @@
                                   Name="mainLayoutControl3">
                             <dxg:GridControl Name="gridRows"
                                              Style="{StaticResource GridControl.Base}"
-                         Margin="0,10,0,0"
-                                     ItemsSource="{Binding Document.Rows, UpdateSourceTrigger=PropertyChanged}"
-                                     CurrentItem="{Binding CurrentRow, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
-                                     SelectedItems="{Binding SelectedRows, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
-                                     AutoGeneratingColumn="GridRows_OnAutoGeneratingColumn"
-                                     AutoGeneratedColumns="GridRows_OnAutoGeneratedColumns"
-                                     CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
+                                             Margin="0,10,0,0"
+                                             ItemsSource="{Binding Document.Rows, UpdateSourceTrigger=PropertyChanged}"
+                                             CurrentItem="{Binding CurrentRow, UpdateSourceTrigger=PropertyChanged}"
+                                             SelectedItems="{Binding SelectedRows, UpdateSourceTrigger=PropertyChanged}"
+                                             AutoGeneratingColumn="GridRows_OnAutoGeneratingColumn"
+                                             CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
+                                             CurrentItemChanged="GridRows_OnCurrentItemChanged"
                                      >
                                 <dxg:GridControl.View>
                                     <dxg:TableView ShowTotalSummary="True"
@@ -279,7 +286,6 @@
                                      CurrentItem="{Binding CurrentShipmentRow, UpdateSourceTrigger=PropertyChanged}"
                                      SelectedItems="{Binding SelectedShipmentRows, UpdateSourceTrigger=PropertyChanged}"
                                      AutoGeneratingColumn="GridFacts_OnAutoGeneratingColumn"
-                                     AutoGeneratedColumns="GridFacts_OnAutoGeneratedColumns"
                                      CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
                                 <dxg:GridControl.View>
                                     <dxg:TableView ShowTotalSummary="True"
@@ -322,7 +328,6 @@
                                      CurrentItem="{Binding CurrentPaymentDoc, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
                                      SelectedItems="{Binding SelectedPayDocs, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
                                      AutoGeneratingColumn="GridPays_OnAutoGeneratingColumn"
-                                     AutoGeneratedColumns="GridPays_OnAutoGeneratedColumns"
                                      CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
                                 <dxg:GridControl.View>
                                     <dxg:TableView ShowTotalSummary="True"

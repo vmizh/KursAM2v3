@@ -391,8 +391,6 @@ namespace KursAM2.Managers
             };
             ctx.Form = view;
             view.Show();
-            ctx.Document.State = RowStatus.NotEdited;
-            ctx.RaisePropertyChanged(nameof(ctx.IsCanSaveData));
             return ctx;
         }
 

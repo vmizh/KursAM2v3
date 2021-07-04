@@ -5,13 +5,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using DevExpress.XtraEditors.DXErrorProvider;
@@ -20,7 +17,7 @@ using KursAM2.View.KursReferences;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
-    public sealed class MainCardWindowViewModel : RSWindowDataErrorInfoViewModelBase
+    public sealed class MainCardWindowViewModel : RSWindowDataErrorInfoViewModelBase, IDXDataErrorInfo
     {
         private readonly Guid myId = Guid.Empty;
         private NomenklMainViewModel myNomenklMain;
@@ -74,8 +71,9 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         public ObservableCollection<NomenklGroup> NomenklCategoryCollection { set; get; } =
             new ObservableCollection<NomenklGroup>();
 
-        public ObservableCollection<CountriesViewModel> CountryCollection { set; get; } 
+        public ObservableCollection<CountriesViewModel> CountryCollection { set; get; }
             = new ObservableCollection<CountriesViewModel>();
+
         public ObservableCollection<Unit> UnitCollection { set; get; } = new ObservableCollection<Unit>();
 
         public override bool IsCanSaveData => NomenklMain != null && NomenklMain.State != RowStatus.NotEdited &&
@@ -104,6 +102,25 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 myNomenklMain = value;
                 RaisePropertyChanged();
             }
+        }
+
+
+        public void GetPropertyError(string propertyName, ErrorInfo info)
+        {
+            switch (propertyName)
+            {
+                case "Name":
+                    if (string.IsNullOrEmpty(Name))
+                        SetErrorInfo(info,
+                            "Наименование не может быть пустым.",
+                            ErrorType.Critical);
+                    break;
+            }
+        }
+
+        public void GetError(ErrorInfo info)
+        {
+            //throw new NotImplementedException();
         }
 
         private void LoadReferences()
@@ -228,11 +245,10 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 };
                                 ctx.SD_83.Add(newNomItem);
                                 break;
-                            case RowStatus.Edited: 
+                            case RowStatus.Edited:
                                 var nomFormMain = ctx.SD_83.Where(_ => _.MainId == NomenklMain.Id).ToList();
-                                
+
                                 if (nomFormMain.Count > 0)
-                                {
                                     foreach (var n in nomFormMain)
                                     {
                                         n.NOM_0MATER_1USLUGA = NomenklMain.IsUsluga ? 1 : 0;
@@ -240,7 +256,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                         n.IsUslugaInRent = NomenklMain.IsRentabelnost;
                                         n.IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
                                     }
-                                }
+
                                 var old = ctx.NomenklMain.SingleOrDefault(_ => _.Id == NomenklMain.Id);
                                 if (old == null) return;
                                 old.Name = NomenklMain.Name;
@@ -257,18 +273,23 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 old.ProductDC = NomenklMain.ProductType.DOC_CODE;
                                 old.IsRentabelnost = NomenklMain.IsRentabelnost;
                                 old.IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
+                                var oldNoms = ctx.SD_83.Where(_ => _.MainId == NomenklMain.Id);
+                                foreach (var nom in oldNoms)
+                                {
+                                    nom.NOM_NAME = NomenklMain.Name;
+                                    nom.IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
+                                }
                                 break;
                         }
+
                         ctx.SaveChanges();
                         tnx.Commit();
                         NomenklMain.myState = RowStatus.NotEdited;
                         RaisePropertyChanged(nameof(IsCanSaveData));
                         ParentReference?.LoadNomMainForCategory(null);
-                        var dcs = new List<decimal>(MainReferences.ALLNomenkls.Values.Where(_ => _.MainId == NomenklMain.Id).Select(_ => _.DOC_CODE));
-                        foreach (var n in dcs)
-                        {
-                            MainReferences.LoadNomenkl(n);
-                        }
+                        var dcs = new List<decimal>(MainReferences.ALLNomenkls.Values
+                            .Where(_ => _.MainId == NomenklMain.Id).Select(_ => _.DOC_CODE));
+                        foreach (var n in dcs) MainReferences.LoadNomenkl(n);
                     }
                     catch (Exception ex)
                     {
@@ -305,7 +326,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             };
             var ctx = new MainCardWindowViewModel
             {
-                ParentReference = this.ParentReference,
+                ParentReference = ParentReference,
                 NomenklMain = newNom
             };
             // ReSharper disable once UseObjectOrCollectionInitializer
@@ -313,35 +334,11 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             //form.DataContext = ctx;
             form.Show();
         }
-        
-
-        public void GetPropertyError(string propertyName, ErrorInfo info)
-        {
-            switch (propertyName)
-            {
-                case "Name":
-                    if (string.IsNullOrEmpty(Name))
-                        SetErrorInfo(info,
-                            "Наименование не может быть пустым.",
-                            ErrorType.Critical);
-                    break;
-                default:
-                    SetErrorInfo(info,
-                        "Наименование не может быть пустым.",
-                        ErrorType.Critical);
-                    break;
-            }
-        }
 
         private void SetErrorInfo(ErrorInfo info, string errorText, ErrorType errorType)
         {
             info.ErrorText = errorText;
             info.ErrorType = errorType;
-        }
-
-        public void GetError(ErrorInfo info)
-        {
-            //throw new NotImplementedException();
         }
 
         #region Command

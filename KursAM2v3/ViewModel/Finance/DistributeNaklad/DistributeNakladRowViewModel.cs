@@ -141,7 +141,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         [DisplayName("Кол-во")]
         [Display(AutoGenerateField = true)]
-        public decimal Quantity => Convert?.Quantity ?? (InvoiceRow?.SFT_KOL ?? 0);
+        public decimal Quantity => Convert?.Quantity ?? (InvoiceRow?.Quantity ?? 0);
 
         [DisplayName("Цена")]
         [Display(AutoGenerateField = true)]

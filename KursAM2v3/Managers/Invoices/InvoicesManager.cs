@@ -404,7 +404,7 @@ namespace KursAM2.Managers.Invoices
                                 SF_REGISTR_DATE = doc.SF_POSTAV_DATE,
                                 SF_SCHET_FLAG = doc.SF_SCHET_FLAG,
                                 SF_SCHET_FACT_FLAG = doc.SF_SCHET_FACT_FLAG,
-                                SF_NOTES = doc.SF_NOTES,
+                                SF_NOTES = doc.Note,
                                 CREATOR = doc.CREATOR,
                                 SF_VZAIMOR_TYPE_DC = doc.SF_VZAIMOR_TYPE_DC,
                                 SF_DOGOVOR_POKUPKI_DC = doc.SF_DOGOVOR_POKUPKI_DC,
@@ -445,8 +445,8 @@ namespace KursAM2.Managers.Invoices
                                         SFT_POST_KOL = items.SFT_POST_KOL,
                                         SFT_NEMENKL_DC = items.Entity.SFT_NEMENKL_DC,
                                         SFT_UCHET_ED_IZM_DC = items.Entity.SFT_UCHET_ED_IZM_DC,
-                                        SFT_ED_CENA = items.SFT_ED_CENA,
-                                        SFT_KOL = items.SFT_KOL,
+                                        SFT_ED_CENA = items.Price,
+                                        SFT_KOL = items.Quantity,
                                         SFT_SUMMA_CBOROV = items.SFT_SUMMA_CBOROV,
                                         SFT_NDS_PERCENT = items.SFT_NDS_PERCENT,
                                         SFT_SUMMA_NAKLAD = items.SFT_SUMMA_NAKLAD,
@@ -509,7 +509,7 @@ namespace KursAM2.Managers.Invoices
                             old.SF_REGISTR_DATE = doc.SF_POSTAV_DATE;
                             old.SF_SCHET_FLAG = doc.SF_SCHET_FLAG;
                             old.SF_SCHET_FACT_FLAG = doc.SF_SCHET_FACT_FLAG;
-                            old.SF_NOTES = doc.SF_NOTES;
+                            old.SF_NOTES = doc.Note;
                             old.CREATOR = doc.CREATOR;
                             old.SF_VZAIMOR_TYPE_DC = doc.SF_VZAIMOR_TYPE_DC;
                             old.SF_DOGOVOR_POKUPKI_DC = doc.SF_DOGOVOR_POKUPKI_DC;
@@ -549,8 +549,8 @@ namespace KursAM2.Managers.Invoices
                                         SFT_POST_KOL = r.SFT_POST_KOL,
                                         SFT_NEMENKL_DC = r.Entity.SFT_NEMENKL_DC,
                                         SFT_UCHET_ED_IZM_DC = r.Entity.SFT_UCHET_ED_IZM_DC,
-                                        SFT_ED_CENA = r.SFT_ED_CENA,
-                                        SFT_KOL = r.SFT_KOL,
+                                        SFT_ED_CENA = r.Price,
+                                        SFT_KOL = r.Quantity,
                                         SFT_SUMMA_CBOROV = r.SFT_SUMMA_CBOROV,
                                         SFT_NDS_PERCENT = r.SFT_NDS_PERCENT,
                                         SFT_SUMMA_NAKLAD = r.SFT_SUMMA_NAKLAD,
@@ -591,8 +591,8 @@ namespace KursAM2.Managers.Invoices
                                     oldRow.SFT_POST_KOL = r.SFT_POST_KOL;
                                     oldRow.SFT_NEMENKL_DC = r.Entity.SFT_NEMENKL_DC;
                                     oldRow.SFT_UCHET_ED_IZM_DC = r.Entity.SFT_UCHET_ED_IZM_DC;
-                                    oldRow.SFT_ED_CENA = r.SFT_ED_CENA;
-                                    oldRow.SFT_KOL = r.SFT_KOL;
+                                    oldRow.SFT_ED_CENA = r.Price;
+                                    oldRow.SFT_KOL = r.Quantity;
                                     oldRow.SFT_SUMMA_CBOROV = r.SFT_SUMMA_CBOROV;
                                     oldRow.SFT_NDS_PERCENT = r.SFT_NDS_PERCENT;
                                     oldRow.SFT_SUMMA_NAKLAD = r.SFT_SUMMA_NAKLAD;
@@ -1447,9 +1447,7 @@ namespace KursAM2.Managers.Invoices
                     item.State = RowStatus.NewRow;
                     newCode++;
                 }
-                document.REGISTER_DATE = DateTime.Today;
                 document.DeletedRows = new List<InvoiceClientRow>();
-                document.State = RowStatus.NewRow;
                 foreach (var r in document.Rows) r.myState = RowStatus.NewRow;
                 document.PaymentDocs.Clear();
                 document.ShipmentRows.Clear();
@@ -1544,11 +1542,11 @@ namespace KursAM2.Managers.Invoices
         /// <param name="isUsePayment"></param>
         /// <param name="isAccepted"></param>
         /// <returns></returns>
-        public static List<InvoiceClient> GetInvoicesClient(string searchText = null, bool isUsePayment = false,
+        public static List<InvoiceClient> GetInvoicesClient(UnitOfWork<ALFAMEDIAEntities> context = null,string searchText = null, bool isUsePayment = false,
             bool isAccepted = false)
         {
-            return GetInvoicesClient(new DateTime(1900, 1, 1), new DateTime(2100, 1, 1), isUsePayment, searchText,
-                isAccepted);
+            return GetInvoicesClient(new DateTime(1900, 1, 1), new DateTime(2100, 1, 1), 
+                isUsePayment,context, searchText, isAccepted);
         }
 
         /// <summary>
@@ -1557,17 +1555,20 @@ namespace KursAM2.Managers.Invoices
         /// <param name="dateStart"></param>
         /// <param name="dateEnd"></param>
         /// <param name="isUsePayment"></param>
+        /// <param name="kontragentDC"></param>
+        /// <param name="context"></param>
         /// <param name="searchText"></param>
         /// <param name="isAccepted"></param>
         /// <returns></returns>
         public static List<InvoiceClient> GetInvoicesClient(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
+            UnitOfWork<ALFAMEDIAEntities> context = null,
             string searchText = null, bool isAccepted = false)
         {
             //MainReferences.CheckUpdateKontragentAndLoad();
             var ret = new List<InvoiceClient>();
             try
             {
-                using (var ctx = GlobalOptions.GetEntities())
+                using (var ctx = context != null ? context.Context : GlobalOptions.GetEntities())
                 {
                     List<SD_84> data;
                     if (string.IsNullOrEmpty(searchText))
@@ -1679,7 +1680,7 @@ namespace KursAM2.Managers.Invoices
                     foreach (var d in data.OrderByDescending(_ => _.SF_DATE))
                     {
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
-                        var newDoc = new InvoiceClient(d)
+                        var newDoc = new InvoiceClient(d,context)
                         {
                             State = RowStatus.NotEdited
                         };
@@ -1930,7 +1931,7 @@ namespace KursAM2.Managers.Invoices
                                 CREATOR = GlobalOptions.UserInfo.NickName,
                                 SF_VZAIMOR_TYPE_DC = doc.SF_VZAIMOR_TYPE_DC,
                                 SF_FORM_RASCH_DC = doc.SF_FORM_RASCH_DC,
-                                SF_NOTE = doc.SF_NOTE,
+                                SF_NOTE = doc.Note,
                                 SF_RECEIVER_KONTR_DC = doc.SF_RECEIVER_KONTR_DC,
                                 SF_NDS_1INCLUD_0NO = doc.SF_NDS_1INCLUD_0NO,
                                 PersonalResponsibleDC = doc.PersonaResponsible?.DocCode
@@ -2015,7 +2016,7 @@ namespace KursAM2.Managers.Invoices
                             item.CREATOR = GlobalOptions.UserInfo.NickName;
                             item.SF_VZAIMOR_TYPE_DC = doc.SF_VZAIMOR_TYPE_DC;
                             item.SF_FORM_RASCH_DC = doc.SF_FORM_RASCH_DC;
-                            item.SF_NOTE = doc.SF_NOTE;
+                            item.SF_NOTE = doc.Note;
                             item.SF_RECEIVER_KONTR_DC = doc.SF_RECEIVER_KONTR_DC;
                             item.SF_NDS_1INCLUD_0NO = doc.SF_NDS_1INCLUD_0NO;
                             item.PersonalResponsibleDC = doc.PersonaResponsible?.DocCode;

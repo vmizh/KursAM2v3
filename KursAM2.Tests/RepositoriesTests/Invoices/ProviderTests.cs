@@ -68,8 +68,8 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 Id = Guid.NewGuid(),
                 DocId = newDoc.Id,
                 
-                SFT_ED_CENA = 1000,
-                SFT_KOL = 1,
+                Price = 1000,
+                Quantity = 1,
                 SFT_NDS_PERCENT = 18,
                 SFT_IS_NAKLAD = 0,
                 SFT_VKLUCH_V_CENU = 1,
@@ -116,13 +116,13 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 NomenklId = row.Nomenkl.Id,
                 Date = DateTime.Today,
                 // ReSharper disable once PossibleInvalidOperationException
-                OLdPrice = (decimal) row.SFT_ED_CENA,
+                OLdPrice = (decimal) row.Price,
                 OLdNakladPrice = (row.SFT_SUMMA_NAKLAD ?? 0) != 0
-                    ? Math.Round((decimal) row.SFT_ED_CENA +
+                    ? Math.Round((decimal) row.Price +
                                  // ReSharper disable once PossibleInvalidOperationException
-                                 (decimal) row.SFT_ED_CENA / (row.SFT_SUMMA_NAKLAD ?? 0), 2)
-                    : Math.Round((decimal) row.SFT_ED_CENA, 2),
-                Quantity = row.SFT_KOL,
+                                 (decimal) row.Price / (row.SFT_SUMMA_NAKLAD ?? 0), 2)
+                    : Math.Round((decimal) row.Price, 2),
+                Quantity = row.Quantity,
                 Rate = 1
             };
             row.CurrencyConvertRows.Add(newCrsItem);

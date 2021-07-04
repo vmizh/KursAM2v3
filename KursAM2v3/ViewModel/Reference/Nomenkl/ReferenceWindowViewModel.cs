@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -8,7 +9,6 @@ using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -194,7 +194,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                             NameFull = n.NOM_FULL_NAME,
                             Currency = new Currency {DocCode = sd301.DOC_CODE, CRS_SHORTNAME = sd301.CRS_SHORTNAME},
                             Note = n.NOM_NOTES,
-                            IsRentabelnost =  n.IsUslugaInRent ?? false
+                            IsRentabelnost = n.IsUslugaInRent ?? false
                         }).ToList();
                     foreach (var nom in noms)
                     {
@@ -270,6 +270,31 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                     {
                         State = RowStatus.NotEdited
                     });
+            }
+
+            CalcCommonSum();
+        }
+
+        private void CalcCommonSum()
+        {
+            var parents = CategoryCollection.Select(_ => _.ParentDC).Distinct().ToList();
+            var lasts = new List<NomenklGroup>();
+            foreach (var n in CategoryCollection)
+                if (parents.All(_ => _ != n.DocCode))
+                    lasts.Add(n);
+            foreach (var node in lasts)
+            {
+                node.NomenklCount = MainReferences.ALLNomenkls.Values.Count(_ => _.NOM_CATEG_DC == node.DocCode);
+                var prevn = node;
+                var n = CategoryCollection.FirstOrDefault(_ => _.DocCode == node.ParentDC);
+                if (n == null) continue;
+                while (n != null)
+                {
+                    var c = MainReferences.ALLNomenkls.Values.Count(_ => _.NOM_CATEG_DC == n.DocCode);
+                    n.NomenklCount = n.NomenklCount + prevn.NomenklCount + c;
+                    prevn = n;
+                    n = CategoryCollection.FirstOrDefault(_ => _.DocCode == n.ParentDC);
+                }
             }
         }
 
@@ -732,10 +757,10 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get
             {
                 return new Command(TreeDelete, param => CurrentCategory != null && NomenklMainCollection.Count == 0
-                                                                                &&
-                                                                                CategoryCollection.All(
-                                                                                    _ => _.ParentDC !=
-                                                                                         CurrentCategory.DocCode));
+                    &&
+                    CategoryCollection.All(
+                        _ => _.ParentDC !=
+                             CurrentCategory.DocCode));
             }
         }
 

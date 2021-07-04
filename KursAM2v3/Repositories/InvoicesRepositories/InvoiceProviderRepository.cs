@@ -38,7 +38,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
         void Delete(SD_26 entity);
     }
 
-    public class InvoiceProviderRepository : GenericKursDBRepository<InvoiceProvider>, IInvoiceProviderRepository
+   public class InvoiceProviderRepository : GenericKursDBRepository<InvoiceProvider>, IInvoiceProviderRepository
     {
         public InvoiceProviderRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {

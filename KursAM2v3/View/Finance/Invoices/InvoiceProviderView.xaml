@@ -35,95 +35,96 @@
                 x:Name="mainLayoutControl1"
                 dx:DXSerializer.SerializationID="mainLayoutControl1">
                 <dxlc:LayoutGroup Orientation="Vertical" dxlc:LayoutControl.AllowVerticalSizing="True">
-                    <dxlc:LayoutGroup Header="Основные" View="Group">
-                        <dxlc:LayoutItem Label="№:"
-                            Width="80"
-                            HorizontalAlignment="Left">
-                            <dxe:TextEdit EditValue="{Binding Document.SF_IN_NUM}" IsReadOnly="True"/>
-                        </dxlc:LayoutItem>
-                        <dxlc:LayoutItem Label="Внеш.№:" 
-                            Width="150"
-                            HorizontalAlignment="Left">
-                            <dxe:TextEdit EditValue="{Binding Document.SF_POSTAV_NUM, UpdateSourceTrigger=PropertyChanged }"/>
-                        </dxlc:LayoutItem>
-                        <dxlc:LayoutItem Label="Дата:" 
-                            Width="120"
-                            HorizontalAlignment="Left">
-                            <dxe:DateEdit EditValue="{Binding Document.SF_POSTAV_DATE, UpdateSourceTrigger=PropertyChanged}"/>
-                        </dxlc:LayoutItem>
-                        <dxlc:LayoutItem Label="Создатель:"
-                            Width="200"
-                            HorizontalAlignment="Right">
-                            <dxe:TextEdit EditValue= "{Binding Document.CREATOR}" IsReadOnly="True"/>
-                        </dxlc:LayoutItem>
-                        <dxlc:LayoutItem Label="Статус:" 
-                            Width="100"
-                            HorizontalAlignment="Right">
+                    <dxlc:LayoutItem>
+                        <DockPanel LastChildFill="False">
+                        <Label Content="№:" DockPanel.Dock="Left"/>
+                        <dxe:TextEdit EditValue="{Binding Document.SF_IN_NUM}" IsReadOnly="True"
+                                      DockPanel.Dock="Left" MinWidth="40"
+                                      Margin="5,0"/>
+                        <Label Content="Внеш.№:" Margin="5,0"/>
+                        <dxe:TextEdit EditValue="{Binding Document.SF_POSTAV_NUM, 
+                            UpdateSourceTrigger=PropertyChanged }" Margin="5,0" MinWidth="80"/>
+                        <Label Content="Дата:" Margin="5,0"/> 
+                            <dxe:DateEdit EditValue="{Binding Document.SF_POSTAV_DATE, 
+                                UpdateSourceTrigger=PropertyChanged}" Margin="5,0 " MinWidth="80"/>
+                       
                             <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
-                                              IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
-                                <dxmvvm:Interaction.Behaviors>
-                                    <dxmvvm:EnumItemsSourceBehavior
-                                        EnumType="{x:Type base:RowStatus}"/>
-                                </dxmvvm:Interaction.Behaviors>
-                            </dxe:ComboBoxEdit>
-                        </dxlc:LayoutItem>
-                    </dxlc:LayoutGroup>
+                                          IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }"
+                                          >
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EnumItemsSourceBehavior EnumType="{x:Type base:RowStatus}"/>
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:ComboBoxEdit>
+                        <Label Content="Статус: " DockPanel.Dock="Right"/>
+                        <dxe:TextEdit EditValue= "{Binding Document.CREATOR}" IsReadOnly="True"
+                                      DockPanel.Dock="Right" MinWidth="80" Margin="0 0 5 0 "/>
+                        <Label Content="Создатель: "
+                               DockPanel.Dock="Right"/>
+                        </DockPanel>
+                    </dxlc:LayoutItem>
                     <dxlc:LayoutGroup Header="Основные данные" View="GroupBox" Orientation="Vertical">
-                        <dxlc:LayoutGroup Orientation="Horizontal">
-                            <dxlc:LayoutItem Label="Контрагент:">
+                        <dxlc:LayoutItem>
+                            <DockPanel LastChildFill="False">
+                                <Label Content="Контрагент: "/>
                                 <dxe:ButtonEdit 
+                                    Margin="5 0"
+                                    MinWidth="200"
                                     EditValue="{Binding Document.Kontragent, 
-                                    ValidatesOnDataErrors=True, 
+                                    ValidatesOnDataErrors=True,
                                     UpdateSourceTrigger=PropertyChanged}"
-                                    IsTextEditable="False">
+                                    IsTextEditable="False"
+                                >
                                     <dxmvvm:Interaction.Behaviors>
                                         <dxmvvm:EventToCommand EventName="DefaultButtonClick" 
                                                                Command="{Binding KontragentSelectCommand}" />
                                     </dxmvvm:Interaction.Behaviors>
                                 </dxe:ButtonEdit>
-                            </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="Тип продукции:">
+                                <Label Content="Тип продукции: "/>
                                 <dxe:ComboBoxEdit
+                                    Margin="5 0"
+                                    MinWidth="200"
                                     AutoComplete = "True"
                                     ItemsSource="{Binding VzaimoraschetTypeList, UpdateSourceTrigger=PropertyChanged}"
                                     EditValue="{Binding Document.VzaimoraschetType, Mode=TwoWay,
                                     UpdateSourceTrigger=PropertyChanged,
                                     NotifyOnValidationError=True,
                                     ValidatesOnDataErrors=True}"
-                                    />
-                            </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="Акцептован:">
+                                />
+                                <Label Content="Акцептован: " Margin="5 0" />
                                 <dxe:CheckEdit EditValue="{Binding Document.IsAccepted,
                                     UpdateSourceTrigger=PropertyChanged}"/>
-                            </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="НДС в цене:">
+                                <Label Content="НДС в цене: " Margin="5 0"/>
                                 <dxe:CheckEdit EditValue="{Binding Document.IsNDSInPrice,
                                     UpdateSourceTrigger=PropertyChanged}" EditValueChanged="CheckEdit_EditValueChanged"/>
-                            </dxlc:LayoutItem>
-                        </dxlc:LayoutGroup>
+                            </DockPanel>
+                        </dxlc:LayoutItem>
                         <dxlc:LayoutGroup Orientation="Horizontal">
-                            <dxlc:LayoutItem Label="Получатель:">
-                                <dxe:ButtonEdit 
-                                    EditValue="{Binding Document.KontrReceiver, UpdateSourceTrigger=PropertyChanged}"
-                                    IsTextEditable="False">
-                                    <dxmvvm:Interaction.Behaviors>
-                                        <dxmvvm:EventToCommand EventName="DefaultButtonClick" 
-                                                               Command="{Binding ReceiverSelectCommand}" />
-                                    </dxmvvm:Interaction.Behaviors>
-                                </dxe:ButtonEdit>
-                            </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="Центр ответственности:">
-                                <dxe:ComboBoxEdit
-                                    AutoComplete = "True"
-                                    ItemsSource="{Binding COList, UpdateSourceTrigger=PropertyChanged}"
-                                    EditValue="{Binding Document.CO, Mode=TwoWay,
+                            <dxlc:LayoutItem>
+                                <DockPanel LastChildFill="False">
+                                    <Label Content="Получатель:"/>
+                                    <dxe:ButtonEdit 
+                                        Margin="6 0"
+                                        MinWidth="200"
+                                        EditValue="{Binding Document.KontrReceiver, UpdateSourceTrigger=PropertyChanged}"
+                                        IsTextEditable="False">
+                                        <dxmvvm:Interaction.Behaviors>
+                                            <dxmvvm:EventToCommand EventName="DefaultButtonClick" 
+                                                                   Command="{Binding ReceiverSelectCommand}" />
+                                        </dxmvvm:Interaction.Behaviors>
+                                    </dxe:ButtonEdit>
+                                    <Label Content="Центр ответственности: "/>
+                                    <dxe:ComboBoxEdit
+                                        Margin="5 0"
+                                        MinWidth="100"
+                                        AutoComplete = "True"
+                                        ItemsSource="{Binding COList, UpdateSourceTrigger=PropertyChanged}"
+                                        EditValue="{Binding Document.CO, Mode=TwoWay,
                                     UpdateSourceTrigger=PropertyChanged,
                                     NotifyOnValidationError=True,
-                                    ValidatesOnDataErrors=True}"
-                                />
-                            </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="Договор поставки:">
-                                <dxe:ButtonEdit/>
+                                    ValidatesOnDataErrors=True}"/>
+                                    <Label Content= "Договор поставки: "/> 
+                                    <dxe:ButtonEdit/>
+                                </DockPanel>
                             </dxlc:LayoutItem>
                         </dxlc:LayoutGroup>
                     </dxlc:LayoutGroup>
@@ -199,6 +200,7 @@
                         </dxlc:LayoutGroup>
                     </dxlc:LayoutGroup>
                     <dxlc:LayoutGroup Header="Характеристики" View="Group">
+
                         <dxlc:LayoutGroup Header="Ответственный" View="GroupBox">
                             <dxlc:LayoutItem Label="Таб.№:" HorizontalAlignment="Left">
                                 <dxe:TextEdit EditValue="{Binding Document.EmployeeTabelNumber,
@@ -241,22 +243,18 @@
                 <dxlc:LayoutGroup Header="Строки" x:Name="mainLayoutControl3"
                                   dx:DXSerializer.SerializationID="mainLayoutControl3">
                     <dxg:GridControl x:Name="gridRows" AutoGenerateColumns="AddNew"
-                        EnableSmartColumnsGeneration="True" HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch" MaxHeight="10000" MaxWidth="10000"
-                        dx:DXSerializer.SerializationID="gridRows"
-                        dx:DXSerializer.StoreLayoutMode="All"
-                        dxg:DataControlSerializationOptions.AddNewColumns="True"
-                        dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                        SelectionMode="Row"
+                                     Style="{StaticResource GridControl.Base}"
                         ItemsSource="{Binding Document.Rows, NotifyOnSourceUpdated=True}"
                         CurrentItem="{Binding CurrentRow, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItems="{Binding SelectedRows, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
                         AutoGeneratingColumn="GridRows_OnAutoGeneratingColumn"
                         AutoGeneratedColumns="GridRows_OnAutoGeneratedColumns"
-                        MasterRowExpanding="gridRows_MasterRowExpanding">
+                        MasterRowExpanding="gridRows_MasterRowExpanding"
+                        CurrentItemChanged="GridRows_OnCurrentItemChanged">
                         <dxg:GridControl.View>
-                            <dxg:TableView ShowTotalSummary="True" x:Name="tableViewRows"
-                                ShowAutoFilterRow="True" EnableImmediatePosting="False"
+                            <dxg:TableView x:Name="tableViewRows"
+                                           Style="{StaticResource TableView.Standart}"
+                                EnableImmediatePosting="False"
                                 CellValueChanged="TableView_CellValueChanged">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
@@ -421,7 +419,8 @@
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>
-            </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+                
         </dxlc:LayoutControl>
     </DockPanel>
 </dx:ThemedWindow>

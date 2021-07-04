@@ -111,7 +111,7 @@ namespace KursAM2.View.DialogUserControl
                             ItemsCollection.Add(d);
                     else
                         foreach (var d in InvoicesManager.GetInvoicesClient(DateTime.Today.AddDays(-300), DateTime.Today,
-                            isPaymentUse, SearchText, isAccepted))
+                            isPaymentUse,null, SearchText, isAccepted))
                             ItemsCollection.Add(d);
                 }
                 else
@@ -403,7 +403,7 @@ namespace KursAM2.View.DialogUserControl
                         ClientItemsCollection.Add(d);
                 else
                     foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000, 1, 1), DateTime.Today,
-                        isUsePayment, SearchText, isAccepted))
+                        isUsePayment,null, SearchText, isAccepted))
                         ClientItemsCollection.Add(d);
             }
             catch (Exception ex)

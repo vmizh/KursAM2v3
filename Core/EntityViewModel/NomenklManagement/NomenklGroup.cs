@@ -20,6 +20,8 @@ namespace Core.EntityViewModel.NomenklManagement
             Entity = DefaultValue();
         }
 
+        public int NomenklCount { set; get; }
+
         public NomenklGroup(SD_82 entity)
         {
             Entity = entity ?? DefaultValue();

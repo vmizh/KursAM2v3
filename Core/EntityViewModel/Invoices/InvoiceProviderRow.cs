@@ -78,17 +78,6 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
-        //public string SFT_TEXT
-        //{
-        //    get => Entity.SFT_TEXT;
-        //    set
-        //    {
-        //        if (Entity.SFT_TEXT == value) return;
-        //        Entity.SFT_TEXT = value;
-        //        RaisePropertyChanged();
-        //    }
-        //}
-
         public override string Note
         {
             get => Entity.SFT_TEXT;
@@ -99,20 +88,6 @@ namespace Core.EntityViewModel.Invoices
                 RaisePropertyChanged();
             }
         }
-
-        //public decimal SFT_POST_ED_IZM_DC
-        //{
-        //    get => Entity.SFT_POST_ED_IZM_DC;
-        //    set
-        //    {
-        //        if (Entity.SFT_POST_ED_IZM_DC == value) return;
-        //        Entity.SFT_POST_ED_IZM_DC = value;
-        //        if (MainReferences.Units.ContainsKey(Entity.SFT_POST_ED_IZM_DC))
-        //            myPostUnit = MainReferences.Units[Entity.SFT_POST_ED_IZM_DC];
-        //        RaisePropertyChanged(nameof(PostUnit));
-        //        RaisePropertyChanged();
-        //    }
-        //}
 
         public Unit PostUnit
         {
@@ -145,50 +120,32 @@ namespace Core.EntityViewModel.Invoices
             {
                 if (Entity.SFT_POST_KOL == value) return;
                 Entity.SFT_POST_KOL = value;
-                Calc();
+                CalcRow();
                 RaisePropertyChanged();
             }
         }
-
-        //public decimal SFT_NEMENKL_DC
-        //{
-        //    get => Entity.SFT_NEMENKL_DC;
-        //    set
-        //    {
-        //        if (Entity.SFT_NEMENKL_DC == value) return;
-        //        Entity.SFT_NEMENKL_DC = value;
-        //        myNomenkl = MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
-        //        RaisePropertyChanged(nameof(Nomenkl));
-        //        RaisePropertyChanged();
-        //    }
-        //}
 
         public Nomenkl Nomenkl
         {
             get => myNomenkl;
             set
             {
-                if (myNomenkl != null && myNomenkl.Equals(value)) return;
+                if (Entity.SFT_NEMENKL_DC != default &&
+                    MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC) == value) return;
                 myNomenkl = value;
                 if (myNomenkl != null)
+                {
                     Entity.SFT_NEMENKL_DC = myNomenkl.DOC_CODE;
+                    Entity.SFT_POST_ED_IZM_DC = myNomenkl.Unit.DocCode;
+                    Entity.SFT_UCHET_ED_IZM_DC = myNomenkl.Unit.DocCode;
+                }
+
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(IsNaklad));
                 RaisePropertyChanged(nameof(IsUsluga));
                 RaisePropertyChanged(nameof(Unit));
             }
         }
-
-        //public decimal SFT_UCHET_ED_IZM_DC
-        //{
-        //    get => Entity.SFT_UCHET_ED_IZM_DC;
-        //    set
-        //    {
-        //        if (Entity.SFT_UCHET_ED_IZM_DC == value) return;
-        //        Entity.SFT_UCHET_ED_IZM_DC = value;
-        //        RaisePropertyChanged();
-        //    }
-        //}
 
         public Unit UchUnit
         {
@@ -198,25 +155,28 @@ namespace Core.EntityViewModel.Invoices
                 if (myUchUnit != null && myUchUnit.Equals(value)) return;
                 myUchUnit = value;
                 if (myUchUnit != null)
+                {
                     Entity.SFT_UCHET_ED_IZM_DC = myUchUnit.DocCode;
-                RaisePropertyChanged(nameof(Entity.SFT_UCHET_ED_IZM_DC));
+                    Entity.SFT_POST_ED_IZM_DC = myUchUnit.DocCode;
+                }
+
                 RaisePropertyChanged();
             }
         }
 
-        public decimal? SFT_ED_CENA
+        public decimal Price
         {
-            get => Entity.SFT_ED_CENA;
+            get => Entity.SFT_ED_CENA ?? 0;
             set
             {
                 if (Entity.SFT_ED_CENA == value) return;
                 Entity.SFT_ED_CENA = value;
-                Calc();
+                CalcRow();
                 if (CurrencyConvertRows != null && CurrencyConvertRows.Count > 0)
                     foreach (var r in CurrencyConvertRows)
                     {
-                        r.Price = (decimal) SFT_ED_CENA;
-                        r.PriceWithNaklad = (decimal) (SFT_ED_CENA + (SFT_SUMMA_NAKLAD ?? 0) / SFT_KOL);
+                        r.Price = (decimal) Entity.SFT_ED_CENA;
+                        r.PriceWithNaklad = (decimal) (Entity.SFT_ED_CENA + (SFT_SUMMA_NAKLAD ?? 0) / Entity.SFT_KOL);
                         r.CalcRow();
                     }
 
@@ -224,7 +184,7 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
-        public decimal SFT_KOL
+        public decimal Quantity
         {
             get => Entity.SFT_KOL;
             set
@@ -243,7 +203,7 @@ namespace Core.EntityViewModel.Invoices
                 }
 
                 Entity.SFT_KOL = value;
-                Calc();
+                CalcRow();
                 RaisePropertyChanged();
             }
         }
@@ -266,7 +226,7 @@ namespace Core.EntityViewModel.Invoices
             {
                 if (Entity.SFT_NDS_PERCENT == value) return;
                 Entity.SFT_NDS_PERCENT = value;
-                Calc();
+                CalcRow();
                 RaisePropertyChanged();
             }
         }
@@ -301,6 +261,7 @@ namespace Core.EntityViewModel.Invoices
                 if (Entity.SFT_SUMMA_K_OPLATE == value) return;
                 Entity.SFT_SUMMA_K_OPLATE = value;
                 Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
+                CalcRow();
                 RaisePropertyChanged();
             }
         }
@@ -349,7 +310,7 @@ namespace Core.EntityViewModel.Invoices
             {
                 if (Entity.SFT_VKLUCH_V_CENU == (value ? 1 : 0)) return;
                 Entity.SFT_VKLUCH_V_CENU = (short) (value ? 1 : 0);
-                Calc();
+                CalcRow();
                 RaisePropertyChanged(nameof(SFT_VKLUCH_V_CENU));
                 RaisePropertyChanged();
             }
@@ -865,46 +826,111 @@ namespace Core.EntityViewModel.Invoices
 
         public bool IsAccessRight { get; set; }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        public void Calc()
+        public void CalcRow()
         {
-            if ((SFT_ED_CENA ?? 0) == 0 || SFT_KOL == 0)
+            if (IsIncludeInPrice)
             {
-                Entity.SFT_SUMMA_K_OPLATE = 0;
-                Entity.SFT_SUMMA_NDS = 0;
+                Entity.SFT_SUMMA_NDS = Math.Round((Entity.SFT_SUMMA_K_OPLATE ?? 0) -
+                                                  (Entity.SFT_SUMMA_K_OPLATE ?? 0) * 100 /
+                                                  (100 + Entity.SFT_NDS_PERCENT), 2);
+                Entity.SFT_ED_CENA =
+                    Math.Round((Entity.SFT_SUMMA_K_OPLATE ?? 0) / Entity.SFT_KOL, 2);
+                RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
+                RaisePropertyChanged(nameof(Price));
             }
             else
             {
-                if (IsIncludeInPrice)
-                {
-                    Entity.SFT_SUMMA_K_OPLATE = Math.Round((decimal) (SFT_ED_CENA * SFT_KOL), 2);
-                    Entity.SFT_SUMMA_NDS = Math.Round((decimal) (SFT_SUMMA_K_OPLATE / (1 + SFT_NDS_PERCENT)), 2);
-                }
-                else
-                {
-                    Entity.SFT_SUMMA_K_OPLATE =
-                        Math.Round((decimal) (SFT_ED_CENA * SFT_KOL * (1 + SFT_NDS_PERCENT / 100)), 2);
-                    Entity.SFT_SUMMA_NDS = Math.Round((decimal) (SFT_ED_CENA * SFT_KOL * SFT_NDS_PERCENT / 100), 2);
-                }
+                Entity.SFT_SUMMA_NDS =
+                    Math.Round((Entity.SFT_SUMMA_K_OPLATE ?? 0) * SFT_NDS_PERCENT / (100 + SFT_NDS_PERCENT), 2);
+                Entity.SFT_SUMMA_K_OPLATE =
+                    Math.Round(Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0, 2)
+                    + Entity.SFT_SUMMA_NDS;
+                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
+                RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
+                RaisePropertyChanged(nameof(SFT_SUMMA_K_OPLATE));
             }
+            //switch (fieldType)
+            //{
+            //    case FieldChangeType.Price:
+            //        if (IsIncludeInPrice)
+            //        {
+            //            if (Entity.SFT_KOL != 0)
+            //                Entity.SFT_SUMMA_NDS = (Entity.SFT_SUMMA_K_OPLATE ?? 0) * SFT_NDS_PERCENT /
+            //                                       (100 + SFT_NDS_PERCENT);
+            //            else
+            //                Entity.SFT_SUMMA_NDS = 0;
+            //            RaisePropertyChanged();
+            //            RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
+            //        }
+            //        else
+            //        {
+            //            if (Entity.SFT_KOL != 0)
+            //                Entity.SFT_SUMMA_NDS = Entity.SFT_ED_CENA * Entity.SFT_KOL * (SFT_NDS_PERCENT / 100);
+            //            else
+            //                Entity.SFT_SUMMA_NDS = 0;
+            //        }
 
-            if (Parent is InvoiceProvider p)
-                // ReSharper disable once PossibleInvalidOperationException
-                p.SF_CRS_SUMMA = (decimal) p.Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE);
+            //        Entity.SFT_SUMMA_K_OPLATE =
+            //            Entity.SFT_KOL * (Entity.SFT_ED_CENA ?? 0) + Entity.SFT_SUMMA_NDS;
+            //        Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
+            //        break;
+            //    case FieldChangeType.Quantity:
+            //    case FieldChangeType.NDS:
+            //        if (IsIncludeInPrice)
+            //        {
+            //            if (Entity.SFT_KOL != 0)
+            //            {
+            //                Entity.SFT_ED_CENA = (Entity.SFT_SUMMA_K_OPLATE ?? 0) / (decimal?) Entity.SFT_KOL;
+            //                Entity.SFT_SUMMA_NDS = (Entity.SFT_SUMMA_K_OPLATE ?? 0) * SFT_NDS_PERCENT /
+            //                                       (100 + SFT_NDS_PERCENT);
+            //            }
+            //            else
+            //            {
+            //                Entity.SFT_ED_CENA = 0;
+            //                Entity.SFT_SUMMA_NDS = 0;
+            //                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = 0;
+            //            }
 
-            Entity.SFT_NOM_CRS_RATE = 1;
-            Entity.SFT_SUMMA_V_UCHET_VALUTE = Entity.SFT_SUMMA_K_OPLATE;
-            Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
-            Entity.EURSumma = Entity.SFT_SUMMA_K_OPLATE * Entity.EURRate;
-            Entity.USDSumma = Entity.SFT_SUMMA_K_OPLATE * Entity.USDRate;
-            Entity.GBPSumma = Entity.SFT_SUMMA_K_OPLATE * Entity.GBPRate;
-            Entity.RUBSumma = Entity.SFT_SUMMA_K_OPLATE * Entity.RUBRate;
-            RaisePropertyChanged(nameof(EURSumma));
-            RaisePropertyChanged(nameof(USDSumma));
-            RaisePropertyChanged(nameof(GBPSumma));
-            RaisePropertyChanged(nameof(RUBSumma));
-            RaisePropertyChanged(nameof(SFT_SUMMA_K_OPLATE));
-            RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
+            //            RaisePropertyChanged(nameof(Entity.SFT_ED_CENA));
+            //            RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
+            //        }
+            //        else
+            //        {
+            //            Entity.SFT_SUMMA_NDS = (Entity.SFT_ED_CENA ?? 0) * (decimal?) Entity.SFT_KOL * SFT_NDS_PERCENT /
+            //                                   100;
+            //            Entity.SFT_SUMMA_K_OPLATE =
+            //                Entity.SFT_KOL * (Entity.SFT_ED_CENA ?? 0) + Entity.SFT_SUMMA_NDS;
+            //            Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
+            //        }
+
+            //        break;
+            //    case FieldChangeType.Summa:
+            //        if (IsIncludeInPrice)
+            //        {
+            //            if (Entity.SFT_KOL != 0)
+            //            {
+            //                Entity.SFT_ED_CENA = (Entity.SFT_SUMMA_K_OPLATE ?? 0) / (decimal?) Entity.SFT_KOL;
+            //                Entity.SFT_SUMMA_NDS = (Entity.SFT_SUMMA_K_OPLATE ?? 0) * SFT_NDS_PERCENT /
+            //                                       (100 + SFT_NDS_PERCENT);
+            //            }
+            //            else
+            //            {
+            //                Entity.SFT_ED_CENA = 0;
+            //                Entity.SFT_SUMMA_NDS = 0;
+            //                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = 0;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            Entity.SFT_SUMMA_NDS = (Entity.SFT_ED_CENA ?? 0) * (decimal?) Entity.SFT_KOL *
+            //                                   ((100 + SFT_NDS_PERCENT) / 100);
+            //            Entity.SFT_SUMMA_K_OPLATE =
+            //                Entity.SFT_KOL * (Entity.SFT_ED_CENA ?? 0) + Entity.SFT_SUMMA_NDS;
+            //            Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
+            //        }
+
+            //        break;
+            //}
         }
 
         private void LoadReference(bool isLoadAll)
@@ -939,12 +965,12 @@ namespace Core.EntityViewModel.Invoices
                 foreach (var d in Entity.TD_26_CurrencyConvert)
                 {
                     var newItem = new InvoiceProviderRowCurrencyConvertViewModel(d);
-                    newItem.OLdPrice = (decimal) SFT_ED_CENA;
+                    newItem.OLdPrice = Entity.SFT_ED_CENA ?? 0;
                     newItem.OLdNakladPrice = (SFT_SUMMA_NAKLAD ?? 0) != 0
-                        ? Math.Round((decimal) SFT_ED_CENA +
-                                     // ReSharper disable once PossibleInvalidOperationException
-                                     (decimal) SFT_ED_CENA / (SFT_SUMMA_NAKLAD ?? 0), 2)
-                        : Math.Round((decimal) SFT_ED_CENA, 2);
+                        ? Math.Round(Entity.SFT_ED_CENA ?? 0 +
+                            // ReSharper disable once PossibleInvalidOperationException
+                            (decimal) Entity.SFT_ED_CENA / (SFT_SUMMA_NAKLAD ?? 0), 2)
+                        : Math.Round(Entity.SFT_ED_CENA ?? 0, 2);
                     CurrencyConvertRows.Add(newItem);
                 }
         }
@@ -976,12 +1002,10 @@ namespace Core.EntityViewModel.Invoices
 
         public void UpdateFrom(TD_26 ent)
         {
-            
         }
 
         public void UpdateTo(TD_26 ent)
         {
-            
         }
 
         public override string ToString()
@@ -1050,8 +1074,8 @@ namespace Core.EntityViewModel.Invoices
             builder.Property(_ => _.PostUnit).NotAutoGenerated();
             builder.Property(_ => _.Unit).AutoGenerated().DisplayName("Ед.изм.");
             builder.Property(_ => _.Nomenkl).AutoGenerated().DisplayName("Наименование").ReadOnly();
-            builder.Property(_ => _.SFT_KOL).AutoGenerated().DisplayName("Кол-во").DisplayFormatString("n4");
-            builder.Property(_ => _.SFT_ED_CENA).AutoGenerated().DisplayName("Цена").DisplayFormatString("n2");
+            builder.Property(_ => _.Quantity).AutoGenerated().DisplayName("Кол-во").DisplayFormatString("n4");
+            builder.Property(_ => _.Price).AutoGenerated().DisplayName("Цена").DisplayFormatString("n2");
             builder.Property(_ => _.SFT_SUMMA_K_OPLATE).AutoGenerated().DisplayName("Сумма").DisplayFormatString("n2");
             builder.Property(_ => _.Note).AutoGenerated().DisplayName("Примечание");
             builder.Property(_ => _.SFT_NDS_PERCENT).AutoGenerated().DisplayName("НДС %").DisplayFormatString("n2");
@@ -1073,8 +1097,8 @@ namespace Core.EntityViewModel.Invoices
             builder.Property(_ => _.PostUnit).NotAutoGenerated();
             builder.Property(_ => _.Unit).AutoGenerated().DisplayName("Ед.изм.");
             builder.Property(_ => _.Nomenkl).AutoGenerated().DisplayName("Наименование").ReadOnly();
-            builder.Property(_ => _.SFT_KOL).AutoGenerated().DisplayName("Кол-во").DisplayFormatString("n4");
-            builder.Property(_ => _.SFT_ED_CENA).AutoGenerated().DisplayName("Цена").DisplayFormatString("n2");
+            builder.Property(_ => _.Quantity).AutoGenerated().DisplayName("Кол-во").DisplayFormatString("n4");
+            builder.Property(_ => _.Price).AutoGenerated().DisplayName("Цена").DisplayFormatString("n2");
             builder.Property(_ => _.SFT_SUMMA_K_OPLATE).AutoGenerated().DisplayName("Сумма").DisplayFormatString("n2");
             builder.Property(_ => _.SFT_SUMMA_NAKLAD).AutoGenerated().DisplayName("Сумма накл")
                 .DisplayFormatString("n2").ReadOnly();

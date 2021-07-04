@@ -307,7 +307,7 @@ namespace KursAM2.View.Finance.Cash
                     doc.Currency = MainReferences.Currencies[item.Entity.SF_CRS_DC];
                     doc.SFactName = item.ToString();
                     doc.SFACT_DC = item.DocCode;
-                    doc.NOTES_ORD = item.SF_NOTE;
+                    doc.NOTES_ORD = item.Note;
                 }
                 else
                 {
@@ -319,7 +319,7 @@ namespace KursAM2.View.Finance.Cash
                     doc.SUMM_ORD = item.Summa - item.PaySumma;
                     doc.SFactName = item.ToString();
                     doc.SFACT_DC = item.DocCode;
-                    doc.NOTES_ORD = item.SF_NOTE;
+                    doc.NOTES_ORD = item.Note;
                 }
             }
             else
@@ -332,7 +332,7 @@ namespace KursAM2.View.Finance.Cash
                 doc.SUMM_ORD = item.Summa - item.PaySumma;
                 doc.SFactName = item.ToString();
                 doc.SFACT_DC = item.DocCode;
-                doc.NOTES_ORD = item.SF_NOTE;
+                doc.NOTES_ORD = item.Note;
             }
         }
 

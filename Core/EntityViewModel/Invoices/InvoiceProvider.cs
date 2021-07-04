@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Controls;
-using Core.EntityViewModel;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Dogovora;
@@ -15,10 +14,10 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.EntityViewModel.Vzaimozachet;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
+using ValidationError = Core.Helper.ValidationError;
 
 // ReSharper disable All
 
@@ -33,6 +32,34 @@ namespace Core.Invoices.EntityViewModel
     {
         private readonly UnitOfWork<ALFAMEDIAEntities> context;
 
+        public string this[string columnName]
+        {
+            get
+            {
+                switch (columnName)
+                {
+                    case nameof(PersonaResponsible):
+                        return PersonaResponsible == null ? ValidationError.FieldNotNull : null;
+                    case nameof(Kontragent):
+                        return Kontragent == null ? ValidationError.FieldNotNull : null;
+                    case nameof(Currency):
+                        return Currency == null ? ValidationError.FieldNotNull : null;
+                    case nameof(CO):
+                        return CO == null || CO.DocCode == 0 ? ValidationError.FieldNotNull : null;
+                    case nameof(PayCondition):
+                        return PayCondition == null ? ValidationError.FieldNotNull : null;
+                    case nameof(VzaimoraschetType):
+                        return VzaimoraschetType == null ? ValidationError.FieldNotNull : null;
+                    case nameof(FormRaschet):
+                        return FormRaschet == null ? ValidationError.FieldNotNull : null;
+                }
+
+                return null;
+            }
+        }
+
+        public string Error => null;
+        
         protected string SFact(decimal dc)
         {
             var doc = context.Context.SD_84.FirstOrDefault(_ => _.DOC_CODE == dc);
@@ -43,6 +70,13 @@ namespace Core.Invoices.EntityViewModel
         {
             throw new NotImplementedException();
         }
+        public ObservableCollection<InvoiceProviderRow> Rows { set; get; } =
+            new ObservableCollection<InvoiceProviderRow>();
+
+        public ObservableCollection<WarehouseOrderInRow> Facts { set; get; } =
+            new ObservableCollection<WarehouseOrderInRow>();
+
+       
 
         #region Fields
 
@@ -55,7 +89,9 @@ namespace Core.Invoices.EntityViewModel
         private PayCondition myPayConditionCondition;
         private VzaimoraschetType myVzaimoraschetType;
         private ContractProvider myContract;
+
         private Employee myPersonaResponsible;
+
         //private Money myNakladAll;
         private decimal mySummaFact;
 
@@ -65,19 +101,11 @@ namespace Core.Invoices.EntityViewModel
 
         #region Constructors
 
-        //public InvoiceProvider(SD_26 entity)
-        //{
-        //    context = new UnitOfWork<ALFAMEDIAEntities>();
-        //    Entity = entity ?? DefaultValue();
-        //    LoadReferences();
-        //    Rows.CollectionChanged += (o, args) => State = RowStatus.NotEdited;
-        //}
-
-
         public InvoiceProvider()
         {
             Entity = DefaultValue();
         }
+
         public InvoiceProvider(UnitOfWork<ALFAMEDIAEntities> ctx)
         {
             context = ctx;
@@ -98,22 +126,17 @@ namespace Core.Invoices.EntityViewModel
 
         #region Properties
 
-        public ObservableCollection<InvoiceProviderRow> Rows { set; get; } =
-            new ObservableCollection<InvoiceProviderRow>();
-
-        public ObservableCollection<WarehouseOrderInRow> Facts { set; get; } =
-            new ObservableCollection<WarehouseOrderInRow>();
-
         public ObservableCollection<ProviderInvoicePayViewModel> PaymentDocs { set; get; } =
             new ObservableCollection<ProviderInvoicePayViewModel>();
 
         public override string Name =>
             $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {SF_POSTAV_DATE.ToShortDateString()} " +
-            $"{SF_NOTES}";
+            $"{Note}";
 
-        public override string Description => $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {SF_POSTAV_DATE.ToShortDateString()} " +
-                                              $"{Kontragent} на {SF_CRS_SUMMA} {Currency} "  +
-                                              $"{SF_NOTES}";
+        public override string Description =>
+            $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {SF_POSTAV_DATE.ToShortDateString()} " +
+            $"{Kontragent} на {SF_CRS_SUMMA} {Currency} " +
+            $"{Note}";
 
         public decimal DOC_CODE
         {
@@ -193,6 +216,7 @@ namespace Core.Invoices.EntityViewModel
                     myPersonaResponsible = Employee;
                     RaisePropertyChanged();
                 }
+
                 return myPersonaResponsible;
             }
             set
@@ -241,7 +265,8 @@ namespace Core.Invoices.EntityViewModel
                 RaisePropertyChanged();
             }
         }
-        [Required(ErrorMessage = "Контрагент должен быть выбран обязательно.")] 
+
+        [Required(ErrorMessage = "Контрагент должен быть выбран обязательно.")]
         public Kontragent Kontragent
         {
             get => myKontragent;
@@ -460,7 +485,7 @@ namespace Core.Invoices.EntityViewModel
 
         public int? EmployeeTabelNumber => Employee?.TabelNumber;
 
-        [Required(ErrorMessage = "Ответственный должен быть выбран обязательно.")] 
+        [Required(ErrorMessage = "Ответственный должен быть выбран обязательно.")]
         public Employee Employee
         {
             get => myEmployee;
@@ -610,7 +635,7 @@ namespace Core.Invoices.EntityViewModel
             }
         }
 
-        public string SF_NOTES
+        public override string Note
         {
             get => Entity.SF_NOTES;
             set
@@ -847,7 +872,7 @@ namespace Core.Invoices.EntityViewModel
                 RaisePropertyChanged();
                 foreach (var r in Rows)
                 {
-                    r.IsIncludeInPrice = (Entity.SF_NDS_VKL_V_CENU ?? 0) == 0 ? false : true;
+                    r.IsIncludeInPrice = Entity.SF_NDS_VKL_V_CENU == 0 ? false : true;
                 }
             }
         }
@@ -1118,7 +1143,6 @@ namespace Core.Invoices.EntityViewModel
         public ObservableCollection<InvoiceProviderRowCurrencyConvertViewModel> DeletedCurrencyRows { get; set; } =
             new ObservableCollection<InvoiceProviderRowCurrencyConvertViewModel>();
 
-
         #endregion Properties
 
         #region Methods
@@ -1270,7 +1294,7 @@ namespace Core.Invoices.EntityViewModel
             SF_REGISTR_DATE = ent.SF_REGISTR_DATE;
             SF_SCHET_FLAG = ent.SF_SCHET_FLAG;
             SF_SCHET_FACT_FLAG = ent.SF_SCHET_FACT_FLAG;
-            SF_NOTES = ent.SF_NOTES;
+            Note = ent.SF_NOTES;
             CREATOR = ent.CREATOR;
             SF_VZAIMOR_TYPE_DC = ent.SF_VZAIMOR_TYPE_DC;
             SF_DOGOVOR_POKUPKI_DC = ent.SF_DOGOVOR_POKUPKI_DC;
@@ -1333,7 +1357,7 @@ namespace Core.Invoices.EntityViewModel
             ent.SF_REGISTR_DATE = SF_REGISTR_DATE;
             ent.SF_SCHET_FLAG = SF_SCHET_FLAG;
             ent.SF_SCHET_FACT_FLAG = SF_SCHET_FACT_FLAG;
-            ent.SF_NOTES = SF_NOTES;
+            ent.SF_NOTES = Note;
             ent.CREATOR = CREATOR;
             ent.SF_VZAIMOR_TYPE_DC = SF_VZAIMOR_TYPE_DC;
             ent.SF_DOGOVOR_POKUPKI_DC = SF_DOGOVOR_POKUPKI_DC;
@@ -1408,36 +1432,6 @@ namespace Core.Invoices.EntityViewModel
         }
 
         #endregion Methods
-
-        public string this[string columnName]
-        {
-            get
-            {
-                switch (columnName)
-                {
-                    case nameof(PersonaResponsible):
-                        return PersonaResponsible == null ? Helper.ValidationError.FieldNotNull : null;
-                    case nameof(Kontragent):
-                        return Kontragent == null ? Helper.ValidationError.FieldNotNull : null;
-                    case nameof(Currency):
-                        return Currency == null ? Helper.ValidationError.FieldNotNull : null;
-                    case nameof(CO):
-                        return CO == null ? Helper.ValidationError.FieldNotNull : null;
-                    case nameof(PayCondition):
-                        return PayCondition == null ? Helper.ValidationError.FieldNotNull : null;
-                    case nameof(VzaimoraschetType):
-                        return VzaimoraschetType == null ? Helper.ValidationError.FieldNotNull : null;
-                    case nameof(FormRaschet):
-                        return FormRaschet == null ? Helper.ValidationError.FieldNotNull : null;
-                }
-                return null;
-            }
-        }
-
-        public string Error
-        {
-            get { return null; }
-        }
     }
 
     /// <summary>
@@ -1452,6 +1446,7 @@ namespace Core.Invoices.EntityViewModel
     public class SD_26LayoutData_FluentAPI : DataAnnotationForFluentApiBase, IMetadataProvider<InvoiceProvider>
     {
         private readonly string notNullMessage = "Поле должно быть заполнено";
+
         void IMetadataProvider<InvoiceProvider>.BuildMetadata(
             MetadataBuilder<InvoiceProvider> builder)
         {
@@ -1459,13 +1454,13 @@ namespace Core.Invoices.EntityViewModel
             builder.Property(x => x.KontrReceiver).AutoGenerated()
                 .DisplayName("Получатель");
             builder.Property(x => x.Currency).AutoGenerated()
-                .DisplayName("Валюта").Required(()=>notNullMessage);
+                .DisplayName("Валюта").Required(() => notNullMessage);
             builder.Property(x => x.SF_CRS_SUMMA).AutoGenerated()
                 .DisplayName("Сумма").ReadOnly().DisplayFormatString("n2");
             builder.Property(x => x.SF_IN_NUM).AutoGenerated()
                 .DisplayName("№");
             builder.Property(x => x.SF_POSTAV_DATE).AutoGenerated()
-                .Required(()=>notNullMessage)
+                .Required(() => notNullMessage)
                 .DisplayName("Дата");
             builder.Property(x => x.SF_POSTAV_NUM).AutoGenerated()
                 .DisplayName("Внешний №");
@@ -1474,19 +1469,19 @@ namespace Core.Invoices.EntityViewModel
             builder.Property(x => x.IsNDSInPrice).AutoGenerated()
                 .DisplayName("НДС в цене");
             builder.Property(x => x.Kontragent).AutoGenerated()
-                .Required(()=>notNullMessage)
+                .Required(() => notNullMessage)
                 .DisplayName("Контрагент");
             builder.Property(x => x.CO).AutoGenerated()
-                .Required(()=>notNullMessage)
+                .Required(() => notNullMessage)
                 .DisplayName("Центр ответственности");
             builder.Property(x => x.VzaimoraschetType).AutoGenerated()
-                .Required(()=>notNullMessage)
+                .Required(() => notNullMessage)
                 .DisplayName("Тип взаиморасчета");
             builder.Property(x => x.PayCondition).AutoGenerated()
-                .Required(()=>notNullMessage)
+                .Required(() => notNullMessage)
                 .DisplayName("Условие оплаты");
             builder.Property(x => x.FormRaschet).AutoGenerated()
-                .Required(()=>notNullMessage)
+                .Required(() => notNullMessage)
                 .DisplayName("Форма расчета");
             //builder.Property(x => x.SF_REGISTR_DATE).NotAutoGenerated()
             //    .DisplayName("Дата регистр.");
@@ -1495,7 +1490,7 @@ namespace Core.Invoices.EntityViewModel
             builder.Property(x => x.SF_GRUZOPOLUCHATEL).AutoGenerated()
                 .DisplayName("Грузополучатель");
             builder.Property(x => x.VzaimoraschetType).AutoGenerated()
-                .Required(()=>notNullMessage)
+                .Required(() => notNullMessage)
                 .DisplayName("Тип продукции");
             builder.Property(x => x.SummaFact).ReadOnly().AutoGenerated()
                 .DisplayName("Фактурировано");
@@ -1515,12 +1510,12 @@ namespace Core.Invoices.EntityViewModel
                 .DisplayName("Статус");
             builder.Property(x => x.CREATOR).AutoGenerated()
                 .DisplayName("Создатель");
-            builder.Property(x => x.SF_NOTES).AutoGenerated().MultilineTextDataType()
+            builder.Property(x => x.Note).AutoGenerated().MultilineTextDataType()
                 .DisplayName("Примечание");
             builder.Property(x => x.PaySumma).AutoGenerated()
                 .DisplayName("Оплачено");
             builder.Property(x => x.PersonaResponsible).AutoGenerated()
-                .Required(()=>notNullMessage)
+                .Required(() => notNullMessage)
                 .DisplayName("Ответственный");
             builder.Property(x => x.IsInvoiceNakald).AutoGenerated()
                 .DisplayName("Счет накладных");
@@ -1592,7 +1587,7 @@ namespace Core.Invoices.EntityViewModel
                             .Group("Накладные расходы", Orientation.Vertical)
                                 //    .ContainsProperty(_ => _.NakladAll)
                                 //    .ContainsProperty(_ => _.Overheads)
-                                .ContainsProperty(_ => _.SF_NOTES)
+                                .ContainsProperty(_ => _.Note)
                             .EndGroup()
                         .EndGroup()
                     .EndGroup()
@@ -1640,12 +1635,14 @@ namespace Core.Invoices.EntityViewModel
                 .DisplayName("Центр ответственности");
             builder.Property(x => x.CREATOR).AutoGenerated()
                 .DisplayName("Создатель");
-            builder.Property(x => x.SF_NOTES).AutoGenerated()
+            builder.Property(x => x.Note).AutoGenerated()
                 .DisplayName("Примечание");
             builder.Property(x => x.PaySumma).AutoGenerated()
                 .DisplayName("Оплачено");
             builder.Property(x => x.PersonaResponsible).AutoGenerated()
                 .DisplayName("Ответственный");
+            builder.Property(x => x.IsNDSInPrice).AutoGenerated()
+                .DisplayName("НДС в цене");
         }
     }
 }

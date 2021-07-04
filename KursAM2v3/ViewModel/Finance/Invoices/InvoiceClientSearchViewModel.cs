@@ -12,6 +12,8 @@ using Core.EntityViewModel.Invoices;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using Data;
+using Data.Repository;
 using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
@@ -31,6 +33,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
             WindowName = "Счета фактуры для клиентов";
             Documents = new ObservableCollection<InvoiceClient>();
         }
+
+        public override string LayoutName => "InvoiceClientSearchViewModel";
+        public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
+            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         public InvoiceClientSearchViewModel(Window form) : base(form)
         {
@@ -213,14 +219,19 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             var res = Task.Factory.StartNew(LoadCore);
             Documents.Clear();
-            foreach (var d in res.Result) Documents.Add(d);
+            foreach (var d in res.Result)
+            {
+                d.RaisePropertyAllChanged();
+                Documents.Add(d);
+            }
+
             return res;
         }
 
         private List<InvoiceClient> LoadCore()
         {
             var ret = new List<InvoiceClient>();
-            base.RefreshData(null);
+            //base.RefreshData(null);
             IsDocumentOpenAllow = false;
             IsDocNewCopyAllow = false;
             IsDocNewCopyRequisiteAllow = false;
@@ -231,7 +242,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             try
             {
-                foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, false, SearchText))
+                foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
+                    false, null, SearchText))
                     ret.Add(d);
             }
             catch (Exception ex)
@@ -239,7 +251,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 WindowManager.ShowError(ex);
             }
 
-            RaisePropertyChanged(nameof(Documents));
             SearchText = "";
             DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
             return ret;
@@ -253,7 +264,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewEmpty(object form)
         { 
-            var ctx = new ClientWindowViewModel {Document = InvoicesManager.NewClient()};
+            var ctx = new ClientWindowViewModel(null);
             var frm = new InvoiceClientView
             {
                 Owner = Application.Current.MainWindow,
@@ -267,29 +278,30 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewCopy(object obj)
         {
             if (CurrentDocument == null) return; 
-            var ctx = new ClientWindowViewModel();
-            var frm = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            ctx.Document = InvoicesManager.NewClientCopy(CurrentDocument);
+            var ctx = new ClientWindowViewModel(CurrentDocument.DocCode);
+            ctx.SetAsNewCopy();
+            var frm = new InvoiceClientView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
             ctx.Form = frm;
             frm.Show();
-            frm.DataContext = ctx;
         }
 
         public override void DocNewCopyRequisite(object obj)
         {
-            if (CurrentDocument == null) return;
-            var ctx = new ClientWindowViewModel();
-            var frm = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            ctx.Document = InvoicesManager.NewClientRequisite(CurrentDocument);
+            if (CurrentDocument == null) return; 
+            var ctx = new ClientWindowViewModel(CurrentDocument.DocCode);
+            ctx.SetAsNewCopyRequisite(null);
+            var frm = new InvoiceClientView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            //ctx.Document = InvoicesManager.NewClientCopy(CurrentDocument);
             ctx.Form = frm;
             frm.Show();
-            frm.DataContext = ctx;
-        }
-
-        public override void ResetLayout(object form)
-        {
-            var frm = form as SearchInvoiceClientView;
-            frm?.LayoutManager.ResetLayout();
         }
 
         #endregion

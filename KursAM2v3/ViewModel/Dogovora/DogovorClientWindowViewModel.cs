@@ -21,6 +21,7 @@ using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Repositories.DogovorsRepositories;
+using KursAM2.View.Helper;
 
 namespace KursAM2.ViewModel.Dogovora
 {
@@ -166,6 +167,13 @@ namespace KursAM2.ViewModel.Dogovora
         #endregion
 
         #region Commands
+
+        public override void ShowHistory(object data)
+        {
+            // ReSharper disable once RedundantArgumentDefaultValue
+            DocumentHistoryManager.LoadHistory(DocumentType.DogovorClient,Document.Id,null, null);
+
+        }
 
         public override bool IsCanSaveData =>
             Document != null && Document.State != RowStatus.NotEdited && Document.IsCorrect();

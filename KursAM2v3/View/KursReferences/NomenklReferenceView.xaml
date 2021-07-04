@@ -66,6 +66,10 @@
                                             Header="Наименование"
                                             FieldName="Name"
                                             AllowEditing="False" />
+                        <dxg:TreeListColumn x:Name="tcol_2"
+                                            Header="Кол-во номенклатур"
+                                            FieldName="NomenklCount"
+                                            AllowEditing="False" />
                     </dxg:TreeListControl.Columns>
                     <dxg:TreeListControl.View>
                         <dxg:TreeListView x:Name="treeListViewCategory"
@@ -73,13 +77,13 @@
                                           KeyFieldName="DocCode"
                                           ParentFieldName="ParentDC"
                                           MouseDoubleClick="TreeListViewCategory_OnMouseDoubleClick"
-                                          NavigationStyle="Cell"
+                                          NavigationStyle="Row"
                                           SearchPanelFindFilter="Contains"
                                           PreviewKeyDown="treeListViewCategory_PreviewKeyDown"
                                           ShowHorizontalLines="False"
                                           ShowVerticalLines="False" 
                                           ShowFilterPanelMode="Never"
-                                          ShowIndicator="False">
+                                          ShowIndicator="True">
                             <dxg:TreeListView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Добавить в корень" Command="{Binding TreeAddInRootCommand}" />
@@ -102,6 +106,15 @@
                                     </MenuItem>
                                 </ContextMenu>
                             </dxg:TreeListView.ContextMenu>
+                            <dxg:TreeListView.FormatConditions>
+                                <dxg:FormatCondition FieldName="Name"
+                                                     Expression="[NomenklCount] > 0">
+                                    <dxg:FormatCondition.Format>  
+                                        <dx:Format FontWeight="Bold" />  
+                                    </dxg:FormatCondition.Format>  
+
+                                </dxg:FormatCondition>
+                            </dxg:TreeListView.FormatConditions>
                         </dxg:TreeListView>
                     </dxg:TreeListControl.View>
                 </dxg:TreeListControl>
@@ -185,7 +198,8 @@
                                      dx:DXSerializer.StoreLayoutMode="All"
                                      dxg:DataControlSerializationOptions.AddNewColumns="True"
                                      dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                                     ItemsSource="{Binding ElementName=gridControlNomenklMain, Path=CurrentItem.NomenklCollection,Mode=TwoWay}"
+                                     ItemsSource="{Binding ElementName=gridControlNomenklMain, 
+                        Path=CurrentItem.NomenklCollection,Mode=TwoWay}"
                                      CurrentItem="{Binding CurrentNomenkl,Mode=TwoWay}"
                                      SelectionMode="Row">
                         <dxg:GridControl.Columns>

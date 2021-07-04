@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using Core.EntityViewModel.CommonReferences;
+using Core.Helper;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 
 namespace Core.EntityViewModel.NomenklManagement
 {
-    public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>
+    public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IDataErrorInfo
     {
         private CountriesViewModel myCountry;
         private NomenklMain myEntity;
@@ -460,5 +461,24 @@ namespace Core.EntityViewModel.NomenklManagement
         {
             throw new NotImplementedException();
         }
+
+        public string this[string columnName]
+        {
+            get
+            {
+                switch (columnName)
+                {
+                    case nameof(Name):
+                        return Name == null ? ValidationError.FieldNotNull : null;
+                    case nameof(NomenklCategory):
+                        return NomenklCategory == null ? ValidationError.FieldNotNull : null;
+
+                }
+
+                return null;
+            }
+        }
+
+        public string Error => null;
     }
 }

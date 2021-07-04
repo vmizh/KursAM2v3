@@ -68,7 +68,8 @@ namespace KursAM2.ViewModel.Reference
             newItem.DocCode = minId;
             Rows.Add(newItem);
             minId--;
-            if (Form is TreeListFormBaseView frm) frm.gridDocuments.RefreshData();
+            if (Form is TreeListFormBaseView frm) 
+                frm.gridDocuments.RefreshData();
             CurrentRow = newItem;
         }
 

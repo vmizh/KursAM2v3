@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.NomenklManagement;
 using Core.EntityViewModel.Vzaimozachet;
 using Core.Helper;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
+using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Mvvm.POCO;
 
 namespace Core.EntityViewModel.Invoices
 {
@@ -20,9 +24,11 @@ namespace Core.EntityViewModel.Invoices
     [SuppressMessage("ReSharper", "MemberInitializerValueIgnored")]
     [SuppressMessage("ReSharper", "MethodOverloadWithOptionalParameter")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>,IDataErrorInfo
+    public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorInfo
     {
+        private readonly UnitOfWork<ALFAMEDIAEntities> context;
         private SD_84 myEntity;
+        private bool isLoadPayment = false;
 
         public InvoiceClient()
         {
@@ -51,6 +57,21 @@ namespace Core.EntityViewModel.Invoices
                 };
                 Rows.Add(newRow);
             }
+        }
+
+        public InvoiceClient(SD_84 entity, UnitOfWork<ALFAMEDIAEntities> ctx)
+        {
+            context = ctx;
+            Entity = entity ?? DefaultValue();
+            LoadReferences();
+        }
+        
+        public InvoiceClient(SD_84 entity, UnitOfWork<ALFAMEDIAEntities> ctx, bool isLoadPaymentDocs = false)
+        {
+            isLoadPayment = isLoadPaymentDocs;
+            context = ctx;
+            Entity = entity ?? DefaultValue();
+            LoadReferences();
         }
 
         public bool IsAccepted
@@ -100,18 +121,18 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
-        public List<InvoiceClientRow> DeletedRows { set; get; } = new List<InvoiceClientRow>();
+        public List<InvoiceClientRow> DeletedRows { set; get; } = new();
 
         public ObservableCollection<InvoiceClientRow> Rows { set; get; } =
-            new ObservableCollection<InvoiceClientRow>();
+            new();
 
         public ObservableCollection<ShipmentRowViewModel> ShipmentRows { set; get; } =
-            new ObservableCollection<ShipmentRowViewModel>();
+            new();
 
         public ObservableCollection<InvoicePaymentDocument> PaymentDocs { set; get; } =
-            new ObservableCollection<InvoicePaymentDocument>();
+            new();
 
-        public decimal DilerSumma => (decimal) Rows.Sum(_ => _.SFT_NACENKA_DILERA ?? 0);
+        public decimal DilerSumma => Rows.Sum(_ => _.SFT_NACENKA_DILERA ?? 0);
 
         public Kontragent Receiver
         {
@@ -127,7 +148,7 @@ namespace Core.EntityViewModel.Invoices
 
         public Kontragent Client
         {
-            get =>  MainReferences.GetKontragent(Entity.SF_CLIENT_DC);
+            get => MainReferences.GetKontragent(Entity.SF_CLIENT_DC);
             set
             {
                 if (MainReferences.GetKontragent(Entity.SF_CLIENT_DC) == value) return;
@@ -241,15 +262,16 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
-        public override string Description => Entity != null ?
-            $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " + 
-            $"от {Entity.SF_DATE.ToShortDateString()} {Client} {Summa} {Currency} {Note} " : null;
+        public override string Description => Entity != null
+            ? $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +
+              $"от {Entity.SF_DATE.ToShortDateString()} {Client} {Summa} {Currency} {Note} "
+            : null;
 
         public override string Name
-            => Entity.DOC_CODE > 0 ?
-                $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +
-                $"от {Entity.SF_DATE.ToShortDateString()} {Summa} {Currency} {Note}"
-        : null;
+            => Entity.DOC_CODE > 0
+                ? $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +
+                  $"от {Entity.SF_DATE.ToShortDateString()} {Summa} {Currency} {Note}"
+                : null;
 
         public int InnerNumber
         {
@@ -725,7 +747,7 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
-        public string SF_NOTE
+        public override string Note
         {
             get => Entity.SF_NOTE;
             set
@@ -1055,6 +1077,36 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
+        public EntityLoadCodition LoadCondition { get; set; }
+
+        public string this[string columnName]
+        {
+            get
+            {
+                switch (columnName)
+                {
+                    case nameof(PersonaResponsible):
+                        return PersonaResponsible == null ? ValidationError.FieldNotNull : null;
+                    case nameof(Client):
+                        return Client == null ? ValidationError.FieldNotNull : null;
+                    case nameof(Currency):
+                        return Currency == null ? ValidationError.FieldNotNull : null;
+                    case nameof(CO):
+                        return CO == null ? ValidationError.FieldNotNull : null;
+                    case nameof(PayCondition):
+                        return PayCondition == null ? ValidationError.FieldNotNull : null;
+                    case nameof(VzaimoraschetType):
+                        return VzaimoraschetType == null ? ValidationError.FieldNotNull : null;
+                    case nameof(FormRaschet):
+                        return FormRaschet == null ? ValidationError.FieldNotNull : null;
+                }
+
+                return null;
+            }
+        }
+
+        public string Error { get; } = null;
+
         public SD_84 Entity
         {
             get => myEntity;
@@ -1065,8 +1117,6 @@ namespace Core.EntityViewModel.Invoices
                 RaisePropertyChanged();
             }
         }
-
-        public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_84> LoadList()
         {
@@ -1099,6 +1149,79 @@ namespace Core.EntityViewModel.Invoices
                 CO = MainReferences.COList[Entity.SF_CENTR_OTV_DC.Value];
             if (Entity.PersonalResponsibleDC != null)
                 PersonaResponsible = MainReferences.Employees[Entity.PersonalResponsibleDC.Value];
+            Rows = new ObservableCollection<InvoiceClientRow>();
+            if (Entity.TD_84 != null && Entity.TD_84.Count > 0)
+                foreach (var t in Entity.TD_84)
+                {
+                    var newRow = new InvoiceClientRow(t)
+                    {
+                        Parent = this
+                    };
+                    Rows.Add(newRow);
+                }
+
+            if (isLoadPayment)
+            {
+                PaymentDocs = new ObservableCollection<InvoicePaymentDocument>();
+                foreach (var c in context.Context.SD_33.Where(_ => _.SFACT_DC == DocCode).ToList())
+                    PaymentDocs.Add(new InvoicePaymentDocument
+                    {
+                        DocCode = c.DOC_CODE,
+                        Code = 0,
+                        DocumentType = DocumentType.CashIn,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        DocumentName =
+                            $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
+                            // ReSharper disable once PossibleInvalidOperationException
+                            $"{MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                        // ReSharper disable once PossibleInvalidOperationException
+                        Summa = (decimal) c.SUMM_ORD,
+                        Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                        Note = c.NOTES_ORD
+                    });
+                foreach (var c in context.Context.TD_101.Include(_ => _.SD_101)
+                    .Where(_ => _.VVT_SFACT_CLIENT_DC == DocCode)
+                    .ToList())
+                    PaymentDocs.Add(new InvoicePaymentDocument
+                    {
+                        DocCode = c.DOC_CODE,
+                        Code = c.CODE,
+                        DocumentType = DocumentType.Bank,
+                        DocumentName =
+                            // ReSharper disable once PossibleInvalidOperationException
+                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                        Summa = (decimal) c.VVT_VAL_PRIHOD,
+                        Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                        Note = c.VVT_DOC_NUM
+                    });
+                foreach (var c in context.Context.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SFACT_DC == DocCode)
+                    .ToList())
+                    PaymentDocs.Add(new InvoicePaymentDocument
+                    {
+                        DocCode = c.DOC_CODE,
+                        Code = c.CODE,
+                        DocumentType = DocumentType.MutualAccounting,
+                        DocumentName =
+                            // ReSharper disable once PossibleInvalidOperationException
+                            $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
+                        // ReSharper disable once PossibleInvalidOperationException
+                        Summa = (decimal) c.VZT_CRS_SUMMA,
+                        Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
+                        Note = c.VZT_DOC_NOTES
+                    });
+            }
+
+            ShipmentRows = new ObservableCollection<ShipmentRowViewModel>();
+            if (Entity.TD_84 is {Count: > 0})
+                foreach (var r in Entity.TD_84)
+                    if (r.TD_24 is {Count: > 0})
+                        foreach (var r2 in r.TD_24)
+                        {
+                            var newItem = new ShipmentRowViewModel(r2);
+                            if (r2.SD_24 != null) newItem.Parent = new WarehouseOrderOut(r2.SD_24);
+
+                            ShipmentRows.Add(newItem);
+                        }
         }
 
         public void Save(SD_84 doc)
@@ -1136,7 +1259,7 @@ namespace Core.EntityViewModel.Invoices
 
         public SD_84 DefaultValue()
         {
-            return new SD_84
+            return new()
             {
                 DOC_CODE = -1,
                 Id = Guid.NewGuid()
@@ -1162,33 +1285,6 @@ namespace Core.EntityViewModel.Invoices
         {
             throw new NotImplementedException();
         }
-
-        public string this[string columnName]
-        {
-            get
-            {
-                switch (columnName)
-                {
-                    case nameof(PersonaResponsible):
-                        return PersonaResponsible == null ? Helper.ValidationError.FieldNotNull : null;
-                    case nameof(Client):
-                        return Client == null ? Helper.ValidationError.FieldNotNull : null;
-                    case nameof(Currency):
-                        return Currency == null ? Helper.ValidationError.FieldNotNull : null;
-                    case nameof(CO):
-                        return CO == null ? Helper.ValidationError.FieldNotNull : null;
-                    case nameof(PayCondition):
-                        return PayCondition == null ? Helper.ValidationError.FieldNotNull : null;
-                    case nameof(VzaimoraschetType):
-                        return VzaimoraschetType == null ? Helper.ValidationError.FieldNotNull : null;
-                    case nameof(FormRaschet):
-                        return FormRaschet == null ? Helper.ValidationError.FieldNotNull : null;
-                }
-                return null;
-            }
-        }
-
-        public string Error { get; } = null;
     }
 
     public class DataAnnotationsSFClientViewModel : DataAnnotationForFluentApiBase, IMetadataProvider<InvoiceClient>
@@ -1210,7 +1306,7 @@ namespace Core.EntityViewModel.Invoices
                 .DisplayFormatString("n2");
             builder.Property(_ => _.SF_DILER_SUMMA).AutoGenerated().DisplayName("Сумма дилера").ReadOnly()
                 .DisplayFormatString("n2");
-            builder.Property(_ => _.SF_NOTE).AutoGenerated().DisplayName("Примечание");
+            builder.Property(_ => _.Note).AutoGenerated().DisplayName("Примечание");
             builder.Property(_ => _.Diler).AutoGenerated().DisplayName("Дилер");
             builder.Property(_ => _.IsAccepted).AutoGenerated().DisplayName("Акцептован");
             builder.Property(_ => _.Summa).AutoGenerated().DisplayName("Сумма").ReadOnly()
@@ -1221,48 +1317,6 @@ namespace Core.EntityViewModel.Invoices
             builder.Property(_ => _.PaySumma).AutoGenerated().DisplayName("Оплачено");
             builder.Property(_ => _.PersonaResponsible).AutoGenerated().DisplayName("Ответственный");
 
-            #region Form Layout
-
-            // @formatter:off
-            //builder.DataFormLayout()
-            //    .Group("Счет", Orientation.Horizontal)
-            //        .ContainsProperty(_ => _.SF_IN_NUM)
-            //        .ContainsProperty(_ => _.SF_OUT_NUM)
-            //        .ContainsProperty(_ => _.SF_DATE)
-            //        .ContainsProperty(_ => _.CREATOR)
-            //        .ContainsProperty(_ => _.State)
-            //    .EndGroup()
-            //    .GroupBox("Клиент и характеристики счета")
-            //        .Group("g1",Orientation.Horizontal)
-            //            .ContainsProperty(_ => _.Client)
-            //            .ContainsProperty(_ => _.Diler)
-            //            .ContainsProperty(_ => _.IsNDSIncludeInPrice)
-            //            .ContainsProperty(_ => _.IsAccepted)
-            //        .EndGroup()
-            //        .ContainsProperty(_ => _.Receiver)
-            //        .GroupBox("Деньги",Orientation.Horizontal)
-            //            .ContainsProperty(_ => _.SF_CRS_SUMMA_K_OPLATE)
-            //            .ContainsProperty(_ => _.Currency)
-            //            .ContainsProperty(_ => _.PaySumma)
-            //            .ContainsProperty(_ => _.SummaOtgruz)
-            //            .ContainsProperty(_ => _.SF_DILER_SUMMA)
-            //        .EndGroup()
-            //        .Group("g2",Orientation.Vertical)
-            //            .Group("g3",Orientation.Horizontal)
-            //                .ContainsProperty(_ => _.PayCondition)
-            //                .ContainsProperty(_ => _.VzaimoraschetType)
-            //            .EndGroup()
-            //            .Group("g4",Orientation.Horizontal)
-            //                .ContainsProperty(_ => _.FormRaschet)
-            //                .ContainsProperty(_ => _.CO)
-            //            .EndGroup()
-            //            .ContainsProperty(_ => _.SF_NOTE)
-            //            .ContainsProperty(_ => _.PersonaResponsible)
-            //        .EndGroup()
-            //    .EndGroup();
-            // @formatter:on
-
-            #endregion
         }
     }
 }
