@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using Core.EntityViewModel.NomenklManagement;
+﻿using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Core.EntityViewModel.AktSpisaniya
 {
@@ -24,7 +23,7 @@ namespace Core.EntityViewModel.AktSpisaniya
         }
     }
     [MetadataType(typeof(AktSpisaniyaRowViewModel_FluentAPI))]
-    class AktSpisaniyaRowViewModel: RSViewModelBase,IDataErrorInfo
+    public class AktSpisaniyaRowViewModel : RSViewModelBase, IDataErrorInfo
     {
         #region Fields
 
@@ -40,6 +39,12 @@ namespace Core.EntityViewModel.AktSpisaniya
             {
                 Id = Guid.NewGuid()
             };
+        }
+        public override bool IsCorrect()
+        {
+            if (this.Nomenkl != null && Quantity >= 0)
+                return true;
+            return false;
         }
 
         #endregion
@@ -66,7 +71,7 @@ namespace Core.EntityViewModel.AktSpisaniya
             get => myEntity;
             set
             {
-                if(myEntity == value) 
+                if (myEntity == value)
                     return;
                 myEntity = value;
                 RaisePropertiesChanged();
@@ -102,7 +107,7 @@ namespace Core.EntityViewModel.AktSpisaniya
             get => MainReferences.GetNomenkl(Entity.Nomenkl_DC);
             set
             {
-                if(Entity.Nomenkl_DC > 0 && MainReferences.GetNomenkl(Entity.Nomenkl_DC) == value)
+                if (Entity.Nomenkl_DC > 0 && MainReferences.GetNomenkl(Entity.Nomenkl_DC) == value)
                     return;
                 Entity.Nomenkl_DC = value?.DocCode ?? 0;
                 RaisePropertiesChanged();

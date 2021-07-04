@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Dogovora;
-using Core.EntityViewModel.NomenklManagement;
+﻿using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Core.EntityViewModel.AktSpisaniya
 {
@@ -28,8 +27,9 @@ namespace Core.EntityViewModel.AktSpisaniya
 
         }
     }
+
     [MetadataType(typeof(AktSpisaniyaNomenkl_TitleViewModel_FluentAPI))]
-    class AktSpisaniyaNomenkl_TitleViewModel : RSWindowViewModelBase, IEntity<AktSpisaniyaNomenkl_Title>, IDataErrorInfo
+    public class AktSpisaniyaNomenkl_TitleViewModel : RSWindowViewModelBase, IEntity<AktSpisaniyaNomenkl_Title>, IDataErrorInfo
     {
         #region Fields
 
@@ -45,6 +45,13 @@ namespace Core.EntityViewModel.AktSpisaniya
             {
                 Id = Guid.NewGuid()
             };
+        }
+
+        public override bool IsCorrect()
+        {
+            if (this.Warehouse != null && DocNumber >= 0 && DocCreator != null && Rows.All(_ =>_.IsCorrect()))
+                return true;
+            return false;
         }
 
 
@@ -114,7 +121,7 @@ namespace Core.EntityViewModel.AktSpisaniya
             get => MainReferences.GetWarehouse(Entity.Warehouse_DC);
             set
             {
-                if(MainReferences.GetWarehouse(Entity.Warehouse_DC) == value)
+                if (MainReferences.GetWarehouse(Entity.Warehouse_DC) == value)
                     return;
                 Entity.Warehouse_DC = value.DocCode;
                 RaisePropertyChanged();
@@ -126,7 +133,7 @@ namespace Core.EntityViewModel.AktSpisaniya
             get => Entity.Num_Doc;
             set
             {
-                if(Entity.Num_Doc == value)
+                if (Entity.Num_Doc == value)
                     return;
                 Entity.Num_Doc = value;
                 RaisePropertyChanged();
@@ -138,7 +145,7 @@ namespace Core.EntityViewModel.AktSpisaniya
             get => Entity.Date_Doc;
             set
             {
-                if(Entity.Date_Doc == value)
+                if (Entity.Date_Doc == value)
                     return;
                 Entity.Date_Doc = value;
                 RaisePropertyChanged();
@@ -150,7 +157,7 @@ namespace Core.EntityViewModel.AktSpisaniya
             get => Entity.Creator;
             set
             {
-                if(Entity.Creator == value)
+                if (Entity.Creator == value)
                     return;
                 Entity.Creator = value;
                 RaisePropertyChanged();
@@ -158,7 +165,7 @@ namespace Core.EntityViewModel.AktSpisaniya
             }
         }
 
-        public string ReasonCreation 
+        public string ReasonCreation
         {
             get => Entity.Reason_Creation;
             set
