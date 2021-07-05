@@ -5,7 +5,6 @@ using System.Windows;
 using Core;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;

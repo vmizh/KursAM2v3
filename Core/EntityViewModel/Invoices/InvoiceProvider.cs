@@ -135,7 +135,7 @@ namespace Core.Invoices.EntityViewModel
 
         public override string Description =>
             $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {SF_POSTAV_DATE.ToShortDateString()} " +
-            $"{Kontragent} на {SF_CRS_SUMMA} {Currency} " +
+            $"{Kontragent} на {Summa} {Currency} " +
             $"{Note}";
 
         public decimal DOC_CODE
@@ -291,25 +291,22 @@ namespace Core.Invoices.EntityViewModel
             }
         }
 
-        public decimal SF_CRS_SUMMA
+        public decimal Summa
         {
-            get => Entity.SF_CRS_SUMMA;
-            set
+            get
             {
-                if (Entity.SF_CRS_SUMMA == value) return;
-                Entity.SF_CRS_SUMMA = value;
-                Entity.SF_RUB_SUMMA = value;
-                Entity.SF_FACT_SUMMA = value;
-                Entity.SF_KONTR_CRS_SUMMA = value;
-                Entity.SF_RUB_SUMMA = value;
+                var s = Rows == null || Rows.Count == 0 ? 0 : Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE) ?? 0;
+                Entity.SF_FACT_SUMMA = s;
+                Entity.SF_KONTR_CRS_SUMMA = s;
+                Entity.SF_CRS_SUMMA = s;
+                Entity.SF_FACT_SUMMA = s;
                 Entity.SF_CRS_RATE = 1;
                 Entity.SF_KONTR_CRS_RATE = 1;
-                Entity.SF_KONTR_CRS_DC = Kontragent?.BalansCurrency.DOC_CODE;
                 Entity.SF_UCHET_VALUTA_RATE = 1;
-                RaisePropertyChanged();
+                return s;
             }
-        }
-
+        }  
+        
         /// <summary>
         ///     Отфактурированная сумма
         /// </summary>
@@ -1271,128 +1268,12 @@ namespace Core.Invoices.EntityViewModel
 
         public void UpdateFrom(SD_26 ent)
         {
-            SF_OPRIHOD_DATE = ent.SF_OPRIHOD_DATE;
-            SF_POSTAV_NUM = ent.SF_POSTAV_NUM;
-            SF_POSTAV_DATE = ent.SF_POSTAV_DATE;
-            SF_POST_DC = ent.SF_POST_DC;
-            SF_RUB_SUMMA = ent.SF_RUB_SUMMA;
-            //SF_CRS_SUMMA = ent.SF_CRS_SUMMA;
-            SF_CRS_DC = ent.SF_CRS_DC;
-            SF_CRS_RATE = ent.SF_CRS_RATE;
-            V_CRS_ADD_PERCENT = ent.V_CRS_ADD_PERCENT;
-            SF_PAY_FLAG = ent.SF_PAY_FLAG;
-            SF_FACT_SUMMA = ent.SF_FACT_SUMMA;
-            SF_OLE = ent.SF_OLE;
-            SF_PAY_COND_DC = ent.SF_PAY_COND_DC;
-            TABELNUMBER = ent.TABELNUMBER;
-            SF_EXECUTED = ent.SF_EXECUTED;
-            SF_GRUZOOTPRAVITEL = ent.SF_GRUZOOTPRAVITEL;
-            SF_GRUZOPOLUCHATEL = ent.SF_GRUZOPOLUCHATEL;
-            SF_NAKLAD_METHOD = ent.SF_NAKLAD_METHOD;
-            SF_ACCEPTED = ent.SF_ACCEPTED;
-            SF_SUMMA_S_NDS = ent.SF_SUMMA_S_NDS;
-            SF_REGISTR_DATE = ent.SF_REGISTR_DATE;
-            SF_SCHET_FLAG = ent.SF_SCHET_FLAG;
-            SF_SCHET_FACT_FLAG = ent.SF_SCHET_FACT_FLAG;
-            Note = ent.SF_NOTES;
-            CREATOR = ent.CREATOR;
-            SF_VZAIMOR_TYPE_DC = ent.SF_VZAIMOR_TYPE_DC;
-            SF_DOGOVOR_POKUPKI_DC = ent.SF_DOGOVOR_POKUPKI_DC;
-            SF_PREDOPL_DOC_DC = ent.SF_PREDOPL_DOC_DC;
-            SF_IN_NUM = ent.SF_IN_NUM;
-            SF_FORM_RASCH_DC = ent.SF_FORM_RASCH_DC;
-            SF_VIPOL_RABOT_DATE = ent.SF_VIPOL_RABOT_DATE;
-            SF_TRANZIT = ent.SF_TRANZIT;
-            SF_KONTR_CRS_DC = ent.SF_KONTR_CRS_DC;
-            SF_KONTR_CRS_RATE = ent.SF_KONTR_CRS_RATE;
-            //SF_KONTR_CRS_SUMMA = ent.SF_KONTR_CRS_SUMMA;
-            SF_UCHET_VALUTA_DC = ent.SF_UCHET_VALUTA_DC;
-            SF_UCHET_VALUTA_RATE = ent.SF_UCHET_VALUTA_RATE;
-            SF_SUMMA_V_UCHET_VALUTE = ent.SF_SUMMA_V_UCHET_VALUTE;
-            SF_NDS_VKL_V_CENU = ent.SF_NDS_VKL_V_CENU;
-            SF_SFACT_DC = ent.SF_SFACT_DC;
-            SF_CENTR_OTV_DC = ent.SF_CENTR_OTV_DC;
-            SF_POLUCH_KONTR_DC = ent.SF_POLUCH_KONTR_DC;
-            SF_PEREVOZCHIK_DC = ent.SF_PEREVOZCHIK_DC;
-            SF_PEREVOZCHIK_SUM = ent.SF_PEREVOZCHIK_SUM;
-            SF_AUTO_CREATE = ent.SF_AUTO_CREATE;
-            TSTAMP = ent.TSTAMP;
-            Id = ent.Id;
-            SD_112 = ent.SD_112;
-            SD_179 = ent.SD_179;
-            SD_189 = ent.SD_189;
-            SD_301 = ent.SD_301;
-            SD_3011 = ent.SD_3011;
-            SD_3012 = ent.SD_3012;
-            SD_37 = ent.SD_37;
-            SD_43 = ent.SD_43;
-            SD_77 = ent.SD_77;
-            SD_40 = ent.SD_40;
-            SD_431 = ent.SD_431;
-            SD_432 = ent.SD_432;
+           
         }
 
         public void UpdateTo(SD_26 ent)
         {
-            ent.SF_OPRIHOD_DATE = SF_OPRIHOD_DATE;
-            ent.SF_POSTAV_NUM = SF_POSTAV_NUM;
-            ent.SF_POSTAV_DATE = SF_POSTAV_DATE;
-            ent.SF_POST_DC = SF_POST_DC;
-            ent.SF_RUB_SUMMA = SF_RUB_SUMMA;
-            ent.SF_CRS_SUMMA = SF_CRS_SUMMA;
-            ent.SF_CRS_DC = SF_CRS_DC;
-            ent.SF_CRS_RATE = SF_CRS_RATE;
-            ent.V_CRS_ADD_PERCENT = V_CRS_ADD_PERCENT;
-            ent.SF_PAY_FLAG = SF_PAY_FLAG;
-            ent.SF_FACT_SUMMA = SF_FACT_SUMMA;
-            ent.SF_OLE = SF_OLE;
-            ent.SF_PAY_COND_DC = SF_PAY_COND_DC;
-            ent.TABELNUMBER = TABELNUMBER;
-            ent.SF_EXECUTED = SF_EXECUTED;
-            ent.SF_GRUZOOTPRAVITEL = SF_GRUZOOTPRAVITEL;
-            ent.SF_GRUZOPOLUCHATEL = SF_GRUZOPOLUCHATEL;
-            ent.SF_NAKLAD_METHOD = SF_NAKLAD_METHOD;
-            ent.SF_ACCEPTED = SF_ACCEPTED;
-            ent.SF_SUMMA_S_NDS = SF_SUMMA_S_NDS;
-            ent.SF_REGISTR_DATE = SF_REGISTR_DATE;
-            ent.SF_SCHET_FLAG = SF_SCHET_FLAG;
-            ent.SF_SCHET_FACT_FLAG = SF_SCHET_FACT_FLAG;
-            ent.SF_NOTES = Note;
-            ent.CREATOR = CREATOR;
-            ent.SF_VZAIMOR_TYPE_DC = SF_VZAIMOR_TYPE_DC;
-            ent.SF_DOGOVOR_POKUPKI_DC = SF_DOGOVOR_POKUPKI_DC;
-            ent.SF_PREDOPL_DOC_DC = SF_PREDOPL_DOC_DC;
-            ent.SF_IN_NUM = SF_IN_NUM;
-            ent.SF_FORM_RASCH_DC = SF_FORM_RASCH_DC;
-            ent.SF_VIPOL_RABOT_DATE = SF_VIPOL_RABOT_DATE;
-            ent.SF_TRANZIT = SF_TRANZIT;
-            ent.SF_KONTR_CRS_DC = SF_KONTR_CRS_DC;
-            ent.SF_KONTR_CRS_RATE = SF_KONTR_CRS_RATE;
-            ent.SF_KONTR_CRS_SUMMA = SF_KONTR_CRS_SUMMA;
-            ent.SF_UCHET_VALUTA_DC = SF_UCHET_VALUTA_DC;
-            ent.SF_UCHET_VALUTA_RATE = SF_UCHET_VALUTA_RATE;
-            ent.SF_SUMMA_V_UCHET_VALUTE = SF_SUMMA_V_UCHET_VALUTE;
-            ent.SF_NDS_VKL_V_CENU = SF_NDS_VKL_V_CENU;
-            ent.SF_SFACT_DC = SF_SFACT_DC;
-            ent.SF_CENTR_OTV_DC = SF_CENTR_OTV_DC;
-            ent.SF_POLUCH_KONTR_DC = SF_POLUCH_KONTR_DC;
-            ent.SF_PEREVOZCHIK_DC = SF_PEREVOZCHIK_DC;
-            ent.SF_PEREVOZCHIK_SUM = SF_PEREVOZCHIK_SUM;
-            ent.SF_AUTO_CREATE = SF_AUTO_CREATE;
-            ent.TSTAMP = TSTAMP;
-            ent.Id = Id;
-            ent.SD_112 = SD_112;
-            ent.SD_179 = SD_179;
-            ent.SD_189 = SD_189;
-            ent.SD_301 = SD_301;
-            ent.SD_3011 = SD_3011;
-            ent.SD_3012 = SD_3012;
-            ent.SD_37 = SD_37;
-            ent.SD_43 = SD_43;
-            ent.SD_77 = SD_77;
-            ent.SD_40 = SD_40;
-            ent.SD_431 = SD_431;
-            ent.SD_432 = SD_432;
+            
         }
 
         public SD_26 DefaultValue()
@@ -1428,7 +1309,7 @@ namespace Core.Invoices.EntityViewModel
         {
             return
                 $"С/ф (поставщика) №{SF_POSTAV_NUM}/{SF_IN_NUM} от {SF_POSTAV_DATE.ToShortDateString()} " +
-                $"от: {Kontragent} сумма: {SF_CRS_SUMMA} {Currency}";
+                $"от: {Kontragent} сумма: {Summa} {Currency}";
         }
 
         #endregion Methods
@@ -1455,7 +1336,7 @@ namespace Core.Invoices.EntityViewModel
                 .DisplayName("Получатель");
             builder.Property(x => x.Currency).AutoGenerated()
                 .DisplayName("Валюта").Required(() => notNullMessage);
-            builder.Property(x => x.SF_CRS_SUMMA).AutoGenerated()
+            builder.Property(x => x.Summa).AutoGenerated()
                 .DisplayName("Сумма").ReadOnly().DisplayFormatString("n2");
             builder.Property(x => x.SF_IN_NUM).AutoGenerated()
                 .DisplayName("№");
@@ -1556,7 +1437,7 @@ namespace Core.Invoices.EntityViewModel
                         .GroupBox("Деньги", Orientation.Horizontal)
                             .Group("444", Orientation.Vertical)
                                 .Group("444-3", Orientation.Horizontal)
-                                    .ContainsProperty(_ => _.SF_CRS_SUMMA)
+                                    .ContainsProperty(_ => _.Summa)
                                     .ContainsProperty(_ => _.Currency)
                                     .ContainsProperty(_ => _.IsInvoiceNakald)
                                     .ContainsProperty(_ => _.NakladDistributedSumma)
@@ -1619,7 +1500,7 @@ namespace Core.Invoices.EntityViewModel
             SetNotAutoGenerated(builder);
             builder.Property(x => x.Currency).AutoGenerated()
                 .DisplayName("Валюта");
-            builder.Property(x => x.SF_CRS_SUMMA).AutoGenerated()
+            builder.Property(x => x.Summa).AutoGenerated()
                 .DisplayName("Сумма").ReadOnly().DisplayFormatString("n2");
             builder.Property(x => x.SF_IN_NUM).AutoGenerated()
                 .DisplayName("№");

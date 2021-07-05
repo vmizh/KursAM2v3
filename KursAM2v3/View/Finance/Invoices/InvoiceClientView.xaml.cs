@@ -1,31 +1,29 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.Invoices;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Data;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
-using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.ViewModel.Finance.Invoices;
-
 
 namespace KursAM2.View.Finance.Invoices
 {
     /// <summary>
     ///     Interaction logic for InvoiceProvider.xaml
     /// </summary>
-    public partial class InvoiceClientView 
+    public partial class InvoiceClientView
     {
         public ButtonEdit KontrSelectButton;
 
         public InvoiceClientView()
         {
             InitializeComponent();
+            
         }
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
@@ -50,10 +48,7 @@ namespace KursAM2.View.Finance.Invoices
             doc.Diler = null;
             doc.SF_DILER_CRS_DC = null;
             doc.SF_DILER_SUMMA = 0;
-            foreach (var r in doc.Rows)
-            {
-                r.SFT_NACENKA_DILERA = 0;
-            }
+            foreach (var r in doc.Rows) r.SFT_NACENKA_DILERA = 0;
         }
 
         private void Kontr_DefaultButtonClick(object sender, RoutedEventArgs e)
@@ -68,12 +63,14 @@ namespace KursAM2.View.Finance.Invoices
                     "Предупреждение", MessageBoxImage.Information);
                 return;
             }
+
             if (doc.PaySumma != 0)
             {
                 WindowManager.ShowMessage("По счету есть Оплата. Изменить контрагента нельзя.",
                     "Предупреждение", MessageBoxImage.Information);
                 return;
             }
+
             var kontr = StandartDialogs.SelectKontragent(doc.Currency);
             if (kontr == null) return;
             if (doc.Rows.Any(_ => !_.IsUsluga && _.Nomenkl.Currency.DocCode != kontr.BalansCurrency.DocCode))
@@ -83,12 +80,13 @@ namespace KursAM2.View.Finance.Invoices
                     "Предупреждение", MessageBoxImage.Information);
                 return;
             }
+
             switch ((sender as ButtonEdit)?.Tag)
             {
                 case "Client":
                     doc.Client = kontr;
                     doc.Currency = kontr.BalansCurrency;
-                    doc.SF_KONTR_CRS_RATE = 1;
+                    doc.Entity.SF_KONTR_CRS_RATE = 1;
                     break;
                 case "Receiver":
                     doc.Receiver = kontr;
@@ -120,25 +118,25 @@ namespace KursAM2.View.Finance.Invoices
             var inv = new InvoiceClientRow();
             switch (e.Column.Name)
             {
-                case nameof(inv.Nomenkl):
-                    var nomenklEdit = new ButtonEditSettings
-                    {
-                        TextWrapping = TextWrapping.Wrap,
-                        IsTextEditable = false
-                    };
-                    nomenklEdit.DefaultButtonClick += Nomenkl_DefaultButtonClick;
-                    e.Column.EditSettings = nomenklEdit;
-                    break;
+                //case nameof(inv.Nomenkl):
+                //    var nomenklEdit = new ButtonEditSettings
+                //    {
+                //        TextWrapping = TextWrapping.Wrap,
+                //        IsTextEditable = false
+                //    };
+                //    nomenklEdit.DefaultButtonClick += Nomenkl_DefaultButtonClick;
+                //    e.Column.EditSettings = nomenklEdit;
+                //    break;
                 //case nameof(inv.Note):
                 //    break;
-                case nameof(inv.SDRSchet):
-                    e.Column.EditSettings = new ComboBoxEditSettings
-                    {
-                        ItemsSource = MainReferences.SDRSchets.Values,
-                        DisplayMember = "Name",
-                        AutoComplete = true
-                    };
-                    break;
+                //case nameof(inv.SDRSchet):
+                //    e.Column.EditSettings = new ComboBoxEditSettings
+                //    {
+                //        ItemsSource = MainReferences.SDRSchets.Values,
+                //        DisplayMember = "Name",
+                //        AutoComplete = true
+                //    };
+                //    break;
             }
         }
 
@@ -153,6 +151,7 @@ namespace KursAM2.View.Finance.Invoices
                     MessageBoxImage.Stop);
                 return;
             }
+
             var doc = ctx.Document;
             if (doc == null)
                 return;
@@ -201,6 +200,18 @@ namespace KursAM2.View.Finance.Invoices
                 colPrice.ReadOnly = false;
                 colSumma.ReadOnly = true;
             }
+            //var colNomenkl = gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Nomenkl");
+            //if(colNomenkl != null && colNomenkl.EditSettings == null)
+            //{
+            //    var nomenklEdit = new ButtonEditSettings
+            //    {
+            //        Name = "PART_Editor",
+            //        TextWrapping = TextWrapping.Wrap,
+            //        IsTextEditable = false
+            //    };
+            //    nomenklEdit.DefaultButtonClick += Nomenkl_DefaultButtonClick;
+            //    colNomenkl.EditSettings = nomenklEdit;
+            //}
         }
 
         private void BaseEdit_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
@@ -218,6 +229,74 @@ namespace KursAM2.View.Finance.Invoices
             {
                 colPrice.ReadOnly = false;
                 colSumma.ReadOnly = true;
+            }
+        }
+
+        private void GridRows_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
+        {
+            gridRows.TotalSummary.Clear();
+            gridRows.TotalSummary.Add(new GridSummaryItem
+            {
+                SummaryType = SummaryItemType.Count,
+                ShowInColumn = "Nomenkl",
+                DisplayFormat = "{0:n2}",
+                FieldName = "Nomenkl"
+            });
+            gridRows.TotalSummary.Add(new GridSummaryItem
+            {
+                SummaryType = SummaryItemType.Sum,
+                ShowInColumn = "Quantity",
+                DisplayFormat = "{0:n2}",
+                FieldName = "Quantity"
+            });
+            gridRows.TotalSummary.Add(new GridSummaryItem
+            {
+                SummaryType = SummaryItemType.Sum,
+                ShowInColumn = "Summa",
+                DisplayFormat = "{0:n2}",
+                FieldName = "Summa"
+            });
+            gridRows.TotalSummary.Add(new GridSummaryItem
+            {
+                SummaryType = SummaryItemType.Sum,
+                ShowInColumn = "SFT_SUMMA_NDS",
+                DisplayFormat = "{0:n2}",
+                FieldName = "SFT_SUMMA_NDS"
+            });
+        }
+
+        private void TableViewRows_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
+        {
+            gridRows.UpdateTotalSummary();
+        }
+
+        private void gridRows_Loaded(object sender, RoutedEventArgs e)
+        {
+            var colNomenkl = gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Nomenkl");
+            if (colNomenkl != null)
+            {
+                if (colNomenkl.EditSettings == null)
+                {
+                    var nomenklEdit = new ButtonEditSettings
+                    {
+                        Name = "PART_Editor",
+                        TextWrapping = TextWrapping.Wrap,
+                        IsTextEditable = false
+                    };
+                    nomenklEdit.DefaultButtonClick += Nomenkl_DefaultButtonClick;
+                    colNomenkl.EditSettings = nomenklEdit;
+                }
+            }
+
+            var colSDR = gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SDRSchet");
+            if (colSDR != null)
+            {
+                colSDR.EditSettings = new ComboBoxEditSettings
+                {
+                    ItemsSource = MainReferences.SDRSchets.Values,
+                    DisplayMember = "Name",
+                    AutoComplete = true
+                };
             }
         }
     }

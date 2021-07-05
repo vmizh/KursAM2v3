@@ -136,7 +136,7 @@ namespace KursAM2.ViewModel.Shop
                     DataContext = invoice
                 };
                 invoice.Form = frm;
-                invoice.Document.SF_CRS_SUMMA = (decimal) invoice.Document.Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE);
+                //invoice.Document.Summa = (decimal) invoice.Document.Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE);
                 frm.Show();
                 frm.DataContext = invoice;
 

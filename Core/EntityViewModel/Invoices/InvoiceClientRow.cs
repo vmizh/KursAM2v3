@@ -10,6 +10,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Xpf.Grid;
 
 // ReSharper disable InconsistentNaming
 namespace Core.EntityViewModel.Invoices
@@ -319,7 +320,6 @@ namespace Core.EntityViewModel.Invoices
                 RaisePropertyChanged();
             }
         }
-
         public SDRSchet SDRSchet
         {
             get => mySDRSchet;
@@ -633,13 +633,18 @@ namespace Core.EntityViewModel.Invoices
             else
             {
                 Entity.SFT_SUMMA_NDS =
-                    Math.Round((Entity.SFT_SUMMA_K_OPLATE ?? 0) * NDSPercent / (100 + NDSPercent), 2);
+                    (decimal) Math.Round(Entity.SFT_KOL*(double) (Entity.SFT_ED_CENA ?? 0) * (double) NDSPercent / (double) (100 + NDSPercent), 2);
                 Entity.SFT_SUMMA_K_OPLATE =
                     Math.Round((decimal) (Entity.SFT_KOL * (double) (Entity.SFT_ED_CENA ?? 0)), 2)
                     + Entity.SFT_SUMMA_NDS;
                 Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
                 RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
                 RaisePropertyChanged(nameof(Summa));
+            }
+
+            if (Parent is InvoiceClient p)
+            {
+                p.RaisePropertyChanged("Summa");
             }
         }
 

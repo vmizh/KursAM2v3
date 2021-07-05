@@ -533,7 +533,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     var bankpay = ent.TD_101.Include(_ => _.SD_101)
                         .FirstOrDefault(_ => _.VVT_RASH_KASS_ORDER_DC == d.DOC_CODE);
                     var name = d.CASH_TO_DC != null
-                        ? MainReferences.Cashs[d.CASH_TO_DC.Value].Name
+                        ? MainReferences.CashsAll[d.CASH_TO_DC.Value].Name
                         // ReSharper disable once PossibleInvalidOperationException
                         : MainReferences.BankAccounts[d.BANK_RASCH_SCHET_DC.Value].Name;
                     if (pay != null || bankpay != null) continue;

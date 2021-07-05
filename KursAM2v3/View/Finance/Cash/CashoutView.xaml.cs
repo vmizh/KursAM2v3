@@ -273,7 +273,7 @@ namespace KursAM2.View.Finance.Cash
             if (item == null) return;
 
             var winManager = new WindowManager();
-            doc.MaxSumma = item.SF_CRS_SUMMA - item.PaySumma;
+            doc.MaxSumma = item.Summa - item.PaySumma;
             if (item.SF_POSTAV_DATE != doc.DATE_ORD)
             {
                 var res = winManager.ShowWinUIMessageBox(
@@ -285,7 +285,7 @@ namespace KursAM2.View.Finance.Cash
                     doc.DATE_ORD = item.SF_POSTAV_DATE;
                     doc.SPostName = item.ToString();
                     doc.SPOST_DC = item.DocCode;
-                    doc.SUMM_ORD = item.SF_CRS_SUMMA - item.PaySumma;
+                    doc.SUMM_ORD = item.Summa - item.PaySumma;
                     doc.Currency = item.Currency;
                     doc.KontragentType = CashKontragentType.Kontragent;
                     doc.KONTRAGENT_DC = item.Kontragent.DocCode;
@@ -295,7 +295,7 @@ namespace KursAM2.View.Finance.Cash
                 {
                     doc.SPostName = item.ToString();
                     doc.SPOST_DC = item.DocCode;
-                    doc.SUMM_ORD = item.SF_CRS_SUMMA - item.PaySumma;
+                    doc.SUMM_ORD = item.Summa - item.PaySumma;
                     doc.Currency = item.Currency;
                     doc.KontragentType = CashKontragentType.Kontragent;
                     doc.KONTRAGENT_DC = item.Kontragent.DocCode;
@@ -306,7 +306,7 @@ namespace KursAM2.View.Finance.Cash
             {
                 doc.SPostName = item.ToString();
                 doc.SPOST_DC = item.DocCode;
-                doc.SUMM_ORD = item.SF_CRS_SUMMA - item.PaySumma;
+                doc.SUMM_ORD = item.Summa - item.PaySumma;
                 doc.Currency = item.Currency;
                 doc.KontragentType = CashKontragentType.Kontragent;
                 doc.KONTRAGENT_DC = item.Kontragent.DocCode;

@@ -40,21 +40,7 @@ namespace Core.ViewModel.Base
         // ReSharper disable once MemberCanBePrivate.Global
         public IList<string> NotifyProtocol = new List<string>();
         private string myDescription;
-        //private RSWindowViewModelBase myWindowViewModel;
-
-        //[Display(AutoGenerateField = false)]
-        //public RSWindowViewModelBase WindowViewModel
-        //{
-        //    get => myWindowViewModel;
-        //    set
-        //    {
-        //        if (Equals(myWindowViewModel, value)) return;
-        //        myWindowViewModel = value;
-        //    }
-        //}
-
-        //[Display(Name = "Родитель", Description = "Родительский объект",AutoGenerateField = false), ReadOnly(true)]
-
+        
         [Display(AutoGenerateField = false)]
         public RSViewModelBase Parent
         {

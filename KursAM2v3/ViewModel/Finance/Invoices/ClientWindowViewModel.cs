@@ -17,6 +17,8 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using DevExpress.Data;
+using DevExpress.Xpf.Grid;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
@@ -30,7 +32,7 @@ using Reports.Base;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
-    public sealed class ClientWindowViewModel : RSWindowViewModelBase,IDocumentCopy,IDataErrorInfo
+    public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
     {
         #region Fields
 
@@ -96,7 +98,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
             else
             {
-
                 Document = new InvoiceClient(doc, UnitOfWork)
                 {
                     State = RowStatus.NotEdited
@@ -114,7 +115,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         #region Properties
 
         public List<Currency> CurrencyList => MainReferences.Currencies.Values.ToList();
-        public List<CentrOfResponsibility> COList => MainReferences.COList.Values.ToList();
+        public List<CentrOfResponsibility> COList => MainReferences.COList.Values.Where(_ => _.DocCode > 1).ToList();
         public List<Employee> EmployeeList => MainReferences.Employees.Values.ToList();
         public List<FormPay> FormRaschets => MainReferences.FormRaschets.Values.ToList();
         public List<VzaimoraschetType> VzaimoraschetTypes => MainReferences.VzaimoraschetTypes.Values.ToList();
@@ -192,7 +193,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                               && Document.Entity.SF_CLIENT_DC != null
                                               && Document.SF_RECEIVER_KONTR_DC != null
                                               && Document.Entity.SF_CRS_DC > 0 &&
-                                              Document.SF_CENTR_OTV_DC != null
+                                              Document.SF_CENTR_OTV_DC != null && Document.SF_CENTR_OTV_DC != 0
                                               && Document.PayCondition != null &&
                                               Document.SF_VZAIMOR_TYPE_DC != null
                                               && Document.SF_FORM_RASCH_DC != null;
@@ -225,8 +226,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Methods
 
-        public void SetAsNewCopyRequisite(Guid? newId)
+        public void SetAsNewCopy(bool isCopy)
         {
+            var newId = Guid.NewGuid();
             UnitOfWork.Context.Entry(Document.Entity).State = EntityState.Detached;
             Document.DocCode = -1;
             Document.DocDate = DateTime.Today;
@@ -236,33 +238,41 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Document.OuterNumber = null;
             Document.IsAccepted = false;
             Document.myState = RowStatus.NewRow;
-            Document.Id = newId ?? Guid.NewGuid();
+            Document.Id = newId;
             Document.DeletedRows = new List<InvoiceClientRow>();
             Document.PaymentDocs.Clear();
             Document.ShipmentRows.Clear();
             UnitOfWork.Context.SD_84.Add(Document.Entity);
-        }
-
-        
-        public void SetAsNewCopy()
-        {
-            var newId = Guid.NewGuid();
-            SetAsNewCopyRequisite(newId);
-            var newCode = 1;
-            foreach (var item in Document.Rows)
-            { 
-                UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
-                item.DocCode = -1;
-                item.Id = Guid.NewGuid();
-                item.DocId = newId;
-                item.DocCode = newCode;
-                item.Shipped = 0;
-                item.State = RowStatus.NewRow;
-                newCode++;
-            }
-            foreach (var r in Document.Rows)
+            if (isCopy)
             {
-                UnitOfWork.Context.TD_84.Add(r.Entity);
+                var newCode = 1;
+                foreach (var item in Document.Rows)
+                {
+                    UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
+                    item.DocCode = -1;
+                    item.Id = Guid.NewGuid();
+                    item.DocId = newId;
+                    item.DocCode = newCode;
+                    item.Shipped = 0;
+                    item.State = RowStatus.NewRow;
+                    newCode++;
+                }
+
+                foreach (var r in Document.Rows)
+                {
+                    UnitOfWork.Context.TD_84.Add(r.Entity);
+                    r.State = RowStatus.NewRow;
+                }
+            }
+            else
+            {
+                foreach (var item in Document.Rows)
+                {
+                    UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
+                    Document.Entity.TD_84.Clear();
+                }
+
+                Document.Rows.Clear();
             }
         }
 
@@ -274,7 +284,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public void UpdateVisualData(object obj)
         {
             // ReSharper disable once NotResolvedInText
-            Document.RaisePropertyChanged("Summa");
             Document.SF_DILER_SUMMA = Document.Rows.Sum(_ => _.SFT_NACENKA_DILERA);
             if (Form is InvoiceClientView frm)
             {
@@ -295,6 +304,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 }
 
                 frm.gridRows.RefreshData();
+                Document.RaisePropertyChanged("Summa");
                 RaisePropertiesChanged(nameof(Document));
             }
         }
@@ -476,6 +486,74 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Command
 
+        private void Nomenkl_DefaultButtonClick(object sender, RoutedEventArgs e)
+        {
+            decimal defaultNDS;
+            if (Document == null)
+                return;
+            var nomenkls = StandartDialogs.SelectNomenkls();
+            if (nomenkls == null || nomenkls.Count <= 0) return;
+            using (var entctx = GlobalOptions.GetEntities())
+            {
+                defaultNDS = Convert.ToDecimal(entctx.PROFILE
+                    .FirstOrDefault(_ => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")?.ITEM_VALUE);
+            }
+
+            CurrentRow.Nomenkl = nomenkls.First();
+            CurrentRow.NDSPercent = CurrentRow.Nomenkl.NDSPercent ?? defaultNDS;
+        }
+
+        public override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(null);
+            if (Form is InvoiceClientView frm)
+            {
+                //var colNomenkl = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Nomenkl");
+                //if (colNomenkl != null)
+                //{
+                //    if (colNomenkl.EditSettings == null)
+                //    {
+                //        var nomenklEdit = new ButtonEditSettings
+                //        {
+                //            TextWrapping = TextWrapping.Wrap,
+                //            IsTextEditable = false
+                //        };
+                //        nomenklEdit.DefaultButtonClick += Nomenkl_DefaultButtonClick;
+                //        colNomenkl.EditSettings = nomenklEdit;
+                //    }
+                //}
+                frm.gridRows.TotalSummary.Clear();
+                frm.gridRows.TotalSummary.Add(new GridSummaryItem
+                {
+                    SummaryType = SummaryItemType.Count,
+                    ShowInColumn = "Nomenkl",
+                    DisplayFormat = "{0:n2}",
+                    FieldName = "Nomenkl"
+                });
+                frm.gridRows.TotalSummary.Add(new GridSummaryItem
+                {
+                    SummaryType = SummaryItemType.Sum,
+                    ShowInColumn = "Quantity",
+                    DisplayFormat = "{0:n2}",
+                    FieldName = "Quantity"
+                });
+                frm.gridRows.TotalSummary.Add(new GridSummaryItem
+                {
+                    SummaryType = SummaryItemType.Sum,
+                    ShowInColumn = "Summa",
+                    DisplayFormat = "{0:n2}",
+                    FieldName = "Summa"
+                });
+                frm.gridRows.TotalSummary.Add(new GridSummaryItem
+                {
+                    SummaryType = SummaryItemType.Sum,
+                    ShowInColumn = "SFT_SUMMA_NDS",
+                    DisplayFormat = "{0:n2}",
+                    FieldName = "SFT_SUMMA_NDS"
+                });
+            }
+        }
+
         public override void ShowHistory(object data)
         {
             // ReSharper disable once RedundantArgumentDefaultValue
@@ -522,7 +600,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             Document.Client = kontr;
             Document.Currency = kontr.BalansCurrency;
-            Document.SF_KONTR_CRS_RATE = 1;
+            Document.Entity.SF_KONTR_CRS_RATE = 1;
         }
 
         public ICommand DilerSelectCommand
@@ -591,6 +669,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
                         RaiseAll();
                         Document.myState = RowStatus.NotEdited;
+                        Document.RaisePropertyChanged("State");
                         foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
                         return;
                 }
@@ -654,19 +733,18 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         ? UnitOfWork.Context.SD_84.Max(_ => _.DOC_CODE) + 1
                         : 10840000001;
                     foreach (var row in Document.Rows) row.DocCode = Document.DocCode;
-                    //genericProviderRepository.Insert(Document.Entity);
                 }
 
                 if (Document.SF_CRS_RATE == 0) Document.SF_CRS_RATE = 1;
 
-                if (Document.SF_KONTR_CRS_RATE == null) Document.SF_KONTR_CRS_RATE = 1;
+                if (Document.Entity.SF_KONTR_CRS_RATE == null) Document.Entity.SF_KONTR_CRS_RATE = 1;
 
                 if (Document.SF_UCHET_VALUTA_RATE == null) Document.SF_UCHET_VALUTA_RATE = 1;
 
                 if (Document.SF_KONTR_CRS_DC == null)
                     Document.SF_KONTR_CRS_DC = Document.Client.BalansCurrency.DocCode;
 
-                if (Document.SF_KONTR_CRS_SUMMA == null) Document.SF_KONTR_CRS_SUMMA = Document.Summa;
+                if (Document.Entity.SF_KONTR_CRS_SUMMA == null) Document.Entity.SF_KONTR_CRS_SUMMA = Document.Summa;
 
                 foreach (var row in Document.Rows)
                     if (row.Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS == null)
@@ -678,18 +756,19 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var ndc in Document.Rows.Select(_ => _.Nomenkl.DocCode)) AddUsedNomenkl(ndc);
                 NomenklManager.RecalcPrice(myUsedNomenklsDC);
                 myUsedNomenklsDC.Clear();
-                foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
-                RaiseAll();
+                //foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
+                //RaiseAll();
                 Document.myState = RowStatus.NotEdited;
                 foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
 
                 foreach (var f in Document.ShipmentRows) f.myState = RowStatus.NotEdited;
 
-                foreach (var p in Document.PaymentDocs) p.State = RowStatus.NotEdited;
-
+                foreach (var p in Document.PaymentDocs) p.myState = RowStatus.NotEdited;
+                Document.myState = RowStatus.NotEdited;
+                Document.RaisePropertyChanged("State");
                 DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceClient, Document.Id, Document.DocCode,
-                    Document.CREATOR,
-                    "", Document.Description);
+                    Document.CREATOR, "", Document.Description);
+                RaisePropertyChanged(nameof(WindowName));
             }
             catch (Exception ex)
             {
@@ -813,9 +892,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewCopyRequisite(object obj)
         {
-            if (Document == null) return; 
+            if (Document == null) return;
             var ctx = new ClientWindowViewModel(Document.DocCode);
-            ctx.SetAsNewCopyRequisite(null);
+            ctx.SetAsNewCopy(false);
             var frm = new InvoiceClientView
             {
                 Owner = Application.Current.MainWindow,
@@ -827,9 +906,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewCopy(object obj)
         {
-            if (Document == null) return; 
+            if (Document == null) return;
             var ctx = new ClientWindowViewModel(Document.DocCode);
-            ctx.SetAsNewCopy();
+            ctx.SetAsNewCopy(true);
             var frm = new InvoiceClientView
             {
                 Owner = Application.Current.MainWindow,
@@ -866,7 +945,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Code = newCode,
                         NDSPercent = nds,
                         Quantity = 1,
-                        Price = 0
+                        Price = 0,
+                        Parent = Document
                     };
                     r.Entity.SFT_NEMENKL_DC = item.DocCode;
                     Document.Rows.Add(r);
@@ -923,7 +1003,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         // ReSharper disable once PossibleNullReferenceException
                         DocCode = Document.DocCode,
                         Code = newCode,
-
+                        Parent = Document,
                         NDSPercent = nds,
                         Quantity = 1,
                         Price = 0

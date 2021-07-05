@@ -35,6 +35,15 @@ namespace KursAM2.View.Dogovors
             e.Column.Name = e.Column.FieldName;
             switch (e.Column.FieldName)
             {
+               case "Nomenkl":
+                    var nomenklEdit = new ComboBoxEditSettings
+                    {
+                        Name = "PART_Editor",
+                        TextWrapping = TextWrapping.Wrap,
+                        IsTextEditable = false
+                    };
+                    e.Column.EditSettings = nomenklEdit;
+                    break;
                 case "Summa":
                 case "NDSSumma":
                 case "Quantity":

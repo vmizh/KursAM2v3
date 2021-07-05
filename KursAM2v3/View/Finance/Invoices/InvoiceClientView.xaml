@@ -70,6 +70,7 @@
                                 <Label Content="Клиент: " DockPanel.Dock="Left"/>
                                 <dxe:ButtonEdit DockPanel.Dock="Left"
                                                 Margin="23,0,0,0"
+                                                Style="{StaticResource ButtonEditWithError}"
                                     EditValue="{Binding Document.Client, 
                                     UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
                                     IsTextEditable="False" MinWidth="300">
@@ -97,7 +98,10 @@
                         </DockPanel>
                         </dxlc:LayoutItem>
                     <dxlc:LayoutItem Label="Поставщик:" HorizontalAlignment="Left">
-                        <dxe:ButtonEdit         EditValue="{Binding Document.Receiver, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                        <dxe:ButtonEdit      
+                            Style="{StaticResource ButtonEditWithError}"
+                            EditValue="{Binding Document.Receiver, 
+                            UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
                                                 IsTextEditable="False" MinWidth="300">
                             <dxmvvm:Interaction.Behaviors>
                                 <dxmvvm:EventToCommand EventName="DefaultButtonClick"
@@ -116,6 +120,7 @@
                                                    HorizontalAlignment="Right" DockPanel.Dock="Left" MinWidth="120"/>
                                 <Label Content="  Валюта: " DockPanel.Dock="Left"/>
                                 <dxe:ComboBoxEdit
+                                    Style="{StaticResource ComboBoxEditWithError}"
                                     AutoComplete = "True"
                                     Width="60"
                                     IsEnabled="{Binding IsCurrencyEnabled, UpdateSourceTrigger=PropertyChanged}"
@@ -151,6 +156,7 @@
                             <Label Content="  Условия оплаты: " DockPanel.Dock="Left"/>
                             <dxe:ComboBoxEdit MinWidth="150" 
                                               Margin="2 0 0 0"
+                                              Style="{StaticResource ComboBoxEditWithError}"
                                                   DockPanel.Dock="Left"
                                                   ItemsSource="{Binding PayConditions, UpdateSourceTrigger=PropertyChanged}"
                                                   EditValue="{Binding Document.PayCondition, UpdateSourceTrigger=PropertyChanged,
@@ -158,6 +164,7 @@
                             </dxe:ComboBoxEdit>
                             <Label Content="  Тип продукции: " DockPanel.Dock="Left"/>
                             <dxe:ComboBoxEdit MinWidth="150" 
+                                              Style="{StaticResource ComboBoxEditWithError}"
                                               Margin="45,0,0,0"
                                               DockPanel.Dock="Left"
                                               ItemsSource="{Binding VzaimoraschetTypes, UpdateSourceTrigger=PropertyChanged}"
@@ -169,6 +176,7 @@
                         <DockPanel>
                             <Label Content="  Форма расчетов: " DockPanel.Dock="Left"/>
                             <dxe:ComboBoxEdit
+                                Style="{StaticResource ComboBoxEditWithError}"
                                     MinWidth="150"
                                     DockPanel.Dock="Left"
                                     AutoComplete = "True"
@@ -177,6 +185,7 @@
                                     NotifyOnValidationError=True,  ValidatesOnDataErrors=True}"/>
                             <Label Content="  Центр ответственности: " DockPanel.Dock="Left"/>
                             <dxe:ComboBoxEdit
+                                Style="{StaticResource ComboBoxEditWithError}"
                                 MinWidth="150"
                                 DockPanel.Dock="Left"
                                 AutoComplete = "True"
@@ -193,6 +202,7 @@
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Имя:">
                                 <dxe:ComboBoxEdit
+                                    Style="{StaticResource ComboBoxEditWithError}"
                                     Width="250"
                                     HorizontalAlignment="Left"
                                     AutoComplete = "True"
@@ -221,19 +231,23 @@
                                   Name="mainLayoutControl3">
                             <dxg:GridControl Name="gridRows"
                                              Style="{StaticResource GridControl.Base}"
+                                            dx:DXSerializer.SerializationID="gridRows"
+                                            dx:DXSerializer.StoreLayoutMode="All"
                                              Margin="0,10,0,0"
                                              ItemsSource="{Binding Document.Rows, UpdateSourceTrigger=PropertyChanged}"
                                              CurrentItem="{Binding CurrentRow, UpdateSourceTrigger=PropertyChanged}"
                                              SelectedItems="{Binding SelectedRows, UpdateSourceTrigger=PropertyChanged}"
                                              AutoGeneratingColumn="GridRows_OnAutoGeneratingColumn"
+                                             AutoGeneratedColumns="GridRows_OnAutoGeneratedColumns"
                                              CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
-                                             CurrentItemChanged="GridRows_OnCurrentItemChanged"
+                                             CurrentItemChanged="GridRows_OnCurrentItemChanged" Loaded="gridRows_Loaded"
                                      >
                                 <dxg:GridControl.View>
                                     <dxg:TableView ShowTotalSummary="True"
                                            Name="tableViewRows"
                                            ShowAutoFilterRow="True"
-                                           EnableImmediatePosting="True">
+                                           EnableImmediatePosting="True"
+                                           CellValueChanged="TableViewRows_OnCellValueChanged">
                                         <dxg:TableView.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem Header="Добавить номенклатуру" Command="{Binding AddNomenklCommand}" />

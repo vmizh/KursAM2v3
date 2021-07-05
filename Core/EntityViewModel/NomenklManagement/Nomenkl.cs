@@ -7,7 +7,6 @@ using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
@@ -1094,6 +1093,13 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
+        public EntityLoadCodition LoadCondition { get; set; }
+
+        public bool Check()
+        {
+            return !string.IsNullOrEmpty(Name) && Currency != null;
+        }
+
         public SD_83 Entity
         {
             get => myEntity;
@@ -1103,13 +1109,6 @@ namespace Core.EntityViewModel.NomenklManagement
                 myEntity = value;
                 RaisePropertyChanged();
             }
-        }
-
-        public EntityLoadCodition LoadCondition { get; set; }
-
-        public bool Check()
-        {
-            return !string.IsNullOrEmpty(Name) && Currency != null;
         }
 
         public List<SD_83> LoadList()

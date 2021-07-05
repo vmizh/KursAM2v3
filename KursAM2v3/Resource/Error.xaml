@@ -54,5 +54,4 @@
             <ContentPresenter />
         </Grid>
     </ControlTemplate>
-
 </ResourceDictionary>

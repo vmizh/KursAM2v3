@@ -5,7 +5,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using DevExpress.Xpf.Core;
-using LayoutManager;
 
 namespace KursAM2
 {
@@ -20,7 +19,7 @@ namespace KursAM2
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
             if (!Directory.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}" +
-                                  $"\\KursAM2v3"))
+                                  "\\KursAM2v3"))
                 Directory.CreateDirectory(
                     $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KursAM2v3");
             Current.Properties.Add("DataPath",

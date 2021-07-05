@@ -370,7 +370,7 @@ namespace LayoutManager
                 }
 
                 ms.Close();
-                if (Win.ActualHeight <= 50 || Win.ActualWidth <= 160)
+                if (Win?.ActualHeight <= 50 || Win?.ActualWidth <= 160)
                 {
                     Win.Height = 400;
                     Win.Width = 800;

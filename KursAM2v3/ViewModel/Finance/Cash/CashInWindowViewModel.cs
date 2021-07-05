@@ -1,10 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
-using Core;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
@@ -59,11 +57,13 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
 
-        public bool IsSummaEnabled => Document != null && Document.State == RowStatus.NewRow || Document != null && Document.BANK_RASCH_SCHET_DC == null
-                                                                                             && Document.RASH_ORDER_FROM_DC == null;
+        public bool IsSummaEnabled => Document != null && Document.State == RowStatus.NewRow || Document != null &&
+            Document.BANK_RASCH_SCHET_DC == null
+            && Document.RASH_ORDER_FROM_DC == null;
 
         public bool IsKontrSelectEnable => Document != null && Document.KontragentType != CashKontragentType.NotChoice
-                                                            && Document.SFACT_DC == null  && Document.State != RowStatus.NewRow;
+                                                            && Document.SFACT_DC == null &&
+                                                            Document.State != RowStatus.NewRow;
 
         public ObservableCollection<Currency> CurrencyList { get; set; } = new ObservableCollection<Currency>();
 
@@ -96,7 +96,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                         Document.NCODE = null;
                     if (Document != null)
                         frm.Sumordcont.IsEnabled =
-                            (Document.BANK_RASCH_SCHET_DC == null && Document.RASH_ORDER_FROM_DC == null)
+                            Document.BANK_RASCH_SCHET_DC == null && Document.RASH_ORDER_FROM_DC == null
                             || Document.State == RowStatus.NewRow;
                 }
 
@@ -118,8 +118,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         public override void ShowHistory(object data)
         {
             // ReSharper disable once RedundantArgumentDefaultValue
-            DocumentHistoryManager.LoadHistory(DocumentType.CashIn,null,Document.DocCode, null);
-
+            DocumentHistoryManager.LoadHistory(DocumentType.CashIn, null, Document.DocCode, null);
         }
 
         public override void CloseWindow(object form)
@@ -185,7 +184,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                 case MessageBoxResult.Yes:
                     var ctx = BookView?.DataContext as CashBookWindowViewModel;
                     CashManager.DeleteDocument(CashDocumentType.CashIn, Document);
-                    if(Document.KONTRAGENT_DC != null)
+                    if (Document.KONTRAGENT_DC != null)
                         RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC,
                             // ReSharper disable once PossibleInvalidOperationException
                             (DateTime) Document.DATE_ORD);
@@ -273,7 +272,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             vm.Document.Cash = Document.Cash;
             vm.BookView = BookView;
             DocumentsOpenManager.Open(DocumentType.CashIn, vm, BookView);
-         }
+        }
 
         public override void DocNewCopyRequisite(object form)
         {
@@ -285,7 +284,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             //vm.Document.Cash = Document.Cash;
             vm.BookView = BookView;
             DocumentsOpenManager.Open(DocumentType.CashIn, vm, BookView);
-         }
+        }
 
         #endregion
     }

@@ -67,6 +67,7 @@
                             <DockPanel LastChildFill="False">
                                 <Label Content="Контрагент: "/>
                                 <dxe:ButtonEdit 
+                                    Style="{StaticResource ButtonEditWithError}"
                                     Margin="5 0"
                                     MinWidth="200"
                                     EditValue="{Binding Document.Kontragent, 
@@ -81,6 +82,7 @@
                                 </dxe:ButtonEdit>
                                 <Label Content="Тип продукции: "/>
                                 <dxe:ComboBoxEdit
+                                    Style="{StaticResource ComboBoxEditWithError}"
                                     Margin="5 0"
                                     MinWidth="200"
                                     AutoComplete = "True"
@@ -103,6 +105,7 @@
                                 <DockPanel LastChildFill="False">
                                     <Label Content="Получатель:"/>
                                     <dxe:ButtonEdit 
+                                        Style="{StaticResource ButtonEditWithError}"
                                         Margin="6 0"
                                         MinWidth="200"
                                         EditValue="{Binding Document.KontrReceiver, UpdateSourceTrigger=PropertyChanged}"
@@ -114,6 +117,7 @@
                                     </dxe:ButtonEdit>
                                     <Label Content="Центр ответственности: "/>
                                     <dxe:ComboBoxEdit
+                                        Style="{StaticResource ComboBoxEditWithError}"
                                         Margin="5 0"
                                         MinWidth="100"
                                         AutoComplete = "True"
@@ -132,12 +136,14 @@
                         <dxlc:LayoutGroup>
                             <dxlc:LayoutItem Label="Сумма:" >
                                 <dxe:PopupCalcEdit 
-                                    EditValue="{Binding Document.SF_CRS_SUMMA, UpdateSourceTrigger=PropertyChanged}" 
+                                    IsReadOnly="True"
+                                    EditValue="{Binding Document.Summa, Mode=OneWay}" 
                                     DisplayFormatString="n2"
                                     MaskUseAsDisplayFormat="True"/>
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Валюта:">
                                 <dxe:ComboBoxEdit
+                                    Style="{StaticResource ComboBoxEditWithError}"
                                     AutoComplete = "True"
                                     IsEnabled="{Binding IsCurrencyEnabled, UpdateSourceTrigger=PropertyChanged}"
                                     ItemsSource="{Binding CurrencyList, UpdateSourceTrigger=PropertyChanged}"
@@ -161,6 +167,7 @@
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Условия оплаты:">
                                 <dxe:ComboBoxEdit
+                                    Style="{StaticResource ComboBoxEditWithError}"
                                     AutoComplete = "True"
                                     ItemsSource="{Binding PayConditionList, UpdateSourceTrigger=PropertyChanged}"
                                     EditValue="{Binding Document.PayCondition, Mode=TwoWay,
@@ -189,6 +196,7 @@
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Форма расчетов:">
                                 <dxe:ComboBoxEdit
+                                    Style="{StaticResource ComboBoxEditWithError}"
                                     AutoComplete = "True"
                                     ItemsSource="{Binding FormRaschetList}"
                                     EditValue="{Binding Document.FormRaschet,
@@ -209,6 +217,7 @@
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Имя:">
                                 <dxe:ComboBoxEdit
+                                    Style="{StaticResource ComboBoxEditWithError}"
                                     MinWidth="150"
                                     AutoComplete = "True"
                                     ItemsSource="{Binding EmployeeList, UpdateSourceTrigger=PropertyChanged}"
@@ -222,7 +231,7 @@
                             <dxlc:LayoutItem VerticalAlignment="Stretch" Label="Примечание:">
                                 <dxe:TextEdit 
                                     Style="{StaticResource NoteStyle}"
-                                    EditValue="{Binding Document.SF_NOTES,
+                                    EditValue="{Binding Document.Note,
                                     UpdateSourceTrigger=PropertyChanged}"
                                     />
                             </dxlc:LayoutItem>

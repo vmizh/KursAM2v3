@@ -263,7 +263,7 @@
                 </DataTrigger>
             </ControlTemplate.Triggers>
      </ControlTemplate>
-    <Style TargetType="{x:Type dxe:ComboBoxEdit}">
+    <Style x:Key="ComboBoxEditWithError" TargetType="{x:Type dxe:ComboBoxEdit}">
         <Setter Property="ValidationErrorTemplate">
             <Setter.Value>
                 <DataTemplate>  
@@ -275,7 +275,7 @@
         </Setter>
         <Setter Property="Template" Value="{StaticResource CustomComboBoxEditTemplate}"/>
     </Style>
-    <Style TargetType="{x:Type dxe:ButtonEdit}">
+    <Style x:Key="ButtonEditWithError" TargetType="{x:Type dxe:ButtonEdit}">
         <Setter Property="ValidationErrorTemplate">
             <Setter.Value>
                 <DataTemplate>  

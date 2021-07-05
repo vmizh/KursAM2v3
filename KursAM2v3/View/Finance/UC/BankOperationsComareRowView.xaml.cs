@@ -413,7 +413,7 @@ namespace KursAM2.View.Finance.UC
                             dtx.Date = d1.SF_POSTAV_DATE;
                         }
                     }
-                    dtx.VVT_VAL_RASHOD = d1.SF_CRS_SUMMA - d1.PaySumma;
+                    dtx.VVT_VAL_RASHOD = d1.Summa - d1.PaySumma;
                     dtx.VVT_DOC_NUM = d1.ToString();
                     dtx.CurrentBankOperations.VVT_SFACT_POSTAV_DC = d1.DocCode;
                     dtx.SFName = d1.ToString();
@@ -430,7 +430,7 @@ namespace KursAM2.View.Finance.UC
                     {
                         dtx2.Date = d1.SF_POSTAV_DATE;
                     }
-                    dtx2.VVT_VAL_RASHOD = d1.SF_CRS_SUMMA - d1.PaySumma;
+                    dtx2.VVT_VAL_RASHOD = d1.Summa - d1.PaySumma;
                     dtx2.VVT_DOC_NUM = d1.ToString();
                     dtx2.VVT_SFACT_POSTAV_DC = d1.DocCode;
                     dtx2.SFName = d1.ToString();

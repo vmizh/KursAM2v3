@@ -166,10 +166,10 @@ namespace KursAM2.ViewModel.Finance
                     : StandartDialogs.SelectInvoiceProvider(true, true, true);
                 if (item == null) return;
                 CurrentCreditor.VZT_DOC_NUM = (Document.Rows.Count + 1).ToString();
-                CurrentCreditor.VZT_CRS_POGASHENO = item.SF_CRS_SUMMA - item.PaySumma;
-                CurrentCreditor.VZT_UCH_CRS_POGASHENO = item.SF_CRS_SUMMA - item.PaySumma;
-                CurrentCreditor.VZT_CRS_SUMMA = item.SF_CRS_SUMMA - item.PaySumma;
-                CurrentCreditor.VZT_KONTR_CRS_SUMMA = item.SF_CRS_SUMMA - item.PaySumma;
+                CurrentCreditor.VZT_CRS_POGASHENO = item.Summa - item.PaySumma;
+                CurrentCreditor.VZT_UCH_CRS_POGASHENO = item.Summa - item.PaySumma;
+                CurrentCreditor.VZT_CRS_SUMMA = item.Summa - item.PaySumma;
+                CurrentCreditor.VZT_KONTR_CRS_SUMMA = item.Summa - item.PaySumma;
                 CurrentCreditor.VZT_UCH_CRS_RATE = 1;
                 CurrentCreditor.VZT_SPOST_DC = item.DocCode;
                 CurrentCreditor.Kontragent = MainReferences.GetKontragent(item.SF_POST_DC);
@@ -194,10 +194,10 @@ namespace KursAM2.ViewModel.Finance
                     VZT_DOC_DATE = Document.VZ_DATE,
                     VZT_DOC_NUM = (Document.Rows.Count + 1).ToString(),
                     VZT_1MYDOLZH_0NAMDOLZH = 1,
-                    VZT_CRS_POGASHENO = item.SF_CRS_SUMMA - item.PaySumma,
-                    VZT_UCH_CRS_POGASHENO = item.SF_CRS_SUMMA - item.PaySumma,
-                    VZT_CRS_SUMMA = item.SF_CRS_SUMMA - item.PaySumma,
-                    VZT_KONTR_CRS_SUMMA = item.SF_CRS_SUMMA - item.PaySumma,
+                    VZT_CRS_POGASHENO = item.Summa - item.PaySumma,
+                    VZT_UCH_CRS_POGASHENO = item.Summa - item.PaySumma,
+                    VZT_CRS_SUMMA = item.Summa - item.PaySumma,
+                    VZT_KONTR_CRS_SUMMA = item.Summa - item.PaySumma,
                     VZT_UCH_CRS_RATE = 1,
                     VZT_SPOST_DC = item.DocCode,
                     State = RowStatus.NewRow,

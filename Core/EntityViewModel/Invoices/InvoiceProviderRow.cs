@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using Core.EntityViewModel.CommonReferences;
@@ -841,7 +840,8 @@ namespace Core.EntityViewModel.Invoices
             else
             {
                 Entity.SFT_SUMMA_NDS =
-                    Math.Round((Entity.SFT_SUMMA_K_OPLATE ?? 0) * SFT_NDS_PERCENT / (100 + SFT_NDS_PERCENT), 2);
+                    Math.Round((Entity.SFT_KOL + (Entity.SFT_ED_CENA ?? 0)) * SFT_NDS_PERCENT / (100 + SFT_NDS_PERCENT),
+                        2);
                 Entity.SFT_SUMMA_K_OPLATE =
                     Math.Round(Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0, 2)
                     + Entity.SFT_SUMMA_NDS;
@@ -849,88 +849,8 @@ namespace Core.EntityViewModel.Invoices
                 RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
                 RaisePropertyChanged(nameof(SFT_SUMMA_K_OPLATE));
             }
-            //switch (fieldType)
-            //{
-            //    case FieldChangeType.Price:
-            //        if (IsIncludeInPrice)
-            //        {
-            //            if (Entity.SFT_KOL != 0)
-            //                Entity.SFT_SUMMA_NDS = (Entity.SFT_SUMMA_K_OPLATE ?? 0) * SFT_NDS_PERCENT /
-            //                                       (100 + SFT_NDS_PERCENT);
-            //            else
-            //                Entity.SFT_SUMMA_NDS = 0;
-            //            RaisePropertyChanged();
-            //            RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
-            //        }
-            //        else
-            //        {
-            //            if (Entity.SFT_KOL != 0)
-            //                Entity.SFT_SUMMA_NDS = Entity.SFT_ED_CENA * Entity.SFT_KOL * (SFT_NDS_PERCENT / 100);
-            //            else
-            //                Entity.SFT_SUMMA_NDS = 0;
-            //        }
 
-            //        Entity.SFT_SUMMA_K_OPLATE =
-            //            Entity.SFT_KOL * (Entity.SFT_ED_CENA ?? 0) + Entity.SFT_SUMMA_NDS;
-            //        Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
-            //        break;
-            //    case FieldChangeType.Quantity:
-            //    case FieldChangeType.NDS:
-            //        if (IsIncludeInPrice)
-            //        {
-            //            if (Entity.SFT_KOL != 0)
-            //            {
-            //                Entity.SFT_ED_CENA = (Entity.SFT_SUMMA_K_OPLATE ?? 0) / (decimal?) Entity.SFT_KOL;
-            //                Entity.SFT_SUMMA_NDS = (Entity.SFT_SUMMA_K_OPLATE ?? 0) * SFT_NDS_PERCENT /
-            //                                       (100 + SFT_NDS_PERCENT);
-            //            }
-            //            else
-            //            {
-            //                Entity.SFT_ED_CENA = 0;
-            //                Entity.SFT_SUMMA_NDS = 0;
-            //                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = 0;
-            //            }
-
-            //            RaisePropertyChanged(nameof(Entity.SFT_ED_CENA));
-            //            RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
-            //        }
-            //        else
-            //        {
-            //            Entity.SFT_SUMMA_NDS = (Entity.SFT_ED_CENA ?? 0) * (decimal?) Entity.SFT_KOL * SFT_NDS_PERCENT /
-            //                                   100;
-            //            Entity.SFT_SUMMA_K_OPLATE =
-            //                Entity.SFT_KOL * (Entity.SFT_ED_CENA ?? 0) + Entity.SFT_SUMMA_NDS;
-            //            Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
-            //        }
-
-            //        break;
-            //    case FieldChangeType.Summa:
-            //        if (IsIncludeInPrice)
-            //        {
-            //            if (Entity.SFT_KOL != 0)
-            //            {
-            //                Entity.SFT_ED_CENA = (Entity.SFT_SUMMA_K_OPLATE ?? 0) / (decimal?) Entity.SFT_KOL;
-            //                Entity.SFT_SUMMA_NDS = (Entity.SFT_SUMMA_K_OPLATE ?? 0) * SFT_NDS_PERCENT /
-            //                                       (100 + SFT_NDS_PERCENT);
-            //            }
-            //            else
-            //            {
-            //                Entity.SFT_ED_CENA = 0;
-            //                Entity.SFT_SUMMA_NDS = 0;
-            //                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = 0;
-            //            }
-            //        }
-            //        else
-            //        {
-            //            Entity.SFT_SUMMA_NDS = (Entity.SFT_ED_CENA ?? 0) * (decimal?) Entity.SFT_KOL *
-            //                                   ((100 + SFT_NDS_PERCENT) / 100);
-            //            Entity.SFT_SUMMA_K_OPLATE =
-            //                Entity.SFT_KOL * (Entity.SFT_ED_CENA ?? 0) + Entity.SFT_SUMMA_NDS;
-            //            Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
-            //        }
-
-            //        break;
-            //}
+            if (Parent is InvoiceProvider p) p.RaisePropertyChanged("Summa");
         }
 
         private void LoadReference(bool isLoadAll)

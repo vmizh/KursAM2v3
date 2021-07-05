@@ -386,7 +386,7 @@ namespace KursAM2.Managers.Invoices
                                 SF_POSTAV_DATE = doc.SF_POSTAV_DATE,
                                 SF_POST_DC = doc.SF_POST_DC,
                                 SF_RUB_SUMMA = doc.SF_RUB_SUMMA,
-                                SF_CRS_SUMMA = doc.SF_CRS_SUMMA,
+                                SF_CRS_SUMMA = doc.Summa,
                                 SF_CRS_DC = doc.SF_CRS_DC,
                                 SF_CRS_RATE = doc.SF_CRS_RATE,
                                 V_CRS_ADD_PERCENT = doc.V_CRS_ADD_PERCENT,
@@ -415,7 +415,7 @@ namespace KursAM2.Managers.Invoices
                                 SF_TRANZIT = doc.SF_TRANZIT,
                                 SF_KONTR_CRS_DC = doc.SF_CRS_DC,
                                 SF_KONTR_CRS_RATE = 1,
-                                SF_KONTR_CRS_SUMMA = doc.SF_CRS_SUMMA,
+                                SF_KONTR_CRS_SUMMA = doc.Summa,
                                 SF_UCHET_VALUTA_DC = doc.SF_UCHET_VALUTA_DC,
                                 SF_UCHET_VALUTA_RATE = doc.SF_UCHET_VALUTA_RATE,
                                 SF_SUMMA_V_UCHET_VALUTE = doc.SF_SUMMA_V_UCHET_VALUTE,
@@ -491,7 +491,7 @@ namespace KursAM2.Managers.Invoices
                             old.SF_POSTAV_DATE = doc.SF_POSTAV_DATE;
                             old.SF_POST_DC = doc.SF_POST_DC;
                             old.SF_RUB_SUMMA = doc.SF_RUB_SUMMA;
-                            old.SF_CRS_SUMMA = doc.SF_CRS_SUMMA;
+                            old.SF_CRS_SUMMA = doc.Summa;
                             old.SF_CRS_DC = doc.SF_CRS_DC;
                             old.SF_CRS_RATE = doc.SF_CRS_RATE;
                             old.V_CRS_ADD_PERCENT = doc.V_CRS_ADD_PERCENT;
@@ -520,7 +520,7 @@ namespace KursAM2.Managers.Invoices
                             old.SF_TRANZIT = doc.SF_TRANZIT;
                             old.SF_KONTR_CRS_DC = doc.SF_KONTR_CRS_DC;
                             old.SF_KONTR_CRS_RATE = 1;
-                            old.SF_KONTR_CRS_SUMMA = doc.SF_CRS_SUMMA;
+                            old.SF_KONTR_CRS_SUMMA = doc.Summa;
                             old.SF_UCHET_VALUTA_DC = doc.SF_UCHET_VALUTA_DC;
                             old.SF_UCHET_VALUTA_RATE = doc.SF_UCHET_VALUTA_RATE;
                             old.SF_SUMMA_V_UCHET_VALUTE = doc.SF_SUMMA_V_UCHET_VALUTE;
@@ -999,7 +999,7 @@ namespace KursAM2.Managers.Invoices
                                 ret.Add(newDoc);
                                 continue;
                             }
-                            if (newDoc.SF_CRS_SUMMA > pd.PaySumma)
+                            if (newDoc.Summa > pd.PaySumma)
                             {
                                 newDoc.PaymentDocs.Add(new ProviderInvoicePayViewModel
                                 {
@@ -1248,7 +1248,7 @@ namespace KursAM2.Managers.Invoices
                         var newDoc = new InvoiceProvider(d,new UnitOfWork<ALFAMEDIAEntities>());
                         if (isUsePayment)
                         {
-                            if(newDoc.PaySumma < newDoc.SF_CRS_SUMMA)
+                            if(newDoc.PaySumma < newDoc.Summa)
                                 ret.Add(newDoc);
                         }
                         else

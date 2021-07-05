@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core.EntityViewModel.Invoices;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.WindowsManager;
 using DevExpress.Mvvm;
@@ -27,13 +26,11 @@ namespace Core.ViewModel.Base
         // ReSharper disable once MemberInitializerValueIgnored
         private bool myIsCanRefresh = true;
 
-        private bool myIsLoading = false;
+        private bool myIsLoading;
 
         // ReSharper disable once InconsistentNaming
         protected string mySearchText;
         private string myWindowName;
-        protected IDispatcherService DispatcherService => GetService<IDispatcherService>();
-        protected ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
 
         public RSWindowViewModelBase()
         {
@@ -48,6 +45,11 @@ namespace Core.ViewModel.Base
             myIsCanRefresh = true;
         }
 
+        protected IDispatcherService DispatcherService => GetService<IDispatcherService>();
+        protected ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
+        protected ILayoutSerializationService LayoutSerializationService
+            => GetService<ILayoutSerializationService>();
+
         public bool IsLoading
         {
             get => myIsLoading;
@@ -61,12 +63,12 @@ namespace Core.ViewModel.Base
 
         [Display(AutoGenerateField = false)] public global::Helper.LayoutManager LayoutManager { get; set; }
 
-        private ILayoutSerializationService LayoutSerializationService
-            => GetService<ILayoutSerializationService>();
+        
 
         public virtual string LayoutName { set; get; }
-        [Display(AutoGenerateField = false)]
-        public StandartErrorManager ErrorManager { set; get; }
+
+        [Display(AutoGenerateField = false)] public StandartErrorManager ErrorManager { set; get; }
+
         public ObservableCollection<MenuButtonInfo> RightMenuBar { set; get; }
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
@@ -109,14 +111,28 @@ namespace Core.ViewModel.Base
 
         public bool IsCanSave { get; set; }
 
-        [Command]
-        public void OnWindowClosing()
+        public ICommand OnWindowClosingCommand
+        {
+            get
+            {
+                return new Command(OnWindowClosing, _ => true);
+            }
+        }
+
+        public virtual void OnWindowClosing(object obj)
         {
             LayoutManager?.Save();
         }
 
-        [Command]
-        public void OnWindowLoaded()
+        public ICommand OnWindowLoadedCommand
+        {
+            get
+            {
+                return new Command(OnWindowLoaded, _ => true);
+            }
+        }
+
+        public virtual void OnWindowLoaded(object obj)
         {
             LayoutManager = new global::Helper.LayoutManager(Form, LayoutSerializationService,
                 LayoutName, null);
@@ -160,7 +176,6 @@ namespace Core.ViewModel.Base
 
         public virtual void UpdateDocumentOpen()
         {
-
         }
 
         public virtual void UpdatePropertyChangies()

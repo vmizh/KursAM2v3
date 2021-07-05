@@ -4,18 +4,13 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Data.Entity;
 using System.Linq;
-using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
-using Core.ViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
@@ -29,13 +24,13 @@ namespace KursAM2.ViewModel.Personal
     {
         public PayRollVedomostEmployeeViewModel Employee;
         private bool isChange;
+        private string myCreator;
         private PayRollVedomostEmployeeViewModel myCurrentEmployee;
         private PayRollVedomostEmployeeRowViewModel myCurrentNach;
         private DateTime myDate;
+        private Visibility myIsCanDateChange;
         private bool myIsTemplate;
         private PayrollType myMyCurrentPayrollType;
-        private Visibility myIsCanDateChange;
-        private string myCreator;
 
         public PayRollVedomostWindowViewModel()
         {
@@ -227,18 +222,20 @@ namespace KursAM2.ViewModel.Personal
                                 Name = item.Name,
                                 State = RowStatus.NewRow,
                                 Employee = item.Persona,
-                                Crs = MainReferences.Currencies[GlobalOptions.SystemProfile.EmployeeDefaultCurrency.DocCode],
+                                Crs = MainReferences.Currencies[
+                                    GlobalOptions.SystemProfile.EmployeeDefaultCurrency.DocCode],
                                 PRType = PayrollTypeCollection.Single(_ =>
                                     _.DocCode == GlobalOptions.SystemProfile.DafaultPayRollType.DocCode),
                                 Summa = 0,
                                 Rate = 0,
                                 NachDate = Date
-
                             }
                         }
                         : new ObservableCollection<PayRollVedomostEmployeeRowViewModel>()
                 }))
             {
+                if (newEmp.Rows.Count == 0)
+                    newEmp.Rows.Add(new PayRollVedomostEmployeeRowViewModel());
                 newEmp.Rows[0].State = RowStatus.NewRow;
                 Employees.Add(newEmp);
                 CurrentEmployee = newEmp;
@@ -412,7 +409,7 @@ namespace KursAM2.ViewModel.Personal
                 case MessageBoxResult.Yes:
                     using (var ent = GlobalOptions.GetEntities())
                     {
-                        if(ent.EMP_PR_DOC.Include(_ => _.EMP_PR_ROWS)
+                        if (ent.EMP_PR_DOC.Include(_ => _.EMP_PR_ROWS)
                             .Any(_ => _.ID == Id.ToString().Replace("-", string.Empty)))
                         {
                             var d =
@@ -428,6 +425,7 @@ namespace KursAM2.ViewModel.Personal
 
                             ent.SaveChanges();
                         }
+
                         var frm = form as Window;
                         frm?.Close();
                     }
@@ -448,12 +446,8 @@ namespace KursAM2.ViewModel.Personal
         private void SetDate(object obj)
         {
             foreach (var emp in Employees)
-            {
-                foreach (var r in emp.Rows)
-                {
-                    r.NachDate = Date;
-                }
-            }
+            foreach (var r in emp.Rows)
+                r.NachDate = Date;
         }
 
         public override void RefreshData(object o)
@@ -563,7 +557,6 @@ namespace KursAM2.ViewModel.Personal
         {
             using (var ent = GlobalOptions.GetEntities())
             {
-
                 try
                 {
                     var id = Id.ToString().Replace("-", string.Empty).ToUpper();
@@ -748,7 +741,6 @@ namespace KursAM2.ViewModel.Personal
         {
             var newNach = new PayRollVedomostEmployeeRowViewModel
             {
-                
                 Id = CurrentEmployee.Id,
                 RowId = Guid.NewGuid(),
                 Summa = 0,

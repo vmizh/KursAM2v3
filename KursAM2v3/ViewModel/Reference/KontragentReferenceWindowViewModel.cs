@@ -548,7 +548,9 @@ namespace KursAM2.ViewModel.Reference
                 Kontragent = new Kontragent
                 {
                     State = RowStatus.NewRow,
-                    Group = CurrentGroup
+                    Group = CurrentGroup,
+                    IsBalans = true,
+                    START_BALANS = DateTime.Today
                 },
                 Form = form
             };

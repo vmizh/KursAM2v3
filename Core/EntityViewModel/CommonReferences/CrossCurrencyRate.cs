@@ -232,7 +232,8 @@ namespace Core.EntityViewModel.CommonReferences
                     CurrencyEUR = rates[MainReferences.Currencies[CurrencyCode.EUR]],
                     CurrencyGBP = rates[MainReferences.Currencies[CurrencyCode.GBP]],
                     CurrencyUSD = rates[MainReferences.Currencies[CurrencyCode.USD]],
-                    CurrencyCNY = rates[MainReferences.Currencies[CurrencyCode.CNY]]
+                    CurrencyCNY = rates.ContainsKey(MainReferences.Currencies[CurrencyCode.CNY]) ?
+                        rates[MainReferences.Currencies[CurrencyCode.CNY]] : 0
                 });
         }
     }

@@ -39,7 +39,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
     /// <summary>
     ///     Сфчет-фактура поставщика
     /// </summary>
-    public sealed class ProviderWindowViewModel : RSWindowViewModelBase,IDocumentCopy, IDataErrorInfo
+    public sealed class ProviderWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
     {
         #region Methods
 
@@ -164,7 +164,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             IsDocNewCopyRequisiteAllow = true;
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
-            WindowName = "Счет-фактура поставщика (новая)";
             CreateReportsMenu();
         }
 
@@ -195,7 +194,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     State = RowStatus.NewRow
                 };
-                WindowName = "Счет-фактура поставщика (новая)";
             }
             else
             {
@@ -231,6 +229,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public List<Employee> EmployeeList => MainReferences.Employees.Values.ToList();
 
         public override string LayoutName => "InvoiceProviderView";
+
+        public override string WindowName =>
+            Document?.DocCode > 0 ? Document.ToString() : "Счет-фактура поставщика (новая)";
 
         public List<InvoiceProviderRowCurrencyConvertViewModel> DeletedCrsConvertItems { set; get; } =
             new List<InvoiceProviderRowCurrencyConvertViewModel>();
@@ -723,7 +724,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             // ReSharper disable once NotResolvedInText
             Document.RaisePropertyChanged("SF_CRS_SUMMA");
             // ReSharper disable once PossibleInvalidOperationException
-            Document.SF_CRS_SUMMA = (decimal) (Document.Rows.Any() ? Document.Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE) : 0);
             Document.SummaFact = 0;
             foreach (var r in Document.Rows)
             {
@@ -921,7 +921,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Quantity = 1,
                     Price = 0,
                     SFT_NDS_PERCENT = n.NDSPercent ?? defaultNDS,
-
                     PostUnit = n.Unit,
                     UchUnit = n.Unit,
                     Note = " ",
@@ -986,6 +985,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     {
                         DocCode = Document.DocCode,
                         Code = newCode,
+                        Nomenkl = MainReferences.GetNomenkl(item.DocCode),
                         Id = Guid.NewGuid(),
                         DocId = Document.Id,
                         SFT_NDS_PERCENT = nds,
@@ -1018,6 +1018,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private void UpdateCalcRowSumma(object obj)
         {
             CurrentRow?.CalcRow();
+            if (Form is InvoiceProviderView frm)
+            {
+                frm.gridRows.RefreshData();
+                frm.gridRows.UpdateTotalSummary();
+            }
         }
 
         public override void SaveData(object data)
@@ -1065,7 +1070,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (Document.SF_KONTR_CRS_DC == null)
                     Document.SF_KONTR_CRS_DC = Document.Kontragent.BalansCurrency.DocCode;
 
-                if (Document.SF_KONTR_CRS_SUMMA == null) Document.SF_KONTR_CRS_SUMMA = Document.SF_CRS_SUMMA;
+                if (Document.SF_KONTR_CRS_SUMMA == null) Document.SF_KONTR_CRS_SUMMA = Document.Summa;
 
                 foreach (var row in Document.Rows)
                 {
@@ -1120,9 +1125,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 RecalcKontragentBalans.CalcBalans(Document.SF_POST_DC, Document.SF_POSTAV_DATE);
                 NomenklManager.RecalcPrice(myUsedNomenklsDC);
                 myUsedNomenklsDC.Clear();
-                foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
-                RaiseAll();
-                Document.myState = RowStatus.NotEdited;
                 foreach (var r in Document.Rows)
                 {
                     r.myState = RowStatus.NotEdited;
@@ -1132,7 +1134,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var f in Document.Facts) f.myState = RowStatus.NotEdited;
 
                 foreach (var p in Document.PaymentDocs) p.State = RowStatus.NotEdited;
-
+                Document.myState = RowStatus.NotEdited;
+                // ReSharper disable once UseNameofExpression
+                Document.RaisePropertyChanged("State");
+                RaisePropertyChanged(nameof(WindowName));
                 DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceProvider, Document.Id, Document.DocCode,
                     Document.CREATOR,
                     "", Document.Description);
@@ -1156,7 +1161,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             if (Document == null) return; 
             var ctx = new ProviderWindowViewModel(Document.DocCode);
-            ctx.SetAsNewCopy();
+            ctx.SetAsNewCopy(true);
             var frm = new InvoiceProviderView
             {
                 Owner = Application.Current.MainWindow,
@@ -1170,7 +1175,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             if (Document == null) return; 
             var ctx = new ProviderWindowViewModel(Document.DocCode);
-            ctx.SetAsNewCopyRequisite(null);
+            ctx.SetAsNewCopy(false);
             var frm = new InvoiceProviderView
             {
                 Owner = Application.Current.MainWindow,
@@ -1291,7 +1296,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get
             {
                 return new Command(AddPaymentFromBank,
-                    _ => Document?.Kontragent != null && Document.PaySumma < Document.SF_CRS_SUMMA);
+                    _ => Document?.Kontragent != null && Document.PaySumma < Document.Summa);
             }
         }
 
@@ -1316,9 +1321,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     {
                         BankCode = old.CODE,
                         myState = RowStatus.NewRow,
-                        Summa = Document.SF_CRS_SUMMA - Document.PaySumma >= oper.Remainder
+                        Summa = Document.Summa - Document.PaySumma >= oper.Remainder
                             ? oper.Remainder
-                            : Document.SF_CRS_SUMMA - Document.PaySumma,
+                            : Document.Summa - Document.PaySumma,
                         // ReSharper disable once PossibleInvalidOperationException
                         DocSumma = (decimal) old.VVT_VAL_RASHOD,
                         DocDate = old.SD_101.VV_START_DATE,
@@ -1347,7 +1352,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get
             {
                 return new Command(AddPaymentFromCash,
-                    _ => Document?.Kontragent != null && Document.PaySumma < Document.SF_CRS_SUMMA);
+                    _ => Document?.Kontragent != null && Document.PaySumma < Document.Summa);
             }
         }
 
@@ -1378,9 +1383,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             CashDC = old.DOC_CODE,
                             myState = RowStatus.NewRow,
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = Document.SF_CRS_SUMMA - Document.PaySumma >= (decimal) old.SUMM_ORD
+                            Summa = Document.Summa - Document.PaySumma >= (decimal) old.SUMM_ORD
                                 ? (decimal) old.SUMM_ORD
-                                : Document.SF_CRS_SUMMA - Document.PaySumma,
+                                : Document.Summa - Document.PaySumma,
                             DocSumma = (decimal) old.SUMM_ORD,
                             // ReSharper disable once PossibleInvalidOperationException
                             DocDate = (DateTime) old.DATE_ORD,
@@ -1410,7 +1415,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get
             {
                 return new Command(AddPaymentFromVZ,
-                    _ => Document?.Kontragent != null && Document.PaySumma < Document.SF_CRS_SUMMA);
+                    _ => Document?.Kontragent != null && Document.PaySumma < Document.Summa);
             }
         }
 
@@ -1433,9 +1438,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     VZCode = old.CODE,
                     myState = RowStatus.NewRow,
                     // ReSharper disable once PossibleInvalidOperationException
-                    Summa = Document.SF_CRS_SUMMA - Document.PaySumma >= (decimal) old.VZT_CRS_SUMMA
+                    Summa = Document.Summa - Document.PaySumma >= (decimal) old.VZT_CRS_SUMMA
                         ? (decimal) old.VZT_CRS_SUMMA
-                        : Document.SF_CRS_SUMMA - Document.PaySumma,
+                        : Document.Summa - Document.PaySumma,
                     DocSumma = (decimal) old.VZT_CRS_SUMMA,
                     DocDate = old.SD_110.VZ_DATE,
                     Rate = 1,
@@ -1510,10 +1515,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public string this[string columnName] => null;
 
         public string Error { get; } = null;
-        public void SetAsNewCopyRequisite(Guid? id)
+        
+        public void SetAsNewCopy(bool isCopy)
         {
+            var newId = Guid.NewGuid();
             UnitOfWork.Context.Entry(Document.Entity).State = EntityState.Detached;
-            Document.Id = id ?? Guid.NewGuid();
+            Document.Id = newId;
             Document.DocCode = -1;
             Document.SF_POSTAV_NUM = null;
             Document.SF_POSTAV_DATE = DateTime.Today;
@@ -1528,23 +1535,34 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Document.DeletedRows.Clear();
             Document.PaymentDocs.Clear();
             Document.Facts.Clear();
-        }
-
-        public void SetAsNewCopy()
-        {
-            var newId = Guid.NewGuid();
-            SetAsNewCopyRequisite(newId);
-            var newCode = 1;
-            foreach (var row in Document.Rows)
+            if (isCopy)
             {
-                Document.Entity.TD_26.Add(row.Entity);
-                row.DocCode = -1;
-                row.Id = Guid.NewGuid();
-                row.DocId = newId;
-                row.Code = newCode;
-                row.myState = RowStatus.NewRow;
-                newCode++;
-                
+                var newCode = 1;
+                foreach (var row in Document.Rows)
+                {
+                    UnitOfWork.Context.Entry(row.Entity).State = EntityState.Detached;
+                    row.DocCode = -1;
+                    row.Id = Guid.NewGuid();
+                    row.DocId = newId;
+                    row.Code = newCode;
+                    row.myState = RowStatus.NewRow;
+                    newCode++;
+                }
+                foreach (var r in Document.Rows)
+                {
+                    UnitOfWork.Context.TD_26.Add(r.Entity);
+                    r.State = RowStatus.NewRow;
+                }
+            }
+            else
+            {
+                foreach (var item in Document.Rows)
+                {
+                    UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
+                    Document.Entity.TD_26.Clear();
+                }
+
+                Document.Rows.Clear();
             }
         }
     }
