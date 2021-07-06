@@ -1,14 +1,26 @@
 ﻿using Core;
 using Core.EntityViewModel.AktSpisaniya;
+using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
+using KursAM2.Repositories;
 using System;
+using System.Collections.ObjectModel;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
-    class AktSpisaniyaNomenkl_TitleWIndowViewModel : RSWindowViewModelBase
+    public sealed class AktSpisaniyaNomenkl_TitleWIndowViewModel : RSWindowViewModelBase
     {
+        #region Methods
+
+        public override bool IsCorrect()
+        {
+            return Document.IsCorrect();
+        }
+
+        #endregion
+
         #region Fields
 
         private AktSpisaniyaNomenkl_TitleViewModel myDocument;
@@ -19,10 +31,43 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         public readonly GenericKursDBRepository<AktSpisaniyaNomenkl_Title> BaseRepository;
+        public readonly IAktSpisaniyaNomenkl_TitleRepository AktSpisaniyaNomenklTitleRepository;
+
+        #endregion
+
+        #region Constructors
+
+        public AktSpisaniyaNomenkl_TitleWIndowViewModel()
+        {
+            Id = Document.Id;
+            BaseRepository = new GenericKursDBRepository<AktSpisaniyaNomenkl_Title>(unitOfWork);
+            AktSpisaniyaNomenklTitleRepository = new AktSpisaniyaNomenkl_TitleRepository(unitOfWork);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
+            WindowName = "Акт списания";
+            Document = new AktSpisaniyaNomenkl_TitleViewModel(AktSpisaniyaNomenklTitleRepository.CreateNew(), RowStatus.NewRow);
+            
+        }
+
+        public AktSpisaniyaNomenkl_TitleWIndowViewModel(Guid id)
+        {
+            Id = id;
+            BaseRepository = new GenericKursDBRepository<AktSpisaniyaNomenkl_Title>(unitOfWork);
+            AktSpisaniyaNomenklTitleRepository = new AktSpisaniyaNomenkl_TitleRepository(unitOfWork);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
+            WindowName = "Акт списания";
+            
+            
+        }
+
+        public override string LayoutName => "AktSpisaniyaNomenkl_TitleView";
 
         #endregion
 
         #region Properties
+        public ObservableCollection<AktSpisaniyaRowViewModel> SelectedRows { set; get; }
+            = new ObservableCollection<AktSpisaniyaRowViewModel>();
 
         public AktSpisaniyaNomenkl_TitleViewModel Document
         {
@@ -60,14 +105,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         #endregion
 
-        #region Methods
-
-        public override bool IsCorrect()
-        {
-            return Document.IsCorrect();
-        }
-
-        #endregion
 
         #region Command
 
