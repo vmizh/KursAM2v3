@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.EntityViewModel.Invoices;
-using Core.Invoices.EntityViewModel;
 using Data;
 using Data.Repository;
 
@@ -18,8 +17,8 @@ namespace KursAM2.Repositories.InvoicesRepositories
         InvoiceClient GetRequisiteCopy(decimal dc);
         void Delete(SD_84 entity);
         List<InvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd);
-
     }
+
     public class InvoiceClientRepository : GenericKursDBRepository<InvoiceClient>, IInvoiceClientRepository
     {
         public InvoiceClientRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
@@ -39,7 +38,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
         {
             DetachObjects();
             return new InvoiceClient(Context.SD_84
-                .FirstOrDefault(_ => _.DOC_CODE == dc),new UnitOfWork<ALFAMEDIAEntities>());
+                .FirstOrDefault(_ => _.DOC_CODE == dc), new UnitOfWork<ALFAMEDIAEntities>());
         }
 
         public InvoiceClient GetFullCopy(InvoiceClient doc)
@@ -69,7 +68,14 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         public List<InvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd)
         {
-            throw new NotImplementedException();
+            DetachObjects();
+            var ret = new List<InvoiceClient>();
+            var data = Context.SD_84
+                .Where(_ => _.SF_DATE >= dateStart && _.SF_DATE <= dateEnd)
+                .OrderByDescending(_ => _.SF_DATE).ToList();
+            foreach (var d in data)
+                ret.Add(new InvoiceClient(d, new UnitOfWork<ALFAMEDIAEntities>()));
+            return ret;
         }
     }
 }

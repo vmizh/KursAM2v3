@@ -191,6 +191,12 @@ namespace KursAM2.ViewModel.Personal
 
         private void AddNewEmployee()
         {
+            if (PayrollTypeCollection.Count == 0)
+            {
+                WinManager.ShowWinUIMessageBox(
+                    "Не существует ни одного типа начисления. Вставка сотрудников не возможна.","Предупреждение");
+                return;
+            }
             var ex = Employees.Select(d => d.Employee.DocCode).ToList();
             var ctx = new PersonalDialogSelectWindowViewModel(ex);
             ctx.RefreshData(null);

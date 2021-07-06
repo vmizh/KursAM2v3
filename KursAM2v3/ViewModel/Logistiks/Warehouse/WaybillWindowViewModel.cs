@@ -8,10 +8,8 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -28,9 +26,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             GlobalOptions.GetEntities(),
             "WaybillViewModel"));
 
+        private readonly WindowManager winManager = new WindowManager();
+
         private WaybillRow myCurrentNomenklRow;
         private Waybill myDocument;
-        private readonly WindowManager winManager = new WindowManager();
 
         public WaybillWindowViewModel()
         {
@@ -88,7 +87,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<string> ByWhomLicoList { set; get; } = new ObservableCollection<string>();
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse> Sklads => MainReferences.Warehouses.Values.ToList();
+
+        public List<Core.EntityViewModel.NomenklManagement.Warehouse> Sklads =>
+            MainReferences.Warehouses.Values.ToList();
 
         public Waybill Document
         {
@@ -370,7 +371,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         if (oldf != null)
                         {
                             if (oldf.DDT_SFACT_DC == r.DocCode && oldf.DDT_SFACT_ROW_CODE == r.Code)
-                                oldf.DDT_KOL_RASHOD = (decimal) r.Quantity;
+                                oldf.DDT_KOL_RASHOD = r.Quantity;
                             continue;
                         }
 
@@ -379,7 +380,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         if (otgr.Any())
                         {
                             var kol = otgr.Sum(_ => _.DDT_KOL_RASHOD);
-                            if (kol < (decimal) r.Quantity)
+                            if (kol < r.Quantity)
                             {
                                 var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
                                 var newItem = new WaybillRow
@@ -387,7 +388,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                     DocCode = Document.DocCode,
                                     Code = newCode,
                                     Nomenkl = n,
-                                    DDT_KOL_RASHOD = (decimal) r.Quantity - kol,
+                                    DDT_KOL_RASHOD = r.Quantity - kol,
                                     Unit = n.Unit,
                                     Currency = n.Currency,
                                     SchetLinkedRow = r,
@@ -405,9 +406,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 Document.WarehouseOut.DocCode);
                             if (m <= 0)
                             {
-                                winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
-                                                               $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
-                                                               $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
+                                winManager.ShowWinUIMessageBox(
+                                    $"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
+                                    $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
+                                    $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
                                     "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                                 continue;
                             }
@@ -417,7 +419,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 DocCode = Document.DocCode,
                                 Code = newCode,
                                 Nomenkl = n,
-                                DDT_KOL_RASHOD = (decimal) r.Quantity,
+                                DDT_KOL_RASHOD = r.Quantity,
                                 Unit = n.Unit,
                                 Currency = n.Currency,
                                 SchetLinkedRow = r,
@@ -457,7 +459,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (dc > 0)
             {
                 RefreshData(dc);
-                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.Waybill, Document.Id, Document.DocCode, Document.CREATOR,
+                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.Waybill, Document.Id, Document.DocCode,
+                    Document.CREATOR,
                     "", Document.Description);
             }
         }

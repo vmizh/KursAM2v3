@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.Periods;
@@ -41,17 +40,6 @@ namespace Core.EntityViewModel.NomenklManagement
 
         public string Sender => KontragentSender?.Name ?? WarehouseOut?.Name;
         public string Receiver => KontragentReceiver?.Name ?? WarehouseIn?.Name;
-
-        public decimal DOC_CODE
-        {
-            get => Entity.DOC_CODE;
-            set
-            {
-                if (Entity.DOC_CODE == value) return;
-                Entity.DOC_CODE = value;
-                RaisePropertyChanged();
-            }
-        }
 
         public override decimal DocCode
         {
@@ -1185,6 +1173,8 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
+        public EntityLoadCodition LoadCondition { get; set; }
+
         public SD_24 Entity
         {
             get => myEntity;
@@ -1195,8 +1185,6 @@ namespace Core.EntityViewModel.NomenklManagement
                 RaisePropertyChanged();
             }
         }
-
-        public EntityLoadCodition LoadCondition { get; set; }
 
         public List<SD_24> LoadList()
         {

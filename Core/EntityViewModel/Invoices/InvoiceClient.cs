@@ -58,13 +58,13 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
-        public InvoiceClient(SD_84 entity, UnitOfWork<ALFAMEDIAEntities> ctx)
-        {
-            context = ctx;
-            Entity = entity ?? DefaultValue();
-            LoadReferences();
-        }
-
+        //public InvoiceClient(SD_84 entity, UnitOfWork<ALFAMEDIAEntities> ctx)
+        //{
+        //    context = ctx;
+        //    Entity = entity ?? DefaultValue();
+        //    LoadReferences();
+        //}
+        
         public InvoiceClient(SD_84 entity, UnitOfWork<ALFAMEDIAEntities> ctx, bool isLoadPaymentDocs = false)
         {
             isLoadPayment = isLoadPaymentDocs;
@@ -1136,55 +1136,116 @@ namespace Core.EntityViewModel.Invoices
                     Rows.Add(newRow);
                 }
 
-            if (isLoadPayment)
+            if (context != null)
             {
-                PaymentDocs = new ObservableCollection<InvoicePaymentDocument>();
-                foreach (var c in context.Context.SD_33.Where(_ => _.SFACT_DC == DocCode).ToList())
-                    PaymentDocs.Add(new InvoicePaymentDocument
-                    {
-                        DocCode = c.DOC_CODE,
-                        Code = 0,
-                        DocumentType = DocumentType.CashIn,
-                        // ReSharper disable once PossibleInvalidOperationException
-                        DocumentName =
-                            $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
+                if (isLoadPayment)
+                {
+                    PaymentDocs = new ObservableCollection<InvoicePaymentDocument>();
+                    foreach (var c in context.Context.SD_33.Where(_ => _.SFACT_DC == DocCode).ToList())
+                        PaymentDocs.Add(new InvoicePaymentDocument
+                        {
+                            DocCode = c.DOC_CODE,
+                            Code = 0,
+                            DocumentType = DocumentType.CashIn,
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
-                        // ReSharper disable once PossibleInvalidOperationException
-                        Summa = (decimal) c.SUMM_ORD,
-                        Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
-                        Note = c.NOTES_ORD
-                    });
-                foreach (var c in context.Context.TD_101.Include(_ => _.SD_101)
-                    .Where(_ => _.VVT_SFACT_CLIENT_DC == DocCode)
-                    .ToList())
-                    PaymentDocs.Add(new InvoicePaymentDocument
-                    {
-                        DocCode = c.DOC_CODE,
-                        Code = c.CODE,
-                        DocumentType = DocumentType.Bank,
-                        DocumentName =
+                            DocumentName =
+                                $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
+                                // ReSharper disable once PossibleInvalidOperationException
+                                $"{MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
-                        Summa = (decimal) c.VVT_VAL_PRIHOD,
-                        Currency = MainReferences.Currencies[c.VVT_CRS_DC],
-                        Note = c.VVT_DOC_NUM
-                    });
-                foreach (var c in context.Context.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SFACT_DC == DocCode)
-                    .ToList())
-                    PaymentDocs.Add(new InvoicePaymentDocument
-                    {
-                        DocCode = c.DOC_CODE,
-                        Code = c.CODE,
-                        DocumentType = DocumentType.MutualAccounting,
-                        DocumentName =
+                            Summa = (decimal) c.SUMM_ORD,
+                            Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                            Note = c.NOTES_ORD
+                        });
+                    foreach (var c in context.Context.TD_101.Include(_ => _.SD_101)
+                        .Where(_ => _.VVT_SFACT_CLIENT_DC == DocCode)
+                        .ToList())
+                        PaymentDocs.Add(new InvoicePaymentDocument
+                        {
+                            DocCode = c.DOC_CODE,
+                            Code = c.CODE,
+                            DocumentType = DocumentType.Bank,
+                            DocumentName =
+                                // ReSharper disable once PossibleInvalidOperationException
+                                $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                            Summa = (decimal) c.VVT_VAL_PRIHOD,
+                            Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                            Note = c.VVT_DOC_NUM
+                        });
+                    foreach (var c in context.Context.TD_110.Include(_ => _.SD_110)
+                        .Where(_ => _.VZT_SFACT_DC == DocCode)
+                        .ToList())
+                        PaymentDocs.Add(new InvoicePaymentDocument
+                        {
+                            DocCode = c.DOC_CODE,
+                            Code = c.CODE,
+                            DocumentType = DocumentType.MutualAccounting,
+                            DocumentName =
+                                // ReSharper disable once PossibleInvalidOperationException
+                                $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
-                        // ReSharper disable once PossibleInvalidOperationException
-                        Summa = (decimal) c.VZT_CRS_SUMMA,
-                        Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
-                        Note = c.VZT_DOC_NOTES
-                    });
+                            Summa = (decimal) c.VZT_CRS_SUMMA,
+                            Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
+                            Note = c.VZT_DOC_NOTES
+                        });
+                }
+            }
+            else
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    if (isLoadPayment)
+                    {
+                        PaymentDocs = new ObservableCollection<InvoicePaymentDocument>();
+                        foreach (var c in ctx.SD_33.Where(_ => _.SFACT_DC == DocCode).ToList())
+                            PaymentDocs.Add(new InvoicePaymentDocument
+                            {
+                                DocCode = c.DOC_CODE,
+                                Code = 0,
+                                DocumentType = DocumentType.CashIn,
+                                // ReSharper disable once PossibleInvalidOperationException
+                                DocumentName =
+                                    $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
+                                    // ReSharper disable once PossibleInvalidOperationException
+                                    $"{MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                                // ReSharper disable once PossibleInvalidOperationException
+                                Summa = (decimal) c.SUMM_ORD,
+                                Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                                Note = c.NOTES_ORD
+                            });
+                        foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
+                            .Where(_ => _.VVT_SFACT_CLIENT_DC == DocCode)
+                            .ToList())
+                            PaymentDocs.Add(new InvoicePaymentDocument
+                            {
+                                DocCode = c.DOC_CODE,
+                                Code = c.CODE,
+                                DocumentType = DocumentType.Bank,
+                                DocumentName =
+                                    // ReSharper disable once PossibleInvalidOperationException
+                                    $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                                Summa = (decimal) c.VVT_VAL_PRIHOD,
+                                Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                                Note = c.VVT_DOC_NUM
+                            });
+                        foreach (var c in ctx.TD_110.Include(_ => _.SD_110)
+                            .Where(_ => _.VZT_SFACT_DC == DocCode)
+                            .ToList())
+                            PaymentDocs.Add(new InvoicePaymentDocument
+                            {
+                                DocCode = c.DOC_CODE,
+                                Code = c.CODE,
+                                DocumentType = DocumentType.MutualAccounting,
+                                DocumentName =
+                                    // ReSharper disable once PossibleInvalidOperationException
+                                    $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
+                                // ReSharper disable once PossibleInvalidOperationException
+                                Summa = (decimal) c.VZT_CRS_SUMMA,
+                                Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
+                                Note = c.VZT_DOC_NOTES
+                            });
+                    }
+                }
             }
 
             ShipmentRows = new ObservableCollection<ShipmentRowViewModel>();
@@ -1194,7 +1255,8 @@ namespace Core.EntityViewModel.Invoices
                         foreach (var r2 in r.TD_24)
                         {
                             var newItem = new ShipmentRowViewModel(r2);
-                            if (r2.SD_24 != null) newItem.Parent = new WarehouseOrderOut(r2.SD_24);
+                            if (r2.SD_24 != null) 
+                                newItem.Parent = new WarehouseOrderOut(r2.SD_24);
 
                             ShipmentRows.Add(newItem);
                         }
