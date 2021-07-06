@@ -17,6 +17,7 @@ using Data.Repository;
 using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
+using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Finance.Invoices;
 using Reports.Base;
 
@@ -25,9 +26,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
     public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
     {
         private InvoiceClient myCurrentDocument;
-        //private IDispatcherService DispatcherService => GetService<IDispatcherService>();
-        //private ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
+        public readonly GenericKursDBRepository<SD_84> GenericProviderRepository;
 
+        // ReSharper disable once NotAccessedField.Local
+        public readonly IInvoiceClientRepository InvoiceClientRepository;
+  
         public InvoiceClientSearchViewModel()
         {
             WindowName = "Счета фактуры для клиентов";
@@ -40,6 +43,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public InvoiceClientSearchViewModel(Window form) : base(form)
         {
+            GenericProviderRepository = new GenericKursDBRepository<SD_84>(UnitOfWork);
+            InvoiceClientRepository = new InvoiceClientRepository(UnitOfWork);
             WindowName = "Счета фактуры для клиентов";
             Documents = new ObservableCollection<InvoiceClient>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -242,8 +247,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             try
             {
-                foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
-                    false, null, SearchText))
+                 foreach(var d in InvoiceClientRepository.GetAllByDates(StartDate, EndDate))
+                //foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
+                //    false, null, SearchText))
                     ret.Add(d);
             }
             catch (Exception ex)

@@ -170,6 +170,7 @@ namespace Core.EntityViewModel.Invoices
             {
                 if (Entity.SFT_ED_CENA == value) return;
                 Entity.SFT_ED_CENA = value;
+                Entity.SFT_ED_CENA_PRIHOD = value;
                 CalcRow();
                 if (CurrencyConvertRows != null && CurrencyConvertRows.Count > 0)
                     foreach (var r in CurrencyConvertRows)
@@ -202,6 +203,7 @@ namespace Core.EntityViewModel.Invoices
                 }
 
                 Entity.SFT_KOL = value;
+                Entity.SFT_POST_KOL = value;
                 CalcRow();
                 RaisePropertyChanged();
             }

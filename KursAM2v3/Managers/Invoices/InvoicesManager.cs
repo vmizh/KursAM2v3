@@ -898,7 +898,7 @@ namespace KursAM2.Managers.Invoices
                                     .Include(_ => _.SD_77)
                                     .Include(_ => _.SD_189)
                                     .Include(_ => _.SD_40)
-                                    .AsNoTracking()
+                                    
                                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
                                                                               && _.SF_ACCEPTED == 1)
                                 join td26 in ctx.TD_26
@@ -943,7 +943,7 @@ namespace KursAM2.Managers.Invoices
                                     .Include(_ => _.SD_77)
                                     .Include(_ => _.SD_189)
                                     .Include(_ => _.SD_40)
-                                    .AsNoTracking()
+                                    
                                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd)
                                 join td26 in ctx.TD_26
                                         .Include(_ => _.SD_83)
@@ -1060,7 +1060,7 @@ namespace KursAM2.Managers.Invoices
                                     .Include(_ => _.SD_77)
                                     .Include(_ => _.SD_189)
                                     .Include(_ => _.SD_40)
-                                    .AsNoTracking()
+                                    
                                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
                                                                               && _.SF_ACCEPTED == 1)
                                     join td26 in ctx.TD_26
@@ -1105,7 +1105,7 @@ namespace KursAM2.Managers.Invoices
                                     .Include(_ => _.SD_77)
                                     .Include(_ => _.SD_189)
                                     .Include(_ => _.SD_40)
-                                    .AsNoTracking()
+                                    
                                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd)
                                     join td26 in ctx.TD_26
                                             .Include(_ => _.SD_83)
@@ -1291,6 +1291,7 @@ namespace KursAM2.Managers.Invoices
                         .Include("TD_84.SD_83")
                         .Include("TD_84.SD_83.SD_175")
                         .Include(_ => _.SD_24)
+                        .Include("SD_24.TD_24")
                         .Include(_ => _.SD_179)
                         .Include(_ => _.SD_77)
                         .Include(_ => _.SD_189)
@@ -1298,7 +1299,6 @@ namespace KursAM2.Managers.Invoices
                         .Include("TD_84.TD_24.SD_24")
                         .Include("TD_84.TD_24.SD_24.SD_201")
                         .Include("TD_84.SD_303")
-                        .AsNoTracking()
                         .SingleOrDefault(_ => _.DOC_CODE == dc);
                     foreach (var c in ctx.SD_33.Where(_ => _.SFACT_DC == dc).ToList())
                         pDocs.Add(new InvoicePaymentDocument
@@ -1410,7 +1410,7 @@ namespace KursAM2.Managers.Invoices
                     .Include(_ => _.SD_189)
                     .Include("TD_84.TD_24")
                     .Include("TD_84.SD_303")
-                    .AsNoTracking()
+                    
                     .SingleOrDefault(_ => _.DOC_CODE == doc.DocCode);
                 document = new InvoiceClient(data)
                 {
@@ -1455,6 +1455,67 @@ namespace KursAM2.Managers.Invoices
             return document;
         }
 
+        public static InvoiceClient NewClientCopy(InvoiceClient doc, ALFAMEDIAEntities ctx)
+        {
+            InvoiceClient document;
+            var data = ctx
+                .SD_84
+                .Include(_ => _.SD_431)
+                .Include(_ => _.SD_432)
+                .Include(_ => _.TD_84)
+                .Include("TD_84.SD_83")
+                .Include("TD_84.SD_83.SD_175")
+                .Include(_ => _.SD_24)
+                .Include(_ => _.SD_179)
+                .Include(_ => _.SD_77)
+                .Include(_ => _.SD_189)
+                .Include("TD_84.TD_24")
+                .Include("TD_84.SD_303")
+                .SingleOrDefault(_ => _.DOC_CODE == doc.DocCode);
+            document = new InvoiceClient(data)
+            {
+                DocCode = -1,
+                DocDate = DateTime.Today,
+                REGISTER_DATE = DateTime.Today,
+                CREATOR = GlobalOptions.UserInfo.Name,
+                InnerNumber = -1,
+                OuterNumber = null,
+                IsAccepted = false,
+                myState = RowStatus.NewRow
+            };
+            //Currency = GlobalOptions.SystemProfile.NationalCurrency,
+            var newCode = 1;
+            foreach (var item in document.Rows)
+            {
+                item.DocCode = -1;
+                item.DocCode = newCode;
+                item.Shipped = 0;
+                var q =
+                    GlobalOptions.GetEntities()
+                        .NOM_PRICE.Where(_ => _.NOM_DC == item.Entity.SFT_NEMENKL_DC && _.DATE <= DateTime.Today)
+                        .ToList();
+                if (q.Count == 0) continue;
+                var quanDate = q.Max(_ => _.DATE);
+                var firstOrDefault = GlobalOptions.GetEntities()
+                    .NOM_PRICE.FirstOrDefault(_ => _.NOM_DC == item.Entity.SFT_NEMENKL_DC && _.DATE == quanDate);
+                if (firstOrDefault != null)
+                {
+                    var quan =
+                        firstOrDefault.NAKOPIT;
+                    item.CurrentRemains = quan;
+                }
+
+                item.State = RowStatus.NewRow;
+                newCode++;
+            }
+
+            document.DeletedRows = new List<InvoiceClientRow>();
+            foreach (var r in document.Rows) r.myState = RowStatus.NewRow;
+            document.PaymentDocs.Clear();
+            document.ShipmentRows.Clear();
+            return document;
+        }
+
         public static InvoiceClient NewClientCopy(decimal dc)
         {
             using (var ctx = GlobalOptions.GetEntities())
@@ -1472,7 +1533,7 @@ namespace KursAM2.Managers.Invoices
                     .Include(_ => _.SD_189)
                     .Include("TD_84.TD_24")
                     .Include("TD_84.SD_303")
-                    .AsNoTracking()
+                    
                     .SingleOrDefault(_ => _.DOC_CODE == dc);
                 if (d == null) return null;
                 var ret = new InvoiceClient(d)
@@ -1746,6 +1807,7 @@ namespace KursAM2.Managers.Invoices
                     foreach (var dc in data.Select(_ => _.DOC_CODE).Distinct())
                     {
                         var inv = GetInvoiceClient(dc);
+                        if (inv == null) continue;
                         var dcs = data.Where(_ => _.DOC_CODE == dc).ToList();
                         var deldcs = new List<int>();
                         foreach (var r in dcs.Where(_ => _.DOC_CODE == dc))

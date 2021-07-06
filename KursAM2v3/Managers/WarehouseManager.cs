@@ -826,13 +826,13 @@ namespace KursAM2.Managers
 
         public WarehouseOrderOut NewOrderOutCopy(WarehouseOrderOut doc)
         {
-            return NewOrderOutCopy(doc.DOC_CODE);
+            return NewOrderOutCopy(doc.DocCode);
         }
 
         public WarehouseOrderOut NewOrderOutCopy(decimal dc)
         {
             var old = GetOrderOut(dc);
-            old.DOC_CODE = -1;
+            old.DocCode = -1;
             old.DD_IN_NUM = -1;
             old.DD_EXT_NUM = null;
             old.DD_DATE = DateTime.Today;
@@ -848,13 +848,13 @@ namespace KursAM2.Managers
 
         public WarehouseOrderOut NewOrderOutRecuisite(WarehouseOrderOut doc)
         {
-            return NewOrderOutRecuisite(doc.DOC_CODE);
+            return NewOrderOutRecuisite(doc.DocCode);
         }
 
         public WarehouseOrderOut NewOrderOutRecuisite(decimal dc)
         {
             var old = GetOrderOut(dc);
-            old.DOC_CODE = -1;
+            old.DocCode = -1;
             old.DD_IN_NUM = -1;
             old.DD_EXT_NUM = null;
             old.DD_DATE = DateTime.Today;

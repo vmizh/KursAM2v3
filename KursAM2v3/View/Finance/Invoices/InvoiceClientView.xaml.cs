@@ -18,7 +18,7 @@ namespace KursAM2.View.Finance.Invoices
     /// </summary>
     public partial class InvoiceClientView
     {
-        public ButtonEdit KontrSelectButton;
+        //public ButtonEdit KontrSelectButton;
 
         public InvoiceClientView()
         {
@@ -30,75 +30,75 @@ namespace KursAM2.View.Finance.Invoices
         public ComboBoxEdit CurrencyItem { set; get; }
         private ClientWindowViewModel viewModel => DataContext as ClientWindowViewModel;
 
-        private void DelBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var ctx = DataContext as ClientWindowViewModel;
-            var doc = ctx?.Document;
-            if (doc == null)
-                return;
-            doc.PersonaResponsible = null;
-        }
+        //private void DelBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var ctx = DataContext as ClientWindowViewModel;
+        //    var doc = ctx?.Document;
+        //    if (doc == null)
+        //        return;
+        //    doc.PersonaResponsible = null;
+        //}
 
-        private void DilerBtnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            var ctx = DataContext as ClientWindowViewModel;
-            var doc = ctx?.Document;
-            if (doc == null)
-                return;
-            doc.Diler = null;
-            doc.SF_DILER_CRS_DC = null;
-            doc.SF_DILER_SUMMA = 0;
-            foreach (var r in doc.Rows) r.SFT_NACENKA_DILERA = 0;
-        }
+        //private void DilerBtnCancel_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var ctx = DataContext as ClientWindowViewModel;
+        //    var doc = ctx?.Document;
+        //    if (doc == null)
+        //        return;
+        //    doc.Diler = null;
+        //    doc.SF_DILER_CRS_DC = null;
+        //    doc.SF_DILER_SUMMA = 0;
+        //    foreach (var r in doc.Rows) r.SFT_NACENKA_DILERA = 0;
+        //}
 
-        private void Kontr_DefaultButtonClick(object sender, RoutedEventArgs e)
-        {
-            var ctx = DataContext as ClientWindowViewModel;
-            var doc = ctx?.Document;
-            if (doc == null)
-                return;
-            if (doc.ShipmentRows.Count > 0)
-            {
-                WindowManager.ShowMessage("По счету есть расходные накладные. Изменить контрагента нельзя.",
-                    "Предупреждение", MessageBoxImage.Information);
-                return;
-            }
+        //private void Kontr_DefaultButtonClick(object sender, RoutedEventArgs e)
+        //{
+        //    var ctx = DataContext as ClientWindowViewModel;
+        //    var doc = ctx?.Document;
+        //    if (doc == null)
+        //        return;
+        //    if (doc.ShipmentRows.Count > 0)
+        //    {
+        //        WindowManager.ShowMessage("По счету есть расходные накладные. Изменить контрагента нельзя.",
+        //            "Предупреждение", MessageBoxImage.Information);
+        //        return;
+        //    }
 
-            if (doc.PaySumma != 0)
-            {
-                WindowManager.ShowMessage("По счету есть Оплата. Изменить контрагента нельзя.",
-                    "Предупреждение", MessageBoxImage.Information);
-                return;
-            }
+        //    if (doc.PaySumma != 0)
+        //    {
+        //        WindowManager.ShowMessage("По счету есть Оплата. Изменить контрагента нельзя.",
+        //            "Предупреждение", MessageBoxImage.Information);
+        //        return;
+        //    }
 
-            var kontr = StandartDialogs.SelectKontragent(doc.Currency);
-            if (kontr == null) return;
-            if (doc.Rows.Any(_ => !_.IsUsluga && _.Nomenkl.Currency.DocCode != kontr.BalansCurrency.DocCode))
-            {
-                WindowManager.ShowMessage(
-                    "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
-                    "Предупреждение", MessageBoxImage.Information);
-                return;
-            }
+        //    var kontr = StandartDialogs.SelectKontragent(doc.Currency);
+        //    if (kontr == null) return;
+        //    if (doc.Rows.Any(_ => !_.IsUsluga && _.Nomenkl.Currency.DocCode != kontr.BalansCurrency.DocCode))
+        //    {
+        //        WindowManager.ShowMessage(
+        //            "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
+        //            "Предупреждение", MessageBoxImage.Information);
+        //        return;
+        //    }
 
-            switch ((sender as ButtonEdit)?.Tag)
-            {
-                case "Client":
-                    doc.Client = kontr;
-                    doc.Currency = kontr.BalansCurrency;
-                    doc.Entity.SF_KONTR_CRS_RATE = 1;
-                    break;
-                case "Receiver":
-                    doc.Receiver = kontr;
-                    break;
-                case "Diler":
-                    doc.Diler = kontr;
-                    doc.SF_DILER_CRS_DC = kontr.BalansCurrency.DocCode;
-                    doc.SF_DILER_SUMMA = 0;
-                    doc.SF_DILER_RATE = 1;
-                    break;
-            }
-        }
+        //    switch ((sender as ButtonEdit)?.Tag)
+        //    {
+        //        case "Client":
+        //            doc.Client = kontr;
+        //            doc.Currency = kontr.BalansCurrency;
+        //            doc.Entity.SF_KONTR_CRS_RATE = 1;
+        //            break;
+        //        case "Receiver":
+        //            doc.Receiver = kontr;
+        //            break;
+        //        case "Diler":
+        //            doc.Diler = kontr;
+        //            doc.SF_DILER_CRS_DC = kontr.BalansCurrency.DocCode;
+        //            doc.SF_DILER_SUMMA = 0;
+        //            doc.SF_DILER_RATE = 1;
+        //            break;
+        //    }
+        //}
 
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
@@ -115,28 +115,29 @@ namespace KursAM2.View.Finance.Invoices
                 return;
             // ReSharper disable once LocalNameCapturedOnly
             // ReSharper disable once RedundantAssignment
+            // ReSharper disable once EntityNameCapturedOnly.Local
             var inv = new InvoiceClientRow();
             switch (e.Column.Name)
             {
-                //case nameof(inv.Nomenkl):
-                //    var nomenklEdit = new ButtonEditSettings
-                //    {
-                //        TextWrapping = TextWrapping.Wrap,
-                //        IsTextEditable = false
-                //    };
-                //    nomenklEdit.DefaultButtonClick += Nomenkl_DefaultButtonClick;
-                //    e.Column.EditSettings = nomenklEdit;
-                //    break;
-                //case nameof(inv.Note):
-                //    break;
-                //case nameof(inv.SDRSchet):
-                //    e.Column.EditSettings = new ComboBoxEditSettings
-                //    {
-                //        ItemsSource = MainReferences.SDRSchets.Values,
-                //        DisplayMember = "Name",
-                //        AutoComplete = true
-                //    };
-                //    break;
+                case nameof(inv.Nomenkl):
+                    var nomenklEdit = new ButtonEditSettings
+                    {
+                        TextWrapping = TextWrapping.Wrap,
+                        IsTextEditable = false
+                    };
+                    nomenklEdit.DefaultButtonClick += Nomenkl_DefaultButtonClick;
+                    e.Column.EditSettings = nomenklEdit;
+                    break;
+                case nameof(inv.Note):
+                    break;
+                case nameof(inv.SDRSchet):
+                    e.Column.EditSettings = new ComboBoxEditSettings
+                    {
+                        ItemsSource = MainReferences.SDRSchets.Values,
+                        DisplayMember = "Name",
+                        AutoComplete = true
+                    };
+                    break;
             }
         }
 
@@ -200,18 +201,6 @@ namespace KursAM2.View.Finance.Invoices
                 colPrice.ReadOnly = false;
                 colSumma.ReadOnly = true;
             }
-            //var colNomenkl = gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Nomenkl");
-            //if(colNomenkl != null && colNomenkl.EditSettings == null)
-            //{
-            //    var nomenklEdit = new ButtonEditSettings
-            //    {
-            //        Name = "PART_Editor",
-            //        TextWrapping = TextWrapping.Wrap,
-            //        IsTextEditable = false
-            //    };
-            //    nomenklEdit.DefaultButtonClick += Nomenkl_DefaultButtonClick;
-            //    colNomenkl.EditSettings = nomenklEdit;
-            //}
         }
 
         private void BaseEdit_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
@@ -263,6 +252,7 @@ namespace KursAM2.View.Finance.Invoices
                 DisplayFormat = "{0:n2}",
                 FieldName = "SFT_SUMMA_NDS"
             });
+
         }
 
         private void TableViewRows_OnCellValueChanged(object sender, CellValueChangedEventArgs e)

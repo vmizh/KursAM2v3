@@ -486,74 +486,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Command
 
-        private void Nomenkl_DefaultButtonClick(object sender, RoutedEventArgs e)
-        {
-            decimal defaultNDS;
-            if (Document == null)
-                return;
-            var nomenkls = StandartDialogs.SelectNomenkls();
-            if (nomenkls == null || nomenkls.Count <= 0) return;
-            using (var entctx = GlobalOptions.GetEntities())
-            {
-                defaultNDS = Convert.ToDecimal(entctx.PROFILE
-                    .FirstOrDefault(_ => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")?.ITEM_VALUE);
-            }
-
-            CurrentRow.Nomenkl = nomenkls.First();
-            CurrentRow.NDSPercent = CurrentRow.Nomenkl.NDSPercent ?? defaultNDS;
-        }
-
-        public override void OnWindowLoaded(object obj)
-        {
-            base.OnWindowLoaded(null);
-            if (Form is InvoiceClientView frm)
-            {
-                //var colNomenkl = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Nomenkl");
-                //if (colNomenkl != null)
-                //{
-                //    if (colNomenkl.EditSettings == null)
-                //    {
-                //        var nomenklEdit = new ButtonEditSettings
-                //        {
-                //            TextWrapping = TextWrapping.Wrap,
-                //            IsTextEditable = false
-                //        };
-                //        nomenklEdit.DefaultButtonClick += Nomenkl_DefaultButtonClick;
-                //        colNomenkl.EditSettings = nomenklEdit;
-                //    }
-                //}
-                frm.gridRows.TotalSummary.Clear();
-                frm.gridRows.TotalSummary.Add(new GridSummaryItem
-                {
-                    SummaryType = SummaryItemType.Count,
-                    ShowInColumn = "Nomenkl",
-                    DisplayFormat = "{0:n2}",
-                    FieldName = "Nomenkl"
-                });
-                frm.gridRows.TotalSummary.Add(new GridSummaryItem
-                {
-                    SummaryType = SummaryItemType.Sum,
-                    ShowInColumn = "Quantity",
-                    DisplayFormat = "{0:n2}",
-                    FieldName = "Quantity"
-                });
-                frm.gridRows.TotalSummary.Add(new GridSummaryItem
-                {
-                    SummaryType = SummaryItemType.Sum,
-                    ShowInColumn = "Summa",
-                    DisplayFormat = "{0:n2}",
-                    FieldName = "Summa"
-                });
-                frm.gridRows.TotalSummary.Add(new GridSummaryItem
-                {
-                    SummaryType = SummaryItemType.Sum,
-                    ShowInColumn = "SFT_SUMMA_NDS",
-                    DisplayFormat = "{0:n2}",
-                    FieldName = "SFT_SUMMA_NDS"
-                });
-            }
-        }
-
         public override void ShowHistory(object data)
         {
             // ReSharper disable once RedundantArgumentDefaultValue
@@ -714,14 +646,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             if (!Document.IsAccepted)
             {
-                var res = WinManager.ShowWinUIMessageBox("В счете имеются услуги. Акцептовать счет?", "Предупреждение",
+                var res = WinManager.ShowWinUIMessageBox("Счет не акцептован, акцептовать?", "Предупреждение",
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (res == MessageBoxResult.Yes) Document.IsAccepted = true;
             }
 
             UnitOfWork.CreateTransaction();
             // ReSharper disable once CollectionNeverUpdated.Local
-            var DistributeDocs = new List<Guid>();
+            new List<Guid>();
             try
             {
                 if (Document.State == RowStatus.NewRow || Document.DocCode < 0)
@@ -745,7 +677,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Document.SF_KONTR_CRS_DC = Document.Client.BalansCurrency.DocCode;
 
                 if (Document.Entity.SF_KONTR_CRS_SUMMA == null) Document.Entity.SF_KONTR_CRS_SUMMA = Document.Summa;
-
                 foreach (var row in Document.Rows)
                     if (row.Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS == null)
                         row.Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = row.Summa;
@@ -946,10 +877,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         NDSPercent = nds,
                         Quantity = 1,
                         Price = 0,
-                        Parent = Document
+                        Parent = Document,
+                        IsNDSInPrice = Document.IsNDSIncludeInPrice,
+                        Note = "",
+                        Id = Guid.NewGuid(),
+                        DocId = Document.Id
                     };
                     r.Entity.SFT_NEMENKL_DC = item.DocCode;
                     Document.Rows.Add(r);
+                    Document.Entity.TD_84.Add(r.Entity);
                     newCode++;
                 }
             }
@@ -1006,10 +942,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Parent = Document,
                         NDSPercent = nds,
                         Quantity = 1,
-                        Price = 0
+                        Price = 0,
+                        IsNDSInPrice = Document.IsNDSIncludeInPrice,
+                        Note = "",
+                        Id = Guid.NewGuid(),
+                        DocId = Document.Id
                     };
                     r.Entity.SFT_NEMENKL_DC = item.DOC_CODE;
                     Document?.Rows.Add(r);
+                    Document.Entity.TD_84.Add(r.Entity);
                     newCode++;
                 }
             }

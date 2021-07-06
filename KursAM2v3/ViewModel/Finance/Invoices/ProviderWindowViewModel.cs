@@ -990,7 +990,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         DocId = Document.Id,
                         SFT_NDS_PERCENT = nds,
                         Quantity = 1,
-                        Price = 0,
                         PostUnit = item.Unit,
                         UchUnit = item.Unit,
                         State = RowStatus.NewRow,
@@ -998,6 +997,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         IsIncludeInPrice = Document.IsNDSInPrice,
                         Parent = Document
                     };
+                    if (Document.IsNDSInPrice)
+                        newRow.SFT_SUMMA_K_OPLATE = 0;
+                    else
+                    {
+                        newRow.Price = 0;
+                    }
                     newRow.Entity.SFT_NEMENKL_DC = item.DOC_CODE;
                     newRow.Entity.SFT_POST_ED_IZM_DC = item.Unit.DocCode;
                     Document.Rows.Add(newRow);
@@ -1039,9 +1044,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 return;
             }
 
-            if (Document.Rows.Any(_ => _.Nomenkl.IsUsluga) && !Document.IsAccepted)
+            if (!Document.IsAccepted)
             {
-                var res = WinManager.ShowWinUIMessageBox("В счете имеются услуги. Акцептовать счет?", "Предупреждение",
+                var res = WinManager.ShowWinUIMessageBox("Счет не акцептован, акцептовать?", "Предупреждение",
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (res == MessageBoxResult.Yes) Document.IsAccepted = true;
             }
@@ -1066,7 +1071,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (Document.SF_KONTR_CRS_RATE == null) Document.SF_KONTR_CRS_RATE = 1;
 
                 if (Document.SF_UCHET_VALUTA_RATE == null) Document.SF_UCHET_VALUTA_RATE = 1;
-
+                if (Document.SF_SUMMA_S_NDS == null) Document.SF_SUMMA_S_NDS = (short) (Document.IsNDSInPrice ? 1 : 0);
+                if (Document.SF_SCHET_FACT_FLAG == null) Document.SF_SCHET_FACT_FLAG = 1;
                 if (Document.SF_KONTR_CRS_DC == null)
                     Document.SF_KONTR_CRS_DC = Document.Kontragent.BalansCurrency.DocCode;
 
