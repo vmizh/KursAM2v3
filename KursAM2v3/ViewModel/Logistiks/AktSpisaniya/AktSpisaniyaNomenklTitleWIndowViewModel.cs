@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
-    public sealed class AktSpisaniyaNomenkl_TitleWIndowViewModel : RSWindowViewModelBase
+    public sealed class AktSpisaniyaNomenklTitleWIndowViewModel : RSWindowViewModelBase
     {
         #region Methods
 
@@ -23,7 +23,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         #region Fields
 
-        private AktSpisaniyaNomenkl_TitleViewModel myDocument;
+        private AktSpisaniyaNomenklTitleViewModel myDocument;
         private Guid myId;
         private AktSpisaniyaRowViewModel myCurrentRow;
 
@@ -37,7 +37,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         #region Constructors
 
-        public AktSpisaniyaNomenkl_TitleWIndowViewModel()
+        public AktSpisaniyaNomenklTitleWIndowViewModel()
         {
             Id = Document.Id;
             BaseRepository = new GenericKursDBRepository<AktSpisaniyaNomenkl_Title>(unitOfWork);
@@ -45,11 +45,11 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             WindowName = "Акт списания";
-            Document = new AktSpisaniyaNomenkl_TitleViewModel(AktSpisaniyaNomenklTitleRepository.CreateNew(), RowStatus.NewRow);
+            Document = new AktSpisaniyaNomenklTitleViewModel(AktSpisaniyaNomenklTitleRepository.CreateNew(), RowStatus.NewRow);
             
         }
 
-        public AktSpisaniyaNomenkl_TitleWIndowViewModel(Guid id)
+        public AktSpisaniyaNomenklTitleWIndowViewModel(Guid id)
         {
             Id = id;
             BaseRepository = new GenericKursDBRepository<AktSpisaniyaNomenkl_Title>(unitOfWork);
@@ -69,7 +69,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public ObservableCollection<AktSpisaniyaRowViewModel> SelectedRows { set; get; }
             = new ObservableCollection<AktSpisaniyaRowViewModel>();
 
-        public AktSpisaniyaNomenkl_TitleViewModel Document
+        public AktSpisaniyaNomenklTitleViewModel Document
         {
             get => myDocument;
             set

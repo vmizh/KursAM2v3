@@ -56,7 +56,7 @@ namespace Core.EntityViewModel.AktSpisaniya
             Entity = DefaultValue();
         }
 
-        public AktSpisaniyaRowViewModel(AktSpisaniya_row entity, AktSpisaniyaNomenkl_TitleViewModel parent = null)
+        public AktSpisaniyaRowViewModel(AktSpisaniya_row entity, AktSpisaniyaNomenklTitleViewModel parent = null)
         {
             Entity = entity ?? DefaultValue();
             Parent = parent;

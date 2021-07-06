@@ -319,7 +319,7 @@
     <Compile Include="ViewModel\Dogovora\DogovorResult.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorClientWindowViewModel.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorClientSearchViewModel.cs" />
-    <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenkl_TitleWIndowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklTitleWIndowViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOut.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOutRow.cs" />
