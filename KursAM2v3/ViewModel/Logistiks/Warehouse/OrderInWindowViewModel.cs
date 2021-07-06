@@ -89,7 +89,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public bool IsCanChangedWarehouseType => Document?.Sender == null;
 
         public override string WindowName =>
-            $"Приходный складской ордер №{Document?.DD_IN_NUM}/{Document?.DD_EXT_NUM} от {Document?.DD_DATE}";
+            $"Приходный складской ордер №{Document?.DD_IN_NUM}/{Document?.DD_EXT_NUM} от {Document?.Date}";
 
         #endregion
 
@@ -169,7 +169,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             Document.DD_POLUCH_NAME = Document.WarehouseIn.Name;
             Document.DD_OTRPAV_NAME = Document.Sender;
-            Document.DD_TYPE_DC = 2010000001;
+            Document.Entity.DD_TYPE_DC = 2010000001;
             var dc = orderManager.SaveOrderIn(Document);
             if (dc > 0)
             {

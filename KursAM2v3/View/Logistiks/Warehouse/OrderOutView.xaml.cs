@@ -127,7 +127,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                 case nameof(doc.DD_EXT_NUM):
                     e.Item.Width = 350;
                     break;
-                case nameof(doc.DD_DATE):
+                case nameof(doc.Date):
                     e.Item.Width = 150;
                     break;
 

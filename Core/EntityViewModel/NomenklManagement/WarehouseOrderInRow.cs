@@ -66,7 +66,7 @@ namespace Core.EntityViewModel.NomenklManagement
             {
                 if (Parent is WarehouseOrderIn p)
                     return
-                        $"Приходный складской ордер {p.DD_IN_NUM}/{p.DD_EXT_NUM} от {p.DD_DATE.ToShortDateString()} {p.Note}";
+                        $"Приходный складской ордер {p.DD_IN_NUM}/{p.DD_EXT_NUM} от {p.Date.ToShortDateString()} {p.Note}";
                 return myName;
             }
         }

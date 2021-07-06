@@ -172,7 +172,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 foreach (var r in Document.Rows)
                 {
-                    r.MaxQuantity = NomenklManager.GetNomenklCount(Document.DD_DATE, r.DDT_NOMENKL_DC,
+                    r.MaxQuantity = NomenklManager.GetNomenklCount(Document.Date, r.DDT_NOMENKL_DC,
                                         Document.WarehouseOut.DOC_CODE) + r.DDT_KOL_RASHOD;
                     r.myState = RowStatus.NotEdited;
                 }
@@ -203,7 +203,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             foreach (var n in nomenkls)
                 if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode && !n.IsUsluga))
                 {
-                    var m = NomenklCalculationManager.NomenklRemain(Document.DD_DATE, n.DocCode,
+                    var m = NomenklCalculationManager.NomenklRemain(Document.Date, n.DocCode,
                         Document.WarehouseOut.DOC_CODE);
                     if (m <= 0)
                     {

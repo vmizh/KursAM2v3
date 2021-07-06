@@ -163,7 +163,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     e.Item.IsReadOnly = true;
                     e.Item.Width = 250;
                     break;
-                case nameof(doc.DD_DATE):
+                case nameof(doc.Date):
                     e.Item.Width = 150;
                     break;
                 case nameof(doc.CREATOR):

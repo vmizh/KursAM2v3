@@ -52,16 +52,18 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
-        public decimal DD_TYPE_DC
-        {
-            get => Entity.DD_TYPE_DC;
-            set
-            {
-                if (Entity.DD_TYPE_DC == value) return;
-                Entity.DD_TYPE_DC = value;
-                RaisePropertyChanged();
-            }
-        }
+        //public decimal DD_TYPE_DC
+        //{
+        //    get => Entity.DD_TYPE_DC;
+        //    set
+        //    {
+        //        if (Entity.DD_TYPE_DC == value) return;
+        //        Entity.DD_TYPE_DC = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
+
+        public string DocTypeName => SD_201?.D_NAME;
 
         public MaterialDocumentType DocumentType
         {
@@ -76,7 +78,7 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
-        public DateTime DD_DATE
+        public DateTime Date
         {
             get => Entity.DD_DATE;
             set
@@ -1239,91 +1241,7 @@ namespace Core.EntityViewModel.NomenklManagement
 
         public void UpdateFrom(SD_24 ent)
         {
-            DD_TYPE_DC = ent.DD_TYPE_DC;
-            DD_DATE = ent.DD_DATE;
-            DD_IN_NUM = ent.DD_IN_NUM;
-            DD_EXT_NUM = ent.DD_EXT_NUM;
-            DD_SKLAD_OTPR_DC = ent.DD_SKLAD_OTPR_DC;
-            DD_SKLAD_POL_DC = ent.DD_SKLAD_POL_DC;
-            DD_KONTR_OTPR_DC = ent.DD_KONTR_OTPR_DC;
-            DD_KONTR_POL_DC = ent.DD_KONTR_POL_DC;
-            DD_KLADOV_TN = ent.DD_KLADOV_TN;
-            DD_EXECUTED = ent.DD_EXECUTED;
-            DD_POLUCHATEL_TN = ent.DD_POLUCHATEL_TN;
-            DD_OTRPAV_NAME = ent.DD_OTRPAV_NAME;
-            DD_POLUCH_NAME = ent.DD_POLUCH_NAME;
-            DD_KTO_SDAL_TN = ent.DD_KTO_SDAL_TN;
-            DD_KOMU_PEREDANO = ent.DD_KOMU_PEREDANO;
-            DD_OT_KOGO_POLUCHENO = ent.DD_OT_KOGO_POLUCHENO;
-            DD_GRUZOOTPRAVITEL = ent.DD_GRUZOOTPRAVITEL;
-            DD_GRUZOPOLUCHATEL = ent.DD_GRUZOPOLUCHATEL;
-            DD_OTPUSK_NA_SKLAD_DC = ent.DD_OTPUSK_NA_SKLAD_DC;
-            DD_PRIHOD_SO_SKLADA_DC = ent.DD_PRIHOD_SO_SKLADA_DC;
-            DD_SHABLON = ent.DD_SHABLON;
-            DD_VED_VIDACH_DC = ent.DD_VED_VIDACH_DC;
-            DD_PERIOD_DC = ent.DD_PERIOD_DC;
-            DD_TREB_NUM = ent.DD_TREB_NUM;
-            DD_TREB_DATE = ent.DD_TREB_DATE;
-            DD_TREB_DC = ent.DD_TREB_DC;
-            CREATOR = ent.CREATOR;
-            DD_PODTVERZHDEN = ent.DD_PODTVERZHDEN;
-            DD_OSN_OTGR_DC = ent.DD_OSN_OTGR_DC;
-            DD_SCHET = ent.DD_SCHET;
-            DD_DOVERENNOST = ent.DD_DOVERENNOST;
-            DD_NOSZATR_ID = ent.DD_NOSZATR_ID;
-            DD_NOSZATR_DC = ent.DD_NOSZATR_DC;
-            DD_DOGOVOR_POKUPKI_DC = ent.DD_DOGOVOR_POKUPKI_DC;
-            DD_NOTES = ent.DD_NOTES;
-            DD_KONTR_CRS_DC = ent.DD_KONTR_CRS_DC;
-            DD_KONTR_CRS_RATE = ent.DD_KONTR_CRS_RATE;
-            DD_UCHET_VALUTA_DC = ent.DD_UCHET_VALUTA_DC;
-            DD_UCHET_VALUTA_RATE = ent.DD_UCHET_VALUTA_RATE;
-            DD_SPOST_DC = ent.DD_SPOST_DC;
-            DD_SFACT_DC = ent.DD_SFACT_DC;
-            DD_VOZVRAT = ent.DD_VOZVRAT;
-            DD_OTPRAV_TYPE = ent.DD_OTPRAV_TYPE;
-            DD_POLUCH_TYPE = ent.DD_POLUCH_TYPE;
-            DD_LISTOV_SERVIFICATOV = ent.DD_LISTOV_SERVIFICATOV;
-            DD_VIEZD_FLAG = ent.DD_VIEZD_FLAG;
-            DD_VIEZD_MASHINE = ent.DD_VIEZD_MASHINE;
-            DD_VIEZD_CREATOR = ent.DD_VIEZD_CREATOR;
-            DD_VIEZD_DATE = ent.DD_VIEZD_DATE;
-            DD_KONTR_POL_FILIAL_DC = ent.DD_KONTR_POL_FILIAL_DC;
-            DD_KONTR_POL_FILIAL_CODE = ent.DD_KONTR_POL_FILIAL_CODE;
-            DD_PROZV_PROCESS_DC = ent.DD_PROZV_PROCESS_DC;
-            TSTAMP = ent.TSTAMP;
-            OWNER_ID = ent.OWNER_ID;
-            OWNER_TEXT = ent.OWNER_TEXT;
-            CONSIGNEE_ID = ent.CONSIGNEE_ID;
-            CONSIGNEE_TEXT = ent.CONSIGNEE_TEXT;
-            BUYER_ID = ent.BUYER_ID;
-            BUYER_TEXT = ent.BUYER_TEXT;
-            SHIPMENT_ID = ent.SHIPMENT_ID;
-            SHIPMENT_TEXT = ent.SHIPMENT_TEXT;
-            SUPPLIER_ID = ent.SUPPLIER_ID;
-            SUPPLIER_TEXT = ent.SUPPLIER_TEXT;
-            GRUZO_INFO_ID = ent.GRUZO_INFO_ID;
-            GROZO_REQUISITE = ent.GROZO_REQUISITE;
-            SD_112 = ent.SD_112;
-            SD_131 = ent.SD_131;
-            SD_189 = ent.SD_189;
-            SD_2 = ent.SD_2;
-            SD_201 = ent.SD_201;
-            SD_9 = ent.SD_9;
-            SD_84 = ent.SD_84;
-            SD_26 = ent.SD_26;
-            SD_242 = ent.SD_242;
-            SD_257 = ent.SD_257;
-            SD_432 = ent.SD_432;
-            XD_43 = ent.XD_43;
-            SD_301 = ent.SD_301;
-            SD_3011 = ent.SD_3011;
-            SD_43 = ent.SD_43;
-            SD_433 = ent.SD_433;
-            SD_27 = ent.SD_27;
-            SD_271 = ent.SD_271;
-            SD_272 = ent.SD_272;
-            SD_273 = ent.SD_273;
+            
         }
 
         public
@@ -1331,91 +1249,7 @@ namespace Core.EntityViewModel.NomenklManagement
             (SD_24
                 ent)
         {
-            ent.DD_TYPE_DC = DD_TYPE_DC;
-            ent.DD_DATE = DD_DATE;
-            ent.DD_IN_NUM = DD_IN_NUM;
-            ent.DD_EXT_NUM = DD_EXT_NUM;
-            ent.DD_SKLAD_OTPR_DC = DD_SKLAD_OTPR_DC;
-            ent.DD_SKLAD_POL_DC = DD_SKLAD_POL_DC;
-            ent.DD_KONTR_OTPR_DC = DD_KONTR_OTPR_DC;
-            ent.DD_KONTR_POL_DC = DD_KONTR_POL_DC;
-            ent.DD_KLADOV_TN = DD_KLADOV_TN;
-            ent.DD_EXECUTED = DD_EXECUTED;
-            ent.DD_POLUCHATEL_TN = DD_POLUCHATEL_TN;
-            ent.DD_OTRPAV_NAME = DD_OTRPAV_NAME;
-            ent.DD_POLUCH_NAME = DD_POLUCH_NAME;
-            ent.DD_KTO_SDAL_TN = DD_KTO_SDAL_TN;
-            ent.DD_KOMU_PEREDANO = DD_KOMU_PEREDANO;
-            ent.DD_OT_KOGO_POLUCHENO = DD_OT_KOGO_POLUCHENO;
-            ent.DD_GRUZOOTPRAVITEL = DD_GRUZOOTPRAVITEL;
-            ent.DD_GRUZOPOLUCHATEL = DD_GRUZOPOLUCHATEL;
-            ent.DD_OTPUSK_NA_SKLAD_DC = DD_OTPUSK_NA_SKLAD_DC;
-            ent.DD_PRIHOD_SO_SKLADA_DC = DD_PRIHOD_SO_SKLADA_DC;
-            ent.DD_SHABLON = DD_SHABLON;
-            ent.DD_VED_VIDACH_DC = DD_VED_VIDACH_DC;
-            ent.DD_PERIOD_DC = DD_PERIOD_DC;
-            ent.DD_TREB_NUM = DD_TREB_NUM;
-            ent.DD_TREB_DATE = DD_TREB_DATE;
-            ent.DD_TREB_DC = DD_TREB_DC;
-            ent.CREATOR = CREATOR;
-            ent.DD_PODTVERZHDEN = DD_PODTVERZHDEN;
-            ent.DD_OSN_OTGR_DC = DD_OSN_OTGR_DC;
-            ent.DD_SCHET = DD_SCHET;
-            ent.DD_DOVERENNOST = DD_DOVERENNOST;
-            ent.DD_NOSZATR_ID = DD_NOSZATR_ID;
-            ent.DD_NOSZATR_DC = DD_NOSZATR_DC;
-            ent.DD_DOGOVOR_POKUPKI_DC = DD_DOGOVOR_POKUPKI_DC;
-            ent.DD_NOTES = DD_NOTES;
-            ent.DD_KONTR_CRS_DC = DD_KONTR_CRS_DC;
-            ent.DD_KONTR_CRS_RATE = DD_KONTR_CRS_RATE;
-            ent.DD_UCHET_VALUTA_DC = DD_UCHET_VALUTA_DC;
-            ent.DD_UCHET_VALUTA_RATE = DD_UCHET_VALUTA_RATE;
-            ent.DD_SPOST_DC = DD_SPOST_DC;
-            ent.DD_SFACT_DC = DD_SFACT_DC;
-            ent.DD_VOZVRAT = DD_VOZVRAT;
-            ent.DD_OTPRAV_TYPE = DD_OTPRAV_TYPE;
-            ent.DD_POLUCH_TYPE = DD_POLUCH_TYPE;
-            ent.DD_LISTOV_SERVIFICATOV = DD_LISTOV_SERVIFICATOV;
-            ent.DD_VIEZD_FLAG = DD_VIEZD_FLAG;
-            ent.DD_VIEZD_MASHINE = DD_VIEZD_MASHINE;
-            ent.DD_VIEZD_CREATOR = DD_VIEZD_CREATOR;
-            ent.DD_VIEZD_DATE = DD_VIEZD_DATE;
-            ent.DD_KONTR_POL_FILIAL_DC = DD_KONTR_POL_FILIAL_DC;
-            ent.DD_KONTR_POL_FILIAL_CODE = DD_KONTR_POL_FILIAL_CODE;
-            ent.DD_PROZV_PROCESS_DC = DD_PROZV_PROCESS_DC;
-            ent.TSTAMP = TSTAMP;
-            ent.OWNER_ID = OWNER_ID;
-            ent.OWNER_TEXT = OWNER_TEXT;
-            ent.CONSIGNEE_ID = CONSIGNEE_ID;
-            ent.CONSIGNEE_TEXT = CONSIGNEE_TEXT;
-            ent.BUYER_ID = BUYER_ID;
-            ent.BUYER_TEXT = BUYER_TEXT;
-            ent.SHIPMENT_ID = SHIPMENT_ID;
-            ent.SHIPMENT_TEXT = SHIPMENT_TEXT;
-            ent.SUPPLIER_ID = SUPPLIER_ID;
-            ent.SUPPLIER_TEXT = SUPPLIER_TEXT;
-            ent.GRUZO_INFO_ID = GRUZO_INFO_ID;
-            ent.GROZO_REQUISITE = GROZO_REQUISITE;
-            ent.SD_112 = SD_112;
-            ent.SD_131 = SD_131;
-            ent.SD_189 = SD_189;
-            ent.SD_2 = SD_2;
-            ent.SD_201 = SD_201;
-            ent.SD_9 = SD_9;
-            ent.SD_84 = SD_84;
-            ent.SD_26 = SD_26;
-            ent.SD_242 = SD_242;
-            ent.SD_257 = SD_257;
-            ent.SD_432 = SD_432;
-            ent.XD_43 = XD_43;
-            ent.SD_301 = SD_301;
-            ent.SD_3011 = SD_3011;
-            ent.SD_43 = SD_43;
-            ent.SD_433 = SD_433;
-            ent.SD_27 = SD_27;
-            ent.SD_271 = SD_271;
-            ent.SD_272 = SD_272;
-            ent.SD_273 = SD_273;
+            
         }
 
         public SD_24 DefaultValue()

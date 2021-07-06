@@ -76,7 +76,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells["K19"].Value = receiver.GruzoRequisiteForWaybill;
             sheet.Cells["K24"].Value = vm.Document.KontragentReceiver.GruzoRequisiteForWaybill;
             sheet["AE33"].Value = vm.Document.DD_EXT_NUM ?? vm.Document.DD_IN_NUM.ToString();
-            sheet["AR33"].Value = vm.Document.DD_DATE.ToShortDateString();
+            sheet["AR33"].Value = vm.Document.Date.ToShortDateString();
             sheet["BX5"].Value = receiver.OKPO;
             sheet["BX14"].Value = vm.Document.KontragentReceiver.OKPO;
             sheet["BX17"].Value = receiver.OKPO;
