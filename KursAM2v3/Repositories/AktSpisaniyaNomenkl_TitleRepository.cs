@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Core.EntityViewModel.Dogovora;
-using Core.EntityViewModel.Invoices;
+﻿using Core;
 using Data;
 using Data.Repository;
-using KursAM2.Repositories.DogovorsRepositories;
-using KursAM2.ViewModel.Dogovora;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 
 namespace KursAM2.Repositories
 {
@@ -17,9 +13,13 @@ namespace KursAM2.Repositories
         AktSpisaniyaNomenkl_Title AktSpisaniya { set; get; }
 
         AktSpisaniyaNomenkl_Title GetByGuidId(Guid id);
-        AktSpisaniyaNomenkl_Title GetFullCopy(AktSpisaniyaNomenkl_Title doc);
-        AktSpisaniyaNomenkl_Title GetRequisiteCopy(AktSpisaniyaNomenkl_Title doc);
+
         AktSpisaniyaNomenkl_Title CreateNew();
+
+        List<AktSpisaniyaNomenkl_Title> GetAllByDates(DateTime dateStart, DateTime dateEnd);
+
+        List<AktSpisaniyaNomenkl_Title> GetAllByWarehouse(decimal warehouseDC);
+
 
         // List<LinkDocumentInfo> GetLinkDocuments();
 
@@ -37,26 +37,42 @@ namespace KursAM2.Repositories
         {
         }
 
-        public AktSpisaniyaNomenkl_Title AktSpisaniya { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public AktSpisaniyaNomenkl_Title CreateNew()
-        {
-            throw new NotImplementedException();
-        }
+        public AktSpisaniyaNomenkl_Title AktSpisaniya { get; set; }
 
         public AktSpisaniyaNomenkl_Title GetByGuidId(Guid id)
         {
-            throw new NotImplementedException();
+            return Context.AktSpisaniyaNomenkl_Title
+                .Include(_ => _.SD_27)
+                .Include(_ => _.AktSpisaniya_row)
+                .FirstOrDefault(_ => _.Id == id);
         }
 
-        public AktSpisaniyaNomenkl_Title GetFullCopy(AktSpisaniyaNomenkl_Title doc)
+        public AktSpisaniyaNomenkl_Title CreateNew()
         {
-            throw new NotImplementedException();
+            var item = new AktSpisaniyaNomenkl_Title()
+            {
+                Id = Guid.NewGuid(),
+                Creator = GlobalOptions.UserInfo.NickName,
+                Date_Doc = DateTime.Today
+            };
+            Context.AktSpisaniyaNomenkl_Title.Add(item);
+            return item;
         }
 
-        public AktSpisaniyaNomenkl_Title GetRequisiteCopy(AktSpisaniyaNomenkl_Title doc)
+        public List<AktSpisaniyaNomenkl_Title> GetAllByDates(DateTime dateStart, DateTime dateEnd)
         {
-            throw new NotImplementedException();
+            return Context.AktSpisaniyaNomenkl_Title
+                .Include(_ => _.SD_27)
+                .Include(_ => _.AktSpisaniya_row)
+                .Where(_ => _.Date_Doc >= dateStart && _.Date_Doc <= dateEnd).ToList();
+        }
+
+        public List<AktSpisaniyaNomenkl_Title> GetAllByWarehouse(decimal warehouseDC)
+        {
+            return Context.AktSpisaniyaNomenkl_Title
+                .Include(_ => _.SD_27)
+                .Include(_ => _.AktSpisaniya_row)
+                .Where(_ => _.Warehouse_DC == warehouseDC).ToList();
         }
     }
 }
