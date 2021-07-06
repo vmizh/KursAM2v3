@@ -34,7 +34,7 @@
                                       dxlc:LayoutControl.AllowHorizontalSizing="True">
                         <dxg:TreeListControl
                             Name="treeListPermissionStruct"
-                            AutoGenerateColumns="AddNew"
+                            AutoGenerateColumns="None"
                             EnableSmartColumnsGeneration="True"
                             HorizontalAlignment="Stretch"
                             MaxHeight="10000"
@@ -42,18 +42,39 @@
                             VerticalAlignment="Stretch"
                             dx:DXSerializer.SerializationID="treeListPermissionStruct"
                             dx:DXSerializer.StoreLayoutMode="All"
-                            dxg:DataControlSerializationOptions.AddNewColumns="False"
-                            dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                            dxg:DataControlSerializationOptions.AddNewColumns="True"
+                            dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                             CurrentItem="{Binding CurrentGroup}"
                             ItemsSource="{Binding NomenklGroup}"
-                            IsEnabled="{Binding IsNotUsluga, UpdateSourceTrigger=LostFocus}">
+                            IsEnabled="{Binding IsNotUsluga, UpdateSourceTrigger=LostFocus}"
+                            AutoGeneratingColumn="TreeListPermissionStruct_OnAutoGeneratingColumn">
+                            <dxg:TreeListControl.Columns>
+                                <dxg:TreeListColumn x:Name="tcol_1"
+                                                    Header="Наименование"
+                                                    FieldName="Name"
+                                                    AllowEditing="False" />
+                                <dxg:TreeListColumn x:Name="tcol_2"
+                                                    Header="Кол-во номенклатур"
+                                                    FieldName="NomenklCount"
+                                                    AllowEditing="False" />
+                            </dxg:TreeListControl.Columns>
                             <dxg:TreeListControl.View>
                                 <dxg:TreeListView ShowTotalSummary="False"
                                                   Name="treeListPermissionStructView"
                                                   ParentFieldName="CAT_PARENT_DC"
                                                   KeyFieldName="DocCode"
                                                   ShowAutoFilterRow="False"
-                                                  EnableImmediatePosting="True" />
+                                                  EnableImmediatePosting="True">
+                                    <dxg:TreeListView.FormatConditions>
+                                        <dxg:FormatCondition FieldName="Name"
+                                                             Expression="[NomenklCount] > 0">
+                                            <dxg:FormatCondition.Format>  
+                                                <dx:Format FontWeight="Bold" />  
+                                            </dxg:FormatCondition.Format>  
+
+                                        </dxg:FormatCondition>
+                                    </dxg:TreeListView.FormatConditions>
+                                </dxg:TreeListView>
                             </dxg:TreeListControl.View>
                         </dxg:TreeListControl>
                         <dxlc:LayoutGroup dxlc:LayoutControl.AllowHorizontalSizing="True">

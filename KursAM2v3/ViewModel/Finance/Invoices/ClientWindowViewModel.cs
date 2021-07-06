@@ -17,8 +17,6 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
-using DevExpress.Data;
-using DevExpress.Xpf.Grid;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;

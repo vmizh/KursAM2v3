@@ -416,6 +416,9 @@
     <Compile Include="View\Base\KursBaseWindow.xaml.cs">
       <DependentUpon>KursBaseWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Base\SelectDialogView2.xaml.cs">
+      <DependentUpon>SelectDialogView2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Behaviors\SelectAllOnGotFocusBehavior.cs" />
     <Compile Include="View\DialogUserControl\AddNomenklFromInvoiceClientUC.xaml.cs">
       <DependentUpon>AddNomenklFromInvoiceClientUC.xaml</DependentUpon>
@@ -1126,6 +1129,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Base\KursBaseWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Base\SelectDialogView2.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

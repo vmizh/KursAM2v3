@@ -80,7 +80,7 @@ namespace KursAM2.Dialogs
             {
                 WindowName = "Выбор номенклатур"
             };
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var dlg = new SelectDialogView2 {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;

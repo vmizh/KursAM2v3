@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Grid;
 using LayoutManager;
 
 namespace KursAM2.View.Logistiks.UC
@@ -6,31 +7,16 @@ namespace KursAM2.View.Logistiks.UC
     /// <summary>
     ///     Interaction logic for AddNomenklUC.xaml
     /// </summary>
-    public partial class AddNomenklUC : ILayout
+    public partial class AddNomenklUC 
     {
         public AddNomenklUC()
         {
             InitializeComponent();
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, mainControl);
-            Loaded += UserControl_Loaded;
-            Unloaded += UserControl_Unloaded;
         }
 
-        public LayoutManager.LayoutManager LayoutManager { get; set; }
-        public string LayoutManagerName { get; set; }
-        public void SaveLayout()
+        private void TreeListPermissionStruct_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
-            LayoutManager.Save();
-        }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            LayoutManager.Load();
-        }
-
-        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            LayoutManager.Save();
+            e.Column.Name = e.Column.FieldName;
         }
     }
 }

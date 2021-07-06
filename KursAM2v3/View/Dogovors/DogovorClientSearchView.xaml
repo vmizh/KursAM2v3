@@ -28,17 +28,10 @@
             <dxe:DateEdit Width="120" EditValue="{Binding DateEnd}"
                 IsEnabled="{Binding IsDateEnabled}"/>
         </StackPanel>
-        <dxg:GridControl Name="gridDocuments" Margin="0,10,0,0" 
-                         AutoGenerateColumns="AddNew"
-            EnableSmartColumnsGeneration="True" 
-                         HorizontalAlignment="Stretch" 
-            MaxHeight="10000"
-            MaxWidth="10000" 
-            VerticalAlignment="Stretch"
-            dx:DXSerializer.SerializationID="gridDocuments" dx:DXSerializer.StoreLayoutMode="All"
-            dxg:DataControlSerializationOptions.AddNewColumns="True"
-            dxg:DataControlSerializationOptions.RemoveOldColumns="True" 
-            SelectionMode="Row"
+        <dxg:GridControl 
+            Style="{StaticResource GridControl.Search}"
+            Name="gridDocuments" Margin="0,10,0,0" 
+            dx:DXSerializer.SerializationID="gridDocuments" 
             ItemsSource="{Binding Documents, UpdateSourceTrigger=PropertyChanged}"
             CurrentItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
             AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn"

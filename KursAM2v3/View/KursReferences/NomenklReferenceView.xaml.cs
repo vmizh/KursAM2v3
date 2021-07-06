@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using DevExpress.Utils;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Reference.Nomenkl;
@@ -26,6 +25,7 @@ namespace KursAM2.View.KursReferences
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -86,20 +86,4 @@ namespace KursAM2.View.KursReferences
                 r.NomenklNumber += " " + r.Currency.Name;
         }
     }
-
-    //public class Conv : MarkupExtension, IValueConverter
-    //{
-    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    //    {
-    //        return value;
-    //    }
-    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //    public override object ProvideValue(IServiceProvider serviceProvider)
-    //    {
-    //        return this;
-    //    }
-    //}
 }

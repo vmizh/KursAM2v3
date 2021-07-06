@@ -206,7 +206,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     e.Item.Content = senderEdit;
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.MinWidth = 600;
-                    if (doc.DD_SPOST_DC != null)
+                    if (doc.Entity.DD_SPOST_DC != null)
                         senderEdit.AllowDefaultButton = false;
                     break;
                 case nameof(doc.DD_SCHET):
@@ -222,7 +222,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                         ToolTip = "Установить связь со счетом",
                         Tag = "Add"
                     };
-                    if (ctx.Document.DD_SPOST_DC != null)
+                    if (ctx.Document.Entity.DD_SPOST_DC != null)
                         addSchet.IsEnabled = false;
                     addSchet.Click += Schet_DefaultButtonClick;
                     var delSchet = new ButtonInfo
@@ -231,7 +231,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                         ToolTip = "Удалить связь со счетом",
                         Tag = "Del"
                     };
-                    if (ctx.Document.DD_SPOST_DC == null)
+                    if (ctx.Document.Entity.DD_SPOST_DC == null)
                         delSchet.IsEnabled = false;
                     delSchet.Click += DelSchet_Click;
                     var openSchet = new ButtonInfo
@@ -240,7 +240,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                         ToolTip = "Открыть счет",
                         Tag = "Open"
                     };
-                    if (ctx.Document.DD_SPOST_DC == null)
+                    if (ctx.Document.Entity.DD_SPOST_DC == null)
                         openSchet.IsEnabled = false;
                     openSchet.Click += OpenSchet_Click;
                     schetEdit.Buttons.Add(addSchet);
@@ -280,8 +280,8 @@ namespace KursAM2.View.Logistiks.Warehouse
         private void OpenSchet_Click(object sender, RoutedEventArgs e)
         {
             var dtx = DataContext as OrderInWindowViewModel;
-            if (dtx == null || dtx.Document == null || dtx.Document.DD_SPOST_DC == null) return;
-            DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal) dtx.Document.DD_SPOST_DC);
+            if (dtx == null || dtx.Document == null || dtx.Document.Entity.DD_SPOST_DC == null) return;
+            DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal) dtx.Document.Entity.DD_SPOST_DC);
         }
 
         private void DelSchet_Click(object sender, RoutedEventArgs e)
@@ -292,14 +292,14 @@ namespace KursAM2.View.Logistiks.Warehouse
             var dtx = DataContext as OrderInWindowViewModel;
             if (dtx == null) return;
             var delList =
-                new List<WarehouseOrderInRow>(dtx.Document.Rows.Where(_ => _.DDT_SPOST_DC == dtx.Document.DD_SPOST_DC));
+                new List<WarehouseOrderInRow>(dtx.Document.Rows.Where(_ => _.DDT_SPOST_DC == dtx.Document.Entity.DD_SPOST_DC));
             foreach (var r in delList)
             {
                 if (r.State != RowStatus.NewRow) dtx.Document.DeletedRows.Add(r);
                 dtx.Document.Rows.Remove(r);
             }
 
-            dtx.Document.DD_SPOST_DC = null;
+            dtx.Document.Entity.DD_SPOST_DC = null;
             dtx.Document.DD_SCHET = null;
             var delBtn = schetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Del");
             if (delBtn != null) delBtn.IsEnabled = false;
@@ -393,7 +393,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                 }
             }
 
-            if (dtx.Document.DD_SPOST_DC == null)
+            if (dtx.Document.Entity.DD_SPOST_DC == null)
                 using (var context = GlobalOptions.GetEntities())
                 {
                     var s26 = context.SD_26.FirstOrDefault(_ => _.DOC_CODE == ctx.CurrentInvoice.DocCode);
@@ -402,7 +402,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                         dtx.Document.DD_SCHET =
                             $"№{s26.SF_POSTAV_NUM}/{s26.SF_IN_NUM} " +
                             $"от {s26.SF_POSTAV_DATE.ToShortDateString()} ";
-                        dtx.Document.DD_SPOST_DC = ctx.CurrentInvoice.DocCode;
+                        dtx.Document.Entity.DD_SPOST_DC = ctx.CurrentInvoice.DocCode;
                     }
                 }
 

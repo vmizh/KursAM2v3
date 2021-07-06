@@ -112,7 +112,7 @@ namespace KursAM2.View.Logistiks.Warehouse
             var delBtn = SchetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Del");
             var addBtn = SchetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Add");
             var openBtn = SchetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Open");
-            if (dtx.Document.DD_SFACT_DC == null)
+            if (dtx.Document.Entity.DD_SFACT_DC == null)
             {
                 if (delBtn != null) delBtn.IsEnabled = false;
                 if (addBtn != null) addBtn.IsEnabled = true;
@@ -189,7 +189,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                         Tag = "Add",
                         IsEnabled = false
                     };
-                    if (ctx.Document.DD_SFACT_DC != null)
+                    if (ctx.Document.Entity.DD_SFACT_DC != null)
                         addSchet.IsEnabled = false;
                     addSchet.Click += Schet_DefaultButtonClick;
                     var delSchet = new ButtonInfo
@@ -199,7 +199,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                         Tag = "Del",
                         IsEnabled = false
                     };
-                    if (ctx.Document.DD_SFACT_DC == null)
+                    if (ctx.Document.Entity.DD_SFACT_DC == null)
                         delSchet.IsEnabled = false;
                     delSchet.Click += DelSchet_Click;
                     var openSchet = new ButtonInfo
@@ -218,7 +218,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.MinWidth = 600;
                     break;
-                case nameof(doc.DD_NOTES):
+                case nameof(doc.Note):
                     ViewFluentHelper.SetDefaultMemoEdit(e.Item);
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.MinWidth = 300;
@@ -281,14 +281,14 @@ namespace KursAM2.View.Logistiks.Warehouse
             var dtx = DataContext as WaybillWindowViewModel;
             if (dtx == null) return;
             var delList =
-                new List<WaybillRow>(dtx.Document.Rows.Where(_ => _.DDT_SFACT_DC == dtx.Document.DD_SFACT_DC));
+                new List<WaybillRow>(dtx.Document.Rows.Where(_ => _.DDT_SFACT_DC == dtx.Document.Entity.DD_SFACT_DC));
             foreach (var r in delList)
             {
                 if (r.State != RowStatus.NewRow) dtx.Document.DeletedRows.Add(r);
                 dtx.Document.Rows.Remove(r);
             }
 
-            dtx.Document.DD_SFACT_DC = null;
+            dtx.Document.Entity.DD_SFACT_DC = null;
             dtx.Document.DD_SCHET = null;
             var delBtn = SchetEdit.Buttons.FirstOrDefault(_ => (string) _.Tag == "Del");
             if (delBtn != null) delBtn.IsEnabled = false;
@@ -301,9 +301,9 @@ namespace KursAM2.View.Logistiks.Warehouse
         private void OpenSchet_Click(object sender, RoutedEventArgs e)
         {
             var dtx = DataContext as WaybillWindowViewModel;
-            if (dtx?.Document != null && dtx.Document.DD_SFACT_DC != null)
+            if (dtx?.Document != null && dtx.Document.Entity.DD_SFACT_DC != null)
                 // ReSharper disable once PossibleInvalidOperationException
-                DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal) dtx.Document.DD_SFACT_DC);
+                DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal) dtx.Document.Entity.DD_SFACT_DC);
         }
     }
 }

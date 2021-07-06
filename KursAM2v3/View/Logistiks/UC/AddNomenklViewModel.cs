@@ -48,6 +48,8 @@ namespace KursAM2.View.Logistiks.UC
         public List<Nomenkl> ListNomenklCollection { set; get; } =
             new List<Nomenkl>();
 
+        public override string LayoutName => "DialogSelectNomenklLayout2";
+
         public NomenklGroup CurrentGroup
         {
             set
@@ -141,10 +143,35 @@ namespace KursAM2.View.Logistiks.UC
                             RaisePropertiesChanged(nameof(NomenklItem));
                         }
                 }
+
+                CalcCommonSum();
             }
             catch (Exception e)
             {
                 WindowManager.ShowError(e);
+            }
+        }
+
+        private void CalcCommonSum()
+        {
+            var parents = NomenklGroup.Select(_ => _.ParentDC).Distinct().ToList();
+            var lasts = new List<NomenklGroup>();
+            foreach (var n in NomenklGroup)
+                if (parents.All(_ => _ != n.DocCode))
+                    lasts.Add(n);
+            foreach (var node in lasts)
+            {
+                node.NomenklCount = MainReferences.ALLNomenkls.Values.Count(_ => _.NOM_CATEG_DC == node.DocCode);
+                var prevn = node;
+                var n = NomenklGroup.FirstOrDefault(_ => _.DocCode == node.ParentDC);
+                if (n == null) continue;
+                while (n != null)
+                {
+                    var c = MainReferences.ALLNomenkls.Values.Count(_ => _.NOM_CATEG_DC == n.DocCode);
+                    n.NomenklCount = n.NomenklCount + prevn.NomenklCount + c;
+                    prevn = n;
+                    n = NomenklGroup.FirstOrDefault(_ => _.DocCode == n.ParentDC);
+                }
             }
         }
 

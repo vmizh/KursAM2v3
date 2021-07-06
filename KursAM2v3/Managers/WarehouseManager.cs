@@ -6,7 +6,6 @@ using System.Windows;
 using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -50,6 +49,7 @@ namespace KursAM2.Managers
                 Console.WriteLine(e);
                 throw;
             }
+
             return result;
         }
 
@@ -111,6 +111,7 @@ namespace KursAM2.Managers
                 myErrorMessager.WriteErrorMessage(e, "Ошибка", "$WarehouseManager.GetOrderIn {dc}");
                 return null;
             }
+
             return result;
         }
 
@@ -143,6 +144,7 @@ namespace KursAM2.Managers
                 r.DocCode = -1;
                 r.State = RowStatus.NewRow;
             }
+
             return res;
         }
 
@@ -163,6 +165,7 @@ namespace KursAM2.Managers
                 r.DocCode = -1;
                 r.State = RowStatus.NewRow;
             }
+
             return res;
         }
 
@@ -212,6 +215,7 @@ namespace KursAM2.Managers
                             if (oldrow == null) continue;
                             ctx.TD_24.Remove(oldrow);
                         }
+
                         if (doc.DocCode == -1)
                         {
                             var guidId = Guid.NewGuid();
@@ -224,11 +228,11 @@ namespace KursAM2.Managers
                                 DD_DATE = doc.Date,
                                 DD_IN_NUM = inNum,
                                 DD_EXT_NUM = doc.DD_EXT_NUM,
-                                DD_SKLAD_OTPR_DC = doc.DD_SKLAD_OTPR_DC,
-                                DD_SKLAD_POL_DC = doc.DD_SKLAD_POL_DC,
-                                DD_KONTR_OTPR_DC = doc.DD_KONTR_OTPR_DC,
-                                DD_KONTR_POL_DC = doc.DD_KONTR_POL_DC,
-                                DD_KLADOV_TN = doc.DD_KLADOV_TN,
+                                DD_SKLAD_OTPR_DC = doc.Entity.DD_SKLAD_OTPR_DC,
+                                DD_SKLAD_POL_DC = doc.Entity.DD_SKLAD_POL_DC,
+                                DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC,
+                                DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC,
+                                DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN,
                                 DD_EXECUTED = doc.DD_EXECUTED,
                                 DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN,
                                 DD_OTRPAV_NAME = doc.DD_OTRPAV_NAME,
@@ -238,11 +242,11 @@ namespace KursAM2.Managers
                                 DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO,
                                 DD_GRUZOOTPRAVITEL = doc.DD_GRUZOOTPRAVITEL,
                                 DD_GRUZOPOLUCHATEL = doc.DD_GRUZOPOLUCHATEL,
-                                DD_OTPUSK_NA_SKLAD_DC = doc.DD_OTPUSK_NA_SKLAD_DC,
-                                DD_PRIHOD_SO_SKLADA_DC = doc.DD_PRIHOD_SO_SKLADA_DC,
+                                DD_OTPUSK_NA_SKLAD_DC = doc.Entity.DD_OTPUSK_NA_SKLAD_DC,
+                                DD_PRIHOD_SO_SKLADA_DC = doc.Entity.DD_PRIHOD_SO_SKLADA_DC,
                                 DD_SHABLON = doc.DD_SHABLON,
                                 DD_VED_VIDACH_DC = doc.DD_VED_VIDACH_DC,
-                                DD_PERIOD_DC = doc.DD_PERIOD_DC,
+                                DD_PERIOD_DC = doc.Entity.DD_PERIOD_DC,
                                 DD_TREB_NUM = doc.DD_TREB_NUM,
                                 DD_TREB_DATE = doc.DD_TREB_DATE,
                                 DD_TREB_DC = doc.DD_TREB_DC,
@@ -254,14 +258,14 @@ namespace KursAM2.Managers
                                 DD_NOSZATR_ID = doc.DD_NOSZATR_ID,
                                 DD_NOSZATR_DC = doc.DD_NOSZATR_DC,
                                 DD_DOGOVOR_POKUPKI_DC = doc.DD_DOGOVOR_POKUPKI_DC,
-                                DD_NOTES = doc.DD_NOTES,
+                                DD_NOTES = doc.Note,
                                 DD_KONTR_CRS_DC = doc.DD_KONTR_CRS_DC,
                                 DD_KONTR_CRS_RATE = doc.DD_KONTR_CRS_RATE,
                                 DD_UCHET_VALUTA_DC = doc.DD_UCHET_VALUTA_DC,
                                 DD_UCHET_VALUTA_RATE = doc.DD_UCHET_VALUTA_RATE,
-                                DD_SPOST_DC = doc.DD_SPOST_DC,
-                                DD_SFACT_DC = doc.DD_SFACT_DC,
-                                DD_VOZVRAT = doc.DD_VOZVRAT,
+                                DD_SPOST_DC = doc.Entity.DD_SPOST_DC,
+                                DD_SFACT_DC = doc.Entity.DD_SFACT_DC,
+                                DD_VOZVRAT = doc.Entity.DD_VOZVRAT,
                                 DD_OTPRAV_TYPE = doc.DD_OTPRAV_TYPE,
                                 DD_POLUCH_TYPE = doc.DD_POLUCH_TYPE,
                                 DD_LISTOV_SERVIFICATOV = doc.DD_LISTOV_SERVIFICATOV,
@@ -390,11 +394,11 @@ namespace KursAM2.Managers
                             old.DD_DATE = doc.Date;
                             old.DD_IN_NUM = doc.DD_IN_NUM;
                             old.DD_EXT_NUM = doc.DD_EXT_NUM;
-                            old.DD_SKLAD_OTPR_DC = doc.DD_SKLAD_OTPR_DC;
-                            old.DD_SKLAD_POL_DC = doc.DD_SKLAD_POL_DC;
-                            old.DD_KONTR_OTPR_DC = doc.DD_KONTR_OTPR_DC;
-                            old.DD_KONTR_POL_DC = doc.DD_KONTR_POL_DC;
-                            old.DD_KLADOV_TN = doc.DD_KLADOV_TN;
+                            old.DD_SKLAD_OTPR_DC = doc.Entity.DD_SKLAD_OTPR_DC;
+                            old.DD_SKLAD_POL_DC = doc.Entity.DD_SKLAD_POL_DC;
+                            old.DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC;
+                            old.DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC;
+                            old.DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN;
                             old.DD_EXECUTED = doc.DD_EXECUTED;
                             old.DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN;
                             old.DD_OTRPAV_NAME = doc.DD_OTRPAV_NAME;
@@ -404,11 +408,11 @@ namespace KursAM2.Managers
                             old.DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO;
                             old.DD_GRUZOOTPRAVITEL = doc.DD_GRUZOOTPRAVITEL;
                             old.DD_GRUZOPOLUCHATEL = doc.DD_GRUZOPOLUCHATEL;
-                            old.DD_OTPUSK_NA_SKLAD_DC = doc.DD_OTPUSK_NA_SKLAD_DC;
-                            old.DD_PRIHOD_SO_SKLADA_DC = doc.DD_PRIHOD_SO_SKLADA_DC;
+                            old.DD_OTPUSK_NA_SKLAD_DC = doc.Entity.DD_OTPUSK_NA_SKLAD_DC;
+                            old.DD_PRIHOD_SO_SKLADA_DC = doc.Entity.DD_PRIHOD_SO_SKLADA_DC;
                             old.DD_SHABLON = doc.DD_SHABLON;
                             old.DD_VED_VIDACH_DC = doc.DD_VED_VIDACH_DC;
-                            old.DD_PERIOD_DC = doc.DD_PERIOD_DC;
+                            old.DD_PERIOD_DC = doc.Entity.DD_PERIOD_DC;
                             old.DD_TREB_NUM = doc.DD_TREB_NUM;
                             old.DD_TREB_DATE = doc.DD_TREB_DATE;
                             old.DD_TREB_DC = doc.DD_TREB_DC;
@@ -420,14 +424,14 @@ namespace KursAM2.Managers
                             old.DD_NOSZATR_ID = doc.DD_NOSZATR_ID;
                             old.DD_NOSZATR_DC = doc.DD_NOSZATR_DC;
                             old.DD_DOGOVOR_POKUPKI_DC = doc.DD_DOGOVOR_POKUPKI_DC;
-                            old.DD_NOTES = doc.DD_NOTES;
+                            old.DD_NOTES = doc.Note;
                             old.DD_KONTR_CRS_DC = doc.DD_KONTR_CRS_DC;
                             old.DD_KONTR_CRS_RATE = doc.DD_KONTR_CRS_RATE;
                             old.DD_UCHET_VALUTA_DC = doc.DD_UCHET_VALUTA_DC;
                             old.DD_UCHET_VALUTA_RATE = doc.DD_UCHET_VALUTA_RATE;
-                            old.DD_SPOST_DC = doc.DD_SPOST_DC;
-                            old.DD_SFACT_DC = doc.DD_SFACT_DC;
-                            old.DD_VOZVRAT = doc.DD_VOZVRAT;
+                            old.DD_SPOST_DC = doc.Entity.DD_SPOST_DC;
+                            old.DD_SFACT_DC = doc.Entity.DD_SFACT_DC;
+                            old.DD_VOZVRAT = doc.Entity.DD_VOZVRAT;
                             old.DD_OTPRAV_TYPE = doc.DD_OTPRAV_TYPE;
                             old.DD_POLUCH_TYPE = doc.DD_POLUCH_TYPE;
                             old.DD_LISTOV_SERVIFICATOV = doc.DD_LISTOV_SERVIFICATOV;
@@ -628,6 +632,7 @@ namespace KursAM2.Managers
                                 }
                             }
                         }
+
                         ctx.SaveChanges();
                         var wManager = new WindowManager();
                         foreach (var r in doc.Rows)
@@ -665,13 +670,13 @@ namespace KursAM2.Managers
                                 calc.Save(ops);
                             var c = NomenklCalculationManager.NomenklRemain(ctx, DateTime.Today, n,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                (decimal) doc.DD_SKLAD_POL_DC);
+                                (decimal) doc.Entity.DD_SKLAD_POL_DC);
                             if (c < 0)
-                            { 
+                            {
                                 var nom = MainReferences.GetNomenkl(n);
                                 var res = wManager.ShowWinUIMessageBox($"По товару {nom.NomenklNumber} {nom.Name} " +
-                                                                       $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_POL_DC]} в кол-ве {c}." +
-                                                                       $"Все равно сохранить?",
+                                                                       $"склад {MainReferences.Warehouses[(decimal) doc.Entity.DD_SKLAD_POL_DC]} в кол-ве {c}." +
+                                                                       "Все равно сохранить?",
                                     "Отрицательные остатки", MessageBoxButton.YesNo,
                                     MessageBoxImage.Warning);
                                 switch (res)
@@ -684,6 +689,7 @@ namespace KursAM2.Managers
                                 }
                             }
                         }
+
                         transaction.Commit();
                         doc.myState = RowStatus.NotEdited;
                         foreach (var r in doc.Rows) r.State = RowStatus.NotEdited;
@@ -718,6 +724,7 @@ namespace KursAM2.Managers
                                 if (oldrow != null)
                                     ctx.TD_24.Remove(oldrow);
                             }
+
                         var olddoc = ctx.SD_24.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
                         if (olddoc != null)
                             ctx.SD_24.Remove(olddoc);
@@ -730,17 +737,18 @@ namespace KursAM2.Managers
                                 calc.Save(ops);
                             var c = NomenklCalculationManager.GetNomenklStoreRemain(ctx, DateTime.Today, n,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                (decimal) doc.DD_SKLAD_POL_DC);
+                                (decimal) doc.Entity.DD_SKLAD_POL_DC);
                             if (c < 0)
                             {
                                 transaction.Rollback();
                                 var nom = MainReferences.GetNomenkl(n);
                                 WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
-                                                          $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_POL_DC]} в кол-ве {c} ",
+                                                          $"склад {MainReferences.Warehouses[(decimal) doc.Entity.DD_SKLAD_POL_DC]} в кол-ве {c} ",
                                     "Отрицательные остатки", MessageBoxImage.Error);
                                 return;
                             }
                         }
+
                         transaction.Commit();
                     }
                     catch (Exception ex)
@@ -816,6 +824,7 @@ namespace KursAM2.Managers
                 Console.WriteLine(e);
                 return null;
             }
+
             return result;
         }
 
@@ -842,6 +851,7 @@ namespace KursAM2.Managers
                 r.DOC_CODE = -1;
                 r.State = RowStatus.NewRow;
             }
+
             var doc = new WarehouseOrderOut(old.Entity) {State = RowStatus.NewRow};
             return doc;
         }
@@ -881,6 +891,7 @@ namespace KursAM2.Managers
                             if (oldrow == null) continue;
                             ctx.TD_24.Remove(oldrow);
                         }
+
                         if (doc.DocCode == -1)
                         {
                             var guidId = Guid.NewGuid();
@@ -893,11 +904,11 @@ namespace KursAM2.Managers
                                 DD_DATE = doc.Date,
                                 DD_IN_NUM = inNum,
                                 DD_EXT_NUM = doc.DD_EXT_NUM,
-                                DD_SKLAD_OTPR_DC = doc.DD_SKLAD_OTPR_DC,
-                                DD_SKLAD_POL_DC = doc.DD_SKLAD_POL_DC,
-                                DD_KONTR_OTPR_DC = doc.DD_KONTR_OTPR_DC,
-                                DD_KONTR_POL_DC = doc.DD_KONTR_POL_DC,
-                                DD_KLADOV_TN = doc.DD_KLADOV_TN,
+                                DD_SKLAD_OTPR_DC = doc.Entity.DD_SKLAD_OTPR_DC,
+                                DD_SKLAD_POL_DC = doc.Entity.DD_SKLAD_POL_DC,
+                                DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC,
+                                DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC,
+                                DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN,
                                 DD_EXECUTED = doc.DD_EXECUTED,
                                 DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN,
                                 DD_OTRPAV_NAME = doc.DD_OTRPAV_NAME,
@@ -907,11 +918,11 @@ namespace KursAM2.Managers
                                 DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO,
                                 DD_GRUZOOTPRAVITEL = doc.DD_GRUZOOTPRAVITEL,
                                 DD_GRUZOPOLUCHATEL = doc.DD_GRUZOPOLUCHATEL,
-                                DD_OTPUSK_NA_SKLAD_DC = doc.DD_OTPUSK_NA_SKLAD_DC,
-                                DD_PRIHOD_SO_SKLADA_DC = doc.DD_PRIHOD_SO_SKLADA_DC,
+                                DD_OTPUSK_NA_SKLAD_DC = doc.Entity.DD_OTPUSK_NA_SKLAD_DC,
+                                DD_PRIHOD_SO_SKLADA_DC = doc.Entity.DD_PRIHOD_SO_SKLADA_DC,
                                 DD_SHABLON = doc.DD_SHABLON,
                                 DD_VED_VIDACH_DC = doc.DD_VED_VIDACH_DC,
-                                DD_PERIOD_DC = doc.DD_PERIOD_DC,
+                                DD_PERIOD_DC = doc.Entity.DD_PERIOD_DC,
                                 DD_TREB_NUM = doc.DD_TREB_NUM,
                                 DD_TREB_DATE = doc.DD_TREB_DATE,
                                 DD_TREB_DC = doc.DD_TREB_DC,
@@ -923,14 +934,14 @@ namespace KursAM2.Managers
                                 DD_NOSZATR_ID = doc.DD_NOSZATR_ID,
                                 DD_NOSZATR_DC = doc.DD_NOSZATR_DC,
                                 DD_DOGOVOR_POKUPKI_DC = doc.DD_DOGOVOR_POKUPKI_DC,
-                                DD_NOTES = doc.DD_NOTES,
+                                DD_NOTES = doc.Note,
                                 DD_KONTR_CRS_DC = doc.DD_KONTR_CRS_DC,
                                 DD_KONTR_CRS_RATE = doc.DD_KONTR_CRS_RATE,
                                 DD_UCHET_VALUTA_DC = doc.DD_UCHET_VALUTA_DC,
                                 DD_UCHET_VALUTA_RATE = doc.DD_UCHET_VALUTA_RATE,
-                                DD_SPOST_DC = doc.DD_SPOST_DC,
-                                DD_SFACT_DC = doc.DD_SFACT_DC,
-                                DD_VOZVRAT = doc.DD_VOZVRAT,
+                                DD_SPOST_DC = doc.Entity.DD_SPOST_DC,
+                                DD_SFACT_DC = doc.Entity.DD_SFACT_DC,
+                                DD_VOZVRAT = doc.Entity.DD_VOZVRAT,
                                 DD_OTPRAV_TYPE = doc.DD_OTPRAV_TYPE,
                                 DD_POLUCH_TYPE = doc.DD_POLUCH_TYPE,
                                 DD_LISTOV_SERVIFICATOV = doc.DD_LISTOV_SERVIFICATOV,
@@ -1059,11 +1070,11 @@ namespace KursAM2.Managers
                             old.DD_DATE = doc.Date;
                             old.DD_IN_NUM = doc.DD_IN_NUM;
                             old.DD_EXT_NUM = doc.DD_EXT_NUM;
-                            old.DD_SKLAD_OTPR_DC = doc.DD_SKLAD_OTPR_DC;
-                            old.DD_SKLAD_POL_DC = doc.DD_SKLAD_POL_DC;
-                            old.DD_KONTR_OTPR_DC = doc.DD_KONTR_OTPR_DC;
-                            old.DD_KONTR_POL_DC = doc.DD_KONTR_POL_DC;
-                            old.DD_KLADOV_TN = doc.DD_KLADOV_TN;
+                            old.DD_SKLAD_OTPR_DC = doc.Entity.DD_SKLAD_OTPR_DC;
+                            old.DD_SKLAD_POL_DC = doc.Entity.DD_SKLAD_POL_DC;
+                            old.DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC;
+                            old.DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC;
+                            old.DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN;
                             old.DD_EXECUTED = doc.DD_EXECUTED;
                             old.DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN;
                             old.DD_OTRPAV_NAME = doc.DD_OTRPAV_NAME;
@@ -1073,11 +1084,11 @@ namespace KursAM2.Managers
                             old.DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO;
                             old.DD_GRUZOOTPRAVITEL = doc.DD_GRUZOOTPRAVITEL;
                             old.DD_GRUZOPOLUCHATEL = doc.DD_GRUZOPOLUCHATEL;
-                            old.DD_OTPUSK_NA_SKLAD_DC = doc.DD_OTPUSK_NA_SKLAD_DC;
-                            old.DD_PRIHOD_SO_SKLADA_DC = doc.DD_PRIHOD_SO_SKLADA_DC;
+                            old.DD_OTPUSK_NA_SKLAD_DC = doc.Entity.DD_OTPUSK_NA_SKLAD_DC;
+                            old.DD_PRIHOD_SO_SKLADA_DC = doc.Entity.DD_PRIHOD_SO_SKLADA_DC;
                             old.DD_SHABLON = doc.DD_SHABLON;
                             old.DD_VED_VIDACH_DC = doc.DD_VED_VIDACH_DC;
-                            old.DD_PERIOD_DC = doc.DD_PERIOD_DC;
+                            old.DD_PERIOD_DC = doc.Entity.DD_PERIOD_DC;
                             old.DD_TREB_NUM = doc.DD_TREB_NUM;
                             old.DD_TREB_DATE = doc.DD_TREB_DATE;
                             old.DD_TREB_DC = doc.DD_TREB_DC;
@@ -1089,14 +1100,14 @@ namespace KursAM2.Managers
                             old.DD_NOSZATR_ID = doc.DD_NOSZATR_ID;
                             old.DD_NOSZATR_DC = doc.DD_NOSZATR_DC;
                             old.DD_DOGOVOR_POKUPKI_DC = doc.DD_DOGOVOR_POKUPKI_DC;
-                            old.DD_NOTES = doc.DD_NOTES;
+                            old.DD_NOTES = doc.Note;
                             old.DD_KONTR_CRS_DC = doc.DD_KONTR_CRS_DC;
                             old.DD_KONTR_CRS_RATE = doc.DD_KONTR_CRS_RATE;
                             old.DD_UCHET_VALUTA_DC = doc.DD_UCHET_VALUTA_DC;
                             old.DD_UCHET_VALUTA_RATE = doc.DD_UCHET_VALUTA_RATE;
-                            old.DD_SPOST_DC = doc.DD_SPOST_DC;
-                            old.DD_SFACT_DC = doc.DD_SFACT_DC;
-                            old.DD_VOZVRAT = doc.DD_VOZVRAT;
+                            old.DD_SPOST_DC = doc.Entity.DD_SPOST_DC;
+                            old.DD_SFACT_DC = doc.Entity.DD_SFACT_DC;
+                            old.DD_VOZVRAT = doc.Entity.DD_VOZVRAT;
                             old.DD_OTPRAV_TYPE = doc.DD_OTPRAV_TYPE;
                             old.DD_POLUCH_TYPE = doc.DD_POLUCH_TYPE;
                             old.DD_LISTOV_SERVIFICATOV = doc.DD_LISTOV_SERVIFICATOV;
@@ -1297,6 +1308,7 @@ namespace KursAM2.Managers
                                 }
                             }
                         }
+
                         ctx.SaveChanges();
                         var calc = new NomenklCostMediumSliding(ctx);
                         foreach (var n in doc.Rows.Select(_ => _.Nomenkl.DocCode))
@@ -1306,18 +1318,19 @@ namespace KursAM2.Managers
                                 calc.Save(ops);
                             var c = NomenklCalculationManager.NomenklRemain(ctx, doc.Date, n,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                (decimal) doc.DD_SKLAD_OTPR_DC);
+                                (decimal) doc.Entity.DD_SKLAD_OTPR_DC);
                             if (c < 0)
                             {
                                 transaction.Rollback();
                                 var nom = MainReferences.GetNomenkl(n);
                                 WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
                                                           // ReSharper disable once PossibleInvalidOperationException
-                                                          $"склад {MainReferences.Warehouses[(decimal) doc.DD_SKLAD_OTPR_DC]} в кол-ве {c} ",
+                                                          $"склад {MainReferences.Warehouses[(decimal) doc.Entity.DD_SKLAD_OTPR_DC]} в кол-ве {c} ",
                                     "Отрицательные остатки", MessageBoxImage.Error);
                                 return -1;
                             }
                         }
+
                         transaction.Commit();
                         doc.myState = RowStatus.NotEdited;
                         foreach (var r in doc.Rows) r.myState = RowStatus.NotEdited;
@@ -1352,6 +1365,7 @@ namespace KursAM2.Managers
                                 if (oldrow != null)
                                     ctx.TD_24.Remove(oldrow);
                             }
+
                         var olddoc = ctx.SD_24.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
                         if (olddoc != null)
                             ctx.SD_24.Remove(olddoc);
@@ -1435,6 +1449,7 @@ namespace KursAM2.Managers
                 Console.WriteLine(e);
                 return null;
             }
+
             return result;
         }
 
@@ -1467,6 +1482,7 @@ namespace KursAM2.Managers
                 r.DocCode = -1;
                 r.State = RowStatus.NewRow;
             }
+
             return res;
         }
 
@@ -1487,6 +1503,7 @@ namespace KursAM2.Managers
                 r.DocCode = -1;
                 r.State = RowStatus.NewRow;
             }
+
             return res;
         }
 
@@ -1535,6 +1552,7 @@ namespace KursAM2.Managers
                             if (oldrow == null) continue;
                             ctx.TD_24.Remove(oldrow);
                         }
+
                         if (doc.DocCode == -1)
                         {
                             var guidId = Guid.NewGuid();
@@ -1547,11 +1565,11 @@ namespace KursAM2.Managers
                                 DD_DATE = doc.Date,
                                 DD_IN_NUM = inNum,
                                 DD_EXT_NUM = doc.DD_EXT_NUM,
-                                DD_SKLAD_OTPR_DC = doc.DD_SKLAD_OTPR_DC,
-                                DD_SKLAD_POL_DC = doc.DD_SKLAD_POL_DC,
-                                DD_KONTR_OTPR_DC = doc.DD_KONTR_OTPR_DC,
-                                DD_KONTR_POL_DC = doc.DD_KONTR_POL_DC,
-                                DD_KLADOV_TN = doc.DD_KLADOV_TN,
+                                DD_SKLAD_OTPR_DC = doc.Entity.DD_SKLAD_OTPR_DC,
+                                DD_SKLAD_POL_DC = doc.Entity.DD_SKLAD_POL_DC,
+                                DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC,
+                                DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC,
+                                DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN,
                                 DD_EXECUTED = doc.DD_EXECUTED,
                                 DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN,
                                 DD_OTRPAV_NAME = doc.DD_OTRPAV_NAME,
@@ -1561,11 +1579,11 @@ namespace KursAM2.Managers
                                 DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO,
                                 DD_GRUZOOTPRAVITEL = doc.DD_GRUZOOTPRAVITEL,
                                 DD_GRUZOPOLUCHATEL = doc.DD_GRUZOPOLUCHATEL,
-                                DD_OTPUSK_NA_SKLAD_DC = doc.DD_OTPUSK_NA_SKLAD_DC,
-                                DD_PRIHOD_SO_SKLADA_DC = doc.DD_PRIHOD_SO_SKLADA_DC,
+                                DD_OTPUSK_NA_SKLAD_DC = doc.Entity.DD_OTPUSK_NA_SKLAD_DC,
+                                DD_PRIHOD_SO_SKLADA_DC = doc.Entity.DD_PRIHOD_SO_SKLADA_DC,
                                 DD_SHABLON = doc.DD_SHABLON,
                                 DD_VED_VIDACH_DC = doc.DD_VED_VIDACH_DC,
-                                DD_PERIOD_DC = doc.DD_PERIOD_DC,
+                                DD_PERIOD_DC = doc.Entity.DD_PERIOD_DC,
                                 DD_TREB_NUM = doc.DD_TREB_NUM,
                                 DD_TREB_DATE = doc.DD_TREB_DATE,
                                 DD_TREB_DC = doc.DD_TREB_DC,
@@ -1577,14 +1595,14 @@ namespace KursAM2.Managers
                                 DD_NOSZATR_ID = doc.DD_NOSZATR_ID,
                                 DD_NOSZATR_DC = doc.DD_NOSZATR_DC,
                                 DD_DOGOVOR_POKUPKI_DC = doc.DD_DOGOVOR_POKUPKI_DC,
-                                DD_NOTES = doc.DD_NOTES,
+                                DD_NOTES = doc.Note,
                                 DD_KONTR_CRS_DC = doc.DD_KONTR_CRS_DC,
                                 DD_KONTR_CRS_RATE = doc.DD_KONTR_CRS_RATE,
                                 DD_UCHET_VALUTA_DC = doc.DD_UCHET_VALUTA_DC,
                                 DD_UCHET_VALUTA_RATE = doc.DD_UCHET_VALUTA_RATE,
-                                DD_SPOST_DC = doc.DD_SPOST_DC,
-                                DD_SFACT_DC = doc.DD_SFACT_DC,
-                                DD_VOZVRAT = doc.DD_VOZVRAT,
+                                DD_SPOST_DC = doc.Entity.DD_SPOST_DC,
+                                DD_SFACT_DC = doc.Entity.DD_SFACT_DC,
+                                DD_VOZVRAT = doc.Entity.DD_VOZVRAT,
                                 DD_OTPRAV_TYPE = doc.DD_OTPRAV_TYPE,
                                 DD_POLUCH_TYPE = doc.DD_POLUCH_TYPE,
                                 DD_LISTOV_SERVIFICATOV = doc.DD_LISTOV_SERVIFICATOV,
@@ -1713,11 +1731,11 @@ namespace KursAM2.Managers
                             old.DD_DATE = doc.Date;
                             old.DD_IN_NUM = doc.DD_IN_NUM;
                             old.DD_EXT_NUM = doc.DD_EXT_NUM;
-                            old.DD_SKLAD_OTPR_DC = doc.DD_SKLAD_OTPR_DC;
-                            old.DD_SKLAD_POL_DC = doc.DD_SKLAD_POL_DC;
-                            old.DD_KONTR_OTPR_DC = doc.DD_KONTR_OTPR_DC;
-                            old.DD_KONTR_POL_DC = doc.DD_KONTR_POL_DC;
-                            old.DD_KLADOV_TN = doc.DD_KLADOV_TN;
+                            old.DD_SKLAD_OTPR_DC = doc.Entity.DD_SKLAD_OTPR_DC;
+                            old.DD_SKLAD_POL_DC = doc.Entity.DD_SKLAD_POL_DC;
+                            old.DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC;
+                            old.DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC;
+                            old.DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN;
                             old.DD_EXECUTED = doc.DD_EXECUTED;
                             old.DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN;
                             old.DD_OTRPAV_NAME = doc.DD_OTRPAV_NAME;
@@ -1727,11 +1745,11 @@ namespace KursAM2.Managers
                             old.DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO;
                             old.DD_GRUZOOTPRAVITEL = doc.DD_GRUZOOTPRAVITEL;
                             old.DD_GRUZOPOLUCHATEL = doc.DD_GRUZOPOLUCHATEL;
-                            old.DD_OTPUSK_NA_SKLAD_DC = doc.DD_OTPUSK_NA_SKLAD_DC;
-                            old.DD_PRIHOD_SO_SKLADA_DC = doc.DD_PRIHOD_SO_SKLADA_DC;
+                            old.DD_OTPUSK_NA_SKLAD_DC = doc.Entity.DD_OTPUSK_NA_SKLAD_DC;
+                            old.DD_PRIHOD_SO_SKLADA_DC = doc.Entity.DD_PRIHOD_SO_SKLADA_DC;
                             old.DD_SHABLON = doc.DD_SHABLON;
                             old.DD_VED_VIDACH_DC = doc.DD_VED_VIDACH_DC;
-                            old.DD_PERIOD_DC = doc.DD_PERIOD_DC;
+                            old.DD_PERIOD_DC = doc.Entity.DD_PERIOD_DC;
                             old.DD_TREB_NUM = doc.DD_TREB_NUM;
                             old.DD_TREB_DATE = doc.DD_TREB_DATE;
                             old.DD_TREB_DC = doc.DD_TREB_DC;
@@ -1743,14 +1761,14 @@ namespace KursAM2.Managers
                             old.DD_NOSZATR_ID = doc.DD_NOSZATR_ID;
                             old.DD_NOSZATR_DC = doc.DD_NOSZATR_DC;
                             old.DD_DOGOVOR_POKUPKI_DC = doc.DD_DOGOVOR_POKUPKI_DC;
-                            old.DD_NOTES = doc.DD_NOTES;
+                            old.DD_NOTES = doc.Note;
                             old.DD_KONTR_CRS_DC = doc.DD_KONTR_CRS_DC;
                             old.DD_KONTR_CRS_RATE = doc.DD_KONTR_CRS_RATE;
                             old.DD_UCHET_VALUTA_DC = doc.DD_UCHET_VALUTA_DC;
                             old.DD_UCHET_VALUTA_RATE = doc.DD_UCHET_VALUTA_RATE;
-                            old.DD_SPOST_DC = doc.DD_SPOST_DC;
-                            old.DD_SFACT_DC = doc.DD_SFACT_DC;
-                            old.DD_VOZVRAT = doc.DD_VOZVRAT;
+                            old.DD_SPOST_DC = doc.Entity.DD_SPOST_DC;
+                            old.DD_SFACT_DC = doc.Entity.DD_SFACT_DC;
+                            old.DD_VOZVRAT = doc.Entity.DD_VOZVRAT;
                             old.DD_OTPRAV_TYPE = doc.DD_OTPRAV_TYPE;
                             old.DD_POLUCH_TYPE = doc.DD_POLUCH_TYPE;
                             old.DD_LISTOV_SERVIFICATOV = doc.DD_LISTOV_SERVIFICATOV;
@@ -1951,13 +1969,11 @@ namespace KursAM2.Managers
                                 }
                             }
                         }
+
                         ctx.SaveChanges();
                         var nomDCList = new List<decimal>();
-                        foreach (var n in doc.Rows.Select(_ => _.Nomenkl.DocCode))
-                        {
-                            nomDCList.Add(n);
-                        }
-                        NomenklManager.RecalcPrice(nomDCList,ctx);
+                        foreach (var n in doc.Rows.Select(_ => _.Nomenkl.DocCode)) nomDCList.Add(n);
+                        NomenklManager.RecalcPrice(nomDCList, ctx);
                         transaction.Commit();
                         doc.myState = RowStatus.NotEdited;
                         foreach (var r in doc.Rows) r.myState = RowStatus.NotEdited;
@@ -1992,6 +2008,7 @@ namespace KursAM2.Managers
                                 if (oldrow != null)
                                     ctx.TD_24.Remove(oldrow);
                             }
+
                         var olddoc = ctx.SD_24.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
                         if (olddoc != null)
                             ctx.SD_24.Remove(olddoc);
@@ -2019,7 +2036,7 @@ namespace KursAM2.Managers
             var res = new List<Waybill>();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var data =ctx.SD_24
+                var data = ctx.SD_24
                     .Include(_ => _.TD_24)
                     .Include("TD_24.TD_26")
                     .Include("TD_24.TD_26.SD_26")
@@ -2048,10 +2065,7 @@ namespace KursAM2.Managers
                     .Include("TD_24.TD_26")
                     .Include("TD_24.TD_241")
                     .Where(_ => _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd && _.DD_TYPE_DC == 2010000012).ToList();
-                foreach (var d in data)
-                {
-                    res.Add(new Waybill(d));
-                }
+                foreach (var d in data) res.Add(new Waybill(d));
             }
 
             return res;

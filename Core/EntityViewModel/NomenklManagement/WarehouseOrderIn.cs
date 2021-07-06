@@ -26,12 +26,12 @@ namespace Core.EntityViewModel.NomenklManagement
         public WarehouseOrderIn(SD_24 entity) : base(entity)
         {
             biling = new ObservableCollection<InvoiceProviderRow>();
-            if (DD_SKLAD_POL_DC != null)
-                WarehouseIn = MainReferences.Warehouses[DD_SKLAD_POL_DC.Value];
-            if (DD_KONTR_OTPR_DC != null)
-                KontragentSender = MainReferences.GetKontragent(DD_KONTR_OTPR_DC);
-            if (DD_SKLAD_OTPR_DC != null)
-                WarehouseOut = MainReferences.Warehouses[DD_SKLAD_OTPR_DC.Value];
+            if (Entity.DD_SKLAD_POL_DC != null)
+                WarehouseIn = MainReferences.Warehouses[Entity.DD_SKLAD_POL_DC.Value];
+            if (Entity.DD_KONTR_OTPR_DC != null)
+                KontragentSender = MainReferences.GetKontragent(Entity.DD_KONTR_OTPR_DC);
+            if (Entity.DD_SKLAD_OTPR_DC != null)
+                WarehouseOut = MainReferences.Warehouses[Entity.DD_SKLAD_OTPR_DC.Value];
             if (WarehouseOut != null)
                 WarehouseSenderType = WarehouseSenderType.Store;
             if (KontragentSender != null)
@@ -57,7 +57,7 @@ namespace Core.EntityViewModel.NomenklManagement
 
         public override string Description =>
             $"Приходный складской ордер №{DD_IN_NUM}/{DD_EXT_NUM} от {Date.ToShortDateString()} " +
-            $"на склад {WarehouseOut} от {KontragentSender} {DD_NOTES}";
+            $"на склад {WarehouseOut} от {KontragentSender} {Note}";
 
         public WarehouseSenderType WarehouseSenderType
         {

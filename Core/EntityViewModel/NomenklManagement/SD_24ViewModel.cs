@@ -52,18 +52,7 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
-        //public decimal DD_TYPE_DC
-        //{
-        //    get => Entity.DD_TYPE_DC;
-        //    set
-        //    {
-        //        if (Entity.DD_TYPE_DC == value) return;
-        //        Entity.DD_TYPE_DC = value;
-        //        RaisePropertyChanged();
-        //    }
-        //}
-
-        public string DocTypeName => SD_201?.D_NAME;
+        public string DocTypeName => Entity.SD_201?.D_NAME;
 
         public MaterialDocumentType DocumentType
         {
@@ -111,18 +100,6 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
-        public decimal? DD_SKLAD_OTPR_DC
-        {
-            get => Entity.DD_SKLAD_OTPR_DC;
-            set
-            {
-                if (Entity.DD_SKLAD_OTPR_DC == value) return;
-                Entity.DD_SKLAD_OTPR_DC = value;
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Sender));
-            }
-        }
-
         /// <summary>
         ///     Склад отправитель
         /// </summary>
@@ -133,24 +110,10 @@ namespace Core.EntityViewModel.NomenklManagement
             {
                 if (myWarehouseOut != null && myWarehouseOut.Equals(value)) return;
                 myWarehouseOut = value;
-                DD_SKLAD_OTPR_DC = myWarehouseOut?.DocCode;
+                Entity.DD_SKLAD_OTPR_DC = myWarehouseOut?.DocCode;
                 DD_OTRPAV_NAME = myWarehouseOut?.Name;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Sender));
-            }
-        }
-
-        public decimal? DD_SKLAD_POL_DC
-        {
-            get => Entity.DD_SKLAD_POL_DC;
-            set
-            {
-                if (Entity.DD_SKLAD_POL_DC == value) return;
-                Entity.DD_SKLAD_POL_DC = value;
-                if (Entity.DD_SKLAD_POL_DC != null)
-                    myWarehouseIn = MainReferences.Warehouses[Entity.DD_SKLAD_POL_DC.Value];
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(WarehouseIn));
             }
         }
 
@@ -164,21 +127,10 @@ namespace Core.EntityViewModel.NomenklManagement
             {
                 if (myWarehouseIn != null && myWarehouseIn.Equals(value)) return;
                 myWarehouseIn = value;
-                DD_SKLAD_POL_DC = myWarehouseIn?.DocCode;
+                Entity.DD_SKLAD_POL_DC = myWarehouseIn?.DocCode;
                 DD_POLUCH_NAME = myWarehouseIn?.Name;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Receiver));
-            }
-        }
-
-        public decimal? DD_KONTR_OTPR_DC
-        {
-            get => Entity.DD_KONTR_OTPR_DC;
-            set
-            {
-                if (Entity.DD_KONTR_OTPR_DC == value) return;
-                Entity.DD_KONTR_OTPR_DC = value;
-                RaisePropertyChanged();
             }
         }
 
@@ -194,23 +146,12 @@ namespace Core.EntityViewModel.NomenklManagement
                 myKontragentSender = value;
                 if (myKontragentSender != null)
                 {
-                    DD_KONTR_OTPR_DC = myKontragentSender.DocCode;
+                    Entity.DD_KONTR_OTPR_DC = myKontragentSender.DocCode;
                     DD_OTRPAV_NAME = myKontragentSender.Name;
                 }
 
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Sender));
-            }
-        }
-
-        public decimal? DD_KONTR_POL_DC
-        {
-            get => Entity.DD_KONTR_POL_DC;
-            set
-            {
-                if (Entity.DD_KONTR_POL_DC == value) return;
-                Entity.DD_KONTR_POL_DC = value;
-                RaisePropertyChanged();
             }
         }
 
@@ -226,23 +167,12 @@ namespace Core.EntityViewModel.NomenklManagement
                 myKontragentReceiver = value;
                 if (myKontragentReceiver != null)
                 {
-                    DD_KONTR_POL_DC = myKontragentReceiver.DocCode;
+                    Entity.DD_KONTR_POL_DC = myKontragentReceiver.DocCode;
                     DD_POLUCH_NAME = myKontragentReceiver.Name;
                 }
 
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Sender));
-            }
-        }
-
-        public int? DD_KLADOV_TN
-        {
-            get => Entity.DD_KLADOV_TN;
-            set
-            {
-                if (Entity.DD_KLADOV_TN == value) return;
-                Entity.DD_KLADOV_TN = value;
-                RaisePropertyChanged();
             }
         }
 
@@ -357,17 +287,7 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
-        public decimal? DD_OTPUSK_NA_SKLAD_DC
-        {
-            get => Entity.DD_OTPUSK_NA_SKLAD_DC;
-            set
-            {
-                if (Entity.DD_OTPUSK_NA_SKLAD_DC == value) return;
-                Entity.DD_OTPUSK_NA_SKLAD_DC = value;
-                RaisePropertyChanged();
-            }
-        }
-
+        
         /// <summary>
         ///     Отпуск на склад
         /// </summary>
@@ -379,18 +299,7 @@ namespace Core.EntityViewModel.NomenklManagement
                 if (myOutOnWarehouse != null && myOutOnWarehouse.Equals(value)) return;
                 myOutOnWarehouse = value;
                 if (myOutOnWarehouse != null)
-                    DD_OTPUSK_NA_SKLAD_DC = myOutOnWarehouse.DocCode;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? DD_PRIHOD_SO_SKLADA_DC
-        {
-            get => Entity.DD_PRIHOD_SO_SKLADA_DC;
-            set
-            {
-                if (Entity.DD_PRIHOD_SO_SKLADA_DC == value) return;
-                Entity.DD_PRIHOD_SO_SKLADA_DC = value;
+                    Entity.DD_OTPUSK_NA_SKLAD_DC = myOutOnWarehouse.DocCode;
                 RaisePropertyChanged();
             }
         }
@@ -406,7 +315,7 @@ namespace Core.EntityViewModel.NomenklManagement
                 if (myInFromWarehouse != null && myInFromWarehouse.Equals(value)) return;
                 myInFromWarehouse = value;
                 if (myInFromWarehouse != null)
-                    DD_PRIHOD_SO_SKLADA_DC = myInFromWarehouse.DocCode;
+                    Entity.DD_PRIHOD_SO_SKLADA_DC = myInFromWarehouse.DocCode;
                 RaisePropertyChanged();
             }
         }
@@ -429,17 +338,6 @@ namespace Core.EntityViewModel.NomenklManagement
             {
                 if (Entity.DD_VED_VIDACH_DC == value) return;
                 Entity.DD_VED_VIDACH_DC = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? DD_PERIOD_DC
-        {
-            get => Entity.DD_PERIOD_DC;
-            set
-            {
-                if (Entity.DD_PERIOD_DC == value) return;
-                Entity.DD_PERIOD_DC = value;
                 RaisePropertyChanged();
             }
         }
@@ -577,7 +475,7 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
-        public string DD_NOTES
+        public override string Note
         {
             get => Entity.DD_NOTES;
             set
@@ -604,6 +502,7 @@ namespace Core.EntityViewModel.NomenklManagement
             get => Entity.DD_KONTR_CRS_RATE;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.DD_KONTR_CRS_RATE == value) return;
                 Entity.DD_KONTR_CRS_RATE = value;
                 RaisePropertyChanged();
@@ -626,19 +525,9 @@ namespace Core.EntityViewModel.NomenklManagement
             get => Entity.DD_UCHET_VALUTA_RATE;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.DD_UCHET_VALUTA_RATE == value) return;
                 Entity.DD_UCHET_VALUTA_RATE = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? DD_SPOST_DC
-        {
-            get => Entity.DD_SPOST_DC;
-            set
-            {
-                if (Entity.DD_SPOST_DC == value) return;
-                Entity.DD_SPOST_DC = value;
                 RaisePropertyChanged();
             }
         }
@@ -656,17 +545,6 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
-        public decimal? DD_SFACT_DC
-        {
-            get => Entity.DD_SFACT_DC;
-            set
-            {
-                if (Entity.DD_SFACT_DC == value) return;
-                Entity.DD_SFACT_DC = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public InvoiceClient InvoiceClient
         {
             get => myInvoiceClient;
@@ -675,29 +553,18 @@ namespace Core.EntityViewModel.NomenklManagement
                 if (myInvoiceClient != null && myInvoiceClient.Equals(value)) return;
                 myInvoiceClient = value;
                 if (myInvoiceClient != null && myInvoiceClient.DocCode > 0)
-                    DD_SFACT_DC = myInvoiceClient.DocCode;
-                RaisePropertyChanged();
-            }
-        }
-
-        public short? DD_VOZVRAT
-        {
-            get => Entity.DD_VOZVRAT;
-            set
-            {
-                if (Entity.DD_VOZVRAT == value) return;
-                Entity.DD_VOZVRAT = value;
+                    Entity.DD_SFACT_DC = myInvoiceClient.DocCode;
                 RaisePropertyChanged();
             }
         }
 
         public bool IsVozvrat
         {
-            get => DD_VOZVRAT == 1;
+            get => Entity.DD_VOZVRAT == 1;
             set
             {
-                if (DD_VOZVRAT == (short?) (value ? 1 : 0)) return;
-                DD_VOZVRAT = (short?) (value ? 1 : 0);
+                if (Entity.DD_VOZVRAT == (short?) (value ? 1 : 0)) return;
+                Entity.DD_VOZVRAT = (short?) (value ? 1 : 0);
                 RaisePropertyChanged();
             }
         }
@@ -955,225 +822,7 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
-        public SD_112 SD_112
-        {
-            get => Entity.SD_112;
-            set
-            {
-                if (Entity.SD_112 == value) return;
-                Entity.SD_112 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_131 SD_131
-        {
-            get => Entity.SD_131;
-            set
-            {
-                if (Entity.SD_131 == value) return;
-                Entity.SD_131 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_189 SD_189
-        {
-            get => Entity.SD_189;
-            set
-            {
-                if (Entity.SD_189 == value) return;
-                Entity.SD_189 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_2 SD_2
-        {
-            get => Entity.SD_2;
-            set
-            {
-                if (Entity.SD_2 == value) return;
-                Entity.SD_2 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_201 SD_201
-        {
-            get => Entity.SD_201;
-            set
-            {
-                if (Entity.SD_201 == value) return;
-                Entity.SD_201 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_9 SD_9
-        {
-            get => Entity.SD_9;
-            set
-            {
-                if (Entity.SD_9 == value) return;
-                Entity.SD_9 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_84 SD_84
-        {
-            get => Entity.SD_84;
-            set
-            {
-                if (Entity.SD_84 == value) return;
-                Entity.SD_84 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_26 SD_26
-        {
-            get => Entity.SD_26;
-            set
-            {
-                if (Entity.SD_26 == value) return;
-                Entity.SD_26 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_24 SD_242
-        {
-            get => Entity.SD_242;
-            set
-            {
-                if (Entity.SD_242 == value) return;
-                Entity.SD_242 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_257 SD_257
-        {
-            get => Entity.SD_257;
-            set
-            {
-                if (Entity.SD_257 == value) return;
-                Entity.SD_257 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_432 SD_432
-        {
-            get => Entity.SD_432;
-            set
-            {
-                if (Entity.SD_432 == value) return;
-                Entity.SD_432 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public XD_43 XD_43
-        {
-            get => Entity.XD_43;
-            set
-            {
-                if (Entity.XD_43 == value) return;
-                Entity.XD_43 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_301 SD_301
-        {
-            get => Entity.SD_301;
-            set
-            {
-                if (Entity.SD_301 == value) return;
-                Entity.SD_301 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_301 SD_3011
-        {
-            get => Entity.SD_3011;
-            set
-            {
-                if (Entity.SD_3011 == value) return;
-                Entity.SD_3011 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_43 SD_43
-        {
-            get => Entity.SD_43;
-            set
-            {
-                if (Entity.SD_43 == value) return;
-                Entity.SD_43 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_43 SD_433
-        {
-            get => Entity.SD_433;
-            set
-            {
-                if (Entity.SD_433 == value) return;
-                Entity.SD_433 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_27 SD_27
-        {
-            get => Entity.SD_27;
-            set
-            {
-                if (Entity.SD_27 == value) return;
-                Entity.SD_27 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_27 SD_271
-        {
-            get => Entity.SD_271;
-            set
-            {
-                if (Entity.SD_271 == value) return;
-                Entity.SD_271 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_27 SD_272
-        {
-            get => Entity.SD_272;
-            set
-            {
-                if (Entity.SD_272 == value) return;
-                Entity.SD_272 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_27 SD_273
-        {
-            get => Entity.SD_273;
-            set
-            {
-                if (Entity.SD_273 == value) return;
-                Entity.SD_273 = value;
-                RaisePropertyChanged();
-            }
-        }
+        
 
         public EntityLoadCodition LoadCondition { get; set; }
 
@@ -1199,16 +848,16 @@ namespace Core.EntityViewModel.NomenklManagement
         {
             if (Entity.SD_201 != null)
                 DocumentType = new MaterialDocumentType(Entity.SD_201);
-            if (DD_SKLAD_POL_DC != null && MainReferences.Warehouses.ContainsKey(DD_SKLAD_POL_DC.Value))
-                WarehouseIn = MainReferences.Warehouses[DD_SKLAD_POL_DC.Value];
-            if (DD_SKLAD_OTPR_DC != null && MainReferences.Warehouses.ContainsKey(DD_SKLAD_OTPR_DC.Value))
-                WarehouseOut = MainReferences.Warehouses[DD_SKLAD_OTPR_DC.Value];
-            if (DD_KONTR_OTPR_DC != null)
-                KontragentSender = MainReferences.GetKontragent(DD_KONTR_OTPR_DC);
-            if (DD_KONTR_POL_DC != null)
-                KontragentReceiver = MainReferences.GetKontragent(DD_KONTR_POL_DC);
-            if (DD_OTPUSK_NA_SKLAD_DC != null && MainReferences.Warehouses.ContainsKey(DD_OTPUSK_NA_SKLAD_DC.Value))
-                WarehouseIn = MainReferences.Warehouses[DD_OTPUSK_NA_SKLAD_DC.Value];
+            if (Entity.DD_SKLAD_POL_DC != null && MainReferences.Warehouses.ContainsKey(Entity.DD_SKLAD_POL_DC.Value))
+                WarehouseIn = MainReferences.Warehouses[Entity.DD_SKLAD_POL_DC.Value];
+            if (Entity.DD_SKLAD_OTPR_DC != null && MainReferences.Warehouses.ContainsKey(Entity.DD_SKLAD_OTPR_DC.Value))
+                WarehouseOut = MainReferences.Warehouses[Entity.DD_SKLAD_OTPR_DC.Value];
+            if (Entity.DD_KONTR_OTPR_DC != null)
+                KontragentSender = MainReferences.GetKontragent(Entity.DD_KONTR_OTPR_DC);
+            if (Entity.DD_KONTR_POL_DC != null)
+                KontragentReceiver = MainReferences.GetKontragent(Entity.DD_KONTR_POL_DC);
+            if (Entity.DD_OTPUSK_NA_SKLAD_DC != null && MainReferences.Warehouses.ContainsKey(Entity.DD_OTPUSK_NA_SKLAD_DC.Value))
+                WarehouseIn = MainReferences.Warehouses[Entity.DD_OTPUSK_NA_SKLAD_DC.Value];
             if (Entity.DD_KLADOV_TN != null)
                 Kladovshik =
                     MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == Entity.DD_KLADOV_TN.Value);
@@ -1261,11 +910,13 @@ namespace Core.EntityViewModel.NomenklManagement
             };
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public SD_24 Load(decimal dc, bool isShort = true)
         {
             throw new NotImplementedException();
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public SD_24 Load(Guid id, bool isShort = true)
         {
             throw new NotImplementedException();
