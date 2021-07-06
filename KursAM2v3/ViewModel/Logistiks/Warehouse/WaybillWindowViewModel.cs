@@ -238,7 +238,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (nomenkls == null || nomenkls.Count <= 0) return;
             foreach (var n in nomenkls)
             {
-                var m = NomenklCalculationManager.NomenklRemain(Document.DD_DATE, n.DocCode,
+                var m = NomenklCalculationManager.NomenklRemain(Document.Date, n.DocCode,
                     Document.WarehouseOut.DocCode);
                 if (m <= 0)
                 {
@@ -402,7 +402,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         else
                         {
                             var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-                            var m = NomenklManager.GetNomenklCount(Document.DD_DATE, n.DocCode,
+                            var m = NomenklManager.GetNomenklCount(Document.Date, n.DocCode,
                                 Document.WarehouseOut.DocCode);
                             if (m <= 0)
                             {
@@ -454,7 +454,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             Document.DD_OTRPAV_NAME = Document.WarehouseOut.Name.Length > 50
                 ? Document.WarehouseOut.Name.Substring(0, 50)
                 : Document.WarehouseOut.Name;
-            Document.DD_TYPE_DC = 2010000012;
+            Document.Entity.DD_TYPE_DC = 2010000012;
             var dc = docManager.SaveWaybill(Document);
             if (dc > 0)
             {

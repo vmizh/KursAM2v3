@@ -122,7 +122,7 @@ namespace KursAM2.Managers
                 State = RowStatus.NewRow,
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
-                DD_DATE = DateTime.Today,
+                Date = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name
             };
         }
@@ -135,7 +135,7 @@ namespace KursAM2.Managers
                 State = RowStatus.NewRow,
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
-                DD_DATE = DateTime.Today,
+                Date = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name
             };
             foreach (var r in res.Rows)
@@ -155,7 +155,7 @@ namespace KursAM2.Managers
                 State = RowStatus.NewRow,
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
-                DD_DATE = DateTime.Today,
+                Date = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name
             };
             foreach (var r in res.Rows)
@@ -174,7 +174,7 @@ namespace KursAM2.Managers
                 State = RowStatus.NewRow,
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
-                DD_DATE = DateTime.Today,
+                Date = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name
             };
             ret.Rows.Clear();
@@ -189,7 +189,7 @@ namespace KursAM2.Managers
                 State = RowStatus.NewRow,
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
-                DD_DATE = DateTime.Today,
+                Date = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name
             };
             ret.Rows.Clear();
@@ -220,8 +220,8 @@ namespace KursAM2.Managers
                             ctx.SD_24.Add(new SD_24
                             {
                                 DOC_CODE = newDC,
-                                DD_TYPE_DC = doc.DD_TYPE_DC,
-                                DD_DATE = doc.DD_DATE,
+                                DD_TYPE_DC = doc.Entity.DD_TYPE_DC,
+                                DD_DATE = doc.Date,
                                 DD_IN_NUM = inNum,
                                 DD_EXT_NUM = doc.DD_EXT_NUM,
                                 DD_SKLAD_OTPR_DC = doc.DD_SKLAD_OTPR_DC,
@@ -386,8 +386,8 @@ namespace KursAM2.Managers
                         {
                             var old = ctx.SD_24.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
                             if (old == null) return doc.DocCode;
-                            old.DD_TYPE_DC = doc.DD_TYPE_DC;
-                            old.DD_DATE = doc.DD_DATE;
+                            old.DD_TYPE_DC = doc.Entity.DD_TYPE_DC;
+                            old.DD_DATE = doc.Date;
                             old.DD_IN_NUM = doc.DD_IN_NUM;
                             old.DD_EXT_NUM = doc.DD_EXT_NUM;
                             old.DD_SKLAD_OTPR_DC = doc.DD_SKLAD_OTPR_DC;
@@ -835,7 +835,7 @@ namespace KursAM2.Managers
             old.DocCode = -1;
             old.DD_IN_NUM = -1;
             old.DD_EXT_NUM = null;
-            old.DD_DATE = DateTime.Today;
+            old.Date = DateTime.Today;
             old.CREATOR = GlobalOptions.UserInfo.Name;
             foreach (var r in old.Rows)
             {
@@ -857,7 +857,7 @@ namespace KursAM2.Managers
             old.DocCode = -1;
             old.DD_IN_NUM = -1;
             old.DD_EXT_NUM = null;
-            old.DD_DATE = DateTime.Today;
+            old.Date = DateTime.Today;
             old.CREATOR = GlobalOptions.UserInfo.Name;
             old.Rows.Clear();
             old.Entity.TD_24.Clear();
@@ -889,8 +889,8 @@ namespace KursAM2.Managers
                             ctx.SD_24.Add(new SD_24
                             {
                                 DOC_CODE = newDC,
-                                DD_TYPE_DC = doc.DD_TYPE_DC,
-                                DD_DATE = doc.DD_DATE,
+                                DD_TYPE_DC = doc.Entity.DD_TYPE_DC,
+                                DD_DATE = doc.Date,
                                 DD_IN_NUM = inNum,
                                 DD_EXT_NUM = doc.DD_EXT_NUM,
                                 DD_SKLAD_OTPR_DC = doc.DD_SKLAD_OTPR_DC,
@@ -1055,8 +1055,8 @@ namespace KursAM2.Managers
                         {
                             var old = ctx.SD_24.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
                             if (old == null) return doc.DocCode;
-                            old.DD_TYPE_DC = doc.DD_TYPE_DC;
-                            old.DD_DATE = doc.DD_DATE;
+                            old.DD_TYPE_DC = doc.Entity.DD_TYPE_DC;
+                            old.DD_DATE = doc.Date;
                             old.DD_IN_NUM = doc.DD_IN_NUM;
                             old.DD_EXT_NUM = doc.DD_EXT_NUM;
                             old.DD_SKLAD_OTPR_DC = doc.DD_SKLAD_OTPR_DC;
@@ -1304,7 +1304,7 @@ namespace KursAM2.Managers
                             var ops = calc.GetOperations(n);
                             if (ops != null && ops.Count > 0)
                                 calc.Save(ops);
-                            var c = NomenklCalculationManager.NomenklRemain(ctx, doc.DD_DATE, n,
+                            var c = NomenklCalculationManager.NomenklRemain(ctx, doc.Date, n,
                                 // ReSharper disable once PossibleInvalidOperationException
                                 (decimal) doc.DD_SKLAD_OTPR_DC);
                             if (c < 0)
@@ -1446,7 +1446,7 @@ namespace KursAM2.Managers
                 State = RowStatus.NewRow,
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
-                DD_DATE = DateTime.Today,
+                Date = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name
             };
         }
@@ -1459,7 +1459,7 @@ namespace KursAM2.Managers
                 State = RowStatus.NewRow,
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
-                DD_DATE = DateTime.Today,
+                Date = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name
             };
             foreach (var r in res.Rows)
@@ -1479,7 +1479,7 @@ namespace KursAM2.Managers
                 State = RowStatus.NewRow,
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
-                DD_DATE = DateTime.Today,
+                Date = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name
             };
             foreach (var r in res.Rows)
@@ -1498,7 +1498,7 @@ namespace KursAM2.Managers
                 State = RowStatus.NewRow,
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
-                DD_DATE = DateTime.Today,
+                Date = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name
             };
             ret.Rows.Clear();
@@ -1513,7 +1513,7 @@ namespace KursAM2.Managers
                 State = RowStatus.NewRow,
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
-                DD_DATE = DateTime.Today,
+                Date = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name
             };
             ret.Rows.Clear();
@@ -1543,8 +1543,8 @@ namespace KursAM2.Managers
                             ctx.SD_24.Add(new SD_24
                             {
                                 DOC_CODE = newDC,
-                                DD_TYPE_DC = doc.DD_TYPE_DC,
-                                DD_DATE = doc.DD_DATE,
+                                DD_TYPE_DC = doc.Entity.DD_TYPE_DC,
+                                DD_DATE = doc.Date,
                                 DD_IN_NUM = inNum,
                                 DD_EXT_NUM = doc.DD_EXT_NUM,
                                 DD_SKLAD_OTPR_DC = doc.DD_SKLAD_OTPR_DC,
@@ -1709,8 +1709,8 @@ namespace KursAM2.Managers
                         {
                             var old = ctx.SD_24.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
                             if (old == null) return doc.DocCode;
-                            old.DD_TYPE_DC = doc.DD_TYPE_DC;
-                            old.DD_DATE = doc.DD_DATE;
+                            old.DD_TYPE_DC = doc.Entity.DD_TYPE_DC;
+                            old.DD_DATE = doc.Date;
                             old.DD_IN_NUM = doc.DD_IN_NUM;
                             old.DD_EXT_NUM = doc.DD_EXT_NUM;
                             old.DD_SKLAD_OTPR_DC = doc.DD_SKLAD_OTPR_DC;

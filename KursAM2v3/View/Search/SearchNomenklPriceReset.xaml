@@ -95,7 +95,7 @@
                         EnableSmartColumnsGeneration="True"
                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <dxg:GridControl.Columns>
-                            <dxg:GridColumn Header="Дата" Name="res_1_2" FieldName="DD_DATE" />
+                            <dxg:GridColumn Header="Дата" Name="res_1_2" FieldName="Date" />
                             <dxg:GridColumn Header="№" Name="res_2_2" FieldName="DD_IN_NUM" />
                             <dxg:GridColumn Header="Склад" Name="res_4" FieldName="Sklad" SortMode="DisplayText"
                                             ColumnFilterMode="DisplayText" />
