@@ -128,8 +128,7 @@ namespace KursAM2.View
             {
                 if (f is KursBaseSearchWindow s)
                 {
-                    var ctx = s.DataContext as DistributeNakladSearchViewModel;
-                    if (ctx != null)
+                    if (s.DataContext is DistributeNakladSearchViewModel ctx)
                     {
                         ctx.OnWindowClosing();
                     }
@@ -137,8 +136,7 @@ namespace KursAM2.View
 
                 if (f is KursBaseWindow b)
                 {
-                    var ctx = b.DataContext as DistributeNakladViewModel;
-                    if (ctx != null)
+                    if (b.DataContext is DistributeNakladViewModel ctx)
                     {
                         ctx.OnWindowClosing();
                     }

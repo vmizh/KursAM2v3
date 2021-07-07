@@ -192,6 +192,7 @@
     <Compile Include="Helper\ValidationError.cs" />
     <Compile Include="Logger\LoggerHelper.cs" />
     <Compile Include="Logger\LogLevelEnum.cs" />
+    <Compile Include="MainReferences2.cs" />
     <Compile Include="ViewModel\Base\DocumentCreateTypeEnum.cs" />
     <Compile Include="ViewModel\Base\IDocumentCopy.cs" />
     <Compile Include="ViewModel\Base\IDocumentOperations.cs" />
