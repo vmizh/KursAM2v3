@@ -255,7 +255,7 @@ namespace KursAM2.Managers.Invoices
             var ret = new InvoiceProvider(null)
             {
                 DocCode = -1,
-                SF_POSTAV_DATE = DateTime.Today,
+                DocDate = DateTime.Today,
                 SF_REGISTR_DATE = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name,
                 Currency = GlobalOptions.SystemProfile.MainCurrency,
@@ -272,7 +272,7 @@ namespace KursAM2.Managers.Invoices
             {
                 DocCode = -1,
                 SF_POSTAV_NUM = null,
-                SF_POSTAV_DATE = DateTime.Today,
+                DocDate = DateTime.Today,
                 SF_REGISTR_DATE = DateTime.Today,
                 CREATOR = GlobalOptions.UserInfo.Name,
                 myState = RowStatus.NewRow
@@ -297,7 +297,7 @@ namespace KursAM2.Managers.Invoices
             if (newCopy == null) return null;
             newCopy.DocCode = -1;
             newCopy.SF_POSTAV_NUM = null;
-            newCopy.SF_POSTAV_DATE = DateTime.Today;
+            newCopy.DocDate = DateTime.Today;
             newCopy.SF_REGISTR_DATE = DateTime.Today;
             newCopy.CREATOR = GlobalOptions.UserInfo.Name;
             newCopy.myState = RowStatus.NewRow;
@@ -383,8 +383,8 @@ namespace KursAM2.Managers.Invoices
                                 DOC_CODE = newDC,
                                 SF_OPRIHOD_DATE = doc.SF_OPRIHOD_DATE,
                                 SF_POSTAV_NUM = doc.SF_POSTAV_NUM,
-                                SF_POSTAV_DATE = doc.SF_POSTAV_DATE,
-                                SF_POST_DC = doc.SF_POST_DC,
+                                SF_POSTAV_DATE = doc.DocDate,
+                                SF_POST_DC = doc.Entity.SF_POST_DC,
                                 SF_RUB_SUMMA = doc.SF_RUB_SUMMA,
                                 SF_CRS_SUMMA = doc.Summa,
                                 SF_CRS_DC = doc.SF_CRS_DC,
@@ -401,7 +401,7 @@ namespace KursAM2.Managers.Invoices
                                 SF_NAKLAD_METHOD = doc.SF_NAKLAD_METHOD,
                                 SF_ACCEPTED = doc.SF_ACCEPTED,
                                 SF_SUMMA_S_NDS = doc.SF_SUMMA_S_NDS,
-                                SF_REGISTR_DATE = doc.SF_POSTAV_DATE,
+                                SF_REGISTR_DATE = doc.DocDate,
                                 SF_SCHET_FLAG = doc.SF_SCHET_FLAG,
                                 SF_SCHET_FACT_FLAG = doc.SF_SCHET_FACT_FLAG,
                                 SF_NOTES = doc.Note,
@@ -488,8 +488,8 @@ namespace KursAM2.Managers.Invoices
                             if (old == null) return doc.DocCode;
                             old.SF_OPRIHOD_DATE = doc.SF_OPRIHOD_DATE;
                             old.SF_POSTAV_NUM = doc.SF_POSTAV_NUM;
-                            old.SF_POSTAV_DATE = doc.SF_POSTAV_DATE;
-                            old.SF_POST_DC = doc.SF_POST_DC;
+                            old.SF_POSTAV_DATE = doc.DocDate;
+                            old.SF_POST_DC = doc.Entity.SF_POST_DC;
                             old.SF_RUB_SUMMA = doc.SF_RUB_SUMMA;
                             old.SF_CRS_SUMMA = doc.Summa;
                             old.SF_CRS_DC = doc.SF_CRS_DC;
@@ -506,7 +506,7 @@ namespace KursAM2.Managers.Invoices
                             old.SF_NAKLAD_METHOD = doc.SF_NAKLAD_METHOD;
                             old.SF_ACCEPTED = doc.SF_ACCEPTED;
                             old.SF_SUMMA_S_NDS = doc.SF_SUMMA_S_NDS;
-                            old.SF_REGISTR_DATE = doc.SF_POSTAV_DATE;
+                            old.SF_REGISTR_DATE = doc.DocDate;
                             old.SF_SCHET_FLAG = doc.SF_SCHET_FLAG;
                             old.SF_SCHET_FACT_FLAG = doc.SF_SCHET_FACT_FLAG;
                             old.SF_NOTES = doc.Note;
@@ -673,7 +673,7 @@ namespace KursAM2.Managers.Invoices
 
                         ctx.SaveChanges();
                         transaction.Commit();
-                        RecalcKontragentBalans.CalcBalans(doc.SF_POST_DC, doc.SF_POSTAV_DATE);
+                        RecalcKontragentBalans.CalcBalans(doc.Entity.SF_POST_DC, doc.DocDate);
                         foreach (var r in doc.Rows)
                         {
                             r.myState = RowStatus.NotEdited;
@@ -723,7 +723,7 @@ namespace KursAM2.Managers.Invoices
                     ? (UnitOfWork.Context.SD_26.Max(_ => _.SF_IN_NUM) ?? 0) + 1 : 1);
                 newDC = UnitOfWork.Context.SD_26.Any() 
                     ? UnitOfWork.Context.SD_26.Max(_ => _.DOC_CODE) + 1 : 10260000001;
-                doc.DOC_CODE = newDC;
+                doc.DocCode = newDC;
                 doc.Id = guidId;
                 doc.SF_IN_NUM = inNum;
                 foreach (var r in doc.Rows)
@@ -741,7 +741,7 @@ namespace KursAM2.Managers.Invoices
                 UnitOfWork.CreateTransaction();
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
-                RecalcKontragentBalans.CalcBalans(doc.SF_POST_DC, doc.SF_POSTAV_DATE);
+                RecalcKontragentBalans.CalcBalans(doc.Entity.SF_POST_DC, doc.DocDate);
                 foreach (var r in doc.Rows)
                 {
                     r.myState = RowStatus.NotEdited;
@@ -1185,7 +1185,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
-            return ret.OrderByDescending(_ => _.SF_POSTAV_DATE).ToList();
+            return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
         public static List<InvoiceProvider> GetInvoicesProvider(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
@@ -1244,7 +1244,7 @@ namespace KursAM2.Managers.Invoices
                     var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
-                        if (ret.Any(_ => _.DOC_CODE == d.DOC_CODE)) continue;
+                        if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
                         var newDoc = new InvoiceProvider(d,new UnitOfWork<ALFAMEDIAEntities>());
                         if (isUsePayment)
                         {
@@ -1262,7 +1262,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
-            return ret.OrderByDescending(_ => _.SF_POSTAV_DATE).ToList();
+            return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
         #endregion

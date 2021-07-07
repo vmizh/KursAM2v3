@@ -144,7 +144,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             if (CurrentDocument == null) return;
             DocumentsOpenManager.Open(
-                DocumentType.InvoiceProvider, CurrentDocument.DOC_CODE);
+                DocumentType.InvoiceProvider, CurrentDocument.DocCode);
         }
 
         public override void DocNewEmpty(object form)
@@ -170,7 +170,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.Document.Id = id;
             ctx.Document.DocCode = -1;
             ctx.Document.SF_POSTAV_NUM = null;
-            ctx.Document.SF_POSTAV_DATE = DateTime.Today;
+            ctx.Document.DocDate = DateTime.Today;
             ctx.Document.SF_REGISTR_DATE = DateTime.Today;
             ctx.Document.CREATOR = GlobalOptions.UserInfo.Name;
             ctx.Document.myState = RowStatus.NewRow;
@@ -208,7 +208,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.Document.Entity.SF_CRS_SUMMA = 0;
             ctx.Document.Id = Guid.NewGuid();
             ctx.Document.SF_POSTAV_NUM = null;
-            ctx.Document.SF_POSTAV_DATE = DateTime.Today;
+            ctx.Document.DocDate = DateTime.Today;
             ctx.Document.SF_REGISTR_DATE = DateTime.Today;
             ctx.Document.CREATOR = GlobalOptions.UserInfo.Name;
             ctx.Document.myState = RowStatus.NewRow;

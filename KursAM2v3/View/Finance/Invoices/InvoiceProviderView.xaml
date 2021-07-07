@@ -45,7 +45,7 @@
                         <dxe:TextEdit EditValue="{Binding Document.SF_POSTAV_NUM, 
                             UpdateSourceTrigger=PropertyChanged }" Margin="5,0" MinWidth="80"/>
                         <Label Content="Дата:" Margin="5,0"/> 
-                            <dxe:DateEdit EditValue="{Binding Document.SF_POSTAV_DATE, 
+                            <dxe:DateEdit EditValue="{Binding Document.DocDate, 
                                 UpdateSourceTrigger=PropertyChanged}" Margin="5,0 " MinWidth="80"/>
                        
                             <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"

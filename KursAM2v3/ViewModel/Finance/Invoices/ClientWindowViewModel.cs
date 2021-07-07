@@ -772,8 +772,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private void DeleteRow(object obj)
         {
             if (CurrentRow != null && CurrentRow.State != RowStatus.NewRow)
+            {
                 Document.DeletedRows.Add(CurrentRow);
-            Document.Rows.Remove(CurrentRow);
+                Document.Entity.TD_84.Remove(CurrentRow.Entity);
+                Document.Rows.Remove(CurrentRow);
+            }
             UpdateVisualData(null);
         }
 
@@ -786,17 +789,29 @@ namespace KursAM2.ViewModel.Finance.Invoices
             switch (res)
             {
                 case MessageBoxResult.Yes:
+                    var dc = Document.DocCode;
+                    var dilerdc = Document.Diler?.DocCode;
+                    var docdate = Document.DocDate;
                     if (Document.State == RowStatus.NewRow)
                     {
                         Form.Close();
                         return;
                     }
-
-                    InvoicesManager.DeleteClient(Document.DocCode);
+                    try
+                    {
+                        GenericClientRepository.Delete(Document.Entity);
+                        UnitOfWork.Save();
+                        UnitOfWork.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        UnitOfWork.Rollback();
+                        WindowManager.ShowError(ex);
+                    }
                     // ReSharper disable once PossibleInvalidOperationException
-                    RecalcKontragentBalans.CalcBalans((decimal) Document.Entity.SF_CLIENT_DC, Document.DocDate);
-                    if (Document.SF_DILER_DC != null)
-                        RecalcKontragentBalans.CalcBalans((decimal) Document.SF_DILER_DC, Document.DocDate);
+                    RecalcKontragentBalans.CalcBalans(dc,docdate);
+                    if (dilerdc != null)
+                        RecalcKontragentBalans.CalcBalans(dilerdc.Value, docdate);
                     Form.Close();
                     return;
                 case MessageBoxResult.No:

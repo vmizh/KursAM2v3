@@ -404,13 +404,13 @@ namespace KursAM2.View.Finance.UC
             {
                 if (dtx != null)
                 {
-                    if (d1.SF_POSTAV_DATE != dtx.Date)
+                    if (d1.DocDate != dtx.Date)
                     {
                         if (winMan.ShowWinUIMessageBox(
                             "Даты операции и счета не совпадают. Переустановить дату, как в счете?",
                             "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                         {
-                            dtx.Date = d1.SF_POSTAV_DATE;
+                            dtx.Date = d1.DocDate;
                         }
                     }
                     dtx.VVT_VAL_RASHOD = d1.Summa - d1.PaySumma;
@@ -426,9 +426,9 @@ namespace KursAM2.View.Finance.UC
                 }
                 if (dtx2 != null)
                 {
-                    if (d1.SF_POSTAV_DATE != dtx2.Date)
+                    if (d1.DocDate != dtx2.Date)
                     {
-                        dtx2.Date = d1.SF_POSTAV_DATE;
+                        dtx2.Date = d1.DocDate;
                     }
                     dtx2.VVT_VAL_RASHOD = d1.Summa - d1.PaySumma;
                     dtx2.VVT_DOC_NUM = d1.ToString();

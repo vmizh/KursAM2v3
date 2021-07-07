@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -15,7 +14,7 @@ using KursAM2.View.Logistiks.Warehouse;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
-    public class WarehouseOrderOutSearchViewModel : RSWindowSearchViewModelBase
+    public sealed class WarehouseOrderOutSearchViewModel : RSWindowSearchViewModelBase
     {
         private readonly WarehouseManager orderManager;
         private WarehouseOrderOut myCurrentDocument;
@@ -41,13 +40,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get { return new Command(PrintOrder, param => CurrentDocument != null); }
         }
 
-        private void PrintOrder(object obj)
-        {
-            ReportManager.WarehouseOrderOutReport(CurrentDocument.DocCode);
-        }
-
         public ObservableCollection<WarehouseOrderOut> Documents { set; get; } =
             new ObservableCollection<WarehouseOrderOut>();
+
         public WarehouseOrderOut CurrentDocument
         {
             set
@@ -58,7 +53,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
             get => myCurrentDocument;
         }
+
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
+
+        private void PrintOrder(object obj)
+        {
+            ReportManager.WarehouseOrderOutReport(CurrentDocument.DocCode);
+        }
 
         #region Commands
 
@@ -155,6 +156,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 WindowManager.ShowError(e);
             }
+
             RaisePropertyChanged(nameof(Documents));
             SearchText = "";
         }

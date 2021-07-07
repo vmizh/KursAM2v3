@@ -98,33 +98,6 @@ namespace KursAM2.Repositories
         public List<SD_24> GetWayBillAllByDates(DateTime dateStart, DateTime dateEnd)
         {
             return Context.SD_24
-                .Include(_ => _.TD_24)
-                .Include("TD_24.TD_26")
-                .Include("TD_24.TD_26.SD_26")
-                .Include("TD_24.SD_175")
-                .Include("TD_24.SD_301")
-                .Include("TD_24.SD_122")
-                .Include("TD_24.SD_170")
-                .Include("TD_24.SD_175")
-                .Include("TD_24.SD_1751")
-                .Include("TD_24.SD_2")
-                .Include("TD_24.SD_254")
-                .Include("TD_24.SD_27")
-                .Include("TD_24.SD_301")
-                .Include("TD_24.SD_3011")
-                .Include("TD_24.SD_3012")
-                .Include("TD_24.SD_303")
-                .Include("TD_24.SD_384")
-                .Include("TD_24.SD_43")
-                .Include("TD_24.SD_83")
-                .Include("TD_24.SD_831")
-                .Include("TD_24.SD_832")
-                .Include("TD_24.SD_84")
-                .Include("TD_24.TD_73")
-                .Include("TD_24.TD_9")
-                .Include("TD_24.TD_84")
-                .Include("TD_24.TD_26")
-                .Include("TD_24.TD_241")
                 .Where(_ => _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd 
                                                    && _.DD_TYPE_DC == 2010000012).ToList();
         }

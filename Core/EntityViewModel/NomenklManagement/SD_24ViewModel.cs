@@ -540,7 +540,7 @@ namespace Core.EntityViewModel.NomenklManagement
                 if (myInvoiceProvider != null && myInvoiceProvider.Equals(value)) return;
                 myInvoiceProvider = value;
                 if (myInvoiceProvider != null)
-                    Entity.DD_SPOST_DC = myInvoiceProvider.DOC_CODE;
+                    Entity.DD_SPOST_DC = myInvoiceProvider.DocCode;
                 RaisePropertyChanged();
             }
         }

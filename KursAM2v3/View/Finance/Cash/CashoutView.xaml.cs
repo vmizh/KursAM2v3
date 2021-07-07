@@ -274,15 +274,15 @@ namespace KursAM2.View.Finance.Cash
 
             var winManager = new WindowManager();
             doc.MaxSumma = item.Summa - item.PaySumma;
-            if (item.SF_POSTAV_DATE != doc.DATE_ORD)
+            if (item.DocDate != doc.DATE_ORD)
             {
                 var res = winManager.ShowWinUIMessageBox(
-                    $"Дата счета {item.SF_POSTAV_DATE.ToShortDateString()} не совпадает с датой ордера {doc.DATE_ORD}." +
+                    $"Дата счета {item.DocDate.ToShortDateString()} не совпадает с датой ордера {doc.DATE_ORD}." +
                     "Установить дату ордера равной дате счета?", "Запрос", MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
                 if (res == MessageBoxResult.Yes)
                 {
-                    doc.DATE_ORD = item.SF_POSTAV_DATE;
+                    doc.DATE_ORD = item.DocDate;
                     doc.SPostName = item.ToString();
                     doc.SPOST_DC = item.DocCode;
                     doc.SUMM_ORD = item.Summa - item.PaySumma;

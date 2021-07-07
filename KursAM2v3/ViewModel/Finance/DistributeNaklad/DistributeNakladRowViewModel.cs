@@ -114,14 +114,14 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [DisplayName("Дата сф")]
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
-        public string DocDate => Invoice?.SF_POSTAV_DATE.ToShortDateString();
+        public string DocDate => Invoice?.DocDate.ToShortDateString();
 
 
         [DisplayName("Поставщик")]
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
         public string ProviderName => Invoice != null
-            ? MainReferences.GetKontragent(Invoice.SF_POST_DC).Name
+            ? MainReferences.GetKontragent(Invoice.Entity.SF_POST_DC).Name
             : null;
 
         [Display(AutoGenerateField = false)]

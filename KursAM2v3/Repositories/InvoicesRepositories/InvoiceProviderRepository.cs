@@ -77,7 +77,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
             Context.Entry(doc.Entity).State = EntityState.Added;
             doc.DocCode = -1;
             doc.CREATOR = GlobalOptions.UserInfo.NickName;
-            doc.SF_POSTAV_DATE = DateTime.Today;
+            doc.DocDate = DateTime.Today;
             doc.Id = newId;
             var i = 1;
             foreach (var r in doc.Rows)
@@ -101,7 +101,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
             Context.Entry(doc.Entity).State = EntityState.Added;
             doc.DocCode = -1;
             doc.CREATOR = GlobalOptions.UserInfo.NickName;
-            doc.SF_POSTAV_DATE = DateTime.Today;
+            doc.DocDate = DateTime.Today;
             doc.Id = newId;
             doc.Rows.Clear();
             doc.Entity.TD_26.Clear();

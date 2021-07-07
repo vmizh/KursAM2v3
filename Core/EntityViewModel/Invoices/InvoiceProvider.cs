@@ -32,6 +32,12 @@ namespace Core.Invoices.EntityViewModel
     {
         private readonly UnitOfWork<ALFAMEDIAEntities> context;
 
+        public ObservableCollection<InvoiceProviderRow> Rows { set; get; } =
+            new ObservableCollection<InvoiceProviderRow>();
+
+        public ObservableCollection<WarehouseOrderInRow> Facts { set; get; } =
+            new ObservableCollection<WarehouseOrderInRow>();
+
         public string this[string columnName]
         {
             get
@@ -59,7 +65,7 @@ namespace Core.Invoices.EntityViewModel
         }
 
         public string Error => null;
-        
+
         protected string SFact(decimal dc)
         {
             var doc = context.Context.SD_84.FirstOrDefault(_ => _.DOC_CODE == dc);
@@ -70,13 +76,7 @@ namespace Core.Invoices.EntityViewModel
         {
             throw new NotImplementedException();
         }
-        public ObservableCollection<InvoiceProviderRow> Rows { set; get; } =
-            new ObservableCollection<InvoiceProviderRow>();
 
-        public ObservableCollection<WarehouseOrderInRow> Facts { set; get; } =
-            new ObservableCollection<WarehouseOrderInRow>();
-
-       
 
         #region Fields
 
@@ -130,24 +130,24 @@ namespace Core.Invoices.EntityViewModel
             new ObservableCollection<ProviderInvoicePayViewModel>();
 
         public override string Name =>
-            $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {SF_POSTAV_DATE.ToShortDateString()} " +
+            $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {DocDate.ToShortDateString()} " +
             $"{Note}";
 
         public override string Description =>
-            $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {SF_POSTAV_DATE.ToShortDateString()} " +
+            $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {DocDate.ToShortDateString()} " +
             $"{Kontragent} на {Summa} {Currency} " +
             $"{Note}";
 
-        public decimal DOC_CODE
-        {
-            get => Entity.DOC_CODE;
-            set
-            {
-                if (Entity.DOC_CODE == value) return;
-                Entity.DOC_CODE = value;
-                RaisePropertyChanged();
-            }
-        }
+        //public decimal DOC_CODE
+        //{
+        //    get => Entity.DOC_CODE;
+        //    set
+        //    {
+        //        if (Entity.DOC_CODE == value) return;
+        //        Entity.DOC_CODE = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public override decimal DocCode
         {
@@ -242,7 +242,7 @@ namespace Core.Invoices.EntityViewModel
             }
         }
 
-        public DateTime SF_POSTAV_DATE
+        public DateTime DocDate
         {
             get => Entity.SF_POSTAV_DATE;
             set
@@ -253,18 +253,18 @@ namespace Core.Invoices.EntityViewModel
             }
         }
 
-        public decimal SF_POST_DC
-        {
-            get => Entity.SF_POST_DC;
-            set
-            {
-                if (Entity.SF_POST_DC == value) return;
-                Entity.SF_POST_DC = value;
-                myKontragent = MainReferences.GetKontragent(Entity.SF_POST_DC);
-                RaisePropertyChanged(nameof(Kontragent));
-                RaisePropertyChanged();
-            }
-        }
+        //public decimal SF_POST_DC
+        //{
+        //    get => Entity.SF_POST_DC;
+        //    set
+        //    {
+        //        if (Entity.SF_POST_DC == value) return;
+        //        Entity.SF_POST_DC = value;
+        //        myKontragent = MainReferences.GetKontragent(Entity.SF_POST_DC);
+        //        RaisePropertyChanged(nameof(Kontragent));
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         [Required(ErrorMessage = "Контрагент должен быть выбран обязательно.")]
         public Kontragent Kontragent
@@ -305,8 +305,8 @@ namespace Core.Invoices.EntityViewModel
                 Entity.SF_UCHET_VALUTA_RATE = 1;
                 return s;
             }
-        }  
-        
+        }
+
         /// <summary>
         ///     Отфактурированная сумма
         /// </summary>
@@ -1146,8 +1146,8 @@ namespace Core.Invoices.EntityViewModel
 
         private void LoadReferences()
         {
-            if (SF_POST_DC > 0)
-                Kontragent = MainReferences.GetKontragent(SF_POST_DC);
+            if (Entity.SF_POST_DC > 0)
+                Kontragent = MainReferences.GetKontragent(Entity.SF_POST_DC);
             if (SF_POLUCH_KONTR_DC != null)
                 KontrReceiver = MainReferences.GetKontragent(SF_POLUCH_KONTR_DC);
             if (SF_CRS_DC != null)
@@ -1268,12 +1268,10 @@ namespace Core.Invoices.EntityViewModel
 
         public void UpdateFrom(SD_26 ent)
         {
-           
         }
 
         public void UpdateTo(SD_26 ent)
         {
-            
         }
 
         public SD_26 DefaultValue()
@@ -1308,7 +1306,7 @@ namespace Core.Invoices.EntityViewModel
         public override string ToString()
         {
             return
-                $"С/ф (поставщика) №{SF_POSTAV_NUM}/{SF_IN_NUM} от {SF_POSTAV_DATE.ToShortDateString()} " +
+                $"С/ф (поставщика) №{SF_POSTAV_NUM}/{SF_IN_NUM} от {DocDate.ToShortDateString()} " +
                 $"от: {Kontragent} сумма: {Summa} {Currency}";
         }
 
@@ -1326,7 +1324,7 @@ namespace Core.Invoices.EntityViewModel
 
     public class SD_26LayoutData_FluentAPI : DataAnnotationForFluentApiBase, IMetadataProvider<InvoiceProvider>
     {
-        private readonly string notNullMessage = "Поле должно быть заполнено";
+        private new readonly string notNullMessage = "Поле должно быть заполнено";
 
         void IMetadataProvider<InvoiceProvider>.BuildMetadata(
             MetadataBuilder<InvoiceProvider> builder)
@@ -1340,7 +1338,7 @@ namespace Core.Invoices.EntityViewModel
                 .DisplayName("Сумма").ReadOnly().DisplayFormatString("n2");
             builder.Property(x => x.SF_IN_NUM).AutoGenerated()
                 .DisplayName("№");
-            builder.Property(x => x.SF_POSTAV_DATE).AutoGenerated()
+            builder.Property(x => x.DocDate).AutoGenerated()
                 .Required(() => notNullMessage)
                 .DisplayName("Дата");
             builder.Property(x => x.SF_POSTAV_NUM).AutoGenerated()
@@ -1410,7 +1408,7 @@ namespace Core.Invoices.EntityViewModel
                 .Group("first",Orientation.Vertical)
                     .Group("Счет", Orientation.Horizontal)
                         .ContainsProperty(_ => _.SF_IN_NUM)
-                        .ContainsProperty(_ => _.SF_POSTAV_DATE)
+                        .ContainsProperty(_ => _.DocDate)
                         .ContainsProperty(_ => _.SF_POSTAV_NUM)
                         .ContainsProperty(_ => _.SF_REGISTR_DATE)
                         .ContainsProperty(_ => _.CREATOR)
@@ -1504,7 +1502,7 @@ namespace Core.Invoices.EntityViewModel
                 .DisplayName("Сумма").ReadOnly().DisplayFormatString("n2");
             builder.Property(x => x.SF_IN_NUM).AutoGenerated()
                 .DisplayName("№");
-            builder.Property(x => x.SF_POSTAV_DATE).AutoGenerated()
+            builder.Property(x => x.DocDate).AutoGenerated()
                 .DisplayName("Дата");
             builder.Property(x => x.SF_POSTAV_NUM).AutoGenerated()
                 .DisplayName("Внешний №");

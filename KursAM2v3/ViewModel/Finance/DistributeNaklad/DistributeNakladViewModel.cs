@@ -409,13 +409,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Display(AutoGenerateField = false)]
         public ICommand OpenDocumentCommand
         {
-            get { return new Command(OpenDocument, _ => CurrentTovar != null && CurrentTovar.Invoice?.DOC_CODE != null); }
+            get { return new Command(OpenDocument, _ => CurrentTovar != null && CurrentTovar.Invoice?.DocCode != null); }
         }
 
         private void OpenDocument(object obj)
         {
             DocumentsOpenManager.Open(
-                DocumentType.InvoiceProvider, CurrentTovar.Invoice.DOC_CODE);
+                DocumentType.InvoiceProvider, CurrentTovar.Invoice.DocCode);
         }
 
         [Display(AutoGenerateField = false)]
@@ -790,7 +790,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             if (dialogs.ShowDialog(null, DateTime.Today.AddDays(-30),
                 DateTime.Today) == true)
                 foreach (var d in dialogs.SelectedItems)
-                    if (NakladInvoices.All(_ => _.Invoice.DOC_CODE != d.DOC_CODE))
+                    if (NakladInvoices.All(_ => _.Invoice.DOC_CODE != d.DocCode))
                     {
                         var ent = new DistributeNakladInvoices
                         {

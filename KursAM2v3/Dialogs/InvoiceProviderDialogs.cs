@@ -105,13 +105,13 @@ namespace KursAM2.Dialogs
             if (!IsNakladInvoices)
             {
                 foreach (var d in invoiceProviderRepository.GetAllForNakladDistribute(Currency,
-                    StartDate, EndDate).OrderByDescending(_ => _.SF_POSTAV_DATE))
+                    StartDate, EndDate).OrderByDescending(_ => _.DocDate))
                     ItemsCollection.Add(d);
             }
             else
             {
                 foreach (var d in invoiceProviderRepository.GetNakladInvoices(StartDate, EndDate)
-                    .OrderByDescending(_ => _.SF_POSTAV_DATE))
+                    .OrderByDescending(_ => _.DocDate))
                     ItemsCollection.Add(d);
             }
         }

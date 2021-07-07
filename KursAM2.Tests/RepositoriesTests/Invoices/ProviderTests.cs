@@ -254,7 +254,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
             var doc = new InvoiceProvider(d, UnitOfWork,false);
             doc.DocCode = -1;
             doc.CREATOR = GlobalOptions.UserInfo.NickName;
-            doc.SF_POSTAV_DATE = DateTime.Today;
+            doc.DocDate = DateTime.Today;
             doc.SF_POSTAV_NUM = "copy";
             doc.Id = newId;
             var i = 1;

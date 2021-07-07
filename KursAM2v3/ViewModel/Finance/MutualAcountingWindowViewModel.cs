@@ -172,7 +172,7 @@ namespace KursAM2.ViewModel.Finance
                 CurrentCreditor.VZT_KONTR_CRS_SUMMA = item.Summa - item.PaySumma;
                 CurrentCreditor.VZT_UCH_CRS_RATE = 1;
                 CurrentCreditor.VZT_SPOST_DC = item.DocCode;
-                CurrentCreditor.Kontragent = MainReferences.GetKontragent(item.SF_POST_DC);
+                CurrentCreditor.Kontragent = MainReferences.GetKontragent(item.Entity.SF_POST_DC);
                 CurrentCreditor.SFProvider = item;
                 if (CurrentCreditor.State == RowStatus.NotEdited) CurrentCreditor.myState = RowStatus.Edited;
                 KontragentManager.UpdateSelectCount(CurrentCreditor.Kontragent.DocCode);
@@ -203,7 +203,7 @@ namespace KursAM2.ViewModel.Finance
                     State = RowStatus.NewRow,
                     VzaimoraschType = vzdefault,
                     Parent = Document,
-                    Kontragent = MainReferences.GetKontragent(item.SF_POST_DC),
+                    Kontragent = MainReferences.GetKontragent(item.Entity.SF_POST_DC),
                     SFProvider = item
                 };
                 Document.Rows.Add(newcred);

@@ -91,7 +91,7 @@ namespace KursAM2.ViewModel.Shop
                         Currency = GlobalOptions.SystemProfile.NationalCurrency,
                         State = RowStatus.NewRow,
                         DocCode = -1,
-                        SF_POSTAV_DATE = DateTime.Today
+                        DocDate = DateTime.Today
 
                     }
                 };

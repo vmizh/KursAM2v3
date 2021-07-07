@@ -123,13 +123,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Command = PrintWaybillExportCommand
             });
         }
-
         public override void ShowHistory(object data)
         {
             // ReSharper disable once RedundantArgumentDefaultValue
             DocumentHistoryManager.LoadHistory(DocumentType.InvoiceProvider, null, Document.DocCode, null);
         }
-
         private void AddUsedNomenkl(decimal nomdc)
         {
             if (myUsedNomenklsDC.All(_ => _ != nomdc)) myUsedNomenklsDC.Add(nomdc);
@@ -818,8 +816,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 return;
             }
 
-            var crsrates = new CurrencyRates(Document.SF_POSTAV_DATE <= factnom.SD_24.DD_DATE
-                ? Document.SF_POSTAV_DATE.AddDays(-5)
+            var crsrates = new CurrencyRates(Document.DocDate <= factnom.SD_24.DD_DATE
+                ? Document.DocDate.AddDays(-5)
                 : factnom.SD_24.DD_DATE.AddDays(-5), DateTime.Today);
 
             var store = UnitOfWork.Context.SD_24.FirstOrDefault(_ => _.DOC_CODE == factnom.DOC_CODE);
@@ -906,7 +904,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     .FirstOrDefault(_ => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")?.ITEM_VALUE);
             }
 
-            var cr = new CurrencyRates(Document.SF_POSTAV_DATE, Document.SF_POSTAV_DATE);
+            var cr = new CurrencyRates(Document.DocDate, Document.DocDate);
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             foreach (var n in nomenkls.Where(_ => Document.Rows.All(t => t.DocCode != _.DocCode)))
             {
@@ -933,22 +931,22 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     case CurrencyCode.EUR:
                         newRow.EURRate = cr.GetRate(Document.Currency.DocCode, CurrencyCode.EUR,
-                            Document.SF_POSTAV_DATE);
+                            Document.DocDate);
                         newRow.EURSumma = newRow.EURRate;
                         break;
                     case CurrencyCode.USD:
                         newRow.EURRate = cr.GetRate(Document.Currency.DocCode, CurrencyCode.USD,
-                            Document.SF_POSTAV_DATE);
+                            Document.DocDate);
                         newRow.EURSumma = newRow.USDRate;
                         break;
                     case CurrencyCode.RUB:
                         newRow.RUBRate = cr.GetRate(Document.Currency.DocCode, CurrencyCode.RUB,
-                            Document.SF_POSTAV_DATE);
+                            Document.DocDate);
                         newRow.RUBSumma = newRow.RUBRate;
                         break;
                     case CurrencyCode.GBP:
                         newRow.GBPRate = cr.GetRate(Document.Currency.DocCode, CurrencyCode.GBP,
-                            Document.SF_POSTAV_DATE);
+                            Document.DocDate);
                         newRow.GBPSumma = newRow.GBPRate;
                         break;
                 }
@@ -1034,7 +1032,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             var closePeriod = UnitOfWork.Context.PERIOD_CLOSED
                 .SingleOrDefault(_ => _.CLOSED_DOC_TYPE.ID.ToString() == "b57d269e-e17f-4dc2-86da-821db51bcc9e");
-            if (closePeriod != null && Document.SF_POSTAV_DATE < closePeriod.DateClosed)
+            if (closePeriod != null && Document.DocDate < closePeriod.DateClosed)
             {
                 WinManager.ShowWinUIMessageBox(
                     $"Документ находится в закрытом периоде.Дата закрытия {closePeriod.DateClosed.ToShortDateString()}"
@@ -1059,10 +1057,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Document.SF_IN_NUM = UnitOfWork.Context.SD_26.Any()
                         ? UnitOfWork.Context.SD_26.Max(_ => _.SF_IN_NUM) + 1
                         : 1;
-                    Document.DOC_CODE = UnitOfWork.Context.SD_26.Any()
+                    Document.DocCode = UnitOfWork.Context.SD_26.Any()
                         ? UnitOfWork.Context.SD_26.Max(_ => _.DOC_CODE) + 1
                         : 10260000001;
-                    foreach (var row in Document.Rows) row.DocCode = Document.DOC_CODE;
+                    foreach (var row in Document.Rows) row.DocCode = Document.DocCode;
                     //genericProviderRepository.Insert(Document.Entity);
                 }
 
@@ -1128,7 +1126,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
-                RecalcKontragentBalans.CalcBalans(Document.SF_POST_DC, Document.SF_POSTAV_DATE);
+                RecalcKontragentBalans.CalcBalans(Document.Entity.SF_POST_DC, Document.DocDate);
                 NomenklManager.RecalcPrice(myUsedNomenklsDC);
                 myUsedNomenklsDC.Clear();
                 foreach (var r in Document.Rows)
@@ -1202,6 +1200,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 switch (res)
                 {
                     case MessageBoxResult.Yes:
+                        var dc = Document.DocCode;
+                        var docdate = Document.DocDate;
                         //InvoicesManager.DeleteProvider(Document.DocCode);
                         UnitOfWork.CreateTransaction();
                         try
@@ -1215,8 +1215,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             UnitOfWork.Rollback();
                             WindowManager.ShowError(ex);
                         }
-
                         Form.Close();
+                        RecalcKontragentBalans.CalcBalans(dc,docdate);
                         return;
                     // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
                     case MessageBoxResult.No:
@@ -1529,7 +1529,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Document.Id = newId;
             Document.DocCode = -1;
             Document.SF_POSTAV_NUM = null;
-            Document.SF_POSTAV_DATE = DateTime.Today;
+            Document.DocDate = DateTime.Today;
             Document.SF_REGISTR_DATE = DateTime.Today;
             Document.CREATOR = GlobalOptions.UserInfo.Name;
             Document.myState = RowStatus.NewRow;

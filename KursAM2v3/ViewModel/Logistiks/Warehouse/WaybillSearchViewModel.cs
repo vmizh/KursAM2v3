@@ -8,8 +8,11 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using Data;
+using Data.Repository;
 using DevExpress.Mvvm;
 using KursAM2.Managers;
+using KursAM2.Repositories;
 using KursAM2.View.Logistiks.Warehouse;
 using Reports.Base;
 
@@ -20,11 +23,19 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private readonly WarehouseManager DocManager = new WarehouseManager(new StandartErrorManager(
             GlobalOptions.GetEntities(),
             "WaybillViewModel"));
+        public readonly GenericKursDBRepository<SD_24> GenericProviderRepository;
+
+        // ReSharper disable once NotAccessedField.Local
+        public readonly ISD_24Repository SD_24Repository;
+        public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
+            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private Waybill myCurrentDocument;
 
         public WaybillSearchViewModel()
         {
+            GenericProviderRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
+            SD_24Repository = new SD_24Repository(UnitOfWork);
             WindowName = "Расходные накладные для клиентов";
             DocumentCollection = new ObservableCollection<Waybill>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -47,6 +58,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public WaybillSearchViewModel(Window form) : base(form)
         {
+            GenericProviderRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
+            SD_24Repository = new SD_24Repository(UnitOfWork);
             WindowName = "Расходные накладные для клиентов";
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
@@ -116,30 +129,22 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         #region Commands
 
-        //public override void RefreshData(object data)
-        //{
-        //    try
-        //    {
-
-
-        //        DocumentCollection.Clear();
-
-        //        var d = DocManager.GetWaybills(StartDate, EndDate);
-        //        foreach (var item in d)
-        //            DocumentCollection.Add(item);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        WindowManager.ShowError(ex);
-        //    }
-
-        //    RaisePropertyChanged();
-        //}
-
         private Task Load()
         {
+
             var res = Task.Factory.StartNew(() =>
-                new List<Waybill>(DocManager.GetWaybills(StartDate, EndDate)));
+            {
+                var data = SD_24Repository.GetWayBillAllByDates(StartDate, EndDate);
+                List<Waybill> w = new List<Waybill>();
+                foreach (var d in data)
+                {
+                    w.Add(new Waybill(d)
+                    {
+                        State=RowStatus.NotEdited
+                    });
+                }
+                return w;
+            });
             DocumentCollection.Clear();
             foreach (var d in res.Result) DocumentCollection.Add(d);
             RaisePropertyChanged(nameof(DocumentCollection));

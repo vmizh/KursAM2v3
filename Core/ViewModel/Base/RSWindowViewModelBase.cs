@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Invoices;
 using Core.Menu;
 using Core.WindowsManager;
@@ -61,10 +62,10 @@ namespace Core.ViewModel.Base
             }
         }
 
+        [Display(AutoGenerateField = false)] public virtual int DocumentId { set; get; }
+
+
         [Display(AutoGenerateField = false)] public global::Helper.LayoutManager LayoutManager { get; set; }
-
-        
-
         public virtual string LayoutName { set; get; }
 
         [Display(AutoGenerateField = false)] public StandartErrorManager ErrorManager { set; get; }

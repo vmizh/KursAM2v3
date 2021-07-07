@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -8,16 +9,19 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using Data;
+using Data.Repository;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ReportManagers;
+using KursAM2.Repositories;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.View.Logistiks.Warehouse;
+using KursAM2.ViewModel.Management.Calculations;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -25,10 +29,18 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
     {
         private readonly WarehouseManager orderManager;
         private WarehouseOrderIn myDocument;
+        public readonly GenericKursDBRepository<SD_24> GenericOrderInRepository;
+
+        // ReSharper disable once NotAccessedField.Local
+        public readonly ISD_24Repository SD_24Repository;
+        public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
+            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         public OrderInWindowViewModel(StandartErrorManager errManager)
         {
+            GenericOrderInRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
+            SD_24Repository = new SD_24Repository(UnitOfWork);
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
@@ -45,6 +57,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public OrderInWindowViewModel(StandartErrorManager errManager, decimal dc)
         {
+            GenericOrderInRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
+            SD_24Repository = new SD_24Repository(UnitOfWork);
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
@@ -114,6 +128,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                                                    || Document.DeletedRows.Count > 0);
 
         public override RowStatus State => Document?.State ?? RowStatus.NewRow;
+        public override string LayoutName => "OrderWarehouseInLayout";
 
         public override void DocNewEmpty(object form)
         {
@@ -151,13 +166,14 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             if (Document != null && Document.DocCode > 0)
             {
-                Document = orderManager.GetOrderIn(Document.DocCode);
+                Document = new WarehouseOrderIn(GenericOrderInRepository
+                    .GetById(Document.DocCode)); //orderManager.GetOrderIn(Document.DocCode);
             }
             else
             {
                 var dc = obj as decimal? ?? 0;
                 if (dc != 0)
-                    Document = orderManager.GetOrderIn(dc);
+                    Document = new WarehouseOrderIn(GenericOrderInRepository.GetById(dc));
             }
 
             RaisePropertyChanged(nameof(Document));
@@ -174,7 +190,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (dc > 0)
             {
                 RefreshData(dc);
-                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.StoreOrderIn, Document.Id, Document.DocCode, Document.CREATOR,
+                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.StoreOrderIn, Document.Id, Document.DocCode,
+                    Document.CREATOR,
                     "", Document.Description);
             }
         }
@@ -197,6 +214,36 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 r.DDT_TAX_EXECUTED = 0;
                 r.DDT_FACT_EXECUTED = 0;
             }
+        }
+
+        public ICommand SenderSelectCommand
+        {
+            get
+            {
+                return new Command(SenderSelect, _ => true);
+            }
+        }
+
+        public bool IsSenderTypeEnabled => Document.Sender == null;
+
+        public void SenderSelect(object obj)
+        {
+            switch (Document?.WarehouseSenderType)
+            {
+                case WarehouseSenderType.Kontragent:
+                    var kontr = StandartDialogs.SelectKontragent();
+                    if (kontr == null) return;
+                    Document.KontragentSender = kontr;
+                    break;
+                case WarehouseSenderType.Store:
+                    var warehouse = StandartDialogs.SelectWarehouseDialog();
+                    if (warehouse == null) return;
+                    Document.WarehouseOut = warehouse;
+                    var win = new WindowManager();
+                    // ReSharper disable once PossibleUnintendedReferenceComparison
+                    break;
+            }
+            Document?.RaisePropertyChanged("Sender");
         }
 
         public ICommand OpenLinkDocumentCommand
@@ -337,7 +384,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Document.Rows.Remove(row);
                 }
                 else
-                {
+                { 
+                    Document.Entity.TD_24.Remove(row.Entity);
                     Document.DeletedRows.Add(row);
                     Document.Rows.Remove(row);
                 }
@@ -351,7 +399,26 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             switch (res)
             {
                 case MessageBoxResult.Yes:
-                    orderManager.DeleteOrderIn(Document);
+                    var dc = Document.DocCode;
+                    var docdate = Document.Date;
+                    if (Document.State == RowStatus.NewRow)
+                    {
+                        Form.Close();
+                        return;
+                    }
+                    try
+                    {
+                        GenericOrderInRepository.Delete(Document.Entity);
+                        UnitOfWork.Save();
+                        UnitOfWork.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        UnitOfWork.Rollback();
+                        WindowManager.ShowError(ex);
+                    }
+                    RecalcKontragentBalans.CalcBalans(dc,docdate);
+                    //orderManager.DeleteOrderIn(Document);
                     CloseWindow(Form);
                     break;
                 case MessageBoxResult.No:
