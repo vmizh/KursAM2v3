@@ -7,9 +7,12 @@ using Data.Repository;
 using KursAM2.Repositories;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 using Core.EntityViewModel.CommonReferences;
 using Core.WindowsManager;
 using KursAM2.Managers;
+using KursAM2.View.AktSpisaniya;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
@@ -109,9 +112,62 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public override void DocNewEmpty(object form)
         {
-            WindowManager.ShowFunctionNotReleased();
+            var frm = new AktSpisaniyaView()
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctx = new AktSpisaniyaNomenklTitleWIndowViewModel()
+            {
+                Form = frm
+            };
+            frm.DataContext = ctx;
+            frm.Show();
 
         }
+
+        public override void DocNewCopy(object obj)
+        {
+            if(CurrentDocument == null)
+                return;
+            var ctx = new AktSpisaniyaNomenklTitleWIndowViewModel(CurrentDocument.Id);
+            ctx.SetAsNewCopy(true);
+            var frm = new AktSpisaniyaView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+
+            ctx.Form = frm;
+            frm.Show();
+        }
+
+        public override void DocNewCopyRequisite(object obj)
+        {
+            if(CurrentDocument == null)
+                return;
+            var ctx = new AktSpisaniyaNomenklTitleWIndowViewModel(CurrentDocument.Id);
+            ctx.SetAsNewCopy(false);
+            var frm = new AktSpisaniyaView()
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+
+            ctx.Form = frm;
+            frm.Show();
+        }
+
+        public override void RefreshData(object obj)
+        {
+            base.RefreshData(obj);
+            foreach (var d in AktSpisaniyaNomenklRepository.GetAllByDates(DateStart, DateEnd).ToList())
+            {
+                Documents.Add(new AktSpisaniyaNomenklTitleViewModel(d));
+            }
+        }
+
+
+
 
 
 

@@ -6,7 +6,11 @@ using Data;
 using Data.Repository;
 using KursAM2.Repositories;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
+using Core.EntityViewModel.Invoices;
+using Core.EntityViewModel.NomenklManagement;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
@@ -17,6 +21,49 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public override bool IsCorrect()
         {
             return Document.IsCorrect();
+        }
+
+        public void SetAsNewCopy(bool isCopy)
+        {
+            var newId = Guid.NewGuid();
+            unitOfWork.Context.Entry(Document.Entity).State = EntityState.Detached;
+            Document.DocCode = -1;
+            Document.DocDate = DateTime.Today;
+            Document.DocCreator = GlobalOptions.UserInfo.Name;
+            Document.myState = RowStatus.NewRow;
+            Document.Id = newId;
+            unitOfWork.Context.AktSpisaniyaNomenkl_Title.Add(Document.Entity);
+            if (isCopy)
+            {
+                var newCode = 1;
+                foreach (var item in Document.Rows)
+                {
+                    unitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
+                    item.DocCode = -1;
+                    item.Id = Guid.NewGuid();
+                    item.DocId = newId;
+                    item.DocCode = newCode;
+                    item.Nomenkl = item.Nomenkl;
+                    item.State = RowStatus.NewRow;
+                    newCode++;
+                }
+
+                foreach (var r in Document.Rows)
+                {
+                    unitOfWork.Context.AktSpisaniya_row.Add(r.Entity);
+                    r.State = RowStatus.NewRow;
+                }
+            }
+            else
+            {
+                foreach (var item in Document.Rows)
+                {
+                    unitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
+                    Document.Entity.AktSpisaniya_row.Clear();
+                }
+
+                Document.Rows.Clear();
+            }
         }
 
         #endregion

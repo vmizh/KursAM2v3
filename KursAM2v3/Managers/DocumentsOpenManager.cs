@@ -12,6 +12,7 @@ using Core.WindowsManager;
 using Data;
 using Helper;
 using KursAM2.Managers.Base;
+using KursAM2.View.AktSpisaniya;
 using KursAM2.View.Dogovors;
 using KursAM2.View.Finance;
 using KursAM2.View.Finance.Cash;
@@ -25,6 +26,7 @@ using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
+using KursAM2.ViewModel.Logistiks.AktSpisaniya;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reference;
@@ -194,7 +196,7 @@ namespace KursAM2.Managers
                     OpenBank(dc);
                     break;
                 case DocumentType.Waybill:
-                    var owb =OpenWayBill(dc);
+                    var owb = OpenWayBill(dc);
                     SaveLastOpenInfo(docType, owb.Document.Id, owb.Document.DocCode, owb.Document.CREATOR,
                         "", owb.Document.Description);
                     break;
@@ -202,6 +204,11 @@ namespace KursAM2.Managers
                     var op = OpenPayroll(id);
                     SaveLastOpenInfo(docType, op.Id, op.DocCode, op.Creator,
                         "", op.Description);
+                    break;
+                case DocumentType.AktSpisaniya:
+                    var akt = OpenAktSpisaniyaNomenkl(id);
+                    SaveLastOpenInfo(docType, akt.Document.Id, null, akt.Document.DocCreator,
+                        "", akt.Document.Description);
                     break;
                 default:
                     return;
@@ -586,5 +593,23 @@ namespace KursAM2.Managers
             var dc = vm.DocCode;
             OpenWayBill(dc);
         }
+
+        private static AktSpisaniyaNomenklTitleWIndowViewModel OpenAktSpisaniyaNomenkl(Guid? id)
+        {
+            if (id == null)
+            {
+                return null;
+            }
+            var ctx = new AktSpisaniyaNomenklTitleWIndowViewModel(id.Value);
+            var view = new AktSpisaniyaView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = view;
+            view.Show();
+            return ctx;
+        }
+
     }
 }

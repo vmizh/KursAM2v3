@@ -410,6 +410,9 @@
     <Compile Include="View\AktSpisaniya\AktSpisaniyaSearchView.xaml.cs">
       <DependentUpon>AktSpisaniyaSearchView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\AktSpisaniya\AktSpisaniyaView.xaml.cs">
+      <DependentUpon>AktSpisaniyaView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Base\IOnAutoGeneratingColumn.cs" />
     <Compile Include="View\Base\KursBaseDialog.xaml.cs">
       <DependentUpon>KursBaseDialog.xaml</DependentUpon>
@@ -1125,6 +1128,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\AktSpisaniya\AktSpisaniyaSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AktSpisaniya\AktSpisaniyaView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
