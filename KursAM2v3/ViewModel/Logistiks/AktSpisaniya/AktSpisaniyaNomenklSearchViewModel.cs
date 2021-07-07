@@ -7,6 +7,9 @@ using Data.Repository;
 using KursAM2.Repositories;
 using System;
 using System.Collections.ObjectModel;
+using Core.EntityViewModel.CommonReferences;
+using Core.WindowsManager;
+using KursAM2.Managers;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
@@ -95,5 +98,27 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         #endregion
 
+        #region Commands
+        public override bool IsDocumentOpenAllow => CurrentDocument != null;
+
+        public override void DocumentOpen(object form)
+        {
+            DocumentsOpenManager.Open(DocumentType.AktSpisaniya, 0, CurrentDocument.Id);
+
+        }
+
+        public override void DocNewEmpty(object form)
+        {
+            WindowManager.ShowFunctionNotReleased();
+
+        }
+
+
+
+        #endregion
+
     }
+
+
+
 }

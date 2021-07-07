@@ -57,6 +57,7 @@ namespace KursAM2.Managers
                 case DocumentType.NomenklTransfer:
                 case DocumentType.PayRollVedomost:
                 case DocumentType.DogovorClient:
+                case DocumentType.AktSpisaniya:
                     return true;
                 default:
                     return false;

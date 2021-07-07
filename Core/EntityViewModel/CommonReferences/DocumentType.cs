@@ -49,6 +49,10 @@ namespace Core.EntityViewModel.CommonReferences
         SaleForCash = 259,
 
         [Display(Name = "Акт сверки")]
-        ActReconciliation = 430
+        ActReconciliation = 430,
+        
+        [Display(Name = "Акт списания")]
+        AktSpisaniya = 1003
+
     }
 }
