@@ -4,14 +4,15 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
+using KursAM2.Dialogs;
 using KursAM2.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using Core.EntityViewModel.Invoices;
-using Core.EntityViewModel.NomenklManagement;
+using System.Windows;
+using System.Windows.Input;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
@@ -93,7 +94,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             WindowName = "Акт списания";
             Document = new AktSpisaniyaNomenklTitleViewModel(AktSpisaniyaNomenklTitleRepository.CreateNew(), RowStatus.NewRow);
-            
+
         }
 
         public AktSpisaniyaNomenklTitleWIndowViewModel(Guid id)
@@ -103,7 +104,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             RefreshData(id);
-            
+
         }
 
         public override string LayoutName => "AktSpisaniyaNomenklTitleView";
@@ -112,11 +113,12 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         #region Properties
         public override string WindowName =>
-            Document == null ? "Акт списания":
+            Document == null ? "Акт списания" :
             $"Акт списания №{Document?.DocNumber} от {Document?.DocDate}";
 
         public ObservableCollection<AktSpisaniyaRowViewModel> SelectedRows { set; get; }
             = new ObservableCollection<AktSpisaniyaRowViewModel>();
+
         public List<Core.EntityViewModel.NomenklManagement.Warehouse>
             WarehouseList
         { set; get; } = MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList();
@@ -144,6 +146,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 RaisePropertyChanged();
             }
         }
+
         public override Guid Id
         {
             get => myId;
@@ -171,6 +174,62 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                     AktSpisaniyaNomenklTitleRepository.GetByGuidId(Document.Id));
             }
             RaisePropertiesChanged(nameof(Document));
+        }
+
+        public ICommand AddNomenklCommand
+        {
+            get { return new Command(AddNomenkl, _ => true); }
+        }
+
+        private void AddNomenkl(object obj)
+        {
+            var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
+
+            var nomenkls = StandartDialogs.SelectNomenkls(null, true);
+            if (nomenkls == null || nomenkls.Count <= 0) return;
+            foreach (var n in nomenkls)
+                if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode))
+                {
+                    Document.Rows.Add(new AktSpisaniyaRowViewModel()
+                    {
+                        Id = Guid.NewGuid(),
+                        DocId = Document.Id,
+                        Nomenkl = n,
+                        Quantity = 1,
+                        Note = "Списание",
+                        Code = newCode,
+                        State = RowStatus.NewRow
+                    });
+                }
+
+            RaisePropertyChanged(nameof(Document));
+        }
+
+        public ICommand DeleteRowCommand
+        {
+            get { return new Command(DeleteRow, _ => SelectedRows.Count > 0); }
+        }
+
+        private void DeleteRow(object obj)
+        {
+            if (WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить строки", "Запрос",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                var list = SelectedRows.Select(_ => _.Id).ToList();
+                foreach (var id in list)
+                {
+                    var row = Document.Rows.Single(_ => _.Id == id);
+                    Document.Rows.Remove(row);
+                    unitOfWork.Context.Entry(row.Entity).State =
+                        unitOfWork.Context.Entry(row.Entity).State == EntityState.Added
+                            ? EntityState.Detached
+                            : EntityState.Deleted;
+
+                }
+
+                Document.State = RowStatus.Edited;
+            }
         }
 
         #endregion
