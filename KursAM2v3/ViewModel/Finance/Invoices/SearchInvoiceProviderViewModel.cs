@@ -160,68 +160,30 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewCopy(object form)
         {
-            if (CurrentDocument == null) return;
-            var frm = new InvoiceProviderView {Owner = Application.Current.MainWindow};
-            var ctx = new ProviderWindowViewModel {Form = frm};
-            ctx.Document = new InvoiceProvider(ctx.GenericProviderRepository.GetById(CurrentDocument.DocCode),
-                ctx.UnitOfWork);
-            ctx.GenericProviderRepository.DetachObjects();
-            var id = Guid.NewGuid();
-            ctx.Document.Id = id;
-            ctx.Document.DocCode = -1;
-            ctx.Document.SF_POSTAV_NUM = null;
-            ctx.Document.DocDate = DateTime.Today;
-            ctx.Document.SF_REGISTR_DATE = DateTime.Today;
-            ctx.Document.CREATOR = GlobalOptions.UserInfo.Name;
-            ctx.Document.myState = RowStatus.NewRow;
-            ctx.Document.PaymentDocs.Clear();
-            ctx.Document.Facts.Clear();
-            ctx.Document.IsAccepted = false;
-            var code = 1;
-            foreach (var row in ctx.Document.Rows)
+            if (CurrentDocument == null) return; 
+            var ctx = new ProviderWindowViewModel(CurrentDocument.DocCode);
+            ctx.SetAsNewCopy(true);
+            var frm = new InvoiceProviderView
             {
-                row.DocCode = -1;
-                row.Id = Guid.NewGuid();
-                row.DocId = id;
-                row.Code = code;
-                row.myState = RowStatus.NewRow;
-                code++;
-            }
-
-            ctx.Document.DeletedRows.Clear();
-            ctx.Document.PaymentDocs.Clear();
-            ctx.Document.Facts.Clear();
-            ctx.UnitOfWork.Context.SD_26.Add(ctx.Document.Entity);
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
             frm.Show();
-            frm.DataContext = ctx;
         }
 
         public override void DocNewCopyRequisite(object form)
         {
-            if (CurrentDocument == null) return;
-            var frm = new InvoiceProviderView {Owner = Application.Current.MainWindow};
-            var ctx = new ProviderWindowViewModel {Form = frm};
-            ctx.Document = new InvoiceProvider(ctx.GenericProviderRepository.GetById(CurrentDocument.DocCode),
-                ctx.UnitOfWork);
-            ctx.GenericProviderRepository.DetachObjects();
-            ctx.Document.DocCode = -1;
-            ctx.Document.Entity.SF_CRS_SUMMA = 0;
-            ctx.Document.Id = Guid.NewGuid();
-            ctx.Document.SF_POSTAV_NUM = null;
-            ctx.Document.DocDate = DateTime.Today;
-            ctx.Document.SF_REGISTR_DATE = DateTime.Today;
-            ctx.Document.CREATOR = GlobalOptions.UserInfo.Name;
-            ctx.Document.myState = RowStatus.NewRow;
-            ctx.Document.PaymentDocs.Clear();
-            ctx.Document.Facts.Clear();
-            ctx.Document.IsAccepted = false;
-            ctx.Document.DeletedRows.Clear();
-            ctx.Document.PaymentDocs.Clear();
-            ctx.Document.Facts.Clear();
-            ctx.Document.Rows.Clear();
-            ctx.UnitOfWork.Context.SD_26.Add(ctx.Document.Entity);
+            if (CurrentDocument == null) return; 
+            var ctx = new ProviderWindowViewModel(CurrentDocument.DocCode);
+            ctx.SetAsNewCopy(false);
+            var frm = new InvoiceProviderView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
             frm.Show();
-            frm.DataContext = ctx;
         }
     }
 }

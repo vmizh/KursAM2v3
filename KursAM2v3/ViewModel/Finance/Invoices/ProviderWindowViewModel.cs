@@ -1536,6 +1536,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Document.PaymentDocs.Clear();
             Document.Facts.Clear();
             Document.IsAccepted = false;
+            Document.IsNDSInPrice = true;
 
             UnitOfWork.Context.SD_26.Add(Document.Entity);
             Document.DeletedRows.Clear();
@@ -1557,6 +1558,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var r in Document.Rows)
                 {
                     UnitOfWork.Context.TD_26.Add(r.Entity);
+                    r.CalcRow();
                     r.State = RowStatus.NewRow;
                 }
             }
