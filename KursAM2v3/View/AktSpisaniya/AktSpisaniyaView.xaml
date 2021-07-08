@@ -37,12 +37,14 @@
                         <Label Content="№: " DockPanel.Dock="Left"
                                        />
                         <dxe:TextEdit MinWidth="80"
-                                      Margin="48,0,0,0"
+                                      Margin="5,0,0,0"
                                       EditValue="{Binding Document.DocNumber, UpdateSourceTrigger=PropertyChanged}"
                                       DockPanel.Dock="Left"/>
                         
                         <Label Content="  Дата " DockPanel.Dock="Left"/>
-                        <dxe:DateEdit MinWidth="100" DockPanel.Dock="Left"
+                        <dxe:DateEdit MinWidth="100"
+                                      DockPanel.Dock="Left"
+                                      Margin="5,0,0,0"
                                     EditValue="{Binding Document.DocDate, UpdateSourceTrigger=PropertyChanged}"/>
                         <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
                                     IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
@@ -63,7 +65,7 @@
                         <dxe:ComboBoxEdit Style="{StaticResource ComboBoxEditWithError}"
                                       DockPanel.Dock="Left" 
                                       MinWidth="200"
-                                      Margin="5 0"
+                                      Margin="22 0"
                                       ItemsSource="{Binding WarehouseList}"
                                       EditValue="{Binding Document.Warehouse, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}">
                         </dxe:ComboBoxEdit>
@@ -75,7 +77,7 @@
                     <dxe:TextEdit MinHeight="40" 
                                   MaxHeight="60" 
                                   MinWidth="500"
-                                  Margin="20 5"
+                                  Margin="5 0"
                                   EditValue="{Binding Document.ReasonCreation, UpdateSourceTrigger=PropertyChanged}"
                                   />
                 </StackPanel>
@@ -84,7 +86,7 @@
                     <dxe:TextEdit MinHeight="40" 
                                   MaxHeight="60" 
                                   MinWidth="500"
-                                  Margin="20 5"
+                                  Margin="39 0"
                                   EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
                                   />
                 </StackPanel>
