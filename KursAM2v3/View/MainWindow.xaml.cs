@@ -14,6 +14,7 @@ using DevExpress.Xpf.Bars;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.LayoutControl;
 using KursAM2.Managers;
+using KursAM2.View.AktSpisaniya;
 using KursAM2.View.Base;
 using KursAM2.View.Dogovors;
 using KursAM2.View.Finance;
@@ -35,6 +36,7 @@ using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
+using KursAM2.ViewModel.Logistiks.AktSpisaniya;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management;
 using KursAM2.ViewModel.Management.BreakEven;
@@ -169,6 +171,17 @@ namespace KursAM2.View
                 Window form;
                 switch (formName)
                 {
+                    // Акт списания материалов
+                    case "Списание материалов":
+                        var actCtx = new AktSpisaniyaNomenklSearchViewModel();
+                        form = new AktSpisaniyaSearchView()
+                        {
+                            Owner = Application.Current.MainWindow
+                        };
+                        form.DataContext = actCtx;
+                        actCtx.Form = form;
+                        form.Show();
+                        break;
                     //Разбор данных для Shop
                     case "Разбор данных для Shop":
                         var shopCTX = new ShopParserExtFilesWindowViewModel();

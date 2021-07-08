@@ -142,7 +142,6 @@ namespace Core.EntityViewModel.Invoices
                         MessageBoxImage.Error);
                     return;
                 }
-
                 if (Math.Abs(Entity.SFT_KOL - (double) value) < 0.00001) return;
                 if (value < Shipped)
                 {
@@ -209,25 +208,24 @@ namespace Core.EntityViewModel.Invoices
 
         public decimal? SFT_SUMMA_NDS => Entity.SFT_SUMMA_NDS;
 
-        public decimal Summa
-        {
-            get => Entity.SFT_SUMMA_K_OPLATE ?? 0;
-            set
-            {
-                if (value < 0)
-                {
-                    WindowManager.ShowMessage("Сумма должна быть больше нуля", "Ошибка",
-                        MessageBoxImage.Error);
-                    return;
-                }
-
-                if (Entity.SFT_SUMMA_K_OPLATE == value) return;
-                Entity.SFT_SUMMA_K_OPLATE = value;
-                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = value;
-                CalcRow();
-                RaisePropertyChanged();
-            }
-        }
+        public decimal Summa => Entity.SFT_SUMMA_K_OPLATE ?? 0;
+        //{
+        //    get => 
+        //    set
+        //    {
+        //        if (value < 0)
+        //        {
+        //            WindowManager.ShowMessage("Сумма должна быть больше нуля", "Ошибка",
+        //                MessageBoxImage.Error);
+        //            return;
+        //        }
+        //        if (Entity.SFT_SUMMA_K_OPLATE == value) return;
+        //        Entity.SFT_SUMMA_K_OPLATE = value;
+        //        Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = value;
+        //        CalcRow();
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public decimal? SFT_STDP_DC
         {
@@ -621,27 +619,23 @@ namespace Core.EntityViewModel.Invoices
         {
             if (IsNDSInPrice)
             {
-                Entity.SFT_SUMMA_NDS = Math.Round((Entity.SFT_SUMMA_K_OPLATE ?? 0) -
-                                                  (Entity.SFT_SUMMA_K_OPLATE ?? 0) * 100 /
-                                                  (decimal) (100 + Entity.SFT_NDS_PERCENT), 2);
-                Entity.SFT_ED_CENA =
-                    (Entity.SFT_SUMMA_K_OPLATE ?? 0) /
-                    (decimal) Entity.SFT_KOL;
-                RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
-                RaisePropertyChanged(nameof(Price));
+                var s = (decimal) Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0;
+                Entity.SFT_SUMMA_NDS = Math.Round(s - s * 100 / (100 + (decimal) Entity.SFT_NDS_PERCENT), 2);
+                Entity.SFT_SUMMA_K_OPLATE = s;
+                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = s;
             }
             else
             {
                 Entity.SFT_SUMMA_NDS =
-                    (decimal) Math.Round(Entity.SFT_KOL*(double) (Entity.SFT_ED_CENA ?? 0) * (double) NDSPercent / (double) (100 + NDSPercent), 2);
+                    (decimal) Math.Round(
+                        Entity.SFT_KOL * (double) (Entity.SFT_ED_CENA ?? 0) * (double) Entity.SFT_NDS_PERCENT / 100, 2);
                 Entity.SFT_SUMMA_K_OPLATE =
                     Math.Round((decimal) (Entity.SFT_KOL * (double) (Entity.SFT_ED_CENA ?? 0)), 2)
                     + Entity.SFT_SUMMA_NDS;
                 Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
-                RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
-                RaisePropertyChanged(nameof(Summa));
             }
-
+            RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
+            RaisePropertyChanged(nameof(Summa));
             if (Parent is InvoiceClient p)
             {
                 p.RaisePropertyChanged("Summa");

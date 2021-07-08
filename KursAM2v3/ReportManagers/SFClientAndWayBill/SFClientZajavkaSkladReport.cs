@@ -53,7 +53,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                         Nomenkl = item.Nomenkl,
                         Quantity = item.Quantity - r.Sum(_ => _.DDT_KOL_RASHOD),
                         Price = item.Price,
-                        Summa = item.Price * (decimal) item.Quantity - r.Sum(_ => _.DDT_KOL_RASHOD),
+                        //Summa = item.Price * (decimal) item.Quantity - r.Sum(_ => _.DDT_KOL_RASHOD),
                         Name = item.Note
                     });
             }

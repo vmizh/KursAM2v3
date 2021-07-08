@@ -1020,7 +1020,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void UpdateCalcRowSumma(object obj)
         {
-            CurrentRow?.CalcRow();
+            //CurrentRow?.CalcRow();
             if (Form is InvoiceProviderView frm)
             {
                 frm.gridRows.RefreshData();

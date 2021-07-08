@@ -66,9 +66,12 @@
                  <dxlc:LayoutItem>
                      <StackPanel Orientation="Horizontal">
                          <Label Content="Тип отправителя: "/>
-                         <dxe:ComboBoxEdit MinWidth="120" DockPanel.Dock="Right"
+                         <dxe:ComboBoxEdit 
+                             Style="{StaticResource ComboBoxEditWithError}"
+                             Margin="11 0"
+                             MinWidth="120" DockPanel.Dock="Right"
                                            IsEnabled="{Binding IsSenderTypeEnabled, Mode=OneWay}" 
-                                           EditValue="{Binding Document.WarehouseSenderType, 
+                                           EditValue="{Binding Document.WarehouseSenderType, ValidatesOnDataErrors=True,
                              UpdateSourceTrigger=PropertyChanged}">
                              <dxmvvm:Interaction.Behaviors>
                                  <dxmvvm:EnumItemsSourceBehavior
@@ -79,7 +82,6 @@
                          <dxe:ButtonEdit
                              Style="{StaticResource ButtonEditWithError}"
                              MinWidth="200"
-                                        TextWrapping="Wrap"
                                          IsTextEditable="False"
                                          EditValue="{Binding Document.Sender, ValidatesOnDataErrors=True, Mode=OneWay}">
                              <dxmvvm:Interaction.Behaviors>
@@ -87,8 +89,46 @@
                                                         Command="{Binding SenderSelectCommand}"/>
                              </dxmvvm:Interaction.Behaviors>
                          </dxe:ButtonEdit>
+                         <Label Margin="5 0" Content="Счет: "/>
+                         <dxe:ButtonEdit MinWidth="200"
+                                         IsTextEditable="False"
+                                         AllowDefaultButton="False"
+                                         EditValue="{Binding Document.Sender, ValidatesOnDataErrors=True, Mode=OneWay}">
+                         <dxe:ButtonEdit.Buttons>
+                             <dxe:ButtonInfo GlyphKind="Regular"
+                                             ToolTip = "Установить связь со счетом"
+                                             Command="{Binding LinkToSchetCommand}"/>
+                             <dxe:ButtonInfo GlyphKind = "Cancel"
+                                                        ToolTip = "Удалить связь со счетом"
+                                                        Command="{Binding DeleteLinkSchetCommand}"/>
+                             <dxe:ButtonInfo GlyphKind = "Edit"
+                                             ToolTip = "Открыть счет"
+                                             Command="{Binding OpenLinkSchetCommand}"/>
+
+                         </dxe:ButtonEdit.Buttons>
+                         </dxe:ButtonEdit>
                      </StackPanel>
                  </dxlc:LayoutItem>
+                <dxlc:LayoutItem>
+                    <StackPanel Orientation="Horizontal">
+                    <Label Content="Склад получатель: "/>
+                    <dxe:ComboBoxEdit Style="{StaticResource ComboBoxEditWithError}"
+                                      DockPanel.Dock="Left" 
+                                      MinWidth="200"
+                                      Margin="5 0"
+                                      ItemsSource="{Binding WarehouseList}"
+                                      EditValue="{Binding Document.WarehouseIn, ValidatesOnDataErrors=True,
+                             UpdateSourceTrigger=PropertyChanged}">
+                    </dxe:ComboBoxEdit>
+                    </StackPanel>
+                </dxlc:LayoutItem>
+                <StackPanel Orientation="Horizontal" MaxHeight="60">
+                    <Label Content="Примечания: " VerticalAlignment="Center"/>
+                    <dxe:TextEdit MinHeight="40" 
+                                  MaxHeight="60" 
+                                  MinWidth="300"
+                                  Margin="33 0"/>
+                </StackPanel>
             </dxlc:LayoutGroup>
             <dxlc:LayoutGroup View="Group"
                               HorizontalAlignment="Stretch"

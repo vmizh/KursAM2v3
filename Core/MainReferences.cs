@@ -466,44 +466,22 @@ namespace Core
         //TODO Вставить проверку на обновление контрагента по дате обновления
         public static Kontragent GetKontragent(decimal dc)
         {
-            if (AllKontragents.ContainsKey(dc))
-                return AllKontragents[dc];
-            return null;
+            return AllKontragents.ContainsKey(dc) ? AllKontragents[dc] : null;
         }
 
         public static Kontragent GetKontragent(decimal? dc)
         {
-            if (dc == null) return null;
-            return GetKontragent(dc.Value);
+            return dc == null ? null : GetKontragent(dc.Value);
         }
 
         public static CentrOfResponsibility GetCO(decimal dc)
         {
-            if (COList.ContainsKey(dc))
-                return COList[dc];
-            return new CentrOfResponsibility
-            {
-                Entity = new SD_40
-                {
-                    DOC_CODE = 0,
-                    CENT_NAME = "ЦО не указан"
-                }
-            };
+            return COList.ContainsKey(dc) ? COList[dc] : null;
         }
 
         public static CentrOfResponsibility GetCO(decimal? dc)
         {
-            if (dc == null)
-                return
-                    new CentrOfResponsibility
-                    {
-                        Entity = new SD_40
-                        {
-                            DOC_CODE = 0,
-                            CENT_NAME = "ЦО не указан"
-                        }
-                    };
-            return GetCO(dc.Value);
+            return dc == null ? null : GetCO(dc.Value);
         }
 
         public static void Refresh()

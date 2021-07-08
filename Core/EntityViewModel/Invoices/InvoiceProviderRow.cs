@@ -119,7 +119,6 @@ namespace Core.EntityViewModel.Invoices
             {
                 if (Entity.SFT_POST_KOL == value) return;
                 Entity.SFT_POST_KOL = value;
-                CalcRow();
                 RaisePropertyChanged();
             }
         }
@@ -168,7 +167,12 @@ namespace Core.EntityViewModel.Invoices
             get => Entity.SFT_ED_CENA ?? 0;
             set
             {
-                if (Entity.SFT_ED_CENA == value) return;
+                if (value < 0)
+                {
+                    WindowManager.ShowMessage("Цена должна быть больше нуля", "Ошибка",
+                        MessageBoxImage.Error);
+                    return;
+                }
                 Entity.SFT_ED_CENA = value;
                 Entity.SFT_ED_CENA_PRIHOD = value;
                 CalcRow();
@@ -179,7 +183,6 @@ namespace Core.EntityViewModel.Invoices
                         r.PriceWithNaklad = (decimal) (Entity.SFT_ED_CENA + (SFT_SUMMA_NAKLAD ?? 0) / Entity.SFT_KOL);
                         r.CalcRow();
                     }
-
                 RaisePropertyChanged();
             }
         }
@@ -189,6 +192,12 @@ namespace Core.EntityViewModel.Invoices
             get => Entity.SFT_KOL;
             set
             {
+                if (value < 0)
+                {
+                    WindowManager.ShowMessage("Количество должно быть больше нуля", "Ошибка",
+                        MessageBoxImage.Error);
+                    return;
+                }
                 if (Entity.SFT_KOL == value) return;
                 if (Parent is InvoiceProvider p && p.Facts.Count > 0)
                 {
@@ -225,6 +234,12 @@ namespace Core.EntityViewModel.Invoices
             get => Entity.SFT_NDS_PERCENT;
             set
             {
+                if (value < 0)
+                {
+                    WindowManager.ShowMessage("НДС должен быть больше нуля", "Ошибка",
+                        MessageBoxImage.Error);
+                    return;
+                }
                 if (Entity.SFT_NDS_PERCENT == value) return;
                 Entity.SFT_NDS_PERCENT = value;
                 CalcRow();
@@ -254,15 +269,15 @@ namespace Core.EntityViewModel.Invoices
             }
         }
 
+        public decimal Summa => Entity.SFT_SUMMA_K_OPLATE ?? 0;
+        
         public decimal? SFT_SUMMA_K_OPLATE
         {
             get => Entity.SFT_SUMMA_K_OPLATE;
             set
             {
-                if (Entity.SFT_SUMMA_K_OPLATE == value) return;
                 Entity.SFT_SUMMA_K_OPLATE = value;
                 Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
-                CalcRow();
                 RaisePropertyChanged();
             }
         }
@@ -311,7 +326,6 @@ namespace Core.EntityViewModel.Invoices
             {
                 if (Entity.SFT_VKLUCH_V_CENU == (value ? 1 : 0)) return;
                 Entity.SFT_VKLUCH_V_CENU = (short) (value ? 1 : 0);
-                CalcRow();
                 RaisePropertyChanged(nameof(SFT_VKLUCH_V_CENU));
                 RaisePropertyChanged();
             }
@@ -827,34 +841,6 @@ namespace Core.EntityViewModel.Invoices
 
         public bool IsAccessRight { get; set; }
 
-        public void CalcRow()
-        {
-            if (IsIncludeInPrice)
-            {
-                Entity.SFT_SUMMA_NDS = Math.Round((Entity.SFT_SUMMA_K_OPLATE ?? 0) -
-                                                  (Entity.SFT_SUMMA_K_OPLATE ?? 0) * 100 /
-                                                  (100 + Entity.SFT_NDS_PERCENT), 2);
-                Entity.SFT_ED_CENA =
-                    Math.Round((Entity.SFT_SUMMA_K_OPLATE ?? 0) / Entity.SFT_KOL, 2);
-                RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
-                RaisePropertyChanged(nameof(Price));
-            }
-            else
-            {
-                Entity.SFT_SUMMA_NDS =
-                    Math.Round((Entity.SFT_KOL + (Entity.SFT_ED_CENA ?? 0)) * SFT_NDS_PERCENT / (100 + SFT_NDS_PERCENT),
-                        2);
-                Entity.SFT_SUMMA_K_OPLATE =
-                    Math.Round(Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0, 2)
-                    + Entity.SFT_SUMMA_NDS;
-                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
-                RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
-                RaisePropertyChanged(nameof(SFT_SUMMA_K_OPLATE));
-            }
-
-            if (Parent is InvoiceProvider p) p.RaisePropertyChanged("Summa");
-        }
-
         private void LoadReference(bool isLoadAll)
         {
             myNomenkl = MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
@@ -886,48 +872,17 @@ namespace Core.EntityViewModel.Invoices
             if (Entity.TD_26_CurrencyConvert?.Count > 0)
                 foreach (var d in Entity.TD_26_CurrencyConvert)
                 {
-                    var newItem = new InvoiceProviderRowCurrencyConvertViewModel(d);
-                    newItem.OLdPrice = Entity.SFT_ED_CENA ?? 0;
-                    newItem.OLdNakladPrice = (SFT_SUMMA_NAKLAD ?? 0) != 0
-                        ? Math.Round(Entity.SFT_ED_CENA ?? 0 +
-                            // ReSharper disable once PossibleInvalidOperationException
-                            (decimal) Entity.SFT_ED_CENA / (SFT_SUMMA_NAKLAD ?? 0), 2)
-                        : Math.Round(Entity.SFT_ED_CENA ?? 0, 2);
+                    var newItem = new InvoiceProviderRowCurrencyConvertViewModel(d)
+                    {
+                        OLdPrice = Entity.SFT_ED_CENA ?? 0,
+                        OLdNakladPrice = (SFT_SUMMA_NAKLAD ?? 0) != 0
+                            ? Math.Round(Entity.SFT_ED_CENA ?? 0 +
+                                // ReSharper disable once PossibleInvalidOperationException
+                                (decimal) Entity.SFT_ED_CENA / (SFT_SUMMA_NAKLAD ?? 0), 2)
+                            : Math.Round(Entity.SFT_ED_CENA ?? 0, 2)
+                    };
                     CurrencyConvertRows.Add(newItem);
                 }
-        }
-
-        public virtual void Save(TD_26 doc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateFrom(TD_26 ent)
-        {
-        }
-
-        public void UpdateTo(TD_26 ent)
-        {
         }
 
         public override string ToString()
@@ -947,6 +902,30 @@ namespace Core.EntityViewModel.Invoices
                 Id = Guid.NewGuid(),
                 DocId = Guid.Empty
             };
+        }
+
+        public void CalcRow()
+        {
+            if (Parent is InvoiceProvider p)
+            {
+                if (p.IsNDSInPrice)
+                {
+                    Entity.SFT_SUMMA_K_OPLATE = Entity.SFT_KOL * Entity.SFT_ED_CENA;
+                    Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
+                    Entity.SFT_SUMMA_NDS = Entity.SFT_SUMMA_K_OPLATE * Entity.SFT_NDS_PERCENT /
+                                           (Entity.SFT_NDS_PERCENT + 100);
+                    
+                }
+                else
+                {
+                    Entity.SFT_SUMMA_NDS = Entity.SFT_KOL * Entity.SFT_ED_CENA * Entity.SFT_NDS_PERCENT / 100;
+                    Entity.SFT_SUMMA_K_OPLATE = Entity.SFT_KOL * Entity.SFT_ED_CENA + Entity.SFT_SUMMA_NDS;
+                    Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
+                }
+                RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
+                RaisePropertyChanged(nameof(Summa));
+                p.RaisePropertyChanged("Summa");
+            } 
         }
 
         public virtual TD_26 Load(decimal dc)
@@ -998,7 +977,7 @@ namespace Core.EntityViewModel.Invoices
             builder.Property(_ => _.Nomenkl).AutoGenerated().DisplayName("Наименование").ReadOnly();
             builder.Property(_ => _.Quantity).AutoGenerated().DisplayName("Кол-во").DisplayFormatString("n4");
             builder.Property(_ => _.Price).AutoGenerated().DisplayName("Цена").DisplayFormatString("n2");
-            builder.Property(_ => _.SFT_SUMMA_K_OPLATE).AutoGenerated().DisplayName("Сумма").DisplayFormatString("n2");
+            builder.Property(_ => _.Summa).AutoGenerated().DisplayName("Сумма").DisplayFormatString("n2");
             builder.Property(_ => _.Note).AutoGenerated().DisplayName("Примечание");
             builder.Property(_ => _.SFT_NDS_PERCENT).AutoGenerated().DisplayName("НДС %").DisplayFormatString("n2");
             builder.Property(_ => _.IsNaklad).AutoGenerated().DisplayName("Накладные").DisplayFormatString("n2");
@@ -1021,7 +1000,7 @@ namespace Core.EntityViewModel.Invoices
             builder.Property(_ => _.Nomenkl).AutoGenerated().DisplayName("Наименование").ReadOnly();
             builder.Property(_ => _.Quantity).AutoGenerated().DisplayName("Кол-во").DisplayFormatString("n4");
             builder.Property(_ => _.Price).AutoGenerated().DisplayName("Цена").DisplayFormatString("n2");
-            builder.Property(_ => _.SFT_SUMMA_K_OPLATE).AutoGenerated().DisplayName("Сумма").DisplayFormatString("n2");
+            builder.Property(_ => _.Summa).AutoGenerated().DisplayName("Сумма").DisplayFormatString("n2");
             builder.Property(_ => _.SFT_SUMMA_NAKLAD).AutoGenerated().DisplayName("Сумма накл")
                 .DisplayFormatString("n2").ReadOnly();
             builder.Property(_ => _.Note).AutoGenerated().DisplayName("Примечание");
