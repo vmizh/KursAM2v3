@@ -870,6 +870,7 @@ namespace Core.Invoices.EntityViewModel
                 foreach (var r in Rows)
                 {
                     r.IsIncludeInPrice = Entity.SF_NDS_VKL_V_CENU == 0 ? false : true;
+                    r.CalcRow();
                 }
             }
         }

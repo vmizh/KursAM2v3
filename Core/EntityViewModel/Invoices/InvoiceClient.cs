@@ -614,7 +614,11 @@ namespace Core.EntityViewModel.Invoices
             {
                 if ((SF_NDS_1INCLUD_0NO ?? 0) == 1 == value) return;
                 SF_NDS_1INCLUD_0NO = (short?) ((SF_NDS_1INCLUD_0NO ?? 0) == 1 ? 0 : 1);
-                foreach (var r in Rows) r.IsNDSInPrice = (SF_NDS_1INCLUD_0NO ?? 0) == 1;
+                foreach (var r in Rows)
+                {
+                    r.IsNDSInPrice = (SF_NDS_1INCLUD_0NO ?? 0) == 1;
+                    r.CalcRow();
+                }
                 RaisePropertyChanged();
             }
         }

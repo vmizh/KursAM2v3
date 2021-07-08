@@ -615,7 +615,7 @@ namespace Core.EntityViewModel.Invoices
 
         public bool IsAccessRight { get; set; }
 
-        private void CalcRow()
+        public void CalcRow()
         {
             if (IsNDSInPrice)
             {
