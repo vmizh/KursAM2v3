@@ -9,10 +9,8 @@ using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -58,6 +56,7 @@ namespace KursAM2.ViewModel.Finance
                             id = i.Id;
                     }
                 }
+
                 var dtx = new BankCurrencyChangeWindowViewModel(id)
                 {
                     ParentForm = this
@@ -113,8 +112,10 @@ namespace KursAM2.ViewModel.Finance
 
         public override void ShowHistory(object data)
         {
-            DocumentHistoryManager.LoadHistory(DocumentType.Bank,null,CurrentBankOperations.DocCode, CurrentBankOperations.Code);
+            DocumentHistoryManager.LoadHistory(DocumentType.Bank, null, CurrentBankOperations.DocCode,
+                CurrentBankOperations.Code);
         }
+
         public override void RefreshData(object obj)
         {
             base.RefreshData(obj);
@@ -128,11 +129,10 @@ namespace KursAM2.ViewModel.Finance
                         $"SELECT DOC_CODE AS DocCode, USR_ID as UserId FROM HD_114 WHERE USR_ID = {GlobalOptions.UserInfo.Id}")
                     .ToList();
                 foreach (var b in MainReferences.BankAccounts.Values)
-                {
-                    if(cashAcc.Any(_ => _.DocCode == b.DocCode))
+                    if (cashAcc.Any(_ => _.DocCode == b.DocCode))
                         BankAccountCollection.Add(b);
-                }
             }
+
             RaisePropertiesChanged(nameof(BankAccountCollection));
             CurrentBankAccount = BankAccountCollection.FirstOrDefault(_ => _.DocCode == bs);
             if (CurrentBankAccount != null)
@@ -141,7 +141,9 @@ namespace KursAM2.ViewModel.Finance
 
         public ICommand RemoveCommand => new Command(DocDelete, _ => CurrentBankOperations != null
                                                                      && !CurrentBankOperations.IsCurrencyChange);
+
         public ICommand AddCurrencyChangedCommand => new Command(AddCurrencyChanged, _ => true);
+
         public ICommand UpdateCurrencyChangedCommand => new Command(UpdateCurrencyChanged,
             _ => CurrentBankOperations != null && CurrentBankOperations.IsCurrencyChange);
 
@@ -167,6 +169,7 @@ namespace KursAM2.ViewModel.Finance
                         id = i.Id;
                 }
             }
+
             var dtx = new BankCurrencyChangeWindowViewModel(id);
             var form = new BankCurrencyChangeView
             {
@@ -202,6 +205,7 @@ namespace KursAM2.ViewModel.Finance
                     WindowManager.ShowError(e);
                 }
             }
+
             var form = new BankCurrencyChangeView
             {
                 Owner = Form,
@@ -272,18 +276,25 @@ namespace KursAM2.ViewModel.Finance
 
         public List<ReminderDatePeriod> Periods { set; get; } =
             new List<ReminderDatePeriod>();
+
         public ObservableCollection<BankAccount> BankAccountCollection { set; get; } =
             new ObservableCollection<BankAccount>();
+
         public ObservableCollection<BankOperationsViewModel> BankOperationsCollection { set; get; } =
             new ObservableCollection<BankOperationsViewModel>();
+
         // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<BankPeriodsOperationsViewModel> BankPeriodOperationsCollection { set; get; } =
             new ObservableCollection<BankPeriodsOperationsViewModel>();
+
         public override bool IsDocNewCopyAllow =>
             CurrentBankOperations != null && !CurrentBankOperations.IsCurrencyChange;
+
         public override bool IsDocDeleteAllow =>
             CurrentBankOperations != null && !CurrentBankOperations.IsCurrencyChange;
+
         private BankAccount myCurrentBankAccount;
+
         public BankAccount CurrentBankAccount
         {
             set
@@ -296,12 +307,15 @@ namespace KursAM2.ViewModel.Finance
                     Currency = MainReferences.BankAccounts[myCurrentBankAccount.DocCode].Currency;
                     GetPeriods();
                 }
+
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Periods));
             }
             get => myCurrentBankAccount;
         }
+
         private ReminderDatePeriod myCurrentPeriods;
+
         public ReminderDatePeriod CurrentPeriods
         {
             set
@@ -314,7 +328,9 @@ namespace KursAM2.ViewModel.Finance
             }
             get => myCurrentPeriods;
         }
+
         private BankOperationsViewModel myCurrentBankOperations;
+
         public BankOperationsViewModel CurrentBankOperations
         {
             set
@@ -329,12 +345,15 @@ namespace KursAM2.ViewModel.Finance
                     manager.SaveBankOperations(myCurrentBankOperations, CurrentBankAccount.DocCode, delta);
                     myCurrentBankOperations.State = RowStatus.NotEdited;
                 }
+
                 myCurrentBankOperations = value;
                 RaisePropertyChanged();
             }
             get => myCurrentBankOperations;
         }
+
         private Currency myCurrency;
+
         public Currency Currency
         {
             get => myCurrency;
@@ -385,7 +404,7 @@ namespace KursAM2.ViewModel.Finance
             CurrentPeriods = Periods.FirstOrDefault(_ => _.DateStart <= k.Date && _.DateEnd >= k.Date);
             RaisePropertyChanged(nameof(Periods));
         }
-  
+
         #endregion
     }
 }
