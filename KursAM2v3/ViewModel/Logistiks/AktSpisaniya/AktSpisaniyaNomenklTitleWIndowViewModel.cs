@@ -86,7 +86,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public AktSpisaniyaNomenklTitleWIndowViewModel()
         {
-            Id = Document.Id;
             BaseRepository = new GenericKursDBRepository<AktSpisaniyaNomenkl_Title>(unitOfWork);
             AktSpisaniyaNomenklTitleRepository = new AktSpisaniyaNomenkl_TitleRepository(unitOfWork);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -98,7 +97,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public AktSpisaniyaNomenklTitleWIndowViewModel(Guid id)
         {
-            Id = id;
             BaseRepository = new GenericKursDBRepository<AktSpisaniyaNomenkl_Title>(unitOfWork);
             AktSpisaniyaNomenklTitleRepository = new AktSpisaniyaNomenkl_TitleRepository(unitOfWork);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -164,10 +162,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             {
                 Document = new AktSpisaniyaNomenklTitleViewModel(
                     AktSpisaniyaNomenklTitleRepository.GetByGuidId(Document.Id));
-            }
-            else
-            {
-                
             }
         }
 
