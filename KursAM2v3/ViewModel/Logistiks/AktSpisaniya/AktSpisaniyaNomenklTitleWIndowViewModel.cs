@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
+using System.Linq;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.NomenklManagement;
 
@@ -101,7 +102,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             AktSpisaniyaNomenklTitleRepository = new AktSpisaniyaNomenkl_TitleRepository(unitOfWork);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
-            WindowName = "Акт списания";
             RefreshData(id);
             
         }
@@ -111,8 +111,15 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         #endregion
 
         #region Properties
+        public override string WindowName =>
+            Document == null ? "Акт списания":
+            $"Акт списания №{Document?.DocNumber} от {Document?.DocDate}";
+
         public ObservableCollection<AktSpisaniyaRowViewModel> SelectedRows { set; get; }
             = new ObservableCollection<AktSpisaniyaRowViewModel>();
+        public List<Core.EntityViewModel.NomenklManagement.Warehouse>
+            WarehouseList
+        { set; get; } = MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList();
 
         public AktSpisaniyaNomenklTitleViewModel Document
         {
@@ -163,6 +170,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 Document = new AktSpisaniyaNomenklTitleViewModel(
                     AktSpisaniyaNomenklTitleRepository.GetByGuidId(Document.Id));
             }
+            RaisePropertiesChanged(nameof(Document));
         }
 
         #endregion

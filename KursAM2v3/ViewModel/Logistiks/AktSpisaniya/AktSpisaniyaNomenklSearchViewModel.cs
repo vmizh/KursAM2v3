@@ -42,6 +42,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
             LayoutName = "AktSpisaniyaSearchView";
+            WindowName = "Акты списания";
         }
 
         #endregion
