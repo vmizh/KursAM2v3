@@ -164,6 +164,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             {
                 Documents.Add(new AktSpisaniyaNomenklTitleViewModel(d));
             }
+
         }
 
 

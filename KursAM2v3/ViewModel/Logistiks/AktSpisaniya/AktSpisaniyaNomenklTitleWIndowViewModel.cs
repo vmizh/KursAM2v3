@@ -104,11 +104,11 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             WindowName = "Акт списания";
-            
+            RefreshData(id);
             
         }
 
-        public override string LayoutName => "AktSpisaniyaNomenkl_TitleView";
+        public override string LayoutName => "AktSpisaniyaNomenklTitleView";
 
         #endregion
 
@@ -157,6 +157,19 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public override bool IsCanSaveData =>
             Document != null && Document.State != RowStatus.NotEdited;
+
+        public override void RefreshData(object obj)
+        {
+            if (Document != null)
+            {
+                Document = new AktSpisaniyaNomenklTitleViewModel(
+                    AktSpisaniyaNomenklTitleRepository.GetByGuidId(Document.Id));
+            }
+            else
+            {
+                
+            }
+        }
 
         #endregion
 
