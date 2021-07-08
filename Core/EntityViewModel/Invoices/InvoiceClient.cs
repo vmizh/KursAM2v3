@@ -1121,8 +1121,6 @@ namespace Core.EntityViewModel.Invoices
                 PayCondition = MainReferences.PayConditions[Entity.SD_179.DOC_CODE];
             if (Entity.SD_77 != null)
                 VzaimoraschetType = MainReferences.VzaimoraschetTypes[Entity.SD_77.DOC_CODE];
-            if (Entity.SF_CENTR_OTV_DC != null)
-                CO = MainReferences.COList[Entity.SF_CENTR_OTV_DC.Value];
             if (Entity.PersonalResponsibleDC != null)
                 PersonaResponsible = MainReferences.Employees[Entity.PersonalResponsibleDC.Value];
             Rows = new ObservableCollection<InvoiceClientRow>();

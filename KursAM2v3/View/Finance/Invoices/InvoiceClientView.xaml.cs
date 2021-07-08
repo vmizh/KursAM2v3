@@ -30,76 +30,7 @@ namespace KursAM2.View.Finance.Invoices
         public ComboBoxEdit CurrencyItem { set; get; }
         private ClientWindowViewModel viewModel => DataContext as ClientWindowViewModel;
 
-        //private void DelBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var ctx = DataContext as ClientWindowViewModel;
-        //    var doc = ctx?.Document;
-        //    if (doc == null)
-        //        return;
-        //    doc.PersonaResponsible = null;
-        //}
-
-        //private void DilerBtnCancel_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var ctx = DataContext as ClientWindowViewModel;
-        //    var doc = ctx?.Document;
-        //    if (doc == null)
-        //        return;
-        //    doc.Diler = null;
-        //    doc.SF_DILER_CRS_DC = null;
-        //    doc.SF_DILER_SUMMA = 0;
-        //    foreach (var r in doc.Rows) r.SFT_NACENKA_DILERA = 0;
-        //}
-
-        //private void Kontr_DefaultButtonClick(object sender, RoutedEventArgs e)
-        //{
-        //    var ctx = DataContext as ClientWindowViewModel;
-        //    var doc = ctx?.Document;
-        //    if (doc == null)
-        //        return;
-        //    if (doc.ShipmentRows.Count > 0)
-        //    {
-        //        WindowManager.ShowMessage("По счету есть расходные накладные. Изменить контрагента нельзя.",
-        //            "Предупреждение", MessageBoxImage.Information);
-        //        return;
-        //    }
-
-        //    if (doc.PaySumma != 0)
-        //    {
-        //        WindowManager.ShowMessage("По счету есть Оплата. Изменить контрагента нельзя.",
-        //            "Предупреждение", MessageBoxImage.Information);
-        //        return;
-        //    }
-
-        //    var kontr = StandartDialogs.SelectKontragent(doc.Currency);
-        //    if (kontr == null) return;
-        //    if (doc.Rows.Any(_ => !_.IsUsluga && _.Nomenkl.Currency.DocCode != kontr.BalansCurrency.DocCode))
-        //    {
-        //        WindowManager.ShowMessage(
-        //            "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
-        //            "Предупреждение", MessageBoxImage.Information);
-        //        return;
-        //    }
-
-        //    switch ((sender as ButtonEdit)?.Tag)
-        //    {
-        //        case "Client":
-        //            doc.Client = kontr;
-        //            doc.Currency = kontr.BalansCurrency;
-        //            doc.Entity.SF_KONTR_CRS_RATE = 1;
-        //            break;
-        //        case "Receiver":
-        //            doc.Receiver = kontr;
-        //            break;
-        //        case "Diler":
-        //            doc.Diler = kontr;
-        //            doc.SF_DILER_CRS_DC = kontr.BalansCurrency.DocCode;
-        //            doc.SF_DILER_SUMMA = 0;
-        //            doc.SF_DILER_RATE = 1;
-        //            break;
-        //    }
-        //}
-
+       
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
             e.Column.Name = e.Column.FieldName;
@@ -185,24 +116,6 @@ namespace KursAM2.View.Finance.Invoices
                 };
         }
 
-        private void GridRows_OnCurrentItemChanged(object sender, CurrentItemChangedEventArgs e)
-        {
-            if (viewModel == null) return;
-            var colPrice = gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Price");
-            var colSumma = gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Summa");
-            if (colPrice == null || colSumma == null) return;
-            if (viewModel.Document.IsNDSIncludeInPrice)
-            {
-                colPrice.ReadOnly = true;
-                colSumma.ReadOnly = false;
-            }
-            else
-            {
-                colPrice.ReadOnly = false;
-                colSumma.ReadOnly = true;
-            }
-        }
-
         private void BaseEdit_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             if (viewModel == null) return;
@@ -228,7 +141,7 @@ namespace KursAM2.View.Finance.Invoices
             {
                 SummaryType = SummaryItemType.Count,
                 ShowInColumn = "Nomenkl",
-                DisplayFormat = "{0:n2}",
+                DisplayFormat = "{0:n0}",
                 FieldName = "Nomenkl"
             });
             gridRows.TotalSummary.Add(new GridSummaryItem
@@ -258,36 +171,6 @@ namespace KursAM2.View.Finance.Invoices
         private void TableViewRows_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
         {
             gridRows.UpdateTotalSummary();
-        }
-
-        private void gridRows_Loaded(object sender, RoutedEventArgs e)
-        {
-            var colNomenkl = gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Nomenkl");
-            if (colNomenkl != null)
-            {
-                if (colNomenkl.EditSettings == null)
-                {
-                    var nomenklEdit = new ButtonEditSettings
-                    {
-                        Name = "PART_Editor",
-                        TextWrapping = TextWrapping.Wrap,
-                        IsTextEditable = false
-                    };
-                    nomenklEdit.DefaultButtonClick += Nomenkl_DefaultButtonClick;
-                    colNomenkl.EditSettings = nomenklEdit;
-                }
-            }
-
-            var colSDR = gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SDRSchet");
-            if (colSDR != null)
-            {
-                colSDR.EditSettings = new ComboBoxEditSettings
-                {
-                    ItemsSource = MainReferences.SDRSchets.Values,
-                    DisplayMember = "Name",
-                    AutoComplete = true
-                };
-            }
         }
     }
 }

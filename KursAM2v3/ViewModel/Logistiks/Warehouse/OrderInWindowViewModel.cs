@@ -75,6 +75,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         #region Properties
 
+        public List<Core.EntityViewModel.NomenklManagement.Warehouse> 
+            WarehouseList { set; get; } = MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList();
+
         public WarehouseOrderIn Document
         {
             set
@@ -108,6 +111,128 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         #endregion
 
         #region Command
+
+        /*<dxe:ButtonInfo GlyphKind="Regular"
+                                             ToolTip = "Установить связь со счетом"
+                                             Command="{Binding LinkToSchetCommand}"/>
+                             <dxe:ButtonInfo GlyphKind = "Cancel"
+                                                        ToolTip = "Удалить связь со счетом"
+                                                        Command="{Binding DeleteLinkSchetCommand}"/>
+                             <dxe:ButtonInfo GlyphKind = "Edit"
+                                             ToolTip = "Открыть счет"
+                                             Command="{Binding OpenLinkSchetCommand}"/>*/
+
+        public ICommand LinkToSchetCommand
+        {
+            get { return new Command(LinkToSchet, _ => true); }
+        }
+
+        private void LinkToSchet(object obj)
+        {
+            switch (Document.WarehouseSenderType)
+            {
+                case WarehouseSenderType.Kontragent:
+                    SelectSchet();
+                    break;
+                case WarehouseSenderType.Store:
+                    SelectRashOrder();
+                    break;
+            }
+        }
+
+        private void SelectRashOrder()
+        {
+            WindowManager.ShowFunctionNotReleased();
+        }
+
+        private void SelectSchet()
+        {
+            if (Document.WarehouseIn == null)
+            {
+                WinManager.ShowWinUIMessageBox("Не выбран склад.", "Ошибка", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+
+            var ctx = new AddNomenklFromInvoiceProviderViewModel(Document.WarehouseIn,
+                Document.KontragentSender);
+            var dlg = new SelectDialogView {DataContext = ctx};
+            ctx.Form = dlg;
+            if (dlg.ShowDialog() == false) return;
+            if (Document.KontragentSender == null)
+            {
+                Document.KontragentSender = ctx.CurrentInvoice.Kontragent;
+            }
+
+            using (var dbctx = GlobalOptions.GetEntities())
+            {
+                foreach (var r in ctx.Nomenkls.Where(_ => _.IsChecked && _.Quantity > 0).ToList())
+                {
+                    var old = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Nomenkl.DocCode);
+                    if (old != null) continue;
+                    var invRow = dbctx.TD_26
+                        .Include(_ => _.SD_26).FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.Code);
+                    var schetRow = invRow != null ? new InvoiceProviderRow(invRow) : null;
+                    Document.Rows.Add(new WarehouseOrderInRow
+                    {
+                        DocCode = -1,
+                        Nomenkl = r.Nomenkl,
+                        DDT_KOL_PRIHOD = r.Quantity,
+                        Unit = r.Nomenkl.Unit,
+                        DDT_SPOST_DC = r.DocCode,
+                        LinkInvoice = schetRow,
+                        DDT_SPOST_ROW_CODE = r.Code,
+                        DDT_CRS_DC = r.Nomenkl.Currency.DocCode,
+                        State = RowStatus.NewRow
+                    });
+                }
+            }
+
+            if (Document.Entity.DD_SPOST_DC == null)
+                using (var context = GlobalOptions.GetEntities())
+                {
+                    var s26 = context.SD_26.FirstOrDefault(_ => _.DOC_CODE == ctx.CurrentInvoice.DocCode);
+                    if (s26 != null)
+                    {
+                        Document.DD_SCHET =
+                            $"№{s26.SF_POSTAV_NUM}/{s26.SF_IN_NUM} " +
+                            $"от {s26.SF_POSTAV_DATE.ToShortDateString()} ";
+                        Document.Entity.DD_SPOST_DC = ctx.CurrentInvoice.DocCode;
+                    }
+                }
+        }
+        public ICommand DeleteLinkSchetCommand
+        {
+            get { return new Command(DeleteLinkSchet, _ => Document.Entity.DD_SPOST_DC != null); }
+        }
+
+        private void DeleteLinkSchet(object obj)
+        {
+            if (WinManager.ShowWinUIMessageBox("Вы хотите удалить счет и связанные с ним строки?",
+                "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+            var delList =
+                new List<WarehouseOrderInRow>(Document.Rows.Where(_ =>
+                    _.DDT_SPOST_DC == Document.Entity.DD_SPOST_DC));
+            foreach (var r in delList)
+            {
+                if (r.State != RowStatus.NewRow) Document.DeletedRows.Add(r);
+                Document.Rows.Remove(r);
+            }
+
+            Document.Entity.DD_SPOST_DC = null;
+            Document.DD_SCHET = null;
+        }
+
+        public ICommand OpenLinkSchetCommand
+        {
+            get { return new Command(OpenLinkSchet, _ => Document.Entity.DD_SPOST_DC != null); }
+        }
+
+        private void OpenLinkSchet(object obj)
+        {
+            // ReSharper disable once PossibleInvalidOperationException
+            DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal) Document.Entity.DD_SPOST_DC);
+        }
 
         public ICommand PrintOrderCommand
         {
