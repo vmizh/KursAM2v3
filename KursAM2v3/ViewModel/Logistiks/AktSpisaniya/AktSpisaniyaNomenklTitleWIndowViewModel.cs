@@ -1,13 +1,17 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using Core;
+﻿using Core;
 using Core.EntityViewModel.AktSpisaniya;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
 using KursAM2.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Linq;
+using Core.EntityViewModel.Invoices;
+using Core.EntityViewModel.NomenklManagement;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
@@ -88,8 +92,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             WindowName = "Акт списания";
-            Document = new AktSpisaniyaNomenklTitleViewModel(AktSpisaniyaNomenklTitleRepository.CreateNew(),
-                RowStatus.NewRow);
+            Document = new AktSpisaniyaNomenklTitleViewModel(AktSpisaniyaNomenklTitleRepository.CreateNew(), RowStatus.NewRow);
+            
         }
 
         public AktSpisaniyaNomenklTitleWIndowViewModel(Guid id)
@@ -98,8 +102,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             AktSpisaniyaNomenklTitleRepository = new AktSpisaniyaNomenkl_TitleRepository(unitOfWork);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
-            WindowName = "Акт списания";
             RefreshData(id);
+            
         }
 
         public override string LayoutName => "AktSpisaniyaNomenklTitleView";
@@ -107,9 +111,15 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         #endregion
 
         #region Properties
+        public override string WindowName =>
+            Document == null ? "Акт списания":
+            $"Акт списания №{Document?.DocNumber} от {Document?.DocDate}";
 
         public ObservableCollection<AktSpisaniyaRowViewModel> SelectedRows { set; get; }
             = new ObservableCollection<AktSpisaniyaRowViewModel>();
+        public List<Core.EntityViewModel.NomenklManagement.Warehouse>
+            WarehouseList
+        { set; get; } = MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList();
 
         public AktSpisaniyaNomenklTitleViewModel Document
         {
@@ -134,7 +144,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 RaisePropertyChanged();
             }
         }
-
         public override Guid Id
         {
             get => myId;
@@ -157,10 +166,16 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public override void RefreshData(object obj)
         {
             if (Document != null)
+            {
                 Document = new AktSpisaniyaNomenklTitleViewModel(
                     AktSpisaniyaNomenklTitleRepository.GetByGuidId(Document.Id));
+            }
+            RaisePropertiesChanged(nameof(Document));
         }
 
         #endregion
+
+
+
     }
 }
