@@ -19,12 +19,12 @@ namespace KursAM2.View.AktSpisaniya
         {
             e.Column.Name = e.Column.FieldName;
             e.Column.ReadOnly = true;
-            switch (e.Column.FieldName)
-            {
-                case "State":
-                    e.Column.Visible = false;
-                    break;
-            }
+            //switch (e.Column.FieldName)
+            //{
+            //    case "State":
+            //        e.Column.Visible = false;
+            //        break;
+            //}
         }
     }
 }

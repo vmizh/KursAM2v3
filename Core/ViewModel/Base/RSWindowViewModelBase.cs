@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Invoices;
 using Core.Menu;
 using Core.WindowsManager;
@@ -48,6 +47,7 @@ namespace Core.ViewModel.Base
 
         protected IDispatcherService DispatcherService => GetService<IDispatcherService>();
         protected ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
+
         protected ILayoutSerializationService LayoutSerializationService
             => GetService<ILayoutSerializationService>();
 
@@ -112,25 +112,22 @@ namespace Core.ViewModel.Base
 
         public bool IsCanSave { get; set; }
 
+        [Display(AutoGenerateField = false)]
         public ICommand OnWindowClosingCommand
         {
-            get
-            {
-                return new Command(OnWindowClosing, _ => true);
-            }
+            get { return new Command(OnWindowClosing, _ => true); }
         }
 
+        [Display(AutoGenerateField = false)]
+        public ICommand OnWindowLoadedCommand
+        {
+            get { return new Command(OnWindowLoaded, _ => true); }
+        }
+
+        
         public virtual void OnWindowClosing(object obj)
         {
             LayoutManager?.Save();
-        }
-
-        public ICommand OnWindowLoadedCommand
-        {
-            get
-            {
-                return new Command(OnWindowLoaded, _ => true);
-            }
         }
 
         public virtual void OnWindowLoaded(object obj)
