@@ -1,10 +1,12 @@
 ﻿using Core;
 using Core.EntityViewModel.AktSpisaniya;
+using Core.EntityViewModel.NomenklManagement;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
 using KursAM2.Dialogs;
+using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories;
 using System;
 using System.Collections.Generic;
@@ -13,8 +15,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core.EntityViewModel.NomenklManagement;
-using KursAM2.Managers.Nomenkl;
+// ReSharper disable IdentifierTypo
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
@@ -74,10 +75,14 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         #region Fields
 
+        // ReSharper disable once InconsistentNaming
         private AktSpisaniyaNomenklTitleViewModel myDocument;
+        // ReSharper disable once InconsistentNaming
         private Guid myId;
+        // ReSharper disable once InconsistentNaming
         private AktSpisaniyaRowViewModel myCurrentRow;
 
+        // ReSharper disable once InconsistentNaming
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork
             = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
@@ -122,9 +127,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public ObservableCollection<AktSpisaniyaRowViewModel> SelectedRows { set; get; }
             = new ObservableCollection<AktSpisaniyaRowViewModel>();
 
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse>
-            WarehouseList
-        { set; get; } = MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList();
+        public List<Core.EntityViewModel.NomenklManagement.Warehouse> WarehouseList { set; get; }
+            = MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList();
 
         public AktSpisaniyaNomenklTitleViewModel Document
         {
@@ -185,7 +189,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public ICommand AddNomenklCommand
         {
-            get { return new Command(AddNomenkl, _ => true); }
+            get { return new Command(AddNomenkl, _ => Document.Warehouse != null); }
         }
 
         private void AddNomenkl(object obj)
@@ -193,7 +197,9 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
 
             var nomenkls = StandartDialogs.SelectNomenkls(null, true);
+
             if (nomenkls == null || nomenkls.Count <= 0) return;
+
             foreach (var n in nomenkls)
                 if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode))
                 {
