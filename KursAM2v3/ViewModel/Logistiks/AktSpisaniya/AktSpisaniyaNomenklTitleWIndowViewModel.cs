@@ -13,6 +13,8 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Core.EntityViewModel.NomenklManagement;
+using KursAM2.Managers.Nomenkl;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
@@ -116,6 +118,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             Document == null ? "Акт списания" :
             $"Акт списания №{Document?.DocNumber} от {Document?.DocDate}";
 
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<AktSpisaniyaRowViewModel> SelectedRows { set; get; }
             = new ObservableCollection<AktSpisaniyaRowViewModel>();
 
@@ -172,6 +175,10 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             {
                 Document = new AktSpisaniyaNomenklTitleViewModel(
                     AktSpisaniyaNomenklTitleRepository.GetByGuidId(Document.Id));
+                foreach (var r in Document.Rows)
+                {
+                    r.Price = NomenklManager.NomenklPrice(r.Nomenkl.DocCode, Document.DocDate).Price;
+                }
             }
             RaisePropertiesChanged(nameof(Document));
         }
@@ -190,12 +197,14 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             foreach (var n in nomenkls)
                 if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode))
                 {
+                    var nPrice = Nomenkl.Price(n.DocCode, Document.DocDate);
                     Document.Rows.Add(new AktSpisaniyaRowViewModel()
                     {
                         Id = Guid.NewGuid(),
                         DocId = Document.Id,
                         Nomenkl = n,
                         Quantity = 1,
+                        Price = nPrice,
                         Note = "Списание",
                         Code = newCode,
                         State = RowStatus.NewRow

@@ -5,7 +5,6 @@ using System.Transactions;
 using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -85,7 +84,8 @@ namespace KursAM2.Managers.Nomenkl
             return ret;
         }
 
-        public static List<Core.EntityViewModel.NomenklManagement.Nomenkl> GetNomenklsSearch(string searchText, bool isDeleted = false)
+        public static List<Core.EntityViewModel.NomenklManagement.Nomenkl> GetNomenklsSearch(string searchText,
+            bool isDeleted = false)
         {
             var ret = new List<Core.EntityViewModel.NomenklManagement.Nomenkl>();
             using (var ctx = GlobalOptions.GetEntities())
@@ -112,7 +112,7 @@ namespace KursAM2.Managers.Nomenkl
         }
 
         /// <summary>
-        /// Текущий остаток товара на конкретном складе
+        ///     Текущий остаток товара на конкретном складе
         /// </summary>
         /// <param name="nomDC"></param>
         /// <param name="storeDC"></param>
@@ -123,7 +123,7 @@ namespace KursAM2.Managers.Nomenkl
         }
 
         /// <summary>
-        /// Остаток товара на конкретном складе на дату
+        ///     Остаток товара на конкретном складе на дату
         /// </summary>
         /// <param name="date"></param>
         /// <param name="nomDC"></param>
@@ -135,7 +135,7 @@ namespace KursAM2.Managers.Nomenkl
         }
 
         /// <summary>
-        /// Текущий остаток товара на всех складах
+        ///     Текущий остаток товара на всех складах
         /// </summary>
         /// <param name="nomDC"></param>
         /// <returns></returns>
@@ -235,10 +235,7 @@ namespace KursAM2.Managers.Nomenkl
             {
                 startQuantity = 0;
                 var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
-                if (data.Count == 0)
-                {
-                    return null;
-                }
+                if (data.Count == 0) return null;
 
                 if (data.Any(_ => _.Date < dateStart))
                 {
@@ -279,10 +276,7 @@ namespace KursAM2.Managers.Nomenkl
             {
                 startQuantity = 0;
                 var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
-                if (data.Count == 0)
-                {
-                    return null;
-                }
+                if (data.Count == 0) return null;
 
                 if (data.Any(_ => _.Date < dateStart))
                 {
@@ -329,10 +323,7 @@ namespace KursAM2.Managers.Nomenkl
                 startPrice = 0;
                 startPriceWithNaklad = 0;
                 var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
-                if (data.Count == 0)
-                {
-                    return null;
-                }
+                if (data.Count == 0) return null;
 
                 if (data.Any(_ => _.Date < dateStart))
                 {
@@ -381,10 +372,7 @@ namespace KursAM2.Managers.Nomenkl
                 startPrice = 0;
                 startPriceWithNaklad = 0;
                 var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
-                if (data.Count == 0)
-                {
-                    return null;
-                }
+                if (data.Count == 0) return null;
 
                 if (data.Any(_ => _.Date < dateStart))
                 {
@@ -425,10 +413,7 @@ namespace KursAM2.Managers.Nomenkl
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
-                if (data.Count == 0)
-                {
-                    return null;
-                }
+                if (data.Count == 0) return null;
 
                 var ndc = data.Select(_ => _.NomDC).Distinct().ToList();
                 foreach (var dc in ndc)
@@ -481,10 +466,7 @@ namespace KursAM2.Managers.Nomenkl
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
-                if (data.Count == 0)
-                {
-                    return null;
-                }
+                if (data.Count == 0) return null;
 
                 var ndc = data.Select(_ => _.NomDC).Distinct().ToList();
                 foreach (var dc in ndc)
@@ -527,14 +509,12 @@ namespace KursAM2.Managers.Nomenkl
                         ctx.SaveChanges();
                         tnx.Complete();
                         if (!MainReferences.NomenklGroups.ContainsKey(newDC))
-                        {
                             MainReferences.NomenklGroups.Add(newDC, new NomenklGroup
                             {
                                 DocCode = newDC,
                                 Name = newCat.CAT_NAME,
                                 ParentDC = newCat.CAT_PARENT_DC
                             });
-                        }
 
                         // ReSharper disable once InconsistentNaming
                         var newCatVM = new NomenklGroup(newCat)
@@ -599,23 +579,17 @@ namespace KursAM2.Managers.Nomenkl
         public static void RecalcPrice(List<decimal> nomdcs, ALFAMEDIAEntities ent = null)
         {
             if (ent != null)
-            {
                 try
                 {
                     foreach (var n in nomdcs)
-                    {
-                        ent.Database.ExecuteSqlCommand($"INSERT INTO NOMENKL_RECALC (NOM_DC, OPER_DATE) " +
+                        ent.Database.ExecuteSqlCommand("INSERT INTO NOMENKL_RECALC (NOM_DC, OPER_DATE) " +
                                                        $"VALUES ({CustomFormat.DecimalToSqlDecimal(n)}, '20000101');");
-                    }
-
                 }
                 catch (Exception ex)
                 {
                     WindowManager.ShowError(ex);
                 }
-            }
             else
-            {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     using (var transaction = ctx.Database.BeginTransaction())
@@ -623,10 +597,8 @@ namespace KursAM2.Managers.Nomenkl
                         try
                         {
                             foreach (var n in nomdcs)
-                            {
-                                ctx.Database.ExecuteSqlCommand($"INSERT INTO NOMENKL_RECALC (NOM_DC, OPER_DATE) " +
+                                ctx.Database.ExecuteSqlCommand("INSERT INTO NOMENKL_RECALC (NOM_DC, OPER_DATE) " +
                                                                $"VALUES ({CustomFormat.DecimalToSqlDecimal(n)}, '20000101');");
-                            }
 
                             transaction.Commit();
                         }
@@ -640,7 +612,6 @@ namespace KursAM2.Managers.Nomenkl
 
                     RecalcPrice();
                 }
-            }
         }
 
         public static Prices NomenklPrice(decimal nomdc, DateTime date, ALFAMEDIAEntities ent = null)
@@ -650,24 +621,16 @@ namespace KursAM2.Managers.Nomenkl
                       "AND Date = (select MAX(np1.Date) " +
                       $"FROM NOM_PRICE np1 WHERE np1.NOM_DC = np.NOM_DC AND np1.DATE <= '{CustomFormat.DateToString(date)}')";
             if (ent == null)
-            {
                 using (var ctx = new ALFAMEDIAEntities())
                 {
                     var data = ctx.Database.SqlQuery<Prices>(sql).ToList();
                     if (data.Count == 0) return null;
-                    else
-                    {
-                        return data.First();
-                    }
+                    return data.First();
                 }
-            }
 
             var data1 = ent.Database.SqlQuery<Prices>(sql).ToList();
             if (data1.Count == 0) return null;
-            else
-            {
-                return data1.First();
-            }
+            return data1.First();
         }
     }
 
