@@ -62,8 +62,12 @@ namespace Core.ViewModel.Base
             }
         }
 
+        public RSWindowViewModelBase ParentFormViewModel { set; get; }
+
         [Display(AutoGenerateField = false)] public virtual int DocumentId { set; get; }
 
+        [Display(AutoGenerateField = false)] 
+        public virtual string ToolTipForSave { set; get; } = "Сохранение";
 
         [Display(AutoGenerateField = false)] public global::Helper.LayoutManager LayoutManager { get; set; }
         public virtual string LayoutName { set; get; }

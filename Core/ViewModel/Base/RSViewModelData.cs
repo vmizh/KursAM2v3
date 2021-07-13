@@ -14,9 +14,12 @@ namespace Core.ViewModel.Base
 
         private void Parent_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (Parent.State != RowStatus.NotEdited) return;
-            Parent.State = RowStatus.Edited;
-            Parent.RaisePropertyChanged();
+            if (Parent is RSViewModelBase p)
+            {
+                if (p.State != RowStatus.NotEdited) return;
+                p.State = RowStatus.Edited; 
+                p.RaisePropertyChanged();
+            }
         }
 
         public override void RaisePropertyChanged(string propertyName = null)

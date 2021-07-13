@@ -37,10 +37,10 @@ namespace KursAM2.Dialogs
         ///     все
         /// </param>
         /// <returns></returns>
-        public static Kontragent SelectKontragent(Currency crs = null)
+        public static Kontragent SelectKontragent(Currency crs = null, bool? isBalans = null)
         {
             //MainReferences.CheckUpdateKontragentAndLoad();
-            var ctx = new KontragentSelectDialog(crs);
+            var ctx = new KontragentSelectDialog(crs,false, isBalans);
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();

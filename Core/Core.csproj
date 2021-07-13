@@ -144,6 +144,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountOfSupplierRowViewModel.cs" />
+    <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountOfSupplierViewModel.cs" />
+    <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountTypeViewModel.cs" />
+    <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountForClientViewModel.cs" />
+    <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountForClientRowViewModel.cs" />
     <Compile Include="EntityViewModel\AktSpisaniya\AktSpisaniyaRowViewModel.cs" />
     <Compile Include="EntityViewModel\AktSpisaniya\AktSpisaniyaNomenklTitleViewModel.cs" />
     <Compile Include="EntityViewModel\Bank\BankOperationType.cs" />

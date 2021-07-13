@@ -26,7 +26,7 @@ namespace Core.ViewModel.Base
         private Guid myId;
         public string myName;
         protected string myNote;
-        private RSViewModelBase myParent;
+        private object myParent;
         private decimal? myParentDC;
         private Guid? myParentId;
         private Guid myRowId;
@@ -42,7 +42,7 @@ namespace Core.ViewModel.Base
         private string myDescription;
         
         [Display(AutoGenerateField = false)]
-        public RSViewModelBase Parent
+        public virtual object Parent
         {
             get => myParent;
             set
@@ -87,8 +87,12 @@ namespace Core.ViewModel.Base
                         break;
                 }
 
-                if (myState != RowStatus.NotEdited && Parent != null && Parent.State == RowStatus.NotEdited)
-                    Parent.State = RowStatus.Edited;
+                if (Parent is RSViewModelBase p)
+                {
+                    if (myState != RowStatus.NotEdited && p.State == RowStatus.NotEdited)
+                        p.State = RowStatus.Edited;
+                }
+
                 RaisePropertyChanged();
             }
             get => myState;
@@ -241,11 +245,17 @@ namespace Core.ViewModel.Base
             if (propertyName != "State")
                 if (State == RowStatus.NotEdited)
                     State = RowStatus.Edited;
-            if (Parent != null && myState != RowStatus.NotEdited)
-                if (Parent.State != RowStatus.NewRow)
+            if (Parent is RSViewModelBase p)
+            {
+                if (myState != RowStatus.NotEdited)
                 {
-                    Parent.State = RowStatus.Edited;
+                    if (p.myState != RowStatus.NewRow)
+                    {
+                        p.myState = RowStatus.Edited;
+                    }
+                    p.RaisePropertyChanged("State");
                 }
+            }
 
             NotifyProtocol.Add(propertyName);
             handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -61,10 +61,14 @@
                                      ShowMaximizeButton="False" 
                                      ShowCaption="False"
                                      ShowCaptionImage="False">
-                        <dxlc:TileLayoutControl x:Name="tileMainGroup" Background="#FFD0D6D3" Margin="0" Padding="12"
+                        <dxlc:TileLayoutControl x:Name="tileMainGroup"
+                                                Background="#FFD0D6D3" 
+                                                Margin="0" 
+                                                Padding="12"
                                                 MaximizedElementPosition="Right" 
                                                 TileClick="tileMainGroup_TileClick" 
-                                                ItemPositionChanged="tileMainGroup_ItemPositionChanged" />
+                                                ItemPositionChanged="tileMainGroup_ItemPositionChanged">
+                        </dxlc:TileLayoutControl>
                     </dxd:LayoutPanel>
                     <dxd:LayoutPanel ShowCloseButton="False" 
                                      ShowPinButton="False"
@@ -94,9 +98,18 @@
                         </dxd:LayoutPanel.Appearance>
                         <dxlc:TileLayoutControl x:Name="tileDocumentItems" Background="#FFD0D6D3" Padding="10"
                                                 TileClick="tileDocumentItems_TileClick" 
-                                                ItemPositionChanged="TileDocumentItems_OnItemPositionChanged"/>
-                        
-
+                                                ItemPositionChanged="TileDocumentItems_OnItemPositionChanged">
+                            <dxlc:TileLayoutControl.ItemTemplate>
+                            <DataTemplate>  
+                                <DockPanel>  
+                                    <dxe:TextEdit Margin="5" 
+                                               Text="{Binding Header}" 
+                                               AcceptsReturn="True"
+                                               />  
+                                </DockPanel>  
+                            </DataTemplate> 
+                            </dxlc:TileLayoutControl.ItemTemplate>
+                        </dxlc:TileLayoutControl>
                     </dxd:LayoutPanel>
                 </dxd:LayoutGroup>
             </dxd:DockLayoutManager.LayoutRoot>

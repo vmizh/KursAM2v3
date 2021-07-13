@@ -2066,6 +2066,17 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_AktSpisaniya_row_Doc_Id" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AktSpisaniya_row_Nomenkl_DC" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AktSpisaniyaNomenkl_Title_Warehouse_DC" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.AccruedAmountForClient" Width="1.5" PointX="26.5" PointY="785.25" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.AccruedAmountOfSupplier" Width="1.5" PointX="26.5" PointY="740.75" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.AccruedAmountType" Width="1.5" PointX="34.5" PointY="785.875" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.AccuredAmountForClientRow" Width="1.5" PointX="28.75" PointY="789.375" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.AccuredAmountOfSupplierRow" Width="1.5" PointX="36.75" PointY="727.875" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccruedAmountForClient_KontrDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_DocId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccruedAmountOfSupplier_KontrDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_DocId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_AccuredAmountTypeId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_AccuredAmountTypeId" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

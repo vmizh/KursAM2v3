@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using Core.EntityViewModel.AccruedAmount;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
@@ -58,6 +59,7 @@ namespace Core
             DeliveryConditions = new Dictionary<decimal, DeliveryCondition>();
             Regions = new Dictionary<decimal, Region>();
             ClientKategory = new Dictionary<decimal, CategoryClientTypeViewModel>();
+            AccruedAmountTypes = new Dictionary<Guid, AccruedAmountTypeViewModel>();
         }
 
         
@@ -90,6 +92,7 @@ namespace Core
         public static Dictionary<decimal, NomenklProductType> NomenklTypes { private set; get; }
         public static Dictionary<decimal, Employee> Employees { private set; get; }
         public static Dictionary<decimal, Kontragent> AllKontragents { set; get; }
+        public static Dictionary<Guid,AccruedAmountTypeViewModel> AccruedAmountTypes { set; get; }
 
         // ReSharper disable once InconsistentNaming
         public static Dictionary<decimal, Nomenkl> ALLNomenkls { set; get; }
@@ -136,6 +139,19 @@ namespace Core
             DeliveryConditions.Clear();
             Regions.Clear();
             ClientKategory.Clear();
+            AccruedAmountTypes.Clear();
+        }
+
+        public static AccruedAmountTypeViewModel GetAccruedAmountType(Guid id)
+        {
+            if (AccruedAmountTypes.ContainsKey(id))
+                return AccruedAmountTypes[id];
+            return null;
+        }
+
+        public static List<AccruedAmountTypeViewModel> GetAllAccruedAmountType()
+        {
+            return new List<AccruedAmountTypeViewModel>(AccruedAmountTypes.Values);
         }
 
         public static Employee GetEmployee(decimal dc)
@@ -1008,6 +1024,23 @@ namespace Core
                     if (s23.Any(_ => _.DOC_CODE == k)) continue;
                     Regions.Remove(k);
                 }
+
+                #endregion
+
+                #region AccruedAmountTypes
+
+                var acct = ent.AccruedAmountType.ToList();
+                foreach(var a in acct)
+                    if(!AccruedAmountTypes.ContainsKey(a.Id))
+                        AccruedAmountTypes.Add(a.Id,new AccruedAmountTypeViewModel(a));
+                    else
+                    {
+                        var a1 = AccruedAmountTypes[a.Id];
+                        a1.Name = a.Name;
+                        a1.IsClient = a.IsClient;
+                        a1.IsSupplier = a.IsSupplier;
+                        a1.Note = a.Note;
+                    }
 
                 #endregion
             }

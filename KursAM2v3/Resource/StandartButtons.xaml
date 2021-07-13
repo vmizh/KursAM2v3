@@ -182,6 +182,7 @@
                 <Setter TargetName="Rect" Property="Stroke" Value="Orange" />
                 <Setter TargetName="PART_1" Property="Fill" Value="Orange" />
                 <Setter TargetName="Rect" Property="Visibility" Value="Visible" />
+                <Setter TargetName="PART_1" Property="ToolTip" Value="{Binding ToolTipForSave}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="PART_1" Property="Fill" Value="LightGray" />

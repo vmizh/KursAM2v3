@@ -541,9 +541,8 @@ namespace KursAM2.ViewModel.Finance
 
                 Document.DeletedRows.Add(CurrentCreditor);
                 Document.Rows.Remove(CurrentCreditor);
-                var prnt = CurrentCreditor.Parent;
-                if (prnt != null)
-                    prnt.State = RowStatus.Edited;
+                if (CurrentCreditor.Parent is RSViewModelBase prnt)
+                    prnt.State = RowStatus.Edited; 
                 CreditorCollection.Remove(CurrentCreditor);
                 UpdateCalcSumma(null);
             }
@@ -568,8 +567,7 @@ namespace KursAM2.ViewModel.Finance
 
                 Document.DeletedRows.Add(CurrentDebitor);
                 Document.Rows.Remove(CurrentDebitor);
-                var prnt = CurrentDebitor.Parent;
-                if (prnt != null)
+                if (CurrentDebitor.Parent is RSViewModelBase prnt)
                     prnt.State = RowStatus.Edited;
                 DebitorCollection.Remove(CurrentDebitor);
                 UpdateCalcSumma(null);

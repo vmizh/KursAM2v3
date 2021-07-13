@@ -18,6 +18,7 @@ using KursAM2.View.AktSpisaniya;
 using KursAM2.View.Base;
 using KursAM2.View.Dogovors;
 using KursAM2.View.Finance;
+using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Finance.DistributeNaklad;
 using KursAM2.View.Finance.Invoices;
@@ -32,6 +33,7 @@ using KursAM2.View.Repozit;
 using KursAM2.View.Shop;
 using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance;
+using KursAM2.ViewModel.Finance.AccruedAmount;
 using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursAM2.ViewModel.Finance.Invoices;
@@ -171,10 +173,46 @@ namespace KursAM2.View
                 Window form;
                 switch (formName)
                 {
+                    // Начисления вынебалансовым Клиентам
+                    case "Внебалансовые начисления для клиентов":
+                        var aad = new AccuredAmountForClientSearchViewModel();
+                        form = new AccruedAmountForClientSearchView
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = aad
+                        };
+                        aad.Form = form;
+                        form.Show();
+                        break;
+
+                    // Начисления вынебалансовым Клиентам
+                    case "Внебалансовые начисления от поставщиков":
+                        var aap = new AccuredAmountOfSupplierSearchViewModel();
+                        form = new AccruedAmountOfSupplierSearchView
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = aap
+                        };
+                        aap.Form = form;
+                        form.Show();
+                        break;
+
+                    // Типы начислений для внебалансовых контрагентов
+                    case "Типы начислений для внебаласовых контрагентов":
+                        var aat = new AccruedAmountTypeWindowViewModel();
+                        form = new AccruedAmountTypeView
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = aat
+                        };
+                        aat.Form = form;
+                        form.Show();
+                        break;
+
                     // Акт списания материалов
                     case "Списание материалов":
                         var actCtx = new AktSpisaniyaNomenklSearchViewModel();
-                        form = new AktSpisaniyaSearchView()
+                        form = new AktSpisaniyaSearchView
                         {
                             Owner = Application.Current.MainWindow
                         };
@@ -854,6 +892,8 @@ namespace KursAM2.View
                     Height = 100,
                     Tag = tile.Id
                 };
+                newTile.HorizontalAlignment = HorizontalAlignment.Center;
+                newTile.HorizontalHeaderAlignment = HorizontalAlignment.Center;
                 tileDocumentItems.Children.Add(newTile);
             }
         }

@@ -4,9 +4,7 @@ using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.Bank;
-using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -15,6 +13,7 @@ using KursAM2.Managers.Base;
 using KursAM2.View.AktSpisaniya;
 using KursAM2.View.Dogovors;
 using KursAM2.View.Finance;
+using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.KursReferences;
@@ -23,6 +22,7 @@ using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.View.Personal;
 using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance;
+using KursAM2.ViewModel.Finance.AccruedAmount;
 using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
@@ -60,6 +60,8 @@ namespace KursAM2.Managers
                 case DocumentType.PayRollVedomost:
                 case DocumentType.DogovorClient:
                 case DocumentType.AktSpisaniya:
+                case DocumentType.AccruedAmountForClient:
+                case DocumentType.AccruedAmountOfSupplier:
                     return true;
                 default:
                     return false;
@@ -100,7 +102,7 @@ namespace KursAM2.Managers
                             $"AND DbId = '{CustomFormat.GuidToSqlString(GlobalOptions.DataBaseId)}' ");
                     if (docId != null && docId != Guid.Empty)
                         ctx.Database.ExecuteSqlCommand(
-                            $"DELETE FROM LastDocument WHERE DocId = '{CustomFormat.GuidToSqlString(docId.Value)}' "  +
+                            $"DELETE FROM LastDocument WHERE DocId = '{CustomFormat.GuidToSqlString(docId.Value)}' " +
                             $"AND UserId = '{CustomFormat.GuidToSqlString(GlobalOptions.UserInfo.KursId)}' " +
                             $"AND DbId = '{CustomFormat.GuidToSqlString(GlobalOptions.DataBaseId)}' ");
 
@@ -208,7 +210,12 @@ namespace KursAM2.Managers
                 case DocumentType.AktSpisaniya:
                     var akt = OpenAktSpisaniyaNomenkl(id);
                     SaveLastOpenInfo(docType, akt.Document.Id, null, akt.Document.DocCreator,
-                        "", akt.Document.Description);
+                        "", akt.Description);
+                    break;
+                case DocumentType.AccruedAmountForClient:
+                    var aat = OpenAccruedAmountForClient(id, parent);
+                    SaveLastOpenInfo(docType, aat.Document.Id, null, aat.Document.Creator,
+                        "", aat.Description);
                     break;
                 default:
                     return;
@@ -402,6 +409,32 @@ namespace KursAM2.Managers
             return ctx;
         }
 
+        private static AccruedAmountForClientWindowViewModel OpenAccruedAmountForClient(Guid? id, object parent)
+        {
+            var ctx = new AccruedAmountForClientWindowViewModel(id);
+            if (parent != null)
+            {
+                switch (parent)
+                {
+                    case RSWindowSearchViewModelBase p:
+                        ctx.ParentFormViewModel = p;
+                        break;
+                    case RSWindowViewModelBase p1:
+                        ctx.ParentFormViewModel = p1;
+                        break;
+                }
+            }
+
+            var view = new AccruedAmountForClientView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = view;
+            view.Show();
+            return ctx;
+        }
+
         private static ProviderWindowViewModel OpenSFProvider(decimal docCode)
         {
             var ctx = new ProviderWindowViewModel(docCode);
@@ -420,7 +453,7 @@ namespace KursAM2.Managers
         private static DogovorClientWindowViewModel OpenDogovorClient(Guid? id)
         {
             if (id == null) return null;
-            var form = new DogovorClientView()
+            var form = new DogovorClientView
             {
                 Owner = Application.Current.MainWindow
             };
@@ -583,7 +616,6 @@ namespace KursAM2.Managers
             form.Show();
             form.DataContext = ctx;
             return ctx;
-
         }
 
         private static void OpenWayBill(WaybillWindowViewModel vm)
@@ -596,10 +628,7 @@ namespace KursAM2.Managers
 
         private static AktSpisaniyaNomenklTitleWIndowViewModel OpenAktSpisaniyaNomenkl(Guid? id)
         {
-            if (id == null)
-            {
-                return null;
-            }
+            if (id == null) return null;
             var ctx = new AktSpisaniyaNomenklTitleWIndowViewModel(id.Value);
             var view = new AktSpisaniyaView
             {
@@ -610,6 +639,5 @@ namespace KursAM2.Managers
             view.Show();
             return ctx;
         }
-
     }
 }

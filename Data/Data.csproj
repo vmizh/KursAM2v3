@@ -63,6 +63,21 @@
     <Compile Include="AccountInvoice.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="AccruedAmountForClient.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AccruedAmountOfSupplier.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AccruedAmountType.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AccuredAmountForClientRow.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AccuredAmountOfSupplierRow.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="AD_149.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
-using KursAM2.ViewModel.Management;
 using LayoutManager;
 
 namespace KursAM2.View.Management
@@ -24,6 +23,7 @@ namespace KursAM2.View.Management
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();

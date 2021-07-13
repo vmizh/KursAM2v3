@@ -9,7 +9,7 @@
     xmlns:control="clr-namespace:Core.Control;assembly=Core"
     x:Class="KursAM2.View.Finance.Invoices.SearchInvoiceClientView"
     Icon="{Binding Source={StaticResource imageStandartSearch},
-    Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
+        Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
     Title="{Binding WindowName}" Height="350" Width="800"
     Style ="{StaticResource DXSplashServices}">
     <Window.InputBindings>

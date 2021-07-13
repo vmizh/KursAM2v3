@@ -385,8 +385,7 @@ namespace KursAM2.Managers.Base
                 }
                 deletedrows.Add(row);
                 rows.Remove(row);
-                var prnt = row.Parent;
-                if (prnt != null)
+                if (row.Parent is RSViewModelBase prnt)
                     prnt.State = prnt.State == RowStatus.NewRow ? RowStatus.NewRow : RowStatus.Edited;
             }
             return row;

@@ -52,7 +52,13 @@ namespace Core.EntityViewModel.CommonReferences
         ActReconciliation = 430,
         
         [Display(Name = "Акт списания")]
-        AktSpisaniya = 1003
+        AktSpisaniya = 1003,
+
+        [Display(Name = "Внебалансовые начисления от поставщиков")]
+        AccruedAmountForClient = 1004,
+
+        [Display(Name = "Типы начислений для внебаласовых контрагентов")]
+        AccruedAmountOfSupplier = 1005
 
     }
 }

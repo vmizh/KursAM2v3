@@ -154,8 +154,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 Form = view
             };
-            view.Show();
             view.DataContext = ctx;
+            view.Show();
+            
         }
 
         public override void DocNewCopy(object form)

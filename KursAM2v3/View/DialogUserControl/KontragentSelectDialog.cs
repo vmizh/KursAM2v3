@@ -1,13 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using KursAM2.Managers;
 
@@ -15,8 +14,11 @@ namespace KursAM2.View.DialogUserControl
 {
     public class KontragentSelectDialog : RSWindowViewModelBase, IDataUserControl
     {
+        private readonly bool? IsBalans;
+
         // ReSharper disable once NotAccessedField.Local
         private readonly bool isDateCheck;
+
         // ReSharper disable once NotAccessedField.Local
         private readonly decimal kontrDC;
         private Currency myCurrency;
@@ -32,10 +34,28 @@ namespace KursAM2.View.DialogUserControl
             while (!MainReferences.IsReferenceLoadComplete)
             {
             }
+
             // ReSharper disable once VirtualMemberCallInConstructor
             WindowName = "Выбор контрагента";
             LoadKontragentFromReference();
         }
+
+        public KontragentSelectDialog(Currency crs, bool isDateCheck = false, bool? isBalans = true)
+        {
+            this.isDateCheck = isDateCheck;
+            IsBalans = isBalans;
+            Currency = crs;
+            LayoutControl =
+                myDataUserControl = new KontragentSelectDialogUC();
+            while (!MainReferences.IsReferenceLoadComplete)
+            {
+            }
+
+            // ReSharper disable once VirtualMemberCallInConstructor
+            WindowName = "Выбор контрагента";
+            LoadKontragentFromReference();
+        }
+
         public KontragentSelectDialog(decimal kontrDC)
         {
             this.kontrDC = kontrDC;
@@ -44,6 +64,7 @@ namespace KursAM2.View.DialogUserControl
             while (!MainReferences.IsReferenceLoadComplete)
             {
             }
+
             // ReSharper disable once VirtualMemberCallInConstructor
             WindowName = "Выбор контрагента";
             LoadKontragentFromReference();
@@ -86,19 +107,20 @@ namespace KursAM2.View.DialogUserControl
         }
 
         public override bool IsCanSearch => !string.IsNullOrWhiteSpace(SearchText);
-        
+
         public DependencyObject LayoutControl { get; }
 
         private void LoadKontragentFromReference()
         {
+            List<Kontragent> KontrList = new List<Kontragent>();
             try
             {
-                KontragentCollection.Clear();
+                KontrList.Clear();
                 if (Currency == null)
                     foreach (var k in KontragentManager.GetAllKontragentSortedByUsed())
                     {
                         if (k.IsDeleted) continue;
-                        KontragentCollection.Add(new Kontragent
+                        KontrList.Add(new Kontragent
                         {
                             DocCode = k.DocCode,
                             Name = k.Name,
@@ -128,8 +150,13 @@ namespace KursAM2.View.DialogUserControl
                             DELETED = k.DELETED ?? 0,
                             Note = k.Note
                         };
-                        KontragentCollection.Add(kontr);
+                        KontrList.Add(kontr);
                     }
+
+                KontragentCollection = IsBalans != null
+                    ? IsBalans.Value ? new ObservableCollection<Kontragent>(KontrList.Where(_ => _.IsBalans)) :
+                    new ObservableCollection<Kontragent>(KontrList.Where(_ => _.IsBalans == false))
+                    : new ObservableCollection<Kontragent>(KontrList);
             }
             catch (Exception ex)
             {
@@ -137,6 +164,8 @@ namespace KursAM2.View.DialogUserControl
             }
         }
 
+        // ReSharper disable once UnusedMember.Local
+        // ReSharper disable once UnusedParameter.Local
         private void LoadKontragentFromReference(decimal KontrDC)
         {
             try
@@ -229,6 +258,7 @@ namespace KursAM2.View.DialogUserControl
                                     DELETED = k.DELETED ?? 0
                                 });
                         }
+
                 RaisePropertyChanged(nameof(KontragentCollection));
             }
             catch (Exception ex)
