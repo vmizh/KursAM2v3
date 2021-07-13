@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Core.EntityViewModel.AktSpisaniya
 {
+    // ReSharper disable once InconsistentNaming
     public class AktSpisaniyaRowViewModel_FluentAPI : DataAnnotationForFluentApiBase,
         IMetadataProvider<AktSpisaniyaRowViewModel>
     {
@@ -29,7 +30,10 @@ namespace Core.EntityViewModel.AktSpisaniya
     {
         #region Fields
 
+        // ReSharper disable once InconsistentNaming
         private AktSpisaniya_row myEntity;
+        // ReSharper disable once InconsistentNaming
+        private decimal myPrice;
 
         #endregion
 
@@ -126,7 +130,6 @@ namespace Core.EntityViewModel.AktSpisaniya
             }
         }
 
-        private decimal myPrice;
         public decimal Price
         {
             get => myPrice;

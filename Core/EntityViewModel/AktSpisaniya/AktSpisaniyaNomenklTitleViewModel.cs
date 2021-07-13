@@ -12,6 +12,7 @@ using System.Linq;
 
 namespace Core.EntityViewModel.AktSpisaniya
 {
+    // ReSharper disable once InconsistentNaming
     public class AktSpisaniyaNomenklTitleViewModel_FluentAPI : DataAnnotationForFluentApiBase, IMetadataProvider<AktSpisaniyaNomenklTitleViewModel>
     {
         void IMetadataProvider<AktSpisaniyaNomenklTitleViewModel>.BuildMetadata(MetadataBuilder<AktSpisaniyaNomenklTitleViewModel> builder)
@@ -36,6 +37,7 @@ namespace Core.EntityViewModel.AktSpisaniya
     {
         #region Fields
 
+        // ReSharper disable once InconsistentNaming
         private AktSpisaniyaNomenkl_Title myEntity;
 
         #endregion
@@ -52,7 +54,7 @@ namespace Core.EntityViewModel.AktSpisaniya
 
         public override bool IsCorrect()
         {
-            if (this.Warehouse != null && DocNumber >= 0 && DocCreator != null && Rows.All(_ =>_.IsCorrect()))
+            if (this.Warehouse != null && DocNumber >= 0 && DocCreator != null && Rows.All(_ => _.IsCorrect()))
                 return true;
             return false;
         }

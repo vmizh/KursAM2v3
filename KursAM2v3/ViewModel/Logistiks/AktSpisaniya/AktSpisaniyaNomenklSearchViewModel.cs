@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using Core;
+﻿using Core;
 using Core.EntityViewModel.AktSpisaniya;
 using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
@@ -12,6 +8,10 @@ using Data.Repository;
 using KursAM2.Managers;
 using KursAM2.Repositories;
 using KursAM2.View.AktSpisaniya;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
@@ -21,11 +21,15 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public readonly GenericKursDBRepository<AktSpisaniyaNomenkl_Title> BaseRepository;
 
+        // ReSharper disable once InconsistentNaming
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
+        // ReSharper disable once InconsistentNaming
         private AktSpisaniyaNomenklTitleViewModel myCurrentDocument;
+        // ReSharper disable once InconsistentNaming
         private DateTime myDateEnd;
+        // ReSharper disable once InconsistentNaming
         private DateTime myDateStart;
 
         #region Constructors
@@ -39,8 +43,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             DateEnd = DateTime.Today;
             DateStart = DateEnd.AddDays(-30);
             IsCanDocNew = true;
-            IsDocNewCopyAllow = true;
-            IsDocNewCopyRequisiteAllow = true;
             LayoutName = "AktSpisaniyaSearchView";
             WindowName = "Акты списания";
         }
@@ -53,6 +55,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         #region Properties
 
+        // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<AktSpisaniyaNomenklTitleViewModel> Documents { set; get; } =
             new ObservableCollection<AktSpisaniyaNomenklTitleViewModel>();
 
@@ -100,6 +103,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         #region Commands
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
 
         public override void DocumentOpen(object form)
         {
@@ -157,6 +162,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             base.RefreshData(obj);
             foreach (var d in AktSpisaniyaNomenklRepository.GetAllByDates(DateStart, DateEnd).ToList())
                 Documents.Add(new AktSpisaniyaNomenklTitleViewModel(d));
+
+            RaisePropertiesChanged(nameof(Documents));
         }
 
         #endregion
