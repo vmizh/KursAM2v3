@@ -1538,6 +1538,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Document.Facts.Clear();
             Document.IsAccepted = false;
             Document.IsNDSInPrice = true;
+            Document.NakladDistributedSumma = 0;
 
             UnitOfWork.Context.SD_26.Add(Document.Entity);
             Document.DeletedRows.Clear();

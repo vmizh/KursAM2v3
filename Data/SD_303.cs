@@ -65,6 +65,8 @@ namespace Data
             this.EXT_ANALS = new HashSet<EXT_ANALS>();
             this.TYPES = new HashSet<TYPES>();
             this.SD_201 = new HashSet<SD_201>();
+            this.AccuredAmountForClientRow = new HashSet<AccuredAmountForClientRow>();
+            this.AccuredAmountOfSupplierRow = new HashSet<AccuredAmountOfSupplierRow>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -179,5 +181,9 @@ namespace Data
         public virtual ICollection<TYPES> TYPES { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_201> SD_201 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
 
@@ -12,6 +13,7 @@ namespace Core.EntityViewModel.AccruedAmount
 
         private AccuredAmountOfSupplierRow myEntity;
         private AccruedAmountOfSupplierViewModel myParent;
+        private SDRSchet mySDRSchet;
 
         #endregion
 
@@ -61,17 +63,6 @@ namespace Core.EntityViewModel.AccruedAmount
             }
         }
 
-        public override string Note
-        {
-            get => Entity.Note;
-            set
-            {
-                if (Entity.Note == value) return;
-                Entity.Note = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public AccruedAmountTypeViewModel AccruedAmountType
         {
             get => MainReferences.GetAccruedAmountType(Entity.AccuredAmountTypeId);
@@ -97,6 +88,28 @@ namespace Core.EntityViewModel.AccruedAmount
             }
         }
 
+        public SDRSchet SDRSchet
+        {
+            get => mySDRSchet;
+            set
+            {
+                if (mySDRSchet == value) return;
+                mySDRSchet = value;
+                Entity.SHPZ_DC = value?.DocCode;
+                RaisePropertyChanged();
+            }
+        }
+
+        public override string Note
+        {
+            get => Entity.Note;
+            set
+            {
+                if (Entity.Note == value) return;
+                Entity.Note = value;
+                RaisePropertyChanged();
+            }
+        }
         #endregion
 
         #region Constructors

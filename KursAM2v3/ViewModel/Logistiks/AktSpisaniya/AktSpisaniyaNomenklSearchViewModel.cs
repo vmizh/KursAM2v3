@@ -1,4 +1,8 @@
-﻿using Core;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using Core;
 using Core.EntityViewModel.AktSpisaniya;
 using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
@@ -7,11 +11,7 @@ using Data;
 using Data.Repository;
 using KursAM2.Managers;
 using KursAM2.Repositories;
-using KursAM2.View.AktSpisaniya;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
+using KursAM2.View.Logistiks.AktSpisaniya;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
@@ -27,8 +27,10 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         // ReSharper disable once InconsistentNaming
         private AktSpisaniyaNomenklTitleViewModel myCurrentDocument;
+
         // ReSharper disable once InconsistentNaming
         private DateTime myDateEnd;
+
         // ReSharper disable once InconsistentNaming
         private DateTime myDateStart;
 

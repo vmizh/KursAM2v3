@@ -8,9 +8,7 @@ using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 
@@ -198,17 +196,6 @@ namespace Core.EntityViewModel.Bank
         }
 
         public string KontragentName => name();
-
-        public TD_101 Entity
-        {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
-        }
 
         public decimal DOC_CODE
         {
@@ -731,6 +718,17 @@ namespace Core.EntityViewModel.Bank
 
         public EntityLoadCodition LoadCondition { get; set; }
 
+        public TD_101 Entity
+        {
+            get => myEntity;
+            set
+            {
+                if (myEntity == value) return;
+                myEntity = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public List<TD_101> LoadList()
         {
             throw new NotImplementedException();
@@ -932,7 +930,7 @@ namespace Core.EntityViewModel.Bank
         #region compendiums
 
         public List<Currency> CurrencysCompendium => MainReferences.Currencies.Values.ToList();
-        public List<SDRSchet> SHPZList { set; get; } = new List<SDRSchet>(MainReferences.SDRSchets.Values.ToList());
+        public List<SDRSchet> SHPZList { set; get; } = new(MainReferences.SDRSchets.Values.ToList());
 
         #endregion
     }

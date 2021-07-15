@@ -195,6 +195,7 @@ namespace Core.ViewModel.Base
         public new virtual event PropertyChangedEventHandler PropertyChanged;
 
         [DataMember]
+        [Display(AutoGenerateField = false)]
         public virtual string Description
         {
             get => myDescription;

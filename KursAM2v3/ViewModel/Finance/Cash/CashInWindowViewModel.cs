@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using Core.EntityViewModel.AccruedAmount;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
@@ -218,7 +219,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
             if (Document?.DocCode > 0)
             {
-                Document = CashManager.LoadCashIn(Document.DOC_CODE);
+                Document = CashManager.LoadCashIn(Document.DocCode);
                 RaisePropertyChanged(nameof(Document));
             }
             else

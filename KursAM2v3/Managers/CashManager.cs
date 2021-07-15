@@ -110,7 +110,7 @@ namespace KursAM2.Managers
         {
             var ret = new SD_33
             {
-                DOC_CODE = ent.DOC_CODE,
+                DOC_CODE = ent.DocCode,
                 NUM_ORD = ent.NUM_ORD,
                 SUMM_ORD = ent.SUMM_ORD,
                 NAME_ORD = ent.NAME_ORD,
@@ -123,7 +123,7 @@ namespace KursAM2.Managers
                 CA_DC = ent.CA_DC,
                 KONTRAGENT_DC = ent.KONTRAGENT_DC,
                 SHPZ_ORD = ent.SHPZ_ORD,
-                SHPZ_DC = ent.SHPZ_DC,
+                SHPZ_DC = ent.Entity.SHPZ_DC,
                 RASH_ORDER_FROM_DC = ent.RASH_ORDER_FROM_DC,
                 SFACT_DC = ent.SFACT_DC,
                 NCODE = ent.NCODE,
@@ -176,6 +176,7 @@ namespace KursAM2.Managers
                         .Include(_ => _.SD_90)
                         .Include(_ => _.SD_84)
                         .Include(_ => _.SD_43)
+                        .Include(_ => _.AccuredAmountForClientRow)
                         .AsNoTracking()
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
                     var doc = new CashIn(data)
@@ -235,7 +236,7 @@ namespace KursAM2.Managers
         {
             return doc.Cash != null && doc.SUMM_ORD != null && doc.SUMM_ORD != 0 &&
                    !string.IsNullOrWhiteSpace(doc.Kontragent)
-                   && doc.CA_DC != null && doc.CRS_DC != null && doc.DATE_ORD != null && doc.SHPZ_DC != null;
+                   && doc.CA_DC != null && doc.CRS_DC != null && doc.DATE_ORD != null && doc.Entity.SHPZ_DC != null;
         }
 
         public static bool CheckCashOut(CashOut doc)
@@ -272,22 +273,6 @@ namespace KursAM2.Managers
             };
             return ret;
         }
-
-        //public static CashIn NewCopyCashIn(SD_33 entity)
-        //{
-
-        //    var ret = new CashIn(entity)
-        //    {
-        //        DocCode = -1,
-        //        DATE_ORD = DateTime.Today,
-        //        Note = null,
-        //        CREATOR = string.IsNullOrEmpty(GlobalOptions.UserInfo.NickName)
-        //            ? GlobalOptions.UserInfo.FullName
-        //            : GlobalOptions.UserInfo.NickName,
-        //        State = RowStatus.NewRow
-        //    };
-        //    return ret;
-        //}
 
         public static CashIn NewCopyCashIn(decimal dc)
         {
@@ -495,7 +480,7 @@ namespace KursAM2.Managers
                                     var sql =
                                         "SELECT s84.doc_code as DocCode, s84.SF_CRS_SUMMA_K_OPLATE as Summa, SUM(ISNULL(s33.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_PRIHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                         "FROM sd_84 s84 " +
-                                        $"LEFT OUTER JOIN sd_33 s33 ON s33.SFACT_DC = s84.DOC_CODE AND s33.DOC_CODE != {CustomFormat.DecimalToSqlDecimal(updateCashIn.DOC_CODE)} " +
+                                        $"LEFT OUTER JOIN sd_33 s33 ON s33.SFACT_DC = s84.DOC_CODE AND s33.DOC_CODE != {CustomFormat.DecimalToSqlDecimal(updateCashIn.DocCode)} " +
                                         "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_CLIENT_DC = s84.DOC_CODE " +
                                         "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SFACT_DC = s84.DOC_CODE " +
                                         $"WHERE s84.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(updateCashIn.SFACT_DC)} " +
@@ -677,34 +662,34 @@ namespace KursAM2.Managers
         /// <summary>
         ///     Создание набора валют для новой даты по кассе
         /// </summary>
-        private static void CreateNewSD_39(decimal cashDC, DateTime date, ALFAMEDIAEntities ctx)
-        {
-            var crsList = ctx.TD_22.Where(_ => _.DOC_CODE == cashDC).ToList();
-            var newDC = ctx.SD_39.Any() ? ctx.SD_39.Max(_ => _.DOC_CODE) : 10390000001;
-            foreach (var crs in crsList)
-            {
-                newDC++;
-                var sdate = ctx.SD_39
-                    .Where(_ => _.CA_DC == cashDC && _.CRS_DC == crs.CRS_DC && _.DATE_CASS < date)
-                    .Max(_ => _.DATE_CASS);
-                var ssum = ctx.SD_39
-                    .FirstOrDefault(
-                        _ => _.CA_DC == cashDC && _.CRS_DC == crs.CRS_DC && _.DATE_CASS == sdate)
-                    ?.MONEY_STOP ?? 0;
-                var newItem = new SD_39
-                {
-                    DOC_CODE = newDC,
-                    CRS_DC = crs.CRS_DC,
-                    DATE_CASS = date,
-                    CA_DC = cashDC,
-                    MONEY_STOP = ssum,
-                    MONEY_START = ssum
-                };
-                ctx.SD_39.Add(newItem);
-            }
+        //private static void CreateNewSD_39(decimal cashDC, DateTime date, ALFAMEDIAEntities ctx)
+        //{
+        //    var crsList = ctx.TD_22.Where(_ => _.DOC_CODE == cashDC).ToList();
+        //    var newDC = ctx.SD_39.Any() ? ctx.SD_39.Max(_ => _.DOC_CODE) : 10390000001;
+        //    foreach (var crs in crsList)
+        //    {
+        //        newDC++;
+        //        var sdate = ctx.SD_39
+        //            .Where(_ => _.CA_DC == cashDC && _.CRS_DC == crs.CRS_DC && _.DATE_CASS < date)
+        //            .Max(_ => _.DATE_CASS);
+        //        var ssum = ctx.SD_39
+        //            .FirstOrDefault(
+        //                _ => _.CA_DC == cashDC && _.CRS_DC == crs.CRS_DC && _.DATE_CASS == sdate)
+        //            ?.MONEY_STOP ?? 0;
+        //        var newItem = new SD_39
+        //        {
+        //            DOC_CODE = newDC,
+        //            CRS_DC = crs.CRS_DC,
+        //            DATE_CASS = date,
+        //            CA_DC = cashDC,
+        //            MONEY_STOP = ssum,
+        //            MONEY_START = ssum
+        //        };
+        //        ctx.SD_39.Add(newItem);
+        //    }
 
-            ctx.SaveChanges();
-        }
+        //    ctx.SaveChanges();
+        //}
 
         [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         public static void InsertDocument(CashDocumentType docType, object doc)
@@ -779,8 +764,16 @@ namespace KursAM2.Managers
                                 }
 
                                 ctx.Entry(ent).State = EntityState.Added;
+                                if (((CashIn) doc).AcrruedAmountRow != null)
+                                {
+                                    var old = ctx.AccuredAmountForClientRow.FirstOrDefault(_ =>
+                                        _.Id == ((CashIn) doc).AcrruedAmountRow.Id);
+                                    if (old != null)
+                                        old.CashDC = ent.DOC_CODE;
+                                }
+
                                 ctx.SaveChanges();
-                                if (insertCashIn.DOC_CODE < 0)
+                                if (insertCashIn.DocCode < 0)
                                 {
                                     insertCashIn.DocCode = ent.DOC_CODE;
                                     insertCashIn.NUM_ORD = ent.NUM_ORD;

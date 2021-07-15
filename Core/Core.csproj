@@ -28,7 +28,7 @@
     <NoWarn>0436;</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -198,10 +198,12 @@
     <Compile Include="Logger\LoggerHelper.cs" />
     <Compile Include="Logger\LogLevelEnum.cs" />
     <Compile Include="MainReferences2.cs" />
+    <Compile Include="ViewModel\Base\Dialogs\DialogErrorViewModel.cs" />
     <Compile Include="ViewModel\Base\DocumentCreateTypeEnum.cs" />
     <Compile Include="ViewModel\Base\IDocumentCopy.cs" />
     <Compile Include="ViewModel\Base\IDocumentOperations.cs" />
     <Compile Include="ViewModel\Base\IDocumentOpenType.cs" />
+    <Compile Include="ViewModel\Base\ISimpleDialogItem.cs" />
     <Compile Include="ViewModel\Base\SplashScreenView.xaml.cs">
       <DependentUpon>SplashScreenView.xaml</DependentUpon>
     </Compile>

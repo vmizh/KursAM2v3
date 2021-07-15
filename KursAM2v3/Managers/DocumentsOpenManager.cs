@@ -10,7 +10,6 @@ using Core.WindowsManager;
 using Data;
 using Helper;
 using KursAM2.Managers.Base;
-using KursAM2.View.AktSpisaniya;
 using KursAM2.View.Dogovors;
 using KursAM2.View.Finance;
 using KursAM2.View.Finance.AccruedAmount;
@@ -18,6 +17,7 @@ using KursAM2.View.Finance.Cash;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.KursReferences;
 using KursAM2.View.Logistiks;
+using KursAM2.View.Logistiks.AktSpisaniya;
 using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.View.Personal;
 using KursAM2.ViewModel.Dogovora;
@@ -413,7 +413,6 @@ namespace KursAM2.Managers
         {
             var ctx = new AccruedAmountForClientWindowViewModel(id);
             if (parent != null)
-            {
                 switch (parent)
                 {
                     case RSWindowSearchViewModelBase p:
@@ -423,7 +422,6 @@ namespace KursAM2.Managers
                         ctx.ParentFormViewModel = p1;
                         break;
                 }
-            }
 
             var view = new AccruedAmountForClientView
             {
@@ -577,7 +575,6 @@ namespace KursAM2.Managers
             var form = new CashInView
             {
                 Owner = Application.Current.MainWindow,
-                DataContext = ctx
             };
             ctx.Form = form;
             ctx.CreateMenu();

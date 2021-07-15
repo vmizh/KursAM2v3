@@ -15,6 +15,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Employee;
 using Core.ViewModel.Base;
+using Core.ViewModel.Base.Dialogs;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
@@ -396,8 +397,12 @@ namespace KursAM2.ViewModel.StartLogin
                     errText.Append($"\n {exx.InnerException.Message}");
                     exx = exx.InnerException;
                 }
-
-                MessageBox.Show("CheckAndSetUser error.\n" + errText);
+                IDialogService service = GetService<IDialogService>("errorDialogService");
+                service?.ShowDialog(MessageButton.OK, "Ошибка", new DialogErrorViewModel
+                {
+                    ErrorText = errText.ToString()
+                });
+                //MessageBox.Show("CheckAndSetUser error.\n" + errText);
                 newUser = null;
                 return false;
             }

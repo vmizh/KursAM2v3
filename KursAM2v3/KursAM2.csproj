@@ -50,7 +50,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -324,6 +324,7 @@
     <Compile Include="ViewModel\Finance\AccruedAmount\AccruedAmountForClientWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountOfSupplierSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountForClientSearchViewModel.cs" />
+    <Compile Include="ViewModel\Finance\AccruedAmount\SelectCashBankDialogViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklSearchViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklTitleWIndowViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
@@ -413,10 +414,13 @@
     <Compile Include="ViewModel\Shop\ShopExtFileOrderItem.cs" />
     <Compile Include="ViewModel\StartLogin\LastDocumentWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastUsersDocumentWindowViewModel.cs" />
-    <Compile Include="View\AktSpisaniya\AktSpisaniyaSearchView.xaml.cs">
+    <Compile Include="View\Finance\AccruedAmount\DialogSelectCashBankView.xaml.cs">
+      <DependentUpon>DialogSelectCashBankView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\AktSpisaniya\AktSpisaniyaSearchView.xaml.cs">
       <DependentUpon>AktSpisaniyaSearchView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\AktSpisaniya\AktSpisaniyaView.xaml.cs">
+    <Compile Include="View\Logistiks\AktSpisaniya\AktSpisaniyaView.xaml.cs">
       <DependentUpon>AktSpisaniyaView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Base\IOnAutoGeneratingColumn.cs" />
@@ -1116,6 +1120,10 @@
     <Folder Include="ViewModel\Logistiks\Helper\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Resource\DialogResorces.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resource\DXControlStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1148,11 +1156,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\AktSpisaniya\AktSpisaniyaSearchView.xaml">
+    <Page Include="View\Finance\AccruedAmount\DialogSelectCashBankView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\AktSpisaniya\AktSpisaniyaView.xaml">
+    <Page Include="View\Logistiks\AktSpisaniya\AktSpisaniyaSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\AktSpisaniya\AktSpisaniyaView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

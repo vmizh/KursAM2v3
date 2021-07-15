@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Controls;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using JetBrains.Annotations;
 
 namespace Core.EntityViewModel.Cash
 {
     [MetadataType(typeof(SD_33LayoutData_FluentAPI))]
-    public class CashIn : RSViewModelBase, IEntity<SD_33>
+    [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
+    public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
     {
         public decimal MaxSumma = decimal.MaxValue;
         private BankAccount myBankAccount;
@@ -41,19 +42,14 @@ namespace Core.EntityViewModel.Cash
             LoadReferences();
         }
 
-        public override string Description => $"Приходный кассовый ордер №{NUM_ORD} от {DATE_ORD?.ToShortDateString()} Касса: {Cash} " +
-                                              $"от {Kontragent} ({KontragentType.GetDisplayAttributesFrom(typeof(CashKontragentType)).Name}) сумма {CRS_SUMMA} {Currency} {NOTES_ORD}";
-
-        public decimal DOC_CODE
+        public override string ToString()
         {
-            get => Entity.DOC_CODE;
-            set
-            {
-                if (Entity.DOC_CODE == value) return;
-                Entity.DOC_CODE = value;
-                RaisePropertyChanged();
-            }
+            return Description;
         }
+
+        public override string Description =>
+            $"Приходный кассовый ордер №{NUM_ORD} от {DATE_ORD?.ToShortDateString()} Касса: {Cash} " +
+            $"от {Kontragent} ({KontragentType.GetDisplayAttributesFrom(typeof(CashKontragentType)).Name}) сумма {CRS_SUMMA} {Currency} {NOTES_ORD}";
 
         public override decimal DocCode
         {
@@ -64,6 +60,13 @@ namespace Core.EntityViewModel.Cash
                 Entity.DOC_CODE = value;
                 RaisePropertyChanged();
             }
+        }
+
+        [Display(AutoGenerateField = false)]
+        public AccuredAmountForClientRow AcrruedAmountRow
+        {
+            get => Entity.AccuredAmountForClientRow.FirstOrDefault();
+            set => Entity.AccuredAmountForClientRow.Add(value);
         }
 
         public override string Note
@@ -340,16 +343,16 @@ namespace Core.EntityViewModel.Cash
             }
         }
 
-        public decimal? SHPZ_DC
-        {
-            get => Entity.SHPZ_DC;
-            set
-            {
-                if (Entity.SHPZ_DC == value) return;
-                Entity.SHPZ_DC = value;
-                RaisePropertyChanged();
-            }
-        }
+        //public decimal? SHPZ_DC
+        //{
+        //    get => Entity.SHPZ_DC;
+        //    set
+        //    {
+        //        if (Entity.SHPZ_DC == value) return;
+        //        Entity.SHPZ_DC = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public SDRSchet SDRSchet
         {
@@ -358,7 +361,7 @@ namespace Core.EntityViewModel.Cash
             {
                 if (Equals(mySDRSchet, value)) return;
                 mySDRSchet = value;
-                SHPZ_DC = mySDRSchet.DocCode;
+                Entity.SHPZ_DC = mySDRSchet.DocCode;
                 RaisePropertyChanged();
             }
         }
@@ -515,10 +518,11 @@ namespace Core.EntityViewModel.Cash
             get => myCurrency;
             set
             {
-                if (Equals(myCurrency, value)) return;
+                if (myCurrency == value) return;
                 myCurrency = value;
                 CRS_DC = myCurrency?.DocCode;
                 if (myCurrency != null)
+                    // ReSharper disable once PossibleInvalidOperationException
                     UCH_VALUTA_RATE = (double?) CurrencyRate.GetCBRate(myCurrency, (DateTime) DATE_ORD);
                 RaisePropertyChanged();
             }
@@ -551,6 +555,7 @@ namespace Core.EntityViewModel.Cash
             get => Entity.UCH_VALUTA_RATE;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.UCH_VALUTA_RATE == value) return;
                 Entity.UCH_VALUTA_RATE = value;
                 RaisePropertyChanged();
@@ -584,6 +589,7 @@ namespace Core.EntityViewModel.Cash
             get => Entity.SFACT_CRS_RATE;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.SFACT_CRS_RATE == value) return;
                 Entity.SFACT_CRS_RATE = value;
                 RaisePropertyChanged();
@@ -653,6 +659,7 @@ namespace Core.EntityViewModel.Cash
             get => Entity.RUB_RATE;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.RUB_RATE == value) return;
                 Entity.RUB_RATE = value;
                 RaisePropertyChanged();
@@ -932,6 +939,10 @@ namespace Core.EntityViewModel.Cash
             }
         }
 
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public EntityLoadCodition LoadCondition { get; set; }
+
+        [NotNull]
         public SD_33 Entity
         {
             get => myEntity;
@@ -943,9 +954,6 @@ namespace Core.EntityViewModel.Cash
             }
         }
 
-        // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public EntityLoadCodition LoadCondition { get; set; }
-
         public List<SD_33> LoadList()
         {
             throw new NotImplementedException();
@@ -955,7 +963,7 @@ namespace Core.EntityViewModel.Cash
 
         private void LoadReferences()
         {
-            if (Entity?.CA_DC != null) Cash = MainReferences.Cashs[(decimal) Entity.CA_DC];
+            if (Entity.CA_DC != null) Cash = MainReferences.Cashs[(decimal) Entity.CA_DC];
             myKontragentType = CashKontragentType.NotChoice;
             if (KONTRAGENT_DC != null)
                 myKontragentType = CashKontragentType.Kontragent;
@@ -966,9 +974,9 @@ namespace Core.EntityViewModel.Cash
             if (RASH_ORDER_FROM_DC != null)
                 myKontragentType = CashKontragentType.Cash;
             IsKontrSelectEnable = myKontragentType != CashKontragentType.NotChoice;
-            if (Entity?.CRS_DC != null) Currency = MainReferences.Currencies[(decimal) Entity?.CRS_DC];
+            if (Entity.CRS_DC != null) Currency = MainReferences.Currencies[(decimal) Entity.CRS_DC];
             if (SFACT_DC != null) SFactName = SFact(SFACT_DC.Value);
-            if (SHPZ_DC != null) SDRSchet = MainReferences.SDRSchets[SHPZ_DC.Value];
+            if (Entity.SHPZ_DC != null) SDRSchet = MainReferences.SDRSchets[Entity.SHPZ_DC.Value];
             if (BANK_RASCH_SCHET_DC != null) BankAccount = MainReferences.BankAccounts[BANK_RASCH_SCHET_DC.Value];
             if (RASH_ORDER_FROM_DC != null) RashodOrderFromName = RashodOrderFrom(RASH_ORDER_FROM_DC.Value);
             RaisePropertyChanged(nameof(IsKontrSelectEnable));
@@ -981,6 +989,7 @@ namespace Core.EntityViewModel.Cash
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var doc = ctx.SD_34.Include(_ => _.SD_22).FirstOrDefault(_ => _.DOC_CODE == dc);
+                // ReSharper disable once PossibleInvalidOperationException
                 return doc == null ? null : MainReferences.Cashs[(decimal) doc.CA_DC].Name;
             }
         }
@@ -996,7 +1005,7 @@ namespace Core.EntityViewModel.Cash
             }
         }
 
-        public virtual void Save(SD_33 doc)
+        public void Save(SD_33 doc)
         {
             throw new NotImplementedException();
         }
@@ -1035,7 +1044,7 @@ namespace Core.EntityViewModel.Cash
             CA_DC = ent.CA_DC;
             KONTRAGENT_DC = ent.KONTRAGENT_DC;
             SHPZ_ORD = ent.SHPZ_ORD;
-            SHPZ_DC = ent.SHPZ_DC;
+            Entity.SHPZ_DC = ent.SHPZ_DC;
             RASH_ORDER_FROM_DC = ent.RASH_ORDER_FROM_DC;
             SFACT_DC = ent.SFACT_DC;
             NCODE = ent.NCODE;
@@ -1094,7 +1103,7 @@ namespace Core.EntityViewModel.Cash
             ent.CA_DC = CA_DC;
             ent.KONTRAGENT_DC = KONTRAGENT_DC;
             ent.SHPZ_ORD = SHPZ_ORD;
-            ent.SHPZ_DC = SHPZ_DC;
+            ent.SHPZ_DC = Entity.SHPZ_DC;
             ent.RASH_ORDER_FROM_DC = RASH_ORDER_FROM_DC;
             ent.SFACT_DC = SFACT_DC;
             ent.NCODE = NCODE;
@@ -1141,29 +1150,31 @@ namespace Core.EntityViewModel.Cash
 
         public SD_33 DefaultValue()
         {
-            return new SD_33
+            return new()
             {
                 DOC_CODE = -1,
                 DATE_ORD = DateTime.Today
             };
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public SD_33 Load(decimal dc, bool isShort = true)
         {
             throw new NotImplementedException();
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public SD_33 Load(Guid id, bool isShort = true)
         {
             throw new NotImplementedException();
         }
 
-        public virtual SD_33 Load(decimal dc)
+        public SD_33 Load(decimal dc)
         {
             throw new NotImplementedException();
         }
 
-        public virtual SD_33 Load(Guid id)
+        public SD_33 Load(Guid id)
         {
             throw new NotImplementedException();
         }
@@ -1177,7 +1188,7 @@ namespace Core.EntityViewModel.Cash
             builder.Property(_ => _.Id).NotAutoGenerated();
             builder.Property(_ => _.Code).NotAutoGenerated();
             builder.Property(_ => _.Note).NotAutoGenerated();
-            builder.Property(_ => _.DOC_CODE).NotAutoGenerated();
+            builder.Property(_ => _.DocCode).NotAutoGenerated();
             builder.Property(_ => _.Entity).NotAutoGenerated();
             builder.Property(_ => _.LoadCondition).NotAutoGenerated();
             builder.Property(_ => _.ParentDC).NotAutoGenerated();
@@ -1205,7 +1216,6 @@ namespace Core.EntityViewModel.Cash
             builder.Property(x => x.CA_DC).NotAutoGenerated();
             builder.Property(x => x.KONTRAGENT_DC).NotAutoGenerated();
             builder.Property(x => x.SHPZ_ORD).NotAutoGenerated();
-            builder.Property(x => x.SHPZ_DC).NotAutoGenerated();
             builder.Property(x => x.RASH_ORDER_FROM_DC).NotAutoGenerated();
             builder.Property(x => x.RashodOrderFromName).NotAutoGenerated();
             builder.Property(x => x.SFACT_DC).NotAutoGenerated();

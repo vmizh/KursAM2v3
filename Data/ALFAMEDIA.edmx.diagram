@@ -315,8 +315,6 @@
         <EntityTypeShape EntityType="ALFAMEDIAModel.SD_320" Width="1.5" PointX="28.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.SD_325" Width="1.5" PointX="16.25" PointY="672.25" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.SD_327" Width="1.5" PointX="29.5" PointY="704.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="ALFAMEDIAModel.SD_33" Width="1.5" PointX="22.25" PointY="649.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ALFAMEDIAModel.SD_34" Width="1.5" PointX="19.25" PointY="658" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.SD_37" Width="1.5" PointX="38.25" PointY="717.625" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.SD_372" Width="1.5" PointX="54.75" PointY="703" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.SD_373" Width="1.5" PointX="54" PointY="678.625" IsExpanded="true" />
@@ -921,7 +919,6 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_ProjectsDocs_FactCrsDC" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_ProviderInvoicePay" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_ProviderInvoicePay_BankCode" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_ProviderInvoicePay_CashDC" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_ProviderInvoicePay_SD_26" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_RequirementForShipping_SD_43_DOC_CODE" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_RequirementForShippingRows_RequirementForShipping_ID" ManuallyRouted="false" />
@@ -989,8 +986,6 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_114_REF_51655_SD_40" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_114_StartRemain_AccountDC" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_161_REF_85848_SD_114" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_13759_SD_114" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_13758_SD_114" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_382_REF_7795_SD_114" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_TD_101_BankAccountDC" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_114_StartRemain_CrsDC" ManuallyRouted="false" />
@@ -1160,7 +1155,6 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_170_REF_65555_SD_27" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_170_REF_65556_SD_24" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_170_REF_65558_SD_83" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_170_REF_65559_SD_34" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_TD_173_REF_65557_SD_170" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_td_24_2_REF_65557_SD_170" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_TD_24_REF_65557_SD_170" ManuallyRouted="false" />
@@ -1233,8 +1227,6 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_32_REF_16093_SD_2" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_325_REF_90437_SD_2" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_327_REF_10821_SD_2" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_16093_SD_2" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_16093_SD_2" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_394_REF_23704_SD_2" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_43_TABELNUMBER_SD_2" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_5_REF_58619_SD_2" ManuallyRouted="false" />
@@ -1317,9 +1309,6 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_22_REF_51654_SD_40" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_251_REF_13178_SD_22" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_299_REF_41900_SD_22" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_41899_SD_22" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_11293_SD_22" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_41899_SD_22" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_382_REF_7785_SD_22" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_39_REF_41898_SD_22" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_TD_22_REF_13179_SD_22" ManuallyRouted="false" />
@@ -1418,7 +1407,6 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_26_REF_70017_SD_40" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_26_REF_76376_SD_43" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_26_REFERENCE2_SD_43" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_15967_SD_26" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_372_REF_521_SD_26" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_42_REF_97121_SD_26" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_TD_101_REF_29554_SD_26" ManuallyRouted="false" />
@@ -1511,14 +1499,6 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_302_R302_UCH__SD_301" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_32_REF_37187_SD_301" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_327_REF_41751_SD_301" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_CASH_DC_SD_301" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_KONTR_VAL_SD_301" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_R33_SFACT_SD_301" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_UCH_VAL_3_SD_301" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_KASS_VAL_SD_301" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_KONTR_VAL_SD_301" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_R34_SPOST_SD_301" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_UCH_VAL_SD_301" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_373_REFERENCE_SD_301" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_39_REF_13179_SD_301" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_399_REFERENCE_SD_301" ManuallyRouted="false" />
@@ -1577,8 +1557,6 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_303_REF_30782_SD_97" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_32_REF_10872_SD_303" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_327_REF_10540_SD_303" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_10921_SD_303" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_10921_SD_303" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_73_REF_10540_SD_303" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_77_REF_51650_SD_303" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_83_REF_69073_SD_303" ManuallyRouted="false" />
@@ -1615,7 +1593,6 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_310_REF_13017_VD_46" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_310_REFERENCE_UD_197" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_61_REF_19744_SD_310" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_312_REF_25984_SD_34" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_315_REF_17_SD_314" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_325_REF_90439_SD_316" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_325_REF_90439_SD_317" ManuallyRouted="false" />
@@ -1623,23 +1600,9 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_32_REF_16086_SD_43" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_32_REF_37865_TD_165" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_TD_32_REF_86437_SD_32" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_327_REF_10862_SD_33" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_327_REF_15215_SD_77" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_327_REF_41392_SD_9" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_TD_327_REF_10824_SD_327" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_11293_SD_34" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_12202_VD_46" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_12595_SD_90" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_15967_SD_84" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_42555_SD_43" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_TD_101_REF_35606_SD_33" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_TD_397_REFERENCE_SD_33" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_TD_60_REF_18327_SD_33" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_UD_259_REF_55092_SD_33" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_UD_281_REF_16099_SD_33" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_42556_SD_43" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_TD_101_REF_35605_SD_34" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_UD_281_REF_16099_SD_34" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_372_REF_567_SD_43" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_372_REF_570_SD_43" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_TD_372_REF_80265_SD_372" ManuallyRouted="false" />
@@ -2070,13 +2033,56 @@
         <EntityTypeShape EntityType="ALFAMEDIAModel.AccruedAmountOfSupplier" Width="1.5" PointX="26.5" PointY="740.75" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.AccruedAmountType" Width="1.5" PointX="34.5" PointY="785.875" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.AccuredAmountForClientRow" Width="1.5" PointX="28.75" PointY="789.375" />
-        <EntityTypeShape EntityType="ALFAMEDIAModel.AccuredAmountOfSupplierRow" Width="1.5" PointX="36.75" PointY="727.875" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccruedAmountForClient_KontrDC" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_DocId" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccruedAmountOfSupplier_KontrDC" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_DocId" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_AccuredAmountTypeId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_BankCode" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.SD_33" Width="1.5" PointX="67.25" PointY="680.25" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.SD_34" Width="1.5" PointX="66.75" PointY="714.625" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_CashDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_ProviderInvoicePay_CashDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_13759_SD_114" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_13758_SD_114" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_170_REF_65559_SD_34" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_16093_SD_2" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_16093_SD_2" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_41899_SD_22" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_11293_SD_22" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_41899_SD_22" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_15967_SD_26" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_CASH_DC_SD_301" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_KONTR_VAL_SD_301" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_R33_SFACT_SD_301" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_UCH_VAL_3_SD_301" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_KASS_VAL_SD_301" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_KONTR_VAL_SD_301" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_R34_SPOST_SD_301" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_UCH_VAL_SD_301" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_10921_SD_303" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_10921_SD_303" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_312_REF_25984_SD_34" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_327_REF_10862_SD_33" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_11293_SD_34" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_12202_VD_46" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_12595_SD_90" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_15967_SD_84" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_42555_SD_43" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_TD_101_REF_35606_SD_33" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_TD_397_REFERENCE_SD_33" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_TD_60_REF_18327_SD_33" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_UD_259_REF_55092_SD_33" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_UD_281_REF_16099_SD_33" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_42556_SD_43" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_TD_101_REF_35605_SD_34" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_UD_281_REF_16099_SD_34" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.AccuredAmountOfSupplierRow" Width="1.5" PointX="69" PointY="718.25" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_DocId" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_AccuredAmountTypeId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_BankCode" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_CashDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.AccuredAmountForClientRow_SD_303" />
+        <AssociationConnector Association="ALFAMEDIAModel.AccuredAmountOfSupplierRow_SD_303" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using Core;
-using Data;
 using DevExpress.Data;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.View.KursReferences;
+using KursAM2.ViewModel.Finance.AccruedAmount;
 using KursAM2.ViewModel.Reference;
 
 namespace KursAM2.View.Finance.AccruedAmount
@@ -18,16 +18,31 @@ namespace KursAM2.View.Finance.AccruedAmount
     public partial class AccruedAmountForClientView
     {
         private ComboBoxEditSettings typeEdit;
+
         public AccruedAmountForClientView()
         {
             InitializeComponent();
+            Loaded += AccruedAmountForClientView_Loaded;
+        }
+
+        private void AccruedAmountForClientView_Loaded(object sender, RoutedEventArgs e)
+        {
+            MainReferences.Refresh();
         }
 
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
+            var ctx = DataContext as AccruedAmountForClientWindowViewModel;
             e.Column.Name = e.Column.FieldName;
             switch (e.Column.FieldName)
             {
+                case "SDRSchet":
+                    e.Column.EditSettings = new ComboBoxEditSettings
+                    {
+                        IsTextEditable = false,
+                        ItemsSource = MainReferences.SDRSchets.Values.ToList()
+                    };
+                    break;
                 case "Summa":
                     e.Column.EditSettings = new CalcEditSettings
                     {
@@ -41,7 +56,7 @@ namespace KursAM2.View.Finance.AccruedAmount
                         Name = "PART_Editor",
                         TextWrapping = TextWrapping.Wrap,
                         IsTextEditable = false,
-                        AutoComplete = true,
+                        AutoComplete = true
                     };
                     typeEdit.DefaultButtonClick += TypeEdit_DefaultButtonClick;
                     var bn = new ButtonInfo
@@ -51,6 +66,75 @@ namespace KursAM2.View.Finance.AccruedAmount
                     bn.Click += Bn_Click;
                     typeEdit.Buttons.Add(bn);
                     e.Column.EditSettings = typeEdit;
+                    break;
+                case "CashDoc":
+                    var cashEdit = new ButtonEditSettings
+                    {
+                        TextWrapping = TextWrapping.Wrap,
+                        IsTextEditable = false,
+                        AllowDefaultButton = false
+                    };
+                    var buttonInfoAdd = new ButtonInfo
+                    {
+                        GlyphKind = GlyphKind.Plus,
+                        ToolTip = "Создать приходный кассовый ордер",
+                        
+                    };
+                    var buttonInfoOpen = new ButtonInfo
+                    {
+                        GlyphKind = GlyphKind.Edit,
+                        ToolTip = "Открыть приходный кассовый ордер"
+                    };
+                    var buttonInfoDelete = new ButtonInfo
+                    {
+                        GlyphKind = GlyphKind.Cancel,
+                        ToolTip = "Удалить связь с приходным кассовым ордером",
+                        
+                    };
+                    if (ctx != null)
+                    {
+                        buttonInfoAdd.SetBinding(CommandButtonInfo.CommandProperty, new Binding("AddCashDocCommand"));
+                        buttonInfoOpen.SetBinding(CommandButtonInfo.CommandProperty, new Binding("OpenCashDocCommand"));
+                        buttonInfoDelete.SetBinding(CommandButtonInfo.CommandProperty, new Binding("DeleteCashDocCommand"));
+                        cashEdit.Buttons.Add(buttonInfoAdd);
+                        cashEdit.Buttons.Add(buttonInfoOpen);
+                        cashEdit.Buttons.Add(buttonInfoDelete);
+                    }
+                    e.Column.EditSettings = cashEdit;
+                    break;
+                case "BankDoc":
+                    var bankEdit = new ButtonEditSettings
+                    {
+                        //IsTextEditable = false
+                    };
+                    var buttonInfoAdd2 = new ButtonInfo
+                    {
+                        GlyphKind = GlyphKind.Plus,
+                        ToolTip = "Создать приходный кассовый ордер",
+                        
+                    };
+                    var buttonInfoOpen2 = new ButtonInfo
+                    {
+                        GlyphKind = GlyphKind.Edit,
+                        ToolTip = "Открыть приходный кассовый ордер"
+                    };
+                    var buttonInfoDelete2 = new ButtonInfo
+                    {
+                        GlyphKind = GlyphKind.Cancel,
+                        ToolTip = "Удалить связь с приходным кассовым ордером",
+                        
+                    };
+                    if (ctx != null)
+                    {
+                        buttonInfoAdd2.SetBinding(CommandButtonInfo.CommandProperty, new Binding("AddBankDocCommand"));
+                        buttonInfoOpen2.SetBinding(CommandButtonInfo.CommandProperty, new Binding("OpenBankDocCommand"));
+                        buttonInfoDelete2.SetBinding(CommandButtonInfo.CommandProperty, new Binding("DeleteBankDocCommand"));
+                        bankEdit.AllowDefaultButton = false;
+                        bankEdit.Buttons.Add(buttonInfoAdd2);
+                        bankEdit.Buttons.Add(buttonInfoOpen2);
+                        bankEdit.Buttons.Add(buttonInfoDelete2);
+                    }
+                    e.Column.EditSettings = bankEdit;
                     break;
             }
         }

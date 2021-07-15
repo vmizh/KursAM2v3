@@ -23,6 +23,7 @@ namespace Data
             this.TD_60 = new HashSet<TD_60>();
             this.UD_259 = new HashSet<UD_259>();
             this.UD_281 = new HashSet<UD_281>();
+            this.AccuredAmountForClientRow = new HashSet<AccuredAmountForClientRow>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -94,5 +95,7 @@ namespace Data
         public virtual ICollection<UD_259> UD_259 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UD_281> UD_281 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
     }
 }

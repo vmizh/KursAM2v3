@@ -9,14 +9,31 @@
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=Core"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
     Title="{Binding WindowName}" MinHeight="450" MinWidth="800"
     >
+    <dx:ThemedWindow.Resources>
+        <DataTemplate x:Key="dialogCanDeleteLinkTemplate">
+            <Label Content="Вы действительно хотите удалить связь с платежным документом?"/>
+        </DataTemplate>
+    </dx:ThemedWindow.Resources>
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}" 
                    Foreground="{Binding DatabaseColor}"
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right"/>
     </dx:ThemedWindow.HeaderItems>
+    <dxmvvm:Interaction.Behaviors>
+        <dx:DialogService x:Name="DialogService" ViewTemplate="{StaticResource dialogCanDeleteLinkTemplate}">
+            <dx:DialogService.DialogStyle>
+                <Style TargetType="Window">
+                    <Setter Property="SizeToContent" Value="WidthAndHeight" />
+                    <Setter Property="WindowStyle" Value="ToolWindow" />
+                </Style>
+            </dx:DialogService.DialogStyle>
+        </dx:DialogService>
+        <dxwui:WinUIDialogService x:Name="WinUIDialogService" ViewTemplate="{StaticResource dialogCanDeleteLinkTemplate}"/>
+    </dxmvvm:Interaction.Behaviors>
     <DockPanel Style="{StaticResource DXServices}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />
         <dxlc:LayoutControl Name="mainLayoutControl"
@@ -84,6 +101,11 @@
                                            MinWidth="120"/>
                         <dxe:TextEdit Margin="5 0" EditValue="{Binding Document.Currency, Mode=OneWay}"
                                       Width="50"/>
+                        <Label Margin="5 0" Content="Оплачено: "/>
+                        <dxe:PopupCalcEdit 
+                            EditValue="{Binding Document.PaySumma, Mode=OneWay}"
+                            IsReadOnly="True"
+                            MinWidth="120"/>
                      </StackPanel>
                 </dxlc:LayoutItem>
                 <StackPanel Orientation="Horizontal" MaxHeight="60">
@@ -114,13 +136,23 @@
                                          >
                     <dxg:GridControl.View>
                         <dxg:TableView Style="{StaticResource TableView.Standart}"
-                           Name="tableViewRows"
+                                       Name="tableViewRows"
                            CellValueChanging="TableViewRows_OnCellValueChanging"
                            CellValueChanged="TableViewRows_OnCellValueChanged">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Добавить начисление" Command="{Binding AddAccrualCommand}" />
                                     <MenuItem Header="Удалить начисление" Command="{Binding DeleteAccrualCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Создать приход">
+                                        <MenuItem Header="Приходный кассовый ордер" 
+                                                  Command="{Binding AddCashDocCommand}"/>
+                                        <MenuItem Header="Банковская транзакция"
+                                                  Command="{Binding AddBankDocCommand}"/>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="Открыть приходный документ" 
+                                              Command="{Binding OpenPrihodDocCommand}"/>
                                     <Separator />
                                     <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                               CommandParameter="{Binding Path=PlacementTarget, 
@@ -138,11 +170,7 @@
                                             AncestorType={x:Type ContextMenu}}}" />
                                 </ContextMenu>
                             </dxg:TableView.ContextMenu>
-                            <!--<dxmvvm:Interaction.Behaviors>
-                                <dxmvvm:EventToCommand EventName="CellValueChanging"
-                                               Command="{Binding UpdateCalcRowSummaCommand}" />
-                            </dxmvvm:Interaction.Behaviors>-->
-                        </dxg:TableView>
+                         </dxg:TableView>
                     </dxg:GridControl.View>
                 </dxg:GridControl>
             </dxlc:LayoutGroup>

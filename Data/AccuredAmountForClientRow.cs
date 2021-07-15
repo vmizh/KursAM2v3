@@ -19,8 +19,14 @@ namespace Data
         public System.Guid AccuredAmountTypeId { get; set; }
         public decimal Summa { get; set; }
         public string Note { get; set; }
+        public Nullable<decimal> CashDC { get; set; }
+        public Nullable<int> BankCode { get; set; }
+        public Nullable<decimal> SHPZ_DC { get; set; }
     
         public virtual AccruedAmountForClient AccruedAmountForClient { get; set; }
         public virtual AccruedAmountType AccruedAmountType { get; set; }
+        public virtual TD_101 TD_101 { get; set; }
+        public virtual SD_33 SD_33 { get; set; }
+        public virtual SD_303 SD_303 { get; set; }
     }
 }

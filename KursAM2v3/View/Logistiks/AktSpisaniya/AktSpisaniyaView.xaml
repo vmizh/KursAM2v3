@@ -1,0 +1,142 @@
+﻿<dx:ThemedWindow
+    x:Class="KursAM2.View.Logistiks.AktSpisaniya.AktSpisaniyaView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:control="clr-namespace:Core.Control;assembly=Core"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=Core"
+    xmlns:nomenklManagement="clr-namespace:Core.EntityViewModel.NomenklManagement;assembly=Core"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    Title="{Binding WindowName}" MinHeight="450" MinWidth="800">
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}" 
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right"/>
+    </dx:ThemedWindow.HeaderItems>
+    <DockPanel Style="{StaticResource DXServices}">
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />
+        <dxlc:LayoutControl Name="mainLayoutControl"
+                            Orientation="Vertical"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch">
+            <dxlc:LayoutGroup View="Group"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch" 
+                              Name="dataLayoutControl" 
+                              Orientation="Vertical"
+                              dxlc:LayoutControl.AllowVerticalSizing="True">
+                <dxlc:LayoutItem>
+                    <DockPanel LastChildFill="False">
+                        <Label Content="№: " DockPanel.Dock="Left"
+                                       />
+                        <dxe:TextEdit MinWidth="80"
+                                      Margin="5,0,0,0"
+                                      EditValue="{Binding Document.DocNumber, UpdateSourceTrigger=PropertyChanged}"
+                                      DockPanel.Dock="Left"/>
+                        
+                        <Label Content="  Дата " DockPanel.Dock="Left"/>
+                        <dxe:DateEdit MinWidth="100"
+                                      DockPanel.Dock="Left"
+                                      Margin="5,0,0,0"
+                                    EditValue="{Binding Document.DocDate, UpdateSourceTrigger=PropertyChanged}"/>
+                        <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
+                                    IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EnumItemsSourceBehavior
+                                            EnumType="{x:Type base:RowStatus}"/>
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:ComboBoxEdit>
+                        <Label Content="  Статус:" DockPanel.Dock="Right"/>
+                        <dxe:TextEdit MinWidth="100" DockPanel.Dock="Right"
+                                    EditValue="{Binding Document.DocCreator}" IsReadOnly="True"/>
+                        <Label Content="Создатель: " DockPanel.Dock="Right"/>
+                    </DockPanel>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Склад списания: "/>
+                        <dxe:ComboBoxEdit Style="{StaticResource ComboBoxEditWithError}"
+                                      DockPanel.Dock="Left" 
+                                      MinWidth="200"
+                                      Margin="22 0"
+                                      ItemsSource="{Binding WarehouseList}"
+                                      EditValue="{Binding Document.Warehouse, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}">
+                        </dxe:ComboBoxEdit>
+                    </StackPanel>
+                </dxlc:LayoutItem>
+                <StackPanel Orientation="Horizontal" MaxHeight="60">
+                    <Label Content="Причина списания: " 
+                           VerticalAlignment="Center"/>
+                    <dxe:TextEdit MinHeight="40" 
+                                  MaxHeight="60" 
+                                  MinWidth="500"
+                                  Margin="5 0"
+                                  EditValue="{Binding Document.ReasonCreation, UpdateSourceTrigger=PropertyChanged}"
+                                  />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" MaxHeight="60">
+                    <Label Content="Примечания: " VerticalAlignment="Center"/>
+                    <dxe:TextEdit MinHeight="40" 
+                                  MaxHeight="60" 
+                                  MinWidth="500"
+                                  Margin="39 0"
+                                  EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
+                                  />
+                </StackPanel>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup View="Group"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch" 
+                              Name="dataLayoutControl2"
+                              dxlc:LayoutControl.AllowVerticalSizing="True">
+                <dxg:GridControl Name="gridRows"
+                                         Style="{StaticResource GridControl.Base}"
+                                         Margin="0,10,0,0"
+                                         dx:DXSerializer.SerializationID="gridRows"
+                                         dx:DXSerializer.StoreLayoutMode="All"
+                                         ItemsSource="{Binding Document.Rows, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"
+                                         CurrentItem="{Binding CurrentRow, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                         SelectedItems="{Binding SelectedRows, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                         AutoGeneratingColumn="GridRows_OnAutoGeneratingColumn"
+                                         AutoGeneratedColumns="GridRows_OnAutoGeneratedColumns"
+                                         >
+                    <dxg:GridControl.View>
+                        <dxg:TableView ShowTotalSummary="True"
+                               Name="tableViewRows"
+                               ShowAutoFilterRow="True">
+                            <dxg:TableView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Добавить номенклатуру" Command="{Binding AddNomenklCommand}" />
+                                    <MenuItem Header="Удалить номенклатуру" Command="{Binding DeleteNomenklCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                              CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}">
+                                        <MenuItem.Icon>
+                                            <Image
+                                        Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Копировать итоговую сумму"
+                                      Command="{Binding GetColumnSummaCommand}"
+                                      CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}" />
+                                </ContextMenu>
+                            </dxg:TableView.ContextMenu>
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand EventName="CellValueChanging"
+                                               Command="{Binding UpdateCalcRowSummaCommand}" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxg:TableView>
+                    </dxg:GridControl.View>
+                </dxg:GridControl>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+  </DockPanel>
+</dx:ThemedWindow>

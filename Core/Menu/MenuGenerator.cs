@@ -868,6 +868,29 @@ namespace Core.Menu
             };
         }
 
+        public static ObservableCollection<MenuButtonInfo> DialogStandartBar(RSWindowViewModelBase vm)
+        {
+            return new ObservableCollection<MenuButtonInfo>
+            {
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuDone"] as ControlTemplate,
+                    ToolTip = "Выбрать текущую позицию",
+                    Command = vm.OkCommand
+                },
+                new MenuButtonInfo
+                {
+                    Alignment = Dock.Right,
+                    HAlignment = HorizontalAlignment.Right,
+                    Content = Application.Current.Resources["menuCancel"] as ControlTemplate,
+                    ToolTip = "Отменить выбор",
+                    Command = vm.CancelCommand
+                }
+            };
+        }
+
         public static ObservableCollection<MenuButtonInfo> StandartDocWithDeleteRightBar(KursBaseControlViewModel vm)
         {
             var prn = new MenuButtonInfo
