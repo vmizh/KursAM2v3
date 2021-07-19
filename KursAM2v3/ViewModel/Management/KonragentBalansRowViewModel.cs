@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 
 namespace KursAM2.ViewModel.Management
@@ -43,7 +41,7 @@ namespace KursAM2.ViewModel.Management
 
         [DataMember] public decimal Nakopit { set; get; }
 
-        [DataMember] public new string  Id { set; get; }
+        [DataMember] public new string Id { set; get; }
 
         [DataMember]
         public Project Project
@@ -79,7 +77,7 @@ namespace KursAM2.ViewModel.Management
                 CrsOperRate = (decimal) db.OPER_CRS_RATE,
                 Nakopit = 0,
                 CrsUchRate = (decimal) db.UCH_CRS_RATE,
-                DocExtNum = db.DOC_EXT_NUM
+                DocExtNum = db.DOC_EXT_NUM,
             };
         }
 

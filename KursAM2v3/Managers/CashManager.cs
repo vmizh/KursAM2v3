@@ -547,7 +547,7 @@ namespace KursAM2.Managers
                                     var sql =
                                         "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                         "FROM sd_26 s26 " +
-                                        $"LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DOC_CODE AND s34.DOC_CODE != {CustomFormat.DecimalToSqlDecimal(updateCashOut.DOC_CODE)} " +
+                                        $"LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DOC_CODE AND s34.DOC_CODE != {CustomFormat.DecimalToSqlDecimal(updateCashOut.DocCode)} " +
                                         "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_POSTAV_DC = s26.DOC_CODE " +
                                         "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SPOST_DC = s26.DOC_CODE " +
                                         $"WHERE s26.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(updateCashOut.SPOST_DC)} " +
@@ -798,7 +798,7 @@ namespace KursAM2.Managers
                                 }
 
                                 var ent1 = CashOutViewModelToEntity(insertCashOut);
-                                if (insertCashOut.DOC_CODE < 0)
+                                if (insertCashOut.DocCode < 0)
                                 {
                                     ent1.DOC_CODE =
                                         ctx.SD_34.Any() ? ctx.SD_34.Max(_ => _.DOC_CODE) + 1 : 10340000001;
@@ -859,7 +859,7 @@ namespace KursAM2.Managers
 
                                 ctx.Entry(ent1).State = EntityState.Added;
                                 ctx.SaveChanges();
-                                if (insertCashOut.DOC_CODE < 0)
+                                if (insertCashOut.DocCode < 0)
                                 {
                                     insertCashOut.DocCode = ent1.DOC_CODE;
                                     insertCashOut.NUM_ORD = ent1.NUM_ORD;
@@ -964,7 +964,7 @@ namespace KursAM2.Managers
         {
             var ret = new SD_34
             {
-                DOC_CODE = ent.DOC_CODE,
+                DOC_CODE = ent.DocCode,
                 NUM_ORD = ent.NUM_ORD,
                 DATE_ORD = ent.DATE_ORD,
                 SUMM_ORD = ent.SUMM_ORD,

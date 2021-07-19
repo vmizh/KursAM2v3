@@ -9,11 +9,11 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Bars;
+using DevExpress.Xpf.DataAccess.DataSourceWizard;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Management.Calculations;
@@ -44,7 +44,6 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
         public ObservableCollection<DebitorCreditorRow> DebitorCreditorAll { set; get; }
         public ObservableCollection<DebitorCreditorRow> Debitors { set; get; }
         public ObservableCollection<DebitorCreditorRow> Creditors { set; get; }
-        protected ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
         public ObservableCollection<KonragentBalansRowViewModel> Operations { set; get; }
 
         public DebitorCreditorRow CurrentDebitorCreditor
@@ -443,10 +442,51 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
 
         public override void DocumentOpen(object obj)
         {
-            if (CurrentOperation.DocTypeCode == DocumentType.Bank)
+            using (var ctx = GlobalOptions.GetEntities())
             {
-                DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, CurrentOperation.DocRowCode);
-                return;
+                switch (CurrentOperation.DocTypeCode)
+                {
+                    case DocumentType.Bank:
+                        DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, CurrentOperation.DocRowCode);
+                        return;
+                    case DocumentType.AccruedAmountForClient:
+                    case DocumentType.AccruedAmountOfSupplier:
+                    {
+                        //var id = Guid.Parse(CurrentOperation.StringId);
+                        var s = CurrentOperation.DocNum.Split('/');
+                        var num = Convert.ToInt32(s[0]);
+                        if (CurrentOperation.DocTypeCode == DocumentType.AccruedAmountForClient)
+                        {
+                            var doc = ctx.AccruedAmountForClient.FirstOrDefault(_ => _.DocInNum == num);
+                            if(doc != null)
+                                DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, 0, doc.Id);
+                            else
+                            {
+                                WinManager.ShowWinUIMessageBox("Документ не найден.","Сообщение");
+                            }
+                        }
+
+                        if (CurrentOperation.DocTypeCode == DocumentType.AccruedAmountOfSupplier)
+                        {
+                            var doc = ctx.AccruedAmountOfSupplier.FirstOrDefault(_ => _.DocInNum == num);
+                            if(doc != null)
+                                DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, 0, doc.Id);
+                            else
+                            {
+                                WinManager.ShowWinUIMessageBox("Документ не найден.","Сообщение");
+                            }
+                        }
+
+                        return;
+                    }
+                    case DocumentType.PayRollVedomost:
+                        DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, 0,
+                            Guid.Parse(CurrentOperation.StringId));
+                        return;
+                    default:
+                        DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, CurrentOperation.DocCode);
+                        break;
+                }
             }
 
             DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, CurrentOperation.DocDC);

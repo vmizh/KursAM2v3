@@ -173,7 +173,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         public override void DocumentOpen(object obj)
         {
-            DocumentsOpenManager.Open(DocumentType.CashOut, CurrentDocument.DOC_CODE);
+            DocumentsOpenManager.Open(DocumentType.CashOut, CurrentDocument.DocCode);
         }
 
         public override void DocNewEmpty(object obj)

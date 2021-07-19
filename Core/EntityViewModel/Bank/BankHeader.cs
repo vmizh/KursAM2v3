@@ -30,7 +30,13 @@ namespace Core.EntityViewModel.Bank
             }
         }
 
-        public decimal DOC_CODE
+        public override string ToString()
+        {
+            if (Entity.SD_114 == null) return null;
+            return $"Банк {MainReferences.BankAccounts[Entity.VV_ACC_DC]} от {VV_START_DATE.ToShortDateString()}";
+        }
+
+        public override decimal DocCode
         {
             get => Entity.DOC_CODE;
             set

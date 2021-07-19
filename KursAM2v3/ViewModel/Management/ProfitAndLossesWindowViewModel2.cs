@@ -8,11 +8,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Grid;
@@ -57,10 +55,7 @@ namespace KursAM2.ViewModel.Management
             EndDate = DateTime.Today;
             var crsrate = new CrossCurrencyRate();
             crsrate.SetRates(DateTime.Today);
-            foreach (var c in crsrate.CurrencyList)
-            {
-                CurrencyRates.Add(c);
-            }
+            foreach (var c in crsrate.CurrencyList) CurrencyRates.Add(c);
 
             CurrentCurrencyRate = CurrencyRates[0];
         }
@@ -194,9 +189,7 @@ namespace KursAM2.ViewModel.Management
                 {
                     if (myBalansFact.Id == Guid.Parse("{459937df-085f-4825-9ae9-810b054d0276}")
                         || myBalansFact.Id == Guid.Parse("{30e9bd73-9bda-4d75-b897-332f9210b9b1}"))
-                    {
                         frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
-                    }
                     else
                         frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
 
@@ -220,12 +213,10 @@ namespace KursAM2.ViewModel.Management
                 {
                     if (myBalansCalc.Id == Guid.Parse("{459937df-085f-4825-9ae9-810b054d0276}")
                         || myBalansCalc.Id == Guid.Parse("{30e9bd73-9bda-4d75-b897-332f9210b9b1}"))
-                    {
                         frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
-                    }
                     else
                         frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
-                    
+
                     UpdateExtend(myBalansCalc.Id);
                 }
 
@@ -263,7 +254,7 @@ namespace KursAM2.ViewModel.Management
         public override bool IsDocumentOpenAllow =>
             CurrentExtend != null; // && IsDocumentOpen(CurrentExtend.DocTypeCode);
 
-        bool IsActConvert()
+        private bool IsActConvert()
         {
             return BalansFact != null && (BalansFact.Id == Guid.Parse("{B6F2540A-9593-42E3-B34F-8C0983BC39A2}")
                                           || BalansFact.Id == Guid.Parse("{35EBABEC-EAC3-4C3C-8383-6326C5D64C8C}"));
@@ -271,20 +262,20 @@ namespace KursAM2.ViewModel.Management
 
         private void ExtendInfo(object obj)
         {
-            var ctx = new MutualAcountingInfoWindowViewModel()
+            var ctx = new MutualAcountingInfoWindowViewModel
             {
                 DateStart = StartDate,
                 DateEnd = EndDate
             };
             ctx.RefreshData(null);
-            var form = new MutualAccountingInfo()
+            var form = new MutualAccountingInfo
             {
                 DataContext = ctx
             };
             form.Show();
         }
 
-        bool IsActConvert2()
+        private bool IsActConvert2()
         {
             return BalansCalc != null && (BalansCalc.Id == Guid.Parse("{B6F2540A-9593-42E3-B34F-8C0983BC39A2}")
                                           || BalansCalc.Id == Guid.Parse("{35EBABEC-EAC3-4C3C-8383-6326C5D64C8C}"));
@@ -292,13 +283,13 @@ namespace KursAM2.ViewModel.Management
 
         private void ExtendInfo2(object obj)
         {
-            var ctx = new MutualAcountingInfoWindowViewModel()
+            var ctx = new MutualAcountingInfoWindowViewModel
             {
                 DateStart = StartDate,
                 DateEnd = EndDate
             };
             ctx.RefreshData(null);
-            var form = new MutualAccountingInfo()
+            var form = new MutualAccountingInfo
             {
                 DataContext = ctx
             };
@@ -411,13 +402,12 @@ namespace KursAM2.ViewModel.Management
                     }
                 }
         }
-        
+
         public void UpdateExtend2(Guid id)
         {
             ExtendActual.Clear();
             if (myBalansCalc.Id == Guid.Parse("{459937df-085f-4825-9ae9-810b054d0276}")
                 || myBalansCalc.Id == Guid.Parse("{30e9bd73-9bda-4d75-b897-332f9210b9b1}"))
-            {
                 foreach (var d in Manager.ExtendNach.Where(d => d.GroupId == id))
                 {
                     var f = ExtendActual.FirstOrDefault(_ => _.DocCode == d.DocCode);
@@ -513,26 +503,17 @@ namespace KursAM2.ViewModel.Management
                         f.ResultCNY = f.VzaimozachetInfo.Sum(_ => _.ProfitCNY - _.LossCNY);
                     }
                 }
-            }
             else
-            {
                 foreach (var d in Manager.ExtendNach.Where(d => d.GroupId == id))
-                {
                     ExtendActual.Add(d);
-                }
-            }
 
             if (id == Guid.Parse("{334973B4-1652-4473-9DED-FD4B31B31FC1}") ||
                 id == Guid.Parse("{D89B1E18-074E-4A7D-A0EE-9537DC1585D8}") ||
                 id == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
                 id == Guid.Parse("{E47EF726-3BEA-4B18-9773-E564D624FDF6}"))
-            {
                 foreach (var id2 in Manager.MainNach.Where(_ => _.ParentId == id).Select(_ => _.Id))
-                {
-                    foreach (var d in Manager.ExtendNach.Where(d => d.GroupId == id2))
-                        ExtendActual.Add(d);
-                }
-            }
+                foreach (var d in Manager.ExtendNach.Where(d => d.GroupId == id2))
+                    ExtendActual.Add(d);
 
             ResetCurrencyDetailColumns();
         }
@@ -545,13 +526,9 @@ namespace KursAM2.ViewModel.Management
                 ExtendActual.Add(d);
             if (BalansFact.Id == Guid.Parse("{334973B4-1652-4473-9DED-FD4B31B31FC1}") ||
                 BalansFact.Id == Guid.Parse("{D89B1E18-074E-4A7D-A0EE-9537DC1585D8}"))
-            {
                 foreach (var id in Main.Where(_ => _.ParentId == BalansFact.Id).Select(_ => _.Id))
-                {
-                    foreach (var d in Manager.Extend.Where(d => d.GroupId == id))
-                        ExtendActual.Add(d);
-                }
-            }
+                foreach (var d in Manager.Extend.Where(d => d.GroupId == id))
+                    ExtendActual.Add(d);
 
             ResetCurrencyDetailColumns();
             RaisePropertyChanged(nameof(ExtendActual));
@@ -668,13 +645,9 @@ namespace KursAM2.ViewModel.Management
                     id == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
                     id == Guid.Parse("{E47EF726-3BEA-4B18-9773-E564D624FDF6}")
                 )
-                {
                     foreach (var id2 in Main.Where(_ => _.ParentId == id).Select(_ => _.Id))
-                    {
-                        foreach (var d in Manager.Extend.Where(d => d.GroupId == id2))
-                            ExtendActual.Add(d);
-                    }
-                }
+                    foreach (var d in Manager.Extend.Where(d => d.GroupId == id2))
+                        ExtendActual.Add(d);
             }
 
             ResetCurrencyDetailColumns();
@@ -688,13 +661,9 @@ namespace KursAM2.ViewModel.Management
                 ExtendActual.Add(d);
             if (BalansCalc.Id == Guid.Parse("{334973B4-1652-4473-9DED-FD4B31B31FC1}") ||
                 BalansCalc.Id == Guid.Parse("{D89B1E18-074E-4A7D-A0EE-9537DC1585D8}"))
-            {
                 foreach (var id in MainNach.Where(_ => _.ParentId == BalansCalc.Id).Select(_ => _.Id))
-                {
-                    foreach (var d in Manager.ExtendNach.Where(d => d.GroupId == id))
-                        ExtendActual.Add(d);
-                }
-            }
+                foreach (var d in Manager.ExtendNach.Where(d => d.GroupId == id))
+                    ExtendActual.Add(d);
 
             ResetCurrencyDetailColumns();
             RaisePropertyChanged(nameof(ExtendActual));
@@ -702,12 +671,31 @@ namespace KursAM2.ViewModel.Management
 
         public override void DocumentOpen(object obj)
         {
-            if (CurrentExtend.DocTypeCode == DocumentType.PayRollVedomost)
+            switch (CurrentExtend.DocTypeCode)
             {
-                DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, 0, Guid.Parse(CurrentExtend.StringId));
-                return;
+                case DocumentType.AccruedAmountForClient:
+                case DocumentType.AccruedAmountOfSupplier:
+                {
+                    var id = Guid.Parse(CurrentExtend.StringId);
+                    if (CurrentExtend.DocTypeCode == DocumentType.AccruedAmountForClient)
+                    {
+                        DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, 0, id);
+                    }
+
+                    if (CurrentExtend.DocTypeCode == DocumentType.AccruedAmountOfSupplier)
+                    {
+                        DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, 0, id);
+                    }
+
+                    return;
+                }
+                case DocumentType.PayRollVedomost:
+                    DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, 0, Guid.Parse(CurrentExtend.StringId));
+                    return;
+                default:
+                    DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, CurrentExtend.DocCode);
+                    break;
             }
-            DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, CurrentExtend.DocCode);
         }
 
         public class NakladTemp
@@ -1187,6 +1175,7 @@ namespace KursAM2.ViewModel.Management
         public override void RefreshData(object obj)
         {
             if (Manager == null)
+            {
                 Manager = new ProfitAndLossesManager(this)
                 {
                     Main = Main,
@@ -1196,6 +1185,7 @@ namespace KursAM2.ViewModel.Management
                     DateStart = StartDate,
                     DateEnd = EndDate
                 };
+            }
             else
             {
                 Manager.DateStart = StartDate;
@@ -1245,6 +1235,7 @@ namespace KursAM2.ViewModel.Management
                 Manager.CalcZarplataNach();
                 Manager.CalcCashPercent();
                 Manager.CalcNomenklCurrencyChanged();
+                Manager.CalcAccruedAmmount();
                 //manager.CalcMoneyInWay();
                 //CalcCashAvans();
                 CalcTreeSumm();

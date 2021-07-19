@@ -404,6 +404,7 @@ namespace KursAM2.Managers
                             VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC
                         });
                         item.DOC_CODE = thisDate.DOC_CODE;
+                        item.Code = code;
                         item.myState = RowStatus.NotEdited;
                     }
 

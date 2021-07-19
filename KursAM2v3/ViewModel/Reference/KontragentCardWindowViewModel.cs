@@ -10,10 +10,8 @@ using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Navigation;
@@ -23,7 +21,7 @@ using KursAM2.View.KursReferences.KontragentControls;
 
 namespace KursAM2.ViewModel.Reference
 {
-    public class KontragentCardWindowViewModel : RSWindowViewModelBase
+    public sealed class KontragentCardWindowViewModel : RSWindowViewModelBase
     {
         private readonly decimal? GetDocCode;
 
@@ -472,6 +470,17 @@ namespace KursAM2.ViewModel.Reference
                         var doc = ctx.SD_43.FirstOrDefault(_ => _.DOC_CODE == Kontragent.DocCode);
                         if (doc != null)
                         {
+                            if (doc.FLAG_BALANS != Kontragent.FLAG_BALANS)
+                            {
+                                if (ctx.AccruedAmountForClient.Any() || ctx.AccruedAmountOfSupplier.Any())
+                                {
+                                    WinManager.ShowWinUIMessageBox(@"Для контрагента есть документы " +
+                                                                   "по внебалансовым начислениям! Смена статуса учета в балансе " +
+                                                                   "не возможна!", "Предупреждение",
+                                        MessageBoxButton.OK, MessageBoxImage.Stop);
+                                    return;
+                                }
+                            }
                             doc.INN = Kontragent.INN;
                             doc.NAME = Kontragent.Name;
                             doc.HEADER = Kontragent.Header;
@@ -523,7 +532,6 @@ namespace KursAM2.ViewModel.Reference
                     }
 
                     if (ctx.TD_43.Any())
-                    {
                         foreach (var item in BankAndAccounts)
                         {
                             var getCode = ctx.TD_43.Max(_ => _.CODE) + 1;
@@ -548,7 +556,6 @@ namespace KursAM2.ViewModel.Reference
                                 }
                             }
                         }
-                    }
 
                     if (DeletedBankAndAccountses != null)
                         foreach (var item in DeletedBankAndAccountses)

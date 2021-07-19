@@ -1891,6 +1891,7 @@ namespace KursAM2.Managers
                           sd101.VV_STOP_DATE >= DateStart && sd101.VV_STOP_DATE <= DateEnd &&
                           td101.VVT_VAL_PRIHOD > 0
                           && td101.VVT_KONTRAGENT != GlobalOptions.SystemProfile.OwnerKontragent.DOC_CODE
+                          && td101.AccuredAmountForClientRow.Count == 0
                     select new
                     {
                         DocDC = sd101.DOC_CODE,
@@ -1915,6 +1916,7 @@ namespace KursAM2.Managers
                           (sd43.FLAG_BALANS ?? 0) == 0 && sd101.VV_STOP_DATE >= DateStart &&
                           sd101.VV_STOP_DATE <= DateEnd && td101.VVT_VAL_RASHOD > 0
                           && td101.VVT_KONTRAGENT != GlobalOptions.SystemProfile.OwnerKontragent.DOC_CODE
+                          && td101.AccuredAmountOfSupplierRow.Count == 0
                     select new
                     {
                         DocDC = sd101.DOC_CODE,
@@ -1940,6 +1942,7 @@ namespace KursAM2.Managers
                                                      && sd43.FLAG_BALANS == 0
                                                      && sd33.KONTRAGENT_DC != GlobalOptions.SystemProfile
                                                          .OwnerKontragent.DOC_CODE
+                                                     && sd33.AccuredAmountForClientRow.Count == 0
                     select new
                     {
                         DocDC = sd33.DOC_CODE,
@@ -1965,6 +1968,7 @@ namespace KursAM2.Managers
                                                      && sd43.FLAG_BALANS == 0
                                                      && sd34.KONTRAGENT_DC != GlobalOptions.SystemProfile
                                                          .OwnerKontragent.DOC_CODE
+                                                     && sd34.AccuredAmountOfSupplierRow.Count == 0
                     select new
                     {
                         DocDC = sd34.DOC_CODE,
@@ -2321,6 +2325,72 @@ namespace KursAM2.Managers
             }
         }
 
+
+        public void CalcAccruedAmmount()
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var outBalansClient = ctx.AccruedAmountForClient
+                    .Include(_ => _.AccuredAmountForClientRow);
+                var outBalansSupplier = ctx.AccruedAmountOfSupplier
+                    .Include(_ => _.AccuredAmountOfSupplierRow);
+                foreach (var d in outBalansClient)
+                {
+                    var newOp1 = new ProfitAndLossesExtendRowViewModel
+                    {
+                        GroupId = ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountClient,
+                        Name = "Внебалансовые начисления для клиентов",
+                        Note =
+                            string.Format($"Дата {d.DocDate.ToShortDateString()} №{d.DocInNum}/{d.DocExtNum} {d.Note}"),
+                        DocCode = 0,
+                        Quantity = 1,
+                        Price = d.AccuredAmountForClientRow?.Sum(_ => _.Summa) ?? 0,
+                        Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                        KontragentBase = null,
+                        Date = d.DocDate,
+                        DocTypeCode = DocumentType.AccruedAmountForClient,
+                        SDRSchet = null,
+                        AktZachet = null,
+                        AktZachetResult = 0,
+                        CurrencyName = MainReferences.GetKontragent(d.KontrDC).BalansCurrency.Name,
+                        DocNum = $"{d.DocInNum}/{d.DocExtNum}",
+                        StringId = d.Id.ToString()
+                        //CalcType = TypeProfitAndLossCalc.IsProfit
+                    };
+                    SetCurrenciesValue(newOp1, MainReferences.GetKontragent(d.KontrDC).BalansCurrency.DocCode,newOp1.Price,0m);
+                    Extend.Add(newOp1);
+                    ExtendNach.Add(newOp1);
+                }
+
+                foreach (var d in outBalansSupplier)
+                {
+                    var newOp1 = new ProfitAndLossesExtendRowViewModel
+                    {
+                        GroupId = ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier,
+                        Name = "Внебалансовые начисления поставщиков",
+                        Note =
+                            string.Format($"Дата {d.DocDate.ToShortDateString()} №{d.DocInNum}/{d.DocExtNum} {d.Note}"),
+                        DocCode = 0,
+                        Quantity = 1,
+                        Price = d.AccuredAmountOfSupplierRow?.Sum(_ => _.Summa) ?? 0,
+                        Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                        KontragentBase = null,
+                        Date = d.DocDate,
+                        DocTypeCode = DocumentType.AccruedAmountOfSupplier,
+                        SDRSchet = null,
+                        AktZachet = null,
+                        AktZachetResult = 0,
+                        CurrencyName = MainReferences.GetKontragent(d.KontrDC).BalansCurrency.Name,
+                        DocNum = $"{d.DocInNum}/{d.DocExtNum}",
+                        StringId = d.Id.ToString()
+                        //CalcType = TypeProfitAndLossCalc.IsProfit
+                    };
+                    SetCurrenciesValue(newOp1, MainReferences.GetKontragent(d.KontrDC).BalansCurrency.DocCode,0m, newOp1.Price);
+                    Extend.Add(newOp1);
+                    ExtendNach.Add(newOp1);
+                }
+            }
+        }
         // ReSharper disable once UnusedMember.Local
         private decimal CalcItogoSumma(List<TD_110> rows)
         {

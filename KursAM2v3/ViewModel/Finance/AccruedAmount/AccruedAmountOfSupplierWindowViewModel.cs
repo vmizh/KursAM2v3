@@ -1,19 +1,27 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.AccruedAmount;
+using Core.EntityViewModel.Bank;
+using Core.EntityViewModel.Cash;
+using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using DevExpress.Mvvm;
 using DevExpress.Utils.Extensions;
 using KursAM2.Dialogs;
+using KursAM2.Managers;
+using KursAM2.View.Finance.AccruedAmount;
+using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Management.Calculations;
 
 namespace KursAM2.ViewModel.Finance.AccruedAmount
@@ -137,8 +145,9 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             }
         }
 
+
         public override string Description =>
-            $"Внебалансовые начисления для клиентов №{Document.DocInNum}/{Document.DocExtNum} " +
+            $"Внебалансовые начисления поставщиков №{Document.DocInNum}/{Document.DocExtNum} " +
             $"от {Document.DocDate.ToShortDateString()} Контрагент: {Document.Kontragent} на сумму {Document.Summa} " +
             $"{Document.Currency}";
 
@@ -151,6 +160,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                                                    || Document.Rows.Any(_ => _.State != RowStatus.NotEdited)) &&
             Document.Error == null;
 
+        [Display(AutoGenerateField = false)]
         public ICommand KontragentSelectCommand
         {
             get { return new Command(KontragentSelect, _ => true); }
@@ -162,7 +172,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             if (kontr == null) return;
             Document.Kontragent = kontr;
         }
-
+        [Display(AutoGenerateField = false)]
         public ICommand AddAccrualCommand
         {
             get { return new Command(AddAccrual, _ => true); }
@@ -184,7 +194,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             Document.Rows.Add(newItem);
             CurrentAccrual = newItem;
         }
-
+        [Display(AutoGenerateField = false)]
         public ICommand DeleteAccrualCommand
         {
             get { return new Command(DeleteAccrual, _ => CurrentAccrual != null); }
@@ -296,6 +306,170 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             Document.myState = RowStatus.NotEdited;
             Document.RaisePropertyChanged("State");
             ParentFormViewModel?.RefreshData(null);
+        }
+
+                [Display(AutoGenerateField = false)]
+        public ICommand AddCashDocCommand
+        {
+            get
+            {
+                return new Command(AddCashDoc, _ => CurrentAccrual != null && CurrentAccrual.CashDoc == null
+                                                                           && CurrentAccrual.BankDoc == null
+                                                                           && CurrentAccrual.SDRSchet != null
+                                                                           && CurrentAccrual.State != RowStatus.NewRow
+                                                                           && CurrentAccrual.Summa > 0);
+            }
+        }
+
+        private void AddCashDoc(object obj)
+        {
+            var ctx = new SelectCashBankDialogViewModel(true);
+            var dlg = new DialogSelectCashBankView
+            {
+                DataContext = ctx
+            };
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            if (!(dlg.DialogResult ?? false)) return;
+            var cash = ctx.CurrentObject;
+
+            var vm = new CashOutWindowViewModel
+            {
+                Document = CashManager.NewCashOut()
+            };
+            vm.Document.Cash = MainReferences.Cashs[cash.DocCode];
+
+
+            vm.Document.Cash = MainReferences.Cashs[cash.DocCode];
+            vm.Document.KontragentType = CashKontragentType.Kontragent;
+            vm.Document.KONTRAGENT_DC = Document.Kontragent.DocCode;
+            vm.Document.Currency = Document.Kontragent.BalansCurrency;
+            vm.Document.SUMM_ORD = CurrentAccrual.Summa;
+            vm.Document.AccuredAmountOfSupplier = CurrentAccrual.Entity;
+            vm.Document.SDRSchet = CurrentAccrual.SDRSchet;
+            vm.SaveData(null);
+            var ord = UnitOfWork.Context.SD_34.FirstOrDefault(_ => _.DOC_CODE == vm.Document.DocCode);
+            if (ord != null)
+                CurrentAccrual.CashDoc = new CashOut(ord);
+            DocumentsOpenManager.Open(DocumentType.CashOut, vm, Form);
+        }
+
+        [Display(AutoGenerateField = false)]
+        public ICommand OpenCashDocCommand
+        {
+            get { return new Command(OpenCashDoc, _ => CurrentAccrual?.CashDoc != null); }
+        }
+
+        private void OpenCashDoc(object obj)
+        {
+            DocumentsOpenManager.Open(DocumentType.CashIn, CurrentAccrual.CashDoc.DocCode, null, Form);
+        }
+
+        [Display(AutoGenerateField = false)]
+        public ICommand DeleteCashDocCommand
+        {
+            get { return new Command(DeleteCashDoc, _ => CurrentAccrual?.CashDoc != null); }
+        }
+
+        private void DeleteCashDoc(object obj)
+        {
+            IDialogService service = GetService<IDialogService>("WinUIDialogService");
+            if (service.ShowDialog(MessageButton.YesNo, "Запрос", null)== MessageResult.Yes)
+            {
+                CurrentAccrual.CashDoc = null;
+            }
+        }
+
+        [Display(AutoGenerateField = false)]
+        public ICommand AddBankDocCommand
+        {
+            get
+            {
+                return new Command(AddBankDoc, _ => CurrentAccrual != null && CurrentAccrual.CashDoc == null
+                                                                           && CurrentAccrual.BankDoc == null
+                                                                           && CurrentAccrual.SDRSchet != null
+                                                                           && CurrentAccrual.State != RowStatus.NewRow
+                                                                           && CurrentAccrual.Summa > 0);
+            }
+        }
+
+        private void AddBankDoc(object obj)
+        {
+            var ctx = new SelectCashBankDialogViewModel(false);
+            var dlg = new DialogSelectCashBankView
+            {
+                DataContext = ctx
+            };
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            if (!(dlg.DialogResult ?? false)) return;
+            var CurrentBankAccount = ctx.CurrentObject;
+            if (CurrentBankAccount != null)
+            {
+                BankOperationsManager manager = new BankOperationsManager();
+                var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode, 
+                    new BankOperationsViewModel
+                    {
+                        DocCode = -1,
+                        Code = -1,
+                        Date = DateTime.Today,
+                        Currency = Document.Currency,
+                        Kontragent = Document.Kontragent,
+                        BankOperationType = BankOperationType.Kontragent,
+                        Payment = Document.Kontragent,
+                        VVT_VAL_RASHOD = CurrentAccrual.Summa,
+                        VVT_VAL_PRIHOD = 0,
+                        SHPZ = CurrentAccrual.SDRSchet,
+                        VVT_SFACT_CLIENT_DC = null,
+                        VVT_SFACT_POSTAV_DC = null,
+                        SFName = null,
+                        VVT_DOC_NUM = CurrentAccrual.Note,
+                        State = RowStatus.NewRow 
+                    },
+                    MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
+                if (k != null)
+                {
+                    k.State = RowStatus.NewRow;
+                    manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
+                    CurrentAccrual.BankDoc = k;
+                }
+            }
+        }
+
+        [Display(AutoGenerateField = false)]
+        public ICommand OpenBankDocCommand
+        {
+            get { return new Command(OpenBankDoc, _ => CurrentAccrual?.BankDoc != null); }
+        }
+
+        private void OpenBankDoc(object obj)
+        {
+            var CurrentBankAccount = CurrentAccrual.BankDoc.BankAccount;
+            var k = StandartDialogs.OpenBankOperation(CurrentBankAccount.DocCode,
+                CurrentAccrual.BankDoc,
+                MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
+            if (k != null)
+            {
+                BankOperationsManager manager = new BankOperationsManager();
+                k.State = RowStatus.Edited;
+                manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
+                CurrentAccrual.BankDoc = k;
+            }
+        }
+
+        [Display(AutoGenerateField = false)]
+        public ICommand DeleteBankDocCommand
+        {
+            get { return new Command(DeleteBankDoc, _ => CurrentAccrual?.BankDoc != null); }
+        }
+
+        private void DeleteBankDoc(object obj)
+        {
+            IDialogService service = GetService<IDialogService>("WinUIDialogService");
+            if (service.ShowDialog(MessageButton.YesNo, "Запрос", null)== MessageResult.Yes)
+            {
+                CurrentAccrual.BankDoc = null;
+            }
         }
 
         #endregion

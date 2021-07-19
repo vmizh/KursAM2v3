@@ -83,12 +83,12 @@ namespace Core.WindowsManager
             );
         }
 
-        public static void ShowFunctionNotReleased()
+        public static void ShowFunctionNotReleased(string text = null)
         {
             WinUIMessageBox.Show(
                 Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
                 "Функция не реализована.",
-                "Системное сообщение.",
+                $"Системное сообщение. {text}",
                 MessageBoxButton.OK,
                 MessageBoxImage.Exclamation,
                 MessageBoxResult.None, MessageBoxOptions.None,

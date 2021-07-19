@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.AccruedAmount;
+using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
@@ -110,7 +111,6 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         private AccruedAmountForClientViewModel myDocument;
         private AccruedAmountForClientRowViewModel myCurrentAccrual;
 
-        private WindowManager winManager = new WindowManager();
 
         #endregion
 
@@ -248,7 +248,45 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void AddBankDoc(object obj)
         {
-            WindowManager.ShowFunctionNotReleased();
+            var ctx = new SelectCashBankDialogViewModel(false);
+            var dlg = new DialogSelectCashBankView
+            {
+                DataContext = ctx
+            };
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            if (!(dlg.DialogResult ?? false)) return;
+            var CurrentBankAccount = ctx.CurrentObject;
+            if (CurrentBankAccount != null)
+            {
+                BankOperationsManager manager = new BankOperationsManager();
+                var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode, 
+                    new BankOperationsViewModel
+                    {
+                        DocCode = -1,
+                        Code = -1,
+                        Date = DateTime.Today,
+                        Currency = Document.Currency,
+                        Kontragent = Document.Kontragent,
+                        BankOperationType = BankOperationType.Kontragent,
+                        Payment = Document.Kontragent,
+                        VVT_VAL_RASHOD = 0,
+                        VVT_VAL_PRIHOD = CurrentAccrual.Summa,
+                        SHPZ = CurrentAccrual.SDRSchet,
+                        VVT_SFACT_CLIENT_DC = null,
+                        VVT_SFACT_POSTAV_DC = null,
+                        SFName = null,
+                        VVT_DOC_NUM = CurrentAccrual.Note,
+                        State = RowStatus.NewRow 
+                    },
+                    MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
+                if (k != null)
+                {
+                    k.State = RowStatus.NewRow;
+                    manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
+                    CurrentAccrual.BankDoc = k;
+                }
+            }
         }
 
         [Display(AutoGenerateField = false)]
@@ -259,6 +297,17 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void OpenBankDoc(object obj)
         {
+            var CurrentBankAccount = CurrentAccrual.BankDoc.BankAccount;
+            var k = StandartDialogs.OpenBankOperation(CurrentBankAccount.DocCode,
+                CurrentAccrual.BankDoc,
+                MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
+            if (k != null)
+            {
+                BankOperationsManager manager = new BankOperationsManager();
+                k.State = RowStatus.Edited;
+                manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
+                CurrentAccrual.BankDoc = k;
+            }
         }
 
         [Display(AutoGenerateField = false)]
@@ -269,6 +318,11 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void DeleteBankDoc(object obj)
         {
+            IDialogService service = GetService<IDialogService>("WinUIDialogService");
+            if (service.ShowDialog(MessageButton.YesNo, "Запрос", null)== MessageResult.Yes)
+            {
+                CurrentAccrual.BankDoc = null;
+            }
         }
 
         [Display(AutoGenerateField = false)]

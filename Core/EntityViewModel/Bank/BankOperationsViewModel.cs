@@ -45,6 +45,14 @@ namespace Core.EntityViewModel.Bank
             RaisePropertyChanged(nameof(SHPZList));
         }
 
+        public override string ToString()
+        {
+            var s = Parent?.ToString();
+            if(VVT_VAL_PRIHOD > 0)
+                return  s + $" {BankOperationType} на сумму {VVT_VAL_PRIHOD ?? 0} {Currency}";
+            return s + $" {BankOperationType} на сумму {VVT_VAL_RASHOD ?? 0} {Currency}";
+        }
+
         public BankOperationsViewModel(TD_101 entity)
         {
             Entity = entity ?? new TD_101

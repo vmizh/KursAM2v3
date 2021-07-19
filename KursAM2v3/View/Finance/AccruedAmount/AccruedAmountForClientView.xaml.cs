@@ -72,7 +72,8 @@ namespace KursAM2.View.Finance.AccruedAmount
                     {
                         TextWrapping = TextWrapping.Wrap,
                         IsTextEditable = false,
-                        AllowDefaultButton = false
+                        AllowDefaultButton = false,
+                        AcceptsReturn = true
                     };
                     var buttonInfoAdd = new ButtonInfo
                     {
@@ -105,23 +106,26 @@ namespace KursAM2.View.Finance.AccruedAmount
                 case "BankDoc":
                     var bankEdit = new ButtonEditSettings
                     {
-                        //IsTextEditable = false
+                        TextWrapping = TextWrapping.Wrap,
+                        IsTextEditable = false,
+                        AllowDefaultButton = false,
+                        AcceptsReturn = true
                     };
                     var buttonInfoAdd2 = new ButtonInfo
                     {
                         GlyphKind = GlyphKind.Plus,
-                        ToolTip = "Создать приходный кассовый ордер",
+                        ToolTip = "Создать банковскую транзакцию",
                         
                     };
                     var buttonInfoOpen2 = new ButtonInfo
                     {
                         GlyphKind = GlyphKind.Edit,
-                        ToolTip = "Открыть приходный кассовый ордер"
+                        ToolTip = "Открыть банковскую транзакцию"
                     };
                     var buttonInfoDelete2 = new ButtonInfo
                     {
                         GlyphKind = GlyphKind.Cancel,
-                        ToolTip = "Удалить связь с приходным кассовым ордером",
+                        ToolTip = "Удалить банковскую транзакцию",
                         
                     };
                     if (ctx != null)

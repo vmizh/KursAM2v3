@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 
 namespace KursAM2.ViewModel.Management
 {
@@ -12,6 +11,7 @@ namespace KursAM2.ViewModel.Management
         private TypeProfitAndLossCalc myCalcType;
         private bool myIsDiv;
         private decimal myLossCHF;
+        private decimal myLossCNY;
         private decimal myLossEUR;
         private decimal myLossGBP;
         private decimal myLossRUB;
@@ -19,6 +19,7 @@ namespace KursAM2.ViewModel.Management
         private decimal myLossUSD;
         private ProfitAndLossesExtendRowViewModel myProfitAndLossesExtendRowViewModel;
         private decimal myProfitCHF;
+        private decimal myProfitCNY;
         private decimal myProfitEUR;
         private decimal myProfitGBP;
         private decimal myProfitRUB;
@@ -28,14 +29,12 @@ namespace KursAM2.ViewModel.Management
         private decimal myRecalcProfit;
         private decimal myRecalcResult;
         private decimal myResultCHF;
+        private decimal myResultCNY;
         private decimal myResultEUR;
         private decimal myResultGBP;
         private decimal myResultRUB;
         private decimal myResultSEK;
         private decimal myResultUSD;
-        private decimal myLossCNY;
-        private decimal myProfitCNY;
-        private decimal myResultCNY;
 
         public ProfitAndLossesMainRowViewModel()
         {
@@ -386,42 +385,6 @@ namespace KursAM2.ViewModel.Management
 
         public SDRSchet SDRSchet { get; set; }
         public SDRState SDRState { get; set; }
-        
-        #region Структура
-
-        public static readonly Guid Result = Guid.Parse("{E7DA6232-CAA0-4358-9BAE-5D96C2EE248A}");
-        
-        public static readonly Guid Dohod = Guid.Parse("{A938446C-AB19-45C3-8DFD-0F24AB08DF49}");
-        public static readonly Guid Rashod = Guid.Parse("{F59D3232-DDF2-4F15-B7AE-E3691F385DDD}");
-        
-        public static readonly Guid BalansOperations = Guid.Parse("{35C9783E-E19F-452B-8479-D6F022444552}");
-        public static readonly Guid NomenklCurrencyChanges = Guid.Parse("{564DB69C-6DAD-4B16-8BF5-118F5AF2D07F}");
-
-        #region Начальные остатки
-
-        public static readonly Guid StartDohodRemains = Guid.Parse("{16524D17-451C-4149-8813-BDB9875F759A}");
-        public static readonly Guid StartRashodRemains = Guid.Parse("{2F1FD81F-A7BE-4830-93EB-9B3A9A362B2B}");
-        
-        public static readonly Guid StartDohodBank = Guid.Parse("{0AD95635-A46D-49F2-AE78-CBDF52BD6E27}");
-        public static readonly Guid StartRashodBank = Guid.Parse("{920B2AB6-1984-49A9-B5E7-18407221F620}");
-        public static readonly Guid StartDohodCash = Guid.Parse("{A084B37A-D942-4B7F-9AE9-3C3AAA0F4475}");
-        public static readonly Guid StartRashodCash = Guid.Parse("{C0AEDEC3-15CD-4D5B-8E37-0FE1EDB5C6FF}");
-        public static readonly Guid StartBalansKontragentDohod = Guid.Parse("{2D07127B-72A8-4018-B9A8-62C7A78CB9C3}");
-        public static readonly Guid StartBalansKontragentRashod = Guid.Parse("{15DF4D79-D608-412A-87A8-1560714A706A}");
-
-        #endregion
-
-        public static readonly Guid PodOtchetRashod = Guid.Parse("{52EA160E-27DC-47E1-9006-70DF349943F6}");
-        public static readonly Guid PodOtchetDohod = Guid.Parse("{7550849B-1D51-445B-B692-CE3FF7AB11B0}");
-
-        #region Товары
-
-        public static readonly Guid NomenklDohod = Guid.Parse("{334973B4-1652-4473-9DED-FD4B31B31FC1}");
-        public static readonly Guid NomenklRashod = Guid.Parse("{D89B1E18-074E-4A7D-A0EE-9537DC1585D8}");
-
-        #endregion
-        
-        #endregion
 
         public static List<ProfitAndLossesMainRowViewModel> GetStructure()
         {
@@ -669,9 +632,66 @@ namespace KursAM2.ViewModel.Management
                     ParentId = Guid.Parse("{F59D3232-DDF2-4F15-B7AE-E3691F385DDD}"),
                     Name = @"Проценты по кассовым ордерам",
                     CalcType = TypeProfitAndLossCalc.IsLoss
+                },
+                new ProfitAndLossesMainRowViewModel
+                {
+                    Id = OutBalansAccrualAmmountClient,
+                    ParentId = Dohod,
+                    Name = @"Внебалансовые начисления для клиентов",
+                    CalcType = TypeProfitAndLossCalc.IsProfit
+                },
+                new ProfitAndLossesMainRowViewModel
+                {
+                    Id = OutBalansAccrualAmmountSupplier,
+                    ParentId = Rashod,
+                    Name = @"Внебалансовые начисления поставщиков",
+                    CalcType = TypeProfitAndLossCalc.IsLoss
                 }
             };
             return res;
         }
+
+        #region Структура
+
+        public static readonly Guid Result = Guid.Parse("{E7DA6232-CAA0-4358-9BAE-5D96C2EE248A}");
+
+        public static readonly Guid Dohod = Guid.Parse("{A938446C-AB19-45C3-8DFD-0F24AB08DF49}");
+        public static readonly Guid Rashod = Guid.Parse("{F59D3232-DDF2-4F15-B7AE-E3691F385DDD}");
+
+        public static readonly Guid BalansOperations = Guid.Parse("{35C9783E-E19F-452B-8479-D6F022444552}");
+        public static readonly Guid NomenklCurrencyChanges = Guid.Parse("{564DB69C-6DAD-4B16-8BF5-118F5AF2D07F}");
+
+        #region Начальные остатки
+
+        public static readonly Guid StartDohodRemains = Guid.Parse("{16524D17-451C-4149-8813-BDB9875F759A}");
+        public static readonly Guid StartRashodRemains = Guid.Parse("{2F1FD81F-A7BE-4830-93EB-9B3A9A362B2B}");
+
+        public static readonly Guid StartDohodBank = Guid.Parse("{0AD95635-A46D-49F2-AE78-CBDF52BD6E27}");
+        public static readonly Guid StartRashodBank = Guid.Parse("{920B2AB6-1984-49A9-B5E7-18407221F620}");
+        public static readonly Guid StartDohodCash = Guid.Parse("{A084B37A-D942-4B7F-9AE9-3C3AAA0F4475}");
+        public static readonly Guid StartRashodCash = Guid.Parse("{C0AEDEC3-15CD-4D5B-8E37-0FE1EDB5C6FF}");
+        public static readonly Guid StartBalansKontragentDohod = Guid.Parse("{2D07127B-72A8-4018-B9A8-62C7A78CB9C3}");
+        public static readonly Guid StartBalansKontragentRashod = Guid.Parse("{15DF4D79-D608-412A-87A8-1560714A706A}");
+
+        #endregion
+
+        public static readonly Guid PodOtchetRashod = Guid.Parse("{52EA160E-27DC-47E1-9006-70DF349943F6}");
+        public static readonly Guid PodOtchetDohod = Guid.Parse("{7550849B-1D51-445B-B692-CE3FF7AB11B0}");
+
+        #region Товары
+
+        public static readonly Guid NomenklDohod = Guid.Parse("{334973B4-1652-4473-9DED-FD4B31B31FC1}");
+        public static readonly Guid NomenklRashod = Guid.Parse("{D89B1E18-074E-4A7D-A0EE-9537DC1585D8}");
+
+        #endregion
+
+        #region Внебалансовые начисления
+
+        public static readonly Guid OutBalansAccrualAmmountClient = Guid.Parse("{7338B45D-B137-4B53-B641-554DEED3F1B3}");
+        public static readonly Guid OutBalansAccrualAmmountSupplier = Guid.Parse("{4CEA8D09-030E-49E8-B6F7-EB83D5E0D6EA}");
+        
+        #endregion
+
+        #endregion
     }
 }

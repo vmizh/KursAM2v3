@@ -224,7 +224,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
             if (Document?.DocCode > 0)
             {
-                Document = CashManager.LoadCashOut(Document.DOC_CODE);
+                Document = CashManager.LoadCashOut(Document.DocCode);
                 RaisePropertyChanged(nameof(Document));
             }
             else

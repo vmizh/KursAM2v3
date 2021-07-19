@@ -217,7 +217,13 @@ namespace KursAM2.Managers
                     SaveLastOpenInfo(docType, aat.Document.Id, null, aat.Document.Creator,
                         "", aat.Description);
                     break;
+                case DocumentType.AccruedAmountOfSupplier:
+                    var aas = OpenAccruedAmountOfSupplier(id, parent);
+                    SaveLastOpenInfo(docType, aas.Document.Id, null, aas.Document.Creator,
+                        "", aas.Description);
+                    break;
                 default:
+                    WindowManager.ShowFunctionNotReleased();
                     return;
             }
         }
@@ -424,6 +430,30 @@ namespace KursAM2.Managers
                 }
 
             var view = new AccruedAmountForClientView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = view;
+            view.Show();
+            return ctx;
+        }
+        //OpenAccruedAmountOfSupplier
+        private static AccruedAmountOfSupplierWindowViewModel OpenAccruedAmountOfSupplier(Guid? id, object parent)
+        {
+            var ctx = new AccruedAmountOfSupplierWindowViewModel(id);
+            if (parent != null)
+                switch (parent)
+                {
+                    case RSWindowSearchViewModelBase p:
+                        ctx.ParentFormViewModel = p;
+                        break;
+                    case RSWindowViewModelBase p1:
+                        ctx.ParentFormViewModel = p1;
+                        break;
+                }
+
+            var view = new AccruedAmountOfSupplierView
             {
                 Owner = Application.Current.MainWindow,
                 DataContext = ctx

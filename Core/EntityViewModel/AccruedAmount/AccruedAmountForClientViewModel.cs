@@ -64,6 +64,13 @@ namespace Core.EntityViewModel.AccruedAmount
         public ObservableCollection<AccruedAmountForClientRowViewModel> Rows { set; get; } =
             new();
 
+        public override string ToString()
+        {
+            return $"Внебалансовые начисления для клиентов №{DocInNum}/{DocExtNum} " +
+                $"от {DocDate.ToShortDateString()} Контрагент: {Kontragent} на сумму {Summa} " +
+                $"{Currency}";
+        }
+
         [Display(AutoGenerateField = false)]
         public AccruedAmountForClientRowViewModel CurrentRow
         {
