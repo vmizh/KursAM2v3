@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.AccruedAmount;
@@ -20,7 +19,6 @@ using DevExpress.Mvvm;
 using DevExpress.Utils.Extensions;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
-using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Management.Calculations;
 
@@ -35,6 +33,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             GenericRepository = new GenericKursDBRepository<AccruedAmountForClient>(UnitOfWork);
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
+            DialogService = GetService<IDialogService>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             var doc = id != null ? GenericRepository.GetById(id.Value) : null;
@@ -111,7 +110,6 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         private AccruedAmountForClientViewModel myDocument;
         private AccruedAmountForClientRowViewModel myCurrentAccrual;
 
-
         #endregion
 
         #region Properties
@@ -177,13 +175,9 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         private void AddCashDoc(object obj)
         {
             var ctx = new SelectCashBankDialogViewModel(true);
-            var dlg = new DialogSelectCashBankView
-            {
-                DataContext = ctx
-            };
-            ctx.Form = dlg;
-            dlg.ShowDialog();
-            if (!(dlg.DialogResult ?? false)) return;
+            var service = GetService<IDialogService>("DialogServiceUI");
+            if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
+            if (ctx.CurrentObject == null) return;
             var cash = ctx.CurrentObject;
 
             var vm = new CashInWindowViewModel
@@ -226,11 +220,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void DeleteCashDoc(object obj)
         {
-            IDialogService service = GetService<IDialogService>("WinUIDialogService");
-            if (service.ShowDialog(MessageButton.YesNo, "Запрос", null)== MessageResult.Yes)
-            {
+            var service = GetService<IDialogService>("WinUIDialogService");
+            dialogServiceText = "Вы действительно хотите удалить связь с платежным документом?";
+            if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.Yes)
                 CurrentAccrual.CashDoc = null;
-            }
         }
 
         [Display(AutoGenerateField = false)]
@@ -246,21 +239,18 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             }
         }
 
+
         private void AddBankDoc(object obj)
         {
             var ctx = new SelectCashBankDialogViewModel(false);
-            var dlg = new DialogSelectCashBankView
-            {
-                DataContext = ctx
-            };
-            ctx.Form = dlg;
-            dlg.ShowDialog();
-            if (!(dlg.DialogResult ?? false)) return;
+            var service = GetService<IDialogService>("DialogServiceUI");
+            if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
+            if (ctx.CurrentObject == null) return;
             var CurrentBankAccount = ctx.CurrentObject;
             if (CurrentBankAccount != null)
             {
-                BankOperationsManager manager = new BankOperationsManager();
-                var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode, 
+                var manager = new BankOperationsManager();
+                var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode,
                     new BankOperationsViewModel
                     {
                         DocCode = -1,
@@ -277,7 +267,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                         VVT_SFACT_POSTAV_DC = null,
                         SFName = null,
                         VVT_DOC_NUM = CurrentAccrual.Note,
-                        State = RowStatus.NewRow 
+                        State = RowStatus.NewRow
                     },
                     MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
                 if (k != null)
@@ -303,7 +293,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
             if (k != null)
             {
-                BankOperationsManager manager = new BankOperationsManager();
+                var manager = new BankOperationsManager();
                 k.State = RowStatus.Edited;
                 manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
                 CurrentAccrual.BankDoc = k;
@@ -316,13 +306,14 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             get { return new Command(DeleteBankDoc, _ => CurrentAccrual?.BankDoc != null); }
         }
 
+        public string dialogServiceText { set; get; }
+
         private void DeleteBankDoc(object obj)
         {
-            IDialogService service = GetService<IDialogService>("WinUIDialogService");
-            if (service.ShowDialog(MessageButton.YesNo, "Запрос", null)== MessageResult.Yes)
-            {
+            var service = GetService<IDialogService>("WinUIDialogService");
+            dialogServiceText = "Вы действительно хотите удалить связь с платежным документом?";
+            if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.Yes)
                 CurrentAccrual.BankDoc = null;
-            }
         }
 
         [Display(AutoGenerateField = false)]
@@ -380,15 +371,15 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             base.RefreshData(obj);
             if (IsCanSaveData)
             {
-                var res = WinManager.ShowWinUIMessageBox("В документ внесены изменения, сохранить?", "Запрос",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question);
+                var service = GetService<IDialogService>("WinUIDialogService");
+                dialogServiceText = "В документ внесены изменения, сохранить?";
+                var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
                 switch (res)
                 {
-                    case MessageBoxResult.Yes:
+                    case MessageResult.Yes:
                         SaveData(null);
                         return;
-                    case MessageBoxResult.No:
+                    case MessageResult.No:
                         foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
                         RaiseAll();
                         Document.myState = RowStatus.NotEdited;
@@ -409,21 +400,18 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         {
             if (Document.State != RowStatus.NewRow)
             {
-                var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?",
-                    "Запрос",
-                    MessageBoxButton.YesNoCancel,
-                    MessageBoxImage.Question);
-                if (res != MessageBoxResult.Yes) return;
+                var service = GetService<IDialogService>("WinUIDialogService");
+                dialogServiceText = "Вы уверены, что хотите удалить данный документ?";
+                var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
+                if (res != MessageResult.Yes) return;
                 switch (res)
                 {
-                    case MessageBoxResult.Yes:
+                    case MessageResult.Yes:
                         var dc = Document.Kontragent.DocCode;
                         var docdate = Document.DocDate;
-                        //InvoicesManager.DeleteProvider(Document.DocCode);
                         UnitOfWork.CreateTransaction();
                         try
                         {
-                            //GenericRepository.Delete(Document.Entity);
                             foreach (var r in Document.Rows.Where(_ => _.State != RowStatus.NewRow))
                                 UnitOfWork.Context.AccuredAmountForClientRow.Remove(r.Entity);
 
@@ -442,11 +430,11 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                         RecalcKontragentBalans.CalcBalans(dc, docdate);
                         return;
                     // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
-                    case MessageBoxResult.No:
+                    case MessageResult.No:
                         Form.Close();
                         return;
                     // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
-                    case MessageBoxResult.Cancel:
+                    case MessageResult.Cancel:
                         return;
                 }
             }

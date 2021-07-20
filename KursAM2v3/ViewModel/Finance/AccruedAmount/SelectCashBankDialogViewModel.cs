@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Controls;
 using Core;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using DevExpress.Mvvm;
 
 namespace KursAM2.ViewModel.Finance.AccruedAmount
 {
@@ -20,8 +21,22 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         #endregion
 
+        public class CashBankItem : ISimpleDialogItem
+        {
+            public decimal DocCode { get; set; }
+            public Guid Id { get; set; }
+            public int Code { get; set; }
+            public string Name { get; set; }
+
+            public override string ToString()
+            {
+                return Name;
+            }
+        }
+
         #region Fields
 
+        private ICurrentWindowService winCurrentService;
         private CashBankItem myCurrentObject;
         private readonly bool IsCash;
 
@@ -29,10 +44,12 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         #region Properties
 
+        public UserControl CustomDataUserControl { set; get; } = new SelectCashBankDialogView();
+
         public override string LayoutName => "SelectCashBankDialogViewModel";
 
         public List<CashBankItem> ObjectList { set; get; } = new List<CashBankItem>();
-        
+
         public CashBankItem CurrentObject
         {
             get => myCurrentObject;
@@ -43,71 +60,53 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 RaisePropertyChanged();
             }
         }
-            
 
         #endregion
 
         #region Command
 
-        public override bool IsOkAllow() 
+        public override bool IsOkAllow()
         {
             return CurrentObject != null;
         }
 
         public override void Ok(object obj)
         {
-            if (Form == null) return;
-            Form.DialogResult = true;
-            Form.Close();
+            winCurrentService = GetService<ICurrentWindowService>();
+            if (winCurrentService != null)
+            {
+                winCurrentService.Close();
+            }
         }
 
         public override void Cancel(object obj)
         {
-            if (Form == null) return;
-            DialogResult = false;
-            Form?.Close();
+            winCurrentService = GetService<ICurrentWindowService>();
+            if (winCurrentService != null)
+            {
+                CurrentObject = null;
+                winCurrentService.Close();
+            }
         }
 
         public sealed override void RefreshData(object obj)
         {
             if (IsCash)
-            {
                 foreach (var c in MainReferences.Cashs.Values)
-                {
                     ObjectList.Add(new CashBankItem
                     {
                         DocCode = c.DocCode,
                         Name = c.Name
                     });
-                }
-            }
             else
-            {
                 foreach (var c in MainReferences.BankAccounts.Values)
-                {
                     ObjectList.Add(new CashBankItem
                     {
                         DocCode = c.DocCode,
                         Name = c.Name
                     });
-                }
-            }
         }
 
         #endregion
-
-        public class CashBankItem : ISimpleDialogItem
-        {
-            
-            public override string ToString()
-            {
-                return Name;
-            }
-
-            public decimal DocCode { get; set; }
-            public Guid Id { get; set; }
-            public int Code { get; set; }
-            public string Name { get; set; }
-        }
     }
 }

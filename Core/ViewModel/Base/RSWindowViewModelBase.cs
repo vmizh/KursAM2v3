@@ -45,12 +45,17 @@ namespace Core.ViewModel.Base
             myIsCanRefresh = true;
         }
 
+        [Display(AutoGenerateField = false)] 
         protected IDispatcherService DispatcherService => GetService<IDispatcherService>();
+        [Display(AutoGenerateField = false)] 
         protected ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
+        
+        [Display(AutoGenerateField = false)] 
+        protected IDialogService DialogService { set; get; }
 
         protected ILayoutSerializationService LayoutSerializationService
             => GetService<ILayoutSerializationService>();
-
+        [Display(AutoGenerateField = false)] 
         public bool IsLoading
         {
             get => myIsLoading;
@@ -136,8 +141,12 @@ namespace Core.ViewModel.Base
 
         public virtual void OnWindowLoaded(object obj)
         {
-            LayoutManager = new global::Helper.LayoutManager(Form, LayoutSerializationService,
+            if(Form != null)
+                LayoutManager = new global::Helper.LayoutManager(Form, LayoutSerializationService,
                 LayoutName, null);
+            else 
+                LayoutManager = new global::Helper.LayoutManager(LayoutSerializationService,
+                    LayoutName, null);
             LayoutManager.Load();
         }
 

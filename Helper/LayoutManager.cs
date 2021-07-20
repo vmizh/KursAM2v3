@@ -46,7 +46,23 @@ namespace Helper
         private readonly Window window;
 
         private readonly ILayoutSerializationService layoutService;
-
+        public LayoutManager(ILayoutSerializationService service, string formName, string ctrlName)
+        {
+            layoutService = service;
+            FormName = formName;
+            ControlName = ctrlName;
+            //window = win;
+            //StartWinState = new WindowsScreenState
+            //{
+            //    FormHeight = window.Height,
+            //    FormWidth = window.Width,
+            //    FormLeft = window.WindowState == WindowState.Maximized ? 0 : window.Left,
+            //    FormTop = window.WindowState == WindowState.Maximized ? 0 : window.Top,
+            //    FormStartLocation = window.WindowStartupLocation,
+            //    FormState = window.WindowState
+            //};
+            StartLayout = layoutService.Serialize();
+        }
         public LayoutManager([NotNull]Window win,ILayoutSerializationService service, string formName, string ctrlName)
         {
             layoutService = service;
@@ -84,22 +100,26 @@ namespace Helper
                                                            && _.ControlName == FormName);
                 try
                 {
-                    var sb = new StringBuilder();
-                    var winState = new WindowsScreenState
+                    StringBuilder sb = null;
+                    if (window != null)
                     {
-                        FormHeight = window.Height,
-                        FormWidth = window.Width,
-                        FormLeft = window.WindowState == WindowState.Maximized ? 0 : window.Left,
-                        FormTop = window.WindowState == WindowState.Maximized ? 0 : window.Top,
-                        FormStartLocation = window.WindowStartupLocation,
-                        FormState = window.WindowState
-                    };
-                    var ser1 =
-                        new DataContractSerializer(typeof(WindowsScreenState));
-                    using (var writer = XmlWriter.Create(sb))
-                    {
-                        ser1.WriteObject(writer, winState);
-                        writer.Flush();
+                        sb = new StringBuilder();
+                        var winState = new WindowsScreenState
+                        {
+                            FormHeight = window.Height,
+                            FormWidth = window.Width,
+                            FormLeft = window.WindowState == WindowState.Maximized ? 0 : window.Left,
+                            FormTop = window.WindowState == WindowState.Maximized ? 0 : window.Top,
+                            FormStartLocation = window.WindowStartupLocation,
+                            FormState = window.WindowState
+                        };
+                        var ser1 =
+                            new DataContractSerializer(typeof(WindowsScreenState));
+                        using (var writer = XmlWriter.Create(sb))
+                        {
+                            ser1.WriteObject(writer, winState);
+                            writer.Flush();
+                        }
                     }
 
                     var s = layoutService.Serialize();
@@ -113,7 +133,7 @@ namespace Helper
                             FormName = FormName,
                             ControlName = FormName,
                             Layout = layoutService.Serialize(),
-                            WindowState = sb.ToString()
+                            WindowState = sb?.ToString()
                         });
                     }
                     else
@@ -123,7 +143,7 @@ namespace Helper
                         l.FormName = FormName;
                         l.ControlName = FormName;
                         l.Layout = layoutService.Serialize();
-                        l.WindowState = sb.ToString();
+                        l.WindowState = sb?.ToString();
                     }
 
                     ctx.SaveChanges();
@@ -155,7 +175,7 @@ namespace Helper
                     if (l != null)
                     {
                         var d = new DataContractSerializer(typeof(WindowsScreenState));
-                        if (l.WindowState != null &&
+                        if (l.WindowState != null && window != null &&
                             d.ReadObject(XmlReader.Create(new StringReader(l.WindowState))) is WindowsScreenState p)
                         {
                             window.WindowStartupLocation = p.FormStartLocation;

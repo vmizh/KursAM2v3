@@ -635,9 +635,5 @@ namespace KursAM2.Managers.Nomenkl
     }
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class Prices
-    {
-        public decimal Price { set; get; }
-        public decimal PriceWithNaklad { set; get; }
-    }
+    
 }

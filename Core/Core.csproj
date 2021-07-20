@@ -198,6 +198,7 @@
     <Compile Include="Logger\LoggerHelper.cs" />
     <Compile Include="Logger\LogLevelEnum.cs" />
     <Compile Include="MainReferences2.cs" />
+    <Compile Include="Prices.cs" />
     <Compile Include="ViewModel\Base\Dialogs\DialogErrorViewModel.cs" />
     <Compile Include="ViewModel\Base\DocumentCreateTypeEnum.cs" />
     <Compile Include="ViewModel\Base\IDocumentCopy.cs" />

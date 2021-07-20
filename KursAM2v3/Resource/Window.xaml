@@ -5,7 +5,8 @@
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-                    xmlns:behaviors="clr-namespace:KursAM2.View.Behaviors">
+                    xmlns:behaviors="clr-namespace:KursAM2.View.Behaviors"
+                    xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui">
     <DataTemplate
         x:Key="{themes:FloatingContainerThemeKey ResourceKey=FloatingContainerCaptionTemplate, ThemeName=MetropolisLight}">
         <DockPanel Width="Auto" Height="24" Cursor="Arrow">
@@ -47,6 +48,12 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <DataTemplate x:Key="dialogServiceTemplate">
+        <Label Content="{Binding dialogServiceText}" FontSize="18"/>
+    </DataTemplate>
+    <DataTemplate x:Key="dialogServiceTemplateUI">
+        <ContentControl Content="{Binding CustomDataUserControl}"/>
+    </DataTemplate>
     <Style x:Key="DXServices" TargetType="FrameworkElement">
         <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
             <Setter.Value>
@@ -56,6 +63,25 @@
                         <dxmvvm:CurrentWindowService ClosingCommand="{Binding OnWindowClosingCommand}"/>
                         <dxmvvm:EventToCommand Event="Loaded" Command="{Binding OnWindowLoadedCommand}" />
                         <dx:DXMessageBoxService />
+                        <dx:DialogService x:Name="DialogService" ViewTemplate="{StaticResource dialogServiceTemplate}">
+                            <dx:DialogService.DialogStyle>
+                                <Style TargetType="Window">
+                                    <Setter Property="SizeToContent" Value="WidthAndHeight" />
+                                    <Setter Property="WindowStyle" Value="ToolWindow" />
+                                </Style>
+                            </dx:DialogService.DialogStyle>
+                        </dx:DialogService>
+                        <dxwui:WinUIDialogService x:Name="WinUIDialogService" ViewTemplate="{StaticResource dialogServiceTemplate}"/>
+                        <dx:DialogService x:Name="DialogServiceUI" ViewTemplate="{StaticResource dialogServiceTemplateUI}">
+                            <dx:DialogService.DialogStyle>
+                                <Style TargetType="Window">
+                                    <Setter Property="SizeToContent" Value="WidthAndHeight" />
+                                    <Setter Property="WindowStyle" Value="ToolWindow" />
+                                </Style>
+                            </dx:DialogService.DialogStyle>
+                        </dx:DialogService>
+                        <dxwui:WinUIDialogService x:Name="WinUIDialogServiceUI" ViewTemplate="{StaticResource dialogServiceTemplateUI}"/>
+
                     </ItemsControl>
                 </DataTemplate>
             </Setter.Value>

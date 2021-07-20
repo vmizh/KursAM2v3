@@ -1,5 +1,4 @@
 ﻿using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 
 namespace Core
 {

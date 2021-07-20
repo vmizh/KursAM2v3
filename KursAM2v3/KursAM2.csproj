@@ -325,6 +325,9 @@
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountOfSupplierSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountForClientSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\SelectCashBankDialogViewModel.cs" />
+    <Compile Include="ViewModel\Finance\SelectCashBankDialogView.xaml.cs">
+      <DependentUpon>SelectCashBankDialogView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklSearchViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklTitleWIndowViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
@@ -1153,6 +1156,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Tests\TreeControlFluentTests.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ViewModel\Finance\SelectCashBankDialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

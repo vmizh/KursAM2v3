@@ -6,6 +6,7 @@ using DevExpress.Mvvm.DataAnnotations;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using DevExpress.PivotGrid.Printing;
 
 namespace Core.EntityViewModel.AktSpisaniya
 {
@@ -125,11 +126,20 @@ namespace Core.EntityViewModel.AktSpisaniya
             set
             {
                 if (Entity.Quantity == value) return;
+                if (Quantity > MaxQuantity)
+                {
+
+                }
                 Entity.Quantity = value;
                 RaisePropertyChanged();
             }
         }
 
+        public Prices Prices { set; get; }
+        public decimal MaxQuantity { set; get; }
+
+        public decimal PriceWithNaklad { set; get; }
+        public decimal SummaWithNaklad => PriceWithNaklad * Quantity;
         public decimal Price
         {
             get => myPrice;
