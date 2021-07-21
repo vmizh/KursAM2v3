@@ -200,12 +200,16 @@ namespace Helper
 
         public void ResetLayout()
         {
-            window.WindowStartupLocation = StartWinState.FormStartLocation;
-            window.WindowState = StartWinState.FormState;
-            window.Height = StartWinState.FormHeight;
-            window.Width = StartWinState.FormWidth;
-            window.Left = StartWinState.FormLeft < 0 ? 0 : StartWinState.FormLeft;
-            window.Top = StartWinState.FormTop < 0 ? 0 : StartWinState.FormTop;
+            if (window != null)
+            {
+                window.WindowStartupLocation = StartWinState.FormStartLocation;
+                window.WindowState = StartWinState.FormState;
+                window.Height = StartWinState.FormHeight;
+                window.Width = StartWinState.FormWidth;
+                window.Left = StartWinState.FormLeft < 0 ? 0 : StartWinState.FormLeft;
+                window.Top = StartWinState.FormTop < 0 ? 0 : StartWinState.FormTop;
+            }
+
             layoutService.Deserialize(StartLayout);
         }
     }

@@ -45,17 +45,18 @@ namespace Core.ViewModel.Base
             myIsCanRefresh = true;
         }
 
-        [Display(AutoGenerateField = false)] 
+        [Display(AutoGenerateField = false)]
         protected IDispatcherService DispatcherService => GetService<IDispatcherService>();
-        [Display(AutoGenerateField = false)] 
+
+        [Display(AutoGenerateField = false)]
         protected ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
-        
-        [Display(AutoGenerateField = false)] 
-        protected IDialogService DialogService { set; get; }
+
+        [Display(AutoGenerateField = false)] protected IDialogService DialogService { set; get; }
 
         protected ILayoutSerializationService LayoutSerializationService
             => GetService<ILayoutSerializationService>();
-        [Display(AutoGenerateField = false)] 
+
+        [Display(AutoGenerateField = false)]
         public bool IsLoading
         {
             get => myIsLoading;
@@ -71,8 +72,7 @@ namespace Core.ViewModel.Base
 
         [Display(AutoGenerateField = false)] public virtual int DocumentId { set; get; }
 
-        [Display(AutoGenerateField = false)] 
-        public virtual string ToolTipForSave { set; get; } = "Сохранение";
+        [Display(AutoGenerateField = false)] public virtual string ToolTipForSave { set; get; } = "Сохранение";
 
         [Display(AutoGenerateField = false)] public global::Helper.LayoutManager LayoutManager { get; set; }
         public virtual string LayoutName { set; get; }
@@ -133,7 +133,7 @@ namespace Core.ViewModel.Base
             get { return new Command(OnWindowLoaded, _ => true); }
         }
 
-        
+
         public virtual void OnWindowClosing(object obj)
         {
             LayoutManager?.Save();
@@ -141,10 +141,10 @@ namespace Core.ViewModel.Base
 
         public virtual void OnWindowLoaded(object obj)
         {
-            if(Form != null)
+            if (Form != null)
                 LayoutManager = new global::Helper.LayoutManager(Form, LayoutSerializationService,
-                LayoutName, null);
-            else 
+                    LayoutName, null);
+            else
                 LayoutManager = new global::Helper.LayoutManager(LayoutSerializationService,
                     LayoutName, null);
             LayoutManager.Load();

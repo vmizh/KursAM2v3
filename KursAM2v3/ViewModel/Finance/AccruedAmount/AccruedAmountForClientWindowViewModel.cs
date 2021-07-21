@@ -17,6 +17,7 @@ using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Utils.Extensions;
+using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.Cash;
@@ -306,8 +307,6 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             get { return new Command(DeleteBankDoc, _ => CurrentAccrual?.BankDoc != null); }
         }
 
-        public string dialogServiceText { set; get; }
-
         private void DeleteBankDoc(object obj)
         {
             var service = GetService<IDialogService>("WinUIDialogService");
@@ -360,6 +359,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void DeleteAccrual(object obj)
         {
+            var service = GetService<IDialogService>("WinUIDialogService");
+            dialogServiceText = "Хотите удалить выделенные строки?";
+            if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.No)
+                return;
             if (CurrentAccrual.State != RowStatus.NewRow)
                 DeletedRows.Add(CurrentAccrual);
             UnitOfWork.Context.AccuredAmountForClientRow.Remove(CurrentAccrual.Entity);
@@ -373,26 +376,21 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             {
                 var service = GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "В документ внесены изменения, сохранить?";
-                var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
-                switch (res)
+                if (service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this) == MessageResult.Yes)
                 {
-                    case MessageResult.Yes:
-                        SaveData(null);
-                        return;
-                    case MessageResult.No:
-                        foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
-                        RaiseAll();
-                        Document.myState = RowStatus.NotEdited;
-                        return;
+                    SaveData(null);
+                    return;
                 }
             }
-
+            foreach (var id in Document.Rows.Where(_ => _.State == RowStatus.NewRow).Select(_ => _.Id)
+                .ToList())
+            {
+                Document.Rows.Remove(Document.Rows.Single(_ => _.Id == id));
+            }
+            EntityManager.EntityReload(UnitOfWork.Context);
             foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
-
             RaiseAll();
-
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
-
             Document.myState = RowStatus.NotEdited;
         }
 

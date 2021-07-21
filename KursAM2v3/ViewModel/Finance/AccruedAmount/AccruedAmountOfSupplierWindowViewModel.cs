@@ -18,6 +18,7 @@ using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Utils.Extensions;
+using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.View.Finance.AccruedAmount;
@@ -213,29 +214,23 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             base.RefreshData(obj);
             if (IsCanSaveData)
             {
-                var res = WinManager.ShowWinUIMessageBox("В документ внесены изменения, сохранить?", "Запрос",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question);
-                switch (res)
+                var service = GetService<IDialogService>("WinUIDialogService");
+                dialogServiceText = "В документ внесены изменения, сохранить?";
+                if (service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this) == MessageResult.Yes)
                 {
-                    case MessageBoxResult.Yes:
-                        SaveData(null);
-                        return;
-                    case MessageBoxResult.No:
-                        foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
-
-                        RaiseAll();
-                        Document.myState = RowStatus.NotEdited;
-                        return;
+                    SaveData(null);
+                    return;
                 }
             }
-
+            foreach (var id in Document.Rows.Where(_ => _.State == RowStatus.NewRow).Select(_ => _.Id)
+                .ToList())
+            {
+                Document.Rows.Remove(Document.Rows.Single(_ => _.Id == id));
+            }
+            EntityManager.EntityReload(UnitOfWork.Context);
             foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
-
             RaiseAll();
-
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
-
             Document.myState = RowStatus.NotEdited;
         }
 

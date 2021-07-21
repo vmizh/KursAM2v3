@@ -12,7 +12,6 @@ using Data.Repository;
 using KursAM2.Managers;
 using KursAM2.Repositories.AccruedAmount;
 using KursAM2.View.Finance.AccruedAmount;
-using KursAM2.ViewModel.Finance.Invoices;
 
 namespace KursAM2.ViewModel.Finance.AccruedAmount
 {

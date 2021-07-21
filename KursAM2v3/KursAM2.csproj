@@ -330,6 +330,8 @@
     </Compile>
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklSearchViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklTitleWIndowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\AktSpisaniya\DialogSelectExistNomOnSkaldViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\AktSpisaniya\NomenklRemainsOnSkladWithPrice.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOut.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOutRow.cs" />
@@ -512,6 +514,9 @@
     </Compile>
     <Compile Include="View\LastDocumentView.xaml.cs">
       <DependentUpon>LastDocumentView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\AktSpisaniya\SelectExistNomenklOnSkladView.xaml.cs">
+      <DependentUpon>SelectExistNomenklOnSkladView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\UC\AddNomenklFromOrderInViewModel.cs" />
     <Compile Include="View\Logistiks\UC\AddNomenklFromOrderInUC.xaml.cs">
@@ -1120,7 +1125,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\DataSources\" />
-    <Folder Include="ViewModel\Logistiks\Helper\" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Resource\DialogResorces.xaml">
@@ -1284,6 +1288,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\LastDocumentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\AktSpisaniya\SelectExistNomenklOnSkladView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

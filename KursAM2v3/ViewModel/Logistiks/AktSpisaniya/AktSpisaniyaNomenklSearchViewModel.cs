@@ -162,6 +162,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public override void RefreshData(object obj)
         {
             base.RefreshData(obj);
+            Documents.Clear();
             foreach (var d in AktSpisaniyaNomenklRepository.GetAllByDates(DateStart, DateEnd).ToList())
                 Documents.Add(new AktSpisaniyaNomenklTitleViewModel(d));
 

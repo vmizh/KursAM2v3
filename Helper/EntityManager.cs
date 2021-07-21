@@ -16,5 +16,16 @@ namespace Helper
             foreach (var entry in changedEntries)
                 entry.State = EntityState.Detached;
         }
+
+        public static void EntityReload(ALFAMEDIAEntities context)
+        {
+            foreach (var entity in context.ChangeTracker.Entries())
+            {
+                if (entity.State != EntityState.Added)
+                    entity.Reload();
+                else 
+                    entity.State = EntityState.Detached;
+            }
+        }
     }
 }

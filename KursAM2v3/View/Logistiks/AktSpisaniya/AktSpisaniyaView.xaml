@@ -103,7 +103,6 @@
                                          Style="{StaticResource GridControl.Base}"
                                          Margin="0,10,0,0"
                                          dx:DXSerializer.SerializationID="gridRows"
-                                         dx:DXSerializer.StoreLayoutMode="All"
                                          ItemsSource="{Binding Document.Rows, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"
                                          CurrentItem="{Binding CurrentRow, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
                                          SelectedItems="{Binding SelectedRows, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
@@ -113,7 +112,8 @@
                     <dxg:GridControl.View>
                         <dxg:TableView ShowTotalSummary="True"
                                Name="tableViewRows"
-                               ShowAutoFilterRow="True">
+                               ShowAutoFilterRow="True"
+                               >
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Добавить номенклатуру" Command="{Binding AddNomenklCommand}" />

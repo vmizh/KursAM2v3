@@ -231,6 +231,8 @@ namespace Core.ViewModel.Base
             }
         }
 
+        public string dialogServiceText { set; get; }
+
         public virtual void Initialize()
         {
         }

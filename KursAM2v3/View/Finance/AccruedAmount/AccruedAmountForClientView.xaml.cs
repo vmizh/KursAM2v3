@@ -145,7 +145,7 @@ namespace KursAM2.View.Finance.AccruedAmount
 
         private void TypeEdit_DefaultButtonClick(object sender, RoutedEventArgs e)
         {
-            typeEdit.ItemsSource = MainReferences.GetAllAccruedAmountType();
+            typeEdit.ItemsSource = MainReferences.GetAllAccruedAmountType().Where(_ => _.IsClient);
         }
 
         private void Bn_Click(object sender, RoutedEventArgs e)

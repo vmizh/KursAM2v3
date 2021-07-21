@@ -433,6 +433,35 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = (doc.DDT_KOL_PRIHOD - doc.DDT_KOL_RASHOD) * prc
                     });
                 }
+                var docs6 = ctx.AktSpisaniya_row
+                    .Include(_ => _.AktSpisaniyaNomenkl_Title)
+                    .Where(_ => _.Nomenkl_DC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
+                                _.AktSpisaniyaNomenkl_Title.Date_Doc >= StartDate
+                                && _.AktSpisaniyaNomenkl_Title.Date_Doc <= EndDate).ToList();
+                foreach (var doc in docs6)
+                {
+                    var prc = NomenklManager.NomenklPrice(doc.Nomenkl_DC, doc.AktSpisaniyaNomenkl_Title.Date_Doc, ctx)
+                        .Price;
+                    DocumentList.Add(new NomPriceDocumentViewModel
+                    {
+                        DocCode = 0,
+                        DocumentName = "Акт списания номенклатур",
+                        DocumentNum = doc.AktSpisaniyaNomenkl_Title.Num_Doc.ToString(),
+                        DocumentDate = doc.AktSpisaniyaNomenkl_Title.Date_Doc,
+                        QuantityIn = 0,
+                        QuantityOut = doc.Quantity,
+                        QuantityDelta = -doc.Quantity,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        From = MainReferences.Warehouses[doc.AktSpisaniyaNomenkl_Title.Warehouse_DC].Name,
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        // ReSharper disable once PossibleInvalidOperationException
+                        To = "Списание",
+                        SummaIn = 0,
+                        SummaOut = doc.Quantity * prc,
+                        SummaDelta = -doc.Quantity * prc
+                    });
+                }
             }
 
             CalcNakopit();
@@ -721,6 +750,37 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = doc.SD_24.DD_SKLAD_POL_DC == storeDC
                             ? doc.DDT_KOL_PRIHOD * prc
                             : -doc.DDT_KOL_RASHOD * prc
+                    });
+                }
+
+                var docs6 = ctx.AktSpisaniya_row
+                    .Include(_ => _.AktSpisaniyaNomenkl_Title)
+                    .Where(_ => _.Nomenkl_DC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
+                                _.AktSpisaniyaNomenkl_Title.Warehouse_DC == storeDC &&
+                                _.AktSpisaniyaNomenkl_Title.Date_Doc >= StartDate
+                                && _.AktSpisaniyaNomenkl_Title.Date_Doc <= EndDate).ToList();
+                foreach (var doc in docs6)
+                {
+                    var prc = NomenklManager.NomenklPrice(doc.Nomenkl_DC, doc.AktSpisaniyaNomenkl_Title.Date_Doc, ctx)
+                        .Price;
+                    DocumentList.Add(new NomPriceDocumentViewModel
+                    {
+                        DocCode = 0,
+                        DocumentName = "Акт списания номенклатур",
+                        DocumentNum = doc.AktSpisaniyaNomenkl_Title.Num_Doc.ToString(),
+                        DocumentDate = doc.AktSpisaniyaNomenkl_Title.Date_Doc,
+                        QuantityIn = 0,
+                        QuantityOut = doc.Quantity,
+                        QuantityDelta = -doc.Quantity,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        From = MainReferences.Warehouses[doc.AktSpisaniyaNomenkl_Title.Warehouse_DC].Name,
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        // ReSharper disable once PossibleInvalidOperationException
+                        To = "Списание",
+                        SummaIn = 0,
+                        SummaOut = doc.Quantity * prc,
+                        SummaDelta = -doc.Quantity * prc
                     });
                 }
             }

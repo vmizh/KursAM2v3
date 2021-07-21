@@ -621,7 +621,7 @@ namespace KursAM2.Managers.Nomenkl
                       "AND Date = (select MAX(np1.Date) " +
                       $"FROM NOM_PRICE np1 WHERE np1.NOM_DC = np.NOM_DC AND np1.DATE <= '{CustomFormat.DateToString(date)}')";
             if (ent == null)
-                using (var ctx = new ALFAMEDIAEntities())
+                using (var ctx = GlobalOptions.GetEntities())
                 {
                     var data = ctx.Database.SqlQuery<Prices>(sql).ToList();
                     if (data.Count == 0) return null;
