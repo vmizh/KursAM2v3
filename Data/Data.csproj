@@ -208,6 +208,12 @@
     <Compile Include="DogovorClientRow.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="DogovorOfSupplier.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DogovorOfSupplierRow.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="dtproperties.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

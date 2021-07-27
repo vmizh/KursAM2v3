@@ -675,18 +675,10 @@ namespace KursAM2.ViewModel.Management
             {
                 case DocumentType.AccruedAmountForClient:
                 case DocumentType.AccruedAmountOfSupplier:
+                case DocumentType.AktSpisaniya:
                 {
                     var id = Guid.Parse(CurrentExtend.StringId);
-                    if (CurrentExtend.DocTypeCode == DocumentType.AccruedAmountForClient)
-                    {
-                        DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, 0, id);
-                    }
-
-                    if (CurrentExtend.DocTypeCode == DocumentType.AccruedAmountOfSupplier)
-                    {
-                        DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, 0, id);
-                    }
-
+                    DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, 0, id);
                     return;
                 }
                 case DocumentType.PayRollVedomost:
@@ -1230,6 +1222,7 @@ namespace KursAM2.ViewModel.Management
                 Manager.CalcUslugi();
                 Manager.CalcFinance();
                 Manager.CalcOutBalans();
+                Manager.SpisanieTovar();
                 Manager.CalcCurrencyChange();
                 Manager.CalcZarplata();
                 Manager.CalcZarplataNach();

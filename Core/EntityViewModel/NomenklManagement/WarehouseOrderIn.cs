@@ -55,6 +55,18 @@ namespace Core.EntityViewModel.NomenklManagement
         public ObservableCollection<WarehouseOrderInRow> DeletedRows { set; get; } =
             new();
 
+
+        public override string Note
+        {
+            get => Entity.DD_NOTES;
+            set
+            {
+                if (Entity.DD_NOTES == value) return;
+                Entity.DD_NOTES = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public override string Description =>
             $"Приходный складской ордер №{DD_IN_NUM}/{DD_EXT_NUM} от {Date.ToShortDateString()} " +
             $"на склад {WarehouseOut} от {KontragentSender} {Note}";

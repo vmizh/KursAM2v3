@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 //using System.Data;
@@ -8,10 +7,7 @@ namespace Core.ViewModel.Base
 {
     public interface IEntity<T>
     {
-        bool IsAccessRight { set; get; }
         T Entity { set; get; }
-        List<T> LoadList();
-
     }
 
     public interface IEntityDocument<T, R> : IEntity<T>

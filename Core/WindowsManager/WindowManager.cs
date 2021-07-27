@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows;
 using Core.Logger;
+using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI;
 
@@ -189,7 +190,6 @@ namespace Core.WindowsManager
                     });
                     errCtx.SaveChanges();
                 }
-
             if (Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive) != null)
                 WinUIMessageBox.Show(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
                     errText.ToString(),

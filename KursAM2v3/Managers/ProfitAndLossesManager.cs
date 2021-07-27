@@ -12,6 +12,7 @@ using Core.ViewModel.Base;
 using Data;
 using FinanceAnalitic;
 using Helper;
+using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Logistiks;
@@ -19,15 +20,14 @@ using KursAM2.ViewModel.Management;
 
 namespace KursAM2.Managers
 {
-    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
     public class ProfitAndLossesManager : RSWindowViewModelBase
     {
         public DateTime DateEnd;
         public DateTime DateStart;
         private Project myProject;
-        private Guid spisanieTovara;
         public List<CURRENCY_RATES_CB> MyRates = new List<CURRENCY_RATES_CB>();
+        private Guid spisanieTovara;
 
         public ProfitAndLossesManager(ProfitAndLossesWindowViewModel vm)
         {
@@ -45,6 +45,7 @@ namespace KursAM2.Managers
         }
 
         public List<decimal> ProjectDocDC { set; get; } = new List<decimal>();
+
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public List<Guid> ProjectIds { set; get; }
 
@@ -160,7 +161,7 @@ namespace KursAM2.Managers
                         DocTypeCode = (DocumentType) 34
                     };
                     SetCurrenciesValue(newOp, d.CRS_DC, 0m, d.SUMM_ORD);
-                    
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
@@ -349,10 +350,10 @@ namespace KursAM2.Managers
                         Nomenkl = e.Nomenkl,
                         DocTypeCode = DocumentType.None
                     };
-                    SetCurrenciesValue(newOp,e.Kontr.BalansCurrency.DocCode,e.Profit,
+                    SetCurrenciesValue(newOp, e.Kontr.BalansCurrency.DocCode, e.Profit,
                         e.Loss * GetRate(MyRates, e.Nomenkl.Currency.DocCode,
                             e.Kontr.BalansCurrency.DocCode, newOp.Date));
-                    
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
@@ -400,7 +401,7 @@ namespace KursAM2.Managers
                     SetCurrenciesValue(newOp, e.Kontr.BalansCurrency.DocCode, e.Profit,
                         e.Loss * GetRate(MyRates, e.Nomenkl.Currency.DocCode,
                             e.Kontr.BalansCurrency.DocCode, newOp.Date));
-                    
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
@@ -504,12 +505,14 @@ namespace KursAM2.Managers
                         // ReSharper disable once PossibleInvalidOperationException
                         Profit = d.DDT_KOL_PRIHOD * (decimal) d.DDT_TAX_CENA,
                         Loss = d.DDT_KOL_RASHOD *
-                               Core.EntityViewModel.NomenklManagement.Nomenkl.PriceWithOutNaklad(d.DDT_NOMENKL_DC, d.SD_24.DD_DATE),
+                               Core.EntityViewModel.NomenklManagement.Nomenkl.PriceWithOutNaklad(d.DDT_NOMENKL_DC,
+                                   d.SD_24.DD_DATE),
                         Result =
                             // ReSharper disable once PossibleInvalidOperationException
                             d.DDT_KOL_PRIHOD * (decimal) d.DDT_TAX_CENA -
                             d.DDT_KOL_RASHOD *
-                            Core.EntityViewModel.NomenklManagement.Nomenkl.PriceWithOutNaklad(d.DDT_NOMENKL_DC, d.SD_24.DD_DATE),
+                            Core.EntityViewModel.NomenklManagement.Nomenkl.PriceWithOutNaklad(d.DDT_NOMENKL_DC,
+                                d.SD_24.DD_DATE),
                         Date = d.SD_24.DD_DATE,
                         Kontragent = "Приход",
                         Nomenkl = nom
@@ -531,7 +534,7 @@ namespace KursAM2.Managers
                             DocTypeCode = DocumentType.StoreOrderIn
                         };
                         SetCurrenciesValue(newOp, e.Nomenkl.Currency.DocCode, e.Profit, 0m);
-                        
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -553,7 +556,7 @@ namespace KursAM2.Managers
                             DocTypeCode = DocumentType.Waybill
                         };
                         SetCurrenciesValue(newOp, e.Nomenkl.Currency.DocCode, 0m, e.Loss);
-                        
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -656,9 +659,10 @@ namespace KursAM2.Managers
                         newOp.Note = d.NOTES;
                         newOp.Nomenkl = null;
                     }
-                    SetCurrenciesValue(newOp, d.VALUTA_DC, (decimal)(d.START_SUMMA > 0 ? d.START_SUMMA : 0),
-                        (decimal)(d.START_SUMMA < 0 ? -d.START_SUMMA : 0));
-                    
+
+                    SetCurrenciesValue(newOp, d.VALUTA_DC, (decimal) (d.START_SUMMA > 0 ? d.START_SUMMA : 0),
+                        (decimal) (d.START_SUMMA < 0 ? -d.START_SUMMA : 0));
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
@@ -693,7 +697,7 @@ namespace KursAM2.Managers
                         Currency = MainReferences.GetCurrency(nom.Currency.DOC_CODE),
                         CurrencyName = MainReferences.GetCurrency(nom.Currency.DOC_CODE).Name
                     };
-                    SetCurrenciesValue(newOp,nom.Currency.DOC_CODE,n.Summa, 0m);
+                    SetCurrenciesValue(newOp, nom.Currency.DOC_CODE, n.Summa, 0m);
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
 
@@ -714,11 +718,10 @@ namespace KursAM2.Managers
                         Currency = MainReferences.GetCurrency(nom1.Currency.DOC_CODE),
                         CurrencyName = MainReferences.GetCurrency(nom1.Currency.DOC_CODE).Name
                     };
-                    SetCurrenciesValue(newOp1,nom1.Currency.DOC_CODE,0m, n.TD_26.SFT_ED_CENA*n.Quantity);
+                    SetCurrenciesValue(newOp1, nom1.Currency.DOC_CODE, 0m, n.TD_26.SFT_ED_CENA * n.Quantity);
                     Extend.Add(newOp1);
                     ExtendNach.Add(newOp1);
                 }
-
             }
         }
 
@@ -745,8 +748,8 @@ namespace KursAM2.Managers
                         Kontragent = d.CH_NAME_ORD,
                         DocTypeCode = (DocumentType) 251
                     };
-                    SetCurrenciesValue(newOp,d.SD_301.DOC_CODE,d.CH_CRS_IN_SUM, 0m);
-                   
+                    SetCurrenciesValue(newOp, d.SD_301.DOC_CODE, d.CH_CRS_IN_SUM, 0m);
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
@@ -762,18 +765,18 @@ namespace KursAM2.Managers
                         DocTypeCode = (DocumentType) 251
                     };
                     SetCurrenciesValue(newOp1, d.SD_3011.DOC_CODE, 0m, d.CH_CRS_OUT_SUM);
-                    
+
                     Extend.Add(newOp1);
                     ExtendNach.Add(newOp1);
                 }
-                
+
                 var bankChanged = ent.TD_101.Include(_ => _.SD_101)
                     .Include(_ => _.SD_101.SD_114)
                     .Include(_ => _.SD_301)
                     .Include(_ => _.SD_3011)
-                    .Where(_ => _.IsCurrencyChange == true &&  _.SD_101.VV_START_DATE >= DateStart 
+                    .Where(_ => _.IsCurrencyChange == true && _.SD_101.VV_START_DATE >= DateStart
                                                            && _.SD_101.VV_START_DATE <= DateEnd
-                                                           )
+                    )
                     .ToList();
                 foreach (var d in bankChanged)
                 {
@@ -842,8 +845,8 @@ namespace KursAM2.Managers
                         Nomenkl = null,
                         DocTypeCode = 0
                     };
-                        SetCurrenciesValue(newOp, d.CRS_DC,d.SUMMA_START,0m);
-                    
+                    SetCurrenciesValue(newOp, d.CRS_DC, d.SUMMA_START, 0m);
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
@@ -886,7 +889,7 @@ namespace KursAM2.Managers
                     };
                     foreach (var c in ent.UD_101.Where(_ => _.DOC_CODE == dc && _.VVU_REST_TYPE == 0))
                         if (c.VVU_VAL_SUMMA > 0)
-                            SetCurrenciesValue(newOp,c.VVU_CRS_DC,c.VVU_VAL_SUMMA,0); 
+                            SetCurrenciesValue(newOp, c.VVU_CRS_DC, c.VVU_VAL_SUMMA, 0);
 
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
@@ -906,7 +909,9 @@ namespace KursAM2.Managers
                     .ToList();
                 foreach (var d in spisano)
                 {
-                    var nomPrice = Core.EntityViewModel.NomenklManagement.Nomenkl.PriceWithOutNaklad(d.DDT_NOMENKL_DC, d.SD_24.DD_DATE);
+                    var nomPrice =
+                        Core.EntityViewModel.NomenklManagement.Nomenkl.PriceWithOutNaklad(d.DDT_NOMENKL_DC,
+                            d.SD_24.DD_DATE);
                     var nom = MainReferences.GetNomenkl(d.DDT_NOMENKL_DC);
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
@@ -923,7 +928,7 @@ namespace KursAM2.Managers
                         DocTypeCode = (DocumentType) 359
                     };
                     SetCurrenciesValue(newOp, nom.Currency.DocCode, 0m, nomPrice * d.DDT_KOL_RASHOD);
-                    
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
@@ -931,7 +936,8 @@ namespace KursAM2.Managers
         }
 
         public void CalcVozvrat()
-        { //Id = Guid.Parse("{C5C36299-FDEF-4251-B525-3DF10C0E8CB9}"), вщзврат от клиента
+        {
+            //Id = Guid.Parse("{C5C36299-FDEF-4251-B525-3DF10C0E8CB9}"), вщзврат от клиента
             using (var ent = GlobalOptions.GetEntities())
             {
                 var vozvratTovara = ent.TD_24.Include(_ => _.SD_24)
@@ -958,7 +964,7 @@ namespace KursAM2.Managers
                         DocTypeCode = (DocumentType) 357
                     };
                     SetCurrenciesValue(newOp, nom.Currency.DocCode, 0, d.DDT_KONTR_CRS_SUMMA);
-                    
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
@@ -974,8 +980,8 @@ namespace KursAM2.Managers
                         DocTypeCode = (DocumentType) 357
                     };
                     var p = NomenklCalculationManager.NomenklPrice(d.SD_24.DD_DATE, nom.DocCode);
-                    SetCurrenciesValue(newOp1, nom.Currency.DocCode,  p.Item1 * d.DDT_KOL_PRIHOD, 0);
-                    
+                    SetCurrenciesValue(newOp1, nom.Currency.DocCode, p.Item1 * d.DDT_KOL_PRIHOD, 0);
+
                     Extend.Add(newOp1);
                     ExtendNach.Add(newOp1);
                 }
@@ -1019,7 +1025,7 @@ namespace KursAM2.Managers
                     if (d.TD_84 != null)
                         SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode, 0m,
                             d.TD_84.SFT_NACENKA_DILERA * d.DDT_KOL_RASHOD);
-                    
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
@@ -1062,8 +1068,9 @@ namespace KursAM2.Managers
                         Kontragent = kontr.Name,
                         DocTypeCode = (DocumentType) 84
                     };
-                    SetCurrenciesValue(newOp,kontr.BalansCurrency.DocCode,0, d.SFT_NACENKA_DILERA * (decimal)d.SFT_KOL);
-                    
+                    SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode, 0,
+                        d.SFT_NACENKA_DILERA * (decimal) d.SFT_KOL);
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
@@ -1107,7 +1114,7 @@ namespace KursAM2.Managers
                                 : null
                     };
                     SetCurrenciesValue(newOp, d.OperCrsDC, 0, d.Summa);
-                    
+
                     Extend.Add(newOp);
                 }
             }
@@ -1234,9 +1241,9 @@ namespace KursAM2.Managers
                         Date = row.NomenklTransfer.Date,
                         Kontragent = null,
                         CurrencyName = crs.Name,
-                        Nomenkl = MainReferences.GetNomenkl(row.SD_83.DOC_CODE),
+                        Nomenkl = MainReferences.GetNomenkl(row.SD_83.DOC_CODE)
                     };
-                    SetCurrenciesValue(newOp,crs.DocCode,row.PriceIn*row.Quantity,0m);
+                    SetCurrenciesValue(newOp, crs.DocCode, row.PriceIn * row.Quantity, 0m);
                     var price = Core.EntityViewModel.NomenklManagement.Nomenkl.PriceWithOutNaklad(row.SD_83.DOC_CODE,
                         row.NomenklTransfer.Date);
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
@@ -1251,7 +1258,7 @@ namespace KursAM2.Managers
                         Date = row.NomenklTransfer.Date,
                         Kontragent = null,
                         CurrencyName = crs1.Name,
-                        Nomenkl = MainReferences.GetNomenkl(row.SD_83.DOC_CODE),
+                        Nomenkl = MainReferences.GetNomenkl(row.SD_83.DOC_CODE)
                     };
                     SetCurrenciesValue(newOp1, crs1.DocCode, 0m, price * row.Quantity);
                     Extend.Add(newOp);
@@ -1340,9 +1347,10 @@ namespace KursAM2.Managers
                             CurrencyName = kontr.BalansCurrency.Name,
                             DocTypeCode = DocumentType.StoreOrderIn
                         };
-                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, 0m, 
-                            Convert.ToDecimal(d.TD_26.SFT_ED_CENA.Value - d.TD_26.SFT_ED_CENA.Value) * d.DDT_KOL_PRIHOD);
-                        
+                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, 0m,
+                            Convert.ToDecimal(d.TD_26.SFT_ED_CENA.Value - d.TD_26.SFT_ED_CENA.Value) *
+                            d.DDT_KOL_PRIHOD);
+
                         Extend.Add(e);
                         ExtendNach.Add(e);
                     }
@@ -1364,7 +1372,7 @@ namespace KursAM2.Managers
                         SetCurrenciesValue(e, kontr.BalansCurrency.DocCode,
                             Convert.ToDecimal(d.TD_26.SFT_ED_CENA.Value - d.TD_26.SFT_ED_CENA.Value) * d.DDT_KOL_PRIHOD,
                             0m);
-                        
+
                         Extend.Add(e);
                         ExtendNach.Add(e);
                     }
@@ -1434,13 +1442,14 @@ namespace KursAM2.Managers
                     where sd26.DOC_CODE == td26.DOC_CODE && sd26.SF_ACCEPTED == 1
                                                          && sd83.DOC_CODE == td26.SFT_NEMENKL_DC
                                                          && sd43.DOC_CODE == sd26.SF_POST_DC
-                                                         && sd26.SF_POSTAV_DATE >= DateStart && sd26.SF_POSTAV_DATE <= DateEnd
+                                                         && sd26.SF_POSTAV_DATE >= DateStart &&
+                                                         sd26.SF_POSTAV_DATE <= DateEnd
                                                          && (sd43.FLAG_BALANS ?? 0) == 1
                                                          && sd83.NOM_0MATER_1USLUGA == 1
-                                                         //&& (td26.SFT_NAKLAD_KONTR_DC == null ||
-                                                         //    td26.SFT_NAKLAD_KONTR_DC == sd26.SF_POST_DC)
-                                                         //&& td26.SFT_IS_NAKLAD == 0
-                                                         //&& sd26.IsInvoiceNakald  == false
+                    //&& (td26.SFT_NAKLAD_KONTR_DC == null ||
+                    //    td26.SFT_NAKLAD_KONTR_DC == sd26.SF_POST_DC)
+                    //&& td26.SFT_IS_NAKLAD == 0
+                    //&& sd26.IsInvoiceNakald  == false
                     select new ProfitAndLossesWindowViewModel.NakladTemp
                     {
                         DocCode = sd26.DOC_CODE,
@@ -1460,10 +1469,7 @@ namespace KursAM2.Managers
                         SDRSchetDC = td26.SFT_SHPZ_DC,
                         IsNaklad = td26.SFT_IS_NAKLAD == 1 || (sd26.IsInvoiceNakald ?? false)
                     }).ToList();
-                foreach (var c in dataOut)
-                {
-                    c.COName = MainReferences.COList[c.CODC ?? 0].Name;
-                }
+                foreach (var c in dataOut) c.COName = MainReferences.COList[c.CODC ?? 0].Name;
                 //var naklad = ent.KONTR_BALANS_OPER_ARC.Where(_ => _.DOC_DATE >= DateStart && _.DOC_DATE <= DateEnd
                 //                                                                          && _.DOC_NAME ==
                 //                                                                          "С/ф от поставщика (накладные расходы как услуги)")
@@ -1510,7 +1516,7 @@ namespace KursAM2.Managers
                         SDRSchet sdrSchet = null;
                         if (d.SDRSchetDC != null)
                             // ReSharper disable once PossibleInvalidOperationException
-                            sdrSchet =  MainReferences.SDRSchets[d.SDRSchetDC.Value];
+                            sdrSchet = MainReferences.SDRSchets[d.SDRSchetDC.Value];
                         var e = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = dictCOIns[d.COName],
@@ -1526,8 +1532,8 @@ namespace KursAM2.Managers
                             SDRSchet = sdrSchet,
                             SDRState = GetSdrState(sdrSchet)
                         };
-                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode,d.Summa,0m);
-                        
+                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, d.Summa, 0m);
+
                         Extend.Add(e);
                         ExtendNach.Add(e);
                     }
@@ -1558,7 +1564,7 @@ namespace KursAM2.Managers
                             SDRState = GetSdrState(sdrSchet)
                         };
                         SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, 0m, d.Summa);
-                        
+
                         Extend.Add(e);
                         ExtendNach.Add(e);
                     }
@@ -1584,7 +1590,7 @@ namespace KursAM2.Managers
                     //        DocTypeCode = DocumentType.InvoiceProvider
                     //    };
                     //    SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, 0m, Convert.ToDecimal(nak.CRS_KONTR_IN));
-                        
+
                     //    Extend.Add(e);
                     //    ExtendNach.Add(e);
                     //}
@@ -1613,7 +1619,7 @@ namespace KursAM2.Managers
                             SDRSchet = sdrSchet,
                             SDRState = GetSdrState(sdrSchet)
                         };
-                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode,d.Summa, 0m);
+                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, d.Summa, 0m);
 
                         Extend.Add(e);
                         ExtendNach.Add(e);
@@ -1733,9 +1739,7 @@ namespace KursAM2.Managers
         {
             if (sdrSchet?.SHPZ_STATIA_DC == null) return null;
             if (MainReferences.SDRStates.ContainsKey(sdrSchet.SHPZ_STATIA_DC.Value))
-            {
                 return MainReferences.SDRStates[sdrSchet.SHPZ_STATIA_DC.Value];
-            }
             return null;
         }
 
@@ -2012,8 +2016,8 @@ namespace KursAM2.Managers
                                         MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
                                     : null
                         };
-                        SetCurrenciesValue(newOp,nom.Currency.DocCode,d.Profit, 0m);
-                        
+                        SetCurrenciesValue(newOp, nom.Currency.DocCode, d.Profit, 0m);
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2043,7 +2047,7 @@ namespace KursAM2.Managers
                                     : null
                         };
                         SetCurrenciesValue(newOp, nom.Currency.DocCode, 0m, d.Quantity * d.NomPrice);
-                        
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2071,7 +2075,7 @@ namespace KursAM2.Managers
                                     : null
                         };
                         SetCurrenciesValue(newOp, d.OperCrsDC, d.Price, 0m);
-                       
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2098,8 +2102,8 @@ namespace KursAM2.Managers
                                         MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
                                     : null
                         };
-                        SetCurrenciesValue(newOp, d.OperCrsDC,0m,d.Price);
-                        
+                        SetCurrenciesValue(newOp, d.OperCrsDC, 0m, d.Price);
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2152,7 +2156,7 @@ namespace KursAM2.Managers
                                     : null
                         };
                         SetCurrenciesValue(newOp, d.CrsDC.Value, 0m, d.Loss);
-                        
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2182,7 +2186,7 @@ namespace KursAM2.Managers
                                     : null
                         };
                         SetCurrenciesValue(newOp, nom.Currency.DocCode, d.Profit, 0m);
-                        
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2263,8 +2267,8 @@ namespace KursAM2.Managers
                                         MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
                                     : null
                         };
-                        SetCurrenciesValue(newOp,d.OperCrsDC,0m,d.Price);
-                        
+                        SetCurrenciesValue(newOp, d.OperCrsDC, 0m, d.Price);
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2290,7 +2294,7 @@ namespace KursAM2.Managers
                                         MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
                                     : null
                         };
-                        SetCurrenciesValue(newOp,d.CrsDC,d.Profit,0m);
+                        SetCurrenciesValue(newOp, d.CrsDC, d.Profit, 0m);
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2317,7 +2321,7 @@ namespace KursAM2.Managers
                                     : null
                         };
                         SetCurrenciesValue(newOp, d.CrsDC, 0m, d.Loss);
-                        
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2325,6 +2329,36 @@ namespace KursAM2.Managers
             }
         }
 
+        public void SpisanieTovar()
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var data = ctx.AktSpisaniya_row.Include(_ => _.AktSpisaniyaNomenkl_Title)
+                    .Where(_ => _.AktSpisaniyaNomenkl_Title.Date_Doc >= DateStart &&
+                                _.AktSpisaniyaNomenkl_Title.Date_Doc <= DateEnd);
+                foreach (var d in data)
+                {
+                    var nom = MainReferences.GetNomenkl(d.Nomenkl_DC);
+                    var newOp = new ProfitAndLossesExtendRowViewModel
+                    {
+                        GroupId = ProfitAndLossesMainRowViewModel.AktSpisaniaNomenkl,
+                        Kontragent = MainReferences.GetWarehouse(d.AktSpisaniyaNomenkl_Title.Warehouse_DC).Name,
+                        Name = $"({nom.NomenklNumber}) {nom.Name}",
+                        Note = d.Note,
+                        DocCode = 0,
+                        Quantity = d.Quantity,
+                        Price = NomenklManager.NomenklPrice(d.Nomenkl_DC, d.AktSpisaniyaNomenkl_Title.Date_Doc).Price,
+                        Date = d.AktSpisaniyaNomenkl_Title.Date_Doc,
+                        DocTypeCode = DocumentType.AktSpisaniya,
+                        StringId = d.Doc_Id.ToString()
+                    };
+                    SetCurrenciesValue(newOp, nom.Currency.DocCode, 0m, d.Quantity * newOp.Price);
+
+                    Extend.Add(newOp);
+                    ExtendNach.Add(newOp);
+                }
+            }
+        }
 
         public void CalcAccruedAmmount()
         {
@@ -2357,7 +2391,8 @@ namespace KursAM2.Managers
                         StringId = d.Id.ToString()
                         //CalcType = TypeProfitAndLossCalc.IsProfit
                     };
-                    SetCurrenciesValue(newOp1, MainReferences.GetKontragent(d.KontrDC).BalansCurrency.DocCode,newOp1.Price,0m);
+                    SetCurrenciesValue(newOp1, MainReferences.GetKontragent(d.KontrDC).BalansCurrency.DocCode,
+                        newOp1.Price, 0m);
                     Extend.Add(newOp1);
                     ExtendNach.Add(newOp1);
                 }
@@ -2385,12 +2420,14 @@ namespace KursAM2.Managers
                         StringId = d.Id.ToString()
                         //CalcType = TypeProfitAndLossCalc.IsProfit
                     };
-                    SetCurrenciesValue(newOp1, MainReferences.GetKontragent(d.KontrDC).BalansCurrency.DocCode,0m, newOp1.Price);
+                    SetCurrenciesValue(newOp1, MainReferences.GetKontragent(d.KontrDC).BalansCurrency.DocCode, 0m,
+                        newOp1.Price);
                     Extend.Add(newOp1);
                     ExtendNach.Add(newOp1);
                 }
             }
         }
+
         // ReSharper disable once UnusedMember.Local
         private decimal CalcItogoSumma(List<TD_110> rows)
         {
@@ -2461,7 +2498,7 @@ namespace KursAM2.Managers
                                     d.DateRow.ToShortDateString(), d.Note, d.Kontragent),
                             DocCode = d.DocCode,
                             Quantity = 1,
-                            Price = d.Price, 
+                            Price = d.Price,
                             Kontragent = kontr.Name,
                             KontragentBase = kontr,
                             Date = d.DateRow,
@@ -2488,9 +2525,9 @@ namespace KursAM2.Managers
                             DocNum = d.DocNum.ToString(),
                             CalcType = d.IsProfit ? TypeProfitAndLossCalc.IsProfit : TypeProfitAndLossCalc.IsLoss
                         };
-                        SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode, d.IsProfit ? (decimal)d.Summa : 0,
-                            d.IsProfit ? 0 : (decimal)-d.Summa);
-                        
+                        SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode, d.IsProfit ? (decimal) d.Summa : 0,
+                            d.IsProfit ? 0 : (decimal) -d.Summa);
+
                         if (d.IsBalans)
                         {
                             Extend.Add(newOp);
@@ -2510,7 +2547,7 @@ namespace KursAM2.Managers
                                         d.DateRow.ToShortDateString(), d.Note, d.Kontragent),
                                 DocCode = d.DocCode,
                                 Quantity = 1,
-                                Price = 0, 
+                                Price = 0,
                                 Kontragent = null,
                                 KontragentBase = null,
                                 Date = d.DateRow,
@@ -2528,7 +2565,7 @@ namespace KursAM2.Managers
                                 DocNum = d.DocNum.ToString(),
                                 CalcType = d.IsProfit ? TypeProfitAndLossCalc.IsProfit : TypeProfitAndLossCalc.IsLoss
                             };
-                            
+
                             Extend.Add(newOp2);
                             ExtendNach.Add(newOp2);
                         }
@@ -2613,9 +2650,9 @@ namespace KursAM2.Managers
                             CurrencyName = MainReferences.Currencies[d.CurrencyDC].Name,
                             DocNum = d.DocNum.ToString()
                         };
-                        SetCurrenciesValue(newOp, d.CurrencyDC, d.IsProfit ? (decimal)d.Summa : 0,
-                            d.IsProfit ? 0 : (decimal)-d.Summa);
-                        
+                        SetCurrenciesValue(newOp, d.CurrencyDC, d.IsProfit ? (decimal) d.Summa : 0,
+                            d.IsProfit ? 0 : (decimal) -d.Summa);
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2712,9 +2749,9 @@ namespace KursAM2.Managers
                             Date = (DateTime) d.Date,
                             DocTypeCode = DocumentType.CashIn
                         };
-                        SetCurrenciesValue(newOp,kontr.BalansCurrency.DocCode,0m,
-                            (d.Profit ?? 0) * (decimal)d.Percent / (100 - (decimal)d.Percent));
-                        
+                        SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode, 0m,
+                            (d.Profit ?? 0) * (decimal) d.Percent / (100 - (decimal) d.Percent));
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2735,8 +2772,8 @@ namespace KursAM2.Managers
                             DocTypeCode = DocumentType.CashIn
                         };
                         SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode,
-                            (d.Profit ?? 0) * (decimal) d.Percent / (100 - (decimal) d.Percent),0m);
-                        
+                            (d.Profit ?? 0) * (decimal) d.Percent / (100 - (decimal) d.Percent), 0m);
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2763,8 +2800,8 @@ namespace KursAM2.Managers
                             DocTypeCode = DocumentType.CashOut
                         };
                         SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode,
-                            (d.Loss ?? 0) * (decimal) d.Percent / (100 - (decimal) d.Percent),0m);
-                        
+                            (d.Loss ?? 0) * (decimal) d.Percent / (100 - (decimal) d.Percent), 0m);
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2784,7 +2821,7 @@ namespace KursAM2.Managers
                         };
                         SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode, 0m,
                             (d.Loss ?? 0) * (decimal) d.Percent / (100 - (decimal) d.Percent));
-                       
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2839,8 +2876,8 @@ namespace KursAM2.Managers
                             Kontragent = kontrName,
                             DocTypeCode = DocumentType.CashOut
                         };
-                        SetCurrenciesValue(newOp,d.CRS_DC,0m,d.SUMM_ORD);
-                        
+                        SetCurrenciesValue(newOp, d.CRS_DC, 0m, d.SUMM_ORD);
+
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
                     }
@@ -2869,7 +2906,7 @@ namespace KursAM2.Managers
                         DocTypeCode = DocumentType.CashIn
                     };
                     SetCurrenciesValue(newOp, d.CRS_DC, d.SUMM_ORD, 0m);
-                    
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
@@ -2905,7 +2942,7 @@ namespace KursAM2.Managers
                         DocTypeCode = DocumentType.Bank
                     };
                     SetCurrenciesValue(newOp, d.VVT_CRS_DC, 0m, d.VVT_VAL_RASHOD);
-                    
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
@@ -2931,7 +2968,7 @@ namespace KursAM2.Managers
                         DocTypeCode = DocumentType.Bank
                     };
                     SetCurrenciesValue(newOp, d.VVT_CRS_DC, d.VVT_VAL_PRIHOD, 0m);
-                    
+
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }

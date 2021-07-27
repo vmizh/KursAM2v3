@@ -161,9 +161,12 @@
     <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentBank.cs" />
     <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentCategory.cs" />
     <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentGruzoRequisite.cs" />
+    <Compile Include="EntityViewModel\Dogovora\DogovorOfSupplierFactViewModel.cs" />
     <Compile Include="EntityViewModel\Dogovora\DogovorClientFactViewModel.cs" />
     <Compile Include="EntityViewModel\Dogovora\DogovorClientRowViewModel.cs" />
     <Compile Include="EntityViewModel\Dogovora\DogovorClientViewModel.cs" />
+    <Compile Include="EntityViewModel\Dogovora\DogovorOfSupplierViewModel.cs" />
+    <Compile Include="EntityViewModel\Dogovora\DogovorOfSupplierRowViewModel.cs" />
     <Compile Include="EntityViewModel\Dogovora\LinkDocumentInfo.cs" />
     <Compile Include="EntityViewModel\FieldChangeType.cs" />
     <Compile Include="EntityViewModel\Systems\KursUser.cs" />
@@ -177,9 +180,9 @@
     <Compile Include="EntityViewModel\Employee\Employee.cs" />
     <Compile Include="EntityViewModel\Bank\BankPeriodOperations.cs" />
     <Compile Include="EntityViewModel\Dogovora\ContractType.cs" />
-    <Compile Include="EntityViewModel\Dogovora\ContractProvider.cs" />
+    <Compile Include="EntityViewModel\Dogovora\Old\ContractProvider.cs" />
     <Compile Include="EntityViewModel\NomenklManagement\DeliveryCondition.cs" />
-    <Compile Include="EntityViewModel\Dogovora\ContractProviderRowViewModel.cs" />
+    <Compile Include="EntityViewModel\Dogovora\Old\ContractProviderRowViewModel.cs" />
     <Compile Include="EntityViewModel\Invoices\InvoiceProvider.cs" />
     <Compile Include="EntityViewModel\NomenklManagement\Nomenkl.cs" />
     <Compile Include="EntityViewModel\Cash\SD_251ViewModel.cs" />

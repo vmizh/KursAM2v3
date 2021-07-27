@@ -85,6 +85,7 @@ namespace Data
         public Nullable<decimal> PersonalResponsibleDC { get; set; }
         public Nullable<bool> IsInvoiceNakald { get; set; }
         public Nullable<decimal> NakladDistributedSumma { get; set; }
+        public Nullable<System.Guid> DogovorOfSupplierId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProviderInvoicePay> ProviderInvoicePay { get; set; }
@@ -128,5 +129,6 @@ namespace Data
         public virtual ICollection<TD_60> TD_60 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UD_26> UD_26 { get; set; }
+        public virtual DogovorOfSupplier DogovorOfSupplier { get; set; }
     }
 }

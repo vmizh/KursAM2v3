@@ -9,7 +9,8 @@
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
-    x:Class="KursAM2.View.Dogovors.DogovorClientSearchView" mc:Ignorable="d"
+    x:Class="KursAM2.View.Dogovors.DogovorClientSearchView" 
+    mc:Ignorable="d"
     Title="{Binding WindowName}" MinHeight="450" Height="600" MinWidth="800"
     Icon="{Binding Source={StaticResource imageStandartSearch},
     Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"

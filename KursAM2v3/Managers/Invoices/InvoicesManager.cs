@@ -407,7 +407,6 @@ namespace KursAM2.Managers.Invoices
                                 SF_NOTES = doc.Note,
                                 CREATOR = doc.CREATOR,
                                 SF_VZAIMOR_TYPE_DC = doc.SF_VZAIMOR_TYPE_DC,
-                                SF_DOGOVOR_POKUPKI_DC = doc.SF_DOGOVOR_POKUPKI_DC,
                                 SF_PREDOPL_DOC_DC = doc.SF_PREDOPL_DOC_DC,
                                 SF_IN_NUM = inNum,
                                 SF_FORM_RASCH_DC = doc.SF_FORM_RASCH_DC,
@@ -512,7 +511,6 @@ namespace KursAM2.Managers.Invoices
                             old.SF_NOTES = doc.Note;
                             old.CREATOR = doc.CREATOR;
                             old.SF_VZAIMOR_TYPE_DC = doc.SF_VZAIMOR_TYPE_DC;
-                            old.SF_DOGOVOR_POKUPKI_DC = doc.SF_DOGOVOR_POKUPKI_DC;
                             old.SF_PREDOPL_DOC_DC = doc.SF_PREDOPL_DOC_DC;
                             old.SF_IN_NUM = doc.SF_IN_NUM;
                             old.SF_FORM_RASCH_DC = doc.SF_FORM_RASCH_DC;

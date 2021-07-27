@@ -259,6 +259,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Auxiliary\ErrorServiceViewModel.cs" />
+    <Compile Include="Auxiliary\MessageManager.cs" />
     <Compile Include="Dialogs\InvoiceProviderDialogs.cs" />
     <Compile Include="Dialogs\StandartDialogs.cs" />
     <Compile Include="Managers\BankOperationsManager.cs" />
@@ -308,6 +310,7 @@
     <Compile Include="Repositories\AktSpisaniyaNomenkl_TitleRepository.cs" />
     <Compile Include="Repositories\DistributeNakladRepository.cs" />
     <Compile Include="Repositories\DogovorsRepositories\DogovorClientRepository.cs" />
+    <Compile Include="Repositories\DogovorsRepositories\DogovorOfSupplierRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceClientRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
     <Compile Include="Repositories\Logistik\SD_24Repository.cs" />
@@ -317,9 +320,12 @@
     <Compile Include="Tests\TreeControlFluentTests.xaml.cs">
       <DependentUpon>TreeControlFluentTests.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\Dogovora\DogovorOfSupplierWindowViewModel.cs" />
+    <Compile Include="ViewModel\Dogovora\DogovorOfSupplierSearchViewModel.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorResult.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorClientWindowViewModel.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorClientSearchViewModel.cs" />
+    <Compile Include="ViewModel\Dogovora\DogovorSelectDialogViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\AccruedAmountOfSupplierWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\AccruedAmountForClientWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountOfSupplierSearchViewModel.cs" />
@@ -419,6 +425,15 @@
     <Compile Include="ViewModel\Shop\ShopExtFileOrderItem.cs" />
     <Compile Include="ViewModel\StartLogin\LastDocumentWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastUsersDocumentWindowViewModel.cs" />
+    <Compile Include="View\Base\StandartSearchView.xaml.cs">
+      <DependentUpon>StandartSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dogovors\DialogSelectDogovorAndPosition.xaml.cs">
+      <DependentUpon>DialogSelectDogovorAndPosition.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dogovors\DogovorOfSupplierView.xaml.cs">
+      <DependentUpon>DogovorOfSupplierView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Finance\AccruedAmount\DialogSelectCashBankView.xaml.cs">
       <DependentUpon>DialogSelectCashBankView.xaml</DependentUpon>
     </Compile>
@@ -1164,6 +1179,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ViewModel\Finance\SelectCashBankDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\StandartSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dogovors\DialogSelectDogovorAndPosition.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dogovors\DogovorOfSupplierView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

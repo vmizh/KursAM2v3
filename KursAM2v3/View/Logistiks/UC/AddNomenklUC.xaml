@@ -88,7 +88,8 @@
                                              VerticalAlignment="Stretch"
                                              HorizontalAlignment="Stretch"
                                              ItemsSource="{Binding NomenklItem}"
-                                             CurrentItem="{Binding CurrentNomenkl}">
+                                             CurrentItem="{Binding CurrentNomenkl}"
+                                             AutoGeneratingColumn="NomenklItemGrid_OnAutoGeneratingColumn">
                                 <dxg:GridControl.View>
                                     <dxg:TableView x:Name="tableView2NomenklItemGrid"
                                                    EnableImmediatePosting="True"
@@ -123,7 +124,8 @@
                         VerticalAlignment="Stretch"
                         HorizontalAlignment="Stretch"
                         ItemsSource="{Binding SelectedNomenkl}"
-                        CurrentItem="{Binding CurrentSelectNomenkl}">
+                        CurrentItem="{Binding CurrentSelectNomenkl}"
+                        AutoGeneratingColumn="SelectedNomenklGrid_OnAutoGeneratingColumn">
                         <dxg:GridControl.View>
                             <dxg:TableView x:Name="tableView3SelectedNomenklGrid"
                                            EnableImmediatePosting="True"

@@ -1029,6 +1029,7 @@ namespace KursAM2.Managers
                         .Include(_ => _.SD_303)
                         .Include(_ => _.SD_33)
                         .Include(_ => _.SD_43)
+                        .Include(_ => _.AccuredAmountOfSupplierRow)
                         .AsNoTracking()
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
                     return new CashOut(data)

@@ -339,6 +339,25 @@ namespace KursAM2.Managers
                         oldItem.VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode;
                         oldItem.VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC;
                         oldItem.VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC;
+
+                        if (item.VVT_SFACT_POSTAV_DC != null)
+                        {
+                            var oldPay = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.BankCode == item.Code);
+                            if (oldPay == null)
+                            {
+                                ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
+                                {
+                                    Id = Guid.NewGuid(),
+                                    BankCode = item.Code,
+                                    DocDC = item.VVT_SFACT_POSTAV_DC.Value,
+                                    Summa = item.VVT_VAL_RASHOD ?? 0,
+                                });
+                            }
+                            else
+                            {
+                                oldPay.Summa = item.VVT_VAL_RASHOD ?? 0;
+                            }
+                        }
                         ctx.SaveChanges();
                         var err = CheckForNonzero(bankDc, ctx);
                         if (!string.IsNullOrEmpty(err))
@@ -446,6 +465,16 @@ namespace KursAM2.Managers
                             VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC
                         });
                     } 
+                    if (item.VVT_SFACT_POSTAV_DC != null)
+                    {
+                        ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
+                        {
+                            Id = Guid.NewGuid(),
+                            BankCode = code,
+                            DocDC = item.VVT_SFACT_POSTAV_DC.Value,
+                            Summa = item.VVT_VAL_RASHOD ?? 0,
+                        });
+                    }
                     ctx.SaveChanges();
                     var err = CheckForNonzero(bankDc, ctx);
                     if (!string.IsNullOrEmpty(err))
@@ -587,7 +616,9 @@ namespace KursAM2.Managers
                         foreach (var d in delUdCol)
                             ctx.UD_101.Remove(d);
                     }
-
+                    var oldPay = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.BankCode == item.Code);
+                    if (oldPay != null)
+                        ctx.ProviderInvoicePay.Remove(oldPay);
                     ctx.SaveChanges();
                     var err = CheckForNonzero(bankDc, ctx);
                     if (!string.IsNullOrEmpty(err))
@@ -598,6 +629,7 @@ namespace KursAM2.Managers
                             MessageBoxImage.Error);
                         return;
                     }
+                  
                     tran.Commit();
                 }
                 catch (Exception e)

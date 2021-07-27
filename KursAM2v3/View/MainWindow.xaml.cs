@@ -197,6 +197,18 @@ namespace KursAM2.View
                         form.Show();
                         break;
 
+                    // Начисления вынебалансовым Клиентам
+                    case "Договора от поставщиков":
+                        var dop = new DogovorOfSupplierSearchViewModel();
+                        form = new StandartSearchView
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = dop
+                        };
+                        dop.Form = form;
+                        form.Show();
+                        break;
+
                     // Типы начислений для внебалансовых контрагентов
                     case "Типы начислений для внебаласовых контрагентов":
                         var aat = new AccruedAmountTypeWindowViewModel();

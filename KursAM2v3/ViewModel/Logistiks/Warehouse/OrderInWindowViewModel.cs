@@ -14,6 +14,9 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using DevExpress.Mvvm;
+using DevExpress.Mvvm.Native;
+using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ReportManagers;
@@ -27,14 +30,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public sealed class OrderInWindowViewModel : RSWindowViewModelBase
     {
-        private readonly WarehouseManager orderManager;
-        private WarehouseOrderIn myDocument;
         public readonly GenericKursDBRepository<SD_24> GenericOrderInRepository;
+        private readonly WarehouseManager orderManager;
 
         // ReSharper disable once NotAccessedField.Local
         public readonly ISD_24Repository SD_24Repository;
+
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+
+        private WarehouseOrderIn myDocument;
 
         [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         public OrderInWindowViewModel(StandartErrorManager errManager)
@@ -54,7 +59,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Command = PrintOrderCommand
             });
         }
-
+       
         public OrderInWindowViewModel(StandartErrorManager errManager, decimal dc)
         {
             GenericOrderInRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
@@ -64,18 +69,40 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             orderManager = new WarehouseManager(errManager);
-            RefreshData(dc);
+            //RefreshData(dc);
             var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
             prn?.SubMenu.Add(new MenuButtonInfo
             {
                 Caption = "Ордер",
                 Command = PrintOrderCommand
             });
+            if (dc == 0)
+            {
+                Document = new WarehouseOrderIn {State = RowStatus.NewRow};
+                UnitOfWork.Context.SD_24.Add(Document.Entity);
+            }
+            else
+            {
+                Document = new WarehouseOrderIn(GenericOrderInRepository
+                            .GetById(dc));
+                {
+                    State = RowStatus.NotEdited;
+                }
+                if (Document != null)
+                    WindowName = Document.ToString();
+                Document.Rows.ForEach(_ => _.State = RowStatus.NotEdited);
+                Document.myState = RowStatus.NotEdited;
+            }
         }
 
+        private void RaiseAll()
+        {
+            Document.RaisePropertyAllChanged();
+            foreach (var r in Document.Rows) r.RaisePropertyAllChanged();
+        }
         #region Properties
 
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse> 
+        public List<Core.EntityViewModel.NomenklManagement.Warehouse>
             WarehouseList { set; get; } = MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList();
 
         public WarehouseOrderIn Document
@@ -89,7 +116,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get => myDocument;
         }
 
-        //public ObservableCollection<WarehouseOrderInRow> Rows { set; get; } = new ObservableCollection<WarehouseOrderInRow>();
         private WarehouseOrderInRow myCurrentRow;
 
         public WarehouseOrderInRow CurrentRow
@@ -112,16 +138,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         #region Command
 
-        /*<dxe:ButtonInfo GlyphKind="Regular"
-                                             ToolTip = "Установить связь со счетом"
-                                             Command="{Binding LinkToSchetCommand}"/>
-                             <dxe:ButtonInfo GlyphKind = "Cancel"
-                                                        ToolTip = "Удалить связь со счетом"
-                                                        Command="{Binding DeleteLinkSchetCommand}"/>
-                             <dxe:ButtonInfo GlyphKind = "Edit"
-                                             ToolTip = "Открыть счет"
-                                             Command="{Binding OpenLinkSchetCommand}"/>*/
-
+  
         public ICommand LinkToSchetCommand
         {
             get { return new Command(LinkToSchet, _ => true); }
@@ -159,10 +176,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             if (dlg.ShowDialog() == false) return;
-            if (Document.KontragentSender == null)
-            {
-                Document.KontragentSender = ctx.CurrentInvoice.Kontragent;
-            }
+            if (Document.KontragentSender == null) Document.KontragentSender = ctx.CurrentInvoice.Kontragent;
 
             using (var dbctx = GlobalOptions.GetEntities())
             {
@@ -201,6 +215,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     }
                 }
         }
+
         public ICommand DeleteLinkSchetCommand
         {
             get { return new Command(DeleteLinkSchet, _ => Document.Entity.DD_SPOST_DC != null); }
@@ -245,7 +260,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         }
 
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
-        public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NotEdited;
+        public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
 
         public override bool IsCanSaveData => Document != null && (Document.State != RowStatus.NotEdited
                                                                    || Document.Rows.Any(_ =>
@@ -289,21 +304,47 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void RefreshData(object obj)
         {
-            if (Document != null && Document.DocCode > 0)
+            //if (Document != null && Document.DocCode > 0)
+            //{
+            //    Document = new WarehouseOrderIn(GenericOrderInRepository
+            //        .GetById(Document.DocCode)); //orderManager.GetOrderIn(Document.DocCode);
+            //}
+            //else
+            //{
+            //    var dc = obj as decimal? ?? 0;
+            //    if (dc != 0) 
+            //        Document = new WarehouseOrderIn(GenericOrderInRepository.GetById(dc));
+            //}
+            
+            //// ReSharper disable once PossibleNullReferenceException
+            //Document.DeletedRows.Clear();
+            //Document.Rows.ForEach(_ => _.myState = RowStatus.NotEdited);
+            //Document.myState = RowStatus.NotEdited;
+            //RaisePropertyChanged(nameof(Document));
+            //RaisePropertyChanged(nameof(Document.Sender));
+            //RaisePropertyChanged(nameof(Document.WarehouseIn));
+            base.RefreshData(obj);
+            if (IsCanSaveData)
             {
-                Document = new WarehouseOrderIn(GenericOrderInRepository
-                    .GetById(Document.DocCode)); //orderManager.GetOrderIn(Document.DocCode);
+                var service = GetService<IDialogService>("WinUIDialogService");
+                dialogServiceText = "В документ внесены изменения, сохранить?";
+                if (service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this) == MessageResult.Yes)
+                {
+                    SaveData(null);
+                    return;
+                }
             }
-            else
+            foreach (var id in Document.Rows.Where(_ => _.State == RowStatus.NewRow).Select(_ => _.Id)
+                .ToList())
             {
-                var dc = obj as decimal? ?? 0;
-                if (dc != 0)
-                    Document = new WarehouseOrderIn(GenericOrderInRepository.GetById(dc));
+                Document.Rows.Remove(Document.Rows.Single(_ => _.Id == id));
             }
-
-            RaisePropertyChanged(nameof(Document));
-            RaisePropertyChanged(nameof(Document.Sender));
-            RaisePropertyChanged(nameof(Document.WarehouseIn));
+            EntityManager.EntityReload(UnitOfWork.Context);
+            foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
+            RaiseAll();
+            foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
+            Document.myState = RowStatus.NotEdited;
+            Document.RaisePropertyChanged("State");
         }
 
         public override void SaveData(object data)
@@ -343,10 +384,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand SenderSelectCommand
         {
-            get
-            {
-                return new Command(SenderSelect, _ => true);
-            }
+            get { return new Command(SenderSelect, _ => true); }
         }
 
         public bool IsSenderTypeEnabled => Document.Sender == null;
@@ -364,10 +402,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     var warehouse = StandartDialogs.SelectWarehouseDialog();
                     if (warehouse == null) return;
                     Document.WarehouseOut = warehouse;
-                    var win = new WindowManager();
+                    //var win = new WindowManager();
                     // ReSharper disable once PossibleUnintendedReferenceComparison
                     break;
             }
+
             Document?.RaisePropertyChanged("Sender");
         }
 
@@ -509,7 +548,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Document.Rows.Remove(row);
                 }
                 else
-                { 
+                {
                     Document.Entity.TD_24.Remove(row.Entity);
                     Document.DeletedRows.Add(row);
                     Document.Rows.Remove(row);
@@ -531,9 +570,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         Form.Close();
                         return;
                     }
+
                     try
                     {
-                        GenericOrderInRepository.Delete(Document.Entity);
+                        UnitOfWork.CreateTransaction();
+                        UnitOfWork.Context.SD_24.Remove(Document.Entity);
                         UnitOfWork.Save();
                         UnitOfWork.Commit();
                     }
@@ -542,9 +583,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         UnitOfWork.Rollback();
                         WindowManager.ShowError(ex);
                     }
-                    RecalcKontragentBalans.CalcBalans(dc,docdate);
+
+                    RecalcKontragentBalans.CalcBalans(dc, docdate);
                     //orderManager.DeleteOrderIn(Document);
-                    CloseWindow(Form);
+                    if (Form != null) Form.Close();
                     break;
                 case MessageBoxResult.No:
                     break;

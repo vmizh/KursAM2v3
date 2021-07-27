@@ -18,5 +18,18 @@ namespace KursAM2.View.Logistiks.UC
         {
             e.Column.Name = e.Column.FieldName;
         }
+
+        private void NomenklItemGrid_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+        {
+            e.Column.Name = e.Column.FieldName;
+            e.Column.ReadOnly = true;
+        }
+
+
+        private void SelectedNomenklGrid_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+        {
+            e.Column.Name = e.Column.FieldName;
+            e.Column.ReadOnly = true;
+        }
     }
 }

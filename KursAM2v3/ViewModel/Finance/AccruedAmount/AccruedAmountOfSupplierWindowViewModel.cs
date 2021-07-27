@@ -161,6 +161,19 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                                                    || Document.Rows.Any(_ => _.State != RowStatus.NotEdited)) &&
             Document.Error == null;
 
+        public override void DocNewCopy(object form)
+        {
+            var ctx = new AccruedAmountOfSupplierWindowViewModel(Document.Id);
+            ctx.SetAsNewCopy(true);
+            var frm = new AccruedAmountOfSupplierView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
+        }
+
         [Display(AutoGenerateField = false)]
         public ICommand KontragentSelectCommand
         {
@@ -369,7 +382,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         private void DeleteCashDoc(object obj)
         {
             IDialogService service = GetService<IDialogService>("WinUIDialogService");
-            if (service.ShowDialog(MessageButton.YesNo, "Запрос", null)== MessageResult.Yes)
+            dialogServiceText = "Вы действительно хотите удалить связь с платежным документом?";
+            if (service.ShowDialog(MessageButton.YesNo, "Запрос", this)== MessageResult.Yes)
             {
                 CurrentAccrual.CashDoc = null;
             }

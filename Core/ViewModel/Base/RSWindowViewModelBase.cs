@@ -53,6 +53,7 @@ namespace Core.ViewModel.Base
 
         [Display(AutoGenerateField = false)] protected IDialogService DialogService { set; get; }
 
+        [Display(AutoGenerateField = false)]
         protected ILayoutSerializationService LayoutSerializationService
             => GetService<ILayoutSerializationService>();
 
@@ -68,7 +69,7 @@ namespace Core.ViewModel.Base
             }
         }
 
-        public RSWindowViewModelBase ParentFormViewModel { set; get; }
+        [Display(AutoGenerateField = false)] public RSWindowViewModelBase ParentFormViewModel { set; get; }
 
         [Display(AutoGenerateField = false)] public virtual int DocumentId { set; get; }
 
@@ -79,8 +80,9 @@ namespace Core.ViewModel.Base
 
         [Display(AutoGenerateField = false)] public StandartErrorManager ErrorManager { set; get; }
 
-        public ObservableCollection<MenuButtonInfo> RightMenuBar { set; get; }
+        [Display(AutoGenerateField = false)] public ObservableCollection<MenuButtonInfo> RightMenuBar { set; get; }
 
+        [Display(AutoGenerateField = false)]
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public ObservableCollection<MenuButtonInfo> LeftMenuBar { set; get; }
 
@@ -97,6 +99,7 @@ namespace Core.ViewModel.Base
             }
         }
 
+        [Display(AutoGenerateField = false)]
         public virtual string WindowName
         {
             get => myWindowName;
@@ -108,6 +111,7 @@ namespace Core.ViewModel.Base
             }
         }
 
+        [Display(AutoGenerateField = false)]
         public virtual string FooterText
         {
             set
@@ -119,7 +123,7 @@ namespace Core.ViewModel.Base
             get => myFooterText;
         }
 
-        public bool IsCanSave { get; set; }
+        [Display(AutoGenerateField = false)] public bool IsCanSave { get; set; }
 
         [Display(AutoGenerateField = false)]
         public ICommand OnWindowClosingCommand
@@ -200,7 +204,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand CommandGridControlExport
         {
-            get { return new Command(GridControlExport, param => true); }
+            get { return new Command(GridControlExport, _ => true); }
         }
 
         public string DatabaseName => GlobalOptions.DataBaseName;

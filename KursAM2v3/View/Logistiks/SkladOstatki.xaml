@@ -32,9 +32,9 @@
                                       dxlc:LayoutControl.AllowHorizontalSizing="True">
                         <dxe:ListBoxEdit ItemsSource="{Binding Sklads}"
                                          DisplayMember="Name"
-                                         ValueMember="DocCode"
                                          EditValue="{Binding CurrentWarehouse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         SelectedItem="{Binding CurrentWarehouse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                         SelectedItem="{Binding CurrentWarehouse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         ItemContainerStyle="{StaticResource ItemContainerStyle}"/>
                     </dxlc:LayoutGroup>
                     <dxlc:LayoutGroup View="Group" Padding="0" Orientation="Vertical">
                         <dxlc:LayoutGroup View="GroupBox" Header="Товары" Padding="0"

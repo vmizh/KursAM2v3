@@ -30,13 +30,27 @@ namespace Core.Invoices.EntityViewModel
     [MetadataType(typeof(SD_26LayoutData_FluentAPI))]
     public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo
     {
+
+        #region Fields
+
+        private Currency myCurrency;
+        private DogovorOfSupplierViewModel myDogovorOfSupplier; 
         private readonly UnitOfWork<ALFAMEDIAEntities> context;
 
+        #endregion
+
+        #region Properties
+        
         public ObservableCollection<InvoiceProviderRow> Rows { set; get; } =
             new ObservableCollection<InvoiceProviderRow>();
 
         public ObservableCollection<WarehouseOrderInRow> Facts { set; get; } =
             new ObservableCollection<WarehouseOrderInRow>();
+        
+
+        #endregion
+
+        
 
         public string this[string columnName]
         {
@@ -88,7 +102,7 @@ namespace Core.Invoices.EntityViewModel
         private Kontragent myKontrReceiver;
         private PayCondition myPayConditionCondition;
         private VzaimoraschetType myVzaimoraschetType;
-        private ContractProvider myContract;
+        private DogovorOfSupplierViewModel myContract;
 
         private Employee myPersonaResponsible;
 
@@ -138,17 +152,7 @@ namespace Core.Invoices.EntityViewModel
             $"{Kontragent} на {Summa} {Currency} " +
             $"{Note}";
 
-        //public decimal DOC_CODE
-        //{
-        //    get => Entity.DOC_CODE;
-        //    set
-        //    {
-        //        if (Entity.DOC_CODE == value) return;
-        //        Entity.DOC_CODE = value;
-        //        RaisePropertyChanged();
-        //    }
-        //}
-
+ 
         public override decimal DocCode
         {
             get => Entity.DOC_CODE;
@@ -170,6 +174,18 @@ namespace Core.Invoices.EntityViewModel
                 RaisePropertyChanged();
             }
         }
+
+        public DogovorOfSupplierViewModel DogovorOfSupplier
+        {
+            get => myDogovorOfSupplier;
+            set
+            {
+                if(myDogovorOfSupplier == value) return;
+                myDogovorOfSupplier = value;
+                RaisePropertiesChanged();
+            }
+        }
+
 
         public decimal? NakladDistributedSumma
         {
@@ -253,19 +269,6 @@ namespace Core.Invoices.EntityViewModel
             }
         }
 
-        //public decimal SF_POST_DC
-        //{
-        //    get => Entity.SF_POST_DC;
-        //    set
-        //    {
-        //        if (Entity.SF_POST_DC == value) return;
-        //        Entity.SF_POST_DC = value;
-        //        myKontragent = MainReferences.GetKontragent(Entity.SF_POST_DC);
-        //        RaisePropertyChanged(nameof(Kontragent));
-        //        RaisePropertyChanged();
-        //    }
-        //}
-
         [Required(ErrorMessage = "Контрагент должен быть выбран обязательно.")]
         public Kontragent Kontragent
         {
@@ -321,17 +324,6 @@ namespace Core.Invoices.EntityViewModel
             }
         }
 
-        //public Money NakladAll
-        //{
-        //    get => myNakladAll;
-        //    set
-        //    {
-        //        if (Equals(myNakladAll, value)) return;
-        //        myNakladAll = value;
-        //        RaisePropertyChanged();
-        //    }
-        //}
-
         public decimal? SF_CRS_DC
         {
             get => Entity.SF_CRS_DC;
@@ -343,8 +335,7 @@ namespace Core.Invoices.EntityViewModel
             }
         }
 
-        private Currency myCurrency;
-
+        
         public Currency Currency
         {
             get => myCurrency;
@@ -683,28 +674,17 @@ namespace Core.Invoices.EntityViewModel
             }
         }
 
-        public decimal? SF_DOGOVOR_POKUPKI_DC
-        {
-            get => Entity.SF_DOGOVOR_POKUPKI_DC;
-            set
-            {
-                if (Entity.SF_DOGOVOR_POKUPKI_DC == value) return;
-                Entity.SF_DOGOVOR_POKUPKI_DC = value;
-                RaisePropertyChanged();
-            }
-        }
-
         /// <summary>
         ///     Договор закупки
         /// </summary>
-        public ContractProvider Contract
+        public DogovorOfSupplierViewModel Contract
         {
             get => myContract;
             set
             {
-                if (myContract != null && myContract.Equals(value)) return;
+                if (myContract == value) return;
                 myContract = value;
-                SF_DOGOVOR_POKUPKI_DC = myContract?.DocCode;
+                Entity.DogovorOfSupplierId = myContract?.Id;
                 RaisePropertyChanged();
             }
         }
@@ -1170,10 +1150,10 @@ namespace Core.Invoices.EntityViewModel
                 FormRaschet = MainReferences.FormRaschets.ContainsKey(SF_FORM_RASCH_DC.Value)
                     ? MainReferences.FormRaschets[SF_FORM_RASCH_DC.Value]
                     : null;
-            if (SD_112 != null)
-                Contract = new ContractProvider(SD_112);
             if (Entity.PersonalResponsibleDC != null)
                 PersonaResponsible = MainReferences.Employees[Entity.PersonalResponsibleDC.Value];
+            if (Entity.DogovorOfSupplier != null)
+                Contract = new DogovorOfSupplierViewModel(Entity.DogovorOfSupplier);
             Rows = new ObservableCollection<InvoiceProviderRow>();
             if (Entity.TD_26 != null && Entity.TD_26.Count > 0)
             {

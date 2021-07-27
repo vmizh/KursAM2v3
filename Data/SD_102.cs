@@ -21,6 +21,7 @@ namespace Data
             this.SD_9 = new HashSet<SD_9>();
             this.EXT_USERS = new HashSet<EXT_USERS>();
             this.DogovorClient = new HashSet<DogovorClient>();
+            this.DogovorOfSupplier = new HashSet<DogovorOfSupplier>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -41,5 +42,7 @@ namespace Data
         public virtual ICollection<EXT_USERS> EXT_USERS { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DogovorClient> DogovorClient { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DogovorOfSupplier> DogovorOfSupplier { get; set; }
     }
 }

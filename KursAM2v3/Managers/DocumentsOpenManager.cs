@@ -62,6 +62,7 @@ namespace KursAM2.Managers
                 case DocumentType.AktSpisaniya:
                 case DocumentType.AccruedAmountForClient:
                 case DocumentType.AccruedAmountOfSupplier:
+                case DocumentType.DogovorOfSupplier:
                     return true;
                 default:
                     return false;
@@ -222,10 +223,28 @@ namespace KursAM2.Managers
                     SaveLastOpenInfo(docType, aas.Document.Id, null, aas.Document.Creator,
                         "", aas.Description);
                     break;
+                case DocumentType.DogovorOfSupplier:
+                    var dos = OpenDogovorOfSupplier(id, parent);
+                    SaveLastOpenInfo(docType, dos.Document.Id, null, dos.Document.Creator,
+                        "", dos.Description);
+                    break;
                 default:
                     WindowManager.ShowFunctionNotReleased();
                     return;
             }
+        }
+
+        private static DogovorOfSupplierWindowViewModel OpenDogovorOfSupplier(Guid? id, object parent)
+        {
+            var ctx = new DogovorOfSupplierWindowViewModel(id) {ParentFormViewModel = (RSWindowViewModelBase) parent};
+            var view = new DogovorOfSupplierView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = view;
+            view.Show();
+            return ctx;
         }
 
         private static PayRollVedomostWindowViewModel OpenPayroll(Guid? id)
@@ -624,8 +643,8 @@ namespace KursAM2.Managers
             };
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(), form.Name), dc)
                 {Form = form};
-            form.Show();
             form.DataContext = ctx;
+            form.Show();
             return ctx;
         }
 

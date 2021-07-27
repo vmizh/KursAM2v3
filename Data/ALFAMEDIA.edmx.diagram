@@ -2083,6 +2083,14 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_CashDC" />
         <AssociationConnector Association="ALFAMEDIAModel.AccuredAmountForClientRow_SD_303" />
         <AssociationConnector Association="ALFAMEDIAModel.AccuredAmountOfSupplierRow_SD_303" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.DogovorOfSupplier" Width="1.5" PointX="39.5" PointY="672.25" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.DogovorOfSupplierRow" Width="1.5" PointX="59.75" PointY="734.5" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorOfSupplier_KontrDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorOfSupplier_OtvetstvenTN" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorOfSupplierRow_DocId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_26_DogovorOfSupplierId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorOfSupplierRow_NomenklDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorOfSupplier_DogType" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -25,10 +25,10 @@ namespace KursAM2.View.Dogovors
                 case "State":
                     e.Column.Visible = false;
                     break;
-                case "SF_NOTES":
+                case "Note":
                     e.Column.EditSettings = new TextEditSettings
                     {
-                        AcceptsReturn = true
+                        AcceptsReturn = true,
                     };
                     break;
             }

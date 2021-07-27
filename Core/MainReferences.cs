@@ -305,7 +305,6 @@ namespace Core
             return null;
         }
 
-
         private static List<string> getThemeNames()
         {
             return new(new[]
@@ -400,7 +399,8 @@ namespace Core
             LoadNomenkl(dc);
             if (!ALLNomenkls.ContainsKey(dc))
             {
-                WindowManager.ShowMessage($"Номенклатура с кодом {dc} отсутствует.", "Ошибка", MessageBoxImage.Error);
+                if(dc != 0) 
+                    WindowManager.ShowMessage($"Номенклатура с кодом {dc} отсутствует.", "Ошибка", MessageBoxImage.Error);
                 return null;
             }
 

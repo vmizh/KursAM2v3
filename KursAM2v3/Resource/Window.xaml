@@ -49,7 +49,15 @@
         </Setter>
     </Style>
     <DataTemplate x:Key="dialogServiceTemplate">
-        <Label Content="{Binding dialogServiceText}" FontSize="18"/>
+        <dxe:TextEdit Text="{Binding dialogServiceText, Mode=OneWay}" 
+                      FontSize="18"
+                      IsReadOnly="True"
+                      AcceptsReturn="True" 
+                      TextWrapping="Wrap"
+                      ShowBorder="False"
+                      HorizontalContentAlignment="Stretch"
+                      VerticalContentAlignment="Stretch"
+                      />
     </DataTemplate>
     <DataTemplate x:Key="dialogServiceTemplateUI">
         <ContentControl Content="{Binding CustomDataUserControl}"/>
@@ -70,7 +78,8 @@
                                 </Style>
                             </dx:DialogService.DialogStyle>
                         </dx:DialogService>
-                        <dxwui:WinUIDialogService x:Name="WinUIDialogService" ViewTemplate="{StaticResource dialogServiceTemplate}"/>
+                        <dxwui:WinUIDialogService x:Name="WinUIDialogService" 
+                                                  ViewTemplate="{StaticResource dialogServiceTemplate}"/>
                         <dx:DialogService x:Name="DialogServiceUI" ViewTemplate="{StaticResource dialogServiceTemplateUI}">
                             <dx:DialogService.DialogStyle>
                                 <Style TargetType="Window">

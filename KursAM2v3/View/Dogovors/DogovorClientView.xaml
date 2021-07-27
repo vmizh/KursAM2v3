@@ -48,6 +48,7 @@
                             <DockPanel LastChildFill="False">
                                 <Label Content="Тип договора: " DockPanel.Dock="Left"/>
                                 <dxe:ComboBoxEdit
+                                    Style="{StaticResource ComboBoxEditWithError}"
                                     MinWidth="100"
                                     AutoComplete = "True"
                                     ItemsSource="{Binding ContractTypeList, UpdateSourceTrigger=PropertyChanged}"

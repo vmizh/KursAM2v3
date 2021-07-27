@@ -45,6 +45,9 @@ namespace Core.EntityViewModel.CommonReferences
         [Display(Name = "Договор для клиентов")]
         DogovorClient = 9,
 
+        [Display(Name = "Договор от поставщиков")]
+        DogovorOfSupplier = 112,
+
         [Display(Name = "Продажа за наличный раксчет")]
         SaleForCash = 259,
 

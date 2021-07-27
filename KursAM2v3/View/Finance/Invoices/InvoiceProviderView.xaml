@@ -22,9 +22,6 @@
                            FontSize="15" FontStyle="Italic" FontWeight="Bold" 
                            VerticalAlignment="Center" HorizontalAlignment="Right"/>
     </dx:ThemedWindow.HeaderItems>
-    <!--<d:ThemedWindow.DataContext>
-        <d:DesignInstance Type="invoices:ProviderWindowViewModel" IsDesignTimeCreatable="False" />
-    </d:ThemedWindow.DataContext>-->
     <DockPanel Style="{StaticResource DXServices}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top"/>
         <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Vertical" DockPanel.Dock="Top"
@@ -127,7 +124,29 @@
                                     NotifyOnValidationError=True,
                                     ValidatesOnDataErrors=True}"/>
                                     <Label Content= "Договор поставки: "/> 
-                                    <dxe:ButtonEdit/>
+                                    <dxe:ButtonEdit 
+                                        AcceptsReturn="True"
+                                        Margin="6 0"
+                                        MinWidth="200"
+                                        EditValue="{Binding Document.Contract, UpdateSourceTrigger=PropertyChanged}"
+                                        IsTextEditable="False"
+                                        AllowDefaultButton="False"
+                                        >
+                                        <dxe:ButtonEdit.Buttons>
+                                            <dxe:ButtonInfo 
+                                                GlyphKind="Regular"
+                                                ToolTip="Выбрать договор поставщика"
+                                                Command="{Binding DogovorSelectCommand}"/>
+                                            <dxe:ButtonInfo 
+                                                GlyphKind="Edit"
+                                                ToolTip="Открыть договор поставщика"
+                                                Command="{Binding DogovorOpenCommand}"/>
+                                            <dxe:ButtonInfo 
+                                                GlyphKind="Cancel"
+                                                ToolTip="Удалить связь с договором поставщика"
+                                                Command="{Binding DogovorDeleteLinkCommand}"/>
+                                        </dxe:ButtonEdit.Buttons>
+                                    </dxe:ButtonEdit>
                                 </DockPanel>
                             </dxlc:LayoutItem>
                         </dxlc:LayoutGroup>

@@ -361,11 +361,7 @@ namespace Core.EntityViewModel.NomenklManagement
 
         public bool IsAccessRight { get; set; }
 
-        List<NomenklMain> IEntity<NomenklMain>.LoadList()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         private bool CheckResetIsUsluga()
         {
             if (State == RowStatus.NewRow) return true;

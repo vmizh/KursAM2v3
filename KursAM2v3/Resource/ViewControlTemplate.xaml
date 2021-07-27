@@ -6,7 +6,8 @@
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                     xmlns:system="clr-namespace:System;assembly=mscorlib"
                     xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
-                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors">
+                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                    xmlns:themes1="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys">
     <dx:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     <DataTemplate x:Key="summaryTemplate" DataType="dxg:GridSummaryItem">
         <ContentControl>
@@ -364,5 +365,71 @@
             </Trigger>
         </Style.Triggers>
     </Style>-->
+
+    <ControlTemplate x:Key="{themes1:ListBoxThemeKey ResourceKey=ItemContainerTemplate, IsThemeIndependent=True}" 
+                             TargetType="{x:Type ListBoxItem}">
+                <Grid>
+                    <Rectangle x:Name="FocusVisual" StrokeThickness="1" 
+                               Stroke="#FF000000" StrokeDashArray="1 2" SnapsToDevicePixels="True" Opacity="0" />
+                    <Border x:Name="Hovered" CornerRadius="2" Opacity="0">
+                        <Border.Background>                            
+                            <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                <GradientStop Color="Orange" Offset="0" />
+                                <GradientStop Color="Orange" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+                    <Border x:Name="Selected" CornerRadius="2" Opacity="0">
+                        <Border.Background>
+                            <SolidColorBrush Color="Orange"/>
+                            <!--<LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                <GradientStop Color="#FF4B6FA5" Offset="0" />
+                                <GradientStop Color="#FF5E81B4" Offset="1" />
+                            </LinearGradientBrush>-->
+                        </Border.Background>
+                    </Border>
+                    <ContentPresenter x:Name="contentPresenter" Margin="3,2,3,2" 
+                                      VerticalAlignment="Center" Width="Auto" Height="Auto" 
+                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
+                </Grid>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter TargetName="contentPresenter" Property="Opacity" Value="0.35"/>
+                    </Trigger>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Opacity" TargetName="Hovered" Value="1" />
+                        <Setter Property="Opacity" TargetName="Selected" Value="0" />
+                        <Setter Property="Opacity" TargetName="FocusVisual" Value="0" />                        
+                    </Trigger>
+                    <Trigger Property="Selector.IsSelected" Value="True">
+                        <Setter Property="Opacity" TargetName="Hovered" Value="1" />
+                        <Setter Property="Opacity" TargetName="Selected" Value="0" />
+                        <Setter Property="Opacity" TargetName="FocusVisual" Value="0" />
+                        <Setter Property="Foreground" Value="Black" />                        
+                    </Trigger>
+                    <Trigger Property="IsKeyboardFocused" Value="True">
+                        <Setter Property="Opacity" TargetName="Hovered" Value="0" />
+                        <Setter Property="Opacity" TargetName="Selected" Value="0" />
+                        <Setter Property="Opacity" TargetName="FocusVisual" Value="1" />                        
+                    </Trigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsKeyboardFocused" Value="True"/>
+                            <Condition Property="Selector.IsSelected" Value="True"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Opacity" TargetName="Hovered" Value="0" />
+                        <Setter Property="Opacity" TargetName="Selected" Value="1" />
+                        <Setter Property="Opacity" TargetName="FocusVisual" Value="0" />                        
+                        <Setter Property="Foreground" Value="Black" />                        
+                    </MultiTrigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+    <Style x:Key="ItemContainerStyle" TargetType="{x:Type ListBoxItem}">
+        <!--<Setter Property="FocusVisualStyle" Value="{x:Null}"/>-->
+        <Setter Property="HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
+        <Setter Property="VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
+        <Setter Property="Template" Value="{DynamicResource {themes1:ListBoxThemeKey ResourceKey=ItemContainerTemplate}}" />
+    </Style>
      
 </ResourceDictionary>

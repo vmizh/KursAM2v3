@@ -230,7 +230,7 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public string dialogServiceText { set; get; }
 
         public virtual void Initialize()
