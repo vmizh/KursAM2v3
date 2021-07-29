@@ -5,28 +5,31 @@
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     Title="Документ" Height="800" Width="1000"
     >
     <dxlc:LayoutControl Orientation="Vertical">
         <dxlc:LayoutGroup
+            Name="LayoutHeader"
             View="Group"
             dxlc:LayoutControl.AllowVerticalSizing="True"
             DockPanel.Dock="Top">
             <dxlc:DataLayoutControl Name="MainLayoutControl"/>
         </dxlc:LayoutGroup>
-        <dxlc:LayoutGroup  View="Group"
+        <dxlc:LayoutGroup  Name ="LayoutTable"
+                           View="Group"
                            dxlc:LayoutControl.AllowVerticalSizing="True">
             <dxg:GridControl 
                 AutoGenerateColumns="AddNew"
                 EnableSmartColumnsGeneration="True"
                 Name="gridControl"
-                AutoGeneratingColumn="GridControl_OnAutoGeneratingColumn">
+                AutoGeneratingColumn="GridControl_OnAutoGeneratingColumn"
+                >
                 <dxg:GridControl.View>
                                     <dxg:TableView ShowTotalSummary="False"
                                            Name="tableViewRows"
                                            ShowAutoFilterRow="True"
-                                           EnableImmediatePosting="True">
+                                           EnableImmediatePosting="True"
+                                           >
                                         <dxg:TableView.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"

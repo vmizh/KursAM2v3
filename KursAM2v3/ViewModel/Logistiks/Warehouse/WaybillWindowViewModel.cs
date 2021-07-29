@@ -8,14 +8,17 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.NomenklManagement;
+using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.ReportManagers.SFClientAndWayBill;
+using KursAM2.View.Helper;
 using Reports.Base;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
@@ -171,6 +174,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private void DeleteLinkDocument(object obj)
         {
         }
+
+        public override void ShowHistory(object data)
+        {
+            // ReSharper disable once RedundantArgumentDefaultValue
+            DocumentHistoryManager.LoadHistory(DocumentType.Waybill, null, Document.DocCode, null);
+        }
+
 
         public override void DocDelete(object form)
         {
@@ -456,6 +466,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 : Document.WarehouseOut.Name;
             Document.Entity.DD_TYPE_DC = 2010000012;
             var dc = docManager.SaveWaybill(Document);
+            DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.Waybill), null,
+                Document.DocCode, null, (string)Document.ToJson());
             if (dc > 0)
             {
                 RefreshData(dc);

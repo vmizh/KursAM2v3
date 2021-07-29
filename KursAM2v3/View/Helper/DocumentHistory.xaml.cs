@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Systems;
-using Core.ViewModel.Common;
+using Core.WindowsManager;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
@@ -26,7 +27,15 @@ namespace KursAM2.View.Helper
 
         private void GridControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
+            e.Column.Name = e.Column.FieldName;
             e.Column.ReadOnly = true;
+            switch (e.Column.Name)
+            {
+                case "Name":
+                case "Note":
+                    e.Column.Visible = false;
+                    break;
+            }
         }
     }
 
@@ -43,14 +52,21 @@ namespace KursAM2.View.Helper
                     case DocumentType.Bank:
                         if (dc == null || code == null) return;
                         hdoclist.AddRange(ctx.DocHistory.Where(_ => _.DocDC == dc && _.Code == code)
-                            .OrderBy(_ => _.Date)
+                            .OrderByDescending(_ => _.Date)
                             .ToList()
                             .Select(d => new DocHistoryViewModel(d)));
                         break;
-                    case DocumentType.CashIn:
+                    case DocumentType.DogovorOfSupplier:
+                        if (id == null) return;
+                        hdoclist.AddRange(ctx.DocHistory.Where(_ => _.DocId == id)
+                            .OrderByDescending(_ => _.Date)
+                            .ToList()
+                            .Select(d => new DocHistoryViewModel(d)));
+                        break;
+                    default:
                         if (dc == null) return;
                         hdoclist.AddRange(ctx.DocHistory.Where(_ => _.DocDC == dc)
-                            .OrderBy(_ => _.Date)
+                            .OrderByDescending(_ => _.Date)
                             .ToList()
                             .Select(d => new DocHistoryViewModel(d)));
                         break;
@@ -68,46 +84,60 @@ namespace KursAM2.View.Helper
         public static void ShowDocument(string json)
         {
             var form = new DocumentHistory();
-            var data = deserializeToDictionary(json);
-            var arr = (JArray) data["Document"];
-            var doc = arr[0];
-            var docdata = deserializeToDictionary(doc.ToString());
-            foreach (var key in docdata.Keys.Where(_ => _ != "Rows"))
+            try
             {
-                var newItem = new DataLayoutItem
+                var jdata = (JObject)JsonConvert.DeserializeObject(json);
+                if (jdata == null) return;
+                foreach (var p in jdata.Properties())
                 {
-                    Label = key, Content = new TextEdit
+                    if (p.Name == "Позиции") continue;
+                    var newItem = new DataLayoutItem
                     {
-                        Text = Convert.ToString(docdata[key]),
-                        IsReadOnly = true
-                    }
-                };
-                form.MainLayoutControl.Children.Add(newItem);
-            }
-
-            if (docdata.ContainsKey("Rows"))
-            {
-                var rows = (JArray) docdata["Rows"];
-                form.gridControl.ItemsSource = JsonConvert.DeserializeObject(rows.ToString());
-            }
-            form.Show();
-        }
-
-        private static Dictionary<string, object> deserializeToDictionary(string jo)
-        {
-            var values = JsonConvert.DeserializeObject<Dictionary<string, object>>(jo);
-            var values2 = new Dictionary<string, object>();
-            if (values != null)
-                foreach (var d in values)
-                {
-                    var fullName = d.Value.GetType().FullName;
-                    if (fullName != null && d.Value != null && fullName.Contains("Newtonsoft.Json.Linq.JObject"))
-                        values2.Add(d.Key, deserializeToDictionary(d.Value.ToString()));
-                    else
-                        values2.Add(d.Key, d.Value);
+                        Label = p.Name.Replace("_"," "), Content = new TextEdit
+                        {
+                            Text = Convert.ToString(p.Value),
+                            IsReadOnly = true
+                        }
+                    };
+                    form.MainLayoutControl.Children.Add(newItem);
                 }
 
-            return values2;
+                var rows = jdata.Property("Позиции");
+                if (rows == null)
+                {
+                    form.gridControl.Visibility = Visibility.Hidden;
+                    form.LayoutTable.Height = 20;
+                }
+                else
+                    form.gridControl.ItemsSource = rows.Value;
+                
+                form.Show();
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowDBError(ex);
+            }
+        }
+
+        public static DataTable Tabulate(string json)
+        {
+            var jsonLinq = JObject.Parse(json);
+
+            // Find the first array using Linq
+            var srcArray = jsonLinq.Descendants().First(d => d is JArray);
+            var trgArray = new JArray();
+            foreach (var row in srcArray.Children<JObject>())
+            {
+                var cleanRow = new JObject();
+                foreach (var column in row.Properties())
+                    // Only include JValue types
+                    if (column.Value is JValue)
+                        cleanRow.Add(column.Name, column.Value);
+
+                trgArray.Add(cleanRow);
+            }
+
+            return JsonConvert.DeserializeObject<DataTable>(trgArray.ToString());
         }
     }
 }

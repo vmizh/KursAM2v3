@@ -10,6 +10,8 @@ using Core.ViewModel.Base;
 using Core.ViewModel.Common;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using Helper;
+using Newtonsoft.Json;
 
 namespace Core.EntityViewModel.Cash
 {
@@ -786,6 +788,27 @@ namespace Core.EntityViewModel.Cash
             ent.SD_3012 = SD_3012;
             ent.SD_43 = SD_43;
             ent.SD_303 = SD_303;
+        }
+
+        public override object ToJson()
+        {
+            var res = new
+            {
+                DocCode,
+                Статус = CustomFormat.GetEnumName(State),
+                Касса = Cash.Name,
+                Номер = CH_NUM_ORD,
+                Дата = CH_DATE.ToShortDateString(),
+                ТипКонтрагента = CustomFormat.GetEnumName(KontragentType),
+                Контрагент = KontragentName,
+                СуммаПриход = CH_CRS_IN_SUM?.ToString("n2") + " " + CurrencyIn,
+                СуммаРасход = CH_CRS_OUT_SUM.ToString("n2") + " " + CurrencyOut,
+                Создатель = CREATOR,
+                ОбратныйРасчет = IsBackCalc ? "Да" : "Нет",
+                Примечание = CH_NOTE,
+                СчетДоходовРасходов = SDRSchet?.Name
+            };
+            return JsonConvert.SerializeObject(res);
         }
 
         #endregion

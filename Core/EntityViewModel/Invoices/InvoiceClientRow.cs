@@ -10,7 +10,6 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using DevExpress.Xpf.Grid;
 
 // ReSharper disable InconsistentNaming
 namespace Core.EntityViewModel.Invoices
@@ -142,6 +141,7 @@ namespace Core.EntityViewModel.Invoices
                         MessageBoxImage.Error);
                     return;
                 }
+
                 if (Math.Abs(Entity.SFT_KOL - (double) value) < 0.00001) return;
                 if (value < Shipped)
                 {
@@ -318,6 +318,7 @@ namespace Core.EntityViewModel.Invoices
                 RaisePropertyChanged();
             }
         }
+
         public SDRSchet SDRSchet
         {
             get => mySDRSchet;
@@ -597,6 +598,8 @@ namespace Core.EntityViewModel.Invoices
 
         public EntityLoadCodition LoadCondition { get; set; }
 
+        public bool IsAccessRight { get; set; }
+
         public TD_84 Entity
         {
             get => myEntity;
@@ -613,8 +616,6 @@ namespace Core.EntityViewModel.Invoices
             throw new NotImplementedException();
         }
 
-        public bool IsAccessRight { get; set; }
-
         public void CalcRow()
         {
             if (IsNDSInPrice)
@@ -628,18 +629,16 @@ namespace Core.EntityViewModel.Invoices
             {
                 Entity.SFT_SUMMA_NDS =
                     (decimal) Math.Round(
-                        Entity.SFT_KOL * (double) (Entity.SFT_ED_CENA ?? 0) * (double) Entity.SFT_NDS_PERCENT / 100, 2);
+                        Entity.SFT_KOL * (double) (Entity.SFT_ED_CENA ?? 0) * Entity.SFT_NDS_PERCENT / 100, 2);
                 Entity.SFT_SUMMA_K_OPLATE =
                     Math.Round((decimal) (Entity.SFT_KOL * (double) (Entity.SFT_ED_CENA ?? 0)), 2)
                     + Entity.SFT_SUMMA_NDS;
                 Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
             }
+
             RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
             RaisePropertyChanged(nameof(Summa));
-            if (Parent is InvoiceClient p)
-            {
-                p.RaisePropertyChanged("Summa");
-            }
+            if (Parent is InvoiceClient p) p.RaisePropertyChanged("Summa");
         }
 
         private void LoadReference()
@@ -700,6 +699,26 @@ namespace Core.EntityViewModel.Invoices
         public virtual TD_84 Load(Guid id)
         {
             throw new NotImplementedException();
+        }
+
+        public override object ToJson()
+        {
+            return new
+            {
+                DocCode,
+                Code,
+                Номенклатурный_Номер = NomNomenkl,
+                Номенклатура = Nomenkl.Name,
+                Услуга = IsUsluga ? "Да" : "Нет",
+                Количество = Quantity.ToString("n3"),
+                Цена = Price.ToString("n2"),
+                Сумма = Summa.ToString("n2"),
+                Наценка_Дилера = SFT_NACENKA_DILERA?.ToString("n2"),
+                Отгружено = Shipped.ToString("n3"),
+                Процент_НДС = NDSPercent.ToString("n2"),
+                Сумма_НДС = SFT_SUMMA_NDS?.ToString("n2"),
+                Примечание = Note
+            };
         }
     }
 

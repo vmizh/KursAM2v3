@@ -1,11 +1,12 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
-using Core.EntityViewModel.AccruedAmount;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
+using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Helper;
 using KursAM2.Managers;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Helper;
@@ -108,7 +109,6 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
         public override bool IsNewDocument => Document != null && Document.State == RowStatus.NewRow;
-        public bool IsNCODEEnable => Document != null && Document.KontragentType == CashKontragentType.Employee;
 
         #endregion
 
@@ -167,6 +167,8 @@ namespace KursAM2.ViewModel.Finance.Cash
                 if (BookView?.DataContext is CashBookWindowViewModel ctx)
                     ctx.RefreshActual(Document);
             }
+            DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.CashIn), null,
+                Document.DocCode, null, (string)Document.ToJson());
             if (Document.KONTRAGENT_DC != null)
                 RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC,
                     // ReSharper disable once PossibleInvalidOperationException
@@ -262,7 +264,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             vm.BookView = BookView;
             DocumentsOpenManager.Open(DocumentType.CashIn, vm, BookView);
         }
-
+        
         public override void DocNewCopy(object form)
         {
             if (Document == null) return;

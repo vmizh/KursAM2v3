@@ -139,17 +139,12 @@ namespace KursAM2.ViewModel.Dogovora
 
         private Task Load()
         {
-            var ctx = GlobalOptions.GetEntities();
-            var res = Task.Factory.StartNew(() =>
-                new List<DogovorOfSupplier>(ctx.DogovorOfSupplier.Where(_ =>
-                    _.DocDate >= DateStart && _.DocDate <= DateEnd)));
-            Documents.Clear();
-            foreach (var d in res.Result) Documents.Add(new DogovorOfSupplierViewModel(d));
-            RaisePropertyChanged(nameof(Documents));
+            var res = Refresh();
             DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
             return res;
         }
 
+        
         public override async void RefreshData(object data)
         {
             SplashScreenService.ShowSplashScreen();
@@ -159,6 +154,18 @@ namespace KursAM2.ViewModel.Dogovora
 
             base.RefreshData(null);
             await Load();
+        }
+
+        public Task<List<DogovorOfSupplier>> Refresh()
+        {
+            var ctx = GlobalOptions.GetEntities();
+            var res = Task.Factory.StartNew(() =>
+                new List<DogovorOfSupplier>(ctx.DogovorOfSupplier.Where(_ =>
+                    _.DocDate >= DateStart && _.DocDate <= DateEnd)));
+            Documents.Clear();
+            foreach (var d in res.Result) Documents.Add(new DogovorOfSupplierViewModel(d));
+            RaisePropertyChanged(nameof(Documents));
+            return res;
         }
 
         #endregion

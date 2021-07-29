@@ -6,6 +6,8 @@ using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.Bank;
+using Core.EntityViewModel.CommonReferences;
+using Core.Helper;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -358,6 +360,8 @@ namespace KursAM2.Managers
                                 oldPay.Summa = item.VVT_VAL_RASHOD ?? 0;
                             }
                         }
+                        DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.Bank), null,
+                            item.DocCode, item.Code, (string)item.ToJson());
                         ctx.SaveChanges();
                         var err = CheckForNonzero(bankDc, ctx);
                         if (!string.IsNullOrEmpty(err))
@@ -475,6 +479,8 @@ namespace KursAM2.Managers
                             Summa = item.VVT_VAL_RASHOD ?? 0,
                         });
                     }
+                    DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.Bank), null,
+                        item.DocCode, item.Code, (string)item.ToJson());
                     ctx.SaveChanges();
                     var err = CheckForNonzero(bankDc, ctx);
                     if (!string.IsNullOrEmpty(err))

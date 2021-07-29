@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Windows.Controls;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Invoices;
@@ -9,6 +10,8 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using Helper;
+using Newtonsoft.Json;
 
 namespace Core.EntityViewModel.NomenklManagement
 {
@@ -129,6 +132,24 @@ namespace Core.EntityViewModel.NomenklManagement
         }
 
         public Waybill Document { get; set; }
+
+        public override object ToJson()
+        {
+            var res = new
+            {
+                Статус = CustomFormat.GetEnumName(State),
+                DocCode,
+                Номер = DD_IN_NUM.ToString(),
+                Дата = Date.ToShortDateString(),
+                Склад = WarehouseOut?.Name,
+                Контрагент = Client.Name,
+                Счет = InvoiceClient.ToString(),
+                Создатель = CREATOR,
+                Примечание = Note,
+                Позиции = Rows.Select(_ => _.ToJson())
+            };
+            return JsonConvert.SerializeObject(res);
+        }
     }
 
     public class Waybill_FluentAPI : DataAnnotationForFluentApiBase, IMetadataProvider<Waybill>

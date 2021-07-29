@@ -9,6 +9,7 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.NomenklManagement;
+using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -22,6 +23,7 @@ using KursAM2.Managers;
 using KursAM2.ReportManagers;
 using KursAM2.Repositories;
 using KursAM2.View.Base;
+using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management.Calculations;
@@ -304,25 +306,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void RefreshData(object obj)
         {
-            //if (Document != null && Document.DocCode > 0)
-            //{
-            //    Document = new WarehouseOrderIn(GenericOrderInRepository
-            //        .GetById(Document.DocCode)); //orderManager.GetOrderIn(Document.DocCode);
-            //}
-            //else
-            //{
-            //    var dc = obj as decimal? ?? 0;
-            //    if (dc != 0) 
-            //        Document = new WarehouseOrderIn(GenericOrderInRepository.GetById(dc));
-            //}
-            
-            //// ReSharper disable once PossibleNullReferenceException
-            //Document.DeletedRows.Clear();
-            //Document.Rows.ForEach(_ => _.myState = RowStatus.NotEdited);
-            //Document.myState = RowStatus.NotEdited;
-            //RaisePropertyChanged(nameof(Document));
-            //RaisePropertyChanged(nameof(Document.Sender));
-            //RaisePropertyChanged(nameof(Document.WarehouseIn));
             base.RefreshData(obj);
             if (IsCanSaveData)
             {
@@ -353,6 +336,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             Document.DD_OTRPAV_NAME = Document.Sender;
             Document.Entity.DD_TYPE_DC = 2010000001;
             var dc = orderManager.SaveOrderIn(Document);
+            DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.StoreOrderIn), null,
+                Document.DocCode, null, (string)Document.ToJson());
             if (dc > 0)
             {
                 RefreshData(dc);
@@ -432,6 +417,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 return new Command(AddFromDocument, _ => Document?.WarehouseIn != null &&
                                                          Document?.KontragentSender != null);
             }
+        }
+        public override void ShowHistory(object data)
+        {
+            // ReSharper disable once RedundantArgumentDefaultValue
+            DocumentHistoryManager.LoadHistory(DocumentType.StoreOrderIn, null, Document.DocCode, null);
         }
 
         private void AddFromDocument(object obj)

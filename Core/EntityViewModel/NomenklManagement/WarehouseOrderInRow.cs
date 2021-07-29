@@ -19,6 +19,7 @@ namespace Core.EntityViewModel.NomenklManagement
         {
         }
 
+        // ReSharper disable once UnusedParameter.Local
         public WarehouseOrderInRow(TD_24 entity, bool isLoadSPost = true) : base(entity)
         {
             if (entity.DDT_SPOST_DC != null)
@@ -69,6 +70,21 @@ namespace Core.EntityViewModel.NomenklManagement
                         $"Приходный складской ордер {p.DD_IN_NUM}/{p.DD_EXT_NUM} от {p.Date.ToShortDateString()} {p.Note}";
                 return myName;
             }
+        }
+
+        public override object ToJson()
+        {
+            return new
+            {
+                DocCode,
+                Code,
+                Номенклатурный_номер = NomNomenkl,
+                Номенклатура = Nomenkl.Name,
+                Количество = DDT_KOL_PRIHOD.ToString("n2"),
+                Единица_измерения = Unit.Name,
+                Связанный_документ = LinkInvoice?.ToString() ?? LinkOrder?.ToString(),
+                Счет_доходов_расходов = SDRSchet?.Name
+            };
         }
 
         public string LinkName

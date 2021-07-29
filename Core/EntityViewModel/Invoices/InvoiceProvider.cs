@@ -17,6 +17,8 @@ using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
+using Helper;
+using Newtonsoft.Json;
 using ValidationError = Core.Helper.ValidationError;
 
 // ReSharper disable All
@@ -38,19 +40,6 @@ namespace Core.Invoices.EntityViewModel
         private readonly UnitOfWork<ALFAMEDIAEntities> context;
 
         #endregion
-
-        #region Properties
-        
-        public ObservableCollection<InvoiceProviderRow> Rows { set; get; } =
-            new ObservableCollection<InvoiceProviderRow>();
-
-        public ObservableCollection<WarehouseOrderInRow> Facts { set; get; } =
-            new ObservableCollection<WarehouseOrderInRow>();
-        
-
-        #endregion
-
-        
 
         public string this[string columnName]
         {
@@ -90,8 +79,7 @@ namespace Core.Invoices.EntityViewModel
         {
             throw new NotImplementedException();
         }
-
-
+        
         #region Fields
 
         private CentrOfResponsibility myCO;
@@ -142,6 +130,12 @@ namespace Core.Invoices.EntityViewModel
 
         public ObservableCollection<ProviderInvoicePayViewModel> PaymentDocs { set; get; } =
             new ObservableCollection<ProviderInvoicePayViewModel>();
+
+        public ObservableCollection<InvoiceProviderRow> Rows { set; get; } =
+            new ObservableCollection<InvoiceProviderRow>();
+
+        public ObservableCollection<WarehouseOrderInRow> Facts { set; get; } =
+            new ObservableCollection<WarehouseOrderInRow>();
 
         public override string Name =>
             $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {DocDate.ToShortDateString()} " +
@@ -1292,6 +1286,31 @@ namespace Core.Invoices.EntityViewModel
         }
 
         #endregion Methods
+
+        public override object ToJson()
+        {
+            var res = new
+            {
+                Статус = CustomFormat.GetEnumName(State),
+                DocCode,
+                Номер = SF_IN_NUM + "/" + SF_POSTAV_NUM,
+                Дата = DocDate,
+                Контрагент = Kontragent.Name,
+                Сумма = Summa.ToString("n2"),
+                Валюта = Currency.Name,
+                Отгружено = SummaFact.ToString("n2"),
+                Договор = Contract?.ToString(),
+                Ответственный = PersonaResponsible.Name,
+                Центр_ответственности = CO?.Name,
+                Тип_взаиморасчетов = VzaimoraschetType?.Name,
+                Условия_оплаты = PayCondition?.Name,
+                Формы_расчетов = FormRaschet?.Name,
+                Примечание = Note,
+                Позиции = Rows.Select(_ => _.ToJson())
+            };
+
+            return JsonConvert.SerializeObject(res);
+        }
     }
 
     /// <summary>

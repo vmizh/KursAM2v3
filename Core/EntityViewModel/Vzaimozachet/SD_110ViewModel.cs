@@ -5,11 +5,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
 namespace Core.EntityViewModel.Vzaimozachet
@@ -77,6 +77,30 @@ namespace Core.EntityViewModel.Vzaimozachet
             }
         }
 
+        public override object ToJson()
+        {
+            var res = new
+            {
+                DocCode,
+                Номер = VZ_NUM,
+                Дата = VZ_DATE.ToShortDateString(),
+                ТипЗачета = MutualAccountingOldType.ToString(),
+                Результат = VZ_PRIBIL_UCH_CRS_SUM != null ? VZ_PRIBIL_UCH_CRS_SUM.Value.ToString("n2") : "0",
+                СуммаДебитор = VZ_LEFT_UCH_CRS_SUM != null
+                    ? VZ_LEFT_UCH_CRS_SUM.Value.ToString("n2")
+                    : "0 " +
+                      DebitorCurrency,
+                СуммаКредитор = VZ_RIGHT_UCH_CRS_SUM != null
+                    ? VZ_RIGHT_UCH_CRS_SUM.Value.ToString("n2")
+                    : "0 " +
+                      DebitorCurrency,
+                Создатель = CREATOR,
+                Примечание = VZ_NOTES,
+                Позиции = Rows.Select(_ => _.ToJson())
+            };
+            return JsonConvert.SerializeObject(res);      
+        }
+
         public decimal? DebitorSumma
         {
             get { return Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0; }
@@ -92,14 +116,16 @@ namespace Core.EntityViewModel.Vzaimozachet
             get
             {
                 var ds = $"Дебиторы: {DebitorSumma} {DebitorCurrency} (";
-                var debList = Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Select(_ => _.Kontragent).Distinct().ToList();
+                var debList = Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Select(_ => _.Kontragent).Distinct()
+                    .ToList();
                 ds = debList.Aggregate(ds, (current, cred) => current + $" {cred},");
-                ds = ds.Remove(ds.Length-1);
+                ds = ds.Remove(ds.Length - 1);
                 ds += ")";
                 var cs = $"Кредиторы: {CreditorSumma} {CreditorCurrency} (";
-                var gredList = Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Select(_ => _.Kontragent).Distinct().ToList();
+                var gredList = Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Select(_ => _.Kontragent).Distinct()
+                    .ToList();
                 cs = gredList.Aggregate(cs, (current, cred) => current + $" {cred},");
-                cs = cs.Remove(cs.Length-1);
+                cs = cs.Remove(cs.Length - 1);
                 cs += ")";
                 var type = SD_111?.IsCurrencyConvert ?? false ? "Акт конвертации" : "Акт взаимозачета";
                 return $"{type} №{VZ_NUM} от {VZ_DATE.ToShortDateString()} {ds} {cs} {VZ_NOTES}";
@@ -314,8 +340,11 @@ namespace Core.EntityViewModel.Vzaimozachet
             }
         }
 
-        
-        
+        public EntityLoadCodition LoadCondition { get; set; }
+
+        public bool IsAccessRight { get; set; }
+
+
         public SD_110 Entity
         {
             get => myEntity;
@@ -327,17 +356,10 @@ namespace Core.EntityViewModel.Vzaimozachet
             }
         }
 
-        public EntityLoadCodition LoadCondition { get; set; }
-
-        public List<SD_110> LoadList()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ObservableCollection<TD_110ViewModel> Rows { get; set; } = new ObservableCollection<TD_110ViewModel>();
+        public ObservableCollection<TD_110ViewModel> Rows { get; set; } = new();
 
         public ObservableCollection<TD_110ViewModel> DeletedRows { get; set; } =
-            new ObservableCollection<TD_110ViewModel>();
+            new();
 
         public bool DeletedRow(TD_110ViewModel row)
         {
@@ -364,7 +386,10 @@ namespace Core.EntityViewModel.Vzaimozachet
             throw new NotImplementedException();
         }
 
-        public bool IsAccessRight { get; set; }
+        public List<SD_110> LoadList()
+        {
+            throw new NotImplementedException();
+        }
 
         public SD_110 Load(decimal dc)
         {
@@ -549,7 +574,7 @@ namespace Core.EntityViewModel.Vzaimozachet
 
         public SD_110 DefaultValue()
         {
-            return new SD_110 {DOC_CODE = -1, CREATOR = GlobalOptions.UserInfo?.Name};
+            return new() {DOC_CODE = -1, CREATOR = GlobalOptions.UserInfo?.Name};
         }
 
         public bool DeletedRow(SD_110 row)

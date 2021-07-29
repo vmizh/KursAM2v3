@@ -5,10 +5,13 @@ using System.Windows;
 using Core;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
+using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Helper;
 using KursAM2.Managers;
 using KursAM2.View.Finance.Cash;
+using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
 
 namespace KursAM2.ViewModel.Finance.Cash
@@ -126,6 +129,8 @@ namespace KursAM2.ViewModel.Finance.Cash
                 CashManager.InsertDocument(CashDocumentType.CashOut, Document);
             if (BookView?.DataContext is CashBookWindowViewModel ctx)
                 ctx.RefreshActual(Document);
+            DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.CashOut), null,
+                Document.DocCode, null, (string)Document.ToJson());
             if (Document.KONTRAGENT_DC != null)
                 // ReSharper disable once PossibleInvalidOperationException
                 RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC, (DateTime) Document.DATE_ORD);
@@ -292,6 +297,13 @@ namespace KursAM2.ViewModel.Finance.Cash
             vm.BookView = BookView;
             DocumentsOpenManager.Open(DocumentType.CashOut, vm, BookView);
         }
+
+        public override void ShowHistory(object data)
+        {
+            // ReSharper disable once RedundantArgumentDefaultValue
+            DocumentHistoryManager.LoadHistory(DocumentType.CashOut, null, Document.DocCode, null);
+        }
+
         #endregion
     }
 }

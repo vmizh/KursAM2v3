@@ -10,7 +10,7 @@ using DevExpress.Mvvm.DataAnnotations;
 namespace Core.EntityViewModel.Bank
 {
     [MetadataType(typeof(DataAnnotationBankAccount))]
-    public class BankAccount : RSViewModelBase, IEntity<SD_114>
+    public sealed class BankAccount : RSViewModelBase, IEntity<SD_114>
     {
         private Bank myBank;
 
@@ -20,27 +20,16 @@ namespace Core.EntityViewModel.Bank
 
         public BankAccount()
         {
-            Entity = new SD_114 { DOC_CODE = -1 };
+            Entity = new SD_114 {DOC_CODE = -1};
         }
 
         public BankAccount(SD_114 entity)
         {
-            Entity = entity ?? new SD_114 { DOC_CODE = -1 };
+            Entity = entity ?? new SD_114 {DOC_CODE = -1};
             if (Entity.SD_44 != null)
                 Bank = new Bank(Entity.SD_44);
             Name = $"{Bank?.Name} Сч.№ {Entity.BA_RASH_ACC} " +
-                   $"{MainReferences.Currencies[(decimal)Entity.CurrencyDC]}";
-        }
-
-        public SD_114 Entity
-        {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
+                   $"{MainReferences.Currencies[(decimal) Entity.CurrencyDC]}";
         }
 
         public Currency Currency
@@ -325,22 +314,33 @@ namespace Core.EntityViewModel.Bank
 
         public bool IsAccessRight { get; set; }
 
+        public SD_114 Entity
+        {
+            get => myEntity;
+            set
+            {
+                if (myEntity == value) return;
+                myEntity = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public List<SD_114> LoadList()
         {
             throw new NotImplementedException();
         }
 
-        public virtual SD_114 Load(decimal dc)
+        public SD_114 Load(decimal dc)
         {
             throw new NotImplementedException();
         }
 
-        public virtual SD_114 Load(Guid id)
+        public SD_114 Load(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void Save(SD_114 doc)
+        public void Save(SD_114 doc)
         {
             throw new NotImplementedException();
         }

@@ -54,6 +54,7 @@ namespace KursAM2.ViewModel.Finance.controls
             {
                 DocCode = row.DOC_CODE,
                 Code = row.Code,
+                BankAccount = bankAcc,
                 Date = isNew ? DateTime.Today : row.Date,
                 Currency = bankAcc.Currency,
                 Kontragent = row.Kontragent,

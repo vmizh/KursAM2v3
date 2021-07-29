@@ -12,6 +12,7 @@ using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace Core.EntityViewModel.Cash
 {
@@ -1146,6 +1147,29 @@ namespace Core.EntityViewModel.Cash
             ent.SD_90 = SD_90;
             ent.SD_84 = SD_84;
             ent.SD_43 = SD_43;
+        }
+
+        public override object ToJson()
+        {
+            var res = new
+            {
+                DocCode,
+                Касса = Cash.Name,
+                Номер = NUM_ORD,
+                Дата = DATE_ORD?.ToShortDateString(),
+                ТипКонтрагента = KontragentType.ToString(),
+                Контрагент = Kontragent,
+                Сумма = SUMM_ORD?.ToString("n2"),
+                Валюта = Currency.ToString(),
+                ОрдерИмя = NAME_ORD,
+                Основание = OSN_ORD,
+                Счет = SFactName,
+                Создатель = CREATOR,
+                ОбратныйРасчет = IsBackCalc ? "Да" : "Нет",
+                ПроцентОбрРасчет = PercentForKontragent?.ToString("n2"),
+                Примечание = NOTES_ORD
+            };
+            return JsonConvert.SerializeObject(res);
         }
 
         public SD_33 DefaultValue()

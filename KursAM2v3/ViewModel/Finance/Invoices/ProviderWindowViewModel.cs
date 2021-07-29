@@ -13,6 +13,7 @@ using Core.EntityViewModel.Employee;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.NomenklManagement;
 using Core.EntityViewModel.Vzaimozachet;
+using Core.Helper;
 using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
@@ -20,6 +21,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
+using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
@@ -1300,6 +1302,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
+                DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceProvider), null,
+                    Document.DocCode, null, (string)Document.ToJson());
                 RecalcKontragentBalans.CalcBalans(Document.Entity.SF_POST_DC, Document.DocDate);
                 NomenklManager.RecalcPrice(myUsedNomenklsDC);
                 myUsedNomenklsDC.Clear();

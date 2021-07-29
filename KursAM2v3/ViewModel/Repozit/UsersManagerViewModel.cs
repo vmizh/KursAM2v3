@@ -318,34 +318,34 @@ namespace KursAM2.ViewModel.Repozit
 
         private void UpdateLinkToDocument(object obj)
         {
-            if (!(obj is CellValueChangedEventArgs e)) return;
-            using (var ctx = GlobalOptions.KursSystem())
-            {
-                if ((bool) e.Value)
-                {
-                    var newItem = new UserMenuRight
-                    {
-                        Id = Guid.NewGuid(),
-                        LoginName = UserListCurrentItem.Name,
-                        DBId = CurrentCompany.Id,
-                        MenuId = CurrentPermission.Id,
-                        IsReadOnly = false
-                    };
-                    ctx.UserMenuRight.Add(newItem);
-                }
-                else
-                {
-                    var linkdoc = ctx.UserMenuRight.FirstOrDefault(_ => _.LoginName == UserListCurrentItem.Name
-                                                                        && _.DBId == CurrentCompany.Id &&
-                                                                        _.MenuId == CurrentPermission.Id);
-                    if (linkdoc != null)
-                    {
-                        ctx.UserMenuRight.Remove(linkdoc);
-                    }
-                }
+            //if (!(obj is CellValueChangedEventArgs e)) return;
+            //using (var ctx = GlobalOptions.KursSystem())
+            //{
+            //    if (UserListCurrentItem != null)
+            //    {
+            //        var newItem = new UserMenuRight
+            //        {
+            //            Id = Guid.NewGuid(),
+            //            LoginName = UserListCurrentItem.Name,
+            //            DBId = CurrentCompany.Id,
+            //            MenuId = CurrentPermission.Id,
+            //            IsReadOnly = false
+            //        };
+            //        ctx.UserMenuRight.Add(newItem);
+            //    }
+            //    else
+            //    {
+            //        var linkdoc = ctx.UserMenuRight.FirstOrDefault(_ => _.LoginName == UserListCurrentItem.Name
+            //                                                            && _.DBId == CurrentCompany.Id &&
+            //                                                            _.MenuId == CurrentPermission.Id);
+            //        if (linkdoc != null)
+            //        {
+            //            ctx.UserMenuRight.Remove(linkdoc);
+            //        }
+            //    }
 
-                ctx.SaveChanges();
-            }
+            //    ctx.SaveChanges();
+            //}
         }
 
         public ICommand UpdateLinkKursMenuItemCommand

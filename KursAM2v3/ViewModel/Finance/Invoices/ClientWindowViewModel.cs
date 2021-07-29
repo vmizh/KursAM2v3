@@ -11,12 +11,14 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Employee;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.Vzaimozachet;
+using Core.Helper;
 using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
@@ -595,7 +597,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         SaveData(null);
                         return;
                     case MessageBoxResult.No:
-                        var dc = Document.DocCode;
                         foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
                         RaiseAll();
                         Document.myState = RowStatus.NotEdited;
@@ -651,7 +652,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             UnitOfWork.CreateTransaction();
             // ReSharper disable once CollectionNeverUpdated.Local
-            new List<Guid>();
             try
             {
                 if (Document.State == RowStatus.NewRow || Document.DocCode < 0)
@@ -693,6 +693,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var f in Document.ShipmentRows) f.myState = RowStatus.NotEdited;
 
                 foreach (var p in Document.PaymentDocs) p.myState = RowStatus.NotEdited;
+                DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
+                    Document.DocCode, null, (string)Document.ToJson());
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
                 DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceClient, Document.Id, Document.DocCode,

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Data;
+using Newtonsoft.Json;
 
 namespace Core.EntityViewModel.Dogovora
 {
@@ -148,6 +149,22 @@ namespace Core.EntityViewModel.Dogovora
         #endregion
 
         #region Methods
+
+        public override object ToJson()
+        {
+            return new
+            {
+                Id = Id.ToString(),
+                НомНомер = NomenklNumber,
+                Номеклатура=Nomenkl.ToString(),
+                Количество = Quantity.ToString("n3"),
+                ЕдИзм = Unit.ToString(),
+                Цена=Price.ToString("n2"),
+                НДСПроцент=NDSPercent.ToString("n2"),
+                Сумма = Summa.ToString("n2"),
+                Примечание = Note,
+            };
+        }
 
         private DogovorOfSupplierRow DefaultValue()
         {

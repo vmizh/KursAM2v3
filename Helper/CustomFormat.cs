@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
 namespace Helper
@@ -35,7 +36,7 @@ namespace Helper
         }
 
         /// <summary>
-        /// Перевожит строку в decimal, не зависимо от токчки или запятой, в качестве разделения
+        ///     Перевожит строку в decimal, не зависимо от токчки или запятой, в качестве разделения
         /// </summary>
         /// <param name="d"></param>
         /// <returns></returns>
@@ -45,6 +46,21 @@ namespace Helper
             {
                 CurrencyDecimalSeparator = ".,"
             });
+        }
+
+        public static string GetEnumName(Enum enumElement)
+        {
+            var type = enumElement.GetType();
+
+            var memInfo = type.GetMember(enumElement.ToString());
+            if (memInfo.Length > 0)
+            {
+                var attrs = memInfo[0].GetCustomAttributes(typeof(DisplayAttribute), false);
+                if (attrs.Length > 0)
+                    return ((DisplayAttribute) attrs[0]).Name;
+            }
+
+            return enumElement.ToString();
         }
     }
 }

@@ -21,19 +21,6 @@ namespace Core.EntityViewModel.Systems
             Entity = entity ?? new DocHistory {Id = Guid.NewGuid()};
         }
 
-        [DisplayName("Entity")]
-        [Display(AutoGenerateField = false)]
-        public DocHistory Entity
-        {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
-        }
-
         [DisplayName("Id")]
         [Display(AutoGenerateField = false)]
         public override Guid Id
@@ -49,6 +36,7 @@ namespace Core.EntityViewModel.Systems
 
         [DisplayName("Дата")]
         [Display(AutoGenerateField = true)]
+        [DisplayFormat(DataFormatString = "G")]
         public DateTime Date
         {
             get => Entity.Date;
@@ -74,7 +62,7 @@ namespace Core.EntityViewModel.Systems
         }
 
         [DisplayName("Type")]
-        [Display(AutoGenerateField = false)]
+        [Display(AutoGenerateField = true)]
         public string DocType
         {
             get => Entity.DocType;
@@ -85,6 +73,7 @@ namespace Core.EntityViewModel.Systems
                 RaisePropertyChanged();
             }
         }
+
         [DisplayName("DocId")]
         [Display(AutoGenerateField = false)]
         public Guid? DocId
@@ -97,6 +86,7 @@ namespace Core.EntityViewModel.Systems
                 RaisePropertyChanged();
             }
         }
+
         [DisplayName("DocDC")]
         [Display(AutoGenerateField = false)]
         public decimal? DocDC
@@ -109,6 +99,7 @@ namespace Core.EntityViewModel.Systems
                 RaisePropertyChanged();
             }
         }
+
         [DisplayName("Code")]
         [Display(AutoGenerateField = false)]
         public override int Code
@@ -121,6 +112,7 @@ namespace Core.EntityViewModel.Systems
                 RaisePropertyChanged();
             }
         }
+
         [DisplayName("DocData")]
         [Display(AutoGenerateField = false)]
         public string DocData
@@ -137,6 +129,19 @@ namespace Core.EntityViewModel.Systems
         [DisplayName("IsAccessRight")]
         [Display(AutoGenerateField = false)]
         public bool IsAccessRight { get; set; }
+
+        [DisplayName("Entity")]
+        [Display(AutoGenerateField = false)]
+        public DocHistory Entity
+        {
+            get => myEntity;
+            set
+            {
+                if (myEntity == value) return;
+                myEntity = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public List<DocHistory> LoadList()
         {

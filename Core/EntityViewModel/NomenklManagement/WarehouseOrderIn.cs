@@ -2,11 +2,14 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Windows.Controls;
 using Core.EntityViewModel.Invoices;
 using Core.Helper;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.XtraPrinting.Native.WebClientUIControl;
+using Newtonsoft.Json;
 
 namespace Core.EntityViewModel.NomenklManagement
 {
@@ -49,6 +52,7 @@ namespace Core.EntityViewModel.NomenklManagement
         public ObservableCollection<InvoiceProviderRow> biling { set; get; } =
             new();
 
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<WarehouseOrderInRow> SelectedRows { set; get; } =
             new();
 
@@ -80,6 +84,22 @@ namespace Core.EntityViewModel.NomenklManagement
                 myWarehouseSenderType = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public override object ToJson()
+        {
+            var res = new
+            {
+                DocCode,
+                Номер = DD_IN_NUM + "/" + DD_EXT_NUM,
+                Дата = Date.ToShortDateString(),
+                Возврат = IsVozvrat ? "Да" : "Нет",
+                Склад = WarehouseIn.Name,
+                Отправитель = Sender,
+                Счет = InvoiceProvider?.ToString(), 
+                Позиции = Rows.Select(_ => _.ToJson())
+            };
+            return JsonConvert.SerializeObject(res);
         }
 
         public override string ToString()

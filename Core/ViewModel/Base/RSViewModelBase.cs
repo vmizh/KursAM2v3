@@ -207,6 +207,11 @@ namespace Core.ViewModel.Base
             }
         }
 
+        public virtual object ToJson()
+        {
+            return null;
+        }
+
         [DataMember]
         public virtual string Name
         {

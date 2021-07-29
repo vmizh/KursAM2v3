@@ -6,12 +6,11 @@ using System.Windows.Controls;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Editors.Settings;
+using Newtonsoft.Json;
 
 namespace Core.EntityViewModel.Cash
 {
@@ -30,7 +29,6 @@ namespace Core.EntityViewModel.Cash
         private CashKontragentType myKontragentType;
         private SDRSchet mySDRSchet;
         private string mySPostName;
-        private AccuredAmountOfSupplierRow myAccuredAmountOfSupplier;
 
         public CashOut()
         {
@@ -44,14 +42,16 @@ namespace Core.EntityViewModel.Cash
             LoadReferences();
         }
 
-        public override string Description => $"Расходный кассовый ордер №{NUM_ORD} от {DATE_ORD?.ToShortDateString()} Касса: {Cash} " +
-                                              $" {Kontragent} ({KontragentType.GetDisplayAttributesFrom(typeof(CashKontragentType)).Name}) сумма {CRS_SUMMA} {Currency} {NOTES_ORD}";
+        public override string Description =>
+            $"Расходный кассовый ордер №{NUM_ORD} от {DATE_ORD?.ToShortDateString()} Касса: {Cash} " +
+            $" {Kontragent} ({KontragentType.GetDisplayAttributesFrom(typeof(CashKontragentType)).Name}) сумма {CRS_SUMMA} {Currency} {NOTES_ORD}";
 
         public AccuredAmountOfSupplierRow AccuredAmountOfSupplier
         {
             get => Entity.AccuredAmountOfSupplierRow.FirstOrDefault();
             set => Entity.AccuredAmountOfSupplierRow.Add(value);
         }
+
         public override string Note
         {
             get => Entity.NOTES_ORD;
@@ -862,17 +862,6 @@ namespace Core.EntityViewModel.Cash
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public EntityLoadCodition LoadCondition { get; set; }
 
-        public SD_34 Entity
-        {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public string SPostName
         {
             get => mySPostName;
@@ -886,12 +875,23 @@ namespace Core.EntityViewModel.Cash
 
         [Display(AutoGenerateField = false)] public decimal MaxSumma { get; set; }
 
+        public bool IsAccessRight { get; set; }
+
+        public SD_34 Entity
+        {
+            get => myEntity;
+            set
+            {
+                if (myEntity == value) return;
+                myEntity = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public List<SD_34> LoadList()
         {
             throw new NotImplementedException();
         }
-
-        public bool IsAccessRight { get; set; }
 
         private void LoadReferences()
         {
@@ -1059,7 +1059,7 @@ namespace Core.EntityViewModel.Cash
 
         public SD_34 DefaultValue()
         {
-            return new SD_34
+            return new()
             {
                 DOC_CODE = -1,
                 DATE_ORD = DateTime.Today
@@ -1112,12 +1112,36 @@ namespace Core.EntityViewModel.Cash
         {
             throw new NotImplementedException();
         }
+
+        public override object ToJson()
+        {
+            var res = new
+            {
+                DocCode,
+                Касса = Cash.Name,
+                Номер = NUM_ORD,
+                Дата = DATE_ORD?.ToShortDateString(),
+                ТипКонтрагента = KontragentType.ToString(),
+                Контрагент = Kontragent,
+                Сумма = SUMM_ORD?.ToString("n2"),
+                Валюта = Currency.ToString(),
+                ОрдерИмя = NAME_ORD,
+                Основание = OSN_ORD,
+                КодЗарплаты = NCODE,
+                Счет = SPostName,
+                Создатель = CREATOR,
+                ОбратныйРасчет = IsBackCalc ? "Да" : "Нет",
+                ПроцентОбрРасчет = PercentForKontragent?.ToString("n2"),
+                Примечание = NOTES_ORD
+            };
+            return JsonConvert.SerializeObject(res);
+        }
     }
 
     // ReSharper disable once InconsistentNaming
     public static class SD_34LayoutData_FluentAPI
     {
-        public static MemoEditSettings Memo = new MemoEditSettings
+        public static MemoEditSettings Memo = new()
         {
             ShowIcon = false
         };

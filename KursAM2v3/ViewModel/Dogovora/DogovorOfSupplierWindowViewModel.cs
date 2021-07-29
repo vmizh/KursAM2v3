@@ -11,6 +11,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Dogovora;
 using Core.EntityViewModel.Employee;
 using Core.EntityViewModel.Invoices;
+using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -22,6 +23,7 @@ using Helper;
 using KursAM2.Auxiliary;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
 
 namespace KursAM2.ViewModel.Dogovora
@@ -57,7 +59,6 @@ namespace KursAM2.ViewModel.Dogovora
                 Document.myState = RowStatus.NotEdited;
             }
         }
-       
 
         #endregion
 
@@ -97,6 +98,7 @@ namespace KursAM2.ViewModel.Dogovora
                     UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
                     Document.Entity.DogovorOfSupplierRow.Clear();
                 }
+
                 Document.Rows.Clear();
             }
         }
@@ -134,7 +136,6 @@ namespace KursAM2.ViewModel.Dogovora
                         $"С/ф поставщика №{sf.SF_IN_NUM}/{sf.SF_POSTAV_NUM} от {sf.SF_POSTAV_DATE.ToShortDateString()} " +
                         $"на {sf.SF_KONTR_CRS_SUMMA} {MainReferences.GetCurrency(sf.SF_CRS_DC)} " +
                         $"{Note}"
-
                 };
                 Documents.Add(newItem);
                 foreach (var p in sf.SD_24)
@@ -177,12 +178,12 @@ namespace KursAM2.ViewModel.Dogovora
                 }
 
                 if (sf.ProviderInvoicePay != null && sf.ProviderInvoicePay.Count > 0)
-                {
                     foreach (var pay in sf.ProviderInvoicePay)
                     {
                         var newPay = new ProviderInvoicePayViewModel(pay);
                         if (pay.TD_101 != null)
                         {
+                            // ReSharper disable once PossibleInvalidOperationException
                             newPay.DocSumma = (decimal) pay.TD_101.VVT_VAL_RASHOD;
                             newPay.DocDate = pay.TD_101.SD_101.VV_START_DATE;
                             newPay.DocName = "Банковский платеж";
@@ -192,22 +193,22 @@ namespace KursAM2.ViewModel.Dogovora
 
                         if (pay.SD_34 != null)
                         {
+                            // ReSharper disable once PossibleInvalidOperationException
                             newPay.DocSumma = (decimal) pay.SD_34.SUMM_ORD;
                             newPay.DocName = "Расходный кассовый ордер";
                             newPay.DocNum = pay.SD_34.NUM_ORD.ToString();
+                            // ReSharper disable once PossibleInvalidOperationException
                             newPay.DocDate = (DateTime) pay.SD_34.DATE_ORD;
                             if (pay.SD_34.SD_22 != null)
-                            {
                                 newPay.DocExtName = $"Касса {pay.SD_34.SD_22.CA_NAME}";
-                            }
                             else
-                            {
+                                // ReSharper disable once PossibleInvalidOperationException
                                 newPay.DocExtName = $"Касса {MainReferences.CashsAll[(decimal) pay.SD_34.CA_DC].Name}";
-                            }
                         }
 
                         if (pay.TD_110 != null)
                         {
+                            // ReSharper disable once PossibleInvalidOperationException
                             newPay.DocSumma = (decimal) pay.TD_110.VZT_CRS_SUMMA;
                             newPay.DocName = "Акт взаимозачета";
                             newPay.DocNum = pay.TD_110.SD_110.VZ_NUM.ToString();
@@ -217,7 +218,6 @@ namespace KursAM2.ViewModel.Dogovora
 
                         PaymentList.Add(newPay);
                     }
-                }
             }
         }
 
@@ -262,7 +262,9 @@ namespace KursAM2.ViewModel.Dogovora
         public ObservableCollection<ProviderInvoicePayViewModel> PaymentList { set; get; } =
             new ObservableCollection<ProviderInvoicePayViewModel>();
 
-        public List<ContractType> ContractTypeList => MainReferences.ContractTypes.Values.Where(_ => !_.IsSale).ToList();
+        public List<ContractType> ContractTypeList =>
+            MainReferences.ContractTypes.Values.Where(_ => !_.IsSale).ToList();
+
         public List<Employee> EmployeeList => MainReferences.Employees.Values.ToList();
 
         public ProviderInvoicePayViewModel CurrentPayment
@@ -336,7 +338,6 @@ namespace KursAM2.ViewModel.Dogovora
             Document.Error == null;
 
 
-
         public override void DocNewCopy(object form)
         {
         }
@@ -367,6 +368,7 @@ namespace KursAM2.ViewModel.Dogovora
             if (CurrentPayment.VZDC != null)
             {
                 DocumentsOpenManager.Open(DocumentType.MutualAccounting, CurrentPayment.VZDC.Value);
+                // ReSharper disable once RedundantJumpStatement
                 return;
             }
         }
@@ -379,7 +381,7 @@ namespace KursAM2.ViewModel.Dogovora
 
         private void OpenPrihOrder(object obj)
         {
-            DocumentsOpenManager.Open(DocumentType.StoreOrderIn,CurrentFact.OrderInDC);
+            DocumentsOpenManager.Open(DocumentType.StoreOrderIn, CurrentFact.OrderInDC);
         }
 
         public ICommand OpenSFactCommand
@@ -389,7 +391,7 @@ namespace KursAM2.ViewModel.Dogovora
 
         private void OpenSFact(object obj)
         {
-            DocumentsOpenManager.Open(DocumentType.InvoiceProvider,CurrentFact.SPostDC);
+            DocumentsOpenManager.Open(DocumentType.InvoiceProvider, CurrentFact.SPostDC);
         }
 
         public ICommand OpenLinkDocumentCommand
@@ -399,7 +401,7 @@ namespace KursAM2.ViewModel.Dogovora
 
         private void OpenLinkDocument(object obj)
         {
-            DocumentsOpenManager.Open(CurrentLinkDocument.DocumentType,CurrentLinkDocument.DocCode);
+            DocumentsOpenManager.Open(CurrentLinkDocument.DocumentType, CurrentLinkDocument.DocCode);
         }
 
         public ICommand AddNomenklCommand
@@ -412,8 +414,8 @@ namespace KursAM2.ViewModel.Dogovora
             decimal defaultNDS;
             while (!MainReferences.IsReferenceLoadComplete)
             {
-
             }
+
             var nomenkls = StandartDialogs.SelectNomenkls(Document.Currency, true);
             if (nomenkls == null || nomenkls.Count <= 0) return;
             using (var entctx = GlobalOptions.GetEntities())
@@ -433,7 +435,7 @@ namespace KursAM2.ViewModel.Dogovora
                     Price = 0,
                     NDSPercent = n.NDSPercent ?? defaultNDS,
                     Parent = Document,
-                    State = RowStatus.NewRow,
+                    State = RowStatus.NewRow
                 })
             {
                 Document.Entity.DogovorOfSupplierRow.Add(newRow.Entity);
@@ -473,7 +475,7 @@ namespace KursAM2.ViewModel.Dogovora
                         Price = 0,
                         NDSPercent = n.NDSPercent ?? defaultNDS,
                         Parent = Document,
-                        State = RowStatus.NewRow,
+                        State = RowStatus.NewRow
                     })
                 {
                     Document.Entity.DogovorOfSupplierRow.Add(newRow.Entity);
@@ -493,9 +495,8 @@ namespace KursAM2.ViewModel.Dogovora
         private void DeleteRow(object obj)
         {
             if (WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить строки", "Запрос",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question) == MessageBoxResult.Yes)
                 //var list = SelectedRows.Select(_ => _.Id).ToList();
                 //foreach (var id in list)
                 //{
@@ -511,7 +512,6 @@ namespace KursAM2.ViewModel.Dogovora
                 //}
 
                 Document.State = RowStatus.Edited;
-            }
         }
 
         public ICommand KontragentSelectCommand
@@ -607,20 +607,26 @@ namespace KursAM2.ViewModel.Dogovora
             try
             {
                 UnitOfWork.CreateTransaction();
+                DocumentHistoryHelper.SaveHistory(Document.DogType.ToString(), Document.Id,
+                    null, null, (string)Document.ToJson());
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
                 RecalcKontragentBalans.CalcBalans(Document.Kontragent.DOC_CODE, Document.DocDate);
                 foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
                 Document.myState = RowStatus.NotEdited;
-                ParentFormViewModel?.RefreshData(null);
                 Document.RaisePropertyChanged("State");
-                
             }
             catch (Exception ex)
             {
                 var service = GetService<IDialogService>("WinUIDialogService");
-                MessageManager.ErrorShow(service,ex);
+                MessageManager.ErrorShow(service, ex);
             }
+        }
+
+        public override void ShowHistory(object data)
+        {
+            // ReSharper disable once RedundantArgumentDefaultValue
+            DocumentHistoryManager.LoadHistory(DocumentType.DogovorOfSupplier, Document.Id, null);
         }
 
         #endregion

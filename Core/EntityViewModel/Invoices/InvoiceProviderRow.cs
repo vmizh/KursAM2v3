@@ -35,10 +35,11 @@ namespace Core.EntityViewModel.Invoices
             Entity = DefaultValue();
         }
 
+        // ReSharper disable once UnusedParameter.Local
         public InvoiceProviderRow(TD_26 entity, bool isLoadAll = true)
         {
             Entity = entity ?? DefaultValue();
-            LoadReference(isLoadAll);
+            LoadReference();
         }
 
         public ObservableCollection<InvoiceProviderRowCurrencyConvertViewModel>
@@ -841,7 +842,7 @@ namespace Core.EntityViewModel.Invoices
 
         public bool IsAccessRight { get; set; }
 
-        private void LoadReference(bool isLoadAll)
+        private void LoadReference()
         {
             myNomenkl = MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
             RaisePropertyChanged(nameof(Nomenkl));
@@ -901,6 +902,26 @@ namespace Core.EntityViewModel.Invoices
                 CODE = -1,
                 Id = Guid.NewGuid(),
                 DocId = Guid.Empty
+            };
+        }
+
+        public override object ToJson()
+        {
+            return new
+            {
+                DocCode,
+                Code,
+                Номенклатурный_номер = NomenklNumber,
+                Номенклатура = Nomenkl.Name,
+                Услуга = IsUsluga ? "Да" : "Нет",
+                Количество = Quantity.ToString("n3"),
+                Единица_измерения = Unit.Name,
+                Цена = Price.ToString("n2"),
+                Сумма = Summa.ToString("n2"),
+                Сумма_накладных = SFT_SUMMA_NAKLAD?.ToString("n2"),
+                Процент_НДС = SFT_NDS_PERCENT.ToString("n2"),
+                НДС_в_цене = IsIncludeInPrice ? "Да" : "Нет",
+                Примечание = Note
             };
         }
 

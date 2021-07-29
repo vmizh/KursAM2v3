@@ -45,6 +45,20 @@ namespace Core.EntityViewModel.NomenklManagement
         //public decimal? Summa => SchetLinkedRow?.Summa;
         public string NomenklNumber => Nomenkl?.NomenklNumber;
         public bool IsUsluga => Nomenkl?.IsUsluga ?? false;
+
+        public override object ToJson()
+        {
+            return new
+            {
+                DocCode,
+                Code,
+                Номенлатурный_номер = NomenklNumber,
+                Номенлатура = Nomenkl.Name,
+                Единица_измерение = Unit.Name,
+                Количество = DDT_KOL_RASHOD.ToString("n2"),
+
+            };
+        }
     }
 
     public class WaybillRow_FluentAPI : DataAnnotationForFluentApiBase, IMetadataProvider<WaybillRow>

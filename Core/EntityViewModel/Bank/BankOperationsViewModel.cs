@@ -11,6 +11,8 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using Helper;
+using Newtonsoft.Json;
 
 namespace Core.EntityViewModel.Bank
 {
@@ -750,10 +752,6 @@ namespace Core.EntityViewModel.Bank
             Entity.VVT_SFACT_POSTAV_DC = null;
             SFName = null;
         }
-        //CashIn != null ? CashIn.Cash.Name :
-        //CashOut != null ? CashOut.Name :
-        //BankAccountIn != null ? BankAccountIn.BankName + " " + BankAccountIn.Account :
-        //BankAccountOut != null ? BankAccountOut.BankName + " " + BankAccountOut.Account : null;
 
         private string name()
         {
@@ -930,6 +928,8 @@ namespace Core.EntityViewModel.Bank
             ent.SD_9 = SD_9;
         }
 
+
+
         public TD_101 DefaultValue()
         {
             throw new NotImplementedException();
@@ -941,6 +941,27 @@ namespace Core.EntityViewModel.Bank
         public List<SDRSchet> SHPZList { set; get; } = new(MainReferences.SDRSchets.Values.ToList());
 
         #endregion
+
+        public override object ToJson()
+        {
+            var res = new
+            {
+                DocCode,
+                Code,
+                Дата = SD_101.VV_START_DATE.ToShortDateString(),
+                Банк = BankAccount.Name,
+                Тип_контрагента = CustomFormat.GetEnumName(BankOperationType),
+                Контрагент = KontragentName,
+                Плательщик_Получатель = Payment?.Name,
+                Приход = VVT_VAL_PRIHOD?.ToString("n2"),
+                Расход = VVT_VAL_RASHOD?.ToString("n2"),
+                Валюта = Currency.Name,
+                Описание = VVT_DOC_NUM,
+                Счет_фактура = SFName,
+                Счет_доходов_расходов = SHPZ?.Name,
+            };
+            return JsonConvert.SerializeObject(res);
+        }
     }
 
     public class DataAnnotationsTD_101ViewModel : DataAnnotationForFluentApiBase,

@@ -14,6 +14,8 @@ using Data;
 using Helper;
 using KursAM2.Managers.Invoices;
 using KursAM2.ViewModel.Finance.Cash;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace KursAM2.Managers
 {
@@ -504,7 +506,6 @@ namespace KursAM2.Managers
                                             }
                                         }
                                 }
-
                                 ctx.Entry(CashInViewModelToEntity(updateCashIn)).State = EntityState.Modified;
                                 ctx.SaveChanges();
                                 break;
@@ -571,7 +572,6 @@ namespace KursAM2.Managers
                                             }
                                         }
                                 }
-
                                 ctx.Entry(CashOutViewModelToEntity(updateCashOut)).State = EntityState.Modified;
                                 ctx.SaveChanges();
                                 break;

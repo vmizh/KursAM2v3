@@ -8,7 +8,6 @@ using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Invoices;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 
@@ -622,6 +621,20 @@ namespace Core.EntityViewModel.Vzaimozachet
             {
                 DOC_CODE = -1,
                 CODE = -1
+            };
+        }
+
+        public override object ToJson()
+        {
+            return new
+            {
+                DocCode,
+                Code,
+                Контрагент = Kontragent.ToString(),
+                Валюта = Currency.ToString(),
+                Cумма = VZT_CRS_SUMMA != null ? VZT_CRS_SUMMA.Value.ToString("n2") : "0",
+                СтатусОперации = VZT_1MYDOLZH_0NAMDOLZH == 0 ?  "Дебитор" : "Кредитор",
+                Примечание = Note,
             };
         }
 

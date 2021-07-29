@@ -3,7 +3,6 @@ using System.Linq;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.Systems;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using KursAM2.View;
 using KursAM2.ViewModel.StartLogin;
@@ -17,7 +16,6 @@ namespace KursAM2.ViewModel
         // ReSharper disable once EmptyConstructor
         public MainWindowViewModel()
         {
-
         }
 
         public ObservableCollection<LastDocumentViewModel> LastDocuments { set; get; }
@@ -39,6 +37,11 @@ namespace KursAM2.ViewModel
             get { return new Command(OpenLastDocumentDialog, _ => true); }
         }
 
+        public ICommand ExpandDocumentListCommand
+        {
+            get { return new Command(ExpandDocumentList, _ => true); }
+        }
+
         private void OpenLastDocumentDialog(object obj)
         {
             var dlg = new LastUsersDocumentView();
@@ -48,12 +51,6 @@ namespace KursAM2.ViewModel
             };
             dlg.DataContext = ctx;
             dlg.Show();
-
-        }
-
-        public ICommand ExpandDocumentListCommand
-        {
-            get { return new Command(ExpandDocumentList, _ => true); }
         }
 
         private void ExpandDocumentList(object obj)
@@ -64,9 +61,7 @@ namespace KursAM2.ViewModel
                 foreach (var h in ctx.LastDocument.Where(_ => _.UserId == GlobalOptions.UserInfo.KursId
                                                               && _.DbId == GlobalOptions.DataBaseId)
                     .OrderByDescending(_ => _.LastOpen))
-                {
                     LastDocuments.Add(new LastDocumentViewModel(h));
-                }
             }
         }
     }

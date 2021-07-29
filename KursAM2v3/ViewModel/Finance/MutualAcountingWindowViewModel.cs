@@ -9,18 +9,19 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Vzaimozachet;
-using Core.Invoices.EntityViewModel;
+using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Editors;
+using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Base;
 using KursAM2.Managers.Invoices;
 using KursAM2.View.Finance;
+using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
 using static KursAM2.ViewModel.Finance.MutualAccountingDebitorCreditors;
 
@@ -354,6 +355,12 @@ namespace KursAM2.ViewModel.Finance
             RaisePropertyChanged(nameof(CurrencyConvertRate));
         }
 
+        public override void ShowHistory(object data)
+        {
+            // ReSharper disable once RedundantArgumentDefaultValue
+            DocumentHistoryManager.LoadHistory(DocumentType.MutualAccounting,null, Document.DocCode);
+        }
+
         public override void RefreshData(object obj)
         {
             try
@@ -438,6 +445,8 @@ namespace KursAM2.ViewModel.Finance
                 Document.CreditorCurrency = Document.DebitorCurrency;
             RaisePropertyChanged(nameof(Document));
             var res = Manager.Save(Document);
+            DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.MutualAccounting), null,
+                Document.DocCode, null, (string)Document.ToJson());
             if (res != null)
             {
                 var dcs = new List<decimal>();
@@ -454,7 +463,7 @@ namespace KursAM2.ViewModel.Finance
 
             DocumentsOpenManager.SaveLastOpenInfo(
                 IsCurrencyConvert ? DocumentType.CurrencyConvertAccounting : DocumentType.MutualAccounting, Document.Id,
-                Document.DocCode, Document.CREATOR,"",Document.Description);
+                Document.DocCode, Document.CREATOR, "", Document.Description);
         }
 
         private void UpdateDebitorCreditorCollections(TD_110ViewModel vm, bool isDebitor = true)
@@ -542,7 +551,7 @@ namespace KursAM2.ViewModel.Finance
                 Document.DeletedRows.Add(CurrentCreditor);
                 Document.Rows.Remove(CurrentCreditor);
                 if (CurrentCreditor.Parent is RSViewModelBase prnt)
-                    prnt.State = RowStatus.Edited; 
+                    prnt.State = RowStatus.Edited;
                 CreditorCollection.Remove(CurrentCreditor);
                 UpdateCalcSumma(null);
             }

@@ -3,10 +3,13 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
+using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Helper;
 using KursAM2.Managers;
 using KursAM2.View.Finance.Cash;
+using KursAM2.View.Helper;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {
@@ -74,6 +77,8 @@ namespace KursAM2.ViewModel.Finance.Cash
                 CashManager.InsertDocument(CashDocumentType.CurrencyExchange, Document);
             if (BookView?.DataContext is CashBookWindowViewModel ctx)
                 ctx.RefreshActual(Document);
+            DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.CurrencyChange), null,
+                Document.DocCode, null, (string)Document.ToJson());
             DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CurrencyConvertAccounting, Document.Id, Document.DocCode, Document.CREATOR,
                 "", Document.Description);
         }
@@ -125,6 +130,12 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
+        }
+
+        public override void ShowHistory(object data)
+        {
+            // ReSharper disable once RedundantArgumentDefaultValue
+            DocumentHistoryManager.LoadHistory(DocumentType.CurrencyChange, null, Document.DocCode, null);
         }
 
         public override void RefreshData(object obj)
