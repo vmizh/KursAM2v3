@@ -130,7 +130,14 @@
     </ControlTemplate>
     <Style TargetType="dxg:TableView">
         <Setter Property = "EnableImmediatePosting" Value="True"/>
-        <Setter Property = "ShowAutoFilterRow" Value="True"/>
+        <Setter Property="AllowGrouping" Value="True" />
+        <Setter Property="ColumnHeaderTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" TextWrapping="Wrap" TextAlignment="Center" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
     <Style TargetType="dxg:TreeListView">
         <Setter Property = "EnableImmediatePosting" Value="True"/>

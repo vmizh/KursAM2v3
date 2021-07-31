@@ -9,7 +9,6 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Dogovora;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
@@ -19,7 +18,7 @@ using KursAM2.View.Dogovors;
 
 namespace KursAM2.ViewModel.Dogovora
 {
-    public sealed class DogovorClientSearchViewModel : RSWindowViewModelBase
+    public sealed class DogovorClientSearchViewModel : RSWindowSearchViewModelBase
     {
         // ReSharper disable once NotAccessedField.Local
         public readonly GenericKursDBRepository<DogovorClient> BaseRepository;
@@ -112,25 +111,44 @@ namespace KursAM2.ViewModel.Dogovora
 
         public override void DocNewCopy(object form)
         {
-            WindowManager.ShowFunctionNotReleased();
-        }
-
-        public override void DocNewCopyRequisite(object form)
-        {
-            WindowManager.ShowFunctionNotReleased();
+            if (CurrentDocument == null) return;
+            var ctx = new DogovorClientWindowViewModel(CurrentDocument.Id);
+            ctx.SetAsNewCopy(true);
+            var frm = new DogovorClientView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
         }
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new DogovorClientView
+            var view = new DogovorClientView
             {
                 Owner = Application.Current.MainWindow
             };
-            var ctx = new DogovorClientWindowViewModel
+            var ctx = new DogovorClientWindowViewModel(null)
             {
-                Form = frm
+                Form = view,
+                ParentFormViewModel = this
             };
-            frm.DataContext = ctx;
+            view.DataContext = ctx;
+            view.Show();
+        }
+
+        public override void DocNewCopyRequisite(object form)
+        {
+            if (CurrentDocument == null) return;
+            var ctx = new DogovorClientWindowViewModel(CurrentDocument.Id);
+            ctx.SetAsNewCopy(false);
+            var frm = new DogovorClientView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
             frm.Show();
         }
 
@@ -155,6 +173,7 @@ namespace KursAM2.ViewModel.Dogovora
             while (!MainReferences.IsReferenceLoadComplete)
             {
             }
+
             base.RefreshData(null);
             await Load();
         }

@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -27,7 +26,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             orderManager =
                 new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderInSearchViewModel"));
-            WindowName = "Приходные складские ордера";
+            StartDate = DateTime.Today.AddDays(-30);
+            EndDate = DateTime.Today;
         }
 
         public ObservableCollection<WarehouseOrderIn> Documents { set; get; } =
@@ -47,6 +47,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
         public override bool IsDocNewCopyAllow => CurrentDocument != null;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
+
+        public override string WindowName => "Поиск приходных складских ордеров";
+        public override string LayoutName => "WarehouseOrderInSearchViewModel";
 
         #region Commands
 

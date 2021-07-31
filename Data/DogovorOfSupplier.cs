@@ -31,6 +31,7 @@ namespace Data
         public string Note { get; set; }
         public int OtvetstvenTN { get; set; }
         public decimal DogType { get; set; }
+        public Nullable<bool> IsNDSInPrice { get; set; }
     
         public virtual SD_43 SD_43 { get; set; }
         public virtual SD_2 SD_2 { get; set; }

@@ -465,9 +465,6 @@
     <Compile Include="View\Finance\AccruedAmount\DialogSelectCashBankView.xaml.cs">
       <DependentUpon>DialogSelectCashBankView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Logistiks\AktSpisaniya\AktSpisaniyaSearchView.xaml.cs">
-      <DependentUpon>AktSpisaniyaSearchView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\Logistiks\AktSpisaniya\AktSpisaniyaView.xaml.cs">
       <DependentUpon>AktSpisaniyaView.xaml</DependentUpon>
     </Compile>
@@ -497,20 +494,11 @@
     <Compile Include="View\DialogUserControl\StandartDialogSelectWithDateUC.xaml.cs">
       <DependentUpon>StandartDialogSelectWithDateUC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Dogovors\DogovorClientSearchView.xaml.cs">
-      <DependentUpon>DogovorClientSearchView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\Dogovors\DogovorClientView.xaml.cs">
       <DependentUpon>DogovorClientView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Finance\AccruedAmount\AccruedAmountForClientSearchView.xaml.cs">
-      <DependentUpon>AccruedAmountForClientSearchView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\Finance\AccruedAmount\AccruedAmountForClientView.xaml.cs">
       <DependentUpon>AccruedAmountForClientView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Finance\AccruedAmount\AccruedAmountOfSupplierSearchView.xaml.cs">
-      <DependentUpon>AccruedAmountOfSupplierSearchView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Finance\AccruedAmount\AccruedAmountOfSupplierView.xaml.cs">
       <DependentUpon>AccruedAmountOfSupplierView.xaml</DependentUpon>
@@ -686,15 +674,6 @@
     </Compile>
     <Compile Include="View\Finance\Invoices\InvoiceProviderView.xaml.cs">
       <DependentUpon>InvoiceProviderView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Finance\Invoices\ProviderSearchView.xaml.cs">
-      <DependentUpon>ProviderSearchView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Finance\Invoices\SearchInvoiceClientView.xaml.cs">
-      <DependentUpon>SearchInvoiceClientView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Finance\MutualAccountingSearchView.xaml.cs">
-      <DependentUpon>MutualAccountingSearchView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Finance\MutualAccountingView.xaml.cs">
       <DependentUpon>MutualAccountingView.xaml</DependentUpon>
@@ -935,17 +914,11 @@
     <Compile Include="View\Logistiks\UC\SelectNomenklSimpleUC.xaml.cs">
       <DependentUpon>SelectNomenklSimpleUC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Logistiks\Warehouse\WarehouseOrderSearchView.xaml.cs">
-      <DependentUpon>WarehouseOrderSearchView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\Logistiks\Warehouse\OrderInView.xaml.cs">
       <DependentUpon>OrderInView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\Warehouse\OrderOutView.xaml.cs">
       <DependentUpon>OrderOutView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Logistiks\Warehouse\WaybillSearchView.xaml.cs">
-      <DependentUpon>WaybillSearchView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\Warehouse\WaybillView.xaml.cs">
       <DependentUpon>WaybillView.xaml</DependentUpon>
@@ -1061,15 +1034,6 @@
     </Compile>
     <Compile Include="View\Repozit\UsersManagerView.xaml.cs">
       <DependentUpon>UsersManagerView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Search\SearchNakladForClientView.xaml.cs">
-      <DependentUpon>SearchNakladForClientView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Search\SearchNomenklPriceReset.xaml.cs">
-      <DependentUpon>SearchNomenklPriceReset.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Search\SearchDogovorForClientView.xaml.cs">
-      <DependentUpon>SearchDogovorForClientView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Shop\ShopParserExtFiles.xaml.cs">
       <DependentUpon>ShopParserExtFiles.xaml</DependentUpon>
@@ -1226,10 +1190,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\Logistiks\AktSpisaniya\AktSpisaniyaSearchView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\Logistiks\AktSpisaniya\AktSpisaniyaView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1266,23 +1226,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\Dogovors\DogovorClientSearchView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\Dogovors\DogovorClientView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\Finance\AccruedAmount\AccruedAmountForClientSearchView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\Finance\AccruedAmount\AccruedAmountForClientView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Finance\AccruedAmount\AccruedAmountOfSupplierSearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1449,18 +1397,6 @@
     <Page Include="View\Finance\Invoices\InvoiceProviderView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Finance\Invoices\ProviderSearchView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Finance\Invoices\SearchInvoiceClientView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Finance\MutualAccountingSearchView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Finance\MutualAccountingView.xaml">
       <SubType>Designer</SubType>
@@ -1678,10 +1614,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\Logistiks\Warehouse\WarehouseOrderSearchView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\Logistiks\Warehouse\OrderInView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1689,10 +1621,6 @@
     <Page Include="View\Logistiks\Warehouse\OrderOutView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Logistiks\Warehouse\WaybillSearchView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Logistiks\Warehouse\WaybillView.xaml">
       <SubType>Designer</SubType>
@@ -1859,18 +1787,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Repozit\UsersManagerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Search\SearchNakladForClientView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Search\SearchNomenklPriceReset.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Search\SearchDogovorForClientView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -26,7 +26,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             orderManager =
                 new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderSearchViewModel"));
-            WindowName = "Расходные складские ордера";
+            StartDate = DateTime.Today.AddDays(-30);
+            EndDate = DateTime.Today;
             var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
             prn?.SubMenu.Add(new MenuButtonInfo
             {
@@ -42,6 +43,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ObservableCollection<WarehouseOrderOut> Documents { set; get; } =
             new ObservableCollection<WarehouseOrderOut>();
+
+        public override string WindowName => "Поиск расходных складских ордеров";
+        public override string LayoutName => "WarehouseOrderOutSearchViewModel";
 
         public WarehouseOrderOut CurrentDocument
         {
@@ -147,7 +151,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 {
                     var d = ctx.SD_24.Where(_ =>
                         _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
-                        _.DD_TYPE_DC == 2010000003).ToList(); /*приходный складской ордер*/
+                        _.DD_TYPE_DC == 2010000003).ToList(); 
                     foreach (var item in d)
                         Documents.Add(new WarehouseOrderOut(item) {State = RowStatus.NotEdited});
                 }

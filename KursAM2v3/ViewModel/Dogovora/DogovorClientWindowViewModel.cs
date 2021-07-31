@@ -17,10 +17,12 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using DevExpress.Mvvm;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Repositories.DogovorsRepositories;
+using KursAM2.View.Dogovors;
 using KursAM2.View.Helper;
 
 namespace KursAM2.ViewModel.Dogovora
@@ -32,6 +34,45 @@ namespace KursAM2.ViewModel.Dogovora
         public override bool IsCorrect()
         {
             return Document.IsCorrect() && Document.Rows.All(_ => _.IsCorrect());
+        }
+
+        public void SetAsNewCopy(bool isCopy)
+        {
+            var newId = Guid.NewGuid();
+            unitOfWork.Context.Entry(Document.Entity).State = EntityState.Detached;
+            Document.Id = newId;
+            Document.DogDate = DateTime.Today;
+            Document.Creator = GlobalOptions.UserInfo.Name;
+            Document.myState = RowStatus.NewRow;
+            Document.Rows.Clear();
+            unitOfWork.Context.DogovorClient.Add(Document.Entity);
+            if (isCopy)
+            {
+                foreach (var row in Document.Rows)
+                {
+                    unitOfWork.Context.Entry(row.Entity).State = EntityState.Detached;
+                    row.Id = Guid.NewGuid();
+                    row.DocId = newId;
+                    Document.Entity.DogovorClientRow.Add(row.Entity);
+                    row.myState = RowStatus.NewRow;
+                }
+            }
+            else
+            {
+                foreach (var item in Document.Rows)
+                {
+                    unitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
+                    Document.Entity.DogovorClientRow.Clear();
+                }
+
+                Document.Rows.Clear();
+            }
+        }
+
+        private void RaiseAll()
+        {
+            Document.RaisePropertyAllChanged();
+            foreach (var r in Document.Rows) r.RaisePropertyAllChanged();
         }
 
         #endregion
@@ -57,28 +98,33 @@ namespace KursAM2.ViewModel.Dogovora
 
         #region Constructors
 
-        public DogovorClientWindowViewModel()
+        public DogovorClientWindowViewModel(Guid? id)
         {
             BaseRepository = new GenericKursDBRepository<DogovorClient>(unitOfWork);
-            DogovorClientRepository = new DogovorClientRepository(unitOfWork);
+            IsDocNewCopyAllow = true;
+            IsDocNewCopyRequisiteAllow = true;
+            DialogService = GetService<IDialogService>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
-            WindowName = "Договор клиенту";
-            Document = new DogovorClientViewModel(DogovorClientRepository.CreateNew(), RowStatus.NewRow);
-            Id = Document.Id;
+            var doc = id != null ? BaseRepository.GetById(id.Value) : null;
+            if (doc == null)
+            {
+                Document = new DogovorClientViewModel {State = RowStatus.NewRow};
+                unitOfWork.Context.DogovorClient.Add(Document.Entity);
+            }
+            else
+            {
+                Document = new DogovorClientViewModel(doc)
+                {
+                    State = RowStatus.NotEdited
+                };
+                if (Document != null)
+                    WindowName = Document.ToString();
+                Document.Rows.ForAll(_ => _.State = RowStatus.NotEdited);
+                //LoadLinkDocuments();
+                Document.myState = RowStatus.NotEdited;
+            }
         }
-
-        public DogovorClientWindowViewModel(Guid id)
-        {
-            Id = id;
-            BaseRepository = new GenericKursDBRepository<DogovorClient>(unitOfWork);
-            DogovorClientRepository = new DogovorClientRepository(unitOfWork);
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
-            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
-            RefreshData(id);
-        }
-
-        public override string LayoutName => "DogovorClientView";
 
         #endregion
 
@@ -96,9 +142,9 @@ namespace KursAM2.ViewModel.Dogovora
         public ObservableCollection<DogovorResult> Results { set; get; } =
             new ObservableCollection<DogovorResult>();
 
-
-        public override string WindowName => Document == null
-            ? "Договор клиенту"
+        public override string LayoutName => "DogovorClientWindowViewModel";
+        public override string WindowName => Document?.State == RowStatus.NewRow
+            ? "Договор клиенту (новый)"
             : $"{Document} Отгружено: {FactsAll.Sum(_ => _.Summa)} Оплачено: {PaymentList.Sum(_ => _.Summa)}";
 
         public DogovorClientViewModel Document
@@ -168,11 +214,51 @@ namespace KursAM2.ViewModel.Dogovora
 
         #region Commands
 
+        public override void DocNewCopy(object form)
+        {
+            var ctx = new DogovorClientWindowViewModel(Document.Id);
+            ctx.SetAsNewCopy(true);
+            var frm = new DogovorClientView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
+        }
+
+        public override void DocNewEmpty(object form)
+        {
+            var view = new DogovorClientView
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctx = new DogovorClientWindowViewModel(null)
+            {
+                Form = view,
+                ParentFormViewModel = this
+            };
+            view.DataContext = ctx;
+            view.Show();
+        }
+
+        public override void DocNewCopyRequisite(object form)
+        {
+            var ctx = new DogovorClientWindowViewModel(Document.Id);
+            ctx.SetAsNewCopy(false);
+            var frm = new DogovorClientView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
+        }
+
         public override void ShowHistory(object data)
         {
             // ReSharper disable once RedundantArgumentDefaultValue
-            DocumentHistoryManager.LoadHistory(DocumentType.DogovorClient,Document.Id,null, null);
-
+            DocumentHistoryManager.LoadHistory(DocumentType.DogovorClient, Document.Id, null);
         }
 
         public override bool IsCanSaveData =>
@@ -336,50 +422,26 @@ namespace KursAM2.ViewModel.Dogovora
 
         public override void RefreshData(object obj)
         {
-            if (Document != null) EntityManager.ContextClear(unitOfWork.Context);
-            Document = new DogovorClientViewModel(DogovorClientRepository.GetByGuidId(Id));
-            DogovorClientRepository.Dogovor = Document.Entity;
-            FactsAll.Clear();
-            foreach (var f in DogovorClientRepository.GetOtgruzkaInfo().ToList()) FactsAll.Add(f);
-            Documents.Clear();
-            foreach (var d in DogovorClientRepository.GetLinkDocuments().ToList()) Documents.Add(d);
-            PaymentList.Clear();
-            foreach (var p in DogovorClientRepository.GetPayments()) PaymentList.Add(p);
-            if (Document.IsCalcBack) return;
-            var factNoms = FactsAll.Select(_ => _.Nomenkl.DocCode).Distinct().ToList();
-            var dogNoms = Document.Rows.Select(_ => _.Nomenkl.DocCode).ToList();
-            var noms = factNoms.Except(dogNoms).ToList();
-            if (noms.Count == 0) return;
-            if (WinManager.ShowWinUIMessageBox(
-                "В счетах присутствуеют номенклатуры, не указанные в договоре. Добавить?",
-                "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            base.RefreshData(obj);
+            if (IsCanSaveData)
             {
-                decimal defaultNDS;
-                using (var entctx = GlobalOptions.GetEntities())
+                var service = GetService<IDialogService>("WinUIDialogService");
+                dialogServiceText = "В документ внесены изменения, сохранить?";
+                if (service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this) == MessageResult.Yes)
                 {
-                    defaultNDS = Convert.ToDecimal(entctx.PROFILE
-                        .FirstOrDefault(_ => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")?.ITEM_VALUE);
-                }
-
-                foreach (var n in noms)
-                {
-                    var newRow = new DogovorClientRowViewModel
-                    {
-                        Id = Guid.NewGuid(),
-                        DocId = Document.Id,
-                        Nomenkl = MainReferences.GetNomenkl(n),
-                        Quantity = 1,
-                        Price = 0,
-                        IsCalcBack = Document.IsCalcBack,
-                        NDSPercent = MainReferences.GetNomenkl(n).NDSPercent ?? defaultNDS,
-                        Parent = Document,
-                        State = RowStatus.NewRow,
-                        Facts = new ObservableCollection<DogovorClientFactViewModel>()
-                    };
-                    Document.Entity.DogovorClientRow.Add(newRow.Entity);
-                    Document.Rows.Add(newRow);
+                    SaveData(null);
+                    return;
                 }
             }
+
+            foreach (var id in Document.Rows.Where(_ => _.State == RowStatus.NewRow).Select(_ => _.Id)
+                .ToList())
+                Document.Rows.Remove(Document.Rows.Single(_ => _.Id == id));
+            EntityManager.EntityReload(unitOfWork.Context);
+            foreach (var entity in unitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
+            RaiseAll();
+            foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
+            Document.myState = RowStatus.NotEdited;
         }
 
         public override void SaveData(object data)

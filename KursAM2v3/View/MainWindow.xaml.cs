@@ -14,11 +14,8 @@ using DevExpress.Xpf.Bars;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.LayoutControl;
 using KursAM2.Managers;
-using KursAM2.View.AktSpisaniya;
 using KursAM2.View.Base;
-using KursAM2.View.Dogovors;
 using KursAM2.View.Finance;
-using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Finance.DistributeNaklad;
 using KursAM2.View.Finance.Invoices;
@@ -101,6 +98,7 @@ namespace KursAM2.View
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -122,7 +120,6 @@ namespace KursAM2.View
 
         private void MainWindow_Closed(object sender, EventArgs e)
         {
-            
         }
 
         private void MainWindow_Closing(object sender, CancelEventArgs e)
@@ -131,25 +128,13 @@ namespace KursAM2.View
             foreach (var f in from Window f in Application.Current.Windows where f != null select f)
             {
                 if (f is KursBaseSearchWindow s)
-                {
                     if (s.DataContext is DistributeNakladSearchViewModel ctx)
-                    {
                         ctx.OnWindowClosing();
-                    }
-                }
 
                 if (f is KursBaseWindow b)
-                {
                     if (b.DataContext is DistributeNakladViewModel ctx)
-                    {
                         ctx.OnWindowClosing();
-                    }
-                }
-
-                if (f is ILayout l)
-                {
-                    l.SaveLayout();
-                }
+                if (f is ILayout l) l.SaveLayout();
                 f.Close();
             }
         }
@@ -176,7 +161,7 @@ namespace KursAM2.View
                     // Начисления вынебалансовым Клиентам
                     case "Внебалансовые начисления для клиентов":
                         var aad = new AccuredAmountForClientSearchViewModel();
-                        form = new AccruedAmountForClientSearchView
+                        form = new StandartSearchView
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = aad
@@ -185,10 +170,9 @@ namespace KursAM2.View
                         form.Show();
                         break;
 
-                    // Начисления вынебалансовым Клиентам
                     case "Внебалансовые начисления от поставщиков":
                         var aap = new AccuredAmountOfSupplierSearchViewModel();
-                        form = new AccruedAmountOfSupplierSearchView
+                        form = new StandartSearchView
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = aap
@@ -197,7 +181,6 @@ namespace KursAM2.View
                         form.Show();
                         break;
 
-                    // Начисления вынебалансовым Клиентам
                     case "Договора от поставщиков":
                         var dop = new DogovorOfSupplierSearchViewModel();
                         form = new StandartSearchView
@@ -224,7 +207,7 @@ namespace KursAM2.View
                     // Акт списания материалов
                     case "Списание материалов":
                         var actCtx = new AktSpisaniyaNomenklSearchViewModel();
-                        form = new AktSpisaniyaSearchView
+                        form = new StandartSearchView
                         {
                             Owner = Application.Current.MainWindow
                         };
@@ -235,7 +218,7 @@ namespace KursAM2.View
                     //Разбор данных для Shop
                     case "Разбор данных для Shop":
                         var shopCTX = new ShopParserExtFilesWindowViewModel();
-                        form = new ShopParserExtFiles()
+                        form = new ShopParserExtFiles
                         {
                             Owner = Application.Current.MainWindow
                         };
@@ -243,7 +226,6 @@ namespace KursAM2.View
                         shopCTX.Form = form;
                         form.Show();
                         break;
-                    //Договра клиентам (новый)
                     case "Последние документы пользователей":
                         var ldoc = new LastUsersDocumentWindowViewModel();
                         form = new LastUsersDocumentView
@@ -270,9 +252,9 @@ namespace KursAM2.View
                     case "Договора для клиентов":
                         var ctxdog = new DogovorClientSearchViewModel
                         {
-                            Form = new DogovorClientSearchView
+                            Form = new StandartSearchView
                             {
-                                Owner = Application.Current.MainWindow,
+                                Owner = Application.Current.MainWindow
                             }
                         };
                         ctxdog.Form.DataContext = ctxdog;
@@ -355,13 +337,13 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Счета-Фактуры клиентам":
-                        form = new SearchInvoiceClientView {Owner = Application.Current.MainWindow};
+                        form = new StandartSearchView {Owner = Application.Current.MainWindow};
                         var ctxsf = new InvoiceClientSearchViewModel(form);
                         form.DataContext = ctxsf;
                         form.Show();
                         break;
                     case "Счета-фактуры поставщиков":
-                        form = new ProviderSearchView {Owner = Application.Current.MainWindow};
+                        form = new StandartSearchView {Owner = Application.Current.MainWindow};
                         var dtx = new SearchInvoiceProviderViewModel(form);
                         form.DataContext = dtx;
                         form.Show();
@@ -369,7 +351,7 @@ namespace KursAM2.View
                     case "Расходные накладные для клиентов":
 
                         var ctxNaklad = new WaybillSearchViewModel();
-                        form = new WaybillSearchView
+                        form = new StandartSearchView
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = ctxNaklad
@@ -430,7 +412,7 @@ namespace KursAM2.View
                         break;
                     case "Приходный складской ордер":
                         var ctxq = new WarehouseOrderInSearchViewModel();
-                        form = new WarehouseOrderSearchView("WarehouseOrderInSearchView")
+                        form = new StandartSearchView
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = ctxq
@@ -440,7 +422,7 @@ namespace KursAM2.View
                         break;
                     case "Расходный складской ордер":
                         var ctxr = new WarehouseOrderOutSearchViewModel();
-                        form = new WarehouseOrderSearchView("WarehouseOrderOutSearchView")
+                        form = new StandartSearchView
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = ctxr
@@ -645,7 +627,7 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Акты взаимозачетов":
-                        form = new MutualAccountingSearchView
+                        form = new StandartSearchView
                         {
                             Owner = Application.Current.MainWindow
                         };
@@ -658,7 +640,7 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Акты валютной конвертации":
-                        form = new MutualAccountingSearchView
+                        form = new StandartSearchView
                         {
                             Owner = Application.Current.MainWindow
                         };

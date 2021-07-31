@@ -23,6 +23,7 @@ using Helper;
 using KursAM2.Auxiliary;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.View.Dogovors;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
 
@@ -340,10 +341,43 @@ namespace KursAM2.ViewModel.Dogovora
 
         public override void DocNewCopy(object form)
         {
+            var ctx = new DogovorOfSupplierWindowViewModel(Document.Id);
+            ctx.SetAsNewCopy(true);
+            var frm = new DogovorOfSupplierView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
+        }
+
+        public override void DocNewEmpty(object form)
+        {
+            var view = new DogovorOfSupplierView
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctx = new DogovorOfSupplierWindowViewModel(null)
+            {
+                Form = view,
+                ParentFormViewModel = this
+            };
+            view.DataContext = ctx;
+            view.Show();
         }
 
         public override void DocNewCopyRequisite(object form)
         {
+            var ctx = new DogovorOfSupplierWindowViewModel(Document.Id);
+            ctx.SetAsNewCopy(false);
+            var frm = new DogovorOfSupplierView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
         }
 
         public ICommand OpenPayDocumentCommand

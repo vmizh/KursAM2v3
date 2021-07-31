@@ -44,12 +44,32 @@
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu>
-                    <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}" />
+                    <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}">
+                        <MenuItem.Icon>
+                            <Image
+                                Source="pack://siteoforigin:,,,/Images/document_edit.png" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <Separator />
                     <MenuItem Header="Создать новый документ">
-                        <MenuItem Header="Пустой документ" Command="{Binding DocNewEmptyCommand}"/>
-                        <MenuItem Header="С текущими реквизитами" Command="{Binding DocNewCopyRequisiteCommand}"/>
-                        <MenuItem Header="Копия текущего" Command="{Binding DocNewCopyCommand}"/>
+                        <MenuItem Header="Пустой документ" Command="{Binding DocNewEmptyCommand}">
+                            <MenuItem.Icon>
+                                <Image
+                                    Source="pack://siteoforigin:,,,/Images/document_new.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="С текущими реквизитами" Command="{Binding DocNewCopyRequisiteCommand}">
+                            <MenuItem.Icon>
+                            <Image
+                                Source="pack://siteoforigin:,,,/Images/document_attachment.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Копия текущего" Command="{Binding DocNewCopyCommand}">
+                            <MenuItem.Icon>
+                                <Image
+                                    Source="pack://siteoforigin:,,,/Images/document_add.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="Экспорт"
@@ -76,6 +96,10 @@
                         </dxmvvm:EventToCommand>
                         <dxmvvm:KeyToCommand Command="{Binding DocumentOpenCommand}"
                                              KeyGesture="Enter"/>
+                            <dxmvvm:EventToCommand EventName="AutoGeneratingColumn"
+                                                   Command="{Binding AutoGeneratingColumnCommand}"
+                                                   PassEventArgsToCommand="True">
+                            </dxmvvm:EventToCommand>
                     </ItemsControl>
                 </DataTemplate>
             </Setter.Value>

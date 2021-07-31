@@ -6,7 +6,6 @@
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     xmlns:control="clr-namespace:Core.Control;assembly=Core"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -16,66 +15,29 @@
     Style="{StaticResource DXSplashServices}">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}" Foreground="{Binding DatabaseColor}"
-            FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
-            VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel Style="{StaticResource DXServices}">
-        <control:WindowMenu Height="60" DockPanel.Dock="Top"/>
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-            <dxe:DateEdit Width="120" EditValue="{Binding DateStart}"
-                IsEnabled="{Binding IsDateEnabled}"/>
-            <Label Content="по"/>
-            <dxe:DateEdit Width="120" EditValue="{Binding DateEnd}"
-                IsEnabled="{Binding IsDateEnabled}"/>
+            <dxe:DateEdit Width="120" EditValue="{Binding StartDate}"
+                          IsEnabled="{Binding IsDateEnabled}" />
+            <Label Content="по" />
+            <dxe:DateEdit Width="120" EditValue="{Binding EndDate}"
+                          IsEnabled="{Binding IsDateEnabled}" />
         </StackPanel>
         <dxg:GridControl
             Style="{StaticResource GridControl.Search}"
             Name="gridDocuments"
-            Margin="0,10,0,0" 
-            dx:DXSerializer.SerializationID="gridDocuments" 
+            Margin="0,10,0,0"
+            dx:DXSerializer.SerializationID="gridDocuments"
             ItemsSource="{Binding Documents, UpdateSourceTrigger=PropertyChanged}"
             CurrentItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
-            AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn"
             CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
-            <dxmvvm:Interaction.Behaviors>
-                <dxmvvm:EventToCommand EventName="MouseDoubleClick"
-                    Command="{Binding DocumentOpenCommand}"/>
-            </dxmvvm:Interaction.Behaviors>
             <dxg:GridControl.View>
-                <dxg:TableView ShowTotalSummary="True" Name="tableViewDocuments"
-                    ShowAutoFilterRow="True">
-                    <dxg:TableView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Открыть документ"
-                                Command="{Binding DocumentOpenCommand}"/>
-                            <Separator/>
-                            <MenuItem Header="Новый документ">
-                                <MenuItem Header="Пустой" Command="{Binding DocNewEmptyCommand}"
-                                    CommandParameter="0"/>
-                                <MenuItem Header="Копия текущего"
-                                    Command="{Binding DocNewCopyCommand}" CommandParameter="1"/>
-                                <MenuItem Header="Новый с реквизитами текущего"
-                                    Command="{Binding DocNewCopyRequisiteCommand}"
-                                    CommandParameter="2"/>
-                            </MenuItem>
-                            <Separator/>
-                            <MenuItem Header="Экспорт"
-                                Command="{Binding VisualControlExportCommand}"
-                                CommandParameter="{Binding Path=PlacementTarget, 
-                                RelativeSource={RelativeSource Mode=FindAncestor,
-                                AncestorType={x:Type ContextMenu}}}">
-                                <MenuItem.Icon>
-                                    <Image Source="pack://siteoforigin:,,,/Images/export1.png"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="Копировать итоговую сумму"
-                                Command="{Binding GetColumnSummaCommand}"
-                                CommandParameter="{Binding Path=PlacementTarget, 
-                                RelativeSource={RelativeSource Mode=FindAncestor,
-                                AncestorType={x:Type ContextMenu}}}"
-                            />
-                        </ContextMenu>
-                    </dxg:TableView.ContextMenu>
+                <dxg:TableView
+                    Style="{StaticResource TableView.Search}">
                 </dxg:TableView>
             </dxg:GridControl.View>
         </dxg:GridControl>

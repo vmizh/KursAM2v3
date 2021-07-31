@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Windows;
+using DevExpress.Xpf.Editors.Settings;
+using DevExpress.Xpf.Grid;
+using ServiceStack.Commands;
 
 namespace Core.ViewModel.Base
 {
@@ -68,5 +71,30 @@ namespace Core.ViewModel.Base
         }
 
         public virtual string SplashCaption { set; get; } = "Загрузка...";
+
+        public Command AutoGeneratingColumnCommand
+        {
+            get { return new Command(AutogeneratingSearchGridColumns, _ => true); }
+        }
+
+        //AutoGeneratingColumnEventArgs
+        public virtual void AutogeneratingSearchGridColumns(object args)
+        {
+            if (args is not AutoGeneratingColumnEventArgs e) return;
+            e.Column.Name = e.Column.FieldName;
+            e.Column.ReadOnly = true;
+            switch (e.Column.FieldName)
+            {
+                case "State":
+                    e.Column.Visible = false;
+                    break;
+                case "Note":
+                    e.Column.EditSettings = new TextEditSettings
+                    {
+                        AcceptsReturn = true,
+                    };
+                    break;
+            }
+        }
     }
 }

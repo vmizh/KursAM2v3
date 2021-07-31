@@ -8,9 +8,11 @@ using System.Windows.Media;
 using Core.EntityViewModel.Invoices;
 using Core.Menu;
 using Core.WindowsManager;
+using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Grid;
+using Helper;
 using LayoutManager;
 
 namespace Core.ViewModel.Base
@@ -143,15 +145,66 @@ namespace Core.ViewModel.Base
             LayoutManager?.Save();
         }
 
+        private bool IsSummaryExists(GridSummaryItemCollection tsums, string fname, SummaryItemType sumType)
+        {
+            foreach (var s in tsums)
+            {
+                if (s.FieldName == fname && s.SummaryType == sumType)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public virtual void OnWindowLoaded(object obj)
         {
             if (Form != null)
+            {
                 LayoutManager = new global::Helper.LayoutManager(Form, LayoutSerializationService,
                     LayoutName, null);
+                LayoutManager.Load();
+                var grids = Form.FindVisualChildren<GridControl>();
+                foreach (var grid in grids)
+                {
+                    foreach (var col in grid.Columns)
+                    {
+                        if (col.FieldType == typeof(decimal) ||
+                            col.FieldType == typeof(decimal?)
+                            || col.FieldType == typeof(float) || col.FieldType == typeof(float?)
+                            || col.FieldType == typeof(double) || col.FieldType == typeof(double?))
+                        {
+                            if (IsSummaryExists(grid.TotalSummary, col.FieldName, SummaryItemType.Sum)) continue;
+                            grid.TotalSummary.Add(new GridSummaryItem
+                            {
+                                DisplayFormat = "n2",
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Sum,
+                                ShowInColumn = col.FieldName
+                            });
+                        }
+
+                        if (col.FieldType == typeof(int) || col.FieldType == typeof(int?))
+                        {
+                            if (IsSummaryExists(grid.TotalSummary, col.FieldName, SummaryItemType.Count)) continue;
+                            grid.TotalSummary.Add(new GridSummaryItem
+                            {
+                                DisplayFormat = "n0",
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Count,
+                                ShowInColumn = col.FieldName
+                            });
+                        }
+                    }
+                }
+            }
             else
+            {
                 LayoutManager = new global::Helper.LayoutManager(LayoutSerializationService,
                     LayoutName, null);
-            LayoutManager.Load();
+                LayoutManager.Load();
+            }
+
         }
 
         public void RefreshData()
@@ -228,8 +281,8 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand CloseWindowCommand
         {
-            // ReSharper disable once UnusedParameter.Local
-            get { return new Command(CloseWindow, param => true); }
+            // ReSharper disable once Unused_eter.Local
+            get { return new Command(CloseWindow, _ => true); }
         }
 
         public virtual bool IsSearchTextNull => string.IsNullOrEmpty(SearchText);
@@ -266,7 +319,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand RefreshDataCommand
         {
-            get { return new Command(RefreshData, param => IsCanRefresh); }
+            get { return new Command(RefreshData, _ => IsCanRefresh); }
         }
 
         public virtual bool IsCanRefresh
@@ -280,7 +333,9 @@ namespace Core.ViewModel.Base
             }
         }
 
+#pragma warning disable 1998
         public virtual async void RefreshData(object obj)
+#pragma warning restore 1998
         {
             MainReferences.Refresh();
         }
@@ -300,21 +355,16 @@ namespace Core.ViewModel.Base
             return null;
         }
 
-        // ReSharper disable once InconsistentNaming
-        public virtual void ObservableCollection<MenuButtonInfo>(object data)
-        {
-        }
-
         [Display(AutoGenerateField = false)]
         public virtual ICommand SaveDataCommand
         {
-            get { return new Command(SaveData, param => IsCanSaveData); }
+            get { return new Command(SaveData, _ => IsCanSaveData); }
         }
 
         [Display(AutoGenerateField = false)]
         public virtual ICommand DoneCommand
         {
-            get { return new Command(Done, param => IsCanDone); }
+            get { return new Command(Done, _ => IsCanDone); }
         }
 
         public virtual bool IsCanDone { get; set; } = false;
@@ -327,7 +377,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand DocumentOpenCommand
         {
-            get { return new Command(DocumentOpen, param => IsDocumentOpenAllow); }
+            get { return new Command(DocumentOpen, _ => IsDocumentOpenAllow); }
         }
 
         private ColumnBase myCurrentColumn;
@@ -347,7 +397,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand VisualControlExportCommand
         {
-            get { return new Command(VisualControlExport, param => true); }
+            get { return new Command(VisualControlExport, _ => true); }
         }
 
         public virtual bool IsGetColumnSumma()
@@ -361,7 +411,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand GetColumnSummaCommand
         {
-            get { return new Command(GetColumnSumma, param => IsGetColumnSumma()); }
+            get { return new Command(GetColumnSumma, _ => IsGetColumnSumma()); }
         }
 
         private void GetColumnSumma(object obj)
@@ -431,7 +481,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public ICommand DocNewEmptyCommand
         {
-            get { return new Command(DocNewEmpty, param => IsDocNewEmptyAllow); }
+            get { return new Command(DocNewEmpty, _ => IsDocNewEmptyAllow); }
         }
 
         public virtual void DocNewEmpty(object form)
@@ -468,7 +518,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand DocNewCopyCommand
         {
-            get { return new Command(DocNewCopy, param => IsDocNewCopyAllow); }
+            get { return new Command(DocNewCopy, _ => IsDocNewCopyAllow); }
         }
 
         public virtual void DocNewCopy(object form)
@@ -504,7 +554,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand DoсDeleteCommand
         {
-            get { return new Command(DocDelete, param => IsDocDeleteAllow); }
+            get { return new Command(DocDelete, _ => IsDocDeleteAllow); }
         }
 
         public virtual void DocDelete(object form)
@@ -527,7 +577,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand RedoCommand
         {
-            get { return new Command(Redo, param => IsRedoAllow); }
+            get { return new Command(Redo, _ => IsRedoAllow); }
         }
 
         public virtual void Redo(object form)
@@ -537,7 +587,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand DocNewCopyRequisiteCommand
         {
-            get { return new Command(DocNewCopyRequisite, param => IsDocNewCopyRequisiteAllow); }
+            get { return new Command(DocNewCopyRequisite, _ => IsDocNewCopyRequisiteAllow); }
         }
 
         public virtual void DocNewCopyRequisite(object form)
@@ -560,13 +610,13 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand PrintCommand
         {
-            get { return new Command(Print, param => IsPrintAllow); }
+            get { return new Command(Print, _ => IsPrintAllow); }
         }
 
         [Display(AutoGenerateField = false)]
         public virtual ICommand OkCommand
         {
-            get { return new Command(Ok, param => IsOkAllow()); }
+            get { return new Command(Ok, _ => IsOkAllow()); }
         }
 
         public virtual bool IsOkAllow()
@@ -593,7 +643,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand CancelCommand
         {
-            get { return new Command(Cancel, param => true); }
+            get { return new Command(Cancel, _ => true); }
         }
 
         public virtual void Cancel(object obj)
@@ -608,7 +658,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand ResetLayoutCommand
         {
-            get { return new Command(ResetLayout, param => true); }
+            get { return new Command(ResetLayout, _ => true); }
         }
 
         public virtual void ResetLayout(object form)
@@ -622,7 +672,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual ICommand ShowHistoryCommand
         {
-            get { return new Command(ShowHistory, param => IsAllowHistoryShow); }
+            get { return new Command(ShowHistory, _ => IsAllowHistoryShow); }
         }
 
         public virtual void ShowHistory(object data)

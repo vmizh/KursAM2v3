@@ -10,6 +10,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Mvvm.Native;
 using Helper;
 using Newtonsoft.Json;
 
@@ -142,6 +143,19 @@ namespace Core.EntityViewModel.Dogovora
                 if (Entity.IsClosed == value) return;
                 Entity.IsClosed = value;
                 RaisePropertyChanged();
+            }
+        }
+
+
+        public bool IsNDSInPrice
+        {
+            get => Entity.IsNDSInPrice ?? false;
+            set
+            {
+                if (Entity.IsNDSInPrice == value) return;
+                Entity.IsNDSInPrice = value;
+                RaisePropertyChanged();
+                Rows.ForEach(_ => _.RaisePropertyChanged("Summa"));
             }
         }
 

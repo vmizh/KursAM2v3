@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             GenericProviderRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
             WindowName = "Расходные накладные для клиентов";
-            DocumentCollection = new ObservableCollection<Waybill>();
+            Documents = new ObservableCollection<Waybill>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
@@ -54,6 +55,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Command = ExportSFCommand
                 });
             }
+            StartDate = DateTime.Today.AddDays(-30);
+            EndDate = DateTime.Today;
         }
 
         public WaybillSearchViewModel(Window form) : base(form)
@@ -75,6 +78,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Caption = "Экспорт",
                 Command = ExportSFCommand
             });
+            StartDate = DateTime.Today.AddDays(-30);
+            EndDate = DateTime.Today;
         }
 
         public Waybill CurrentDocument
@@ -97,7 +102,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         }
 
         // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<Waybill> DocumentCollection { set; get; } = new ObservableCollection<Waybill>();
+        public ObservableCollection<Waybill> Documents { set; get; } = new ObservableCollection<Waybill>();
+
+        public override string WindowName => "Поиск расходных ракладных для клипентов";
+        public override string LayoutName => "WaybillSearchViewModel";
 
         public Command ExportSFCommand
         {
@@ -145,9 +153,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 }
                 return w;
             });
-            DocumentCollection.Clear();
-            foreach (var d in res.Result) DocumentCollection.Add(d);
-            RaisePropertyChanged(nameof(DocumentCollection));
+            Documents.Clear();
+            foreach (var d in res.Result) Documents.Add(d);
+            RaisePropertyChanged(nameof(Documents));
             DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
             return res;
         }

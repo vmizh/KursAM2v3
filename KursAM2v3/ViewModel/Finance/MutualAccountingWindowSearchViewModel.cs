@@ -15,7 +15,7 @@ using KursAM2.View.Finance;
 
 namespace KursAM2.ViewModel.Finance
 {
-    public class MutualAccountingWindowSearchViewModel : RSWindowViewModelBase
+    public class MutualAccountingWindowSearchViewModel : RSWindowSearchViewModelBase
     {
         private readonly MutualAccountingManager manager = new MutualAccountingManager();
         private SD_110ViewModel myCurrentDocument;
@@ -39,6 +39,9 @@ namespace KursAM2.ViewModel.Finance
             DateEnd = DateTime.Today;
             IsConvert = isConvert;
         }
+
+        public override string WindowName => IsConvert ? "Поиск валютной конвертации" : "Поис актов взаимозачета";
+        public override string LayoutName => "MutualAccountingWindowSearchViewModel";
 
         public bool IsConvert
         {
@@ -90,7 +93,7 @@ namespace KursAM2.ViewModel.Finance
             }
         }
 
-        public ObservableCollection<SD_110ViewModel> DocumentCollection { set; get; } =
+        public ObservableCollection<SD_110ViewModel> Documents { set; get; } =
             new ObservableCollection<SD_110ViewModel>();
 
         public override string SearchText
@@ -115,7 +118,7 @@ namespace KursAM2.ViewModel.Finance
         {
             base.RefreshData(obj);
             SearchText = null;
-            DocumentCollection = new ObservableCollection<SD_110ViewModel>();
+            Documents.Clear();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -137,7 +140,7 @@ namespace KursAM2.ViewModel.Finance
                         foreach (var d in data)
                         {
                             var newDoc = new SD_110ViewModel(d) {IsOld = false};
-                            DocumentCollection.Add(newDoc);
+                            Documents.Add(newDoc);
                         }
                     }
                     else
@@ -158,13 +161,13 @@ namespace KursAM2.ViewModel.Finance
                         {
                             var newDoc = new SD_110ViewModel(d);
                             newDoc.IsOld = manager.CheckDocumentForOld(newDoc.DocCode);
-                            DocumentCollection.Add(newDoc);
+                            Documents.Add(newDoc);
                         }
                     }
                 }
 
-                foreach (var d in DocumentCollection) d.myState = RowStatus.NotEdited;
-                RaisePropertyChanged(nameof(DocumentCollection));
+                foreach (var d in Documents) d.myState = RowStatus.NotEdited;
+                RaisePropertyChanged(nameof(Documents));
             }
             catch (Exception ex)
             {
@@ -176,7 +179,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override void Search(object obj)
         {
-            DocumentCollection.Clear();
+            Documents.Clear();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -197,16 +200,16 @@ namespace KursAM2.ViewModel.Finance
                                                       _.VZ_NUM.ToString().Contains(SearchText)))
                     {
                         var newDoc = new SD_110ViewModel(d);
-                        DocumentCollection.Add(newDoc);
+                        Documents.Add(newDoc);
                     }
 
                     foreach (var d in data)
                     foreach (var t in d.TD_110)
                     {
                         if (!t.SD_43.NAME.ToUpper().Contains(SearchText.ToUpper()) ||
-                            DocumentCollection.Any(_ => _.DocCode == d.DOC_CODE)) continue;
+                            Documents.Any(_ => _.DocCode == d.DOC_CODE)) continue;
                         var newDoc = new SD_110ViewModel(d);
-                        DocumentCollection.Add(newDoc);
+                        Documents.Add(newDoc);
                     }
                 }
             }

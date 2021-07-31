@@ -9,7 +9,6 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Dogovora;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
@@ -112,12 +111,30 @@ namespace KursAM2.ViewModel.Dogovora
 
         public override void DocNewCopy(object form)
         {
-            WindowManager.ShowFunctionNotReleased();
+            if (CurrentDocument == null) return;
+            var ctx = new DogovorOfSupplierWindowViewModel(CurrentDocument.Id);
+            ctx.SetAsNewCopy(true);
+            var frm = new DogovorOfSupplierView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
         }
 
         public override void DocNewCopyRequisite(object form)
         {
-            WindowManager.ShowFunctionNotReleased();
+            if (CurrentDocument == null) return;
+            var ctx = new DogovorOfSupplierWindowViewModel(CurrentDocument.Id);
+            ctx.SetAsNewCopy(true);
+            var frm = new DogovorOfSupplierView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
         }
 
         public override void DocNewEmpty(object form)
@@ -144,7 +161,7 @@ namespace KursAM2.ViewModel.Dogovora
             return res;
         }
 
-        
+
         public override async void RefreshData(object data)
         {
             SplashScreenService.ShowSplashScreen();

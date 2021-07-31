@@ -16,6 +16,7 @@ using Data.Repository;
 using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.View.Base;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.ViewModel.Management.Calculations;
@@ -328,7 +329,7 @@ namespace KursAM2.Managers.Invoices
             return ret;
         }
 
-        public static decimal SaveProvider(InvoiceProvider doc, ProviderSearchView searchWindow = null)
+        public static decimal SaveProvider(InvoiceProvider doc, StandartSearchView searchWindow = null)
         {
             var newDC = doc.DocCode;
             using (var ctx = GlobalOptions.GetEntities())
@@ -808,7 +809,7 @@ namespace KursAM2.Managers.Invoices
         {
             genericProviderRepository.Refresh(doc.Entity);
         }
-        public static void DeleteProvider(decimal dc, ProviderSearchView searchWindow = null)
+        public static void DeleteProvider(decimal dc, StandartSearchView searchWindow = null)
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -1925,7 +1926,7 @@ namespace KursAM2.Managers.Invoices
             return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
-        public static void DeleteClient(decimal dc, SearchInvoiceClientView searchWindow = null)
+        public static void DeleteClient(decimal dc, StandartSearchView searchWindow = null)
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -1951,7 +1952,7 @@ namespace KursAM2.Managers.Invoices
             NomenklManager.RecalcPrice();
         }
 
-        public static decimal SaveClient(InvoiceClient doc, ProviderSearchView searchWindow = null)
+        public static decimal SaveClient(InvoiceClient doc, StandartSearchView searchWindow = null)
         {
             decimal dc;
             using (var ctx = GlobalOptions.GetEntities())

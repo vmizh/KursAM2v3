@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Data;
-using Newtonsoft.Json;
 
 namespace Core.EntityViewModel.Dogovora
 {
@@ -83,6 +82,9 @@ namespace Core.EntityViewModel.Dogovora
                 if (Entity.Quantity == value) return;
                 Entity.Quantity = value;
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(Summa));
+                if(Parent is DogovorOfSupplierViewModel d)
+                    d.RaisePropertyChanged("Summa");
             }
         }
 
@@ -99,6 +101,9 @@ namespace Core.EntityViewModel.Dogovora
                 if (Entity.Price == value) return;
                 Entity.Price = value;
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(Summa));
+                if(Parent is DogovorOfSupplierViewModel d)
+                    d.RaisePropertyChanged("Summa");
             }
         }
 
@@ -112,12 +117,15 @@ namespace Core.EntityViewModel.Dogovora
                 if (Entity.NDSPercent == value) return;
                 Entity.NDSPercent = value;
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(Summa));
+                if(Parent is DogovorOfSupplierViewModel d)
+                    d.RaisePropertyChanged("Summa");
             }
         }
 
         [Display(AutoGenerateField = true, Name = "Сумма")]
         [DisplayFormat(DataFormatString = "n2", ApplyFormatInEditMode = true)]
-        public decimal Summa => Math.Round(Quantity * Price + Quantity * Price * NDSPercent / 100, 2);
+        public decimal Summa => GetSumma();
 
         [Display(AutoGenerateField = true, Name = "Примечания")]
         public override string Note
@@ -164,6 +172,28 @@ namespace Core.EntityViewModel.Dogovora
                 Сумма = Summa.ToString("n2"),
                 Примечание = Note,
             };
+        }
+
+        public decimal GetSumma()
+        {
+            decimal summa = 0;
+            if (Parent is DogovorOfSupplierViewModel d)
+            {
+                if (d.IsNDSInPrice)
+                {
+                    summa = Entity.Quantity * Entity.Price;
+                }
+                else
+                {
+                    var ndsSumma = Decimal.Round(Entity.Quantity * Entity.Price * Entity.NDSPercent / 100, 2);
+                    summa = Entity.Quantity * Entity.Price + ndsSumma;
+                }
+
+                RaisePropertyChanged(nameof(Summa));
+                d.RaisePropertyChanged(nameof(d.Summa));
+            }
+
+            return summa;
         }
 
         private DogovorOfSupplierRow DefaultValue()

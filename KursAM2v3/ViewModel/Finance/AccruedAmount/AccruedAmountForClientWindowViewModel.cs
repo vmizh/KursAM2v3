@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Text.Json;
+using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.AccruedAmount;
@@ -22,6 +23,7 @@ using DevExpress.XtraRichEdit.Model;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Management.Calculations;
 
@@ -459,6 +461,49 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             Document.myState = RowStatus.NotEdited;
             Document.RaisePropertyChanged("State");
             ParentFormViewModel?.RefreshData(null);
+        }
+
+        public override void DocNewCopy(object form)
+        {
+            var ctx = new AccruedAmountForClientWindowViewModel(Document.Id);
+            ctx.SetAsNewCopy(true);
+            var frm = new AccruedAmountForClientView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
+        }
+
+        public override void DocNewEmpty(object form)
+        {
+            var view = new AccruedAmountForClientView
+            {
+                Owner = Application.Current.MainWindow,
+            };
+            var ctx = new AccruedAmountForClientWindowViewModel(null)
+            {
+                Form = view,
+                ParentFormViewModel = this
+            };
+            view.DataContext = ctx;
+            view.Show();
+            
+        }
+
+        public override void DocNewCopyRequisite(object form)
+        {
+            
+            var ctx = new AccruedAmountForClientWindowViewModel(Document.Id);
+            ctx.SetAsNewCopy(false);
+            var frm = new AccruedAmountForClientView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
         }
 
         #endregion

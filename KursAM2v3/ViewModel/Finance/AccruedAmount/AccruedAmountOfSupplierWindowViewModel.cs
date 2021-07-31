@@ -174,6 +174,36 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             frm.Show();
         }
 
+        public override void DocNewEmpty(object form)
+        {
+            var view = new AccruedAmountOfSupplierView
+            {
+                Owner = Application.Current.MainWindow,
+            };
+            var ctx = new AccruedAmountOfSupplierWindowViewModel(null)
+            {
+                Form = view,
+                ParentFormViewModel = this
+            };
+            view.DataContext = ctx;
+            view.Show();
+            
+        }
+
+        public override void DocNewCopyRequisite(object form)
+        {
+            
+            var ctx = new AccruedAmountOfSupplierWindowViewModel(Document.Id);
+            ctx.SetAsNewCopy(false);
+            var frm = new AccruedAmountOfSupplierView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
+            frm.Show();
+        }
+
         [Display(AutoGenerateField = false)]
         public ICommand KontragentSelectCommand
         {

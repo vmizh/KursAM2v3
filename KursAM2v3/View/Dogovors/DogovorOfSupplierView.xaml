@@ -90,6 +90,10 @@
                                            MinWidth="120"/>
                         <dxe:TextEdit Margin="5 0" EditValue="{Binding Document.Currency, Mode=OneWay}"
                                       Width="50"/>
+                        <Label 
+                            Margin="5 0"
+                            Content="НДС в цене: "/>
+                        <dxe:CheckEdit EditValue="{Binding Document.IsNDSInPrice, UpdateSourceTrigger=PropertyChanged}"/>
                         <Label Margin="5 0" Content="Оплачено: "/>
                         <dxe:PopupCalcEdit 
                             EditValue="{Binding Document.PaySumma, Mode=OneWay}"

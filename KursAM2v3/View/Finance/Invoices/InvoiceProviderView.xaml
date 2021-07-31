@@ -325,19 +325,23 @@
                             <dxg:DataControlDetailDescriptor ShowHeader="False"
                                 ItemsSourceBinding="{Binding CurrencyConvertRows, UpdateSourceTrigger=PropertyChanged}">
                                 <dxg:GridControl AutoGenerateColumns="AddNew"
-                                    EnableSmartColumnsGeneration="True"
+                                                 EnableSmartColumnsGeneration="True"
                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     MaxHeight="10000" MaxWidth="10000"
                                     dx:DXSerializer.SerializationID="gridDetailRows"
                                     dx:DXSerializer.StoreLayoutMode="All"
                                     dxg:DataControlSerializationOptions.AddNewColumns="True"
                                     dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                                    CurrentItem="{Binding CurrentCrsConvertItem}">
+                                    CurrentItem="{Binding CurrentCrsConvertItem}"
+                                    >
                                     <dxg:GridControl.View>
                                         <dxg:TableView VerticalScrollbarVisibility="Auto"
-                                            NavigationStyle="Row" DetailHeaderContent="С/ф"
+                                            NavigationStyle="Row" 
+                                            ShowAutoFilterRow="False"
+                                            DetailHeaderContent="С/ф"
                                             ShowFixedTotalSummary="True"
-                                            CellValueChanged="TableView_CellValueChanged"/>
+                                            CellValueChanged="TableView_CellValueChanged"
+                                            />
                                     </dxg:GridControl.View>
                                 </dxg:GridControl>
                             </dxg:DataControlDetailDescriptor>
