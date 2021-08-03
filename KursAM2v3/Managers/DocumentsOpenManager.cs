@@ -118,7 +118,7 @@ namespace KursAM2.Managers
                         UserId = GlobalOptions.UserInfo.KursId,
                         DbId = GlobalOptions.DataBaseId,
                         DocId = docId,
-                        Creator = creator,
+                        Creator = creator ?? "не указан",
                         DocDC = docDC,
                         DocType = (int) docType,
                         LastChanger = lastChanger,

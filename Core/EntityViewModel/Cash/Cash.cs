@@ -4,9 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 
@@ -28,17 +26,6 @@ namespace Core.EntityViewModel.Cash
         public Cash(SD_22 entity)
         {
             Entity = entity ?? DefaultValue();
-        }
-
-        public decimal DOC_CODE
-        {
-            get => Entity.DOC_CODE;
-            set
-            {
-                if (Entity.DOC_CODE == value) return;
-                Entity.DOC_CODE = value;
-                RaisePropertyChanged();
-            }
         }
 
         public override decimal DocCode
@@ -176,6 +163,10 @@ namespace Core.EntityViewModel.Cash
             }
         }
 
+        public EntityLoadCodition LoadCondition { get; set; }
+
+        public bool IsAccessRight { get; set; }
+
         public SD_22 Entity
         {
             get => myEntity;
@@ -187,14 +178,10 @@ namespace Core.EntityViewModel.Cash
             }
         }
 
-        public EntityLoadCodition LoadCondition { get; set; }
-
         public List<SD_22> LoadList()
         {
             throw new NotImplementedException();
         }
-
-        public bool IsAccessRight { get; set; }
 
         public SD_22 Load(Guid id)
         {
@@ -252,7 +239,7 @@ namespace Core.EntityViewModel.Cash
 
         public SD_22 DefaultValue()
         {
-            return new SD_22
+            return new()
             {
                 DOC_CODE = -1
             };
@@ -275,7 +262,7 @@ namespace Core.EntityViewModel.Cash
     }
 
     [MetadataType(typeof(DataAnnotationsCashReference))]
-    public class CashReference : Cash
+    public sealed class CashReference : Cash
     {
         private Currency myDefaultCurrency;
 
@@ -297,7 +284,7 @@ namespace Core.EntityViewModel.Cash
                     {
                         Cash = this,
                         Parent = this,
-                        ParentDC = DOC_CODE,
+                        ParentDC = DocCode,
                         State = RowStatus.NotEdited
                     };
                     StartRemains.Add(newItem);
@@ -318,7 +305,7 @@ namespace Core.EntityViewModel.Cash
         }
 
         public ObservableCollection<CashStartRemains> StartRemains { set; get; } =
-            new ObservableCollection<CashStartRemains>();
+            new();
     }
 
     public class DataAnnotationsCash : DataAnnotationForFluentApiBase, IMetadataProvider<Cash>

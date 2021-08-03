@@ -615,7 +615,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void updateCash(ALFAMEDIAEntities ctx, CashReference cash)
         {
-            var old = ctx.SD_22.FirstOrDefault(_ => _.DOC_CODE == cash.DOC_CODE);
+            var old = ctx.SD_22.FirstOrDefault(_ => _.DOC_CODE == cash.DocCode);
             if (old == null) return;
             old.CA_NAME = cash.Name;
             old.CA_CENTR_OTV_DC = cash.CO == null || cash.CO.DocCode == 0 ? (decimal?) null : cash.CO.DocCode;
@@ -661,7 +661,7 @@ namespace KursAM2.ViewModel.Reference
                                         ctx.SD_39.Add(new SD_39
                                         {
                                             DOC_CODE = codeCashDC,
-                                            CA_DC = cash.DOC_CODE,
+                                            CA_DC = cash.DocCode,
                                             CRS_DC = r.Currency.DocCode,
                                             DATE_CASS = d,
                                             MONEY_START = r.SUMMA_START,
@@ -695,16 +695,16 @@ namespace KursAM2.ViewModel.Reference
                         ctx.SD_39.Add(new SD_39
                         {
                             DOC_CODE = codeCashDC,
-                            CA_DC = cash.DOC_CODE,
+                            CA_DC = cash.DocCode,
                             CRS_DC = r.Currency.DocCode,
                             DATE_CASS = r.DATE_START,
                             MONEY_START = r.SUMMA_START,
                             MONEY_STOP = r.SUMMA_START
                         });
-                        var code = (int) ctx.TD_22.Where(_ => _.DOC_CODE == cash.DOC_CODE).Max(_ => _.CODE) + 1;
+                        var code = (int) ctx.TD_22.Where(_ => _.DOC_CODE == cash.DocCode).Max(_ => _.CODE) + 1;
                         var newRem = new TD_22
                         {
-                            DOC_CODE = cash.DOC_CODE,
+                            DOC_CODE = cash.DocCode,
                             CODE = code,
                             CRS_DC = r.Currency.DocCode,
                             DATE_START = r.DATE_START,
@@ -715,7 +715,7 @@ namespace KursAM2.ViewModel.Reference
                         r.Code = code;
                         var oldCashsList =
                             ctx.SD_39.Where(_ =>
-                                _.CA_DC == cash.DOC_CODE && _.DATE_CASS > r.DATE_START &&
+                                _.CA_DC == cash.DocCode && _.DATE_CASS > r.DATE_START &&
                                 _.CRS_DC != r.Currency.DocCode).ToList();
                         if (oldCashsList.Any())
                             foreach (var o in oldCashsList.Select(_ => _.DATE_CASS).Distinct())
@@ -724,7 +724,7 @@ namespace KursAM2.ViewModel.Reference
                                 ctx.SD_39.Add(new SD_39
                                 {
                                     DOC_CODE = codeCashDC,
-                                    CA_DC = cash.DOC_CODE,
+                                    CA_DC = cash.DocCode,
                                     CRS_DC = r.Currency.DocCode,
                                     DATE_CASS = o,
                                     MONEY_START = r.SUMMA_START,

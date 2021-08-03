@@ -321,7 +321,7 @@ namespace Core.EntityViewModel.Cash
                             : null;
                     case CashKontragentType.Kontragent:
                         return KONTRAGENT_DC != null
-                            ? MainReferences.GetKontragent(KONTRAGENT_DC).Name
+                            ? MainReferences.GetKontragent(KONTRAGENT_DC)?.Name
                             : null;
                     case CashKontragentType.Cash:
                         return RashodOrderFromName;
@@ -964,7 +964,7 @@ namespace Core.EntityViewModel.Cash
 
         private void LoadReferences()
         {
-            if (Entity.CA_DC != null) Cash = MainReferences.Cashs[(decimal) Entity.CA_DC];
+            if (Entity.CA_DC != null) Cash = MainReferences.CashsAll[(decimal) Entity.CA_DC];
             myKontragentType = CashKontragentType.NotChoice;
             if (KONTRAGENT_DC != null)
                 myKontragentType = CashKontragentType.Kontragent;

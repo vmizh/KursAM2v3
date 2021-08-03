@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KursRepositories", "KursRep
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KursRepositories.Test", "KursRepositories.Test\KursRepositories.Test.csproj", "{F1C258DF-4AE6-405C-8BE2-80F0AC502086}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auxiliary", "Auxiliary\Auxiliary.csproj", "{70164AB2-959F-4DD5-8B21-9FA1869D6573}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -162,6 +164,12 @@ Global
 		{F1C258DF-4AE6-405C-8BE2-80F0AC502086}.Development|Any CPU.Build.0 = Debug|Any CPU
 		{F1C258DF-4AE6-405C-8BE2-80F0AC502086}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1C258DF-4AE6-405C-8BE2-80F0AC502086}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70164AB2-959F-4DD5-8B21-9FA1869D6573}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70164AB2-959F-4DD5-8B21-9FA1869D6573}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70164AB2-959F-4DD5-8B21-9FA1869D6573}.Development|Any CPU.ActiveCfg = Debug|Any CPU
+		{70164AB2-959F-4DD5-8B21-9FA1869D6573}.Development|Any CPU.Build.0 = Debug|Any CPU
+		{70164AB2-959F-4DD5-8B21-9FA1869D6573}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70164AB2-959F-4DD5-8B21-9FA1869D6573}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -116,7 +116,8 @@ namespace KursAM2.View.Finance.Cash
                     CurrencyItem = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Currency, "Currency", ctx.CurrencyList,
                         width: 50);
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
-                    if (doc.BANK_RASCH_SCHET_DC != null && doc.SPOST_DC != null && doc.State != RowStatus.NewRow)
+                    if (doc.BANK_RASCH_SCHET_DC != null && doc.SPOST_DC != null && doc.State != RowStatus.NewRow && 
+                        string.IsNullOrWhiteSpace(doc.Kontragent))
                         CurrencyItem.IsEnabled = false;
                     break;
                 case "NOTES_ORD":
@@ -367,25 +368,34 @@ namespace KursAM2.View.Finance.Cash
             {
                 case CashKontragentType.Kontragent:
                     var kontr = StandartDialogs.SelectKontragent(ctx.Document.Currency);
-                    if (kontr != null) ctx.Document.KONTRAGENT_DC = kontr.DocCode;
+                    if (kontr == null) return;
+                    ctx.Document.KONTRAGENT_DC = kontr.DocCode;
                     ctx.Document.NAME_ORD = kontr?.Name;
                     ctx.Document.KONTR_CRS_DC = kontr?.BalansCurrency.DocCode;
                     ctx.Document.SPostName = null;
                     ctx.Document.SPOST_DC = null;
+                    ctx.Document.Currency = kontr.BalansCurrency;
+                    CurrencyItem.IsEnabled = false;
                     break;
                 case CashKontragentType.Employee:
                     var emp = StandartDialogs.SelectEmployee();
-                    if (emp != null) ctx.Document.Employee = emp;
+                    if (emp == null) return;
+                    ctx.Document.Employee = emp;
                     ctx.Document.NAME_ORD = emp?.Name;
                     ctx.Document.SPostName = null;
                     ctx.Document.SPOST_DC = null;
+                    ctx.Document.Currency = emp.Currency;
+                    CurrencyItem.IsEnabled = false;
                     break;
                 case CashKontragentType.Bank:
                     var bank = StandartDialogs.SelectBankAccount();
-                    ctx.Document.NAME_ORD = bank?.Name;
+                    if (bank == null) return;
+                    ctx.Document.NAME_ORD = bank.Name;
                     ctx.Document.BankAccount = bank;
                     ctx.Document.SPostName = null;
                     ctx.Document.SPOST_DC = null;
+                    ctx.Document.Currency = bank.Currency;
+                    CurrencyItem.IsEnabled = false;
                     break;
                 case CashKontragentType.Cash:
                     var ch = StandartDialogs.SelectCash(new List<Core.EntityViewModel.Cash.Cash> {ctx.Document.Cash});

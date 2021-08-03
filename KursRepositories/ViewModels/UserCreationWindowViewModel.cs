@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using Core;
@@ -45,18 +46,18 @@ namespace KursRepositories.ViewModels
         private string myThemeName = "MetropolisLight";
         private new string myNote;
         private Users myNewUser;
-        private List<string> _myRegisteredUsersNames = new List<string>();
+        private List<string> _myRegisteredUsersNames = new();
 
         private ObservableCollection<DataSourcesViewModel> myCompanies =
-            new ObservableCollection<DataSourcesViewModel>();
+            new();
 
-        private ObservableCollection<UserRolesViewModel> myRoles = new ObservableCollection<UserRolesViewModel>();
+        private ObservableCollection<UserRolesViewModel> myRoles = new();
 
         private ObservableCollection<DataSourcesViewModel> myIsSelectedCompanies =
-            new ObservableCollection<DataSourcesViewModel>();
+            new();
 
         private ObservableCollection<UserRolesViewModel> myIsSelectedRoles =
-            new ObservableCollection<UserRolesViewModel>();
+            new();
 
         private DataSourcesViewModel myCurrentCompany;
         private UserRolesViewModel myCurrentRole;
@@ -245,15 +246,10 @@ namespace KursRepositories.ViewModels
                 if (fnames.Length > 0)
                 {
                     LastName = fnames[0];
-                    if (fnames.Length >= 2)
-                    {
-                        MiddleName = fnames[1];
-                    }
-                    if (fnames.Length >= 3)
-                    {
-                        FirstName = fnames[2];
-                    }
+                    if (fnames.Length >= 2) MiddleName = fnames[1];
+                    if (fnames.Length >= 3) FirstName = fnames[2];
                 }
+
                 RaisePropertyChanged();
             }
         }
@@ -294,7 +290,7 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        public bool Deleted { get; set; } = false;
+        public bool Deleted { get; set; }
 
         public byte[] Avatar
         {
@@ -395,10 +391,10 @@ namespace KursRepositories.ViewModels
                     return;
                 }
 
-                string[] fnames = {};
+                string[] fnames = { };
                 if (!string.IsNullOrWhiteSpace(usr.FullName))
                 {
-                    var s = System.Text.RegularExpressions.Regex.Replace(usr.FullName, @"\s+", " ");
+                    var s = Regex.Replace(usr.FullName, @"\s+", " ");
                     fnames = s.Split(' ');
                 }
 
@@ -408,15 +404,10 @@ namespace KursRepositories.ViewModels
                 if (fnames.Length > 0)
                 {
                     LastName = fnames[0];
-                    if (fnames.Length >= 2)
-                    {
-                        MiddleName = fnames[1];
-                    }
-                    if (fnames.Length >= 3)
-                    {
-                        FirstName = fnames[2];
-                    }
+                    if (fnames.Length >= 2) MiddleName = fnames[1];
+                    if (fnames.Length >= 3) FirstName = fnames[2];
                 }
+
                 Note = usr.Note;
                 ThemeName = usr.ThemeName;
                 Admin = usr.IsAdmin;
@@ -424,22 +415,14 @@ namespace KursRepositories.ViewModels
                 Deleted = usr.IsDeleted;
                 Avatar = usr.Avatar;
 
-                foreach (var c in Companies)
-                {
-                    c.IsSelectedItem = false;
-                }
-                var data = ctx.Users.Include(_ => _.DataSources).FirstOrDefault(_ => _.Name == usr.Name)?.DataSources.ToList();
+                foreach (var c in Companies) c.IsSelectedItem = false;
+                var data = ctx.Users.Include(_ => _.DataSources).FirstOrDefault(_ => _.Name == usr.Name)?.DataSources
+                    .ToList();
                 if (data != null && data.Count > 0)
-                {
                     foreach (var d in data)
-                    {
-                        foreach (var c in Companies)
-                        {
-                            if (c.Id == d.Id)
-                                c.IsSelectedItem = true;
-                        }
-                    }
-                }
+                    foreach (var c in Companies)
+                        if (c.Id == d.Id)
+                            c.IsSelectedItem = true;
             }
         }
 
@@ -478,6 +461,7 @@ namespace KursRepositories.ViewModels
         {
             RaisePropertyChanged(nameof(Password));
         }
+
         #endregion
 
         #region InputValidation

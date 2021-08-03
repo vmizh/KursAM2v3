@@ -40,5 +40,8 @@ namespace Data
         public virtual DbSet<TasksLog> TasksLog { get; set; }
         public virtual DbSet<UserRoles> UserRoles { get; set; }
         public virtual DbSet<LastDocument> LastDocument { get; set; }
+        public virtual DbSet<SignatureSchemes> SignatureSchemes { get; set; }
+        public virtual DbSet<SignatureSchemesInfo> SignatureSchemesInfo { get; set; }
+        public virtual DbSet<SignatureType> SignatureType { get; set; }
     }
 }

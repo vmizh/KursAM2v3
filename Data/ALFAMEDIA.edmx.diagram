@@ -2091,6 +2091,8 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_26_DogovorOfSupplierId" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorOfSupplierRow_NomenklDC" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorOfSupplier_DogType" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.DocumentSignatures" Width="1.5" PointX="47.375" PointY="4.75" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.SignatureDocumentTypes" Width="1.5" PointX="47.375" PointY="7.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

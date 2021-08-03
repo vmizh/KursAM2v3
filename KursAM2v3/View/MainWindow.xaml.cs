@@ -13,15 +13,14 @@ using Data;
 using DevExpress.Xpf.Bars;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.LayoutControl;
+using KursAM2.Auxiliary;
 using KursAM2.Managers;
 using KursAM2.View.Base;
 using KursAM2.View.Finance;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Finance.DistributeNaklad;
-using KursAM2.View.Finance.Invoices;
 using KursAM2.View.KursReferences;
 using KursAM2.View.Logistiks;
-using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.View.Management;
 using KursAM2.View.Period;
 using KursAM2.View.Personal;
@@ -1026,6 +1025,11 @@ namespace KursAM2.View
             };
             ctxUserProfile.Form = formUserProfile;
             formUserProfile.Show();
+        }
+
+        private void BarButtonItem5_OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            SaveHistoryStart.SaveHistory();
         }
     }
 }

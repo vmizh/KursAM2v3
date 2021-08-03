@@ -17,8 +17,8 @@ namespace Data
     
     public partial class ALFAMEDIAEntities : DbContext
     {
-        public  ALFAMEDIAEntities()
-            : base("name= ALFAMEDIAEntities")
+        public ALFAMEDIAEntities()
+            : base("name=ALFAMEDIAEntities")
         {
         }
     
@@ -781,6 +781,8 @@ namespace Data
         public virtual DbSet<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
         public virtual DbSet<DogovorOfSupplier> DogovorOfSupplier { get; set; }
         public virtual DbSet<DogovorOfSupplierRow> DogovorOfSupplierRow { get; set; }
+        public virtual DbSet<DocumentSignatures> DocumentSignatures { get; set; }
+        public virtual DbSet<SignatureDocumentTypes> SignatureDocumentTypes { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

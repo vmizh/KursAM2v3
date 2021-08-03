@@ -7,6 +7,7 @@ using Core.EntityViewModel.Cash;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
@@ -356,12 +357,15 @@ namespace KursAM2.View.Finance.Cash
                         ctx.Document.KONTR_CRS_DC = kontr.BalansCurrency.DocCode;
                         ctx.Document.SFactName = null;
                         doc.SFACT_DC = null;
+                        CurrencyItem.IsEnabled = false;
                         break;
                     case CashKontragentType.Employee:
                         var emp = StandartDialogs.SelectEmployee();
                         if (emp != null) ctx.Document.TABELNUMBER = emp.TabelNumber;
                         ctx.Document.NAME_ORD = emp?.Name;
                         ctx.Document.SFactName = null;
+                        ctx.Document.Currency = emp.Currency;
+                        CurrencyItem.IsEnabled = false;
                         doc.SFACT_DC = null;
                         break;
                     case CashKontragentType.Bank:
@@ -370,6 +374,8 @@ namespace KursAM2.View.Finance.Cash
                         ctx.Document.NAME_ORD = bank?.Name;
                         ctx.Document.BankAccount = bank;
                         ctx.Document.SFactName = null;
+                        ctx.Document.Currency = bank.Currency;
+                        CurrencyItem.IsEnabled = false;
                         doc.SFACT_DC = null;
                         break;
                     case CashKontragentType.Cash:
@@ -378,6 +384,7 @@ namespace KursAM2.View.Finance.Cash
                         ctx.Document.RASH_ORDER_FROM_DC = order.DocCode;
                         ctx.Document.SUMM_ORD = order.SUMM_ORD;
                         ctx.Document.Currency = order.Currency;
+                        CurrencyItem.IsEnabled = false;
                         ctx.Document.SDRSchet = order.SDRSchet;
                         ctx.Document.RashodOrderFromName = order.Cash.Name;
                         ctx.Document.OSN_ORD = order.ToString();

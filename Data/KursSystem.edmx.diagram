@@ -34,6 +34,16 @@
         <EntityTypeShape EntityType="KursSystemModel.LastDocument" Width="1.5" PointX="7.5" PointY="9.875" />
         <AssociationConnector Association="KursSystemModel.FK_LastDocument_DbId" />
         <AssociationConnector Association="KursSystemModel.FK_LastDocument_UserId" />
+        <EntityTypeShape EntityType="KursSystemModel.SignatureSchemes" Width="1.5" PointX="10" PointY="7.25" />
+        <EntityTypeShape EntityType="KursSystemModel.SignatureSchemesInfo" Width="1.5" PointX="5.25" PointY="22.25" />
+        <EntityTypeShape EntityType="KursSystemModel.SignatureType" Width="1.5" PointX="3" PointY="22.25" />
+        <AssociationConnector Association="KursSystemModel.FK_SignatureSchemes_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_SignatureType_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId" />
+        <AssociationConnector Association="KursSystemModel.FK_SignatureSchemesInfo_ParentId" />
+        <AssociationConnector Association="KursSystemModel.FK_SignatureSchemesInfo_SignId" />
+        <AssociationConnector Association="KursSystemModel.FK_Users_SignatureTypeId" />
+        <AssociationConnector Association="KursSystemModel.SignatureLink" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -529,23 +529,25 @@ namespace KursAM2.ViewModel.Dogovora
         private void DeleteRow(object obj)
         {
             if (WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить строки", "Запрос",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question) == MessageBoxResult.Yes)
-                //var list = SelectedRows.Select(_ => _.Id).ToList();
-                //foreach (var id in list)
-                //{
-                //    var row = Document.Rows.Single(_ => _.Id == id);
-                //    //if (FactsAll.All(_ => _.Nomenkl.DocCode != row.Nomenkl.DocCode))
-                //    //{
-                //    //    Document.Rows.Remove(row);
-                //    //    unitOfWork.Context.Entry(row.Entity).State =
-                //    //        unitOfWork.Context.Entry(row.Entity).State == EntityState.Added
-                //    //            ? EntityState.Detached
-                //    //            : EntityState.Deleted;
-                //    //}
-                //}
-
-                Document.State = RowStatus.Edited;
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                var list = SelectedRows.Select(_ => _.Id).ToList();
+                foreach (var id in list)
+                {
+                    var row = Document.Rows.Single(_ => _.Id == id);
+                    if (FactsAll.All(_ => _.Nomenkl.DocCode != row.Nomenkl.DocCode))
+                    {
+                        Document.Rows.Remove(row);
+                        UnitOfWork.Context.Entry(row.Entity).State =
+                            UnitOfWork.Context.Entry(row.Entity).State == EntityState.Added
+                                ? EntityState.Detached
+                                : EntityState.Deleted;
+                    }
+                    Document.Rows.Remove(row);
+                }
+            }
+            Document.State = RowStatus.Edited;
         }
 
         public ICommand KontragentSelectCommand

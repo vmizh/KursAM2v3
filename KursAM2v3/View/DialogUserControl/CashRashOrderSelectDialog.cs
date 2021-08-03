@@ -1,14 +1,14 @@
 ﻿using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.Cash;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 
 namespace KursAM2.View.DialogUserControl
 {
-    public class CashRashOrderSelectDialog : RSWindowViewModelBase, IDataUserControl
+    public sealed class CashRashOrderSelectDialog : RSWindowViewModelBase, IDataUserControl
     {
         private CashOut myCurrentItem;
         private StandartDialogSelectUC myDataUserControl;
@@ -58,10 +58,14 @@ namespace KursAM2.View.DialogUserControl
                 var exsitsDC = ctx.SD_33.Where(_ => _.RASH_ORDER_FROM_DC != null).Select(_ => _.RASH_ORDER_FROM_DC)
                     .ToList();
                 ItemsCollection.Clear();
-                foreach (var d in ctx.SD_34.Where(_ => _.CASH_TO_DC == Order.CA_DC && !exsitsDC.Contains(_.DOC_CODE))
+                foreach (var d in 
+                    ctx.SD_34
+                        .Include(_ => _.AccuredAmountOfSupplierRow)
+                        .Where(_ => _.CASH_TO_DC == Order.CA_DC && !exsitsDC.Contains(_.DOC_CODE))
                     .ToList())
                     ItemsCollection.Add(new CashOut(d));
             }
+
             if (ItemsCollection.Count > 0)
                 CurrentItem = ItemsCollection.First();
         }

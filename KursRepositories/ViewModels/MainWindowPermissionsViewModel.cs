@@ -6,7 +6,6 @@ using System.Windows.Input;
 using Core;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Data;
 using DevExpress.Xpf.Grid;
 using KursRepositories.View;
 
@@ -34,13 +33,13 @@ namespace KursRepositories.ViewModels
         # region Properties
 
         public ObservableCollection<UsersViewModel> UserList { set; get; } =
-            new ObservableCollection<UsersViewModel>();
+            new();
 
         public ObservableCollection<KursMenuItemViewModel> PermissionsList { set; get; } =
-            new ObservableCollection<KursMenuItemViewModel>();
+            new();
 
         public ObservableCollection<DataSourcesViewModel> CompaniesList { set; get; } =
-            new ObservableCollection<DataSourcesViewModel>();
+            new();
 
         public bool IsPermissionEnable => CurrentCompany != null;
 
@@ -101,10 +100,10 @@ namespace KursRepositories.ViewModels
         }
 
         public ObservableCollection<UserRolesViewModel> RoleList { get; set; } =
-            new ObservableCollection<UserRolesViewModel>();
+            new();
 
         public ObservableCollection<KursMenuItemViewModel> RoleItemsList { get; set; } =
-            new ObservableCollection<KursMenuItemViewModel>();
+            new();
 
         #endregion
 
@@ -248,10 +247,7 @@ namespace KursRepositories.ViewModels
 
         public ICommand UpdateLinkKursMenuItemCommand
         {
-            get
-            {
-                return new Command(UpdateLinkKursMenuItem, _ => CurrentRole != null);
-            }
+            get { return new Command(UpdateLinkKursMenuItem, _ => CurrentRole != null); }
         }
 
         private void UpdateLinkKursMenuItem(object obj)
@@ -263,15 +259,12 @@ namespace KursRepositories.ViewModels
                 var menuItem = ctx.KursMenuItem.FirstOrDefault(_ => _.Id == CurrentPermission.Id);
                 if (role != null && menuItem != null)
                 {
-                    if ((bool)e.Value)
-                    {
+                    if ((bool) e.Value)
                         role.KursMenuItem.Add(menuItem);
-                    }
                     else
-                    {
                         role.KursMenuItem.Remove(menuItem);
-                    }
                 }
+
                 ctx.SaveChanges();
             }
         }

@@ -51,7 +51,7 @@ namespace Core.EntityViewModel.Cash
             DocCode = order.DOC_CODE;
             NumOrder = order.NUM_ORD.ToString();
             Currency = Currencies[(decimal) order.CRS_DC];
-            Cash = Cashs[(decimal) order.CA_DC];
+            Cash = CashsAll[(decimal) order.CA_DC];
             Creator = order.CREATOR;
             DateOrder = (DateTime) order.DATE_ORD;
             NameOrder = order.NAME_ORD;

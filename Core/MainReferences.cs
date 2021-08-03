@@ -961,36 +961,22 @@ namespace Core
                     .ToList();
                 foreach (var item in s22)
                 {
-                    if (Cashs.ContainsKey(item.DOC_CODE))
+                    if (CashsAll.ContainsKey(item.DOC_CODE))
                     {
                         var d = Cashs[item.DOC_CODE];
                         d.UpdateFrom(item);
                         d.myState = RowStatus.NotEdited;
-                    }
-                    else
-                    {
-                        Cashs.Add(item.DOC_CODE,
-                            new Cash(item)
-                            {
-                                IsAccessRight = cashAcc.Any(_ => item.DOC_CODE == _.DocCode),
-                                myState = RowStatus.Deleted
-                            });
-                    }
 
-                    if (CashsAll.ContainsKey(item.DOC_CODE))
-                    {
-                        var d = CashsAll[item.DOC_CODE];
-                        d.UpdateFrom(item);
-                        d.myState = RowStatus.NotEdited;
                     }
                     else
                     {
-                        CashsAll.Add(item.DOC_CODE,
-                            new Cash(item)
-                            {
-                                IsAccessRight = cashAcc.Any(_ => item.DOC_CODE == _.DocCode),
-                                myState = RowStatus.Deleted
-                            });
+                        var ch = new Cash(item)
+                        {
+                            IsAccessRight = cashAcc.Any(_ => item.DOC_CODE == _.DocCode),
+                            myState = RowStatus.Deleted
+                        };
+                        Cashs.Add(item.DOC_CODE, ch);
+                        CashsAll.Add(item.DOC_CODE, ch);
                     }
                 }
 

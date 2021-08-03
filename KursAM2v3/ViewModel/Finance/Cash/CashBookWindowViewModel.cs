@@ -131,50 +131,50 @@ namespace KursAM2.ViewModel.Finance.Cash
                 {
                     var d1 = ctx.TD_22.Where(_ => _.DOC_CODE == CurrentCash.DocCode && _.CRS_DC == crs)
                         .Select(_ => _.SUMMA_START).ToList();
-                    var dIn = ctx.SD_33.Where(_ => _.CA_DC == CurrentCash.DOC_CODE && _.CRS_DC == crs
+                    var dIn = ctx.SD_33.Where(_ => _.CA_DC == CurrentCash.DocCode && _.CRS_DC == crs
                             && _.DATE_ORD >=
                             CurrentPeriod.DateStart &&
                             _.DATE_ORD <=
                             CurrentPeriod.DateEnd)
                         .Select(_ => _.SUMM_ORD).ToList();
-                    var dIn1 = ctx.SD_33.Where(_ => _.CA_DC == CurrentCash.DOC_CODE && _.CRS_DC == crs
+                    var dIn1 = ctx.SD_33.Where(_ => _.CA_DC == CurrentCash.DocCode && _.CRS_DC == crs
                             && _.DATE_ORD <
                             CurrentPeriod.DateStart)
                         .Select(_ => _.SUMM_ORD).ToList();
                     var dOut = ctx.SD_34.Where(_ =>
-                            _.CA_DC == CurrentCash.DOC_CODE && _.CRS_DC == crs && _.DATE_ORD >=
+                            _.CA_DC == CurrentCash.DocCode && _.CRS_DC == crs && _.DATE_ORD >=
                             CurrentPeriod.DateStart &&
                             _.DATE_ORD <=
                             CurrentPeriod.DateEnd)
                         .Select(_ => _.SUMM_ORD).ToList();
                     var dOut1 = ctx.SD_34.Where(_ =>
-                            _.CA_DC == CurrentCash.DOC_CODE && _.CRS_DC == crs &&
+                            _.CA_DC == CurrentCash.DocCode && _.CRS_DC == crs &&
                             _.DATE_ORD <
                             CurrentPeriod.DateStart)
                         .Select(_ => _.SUMM_ORD).ToList();
                     var dCrs1 = ctx.SD_251
-                        .Where(_ => _.CH_CASH_DC == CurrentCash.DOC_CODE && _.CH_CRS_IN_DC == crs
-                                                                         && _.CH_DATE >=
-                                                                         CurrentPeriod.DateStart &&
-                                                                         _.CH_DATE <=
-                                                                         CurrentPeriod.DateEnd)
+                        .Where(_ => _.CH_CASH_DC == CurrentCash.DocCode && _.CH_CRS_IN_DC == crs
+                                                                        && _.CH_DATE >=
+                                                                        CurrentPeriod.DateStart &&
+                                                                        _.CH_DATE <=
+                                                                        CurrentPeriod.DateEnd)
                         .Select(_ => _.CH_CRS_IN_SUM).ToList();
                     var dCrs2 = ctx.SD_251
-                        .Where(_ => _.CH_CASH_DC == CurrentCash.DOC_CODE && _.CH_CRS_OUT_DC == crs
-                                                                         && _.CH_DATE >=
-                                                                         CurrentPeriod.DateStart &&
-                                                                         _.CH_DATE <=
-                                                                         CurrentPeriod.DateEnd)
+                        .Where(_ => _.CH_CASH_DC == CurrentCash.DocCode && _.CH_CRS_OUT_DC == crs
+                                                                        && _.CH_DATE >=
+                                                                        CurrentPeriod.DateStart &&
+                                                                        _.CH_DATE <=
+                                                                        CurrentPeriod.DateEnd)
                         .Select(_ => _.CH_CRS_OUT_SUM).ToList();
                     var dCrs11 = ctx.SD_251
-                        .Where(_ => _.CH_CASH_DC == CurrentCash.DOC_CODE && _.CH_CRS_IN_DC == crs
-                                                                         && _.CH_DATE <
-                                                                         CurrentPeriod.DateStart)
+                        .Where(_ => _.CH_CASH_DC == CurrentCash.DocCode && _.CH_CRS_IN_DC == crs
+                                                                        && _.CH_DATE <
+                                                                        CurrentPeriod.DateStart)
                         .Select(_ => _.CH_CRS_IN_SUM).ToList();
                     var dCrs21 = ctx.SD_251
-                        .Where(_ => _.CH_CASH_DC == CurrentCash.DOC_CODE && _.CH_CRS_OUT_DC == crs
-                                                                         && _.CH_DATE <
-                                                                         CurrentPeriod.DateStart)
+                        .Where(_ => _.CH_CASH_DC == CurrentCash.DocCode && _.CH_CRS_OUT_DC == crs
+                                                                        && _.CH_DATE <
+                                                                        CurrentPeriod.DateStart)
                         .Select(_ => _.CH_CRS_OUT_SUM).ToList();
                     var p1 = d1.Sum() + dIn1.Sum()
                              - dOut1.Sum()
@@ -484,9 +484,9 @@ namespace KursAM2.ViewModel.Finance.Cash
                 {
                     var dates = new List<DateTime>();
                     var d1 = ctx.TD_22.Where(_ => _.DOC_CODE == CurrentCash.DocCode).Select(_ => _.DATE_START);
-                    var dIn = ctx.SD_33.Where(_ => _.CA_DC == CurrentCash.DOC_CODE).Select(_ => _.DATE_ORD).Distinct();
-                    var dOut = ctx.SD_34.Where(_ => _.CA_DC == CurrentCash.DOC_CODE).Select(_ => _.DATE_ORD).Distinct();
-                    var dCrs = ctx.SD_251.Where(_ => _.CH_CASH_DC == CurrentCash.DOC_CODE).Select(_ => _.CH_DATE)
+                    var dIn = ctx.SD_33.Where(_ => _.CA_DC == CurrentCash.DocCode).Select(_ => _.DATE_ORD).Distinct();
+                    var dOut = ctx.SD_34.Where(_ => _.CA_DC == CurrentCash.DocCode).Select(_ => _.DATE_ORD).Distinct();
+                    var dCrs = ctx.SD_251.Where(_ => _.CH_CASH_DC == CurrentCash.DocCode).Select(_ => _.CH_DATE)
                         .Distinct();
                     foreach (var i in d1) dates.Add(i);
                     foreach (var i in dIn)

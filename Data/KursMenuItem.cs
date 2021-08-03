@@ -20,6 +20,7 @@ namespace Data
             this.UserMenuRight = new HashSet<UserMenuRight>();
             this.FormLayout = new HashSet<FormLayout>();
             this.UserRoles = new HashSet<UserRoles>();
+            this.SignatureSchemes = new HashSet<SignatureSchemes>();
         }
     
         public int Id { get; set; }
@@ -37,5 +38,7 @@ namespace Data
         public virtual ICollection<FormLayout> FormLayout { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserRoles> UserRoles { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SignatureSchemes> SignatureSchemes { get; set; }
     }
 }

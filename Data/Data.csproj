@@ -199,6 +199,9 @@
     <Compile Include="DocHistory.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="DocumentSignatures.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="DOC_FILES.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -1489,6 +1492,18 @@
     </Compile>
     <Compile Include="SHORT_PERSONA.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SignatureDocumentTypes.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SignatureSchemes.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SignatureSchemesInfo.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SignatureType.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="SONY_REPORT.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>

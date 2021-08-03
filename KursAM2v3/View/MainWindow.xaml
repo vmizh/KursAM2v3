@@ -23,10 +23,13 @@
                 <dxb:BarButtonItemLink BarItemName="barButtonItem2" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem4" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem3" />
+                <dxb:BarButtonItemLink BarItemName="barButtonItem5" />
             </dxb:BarSubItem>
             <dxb:BarButtonItem x:Name="barButtonItem1" Content="Настройки пользователя" ItemClick="BarButtonItem1_OnItemClick"/>
             <dxb:BarButtonItem x:Name="barButtonItem2" Content="Обновить справочники"
                                ItemClick="BarButtonItem2_OnItemClick" />
+            <dxb:BarButtonItem x:Name="barButtonItem5" Content="Сохранить историю"
+                               ItemClick="BarButtonItem5_OnItemClick" />
             <dxb:BarButtonItem x:Name="barButtonItem4" Content="Сбросить разметку"
                                ItemClick="BarButtonItem4_OnItemClick" />
             <dxb:BarButtonItem x:Name="barButtonItem3" Content="Выход" ItemClick="BarButtonItem3_OnItemClick" />

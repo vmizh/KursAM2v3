@@ -101,6 +101,7 @@ namespace KursAM2.ViewModel.Dogovora
         public DogovorClientWindowViewModel(Guid? id)
         {
             BaseRepository = new GenericKursDBRepository<DogovorClient>(unitOfWork);
+            DogovorClientRepository = new DogovorClientRepository(unitOfWork);
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
             DialogService = GetService<IDialogService>();
@@ -130,12 +131,14 @@ namespace KursAM2.ViewModel.Dogovora
 
         #region Properties
 
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<DogovorClientFactViewModel> FactsAll { set; get; } =
             new ObservableCollection<DogovorClientFactViewModel>();
 
         public ObservableCollection<LinkDocumentInfo> Documents { set; get; } =
             new ObservableCollection<LinkDocumentInfo>();
 
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<InvoicePaymentDocument> PaymentList { set; get; } =
             new ObservableCollection<InvoicePaymentDocument>();
 

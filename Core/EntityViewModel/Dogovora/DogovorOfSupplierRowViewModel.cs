@@ -188,9 +188,6 @@ namespace Core.EntityViewModel.Dogovora
                     var ndsSumma = Decimal.Round(Entity.Quantity * Entity.Price * Entity.NDSPercent / 100, 2);
                     summa = Entity.Quantity * Entity.Price + ndsSumma;
                 }
-
-                RaisePropertyChanged(nameof(Summa));
-                d.RaisePropertyChanged(nameof(d.Summa));
             }
 
             return summa;

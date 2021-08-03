@@ -117,14 +117,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ViewModels\DataSourcesViewModel.cs" />
-    <Compile Include="ViewModels\KursMenuGroupViewModel.cs" />
-    <Compile Include="ViewModels\KursMenuItemViewModel.cs" />
     <Compile Include="ViewModels\MainWindowPermissionsViewModel.cs" />
     <Compile Include="ViewModels\RoleCreationWindowViewModel1.cs" />
     <Compile Include="ViewModels\UserCreationWindowViewModel.cs" />
-    <Compile Include="ViewModels\UserRolesViewModel.cs" />
-    <Compile Include="ViewModels\UsersViewModel.cs" />
     <Compile Include="View\MainWindowPermissions.xaml.cs">
       <DependentUpon>MainWindowPermissions.xaml</DependentUpon>
     </Compile>

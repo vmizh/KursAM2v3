@@ -1300,7 +1300,7 @@ namespace Core.Invoices.EntityViewModel
                 Валюта = Currency.Name,
                 Отгружено = SummaFact.ToString("n2"),
                 Договор = Contract?.ToString(),
-                Ответственный = PersonaResponsible.Name,
+                Ответственный = PersonaResponsible?.Name,
                 Центр_ответственности = CO?.Name,
                 Тип_взаиморасчетов = VzaimoraschetType?.Name,
                 Условия_оплаты = PayCondition?.Name,
