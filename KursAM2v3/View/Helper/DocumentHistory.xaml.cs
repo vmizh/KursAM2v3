@@ -41,6 +41,60 @@ namespace KursAM2.View.Helper
 
     public static class DocumentHistoryManager
     {
+        public static void LoadHistory(decimal dc)
+        {
+            var hdoclist = new List<DocHistoryViewModel>();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                hdoclist.AddRange(ctx.DocHistory.Where(_ => _.DocDC == dc)
+                    .OrderByDescending(_ => _.Date)
+                    .ToList()
+                    .Select(d => new DocHistoryViewModel(d)));
+            }
+            var form = new DocHistoryList
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = new DocHistoryWindowViewModel(hdoclist)
+            };
+            form.Show();
+        }
+
+        public static void LoadHistory(Guid id)
+        {
+            var hdoclist = new List<DocHistoryViewModel>();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                hdoclist.AddRange(ctx.DocHistory.Where(_ => _.DocId == id)
+                    .OrderByDescending(_ => _.Date)
+                    .ToList()
+                    .Select(d => new DocHistoryViewModel(d)));
+            }
+            var form = new DocHistoryList
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = new DocHistoryWindowViewModel(hdoclist)
+            };
+            form.Show();
+        }
+
+        public static void LoadHistory(decimal dc, int code)
+        {
+            var hdoclist = new List<DocHistoryViewModel>();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                hdoclist.AddRange(ctx.DocHistory.Where(_ => _.DocDC == dc && _.Code == code)
+                    .OrderByDescending(_ => _.Date)
+                    .ToList()
+                    .Select(d => new DocHistoryViewModel(d)));
+            }
+            var form = new DocHistoryList
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = new DocHistoryWindowViewModel(hdoclist)
+            };
+            form.Show();
+        }
+
         public static void LoadHistory(DocumentType type, Guid? id = null, decimal? dc = null, int? code = null)
         {
             if (id == null && dc == null && code == null) return;

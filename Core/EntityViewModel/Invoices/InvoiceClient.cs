@@ -48,16 +48,7 @@ namespace Core.EntityViewModel.Invoices
             LoadReferences();
 
             // ReSharper disable once PossibleNullReferenceException
-            if (Entity.TD_84 == null || Entity.TD_84.Count <= 0) return;
-            foreach (var row in Entity.TD_84)
-            {
-                var newRow = new InvoiceClientRow(row)
-                {
-                    Parent = this,
-                    IsNDSInPrice = IsNDSIncludeInPrice
-                };
-                Rows.Add(newRow);
-            }
+            
         }
 
         public InvoiceClient(SD_84 entity, UnitOfWork<ALFAMEDIAEntities> ctx, bool isLoadPaymentDocs = false)

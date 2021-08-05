@@ -10,6 +10,7 @@ using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Mvvm.UI.ModuleInjection;
 using DevExpress.Xpf.Bars;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.LayoutControl;
@@ -48,6 +49,7 @@ using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.Reference.Nomenkl;
 using KursAM2.ViewModel.Repozit;
 using KursAM2.ViewModel.Shop;
+using KursAM2.ViewModel.Signatures;
 using KursAM2.ViewModel.StartLogin;
 using LayoutManager;
 using NomenklCostReset = KursAM2.View.Logistiks.NomenklCostReset;
@@ -157,6 +159,20 @@ namespace KursAM2.View
                 Window form;
                 switch (formName)
                 {
+                        //Настройка подписей
+                        case"Настройка подписей": 
+                            form = new KursStandartFormView
+                            {
+                                Owner = Application.Current.MainWindow,
+                            };
+                            var sign = new SignaturesWindowViewModel
+                            {
+                                Form = form
+                            };
+                            form.DataContext = sign;
+                            sign.Form = form;
+                            form.Show();
+                            break;
                     // Начисления вынебалансовым Клиентам
                     case "Внебалансовые начисления для клиентов":
                         var aad = new AccuredAmountForClientSearchViewModel();

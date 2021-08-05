@@ -44,8 +44,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             Documents = new ObservableCollection<InvoiceProvider>();
             SelectedDocs = new ObservableCollection<InvoiceProvider>();
-            DateEnd = DateTime.Today;
-            DateStart = DateEnd.AddDays(-30);
+            EndDate = DateTime.Today;
+            StartDate = EndDate.AddDays(-30);
         }
 
         public SearchInvoiceProviderViewModel(Window form) : base(form)
@@ -58,37 +58,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             Documents = new ObservableCollection<InvoiceProvider>();
             SelectedDocs = new ObservableCollection<InvoiceProvider>();
-            DateEnd = DateTime.Today;
-            DateStart = DateEnd.AddDays(-30);
+            EndDate = DateTime.Today;
+            StartDate = EndDate.AddDays(-30);
         }
 
-        public DateTime DateEnd
-        {
-            get => myDateEnd;
-            set
-            {
-                if (myDateEnd == value) return;
-                myDateEnd = value;
-                RaisePropertyChanged();
-                if (myDateStart < myDateEnd) return;
-                myDateStart = myDateEnd;
-                RaisePropertyChanged(nameof(DateStart));
-            }
-        }
-
-        public DateTime DateStart
-        {
-            get => myDateStart;
-            set
-            {
-                if (myDateStart == value) return;
-                myDateStart = value;
-                RaisePropertyChanged();
-                if (myDateStart <= myDateEnd) return;
-                myDateEnd = myDateStart;
-                RaisePropertyChanged(nameof(DateEnd));
-            }
-        }
+        public override string WindowName => "Поиск счетов-фактур поставщиков";
 
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<InvoiceProvider> Documents { set; get; }
@@ -121,7 +95,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private Task Load()
         {
             var res = Task.Factory.StartNew(() =>
-                new List<InvoiceProvider>(InvoiceProviderRepository.GetAllByDates(DateStart, DateEnd)));
+                new List<InvoiceProvider>(InvoiceProviderRepository.GetAllByDates(StartDate, EndDate)));
             Documents.Clear();
             foreach (var d in res.Result) Documents.Add(d);
             RaisePropertyChanged(nameof(Documents));

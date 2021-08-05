@@ -452,8 +452,12 @@
     <Compile Include="ViewModel\Shop\ShopParserExtFilesWindowViewModel.cs" />
     <Compile Include="ViewModel\Shop\NomenklInfo.cs" />
     <Compile Include="ViewModel\Shop\ShopExtFileOrderItem.cs" />
+    <Compile Include="ViewModel\Signatures\SignaturesWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastDocumentWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastUsersDocumentWindowViewModel.cs" />
+    <Compile Include="View\Base\KursStandartFormView.xaml.cs">
+      <DependentUpon>KursStandartFormView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Base\StandartSearchView.xaml.cs">
       <DependentUpon>StandartSearchView.xaml</DependentUpon>
     </Compile>
@@ -1039,6 +1043,9 @@
     <Compile Include="View\Shop\ShopParserExtFiles.xaml.cs">
       <DependentUpon>ShopParserExtFiles.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Signature\SignatureReferenceUC.xaml.cs">
+      <DependentUpon>SignatureReferenceUC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SplashWindow\DebitorCreditorKontrCalcSplashView.xaml.cs">
       <DependentUpon>DebitorCreditorKontrCalcSplashView.xaml</DependentUpon>
     </Compile>
@@ -1172,6 +1179,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ViewModel\Finance\SelectCashBankDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\KursStandartFormView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1792,6 +1803,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Shop\ShopParserExtFiles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Signature\SignatureReferenceUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

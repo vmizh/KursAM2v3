@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
 using Data;
@@ -16,7 +17,7 @@ namespace Core.EntityViewModel.Signatures
 
         #region Properties
 
-        public SignatureType Entity { get; set; }
+        [Display(AutoGenerateField = false)] public SignatureType Entity { get; set; }
 
         public override Guid Id
         {
@@ -28,6 +29,60 @@ namespace Core.EntityViewModel.Signatures
                 RaisePropertyChanged();
             }
         }
+
+        [Display(Name = "Наименование")]
+        public override string Name
+        {
+            get => Entity.Name;
+            set
+            {
+                if (Entity.Name == value) return;
+                Entity.Name = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        [Display(Name = "Примечания")]
+        public override string Note
+        {
+            get => Entity.Note;
+            set
+            {
+                if (Entity.Note == value) return;
+                Entity.Note = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        [Display(Name = "База данных")]
+        public DataSourceViewModel DataSource
+        {
+            get
+            {
+                if (myDataSource != null) return myDataSource;
+                if (Entity.DataSources != null)
+                {
+                    myDataSource = new DataSourceViewModel(Entity.DataSources);
+                    return myDataSource;
+                }
+
+                return null;
+
+            }
+            set
+            {
+                if (myDataSource == value) return;
+                myDataSource = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<SignatureSchemesViewModel> Shemes { set; get; } =
+            new ObservableCollection<SignatureSchemesViewModel>();
+
+        public ObservableCollection<UserViewModel> Users { set; get; } = new ObservableCollection<UserViewModel>();
+
+
 
         #endregion
 
@@ -54,29 +109,6 @@ namespace Core.EntityViewModel.Signatures
                 Id = Guid.NewGuid(),
             };
         }
-        
-        public DataSourceViewModel DataSource
-        {
-            get
-            {
-                if(myDataSource != null) return myDataSource;
-                if (Entity.DataSources != null)
-                {
-                    myDataSource = new DataSourceViewModel(Entity.DataSources);
-                    return myDataSource;
-                }
-                return null;
-
-            }
-            set
-            {
-                if (myDataSource == value) return;
-                myDataSource = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public ObservableCollection<UserViewModel> Users { set; get; } = new ObservableCollection<UserViewModel>();
 
         #endregion
     }

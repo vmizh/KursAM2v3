@@ -4,10 +4,8 @@ using System.Windows;
 using System.Windows.Data;
 using Core;
 using Core.EntityViewModel.Cash;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
@@ -40,6 +38,7 @@ namespace KursAM2.View.Finance.Cash
         public ComboBoxEdit CurrencyItem { get; set; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -82,6 +81,7 @@ namespace KursAM2.View.Finance.Cash
                 BindingHelper.CopyBinding(oldContent, newContent, BaseEdit.EditValueProperty);
                 e.Item.Content = newContent;
             }
+
             switch (e.PropertyName)
             {
                 case nameof(doc.CREATOR):
@@ -112,6 +112,7 @@ namespace KursAM2.View.Finance.Cash
                     {
                         WindowManager.ShowError(ex);
                     }
+
                     CurrencyItem = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Currency, "Currency", ctx.CurrencyList,
                         width: 50);
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
@@ -229,6 +230,7 @@ namespace KursAM2.View.Finance.Cash
                     e.Item.VerticalAlignment = VerticalAlignment.Center;
                     break;
             }
+
             ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
         }
 
@@ -243,6 +245,7 @@ namespace KursAM2.View.Finance.Cash
                 doc.SUMM_ORD = 0;
                 return;
             }
+
             if ((decimal) (e.NewValue ?? 0m) > doc.MaxSumma && doc.SFACT_DC != null)
             {
                 WindowManager.ShowMessage(this, "Сумма ордера не может быть больше сумму оплаты по счету!", "Ошибка",
@@ -265,6 +268,7 @@ namespace KursAM2.View.Finance.Cash
                     "Предупреждение", MessageBoxImage.Information);
                 return;
             }
+
             ctx.WindowName = $"Приходный кассовый ордер в {doc?.Cash?.Name}";
             if (doc == null || doc.Cash == null) return;
             try
@@ -300,7 +304,7 @@ namespace KursAM2.View.Finance.Cash
                     MessageBoxImage.Question);
                 if (res == MessageBoxResult.Yes)
                 {
-                    doc.MaxSumma = (decimal) (item.Summa - item.PaySumma);
+                    doc.MaxSumma = item.Summa - item.PaySumma;
                     doc.KONTRAGENT_DC = item.Entity.SF_CLIENT_DC;
                     doc.DATE_ORD = item.DocDate;
                     doc.SUMM_ORD = item.Summa - item.PaySumma;
@@ -312,7 +316,7 @@ namespace KursAM2.View.Finance.Cash
                 }
                 else
                 {
-                    doc.MaxSumma = (decimal) (item.Summa - item.PaySumma);
+                    doc.MaxSumma = item.Summa - item.PaySumma;
                     doc.KONTRAGENT_DC = item.Entity.SF_CLIENT_DC;
                     doc.SUMM_ORD = item.Summa;
                     doc.KONTR_CRS_DC = item.Entity.SF_CRS_DC;
@@ -325,7 +329,7 @@ namespace KursAM2.View.Finance.Cash
             }
             else
             {
-                doc.MaxSumma = (decimal) (item.Summa - item.PaySumma);
+                doc.MaxSumma = item.Summa - item.PaySumma;
                 doc.KONTRAGENT_DC = item.Entity.SF_CLIENT_DC;
                 doc.SUMM_ORD = item.Summa;
                 doc.KONTR_CRS_DC = item.Entity.SF_CRS_DC;

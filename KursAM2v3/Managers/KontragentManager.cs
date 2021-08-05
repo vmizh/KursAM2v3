@@ -52,17 +52,7 @@ namespace KursAM2.Managers
         {
             try
             {
-                //using (var ctx = new LocalDbContext())
-                //{
-                //    var dd = ctx.KontragentCashes.Where(_ => _.DBName == GlobalOptions.DataBaseName).ToList();
-                //    if (dd.Count > 0)
-                //        foreach (var d in dd)
-                //        {
-                //            var k = MainReferences.GetKontragent(d.DocCode);
-                //            if (k != null)
-                //                k.OrderCount = d.Count;
-                //        }
-                //}
+                MainReferences.LoadKontragents();
                 using (var dtx = GlobalOptions.KursSystem())
                 {
                     var dd = dtx.KontragentCashes.Where(_ => _.UserId == GlobalOptions.UserInfo.KursId

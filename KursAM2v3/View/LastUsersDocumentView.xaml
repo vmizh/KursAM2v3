@@ -43,6 +43,26 @@
                                            x:Name="tableViewRows"
                                 ShowAutoFilterRow="True" 
                                 EnableImmediatePosting="False">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                    <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}">
+                        <MenuItem.Icon>
+                            <Image
+                                Source="pack://siteoforigin:,,,/Images/document_edit.png" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Экспорт"
+                              Command="{Binding VisualControlExportCommand}"
+                              CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              AncestorType={x:Type ContextMenu}}}">
+                        <MenuItem.Icon>
+                            <Image
+                                Source="pack://siteoforigin:,,,/Images/export1.png" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+                                </dxg:TableView.ContextMenu>
                             </dxg:TableView>
                         </dxg:GridControl.View>
                     </dxg:GridControl>

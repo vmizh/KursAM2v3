@@ -2,17 +2,16 @@
 using System.Windows;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
-using ServiceStack.Commands;
 
 namespace Core.ViewModel.Base
 {
     public abstract class RSWindowSearchViewModelBase : RSWindowViewModelBase
     {
-        private DateTime myEndDate;
+        private DateTime myDateEnd;
+        private DateTime myDateStart;
         private string myFirstSearchName;
         private string mySecondSearchName;
-        private DateTime myStartDate;
-        
+
         public RSWindowSearchViewModelBase()
         {
             StartDate = DateTime.Today.AddDays(-14);
@@ -48,25 +47,31 @@ namespace Core.ViewModel.Base
             }
         }
 
-        public DateTime StartDate
+        public DateTime EndDate
         {
-            get => myStartDate;
+            get => myDateEnd;
             set
             {
-                if (myStartDate == value) return;
-                myStartDate = value;
+                if (myDateEnd == value) return;
+                myDateEnd = value;
                 RaisePropertyChanged();
+                if (myDateStart < myDateEnd) return;
+                myDateStart = myDateEnd;
+                RaisePropertyChanged(nameof(StartDate));
             }
         }
 
-        public DateTime EndDate
+        public DateTime StartDate
         {
-            get => myEndDate;
+            get => myDateStart;
             set
             {
-                if (myEndDate == value) return;
-                myEndDate = value;
+                if (myDateStart == value) return;
+                myDateStart = value;
                 RaisePropertyChanged();
+                if (myDateStart <= myDateEnd) return;
+                myDateEnd = myDateStart;
+                RaisePropertyChanged(nameof(EndDate));
             }
         }
 
@@ -74,7 +79,7 @@ namespace Core.ViewModel.Base
 
         public Command AutoGeneratingColumnCommand
         {
-            get { return new Command(AutogeneratingSearchGridColumns, _ => true); }
+            get { return new(AutogeneratingSearchGridColumns, _ => true); }
         }
 
         //AutoGeneratingColumnEventArgs
@@ -91,7 +96,7 @@ namespace Core.ViewModel.Base
                 case "Note":
                     e.Column.EditSettings = new TextEditSettings
                     {
-                        AcceptsReturn = true,
+                        AcceptsReturn = true
                     };
                     break;
             }

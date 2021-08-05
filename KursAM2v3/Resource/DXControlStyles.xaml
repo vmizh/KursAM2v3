@@ -47,27 +47,31 @@
                     <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}">
                         <MenuItem.Icon>
                             <Image
-                                Source="pack://siteoforigin:,,,/Images/document_edit.png" />
+                                Source="{StaticResource DocOpenDrawingImage}" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
                     <MenuItem Header="Создать новый документ">
+                        <MenuItem.Icon>
+                            <Image
+                                Source="{StaticResource AddDrawingImage}" />
+                        </MenuItem.Icon>
                         <MenuItem Header="Пустой документ" Command="{Binding DocNewEmptyCommand}">
                             <MenuItem.Icon>
                                 <Image
-                                    Source="pack://siteoforigin:,,,/Images/document_new.png" />
+                                    Source="{StaticResource AddEmptyDrawingImage}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="С текущими реквизитами" Command="{Binding DocNewCopyRequisiteCommand}">
                             <MenuItem.Icon>
                             <Image
-                                Source="pack://siteoforigin:,,,/Images/document_attachment.png" />
+                                Source="{StaticResource AddRequisiteDrawingImage}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Копия текущего" Command="{Binding DocNewCopyCommand}">
                             <MenuItem.Icon>
                                 <Image
-                                    Source="pack://siteoforigin:,,,/Images/document_add.png" />
+                                    Source="{StaticResource AddCopyDrawingImage}" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
@@ -78,7 +82,7 @@
                                               AncestorType={x:Type ContextMenu}}}">
                         <MenuItem.Icon>
                             <Image
-                                Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                Source="{StaticResource ExportDrawingImage}" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>

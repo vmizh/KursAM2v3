@@ -1227,7 +1227,7 @@ namespace Core
             }
         }
 
-        private static void LoadKontragents()
+        public static void LoadKontragents()
         {
             //AllKontragents.Clear();
             try

@@ -228,7 +228,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     DOC_CODE = newDC,
                                     NOM_NAME = newItem.Name,
                                     NOM_NOMENKL = newItem.NomenklNumber + " " +
-                                                  GlobalOptions.SystemProfile.MainCurrency.Name,
+                                                  GlobalOptions.SystemProfile.NationalCurrency.Name,
                                     NOM_NOTES = newItem.Note,
                                     NOM_SALE_CRS_DC = crsDC,
                                     NOM_FULL_NAME = newItem.Name,

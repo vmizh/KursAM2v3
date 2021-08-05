@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Systems;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
+using KursAM2.View.Helper;
 
 namespace KursAM2.ViewModel.StartLogin
 {
@@ -43,16 +44,16 @@ namespace KursAM2.ViewModel.StartLogin
                                                               && _.DbId == GlobalOptions.DataBaseId
                                                               && _.LastOpen > d)
                     .OrderByDescending(_ => _.LastOpen))
-                {
                     LastDocuments.Add(new LastDocumentViewModel(h));
-                }
             }
         }
 
         public override void DocumentOpen(object obj)
         {
-            DocumentsOpenManager.Open((DocumentType)CurrentLastDocument.Entity.DocType, (decimal)CurrentLastDocument.Entity.DocDC);
-            Form.Close();
+            DocumentsOpenManager.Open((DocumentType) CurrentLastDocument.Entity.DocType,
+                // ReSharper disable once PossibleInvalidOperationException
+                (decimal) CurrentLastDocument.Entity.DocDC);
+            //Form.Close();
         }
 
         public override bool IsDocumentOpenAllow => CurrentLastDocument != null;
@@ -76,7 +77,5 @@ namespace KursAM2.ViewModel.StartLogin
         }
 
         #endregion
-
-
     }
 }

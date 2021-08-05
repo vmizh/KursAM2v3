@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Windows.Media;
-using Core.EntityViewModel;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
-using Core.ViewModel.Common;
 using Data;
 using Data.Repository;
-using User = Helper.User;
+using Helper;
 
 namespace Core
 {
@@ -27,25 +22,28 @@ namespace Core
         public static UnitOfWork<KursSystemEntities> KursSystemDBUnitOfWork;
 
         public static string SqlConnectionString;
+        public static string SqlSystemConnectionString;
         public static User UserInfo { set; get; }
 
         public static string DataBaseName { set; get; }
         public static Guid DataBaseId { set; get; }
         public static Brush DatabaseColor { set; get; }
+
         public static SystemProfile SystemProfile { set; get; }
+
         //public static MainReferences MainReferences { set; get; }
         public static string Version { set; get; }
 
         public static KursSystemEntities KursSystem()
         {
-            var connString = new SqlConnectionStringBuilder
+            SqlSystemConnectionString = new SqlConnectionStringBuilder
             {
                 DataSource = "172.16.0.1",
                 InitialCatalog = "KursSystem",
                 UserID = "sa",
                 Password = "CbvrfFhntvrf65"
             }.ToString();
-            return new KursSystemEntities(connString);
+            return new KursSystemEntities(SqlSystemConnectionString);
         }
 
         public static ALFAMEDIAEntities GetEntities()
@@ -56,7 +54,7 @@ namespace Core
                     DataSource = "172.16.0.1",
                     InitialCatalog = "EcoOndol",
                     UserID = "sysadm",
-                    Password = "19655691",
+                    Password = "19655691"
                 }.ToString();
             var ret = new ALFAMEDIAEntities(SqlConnectionString);
             return ret;
@@ -139,7 +137,7 @@ namespace Core
         public Kontragent OwnerKontragent { set; get; }
 
         public NomenklCalcType NomenklCalcType { set; get; }
-        public List<PROFILE> Profile { set; get; } = new List<PROFILE>();
+        public List<PROFILE> Profile { set; get; } = new();
         public Currency EmployeeDefaultCurrency { set; get; }
         public EMP_PAYROLL_TYPEViewModel DafaultPayRollType { set; get; }
     }

@@ -64,7 +64,7 @@ namespace KursRepositories.ViewModels
                     RaisePropertyChanged();
                 }
             }
-        [DisplayName("Наименоване комании")]
+        [DisplayName("Наименоване компании")]
         public string ShowName
             {
                 get => Entity.ShowName;

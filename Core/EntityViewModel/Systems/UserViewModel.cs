@@ -5,7 +5,7 @@ namespace Core.EntityViewModel.Systems
 {
     public class UserViewModel : RSViewModelBase
     {
-        [Display(Name = "Полное имя")] private string myFullName;
+        private string myFullName;
         private int myTabelNumber;
         private int myUserId;
 
@@ -21,6 +21,7 @@ namespace Core.EntityViewModel.Systems
             }
         }
 
+        [Display(Name = "Полное имя")]
         public string FullName
         {
             get => myFullName;
@@ -32,7 +33,7 @@ namespace Core.EntityViewModel.Systems
             }
         }
 
-        [Display(Name = "Табельный номер")]
+        [Display(Name = "Табельный номер", AutoGenerateField = false)]
         public int TabelNumber
         {
             get => myTabelNumber;

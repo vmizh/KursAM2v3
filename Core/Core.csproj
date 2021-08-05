@@ -172,6 +172,7 @@
     <Compile Include="EntityViewModel\Dogovora\DogovorOfSupplierRowViewModel.cs" />
     <Compile Include="EntityViewModel\Dogovora\LinkDocumentInfo.cs" />
     <Compile Include="EntityViewModel\FieldChangeType.cs" />
+    <Compile Include="EntityViewModel\Signatures\SignatureSchemesInfoViewModel.cs" />
     <Compile Include="EntityViewModel\Signatures\SignatureSchemesViewModel.cs" />
     <Compile Include="EntityViewModel\Signatures\SignatureTypeViewModel.cs" />
     <Compile Include="EntityViewModel\Systems\DataSourcesViewModel.cs" />
