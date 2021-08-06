@@ -11,7 +11,6 @@ using Core.EntityViewModel.Employee;
 using Core.EntityViewModel.Systems;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using KursAM2.View.Base;

@@ -10,13 +10,11 @@
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=Core"
-             xmlns:invoices="clr-namespace:KursAM2.ViewModel.Finance.Invoices"
              mc:Ignorable="d"
+             Icon="{Binding Source={StaticResource InvoiceClientDrawingImage},
+             Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
              Title="{Binding WindowName}" MinHeight="400" Width="800"
              >
-    <!--<dx:ThemedWindow.DataContext>
-        <invoices:ClientWindowViewModel/>
-    </dx:ThemedWindow.DataContext>-->
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}" 
                    Foreground="{Binding DatabaseColor}"
@@ -227,12 +225,12 @@
                               VerticalAlignment="Stretch"
                               dxlc:LayoutControl.AllowVerticalSizing="True"
                               Name="mainLayoutControl2">
-                        <dxlc:LayoutGroup Header="Строки"
+                        <dxlc:LayoutGroup HeaderTemplate="{StaticResource RowsLayoutGroupHeader}"
                                   Name="mainLayoutControl3">
                             <dxg:GridControl Name="gridRows"
                                              Style="{StaticResource GridControl.Base}"
-                                            dx:DXSerializer.SerializationID="gridRows"
-                                            dx:DXSerializer.StoreLayoutMode="All"
+                                             dx:DXSerializer.SerializationID="gridRows"
+                                             dx:DXSerializer.StoreLayoutMode="All"
                                              Margin="0,10,0,0"
                                              ItemsSource="{Binding Document.Rows, UpdateSourceTrigger=PropertyChanged}"
                                              CurrentItem="{Binding CurrentRow, UpdateSourceTrigger=PropertyChanged}"
@@ -248,20 +246,30 @@
                                            CellValueChanged="TableViewRows_OnCellValueChanged">
                                         <dxg:TableView.ContextMenu>
                                             <ContextMenu>
-                                                <MenuItem Header="Добавить номенклатуру" Command="{Binding AddNomenklCommand}" />
-                                                <MenuItem Header="Добавить услугу" Command="{Binding AddUslugaCommand}" />
-                                                <MenuItem Header="Удалить номенклатуру" Command="{Binding DeleteRowCommand}" />
+                                                <MenuItem Header="Добавить номенклатуру" Command="{Binding AddNomenklCommand}">
+                                                    <MenuItem.Icon>
+                                                        <Image
+                                                            Source="{StaticResource AddStandartDrawingImage}" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem Header="Добавить услугу" Command="{Binding AddUslugaCommand}">
+                                                    <MenuItem.Icon>
+                                                        <Image
+                                                            Source="{StaticResource UslugaDrawingImage}" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem Header="Удалить номенклатуру" Command="{Binding DeleteRowCommand}">
+                                                    <MenuItem.Icon>
+                                                        <Image
+                                                            Source="{StaticResource DeleteStandartDrawingImage}" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
                                                 <Separator/>
-                                                <MenuItem Header="Добавить из договора" Command="{Binding AddFromDogovorCommand}" />
-                                                <Separator/>
-                                                <MenuItem Header="Накладные расходы">
-                                                    <MenuItem Header="По стоимости" Command="{Binding SetTypeNakladCommand}" CommandParameter="0"/>
-                                                    <MenuItem Header="По цене за единицу"  Command="{Binding SetTypeNakladCommand}" CommandParameter="1"/>
-                                                    <MenuItem Header="По количеству"  Command="{Binding SetTypeNakladCommand}" CommandParameter="2"/>
-                                                    <MenuItem Header="По весу"  Command="{Binding SetTypeNakladCommand}" CommandParameter="3"/>
-                                                    <MenuItem Header="По объему"  Command="{Binding SetTypeNakladCommand}" CommandParameter="4"/>
-                                                    <MenuItem Header="По стоимости" Command="{Binding SetTypeNakladCommand}" CommandParameter="5"/>
-                                                    <MenuItem Header="В ручную" Command="{Binding SetTypeNakladCommand}" CommandParameter="6"/>
+                                                <MenuItem Header="Добавить из договора" Command="{Binding AddFromDogovorCommand}">
+                                                    <MenuItem.Icon>
+                                                        <Image
+                                                            Source="{StaticResource DogovorDrawingImage}" />
+                                                    </MenuItem.Icon>
                                                 </MenuItem>
                                                 <Separator />
                                                 <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
@@ -270,7 +278,7 @@
                                             AncestorType={x:Type ContextMenu}}}">
                                                     <MenuItem.Icon>
                                                         <Image
-                                                    Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                                    Source="{StaticResource ExportDrawingImage}" />
                                                     </MenuItem.Icon>
                                                 </MenuItem>
                                                 <MenuItem Header="Копировать итоговую сумму"
@@ -288,7 +296,7 @@
                                 </dxg:GridControl.View>
                             </dxg:GridControl>
                         </dxlc:LayoutGroup>
-                        <dxlc:LayoutGroup Header="Фактурирование"
+                        <dxlc:LayoutGroup HeaderTemplate="{StaticResource FactsLayoutGroupHeader}"
                                   Name="mainLayoutControl4">
                             <dxg:GridControl Name="gridFacts"
                                              Style="{StaticResource GridControl.Base}"
@@ -330,7 +338,7 @@
                                 </dxg:GridControl.View>
                             </dxg:GridControl>
                         </dxlc:LayoutGroup>
-                        <dxlc:LayoutGroup Header="Оплата"
+                        <dxlc:LayoutGroup HeaderTemplate="{StaticResource PaysLayoutGroupHeader}"
                                   Name="mainLayoutControl5">
                             <dxg:GridControl Name="gridPays"
                                              Style="{StaticResource GridControl.Base}"

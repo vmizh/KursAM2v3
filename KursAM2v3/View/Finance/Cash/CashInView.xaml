@@ -7,6 +7,8 @@
              xmlns:control="clr-namespace:Core.Control;assembly=Core"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              mc:Ignorable="d"
+             Icon="{Binding Source={StaticResource CashInDrawingImage},
+             Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
              Title="{Binding WindowName}" Height="300" Width="300">
 
     <DockPanel>

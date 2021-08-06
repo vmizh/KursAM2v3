@@ -16,7 +16,7 @@
             <Label Content="База данных:" />
             <dxe:ComboBoxEdit
                 Margin="5 0"
-                MinWidth="200"
+                MinWidth="300"
                 AutoComplete="True"
                 ItemsSource="{Binding DataSourceList, UpdateSourceTrigger=PropertyChanged}"
                 EditValue="{Binding CurrentDataSource, UpdateSourceTrigger=PropertyChanged,
@@ -24,7 +24,8 @@
         </StackPanel>
         <dxlc:LayoutGroup Name="TabsLayoutGroup" View="Tabs"
                           HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch">
+                          VerticalAlignment="Stretch"
+                          Margin="0 8 0 0">
             <dxlc:LayoutGroup Name="SignatureTypesGroup"
                               Orientation="Vertical">
                 <dxlc:LayoutGroup.HeaderTemplate>
@@ -90,8 +91,8 @@
                                            Name="tableViewUsers">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Добавить подпись" Command="{Binding AddSignatureCommand}" />
-                                        <MenuItem Header="Удалить подпись" Command="{Binding DeleteSignatureCommand}" />
+                                        <MenuItem Header="Добавить пользователя" Command="{Binding AddUserCommand}" />
+                                        <MenuItem Header="Удалить пользователя" Command="{Binding DeleteUserCommand}" />
                                         <Separator />
                                         <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                                   CommandParameter="{Binding Path=PlacementTarget, 

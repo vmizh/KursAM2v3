@@ -10,7 +10,14 @@
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              mc:Ignorable="d"
-             Title="{Binding WindowName}" Height="674.286" Width="1612.381">
+             Title="{Binding WindowName}"
+             Icon="{Binding Source={StaticResource MutualDrawingImage},
+             Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"> 
+             <!--Height="674.286" Width="1612.381">
+    <dx:DXWindow.Icon>
+        <Image
+            Source="{StaticResource MutualDrawingImage}" />
+    </dx:DXWindow.Icon>-->
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"

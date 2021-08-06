@@ -49,7 +49,8 @@ namespace KursAM2.ViewModel.Finance
             RefreshData(dc);
         }
 
-        public new string WindowName => IsCurrencyConvert ? "Акт конвертации" : "Акт взаимозачета";
+        public new string WindowName => Document != null && Document.State != RowStatus.NewRow ?  Document.Description :
+            IsCurrencyConvert ? "Новый акт конвертации" : "Новый акт взаимозачета";
         public bool IsTypeVzaimEnabled => !IsCurrencyConvert;
 
         public decimal CurrencyConvertRate

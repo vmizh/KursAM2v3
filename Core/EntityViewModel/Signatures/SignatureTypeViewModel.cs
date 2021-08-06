@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
 using Data;
+using KursRepositories.ViewModels;
 
 namespace Core.EntityViewModel.Signatures
 {
@@ -80,7 +81,7 @@ namespace Core.EntityViewModel.Signatures
         public ObservableCollection<SignatureSchemesViewModel> Shemes { set; get; } =
             new ObservableCollection<SignatureSchemesViewModel>();
 
-        public ObservableCollection<UserViewModel> Users { set; get; } = new ObservableCollection<UserViewModel>();
+        public ObservableCollection<UsersViewModel> Users { set; get; } = new ObservableCollection<UsersViewModel>();
 
 
 
@@ -96,11 +97,20 @@ namespace Core.EntityViewModel.Signatures
         public SignatureTypeViewModel(SignatureType entity)
         {
             Entity = entity ?? DefaultValue();
-        }
-
+            LoadReference();
+        } 
+        
         #endregion
 
         #region Methods
+
+        private void LoadReference()
+        {
+            foreach (var u in Entity.Users)
+            {
+                Users.Add(new UsersViewModel(u));
+            }
+        }
 
         public SignatureType DefaultValue()
         {

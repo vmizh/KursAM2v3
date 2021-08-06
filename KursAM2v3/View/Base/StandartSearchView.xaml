@@ -37,8 +37,7 @@
             CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
             <dxg:GridControl.View>
                 <dxg:TableView
-                    Style="{StaticResource TableView.Search}">
-                </dxg:TableView>
+                    Style="{StaticResource TableView.Search}" />
             </dxg:GridControl.View>
         </dxg:GridControl>
     </DockPanel>

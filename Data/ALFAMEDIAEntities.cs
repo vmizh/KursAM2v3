@@ -19,7 +19,6 @@ namespace Data
             Configuration.ValidateOnSaveEnabled = validationMode;
             Configuration.LazyLoadingEnabled = lazyLoadingMode;
             Configuration.AutoDetectChangesEnabled = autoDetectMode;
-            //Configuration.ProxyCreationEnabled = false;
         }
     }
 }

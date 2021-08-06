@@ -7,6 +7,8 @@
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              mc:Ignorable="d"
+             Icon="{Binding Source={StaticResource CurrencyExchangedDrawingImage},
+             Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
              Title="{Binding WindowName}" Height="450" Width="800">
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />

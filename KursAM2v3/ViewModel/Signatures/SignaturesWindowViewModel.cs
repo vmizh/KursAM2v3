@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
@@ -10,7 +9,11 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
+using DevExpress.Mvvm;
+using KursAM2.Auxiliary;
+using KursAM2.View.Base;
 using KursAM2.View.Signature;
+using KursAM2.ViewModel.Personal;
 using KursRepositories.ViewModels;
 
 namespace KursAM2.ViewModel.Signatures
@@ -35,7 +38,7 @@ namespace KursAM2.ViewModel.Signatures
         private bool IsDataCorrect()
         {
             if (Signatures.Any(_ => string.IsNullOrWhiteSpace(_.Name))) return false;
-            if(Signatures.Select(_ => _.Name).Distinct().Count() < Signatures.Count) return false;
+            if (Signatures.Select(_ => _.Name).Distinct().Count() < Signatures.Count) return false;
             return true;
         }
 
@@ -61,8 +64,10 @@ namespace KursAM2.ViewModel.Signatures
         {
             Signatures.Clear();
 
-            var signs = SystemUnitOfWork.Context.SignatureType.Where(_ => _.DbId == CurrentDataSource.Id);
-            foreach (var s in signs) Signatures.Add(new SignatureTypeViewModel(s));
+            var signs = SystemUnitOfWork.Context.SignatureType
+                .Where(_ => _.DbId == CurrentDataSource.Id);
+            foreach (var s in signs.ToList()) 
+                Signatures.Add(new SignatureTypeViewModel(s));
         }
 
         #endregion
@@ -127,8 +132,8 @@ namespace KursAM2.ViewModel.Signatures
 
         #region Commands
 
-        public override bool IsCanSaveData => SystemUnitOfWork.Context.ChangeTracker.HasChanges() ||
-                                              UnitOfWork.Context.ChangeTracker.HasChanges();
+        public override bool IsCanSaveData => (SystemUnitOfWork.Context.ChangeTracker.HasChanges() ||
+                                               UnitOfWork.Context.ChangeTracker.HasChanges()) && IsDataCorrect();
 
         public ICommand AddSignatureCommand
         {
@@ -146,6 +151,7 @@ namespace KursAM2.ViewModel.Signatures
             var newItem = new SignatureTypeViewModel(newSign);
             Signatures.Add(newItem);
             CurrentSignature = newItem;
+            RaisePropertyChanged(nameof(IsCanSaveData));
         }
 
         public ICommand DeleteSignatureCommand
@@ -155,31 +161,59 @@ namespace KursAM2.ViewModel.Signatures
 
         private void DeleteSignature(object obj)
         {
+            var service = GetService<IDialogService>("WinUIDialogService");
+            dialogServiceText = "Вы уверены, что хотите удалить подпись?";
+            var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
+            if (res != MessageResult.Yes) return;
+            SystemUnitOfWork.Context.SignatureType.Remove(CurrentSignature.Entity);
+            Signatures.Remove(CurrentSignature);
         }
 
-        #endregion
-    }
-
-    public class UserShortWithSelect : RSViewModelBase
-    {
-        private bool myIsSelected;
-
-        [Display(AutoGenerateField = false)] public UsersViewModel User { set; get; }
-
-        [Display(Name = "Пользователь")] public string UserName => User.Name;
-
-        [Display(Name = "Полное имя")] public string UserFullName => User.FullName;
-
-        [Display(Name = "Включен")]
-        public bool IsSelected
+        public ICommand AddUserCommand
         {
-            get => myIsSelected;
-            set
+            get { return new Command(AddUser, _ => CurrentSignature != null); }
+        }
+
+        private void AddUser(object obj)
+        {
+            var ctxnew = new PersonaAddUserForRights();
+            var dlg = new SelectDialogView {DataContext = ctxnew};
+            dlg.ShowDialog();
+            if (!ctxnew.DialogResult) return;
+            var usr = SystemUnitOfWork.Context.Users.SingleOrDefault(_ => _.Name == ctxnew.CurrentRow.NickName);
+            if (usr != null)
             {
-                if (myIsSelected == value) return;
-                myIsSelected = value;
-                RaisePropertyChanged();
+                CurrentSignature.Entity.Users.Add(usr);
+                CurrentSignature.Users.Add(new UsersViewModel(usr));
             }
         }
+
+        public override void SaveData(object data)
+        {
+            try
+            {
+                if (SystemUnitOfWork.Context.ChangeTracker.HasChanges())
+                {
+                    SystemUnitOfWork.CreateTransaction();
+                    SystemUnitOfWork.Save();
+                    SystemUnitOfWork.Commit();
+                }
+
+                if (UnitOfWork.Context.ChangeTracker.HasChanges())
+                {
+                    UnitOfWork.CreateTransaction();
+                    UnitOfWork.Save();
+                    UnitOfWork.Commit();
+                }
+
+                RaisePropertyChanged(nameof(IsCanSaveData));
+            }
+            catch (Exception ex)
+            {
+                var service = GetService<IDialogService>("WinUIDialogService");
+                MessageManager.ErrorShow(service, ex);
+            }
+        }
+        #endregion
     }
 }
