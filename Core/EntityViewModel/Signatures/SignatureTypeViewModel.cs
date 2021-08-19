@@ -84,7 +84,6 @@ namespace Core.EntityViewModel.Signatures
         public ObservableCollection<UsersViewModel> Users { set; get; } = new ObservableCollection<UsersViewModel>();
 
 
-
         #endregion
 
         #region Constructors

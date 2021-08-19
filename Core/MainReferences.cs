@@ -963,7 +963,7 @@ namespace Core
                 {
                     if (CashsAll.ContainsKey(item.DOC_CODE))
                     {
-                        var d = Cashs[item.DOC_CODE];
+                        var d = CashsAll[item.DOC_CODE];
                         d.UpdateFrom(item);
                         d.myState = RowStatus.NotEdited;
 

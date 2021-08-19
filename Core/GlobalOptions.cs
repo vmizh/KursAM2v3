@@ -65,7 +65,7 @@ namespace Core
             var ret = new ALFAMEDIAEntities(SqlConnectionString);
             SqlConnectionString = new SqlConnectionStringBuilder
             {
-                DataSource = "172.16.1.1",
+                DataSource = "172.16.0.1",
                 InitialCatalog = "AlfaMedia",
                 UserID = "sa",
                 Password = ",juk.,bnyfc"

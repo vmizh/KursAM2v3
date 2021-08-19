@@ -26,22 +26,22 @@ namespace Data
         }
     
         public virtual DbSet<DataSources> DataSources { get; set; }
+        public virtual DbSet<Errors> Errors { get; set; }
+        public virtual DbSet<FormLayout> FormLayout { get; set; }
         public virtual DbSet<KontragentCashes> KontragentCashes { get; set; }
         public virtual DbSet<KursMenuGroup> KursMenuGroup { get; set; }
         public virtual DbSet<KursMenuItem> KursMenuItem { get; set; }
-        public virtual DbSet<UserMenuRight> UserMenuRight { get; set; }
-        public virtual DbSet<Users> Users { get; set; }
-        public virtual DbSet<Version> Version { get; set; }
-        public virtual DbSet<VersionInfo> VersionInfo { get; set; }
-        public virtual DbSet<Errors> Errors { get; set; }
-        public virtual DbSet<FormLayout> FormLayout { get; set; }
-        public virtual DbSet<UserMenuOrder> UserMenuOrder { get; set; }
-        public virtual DbSet<Log> Log { get; set; }
-        public virtual DbSet<TasksLog> TasksLog { get; set; }
-        public virtual DbSet<UserRoles> UserRoles { get; set; }
         public virtual DbSet<LastDocument> LastDocument { get; set; }
+        public virtual DbSet<Log> Log { get; set; }
         public virtual DbSet<SignatureSchemes> SignatureSchemes { get; set; }
         public virtual DbSet<SignatureSchemesInfo> SignatureSchemesInfo { get; set; }
         public virtual DbSet<SignatureType> SignatureType { get; set; }
+        public virtual DbSet<TasksLog> TasksLog { get; set; }
+        public virtual DbSet<UserMenuOrder> UserMenuOrder { get; set; }
+        public virtual DbSet<UserMenuRight> UserMenuRight { get; set; }
+        public virtual DbSet<UserRoles> UserRoles { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
+        public virtual DbSet<Version> Version { get; set; }
+        public virtual DbSet<VersionInfo> VersionInfo { get; set; }
     }
 }

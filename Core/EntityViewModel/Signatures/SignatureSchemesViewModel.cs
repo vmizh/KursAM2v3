@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
 using Data;
@@ -17,8 +18,10 @@ namespace Core.EntityViewModel.Signatures
 
         #region Properties
 
+        [Display(AutoGenerateField = false)]
         public SignatureSchemes Entity { get; set; }
 
+        [Display(AutoGenerateField = false)]
         public override Guid Id
         {
             get => Entity.Id;
@@ -30,6 +33,7 @@ namespace Core.EntityViewModel.Signatures
             }
         }
 
+        [Display(AutoGenerateField = false)]
         public DataSourceViewModel DataSource
         {
             get
@@ -51,7 +55,8 @@ namespace Core.EntityViewModel.Signatures
                 RaisePropertyChanged();
             }
         }
-        
+
+        [Display(AutoGenerateField = false)]
         public KursMenuItemViewModel DocumentType
         {
             get
@@ -70,6 +75,33 @@ namespace Core.EntityViewModel.Signatures
                 if (myDocumentType == value) return;
                 myDocumentType = value;
                 Entity.KursMenuItem = myDocumentType.Entity;
+                RaisePropertyChanged();
+            }
+        }
+
+        [Display(Name = "Тип документа")]
+        public string MenuItemName => Entity.KursMenuItem?.Name;
+
+        [Display(Name = "Наименование")]
+        public override string Name
+        {
+            get => Entity.Name;
+            set
+            {
+                if (Entity.Name == value) return;
+                Entity.Name = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        [Display(Name = "Примечания")]
+        public override string Note
+        {
+            get => Entity.Note;
+            set
+            {
+                if (Entity.Note == value) return;
+                Entity.Note = value;
                 RaisePropertyChanged();
             }
         }

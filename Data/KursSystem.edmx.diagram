@@ -5,44 +5,43 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="1cb860f8bcf74fa4b3b81a6ac9efd58c" Name="Diagram1">
-        <EntityTypeShape EntityType="KursSystemModel.DataSources" Width="1.5" PointX="0.75" PointY="8.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="KursSystemModel.KontragentCashes" Width="1.5" PointX="8.25" PointY="13.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="KursSystemModel.KursMenuGroup" Width="1.5" PointX="1.5" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="KursSystemModel.KursMenuItem" Width="1.5" PointX="0.75" PointY="4.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="KursSystemModel.UserMenuRight" Width="1.5" PointX="3" PointY="9" IsExpanded="true" />
-        <EntityTypeShape EntityType="KursSystemModel.Users" Width="1.5" PointX="2.25" PointY="16.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="KursSystemModel.Version" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="KursSystemModel.VersionInfo" Width="1.5" PointX="4.75" PointY="2.75" IsExpanded="true" />
-        <AssociationConnector Association="KursSystemModel.FK_KontragentCashes_DBId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.FK_UserMenuRight_DBId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.FK_KontragentCashes_UserId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.FK_KursMenuGroup_ParentId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.FK_KursMenuItem_GroupId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.FK_UserMenuRight_MenuId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.UsersLinkDB" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="KursSystemModel.Errors" Width="1.5" PointX="5.25" PointY="10" />
+        <EntityTypeShape EntityType="KursSystemModel.DataSources" Width="1.5" PointX="0.75" PointY="12.75" />
+        <EntityTypeShape EntityType="KursSystemModel.Errors" Width="1.5" PointX="6" PointY="9.25" />
+        <EntityTypeShape EntityType="KursSystemModel.FormLayout" Width="1.5" PointX="7.5" PointY="21.375" />
+        <EntityTypeShape EntityType="KursSystemModel.KontragentCashes" Width="1.5" PointX="3" PointY="9.375" />
+        <EntityTypeShape EntityType="KursSystemModel.KursMenuGroup" Width="1.5" PointX="1.5" PointY="4.25" />
+        <EntityTypeShape EntityType="KursSystemModel.KursMenuItem" Width="1.5" PointX="0.75" PointY="8" />
+        <EntityTypeShape EntityType="KursSystemModel.LastDocument" Width="1.5" PointX="3" PointY="17" />
+        <EntityTypeShape EntityType="KursSystemModel.Log" Width="1.5" PointX="3.75" PointY="4.25" />
+        <EntityTypeShape EntityType="KursSystemModel.SignatureSchemes" Width="1.5" PointX="3" PointY="13.5" />
+        <EntityTypeShape EntityType="KursSystemModel.SignatureSchemesInfo" Width="1.5" PointX="5.25" PointY="35.125" />
+        <EntityTypeShape EntityType="KursSystemModel.SignatureType" Width="1.5" PointX="3" PointY="30.625" />
+        <EntityTypeShape EntityType="KursSystemModel.TasksLog" Width="1.5" PointX="5.75" PointY="1.25" />
+        <EntityTypeShape EntityType="KursSystemModel.UserMenuOrder" Width="1.5" PointX="5.75" PointY="4.25" />
+        <EntityTypeShape EntityType="KursSystemModel.UserMenuRight" Width="1.5" PointX="6" PointY="13.5" />
+        <EntityTypeShape EntityType="KursSystemModel.UserRoles" Width="1.5" PointX="3" PointY="0.75" />
+        <EntityTypeShape EntityType="KursSystemModel.Users" Width="1.5" PointX="5.25" PointY="20.875" />
+        <EntityTypeShape EntityType="KursSystemModel.Version" Width="1.5" PointX="7.75" PointY="1.25" />
+        <EntityTypeShape EntityType="KursSystemModel.VersionInfo" Width="1.5" PointX="7.75" PointY="4.25" />
         <AssociationConnector Association="KursSystemModel.FK_Errors_DbId" />
-        <AssociationConnector Association="KursSystemModel.FK_Errors_UserId" />
-        <EntityTypeShape EntityType="KursSystemModel.FormLayout" Width="1.5" PointX="5.25" PointY="13.875" />
-        <AssociationConnector Association="KursSystemModel.FK_FormLayout_FormId" />
-        <AssociationConnector Association="KursSystemModel.FK_FormLayout_UserId" />
-        <EntityTypeShape EntityType="KursSystemModel.UserMenuOrder" Width="1.5" PointX="5.375" PointY="5.75" />
-        <EntityTypeShape EntityType="KursSystemModel.Log" Width="1.5" PointX="7.375" PointY="0.75" />
-        <EntityTypeShape EntityType="KursSystemModel.TasksLog" Width="1.5" PointX="7.375" PointY="4.75" />
-        <EntityTypeShape EntityType="KursSystemModel.UserRoles" Width="1.5" PointX="3" PointY="12.25" />
-        <AssociationConnector Association="KursSystemModel.UserRolesLinkMenuItem" />
-        <EntityTypeShape EntityType="KursSystemModel.LastDocument" Width="1.5" PointX="7.5" PointY="9.875" />
+        <AssociationConnector Association="KursSystemModel.FK_KontragentCashes_DBId" />
         <AssociationConnector Association="KursSystemModel.FK_LastDocument_DbId" />
-        <AssociationConnector Association="KursSystemModel.FK_LastDocument_UserId" />
-        <EntityTypeShape EntityType="KursSystemModel.SignatureSchemes" Width="1.5" PointX="10" PointY="7.25" />
-        <EntityTypeShape EntityType="KursSystemModel.SignatureSchemesInfo" Width="1.5" PointX="5.25" PointY="22.25" />
-        <EntityTypeShape EntityType="KursSystemModel.SignatureType" Width="1.5" PointX="3" PointY="22.25" />
         <AssociationConnector Association="KursSystemModel.FK_SignatureSchemes_DbId" />
         <AssociationConnector Association="KursSystemModel.FK_SignatureType_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_UserMenuRight_DBId" />
+        <AssociationConnector Association="KursSystemModel.FK_Errors_UserId" />
+        <AssociationConnector Association="KursSystemModel.FK_FormLayout_FormId" />
+        <AssociationConnector Association="KursSystemModel.FK_FormLayout_UserId" />
+        <AssociationConnector Association="KursSystemModel.FK_KontragentCashes_UserId" />
+        <AssociationConnector Association="KursSystemModel.FK_KursMenuGroup_ParentId" />
+        <AssociationConnector Association="KursSystemModel.FK_KursMenuItem_GroupId" />
         <AssociationConnector Association="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId" />
+        <AssociationConnector Association="KursSystemModel.FK_UserMenuRight_MenuId" />
+        <AssociationConnector Association="KursSystemModel.FK_LastDocument_UserId" />
         <AssociationConnector Association="KursSystemModel.FK_SignatureSchemesInfo_ParentId" />
         <AssociationConnector Association="KursSystemModel.FK_SignatureSchemesInfo_SignId" />
-        <AssociationConnector Association="KursSystemModel.FK_Users_SignatureTypeId" />
+        <AssociationConnector Association="KursSystemModel.UserRolesLinkMenuItem" />
+        <AssociationConnector Association="KursSystemModel.UsersLinkDB" />
         <AssociationConnector Association="KursSystemModel.SignatureLink" />
       </Diagram>
     </edmx:Diagrams>

@@ -181,6 +181,9 @@
     <Compile Include="DataForRequirement.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataSources.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="DD_2.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -237,6 +240,9 @@
     </Compile>
     <Compile Include="ErrorMessages.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Errors.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="EXEC_CALC_BALANS.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
@@ -493,6 +499,9 @@
     <Compile Include="FK_REFERENCE_VIEW.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="FormLayout.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="GROZO_REQUISITE.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -550,6 +559,9 @@
     <Compile Include="INVOICE_SEARCH_VIEW.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="KontragentCashes.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="KontragentGroups.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -574,25 +586,13 @@
     <Compile Include="KONTR_IS_CALC_EXECUTING.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="KursSystemEntities.cs" />
-    <Compile Include="DataSources.cs">
-      <DependentUpon>KursSystem.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Errors.cs">
-      <DependentUpon>KursSystem.tt</DependentUpon>
-    </Compile>
-    <Compile Include="FormLayout.cs">
-      <DependentUpon>KursSystem.tt</DependentUpon>
-    </Compile>
-    <Compile Include="KontragentCashes.cs">
-      <DependentUpon>KursSystem.tt</DependentUpon>
-    </Compile>
     <Compile Include="KursMenuGroup.cs">
       <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="KursMenuItem.cs">
       <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
+    <Compile Include="KursSystemEntities.cs" />
     <Compile Include="KursSystem.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

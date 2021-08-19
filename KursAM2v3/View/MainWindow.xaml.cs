@@ -86,8 +86,12 @@ namespace KursAM2.View
             {
                 var s = new StringBuilder();
                 s.Append(ex.Message + "\nInnerExcepption:");
-                if (ex.InnerException != null)
-                    s.Append(ex.InnerException.Message);
+                var ex1 = ex.InnerException;
+                while (ex1?.InnerException != null)
+                {
+                    s.Append(ex1.InnerException.Message);
+                    ex1 = ex1.InnerException;
+                }
                 MessageBox.Show(s.ToString());
             }
         }
@@ -142,8 +146,7 @@ namespace KursAM2.View
 
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            LayoutManager.Load();
+        { LayoutManager.Load();
             DocumentLayoutPanel.Caption = "";
         }
 

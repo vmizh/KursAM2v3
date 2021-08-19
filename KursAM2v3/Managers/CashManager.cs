@@ -14,8 +14,6 @@ using Data;
 using Helper;
 using KursAM2.Managers.Invoices;
 using KursAM2.ViewModel.Finance.Cash;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace KursAM2.Managers
 {
@@ -506,6 +504,7 @@ namespace KursAM2.Managers
                                             }
                                         }
                                 }
+
                                 ctx.Entry(CashInViewModelToEntity(updateCashIn)).State = EntityState.Modified;
                                 ctx.SaveChanges();
                                 break;
@@ -572,6 +571,7 @@ namespace KursAM2.Managers
                                             }
                                         }
                                 }
+
                                 ctx.Entry(CashOutViewModelToEntity(updateCashOut)).State = EntityState.Modified;
                                 ctx.SaveChanges();
                                 break;
@@ -690,7 +690,6 @@ namespace KursAM2.Managers
 
         //    ctx.SaveChanges();
         //}
-
         [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         public static void InsertDocument(CashDocumentType docType, object doc)
         {
@@ -1263,7 +1262,7 @@ namespace KursAM2.Managers
                         {
                             doc.KontragnetTypeName = "Расходный кассовый ордер";
                             var c = ctx.SD_34.FirstOrDefault(_ => _.DOC_CODE == d.RASH_ORDER_FROM_DC);
-                            if (c != null) doc.KontragnetName = MainReferences.Cashs[(decimal) c.CA_DC].Name;
+                            if (c != null) doc.KontragnetName = MainReferences.CashsAll[(decimal) c.CA_DC].Name;
                         }
 
                         ret.Add(doc);
@@ -1356,7 +1355,7 @@ namespace KursAM2.Managers
                             doc.KontragnetTypeName = "Касса";
                             var prihOrder = ctx.SD_33.FirstOrDefault(_ => _.RASH_ORDER_FROM_DC == d.DOC_CODE);
                             if (prihOrder != null)
-                                doc.KontragnetName = MainReferences.Cashs[(decimal) prihOrder.CA_DC].Name;
+                                doc.KontragnetName = MainReferences.CashsAll[(decimal) prihOrder.CA_DC].Name;
                         }
 
                         ret.Add(doc);

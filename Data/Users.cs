@@ -17,12 +17,12 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Users()
         {
-            this.KontragentCashes = new HashSet<KontragentCashes>();
-            this.DataSources = new HashSet<DataSources>();
             this.Errors = new HashSet<Errors>();
             this.FormLayout = new HashSet<FormLayout>();
+            this.KontragentCashes = new HashSet<KontragentCashes>();
             this.LastDocument = new HashSet<LastDocument>();
-            this.SignatureType1 = new HashSet<SignatureType>();
+            this.DataSources = new HashSet<DataSources>();
+            this.SignatureType = new HashSet<SignatureType>();
         }
     
         public System.Guid Id { get; set; }
@@ -34,20 +34,18 @@ namespace Data
         public byte[] Avatar { get; set; }
         public string FullName { get; set; }
         public string ThemeName { get; set; }
-        public Nullable<System.Guid> SignatureTypeId { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<KontragentCashes> KontragentCashes { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DataSources> DataSources { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Errors> Errors { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FormLayout> FormLayout { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LastDocument> LastDocument { get; set; }
-        public virtual SignatureType SignatureType { get; set; }
+        public virtual ICollection<KontragentCashes> KontragentCashes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SignatureType> SignatureType1 { get; set; }
+        public virtual ICollection<LastDocument> LastDocument { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DataSources> DataSources { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SignatureType> SignatureType { get; set; }
     }
 }

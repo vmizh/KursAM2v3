@@ -7,17 +7,12 @@ using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
-using DevExpress.Mvvm;
 using DevExpress.Mvvm.Xpf;
-using KursAM2.Managers;
 using KursAM2.View.DialogUserControl.ViewModel;
 using KursAM2.View.KursReferences.KontragentControls;
 
@@ -25,7 +20,6 @@ namespace KursAM2.ViewModel.Reference
 {
     public class KontragentReferenceWindowViewModel : RSWindowViewModelBase
     {
-        private KontragentManager kontrManager = new KontragentManager();
         private KontragentGroup myCurrentGroup;
         private Kontragent myCurrentKontragent;
         private bool myIsAllKontragent;
@@ -40,9 +34,6 @@ namespace KursAM2.ViewModel.Reference
             RefreshData(null);
             IsGroupEnabled = true;
         }
-
-        private IDialogService DialogService => GetService<IDialogService>();
-        private IMessageBoxService MessageBoxService => GetService<IMessageBoxService>();
 
         //public List<Kontragent> Kontragents => MainReferences.AllKontragents.Values.ToList();
         public ObservableCollection<Kontragent> Kontragents { set; get; } = new ObservableCollection<Kontragent>();
@@ -407,10 +398,8 @@ namespace KursAM2.ViewModel.Reference
             return true;
         }
 
-        private void TreeDelete(object obj)
-        {
-        }
-
+       
+        
         #region Commands
 
         public override bool IsDocumentOpenAllow => CurrentKontragent != null;
@@ -435,6 +424,7 @@ namespace KursAM2.ViewModel.Reference
                 WinManager.ShowWinUIMessageBox("Не выбрана категория.", "Ощибка");
                 return;
             }
+
             var ctx = new KontragentCardWindowViewModel(-1, CurrentGroup.EG_ID, false) {Form = form};
             form.DataContext = ctx;
             form.ShowDialog();

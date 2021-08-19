@@ -84,7 +84,13 @@ namespace KursAM2.View
             catch (Exception ex)
             {
                 var errText = new StringBuilder(ex.Message);
-                while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
+                var ex1 = ex;
+                while (ex1.InnerException != null)
+                {
+                    errText.Append($"\n {ex1.InnerException.Message}");
+                    ex1 = ex1.InnerException;
+                }
+
                 MessageBox.Show("KursSystem error.\n" + errText);
             }
         }

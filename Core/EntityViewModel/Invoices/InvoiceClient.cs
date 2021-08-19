@@ -51,7 +51,7 @@ namespace Core.EntityViewModel.Invoices
             
         }
 
-        public InvoiceClient(SD_84 entity, UnitOfWork<ALFAMEDIAEntities> ctx, bool isLoadPaymentDocs = false)
+        public InvoiceClient(SD_84 entity, UnitOfWork<ALFAMEDIAEntities> ctx, bool isLoadPaymentDocs = true)
         {
             isLoadPayment = isLoadPaymentDocs;
             context = ctx;
@@ -1129,7 +1129,7 @@ namespace Core.EntityViewModel.Invoices
                 if (isLoadPayment)
                 {
                     PaymentDocs = new ObservableCollection<InvoicePaymentDocument>();
-                    foreach (var c in context.Context.SD_33.Where(_ => _.SFACT_DC == DocCode).ToList())
+                    foreach (var c in Entity.SD_33)
                         PaymentDocs.Add(new InvoicePaymentDocument
                         {
                             DocCode = c.DOC_CODE,
@@ -1145,9 +1145,7 @@ namespace Core.EntityViewModel.Invoices
                             Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
                             Note = c.NOTES_ORD
                         });
-                    foreach (var c in context.Context.TD_101.Include(_ => _.SD_101)
-                        .Where(_ => _.VVT_SFACT_CLIENT_DC == DocCode)
-                        .ToList())
+                    foreach (var c in Entity.TD_101)
                         PaymentDocs.Add(new InvoicePaymentDocument
                         {
                             DocCode = c.DOC_CODE,
@@ -1160,9 +1158,7 @@ namespace Core.EntityViewModel.Invoices
                             Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                             Note = c.VVT_DOC_NUM
                         });
-                    foreach (var c in context.Context.TD_110.Include(_ => _.SD_110)
-                        .Where(_ => _.VZT_SFACT_DC == DocCode)
-                        .ToList())
+                    foreach (var c in Entity.TD_110)
                         PaymentDocs.Add(new InvoicePaymentDocument
                         {
                             DocCode = c.DOC_CODE,

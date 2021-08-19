@@ -11,7 +11,6 @@ using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
-using DevExpress.PivotGrid.ServerMode.Queryable;
 using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories;

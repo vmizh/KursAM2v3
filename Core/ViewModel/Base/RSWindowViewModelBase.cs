@@ -165,10 +165,12 @@ namespace Core.ViewModel.Base
                     LayoutName, null);
                 LayoutManager.Load();
                 var grids = Form.FindVisualChildren<GridControl>();
+                var trees = Form.FindVisualChildren<TreeListControl>();
                 foreach (var grid in grids)
                 {
                     foreach (var col in grid.Columns)
                     {
+                        col.Name = col.FieldName;
                         if (col.FieldType == typeof(decimal) ||
                             col.FieldType == typeof(decimal?)
                             || col.FieldType == typeof(float) || col.FieldType == typeof(float?)
@@ -195,6 +197,14 @@ namespace Core.ViewModel.Base
                                 ShowInColumn = col.FieldName
                             });
                         }
+                    }
+                }
+
+                foreach (var t in trees)
+                {
+                    foreach (var col in t.Columns)
+                    {
+                        col.Name = col.FieldName;
                     }
                 }
             }

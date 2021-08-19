@@ -609,24 +609,48 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (Document.DocCode > 0 && Document.State != RowStatus.NewRow)
             {
                 foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
+                LoadFromExternal();
+                
+                foreach (var r in Document.Rows)
+                {
+                    r.myState = RowStatus.NotEdited;
+                    AddUsedNomenkl(r.Nomenkl.DocCode);
+                }
                 RaiseAll();
+                Document.myState = RowStatus.NotEdited;
+                Document.RaisePropertyChanged("State");
             }
+        }
 
-            foreach (var r in Document.Rows)
+
+        private void LoadFromExternal()
+        {
+            using (var ctx = GlobalOptions.GetEntities())
             {
-                r.myState = RowStatus.NotEdited;
-                AddUsedNomenkl(r.Nomenkl.DocCode);
+                Document.PaymentDocs.Clear();
+                foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
+                    .Where(_ => _.VVT_SFACT_CLIENT_DC == Document.DocCode))
+                    Document.PaymentDocs.Add(new InvoicePaymentDocument
+                    {
+                        DocCode = c.DOC_CODE,
+                        Code = c.CODE,
+                        DocumentType = DocumentType.Bank,
+                        DocumentName =
+                            // ReSharper disable once PossibleInvalidOperationException
+                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                        Summa = (decimal) c.VVT_VAL_PRIHOD,
+                        Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                        Note = c.VVT_DOC_NUM
+                    });
             }
-
-            Document.myState = RowStatus.NotEdited;
         }
 
         private void RaiseAll()
         {
-            Document.RaisePropertyAllChanged();
             foreach (var r in Document.Rows) r.RaisePropertyAllChanged();
-
             foreach (var s in Document.ShipmentRows) s.RaisePropertyAllChanged();
+            foreach (var pay in Document.PaymentDocs) pay.RaisePropertyAllChanged();
+            Document.RaisePropertyAllChanged();
         }
 
         public override void SaveData(object data)
@@ -694,7 +718,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
                 foreach (var p in Document.PaymentDocs) p.myState = RowStatus.NotEdited;
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
-                    Document.DocCode, null, (string)Document.ToJson());
+                    Document.DocCode, null, (string) Document.ToJson());
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
                 DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceClient, Document.Id, Document.DocCode,
@@ -779,6 +803,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.Entity.TD_84.Remove(CurrentRow.Entity);
                 Document.Rows.Remove(CurrentRow);
             }
+
             UpdateVisualData(null);
         }
 
@@ -799,8 +824,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Form.Close();
                         return;
                     }
+
                     try
                     {
+                        UnitOfWork.CreateTransaction();
                         GenericClientRepository.Delete(Document.Entity);
                         UnitOfWork.Save();
                         UnitOfWork.Commit();
@@ -810,8 +837,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         UnitOfWork.Rollback();
                         WindowManager.ShowError(ex);
                     }
+
                     // ReSharper disable once PossibleInvalidOperationException
-                    RecalcKontragentBalans.CalcBalans(dc,docdate);
+                    RecalcKontragentBalans.CalcBalans(dc, docdate);
                     if (dilerdc != null)
                         RecalcKontragentBalans.CalcBalans(dilerdc.Value, docdate);
                     Form.Close();

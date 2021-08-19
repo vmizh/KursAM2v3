@@ -8,7 +8,6 @@ using Core.EntityViewModel.Invoices;
 using Core.Helper;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using DevExpress.XtraPrinting.Native.WebClientUIControl;
 using Newtonsoft.Json;
 
 namespace Core.EntityViewModel.NomenklManagement

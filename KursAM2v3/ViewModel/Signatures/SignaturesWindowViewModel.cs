@@ -14,6 +14,7 @@ using KursAM2.Auxiliary;
 using KursAM2.View.Base;
 using KursAM2.View.Signature;
 using KursAM2.ViewModel.Personal;
+using KursAM2.ViewModel.Reference.Dialogs;
 using KursRepositories.ViewModels;
 
 namespace KursAM2.ViewModel.Signatures
@@ -50,23 +51,13 @@ namespace KursAM2.ViewModel.Signatures
             foreach (var d in ds) DataSourceList.Add(new DataSourcesViewModel(d));
         }
 
-        private void LoadKursMenuItems()
-        {
-            KursMenuItems.Clear();
-
-            var menuitems = SystemUnitOfWork.Context.UserMenuRight.Include(_ => _.KursMenuItem).Where(_ =>
-                    _.DBId == CurrentDataSource.Id && _.LoginName == GlobalOptions.UserInfo.NickName)
-                .Select(x => x.KursMenuItem).ToList();
-            foreach (var m in menuitems) KursMenuItems.Add(new KursMenuItemViewModel(m));
-        }
-
         private void LoadSignatureTypes()
         {
             Signatures.Clear();
 
             var signs = SystemUnitOfWork.Context.SignatureType
                 .Where(_ => _.DbId == CurrentDataSource.Id);
-            foreach (var s in signs.ToList()) 
+            foreach (var s in signs.ToList())
                 Signatures.Add(new SignatureTypeViewModel(s));
         }
 
@@ -76,6 +67,8 @@ namespace KursAM2.ViewModel.Signatures
 
         private DataSourcesViewModel myCurrentDataSource;
         private SignatureTypeViewModel myCurrentSignature;
+        private UsersViewModel myCurrentUser;
+        private KursMenuItemViewModel myCurrentDocType;
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
@@ -95,8 +88,9 @@ namespace KursAM2.ViewModel.Signatures
         public ObservableCollection<SignatureTypeViewModel> Signatures { set; get; } =
             new ObservableCollection<SignatureTypeViewModel>();
 
-        public ObservableCollection<KursMenuItemViewModel> KursMenuItems { set; get; } =
-            new ObservableCollection<KursMenuItemViewModel>();
+        public ObservableCollection<SignatureSchemesViewModel> SignatureDocTypes { set; get; } =
+            new ObservableCollection<SignatureSchemesViewModel>();
+
 
         public SignatureReferenceUC DocumentUserControl { set; get; }
 
@@ -112,6 +106,28 @@ namespace KursAM2.ViewModel.Signatures
                 if (myCurrentDataSource == value) return;
                 myCurrentDataSource = value;
                 LoadSignatureTypes();
+                RaisePropertyChanged();
+            }
+        }
+
+        public UsersViewModel CurrentUser
+        {
+            get => myCurrentUser;
+            set
+            {
+                if (myCurrentUser == value) return;
+                myCurrentUser = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public KursMenuItemViewModel CurrentDocType
+        {
+            get => myCurrentDocType;
+            set
+            {
+                if (myCurrentDocType == value) return;
+                myCurrentDocType = value;
                 RaisePropertyChanged();
             }
         }
@@ -183,9 +199,25 @@ namespace KursAM2.ViewModel.Signatures
             var usr = SystemUnitOfWork.Context.Users.SingleOrDefault(_ => _.Name == ctxnew.CurrentRow.NickName);
             if (usr != null)
             {
+                if (CurrentSignature.Users.Any(_ => _.Id == usr.Id)) return;
                 CurrentSignature.Entity.Users.Add(usr);
                 CurrentSignature.Users.Add(new UsersViewModel(usr));
             }
+        }
+
+        public ICommand DeleteUserCommand
+        {
+            get { return new Command(DeleteUser, _ => CurrentUser != null); }
+        }
+
+        private void DeleteUser(object obj)
+        {
+            var service = GetService<IDialogService>("WinUIDialogService");
+            dialogServiceText = "Вы уверены, что хотите удалить пользователя?";
+            var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
+            if (res != MessageResult.Yes) return;
+            CurrentSignature.Entity.Users.Remove(CurrentUser.Entity);
+            CurrentSignature.Users.Remove(CurrentUser);
         }
 
         public override void SaveData(object data)
@@ -214,6 +246,30 @@ namespace KursAM2.ViewModel.Signatures
                 MessageManager.ErrorShow(service, ex);
             }
         }
+
+        public ICommand AddDocumentCommand
+        {
+            get { return new Command(AddDocument, _ => CurrentDataSource != null); }
+        }
+
+        private void AddDocument(object obj)
+        {
+            var ctx = new SelectKursMainMenuItemViewModel();
+            var service = GetService<IDialogService>("DialogServiceUI");
+            if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
+            if (ctx.CurrentMenu == null) return;
+            var newEnt = new SignatureSchemes
+            {
+                Id = Guid.NewGuid(),
+                Name = ctx.CurrentMenu.Name,
+                DataSources = CurrentDataSource.Entity,
+                KursMenuItem = ctx.CurrentMenu.Entity
+            };
+            var schema = new SignatureSchemesViewModel(newEnt);
+            SystemUnitOfWork.Context.SignatureSchemes.Add(schema.Entity);
+            SignatureDocTypes.Add(schema);
+        }
+
         #endregion
     }
 }

@@ -4,7 +4,7 @@
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-                    xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v21.1">
+                    xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v20.1">
     <Style x:Key="GridControl.Base" TargetType="dxg:GridControl">
         <Setter Property="ShowBorder" Value="False" />
         <Setter Property="EnableSmartColumnsGeneration" Value="True" />
@@ -57,27 +57,32 @@
                 <ContextMenu>
                     <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}">
                         <MenuItem.Icon>
-                            <Image Source="{StaticResource DocOpenDrawingImage}" />
+                            <Image
+                                Source="{StaticResource DocOpenDrawingImage}" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
                     <MenuItem Header="Создать новый документ">
                         <MenuItem.Icon>
-                            <Image Source="{StaticResource AddDrawingImage}" />
+                            <Image
+                                Source="{StaticResource AddDrawingImage}" />
                         </MenuItem.Icon>
                         <MenuItem Header="Пустой документ" Command="{Binding DocNewEmptyCommand}">
                             <MenuItem.Icon>
-                                <Image Source="{StaticResource AddEmptyDrawingImage}" />
+                                <Image
+                                    Source="{StaticResource AddEmptyDrawingImage}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="С текущими реквизитами" Command="{Binding DocNewCopyRequisiteCommand}">
                             <MenuItem.Icon>
-                                <Image Source="{StaticResource AddRequisiteDrawingImage}" />
+                                <Image
+                                    Source="{StaticResource AddRequisiteDrawingImage}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Копия текущего" Command="{Binding DocNewCopyCommand}">
                             <MenuItem.Icon>
-                                <Image Source="{StaticResource AddCopyDrawingImage}" />
+                                <Image
+                                    Source="{StaticResource AddCopyDrawingImage}" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
@@ -87,7 +92,8 @@
                               CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
                                               AncestorType={x:Type ContextMenu}}}">
                         <MenuItem.Icon>
-                            <Image Source="{StaticResource ExportDrawingImage}" />
+                            <Image
+                                Source="{StaticResource ExportDrawingImage}" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>

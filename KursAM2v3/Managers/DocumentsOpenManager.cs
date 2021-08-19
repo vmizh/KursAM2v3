@@ -8,6 +8,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using Data.Repository;
 using Helper;
 using KursAM2.Managers.Base;
 using KursAM2.View.Dogovors;
@@ -136,7 +137,7 @@ namespace KursAM2.Managers
         }
 
         public static void Open(DocumentType docType, decimal dc, Guid? id = null,
-            object parent = null)
+            object parent = null, UnitOfWork<ALFAMEDIAEntities> ctx = null)
         {
             if (!IsDocumentOpen(docType)) return;
             switch (docType)

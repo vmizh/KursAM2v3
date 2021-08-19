@@ -57,7 +57,7 @@
             <Setter.Value>
                 <DataTemplate>
                     <ItemsControl>
-                        <dxmvvm:LayoutSerializationService/>
+                        <dxmvvm:LayoutSerializationService />
                         <dxmvvm:CurrentWindowService ClosingCommand="{Binding OnWindowClosingCommand}"/>
                         <dxmvvm:EventToCommand Event="Loaded" Command="{Binding OnWindowLoadedCommand}" />
                         <dx:DXMessageBoxService />
@@ -78,7 +78,6 @@
                             </dx:DialogService.DialogStyle>
                         </dx:DialogService>
                         <dxwui:WinUIDialogService x:Name="WinUIDialogServiceUI" ViewTemplate="{StaticResource dialogServiceTemplateUI}"/>
-
                     </ItemsControl>
                 </DataTemplate>
             </Setter.Value>

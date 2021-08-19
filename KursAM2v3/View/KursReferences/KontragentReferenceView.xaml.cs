@@ -2,10 +2,7 @@
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.Invoices.EntityViewModel;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Grid;
@@ -31,6 +28,7 @@ namespace KursAM2.View.KursReferences
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -72,6 +70,7 @@ namespace KursAM2.View.KursReferences
                         row.EG_ID = egId;
                         ctx.UD_43.Add(item);
                     }
+
                     ctx.SaveChanges();
                 }
                 catch (Exception ex)

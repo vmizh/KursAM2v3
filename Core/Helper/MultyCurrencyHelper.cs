@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using DevExpress.Xpf.Grid;
 
 namespace Core.Helper
 {
+    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public class MultyCurrencyHelper
     {
         #region Methods
@@ -15,6 +16,7 @@ namespace Core.Helper
             IEnumerable<IMultyWithDilerCurrency> data)
         {
             if (treeList == null || data == null) return;
+            // ReSharper disable once PossibleMultipleEnumeration
             if (!data.Any())
             {
                 foreach (var band in treeList.Bands)
