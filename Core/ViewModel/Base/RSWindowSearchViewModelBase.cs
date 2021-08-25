@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 
 namespace Core.ViewModel.Base
 {
+    [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
     public abstract class RSWindowSearchViewModelBase : RSWindowViewModelBase
     {
         private DateTime myDateEnd;
@@ -47,7 +49,7 @@ namespace Core.ViewModel.Base
             }
         }
 
-        public DateTime EndDate
+        public virtual DateTime EndDate
         {
             get => myDateEnd;
             set
@@ -61,7 +63,7 @@ namespace Core.ViewModel.Base
             }
         }
 
-        public DateTime StartDate
+        public virtual DateTime StartDate
         {
             get => myDateStart;
             set

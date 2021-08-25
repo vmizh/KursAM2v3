@@ -2150,12 +2150,6 @@
     <Compile Include="VD_9.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="Version.cs">
-      <DependentUpon>KursSystem.tt</DependentUpon>
-    </Compile>
-    <Compile Include="VersionInfo.cs">
-      <DependentUpon>KursSystem.tt</DependentUpon>
-    </Compile>
     <Compile Include="VH_SD_102.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

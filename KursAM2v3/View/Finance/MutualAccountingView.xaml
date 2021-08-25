@@ -11,14 +11,8 @@
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              mc:Ignorable="d"
              Title="{Binding WindowName}"
-             Icon="{Binding Source={StaticResource MutualDrawingImage},
-             Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"> 
-             <!--Height="674.286" Width="1612.381">
-    <dx:DXWindow.Icon>
-        <Image
-            Source="{StaticResource MutualDrawingImage}" />
-    </dx:DXWindow.Icon>-->
-    <DockPanel>
+             >
+     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
                Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />

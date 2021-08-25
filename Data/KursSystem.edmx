@@ -75,6 +75,7 @@
           <Property Name="Note" Type="varchar" MaxLength="500" />
           <Property Name="OrderBy" Type="int" />
           <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="IsSign" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="LastDocument">
           <Key>
@@ -132,6 +133,7 @@
           <Property Name="ParentId" Type="uniqueidentifier" />
           <Property Name="IsRequired" Type="bit" Nullable="false" />
           <Property Name="Note" Type="varchar(max)" />
+          <Property Name="SchemeId" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <EntityType Name="SignatureType">
           <Key>
@@ -208,26 +210,6 @@
           </Key>
           <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="DBId" Type="uniqueidentifier" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Version">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="ServerPath" Type="varchar" MaxLength="200" Nullable="false" />
-          <Property Name="Major" Type="int" Nullable="false" />
-          <Property Name="Minor" Type="int" Nullable="false" />
-          <Property Name="Version" Type="int" Nullable="false" />
-        </EntityType>
-        <EntityType Name="VersionInfo">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="Info" Type="varchar(max)" />
-          <Property Name="Major" Type="int" Nullable="false" />
-          <Property Name="Minor" Type="int" Nullable="false" />
-          <Property Name="Version" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="FK_Errors_DbId">
           <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
@@ -409,6 +391,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SignatureSchemesInfo_SchemeId">
+          <End Role="SignatureSchemes" Type="Self.SignatureSchemes" Multiplicity="1" />
+          <End Role="SignatureSchemesInfo" Type="Self.SignatureSchemesInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SignatureSchemes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SignatureSchemesInfo">
+              <PropertyRef Name="SchemeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SignatureSchemesInfo_SignId">
           <End Role="SignatureType" Type="Self.SignatureType" Multiplicity="1" />
           <End Role="SignatureSchemesInfo" Type="Self.SignatureSchemesInfo" Multiplicity="*" />
@@ -528,8 +522,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <EntitySet Name="UserRolesLinkMenuItem" EntityType="Self.UserRolesLinkMenuItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UsersLinkDB" EntityType="Self.UsersLinkDB" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Version" EntityType="Self.Version" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="VersionInfo" EntityType="Self.VersionInfo" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Errors_DbId" Association="Self.FK_Errors_DbId">
             <End Role="DataSources" EntitySet="DataSources" />
             <End Role="Errors" EntitySet="Errors" />
@@ -590,6 +582,10 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
             <End Role="SignatureSchemesInfo1" EntitySet="SignatureSchemesInfo" />
           </AssociationSet>
+          <AssociationSet Name="FK_SignatureSchemesInfo_SchemeId" Association="Self.FK_SignatureSchemesInfo_SchemeId">
+            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
+            <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
+          </AssociationSet>
           <AssociationSet Name="FK_SignatureSchemesInfo_SignId" Association="Self.FK_SignatureSchemesInfo_SignId">
             <End Role="SignatureType" EntitySet="SignatureType" />
             <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
@@ -636,16 +632,12 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <EntitySet Name="KursMenuItem" EntityType="KursSystemModel.KursMenuItem" />
           <EntitySet Name="LastDocument" EntityType="KursSystemModel.LastDocument" />
           <EntitySet Name="Log" EntityType="KursSystemModel.Log" />
-          <EntitySet Name="SignatureSchemes" EntityType="KursSystemModel.SignatureSchemes" />
-          <EntitySet Name="SignatureSchemesInfo" EntityType="KursSystemModel.SignatureSchemesInfo" />
           <EntitySet Name="SignatureType" EntityType="KursSystemModel.SignatureType" />
           <EntitySet Name="TasksLog" EntityType="KursSystemModel.TasksLog" />
           <EntitySet Name="UserMenuOrder" EntityType="KursSystemModel.UserMenuOrder" />
           <EntitySet Name="UserMenuRight" EntityType="KursSystemModel.UserMenuRight" />
           <EntitySet Name="UserRoles" EntityType="KursSystemModel.UserRoles" />
           <EntitySet Name="Users" EntityType="KursSystemModel.Users" />
-          <EntitySet Name="Version" EntityType="KursSystemModel.Version" />
-          <EntitySet Name="VersionInfo" EntityType="KursSystemModel.VersionInfo" />
           <AssociationSet Name="FK_Errors_DbId" Association="KursSystemModel.FK_Errors_DbId">
             <End Role="DataSources" EntitySet="DataSources" />
             <End Role="Errors" EntitySet="Errors" />
@@ -657,10 +649,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <AssociationSet Name="FK_LastDocument_DbId" Association="KursSystemModel.FK_LastDocument_DbId">
             <End Role="DataSources" EntitySet="DataSources" />
             <End Role="LastDocument" EntitySet="LastDocument" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SignatureSchemes_DbId" Association="KursSystemModel.FK_SignatureSchemes_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
           </AssociationSet>
           <AssociationSet Name="FK_SignatureType_DbId" Association="KursSystemModel.FK_SignatureType_DbId">
             <End Role="DataSources" EntitySet="DataSources" />
@@ -694,10 +682,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             <End Role="KursMenuGroup" EntitySet="KursMenuGroup" />
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
           </AssociationSet>
-          <AssociationSet Name="FK_SignatureSchemes_DocumentTYpeId" Association="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId">
-            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
-            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
-          </AssociationSet>
           <AssociationSet Name="FK_UserMenuRight_MenuId" Association="KursSystemModel.FK_UserMenuRight_MenuId">
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
             <End Role="UserMenuRight" EntitySet="UserMenuRight" />
@@ -705,14 +689,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <AssociationSet Name="FK_LastDocument_UserId" Association="KursSystemModel.FK_LastDocument_UserId">
             <End Role="Users" EntitySet="Users" />
             <End Role="LastDocument" EntitySet="LastDocument" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SignatureSchemesInfo_ParentId" Association="KursSystemModel.FK_SignatureSchemesInfo_ParentId">
-            <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
-            <End Role="SignatureSchemesInfo1" EntitySet="SignatureSchemesInfo" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SignatureSchemesInfo_SignId" Association="KursSystemModel.FK_SignatureSchemesInfo_SignId">
-            <End Role="SignatureType" EntitySet="SignatureType" />
-            <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
           </AssociationSet>
           <AssociationSet Name="UserRolesLinkMenuItem" Association="KursSystemModel.UserRolesLinkMenuItem">
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
@@ -726,7 +702,29 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             <End Role="SignatureType" EntitySet="SignatureType" />
             <End Role="Users" EntitySet="Users" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="SignatureSchemes" EntityType="KursSystemModel.SignatureSchemes" />
+          <EntitySet Name="SignatureSchemesInfo" EntityType="KursSystemModel.SignatureSchemesInfo" />
+          <AssociationSet Name="FK_SignatureSchemes_DbId" Association="KursSystemModel.FK_SignatureSchemes_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignatureSchemes_DocumentTYpeId" Association="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignatureSchemesInfo_SchemeId" Association="KursSystemModel.FK_SignatureSchemesInfo_SchemeId">
+            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
+            <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignatureSchemesInfo_ParentId" Association="KursSystemModel.FK_SignatureSchemesInfo_ParentId">
+            <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
+            <End Role="SignatureSchemesInfo1" EntitySet="SignatureSchemesInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignatureSchemesInfo_SignId" Association="KursSystemModel.FK_SignatureSchemesInfo_SignId">
+            <End Role="SignatureType" EntitySet="SignatureType" />
+            <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
+          </AssociationSet>
+          </EntityContainer>
         <EntityType Name="DataSources">
           <Key>
             <PropertyRef Name="Id" />
@@ -741,10 +739,10 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <NavigationProperty Name="Errors" Relationship="KursSystemModel.FK_Errors_DbId" FromRole="DataSources" ToRole="Errors" />
           <NavigationProperty Name="KontragentCashes" Relationship="KursSystemModel.FK_KontragentCashes_DBId" FromRole="DataSources" ToRole="KontragentCashes" />
           <NavigationProperty Name="LastDocument" Relationship="KursSystemModel.FK_LastDocument_DbId" FromRole="DataSources" ToRole="LastDocument" />
-          <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DbId" FromRole="DataSources" ToRole="SignatureSchemes" />
           <NavigationProperty Name="SignatureType" Relationship="KursSystemModel.FK_SignatureType_DbId" FromRole="DataSources" ToRole="SignatureType" />
           <NavigationProperty Name="UserMenuRight" Relationship="KursSystemModel.FK_UserMenuRight_DBId" FromRole="DataSources" ToRole="UserMenuRight" />
           <NavigationProperty Name="Users" Relationship="KursSystemModel.UsersLinkDB" FromRole="DataSources" ToRole="Users" />
+          <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DbId" FromRole="DataSources" ToRole="SignatureSchemes" />
         </EntityType>
         <EntityType Name="Errors">
           <Key>
@@ -815,9 +813,10 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="FormLayout" Relationship="KursSystemModel.FK_FormLayout_FormId" FromRole="KursMenuItem" ToRole="FormLayout" />
           <NavigationProperty Name="KursMenuGroup" Relationship="KursSystemModel.FK_KursMenuItem_GroupId" FromRole="KursMenuItem" ToRole="KursMenuGroup" />
-          <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId" FromRole="KursMenuItem" ToRole="SignatureSchemes" />
           <NavigationProperty Name="UserMenuRight" Relationship="KursSystemModel.FK_UserMenuRight_MenuId" FromRole="KursMenuItem" ToRole="UserMenuRight" />
           <NavigationProperty Name="UserRoles" Relationship="KursSystemModel.UserRolesLinkMenuItem" FromRole="KursMenuItem" ToRole="UserRoles" />
+          <Property Name="IsSign" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId" FromRole="KursMenuItem" ToRole="SignatureSchemes" />
         </EntityType>
         <EntityType Name="LastDocument">
           <Key>
@@ -850,31 +849,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <Property Name="ProgramName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="UserName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="SignatureSchemes">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="DbId" Type="Guid" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="DocumentTYpeId" Type="Int32" Nullable="false" />
-          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_SignatureSchemes_DbId" FromRole="SignatureSchemes" ToRole="DataSources" />
-          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId" FromRole="SignatureSchemes" ToRole="KursMenuItem" />
-        </EntityType>
-        <EntityType Name="SignatureSchemesInfo">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="SignId" Type="Guid" Nullable="false" />
-          <Property Name="ParentId" Type="Guid" />
-          <Property Name="IsRequired" Type="Boolean" Nullable="false" />
-          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="SignatureSchemesInfo1" Relationship="KursSystemModel.FK_SignatureSchemesInfo_ParentId" FromRole="SignatureSchemesInfo" ToRole="SignatureSchemesInfo1" />
-          <NavigationProperty Name="SignatureSchemesInfo2" Relationship="KursSystemModel.FK_SignatureSchemesInfo_ParentId" FromRole="SignatureSchemesInfo1" ToRole="SignatureSchemesInfo" />
-          <NavigationProperty Name="SignatureType" Relationship="KursSystemModel.FK_SignatureSchemesInfo_SignId" FromRole="SignatureSchemesInfo" ToRole="SignatureType" />
-        </EntityType>
         <EntityType Name="SignatureType">
           <Key>
             <PropertyRef Name="Id" />
@@ -884,8 +858,8 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="DbId" Type="Guid" Nullable="false" />
           <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_SignatureType_DbId" FromRole="SignatureType" ToRole="DataSources" />
-          <NavigationProperty Name="SignatureSchemesInfo" Relationship="KursSystemModel.FK_SignatureSchemesInfo_SignId" FromRole="SignatureType" ToRole="SignatureSchemesInfo" />
           <NavigationProperty Name="Users" Relationship="KursSystemModel.SignatureLink" FromRole="SignatureType" ToRole="Users" />
+          <NavigationProperty Name="SignatureSchemesInfo" Relationship="KursSystemModel.FK_SignatureSchemesInfo_SignId" FromRole="SignatureType" ToRole="SignatureSchemesInfo" />
         </EntityType>
         <EntityType Name="TasksLog">
           <Key>
@@ -947,26 +921,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <NavigationProperty Name="DataSources" Relationship="KursSystemModel.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
           <NavigationProperty Name="SignatureType" Relationship="KursSystemModel.SignatureLink" FromRole="Users" ToRole="SignatureType" />
         </EntityType>
-        <EntityType Name="Version">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="ServerPath" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="Major" Type="Int32" Nullable="false" />
-          <Property Name="Minor" Type="Int32" Nullable="false" />
-          <Property Name="Version1" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="VersionInfo">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="Info" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="Major" Type="Int32" Nullable="false" />
-          <Property Name="Minor" Type="Int32" Nullable="false" />
-          <Property Name="Version" Type="Int32" Nullable="false" />
-        </EntityType>
         <Association Name="FK_Errors_DbId">
           <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
           <End Type="KursSystemModel.Errors" Role="Errors" Multiplicity="*" />
@@ -999,18 +953,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="LastDocument">
-              <PropertyRef Name="DbId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_SignatureSchemes_DbId">
-          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
-          <End Type="KursSystemModel.SignatureSchemes" Role="SignatureSchemes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="SignatureSchemes">
               <PropertyRef Name="DbId" />
             </Dependent>
           </ReferentialConstraint>
@@ -1111,18 +1053,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_SignatureSchemes_DocumentTYpeId">
-          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="1" />
-          <End Type="KursSystemModel.SignatureSchemes" Role="SignatureSchemes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="KursMenuItem">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="SignatureSchemes">
-              <PropertyRef Name="DocumentTYpeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_UserMenuRight_MenuId">
           <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="1" />
           <End Type="KursSystemModel.UserMenuRight" Role="UserMenuRight" Multiplicity="*" />
@@ -1144,6 +1074,82 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             </Principal>
             <Dependent Role="LastDocument">
               <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserRolesLinkMenuItem">
+          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="*" />
+          <End Type="KursSystemModel.UserRoles" Role="UserRoles" Multiplicity="*" />
+        </Association>
+        <Association Name="UsersLinkDB">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="*" />
+          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="*" />
+        </Association>
+        <Association Name="SignatureLink">
+          <End Type="KursSystemModel.SignatureType" Role="SignatureType" Multiplicity="*" />
+          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="*" />
+        </Association>
+        <EntityType Name="SignatureSchemes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="DbId" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="DocumentTYpeId" Type="Int32" Nullable="false" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_SignatureSchemes_DbId" FromRole="SignatureSchemes" ToRole="DataSources" />
+          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId" FromRole="SignatureSchemes" ToRole="KursMenuItem" />
+          <NavigationProperty Name="SignatureSchemesInfo" Relationship="KursSystemModel.FK_SignatureSchemesInfo_SchemeId" FromRole="SignatureSchemes" ToRole="SignatureSchemesInfo" />
+        </EntityType>
+        <EntityType Name="SignatureSchemesInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="SignId" Type="Guid" Nullable="false" />
+          <Property Name="ParentId" Type="Guid" />
+          <Property Name="IsRequired" Type="Boolean" Nullable="false" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="SchemeId" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemesInfo_SchemeId" FromRole="SignatureSchemesInfo" ToRole="SignatureSchemes" />
+          <NavigationProperty Name="SignatureSchemesInfo1" Relationship="KursSystemModel.FK_SignatureSchemesInfo_ParentId" FromRole="SignatureSchemesInfo" ToRole="SignatureSchemesInfo1" />
+          <NavigationProperty Name="SignatureSchemesInfo2" Relationship="KursSystemModel.FK_SignatureSchemesInfo_ParentId" FromRole="SignatureSchemesInfo1" ToRole="SignatureSchemesInfo" />
+          <NavigationProperty Name="SignatureType" Relationship="KursSystemModel.FK_SignatureSchemesInfo_SignId" FromRole="SignatureSchemesInfo" ToRole="SignatureType" />
+        </EntityType>
+        <Association Name="FK_SignatureSchemes_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.SignatureSchemes" Role="SignatureSchemes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SignatureSchemes">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SignatureSchemes_DocumentTYpeId">
+          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="1" />
+          <End Type="KursSystemModel.SignatureSchemes" Role="SignatureSchemes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SignatureSchemes">
+              <PropertyRef Name="DocumentTYpeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SignatureSchemesInfo_SchemeId">
+          <End Type="KursSystemModel.SignatureSchemes" Role="SignatureSchemes" Multiplicity="1" />
+          <End Type="KursSystemModel.SignatureSchemesInfo" Role="SignatureSchemesInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SignatureSchemes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SignatureSchemesInfo">
+              <PropertyRef Name="SchemeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1170,18 +1176,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
               <PropertyRef Name="SignId" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>
-        <Association Name="UserRolesLinkMenuItem">
-          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="*" />
-          <End Type="KursSystemModel.UserRoles" Role="UserRoles" Multiplicity="*" />
-        </Association>
-        <Association Name="UsersLinkDB">
-          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="*" />
-          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="*" />
-        </Association>
-        <Association Name="SignatureLink">
-          <End Type="KursSystemModel.SignatureType" Role="SignatureType" Multiplicity="*" />
-          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="*" />
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -1256,6 +1250,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <EntitySetMapping Name="KursMenuItem">
             <EntityTypeMapping TypeName="KursSystemModel.KursMenuItem">
               <MappingFragment StoreEntitySet="KursMenuItem">
+                <ScalarProperty Name="IsSign" ColumnName="IsSign" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="OrderBy" ColumnName="OrderBy" />
                 <ScalarProperty Name="Note" ColumnName="Note" />
@@ -1293,28 +1288,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
                 <ScalarProperty Name="Level" ColumnName="Level" />
                 <ScalarProperty Name="Logged" ColumnName="Logged" />
                 <ScalarProperty Name="MachineName" ColumnName="MachineName" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SignatureSchemes">
-            <EntityTypeMapping TypeName="KursSystemModel.SignatureSchemes">
-              <MappingFragment StoreEntitySet="SignatureSchemes">
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="DocumentTYpeId" ColumnName="DocumentTYpeId" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="DbId" ColumnName="DbId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SignatureSchemesInfo">
-            <EntityTypeMapping TypeName="KursSystemModel.SignatureSchemesInfo">
-              <MappingFragment StoreEntitySet="SignatureSchemesInfo">
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="IsRequired" ColumnName="IsRequired" />
-                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
-                <ScalarProperty Name="SignId" ColumnName="SignId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1385,28 +1358,6 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Version">
-            <EntityTypeMapping TypeName="KursSystemModel.Version">
-              <MappingFragment StoreEntitySet="Version">
-                <ScalarProperty Name="Version1" ColumnName="Version" />
-                <ScalarProperty Name="Minor" ColumnName="Minor" />
-                <ScalarProperty Name="Major" ColumnName="Major" />
-                <ScalarProperty Name="ServerPath" ColumnName="ServerPath" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="VersionInfo">
-            <EntityTypeMapping TypeName="KursSystemModel.VersionInfo">
-              <MappingFragment StoreEntitySet="VersionInfo">
-                <ScalarProperty Name="Version" ColumnName="Version" />
-                <ScalarProperty Name="Minor" ColumnName="Minor" />
-                <ScalarProperty Name="Major" ColumnName="Major" />
-                <ScalarProperty Name="Info" ColumnName="Info" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <AssociationSetMapping Name="UserRolesLinkMenuItem" TypeName="KursSystemModel.UserRolesLinkMenuItem" StoreEntitySet="UserRolesLinkMenuItem">
             <EndProperty Name="UserRoles">
               <ScalarProperty Name="id" ColumnName="RolesId" />
@@ -1431,6 +1382,29 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
               <ScalarProperty Name="Id" ColumnName="SignId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="SignatureSchemes">
+            <EntityTypeMapping TypeName="KursSystemModel.SignatureSchemes">
+              <MappingFragment StoreEntitySet="SignatureSchemes">
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="DocumentTYpeId" ColumnName="DocumentTYpeId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DbId" ColumnName="DbId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SignatureSchemesInfo">
+            <EntityTypeMapping TypeName="KursSystemModel.SignatureSchemesInfo">
+              <MappingFragment StoreEntitySet="SignatureSchemesInfo">
+                <ScalarProperty Name="SchemeId" ColumnName="SchemeId" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="IsRequired" ColumnName="IsRequired" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="SignId" ColumnName="SignId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

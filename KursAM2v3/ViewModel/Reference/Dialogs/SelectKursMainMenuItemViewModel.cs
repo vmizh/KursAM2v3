@@ -1,22 +1,23 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Controls;
-using Core;
+using Core.EntityViewModel.Systems;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Data;
 using DevExpress.Mvvm;
 using KursAM2.View.KursReferences.UC;
-using KursRepositories.ViewModels;
 
 namespace KursAM2.ViewModel.Reference.Dialogs
 {
     public sealed class SelectKursMainMenuItemViewModel : RSWindowViewModelBase
     {
+        private readonly KursSystemEntities context;
         private KursMenuItemViewModel myCurrentMenu;
         private ICurrentWindowService winCurrentService;
 
-        public SelectKursMainMenuItemViewModel()
+        public SelectKursMainMenuItemViewModel(KursSystemEntities ctx)
         {
+            context = ctx;
             RightMenuBar = MenuGenerator.DialogStandartBar(this);
             RefreshData(null);
         }
@@ -63,13 +64,10 @@ namespace KursAM2.ViewModel.Reference.Dialogs
 
         public override void RefreshData(object obj)
         {
-            using (var ctx = GlobalOptions.KursSystem())
-            {
-                var data = ctx.KursMenuItem.ToList();
-                MenuItems.Clear();
-                foreach(var d in data)
-                    MenuItems.Add(new KursMenuItemViewModel(d));
-            }
+            if (context == null) return;
+            MenuItems.Clear();
+            foreach (var d in context.KursMenuItem)
+                MenuItems.Add(new KursMenuItemViewModel(d));
         }
 
         #endregion

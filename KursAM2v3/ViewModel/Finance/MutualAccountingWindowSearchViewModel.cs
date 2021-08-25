@@ -15,28 +15,26 @@ using KursAM2.View.Finance;
 
 namespace KursAM2.ViewModel.Finance
 {
-    public class MutualAccountingWindowSearchViewModel : RSWindowSearchViewModelBase
+    public sealed class MutualAccountingWindowSearchViewModel : RSWindowSearchViewModelBase
     {
         private readonly MutualAccountingManager manager = new MutualAccountingManager();
         private SD_110ViewModel myCurrentDocument;
-        private DateTime myDateEnd;
-        private DateTime myDateStart;
         private bool myIsConvert;
 
         public MutualAccountingWindowSearchViewModel()
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            DateStart = DateTime.Today.AddDays(-100);
-            DateEnd = DateTime.Today;
+            StartDate = DateTime.Today.AddDays(-100);
+            EndDate = DateTime.Today;
         }
 
         public MutualAccountingWindowSearchViewModel(bool isConvert)
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            DateStart = DateTime.Today.AddDays(-100);
-            DateEnd = DateTime.Today;
+            StartDate = DateTime.Today.AddDays(-100);
+            EndDate = DateTime.Today;
             IsConvert = isConvert;
         }
 
@@ -56,28 +54,28 @@ namespace KursAM2.ViewModel.Finance
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
-        public DateTime DateStart
+        public override DateTime StartDate
         {
-            get => myDateStart;
+            get => base.StartDate;
             set
             {
-                if (myDateStart == value) return;
-                myDateStart = value;
-                if (DateStart > DateEnd)
-                    DateEnd = DateStart;
+                if (base.StartDate == value) return;
+                base.StartDate = value;
+                if (base.StartDate > base.EndDate)
+                    base.EndDate = base.StartDate;
                 RaisePropertyChanged();
             }
         }
 
-        public DateTime DateEnd
+        public override DateTime EndDate
         {
-            get => myDateEnd;
+            get => base.EndDate;
             set
             {
-                if (myDateEnd == value) return;
-                myDateEnd = value;
-                if (DateEnd < DateStart)
-                    DateStart = DateEnd;
+                if (base.EndDate == value) return;
+                base.EndDate = value;
+                if (base.EndDate < base.StartDate)
+                    base.StartDate = base.EndDate;
                 RaisePropertyChanged();
             }
         }
@@ -135,11 +133,11 @@ namespace KursAM2.ViewModel.Finance
                             .Include("TD_110.SD_43")
                             .Include("TD_110.SD_77")
                             .Include("TD_110.SD_84")
-                            .Where(_ => _.VZ_DATE >= DateStart && _.VZ_DATE <= DateEnd && _.SD_111.IsCurrencyConvert)
+                            .Where(_ => _.VZ_DATE >= StartDate && _.VZ_DATE <= EndDate && _.SD_111.IsCurrencyConvert)
                             .ToList();
                         foreach (var d in data)
                         {
-                            var newDoc = new SD_110ViewModel(d) {IsOld = false};
+                            var newDoc = new SD_110ViewModel(d) { IsOld = false };
                             Documents.Add(newDoc);
                         }
                     }
@@ -155,7 +153,7 @@ namespace KursAM2.ViewModel.Finance
                             .Include("TD_110.SD_43")
                             .Include("TD_110.SD_77")
                             .Include("TD_110.SD_84")
-                            .Where(_ => _.VZ_DATE >= DateStart && _.VZ_DATE <= DateEnd && !_.SD_111.IsCurrencyConvert)
+                            .Where(_ => _.VZ_DATE >= StartDate && _.VZ_DATE <= EndDate && !_.SD_111.IsCurrencyConvert)
                             .ToList();
                         foreach (var d in data)
                         {
@@ -194,7 +192,7 @@ namespace KursAM2.ViewModel.Finance
                         .Include("TD_110.SD_43")
                         .Include("TD_110.SD_77")
                         .Include("TD_110.SD_84")
-                        .Where(_ => _.VZ_DATE >= DateStart && _.VZ_DATE <= DateEnd)
+                        .Where(_ => _.VZ_DATE >= StartDate && _.VZ_DATE <= EndDate)
                         .ToList();
                     foreach (var d in data.Where(_ => _.VZ_NOTES?.ToUpper().Contains(SearchText.ToUpper()) ??
                                                       _.VZ_NUM.ToString().Contains(SearchText)))
@@ -227,7 +225,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new MutualAccountingView {Owner = Application.Current.MainWindow};
+            var frm = new MutualAccountingView { Owner = Application.Current.MainWindow };
             var ctx = new MutualAcountingWindowViewModel
             {
                 IsCurrencyConvert = IsConvert,

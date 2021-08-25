@@ -25,7 +25,9 @@ namespace Data
         public Nullable<System.Guid> ParentId { get; set; }
         public bool IsRequired { get; set; }
         public string Note { get; set; }
+        public System.Guid SchemeId { get; set; }
     
+        public virtual SignatureSchemes SignatureSchemes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SignatureSchemesInfo> SignatureSchemesInfo1 { get; set; }
         public virtual SignatureSchemesInfo SignatureSchemesInfo2 { get; set; }

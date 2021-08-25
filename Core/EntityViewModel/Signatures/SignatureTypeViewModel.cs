@@ -12,7 +12,7 @@ namespace Core.EntityViewModel.Signatures
     {
         #region Fields
 
-        private DataSourceViewModel myDataSource;
+        private DataSourcesViewModel myDataSource;
 
         #endregion
 
@@ -56,14 +56,14 @@ namespace Core.EntityViewModel.Signatures
         }
 
         [Display(Name = "База данных")]
-        public DataSourceViewModel DataSource
+        public DataSourcesViewModel DataSource
         {
             get
             {
                 if (myDataSource != null) return myDataSource;
                 if (Entity.DataSources != null)
                 {
-                    myDataSource = new DataSourceViewModel(Entity.DataSources);
+                    myDataSource = new DataSourcesViewModel(Entity.DataSources);
                     return myDataSource;
                 }
 

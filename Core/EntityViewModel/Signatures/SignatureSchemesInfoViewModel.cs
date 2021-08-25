@@ -62,17 +62,7 @@ namespace Core.EntityViewModel.Signatures
         }
         public SignatureTypeViewModel SignatureType
         {
-            get
-            {
-                if (mySignatureType != null) return mySignatureType;
-                if (Entity.SignatureType != null)
-                {
-                    mySignatureType = new SignatureTypeViewModel(Entity.SignatureType);
-                    RaisePropertyChanged();
-                    return mySignatureType;
-                } 
-                return null;
-            }
+            get => mySignatureType;
             set
             {
                 if (mySignatureType == value) return;

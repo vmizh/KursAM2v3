@@ -1241,9 +1241,18 @@ namespace Core
                         .ToList())
                 {
                     var newItem = new Kontragent(item);
-                    AllKontragents.Add(newItem.DOC_CODE, newItem);
-                    if ((item.DELETED ?? 0) == 0)
-                        ActiveKontragents.Add(newItem.DOC_CODE, newItem);
+                    if (AllKontragents.ContainsKey(newItem.DOC_CODE))
+                    {
+                        AllKontragents[newItem.DOC_CODE] = newItem;
+                        if ((newItem.DELETED ?? 0) == 0)
+                            ActiveKontragents[newItem.DOC_CODE] = newItem;
+                    }
+                    else
+                    {
+                        AllKontragents.Add(newItem.DOC_CODE, newItem);
+                        if ((newItem.DELETED ?? 0) == 0)
+                            ActiveKontragents.Add(newItem.DOC_CODE, newItem);
+                    }
                 }
 
                 // ReSharper disable once PossibleInvalidOperationException

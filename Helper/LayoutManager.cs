@@ -185,7 +185,6 @@ namespace Helper
                             window.Left = p.FormLeft < 0 ? 0 : StartWinState.FormLeft;
                             window.Top = p.FormTop < 0 ? 0 : StartWinState.FormTop;
                         }
-
                         layoutService.Deserialize(l.Layout);
                     }
                 }

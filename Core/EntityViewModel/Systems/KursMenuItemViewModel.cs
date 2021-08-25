@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
 
-namespace KursRepositories.ViewModels
+namespace Core.EntityViewModel.Systems
 {
     public class KursMenuItemViewModel : RSViewModelBase
     {
@@ -122,6 +122,20 @@ namespace KursRepositories.ViewModels
                 if (Entity.OrderBy == value)
                     return;
                 Entity.OrderBy = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        [DisplayName("Поддерживает подписи")]
+        [Display(AutoGenerateField = true)]
+        public bool IsSignature
+        {
+            get => Entity.IsSign;
+            set
+            {
+                if (Entity.IsSign == value)
+                    return;
+                Entity.IsSign = value;
                 RaisePropertyChanged();
             }
         }

@@ -14,6 +14,12 @@ namespace Data
     
     public partial class SignatureSchemes
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public SignatureSchemes()
+        {
+            this.SignatureSchemesInfo = new HashSet<SignatureSchemesInfo>();
+        }
+    
         public System.Guid Id { get; set; }
         public System.Guid DbId { get; set; }
         public string Name { get; set; }
@@ -22,5 +28,7 @@ namespace Data
     
         public virtual DataSources DataSources { get; set; }
         public virtual KursMenuItem KursMenuItem { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SignatureSchemesInfo> SignatureSchemesInfo { get; set; }
     }
 }

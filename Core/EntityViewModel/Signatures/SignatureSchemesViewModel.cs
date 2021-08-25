@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
@@ -9,17 +10,42 @@ namespace Core.EntityViewModel.Signatures
 {
     public class SignatureSchemesViewModel : RSViewModelBase, IEntity<SignatureSchemes>
     {
+        #region Methods
+
+        public SignatureSchemes DefaultValue()
+        {
+            return new()
+            {
+                Id = Guid.NewGuid()
+            };
+        }
+
+        private void LoadReference()
+        {
+            if (Entity.SignatureSchemesInfo is {Count: > 0})
+            {
+                foreach (var info in Entity.SignatureSchemesInfo)
+                {
+                    SchemesInfo.Add(new SignatureSchemesInfoViewModel(info));
+                }
+            }
+        }
+
+        #endregion
+
         #region Fields
 
-        private DataSourceViewModel myDataSource;
+        private DataSourcesViewModel myDataSource;
         private KursMenuItemViewModel myDocumentType;
 
         #endregion
 
         #region Properties
 
-        [Display(AutoGenerateField = false)]
-        public SignatureSchemes Entity { get; set; }
+        public ObservableCollection<SignatureSchemesInfoViewModel> SchemesInfo { set; get; }
+            = new();
+
+        [Display(AutoGenerateField = false)] public SignatureSchemes Entity { get; set; }
 
         [Display(AutoGenerateField = false)]
         public override Guid Id
@@ -34,19 +60,9 @@ namespace Core.EntityViewModel.Signatures
         }
 
         [Display(AutoGenerateField = false)]
-        public DataSourceViewModel DataSource
+        public DataSourcesViewModel DataSource
         {
-            get
-            {
-                if (myDataSource != null) return myDataSource;
-                if (Entity.DataSources != null)
-                {
-                    myDataSource = new DataSourceViewModel(Entity.DataSources);
-                    RaisePropertyChanged();
-                    return myDataSource;
-                } 
-                return null;
-            }
+            get => myDataSource;
             set
             {
                 if (myDataSource == value) return;
@@ -59,17 +75,7 @@ namespace Core.EntityViewModel.Signatures
         [Display(AutoGenerateField = false)]
         public KursMenuItemViewModel DocumentType
         {
-            get
-            {
-                if (myDocumentType != null) return myDocumentType;
-                if (Entity.KursMenuItem != null)
-                {
-                    myDocumentType = new KursMenuItemViewModel(Entity.KursMenuItem);
-                    RaisePropertyChanged();
-                    return myDocumentType;
-                } 
-                return null;
-            }
+            get => myDocumentType;
             set
             {
                 if (myDocumentType == value) return;
@@ -79,8 +85,7 @@ namespace Core.EntityViewModel.Signatures
             }
         }
 
-        [Display(Name = "Тип документа")]
-        public string MenuItemName => Entity.KursMenuItem?.Name;
+        [Display(Name = "Тип документа")] public string MenuItemName => Entity.KursMenuItem?.Name;
 
         [Display(Name = "Наименование")]
         public override string Name
@@ -118,18 +123,7 @@ namespace Core.EntityViewModel.Signatures
         public SignatureSchemesViewModel(SignatureSchemes entity)
         {
             Entity = entity ?? DefaultValue();
-        }
-
-        #endregion
-
-        #region Methods
-
-        public SignatureSchemes DefaultValue()
-        {
-            return new()
-            {
-                Id = Guid.NewGuid()
-            };
+            LoadReference();
         }
 
         #endregion

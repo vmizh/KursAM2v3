@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
+using Core.EntityViewModel.Systems;
 using Core.Menu;
 using Core.ViewModel.Base;
 using DevExpress.Xpf.Grid;

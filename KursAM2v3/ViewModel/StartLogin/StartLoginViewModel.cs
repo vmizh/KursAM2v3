@@ -117,6 +117,9 @@ namespace KursAM2.ViewModel.StartLogin
             if (!userIni.KeyExists("Login", "Start")) userIni.Write("Start", "Login", "");
             if (!userIni.KeyExists("LastDataBase", "Start")) userIni.Write("Start", "LastDataBase", "");
             if (!userIni.KeyExists("DefaultDataBase", "Start")) userIni.Write("Start", "DefaultDataBase", "");
+            if (!userIni.KeyExists("System","Version")) userIni.Write("Version", "System", "0");
+            if (!userIni.KeyExists("Test","Version")) userIni.Write("Version", "Test", "0");
+            if (!userIni.KeyExists("Version","Version")) userIni.Write("Version", "Version", "0");
         }
 
         #region command
@@ -400,7 +403,8 @@ namespace KursAM2.ViewModel.StartLogin
                 IDialogService service = GetService<IDialogService>("errorDialogService");
                 service?.ShowDialog(MessageButton.OK, "Ошибка", new DialogErrorViewModel
                 {
-                    ErrorText = errText.ToString()
+                    ErrorText = errText.ToString().Replace("The underlying provider failed on Open","Не могу открыть базу данных")
+                        .Replace("Login failed for user","Неправильный пользователь/пароль")
                 });
                 //MessageBox.Show("CheckAndSetUser error.\n" + errText);
                 newUser = null;

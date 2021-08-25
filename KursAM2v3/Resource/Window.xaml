@@ -57,9 +57,11 @@
             <Setter.Value>
                 <DataTemplate>
                     <ItemsControl>
-                        <dxmvvm:LayoutSerializationService />
+                        <dxmvvm:CurrentWindowSerializationBehavior/>
+                        <dxmvvm:LayoutSerializationService/>
                         <dxmvvm:CurrentWindowService ClosingCommand="{Binding OnWindowClosingCommand}"/>
-                        <dxmvvm:EventToCommand Event="Loaded" Command="{Binding OnWindowLoadedCommand}" />
+                        <dxmvvm:EventToCommand EventName="Initialized" Command="{Binding OnWindowLoadedCommand}"/>
+                        <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding OnWindowLoadedCommand}"/>
                         <dx:DXMessageBoxService />
                         <dx:DialogService x:Name="DialogService" ViewTemplate="{StaticResource dialogServiceTemplate}">
                             <dx:DialogService.DialogStyle>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.Signatures;
+using Core.EntityViewModel.Systems;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
@@ -45,7 +46,7 @@ namespace KursAM2.ViewModel.Signatures
 
         private void LoadReference()
         {
-            var ds = SystemUnitOfWork.Context.DataSources.Include(_ => _.Users).AsNoTracking()
+            var ds = SystemUnitOfWork.Context.DataSources.Include(_ => _.Users)
                 .Where(_ => _.Users.Any(u => u.Id == GlobalOptions.UserInfo.KursId))
                 .ToList();
             foreach (var d in ds) DataSourceList.Add(new DataSourcesViewModel(d));
@@ -54,11 +55,16 @@ namespace KursAM2.ViewModel.Signatures
         private void LoadSignatureTypes()
         {
             Signatures.Clear();
+            DocumentSchemes.Clear();
 
-            var signs = SystemUnitOfWork.Context.SignatureType
-                .Where(_ => _.DbId == CurrentDataSource.Id);
-            foreach (var s in signs.ToList())
+            foreach (var s in SystemUnitOfWork.Context.SignatureType
+                .Where(_ => _.DbId == CurrentDataSource.Id).ToList())
                 Signatures.Add(new SignatureTypeViewModel(s));
+            foreach (var ds in SystemUnitOfWork.Context.SignatureSchemes.Where(
+                _ => _.DbId == CurrentDataSource.Id).ToList())
+            {
+                DocumentSchemes.Add(new SignatureSchemesViewModel(ds));
+            }
         }
 
         #endregion
@@ -69,6 +75,8 @@ namespace KursAM2.ViewModel.Signatures
         private SignatureTypeViewModel myCurrentSignature;
         private UsersViewModel myCurrentUser;
         private KursMenuItemViewModel myCurrentDocType;
+        private SignatureSchemesViewModel myCurrentSchema;
+        private SignatureSchemesInfo myCurrentInfoSchema;
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
@@ -77,6 +85,7 @@ namespace KursAM2.ViewModel.Signatures
             new UnitOfWork<KursSystemEntities>(new KursSystemEntities(GlobalOptions.SqlSystemConnectionString));
 
         public readonly GenericKursDBRepository<SignatureType> GenericRepository;
+        
 
         #endregion
 
@@ -88,7 +97,7 @@ namespace KursAM2.ViewModel.Signatures
         public ObservableCollection<SignatureTypeViewModel> Signatures { set; get; } =
             new ObservableCollection<SignatureTypeViewModel>();
 
-        public ObservableCollection<SignatureSchemesViewModel> SignatureDocTypes { set; get; } =
+        public ObservableCollection<SignatureSchemesViewModel> DocumentSchemes { set; get; } =
             new ObservableCollection<SignatureSchemesViewModel>();
 
 
@@ -132,6 +141,27 @@ namespace KursAM2.ViewModel.Signatures
             }
         }
 
+        public SignatureSchemesInfo CurrentInfoSchema
+        {
+            get => myCurrentInfoSchema;
+            set
+            {
+                if (myCurrentInfoSchema == value) return;
+                myCurrentInfoSchema = value;
+                RaisePropertyChanged();
+            }
+        }
+
+    public SignatureSchemesViewModel CurrentSchema
+        {
+            get => myCurrentSchema;
+            set
+            {
+                if (myCurrentSchema == value) return;
+                myCurrentSchema = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public SignatureTypeViewModel CurrentSignature
         {
@@ -150,6 +180,44 @@ namespace KursAM2.ViewModel.Signatures
 
         public override bool IsCanSaveData => (SystemUnitOfWork.Context.ChangeTracker.HasChanges() ||
                                                UnitOfWork.Context.ChangeTracker.HasChanges()) && IsDataCorrect();
+
+        public ICommand AddSchemaSignatureCommand
+        {
+            get { return new Command(AddSchemaSignature, _ => CurrentSchema != null); }
+        }
+
+        private void AddSchemaSignature(object obj)
+        {
+            var newSch = new SignatureSchemesInfo
+            {
+                Id = Guid.NewGuid(),
+                IsRequired = true,
+                SchemeId = CurrentSchema.Id
+            };
+            var newItem = new SignatureSchemesInfoViewModel(newSch);
+            CurrentSchema.SchemesInfo.Add(newItem);
+            
+        }
+
+        public ICommand AddSchemaSignature2Command
+        {
+            get { return new Command(AddSchemaSignature2, _ => CurrentSchema != null); }
+        }
+
+        private void AddSchemaSignature2(object obj)
+        {
+            
+        }
+
+        public ICommand DeleteSchemaSignatureCommand
+        {
+            get { return new Command(DeleteSchemaSignature, _ => true); }
+        }
+
+        private void DeleteSchemaSignature(object obj)
+        {
+            
+        }
 
         public ICommand AddSignatureCommand
         {
@@ -226,6 +294,7 @@ namespace KursAM2.ViewModel.Signatures
             {
                 if (SystemUnitOfWork.Context.ChangeTracker.HasChanges())
                 {
+                    //var e = SystemUnitOfWork.Context.Entry(CurrentSchema.Entity);
                     SystemUnitOfWork.CreateTransaction();
                     SystemUnitOfWork.Save();
                     SystemUnitOfWork.Commit();
@@ -247,6 +316,24 @@ namespace KursAM2.ViewModel.Signatures
             }
         }
 
+        public ICommand DeleteDocumentCommand
+        {
+            get { return new Command(DeleteDocument, _ => CurrentSchema != null); }
+        }
+
+        private void DeleteDocument(object obj)
+        {
+            if (SystemUnitOfWork.Context.Entry(CurrentSchema.Entity).State == EntityState.Added)
+            {
+                SystemUnitOfWork.Context.Entry(CurrentSchema.Entity).State = EntityState.Detached;
+            }
+            else
+            {
+                SystemUnitOfWork.Context.SignatureSchemes.Remove(CurrentSchema.Entity);
+            }
+            DocumentSchemes.Remove(CurrentSchema);
+        }
+
         public ICommand AddDocumentCommand
         {
             get { return new Command(AddDocument, _ => CurrentDataSource != null); }
@@ -254,7 +341,7 @@ namespace KursAM2.ViewModel.Signatures
 
         private void AddDocument(object obj)
         {
-            var ctx = new SelectKursMainMenuItemViewModel();
+            var ctx = new SelectKursMainMenuItemViewModel(SystemUnitOfWork.Context);
             var service = GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
             if (ctx.CurrentMenu == null) return;
@@ -262,12 +349,21 @@ namespace KursAM2.ViewModel.Signatures
             {
                 Id = Guid.NewGuid(),
                 Name = ctx.CurrentMenu.Name,
-                DataSources = CurrentDataSource.Entity,
-                KursMenuItem = ctx.CurrentMenu.Entity
+                DbId = CurrentDataSource.Id,
+                DocumentTYpeId = ctx.CurrentMenu.Id,
             };
-            var schema = new SignatureSchemesViewModel(newEnt);
+            var schema = new SignatureSchemesViewModel(newEnt)
+            {
+                DataSource = CurrentDataSource,
+                DocumentType = ctx.CurrentMenu
+
+            };
             SystemUnitOfWork.Context.SignatureSchemes.Add(schema.Entity);
-            SignatureDocTypes.Add(schema);
+            DocumentSchemes.Add(schema);
+            if (DocumentSchemes.Count == 1)
+            {
+                CurrentSchema = schema;
+            }
         }
 
         #endregion
