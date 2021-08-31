@@ -47,14 +47,6 @@ namespace Core.EntityViewModel.Bank
             RaisePropertyChanged(nameof(SHPZList));
         }
 
-        public override string ToString()
-        {
-            var s = Parent?.ToString();
-            if(VVT_VAL_PRIHOD > 0)
-                return  s + $" {BankOperationType} на сумму {VVT_VAL_PRIHOD ?? 0} {Currency}";
-            return s + $" {BankOperationType} на сумму {VVT_VAL_RASHOD ?? 0} {Currency}";
-        }
-
         public BankOperationsViewModel(TD_101 entity)
         {
             Entity = entity ?? new TD_101
@@ -479,6 +471,7 @@ namespace Core.EntityViewModel.Bank
             get => Entity.VVT_SF_CRS_RATE;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.VVT_SF_CRS_RATE == value) return;
                 Entity.VVT_SF_CRS_RATE = value;
                 RaisePropertyChanged();
@@ -728,6 +721,8 @@ namespace Core.EntityViewModel.Bank
 
         public EntityLoadCodition LoadCondition { get; set; }
 
+        public bool IsAccessRight { get; set; }
+
         public TD_101 Entity
         {
             get => myEntity;
@@ -739,12 +734,20 @@ namespace Core.EntityViewModel.Bank
             }
         }
 
+        public override string ToString()
+        {
+            if (VVT_VAL_PRIHOD > 0)
+                return myBankAccount +
+                       $" {BankOperationType.GetDisplayAttributesFrom(typeof(BankOperationType)).Name} на сумму {VVT_VAL_PRIHOD ?? 0} {Currency}";
+            return myBankAccount + $" {BankOperationType.GetDisplayAttributesFrom(typeof(BankOperationType)).Name} " +
+                   $"{KontragentName}" +
+                   $"на сумму {VVT_VAL_RASHOD ?? 0} {Currency}";
+        }
+
         public List<TD_101> LoadList()
         {
             throw new NotImplementedException();
         }
-
-        public bool IsAccessRight { get; set; }
 
         private void SFNameRemove(object obj)
         {
@@ -785,7 +788,7 @@ namespace Core.EntityViewModel.Bank
                         $"С/ф №{Entity.SD_84.SF_IN_NUM}/{Entity.SD_84.SF_OUT_NUM} от {Entity.SD_84.SF_DATE} на {Entity.SD_84.SF_CRS_SUMMA_K_OPLATE} {MainReferences.Currencies[Entity.SD_84.SF_CRS_DC]}";
             if (Entity.VVT_SFACT_POSTAV_DC != null)
                 SFName =
-                    $"С/ф №{Entity.SD_26.SF_IN_NUM}/{Entity.SD_26.SF_POSTAV_NUM} от {Entity.SD_26.SF_POSTAV_DATE} на {Entity.SD_26.SF_CRS_SUMMA} {MainReferences.Currencies[(decimal) Entity.SD_26.SF_CRS_DC]}";
+                    $"С/ф №{Entity.SD_26.SF_IN_NUM}/{Entity.SD_26.SF_POSTAV_NUM} от {Entity.SD_26.SF_POSTAV_DATE} на {Entity.SD_26.SF_CRS_SUMMA} {MainReferences.Currencies[(decimal)Entity.SD_26.SF_CRS_DC]}";
             updateBankInfo();
             BankOperationType = Kontragent != null ? BankOperationType.Kontragent :
                 CashIn != null ? BankOperationType.CashIn :
@@ -929,18 +932,10 @@ namespace Core.EntityViewModel.Bank
         }
 
 
-
         public TD_101 DefaultValue()
         {
             throw new NotImplementedException();
         }
-
-        #region compendiums
-
-        public List<Currency> CurrencysCompendium => MainReferences.Currencies.Values.ToList();
-        public List<SDRSchet> SHPZList { set; get; } = new(MainReferences.SDRSchets.Values.ToList());
-
-        #endregion
 
         public override object ToJson()
         {
@@ -958,10 +953,17 @@ namespace Core.EntityViewModel.Bank
                 Валюта = Currency.Name,
                 Описание = VVT_DOC_NUM,
                 Счет_фактура = SFName,
-                Счет_доходов_расходов = SHPZ?.Name,
+                Счет_доходов_расходов = SHPZ?.Name
             };
             return JsonConvert.SerializeObject(res);
         }
+
+        #region compendiums
+
+        public List<Currency> CurrencysCompendium => MainReferences.Currencies.Values.ToList();
+        public List<SDRSchet> SHPZList { set; get; } = new(MainReferences.SDRSchets.Values.ToList());
+
+        #endregion
     }
 
     public class DataAnnotationsTD_101ViewModel : DataAnnotationForFluentApiBase,

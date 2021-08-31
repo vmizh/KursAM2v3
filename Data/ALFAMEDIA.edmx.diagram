@@ -2032,15 +2032,10 @@
         <EntityTypeShape EntityType="ALFAMEDIAModel.AccruedAmountForClient" Width="1.5" PointX="26.5" PointY="785.25" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.AccruedAmountOfSupplier" Width="1.5" PointX="26.5" PointY="740.75" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.AccruedAmountType" Width="1.5" PointX="34.5" PointY="785.875" />
-        <EntityTypeShape EntityType="ALFAMEDIAModel.AccuredAmountForClientRow" Width="1.5" PointX="28.75" PointY="789.375" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccruedAmountForClient_KontrDC" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_DocId" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccruedAmountOfSupplier_KontrDC" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_AccuredAmountTypeId" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_BankCode" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.SD_33" Width="1.5" PointX="67.25" PointY="680.25" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.SD_34" Width="1.5" PointX="66.75" PointY="714.625" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_CashDC" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_ProviderInvoicePay_CashDC" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_REF_13759_SD_114" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_13758_SD_114" />
@@ -2076,13 +2071,6 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_REF_42556_SD_43" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_TD_101_REF_35605_SD_34" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_UD_281_REF_16099_SD_34" />
-        <EntityTypeShape EntityType="ALFAMEDIAModel.AccuredAmountOfSupplierRow" Width="1.5" PointX="69" PointY="718.25" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_DocId" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_AccuredAmountTypeId" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_BankCode" />
-        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_CashDC" />
-        <AssociationConnector Association="ALFAMEDIAModel.AccuredAmountForClientRow_SD_303" />
-        <AssociationConnector Association="ALFAMEDIAModel.AccuredAmountOfSupplierRow_SD_303" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.DogovorOfSupplier" Width="1.5" PointX="39.5" PointY="672.25" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.DogovorOfSupplierRow" Width="1.5" PointX="59.75" PointY="734.5" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorOfSupplier_KontrDC" />
@@ -2093,6 +2081,18 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorOfSupplier_DogType" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.DocumentSignatures" Width="1.5" PointX="47.375" PointY="4.75" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.SignatureDocumentTypes" Width="1.5" PointX="47.375" PointY="7.75" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.AccuredAmountForClientRow" Width="1.5" PointX="69.5" PointY="717.875" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.AccuredAmountOfSupplierRow" Width="1.5" PointX="69" PointY="705.75" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_DocId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_DocId" />
+        <AssociationConnector Association="ALFAMEDIAModel.AccuredAmountForClientRow_SD_303" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_BankCode" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_CashDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_NomenklDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.AccuredAmountOfSupplierRow_SD_303" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_BankCode" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_CashDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_NomenklDC" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

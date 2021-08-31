@@ -53,6 +53,8 @@
         <ContentControl Content="{Binding CustomDataUserControl}"/>
     </DataTemplate>
     <Style x:Key="DXServices" TargetType="FrameworkElement">
+        <Setter Property="MinHeight" Value="100"/>
+        <Setter Property="MinWidth" Value="200"/>
         <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -60,7 +62,7 @@
                         <dxmvvm:CurrentWindowSerializationBehavior/>
                         <dxmvvm:LayoutSerializationService/>
                         <dxmvvm:CurrentWindowService ClosingCommand="{Binding OnWindowClosingCommand}"/>
-                        <dxmvvm:EventToCommand EventName="Initialized" Command="{Binding OnWindowLoadedCommand}"/>
+                        <dxmvvm:EventToCommand EventName="Initialized" Command="{Binding OnWindowLoadedCommand }"/>
                         <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding OnWindowLoadedCommand}"/>
                         <dx:DXMessageBoxService />
                         <dx:DialogService x:Name="DialogService" ViewTemplate="{StaticResource dialogServiceTemplate}">

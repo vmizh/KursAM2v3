@@ -7,7 +7,6 @@ using System.Windows.Data;
 using Core;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -25,6 +24,13 @@ namespace KursAM2.View.Finance.Cash
     /// </summary>
     public partial class CashOutView : ILayout
     {
+        public ButtonEdit KontrSelectButton = new ButtonEdit();
+
+        public DataLayoutItem NCODEItem = new DataLayoutItem();
+        public DataLayoutItem SFactNameItem = new DataLayoutItem();
+        public PopupCalcEdit SumKontrcont = new PopupCalcEdit();
+        public PopupCalcEdit Sumordcont = new PopupCalcEdit();
+
         public CashOutView()
         {
             InitializeComponent();
@@ -34,15 +40,12 @@ namespace KursAM2.View.Finance.Cash
             MinWidth = 1000;
         }
 
-        public DataLayoutItem NCODEItem = new DataLayoutItem();
-        public DataLayoutItem SFactNameItem = new DataLayoutItem();
-        public ButtonEdit KontrSelectButton = new ButtonEdit();
-        public PopupCalcEdit Sumordcont = new PopupCalcEdit();
-        public PopupCalcEdit SumKontrcont = new PopupCalcEdit();
-
         public ObservableCollection<Currency> CurrencyList { set; get; } = new ObservableCollection<Currency>();
+
+        public ComboBoxEdit CurrencyItem { get; set; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -116,7 +119,7 @@ namespace KursAM2.View.Finance.Cash
                     CurrencyItem = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Currency, "Currency", ctx.CurrencyList,
                         width: 50);
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
-                    if (doc.BANK_RASCH_SCHET_DC != null && doc.SPOST_DC != null && doc.State != RowStatus.NewRow && 
+                    if (doc.BANK_RASCH_SCHET_DC != null && doc.SPOST_DC != null && doc.State != RowStatus.NewRow &&
                         string.IsNullOrWhiteSpace(doc.Kontragent))
                         CurrencyItem.IsEnabled = false;
                     break;
@@ -145,7 +148,7 @@ namespace KursAM2.View.Finance.Cash
                         IsTextEditable = false
                     };
                     KontrSelectButton.SetBinding(IsEnabledProperty,
-                        new Binding {Path = new PropertyPath("IsKontrSelectEnable")});
+                        new Binding { Path = new PropertyPath("IsKontrSelectEnable") });
                     KontrSelectButton.DefaultButtonClick += KontrEdit_DefaultButtonClick;
                     BindingHelper.CopyBinding(oldContent, KontrSelectButton, BaseEdit.EditValueProperty);
                     e.Item.Content = KontrSelectButton;
@@ -157,11 +160,11 @@ namespace KursAM2.View.Finance.Cash
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     break;
                 case nameof(doc.SPostName):
-                    var cancelBtn = new ButtonInfo()
+                    var cancelBtn = new ButtonInfo
                     {
                         ButtonKind = ButtonKind.Simple,
                         GlyphKind = GlyphKind.Cancel,
-                        ToolTip = "Удалить связь со счетом",
+                        ToolTip = "Удалить связь со счетом"
                         // IsEnabled = doc.SPOST_DC != null,
                     };
                     cancelBtn.Click += CancelBtn_Click;
@@ -200,7 +203,7 @@ namespace KursAM2.View.Finance.Cash
                         MaskUseAsDisplayFormat = true
                     };
                     SumKontrcont.SetBinding(IsEnabledProperty,
-                        new Binding {Path = new PropertyPath("IsKontrSummaEnabled")});
+                        new Binding { Path = new PropertyPath("IsKontrSummaEnabled") });
                     BindingHelper.CopyBinding(oldContent, SumKontrcont, BaseEdit.EditValueProperty);
                     e.Item.Content = SumKontrcont;
                     e.Item.Width = 250;
@@ -226,13 +229,11 @@ namespace KursAM2.View.Finance.Cash
             ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
         }
 
-        public ComboBoxEdit CurrencyItem { get; set; }
-
         private void Sumordcont1_EditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             if (!(DataContext is CashOutWindowViewModel ctx)) return;
             var doc = ctx.Document;
-            if ((decimal) e.NewValue < 0)
+            if ((decimal)e.NewValue < 0)
             {
                 WindowManager.ShowMessage(this, "Сумма ордера не может быть меньше 0!", "Ошибка",
                     MessageBoxImage.Stop);
@@ -240,7 +241,7 @@ namespace KursAM2.View.Finance.Cash
                 return;
             }
 
-            if ((decimal) e.NewValue > doc.CRS_SUMMA + doc.MaxSumma && doc.SPOST_DC != null)
+            if ((decimal)e.NewValue > doc.CRS_SUMMA + doc.MaxSumma && doc.SPOST_DC != null)
             {
                 WindowManager.ShowMessage(this, "Сумма ордера не может быть больше сумму оплаты по счету!", "Ошибка",
                     MessageBoxImage.Stop);
@@ -270,7 +271,7 @@ namespace KursAM2.View.Finance.Cash
             //}
 
             var doc = dtx.Document;
-            var item = StandartDialogs.SelectInvoiceProvider(dtx, true, true,true);
+            var item = StandartDialogs.SelectInvoiceProvider(dtx, true, true, true);
             if (item == null) return;
 
             var winManager = new WindowManager();
@@ -315,7 +316,6 @@ namespace KursAM2.View.Finance.Cash
             }
 
             if (dtx.Document.DocCode > 0)
-            {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     try
@@ -323,23 +323,19 @@ namespace KursAM2.View.Finance.Cash
                         var old = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.CashDC == dtx.Document.DocCode
                                                                              && _.DocDC == dtx.Document.SPOST_DC);
                         if (old == null)
-                        {
                             ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
                             {
                                 Id = Guid.NewGuid(),
                                 Rate = 1,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                Summa = (decimal) dtx.Document.SUMM_ORD,
+                                Summa = (decimal)dtx.Document.SUMM_ORD,
                                 CashDC = dtx.Document.DocCode,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                DocDC = (decimal) dtx.Document.SPOST_DC
+                                DocDC = (decimal)dtx.Document.SPOST_DC
                             });
-                        }
                         else
-                        {
                             // ReSharper disable once PossibleInvalidOperationException
-                            old.Summa = (decimal) dtx.Document.SUMM_ORD;
-                        }
+                            old.Summa = (decimal)dtx.Document.SUMM_ORD;
 
                         ctx.SaveChanges();
                     }
@@ -348,7 +344,6 @@ namespace KursAM2.View.Finance.Cash
                         WindowManager.ShowError(ex);
                     }
                 }
-            }
         }
 
         private void KontrEdit_DefaultButtonClick(object sender, RoutedEventArgs e)
@@ -398,7 +393,7 @@ namespace KursAM2.View.Finance.Cash
                     CurrencyItem.IsEnabled = false;
                     break;
                 case CashKontragentType.Cash:
-                    var ch = StandartDialogs.SelectCash(new List<Core.EntityViewModel.Cash.Cash> {ctx.Document.Cash});
+                    var ch = StandartDialogs.SelectCash(new List<Core.EntityViewModel.Cash.Cash> { ctx.Document.Cash });
                     if (ch != null) ctx.Document.CashTo = ch;
                     ctx.Document.NAME_ORD = ch?.Name;
                     ctx.Document.SPostName = null;
@@ -410,7 +405,7 @@ namespace KursAM2.View.Finance.Cash
         private void LayoutItems_OnAutoGeneratedUI(object sender, EventArgs e)
         {
             foreach (var item in WindowHelper.GetLogicalChildCollection<MemoEdit>(layoutItems))
-                if (item.EditValue != null && !string.IsNullOrWhiteSpace((string) item.EditValue))
+                if (item.EditValue != null && !string.IsNullOrWhiteSpace((string)item.EditValue))
                     item.Height = 80;
         }
 

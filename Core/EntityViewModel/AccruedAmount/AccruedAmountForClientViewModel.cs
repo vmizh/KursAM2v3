@@ -223,7 +223,7 @@ namespace Core.EntityViewModel.AccruedAmount
         {
             if (Kontragent == null)
                 return "Контрагент должен быть обязательно выбран";
-            if (Rows.Any(_ => string.IsNullOrWhiteSpace(_.AccruedAmountType?.Name)))
+            if (Rows.Any(_ => string.IsNullOrWhiteSpace(_.Nomenkl?.Name)))
                 return "Должен быть выбран тип начисления";
             return null;
         }

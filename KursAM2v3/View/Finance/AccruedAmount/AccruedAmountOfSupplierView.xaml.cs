@@ -44,23 +44,6 @@ namespace KursAM2.View.Finance.AccruedAmount
                         MaskUseAsDisplayFormat = true
                     };
                     break;
-                case "AccruedAmountType":
-                    typeEdit = new ComboBoxEditSettings
-                    {
-                        Name = "PART_Editor",
-                        TextWrapping = TextWrapping.Wrap,
-                        IsTextEditable = false,
-                        AutoComplete = true
-                    };
-                    typeEdit.DefaultButtonClick += TypeEdit_DefaultButtonClick;
-                    var bn = new ButtonInfo
-                    {
-                        GlyphKind = GlyphKind.Edit
-                    };
-                    bn.Click += Bn_Click;
-                    typeEdit.Buttons.Add(bn);
-                    e.Column.EditSettings = typeEdit;
-                    break;
                 case "CashDoc":
                     var cashEdit = new ButtonEditSettings
                     {
@@ -72,18 +55,18 @@ namespace KursAM2.View.Finance.AccruedAmount
                     var buttonInfoAdd = new ButtonInfo
                     {
                         GlyphKind = GlyphKind.Plus,
-                        ToolTip = "Создать приходный кассовый ордер",
+                        ToolTip = "Создать расходный кассовый ордер",
                         
                     };
                     var buttonInfoOpen = new ButtonInfo
                     {
                         GlyphKind = GlyphKind.Edit,
-                        ToolTip = "Открыть приходный кассовый ордер"
+                        ToolTip = "Открыть расходны кассовый ордер"
                     };
                     var buttonInfoDelete = new ButtonInfo
                     {
                         GlyphKind = GlyphKind.Cancel,
-                        ToolTip = "Удалить связь с приходным кассовым ордером",
+                        ToolTip = "Удалить связь с расходным кассовым ордером",
                         
                     };
                     if (ctx != null)

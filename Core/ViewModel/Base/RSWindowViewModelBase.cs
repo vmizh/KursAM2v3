@@ -139,6 +139,12 @@ namespace Core.ViewModel.Base
             get { return new Command(OnWindowLoaded, _ => true); }
         }
 
+        [Display(AutoGenerateField = false)]
+        public ICommand OnLayoutInitialCommand
+        {
+            get { return new Command(OnLayoutInitial, _ => true); }
+        }
+
 
         public virtual void OnWindowClosing(object obj)
         {
@@ -148,24 +154,31 @@ namespace Core.ViewModel.Base
         private bool IsSummaryExists(GridSummaryItemCollection tsums, string fname, SummaryItemType sumType)
         {
             foreach (var s in tsums)
-            {
                 if (s.FieldName == fname && s.SummaryType == sumType)
-                {
                     return true;
-                }
-            }
+
             return false;
+        }
+
+        private void OnLayoutInitial(object obj)
+        {
+            if (Form != null)
+                LayoutManager ??= new global::Helper.LayoutManager(Form, LayoutSerializationService,
+                    LayoutName, null);
+            else
+                LayoutManager = new global::Helper.LayoutManager(LayoutSerializationService,
+                    LayoutName, null);
         }
 
         public virtual void OnWindowLoaded(object obj)
         {
-            if (Form != null)
+            if (LayoutManager == null) OnLayoutInitial(null);
+            LayoutManager.Load();
+            if (Form == null) return;
+            var grids = Form.FindVisualChildren<GridControl>();
+            var trees = Form.FindVisualChildren<TreeListControl>();
+            if (grids != null)
             {
-                LayoutManager = new global::Helper.LayoutManager(Form, LayoutSerializationService,
-                    LayoutName, null);
-                LayoutManager.Load();
-                var grids = Form.FindVisualChildren<GridControl>();
-                var trees = Form.FindVisualChildren<TreeListControl>();
                 foreach (var grid in grids)
                 {
                     foreach (var col in grid.Columns)
@@ -199,22 +212,16 @@ namespace Core.ViewModel.Base
                         }
                     }
                 }
+            }
 
+            if (trees != null)
+            {
                 foreach (var t in trees)
                 {
                     foreach (var col in t.Columns)
-                    {
                         col.Name = col.FieldName;
-                    }
                 }
             }
-            else
-            {
-                LayoutManager = new global::Helper.LayoutManager(LayoutSerializationService,
-                    LayoutName, null);
-                LayoutManager.Load();
-            }
-
         }
 
         public void RefreshData()

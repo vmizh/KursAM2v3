@@ -132,6 +132,7 @@ namespace Core.EntityViewModel.AccruedAmount
                 {
                     Entity.KontrDC = value.DocCode;
                     RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(Currency));
                 }
             }
         }

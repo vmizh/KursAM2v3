@@ -10,6 +10,8 @@
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              mc:Ignorable="d"
+             Icon="{Binding Source={StaticResource MutualDrawingImage},
+                Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
              Title="{Binding WindowName}"
              >
      <DockPanel>
@@ -34,6 +36,7 @@
                            VerticalAlignment="Center"
                            FontSize="14"
                            Content="{Binding Document.CREATOR}"
+                           MinHeight="20"
                            Width="200" Background="{x:Null}" />
                 </StackPanel>
             </StackPanel>

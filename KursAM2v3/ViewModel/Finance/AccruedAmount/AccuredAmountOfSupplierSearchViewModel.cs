@@ -117,6 +117,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         #region Properties
 
         public override string LayoutName => "AccuredAmountOfSupplierSearchViewModel";
+        public override string WindowName => "Внебалансовые начисления от поставщиков";
 
         public ObservableCollection<AccruedAmountOfSupplierViewModel> Documents { set; get; } =
             new ObservableCollection<AccruedAmountOfSupplierViewModel>();

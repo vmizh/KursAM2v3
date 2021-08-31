@@ -348,12 +348,14 @@ namespace KursAM2.Managers
                         Kontragent = e.Kontragent,
                         CurrencyName = e.Kontr.BalansCurrency.Name,
                         Nomenkl = e.Nomenkl,
-                        DocTypeCode = DocumentType.None
+                        DocTypeCode = DocumentType.Waybill
                     };
                     SetCurrenciesValue(newOp, e.Kontr.BalansCurrency.DocCode, e.Profit,
                         e.Loss * GetRate(MyRates, e.Nomenkl.Currency.DocCode,
                             e.Kontr.BalansCurrency.DocCode, newOp.Date));
 
+                    newOp.DocumentDC = ent.TD_24.Include(_ => _.SD_24)
+                        .FirstOrDefault(_ => _.DDT_NOMENKL_DC == e.DocCode && _.SD_24.DD_DATE == e.Date)?.DOC_CODE;
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
@@ -396,7 +398,7 @@ namespace KursAM2.Managers
                         Kontragent = e.Kontragent,
                         CurrencyName = e.Kontr.BalansCurrency.Name,
                         Nomenkl = e.Nomenkl,
-                        DocTypeCode = DocumentType.None
+                        DocTypeCode = DocumentType.Waybill
                     };
                     SetCurrenciesValue(newOp, e.Kontr.BalansCurrency.DocCode, e.Profit,
                         e.Loss * GetRate(MyRates, e.Nomenkl.Currency.DocCode,

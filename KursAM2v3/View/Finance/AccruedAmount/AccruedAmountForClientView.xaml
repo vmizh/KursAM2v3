@@ -138,6 +138,8 @@
                                     <Separator />
                                     <MenuItem Header="Открыть приходный документ" 
                                               Command="{Binding OpenPrihodDocCommand}"/>
+                                    <MenuItem Header="Удалить связь с приходным документом" 
+                                              Command="{Binding DeleteLinkPrihodDocCommand}"/>
                                     <Separator />
                                     <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                               CommandParameter="{Binding Path=PlacementTarget, 

@@ -684,6 +684,10 @@ namespace KursAM2.ViewModel.Management
                 case DocumentType.PayRollVedomost:
                     DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, 0, Guid.Parse(CurrentExtend.StringId));
                     return;
+                case DocumentType.Waybill:
+                    if(CurrentExtend.DocumentDC != null)
+                        DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, CurrentExtend.DocumentDC.Value);
+                    break;
                 default:
                     DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, CurrentExtend.DocCode);
                     break;

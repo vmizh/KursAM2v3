@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Input;
 using Core;
@@ -19,7 +18,6 @@ using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Utils.Extensions;
-using DevExpress.XtraRichEdit.Model;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -44,7 +42,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             var doc = id != null ? GenericRepository.GetById(id.Value) : null;
             if (doc == null)
             {
-                Document = new AccruedAmountForClientViewModel {State = RowStatus.NewRow};
+                Document = new AccruedAmountForClientViewModel { State = RowStatus.NewRow };
                 UnitOfWork.Context.AccruedAmountForClient.Add(Document.Entity);
             }
             else
@@ -206,31 +204,62 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             DocumentsOpenManager.Open(DocumentType.CashIn, vm, Form);
         }
 
-        [Display(AutoGenerateField = false)]
-        public ICommand OpenCashDocCommand
+        public ICommand OpenPrihodDocCommand
         {
-            get { return new Command(OpenCashDoc, _ => CurrentAccrual?.CashDoc != null); }
-        }
-
-        private void OpenCashDoc(object obj)
-        {
-            DocumentsOpenManager.Open(DocumentType.CashIn, CurrentAccrual.CashDoc.DocCode, null, Form);
+            get
+            {
+                return new Command(OpenPrihodDoc,
+                    _ => CurrentAccrual.BankDoc != null || CurrentAccrual.CashDoc != null);
+            }
         }
 
         [Display(AutoGenerateField = false)]
-        public ICommand DeleteCashDocCommand
+        private void OpenPrihodDoc(object obj)
         {
-            get { return new Command(DeleteCashDoc, _ => CurrentAccrual?.CashDoc != null); }
+            if (CurrentAccrual.BankDoc != null)
+            {
+                var CurrentBankAccount = CurrentAccrual.BankDoc.BankAccount;
+                var k = StandartDialogs.OpenBankOperation(CurrentBankAccount.DocCode,
+                    CurrentAccrual.BankDoc,
+                    MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
+                if (k != null)
+                {
+                    var manager = new BankOperationsManager();
+                    k.State = RowStatus.Edited;
+                    manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
+                    CurrentAccrual.BankDoc = k;
+                }
+            }
+
+            if (CurrentAccrual.CashDoc != null)
+            { 
+                DocumentsOpenManager.Open(DocumentType.CashIn, CurrentAccrual.CashDoc.DocCode, null, Form);
+            }
         }
 
-        private void DeleteCashDoc(object obj)
+        [Display(AutoGenerateField = false)]
+        public ICommand DeleteLinkPrihodDocCommand
+        {
+            get
+            {
+                return new Command(DeleteLinkPrihodDoc,
+                    _ => CurrentAccrual.BankDoc != null || CurrentAccrual.CashDoc != null);
+            }
+        }
+
+        private void DeleteLinkPrihodDoc(object obj)
         {
             var service = GetService<IDialogService>("WinUIDialogService");
             dialogServiceText = "Вы действительно хотите удалить связь с платежным документом?";
             if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.Yes)
-                CurrentAccrual.CashDoc = null;
+            {
+                if (CurrentAccrual.BankDoc != null)
+                    CurrentAccrual.BankDoc = null;
+                if (CurrentAccrual.CashDoc != null)
+                    CurrentAccrual.CashDoc = null;
+            }
         }
-
+        
         [Display(AutoGenerateField = false)]
         public ICommand AddBankDocCommand
         {
@@ -258,8 +287,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode,
                     new BankOperationsViewModel
                     {
-                        DocCode = -1,
-                        Code = -1,
+                        DocCode = UnitOfWork.Context.TD_101.Any() ? UnitOfWork.Context.TD_101.Max(_ => _.DOC_CODE)+1 : 11010000001,
+                        Code = UnitOfWork.Context.TD_101.Any() ? UnitOfWork.Context.TD_101.Max(_ => _.CODE) + 1 : 1,
                         Date = DateTime.Today,
                         Currency = Document.Currency,
                         Kontragent = Document.Kontragent,
@@ -284,41 +313,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             }
         }
 
-        [Display(AutoGenerateField = false)]
-        public ICommand OpenBankDocCommand
-        {
-            get { return new Command(OpenBankDoc, _ => CurrentAccrual?.BankDoc != null); }
-        }
-
-        private void OpenBankDoc(object obj)
-        {
-            var CurrentBankAccount = CurrentAccrual.BankDoc.BankAccount;
-            var k = StandartDialogs.OpenBankOperation(CurrentBankAccount.DocCode,
-                CurrentAccrual.BankDoc,
-                MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
-            if (k != null)
-            {
-                var manager = new BankOperationsManager();
-                k.State = RowStatus.Edited;
-                manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
-                CurrentAccrual.BankDoc = k;
-            }
-        }
-
-        [Display(AutoGenerateField = false)]
-        public ICommand DeleteBankDocCommand
-        {
-            get { return new Command(DeleteBankDoc, _ => CurrentAccrual?.BankDoc != null); }
-        }
-
-        private void DeleteBankDoc(object obj)
-        {
-            var service = GetService<IDialogService>("WinUIDialogService");
-            dialogServiceText = "Вы действительно хотите удалить связь с платежным документом?";
-            if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.Yes)
-                CurrentAccrual.BankDoc = null;
-        }
-
+       
         [Display(AutoGenerateField = false)]
         public ICommand KontragentSelectCommand
         {
@@ -335,24 +330,34 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         [Display(AutoGenerateField = false)]
         public ICommand AddAccrualCommand
         {
-            get { return new Command(AddAccrual, _ => true); }
+            get { return new Command(AddAccrual, _ => Document.Kontragent != null); }
         }
 
         private void AddAccrual(object obj)
         {
-            var newItem = new AccruedAmountForClientRowViewModel(null, Document)
+            var k = StandartDialogs.SelectNomenkls();
+            if (k != null)
             {
-                State = RowStatus.NewRow
-            };
-            if (Document.State != RowStatus.NewRow)
-            {
-                Document.myState = RowStatus.Edited;
-                Document.RaisePropertyChanged("State");
-            }
+                foreach (var item in k)
+                {
+                    // ReSharper disable once PossibleNullReferenceException
+                    var newItem = new AccruedAmountForClientRowViewModel(null, Document)
+                    {
+                        Nomenkl = item,
+                        State = RowStatus.NewRow
+                    };
+                    // ReSharper disable once PossibleNullReferenceException
+                    if (Document.State != RowStatus.NewRow)
+                    {
+                        Document.myState = RowStatus.Edited;
+                        Document.RaisePropertyChanged("State");
+                    }
 
-            Document.Entity.AccuredAmountForClientRow.Add(newItem.Entity);
-            Document.Rows.Add(newItem);
-            CurrentAccrual = newItem;
+                    Document.Entity.AccuredAmountForClientRow.Add(newItem.Entity);
+                    Document.Rows.Add(newItem);
+                    CurrentAccrual = newItem;
+                }
+            }
         }
 
         [Display(AutoGenerateField = false)]
@@ -386,11 +391,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                     return;
                 }
             }
+
             foreach (var id in Document.Rows.Where(_ => _.State == RowStatus.NewRow).Select(_ => _.Id)
                 .ToList())
-            {
                 Document.Rows.Remove(Document.Rows.Single(_ => _.Id == id));
-            }
             EntityManager.EntityReload(UnitOfWork.Context);
             foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
             RaiseAll();
@@ -480,7 +484,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         {
             var view = new AccruedAmountForClientView
             {
-                Owner = Application.Current.MainWindow,
+                Owner = Application.Current.MainWindow
             };
             var ctx = new AccruedAmountForClientWindowViewModel(null)
             {
@@ -489,12 +493,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             };
             view.DataContext = ctx;
             view.Show();
-            
         }
 
         public override void DocNewCopyRequisite(object form)
         {
-            
             var ctx = new AccruedAmountForClientWindowViewModel(Document.Id);
             ctx.SetAsNewCopy(false);
             var frm = new AccruedAmountForClientView

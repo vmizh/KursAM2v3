@@ -160,7 +160,8 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
             catch (Exception ex)
             {
                 UnitOfWork.Rollback();
-                Assert.Fail($"Не удалена валютная таксировка сохраненный счет фактура поставщика. {ex.Message}");
+                Assert.Fail(string.Format("Не удалена валютная таксировка сохраненный счет фактура поставщика. {0}",
+                    ex.Message));
             }
 
             saveCrsEntity = genericProviderRepository.GetById(newDC);

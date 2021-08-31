@@ -102,6 +102,8 @@ namespace Data
             this.SD_821 = new HashSet<SD_82>();
             this.AktSpisaniya_row = new HashSet<AktSpisaniya_row>();
             this.DogovorOfSupplierRow = new HashSet<DogovorOfSupplierRow>();
+            this.AccuredAmountForClientRow = new HashSet<AccuredAmountForClientRow>();
+            this.AccuredAmountOfSupplierRow = new HashSet<AccuredAmountOfSupplierRow>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -357,5 +359,9 @@ namespace Data
         public virtual ICollection<AktSpisaniya_row> AktSpisaniya_row { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DogovorOfSupplierRow> DogovorOfSupplierRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
     }
 }

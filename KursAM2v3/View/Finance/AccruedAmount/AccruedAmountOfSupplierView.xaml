@@ -123,6 +123,18 @@
                                     <MenuItem Header="Добавить начисление" Command="{Binding AddAccrualCommand}" />
                                     <MenuItem Header="Удалить начисление" Command="{Binding DeleteAccrualCommand}" />
                                     <Separator />
+                                    <MenuItem Header="Создать расход">
+                                        <MenuItem Header="Расходный кассовый ордер" 
+                                                  Command="{Binding AddCashDocCommand}"/>
+                                        <MenuItem Header="Банковская транзакция"
+                                                  Command="{Binding AddBankDocCommand}"/>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="Открыть расходный документ" 
+                                              Command="{Binding OpenRashodDocCommand}"/>
+                                    <MenuItem Header="Удалить связь с приходным документом" 
+                                              Command="{Binding DeleteLinkRashodDocCommand}"/>
+                                    <Separator />
                                     <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                               CommandParameter="{Binding Path=PlacementTarget, 
                            RelativeSource={RelativeSource Mode=FindAncestor,
@@ -139,11 +151,7 @@
                                             AncestorType={x:Type ContextMenu}}}" />
                                 </ContextMenu>
                             </dxg:TableView.ContextMenu>
-                            <!--<dxmvvm:Interaction.Behaviors>
-                                <dxmvvm:EventToCommand EventName="CellValueChanging"
-                                               Command="{Binding UpdateCalcRowSummaCommand}" />
-                            </dxmvvm:Interaction.Behaviors>-->
-                        </dxg:TableView>
+                         </dxg:TableView>
                     </dxg:GridControl.View>
                 </dxg:GridControl>
             </dxlc:LayoutGroup>

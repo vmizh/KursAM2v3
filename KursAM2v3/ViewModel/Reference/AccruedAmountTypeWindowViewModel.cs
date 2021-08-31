@@ -98,9 +98,7 @@ namespace KursAM2.ViewModel.Reference
         {
             get
             {
-                return new Command(Delete, _ => CurrentType != null
-                                                && CurrentType.Entity.AccuredAmountForClientRow.Count == 0
-                                                && CurrentType.Entity.AccuredAmountOfSupplierRow.Count == 0);
+                return new Command(Delete, _ => CurrentType != null);
             }
         }
 

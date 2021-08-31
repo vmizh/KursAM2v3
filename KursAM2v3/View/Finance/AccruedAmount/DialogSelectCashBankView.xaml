@@ -6,7 +6,10 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:control="clr-namespace:Core.Control;assembly=Core"
-    Title="{Binding WindowName}" Height="800" Width="1000"
+    Title="{Binding WindowName}" 
+    MinHeight="100"
+    MinWidth="200"
+    Height="800" Width="1000"
     >
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}" 

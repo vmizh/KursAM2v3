@@ -81,7 +81,7 @@ namespace Helper
             StartLayout = layoutService.Serialize();
         }
 
-        public string StartLayout { set; get; }
+        public string StartLayout { set; get; } = null;
         public WindowsScreenState StartWinState { set; get; }
         public void Save()
         {

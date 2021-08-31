@@ -11,21 +11,6 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="600">
     <DockPanel>
-        <Grid DockPanel.Dock="Top">
-            <Label Content="Строка поиска" Margin="12 0 0 0" />
-            <dxe:ButtonEdit Margin="100 0 12 0"
-                            AllowDefaultButton="False"
-                            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
-                <dxe:ButtonEdit.Buttons>
-                    <dxe:ButtonInfo GlyphKind="Search" Command="{Binding SearchCommand}" />
-                    <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding SearchClearCommand}" />
-                </dxe:ButtonEdit.Buttons>
-                <dxmvvm:Interaction.Behaviors>
-                    <dxmvvm:KeyToCommand Command="{Binding SearchKeyDownCommand}"
-                                         KeyGesture="Enter" />
-                </dxmvvm:Interaction.Behaviors>
-            </dxe:ButtonEdit>
-        </Grid>
         <dxlc:LayoutControl Name="mainControl">
             <dxlc:LayoutGroup Orientation="Vertical" Name="Group3">
 

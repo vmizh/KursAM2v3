@@ -38,7 +38,7 @@ namespace KursAM2.ViewModel.Finance
             IsConvert = isConvert;
         }
 
-        public override string WindowName => IsConvert ? "Поиск валютной конвертации" : "Поис актов взаимозачета";
+        public override string WindowName => IsConvert ? "Поиск валютной конвертации" : "Поиск актов взаимозачета";
         public override string LayoutName => "MutualAccountingWindowSearchViewModel";
 
         public bool IsConvert

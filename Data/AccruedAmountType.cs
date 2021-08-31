@@ -14,22 +14,10 @@ namespace Data
     
     public partial class AccruedAmountType
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public AccruedAmountType()
-        {
-            this.AccuredAmountForClientRow = new HashSet<AccuredAmountForClientRow>();
-            this.AccuredAmountOfSupplierRow = new HashSet<AccuredAmountOfSupplierRow>();
-        }
-    
         public System.Guid Id { get; set; }
         public string Name { get; set; }
         public bool IsSupplier { get; set; }
         public bool IsClient { get; set; }
         public string Note { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
     }
 }

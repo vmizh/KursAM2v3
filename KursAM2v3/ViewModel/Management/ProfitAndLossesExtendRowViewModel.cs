@@ -62,6 +62,7 @@ namespace KursAM2.ViewModel.Management
         public DateTime Date { set; get; }
         public DateTime RowDate { set; get; }
         public string DocNum { set; get; }
+        public decimal? DocumentDC { set; get; }
 
         public static ProfitAndLossesExtendRowViewModel GetCopy(ProfitAndLossesExtendRowViewModel d)
         {
