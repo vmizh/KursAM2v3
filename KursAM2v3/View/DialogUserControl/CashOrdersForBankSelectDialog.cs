@@ -7,7 +7,6 @@ using Core.EntityViewModel.Cash;
 using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 
 namespace KursAM2.View.DialogUserControl
 {

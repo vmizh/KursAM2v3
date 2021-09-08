@@ -8,7 +8,6 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using KursAM2.View.Management.Controls;
 using KursAM2.ViewModel.Management.Projects;

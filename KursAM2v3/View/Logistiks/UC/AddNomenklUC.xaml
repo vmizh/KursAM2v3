@@ -11,6 +11,23 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="600">
     <DockPanel>
+        <dxe:ButtonEdit EditValue="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                        DockPanel.Dock="Top"
+                        HorizontalAlignment="Left"
+                        Width="200"
+                        AllowDefaultButton="False"
+                        EditValueChanging="BaseEdit_OnEditValueChanging">
+            <dxe:ButtonEdit.Buttons>
+                <dxe:ButtonInfo GlyphKind="Search" Command="{Binding SearchCommand}"/>
+                <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding ClearSearchCommand}"/>
+            </dxe:ButtonEdit.Buttons>
+            <dxmvvm:Interaction.Behaviors>
+                <dxmvvm:KeyToCommand KeyGesture="Enter"
+                                     Command="{Binding SearchCommand}"/>
+                <dxmvvm:KeyToCommand KeyGesture="Esc"
+                                     Command="{Binding ClearSearchCommand}"/>
+            </dxmvvm:Interaction.Behaviors>
+        </dxe:ButtonEdit>
         <dxlc:LayoutControl Name="mainControl">
             <dxlc:LayoutGroup Orientation="Vertical" Name="Group3">
 

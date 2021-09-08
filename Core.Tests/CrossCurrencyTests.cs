@@ -1,6 +1,5 @@
 ﻿using System;
 using Core.EntityViewModel.CommonReferences;
-using Core.ViewModel.Common;
 using NUnit.Framework;
 
 namespace Core.Tests

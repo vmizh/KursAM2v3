@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using Core;
+using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Invoices;
 using DevExpress.Spreadsheet;
 using Helper;
@@ -91,30 +93,39 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
 
         public override void GenerateReport(Worksheet sheet)
         {
+            
             var vm = ViewModel as ClientWindowViewModel;
             if (vm == null) return;
             var document = vm.Document;
-            var receiverName = string.IsNullOrEmpty(document.Receiver.FullName)
-                ? document.Receiver.Name
-                : document.Receiver.FullName;
-            var clientName = string.IsNullOrEmpty(document.Client.FullName)
-                ? document.Client.Name
-                : document.Client.FullName;
+            Kontragent client, receiver;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var cl = ctx.SD_43.Find(document.Client.DOC_CODE);
+                client = new Kontragent(cl);
+                var r = ctx.SD_43.Find(document.Receiver.DOC_CODE);
+                receiver = new Kontragent(r);
+            }
+            var receiverName = string.IsNullOrEmpty(receiver.FullName)
+                ? receiver.Name
+                : receiver.FullName;
+            var clientName = string.IsNullOrEmpty(client.FullName)
+                ? client.Name
+                : client.FullName;
             sheet.Cells["B11"].Value =
                 $"Счет на оплату № {document.OuterNumber} от {document.DocDate.ToLongDateString()}";
-            sheet.Cells["D6"].Value = document.Receiver.INN;
-            sheet.Cells["M6"].Value = document.Receiver.KPP;
-            sheet.Cells["B7"].Value = document.Receiver.FullName;
+            sheet.Cells["D6"].Value = receiver.INN;
+            sheet.Cells["M6"].Value = receiver.KPP;
+            sheet.Cells["B7"].Value = receiver.FullName;
             sheet.Cells["H13"].Value =
-                $"{receiverName}, ИНН {document.Receiver.INN}, КПП {document.Receiver.KPP}, {document.Receiver.ADDRESS}, тел.{document.Receiver.TEL}";
+                $"{receiverName}, ИНН {receiver.INN}, КПП {receiver.KPP}, {receiver.ADDRESS}, тел.{receiver.TEL}";
             sheet.Cells["H15"].Value =
-                $"{receiverName}, ИНН {document.Receiver.INN}, КПП {document.Receiver.KPP}, {document.Receiver.ADDRESS}, тел.{document.Receiver.TEL}";
+                $"{receiverName}, ИНН {receiver.INN}, КПП {receiver.KPP}, {receiver.ADDRESS}, тел.{receiver.TEL}";
             sheet.Cells["H17"].Value =
-                $"{clientName}, ИНН {document.Client.INN}, КПП {document.Client.KPP}, {document.Client.ADDRESS}, тел.{document.Client.TEL}";
+                $"{clientName}, ИНН {client.INN}, КПП {client.KPP}, {client.ADDRESS}, тел.{client.TEL}";
             sheet.Cells["H19"].Value =
-                $"{clientName}, ИНН {document.Client.INN}, КПП {document.Client.KPP}, {document.Client.ADDRESS}, тел.{document.Client.TEL}";
-            var k = document.Receiver.KontragentBanks != null && document.Receiver.KontragentBanks.Count > 0
-                ? document.Receiver.KontragentBanks[0]
+                $"{clientName}, ИНН {client.INN}, КПП {client.KPP}, {client.ADDRESS}, тел.{client.TEL}";
+            var k = receiver.KontragentBanks != null && receiver.KontragentBanks.Count > 0
+                ? receiver.KontragentBanks[0]
                 : null;
             if (k != null)
             {
@@ -124,9 +135,9 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells["W6"].Value = k.Entity.RASCH_ACC;
             }
 
-            sheet.Cells["AC29"].Value = document.Receiver.Header;
-            sheet.Cells["AC32"].Value = document.Receiver.GlavBuh;
-            sheet.Cells["AC35"].Value = document.Receiver.Header;
+            sheet.Cells["AC29"].Value = receiver.Header;
+            sheet.Cells["AC32"].Value = receiver.GlavBuh;
+            sheet.Cells["AC35"].Value = receiver.Header;
             var startTableRow = 21;
             for (var i = 2; i <= document.Rows.Count; i++)
             {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
 
@@ -31,7 +32,29 @@ namespace Core.EntityViewModel.CommonReferences.Kontragent
             }
 
         }
-
+        [Display(AutoGenerateField = false)]
+        public override decimal DocCode
+        {
+            get => Entity.DOC_CODE;
+            set
+            {
+                if (Entity.DOC_CODE == value) return;
+                Entity.DOC_CODE = value;
+                RaisePropertyChanged();
+            }
+        }
+        [Display(AutoGenerateField = false)]
+        public override int Code
+        {
+            get => Entity.CODE;
+            set
+            {
+                if (Entity.CODE == value) return;
+                Entity.CODE = value;
+                RaisePropertyChanged();
+            }
+        }
+        [Display(AutoGenerateField = false)]
         public TD_43 Entity
         {
             get => myEntity;
@@ -43,6 +66,7 @@ namespace Core.EntityViewModel.CommonReferences.Kontragent
             }
         }
 
+        [Display(AutoGenerateField = false)]
         public Bank.Bank Bank
         {
             get => myBank;
@@ -55,6 +79,65 @@ namespace Core.EntityViewModel.CommonReferences.Kontragent
             }
         }
 
+        [Display(AutoGenerateField = true,Name = "№ расчетного счета")]
+        public string AccountNumber
+        {
+            get => Entity.RASCH_ACC;
+            set
+            {
+                if (Entity.RASCH_ACC == value) return;
+                Entity.RASCH_ACC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        [Display(AutoGenerateField = true,Name = "Наименование банка")]
+        public string BankName => Bank?.Name;
+
+        [Display(AutoGenerateField = true,Name = "Корр.счет")]
+        public string BankKorrAccount => Bank?.CORRESP_ACC;
+
+        [Display(AutoGenerateField = true,Name = "КПП")]
+        public string BankKPP => Bank?.POST_CODE;
+
+
+        [Display(AutoGenerateField = true,Name = "Для печати")]
+        public bool IsForPrint
+        {
+            get => (Entity.USE_FOR_TLAT_TREB ?? 0) == 1;
+            set
+            {
+                if ((Entity.USE_FOR_TLAT_TREB ?? 0) == (value ? 1 : 0)) return;
+                Entity.USE_FOR_TLAT_TREB = value ? 1 : 0;
+                RaisePropertyChanged();
+            }
+        }
+
+        [Display(AutoGenerateField = false,Name = "Удален")]
+        public bool IsDeleted
+        {
+            get => (Entity.DELETED ?? 0) == 1;
+            set
+            {
+                if ((Entity.DELETED ?? 0) == (value ? 1 : 0)) return;
+                Entity.DELETED = (short?)(value ? 1 : 0);
+                RaisePropertyChanged();
+            }
+        }
+
+        [Display(AutoGenerateField = true,Name = "Заблокирован")]
+        public bool IsDisabled
+        {
+            get => (Entity.DISABLED ?? 0) == 1;
+            set
+            {
+                if ((Entity.DISABLED ?? 0) == (value ? 1 : 0)) return;
+                Entity.DISABLED = (short?)(value ? 1 : 0);
+                RaisePropertyChanged();
+            }
+        }
+
+        [Display(AutoGenerateField = false)]
         public bool IsAccessRight { get; set; }
         public List<TD_43> LoadList()
         {

@@ -3,7 +3,7 @@ using Core.ViewModel.Base;
 
 namespace KursAM2.View.Finance.UC
 {
-    public class BankAccountSelectDialog : RSWindowViewModelBase, IDataUserControl
+    public sealed class BankAccountSelectDialog : RSWindowViewModelBase, IDataUserControl
 
     {
         #region Fields

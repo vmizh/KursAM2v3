@@ -8,7 +8,6 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Employee;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.View.KursReferences;

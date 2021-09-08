@@ -12,7 +12,6 @@ using Core.EntityViewModel.Periods;
 using Core.EntityViewModel.Systems;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
 using KursAM2.View.Finance.UC;

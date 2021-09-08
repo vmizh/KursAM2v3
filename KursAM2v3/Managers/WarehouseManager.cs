@@ -635,32 +635,26 @@ namespace KursAM2.Managers
 
                         ctx.SaveChanges();
                         var wManager = new WindowManager();
-                        foreach (var r in doc.Rows)
-                            if (r.DDT_SPOST_DC != null)
+                        foreach (var r in doc.Rows.Where(_ => _.DDT_SPOST_DC != null))
+                        {
+                            var schets = ctx.TD_26.First(_ => _.DOC_CODE == r.DDT_SPOST_DC
+                                                              && _.CODE == r.DDT_SPOST_ROW_CODE);
+                            if (r.DDT_KOL_PRIHOD > schets.SFT_KOL)
                             {
-                                var stores = ctx.TD_24.Where(_ => _.DDT_SPOST_DC == r.DDT_SPOST_DC
-                                                                  && _.DDT_SPOST_ROW_CODE == r.DDT_SPOST_ROW_CODE)
-                                    .ToList();
-                                var storesum = stores.Count > 0 ? stores.Sum(_ => _.DDT_KOL_PRIHOD) : 0;
-                                var schets = ctx.TD_26.Where(_ => _.DOC_CODE == r.DDT_SPOST_DC
-                                                                  && _.CODE == r.DDT_SPOST_ROW_CODE).ToList();
-                                var schetsum = schets.Count > 0 ? schets.Sum(_ => _.SFT_KOL) : 0;
-                                if (storesum > schetsum)
+                                var res = wManager.ShowWinUIMessageBox($"По товару {r.NomNomenkl} {r.Nomenkl} " +
+                                                                       "Приход превысил кол-во по счету ",
+                                    "Превышение кол-ва прихода над кол-вом в счете", MessageBoxButton.YesNo,
+                                    MessageBoxImage.Warning);
+                                switch (res)
                                 {
-                                    var res = wManager.ShowWinUIMessageBox($"По товару {r.NomNomenkl} {r.Nomenkl} " +
-                                                                           "Приход превысил кол-во по счету ",
-                                        "Превышение кол-ва прихода над кол-вом в счете", MessageBoxButton.YesNo,
-                                        MessageBoxImage.Warning);
-                                    switch (res)
-                                    {
-                                        case MessageBoxResult.Yes:
-                                            continue;
-                                        case MessageBoxResult.No:
-                                            transaction.Rollback();
-                                            return -1;
-                                    }
+                                    case MessageBoxResult.Yes:
+                                        continue;
+                                    case MessageBoxResult.No:
+                                        transaction.Rollback();
+                                        return -1;
                                 }
                             }
+                        }
 
                         var calc = new NomenklCostMediumSliding(ctx);
                         foreach (var n in doc.Rows.Select(_ => _.Nomenkl.DocCode))
@@ -692,7 +686,7 @@ namespace KursAM2.Managers
 
                         transaction.Commit();
                         doc.myState = RowStatus.NotEdited;
-                        foreach (var r in doc.Rows) r.State = RowStatus.NotEdited;
+                        foreach (var r in doc.Rows) r.myState = RowStatus.NotEdited;
                         doc.DeletedRows.Clear();
                         return newDC;
                     }

@@ -1,5 +1,4 @@
 ﻿using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.ViewModel.Common;
 
 namespace KursAM2.ViewModel.Management.BreakEven
 {

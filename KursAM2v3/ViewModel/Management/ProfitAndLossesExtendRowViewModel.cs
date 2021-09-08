@@ -7,7 +7,6 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using FinanceAnalitic;
 
 namespace KursAM2.ViewModel.Management

@@ -16,12 +16,12 @@ using DevExpress.Mvvm.Xpf;
 using KursAM2.View.DialogUserControl.ViewModel;
 using KursAM2.View.KursReferences.KontragentControls;
 
-namespace KursAM2.ViewModel.Reference
+namespace KursAM2.ViewModel.Reference.Kontragent
 {
     public class KontragentReferenceWindowViewModel : RSWindowViewModelBase
     {
         private KontragentGroup myCurrentGroup;
-        private Kontragent myCurrentKontragent;
+        private Core.EntityViewModel.CommonReferences.Kontragent.Kontragent myCurrentKontragent;
         private bool myIsAllKontragent;
         private bool myIsGroupEnabled;
         private bool myIsShowDeleted;
@@ -36,14 +36,14 @@ namespace KursAM2.ViewModel.Reference
         }
 
         //public List<Kontragent> Kontragents => MainReferences.AllKontragents.Values.ToList();
-        public ObservableCollection<Kontragent> Kontragents { set; get; } = new ObservableCollection<Kontragent>();
+        public ObservableCollection<Core.EntityViewModel.CommonReferences.Kontragent.Kontragent> Kontragents { set; get; } = new ObservableCollection<Core.EntityViewModel.CommonReferences.Kontragent.Kontragent>();
 
-        public ObservableCollection<Kontragent> KontragentsInGroup { set; get; } =
-            new ObservableCollection<Kontragent>();
+        public ObservableCollection<Core.EntityViewModel.CommonReferences.Kontragent.Kontragent> KontragentsInGroup { set; get; } =
+            new ObservableCollection<Core.EntityViewModel.CommonReferences.Kontragent.Kontragent>();
 
         public ObservableCollection<KontragentGroup> Groups { set; get; } = new ObservableCollection<KontragentGroup>();
 
-        public Kontragent CurrentKontragent
+        public Core.EntityViewModel.CommonReferences.Kontragent.Kontragent CurrentKontragent
         {
             get => myCurrentKontragent;
             set
@@ -155,7 +155,7 @@ namespace KursAM2.ViewModel.Reference
                     foreach (var i in data)
                     {
                         if (!IsShowDeleted && i.DELETED == 1) continue;
-                        KontragentsInGroup.Add(new Kontragent(i));
+                        KontragentsInGroup.Add(new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent(i));
                     }
 
                     if (CurrentGroup.EG_ID == 0)
@@ -172,7 +172,7 @@ namespace KursAM2.ViewModel.Reference
                         foreach (var k in data2)
                         {
                             if (!IsShowDeleted && k.DELETED == 1) continue;
-                            KontragentsInGroup.Add(new Kontragent(k));
+                            KontragentsInGroup.Add(new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent(k));
                         }
 
                         RaisePropertyChanged(nameof(KontragentsInGroup));
@@ -205,7 +205,7 @@ namespace KursAM2.ViewModel.Reference
                             .AsNoTracking().Where(_ => _.NAME.ToUpper().Contains(SearchText.ToUpper())
                                                        || _.NAME_FULL.ToUpper().Contains(SearchText.ToUpper()))
                             .ToList();
-                    foreach (var i in data) KontragentsInGroup.Add(new Kontragent(i));
+                    foreach (var i in data) KontragentsInGroup.Add(new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent(i));
                     RaisePropertyChanged(nameof(KontragentsInGroup));
                 }
             }
@@ -241,7 +241,7 @@ namespace KursAM2.ViewModel.Reference
                             .Where(_ => _.DELETED != 1)
                             .ToList();
                     foreach (var i in data)
-                        KontragentsInGroup.Add(new Kontragent(i));
+                        KontragentsInGroup.Add(new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent(i));
                 }
 
                 RaisePropertyChanged(nameof(KontragentsInGroup));
@@ -535,7 +535,7 @@ namespace KursAM2.ViewModel.Reference
             var form = new KontragentCardView {Owner = Application.Current.MainWindow};
             var ctx = new KontragentCardWindowViewModel
             {
-                Kontragent = new Kontragent
+                Kontragent = new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent
                 {
                     State = RowStatus.NewRow,
                     Group = CurrentGroup,

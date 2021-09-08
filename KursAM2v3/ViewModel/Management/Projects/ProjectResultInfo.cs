@@ -2,7 +2,6 @@
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.ViewModel.Common;
 using DevExpress.Mvvm.DataAnnotations;
 using static System.Math;
 

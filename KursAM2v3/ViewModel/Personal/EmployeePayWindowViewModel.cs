@@ -11,7 +11,6 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using KursAM2.View.Personal;
 

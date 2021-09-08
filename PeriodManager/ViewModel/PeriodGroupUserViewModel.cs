@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 
 namespace PeriodManager.ViewModel
 {

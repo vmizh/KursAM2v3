@@ -392,7 +392,7 @@
     <Compile Include="ViewModel\Reference\AccruedAmountTypeWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\Dialogs\SelectKursMainMenuItemViewModel.cs" />
     <Compile Include="ViewModel\Reference\FormPayReferenceWindowViewModel.cs" />
-    <Compile Include="ViewModel\Reference\KontragentCategoryRefWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Kontragent\KontragentCategoryRefWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\CountriesRefWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\Nomenkl\TypeOfProductReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\ReferenceOfResponsibilityCentersWindowViewModel.cs" />
@@ -410,6 +410,9 @@
     <Compile Include="ViewModel\Signatures\SignaturesWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastDocumentWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastUsersDocumentWindowViewModel.cs" />
+    <Compile Include="View\Base\GridControlUC.xaml.cs">
+      <DependentUpon>GridControlUC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Base\KursStandartFormView.xaml.cs">
       <DependentUpon>KursStandartFormView.xaml</DependentUpon>
     </Compile>
@@ -785,9 +788,9 @@
     <Compile Include="View\Finance\SaleTaxNomenklView.xaml.cs">
       <DependentUpon>SaleTaxNomenklView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\Reference\KontragentCardWindowViewModel.cs" />
-    <Compile Include="ViewModel\Reference\KontragentReferenceWindowViewModel.cs" />
-    <Compile Include="ViewModel\Reference\KontragentReferenceViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Kontragent\KontragentCardWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Kontragent\KontragentReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Kontragent\KontragentReferenceViewModel.cs" />
     <Compile Include="ViewModel\Splash\DebitorCreditorCalcKontrSplashViewModel.cs" />
     <Compile Include="ViewModel\Splash\SplashBaseViewModel.cs" />
     <Compile Include="View\Finance\KontragentRefOutView.xaml.cs">
@@ -1137,6 +1140,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ViewModel\Finance\SelectCashBankDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\GridControlUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

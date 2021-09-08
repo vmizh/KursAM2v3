@@ -1,12 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.ViewModel.Common;
 using Data;
 
-namespace KursAM2.ViewModel.Reference
+namespace KursAM2.ViewModel.Reference.Kontragent
 {
-    public sealed class KontragentReferenceViewModel : Kontragent
+    public sealed class KontragentReferenceViewModel : Core.EntityViewModel.CommonReferences.Kontragent.Kontragent
     {
         private ObservableCollection<BankAccount> myBankCollection;
         private ObservableCollection<KontragentGruzoRequisite> myGruzoRequisities;
@@ -17,6 +16,7 @@ namespace KursAM2.ViewModel.Reference
             BankCollection = new ObservableCollection<BankAccount>();
         }
 
+        // ReSharper disable once UnusedParameter.Local
         public KontragentReferenceViewModel(decimal docCode) : this()
         {
         }
@@ -68,7 +68,7 @@ namespace KursAM2.ViewModel.Reference
             set
             {
                 if (Entity.FLAG_BALANS == 0 == value) return;
-                Entity.FLAG_BALANS = (short?) (value ? 0 : 1);
+                Entity.FLAG_BALANS = (short?)(value ? 0 : 1);
                 RaisePropertyChanged();
             }
         }

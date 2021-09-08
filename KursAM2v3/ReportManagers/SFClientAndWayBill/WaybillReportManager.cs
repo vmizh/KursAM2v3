@@ -4,7 +4,6 @@ using Core;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.NomenklManagement;
 using Core.Invoices.EntityViewModel;
-using Core.ViewModel.Common;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Logistiks.Warehouse;

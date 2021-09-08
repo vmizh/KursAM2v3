@@ -115,6 +115,34 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="TableView.SearchWithoutMenu" TargetType="dxg:TableView">
+        <Setter Property="AllowEditing" Value="False" />
+        <Setter Property="ShowFixedTotalSummary" Value="True" />
+        <Setter Property="AllowPerPixelScrolling" Value="True" />
+        <Setter Property="ShowTotalSummary" Value="True" />
+        <Setter Property="ShowAutoFilterRow" Value="True" />
+        <Setter Property="EnableImmediatePosting" Value="True" />
+        <Setter Property="ShowGroupPanel" Value="True" />
+        <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <ItemsControl>
+                        <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding DocumentOpenCommand}"
+                                               PassEventArgsToCommand="True" MarkRoutedEventsAsHandled="True">
+                            <dxmvvm:EventToCommand.EventArgsConverter>
+                                <dx:EventArgsToDataRowConverter />
+                            </dxmvvm:EventToCommand.EventArgsConverter>
+                        </dxmvvm:EventToCommand>
+                        <dxmvvm:KeyToCommand Command="{Binding DocumentOpenCommand}"
+                                             KeyGesture="Enter" />
+                        <dxmvvm:EventToCommand EventName="AutoGeneratingColumn"
+                                               Command="{Binding AutoGeneratingColumnCommand}"
+                                               PassEventArgsToCommand="True" />
+                    </ItemsControl>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style x:Key="TableView.Standart" TargetType="dxg:TableView">
         <Setter Property="ShowTotalSummary" Value="True" />

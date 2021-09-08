@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core;
+using Core.EntityViewModel;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.NomenklManagement;

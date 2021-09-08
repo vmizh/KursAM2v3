@@ -5,7 +5,6 @@ using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Employee;
 using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 
 namespace KursAM2.ViewModel.Management.ManagementBalans
 {

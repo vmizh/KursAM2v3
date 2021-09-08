@@ -243,7 +243,8 @@
                                            Name="tableViewRows"
                                            ShowAutoFilterRow="True"
                                            EnableImmediatePosting="True"
-                                           CellValueChanged="TableViewRows_OnCellValueChanged">
+                                           CellValueChanged="TableViewRows_OnCellValueChanged"
+                                          >
                                         <dxg:TableView.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem Header="Добавить номенклатуру" Command="{Binding AddNomenklCommand}">

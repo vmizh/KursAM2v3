@@ -87,6 +87,36 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="DXServicesDialogOnly" TargetType="FrameworkElement">
+        <Setter Property="MinHeight" Value="100"/>
+        <Setter Property="MinWidth" Value="200"/>
+        <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <ItemsControl>
+                        <dx:DXMessageBoxService />
+                        <dx:DialogService x:Name="DialogService" ViewTemplate="{StaticResource dialogServiceTemplate}">
+                            <dx:DialogService.DialogStyle>
+                                <Style TargetType="Window">
+                                    <Setter Property="WindowStyle" Value="ToolWindow" />
+                                </Style>
+                            </dx:DialogService.DialogStyle>
+                        </dx:DialogService>
+                        <dxwui:WinUIDialogService x:Name="WinUIDialogService" 
+                                                  ViewTemplate="{StaticResource dialogServiceTemplate}"/>
+                        <dx:DialogService x:Name="DialogServiceUI" ViewTemplate="{StaticResource dialogServiceTemplateUI}">
+                            <dx:DialogService.DialogStyle>
+                                <Style TargetType="Window">
+                                   <Setter Property="WindowStyle" Value="ToolWindow" />
+                                </Style>
+                            </dx:DialogService.DialogStyle>
+                        </dx:DialogService>
+                        <dxwui:WinUIDialogService x:Name="WinUIDialogServiceUI" ViewTemplate="{StaticResource dialogServiceTemplateUI}"/>
+                    </ItemsControl>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <Style x:Key="DXSplashServices" TargetType="FrameworkElement">
         <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
             <Setter.Value>

@@ -9,7 +9,6 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.UC;
 

@@ -45,6 +45,7 @@ using KursAM2.ViewModel.Period;
 using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reconcilation;
 using KursAM2.ViewModel.Reference;
+using KursAM2.ViewModel.Reference.Kontragent;
 using KursAM2.ViewModel.Reference.Nomenkl;
 using KursAM2.ViewModel.Repozit;
 using KursAM2.ViewModel.Shop;

@@ -5,7 +5,6 @@ using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 

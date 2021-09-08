@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.Bank;
@@ -9,46 +10,38 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using KursAM2.View.DialogUserControl;
+using DevExpress.Mvvm;
+using KursAM2.View.Base;
 
 namespace KursAM2.ViewModel.Reference.Dialogs
 {
-    public class BankSelectDialogViewModel : RSWindowViewModelBase
+    public sealed class BankSelectDialogViewModel : RSWindowViewModelBase
     {
+        #region Fields
+
+        private Bank myCurrentItem;
+
+        #endregion
+
         #region Constructors
 
         public BankSelectDialogViewModel()
         {
-            myDataUserControl = new StandartDialogSelectUC2(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             WindowName = "Выбор банка";
-            ItemsCollection = new ObservableCollection<Bank>();
+            Items = new ObservableCollection<Bank>();
             RefreshData(null);
         }
 
         #endregion
 
-        #region Fields
-
-        private StandartDialogSelectUC2 myDataUserControl;
-        private Bank myCurrentItem;
-
-        #endregion
-
         #region Properties
 
-        public StandartDialogSelectUC2 DataUserControl
-        {
-            get => myDataUserControl;
-            set
-            {
-                if (Equals(myDataUserControl, value)) return;
-                myDataUserControl = value;
-                RaisePropertyChanged();
-            }
-        }
+        private ICurrentWindowService winCurrentService;
+        public UserControl CustomDataUserControl { set; get; } = new GridControlUC();
+        public override string LayoutName => "BankSelectDialogViewModel";
 
-        public ObservableCollection<Bank> ItemsCollection { set; get; }
+        public ObservableCollection<Bank> Items { set; get; }
 
         public Bank CurrentItem
         {
@@ -68,12 +61,37 @@ namespace KursAM2.ViewModel.Reference.Dialogs
 
         public override void RefreshData(object obj)
         {
-            ItemsCollection.Clear();
+            Items.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                foreach (var b in ctx.SD_44.ToList()) ItemsCollection.Add(new Bank(b));
+                foreach (var b in ctx.SD_44.ToList()) Items.Add(new Bank(b));
             }
         }
+
+        public override bool IsOkAllow()
+        {
+            return CurrentItem != null;
+        }
+
+        public override void Ok(object obj)
+        {
+            winCurrentService = GetService<ICurrentWindowService>();
+            if (winCurrentService != null)
+            {
+                winCurrentService.Close();
+            }
+        }
+
+        public override void Cancel(object obj)
+        {
+            winCurrentService = GetService<ICurrentWindowService>();
+            if (winCurrentService != null)
+            {
+                CurrentItem = null;
+                winCurrentService.Close();
+            }
+        }
+
 
         public ICommand AddNewBankCommand
         {
@@ -95,7 +113,7 @@ namespace KursAM2.ViewModel.Reference.Dialogs
                     if (b == null) return;
                     ctx.SD_44.Remove(b);
                     ctx.SaveChanges();
-                    ItemsCollection.Remove(CurrentItem);
+                    Items.Remove(CurrentItem);
                 }
                 catch (Exception ex)
                 {
@@ -108,7 +126,7 @@ namespace KursAM2.ViewModel.Reference.Dialogs
         {
             var newBank = new Bank
             {
-                DocCode = ItemsCollection.Max(_ => _.DocCode) + 1,
+                DocCode = Items.Max(_ => _.DocCode) + 1,
                 Name = "Новый",
                 CORRESP_ACC = " ",
                 POST_CODE = " "
@@ -133,13 +151,13 @@ namespace KursAM2.ViewModel.Reference.Dialogs
                 }
             }
 
-            ItemsCollection.Add(newBank);
+            Items.Add(newBank);
             CurrentItem = newBank;
         }
 
         public override void Search(object obj)
         {
-            ItemsCollection.Clear();
+            Items.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var b in ctx.SD_44.Where(_ => _.ADDRESS.ToUpper().Contains(SearchText.ToUpper()) ||
@@ -148,7 +166,7 @@ namespace KursAM2.ViewModel.Reference.Dialogs
                                                        || _.CORRESP_ACC.ToUpper().Contains(SearchText.ToUpper())
                                                        || _.POST_CODE.ToUpper().Contains(SearchText.ToUpper()))
                     .ToList())
-                    ItemsCollection.Add(new Bank(b));
+                    Items.Add(new Bank(b));
             }
         }
 
@@ -156,12 +174,6 @@ namespace KursAM2.ViewModel.Reference.Dialogs
         {
             SearchText = null;
             RefreshData(null);
-        }
-
-        public override void Cancel(object obj)
-        {
-            CurrentItem = null;
-            base.Cancel(obj);
         }
 
         #endregion

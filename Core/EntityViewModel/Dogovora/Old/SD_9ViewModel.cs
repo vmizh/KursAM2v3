@@ -5,7 +5,6 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 

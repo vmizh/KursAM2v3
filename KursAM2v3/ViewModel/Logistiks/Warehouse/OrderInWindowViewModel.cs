@@ -289,7 +289,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderIn", true))
                 {Form = frm};
-            ctx.Document = orderManager.NewOrderInCopy(Document);
+            ctx.Document = orderManager.NewOrderInCopy(Document.DocCode);
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -316,11 +316,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     SaveData(null);
                     return;
                 }
-            }
-            foreach (var id in Document.Rows.Where(_ => _.State == RowStatus.NewRow).Select(_ => _.Id)
-                .ToList())
-            {
-                Document.Rows.Remove(Document.Rows.Single(_ => _.Id == id));
             }
             EntityManager.EntityReload(UnitOfWork.Context);
             foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
@@ -526,27 +521,38 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand DeleteNomenklCommand
         {
-            get { return new Command(DeleteNomenkl, _ => Document.SelectedRows.Count > 0); }
+            get { return new Command(DeleteNomenkl, _ => CurrentRow.State == RowStatus.NewRow 
+                                                         || CurrentRow.LinkInvoice == null); }
         }
 
         private void DeleteNomenkl(object obj)
         {
-            var delList = new List<WarehouseOrderInRow>(Document.SelectedRows.ToList());
-            foreach (var row in delList)
-                if (row.State == RowStatus.NewRow)
-                {
-                    Document.Rows.Remove(row);
-                }
-                else
-                {
-                    Document.Entity.TD_24.Remove(row.Entity);
-                    Document.DeletedRows.Add(row);
-                    Document.Rows.Remove(row);
-                }
+            if (CurrentRow.State == RowStatus.NewRow)
+            {
+                Document.Rows.Remove(CurrentRow);
+            }
+            else
+            {
+                Document.Entity.TD_24.Remove(CurrentRow.Entity);
+                Document.DeletedRows.Add(CurrentRow);
+                Document.Rows.Remove(CurrentRow);
+            }
         }
 
         public override void DocDelete(object form)
         {
+            if (Document.State != RowStatus.NewRow)
+            {
+                foreach (var r in Document.Rows)
+                {
+                    if (r.LinkInvoice == null) continue;
+                    MessageBox.Show("В ордере есть строки привязанные к счету, удаление не возможно.", "Запрос",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Stop);
+                    return;
+                }
+            }
+
             var res = MessageBox.Show("Вы уверены, что хотите удалить данный документ?", "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
@@ -564,7 +570,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     try
                     {
                         UnitOfWork.CreateTransaction();
-                        UnitOfWork.Context.SD_24.Remove(Document.Entity);
+                        var doc = UnitOfWork.Context.SD_24.FirstOrDefault(_ => _.DOC_CODE == Document.DocCode);
+                        if(doc != null)
+                            UnitOfWork.Context.SD_24.Remove(doc);
                         UnitOfWork.Save();
                         UnitOfWork.Commit();
                     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 
 namespace KursAM2.ViewModel.Management.Projects
 {

@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 
@@ -32,6 +32,7 @@ namespace Core.EntityViewModel.CommonReferences.Kontragent
     }
 
     [MetadataType(typeof(DataAnnotationsKontragent))]
+    [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
     public class Kontragent : RSViewModelBase, IEntity<SD_43>, IDataErrorInfo
     {
         private KontragentCategory myCategory;
@@ -54,10 +55,10 @@ namespace Core.EntityViewModel.CommonReferences.Kontragent
         }
 
         public ObservableCollection<KontragentGruzoRequisite> GruzoRequisities { set; get; } =
-            new ObservableCollection<KontragentGruzoRequisite>();
+            new();
 
         public ObservableCollection<KontragentBank> KontragentBanks { set; get; } =
-            new ObservableCollection<KontragentBank>();
+            new();
 
         public Employee.Employee Employee
         {
@@ -952,11 +953,11 @@ namespace Core.EntityViewModel.CommonReferences.Kontragent
                 OtvetstLico = otv;
             if (Entity.SD_43_GRUZO != null && Entity.SD_43_GRUZO.Count > 0)
                 foreach (var item in Entity.SD_43_GRUZO.ToList())
-                    GruzoRequisities.Add(new KontragentGruzoRequisite(item));
+                    GruzoRequisities.Add(new KontragentGruzoRequisite(item) {myState = RowStatus.NotEdited});
             if (Entity.TD_43 != null && Entity.TD_43.Count > 0)
                 foreach (var item in Entity.TD_43.ToList())
                 {
-                    var newItem = new KontragentBank(item);
+                    var newItem = new KontragentBank(item) {myState = RowStatus.NotEdited};
                     KontragentBanks.Add(newItem);
                 }
 

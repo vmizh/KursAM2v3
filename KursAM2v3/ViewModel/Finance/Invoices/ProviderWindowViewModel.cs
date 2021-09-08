@@ -32,10 +32,8 @@ using KursAM2.View.DialogUserControl;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.UC;
-using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
-using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management.Calculations;
 using Reports.Base;
 
@@ -128,15 +126,18 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Command = PrintWaybillExportCommand
             });
         }
+
         public override void ShowHistory(object data)
         {
             // ReSharper disable once RedundantArgumentDefaultValue
             DocumentHistoryManager.LoadHistory(DocumentType.InvoiceProvider, null, Document.DocCode, null);
         }
+
         private void AddUsedNomenkl(decimal nomdc)
         {
             if (myUsedNomenklsDC.All(_ => _ != nomdc)) myUsedNomenklsDC.Add(nomdc);
         }
+
         private void DeletePayments()
         {
             //TODO Добавить для кассы и акта взаимозачета
@@ -159,59 +160,60 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 }
             }
         }
+
         public void SetAsNewCopy(bool isCopy)
-         {
-             var newId = Guid.NewGuid();
-             UnitOfWork.Context.Entry(Document.Entity).State = EntityState.Detached;
-             Document.Id = newId;
-             Document.DocCode = -1;
-             Document.SF_POSTAV_NUM = null;
-             Document.DocDate = DateTime.Today;
-             Document.SF_REGISTR_DATE = DateTime.Today;
-             Document.CREATOR = GlobalOptions.UserInfo.Name;
-             Document.myState = RowStatus.NewRow;
-             Document.PaymentDocs.Clear();
-             Document.Facts.Clear();
-             Document.IsAccepted = false;
-             Document.IsNDSInPrice = true;
-             Document.NakladDistributedSumma = 0;
+        {
+            var newId = Guid.NewGuid();
+            UnitOfWork.Context.Entry(Document.Entity).State = EntityState.Detached;
+            Document.Id = newId;
+            Document.DocCode = -1;
+            Document.SF_POSTAV_NUM = null;
+            Document.DocDate = DateTime.Today;
+            Document.SF_REGISTR_DATE = DateTime.Today;
+            Document.CREATOR = GlobalOptions.UserInfo.Name;
+            Document.myState = RowStatus.NewRow;
+            Document.PaymentDocs.Clear();
+            Document.Facts.Clear();
+            Document.IsAccepted = false;
+            Document.IsNDSInPrice = true;
+            Document.NakladDistributedSumma = 0;
 
-             UnitOfWork.Context.SD_26.Add(Document.Entity);
-             Document.DeletedRows.Clear();
-             Document.PaymentDocs.Clear();
-             Document.Facts.Clear();
-             if (isCopy)
-             {
-                 var newCode = 1;
-                 foreach (var row in Document.Rows)
-                 {
-                     UnitOfWork.Context.Entry(row.Entity).State = EntityState.Detached;
-                     row.DocCode = -1;
-                     row.Id = Guid.NewGuid();
-                     row.DocId = newId;
-                     row.Code = newCode;
-                     row.myState = RowStatus.NewRow;
-                     newCode++;
-                 }
+            UnitOfWork.Context.SD_26.Add(Document.Entity);
+            Document.DeletedRows.Clear();
+            Document.PaymentDocs.Clear();
+            Document.Facts.Clear();
+            if (isCopy)
+            {
+                var newCode = 1;
+                foreach (var row in Document.Rows)
+                {
+                    UnitOfWork.Context.Entry(row.Entity).State = EntityState.Detached;
+                    row.DocCode = -1;
+                    row.Id = Guid.NewGuid();
+                    row.DocId = newId;
+                    row.Code = newCode;
+                    row.myState = RowStatus.NewRow;
+                    newCode++;
+                }
 
-                 foreach (var r in Document.Rows)
-                 {
-                     UnitOfWork.Context.TD_26.Add(r.Entity);
-                     r.CalcRow();
-                     r.State = RowStatus.NewRow;
-                 }
-             }
-             else
-             {
-                 foreach (var item in Document.Rows)
-                 {
-                     UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
-                     Document.Entity.TD_26.Clear();
-                 }
+                foreach (var r in Document.Rows)
+                {
+                    UnitOfWork.Context.TD_26.Add(r.Entity);
+                    r.CalcRow();
+                    r.State = RowStatus.NewRow;
+                }
+            }
+            else
+            {
+                foreach (var item in Document.Rows)
+                {
+                    UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
+                    Document.Entity.TD_26.Clear();
+                }
 
-                 Document.Rows.Clear();
-             }
-         }
+                Document.Rows.Clear();
+            }
+        }
 
         #endregion
 
@@ -403,11 +405,19 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void DogovorDeleteLink(object obj)
         {
-            IDialogService service = GetService<IDialogService>("WinUIDialogService");
+            var service = GetService<IDialogService>("WinUIDialogService");
             dialogServiceText = "Вы действительно хотите удалить связь с договором?";
-            if (service.ShowDialog(MessageButton.YesNo, "Запрос", this)== MessageResult.Yes)
+            if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.Yes) Document.Contract = null;
+        }
+
+        public override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            if (Form is InvoiceProviderView frm)
             {
-                Document.Contract = null;
+                var col = frm.gridFacts.Columns.FirstOrDefault(_ => _.FieldName == "LinkOrder");
+                if (col != null)
+                    frm.gridFacts.Columns.Remove(col);
             }
         }
 
@@ -451,7 +461,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         State = RowStatus.NewRow,
                         IsIncludeInPrice = Document.IsNDSInPrice,
                         Parent = Document,
-                        Entity = {SFT_POST_ED_IZM_DC = p.Unit.DocCode}
+                        Entity = { SFT_POST_ED_IZM_DC = p.Unit.DocCode }
                     };
                     newRow.CalcRow();
                     switch (Document.Currency.DocCode)
@@ -532,7 +542,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private void AddStoreLink(object obj)
         {
             var ctx = new AddNomenklFromOrderInViewModel(Document.Kontragent);
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var dlg = new SelectDialogView { DataContext = ctx };
             ctx.Form = dlg;
             if (dlg.ShowDialog() == false) return;
             var defaultNDS = Convert.ToDecimal(GenericProviderRepository.Context.PROFILE
@@ -686,16 +696,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void OpenStoreLinkDocument(object obj)
         {
-            var ctx = new OrderInWindowViewModel(
-                new StandartErrorManager(GlobalOptions.GetEntities(), "WarehouseOrderIn", true)
-                , CurrentFact.DocCode);
-            var frm = new OrderInView
-            {
-                Owner = Application.Current.MainWindow,
-                DataContext = ctx
-            };
-            ctx.Form = frm;
-            frm.Show();
+            DocumentsOpenManager.Open(DocumentType.StoreOrderIn, CurrentFact.DocCode);
         }
 
         public ICommand OpenPayDocumentCommand
@@ -709,15 +710,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 case "Расходный кассовый ордер":
                     // ReSharper disable once PossibleInvalidOperationException
-                    DocumentsOpenManager.Open(DocumentType.CashOut, (decimal) CurrentPaymentDoc.CashDC);
+                    DocumentsOpenManager.Open(DocumentType.CashOut, (decimal)CurrentPaymentDoc.CashDC);
                     break;
                 case "Банковский платеж":
                     // ReSharper disable once PossibleInvalidOperationException
-                    DocumentsOpenManager.Open(DocumentType.Bank, (decimal) CurrentPaymentDoc.BankCode);
+                    DocumentsOpenManager.Open(DocumentType.Bank, (decimal)CurrentPaymentDoc.BankCode);
                     break;
                 case "Акт взаимозачета":
                     // ReSharper disable once PossibleInvalidOperationException
-                    DocumentsOpenManager.Open(DocumentType.MutualAccounting, (decimal) CurrentPaymentDoc.VZDC);
+                    DocumentsOpenManager.Open(DocumentType.MutualAccounting, (decimal)CurrentPaymentDoc.VZDC);
                     break;
             }
         }
@@ -880,14 +881,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
                     else
-                        nds = (decimal) item.NOM_NDS_PERCENT;
+                        nds = (decimal)item.NOM_NDS_PERCENT;
                     var r = new InvoiceProviderRow
                     {
                         DocCode = -1,
                         SFT_NDS_PERCENT = nds,
                         Quantity = 1,
                         Price = 0,
-                        Entity = {SFT_NEMENKL_DC = item.DOC_CODE}
+                        Entity = { SFT_NEMENKL_DC = item.DOC_CODE }
                     };
                     Document.Rows.Add(r);
                 }
@@ -906,7 +907,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var q = Document.Facts.Where(_ => _.DDT_SPOST_DC == r.DocCode
                                                   && _.DDT_SPOST_ROW_CODE == r.Code).Sum(_ => _.DDT_KOL_PRIHOD);
                 // ReSharper disable once PossibleInvalidOperationException
-                Document.SummaFact += (decimal) r.SFT_SUMMA_K_OPLATE / r.Quantity * q;
+                Document.SummaFact += (decimal)r.SFT_SUMMA_K_OPLATE / r.Quantity * q;
             }
 
             // ReSharper disable once NotResolvedInText
@@ -971,7 +972,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     ItemsCollection = new ObservableCollection<Nomenkl>(noms)
                 };
-                var dlg = new SelectDialogView {DataContext = ctx};
+                var dlg = new SelectDialogView { DataContext = ctx };
                 ctx.Form = dlg;
                 dlg.ShowDialog();
                 n = !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -1022,7 +1023,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Rate = Math.Round(crsrates.GetRate(CurrentRow.Nomenkl.Currency.DocCode,
                     n.Currency.DocCode, dt), 4),
                 // ReSharper disable once PossibleInvalidOperationException
-                StoreDC = (decimal) store.DD_SKLAD_POL_DC
+                StoreDC = (decimal)store.DD_SKLAD_POL_DC
             };
             CurrentRow.Entity.TD_26_CurrencyConvert.Add(newItem.Entity);
             newItem.CalcRow(DirectCalc.Rate);
@@ -1156,7 +1157,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
                     else
-                        nds = (decimal) item.NOM_NDS_PERCENT;
+                        nds = (decimal)item.NOM_NDS_PERCENT;
                     var newRow = new InvoiceProviderRow
                     {
                         DocCode = Document.DocCode,
@@ -1245,7 +1246,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (Document.SF_KONTR_CRS_RATE == null) Document.SF_KONTR_CRS_RATE = 1;
 
                 if (Document.SF_UCHET_VALUTA_RATE == null) Document.SF_UCHET_VALUTA_RATE = 1;
-                if (Document.SF_SUMMA_S_NDS == null) Document.SF_SUMMA_S_NDS = (short) (Document.IsNDSInPrice ? 1 : 0);
+                if (Document.SF_SUMMA_S_NDS == null) Document.SF_SUMMA_S_NDS = (short)(Document.IsNDSInPrice ? 1 : 0);
                 if (Document.SF_SCHET_FACT_FLAG == null) Document.SF_SCHET_FACT_FLAG = 1;
                 if (Document.SF_KONTR_CRS_DC == null)
                     Document.SF_KONTR_CRS_DC = Document.Kontragent.BalansCurrency.DocCode;
@@ -1511,7 +1512,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             ? oper.Remainder
                             : Document.Summa - Document.PaySumma,
                         // ReSharper disable once PossibleInvalidOperationException
-                        DocSumma = (decimal) old.VVT_VAL_RASHOD,
+                        DocSumma = (decimal)old.VVT_VAL_RASHOD,
                         DocDate = old.SD_101.VV_START_DATE,
                         Rate = 1,
                         DocName = "Банковский платеж",
@@ -1569,17 +1570,17 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             CashDC = old.DOC_CODE,
                             myState = RowStatus.NewRow,
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = Document.Summa - Document.PaySumma >= (decimal) old.SUMM_ORD
-                                ? (decimal) old.SUMM_ORD
+                            Summa = Document.Summa - Document.PaySumma >= (decimal)old.SUMM_ORD
+                                ? (decimal)old.SUMM_ORD
                                 : Document.Summa - Document.PaySumma,
-                            DocSumma = (decimal) old.SUMM_ORD,
+                            DocSumma = (decimal)old.SUMM_ORD,
                             // ReSharper disable once PossibleInvalidOperationException
-                            DocDate = (DateTime) old.DATE_ORD,
+                            DocDate = (DateTime)old.DATE_ORD,
                             DocNum = old.NUM_ORD.ToString(),
                             Rate = 1,
                             DocName = "Расходный кассовый ордер",
                             // ReSharper disable once PossibleInvalidOperationException
-                            DocExtName = $"Касса: {MainReferences.Cashs[(decimal) old.CA_DC].Name} "
+                            DocExtName = $"Касса: {MainReferences.Cashs[(decimal)old.CA_DC].Name} "
                         };
                         Document.Entity.ProviderInvoicePay.Add(newItem.Entity);
                         Document.PaymentDocs.Add(newItem);
@@ -1624,10 +1625,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     VZCode = old.CODE,
                     myState = RowStatus.NewRow,
                     // ReSharper disable once PossibleInvalidOperationException
-                    Summa = Document.Summa - Document.PaySumma >= (decimal) old.VZT_CRS_SUMMA
-                        ? (decimal) old.VZT_CRS_SUMMA
+                    Summa = Document.Summa - Document.PaySumma >= (decimal)old.VZT_CRS_SUMMA
+                        ? (decimal)old.VZT_CRS_SUMMA
                         : Document.Summa - Document.PaySumma,
-                    DocSumma = (decimal) old.VZT_CRS_SUMMA,
+                    DocSumma = (decimal)old.VZT_CRS_SUMMA,
                     DocDate = old.SD_110.VZ_DATE,
                     Rate = 1,
                     DocName = "Акт взаимозачета",
@@ -1645,8 +1646,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
         /// <summary>
         ///     удаление зависших связей с платежами
         /// </summary>
-       
-
         public override void CloseWindow(object form)
         {
             if (IsCanSaveData)
@@ -1676,8 +1675,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var frm = form as Window;
             frm?.Close();
         }
-        
-        
+
         #endregion
 
         #region IDataErrorInfo

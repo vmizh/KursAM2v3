@@ -7,14 +7,13 @@ using Core;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using Helper;
 using KursAM2.Managers.Nomenkl;
 
 namespace KursAM2.View.Logistiks.UC
 {
-    public class AddNomenklFromInvoiceProviderRowViewModel : RSWindowViewModelBase, IDataUserControl
+    public sealed class AddNomenklFromInvoiceProviderRowViewModel : RSWindowViewModelBase, IDataUserControl
     {
         private readonly Kontragent Kontragent;
 
@@ -62,7 +61,7 @@ namespace KursAM2.View.Logistiks.UC
                             Date = d.SF_POSTAV_DATE,
                             DocCode = d.DOC_CODE,
                             Num = d.SF_POSTAV_NUM,
-                            Currency = MainReferences.Currencies[(decimal) d.SF_CRS_DC],
+                            Currency = MainReferences.Currencies[(decimal)d.SF_CRS_DC],
                             Rows = new List<InvoiceShortRow>()
                         };
                         var rows = ctx.TD_26.Where(_ => _.DOC_CODE == dc).ToList();
@@ -74,18 +73,18 @@ namespace KursAM2.View.Logistiks.UC
                             {
                                 Id = r.Id,
                                 DocCode = r.DOC_CODE,
-                                DocId = (Guid) r.DocId,
+                                DocId = (Guid)r.DocId,
                                 InvoiceQuantity = r.SFT_KOL,
                                 Nomenkl = MainReferences.GetNomenkl(r.SFT_NEMENKL_DC),
-                                AlreadyShippedQuantity = (decimal) s.Shipped,
+                                AlreadyShippedQuantity = (decimal)s.Shipped,
                                 Code = r.CODE,
                                 Note = r.SFT_TEXT,
-                                Price = (decimal) (r.SFT_SUMMA_K_OPLATE / r.SFT_KOL),
+                                Price = (decimal)(r.SFT_SUMMA_K_OPLATE / r.SFT_KOL),
                                 AlreadyShippedSumma =
-                                    (decimal) (r.SFT_SUMMA_K_OPLATE / r.SFT_KOL) * (decimal) s.Shipped,
+                                    (decimal)(r.SFT_SUMMA_K_OPLATE / r.SFT_KOL) * (decimal)s.Shipped,
                                 IsChecked = false,
                                 QuantityOnSklad = NomenklManager.GetNomenklCount(r.SFT_NEMENKL_DC, Warehouse.DocCode),
-                                Quantity = r.SFT_KOL - (decimal) s.Shipped,
+                                Quantity = r.SFT_KOL - (decimal)s.Shipped,
                                 Invoice = doc
                             };
                             Nomenkls.Add(newRow);

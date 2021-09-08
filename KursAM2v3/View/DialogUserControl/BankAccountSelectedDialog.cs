@@ -10,7 +10,6 @@ using Core.EntityViewModel.CommonReferences;
 using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Dialogs;
 

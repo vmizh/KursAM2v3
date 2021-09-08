@@ -5,7 +5,7 @@ using Data;
 
 namespace KursAM2.ViewModel.Logistiks
 {
-    public class KontragentGruzoInfoViewModel : SD_43_GRUZOViewModel
+    public class KontragentGruzoInfoViewModel : KontragentGruzoRequisite
     {
         public KontragentGruzoInfoViewModel(SD_43_GRUZO ent)
         {

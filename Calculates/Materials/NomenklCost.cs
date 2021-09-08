@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using Core.EntityViewModel.NomenklManagement;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 
 namespace Calculates.Materials
 {

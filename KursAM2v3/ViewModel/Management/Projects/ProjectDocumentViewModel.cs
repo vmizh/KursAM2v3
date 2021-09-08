@@ -9,7 +9,6 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using DevExpress.Mvvm.DataAnnotations;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global

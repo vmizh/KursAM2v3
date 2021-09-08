@@ -7,7 +7,6 @@ using Core;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.Invoices.EntityViewModel;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;

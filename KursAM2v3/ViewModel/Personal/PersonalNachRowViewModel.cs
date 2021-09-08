@@ -7,7 +7,6 @@ using Core.EntityViewModel.CommonReferences;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 
 namespace KursAM2.ViewModel.Personal

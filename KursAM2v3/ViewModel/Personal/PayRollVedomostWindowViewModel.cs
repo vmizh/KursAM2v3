@@ -44,6 +44,7 @@ namespace KursAM2.ViewModel.Personal
             foreach (var pr in prType)
                 PayrollTypeCollection.Add(new EMP_PAYROLL_TYPEViewModel(pr));
             CurrencyCollection = MainReferences.Currencies.Values.ToList();
+            isChange = false;
         }
 
         public PayRollVedomostWindowViewModel(string id) : this()
@@ -554,7 +555,7 @@ namespace KursAM2.ViewModel.Personal
 
             State = RowStatus.NotEdited;
             isChange = false;
-            IsCanDateChange = Visibility.Collapsed;
+            myIsCanDateChange = Visibility.Collapsed;
             //RaisePropertyChanged(nameof(Employees));
             //RaisePropertyChanged(nameof(IsCanSaveData));
         }

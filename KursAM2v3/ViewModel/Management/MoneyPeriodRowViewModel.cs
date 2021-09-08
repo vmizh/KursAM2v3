@@ -3,7 +3,6 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 
 namespace KursAM2.ViewModel.Management
 {

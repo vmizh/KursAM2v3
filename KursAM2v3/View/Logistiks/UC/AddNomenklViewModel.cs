@@ -200,6 +200,7 @@ namespace KursAM2.View.Logistiks.UC
 
         public override bool IsCanSearch => SearchText != null;
 
+
         public override void Search(object obj)
         {
             SearchNomenkl(null);
@@ -229,16 +230,19 @@ namespace KursAM2.View.Logistiks.UC
 
                 if (NomenklItem.Count > 0) myDataUserControl.treeListPermissionStruct.IsEnabled = false;
             }
-
-            //foreach (var item in NomenklItemCollection)
-            //    // ReSharper disable once RedundantLogicalConditionalExpressionOperand
-            //    // ReSharper disable once MergeConditionalExpression
-            //    if (item.NOM_POLNOE_IMIA != null
-            //        ? item.NOM_POLNOE_IMIA.ToUpper().Contains(SearchText.ToUpper())
-            //        : false
-            //          || item.NOM_NOMENKL.ToUpper().Contains(SearchText.ToUpper()))
-            //        NomenklItem.Add(item);
         }
+
+        public ICommand ClearSearchCommand
+        {
+            get { return new Command(ClearSearch, _ => !string.IsNullOrWhiteSpace(SearchText)); }
+        }
+
+        public void ClearSearch(object obj)
+        {
+            NomenklItem.Clear();
+            myDataUserControl.treeListPermissionStruct.IsEnabled = true;
+        }
+
 
         public override void SearchClear(object obj)
         {

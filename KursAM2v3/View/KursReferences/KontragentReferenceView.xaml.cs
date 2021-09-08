@@ -7,7 +7,6 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.TreeList;
-using KursAM2.ViewModel.Reference;
 using LayoutManager;
 
 namespace KursAM2.View.KursReferences
@@ -90,22 +89,22 @@ namespace KursAM2.View.KursReferences
             e.Column.Name = e.Column.FieldName;
         }
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (!(DataContext is KontragentReferenceWindowViewModel dtx)) return;
-            if (ToggleButton.IsChecked == true)
-            {
-                treeGroups.IsEnabled = false;
-                dtx.GetAllKontragent();
-                dtx.CurrentGroup = null;
-                CheckBox.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                treeGroups.IsEnabled = true;
-                dtx.RefreshData(null);
-                CheckBox.Visibility = Visibility.Hidden;
-            }
-        }
+        //private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        //{
+        //    if (!(DataContext is KontragentReferenceWindowViewModel dtx)) return;
+        //    if (ToggleButton.IsChecked == true)
+        //    {
+        //        treeGroups.IsEnabled = false;
+        //        dtx.GetAllKontragent();
+        //        dtx.CurrentGroup = null;
+        //        CheckBox.Visibility = Visibility.Visible;
+        //    }
+        //    else
+        //    {
+        //        treeGroups.IsEnabled = true;
+        //        dtx.RefreshData(null);
+        //        CheckBox.Visibility = Visibility.Hidden;
+        //    }
+        //}
     }
 }

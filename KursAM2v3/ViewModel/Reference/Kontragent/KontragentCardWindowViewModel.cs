@@ -14,20 +14,31 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Mvvm;
 using DevExpress.Xpf.Navigation;
 using KursAM2.View.Base;
 using KursAM2.View.KursReferences;
 using KursAM2.View.KursReferences.KontragentControls;
+using KursAM2.ViewModel.Reference.Dialogs;
 
-namespace KursAM2.ViewModel.Reference
+namespace KursAM2.ViewModel.Reference.Kontragent
 {
     public sealed class KontragentCardWindowViewModel : RSWindowViewModelBase
     {
-        private readonly decimal? GetDocCode;
+        #region Fields
+
+         private readonly decimal? GetDocCode;
+        private KontragentGruzoRequisite myCurrentGruzoRequisite;
+
+        #endregion
+       
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Global
-        public ObservableCollection<BankAndAccounts> DeletedBankAndAccountses =
-            new ObservableCollection<BankAndAccounts>();
+        public ObservableCollection<KontragentBank> DeletedBankAndAccountses =
+            new ObservableCollection<KontragentBank>();
+
+        public ObservableCollection<KontragentGruzoRequisite> DeletedKontragentGruzoRequisites =
+            new ObservableCollection<KontragentGruzoRequisite>();
 
         private TileBarItem mySelectedTab;
 
@@ -69,13 +80,12 @@ namespace KursAM2.ViewModel.Reference
         public ObservableCollection<KontragentCategory> Categories { set; get; }
             = new ObservableCollection<KontragentCategory>();
 
-        public Kontragent Kontragent { set; get; }
+        public Core.EntityViewModel.CommonReferences.Kontragent.Kontragent Kontragent { set; get; }
         public List<Employee> Employees => MainReferences.Employees.Values.ToList();
 
-        public ObservableCollection<BankAndAccounts> BankAndAccounts { set; get; } =
-            new ObservableCollection<BankAndAccounts>();
+        public ObservableCollection<KontragentBank> BankAndAccounts { set; get; } =
+            new ObservableCollection<KontragentBank>();
 
-        public ObservableCollection<KontragentBank> Accounts { set; get; } = new ObservableCollection<KontragentBank>();
         public ObservableCollection<Bank> AllBanks { set; get; } = new ObservableCollection<Bank>();
         public List<Region> Regions { set; get; } = new List<Region>();
 
@@ -83,6 +93,17 @@ namespace KursAM2.ViewModel.Reference
             => MainReferences.Currencies.Values.Where(_ => (_.CRS_ACTIVE ?? 0) == 1).ToList();
 
         #region Property
+
+        public KontragentGruzoRequisite CurrentGruzoRequisite
+        {
+            get => myCurrentGruzoRequisite;
+            set
+            {
+                if (myCurrentGruzoRequisite == value) return;
+                myCurrentGruzoRequisite = value;
+                RaisePropertyChanged();
+            }
+        }
 
         private KontragentCategory myCategory;
 
@@ -142,9 +163,9 @@ namespace KursAM2.ViewModel.Reference
             get => myCurrentRegions;
         }
 
-        private BankAndAccounts myCurrentBankAndAccounts;
+        private KontragentBank myCurrentBankAndAccounts;
 
-        public BankAndAccounts CurrentBankAndAccounts
+        public KontragentBank CurrentBankAndAccounts
         {
             set
             {
@@ -174,6 +195,58 @@ namespace KursAM2.ViewModel.Reference
         #endregion
 
         #region Command
+
+        public ICommand AddNewRequisiteCommand
+        {
+            get { return new Command(AddNewRequisite, _ => Kontragent.State != RowStatus.NewRow); }
+        }
+
+        private void AddNewRequisite(object obj)
+        {
+            var d = new SD_43_GRUZO
+            {
+                doc_code = Kontragent.DocCode,
+                IsDefault = false,
+                Id = Guid.NewGuid()
+            };
+            var newItem = new KontragentGruzoRequisite(d)
+                { myState = RowStatus.NewRow };
+            Kontragent.GruzoRequisities.Add(newItem);
+            if (Kontragent.myState != RowStatus.NewRow) Kontragent.myState = RowStatus.Edited;
+        }
+
+        public ICommand AddCopyRequisiteCommand
+        {
+            get { return new Command(AddCopyRequisite, _ => CurrentGruzoRequisite != null); }
+        }
+
+        private void AddCopyRequisite(object obj)
+        {
+            var d = new SD_43_GRUZO
+            {
+                doc_code = Kontragent.DocCode,
+                IsDefault = false,
+                Id = Guid.NewGuid(),
+                GRUZO_TEXT_NAKLAD = CurrentGruzoRequisite.GRUZO_TEXT_NAKLAD,
+                GRUZO_TEXT_SF = CurrentGruzoRequisite.GRUZO_TEXT_SF,
+                OKPO = CurrentGruzoRequisite.OKPO
+            };
+            var newItem = new KontragentGruzoRequisite(d)
+                { myState = RowStatus.NewRow };
+            Kontragent.GruzoRequisities.Add(newItem);
+            if (Kontragent.myState != RowStatus.NewRow) Kontragent.myState = RowStatus.Edited;
+        }
+
+        public ICommand DeleteRequisiteCommand
+        {
+            get { return new Command(DeleteRequisite, _ => CurrentGruzoRequisite != null); }
+        }
+
+        private void DeleteRequisite(object obj)
+        {
+            DeletedKontragentGruzoRequisites.Add(CurrentGruzoRequisite);
+            Kontragent.GruzoRequisities.Remove(CurrentGruzoRequisite);
+        }
 
         public ICommand CategoryReferenceCommand
         {
@@ -216,7 +289,7 @@ namespace KursAM2.ViewModel.Reference
             var item = BankAndAccounts.FirstOrDefault(_ => _.Code == CurrentBankAndAccounts.Code);
             if (item != null)
             {
-                item.DELETED = 1;
+                item.IsDeleted = true;
                 item.State = RowStatus.Edited;
             }
 
@@ -231,8 +304,20 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewBank(object obj)
         {
-            BankAndAccounts.Add(new BankAndAccounts {State = RowStatus.NewRow});
-            RaisePropertiesChanged(nameof(Kontragent.KontragentBanks));
+            var ctx = new BankSelectDialogViewModel();
+            var service = GetService<IDialogService>("DialogServiceUI");
+            if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
+            if (ctx.CurrentItem == null) return;
+            BankAndAccounts.Add(new KontragentBank
+            {
+                Bank = ctx.CurrentItem,
+                State = RowStatus.NewRow
+            });
+            if (Kontragent.myState != RowStatus.NewRow)
+            {
+                Kontragent.myState = RowStatus.Edited;
+                Kontragent.RaisePropertyChanged("State");
+            }
         }
 
         public override void RefreshData(object data)
@@ -275,40 +360,24 @@ namespace KursAM2.ViewModel.Reference
             Regions.Clear();
             foreach (var item in GlobalOptions.GetEntities().SD_23.ToList())
                 Regions.Add(new Region(item));
-            Accounts.Clear();
             if (GetDocCode == null) return;
             var kontr = GlobalOptions.GetEntities()
                 .SD_43
                 .Include(_ => _.SD_301)
                 .Include(_ => _.SD_148)
                 .SingleOrDefault(_ => _.DOC_CODE == GetDocCode);
-            Kontragent = new Kontragent(kontr);
+            Kontragent = new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent(kontr);
             RaisePropertiesChanged(nameof(Kontragent));
             RaisePropertiesChanged(nameof(Categories));
             RaisePropertiesChanged(nameof(Regions));
-            Accounts.Clear();
+            BankAndAccounts.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                if (ctx.TD_43.FirstOrDefault(_ => _.DOC_CODE == Kontragent.DOC_CODE) != null)
-                    foreach (var item in ctx.TD_43)
-                        Accounts.Add(new KontragentBank(item));
-            }
-
-            BankAndAccounts.Clear();
-            foreach (var item in Accounts)
-            {
-                if (item.Entity.DELETED == 1) continue;
-                if (item.DocCode != Kontragent.DocCode) continue;
-                BankAndAccounts.Add(new BankAndAccounts
-                {
-                    Id = Guid.NewGuid(),
-                    RASCH_ACC = item.Entity.RASCH_ACC,
-                    DISABLED = item.Entity.DISABLED,
-                    BankDC = item.Entity.BANK_DC,
-                    Code = item.Code,
-                    Bank = AllBanks.FirstOrDefault(_ => _.DocCode == item.Entity.BANK_DC),
-                    State = RowStatus.NotEdited
-                });
+                foreach (var item in ctx.TD_43.Where(_ => _.DOC_CODE == Kontragent.DocCode).ToList())
+                    BankAndAccounts.Add(new KontragentBank(item)
+                    {
+                        myState = RowStatus.NotEdited
+                    });
             }
 
             if (Kontragent.CLIENT_CATEG_DC != null)
@@ -350,8 +419,8 @@ namespace KursAM2.ViewModel.Reference
                 .Include(_ => _.TD_43)
                 .Include(_ => _.SD_301)
                 .Include(_ => _.SD_148)
-                .SingleOrDefault(_ => _.DOC_CODE == (decimal) data);
-            var copy = new Kontragent(kontr);
+                .SingleOrDefault(_ => _.DOC_CODE == (decimal)data);
+            var copy = new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent(kontr);
             using (var ctx = GlobalOptions.GetEntities())
             {
                 try
@@ -372,10 +441,10 @@ namespace KursAM2.ViewModel.Reference
 
         private void NewData(int? groupId)
         {
-            Kontragent = new Kontragent
+            Kontragent = new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent
             {
                 Id = Guid.NewGuid(),
-                Group = groupId != null ? new KontragentGroup {EG_ID = groupId.Value} : null
+                Group = groupId != null ? new KontragentGroup { EG_ID = groupId.Value } : null
             };
         }
 
@@ -397,7 +466,11 @@ namespace KursAM2.ViewModel.Reference
             form.Closed += Form_Closed;
         }
 
-        public override bool IsCanSaveData => Kontragent?.State != RowStatus.NotEdited;
+        public override bool IsCanSaveData => Kontragent?.State != RowStatus.NotEdited ||
+                                              BankAndAccounts.Any(_ => _.State != RowStatus.NotEdited)
+                                              || Kontragent.GruzoRequisities.Any(_ => _.State != RowStatus.NotEdited)
+                                              || DeletedBankAndAccountses.Count > 0 
+                                              || DeletedKontragentGruzoRequisites.Count > 0;
 
         public override void SaveData(object data)
         {
@@ -471,7 +544,6 @@ namespace KursAM2.ViewModel.Reference
                         if (doc != null)
                         {
                             if (doc.FLAG_BALANS != Kontragent.FLAG_BALANS)
-                            {
                                 if (ctx.AccruedAmountForClient.Any() || ctx.AccruedAmountOfSupplier.Any())
                                 {
                                     WinManager.ShowWinUIMessageBox(@"Для контрагента есть документы " +
@@ -480,7 +552,7 @@ namespace KursAM2.ViewModel.Reference
                                         MessageBoxButton.OK, MessageBoxImage.Stop);
                                     return;
                                 }
-                            }
+
                             doc.INN = Kontragent.INN;
                             doc.NAME = Kontragent.Name;
                             doc.HEADER = Kontragent.Header;
@@ -538,10 +610,11 @@ namespace KursAM2.ViewModel.Reference
                             if (item.State == RowStatus.NewRow)
                                 ctx.TD_43.Add(new TD_43
                                 {
-                                    RASCH_ACC = item.RASCH_ACC,
-                                    DOC_CODE = Kontragent.DOC_CODE,
-                                    DISABLED = item.DISABLED,
-                                    BANK_DC = item.BankDC,
+                                    RASCH_ACC = item.AccountNumber,
+                                    DOC_CODE = Kontragent.DocCode,
+                                    DISABLED = (short?)(item.IsDisabled ? 1 : 0),
+                                    BANK_DC = item.Bank?.DocCode,
+                                    USE_FOR_TLAT_TREB = (short?)(item.IsForPrint ? 1 : 0),
                                     CODE = getCode
                                 });
                             if (item.State == RowStatus.Edited)
@@ -549,10 +622,11 @@ namespace KursAM2.ViewModel.Reference
                                 var i = ctx.TD_43.FirstOrDefault(_ => _.CODE == item.Code);
                                 if (i != null)
                                 {
-                                    i.BANK_DC = item.BankDC;
-                                    i.DISABLED = item.DISABLED;
-                                    i.DELETED = item.DELETED;
-                                    i.RASCH_ACC = item.RASCH_ACC;
+                                    i.BANK_DC = item.Bank?.DocCode;
+                                    i.DISABLED = (short?)(item.IsDisabled ? 1 : 0);
+                                    i.DELETED = (short?)(item.IsDeleted ? 1 : 0);
+                                    i.RASCH_ACC = item.AccountNumber;
+                                    i.USE_FOR_TLAT_TREB = (short?)(item.IsForPrint ? 1 : 0);
                                 }
                             }
                         }
@@ -566,25 +640,37 @@ namespace KursAM2.ViewModel.Reference
                         }
 
                     // ReSharper disable once PossibleNullReferenceException
-                    DeletedBankAndAccountses.Clear();
-                    ctx.SaveChanges();
-                    //if (IsNewDoc && !MainReferences.AllKontragents.ContainsKey(Kontragent.DocCode))
-                    //{
-                    //    Kontragent.DocCode = newDC;
-                    //    MainReferences.AllKontragents.Add(Kontragent.DocCode, Kontragent);
-                    //    MainReferences.ActiveKontragents.Add(Kontragent.DocCode, Kontragent);
-                    //    MainReferences.KontragentLastUpdate =
-                    //        (DateTime) MainReferences.AllKontragents.Values.Select(_ => _.UpdateDate).Max();
-                    //}
-                    //else
-                    //{
-                    //    MainReferences.AllKontragents[Kontragent.DocCode] = Kontragent;
-                    //    MainReferences.ActiveKontragents[Kontragent.DocCode] = Kontragent;
-                    //    MainReferences.KontragentLastUpdate =
-                    //        (DateTime)MainReferences.AllKontragents.Values.Select(_ => _.UpdateDate).Max();
-                    //}
+                    foreach (var g in Kontragent.GruzoRequisities.Where(_ => State != RowStatus.NotEdited))
+                    {
+                        switch (g.State)
+                        {
+                            case RowStatus.NewRow:
+                                ctx.SD_43_GRUZO.Add(g.Entity);
+                                break;
+                            case RowStatus.Edited:
+                                var old = ctx.SD_43_GRUZO.FirstOrDefault(_ => _.Id == g.Id);
+                                if (old != null)
+                                {
+                                    old.GRUZO_TEXT_SF = g.GRUZO_TEXT_SF;
+                                    old.OKPO = g.OKPO;
+                                    old.GRUZO_TEXT_NAKLAD = g.GRUZO_TEXT_NAKLAD;
+                                }
+                                break;
+                        }
+                    }
 
+                    foreach (var g in DeletedKontragentGruzoRequisites)
+                    {
+                        var old = ctx.SD_43_GRUZO.FirstOrDefault(_ => _.Id == g.Id);
+                        ctx.SD_43_GRUZO.Remove(old);
+                    }
+                    ctx.SaveChanges();
+                    
+                    DeletedBankAndAccountses.Clear();
+                    DeletedKontragentGruzoRequisites.Clear();
                     Kontragent.myState = RowStatus.NotEdited;
+                    foreach (var b in BankAndAccounts) b.myState = RowStatus.NotEdited;
+                    foreach (var g in Kontragent.GruzoRequisities) g.myState = RowStatus.NotEdited;
                 }
                 catch (Exception e)
                 {

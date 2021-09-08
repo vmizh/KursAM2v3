@@ -82,7 +82,7 @@
             </Style.Triggers>
         </Style>
     </dx:DXWindow.Resources>
-    <DockPanel Margin="0">
+    <DockPanel Margin="0" Style="{StaticResource DXServicesDialogOnly}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxlc:LayoutControl Orientation="Vertical" Padding="0" x:Name="mainLayoutControl">
             <dxlc:LayoutGroup Orientation="Vertical">

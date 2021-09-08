@@ -142,8 +142,8 @@
     <Compile Include="EntityViewModel\Bank\BankCurrencyChangeViewModel.cs" />
     <Compile Include="EntityViewModel\CommonReferences\Kontragent\Kontragent.cs" />
     <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentBank.cs" />
+    <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentBanks.cs" />
     <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentCategory.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentGruzoRequisite.cs" />
     <Compile Include="EntityViewModel\Dogovora\DogovorOfSupplierFactViewModel.cs" />
     <Compile Include="EntityViewModel\Dogovora\DogovorClientFactViewModel.cs" />
     <Compile Include="EntityViewModel\Dogovora\DogovorClientRowViewModel.cs" />
@@ -289,7 +289,7 @@
     <Compile Include="EntityViewModel\Cash\CashIn.cs" />
     <Compile Include="EntityViewModel\Cash\CashOut.cs" />
     <Compile Include="EntityViewModel\SD_375ViewModel.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Kontragent\SD_43_GRUZOViewModel.cs" />
+    <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentGruzoRequisite.cs" />
     <Compile Include="EntityViewModel\Bank\Bank.cs" />
     <Compile Include="EntityViewModel\Vzaimozachet\VzaimoraschetType.cs" />
     <Compile Include="EntityViewModel\NomenklManagement\NomenklGroup.cs" />

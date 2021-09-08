@@ -12,7 +12,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 
-namespace KursAM2.ViewModel.Reference
+namespace KursAM2.ViewModel.Reference.Kontragent
 {
     public class KontragentCategoryRefWindowViewModel : RSWindowViewModelBase
     {
@@ -42,6 +42,7 @@ namespace KursAM2.ViewModel.Reference
         public ObservableCollection<KontragentCategory> CategoryDeleteCollection { set; get; } =
             new ObservableCollection<KontragentCategory>();
 
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<KontragentCategory> SelectedCategories { set; get; } =
             new ObservableCollection<KontragentCategory>();
 
@@ -89,7 +90,7 @@ namespace KursAM2.ViewModel.Reference
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var item in ctx.SD_148.ToList())
-                    CategoryCollection.Add(new KontragentCategory(item) {myState = RowStatus.NotEdited});
+                    CategoryCollection.Add(new KontragentCategory(item) { myState = RowStatus.NotEdited });
             }
         }
 

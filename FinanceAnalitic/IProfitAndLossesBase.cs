@@ -4,7 +4,6 @@ using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.NomenklManagement;
 using Core.Invoices.EntityViewModel;
 using Core.Helper;
-using Core.ViewModel.Common;
 
 namespace FinanceAnalitic
 {

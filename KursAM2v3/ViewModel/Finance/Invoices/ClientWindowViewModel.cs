@@ -7,12 +7,12 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
+using Core.EntityViewModel;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Employee;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.Vzaimozachet;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -291,7 +291,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (Document.IsNDSIncludeInPrice)
                 {
                     var colPrice = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Price");
-                    if (colPrice != null) colPrice.ReadOnly = true;
+                    if (colPrice != null) colPrice.ReadOnly = false;
                     var colSumma = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Summa");
                     if (colSumma != null) colSumma.ReadOnly = false;
                 }
@@ -304,6 +304,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 }
 
                 frm.gridRows.RefreshData();
+                frm.gridRows.UpdateTotalSummary();
                 Document.RaisePropertyChanged("Summa");
                 RaisePropertiesChanged(nameof(Document));
             }

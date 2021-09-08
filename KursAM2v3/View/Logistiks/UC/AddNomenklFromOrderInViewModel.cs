@@ -10,7 +10,6 @@ using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Core.ViewModel.Common;
 using Core.WindowsManager;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;

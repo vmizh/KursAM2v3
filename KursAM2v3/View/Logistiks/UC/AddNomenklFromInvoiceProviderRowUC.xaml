@@ -12,6 +12,7 @@
     <dxmvvm:Interaction.Behaviors>
         <dxmvvm:LayoutSerializationService />
     </dxmvvm:Interaction.Behaviors>
+    <!--<DockPanel Style="{StaticResource DXServices}">-->
     <DockPanel>
         <dxlc:LayoutControl Name="mainControl">
             <dxlc:LayoutGroup Orientation="Vertical" Name="Group3">
