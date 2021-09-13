@@ -990,32 +990,9 @@ namespace KursAM2.Managers.Invoices
                     var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
-                        var newDoc = new InvoiceProvider(d,new UnitOfWork<ALFAMEDIAEntities>());
-                        if (isUsePayment)
-                        {
-                            var pd = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode);
-                            if (pd == null)
-                            {
-                                ret.Add(newDoc);
-                                continue;
-                            }
-                            if (newDoc.Summa > pd.PaySumma)
-                            {
-                                newDoc.PaymentDocs.Add(new ProviderInvoicePayViewModel
-                                {
-                                    Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
-                                });
-                                ret.Add(newDoc);
-                            }
-                        }
-                        else
-                        {
-                            newDoc.PaymentDocs.Add(new ProviderInvoicePayViewModel
-                            {
-                                Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
-                            });
-                            ret.Add(newDoc);
-                        }
+                       
+                        var newDoc = new InvoiceProvider(d,new UnitOfWork<ALFAMEDIAEntities>());  
+                        ret.Add(newDoc);
                     }
                 }
             }

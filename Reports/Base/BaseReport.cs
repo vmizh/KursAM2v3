@@ -23,7 +23,10 @@ namespace Reports.Base
         public virtual void ShowSpreadsheet()
         {
             var file = $"{Environment.CurrentDirectory}\\Reports\\{XlsFileName}.xlsx";
-            var view = new ExportView {Owner = Application.Current.MainWindow};
+            var view = new ExportView
+            {
+                Owner = Application.Current.MainWindow
+            };
             Workbook = view.Sreadsheet.Document;
             if (XlsFileName != null)
                 if (File.Exists(file))
@@ -41,6 +44,8 @@ namespace Reports.Base
             {
                 var worksheet = Workbook.Worksheets.ActiveWorksheet;
                 GenerateReport(worksheet);
+                view.MinWidth = 1200;
+                view.MinHeight = 800;
                 view.Show();
             }
             catch (Exception ex)
@@ -62,6 +67,8 @@ namespace Reports.Base
             {
                 var worksheet = Workbook.Worksheets.ActiveWorksheet;
                 GenerateReport(worksheet);
+                view.MinWidth = 1200;
+                view.MinHeight = 800;
                 view.Show();
             }
             finally
@@ -74,7 +81,7 @@ namespace Reports.Base
         {
             Workbook = new SpreadsheetControl().Document;
             var file = $"{Environment.CurrentDirectory}\\Reports\\{XlsFileName}.xlsx";
-            var view = new ExportView {Owner = Application.Current.MainWindow};
+            var view = new ExportView();
             Workbook = view.Sreadsheet.Document;
             Workbook.BeginUpdate();
             if (XlsFileName != null)
@@ -102,20 +109,26 @@ namespace Reports.Base
                 printOptions.FitToPage = PrintOptions.FitToPage;
                 printOptions.FitToWidth = PrintOptions.FitToWidth;
                 printOptions.ErrorsPrintMode = ErrorsPrintMode.Dash;
+                
 
                 #region #PrintWorkbook
 
                 var link = new LegacyPrintableComponentLink(Workbook);
 
                 link.CreateDocument();
+                link.CreateDocumentFinished += Link_CreateDocumentFinished;
                 link.ShowPrintPreview(Application.Current.MainWindow);
-
                 #endregion #PrintWorkbook
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(null,ex);
             }
+        }
+
+        private void Link_CreateDocumentFinished(object sender, EventArgs e)
+        {
+            
         }
 
         public virtual void Show()

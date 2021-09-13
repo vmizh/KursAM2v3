@@ -120,7 +120,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public List<FormPay> FormRaschets => MainReferences.FormRaschets.Values.ToList();
         public List<VzaimoraschetType> VzaimoraschetTypes => MainReferences.VzaimoraschetTypes.Values.ToList();
         public List<PayCondition> PayConditions => MainReferences.PayConditions.Values.ToList();
-
         public List<CountriesViewModel> Countries => MainReferences.Countries.Values.ToList();
 
         public override string LayoutName => "InvoiceClientView2";
@@ -385,26 +384,47 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 IsSeparator = true
             });
-            prn.SubMenu.Add(new MenuButtonInfo
+
+            #region Счет
+
+            var schetPrint = new MenuButtonInfo
             {
-                Caption = "Счет",
+                Caption = "Счет"
+            };
+            schetPrint.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "Печать",
                 Command = PrintSFSchetCommand
-            });
-            prn.SubMenu.Add(new MenuButtonInfo
+            }); 
+            schetPrint.SubMenu.Add(new MenuButtonInfo
             {
-                Caption = "Счет экспорт",
+                Caption = "Экспорт",
                 Command = PrintSFSchetExportCommand
             });
-            prn.SubMenu.Add(new MenuButtonInfo
+            prn.SubMenu.Add(schetPrint);
+            #endregion
+
+            #region Счет-фактура
+
+            var schetFPrint = new MenuButtonInfo
             {
-                Caption = "Счет фактура",
+                Caption = "Счет-фактура"
+            };
+            schetFPrint.SubMenu.Add(new MenuButtonInfo
+            {
+                Caption = "Печать",
                 Command = PrintSFCommand
             });
-            prn.SubMenu.Add(new MenuButtonInfo
+            schetFPrint.SubMenu.Add(new MenuButtonInfo
             {
                 Caption = "Экспорт",
                 Command = ExportSFCommand
             });
+            prn.SubMenu.Add(schetFPrint);
+            #endregion
+            
+            
+            
             prn.SubMenu.Add(new MenuButtonInfo
             {
                 Caption = "Товарная накладная",
@@ -419,23 +439,23 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void CreateReports()
         {
-            ReportManager.Reports.Add("Экспорт", new SFClientSchetFacturaReport(this)
+            ReportManager.Reports.Add("Экспорт", new SFClientSchetFacturaReportNew(this)
             {
                 PrintOptions = new KursReportA4PrintOptions(),
                 ShowType = ReportShowType.Spreadsheet,
-                XlsFileName = "SFClient"
+                XlsFileName = "UPD"
             });
-            ReportManager.Reports.Add("Счет", new SFClientSFSChet(this)
+            ReportManager.Reports.Add("Счет", new SFClientSFSсhetNew(this)
             {
                 PrintOptions = new KursReportA4PrintOptions(),
                 ShowType = ReportShowType.Report,
-                XlsFileName = "Account2"
+                XlsFileName = "AccountNew"
             });
-            ReportManager.Reports.Add("Счет-фактура", new SFClientSchetFacturaReport(this)
+            ReportManager.Reports.Add("Счет-фактура", new SFClientSchetFacturaReportNew(this)
             {
                 PrintOptions = new KursReportLandscapeA4PrintOptions(),
                 ShowType = ReportShowType.Report,
-                XlsFileName = "SFClient"
+                XlsFileName = "UPD"
             });
             ReportManager.Reports.Add("Заказ", new SFClientZakazReport(this)
             {

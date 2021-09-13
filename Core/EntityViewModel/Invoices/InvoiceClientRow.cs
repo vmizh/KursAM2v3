@@ -96,7 +96,7 @@ namespace Core.EntityViewModel.Invoices
 
         public bool IsNDSInPrice
         {
-            get => myIsNDSInPrice;
+            get => ((InvoiceClient)Parent)?.IsNDSIncludeInPrice ?? myIsNDSInPrice;
             set
             {
                 if (myIsNDSInPrice == value) return;

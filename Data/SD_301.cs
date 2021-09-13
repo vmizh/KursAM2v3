@@ -127,6 +127,8 @@ namespace Data
         public byte[] SMALL_SUMBOL { get; set; }
         public System.Guid Id { get; set; }
         public Nullable<int> ORDER_IMPOTANCE { get; set; }
+        public string NalogCode { get; set; }
+        public string NalogName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BankCurrencyChange> BankCurrencyChange { get; set; }

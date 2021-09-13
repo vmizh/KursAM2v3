@@ -179,6 +179,32 @@ namespace Core.EntityViewModel.CommonReferences
             }
         }
 
+        public string NalogCode
+        {
+            get => Entity.NalogCode;
+            set
+            {
+                if (Entity.NalogCode == value) return;
+                Entity.NalogCode = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string NalogName
+        {
+            get => Entity.NalogName;
+            set
+            {
+                if (Entity.NalogName == value) return;
+                Entity.NalogName = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public EntityLoadCodition LoadCondition { get; set; }
+
+        public bool IsAccessRight { get; set; }
+
         public SD_301 Entity
         {
             get => myEntity;
@@ -190,18 +216,14 @@ namespace Core.EntityViewModel.CommonReferences
             }
         }
 
-        public EntityLoadCodition LoadCondition { get; set; }
+        public bool Equals(Currency other)
+        {
+            return DocCode == other?.DocCode;
+        }
 
         public List<SD_301> LoadList()
         {
             throw new NotImplementedException();
-        }
-
-        public bool IsAccessRight { get; set; }
-
-        public bool Equals(Currency other)
-        {
-            return DocCode == other?.DocCode;
         }
 
         public IList<Currency> GetAllFromDataBase()
@@ -219,7 +241,7 @@ namespace Core.EntityViewModel.CommonReferences
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((Currency) obj);
+            return Equals((Currency)obj);
         }
 
         public override int GetHashCode()
@@ -288,11 +310,13 @@ namespace Core.EntityViewModel.CommonReferences
             };
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public SD_301 Load(decimal dc, bool isShort = true)
         {
             throw new NotImplementedException();
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public SD_301 Load(Guid id, bool isShort = true)
         {
             throw new NotImplementedException();

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
 using Core;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Invoices;
+using Data;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Finance.Invoices;
@@ -178,13 +180,163 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
         }
     }
 
+    public class SFClientSFSсhetNew : BaseReport
+    {
+        public SFClientSFSсhetNew(ClientWindowViewModel viewmodel)
+        {
+            ViewModel = viewmodel;
+        }
+
+        public override void GenerateReport(Worksheet sheet)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var vm = ViewModel as ClientWindowViewModel;
+                if (vm == null) return;
+                var document = vm.Document;
+                var number = string.IsNullOrWhiteSpace(document.OuterNumber)
+                    ? Convert.ToString(document.InnerNumber)
+                    : document.OuterNumber;
+                Kontragent client, receiver;
+                var cl = ctx.SD_43.Find(document.Client.DOC_CODE);
+                    client = new Kontragent(cl);
+                    var r = ctx.SD_43.Find(document.Receiver.DOC_CODE);
+                    receiver = new Kontragent(r);
+                var receiverName = string.IsNullOrEmpty(receiver.FullName)
+                    ? receiver.Name
+                    : receiver.FullName;
+                var clientName = string.IsNullOrEmpty(client.FullName)
+                    ? client.Name
+                    : client.FullName;
+                sheet.Cells["B11"].Value =
+                    $"Счет на оплату № {number} от {document.DocDate.ToLongDateString()}";
+                sheet.Cells["D6"].Value = receiver.INN;
+                sheet.Cells["M6"].Value = receiver.KPP;
+                sheet.Cells["B7"].Value = receiver.FullName;
+                sheet.Cells["H13"].Value =
+                    $"{receiverName}, ИНН {receiver.INN}, КПП {receiver.KPP}, {receiver.ADDRESS}, тел.{receiver.TEL}";
+                sheet.Cells["H15"].Value =
+                    $"{receiverName}, ИНН {receiver.INN}, КПП {receiver.KPP}, {receiver.ADDRESS}, тел.{receiver.TEL}";
+                sheet.Cells["H17"].Value =
+                    $"{clientName}, ИНН {client.INN}, КПП {client.KPP}, {client.ADDRESS}, тел.{client.TEL}";
+                sheet.Cells["H19"].Value =
+                    $"{clientName}, ИНН {client.INN}, КПП {client.KPP}, {client.ADDRESS}, тел.{client.TEL}";
+                var bs = ctx.TD_43.Include(_ => _.SD_44).Where(_ => _.DOC_CODE == receiver.DocCode);
+                TD_43 k = null;
+                if (bs.Any())
+                {
+                    if (bs.Count() == 1)
+                    {
+                        k = bs.First();
+                    }
+                    else
+                    {
+                        var k1 = bs.FirstOrDefault(_ => _.USE_FOR_TLAT_TREB == 1);
+                        if (k1 == null)
+                            k = bs.First();
+                    }
+
+                    if (k != null)
+                    {
+                        sheet.Cells["B3"].Value = k.SD_44.BANK_NAME;
+                        sheet.Cells["W3"].Value = k.SD_44.POST_CODE;
+                        sheet.Cells["W4"].Value = k.SD_44.CORRESP_ACC;
+                        sheet.Cells["W6"].Value = k.RASCH_ACC;
+                    }
+                }
+
+                sheet.Cells["H13"].Value = $"{receiverName}, ИНН {receiver.INN}, " +
+                                           $"КПП {receiver.KPP}, {receiver.ADDRESS}";
+                var grlist = ctx.SD_43_GRUZO.Where(_ => _.doc_code == receiver.DocCode);
+
+                if (grlist.Any())
+                {
+                    switch (grlist.Count())
+                    {
+                        case 1:
+                            sheet.Cells["H15"].Value = grlist.First().GRUZO_TEXT_SF;
+                            break;
+                        default:
+                        {
+                            var g = grlist.FirstOrDefault(_ => _.IsDefault == true);
+                            sheet.Cells["H15"].Value = g != null ? g.GRUZO_TEXT_SF : grlist.First().GRUZO_TEXT_SF;
+                            break;
+                        }
+                    }
+                }
+
+                var pgrlist = ctx.SD_43_GRUZO.Where(_ => _.doc_code == client.DocCode);
+
+                if (pgrlist.Any())
+                {
+                    switch (pgrlist.Count())
+                    {
+                        case 1:
+                            sheet.Cells["H19"].Value = pgrlist.First().GRUZO_TEXT_SF;
+                            break;
+                        default:
+                        {
+                            var g = pgrlist.FirstOrDefault(_ => _.IsDefault == true);
+                            sheet.Cells["H19"].Value = g != null ? g.GRUZO_TEXT_SF : pgrlist.First().GRUZO_TEXT_SF;
+                            break;
+                        }
+                    }
+                }
+
+                
+                var startTableRow = 21;
+                for (var i = 2; i <= document.Rows.Count; i++)
+                {
+                    sheet.InsertCells(sheet.Range[string.Format("A{0}:AL{0}", startTableRow + i)],
+                        InsertCellsMode.ShiftCellsDown);
+                    sheet.Rows[$"{startTableRow + i}"].CopyFrom(sheet.Rows["22"]);
+                }
+
+                var row = 1;
+                foreach (var item in document.Rows)
+                {
+                    sheet[startTableRow + row - 1, 1].Value = row;
+                    sheet[startTableRow + row - 1, 3].Value =
+                        !string.IsNullOrEmpty(item.Nomenkl.NOM_FULL_NAME)
+                            ? item.Nomenkl.NOM_FULL_NAME
+                            : item.Nomenkl.Name;
+                    sheet.Cells[$"AB{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_NAME;
+                    sheet.Cells[$"Y{startTableRow + row}"].Value = item.Quantity;
+                    sheet.Cells[$"Y{startTableRow + row}"].NumberFormat = "#,##0.00";
+                    sheet.Cells[$"AD{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
+                    sheet.Cells[$"AD{startTableRow + row}"].NumberFormat = "#,##0.00";
+                    sheet.Cells[$"AH{startTableRow + row}"].Value =
+                        Convert.ToDouble(item.Summa);
+                    sheet.Cells[$"AH{startTableRow + row}"].NumberFormat = "#,##0.00";
+                    row++;
+                }
+
+                sheet.Cells[$"AH{document.Rows.Count + startTableRow + 2}"].Value =
+                    Convert.ToDouble(document.Summa);
+                sheet.Cells[$"AH{document.Rows.Count + startTableRow + 3}"].Value =
+                    Convert.ToDouble(document.Rows.Sum(_ => _.SFT_SUMMA_NDS));
+                sheet.Cells[$"AH{document.Rows.Count + startTableRow + 4}"].Value =
+                    Convert.ToDouble(document.Summa);
+                sheet.Cells[$"B{document.Rows.Count + startTableRow + 5}"].Value =
+                    $"Всего наименований {document.Rows.Count()}, на сумму {document.Summa:n2} {document.Currency.FullName}";
+                sheet.Cells[$"B{document.Rows.Count + startTableRow + 6}"].Value =
+                    $"{RuDateAndMoneyConverter.CurrencyToTxt(Convert.ToDouble(document.Summa), document.Currency.Name, true)} , в т.ч. НДС {Math.Round((double)(document.Rows.Sum(_ => _.SFT_SUMMA_NDS) ?? 0), 2)}";
+                
+                sheet.Cells[$"AC{document.Rows.Count + startTableRow + 11}"].Value = receiver.Header;
+                sheet.Cells[$"AC{document.Rows.Count + startTableRow + 14}"].Value = receiver.GlavBuh;
+                sheet.Cells[$"AC{document.Rows.Count + startTableRow + 17}"].Value =
+                    ((ClientWindowViewModel)ViewModel).Document.PersonaResponsible?.Name;
+            }
+        }
+    }
+
     public class SFClientSchetFacturaReport : BaseReport
     {
         public SFClientSchetFacturaReport(ClientWindowViewModel viewmodel)
         {
             ViewModel = viewmodel;
         }
-
+        
         public override void GenerateReport(Worksheet sheet)
         {
             var vm = ViewModel as ClientWindowViewModel;
@@ -270,6 +422,158 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"V{document.Rows.Count + startTableRow + 1}"].Formula =
                 $"SUM(V{startTableRow}:V{document.Rows.Count + startTableRow})";
             sheet.Cells[$"V{document.Rows.Count + startTableRow + 1}"].NumberFormat = "#,##0.00";
+        }
+    }
+
+    public class SFClientSchetFacturaReportNew : BaseReport
+    {
+        public SFClientSchetFacturaReportNew(ClientWindowViewModel viewmodel)
+        {
+            ViewModel = viewmodel;
+        }
+
+        public override void GenerateReport(Worksheet sheet)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var vm = ViewModel as ClientWindowViewModel;
+                if (vm == null) return;
+                var document = vm.Document;
+                sheet.Cells["R2"].Value = string.IsNullOrWhiteSpace(document.OuterNumber)
+                    ? document.InnerNumber.ToString()
+                    : document.OuterNumber;
+                sheet.Cells["AD2"].Value = $"{document.DocDate.ToLongDateString()}";
+                sheet.Cells["AB5"].Value = document.Receiver != null
+                    ? string.IsNullOrWhiteSpace(document.Receiver.FullName) ? document.Receiver.Name :
+                    document.Receiver.FullName
+                    : "";
+                sheet.Cells["AB15"].Value = document.Currency != null
+                    ? $"{document.Currency.NalogName}, {document.Currency.NalogCode}"
+                    : null;
+                if (document.Receiver != null)
+                {
+                    sheet.Cells["AB6"].Value = document.Receiver.ADDRESS;
+                    sheet.Cells["AB7"].Value = $"{document.Receiver.INN}/{document.Receiver.KPP}";
+                    var grlist = ctx.SD_43_GRUZO.Where(_ => _.doc_code == document.Receiver.DocCode);
+
+                    if (grlist.Any())
+                    {
+                        switch (grlist.Count())
+                        {
+                            case 1:
+                                sheet.Cells["AB8"].Value = grlist.First().GRUZO_TEXT_SF;
+                                break;
+                            default:
+                            {
+                                var g = grlist.FirstOrDefault(_ => _.IsDefault == true);
+                                sheet.Cells["AB8"].Value = g != null ? g.GRUZO_TEXT_SF : grlist.First().GRUZO_TEXT_SF;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        sheet.Cells["AB8"].Value = "он же";
+                    }
+                }
+
+                if (document.Client != null)
+                {
+                    sheet.Cells["AB12"].Value = document.Client?.FullName ?? document.Client.Name;
+                    var pgrlist = ctx.SD_43_GRUZO.Where(_ => _.doc_code == document.Client.DocCode);
+
+                    if (pgrlist.Any())
+                    {
+                        switch (pgrlist.Count())
+                        {
+                            case 1:
+                                sheet.Cells["AB9"].Value = pgrlist.First().GRUZO_TEXT_SF;
+                                break;
+                            default:
+                            {
+                                var g = pgrlist.FirstOrDefault(_ => _.IsDefault == true);
+                                sheet.Cells["AB9"].Value = g != null ? g.GRUZO_TEXT_SF : pgrlist.First().GRUZO_TEXT_SF;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        sheet.Cells["AB9"].Value = "он же";
+                    }
+
+                    // ReSharper disable once PossibleNullReferenceException
+                    sheet.Cells["AB13"].Value = document.Client.ADDRESS;
+                    sheet.Cells["AB14"].Value = $"{document.Client.INN}/{document.Client.KPP}";
+                }
+
+                sheet.Cells["V13"].Value = $"{document.Currency?.NalogName},{document.Currency?.NalogCode}";
+                sheet.Cells["AD22"].Value = document.Receiver?.Header;
+                var startTableRow = 20;
+                for (var i = 2; i <= document.Rows.Count; i++)
+                {
+                    sheet.InsertCells(sheet.Range[string.Format("A{0}:CK{0}", startTableRow + i)],
+                        InsertCellsMode.ShiftCellsDown);
+                    sheet.Rows[$"{startTableRow + i}"].CopyFrom(sheet.Rows["21"]);
+                }
+
+                var defaultNDS = Convert.ToDecimal(GlobalOptions.SystemProfile.Profile.FirstOrDefault(_
+                    => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")
+                    ?.ITEM_VALUE);
+                
+                var row = 1;
+                foreach (var item in document.Rows)
+                {
+                    sheet.Cells[$"A{startTableRow + row}"].Value = row;
+                    sheet.Cells[$"I{startTableRow + row}"].Value =
+                        !string.IsNullOrEmpty(item.Nomenkl.NOM_FULL_NAME) && item.Nomenkl.NOM_FULL_NAME != ""
+                            ? item.Nomenkl.NOM_FULL_NAME
+                            : item.Nomenkl.Name;
+                    var w = sheet.Cells[$"I{startTableRow + row}"].DisplayText.Length / 40;
+                    sheet.Cells[$"I{startTableRow + row}"].RowHeight = w*80;
+                    
+                    sheet.Cells[$"C{startTableRow + row}"].Value = item.NomNomenkl;
+                    sheet.Cells[$"Z{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_OKEI_CODE;
+                    sheet.Cells[$"AB{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_NAME;
+                    sheet.Cells[$"AI{startTableRow + row}"].Value = item.Quantity;
+                    sheet.Cells[$"AI{startTableRow + row}"].NumberFormat = "#,##0.00";
+                    sheet.Cells[$"AM{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
+                    sheet.Cells[$"AM{startTableRow + row}"].NumberFormat = "#,##0.00";
+                    sheet.Cells[$"AR{startTableRow + row}"].Value =
+                        Convert.ToDouble(item.Summa - item.SFT_SUMMA_NDS);
+                    sheet.Cells[$"AR{startTableRow + row}"].NumberFormat = "#,##0.00";
+                    sheet.Cells[$"BC{startTableRow + row}"].Value = item.NDSPercent == 0 ? defaultNDS : item.NDSPercent;
+                    sheet.Cells[$"BG{startTableRow + row}"].Value =
+                        Convert.ToDouble(item.SFT_SUMMA_NDS);
+                    sheet.Cells[$"BG{startTableRow + row}"].NumberFormat = "#,##0.00";
+                    sheet.Cells[$"BM{startTableRow + row}"].Value =
+                        Convert.ToDouble(item.Summa);
+                    sheet.Cells[$"BM{startTableRow + row}"].NumberFormat = "#,##0.00";
+                    sheet.Cells[$"BT{startTableRow + row}"].Value = item.SFT_COUNTRY_CODE;
+                    sheet[$"BX{startTableRow + row}"].Value = item.SFT_STRANA_PROIS;
+                    sheet[$"CE{startTableRow + row}"].Value = item.SFT_N_GRUZ_DECLAR;
+                    row++;
+                }
+
+                sheet.Cells[$"AR{document.Rows.Count + startTableRow + 1}"].Formula =
+                    $"SUM(AR{startTableRow}:AR{document.Rows.Count + startTableRow})";
+                sheet.Cells[$"AR{document.Rows.Count + startTableRow + 1}"].NumberFormat = "#,##0.00";
+                sheet.Cells[$"BG{document.Rows.Count + startTableRow + 1}"].Formula =
+                    $"SUM(BG{startTableRow}:BG{document.Rows.Count + startTableRow})";
+                sheet.Cells[$"BG{document.Rows.Count + startTableRow + 1}"].NumberFormat = "#,##0.00";
+                sheet.Cells[$"BM{document.Rows.Count + startTableRow + 1}"].Formula =
+                    $"SUM(BM{startTableRow}:BM{document.Rows.Count + startTableRow})";
+                sheet.Cells[$"BM{document.Rows.Count + startTableRow + 1}"].NumberFormat = "#,##0.00";
+                sheet.Cells[$"AJ{document.Rows.Count + startTableRow + 3}"].Value = document.Receiver?.Header;
+                sheet.Cells[$"BV{document.Rows.Count + startTableRow + 3}"].Value = document.Receiver?.GlavBuh;
+                sheet.Cells[$"P{document.Rows.Count + startTableRow + 15}"].Value = document.DocDate.ToLongDateString();
+                sheet.Cells[$"AU{document.Rows.Count + startTableRow + 23}"].Value = $"{document.Client?.FullName ?? document.Client.Name} " +
+                    $"ИНН/КПП {document.Client.INN}/{document.Client.KPP}";
+
+                WorksheetHeaderFooterOptions options = sheet.HeaderFooterOptions;
+                options.EvenFooter.Center = $"Стр. {"&P"} из {"&N"}";
+                options.OddFooter.Center = $"Стр. {"&P"} из {"&N"}";
+            }
         }
     }
 
