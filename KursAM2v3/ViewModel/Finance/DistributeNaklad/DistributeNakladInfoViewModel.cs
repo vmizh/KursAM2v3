@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
 
@@ -11,9 +10,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {
     public class DistributeNakladInfoViewModel : KursBaseViewModel, IViewModelToEntity<DistributeNakladInfo>
     {
-        #region Fields 
-        #endregion
-        #region Constructors 
+        #region Constructors
+
         public DistributeNakladInfoViewModel(DistributeNakladInfo entity, RowStatus state = RowStatus.NotEdited)
         {
             if (entity == null)
@@ -32,18 +30,23 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 State = state;
             }
         }
+
         #endregion
+
+        #region Fields
+
+        #endregion
+
         #region Properties
+
         [DisplayName("Entity")]
         [Display(AutoGenerateField = false)]
         public DistributeNakladInfo Entity
         {
             get => GetValue<DistributeNakladInfo>();
-            set => SetValue(value, () =>
-            {
-                SetChangeStatus();
-            });
+            set => SetValue(value, () => { SetChangeStatus(); });
         }
+
         [DisplayName("RowId")]
         [Display(AutoGenerateField = false)]
         public Guid RowId
@@ -56,6 +59,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 SetChangeStatus();
             }
         }
+
         [DisplayName("InvoiceNakladId")]
         [Display(AutoGenerateField = false)]
         public Guid InvoiceNakladId
@@ -120,6 +124,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 SetChangeStatus();
             }
         }
+
         [DisplayName("Распределенная сумма")]
         [Display(AutoGenerateField = true)]
         public decimal DistributeSumma
@@ -132,10 +137,15 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 SetChangeStatus();
             }
         }
+
         #endregion
-        #region Methods 
+
+        #region Methods
+
         #endregion
-        #region Commands 
+
+        #region Commands
+
         #endregion
     }
 }

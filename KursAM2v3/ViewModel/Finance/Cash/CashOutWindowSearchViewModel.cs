@@ -5,7 +5,6 @@ using System.Linq;
 using Core;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -126,7 +125,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                     foreach (var d in data)
                         if (d.SD_43.NAME.Contains(SearchText))
                             DocumentCollection.Add(new CashOut(d)
-                                {myState = RowStatus.NotEdited});
+                                { myState = RowStatus.NotEdited });
                 }
             }
             catch (Exception ex)
@@ -160,7 +159,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                         .ToList();
                     foreach (var d in data)
                         DocumentCollection.Add(new CashOut(d)
-                            {myState = RowStatus.NotEdited});
+                            { myState = RowStatus.NotEdited });
                 }
 
                 RaisePropertyChanged(nameof(DocumentCollection));

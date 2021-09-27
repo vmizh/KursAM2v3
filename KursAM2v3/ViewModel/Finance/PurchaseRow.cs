@@ -1,17 +1,12 @@
 using System;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Data;
 
 namespace KursAM2.ViewModel.Finance
 {
     public class PurchaseRow : TD_24ViewModel
     {
-        public PurchaseRow()
-        {
-        }
-
         public PurchaseRow(TD_24 entity) : base(entity)
         {
         }
@@ -19,6 +14,7 @@ namespace KursAM2.ViewModel.Finance
         public decimal AveragePrice { set; get; }
         public decimal CBRate { set; get; }
         public string PostName => MainReferences.GetKontragent(TD_26.SD_26.SF_POST_DC).Name;
+
         // ReSharper disable once PossibleInvalidOperationException
         public string CurrencyName => MainReferences.Currencies[TD_26.SD_26.SF_CRS_DC.Value].Name;
 

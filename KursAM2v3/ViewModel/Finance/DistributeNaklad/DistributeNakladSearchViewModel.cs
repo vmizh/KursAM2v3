@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Base;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
@@ -21,6 +20,15 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
     public sealed class DistributeNakladSearchViewModel : KursWindowSearchBaseViewModel,
         ISearchWindowViewModel<DistributeNakladViewModel>, IKursLayoutManager
     {
+        #region Methods
+
+        public static DistributeNakladSearchViewModel Create()
+        {
+            return ViewModelSource.Create(() => new DistributeNakladSearchViewModel());
+        }
+
+        #endregion
+
         #region Constructors
 
         public DistributeNakladSearchViewModel(Window form) : base(form)
@@ -113,15 +121,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #endregion
 
-        #region Methods
-
-        public static DistributeNakladSearchViewModel Create()
-        {
-            return ViewModelSource.Create(() => new DistributeNakladSearchViewModel());
-        }
-
-        #endregion
-
         #region Commands
 
         [Command]
@@ -202,7 +201,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         public override void Load(object o)
         {
             Documents.Clear();
-            while (!MainReferences.IsReferenceLoadComplete) {}
+            while (!MainReferences.IsReferenceLoadComplete)
+            {
+            }
+
             foreach (var d in distributeNakladRepository.GetAllByDates(StartDate, EndDate))
                 Documents.Add(new DistributeNakladViewModel(d));
             RaisePropertiesChanged(nameof(Documents));

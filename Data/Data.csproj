@@ -692,6 +692,9 @@
     <Compile Include="NOMENKL_MOVE_VIEW.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="NOMENKL_PRIH_EXCLUDE.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="NOMENKL_RECALC.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

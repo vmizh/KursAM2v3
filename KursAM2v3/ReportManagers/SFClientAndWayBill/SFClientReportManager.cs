@@ -409,7 +409,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells[$"V{startTableRow + row}"].NumberFormat = "#,##0.00";
                 sheet.Cells[$"Y{startTableRow + row}"].Value = item.SFT_COUNTRY_CODE;
                 sheet[startTableRow + row - 1, 26].Value = item.SFT_STRANA_PROIS;
-                sheet[startTableRow + row - 1, 28].Value = item.SFT_N_GRUZ_DECLAR;
+                sheet[startTableRow + row - 1, 28].Value = item.GruzoDeclaration;
                 row++;
             }
 
@@ -509,28 +509,29 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
 
                 sheet.Cells["V13"].Value = $"{document.Currency?.NalogName},{document.Currency?.NalogCode}";
                 sheet.Cells["AD22"].Value = document.Receiver?.Header;
-                var startTableRow = 20;
+                //var copy = sheet.Rows["21"];
+                var startTableRow = 21;
                 for (var i = 2; i <= document.Rows.Count; i++)
                 {
-                    sheet.InsertCells(sheet.Range[string.Format("A{0}:CK{0}", startTableRow + i)],
-                        InsertCellsMode.ShiftCellsDown);
-                    sheet.Rows[$"{startTableRow + i}"].CopyFrom(sheet.Rows["21"]);
+                    sheet.Rows.Insert(startTableRow + i-1);
+                    //sheet.InsertCells(copy);
+                    sheet.Rows[$"{startTableRow + i-1}"].CopyFrom(sheet.Rows["21"]);
                 }
 
                 var defaultNDS = Convert.ToDecimal(GlobalOptions.SystemProfile.Profile.FirstOrDefault(_
                     => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")
                     ?.ITEM_VALUE);
-                
-                var row = 1;
+
+                var row = 0;
                 foreach (var item in document.Rows)
                 {
-                    sheet.Cells[$"A{startTableRow + row}"].Value = row;
+                    sheet.Cells[$"A{startTableRow + row}"].Value = row+1;
                     sheet.Cells[$"I{startTableRow + row}"].Value =
                         !string.IsNullOrEmpty(item.Nomenkl.NOM_FULL_NAME) && item.Nomenkl.NOM_FULL_NAME != ""
                             ? item.Nomenkl.NOM_FULL_NAME
                             : item.Nomenkl.Name;
                     var w = sheet.Cells[$"I{startTableRow + row}"].DisplayText.Length / 40;
-                    sheet.Cells[$"I{startTableRow + row}"].RowHeight = w*80;
+                    sheet.Cells[$"I{startTableRow + row}"].RowHeight = (w < 1 ? 1 : w) * 80;
                     
                     sheet.Cells[$"C{startTableRow + row}"].Value = item.NomNomenkl;
                     sheet.Cells[$"Z{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_OKEI_CODE;
@@ -551,7 +552,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     sheet.Cells[$"BM{startTableRow + row}"].NumberFormat = "#,##0.00";
                     sheet.Cells[$"BT{startTableRow + row}"].Value = item.SFT_COUNTRY_CODE;
                     sheet[$"BX{startTableRow + row}"].Value = item.SFT_STRANA_PROIS;
-                    sheet[$"CE{startTableRow + row}"].Value = item.SFT_N_GRUZ_DECLAR;
+                    sheet[$"CE{startTableRow + row}"].Value = item.GruzoDeclaration;
                     row++;
                 }
 

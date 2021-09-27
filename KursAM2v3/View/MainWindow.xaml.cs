@@ -179,7 +179,7 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     // Начисления вынебалансовым Клиентам
-                    case "Внебалансовые начисления для клиентов":
+                    case "Реестр прямых расходов для клиентов":
                         var aad = new AccuredAmountForClientSearchViewModel();
                         form = new StandartSearchView
                         {
@@ -190,7 +190,7 @@ namespace KursAM2.View
                         form.Show();
                         break;
 
-                    case "Внебалансовые начисления от поставщиков":
+                    case "Реестр прямых расходов от поставщиков":
                         var aap = new AccuredAmountOfSupplierSearchViewModel();
                         form = new StandartSearchView
                         {

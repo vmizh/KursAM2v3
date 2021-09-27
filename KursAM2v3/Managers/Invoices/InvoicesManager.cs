@@ -468,7 +468,7 @@ namespace KursAM2.Managers.Invoices
                                         SFT_SUMMA_K_OPLATE_KONTR_CRS = items.SFT_SUMMA_K_OPLATE,
                                         SFT_SHPZ_DC = items.Entity.SFT_SHPZ_DC,
                                         SFT_STRANA_PROIS = items.SFT_STRANA_PROIS,
-                                        SFT_N_GRUZ_DECLAR = items.SFT_N_GRUZ_DECLAR,
+                                        SFT_N_GRUZ_DECLAR = items.GruzoDeclaration,
                                         SFT_PEREVOZCHIK_POZITION = items.SFT_PEREVOZCHIK_POZITION,
                                         SFT_NAKLAD_KONTR_DC = items.SFT_NAKLAD_KONTR_DC,
                                         SFT_SALE_PRICE_IN_UCH_VAL = items.SFT_SALE_PRICE_IN_UCH_VAL,
@@ -571,7 +571,7 @@ namespace KursAM2.Managers.Invoices
                                         SFT_SUMMA_K_OPLATE_KONTR_CRS = r.SFT_SUMMA_K_OPLATE,
                                         SFT_SHPZ_DC = r.Entity.SFT_SHPZ_DC,
                                         SFT_STRANA_PROIS = r.SFT_STRANA_PROIS,
-                                        SFT_N_GRUZ_DECLAR = r.SFT_N_GRUZ_DECLAR,
+                                        SFT_N_GRUZ_DECLAR = r.GruzoDeclaration,
                                         SFT_PEREVOZCHIK_POZITION = r.SFT_PEREVOZCHIK_POZITION,
                                         SFT_NAKLAD_KONTR_DC = r.SFT_NAKLAD_KONTR_DC,
                                         SFT_SALE_PRICE_IN_UCH_VAL = r.SFT_SALE_PRICE_IN_UCH_VAL,
@@ -613,7 +613,7 @@ namespace KursAM2.Managers.Invoices
                                     oldRow.SFT_SUMMA_K_OPLATE_KONTR_CRS = r.SFT_SUMMA_K_OPLATE;
                                     oldRow.SFT_SHPZ_DC = r.Entity.SFT_SHPZ_DC;
                                     oldRow.SFT_STRANA_PROIS = r.SFT_STRANA_PROIS;
-                                    oldRow.SFT_N_GRUZ_DECLAR = r.SFT_N_GRUZ_DECLAR;
+                                    oldRow.SFT_N_GRUZ_DECLAR = r.GruzoDeclaration;
                                     oldRow.SFT_PEREVOZCHIK_POZITION = r.SFT_PEREVOZCHIK_POZITION;
                                     oldRow.SFT_NAKLAD_KONTR_DC = r.SFT_NAKLAD_KONTR_DC;
                                     oldRow.SFT_SALE_PRICE_IN_UCH_VAL = r.SFT_SALE_PRICE_IN_UCH_VAL;
@@ -2004,7 +2004,7 @@ namespace KursAM2.Managers.Invoices
                                         SFT_UCHET_ED_IZM_DC = items.SFT_UCHET_ED_IZM_DC,
                                         SFT_NACENKA_DILERA = items.SFT_NACENKA_DILERA,
                                         SFT_NALOG_NA_PROD = items.SFT_NALOG_NA_PROD,
-                                        SFT_N_GRUZ_DECLAR = items.SFT_N_GRUZ_DECLAR,
+                                        SFT_N_GRUZ_DECLAR = items.GruzoDeclaration,
                                         SFT_PROCENT_ZS_RASHODOV = items.SFT_PROCENT_ZS_RASHODOV,
                                         SFT_SHPZ_DC = items.SDRSchet?.DocCode,
                                         SFT_STDP_DC = items.SFT_STDP_DC,
@@ -2094,7 +2094,7 @@ namespace KursAM2.Managers.Invoices
                                             SFT_UCHET_ED_IZM_DC = items.SFT_UCHET_ED_IZM_DC,
                                             SFT_NACENKA_DILERA = items.SFT_NACENKA_DILERA,
                                             SFT_NALOG_NA_PROD = items.SFT_NALOG_NA_PROD,
-                                            SFT_N_GRUZ_DECLAR = items.SFT_N_GRUZ_DECLAR,
+                                            SFT_N_GRUZ_DECLAR = items.GruzoDeclaration,
                                             SFT_PROCENT_ZS_RASHODOV = items.SFT_PROCENT_ZS_RASHODOV,
                                             SFT_SHPZ_DC = items.SDRSchet?.DocCode,
                                             SFT_STDP_DC = items.SFT_STDP_DC,
@@ -2129,7 +2129,7 @@ namespace KursAM2.Managers.Invoices
                                         data.SFT_UCHET_ED_IZM_DC = items.SFT_UCHET_ED_IZM_DC;
                                         data.SFT_NACENKA_DILERA = items.SFT_NACENKA_DILERA;
                                         data.SFT_NALOG_NA_PROD = items.SFT_NALOG_NA_PROD;
-                                        data.SFT_N_GRUZ_DECLAR = items.SFT_N_GRUZ_DECLAR;
+                                        data.SFT_N_GRUZ_DECLAR = items.GruzoDeclaration;
                                         data.SFT_PROCENT_ZS_RASHODOV = items.SFT_PROCENT_ZS_RASHODOV;
                                         data.SFT_SHPZ_DC = items.SDRSchet?.DocCode;
                                         data.SFT_STDP_DC = items.SFT_STDP_DC;

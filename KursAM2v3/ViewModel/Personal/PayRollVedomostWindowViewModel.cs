@@ -79,7 +79,6 @@ namespace KursAM2.ViewModel.Personal
         public ICommand ShowMessageBoxCommand => new DelegateCommand(ShowMessageBox);
 
         // ReSharper disable once UnusedMember.Local
-        private IDialogService DialogService => GetService<IDialogService>();
         private IMessageBoxService MessageBoxService => GetService<IMessageBoxService>();
         public ObservableCollection<PayRollVedomostEmployeeViewModel> Employees { set; get; }
         public ObservableCollection<PayRollVedomostEmployeeViewModel> RemoveEmployees { set; get; }
@@ -195,9 +194,10 @@ namespace KursAM2.ViewModel.Personal
             if (PayrollTypeCollection.Count == 0)
             {
                 WinManager.ShowWinUIMessageBox(
-                    "Не существует ни одного типа начисления. Вставка сотрудников не возможна.","Предупреждение");
+                    "Не существует ни одного типа начисления. Вставка сотрудников не возможна.", "Предупреждение");
                 return;
             }
+
             var ex = Employees.Select(d => d.Employee.DocCode).ToList();
             var ctx = new PersonalDialogSelectWindowViewModel(ex);
             ctx.RefreshData(null);
@@ -216,9 +216,9 @@ namespace KursAM2.ViewModel.Personal
                 {
                     State = RowStatus.NewRow,
                     Employee = item.Persona,
-                    EURSumma = (decimal) 0.0,
-                    RUBSumma = (decimal) 0.0,
-                    USDSumma = (decimal) 0.0,
+                    EURSumma = (decimal)0.0,
+                    RUBSumma = (decimal)0.0,
+                    USDSumma = (decimal)0.0,
                     Rows = PayrollTypeCollection.FirstOrDefault(_ => _.DocCode == 19000000001) != null
                         ? new ObservableCollection<PayRollVedomostEmployeeRowViewModel>
                         {
@@ -367,14 +367,14 @@ namespace KursAM2.ViewModel.Personal
         public override void DocNewEmpty(object form)
         {
             var ved = CreateNew();
-            var frm = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = ved};
+            var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = ved };
             frm.Show();
         }
 
         public override void DocNewCopyRequisite(object form)
         {
             var dtx = Copy();
-            var frm = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = dtx};
+            var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = dtx };
             frm.Show();
             foreach (var e in dtx.Employees)
             {
@@ -402,7 +402,7 @@ namespace KursAM2.ViewModel.Personal
         {
             var dtx = Copy();
             dtx.myState = RowStatus.NewRow;
-            var frm = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = dtx};
+            var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = dtx };
             frm.Show();
         }
 

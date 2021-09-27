@@ -6,9 +6,7 @@ using DevExpress.Data;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
-using KursAM2.View.KursReferences;
 using KursAM2.ViewModel.Finance.AccruedAmount;
-using KursAM2.ViewModel.Reference;
 
 namespace KursAM2.View.Finance.AccruedAmount
 {
@@ -17,8 +15,6 @@ namespace KursAM2.View.Finance.AccruedAmount
     /// </summary>
     public partial class AccruedAmountForClientView
     {
-        private ComboBoxEditSettings typeEdit;
-
         public AccruedAmountForClientView()
         {
             InitializeComponent();
@@ -36,6 +32,13 @@ namespace KursAM2.View.Finance.AccruedAmount
             e.Column.Name = e.Column.FieldName;
             switch (e.Column.FieldName)
             {
+                case "Note":
+                    e.Column.EditSettings = new TextEditSettings
+                    {
+                        AcceptsReturn = true,
+                        TextWrapping = TextWrapping.Wrap
+                    };
+                    break;
                 case "SDRSchet":
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
@@ -50,7 +53,7 @@ namespace KursAM2.View.Finance.AccruedAmount
                         MaskUseAsDisplayFormat = true
                     };
                     break;
-               case "CashDoc":
+                case "CashDoc":
                     var cashEdit = new ButtonEditSettings
                     {
                         TextWrapping = TextWrapping.Wrap,
@@ -61,8 +64,7 @@ namespace KursAM2.View.Finance.AccruedAmount
                     var buttonInfoAdd = new ButtonInfo
                     {
                         GlyphKind = GlyphKind.Plus,
-                        ToolTip = "Создать приходный кассовый ордер",
-                        
+                        ToolTip = "Создать приходный кассовый ордер"
                     };
                     var buttonInfoOpen = new ButtonInfo
                     {
@@ -72,18 +74,19 @@ namespace KursAM2.View.Finance.AccruedAmount
                     var buttonInfoDelete = new ButtonInfo
                     {
                         GlyphKind = GlyphKind.Cancel,
-                        ToolTip = "Удалить связь с приходным кассовым ордером",
-                        
+                        ToolTip = "Удалить связь с приходным кассовым ордером"
                     };
                     if (ctx != null)
                     {
                         buttonInfoAdd.SetBinding(CommandButtonInfo.CommandProperty, new Binding("AddCashDocCommand"));
                         buttonInfoOpen.SetBinding(CommandButtonInfo.CommandProperty, new Binding("OpenCashDocCommand"));
-                        buttonInfoDelete.SetBinding(CommandButtonInfo.CommandProperty, new Binding("DeleteCashDocCommand"));
+                        buttonInfoDelete.SetBinding(CommandButtonInfo.CommandProperty,
+                            new Binding("DeleteCashDocCommand"));
                         cashEdit.Buttons.Add(buttonInfoAdd);
                         cashEdit.Buttons.Add(buttonInfoOpen);
                         cashEdit.Buttons.Add(buttonInfoDelete);
                     }
+
                     e.Column.EditSettings = cashEdit;
                     break;
                 case "BankDoc":
@@ -97,8 +100,7 @@ namespace KursAM2.View.Finance.AccruedAmount
                     var buttonInfoAdd2 = new ButtonInfo
                     {
                         GlyphKind = GlyphKind.Plus,
-                        ToolTip = "Создать банковскую транзакцию",
-                        
+                        ToolTip = "Создать банковскую транзакцию"
                     };
                     var buttonInfoOpen2 = new ButtonInfo
                     {
@@ -108,19 +110,21 @@ namespace KursAM2.View.Finance.AccruedAmount
                     var buttonInfoDelete2 = new ButtonInfo
                     {
                         GlyphKind = GlyphKind.Cancel,
-                        ToolTip = "Удалить банковскую транзакцию",
-                        
+                        ToolTip = "Удалить банковскую транзакцию"
                     };
                     if (ctx != null)
                     {
                         buttonInfoAdd2.SetBinding(CommandButtonInfo.CommandProperty, new Binding("AddBankDocCommand"));
-                        buttonInfoOpen2.SetBinding(CommandButtonInfo.CommandProperty, new Binding("OpenBankDocCommand"));
-                        buttonInfoDelete2.SetBinding(CommandButtonInfo.CommandProperty, new Binding("DeleteBankDocCommand"));
+                        buttonInfoOpen2.SetBinding(CommandButtonInfo.CommandProperty,
+                            new Binding("OpenBankDocCommand"));
+                        buttonInfoDelete2.SetBinding(CommandButtonInfo.CommandProperty,
+                            new Binding("DeleteBankDocCommand"));
                         bankEdit.AllowDefaultButton = false;
                         bankEdit.Buttons.Add(buttonInfoAdd2);
                         bankEdit.Buttons.Add(buttonInfoOpen2);
                         bankEdit.Buttons.Add(buttonInfoDelete2);
                     }
+
                     e.Column.EditSettings = bankEdit;
                     break;
             }

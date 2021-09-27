@@ -10,12 +10,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.Base;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Helper;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -52,17 +51,17 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             switch (docOpenType.OpenType)
             {
                 case DocumentCreateTypeEnum.Open:
-                    Entity = DistributeNakladRepository.GetById((Guid) docOpenType.Id);
+                    Entity = DistributeNakladRepository.GetById((Guid)docOpenType.Id);
                     // ReSharper disable once VirtualMemberCallInConstructor
                     Load(docOpenType.Id);
                     State = RowStatus.NotEdited;
                     break;
                 case DocumentCreateTypeEnum.Copy:
-                    Entity = DistributeNakladRepository.CreateCopy((Guid) docOpenType.Id);
+                    Entity = DistributeNakladRepository.CreateCopy((Guid)docOpenType.Id);
                     State = RowStatus.NewRow;
                     break;
                 case DocumentCreateTypeEnum.RequisiteCopy:
-                    Entity = DistributeNakladRepository.CreateRequisiteCopy((Guid) docOpenType.Id);
+                    Entity = DistributeNakladRepository.CreateRequisiteCopy((Guid)docOpenType.Id);
                     State = RowStatus.NewRow;
                     break;
             }
@@ -272,7 +271,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 t.DistributeSumma = DistributeAllNaklads.Where(_ => _.RowId == t.Id)
                     .Sum(_ => _.DistributeSumma);
-                t.DistributePrice = Math.Round((t.Summa + t.DistributeSumma) / t.Quantity,4);
+                t.DistributePrice = Math.Round((t.Summa + t.DistributeSumma) / t.Quantity, 4);
             }
 
             foreach (var i in NakladInvoices)
@@ -301,7 +300,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                         NakladSumma = 0,
                         DistributeSumma = 0,
                         // ReSharper disable once PossibleInvalidOperationException
-                        InvoiceCrsDC = (decimal) inv.Invoice.SF_CRS_DC,
+                        InvoiceCrsDC = (decimal)inv.Invoice.SF_CRS_DC,
                         Rate = 1,
                         RowId = n.Id
                     };
@@ -409,7 +408,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Display(AutoGenerateField = false)]
         public ICommand OpenDocumentCommand
         {
-            get { return new Command(OpenDocument, _ => CurrentTovar != null && CurrentTovar.Invoice?.DocCode != null); }
+            get
+            {
+                return new Command(OpenDocument, _ => CurrentTovar != null && CurrentTovar.Invoice?.DocCode != null);
+            }
         }
 
         private void OpenDocument(object obj)
@@ -459,6 +461,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                                                       .ManualValue;
             }
         }
+
         [Display(AutoGenerateField = false)]
         public ICommand UpdateNakladSummaCommand
         {
@@ -474,15 +477,16 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 winManager.ShowWinUIMessageBox($"Сумма распредления {sum} больше, чем сумма счета {invnakl.Summa}",
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                CurrentDistributeNaklad.NakladSumma = CurrentDistributeNaklad.NakladSumma - (decimal) (sum - invnakl.Summa);
+                CurrentDistributeNaklad.NakladSumma =
+                    CurrentDistributeNaklad.NakladSumma - (decimal)(sum - invnakl.Summa);
             }
+
             CurrentDistributeNaklad.DistributeSumma =
                 CurrentDistributeNaklad.NakladSumma * CurrentDistributeNaklad.Rate;
             RecalcAllResult();
             if (State != RowStatus.NewRow)
                 State = RowStatus.Edited;
             RaisePropertyChanged(nameof(Tovars));
-            
         }
 
 
@@ -516,6 +520,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                         var sql = $"exec dbo.NomenklCalculateCostsForOne {CustomFormat.DecimalToSqlDecimal(n.DocCode)}";
                         unitOfWork.Context.Database.ExecuteSqlCommand(sql);
                     }
+
                     unitOfWork.Commit();
                     Form.Close();
                     break;
@@ -532,18 +537,18 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 {
                     foreach (var n in Tovars)
                     {
-                        var sql = $"exec dbo.NomenklCalculateCostsForOne {CustomFormat.DecimalToSqlDecimal(n.Nomenkl.DocCode)}";
+                        var sql =
+                            $"exec dbo.NomenklCalculateCostsForOne {CustomFormat.DecimalToSqlDecimal(n.Nomenkl.DocCode)}";
                         ctx.Database.ExecuteSqlCommand(sql);
                     }
+
                     return;
                 }
 
                 foreach (var n in noms)
                 {
-                    {
-                        var sql = $"exec dbo.NomenklCalculateCostsForOne {CustomFormat.DecimalToSqlDecimal(n.DocCode)}";
-                        ctx.Database.ExecuteSqlCommand(sql);
-                    }
+                    var sql = $"exec dbo.NomenklCalculateCostsForOne {CustomFormat.DecimalToSqlDecimal(n.DocCode)}";
+                    ctx.Database.ExecuteSqlCommand(sql);
                 }
             }
         }
@@ -571,8 +576,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
-        [Display(AutoGenerateField = false)]
-        public override bool IsCanRefresh { set; get; } = true;
+        [Display(AutoGenerateField = false)] public override bool IsCanRefresh { set; get; } = true;
 
         public override bool CanSave()
         {
@@ -616,7 +620,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
                     if (invrow != null)
                         // ReSharper disable once PossibleInvalidOperationException
-                        inv = DistributeNakladRepository.GetInvoiceHead((Guid) invrow.DocId);
+                        inv = DistributeNakladRepository.GetInvoiceHead((Guid)invrow.DocId);
                     Tovars.Add(new DistributeNakladRowViewModel(r)
                     {
                         InvoiceRow = invrow,
@@ -652,7 +656,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Command]
         public void AddNomenkl()
         {
-            var dialogs = new InvoiceProviderDialogs {IsNakladInvoices = false};
+            var dialogs = new InvoiceProviderDialogs { IsNakladInvoices = false };
             if (dialogs.ShowDialog(Currency, DateTime.Today.AddDays(-30),
                 DateTime.Today) == true)
                 foreach (var d in dialogs.SelectedItems)
@@ -672,7 +676,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                                 InvoiceRow = r,
                                 State = RowStatus.NewRow
                             };
-                            ((ISupportParentViewModel) newTovar).ParentViewModel = this;
+                            ((ISupportParentViewModel)newTovar).ParentViewModel = this;
                             Tovars.Add(newTovar);
                         }
                     }
@@ -684,7 +688,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                             InvoiceRow = r,
                             State = RowStatus.NewRow
                         };
-                        ((ISupportParentViewModel) newTovar).ParentViewModel = this;
+                        ((ISupportParentViewModel)newTovar).ParentViewModel = this;
                         Tovars.Add(newTovar);
                     }
 
@@ -786,7 +790,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Command]
         public void AddNakladInvoice()
         {
-            var dialogs = new InvoiceProviderDialogs {IsNakladInvoices = true};
+            var dialogs = new InvoiceProviderDialogs { IsNakladInvoices = true };
             if (dialogs.ShowDialog(null, DateTime.Today.AddDays(-30),
                 DateTime.Today) == true)
                 foreach (var d in dialogs.SelectedItems)

@@ -7,7 +7,6 @@ using Core;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.UC;
@@ -39,7 +38,7 @@ namespace KursAM2.ViewModel.Finance.controls
 
         public AddBankOperionUC(decimal docCode) : this()
         {
-            CurrentBankOperations = new BankOperationsViewModel {Date = DateTime.Today};
+            CurrentBankOperations = new BankOperationsViewModel { Date = DateTime.Today };
             BankOperationType = BankOperationType.NotChoice;
             // ReSharper disable once VirtualMemberCallInConstructor
             RefreshData(docCode);
@@ -69,6 +68,7 @@ namespace KursAM2.ViewModel.Finance.controls
                 State = isNew ? RowStatus.NewRow : RowStatus.NotEdited
             };
         }
+
         // ReSharper disable once InconsistentNaming
         public List<SDRSchet> SHPZList => MainReferences.SDRSchets.Values.ToList();
 
@@ -449,7 +449,7 @@ namespace KursAM2.ViewModel.Finance.controls
         {
             base.RefreshData(o);
             CurrentBankOperations.Code = -1;
-            CurrentBankOperations.DOC_CODE = (decimal) o;
+            CurrentBankOperations.DOC_CODE = (decimal)o;
         }
 
         public override bool IsOkAllow()

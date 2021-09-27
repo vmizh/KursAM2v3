@@ -1,7 +1,6 @@
 ﻿using System;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Data;
 
 namespace KursAM2.ViewModel.Finance
@@ -11,9 +10,6 @@ namespace KursAM2.ViewModel.Finance
         private decimal myRateCost;
         private decimal myRateSumma;
 
-        public SaleTaxNomenkl()
-        {
-        }
 
         public SaleTaxNomenkl(TD_24 entity, decimal costPrice, decimal costSumma, decimal rate, string saleNote)
             : base(entity)
@@ -34,7 +30,7 @@ namespace KursAM2.ViewModel.Finance
         public string AccountCreator => TD_84.SD_84.CREATOR;
 
         // ReSharper disable once PossibleInvalidOperationException
-        public string SkladName => MainReferences.Warehouses[(decimal) SD_24.DD_SKLAD_OTPR_DC].Name;
+        public string SkladName => MainReferences.Warehouses[(decimal)SD_24.DD_SKLAD_OTPR_DC].Name;
         public string KontragentName => MainReferences.GetKontragent(SD_24.DD_KONTR_POL_DC).Name;
         public string NomenklName => MainReferences.GetNomenkl(DDT_NOMENKL_DC).Name;
         public string NomenklNomNumber => MainReferences.GetNomenkl(DDT_NOMENKL_DC).NomenklNumber;

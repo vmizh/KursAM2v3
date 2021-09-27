@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.ViewModel.Costing;
@@ -20,12 +19,6 @@ namespace KursAM2.ViewModel.Finance
         private readonly List<KontragentRefOut> Deleted = new List<KontragentRefOut>();
         private KontragentRefOut myCurrentKontr;
         private KONTRAGENT_REF_OUT_REQUISITEViewModel myCurrentRequisite;
-
-        public KontragentReferenceOutWindowViewModel()
-        {
-            WindowName = "Справочник контрагентов для печати";
-            Result = new ObservableCollection<KontragentRefOut>();
-        }
 
         public KontragentReferenceOutWindowViewModel(Window form) : base(form)
         {
@@ -110,7 +103,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override void DocNewEmpty(object form)
         {
-            Result.Add(new KontragentRefOut {State = RowStatus.NewRow});
+            Result.Add(new KontragentRefOut { State = RowStatus.NewRow });
             RaisePropertyChanged(nameof(Result));
         }
 
@@ -122,7 +115,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override void DocNewCopy(object form)
         {
-            Result.Add(new KontragentRefOut(CurrentKontr.Entity) {State = RowStatus.NewRow});
+            Result.Add(new KontragentRefOut(CurrentKontr.Entity) { State = RowStatus.NewRow });
             RaisePropertyChanged(nameof(Result));
         }
 

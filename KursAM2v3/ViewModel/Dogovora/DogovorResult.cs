@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Core.EntityViewModel;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;

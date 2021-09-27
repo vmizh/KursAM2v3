@@ -41,7 +41,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [DisplayName("Convert")]
         [Display(AutoGenerateField = false)]
         public InvoiceProviderRowCurrencyConvertViewModel Convert { set; get; }
-        
+
         [DisplayName("ConvertNomenkl")]
         [Display(AutoGenerateField = false)]
         public Nomenkl ConvertNomenkl => Convert != null ? MainReferences.GetNomenkl(Convert.NomenklId) : null;
@@ -145,14 +145,17 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         [DisplayName("Цена")]
         [Display(AutoGenerateField = true)]
-        public decimal Price => Convert?.Price ?? (Quantity != 0 ? (InvoiceRow?.SFT_SUMMA_K_OPLATE ?? 0) / Quantity : 0);
+        public decimal Price =>
+            Convert?.Price ?? (Quantity != 0 ? (InvoiceRow?.SFT_SUMMA_K_OPLATE ?? 0) / Quantity : 0);
 
         [DisplayName("Сумма")]
-        [Display(AutoGenerateField = true),ReadOnly(true)]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
         public decimal Summa => Convert?.Summa ?? InvoiceRow?.SFT_SUMMA_K_OPLATE ?? 0;
 
         [DisplayName("Сумма накладных")]
-        [Display(AutoGenerateField = true),ReadOnly(true)]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
         public decimal DistributeSumma
         {
             get => Entity.DistributeSumma;
@@ -165,10 +168,12 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         }
 
         [DisplayName("Сумма накл. на ед.")]
-        [Display(AutoGenerateField = true),ReadOnly(true)]
+        [Display(AutoGenerateField = true)]
+        [ReadOnly(true)]
         public decimal DistributeItemSumma => Quantity == 0 ? 0 : DistributeSumma / Quantity;
 
-        [DisplayName("Цена с накладными"),ReadOnly(true)]
+        [DisplayName("Цена с накладными")]
+        [ReadOnly(true)]
         [Display(AutoGenerateField = true)]
         public decimal DistributePrice
         {
@@ -182,7 +187,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
-        [DisplayName("Сумма с накладными"),ReadOnly(true)]
+        [DisplayName("Сумма с накладными")]
+        [ReadOnly(true)]
         [Display(AutoGenerateField = true)]
         public decimal DistributeSummaWithNaklad => Quantity * Entity.DistributePrice;
 

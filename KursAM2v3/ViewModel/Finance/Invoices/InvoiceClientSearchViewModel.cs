@@ -19,27 +19,26 @@ using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Finance.Invoices;
-using Reports.Base;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
     public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
     {
-        private InvoiceClient myCurrentDocument;
         public readonly GenericKursDBRepository<SD_84> GenericProviderRepository;
 
         // ReSharper disable once NotAccessedField.Local
         public readonly IInvoiceClientRepository InvoiceClientRepository;
-  
+
+        public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
+            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+
+        private InvoiceClient myCurrentDocument;
+
         public InvoiceClientSearchViewModel()
         {
             WindowName = "Счета фактуры для клиентов";
             Documents = new ObservableCollection<InvoiceClient>();
         }
-
-        public override string LayoutName => "InvoiceClientSearchViewModel";
-        public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
-            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         public InvoiceClientSearchViewModel(Window form) : base(form)
         {
@@ -59,23 +58,42 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Caption = "Заказ",
                     Command = PrintZakazCommand
                 });
-                prn.SubMenu.Add(new MenuButtonInfo
+                var schet = new MenuButtonInfo
                 {
-                    Caption = "Счет",
+                    Caption = "Счет"
+                    //Command = PrintSFSchetCommand
+                };
+                schet.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Печать",
                     Command = PrintSFSchetCommand
                 });
-                prn.SubMenu.Add(new MenuButtonInfo
-                {
-                    Caption = "Счет фактура",
-                    Command = PrintSFCommand
-                });
-                prn.SubMenu.Add(new MenuButtonInfo
+                schet.SubMenu.Add(new MenuButtonInfo
                 {
                     Caption = "Экспорт",
                     Command = ExportSFCommand
                 });
+                prn.SubMenu.Add(schet);
+                var sf = new MenuButtonInfo
+                {
+                    Caption = "Счет фактура"
+                    //Command = PrintSFCommand
+                };
+                sf.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Печать",
+                    Command = PrintSFCommand
+                });
+                sf.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Экспорт",
+                    Command = ExportSFCommand
+                });
+                prn.SubMenu.Add(sf);
             }
         }
+
+        public override string LayoutName => "InvoiceClientSearchViewModel";
 
         public InvoiceClient CurrentDocument
         {
@@ -114,6 +132,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get { return new Command(PrintZakaz, param => true); }
         }
 
+        public override bool IsPrintAllow => CurrentDocument != null;
+
         public Command PrintSFSchetCommand
         {
             get { return new Command(PrintSChet, param => true); }
@@ -131,11 +151,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.PrintZakaz(null);
         }
 
-        public override void Print(object form)
-        {
-            var rep = new ExportView();
-            rep.Show();
-        }
+        //public override void Print(object form)
+        //{
+        //    var rep = new ExportView();
+        //    rep.Show();
+        //}
 
         private void ExportSF(object obj)
         {
@@ -247,9 +267,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             try
             {
-                 foreach(var d in InvoiceClientRepository.GetAllByDates(StartDate, EndDate))
-                //foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
-                //    false, null, SearchText))
+                foreach (var d in InvoiceClientRepository.GetAllByDates(StartDate, EndDate))
+                    //foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
+                    //    false, null, SearchText))
                     ret.Add(d);
             }
             catch (Exception ex)
@@ -269,7 +289,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         }
 
         public override void DocNewEmpty(object form)
-        { 
+        {
             var ctx = new ClientWindowViewModel(null);
             var frm = new InvoiceClientView
             {
@@ -282,7 +302,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewCopy(object obj)
         {
-            if (CurrentDocument == null) return; 
+            if (CurrentDocument == null) return;
             var ctx = new ClientWindowViewModel(CurrentDocument.DocCode);
             ctx.SetAsNewCopy(true);
             var frm = new InvoiceClientView
@@ -296,7 +316,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewCopyRequisite(object obj)
         {
-            if (CurrentDocument == null) return; 
+            if (CurrentDocument == null) return;
             var ctx = new ClientWindowViewModel(CurrentDocument.DocCode);
             ctx.SetAsNewCopy(false);
             var frm = new InvoiceClientView

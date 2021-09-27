@@ -44,7 +44,7 @@ namespace KursAM2.ViewModel.Dogovora
             var doc = id != null ? GenericRepository.GetById(id.Value) : null;
             if (doc == null)
             {
-                Document = new DogovorOfSupplierViewModel {State = RowStatus.NewRow};
+                Document = new DogovorOfSupplierViewModel { State = RowStatus.NewRow };
                 UnitOfWork.Context.DogovorOfSupplier.Add(Document.Entity);
             }
             else
@@ -185,7 +185,7 @@ namespace KursAM2.ViewModel.Dogovora
                         if (pay.TD_101 != null)
                         {
                             // ReSharper disable once PossibleInvalidOperationException
-                            newPay.DocSumma = (decimal) pay.TD_101.VVT_VAL_RASHOD;
+                            newPay.DocSumma = (decimal)pay.TD_101.VVT_VAL_RASHOD;
                             newPay.DocDate = pay.TD_101.SD_101.VV_START_DATE;
                             newPay.DocName = "Банковский платеж";
                             newPay.DocExtName = $"{pay.TD_101.SD_101.SD_114.BA_BANK_NAME} " +
@@ -195,22 +195,22 @@ namespace KursAM2.ViewModel.Dogovora
                         if (pay.SD_34 != null)
                         {
                             // ReSharper disable once PossibleInvalidOperationException
-                            newPay.DocSumma = (decimal) pay.SD_34.SUMM_ORD;
+                            newPay.DocSumma = (decimal)pay.SD_34.SUMM_ORD;
                             newPay.DocName = "Расходный кассовый ордер";
                             newPay.DocNum = pay.SD_34.NUM_ORD.ToString();
                             // ReSharper disable once PossibleInvalidOperationException
-                            newPay.DocDate = (DateTime) pay.SD_34.DATE_ORD;
+                            newPay.DocDate = (DateTime)pay.SD_34.DATE_ORD;
                             if (pay.SD_34.SD_22 != null)
                                 newPay.DocExtName = $"Касса {pay.SD_34.SD_22.CA_NAME}";
                             else
                                 // ReSharper disable once PossibleInvalidOperationException
-                                newPay.DocExtName = $"Касса {MainReferences.CashsAll[(decimal) pay.SD_34.CA_DC].Name}";
+                                newPay.DocExtName = $"Касса {MainReferences.CashsAll[(decimal)pay.SD_34.CA_DC].Name}";
                         }
 
                         if (pay.TD_110 != null)
                         {
                             // ReSharper disable once PossibleInvalidOperationException
-                            newPay.DocSumma = (decimal) pay.TD_110.VZT_CRS_SUMMA;
+                            newPay.DocSumma = (decimal)pay.TD_110.VZT_CRS_SUMMA;
                             newPay.DocName = "Акт взаимозачета";
                             newPay.DocNum = pay.TD_110.SD_110.VZ_NUM.ToString();
                             newPay.DocDate = pay.TD_110.SD_110.VZ_DATE;
@@ -389,7 +389,7 @@ namespace KursAM2.ViewModel.Dogovora
         {
             if (CurrentPayment.BankCode != null)
             {
-                DocumentsOpenManager.Open(DocumentType.Bank, (decimal) CurrentPayment.BankCode);
+                DocumentsOpenManager.Open(DocumentType.Bank, (decimal)CurrentPayment.BankCode);
                 return;
             }
 
@@ -544,9 +544,11 @@ namespace KursAM2.ViewModel.Dogovora
                                 ? EntityState.Detached
                                 : EntityState.Deleted;
                     }
+
                     Document.Rows.Remove(row);
                 }
             }
+
             Document.State = RowStatus.Edited;
         }
 

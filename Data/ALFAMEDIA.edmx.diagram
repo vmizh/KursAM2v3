@@ -2093,6 +2093,7 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_BankCode" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_CashDC" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_NomenklDC" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.NOMENKL_PRIH_EXCLUDE" Width="1.5" PointX="47.375" PointY="10.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

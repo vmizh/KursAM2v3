@@ -48,7 +48,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         public override void DocNewCopy(object form)
         {
-            if (CurrentDocument == null) return; 
+            if (CurrentDocument == null) return;
             var ctx = new AccruedAmountForClientWindowViewModel(CurrentDocument.Id);
             ctx.SetAsNewCopy(true);
             var frm = new AccruedAmountForClientView
@@ -64,7 +64,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         {
             var view = new AccruedAmountForClientView
             {
-                Owner = Application.Current.MainWindow,
+                Owner = Application.Current.MainWindow
             };
             var ctx = new AccruedAmountForClientWindowViewModel(null)
             {
@@ -73,12 +73,11 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             };
             view.DataContext = ctx;
             view.Show();
-            
         }
 
         public override void DocNewCopyRequisite(object form)
         {
-            if (CurrentDocument == null) return; 
+            if (CurrentDocument == null) return;
             var ctx = new AccruedAmountForClientWindowViewModel(CurrentDocument.Id);
             ctx.SetAsNewCopy(false);
             var frm = new AccruedAmountForClientView
@@ -96,10 +95,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             Documents.Clear();
             foreach (var d in AccruedAmountForClientRepository.GetByDate(StartDate, EndDate))
                 Documents.Add(new AccruedAmountForClientViewModel(d));
-            foreach (var item in Documents)
-            {
-                item.RaisePropertyAllChanged();
-            }
+            foreach (var item in Documents) item.RaisePropertyAllChanged();
         }
 
         #endregion
@@ -119,6 +115,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         #endregion
 
         #region Properties
+
+        public override string WindowName => "Реестр прямых расходов для клиентов";
 
         public override string LayoutName => "AccuredAmountForClientSearchViewModel";
 
@@ -168,7 +166,6 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         #region Methods
 
-        
         #endregion
     }
 }

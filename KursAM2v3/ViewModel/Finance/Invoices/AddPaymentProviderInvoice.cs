@@ -59,11 +59,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         CurrencyName = MainReferences.Currencies[d.VVT_CRS_DC].Name,
                         DocDate = d.SD_101.VV_START_DATE,
                         // ReSharper disable once PossibleInvalidOperationException
-                        Summa = (decimal) d.VVT_VAL_RASHOD,
+                        Summa = (decimal)d.VVT_VAL_RASHOD,
                         Note = d.VVT_DOC_NUM,
                         Name = d.SD_101.SD_114.SD_44.BANK_NAME,
                         AccountName = d.SD_101.SD_114.BA_RASH_ACC,
-                        Remainder = (decimal) d.VVT_VAL_RASHOD
+                        Remainder = (decimal)d.VVT_VAL_RASHOD
                     });
                 foreach (var d in data2)
                 {

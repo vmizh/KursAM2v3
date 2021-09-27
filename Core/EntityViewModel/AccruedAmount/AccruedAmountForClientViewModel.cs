@@ -66,7 +66,7 @@ namespace Core.EntityViewModel.AccruedAmount
 
         public override string ToString()
         {
-            return $"Внебалансовые начисления для клиентов №{DocInNum}/{DocExtNum} " +
+            return $"Прямой расход для клиентов №{DocInNum}/{DocExtNum} " +
                 $"от {DocDate.ToShortDateString()} Контрагент: {Kontragent} на сумму {Summa} " +
                 $"{Currency}";
         }

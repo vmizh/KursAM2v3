@@ -73,10 +73,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         public override void Ok(object obj)
         {
             winCurrentService = GetService<ICurrentWindowService>();
-            if (winCurrentService != null)
-            {
-                winCurrentService.Close();
-            }
+            if (winCurrentService != null) winCurrentService.Close();
         }
 
         public override void Cancel(object obj)

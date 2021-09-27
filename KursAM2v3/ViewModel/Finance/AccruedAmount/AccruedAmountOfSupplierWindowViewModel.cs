@@ -133,8 +133,15 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 if (myCurrentAccrual == value) return;
                 myCurrentAccrual = value;
                 RaisePropertyChanged();
+                if (Form is AccruedAmountOfSupplierView frm)
+                {
+                    var col = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Summa");
+                    if (col == null) return;
+                    col.ReadOnly = myCurrentAccrual.CashDoc != null || myCurrentAccrual.BankDoc != null;
+                }
             }
         }
+
 
         public AccruedAmountOfSupplierViewModel Document
         {
@@ -149,7 +156,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
 
         public override string Description =>
-            $"Внебалансовые начисления поставщиков №{Document.DocInNum}/{Document.DocExtNum} " +
+            $"Прямой расход от поставщиков №{Document.DocInNum}/{Document.DocExtNum} " +
             $"от {Document.DocDate.ToShortDateString()} Контрагент: {Document.Kontragent} на сумму {Document.Summa} " +
             $"{Document.Currency}";
 
@@ -211,9 +218,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void KontragentSelect(object obj)
         {
-            var kontr = StandartDialogs.SelectKontragent(null, false);
+            var kontr = StandartDialogs.SelectKontragent();
             if (kontr == null) return;
             Document.Kontragent = kontr;
+            RaisePropertyChanged(nameof(WindowName));
         }
 
         [Display(AutoGenerateField = false)]
@@ -233,7 +241,6 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                     {
                         State = RowStatus.NewRow,
                         Nomenkl = item
-
                     };
                     // ReSharper disable once PossibleNullReferenceException
                     if (Document.State != RowStatus.NewRow)
@@ -394,6 +401,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             if (ord != null)
                 CurrentAccrual.CashDoc = new CashOut(ord);
             DocumentsOpenManager.Open(DocumentType.CashOut, vm, Form);
+            if(Form is AccruedAmountOfSupplierView frm)
+                frm.gridRows.UpdateTotalSummary();
         }
 
         public ICommand OpenRashodDocCommand
@@ -401,7 +410,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             get
             {
                 return new Command(OpenRashodDoc,
-                    _ => CurrentAccrual.BankDoc != null || CurrentAccrual.CashDoc != null);
+                    _ => CurrentAccrual?.BankDoc != null || CurrentAccrual?.CashDoc != null);
             }
         }
 
@@ -424,9 +433,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             }
 
             if (CurrentAccrual.CashDoc != null)
-            { 
                 DocumentsOpenManager.Open(DocumentType.CashOut, CurrentAccrual.CashDoc.DocCode, null, Form);
-            }
         }
 
         [Display(AutoGenerateField = false)]
@@ -435,7 +442,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             get
             {
                 return new Command(DeleteLinkRashodDoc,
-                    _ => CurrentAccrual.BankDoc != null || CurrentAccrual.CashDoc != null);
+                    _ => CurrentAccrual?.BankDoc != null || CurrentAccrual?.CashDoc != null);
             }
         }
 
@@ -450,6 +457,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 if (CurrentAccrual.CashDoc != null)
                     CurrentAccrual.CashDoc = null;
             }
+            if(Form is AccruedAmountOfSupplierView frm)
+                frm.gridRows.UpdateTotalSummary();
         }
 
         [Display(AutoGenerateField = false)]
@@ -478,7 +487,9 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode,
                     new BankOperationsViewModel
                     {
-                        DocCode = UnitOfWork.Context.TD_101.Any() ? UnitOfWork.Context.TD_101.Max(_ => _.DOC_CODE)+1 : 11010000001,
+                        DocCode = UnitOfWork.Context.TD_101.Any()
+                            ? UnitOfWork.Context.TD_101.Max(_ => _.DOC_CODE) + 1
+                            : 11010000001,
                         Code = UnitOfWork.Context.TD_101.Any() ? UnitOfWork.Context.TD_101.Max(_ => _.CODE) + 1 : 1,
                         Date = DateTime.Today,
                         Currency = Document.Currency,
@@ -501,6 +512,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                     manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
                     CurrentAccrual.BankDoc = k;
                 }
+                if(Form is AccruedAmountOfSupplierView frm)
+                    frm.gridRows.UpdateTotalSummary();
             }
         }
 

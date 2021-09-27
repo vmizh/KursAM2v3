@@ -1093,6 +1093,9 @@
     <None Include="Reports\UPD.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\UPD1.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Reports\WarehouseOrderOut.repx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

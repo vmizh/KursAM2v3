@@ -5,7 +5,7 @@ using Data;
 
 namespace KursAM2.ViewModel.Logistiks
 {
-    public class NomPriceViewModel : RSViewModelBase, IEntity<NOM_PRICE>
+    public sealed class NomPriceViewModel : RSViewModelBase, IEntity<NOM_PRICE>
     {
         private NOM_PRICE myEntity;
 
@@ -239,6 +239,10 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
+        public EntityLoadCodition LoadCondition { get; set; }
+
+        public bool IsAccessRight { get; set; }
+
         public NOM_PRICE Entity
         {
             get => myEntity;
@@ -250,21 +254,17 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public EntityLoadCodition LoadCondition { get; set; }
-
         public List<NOM_PRICE> LoadList()
         {
             throw new NotImplementedException();
         }
 
-        public bool IsAccessRight { get; set; }
-
-        public virtual NOM_PRICE Load(decimal dc, bool isShort = true)
+        public NOM_PRICE Load(decimal dc, bool isShort = true)
         {
             throw new NotImplementedException();
         }
 
-        public virtual NOM_PRICE Load(Guid id, bool isShort = true)
+        public NOM_PRICE Load(Guid id, bool isShort = true)
         {
             throw new NotImplementedException();
         }
@@ -279,7 +279,7 @@ namespace KursAM2.ViewModel.Logistiks
             throw new NotImplementedException();
         }
 
-        public virtual void Save(NOM_PRICE doc)
+        public void Save(NOM_PRICE doc)
         {
             throw new NotImplementedException();
         }

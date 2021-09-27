@@ -58,7 +58,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     foreach (var c in ctx.SD_26)
-                        InvoiceCollection.Add(new InvoiceProvider(c,new UnitOfWork<ALFAMEDIAEntities>()));
+                        InvoiceCollection.Add(new InvoiceProvider(c, new UnitOfWork<ALFAMEDIAEntities>()));
                 }
             }
             catch (Exception ex)

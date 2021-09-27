@@ -39,7 +39,6 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             IsCategoryEnabled = true;
         }
 
-        private IDialogService DialogService => GetService<IDialogService>();
         private IMessageBoxService MessageBoxService => GetService<IMessageBoxService>();
 
         public ObservableCollection<NomenklGroup> CategoryCollection { set; get; } =
@@ -192,7 +191,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                             Name = n.NOM_NAME,
                             NomenklNumber = n.NOM_NOMENKL,
                             NameFull = n.NOM_FULL_NAME,
-                            Currency = new Currency {DocCode = sd301.DOC_CODE, CRS_SHORTNAME = sd301.CRS_SHORTNAME},
+                            Currency = new Currency { DocCode = sd301.DOC_CODE, CRS_SHORTNAME = sd301.CRS_SHORTNAME },
                             Note = n.NOM_NOTES,
                             IsRentabelnost = n.IsUslugaInRent ?? false
                         }).ToList();
@@ -500,7 +499,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 ParentReference = this
             };
             // ReSharper disable once UseObjectOrCollectionInitializer
-            var form = new NomenklMainCardView {Owner = Application.Current.MainWindow, DataContext = ctx};
+            var form = new NomenklMainCardView { Owner = Application.Current.MainWindow, DataContext = ctx };
             //form.DataContext = ctx;
             form.Show();
         }
@@ -523,7 +522,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                             || n.NomenklNumber.ToUpper().Contains(SearchText.ToUpper())
                             || n.FullName.ToUpper().Contains(SearchText.ToUpper()))
                         {
-                            var nn = new NomenklMainViewModel(n) {State = RowStatus.NotEdited};
+                            var nn = new NomenklMainViewModel(n) { State = RowStatus.NotEdited };
                             NomenklMainCollection.Add(nn);
                         }
                 }
@@ -547,7 +546,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 NomenklMain = CurrentNomenklMain
             };
             // ReSharper disable once UseObjectOrCollectionInitializer
-            var form = new NomenklMainCardView {Owner = Application.Current.MainWindow, DataContext = ctx};
+            var form = new NomenklMainCardView { Owner = Application.Current.MainWindow, DataContext = ctx };
             //form.DataContext = ctx;
             form.Show();
             //ctx.RefreshData(null);
@@ -584,7 +583,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 NomenklMain = newNom
             };
             // ReSharper disable once UseObjectOrCollectionInitializer
-            var form = new NomenklMainCardView {Owner = Application.Current.MainWindow, DataContext = ctx};
+            var form = new NomenklMainCardView { Owner = Application.Current.MainWindow, DataContext = ctx };
             //form.DataContext = ctx;
             form.Show();
         }

@@ -50,7 +50,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             RefreshData(dc);
             // ReSharper disable once PossibleInvalidOperationException
-            oldDate = (DateTime) Document.DATE_ORD;
+            oldDate = (DateTime)Document.DATE_ORD;
         }
 
         #endregion
@@ -170,9 +170,9 @@ namespace KursAM2.ViewModel.Finance.Cash
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.CashIn), null,
                 Document.DocCode, null, (string)Document.ToJson());
             if (Document.KONTRAGENT_DC != null)
-                RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC,
+                RecalcKontragentBalans.CalcBalans((decimal)Document.KONTRAGENT_DC,
                     // ReSharper disable once PossibleInvalidOperationException
-                    (DateTime) (Document.DATE_ORD > oldDate ? oldDate : Document.DATE_ORD));
+                    (DateTime)(Document.DATE_ORD > oldDate ? oldDate : Document.DATE_ORD));
             DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CashIn, Document.Id, Document.DocCode, Document.CREATOR,
                 "", Document.Description);
         }
@@ -188,9 +188,9 @@ namespace KursAM2.ViewModel.Finance.Cash
                     var ctx = BookView?.DataContext as CashBookWindowViewModel;
                     CashManager.DeleteDocument(CashDocumentType.CashIn, Document);
                     if (Document.KONTRAGENT_DC != null)
-                        RecalcKontragentBalans.CalcBalans((decimal) Document.KONTRAGENT_DC,
+                        RecalcKontragentBalans.CalcBalans((decimal)Document.KONTRAGENT_DC,
                             // ReSharper disable once PossibleInvalidOperationException
-                            (DateTime) Document.DATE_ORD);
+                            (DateTime)Document.DATE_ORD);
                     ctx?.RefreshActual(Document);
                     CloseWindow(Form);
                     break;
@@ -264,7 +264,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             vm.BookView = BookView;
             DocumentsOpenManager.Open(DocumentType.CashIn, vm, BookView);
         }
-        
+
         public override void DocNewCopy(object form)
         {
             if (Document == null) return;

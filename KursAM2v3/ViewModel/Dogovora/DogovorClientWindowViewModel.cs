@@ -29,6 +29,39 @@ namespace KursAM2.ViewModel.Dogovora
 {
     public sealed class DogovorClientWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
     {
+        #region Constructors
+
+        public DogovorClientWindowViewModel(Guid? id)
+        {
+            BaseRepository = new GenericKursDBRepository<DogovorClient>(unitOfWork);
+            DogovorClientRepository = new DogovorClientRepository(unitOfWork);
+            IsDocNewCopyAllow = true;
+            IsDocNewCopyRequisiteAllow = true;
+            DialogService = GetService<IDialogService>();
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
+            var doc = id != null ? BaseRepository.GetById(id.Value) : null;
+            if (doc == null)
+            {
+                Document = new DogovorClientViewModel { State = RowStatus.NewRow };
+                unitOfWork.Context.DogovorClient.Add(Document.Entity);
+            }
+            else
+            {
+                Document = new DogovorClientViewModel(doc)
+                {
+                    State = RowStatus.NotEdited
+                };
+                if (Document != null)
+                    WindowName = Document.ToString();
+                Document.Rows.ForAll(_ => _.State = RowStatus.NotEdited);
+                //LoadLinkDocuments();
+                Document.myState = RowStatus.NotEdited;
+            }
+        }
+
+        #endregion
+
         #region Methods
 
         public override bool IsCorrect()
@@ -96,39 +129,6 @@ namespace KursAM2.ViewModel.Dogovora
 
         #endregion
 
-        #region Constructors
-
-        public DogovorClientWindowViewModel(Guid? id)
-        {
-            BaseRepository = new GenericKursDBRepository<DogovorClient>(unitOfWork);
-            DogovorClientRepository = new DogovorClientRepository(unitOfWork);
-            IsDocNewCopyAllow = true;
-            IsDocNewCopyRequisiteAllow = true;
-            DialogService = GetService<IDialogService>();
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
-            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
-            var doc = id != null ? BaseRepository.GetById(id.Value) : null;
-            if (doc == null)
-            {
-                Document = new DogovorClientViewModel {State = RowStatus.NewRow};
-                unitOfWork.Context.DogovorClient.Add(Document.Entity);
-            }
-            else
-            {
-                Document = new DogovorClientViewModel(doc)
-                {
-                    State = RowStatus.NotEdited
-                };
-                if (Document != null)
-                    WindowName = Document.ToString();
-                Document.Rows.ForAll(_ => _.State = RowStatus.NotEdited);
-                //LoadLinkDocuments();
-                Document.myState = RowStatus.NotEdited;
-            }
-        }
-
-        #endregion
-
         #region Properties
 
         // ReSharper disable once CollectionNeverUpdated.Global
@@ -146,6 +146,7 @@ namespace KursAM2.ViewModel.Dogovora
             new ObservableCollection<DogovorResult>();
 
         public override string LayoutName => "DogovorClientWindowViewModel";
+
         public override string WindowName => Document?.State == RowStatus.NewRow
             ? "Договор клиенту (новый)"
             : $"{Document} Отгружено: {FactsAll.Sum(_ => _.Summa)} Оплачено: {PaymentList.Sum(_ => _.Summa)}";

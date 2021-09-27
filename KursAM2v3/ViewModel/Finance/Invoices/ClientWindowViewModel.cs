@@ -395,13 +395,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 Caption = "Печать",
                 Command = PrintSFSchetCommand
-            }); 
+            });
             schetPrint.SubMenu.Add(new MenuButtonInfo
             {
                 Caption = "Экспорт",
                 Command = PrintSFSchetExportCommand
             });
             prn.SubMenu.Add(schetPrint);
+
             #endregion
 
             #region Счет-фактура
@@ -421,10 +422,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Command = ExportSFCommand
             });
             prn.SubMenu.Add(schetFPrint);
+
             #endregion
-            
-            
-            
+
+
             prn.SubMenu.Add(new MenuButtonInfo
             {
                 Caption = "Товарная накладная",
@@ -631,12 +632,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
                 LoadFromExternal();
-                
+
                 foreach (var r in Document.Rows)
                 {
                     r.myState = RowStatus.NotEdited;
                     AddUsedNomenkl(r.Nomenkl.DocCode);
                 }
+
                 RaiseAll();
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
@@ -658,8 +660,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         DocumentType = DocumentType.Bank,
                         DocumentName =
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
-                        Summa = (decimal) c.VVT_VAL_PRIHOD,
+                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                        Summa = (decimal)c.VVT_VAL_PRIHOD,
                         Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                         Note = c.VVT_DOC_NUM
                     });
@@ -739,7 +741,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
                 foreach (var p in Document.PaymentDocs) p.myState = RowStatus.NotEdited;
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
-                    Document.DocCode, null, (string) Document.ToJson());
+                    Document.DocCode, null, (string)Document.ToJson());
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
                 DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceClient, Document.Id, Document.DocCode,
@@ -875,8 +877,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            var ctx = new ClientWindowViewModel {Form = frm};
+            var frm = new InvoiceClientView { Owner = Application.Current.MainWindow };
+            var ctx = new ClientWindowViewModel { Form = frm };
             ctx.Document = InvoicesManager.NewClient();
             frm.Show();
             frm.DataContext = ctx;
@@ -932,7 +934,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
                     else
-                        nds = (decimal) item.NOM_NDS_PERCENT;
+                        nds = (decimal)item.NOM_NDS_PERCENT;
                     // ReSharper disable once UseObjectOrCollectionInitializer
                     var r = new InvoiceClientRow
                     {
@@ -996,7 +998,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
                     else
-                        nds = (decimal) item.NOM_NDS_PERCENT;
+                        nds = (decimal)item.NOM_NDS_PERCENT;
                     // ReSharper disable once UseObjectOrCollectionInitializer
                     var r = new InvoiceClientRow
                     {
@@ -1027,6 +1029,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => Document?.DeletedRows != null && Document?.DeletedRows.Count > 0;
             set => base.IsRedoAllow = value;
         }
+
+        public override bool IsPrintAllow => Document.State != RowStatus.NewRow;
 
         public ICommand PrintZajavkaCommand
         {
@@ -1148,10 +1152,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     DocumentName =
                         $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
                         // ReSharper disable once PossibleInvalidOperationException
-                        $"{MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                        $"{MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
                     // ReSharper disable once PossibleInvalidOperationException
-                    Summa = (decimal) c.SUMM_ORD,
-                    Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                    Summa = (decimal)c.SUMM_ORD,
+                    Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
                     Note = c.NOTES_ORD
                 });
             foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
@@ -1164,8 +1168,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     DocumentType = DocumentType.Bank,
                     DocumentName =
                         // ReSharper disable once PossibleInvalidOperationException
-                        $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
-                    Summa = (decimal) c.VVT_VAL_PRIHOD,
+                        $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                    Summa = (decimal)c.VVT_VAL_PRIHOD,
                     Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                     Note = c.VVT_DOC_NUM
                 });
@@ -1180,7 +1184,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         // ReSharper disable once PossibleInvalidOperationException
                         $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
                     // ReSharper disable once PossibleInvalidOperationException
-                    Summa = (decimal) c.VZT_CRS_SUMMA,
+                    Summa = (decimal)c.VZT_CRS_SUMMA,
                     Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
                     Note = c.VZT_DOC_NOTES
                 });

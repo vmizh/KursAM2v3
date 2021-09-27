@@ -11,6 +11,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.NomenklManagement;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Data;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
@@ -164,11 +165,20 @@ namespace KursAM2.ViewModel.Logistiks
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
+        private bool MustExclude(List<NOMENKL_PRIH_EXCLUDE> list, TD_24 doc)
+        {
+            foreach (var l in list)
+                if (l.DOC_CODE == doc.DOC_CODE && l.CODE == doc.CODE)
+                    return true;
+            return false;
+        }
+
         private void LoadDocuments()
         {
             DocumentList.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
+                var exclude = ctx.NOMENKL_PRIH_EXCLUDE.ToList();
                 var docs = ctx.TD_24
                     .Include(_ => _.SD_24)
                     .Include(_ => _.SD_24.SD_201)
@@ -179,6 +189,8 @@ namespace KursAM2.ViewModel.Logistiks
                             _.SD_24.DD_TYPE_DC == 2010000005)
                     .ToList();
                 foreach (var doc in docs)
+                {
+                    if (MustExclude(exclude, doc)) continue;
                     DocumentList.Add(new NomPriceDocumentViewModel
                     {
                         DocCode = doc.DOC_CODE,
@@ -199,6 +211,8 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = (doc.DDT_KOL_PRIHOD > 0 ? doc.DDT_TAX_CRS_CENA ?? 0 : 0) * doc.DDT_KOL_PRIHOD -
                                      (doc.DDT_KOL_RASHOD > 0 ? doc.DDT_TAX_CRS_CENA ?? 0 : 0) * doc.DDT_KOL_RASHOD
                     });
+                }
+
                 docs = ctx.TD_24
                     .Include(_ => _.SD_24)
                     .Include(_ => _.SD_24.SD_201)
@@ -212,6 +226,7 @@ namespace KursAM2.ViewModel.Logistiks
                     .ToList();
                 foreach (var doc in docs)
                 {
+                    if (MustExclude(exclude, doc)) continue;
                     var newItem = new NomPriceDocumentViewModel
                     {
                         DocCode = doc.DOC_CODE,
@@ -232,12 +247,12 @@ namespace KursAM2.ViewModel.Logistiks
                     if (doc.TD_26 != null)
                     {
                         // ReSharper disable once PossibleInvalidOperationException
-                        newItem.SummaIn = (decimal) (doc.TD_26.SFT_SUMMA_K_OPLATE * doc.DDT_KOL_PRIHOD) /
+                        newItem.SummaIn = (decimal)(doc.TD_26.SFT_SUMMA_K_OPLATE * doc.DDT_KOL_PRIHOD) /
                                           doc.TD_26.SFT_KOL;
                         newItem.SummaOut = 0;
                         newItem.SummaDelta =
 // ReSharper disable once PossibleInvalidOperationException
-                            (decimal) (doc.TD_26.SFT_SUMMA_K_OPLATE / doc.TD_26.SFT_KOL * doc.DDT_KOL_PRIHOD);
+                            (decimal)(doc.TD_26.SFT_SUMMA_K_OPLATE / doc.TD_26.SFT_KOL * doc.DDT_KOL_PRIHOD);
                         newItem.Note = doc.SD_24.DD_NOTES + " / " + doc.TD_26.SD_26.SF_NOTES;
                     }
                     else
@@ -266,6 +281,8 @@ namespace KursAM2.ViewModel.Logistiks
                             _.SD_24.DD_TYPE_DC == 2010000012)
                     .ToList();
                 foreach (var doc in docs)
+                {
+                    if (MustExclude(exclude, doc)) continue;
                     DocumentList.Add(new NomPriceDocumentViewModel
                     {
                         DocCode = doc.DOC_CODE,
@@ -284,6 +301,8 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = -doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceEnd,
                         Note = doc.SD_24.DD_NOTES + " / " + doc.TD_84.SD_84.SF_NOTE
                     });
+                }
+
                 var docs2 = ctx.NomenklTransferRow
                     .Include(_ => _.NomenklTransfer)
                     .Where(_ => _.NomenklOutDC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
@@ -307,6 +326,7 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = -doc.PriceOut * doc.Quantity,
                         Note = doc.NomenklTransfer.Note + "/" + doc.Note
                     });
+
                 docs2 = ctx.NomenklTransferRow
                     .Include(_ => _.NomenklTransfer)
                     .Where(_ => _.NomenklInDC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
@@ -412,6 +432,7 @@ namespace KursAM2.ViewModel.Logistiks
                     .ToList();
                 foreach (var doc in docs5)
                 {
+                    if (MustExclude(exclude, doc)) continue;
                     var prc = NomenklManager.NomenklPrice(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE, ctx).Price;
                     DocumentList.Add(new NomPriceDocumentViewModel
                     {
@@ -433,6 +454,7 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = (doc.DDT_KOL_PRIHOD - doc.DDT_KOL_RASHOD) * prc
                     });
                 }
+
                 var docs6 = ctx.AktSpisaniya_row
                     .Include(_ => _.AktSpisaniyaNomenkl_Title)
                     .Where(_ => _.Nomenkl_DC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
@@ -477,6 +499,7 @@ namespace KursAM2.ViewModel.Logistiks
             if (CurrentNomenklMoveItem == null || storeDC == 0) return;
             using (var ctx = GlobalOptions.GetEntities())
             {
+                var exclude = ctx.NOMENKL_PRIH_EXCLUDE.ToList();
                 var docs = ctx.TD_24
                     .Include(_ => _.SD_24)
                     .Include(_ => _.SD_24.SD_201)
@@ -488,6 +511,8 @@ namespace KursAM2.ViewModel.Logistiks
                             && (_.SD_24.DD_SKLAD_POL_DC == storeDC || _.SD_24.DD_SKLAD_OTPR_DC == storeDC))
                     .ToList();
                 foreach (var doc in docs)
+                {
+                    if (MustExclude(exclude, doc)) continue;
                     DocumentList.Add(new NomPriceDocumentViewModel
                     {
                         DocCode = doc.DOC_CODE,
@@ -508,6 +533,8 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = (doc.DDT_KOL_PRIHOD > 0 ? doc.DDT_TAX_CRS_CENA ?? 0 : 0) * doc.DDT_KOL_PRIHOD -
                                      (doc.DDT_KOL_RASHOD > 0 ? doc.DDT_TAX_CRS_CENA ?? 0 : 0) * doc.DDT_KOL_RASHOD
                     });
+                }
+
                 docs = ctx.TD_24
                     .Include(_ => _.SD_24)
                     .Include(_ => _.SD_24.SD_201)
@@ -522,6 +549,7 @@ namespace KursAM2.ViewModel.Logistiks
                     .ToList();
                 foreach (var doc in docs)
                 {
+                    if (MustExclude(exclude, doc)) continue;
                     var newItem = new NomPriceDocumentViewModel
                     {
                         DocCode = doc.DOC_CODE,
@@ -542,12 +570,12 @@ namespace KursAM2.ViewModel.Logistiks
                     if (doc.TD_26 != null)
                     {
                         // ReSharper disable once PossibleInvalidOperationException
-                        newItem.SummaIn = (decimal) (doc.TD_26.SFT_SUMMA_K_OPLATE * doc.DDT_KOL_PRIHOD) /
+                        newItem.SummaIn = (decimal)(doc.TD_26.SFT_SUMMA_K_OPLATE * doc.DDT_KOL_PRIHOD) /
                                           doc.TD_26.SFT_KOL;
                         newItem.SummaOut = 0;
                         newItem.SummaDelta =
 // ReSharper disable once PossibleInvalidOperationException
-                            (decimal) (doc.TD_26.SFT_SUMMA_K_OPLATE / doc.TD_26.SFT_KOL * doc.DDT_KOL_PRIHOD);
+                            (decimal)(doc.TD_26.SFT_SUMMA_K_OPLATE / doc.TD_26.SFT_KOL * doc.DDT_KOL_PRIHOD);
                         newItem.Note = doc.SD_24.DD_NOTES + " / " + doc.TD_26.SD_26.SF_NOTES;
                     }
                     else
@@ -804,8 +832,8 @@ namespace KursAM2.ViewModel.Logistiks
         private void NomenklCalcOpen(object obj)
         {
             if (CurrentNomenklMoveItem?.Nomenkl.DocCode == null) return;
-            var ctx = new NomPriceWindowViewModel((decimal) CurrentNomenklMoveItem?.Nomenkl.DocCode);
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var ctx = new NomPriceWindowViewModel((decimal)CurrentNomenklMoveItem?.Nomenkl.DocCode);
+            var dlg = new SelectDialogView { DataContext = ctx };
             dlg.ShowDialog();
         }
 

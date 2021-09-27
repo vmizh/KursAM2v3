@@ -72,7 +72,8 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
-                ToolTip = "Печать"
+                ToolTip = "Печать",
+                Command = vm.PrintCommand
             };
             var docNew = new MenuButtonInfo
             {
@@ -141,7 +142,8 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
-                ToolTip = "Печать"
+                ToolTip = "Печать",
+                Command = vm.PrintCommand
             };
             var docNew = new MenuButtonInfo
             {
@@ -210,7 +212,8 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
-                ToolTip = "Печать"
+                ToolTip = "Печать",
+                Command = vm.PrintCommand
             };
             var docNew = new MenuButtonInfo
             {
@@ -342,7 +345,8 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
-                ToolTip = "Печать"
+                ToolTip = "Печать",
+                Command = vm.PrintCommand
             };
             var ret = new ObservableCollection<MenuButtonInfo>
             {
@@ -383,7 +387,8 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
-                ToolTip = "Печать"
+                ToolTip = "Печать",
+                Command = vm.PrintCommand
             };
             var docDelete = new MenuButtonInfo
             {
@@ -479,7 +484,8 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
-                ToolTip = "Печать"
+                ToolTip = "Печать",
+                Command = vm.PrintCommand
             };
             var docNew = new MenuButtonInfo
             {
@@ -551,7 +557,8 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
-                ToolTip = "Печать"
+                ToolTip = "Печать",
+                Command = vm.PrintCommand
             };
             var docNew = new MenuButtonInfo
             {
@@ -619,7 +626,8 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
-                ToolTip = "Печать"
+                ToolTip = "Печать",
+                Command = vm.PrintCommand
             };
             var docNew = new MenuButtonInfo
             {
@@ -899,7 +907,8 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
-                ToolTip = "Печать"
+                ToolTip = "Печать",
+                Command = vm.PrintCommand
             };
             var docNew = new MenuButtonInfo
             {
@@ -969,7 +978,7 @@ namespace Core.Menu
             return ret;
         }
 
-         public static ObservableCollection<MenuButtonInfo> NomenklCardRightBar(RSWindowViewModelBase vm)
+        public static ObservableCollection<MenuButtonInfo> NomenklCardRightBar(RSWindowViewModelBase vm)
         {
             var docNew = new MenuButtonInfo
             {
@@ -1078,7 +1087,8 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
-                ToolTip = "Печать"
+                ToolTip = "Печать",
+                Command = vm.PrintCommand
             };
             var ret = new ObservableCollection<MenuButtonInfo>
             {
@@ -1119,7 +1129,8 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
-                ToolTip = "Печать"
+                ToolTip = "Печать",
+                Command = vm.PrintCommand
             };
             var docDelete = new MenuButtonInfo
             {
@@ -1209,7 +1220,8 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuPrinter"] as ControlTemplate,
-                ToolTip = "Печать"
+                ToolTip = "Печать",
+                Command = vm.PrintCommand
             };
             var docNew = new MenuButtonInfo
             {

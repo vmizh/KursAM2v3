@@ -181,7 +181,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                              + dCrs11.Sum()
                              - dCrs21.Sum();
                     // ReSharper disable once PossibleInvalidOperationException
-                    var p2 = (decimal) (dIn == null ? 0 : dIn.Sum()) +
+                    var p2 = (decimal)(dIn == null ? 0 : dIn.Sum()) +
                              dCrs1.Sum();
                     var p3 = dOut.Sum()
                              + dCrs2.Sum();
@@ -189,10 +189,10 @@ namespace KursAM2.ViewModel.Finance.Cash
                         {
                             CurrencyName = MainReferences.Currencies[crs].Name,
                             // ReSharper disable PossibleInvalidOperationException
-                            Start = (decimal) p1,
-                            In = (decimal) p2,
-                            Out = (decimal) p3,
-                            End = (decimal) (p1 + p2 - p3)
+                            Start = (decimal)p1,
+                            In = (decimal)p2,
+                            Out = (decimal)p3,
+                            End = (decimal)(p1 + p2 - p3)
                             // ReSharper restore PossibleInvalidOperationException
                         }
                     );
@@ -344,7 +344,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             if (form != null && form is string)
             {
-                var code = (string) form;
+                var code = (string)form;
                 switch (code)
                 {
                     case "0":
@@ -492,11 +492,11 @@ namespace KursAM2.ViewModel.Finance.Cash
                     foreach (var i in dIn)
                         if (dates.All(_ => _ != i))
                             // ReSharper disable once PossibleInvalidOperationException
-                            dates.Add((DateTime) i);
+                            dates.Add((DateTime)i);
                     foreach (var i in dOut)
                         if (dates.All(_ => _ != i))
                             // ReSharper disable once PossibleInvalidOperationException
-                            dates.Add((DateTime) i);
+                            dates.Add((DateTime)i);
                     foreach (var i in dCrs)
                         if (dates.All(_ => _ != i))
                             dates.Add(i);
@@ -521,7 +521,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             var cashOut = vm as CashOut;
             var cashExch = vm as CashCurrencyExchange;
             // ReSharper disable once PossibleInvalidOperationException
-            var date = (DateTime) (vm is CashIn cashIn ? cashIn.DATE_ORD :
+            var date = (DateTime)(vm is CashIn cashIn ? cashIn.DATE_ORD :
                 cashOut != null ? cashOut.DATE_ORD :
                 cashExch?.CH_DATE ?? DateTime.Today);
             RefreshData(null);
@@ -536,7 +536,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                 var iteratorMonth = new TreeListNodeIterator(iteratorYear.Current, false);
                 while (iteratorMonth.MoveNext())
                 {
-                    var month = (DatePeriod) iteratorYear.Current.Content;
+                    var month = (DatePeriod)iteratorYear.Current.Content;
                     if (month.DateStart.Month == date.Month)
                     {
                         if (iteratorMonth.Current != null) iteratorMonth.Current.IsExpanded = true;
@@ -579,7 +579,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                 var iteratorMonth = new TreeListNodeIterator(iteratorYear.Current, false);
                 while (iteratorMonth.MoveNext())
                 {
-                    var month = (DatePeriod) iteratorYear.Current.Content;
+                    var month = (DatePeriod)iteratorYear.Current.Content;
                     if (month.DateStart.Month != date.Month) continue;
                     if (iteratorMonth.Current != null) iteratorMonth.Current.IsExpanded = true;
                     else return;

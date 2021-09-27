@@ -730,7 +730,7 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-        <ControlTemplate x:Key="menuCancel" TargetType="{x:Type Button}">
+    <ControlTemplate x:Key="menuCancel" TargetType="{x:Type Button}">
         <ContentControl>
             <Grid Width="48" Height="48">
                 <Grid Name="backgroundGrid" Width="48" Height="48" Visibility="Visible">

@@ -48,7 +48,6 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         #region Properties
 
-
         public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited &&
                                               CashManager.CheckCashCurrencyExchange(Document);
 
@@ -79,7 +78,8 @@ namespace KursAM2.ViewModel.Finance.Cash
                 ctx.RefreshActual(Document);
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.CurrencyChange), null,
                 Document.DocCode, null, (string)Document.ToJson());
-            DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CurrencyConvertAccounting, Document.Id, Document.DocCode, Document.CREATOR,
+            DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CurrencyConvertAccounting, Document.Id, Document.DocCode,
+                Document.CREATOR,
                 "", Document.Description);
         }
 

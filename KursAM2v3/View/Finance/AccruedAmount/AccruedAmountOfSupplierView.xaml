@@ -132,7 +132,7 @@
                                     <Separator />
                                     <MenuItem Header="Открыть расходный документ" 
                                               Command="{Binding OpenRashodDocCommand}"/>
-                                    <MenuItem Header="Удалить связь с приходным документом" 
+                                    <MenuItem Header="Удалить связь с платежным документом" 
                                               Command="{Binding DeleteLinkRashodDocCommand}"/>
                                     <Separator />
                                     <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"

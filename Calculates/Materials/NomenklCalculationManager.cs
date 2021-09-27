@@ -689,6 +689,7 @@ namespace Calculates.Materials
                 " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
                 " INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC " +
                 $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
+                "AND NOT EXISTS (SELECT 1 FROM NOMENKL_PRIH_EXCLUDE tt WHERE tt.DOC_CODE = t.DOC_CODE AND tt.CODE = t.CODE) " +
                 "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_POL_DC " +
                 "UNION ALL " +
                 "SELECT T24.DDT_NOMENKL_DC AS NomenklDC " +
@@ -701,6 +702,7 @@ namespace Calculates.Materials
                 " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
                 " INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC " +
                 $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_OTPR_DC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
+                "AND NOT EXISTS (SELECT 1 FROM NOMENKL_PRIH_EXCLUDE tt WHERE tt.DOC_CODE = t.DOC_CODE AND tt.CODE = t.CODE) " +
                 "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_OTPR_DC " +
                 "UNION ALL " +
                 "SELECT ntr.NomenklInDC AS NomenklDC " +
@@ -790,6 +792,7 @@ namespace Calculates.Materials
                         " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
                         " INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC " +
                         $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_POL_DC IS NOT NULL " +
+                        "AND NOT EXISTS (SELECT 1 FROM NOMENKL_PRIH_EXCLUDE tt WHERE tt.DOC_CODE = t.DOC_CODE AND tt.CODE = t.CODE) " +
                         "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_POL_DC " +
                         "UNION ALL " +
                         "SELECT T24.DDT_NOMENKL_DC AS NomenklDC " +
@@ -802,6 +805,7 @@ namespace Calculates.Materials
                         " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
                         " INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC " +
                         $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_OTPR_DC IS NOT NULL " +
+                        "AND NOT EXISTS (SELECT 1 FROM NOMENKL_PRIH_EXCLUDE tt WHERE tt.DOC_CODE = t.DOC_CODE AND tt.CODE = t.CODE) " +
                         "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_OTPR_DC " +
                         "UNION ALL " +
                         "SELECT ntr.NomenklInDC AS NomenklDC " +
@@ -859,6 +863,7 @@ namespace Calculates.Materials
                 " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
                 $" INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
                 $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_POL_DC IS NOT NULL " +
+                "AND NOT EXISTS (SELECT 1 FROM NOMENKL_PRIH_EXCLUDE tt WHERE tt.DOC_CODE = t.DOC_CODE AND tt.CODE = t.CODE) " +
                 "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_POL_DC " +
                 "UNION ALL " +
                 "SELECT T24.DDT_NOMENKL_DC AS NomenklDC " +
@@ -871,6 +876,7 @@ namespace Calculates.Materials
                 " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
                 $" INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
                 $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_OTPR_DC IS NOT NULL " +
+                "AND NOT EXISTS (SELECT 1 FROM NOMENKL_PRIH_EXCLUDE tt WHERE tt.DOC_CODE = t.DOC_CODE AND tt.CODE = t.CODE) " +
                 "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_OTPR_DC " +
                 "UNION ALL " +
                 "SELECT ntr.NomenklInDC AS NomenklDC " +

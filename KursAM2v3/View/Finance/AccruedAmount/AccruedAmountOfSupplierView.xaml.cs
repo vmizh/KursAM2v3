@@ -17,7 +17,6 @@ namespace KursAM2.View.Finance.AccruedAmount
     /// </summary>
     public partial class AccruedAmountOfSupplierView
     {
-        private ComboBoxEditSettings typeEdit;
 
         public AccruedAmountOfSupplierView()
         {
@@ -30,6 +29,13 @@ namespace KursAM2.View.Finance.AccruedAmount
             e.Column.Name = e.Column.FieldName;
             switch (e.Column.FieldName)
             {
+                case "Note":
+                    e.Column.EditSettings = new TextEditSettings
+                    {
+                        AcceptsReturn = true,
+                        TextWrapping = TextWrapping.Wrap
+                    };
+                    break;
                 case "SDRSchet":
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
@@ -119,11 +125,7 @@ namespace KursAM2.View.Finance.AccruedAmount
                     break;
             }
         }
-        private void TypeEdit_DefaultButtonClick(object sender, RoutedEventArgs e)
-        {
-            typeEdit.ItemsSource = MainReferences.GetAllAccruedAmountType().Where(_ => _.IsSupplier);
-        }
-
+        
         private void Bn_Click(object sender, RoutedEventArgs e)
         {
             var aat = new AccruedAmountTypeWindowViewModel();

@@ -61,7 +61,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         CurrencyName = MainReferences.Currencies[d.VVT_CRS_DC].Name,
                         DocDate = d.SD_101.VV_START_DATE,
                         // ReSharper disable once PossibleInvalidOperationException
-                        Summa = (decimal) d.VVT_VAL_PRIHOD,
+                        Summa = (decimal)d.VVT_VAL_PRIHOD,
                         Note = d.VVT_DOC_NUM,
                         Name = d.SD_101.SD_114.SD_44.BANK_NAME,
                         AccountName = d.SD_101.SD_114.BA_RASH_ACC
@@ -83,8 +83,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Properties
 
-        public ObservableCollection<BankPaymentRow> ItemsCollection { set; get; } = new ObservableCollection<BankPaymentRow>();
-        public ObservableCollection<BankPaymentRow> SelectedItems { set; get; } = new ObservableCollection<BankPaymentRow>();
+        public ObservableCollection<BankPaymentRow> ItemsCollection { set; get; } =
+            new ObservableCollection<BankPaymentRow>();
+
+        public ObservableCollection<BankPaymentRow> SelectedItems { set; get; } =
+            new ObservableCollection<BankPaymentRow>();
 
         public StandartDialogSelectUC DataUserControl
         {
@@ -139,7 +142,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var data = ctx.SD_33.Where(_ => _.KONTRAGENT_DC == kontrDC
                                                 && (_.KONTR_FROM_DC ?? 0) == 0 && (_.SFACT_DC ?? 0) == 0);
                 foreach (var d in data)
-                {
                     ItemsCollection.Add(new CashPaymentRow
                     {
                         DocCode = d.DOC_CODE,
@@ -148,9 +150,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         DocDate = Convert.ToDateTime(d.DATE_ORD),
                         CurrencyName = MainReferences.Currencies[Convert.ToDecimal(d.CRS_DC)].Name,
                         Summa = Convert.ToDecimal(d.SUMM_ORD),
-                        Note = d.NOTES_ORD,
+                        Note = d.NOTES_ORD
                     });
-                }
             }
 
             RaisePropertyChanged(nameof(ItemsCollection));
@@ -168,8 +169,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Properties
 
-        public ObservableCollection<CashPaymentRow> ItemsCollection { set; get; } = new ObservableCollection<CashPaymentRow>();
-        public ObservableCollection<CashPaymentRow> SelectedItems { set; get; } = new ObservableCollection<CashPaymentRow>();
+        public ObservableCollection<CashPaymentRow> ItemsCollection { set; get; } =
+            new ObservableCollection<CashPaymentRow>();
+
+        public ObservableCollection<CashPaymentRow> SelectedItems { set; get; } =
+            new ObservableCollection<CashPaymentRow>();
 
         public StandartDialogSelectUC DataUserControl
         {
@@ -230,18 +234,16 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                                               _.SD_110.SD_111.IsCurrencyConvert != true)
                     .OrderByDescending(_ => _.SD_110.VZ_DATE);
                 foreach (var d in data)
-                {
                     ItemsCollection.Add(new VZPaymentRow
                     {
                         DocCode = d.DOC_CODE,
                         Code = d.CODE,
-                        DocNum = d.SD_110.VZ_NUM.ToString() + "/" + d.VZT_DOC_NUM,
+                        DocNum = d.SD_110.VZ_NUM + "/" + d.VZT_DOC_NUM,
                         DocDate = Convert.ToDateTime(d.SD_110.VZ_DATE),
                         CurrencyName = MainReferences.Currencies[Convert.ToDecimal(d.VZT_CRS_DC)].Name,
                         Summa = Convert.ToDecimal(d.VZT_CRS_SUMMA),
-                        Note = d.SD_110.VZ_NOTES + " " + d.VZT_DOC_NOTES,
+                        Note = d.SD_110.VZ_NOTES + " " + d.VZT_DOC_NOTES
                     });
-                }
             }
 
             RaisePropertyChanged(nameof(ItemsCollection));
@@ -259,9 +261,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Properties
 
-        public ObservableCollection<VZPaymentRow> ItemsCollection { set; get; } 
+        public ObservableCollection<VZPaymentRow> ItemsCollection { set; get; }
             = new ObservableCollection<VZPaymentRow>();
-        public ObservableCollection<VZPaymentRow> SelectedItems { set; get; } 
+
+        public ObservableCollection<VZPaymentRow> SelectedItems { set; get; }
             = new ObservableCollection<VZPaymentRow>();
 
         public StandartDialogSelectUC DataUserControl
@@ -306,7 +309,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public string DocNum { set; get; }
         public DateTime DocDate { set; get; }
         public string Note { set; get; }
-        
+
         public decimal AlreadyPay { set; get; }
         public decimal Remainder { set; get; }
     }

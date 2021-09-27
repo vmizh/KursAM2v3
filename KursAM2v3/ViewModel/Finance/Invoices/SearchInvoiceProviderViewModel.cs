@@ -32,8 +32,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private InvoiceProvider myCurrentDocument;
-        private DateTime myDateEnd;
-        private DateTime myDateStart;
 
         public SearchInvoiceProviderViewModel()
         {
@@ -123,19 +121,18 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewEmpty(object form)
         {
-            var view = new InvoiceProviderView {Owner = Application.Current.MainWindow};
+            var view = new InvoiceProviderView { Owner = Application.Current.MainWindow };
             var ctx = new ProviderWindowViewModel(null)
             {
                 Form = view
             };
             view.DataContext = ctx;
             view.Show();
-            
         }
 
         public override void DocNewCopy(object form)
         {
-            if (CurrentDocument == null) return; 
+            if (CurrentDocument == null) return;
             var ctx = new ProviderWindowViewModel(CurrentDocument.DocCode);
             ctx.SetAsNewCopy(true);
             var frm = new InvoiceProviderView
@@ -149,7 +146,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewCopyRequisite(object form)
         {
-            if (CurrentDocument == null) return; 
+            if (CurrentDocument == null) return;
             var ctx = new ProviderWindowViewModel(CurrentDocument.DocCode);
             ctx.SetAsNewCopy(false);
             var frm = new InvoiceProviderView
