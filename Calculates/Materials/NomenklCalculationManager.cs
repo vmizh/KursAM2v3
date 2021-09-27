@@ -114,8 +114,9 @@ namespace Calculates.Materials
                       ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC,StoreDC  ORDER BY Date, OrderBy  " +
                       "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
                       "FROM @tab INNER JOIN sd_83  ON NomDC = DOC_CODE " +
-                      $"WHERE Date <= {CustomFormat.DateToString(date)} " +
-                      "INNER JOIN SD_27  ON SD_27.DOC_CODE = StoreDC ORDER BY NomDC, StoreDC;";
+                      "INNER JOIN SD_27  ON SD_27.DOC_CODE = StoreDC " +
+                      $"WHERE Date <= '{CustomFormat.DateToString(date)}' " +
+                      "ORDER BY NomDC, StoreDC;";
             var data = ctx.Database.SqlQuery<NomenklCalcMove>(sql).ToList();
             if (data.Count == 0)
             {

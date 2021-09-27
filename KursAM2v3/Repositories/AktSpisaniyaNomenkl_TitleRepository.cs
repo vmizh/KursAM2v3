@@ -20,9 +20,8 @@ namespace KursAM2.Repositories
 
         List<AktSpisaniyaNomenkl_Title> GetAllByWarehouse(decimal warehouseDC);
 
-
-        // List<LinkDocumentInfo> GetLinkDocuments();
-
+        void Delete();
+        void Delete(Guid id);
     }
 
     public class AktSpisaniyaNomenkl_TitleRepository : GenericKursDBRepository<AktSpisaniyaNomenkl_Title>, IAktSpisaniyaNomenkl_TitleRepository
@@ -53,7 +52,7 @@ namespace KursAM2.Repositories
             {
                 Id = Guid.NewGuid(),
                 Creator = GlobalOptions.UserInfo.NickName,
-                Date_Doc = DateTime.Today
+                Date_Doc = DateTime.Today,
             };
             Context.AktSpisaniyaNomenkl_Title.Add(item);
             return item;
@@ -70,6 +69,23 @@ namespace KursAM2.Repositories
                 .Include(_ => _.SD_27)
                 .Include(_ => _.AktSpisaniya_row)
                 .Where(_ => _.Warehouse_DC == warehouseDC).ToList();
+        }
+
+        public void Delete()
+        {
+            if (AktSpisaniya == null) return;
+            Delete(AktSpisaniya.Id);
+        }
+
+        public void Delete(Guid id)
+        {
+            foreach (var r in Context.AktSpisaniya_row.Where(_ => _.Doc_Id == id).ToList())
+            {
+                Context.AktSpisaniya_row.Remove(r);
+            }
+            var d = Context.AktSpisaniyaNomenkl_Title.FirstOrDefault(_ => _.Id == id);
+            if (d != null)
+                Context.AktSpisaniyaNomenkl_Title.Remove(d);
         }
     }
 }

@@ -676,7 +676,10 @@ namespace KursAM2.Managers
         private static AktSpisaniyaNomenklTitleWIndowViewModel OpenAktSpisaniyaNomenkl(Guid? id)
         {
             if (id == null) return null;
-            var ctx = new AktSpisaniyaNomenklTitleWIndowViewModel(id.Value);
+            var ctx = new AktSpisaniyaNomenklTitleWIndowViewModel(id.Value)
+            {
+                State = RowStatus.NotEdited
+            };
             var view = new AktSpisaniyaView
             {
                 Owner = Application.Current.MainWindow,

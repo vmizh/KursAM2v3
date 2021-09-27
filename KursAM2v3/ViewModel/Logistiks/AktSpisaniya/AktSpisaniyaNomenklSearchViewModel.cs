@@ -121,7 +121,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             };
             var ctx = new AktSpisaniyaNomenklTitleWIndowViewModel
             {
-                Form = frm
+                Form = frm,
+                State = RowStatus.NewRow
             };
             frm.DataContext = ctx;
             frm.Show();

@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
+using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.AktSpisaniya;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
@@ -116,27 +119,19 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         #region Constructors
 
-        public AktSpisaniyaNomenklTitleWIndowViewModel()
+        public AktSpisaniyaNomenklTitleWIndowViewModel(Guid? id = null) 
         {
             GenericRepository = new GenericKursDBRepository<AktSpisaniyaNomenkl_Title>(unitOfWork);
             AktSpisaniyaNomenklTitleRepository = new AktSpisaniyaNomenkl_TitleRepository(unitOfWork);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
-            WindowName = "Акт списания";
-            Document = new AktSpisaniyaNomenklTitleViewModel(AktSpisaniyaNomenklTitleRepository.CreateNew(),
-                RowStatus.NewRow);
-        }
-
-        public AktSpisaniyaNomenklTitleWIndowViewModel(Guid? id)
-        {
-            GenericRepository = new GenericKursDBRepository<AktSpisaniyaNomenkl_Title>(unitOfWork);
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
-            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             var doc = id != null ? GenericRepository.GetById(id.Value) : null;
             if (doc == null)
             {
-                Document = new AktSpisaniyaNomenklTitleViewModel {State = RowStatus.NewRow};
-                unitOfWork.Context.AktSpisaniyaNomenkl_Title.Add(Document.Entity);
+                Document = Document = new AktSpisaniyaNomenklTitleViewModel(AktSpisaniyaNomenklTitleRepository.CreateNew())
+                {
+                    State = RowStatus.NewRow
+                };
             }
             else
             {
@@ -155,13 +150,15 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 }
                 Document.myState = RowStatus.NotEdited;
             }
-        }
 
-        public override string LayoutName => "AktSpisaniyaNomenklTitleView";
+            AktSpisaniyaNomenklTitleRepository.AktSpisaniya = Document.Entity;
+        }
 
         #endregion
 
         #region Properties
+        
+        public override string LayoutName => "AktSpisaniyaNomenklTitleView";
 
         public override string WindowName =>
             Document == null ? "Акт списания" : $"Акт списания №{Document?.DocNumber} от {Document?.DocDate}";
@@ -214,7 +211,31 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public override bool IsCanSaveData =>
             Document != null && Document.State != RowStatus.NotEdited
-                             && Document.Rows.All(_ => _.Quantity <= _.MaxQuantity);
+                             && Document.Rows.All(_ => _.Quantity <= _.MaxQuantity)
+                             && Document.Warehouse != null;
+
+        public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
+
+        public override void DocDelete(object form)
+        {
+            if (Document.State != RowStatus.NewRow)
+            {
+                var service = GetService<IDialogService>("WinUIDialogService");
+                dialogServiceText = "Вы уверены, что хотите удалить документ?";
+                var res = service.ShowDialog(MessageButton.YesNo, "Запрос", this);
+                switch (res)
+                {
+                    case MessageResult.Yes:
+                        unitOfWork.CreateTransaction();
+                        AktSpisaniyaNomenklTitleRepository.Delete();
+                        unitOfWork.Save();
+                        unitOfWork.Commit();
+                        if (Form != null)
+                            Form.Close();
+                        return;
+                }
+            }
+        }
 
         public override void RefreshData(object obj)
         {
@@ -253,22 +274,40 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public override void SaveData(object data)
         {
             if (Document.State == RowStatus.NewRow)
-                Document.DocNumber = unitOfWork.Context.AccruedAmountForClient.Any()
-                    ? unitOfWork.Context.AccruedAmountForClient.Max(_ => _.DocInNum) + 1
+            {
+               Document.DocNumber = unitOfWork.Context.AktSpisaniyaNomenkl_Title.Any()
+                    ? unitOfWork.Context.AktSpisaniyaNomenkl_Title.Max(_ => _.Num_Doc) + 1
                     : 1;
+            }
+
             unitOfWork.CreateTransaction();
             unitOfWork.Save();
+            foreach (var n in Document.Rows.Select(_ => _.Nomenkl.DocCode))
+            {
+                var c = NomenklCalculationManager.GetNomenklStoreRemain(unitOfWork.Context,Document.DocDate,
+                    n, Document.Warehouse.DocCode);
+                if (c < 0)
+                {
+                    unitOfWork.Rollback();
+                    var nom = MainReferences.GetNomenkl(n);
+                    WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
+                                              // ReSharper disable once PossibleInvalidOperationException
+                                              $"склад {Document.Warehouse} в кол-ве {c} ",
+                        "Отрицательные остатки", MessageBoxImage.Error);
+                    return;
+                }
+            }
             unitOfWork.Commit();
+
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
 
             Document.myState = RowStatus.NotEdited;
             Document.RaisePropertyChanged("State");
-            //ParentFormViewModel?.RefreshData(null);
         }
 
         public ICommand AddNomenklCommand
         {
-            get { return new Command(AddNomenkl, _ => Document.Warehouse != null); }
+            get { return new Command(AddNomenkl, _ => Document?.Warehouse != null); }
         }
 
         private void AddNomenkl(object obj)
