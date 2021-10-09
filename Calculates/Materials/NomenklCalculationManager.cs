@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
 using Data;
 using Helper;
+using JetBrains.Annotations;
 
 namespace Calculates.Materials
 {
@@ -54,6 +58,7 @@ namespace Calculates.Materials
                 new List<NOM_PRICE>(
                     GlobalOptions.GetEntities().NOM_PRICE.Where(_ => _.NOM_DC == nomDC).OrderBy(_ => _.DATE));
         }
+
         public static ObservableCollection<NomenklMoveOnSkladViewModel> NomenklMoveList { set; get; } =
             new ObservableCollection<NomenklMoveOnSkladViewModel>();
 
@@ -122,6 +127,7 @@ namespace Calculates.Materials
             {
                 return 0;
             }
+
             return data.Last().Ostatok;
         }
 
@@ -594,7 +600,7 @@ namespace Calculates.Materials
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var alldata = ctx.NomenklMoveForCalc.Where(_ => _.StoreDC == storeDC && _.Date <= end).ToList();
-                
+
                 var remDCs = alldata.Select(_ => _.NomDC).Distinct().ToList();
 
                 foreach (var ndc in remDCs)
@@ -642,6 +648,7 @@ namespace Calculates.Materials
                         nSumInWithNaklad = moves.Sum(_ => (_.PriceWithNaklad ?? 0) * _.Prihod);
                         nSumOutWithNaklad = moves.Sum(_ => (_.PriceWithNaklad ?? 0) * _.Rashod);
                     }
+
                     var nitem = new NomenklCalcFull
                     {
                         StoreDC = storeDC,
@@ -659,9 +666,10 @@ namespace Calculates.Materials
                         PriceEnd = nPriceEnd,
                         PriceEndWithNaklad = nPriceEndWithNaklad,
                     };
-                    
+
                     ret.Add(nitem);
                 }
+
                 return ret;
             }
         }
@@ -764,17 +772,17 @@ namespace Calculates.Materials
             {
                 case NomenklCalcType.NakladSeparately:
                     sql = "SELECT n.NomDC NomenklDC, n.NomCrsDC NomCurrencyDC, n.NomName NomenklName, " +
-                        "n.StoreDC StoreDC, SUM(n.Prihod) Prihod, SUM(n.Rashod) Rashod, SUM(n.Prihod) - SUM(n.Rashod) Remain " +
-                        ",ISNULL(p.Price, 0) AS PriceWithNaklad, ISNULL(p.PRICE_WO_NAKLAD, 0) AS Price, " +
-                        "(SUM(n.Prihod) - SUM(n.Rashod)) * ISNULL(p.PRICE_WO_NAKLAD, 0) AS Summa " +
-                        ",(SUM(n.Prihod) - SUM(n.Rashod)) * ISNULL(p.Price, 0) AS SummaWithNaklad " +
-                        "FROM NomenklMoveForCalc n " +
-                        "inner JOIN NOM_PRICE p " +
-                        "ON p.NOM_DC = n.NomDC AND p.DATE = (SELECT MAX(pp.Date) FROM NOM_PRICE pp " +
-                        $"WHERE pp.NOM_DC = n.NomDC AND pp.Date <= '{CustomFormat.DateToString(date)}' ) " +
-                        $"WHERE n.Date <= '{CustomFormat.DateToString(date)}' " +
-                        "GROUP BY n.NomDC,n.NomCrsDC,n.NomName,n.StoreDC,p.PRICE,p.PRICE_WO_NAKLAD " +
-                        "HAVING SUM(n.Prihod) - SUM(n.Rashod) != 0;";
+                          "n.StoreDC StoreDC, SUM(n.Prihod) Prihod, SUM(n.Rashod) Rashod, SUM(n.Prihod) - SUM(n.Rashod) Remain " +
+                          ",ISNULL(p.Price, 0) AS PriceWithNaklad, ISNULL(p.PRICE_WO_NAKLAD, 0) AS Price, " +
+                          "(SUM(n.Prihod) - SUM(n.Rashod)) * ISNULL(p.PRICE_WO_NAKLAD, 0) AS Summa " +
+                          ",(SUM(n.Prihod) - SUM(n.Rashod)) * ISNULL(p.Price, 0) AS SummaWithNaklad " +
+                          "FROM NomenklMoveForCalc n " +
+                          "inner JOIN NOM_PRICE p " +
+                          "ON p.NOM_DC = n.NomDC AND p.DATE = (SELECT MAX(pp.Date) FROM NOM_PRICE pp " +
+                          $"WHERE pp.NOM_DC = n.NomDC AND pp.Date <= '{CustomFormat.DateToString(date)}' ) " +
+                          $"WHERE n.Date <= '{CustomFormat.DateToString(date)}' " +
+                          "GROUP BY n.NomDC,n.NomCrsDC,n.NomName,n.StoreDC,p.PRICE,p.PRICE_WO_NAKLAD " +
+                          "HAVING SUM(n.Prihod) - SUM(n.Rashod) != 0;";
                     break;
                 case NomenklCalcType.Standart:
                     sql =
@@ -907,6 +915,79 @@ namespace Calculates.Materials
                 "HAVING SUM(tab.Prihod) - SUM(tab.Rashod) != 0 ";
             var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>(sql).ToList();
             return data;
+        }
+
+        public static void CalcAllNomenklRemains([NotNull] ALFAMEDIAEntities context)
+        {
+            var sql = "DECLARE @NomDC NUMERIC(15, 0); " +
+                      "DECLARE NomenklList CURSOR FOR SELECT DISTINCT NOM_DC FROM NOMENKL_RECALC; " +
+                      "OPEN NomenklList FETCH NEXT FROM NomenklList INTO @NomDC " +
+                      "WHILE @@fetch_status = 0 BEGIN " +
+                      "     EXEC dbo.NomenklCalculateCostsForOne @NomDC " +
+                      "     FETCH NEXT FROM NomenklList INTO @NomDC " +
+                      "END " +
+                      "CLOSE NomenklList; " +
+                      "DEALLOCATE NomenklList; " +
+                      "DELETE FROM WD_27 " +
+                      "INSERT INTO dbo.WD_27 (DOC_CODE , SKLW_NOMENKL_DC , SKLW_DATE , SKLW_KOLICH) " +
+                      "SELECT n.StoreDC, n.nomdc, n.DATE, SUM(n.prihod) - SUM(n.rashod) Quantity " +
+                      "FROM NomenklMoveWithPrice n   " +
+                      "WHERE n.Date = (SELECT MAX(n1.Date) FROM NomenklMoveWithPrice n1 " +
+                      "                WHERE n1.NomDC = n.NomDC AND n.StoreDC = n1.StoreDC) " +
+                      "GROUP BY n.NomDC,n.StoreDC,n.Date " +
+                      "HAVING SUM(n.Prihod) - SUM(n.Rashod) > 0;" +
+                      "DELETE FROM NOMENKL_RECALC;";
+            try
+            {
+                context.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction,sql);
+            }
+            catch (Exception ex)
+            {
+                SaveError(ex);
+            }
+        }
+
+        private static void SaveError(Exception ex)
+        {
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                StringBuilder b = new StringBuilder(ex.Message);
+                var ex1 = ex;
+                while (ex1.InnerException != null)
+                {
+                    b.Append(ex1.Message);
+                    ex1 = ex1.InnerException;
+                }
+
+                ctx.Errors.Add(new Data.Errors
+                {
+                    Id = Guid.NewGuid(),
+                    DbId = GlobalOptions.DataBaseId,
+                    Host = Environment.MachineName,
+                    UserId = GlobalOptions.UserInfo.KursId,
+                    ErrorText = b.ToString(),
+                    Moment = DateTime.Now
+                });
+            }
+        }
+
+        public static void InsertNomenklForCalc(ALFAMEDIAEntities context, [NotNull] List<decimal> nomenkls)
+        {
+            try
+            {
+                foreach (var dc in nomenkls)
+                {
+                    var sql = "INSERT INTO NOMENKL_RECALC(NOM_DC,OPER_DATE) " +
+                              $"VALUES({CustomFormat.DecimalToSqlDecimal(dc)},'{CustomFormat.DateToString(DateTime.Now)}');" +
+                              "GO;";
+                    context.Database.ExecuteSqlCommand(sql);
+                }
+            }
+            catch (Exception ex)
+            {
+                SaveError(ex);
+            }
+
         }
     }
 }

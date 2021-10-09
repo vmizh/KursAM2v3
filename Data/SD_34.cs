@@ -23,7 +23,6 @@ namespace Data
             this.SD_33 = new HashSet<SD_33>();
             this.TD_101 = new HashSet<TD_101>();
             this.UD_281 = new HashSet<UD_281>();
-            this.AccuredAmountOfSupplierRow = new HashSet<AccuredAmountOfSupplierRow>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -69,6 +68,7 @@ namespace Data
         public byte[] TSTAMP { get; set; }
         public Nullable<decimal> PLAT_VED_DC { get; set; }
         public Nullable<int> PLAT_VED_ROW_CODE { get; set; }
+        public Nullable<System.Guid> AccuredId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProviderInvoicePay> ProviderInvoicePay { get; set; }
@@ -93,7 +93,6 @@ namespace Data
         public virtual ICollection<TD_101> TD_101 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UD_281> UD_281 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
+        public virtual AccuredAmountOfSupplierRow AccuredAmountOfSupplierRow { get; set; }
     }
 }

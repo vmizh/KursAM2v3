@@ -6,12 +6,14 @@ using System.Windows;
 using Core;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.Cash;
+using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Invoices;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors;
 using KursAM2.Dialogs;
+using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.controls;
 
 namespace KursAM2.View.Finance.UC
@@ -462,7 +464,21 @@ namespace KursAM2.View.Finance.UC
                 dtx2.SFName = null;
                 dtx2.Payment = null;
             }
+        }
 
+        private void AccuredEdit_OnDefaultButtonClick(object sender, RoutedEventArgs e)
+        {
+            var dtx = DataContext as AddBankOperionUC;
+            if (dtx == null)
+                return;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var row = ctx.AccuredAmountOfSupplierRow.FirstOrDefault(
+                    _ => _.Id == dtx.CurrentBankOperations.AccuredId);
+                if (row == null) return;
+                DocumentsOpenManager.Open(
+                    DocumentType.AccruedAmountOfSupplier, 0, row.DocId, this);
+            }
         }
     }
 }

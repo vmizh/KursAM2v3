@@ -10,7 +10,7 @@
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="600">
-    <DockPanel>
+    <DockPanel Style="{StaticResource DXServices}">
         <dxe:ButtonEdit EditValue="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                         DockPanel.Dock="Top"
                         HorizontalAlignment="Left"
@@ -30,7 +30,6 @@
         </dxe:ButtonEdit>
         <dxlc:LayoutControl Name="mainControl">
             <dxlc:LayoutGroup Orientation="Vertical" Name="Group3">
-
                 <dxlc:LayoutGroup Orientation="Vertical" Name="Group4" dxlc:LayoutControl.AllowVerticalSizing="True">
                     <dxlc:LayoutGroup Orientation="Horizontal" x:Name="Group1"
                                       dxlc:LayoutControl.AllowHorizontalSizing="True">

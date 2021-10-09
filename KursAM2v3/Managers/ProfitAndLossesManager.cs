@@ -1922,7 +1922,7 @@ namespace KursAM2.Managers
                           (sd43.FLAG_BALANS ?? 0) == 0 && sd101.VV_STOP_DATE >= DateStart &&
                           sd101.VV_STOP_DATE <= DateEnd && td101.VVT_VAL_RASHOD > 0
                           && td101.VVT_KONTRAGENT != GlobalOptions.SystemProfile.OwnerKontragent.DOC_CODE
-                          && td101.AccuredAmountOfSupplierRow.Count == 0
+                          && td101.AccuredAmountOfSupplierRow == null
                     select new
                     {
                         DocDC = sd101.DOC_CODE,
@@ -1974,7 +1974,7 @@ namespace KursAM2.Managers
                                                      && sd43.FLAG_BALANS == 0
                                                      && sd34.KONTRAGENT_DC != GlobalOptions.SystemProfile
                                                          .OwnerKontragent.DOC_CODE
-                                                     && sd34.AccuredAmountOfSupplierRow.Count == 0
+                                                     && sd34.AccuredAmountOfSupplierRow == null
                     select new
                     {
                         DocDC = sd34.DOC_CODE,

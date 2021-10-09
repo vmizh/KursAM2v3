@@ -65,7 +65,9 @@ namespace KursAM2.ViewModel.Finance.controls
                 VVT_SFACT_POSTAV_DC = row.VVT_SFACT_POSTAV_DC,
                 SFName = row.SFName,
                 VVT_DOC_NUM = row.VVT_DOC_NUM,
-                State = isNew ? RowStatus.NewRow : RowStatus.NotEdited
+                State = isNew ? RowStatus.NewRow : RowStatus.NotEdited,
+                AccuredId = row.AccuredId,
+                AccuredInfo = row.AccuredInfo
             };
         }
 
@@ -94,6 +96,8 @@ namespace KursAM2.ViewModel.Finance.controls
                                                   || IsNotCurrencyChange;
 
         public string KontragentName => CurrentBankOperations?.KontragentName;
+
+        public bool IsCanOpenAccured => CurrentBankOperations.AccuredId != null;
 
         public bool IsNotCurrencyChange => CurrentBankOperations?.IsCurrencyChange == false;
 
@@ -149,6 +153,17 @@ namespace KursAM2.ViewModel.Finance.controls
                 DataUserControl.Kontragent.Text = null;
                 RaisePropertyChanged(nameof(NotAllowSummaPrihodChanged));
                 RaisePropertyChanged(nameof(NotAllowSummaRashodChanged));
+            }
+        }
+
+        public string AccuredInfo
+        {
+            get => CurrentBankOperations.AccuredInfo;
+            set
+            {
+                if (CurrentBankOperations.AccuredInfo == value) return;
+                CurrentBankOperations.AccuredInfo = value;
+                RaisePropertyChanged();
             }
         }
 

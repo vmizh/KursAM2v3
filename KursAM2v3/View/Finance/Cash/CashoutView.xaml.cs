@@ -14,6 +14,7 @@ using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.Dialogs;
+using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.Cash;
 using LayoutManager;
 
@@ -25,6 +26,7 @@ namespace KursAM2.View.Finance.Cash
     public partial class CashOutView : ILayout
     {
         public ButtonEdit KontrSelectButton = new ButtonEdit();
+        public ButtonEdit AccuredInfoButton;
 
         public DataLayoutItem NCODEItem = new DataLayoutItem();
         public DataLayoutItem SFactNameItem = new DataLayoutItem();
@@ -135,6 +137,18 @@ namespace KursAM2.View.Finance.Cash
                     break;
                 case "NAME_ORD":
                     ViewFluentHelper.SetDefaultMemoEdit(e.Item);
+                    break;
+                case nameof(doc.AccuredInfo):
+                    AccuredInfoButton = new ButtonEdit
+                    {
+                        TextWrapping = TextWrapping.Wrap,
+                        IsTextEditable = false
+                    };
+                    AccuredInfoButton.SetBinding(IsEnabledProperty,
+                        new Binding { Path = new PropertyPath("IsAccuredOpenEnable") });
+                    AccuredInfoButton.DefaultButtonClick += AccuredOpen_DefaultButtonClick;
+                    BindingHelper.CopyBinding(oldContent, AccuredInfoButton, BaseEdit.EditValueProperty);
+                    e.Item.Content = AccuredInfoButton;
                     break;
                 case "State":
                     e.Item.IsReadOnly = true;
@@ -256,6 +270,19 @@ namespace KursAM2.View.Finance.Cash
             var doc = dtx.Document;
             doc.SPOST_DC = null;
             doc.SPostName = null;
+        }
+
+        private void AccuredOpen_DefaultButtonClick(object sender, RoutedEventArgs e)
+        {
+            var ctx = DataContext as CashOutWindowViewModel;
+            var doc = ctx?.Document;
+            if (doc == null)
+                return;
+            if (doc.AccuredAmountOfSupplier != null)
+            {
+                DocumentsOpenManager.Open(
+                    DocumentType.AccruedAmountOfSupplier, 0, doc.AccuredAmountOfSupplier.DocId, this);
+            }
         }
 
         private void SFPostEdit_DefaultButtonClick(object sender, RoutedEventArgs e)

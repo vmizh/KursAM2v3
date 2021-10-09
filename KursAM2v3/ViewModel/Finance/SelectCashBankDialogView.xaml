@@ -7,13 +7,11 @@
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              mc:Ignorable="d"
-             MinHeight="100"
-             MinWidth="200"
-             d:DesignHeight="300" d:DesignWidth="300">
+             >
     <DockPanel Style="{StaticResource DXServices}">
         <dxe:ListBoxEdit 
             ItemsSource="{Binding ObjectList}"
-            EditValue="{Binding CurrentObject, UpdateSourceTrigger=PropertyChanged}"
+            EditValue="{Binding CurrentObject, UpdateSourceTrigger=PropertyChanged}" FontSize="16"
         >
             <dxmvvm:Interaction.Behaviors>
                 <dxmvvm:EventToCommand EventName="MouseDoubleClick"

@@ -57,6 +57,8 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         #region Properties
 
+        public bool IsAccuredOpenEnable => !string.IsNullOrWhiteSpace(Document?.AccuredInfo);
+
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
 
         public bool IsSummaEnabled => Document != null && Document.State == RowStatus.NewRow || Document != null &&

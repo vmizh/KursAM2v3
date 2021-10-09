@@ -17,6 +17,7 @@ using KursAM2.ViewModel.Finance.Cash;
 
 namespace KursAM2.Managers
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class CashManager
     {
         private static readonly WindowManager winManager = new WindowManager();
@@ -177,12 +178,23 @@ namespace KursAM2.Managers
                         .Include(_ => _.SD_84)
                         .Include(_ => _.SD_43)
                         .Include(_ => _.AccuredAmountForClientRow)
+                        .Include(_ => _.AccuredAmountForClientRow.Select(x => x.AccruedAmountForClient))
                         .AsNoTracking()
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
                     var doc = new CashIn(data)
                     {
                         myState = RowStatus.NotEdited
                     };
+                    if (doc.AcrruedAmountRow != null)
+                    {
+                        var snum = string.IsNullOrWhiteSpace(doc.AcrruedAmountRow.AccruedAmountForClient.DocExtNum)
+                            ? doc.AcrruedAmountRow.AccruedAmountForClient.DocInNum.ToString()
+                            : $"{doc.AcrruedAmountRow.AccruedAmountForClient.DocInNum}/{doc.AcrruedAmountRow.AccruedAmountForClient.DocExtNum}";
+                        var nom = MainReferences.GetNomenkl(doc.AcrruedAmountRow.NomenklDC);
+                        var snom = $"{nom}({nom.NomenklNumber})";
+                        doc.AccuredInfo = $"Прямой расход №{snum} от {doc.AcrruedAmountRow.AccruedAmountForClient.DocDate.ToShortDateString()} " +
+                                          $"{snom}";
+                    }
                     if (doc.SFACT_DC != null)
                     {
                         var inv = ctx.SD_84.FirstOrDefault(_ => _.DOC_CODE == doc.SFACT_DC);
@@ -510,9 +522,9 @@ namespace KursAM2.Managers
                                 break;
                             case CashDocumentType.CashOut:
                                 if (!(doc is CashOut updateCashOut)) return;
-                                docDate = (DateTime) updateCashOut.DATE_ORD;
-                                docCRS = (decimal) updateCashOut.CRS_DC;
-                                cashDC = (decimal) updateCashOut.CA_DC;
+                                docDate = (DateTime)updateCashOut.DATE_ORD;
+                                docCRS = (decimal)updateCashOut.CRS_DC;
+                                cashDC = (decimal)updateCashOut.CA_DC;
                                 cashstart = ctx.TD_22.FirstOrDefault(_ => _.CRS_DC == updateCashOut.Currency.DocCode
                                                                           && updateCashOut.Cash.DocCode == _.DOC_CODE);
                                 if (cashstart == null || updateCashOut.DATE_ORD < cashstart.DATE_START)
@@ -536,14 +548,14 @@ namespace KursAM2.Managers
                                             Id = Guid.NewGuid(),
                                             Rate = 1,
                                             // ReSharper disable once PossibleInvalidOperationException
-                                            Summa = (decimal) updateCashOut.SUMM_ORD,
+                                            Summa = (decimal)updateCashOut.SUMM_ORD,
                                             CashDC = updateCashOut.DocCode,
                                             // ReSharper disable once PossibleInvalidOperationException
-                                            DocDC = (decimal) updateCashOut.SPOST_DC
+                                            DocDC = (decimal)updateCashOut.SPOST_DC
                                         });
                                     else
                                         // ReSharper disable once PossibleInvalidOperationException
-                                        old.Summa = (decimal) updateCashOut.SUMM_ORD;
+                                        old.Summa = (decimal)updateCashOut.SUMM_ORD;
                                     var sql =
                                         "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                         "FROM sd_26 s26 " +
@@ -570,6 +582,24 @@ namespace KursAM2.Managers
                                                     return;
                                             }
                                         }
+                                }
+
+                                var s = ctx.SD_34.Where(_ =>
+                                        _.AccuredId == updateCashOut.AccuredId && _.DOC_CODE != updateCashOut.DocCode)
+                                    .Sum(_ => _.SUMM_ORD);
+                                var s2 = ctx.AccuredAmountOfSupplierRow.Single(_ => _.Id == updateCashOut.AccuredId)
+                                    .Summa;
+                                if (s + updateCashOut.SUMM_ORD > s2)
+                                {
+                                    var res = winManager.ShowWinUIMessageBox(
+                                        $"Сумма прямых затрат {s2:n2} меньше сумм оплат {s + updateCashOut.SUMM_ORD:n2}! " +
+                                        $"Установить максимально возможную сумму {s2-s}?",
+                                        "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Stop);
+                                    if (res == MessageBoxResult.Yes)
+                                    {
+                                        updateCashOut.SUMM_ORD = s2 - s;
+                                    } else 
+                                        return;
                                 }
 
                                 ctx.Entry(CashOutViewModelToEntity(updateCashOut)).State = EntityState.Modified;
@@ -1005,7 +1035,9 @@ namespace KursAM2.Managers
                 SFACT_FLAG = ent.SFACT_FLAG,
                 TSTAMP = ent.TSTAMP,
                 PLAT_VED_DC = ent.PLAT_VED_DC,
-                PLAT_VED_ROW_CODE = ent.PLAT_VED_ROW_CODE
+                PLAT_VED_ROW_CODE = ent.PLAT_VED_ROW_CODE,
+                AccuredId = ent.AccuredId
+                
             };
             return ret;
         }
@@ -1029,12 +1061,26 @@ namespace KursAM2.Managers
                         .Include(_ => _.SD_33)
                         .Include(_ => _.SD_43)
                         .Include(_ => _.AccuredAmountOfSupplierRow)
+                        .Include(_ => _.AccuredAmountOfSupplierRow.AccruedAmountOfSupplier)
                         .AsNoTracking()
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
-                    return new CashOut(data)
+                    var doc = new CashOut(data)
                     {
                         myState = RowStatus.NotEdited
                     };
+                    // ReSharper disable once PossibleNullReferenceException
+                    if (data.AccuredAmountOfSupplierRow != null)
+                    {
+                        var acc = data.AccuredAmountOfSupplierRow;
+                        var snum = string.IsNullOrWhiteSpace(acc.AccruedAmountOfSupplier.DocExtNum)
+                            ? acc.AccruedAmountOfSupplier.DocInNum.ToString()
+                            : $"{acc.AccruedAmountOfSupplier.DocInNum}/{acc.AccruedAmountOfSupplier.DocExtNum}";
+                        var nom = MainReferences.GetNomenkl(acc.NomenklDC);
+                        var snom = $"{nom}({nom.NomenklNumber})";
+                        doc.AccuredInfo = $"Прямой расход №{snum} от {acc.AccruedAmountOfSupplier.DocDate.ToShortDateString()} " +
+                                          $"{snom}";
+                    }
+                    return doc;
                 }
             }
             catch (Exception e)

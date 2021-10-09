@@ -415,7 +415,7 @@ namespace Core.EntityViewModel.AktSpisaniya
         }
 
         public Currency Currency => Nomenkl?.Currency;
-        public string NomenklNumber => Nomenkl.NomenklNumber;
+        public string NomenklNumber => Nomenkl?.NomenklNumber;
 
         public decimal Quantity
         {

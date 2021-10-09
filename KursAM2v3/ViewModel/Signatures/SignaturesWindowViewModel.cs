@@ -152,7 +152,7 @@ namespace KursAM2.ViewModel.Signatures
             }
         }
 
-    public SignatureSchemesViewModel CurrentSchema
+        public SignatureSchemesViewModel CurrentSchema
         {
             get => myCurrentSchema;
             set

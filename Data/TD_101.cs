@@ -23,7 +23,6 @@ namespace Data
             this.TD_60 = new HashSet<TD_60>();
             this.VD_60 = new HashSet<VD_60>();
             this.AccuredAmountForClientRow = new HashSet<AccuredAmountForClientRow>();
-            this.AccuredAmountOfSupplierRow = new HashSet<AccuredAmountOfSupplierRow>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -57,6 +56,7 @@ namespace Data
         public Nullable<decimal> BankAccountDC { get; set; }
         public Nullable<int> BankFromTransactionCode { get; set; }
         public Nullable<bool> IsCurrencyChange { get; set; }
+        public Nullable<System.Guid> AccuredId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProviderInvoicePay> ProviderInvoicePay { get; set; }
@@ -86,7 +86,6 @@ namespace Data
         public virtual ICollection<VD_60> VD_60 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
+        public virtual AccuredAmountOfSupplierRow AccuredAmountOfSupplierRow { get; set; }
     }
 }

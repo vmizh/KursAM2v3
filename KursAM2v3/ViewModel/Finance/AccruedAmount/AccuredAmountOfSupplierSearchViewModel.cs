@@ -94,7 +94,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.State = EntityState.Detached;
             Documents.Clear();
             foreach (var d in AccruedAmountOfSupplierRepository.GetByDate(StartDate, EndDate))
-                Documents.Add(new AccruedAmountOfSupplierViewModel(d));
+                Documents.Add(new AccruedAmountOfSupplierViewModel(d,GenericRepository.Context));
             foreach (var item in Documents) item.RaisePropertyAllChanged();
         }
 
@@ -117,7 +117,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         #region Properties
 
         public override string LayoutName => "AccuredAmountOfSupplierSearchViewModel";
-        public override string WindowName => "Реестр прямых расходов от поставщиков";
+        public override string WindowName => "Реестр прямых затрат";
 
         public ObservableCollection<AccruedAmountOfSupplierViewModel> Documents { set; get; } =
             new ObservableCollection<AccruedAmountOfSupplierViewModel>();

@@ -8,7 +8,6 @@ using Core;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -40,7 +39,7 @@ namespace KursAM2.Managers
                             BankDC = MainReferences.BankAccounts[item.DOC_CODE].Bank.DocCode,
                             Bank = MainReferences.BankAccounts[item.DOC_CODE].Bank,
                             // ReSharper disable once PossibleInvalidOperationException
-                            Currency = MainReferences.Currencies[(decimal) item.CurrencyDC],
+                            Currency = MainReferences.Currencies[(decimal)item.CurrencyDC],
                             Name = item.BA_ACC_SHORTNAME?.Trim() + " " + item.BA_RASH_ACC.Trim(),
                             Account = item.BA_RASH_ACC,
                             DocCode = item.DOC_CODE,
@@ -59,6 +58,7 @@ namespace KursAM2.Managers
             {
                 WindowManager.ShowError(e);
             }
+
             return result;
         }
 
@@ -78,6 +78,7 @@ namespace KursAM2.Managers
                         .Include(_ => _.SD_33.SD_22)
                         .Include(_ => _.SD_26)
                         .Include(_ => _.SD_84)
+                        .Include(_ => _.AccuredAmountOfSupplierRow)
                         .Where(_ => _.SD_101.VV_ACC_DC == docCode && _.SD_101.VV_START_DATE >= dateStart
                                                                   && _.SD_101.VV_START_DATE <= dateEnd).AsNoTracking()
                         .ToList();
@@ -89,6 +90,7 @@ namespace KursAM2.Managers
             {
                 WindowManager.ShowError(e);
             }
+
             return result;
         }
 
@@ -215,11 +217,9 @@ namespace KursAM2.Managers
                 var firstZero = data.FirstOrDefault(_ => _.Date >= accountInfo.DateNonZero
                                                          && _.End < 0);
                 if (firstZero != null)
-                {
                     // ReSharper disable once PossibleInvalidOperationException
                     return $"Возникли отрицательные остатки на {firstZero.Date.Value.ToShortDateString()}" +
                            $" в размере {firstZero.End}";
-                }
             }
 
 
@@ -233,6 +233,7 @@ namespace KursAM2.Managers
                 AddBankOperation(item, bankDc);
                 return;
             }
+
             if (item.State == RowStatus.Edited)
                 using (var ctx = GlobalOptions.GetEntities())
                 {
@@ -304,6 +305,7 @@ namespace KursAM2.Managers
                                         }
                                     }
                             }
+
                         var oldItem = ctx.TD_101.FirstOrDefault(_ => _.DOC_CODE == item.DOC_CODE
                                                                      && _.CODE == item.Code);
                         if (oldItem == null) return;
@@ -321,6 +323,7 @@ namespace KursAM2.Managers
                             ctx.SD_101.Add(oldDC);
                             oldItem.DOC_CODE = oldDC.DOC_CODE;
                         }
+
                         oldItem.VVT_DOC_NUM = item.VVT_DOC_NUM;
                         oldItem.VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD;
                         oldItem.VVT_VAL_RASHOD = item.VVT_VAL_RASHOD;
@@ -341,25 +344,23 @@ namespace KursAM2.Managers
                         oldItem.VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode;
                         oldItem.VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC;
                         oldItem.VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC;
+                        oldItem.AccuredId = item.AccuredId;
 
                         if (item.VVT_SFACT_POSTAV_DC != null)
                         {
                             var oldPay = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.BankCode == item.Code);
                             if (oldPay == null)
-                            {
                                 ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
                                 {
                                     Id = Guid.NewGuid(),
                                     BankCode = item.Code,
                                     DocDC = item.VVT_SFACT_POSTAV_DC.Value,
-                                    Summa = item.VVT_VAL_RASHOD ?? 0,
+                                    Summa = item.VVT_VAL_RASHOD ?? 0
                                 });
-                            }
                             else
-                            {
                                 oldPay.Summa = item.VVT_VAL_RASHOD ?? 0;
-                            }
                         }
+
                         DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.Bank), null,
                             item.DocCode, item.Code, (string)item.ToJson());
                         ctx.SaveChanges();
@@ -368,21 +369,23 @@ namespace KursAM2.Managers
                         {
                             if (tran.UnderlyingTransaction?.Connection != null)
                                 tran.Rollback();
-                            winManager.ShowWinUIMessageBox(err, "Ошибка", MessageBoxButton.OK, 
+                            winManager.ShowWinUIMessageBox(err, "Ошибка", MessageBoxButton.OK,
                                 MessageBoxImage.Error);
                             return;
                         }
+
                         tran.Commit();
                         item.State = RowStatus.NotEdited;
                     }
                     catch (Exception ex)
                     {
-                        if(tran.UnderlyingTransaction?.Connection != null)
+                        if (tran.UnderlyingTransaction?.Connection != null)
                             tran.Rollback();
                         WindowManager.ShowError(ex);
                     }
+
                     if (item.VVT_KONTRAGENT != null)
-                        RecalcKontragentBalans.CalcBalans((decimal) item.VVT_KONTRAGENT, item.Date);
+                        RecalcKontragentBalans.CalcBalans((decimal)item.VVT_KONTRAGENT, item.Date);
                 }
         }
 
@@ -424,7 +427,8 @@ namespace KursAM2.Managers
                             VVT_RASH_KASS_ORDER_DC = item.CashOut?.DocCode,
                             VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode,
                             VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
-                            VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC
+                            VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
+                            AccuredId = item.AccuredId
                         });
                         item.DOC_CODE = thisDate.DOC_CODE;
                         item.Code = code;
@@ -466,19 +470,19 @@ namespace KursAM2.Managers
                             VVT_RASH_KASS_ORDER_DC = item.CashOut?.DocCode,
                             VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode,
                             VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
-                            VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC
+                            VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
+                            AccuredId = item.AccuredId
                         });
-                    } 
+                    }
+
                     if (item.VVT_SFACT_POSTAV_DC != null)
-                    {
                         ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
                         {
                             Id = Guid.NewGuid(),
                             BankCode = code,
                             DocDC = item.VVT_SFACT_POSTAV_DC.Value,
-                            Summa = item.VVT_VAL_RASHOD ?? 0,
+                            Summa = item.VVT_VAL_RASHOD ?? 0
                         });
-                    }
                     DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.Bank), null,
                         item.DocCode, item.Code, (string)item.ToJson());
                     ctx.SaveChanges();
@@ -491,6 +495,7 @@ namespace KursAM2.Managers
                             MessageBoxImage.Error);
                         return;
                     }
+
                     tran.Commit();
                     item.myState = RowStatus.NotEdited;
                 }
@@ -503,7 +508,7 @@ namespace KursAM2.Managers
             }
 
             if (item.VVT_KONTRAGENT != null)
-                    RecalcKontragentBalans.CalcBalans((decimal)item.VVT_KONTRAGENT, item.Date);
+                RecalcKontragentBalans.CalcBalans((decimal)item.VVT_KONTRAGENT, item.Date);
         }
 
         private Tuple<decimal, int> AddBankOperation2(ALFAMEDIAEntities ctx, BankOperationsViewModel item,
@@ -540,12 +545,14 @@ namespace KursAM2.Managers
                     VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode,
                     VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
                     VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
-                    IsCurrencyChange = true
+                    IsCurrencyChange = true,
+                    AccuredId = item.AccuredId
                 });
                 item.DOC_CODE = thisDate.DOC_CODE;
                 ctx.SaveChanges();
                 item.myState = RowStatus.NotEdited;
             }
+
             if (thisDate == null && item.State == RowStatus.NewRow)
             {
                 item.DOC_CODE = ctx.SD_101.ToList().Any() ? ctx.SD_101.Max(_ => _.DOC_CODE) + 1 : 11010000001;
@@ -582,11 +589,13 @@ namespace KursAM2.Managers
                     VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode,
                     VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
                     VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
-                    IsCurrencyChange = true
+                    IsCurrencyChange = true,
+                    AccuredId = item.AccuredId
                 });
                 ctx.SaveChanges();
                 item.myState = RowStatus.NotEdited;
             }
+
             return new Tuple<decimal, int>(item.DOC_CODE, code);
         }
 
@@ -622,6 +631,7 @@ namespace KursAM2.Managers
                         foreach (var d in delUdCol)
                             ctx.UD_101.Remove(d);
                     }
+
                     var oldPay = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.BankCode == item.Code);
                     if (oldPay != null)
                         ctx.ProviderInvoicePay.Remove(oldPay);
@@ -635,7 +645,7 @@ namespace KursAM2.Managers
                             MessageBoxImage.Error);
                         return;
                     }
-                  
+
                     tran.Commit();
                 }
                 catch (Exception e)
@@ -728,6 +738,7 @@ namespace KursAM2.Managers
                                       + (startRemain.FirstOrDefault(_ =>
                                           _.AccountDC == bankDC && _.CrsDC == CurrencyCode.SEK)?.Summa ?? 0);
                 }
+
                 // ReSharper disable once InconsistentNaming
                 if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.CHF))
                 {
@@ -736,6 +747,7 @@ namespace KursAM2.Managers
                     ret.SummaOutCHF = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.CHF)
                         .Sum(_ => _.VVT_VAL_RASHOD);
                 }
+
                 if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.USD))
                 {
                     ret.SummaInUSD = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.USD)
@@ -743,6 +755,7 @@ namespace KursAM2.Managers
                     ret.SummaOutUSD = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.USD)
                         .Sum(_ => _.VVT_VAL_RASHOD);
                 }
+
                 if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.EUR))
                 {
                     ret.SummaInEUR = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.EUR)
@@ -750,6 +763,7 @@ namespace KursAM2.Managers
                     ret.SummaOutEUR = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.EUR)
                         .Sum(_ => _.VVT_VAL_RASHOD);
                 }
+
                 if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.SEK))
                 {
                     ret.SummaInSEK = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.SEK)
@@ -757,6 +771,7 @@ namespace KursAM2.Managers
                     ret.SummaOutSEK = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.SEK)
                         .Sum(_ => _.VVT_VAL_RASHOD);
                 }
+
                 if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.GBP))
                 {
                     ret.SummaInGBP = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.GBP)
@@ -764,6 +779,7 @@ namespace KursAM2.Managers
                     ret.SummaOutGBP = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.GBP)
                         .Sum(_ => _.VVT_VAL_RASHOD);
                 }
+
                 if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.RUB))
                 {
                     ret.SummaInRUB = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.RUB)
@@ -771,9 +787,11 @@ namespace KursAM2.Managers
                     ret.SummaOutRUB = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.RUB)
                         .Sum(_ => _.VVT_VAL_RASHOD);
                 }
+
                 return ret;
             }
         }
+
         [Obsolete]
         public List<RemainderCurrenciesDatePeriod> GetRemains(decimal bankDC, DateTime datestart, DateTime dateend)
         {
@@ -787,6 +805,7 @@ namespace KursAM2.Managers
                     .GenerateIerarhy(dataoborot.Select(_ => _.SD_101.VV_START_DATE).Distinct(),
                         PeriodIerarhy.YearMonthDay).Select(d => new RemainderCurrenciesDatePeriod(d)).ToList()
                     .OrderByDescending(_ => _.DateEnd);
+                // ReSharper disable once PossibleMultipleEnumeration
                 foreach (var d in PeriodAdapter)
                 {
                     d.SummaStartCHF = (dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.CHF
@@ -860,6 +879,7 @@ namespace KursAM2.Managers
                                                               _.SD_101.VV_STOP_DATE <= d.DateEnd)
                             .Sum(_ => _.VVT_VAL_RASHOD);
                     }
+
                     if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.USD))
                     {
                         d.SummaInUSD = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.USD
@@ -871,6 +891,7 @@ namespace KursAM2.Managers
                                                               _.SD_101.VV_STOP_DATE <= d.DateEnd)
                             .Sum(_ => _.VVT_VAL_RASHOD);
                     }
+
                     if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.EUR))
                     {
                         d.SummaInEUR = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.EUR
@@ -882,6 +903,7 @@ namespace KursAM2.Managers
                                                               _.SD_101.VV_STOP_DATE <= d.DateEnd)
                             .Sum(_ => _.VVT_VAL_RASHOD);
                     }
+
                     if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.SEK))
                     {
                         d.SummaInSEK = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.SEK
@@ -893,6 +915,7 @@ namespace KursAM2.Managers
                                                               _.SD_101.VV_STOP_DATE <= d.DateEnd)
                             .Sum(_ => _.VVT_VAL_RASHOD);
                     }
+
                     if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.GBP))
                     {
                         d.SummaInGBP = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.GBP
@@ -904,6 +927,7 @@ namespace KursAM2.Managers
                                                               _.SD_101.VV_STOP_DATE <= d.DateEnd)
                             .Sum(_ => _.VVT_VAL_RASHOD);
                     }
+
                     if (dataoborot.Any(_ => _.VVT_CRS_DC == CurrencyCode.RUB))
                     {
                         d.SummaInRUB = dataoborot.Where(_ => _.VVT_CRS_DC == CurrencyCode.RUB
@@ -916,6 +940,7 @@ namespace KursAM2.Managers
                             .Sum(_ => _.VVT_VAL_RASHOD);
                     }
                 }
+
                 // ReSharper disable once PossibleMultipleEnumeration
                 return new List<RemainderCurrenciesDatePeriod>(PeriodAdapter);
             }
@@ -932,9 +957,11 @@ namespace KursAM2.Managers
                 var data = ctx.Database.SqlQuery<BankOperations>(sql).ToList();
                 var PeriodAdapter = DatePeriod
                     // ReSharper disable once PossibleInvalidOperationException
-                    .GenerateIerarhy(data.Select(_ => (DateTime) _.Date).ToList(),
+                    .GenerateIerarhy(data.Select(_ => (DateTime)_.Date).ToList(),
                         PeriodIerarhy.YearMonthDay).Select(d => new ReminderDatePeriod(d)).ToList()
                     .OrderByDescending(_ => _.DateEnd);
+                // ReSharper disable once PossibleMultipleEnumeration
+                // ReSharper disable PossibleMultipleEnumeration
                 foreach (var p in PeriodAdapter)
                 {
                     var dstart = data.FirstOrDefault(_ => _.Date == p.DateStart);
@@ -946,15 +973,18 @@ namespace KursAM2.Managers
                     }
                     else
                     {
+                        
                         var dtstart = dob.Min(_ => _.Date);
                         var ds = dob.Single(_ => _.Date == dtstart);
                         p.SummaStart = ds.Start ?? 0;
                     }
+
                     p.SummaIn = dob.Sum(_ => _.SummaIn);
                     p.SummaOut = dob.Sum(_ => _.SummaOut);
                     p.SummaEnd = p.SummaStart + p.SummaIn - p.SummaOut;
                     // ReSharper restore PossibleNullReferenceException
                 }
+                // ReSharper restore PossibleMultipleEnumeration
                 // ReSharper disable once PossibleMultipleEnumeration
                 return new List<ReminderDatePeriod>(PeriodAdapter);
             }
@@ -963,8 +993,7 @@ namespace KursAM2.Managers
         public ReminderDatePeriod GetRemains2(decimal bankDC, DateTime DateStart, DateTime DateEnd)
         {
             if (DateStart > DateEnd)
-            {
-                return new ReminderDatePeriod()
+                return new ReminderDatePeriod
                 {
                     DateEnd = DateStart,
                     DateStart = DateEnd,
@@ -974,7 +1003,6 @@ namespace KursAM2.Managers
                     SummaOut = 0,
                     Currency = MainReferences.BankAccounts[bankDC].Currency
                 };
-            }
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var sql = "SELECT  AccountDC ,Date ,Start ," +
@@ -983,8 +1011,7 @@ namespace KursAM2.Managers
                           " order by 2";
                 var data = ctx.Database.SqlQuery<BankOperations>(sql).ToList();
                 if (data.Count == 0)
-                {
-                    return new ReminderDatePeriod()
+                    return new ReminderDatePeriod
                     {
                         DateEnd = DateEnd,
                         DateStart = DateStart,
@@ -994,12 +1021,10 @@ namespace KursAM2.Managers
                         SummaOut = 0,
                         Currency = MainReferences.BankAccounts[bankDC].Currency
                     };
-                }
                 var startDate = data.Where(_ => _.Date <= DateStart).Max(_ => _.Date);
                 var endDate = data.Where(_ => _.Date <= DateEnd).Max(_ => _.Date);
                 if (startDate == null || endDate == null)
-                {
-                    return new ReminderDatePeriod()
+                    return new ReminderDatePeriod
                     {
                         DateEnd = DateStart,
                         DateStart = DateEnd,
@@ -1009,8 +1034,7 @@ namespace KursAM2.Managers
                         SummaOut = 0,
                         Currency = MainReferences.BankAccounts[bankDC].Currency
                     };
-                }
-                return new ReminderDatePeriod()
+                return new ReminderDatePeriod
                 {
                     DateEnd = DateEnd,
                     DateStart = DateStart,
@@ -1101,6 +1125,7 @@ namespace KursAM2.Managers
             {
                 WindowManager.ShowError(e);
             }
+
             return document;
         }
 
@@ -1179,6 +1204,7 @@ namespace KursAM2.Managers
                             MessageBoxImage.Error);
                         return;
                     }
+
                     var err2 = CheckForNonzero(item.BankToDC, ctx);
                     if (!string.IsNullOrEmpty(err))
                     {
@@ -1188,6 +1214,7 @@ namespace KursAM2.Managers
                             MessageBoxImage.Error);
                         return;
                     }
+
                     tran.Commit();
                     item.myState = RowStatus.NotEdited;
                 }

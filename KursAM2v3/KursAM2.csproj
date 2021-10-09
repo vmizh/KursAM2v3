@@ -1004,6 +1004,9 @@
     <Compile Include="View\Shop\ShopParserExtFiles.xaml.cs">
       <DependentUpon>ShopParserExtFiles.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Signature\Signature.UC.xaml.cs">
+      <DependentUpon>Signature.UC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Signature\SignatureReferenceUC.xaml.cs">
       <DependentUpon>SignatureReferenceUC.xaml</DependentUpon>
     </Compile>
@@ -1787,6 +1790,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Shop\ShopParserExtFiles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Signature\Signature.UC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

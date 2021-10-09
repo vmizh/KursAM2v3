@@ -14,19 +14,26 @@ namespace Data
     
     public partial class AccuredAmountOfSupplierRow
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public AccuredAmountOfSupplierRow()
+        {
+            this.SD_34 = new HashSet<SD_34>();
+            this.TD_101 = new HashSet<TD_101>();
+        }
+    
         public System.Guid Id { get; set; }
         public System.Guid DocId { get; set; }
         public decimal Summa { get; set; }
         public string Note { get; set; }
-        public Nullable<decimal> CashDC { get; set; }
-        public Nullable<int> BankCode { get; set; }
         public Nullable<decimal> SHPZ_DC { get; set; }
         public decimal NomenklDC { get; set; }
     
-        public virtual AccruedAmountOfSupplier AccruedAmountOfSupplier { get; set; }
         public virtual SD_303 SD_303 { get; set; }
-        public virtual TD_101 TD_101 { get; set; }
-        public virtual SD_34 SD_34 { get; set; }
         public virtual SD_83 SD_83 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SD_34> SD_34 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TD_101> TD_101 { get; set; }
+        public virtual AccruedAmountOfSupplier AccruedAmountOfSupplier { get; set; }
     }
 }

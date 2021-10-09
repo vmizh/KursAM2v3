@@ -1,0 +1,33 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             x:Class="KursAM2.View.Signature.Signature"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <DockPanel>
+        <dxg:TreeListControl AutoGenerateColumns="None" 
+                             EnableSmartColumnsGeneration="True" 
+                             HorizontalAlignment="Stretch"  
+                             MaxHeight="10000"
+                             MaxWidth="10000"
+                             VerticalAlignment="Stretch"
+                             dx:DXSerializer.SerializationID="gridSignatures"
+                             dx:DXSerializer.StoreLayoutMode="All"
+                             dxg:DataControlSerializationOptions.AddNewColumns="False"
+                             dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                             SelectionMode="Row"
+                             ItemsSource="{Binding SignatureRows, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                             CurrentItem="{Binding CurrentSignature, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}">
+            <dxg:TreeListControl.Columns>
+                <dxg:TreeListColumn></dxg:TreeListColumn>
+            </dxg:TreeListControl.Columns>                
+            <dxg:TreeListControl.View>
+                <dxg:TreeListView ShowTotalSummary="True"/>
+            </dxg:TreeListControl.View>
+        </dxg:TreeListControl>
+    </DockPanel>
+</UserControl>

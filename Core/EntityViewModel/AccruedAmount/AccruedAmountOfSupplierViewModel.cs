@@ -168,12 +168,48 @@ namespace Core.EntityViewModel.AccruedAmount
             Entity = DefaultValue();
         }
 
-        public AccruedAmountOfSupplierViewModel(AccruedAmountOfSupplier entity)
+        public AccruedAmountOfSupplierViewModel(AccruedAmountOfSupplier entity, ALFAMEDIAEntities context)
         {
             Entity = entity ?? DefaultValue();
             foreach (var r in Entity.AccuredAmountOfSupplierRow)
             {
-                Rows.Add(new AccruedAmountOfSupplierRowViewModel(r,this));
+                Rows.Add(new AccruedAmountOfSupplierRowViewModel(r, this));
+            }
+
+            if (context != null)
+            {
+                foreach (var r in Rows)
+                {
+                    if (r.Entity.SD_34 != null && r.Entity.SD_34.Count > 0)
+                        foreach (var d in context.SD_34.Where(_ => _.AccuredId == r.Id).ToList())
+                            r.CashDocs.Add(new AccruedAmountOfSupplierCashDocViewModel
+                            {
+                                Creator = d.CREATOR,
+                                DocCode = d.DOC_CODE,
+                                // ReSharper disable once PossibleInvalidOperationException
+                                DocDate = (DateTime)d.DATE_ORD,
+                                DocNumber = d.NUM_ORD.ToString(),
+                                DocumentType = "Расходный кассовый ордер",
+                                // ReSharper disable once PossibleInvalidOperationException
+                                Summa = (decimal)d.CRS_SUMMA,
+                                Note = d.NAME_ORD + " " + d.NOTES_ORD
+                            });
+                    if (r.Entity.TD_101 != null && r.Entity.TD_101.Count > 0)
+                        foreach (var d in context.TD_101.Where(_ => _.AccuredId == r.Id).ToList())
+                            r.CashDocs.Add(new AccruedAmountOfSupplierCashDocViewModel
+                            {
+                                Creator = null,
+                                DocCode = d.DOC_CODE,
+                                Code = d.CODE,
+                                DocDate = d.SD_101.VV_START_DATE,
+                                DocNumber = d.VVT_DOC_NUM,
+                                DocumentType = "Банковская транзакция",
+                                // ReSharper disable once PossibleInvalidOperationException
+                                Summa = (decimal)d.VVT_VAL_RASHOD,
+                                Note = null
+                            });
+
+                }
             }
         }
 
@@ -192,7 +228,7 @@ namespace Core.EntityViewModel.AccruedAmount
 
         public override string ToString()
         {
-            return $"Прямой расход от поставщиков №{DocInNum}/{DocExtNum} " +
+            return $"Прямые затраты №{DocInNum}/{DocExtNum} " +
                    $"от {DocDate.ToShortDateString()} Контрагент: {Kontragent} на сумму {Summa} " +
                    $"{Currency}";
         }

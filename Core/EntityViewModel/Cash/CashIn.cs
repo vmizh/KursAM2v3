@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Controls;
 using Core.EntityViewModel.Bank;
@@ -17,10 +16,12 @@ using Newtonsoft.Json;
 namespace Core.EntityViewModel.Cash
 {
     [MetadataType(typeof(SD_33LayoutData_FluentAPI))]
-    [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
     public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
     {
         public decimal MaxSumma = decimal.MaxValue;
+
+
+        private string myAccuredInfo;
         private BankAccount myBankAccount;
         private Cash myCash;
         private Currency myCurrency;
@@ -41,11 +42,6 @@ namespace Core.EntityViewModel.Cash
         {
             Entity = entity ?? DefaultValue();
             LoadReferences();
-        }
-
-        public override string ToString()
-        {
-            return Description;
         }
 
         public override string Description =>
@@ -69,6 +65,19 @@ namespace Core.EntityViewModel.Cash
             get => Entity.AccuredAmountForClientRow.FirstOrDefault();
             set => Entity.AccuredAmountForClientRow.Add(value);
         }
+
+        [Display(AutoGenerateField = true)]
+        public string AccuredInfo
+        {
+            get => myAccuredInfo;
+            set
+            {
+                if (myAccuredInfo == value) return;
+                myAccuredInfo = value;
+                RaisePropertyChanged();
+            }
+        }
+
 
         public override string Note
         {
@@ -99,19 +108,19 @@ namespace Core.EntityViewModel.Cash
             {
                 if (Entity.SUMM_ORD == value) return;
                 Entity.SUMM_ORD = value;
-                if ((decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
-                    (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
+                if ((decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
+                    (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
                 {
                     if (IsBackCalc)
                     {
                         Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                     (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                     (100 + (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(SUMM_ORD));
                     }
                     else
                     {
                         Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                      (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                      (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(CRS_SUMMA));
                     }
                 }
@@ -128,19 +137,19 @@ namespace Core.EntityViewModel.Cash
             {
                 if (Entity.CRS_SUMMA == value) return;
                 Entity.CRS_SUMMA = value;
-                if ((decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
-                    (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
+                if ((decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
+                    (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
                 {
                     if (IsBackCalc)
                     {
                         Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                     (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                     (100 + (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(SUMM_ORD));
                     }
                     else
                     {
                         Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                      (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                      (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(CRS_SUMMA));
                     }
                 }
@@ -524,7 +533,7 @@ namespace Core.EntityViewModel.Cash
                 CRS_DC = myCurrency?.DocCode;
                 if (myCurrency != null)
                     // ReSharper disable once PossibleInvalidOperationException
-                    UCH_VALUTA_RATE = (double?) CurrencyRate.GetCBRate(myCurrency, (DateTime) DATE_ORD);
+                    UCH_VALUTA_RATE = (double?)CurrencyRate.GetCBRate(myCurrency, (DateTime)DATE_ORD);
                 RaisePropertyChanged();
             }
         }
@@ -686,20 +695,20 @@ namespace Core.EntityViewModel.Cash
             set
             {
                 if (OBRATNY_RASCHET == (value ? 1 : 0)) return;
-                OBRATNY_RASCHET = value ? (short?) 1 : (short?) 0;
-                if ((decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
-                    (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
+                OBRATNY_RASCHET = value ? (short?)1 : (short?)0;
+                if ((decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
+                    (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
                 {
                     if (IsBackCalc)
                     {
                         Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                     (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                     (100 + (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(SUMM_ORD));
                     }
                     else
                     {
                         Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                      (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                      (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(CRS_SUMMA));
                     }
                 }
@@ -713,6 +722,7 @@ namespace Core.EntityViewModel.Cash
             get => Entity.KONTR_CRS_SUM_CORRECT_PERCENT;
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.KONTR_CRS_SUM_CORRECT_PERCENT == value) return;
                 Entity.KONTR_CRS_SUM_CORRECT_PERCENT = value;
                 RaisePropertyChanged();
@@ -724,21 +734,22 @@ namespace Core.EntityViewModel.Cash
             get => Convert.ToDecimal(Entity.KONTR_CRS_SUM_CORRECT_PERCENT);
             set
             {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (Entity.KONTR_CRS_SUM_CORRECT_PERCENT == Convert.ToDouble(value)) return;
                 Entity.KONTR_CRS_SUM_CORRECT_PERCENT = Convert.ToDouble(value);
-                if ((decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
-                    (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
+                if ((decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
+                    (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
                 {
                     if (IsBackCalc)
                     {
                         Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                     (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                     (100 + (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(SUMM_ORD));
                     }
                     else
                     {
                         Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                      (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                      (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                         RaisePropertyChanged(nameof(CRS_SUMMA));
                     }
                 }
@@ -943,6 +954,8 @@ namespace Core.EntityViewModel.Cash
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public EntityLoadCodition LoadCondition { get; set; }
 
+        public bool IsAccessRight { get; set; }
+
         [NotNull]
         public SD_33 Entity
         {
@@ -955,16 +968,19 @@ namespace Core.EntityViewModel.Cash
             }
         }
 
+        public override string ToString()
+        {
+            return Description;
+        }
+
         public List<SD_33> LoadList()
         {
             throw new NotImplementedException();
         }
 
-        public bool IsAccessRight { get; set; }
-
         private void LoadReferences()
         {
-            if (Entity.CA_DC != null) Cash = MainReferences.CashsAll[(decimal) Entity.CA_DC];
+            if (Entity.CA_DC != null) Cash = MainReferences.CashsAll[(decimal)Entity.CA_DC];
             myKontragentType = CashKontragentType.NotChoice;
             if (KONTRAGENT_DC != null)
                 myKontragentType = CashKontragentType.Kontragent;
@@ -975,7 +991,7 @@ namespace Core.EntityViewModel.Cash
             if (RASH_ORDER_FROM_DC != null)
                 myKontragentType = CashKontragentType.Cash;
             IsKontrSelectEnable = myKontragentType != CashKontragentType.NotChoice;
-            if (Entity.CRS_DC != null) Currency = MainReferences.Currencies[(decimal) Entity.CRS_DC];
+            if (Entity.CRS_DC != null) Currency = MainReferences.Currencies[(decimal)Entity.CRS_DC];
             if (SFACT_DC != null) SFactName = SFact(SFACT_DC.Value);
             if (Entity.SHPZ_DC != null) SDRSchet = MainReferences.SDRSchets[Entity.SHPZ_DC.Value];
             if (BANK_RASCH_SCHET_DC != null) BankAccount = MainReferences.BankAccounts[BANK_RASCH_SCHET_DC.Value];
@@ -991,7 +1007,7 @@ namespace Core.EntityViewModel.Cash
             {
                 var doc = ctx.SD_34.Include(_ => _.SD_22).FirstOrDefault(_ => _.DOC_CODE == dc);
                 // ReSharper disable once PossibleInvalidOperationException
-                return doc == null ? null : MainReferences.Cashs[(decimal) doc.CA_DC].Name;
+                return doc == null ? null : MainReferences.Cashs[(decimal)doc.CA_DC].Name;
             }
         }
 
@@ -1174,7 +1190,7 @@ namespace Core.EntityViewModel.Cash
 
         public SD_33 DefaultValue()
         {
-            return new()
+            return new SD_33
             {
                 DOC_CODE = -1,
                 DATE_ORD = DateTime.Today
@@ -1273,6 +1289,7 @@ namespace Core.EntityViewModel.Cash
             builder.Property(_ => _.IsKontrSummaEnabled).NotAutoGenerated();
             builder.Property(_ => _.IsSummaEnabled).NotAutoGenerated();
             builder.Property(_ => _.KONTR_CRS_SUM_CORRECT_PERCENT).NotAutoGenerated();
+            builder.Property(_ => _.AccuredInfo).DisplayName("Прямой расход");
             builder.Property(x => x.Currency)
                 .DisplayName("Валюта");
             builder.Property(x => x.Cash)
@@ -1336,6 +1353,7 @@ namespace Core.EntityViewModel.Cash
                         .ContainsProperty(_ => _.NAME_ORD)
                         .ContainsProperty(_ => _.OSN_ORD)
                         .ContainsProperty(_ => _.NOTES_ORD)
+                        .ContainsProperty(_ => _.AccuredInfo)
                     .EndGroup()
                 .EndGroup();
             // @formatter:on

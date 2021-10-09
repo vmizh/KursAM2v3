@@ -153,10 +153,19 @@
                         </dxe:ButtonEdit.Buttons>
                     </dxe:ButtonEdit>
                 </dxlc:LayoutItem>
-
+                <dxlc:LayoutItem Label="Прямые затраты">
+                    <dxe:ButtonEdit EditValue="{Binding AccuredInfo, Mode=TwoWay}"
+                                  AcceptsReturn="True"
+                                  TextWrapping="Wrap"
+                                  IsReadOnly="True"
+                                  Margin="0 0 0 5" 
+                                  AllowDefaultButton="{Binding IsCanOpenAccured, UpdateSourceTrigger=PropertyChanged}"
+                                  DefaultButtonClick="AccuredEdit_OnDefaultButtonClick"/>
+                </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Примечание">
-                    <dxe:MemoEdit EditValue="{Binding VVT_DOC_NUM, Mode=TwoWay}"
-                                  ShowIcon="False"
+                    <dxe:TextEdit EditValue="{Binding VVT_DOC_NUM, Mode=TwoWay}"
+                                    AcceptsReturn="True"
+                                    TextWrapping="Wrap"
                                     Height="55"
                                   IsEnabled="{Binding IsNotCurrencyChange}"
                              Margin="0 0 0 5" />

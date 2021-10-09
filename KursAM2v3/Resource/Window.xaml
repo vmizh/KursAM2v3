@@ -25,7 +25,8 @@
     </Style>
 
     <dxmvvm:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" HiddenInsteadOfCollapsed="True" />
-    <Style x:Key="NoteStyle" TargetType="dxe:TextEdit">
+
+   <Style x:Key="NoteStyle" TargetType="dxe:TextEdit">
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="SelectAllOnMouseUp" Value="True"/>
         <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
@@ -53,8 +54,6 @@
         <ContentControl Content="{Binding CustomDataUserControl}"/>
     </DataTemplate>
     <Style x:Key="DXServices" TargetType="FrameworkElement">
-        <Setter Property="MinHeight" Value="100"/>
-        <Setter Property="MinWidth" Value="200"/>
         <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -69,6 +68,7 @@
                             <dx:DialogService.DialogStyle>
                                 <Style TargetType="Window">
                                     <Setter Property="WindowStyle" Value="ToolWindow" />
+                                    <Setter Property="SizeToContent" Value="WidthAndHeight" />  
                                 </Style>
                             </dx:DialogService.DialogStyle>
                         </dx:DialogService>
@@ -78,6 +78,7 @@
                             <dx:DialogService.DialogStyle>
                                 <Style TargetType="Window">
                                    <Setter Property="WindowStyle" Value="ToolWindow" />
+                                   <Setter Property="SizeToContent" Value="WidthAndHeight" />  
                                 </Style>
                             </dx:DialogService.DialogStyle>
                         </dx:DialogService>
@@ -88,9 +89,7 @@
         </Setter>
     </Style>
     <Style x:Key="DXServicesDialogOnly" TargetType="FrameworkElement">
-        <Setter Property="MinHeight" Value="100"/>
-        <Setter Property="MinWidth" Value="200"/>
-        <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
+       <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
             <Setter.Value>
                 <DataTemplate>
                     <ItemsControl>

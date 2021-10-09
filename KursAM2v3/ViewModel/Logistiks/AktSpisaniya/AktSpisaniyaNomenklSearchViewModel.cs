@@ -42,8 +42,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             AktSpisaniyaNomenklRepository = new AktSpisaniyaNomenkl_TitleRepository(unitOfWork);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            DateEnd = DateTime.Today;
-            DateStart = DateEnd.AddDays(-30);
+            EndDate = DateTime.Today;
+            StartDate = EndDate.AddDays(-30);
             IsCanDocNew = true;
             LayoutName = "AktSpisaniyaSearchView";
             WindowName = "Акты списания";
@@ -61,7 +61,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public ObservableCollection<AktSpisaniyaNomenklTitleViewModel> Documents { set; get; } =
             new ObservableCollection<AktSpisaniyaNomenklTitleViewModel>();
 
-        public DateTime DateEnd
+        public DateTime EndDate
         {
             get => myDateEnd;
             set
@@ -71,11 +71,11 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 RaisePropertyChanged();
                 if (myDateStart < myDateEnd) return;
                 myDateStart = myDateEnd;
-                RaisePropertyChanged(nameof(DateStart));
+                RaisePropertyChanged(nameof(StartDate));
             }
         }
 
-        public DateTime DateStart
+        public DateTime StartDate
         {
             get => myDateStart;
             set
@@ -85,7 +85,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 RaisePropertyChanged();
                 if (myDateStart <= myDateEnd) return;
                 myDateEnd = myDateStart;
-                RaisePropertyChanged(nameof(DateEnd));
+                RaisePropertyChanged(nameof(EndDate));
             }
         }
 
@@ -164,7 +164,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         {
             base.RefreshData(obj);
             Documents.Clear();
-            foreach (var d in AktSpisaniyaNomenklRepository.GetAllByDates(DateStart, DateEnd).ToList())
+            foreach (var d in AktSpisaniyaNomenklRepository.GetAllByDates(StartDate, EndDate).ToList())
                 Documents.Add(new AktSpisaniyaNomenklTitleViewModel(d));
 
             RaisePropertiesChanged(nameof(Documents));

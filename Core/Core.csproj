@@ -127,6 +127,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountOfSupplierCashDocViewModel.cs" />
     <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountOfSupplierRowViewModel.cs" />
     <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountOfSupplierViewModel.cs" />
     <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountTypeViewModel.cs" />

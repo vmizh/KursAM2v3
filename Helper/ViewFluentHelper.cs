@@ -27,12 +27,12 @@ namespace Helper
             defaultMemo.EditValueChanged += delegate(object o, EditValueChangedEventArgs args)
             {
                 if (!(args.Source is MemoEdit editor)) return;
-                if (editor.EditValue != null && !string.IsNullOrWhiteSpace((string) editor.EditValue))
+                if (editor.EditValue != null && !string.IsNullOrWhiteSpace((string)editor.EditValue))
                     editor.Height = 50;
             };
             BindingHelper.CopyBinding(oldContent, defaultMemo, BaseEdit.EditValueProperty);
             item.Content = defaultMemo;
-            if (defaultMemo.EditValue != null && !string.IsNullOrWhiteSpace((string) defaultMemo.EditValue))
+            if (defaultMemo.EditValue != null && !string.IsNullOrWhiteSpace((string)defaultMemo.EditValue))
                 item.Height = height;
             item.HorizontalAlignment = hrzAlign;
             if (width != null)
@@ -63,7 +63,7 @@ namespace Helper
         {
             var canWrite = Document.GetType().GetProperties().FirstOrDefault(_ => _.Name == propertyName)
                 ?.CanWrite;
-            if (canWrite == null || !(bool) canWrite) return;
+            if (canWrite == null || !(bool)canWrite) return;
             {
                 if (!(item.Content is BaseEdit editor)) return;
                 // ReSharper disable once PossibleNullReferenceException
@@ -85,7 +85,7 @@ namespace Helper
         {
             var canWrite = Document.GetType().GetProperties().FirstOrDefault(_ => _.Name == propertyName)
                 ?.CanWrite;
-            if (canWrite == null || !(bool) canWrite) return;
+            if (canWrite == null || !(bool)canWrite) return;
             {
                 if (!(item.EditSettings is BaseEditSettings editor)) return;
                 // ReSharper disable once PossibleNullReferenceException
@@ -137,7 +137,7 @@ namespace Helper
             };
             DockPanel.SetDock(cbCashs, Dock.Left);
             cbCashs.SetBinding(LookUpEditBase.SelectedItemProperty,
-                new Binding {Path = new PropertyPath(nameField)});
+                new Binding { Path = new PropertyPath(nameField) });
             dockPanel.Children.Add(cbCashs);
             item.Content = dockPanel;
             item.Width = dockPanel.Width + 150;
@@ -170,11 +170,19 @@ namespace Helper
             };
             DockPanel.SetDock(cbCashs, Dock.Left);
             cbCashs.SetBinding(LookUpEditBase.SelectedItemProperty,
-                new Binding {Path = new PropertyPath(nameField)});
+                new Binding { Path = new PropertyPath(nameField) });
             dockPanel.Children.Add(cbCashs);
             item.Content = dockPanel;
             item.Width = dockPanel.Width + 150;
             return cbCashs;
+        }
+
+        public static bool IsSummaryExists(GridControl control, string fieldName)
+        {
+            foreach (var s in control.TotalSummary)
+                if (string.Equals(s.FieldName, fieldName))
+                    return true;
+            return false;
         }
     }
 }

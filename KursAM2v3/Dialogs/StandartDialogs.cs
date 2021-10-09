@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Core;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.Cash;
@@ -83,7 +84,7 @@ namespace KursAM2.Dialogs
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;
-            return ctx.ListNomenklCollection;
+            return ctx.SelectedNomenkl.ToList();
         }
 
         public static List<WarehouseOrderOutRowSelect> SelectNomenklsFromRashodOrder(Warehouse store)

@@ -282,9 +282,12 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
             unitOfWork.CreateTransaction();
             unitOfWork.Save();
+            NomenklCalculationManager.InsertNomenklForCalc(unitOfWork.Context,
+                Document.Rows.Select(_ => _.Nomenkl.DocCode).ToList());
+            NomenklCalculationManager.CalcAllNomenklRemains(unitOfWork.Context);
             foreach (var n in Document.Rows.Select(_ => _.Nomenkl.DocCode))
             {
-                var c = NomenklCalculationManager.GetNomenklStoreRemain(unitOfWork.Context,Document.DocDate,
+                var c = NomenklCalculationManager.GetNomenklStoreRemain(unitOfWork.Context, Document.DocDate,
                     n, Document.Warehouse.DocCode);
                 if (c < 0)
                 {
@@ -298,7 +301,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 }
             }
             unitOfWork.Commit();
-
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
 
             Document.myState = RowStatus.NotEdited;
