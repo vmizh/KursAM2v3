@@ -48,7 +48,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             }
             else
             {
-                Document = new AccruedAmountOfSupplierViewModel(doc,GenericRepository.Context)
+                Document = new AccruedAmountOfSupplierViewModel(doc, GenericRepository.Context)
                 {
                     State = RowStatus.NotEdited
                 };
@@ -150,7 +150,6 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             }
         }
 
-
         public AccruedAmountOfSupplierViewModel Document
         {
             get => myDocument;
@@ -161,7 +160,6 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 RaisePropertyChanged();
             }
         }
-
 
         public override string Description =>
             $"Прямой расход от поставщиков №{Document.DocInNum}/{Document.DocExtNum} " +
@@ -333,8 +331,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                     frm.gridRows.UpdateTotalSummary();
                     frm.gridCashRows.UpdateTotalSummary();
                 }
+
                 r.myState = RowStatus.NotEdited;
             }
+
             Document.myState = RowStatus.NotEdited;
             Document.RaisePropertyChanged("State");
         }
@@ -422,59 +422,61 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void AddCashDoc(object obj)
         {
-            var ctx = new SelectCashBankDialogViewModel(true);
+            var ctx = new SelectCashBankDialogViewModel(true, Document.Currency);
             var service = GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(MessageButton.OKCancel, "Выбрать кассу", ctx) == MessageResult.Cancel) return;
-            if (ctx.CurrentObject == null) return;
-            var cash = ctx.CurrentObject;
-            var maxsumma = CashManager.GetCashCurrencyRemains(cash.DocCode, Document.Currency.DocCode, DateTime.Today);
-            if (CurrentAccrual.Summa - CurrentAccrual.PaySumma > maxsumma)
+            if (service.ShowDialog(MessageButton.OKCancel, "Выбрать кассу", ctx) == MessageResult.OK)
             {
-                WindowManager winManager = new WindowManager();
-                var res = winManager.ShowWinUIMessageBox(
-                    $"Сумма платежа {CurrentAccrual.Summa - CurrentAccrual.PaySumma:n2} " +
-                    $"меньше остатка по кассе {maxsumma:n2}! " +
-                    $"Установить максимально возможную сумму {maxsumma}?",
-                    "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Stop);
-                if (res == MessageBoxResult.No) return;
-            }
+                if (ctx.CurrentObject == null) return;
+                var cash = ctx.CurrentObject;
+                var maxsumma =
+                    CashManager.GetCashCurrencyRemains(cash.DocCode, Document.Currency.DocCode, DateTime.Today);
+                if (CurrentAccrual.Summa - CurrentAccrual.PaySumma > maxsumma)
+                {
+                    var winManager = new WindowManager();
+                    var res = winManager.ShowWinUIMessageBox(
+                        $"Сумма платежа {CurrentAccrual.Summa - CurrentAccrual.PaySumma:n2} " +
+                        $"меньше остатка по кассе {maxsumma:n2}! " +
+                        $"Будет установлена сумма {maxsumma}.",
+                        "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Stop);
+                    if (res == MessageBoxResult.No) return;
+                }
 
-            var s = CurrentAccrual.Summa - CurrentAccrual.PaySumma > maxsumma
-                ? maxsumma
-                : CurrentAccrual.Summa - CurrentAccrual.PaySumma;
-            var snum = string.IsNullOrWhiteSpace(Document.DocExtNum)
-                ? Document.DocInNum.ToString()
-                : $"{Document.DocInNum}/{Document.DocExtNum}";
-            var vm = new CashOutWindowViewModel
-            {
-                Document = CashManager.NewCashOut()
-            };
-            vm.Document.Cash = MainReferences.Cashs[cash.DocCode];
-            vm.Document.KontragentType = CashKontragentType.Kontragent;
-            vm.Document.KONTRAGENT_DC = Document.Kontragent.DocCode;
-            vm.Document.Currency = Document.Kontragent.BalansCurrency;
-            vm.Document.SUMM_ORD = s;
-            vm.Document.AccuredId = CurrentAccrual.Id;
-            vm.Document.AccuredInfo = $"Прямой расход №{snum} от {Document.DocDate.ToShortDateString()} " +
-                                      $"{CurrentAccrual.Nomenkl}({CurrentAccrual.Nomenkl.NomenklNumber})";
-            vm.Document.SDRSchet = CurrentAccrual.SDRSchet;
-            vm.SaveData(null);
-            CurrentAccrual.CashDocs.Add(new AccruedAmountOfSupplierCashDocViewModel
-            {
-                Creator = vm.Document.CREATOR,
-                DocCode = vm.Document.DocCode,
-                // ReSharper disable once PossibleInvalidOperationException
-                DocDate = (DateTime)vm.Document.DATE_ORD,
-                DocNumber = vm.Document.NUM_ORD.ToString(),
-                DocumentType = "Расходный кассовый ордер",
-                // ReSharper disable once PossibleInvalidOperationException
-                Summa = (decimal)vm.Document.SUMM_ORD,
-                Note = vm.Document.NAME_ORD + " " + vm.Document.NOTES_ORD
-            });
-            DocumentsOpenManager.Open(DocumentType.CashOut, vm, Form);
-            if (Form is AccruedAmountOfSupplierView frm)
-                frm.gridRows.UpdateTotalSummary();
-            
+                var s = CurrentAccrual.Summa - CurrentAccrual.PaySumma > maxsumma
+                    ? maxsumma
+                    : CurrentAccrual.Summa - CurrentAccrual.PaySumma;
+                var snum = string.IsNullOrWhiteSpace(Document.DocExtNum)
+                    ? Document.DocInNum.ToString()
+                    : $"{Document.DocInNum}/{Document.DocExtNum}";
+                var vm = new CashOutWindowViewModel
+                {
+                    Document = CashManager.NewCashOut()
+                };
+                vm.Document.Cash = MainReferences.Cashs[cash.DocCode];
+                vm.Document.KontragentType = CashKontragentType.Kontragent;
+                vm.Document.KONTRAGENT_DC = Document.Kontragent.DocCode;
+                vm.Document.Currency = Document.Kontragent.BalansCurrency;
+                vm.Document.SUMM_ORD = s;
+                vm.Document.AccuredId = CurrentAccrual.Id;
+                vm.Document.AccuredInfo = $"Прямой расход №{snum} от {Document.DocDate.ToShortDateString()} " +
+                                          $"{CurrentAccrual.Nomenkl}({CurrentAccrual.Nomenkl.NomenklNumber})";
+                vm.Document.SDRSchet = CurrentAccrual.SDRSchet;
+                vm.SaveData(null);
+                CurrentAccrual.CashDocs.Add(new AccruedAmountOfSupplierCashDocViewModel
+                {
+                    Creator = vm.Document.CREATOR,
+                    DocCode = vm.Document.DocCode,
+                    // ReSharper disable once PossibleInvalidOperationException
+                    DocDate = (DateTime)vm.Document.DATE_ORD,
+                    DocNumber = vm.Document.NUM_ORD.ToString(),
+                    DocumentType = "Расходный кассовый ордер",
+                    // ReSharper disable once PossibleInvalidOperationException
+                    Summa = (decimal)vm.Document.SUMM_ORD,
+                    Note = vm.Document.NAME_ORD + " " + vm.Document.NOTES_ORD
+                });
+                DocumentsOpenManager.Open(DocumentType.CashOut, vm, Form);
+                if (Form is AccruedAmountOfSupplierView frm)
+                    frm.gridRows.UpdateTotalSummary();
+            }
         }
 
         [Display(AutoGenerateField = false)]
@@ -515,7 +517,6 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             var service = GetService<IDialogService>("WinUIDialogService");
             dialogServiceText = "Вы действительно хотите удалить связь с платежным документом?";
             if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.Yes)
-            {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     if (CurrentCash.DocumentType == "Расходный кассовый ордер")
@@ -523,7 +524,6 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                         var old = ctx.SD_34.FirstOrDefault(_ => _.DOC_CODE == CurrentCash.DocCode);
                         if (old != null)
                             old.AccuredId = null;
-                       
                     }
 
                     if (CurrentCash.DocumentType == "Банковская транзакция")
@@ -531,10 +531,12 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                         var old = ctx.TD_101.FirstOrDefault(_ => _.CODE == CurrentCash.Code);
                         if (old != null)
                             old.AccuredId = null;
-                    } 
+                    }
+
                     ctx.SaveChanges();
                 }
-            }
+
+            CurrentAccrual.CashDocs.Remove(CurrentCash);
 
             if (Form is AccruedAmountOfSupplierView frm)
                 frm.gridRows.UpdateTotalSummary();
@@ -554,76 +556,78 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void AddBankDoc(object obj)
         {
-            var ctx = new SelectCashBankDialogViewModel(false);
+            var ctx = new SelectCashBankDialogViewModel(false, Document.Currency);
             var service = GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
-            if (ctx.CurrentObject == null) return;
-            var CurrentBankAccount = ctx.CurrentObject;
-            if (CurrentBankAccount != null)
+            if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.OK)
             {
-                var manager = new BankOperationsManager();
-                var maxsumma = manager.GetRemains2(CurrentBankAccount.DocCode, DateTime.Today, DateTime.Today)
-                    .SummaEnd;
-                if (CurrentAccrual.Summa - CurrentAccrual.PaySumma > maxsumma)
+                if (ctx.CurrentObject == null) return;
+                var CurrentBankAccount = ctx.CurrentObject;
+                if (CurrentBankAccount != null)
                 {
-                    WindowManager winManager = new WindowManager();
-                    var res = winManager.ShowWinUIMessageBox(
-                        $"Сумма платежа {CurrentAccrual.Summa - CurrentAccrual.PaySumma:n2} " +
-                        $"меньше остатка по кассе {maxsumma:n2}! " +
-                        $"Установить максимально возможную сумму {maxsumma}?",
-                        "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Stop);
-                    if (res == MessageBoxResult.No) return;
-                }
-                var s = CurrentAccrual.Summa - CurrentAccrual.PaySumma > maxsumma
-                    ? maxsumma
-                    : CurrentAccrual.Summa - CurrentAccrual.PaySumma;
+                    var manager = new BankOperationsManager();
+                    var maxsumma = manager.GetRemains2(CurrentBankAccount.DocCode, DateTime.Today, DateTime.Today)
+                        .SummaEnd;
+                    if (CurrentAccrual.Summa - CurrentAccrual.PaySumma > maxsumma)
+                    {
+                        var winManager = new WindowManager();
+                        var res = winManager.ShowWinUIMessageBox(
+                            $"Сумма платежа {CurrentAccrual.Summa - CurrentAccrual.PaySumma:n2} " +
+                            $"меньше остатка по кассе {maxsumma:n2}! " +
+                            $"Будет установлена сумма {maxsumma}.",
+                            "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Stop);
+                        if (res == MessageBoxResult.No) return;
+                    }
 
-                var snum = string.IsNullOrWhiteSpace(Document.DocExtNum)
-                    ? Document.DocInNum.ToString()
-                    : $"{Document.DocInNum}/{Document.DocExtNum}";
-                var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode,
-                    new BankOperationsViewModel
+                    var s = CurrentAccrual.Summa - CurrentAccrual.PaySumma > maxsumma
+                        ? maxsumma
+                        : CurrentAccrual.Summa - CurrentAccrual.PaySumma;
+
+                    var snum = string.IsNullOrWhiteSpace(Document.DocExtNum)
+                        ? Document.DocInNum.ToString()
+                        : $"{Document.DocInNum}/{Document.DocExtNum}";
+                    var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode,
+                        new BankOperationsViewModel
+                        {
+                            DocCode = UnitOfWork.Context.TD_101.Any()
+                                ? UnitOfWork.Context.TD_101.Max(_ => _.DOC_CODE) + 1
+                                : 11010000001,
+                            Code = UnitOfWork.Context.TD_101.Any() ? UnitOfWork.Context.TD_101.Max(_ => _.CODE) + 1 : 1,
+                            Date = DateTime.Today,
+                            Currency = Document.Currency,
+                            Kontragent = Document.Kontragent,
+                            BankOperationType = BankOperationType.Kontragent,
+                            Payment = Document.Kontragent,
+                            VVT_VAL_RASHOD = s,
+                            VVT_VAL_PRIHOD = 0,
+                            SHPZ = CurrentAccrual.SDRSchet,
+                            VVT_SFACT_CLIENT_DC = null,
+                            VVT_SFACT_POSTAV_DC = null,
+                            SFName = null,
+                            VVT_DOC_NUM = CurrentAccrual.Note,
+                            State = RowStatus.NewRow,
+                            AccuredId = CurrentAccrual.Id,
+                            AccuredInfo = $"Прямой расход №{snum} от {Document.DocDate.ToShortDateString()} " +
+                                          $"{CurrentAccrual.Nomenkl}({CurrentAccrual.Nomenkl.NomenklNumber})"
+                        },
+                        MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
+                    if (k != null)
                     {
-                        DocCode = UnitOfWork.Context.TD_101.Any()
-                            ? UnitOfWork.Context.TD_101.Max(_ => _.DOC_CODE) + 1
-                            : 11010000001,
-                        Code = UnitOfWork.Context.TD_101.Any() ? UnitOfWork.Context.TD_101.Max(_ => _.CODE) + 1 : 1,
-                        Date = DateTime.Today,
-                        Currency = Document.Currency,
-                        Kontragent = Document.Kontragent,
-                        BankOperationType = BankOperationType.Kontragent,
-                        Payment = Document.Kontragent,
-                        VVT_VAL_RASHOD = s,
-                        VVT_VAL_PRIHOD = 0,
-                        SHPZ = CurrentAccrual.SDRSchet,
-                        VVT_SFACT_CLIENT_DC = null,
-                        VVT_SFACT_POSTAV_DC = null,
-                        SFName = null,
-                        VVT_DOC_NUM = CurrentAccrual.Note,
-                        State = RowStatus.NewRow,
-                        AccuredId = CurrentAccrual.Id,
-                        AccuredInfo = $"Прямой расход №{snum} от {Document.DocDate.ToShortDateString()} " +
-                                      $"{CurrentAccrual.Nomenkl}({CurrentAccrual.Nomenkl.NomenklNumber})"
-                            
-                    },
-                    MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
-                if (k != null)
-                {
-                    k.State = RowStatus.NewRow;
-                    manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
-                    CurrentAccrual.CashDocs.Add(new AccruedAmountOfSupplierCashDocViewModel
-                    {
-                        Creator = null,
-                        DocCode = k.DocCode,
-                        Code = k.Code,
-                        // ReSharper disable once PossibleInvalidOperationException
-                        DocDate = k.Entity.SD_101.VV_START_DATE,
-                        DocNumber = k.VVT_DOC_NUM,
-                        DocumentType = "Банковская транзакция",
-                        // ReSharper disable once PossibleInvalidOperationException
-                        Summa = (decimal)k.VVT_VAL_RASHOD,
-                        Note = null
-                    });
+                        k.State = RowStatus.NewRow;
+                        manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
+                        CurrentAccrual.CashDocs.Add(new AccruedAmountOfSupplierCashDocViewModel
+                        {
+                            Creator = null,
+                            DocCode = k.DocCode,
+                            Code = k.Code,
+                            // ReSharper disable once PossibleInvalidOperationException
+                            DocDate = k.Entity.SD_101.VV_START_DATE,
+                            DocNumber = k.VVT_DOC_NUM,
+                            DocumentType = "Банковская транзакция",
+                            // ReSharper disable once PossibleInvalidOperationException
+                            Summa = (decimal)k.VVT_VAL_RASHOD,
+                            Note = null
+                        });
+                    }
                 }
 
                 if (Form is AccruedAmountOfSupplierView frm)

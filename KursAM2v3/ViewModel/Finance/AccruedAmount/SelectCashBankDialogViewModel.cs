@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Windows.Controls;
 using Core;
+using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm;
+using KursAM2.Managers;
 
 namespace KursAM2.ViewModel.Finance.AccruedAmount
 {
@@ -12,9 +16,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
     {
         #region Constructors
 
-        public SelectCashBankDialogViewModel(bool isCash)
+        public SelectCashBankDialogViewModel(bool isCash, Currency crs)
         {
             IsCash = isCash;
+            currency = crs;
             RightMenuBar = MenuGenerator.DialogStandartBar(this);
             RefreshData(null);
         }
@@ -22,11 +27,21 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         #endregion
 
         public class CashBankItem : ISimpleDialogItem
-        {
-            public decimal DocCode { get; set; }
-            public Guid Id { get; set; }
-            public int Code { get; set; }
+        { 
+            [Display(AutoGenerateField = true, Name = "Наименование", Order = 1)]
             public string Name { get; set; }
+
+            [Display(AutoGenerateField = true, Name = "Остаток",Order = 2)]
+            [DisplayFormat(DataFormatString = "n2")]
+            public decimal Summa { set; get; }
+
+            [Display(AutoGenerateField = false)] public decimal DocCode { get; set; }
+
+            [Display(AutoGenerateField = false)] public Guid Id { get; set; }
+
+            [Display(AutoGenerateField = false)] public int Code { get; set; }
+
+           
 
             public override string ToString()
             {
@@ -39,6 +54,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         private ICurrentWindowService winCurrentService;
         private CashBankItem myCurrentObject;
         private readonly bool IsCash;
+        private Currency currency;
 
         #endregion
 
@@ -93,15 +109,22 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                     ObjectList.Add(new CashBankItem
                     {
                         DocCode = c.DocCode,
-                        Name = c.Name
+                        Name = c.Name,
+                        Summa = CashManager.GetCashCurrencyRemains(c.DocCode,currency.DocCode, DateTime.Today)
                     });
             else
-                foreach (var c in MainReferences.BankAccounts.Values)
+            {
+                var manager = new BankOperationsManager();
+                foreach (var c in MainReferences.BankAccounts.Values.Where(_ => _.Currency.DocCode == currency.DocCode))
                     ObjectList.Add(new CashBankItem
                     {
                         DocCode = c.DocCode,
-                        Name = c.Name
+                        Name = c.Name,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        Summa = manager.GetRemains2(c.DocCode, DateTime.Today, DateTime.Today)?
+                            .SummaEnd ?? 0 
                     });
+            }
         }
 
         #endregion

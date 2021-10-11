@@ -506,6 +506,7 @@ namespace KursAM2.ViewModel.Management
                 DocumentsOpenManager.Open(CurrentDocument.DocTypeCode, CurrentDocument.DocRowCode);
                 return;
             }
+
             if (CurrentDocument.DocTypeCode == DocumentType.AccruedAmountForClient ||
                 CurrentDocument.DocTypeCode == DocumentType.AccruedAmountOfSupplier)
             {
@@ -519,21 +520,19 @@ namespace KursAM2.ViewModel.Management
                         if (doc != null)
                             DocumentsOpenManager.Open(CurrentDocument.DocTypeCode, 0, doc.Id);
                         else
-                        {
                             WinManager.ShowWinUIMessageBox("Документ не найден.", "Сообщение");
-                        }
                     }
+
                     if (CurrentDocument.DocTypeCode == DocumentType.AccruedAmountOfSupplier)
                     {
                         var doc = ctx.AccruedAmountOfSupplier.FirstOrDefault(_ => _.DocInNum == num);
                         if (doc != null)
                             DocumentsOpenManager.Open(CurrentDocument.DocTypeCode, 0, doc.Id);
                         else
-                        {
                             WinManager.ShowWinUIMessageBox("Документ не найден.", "Сообщение");
-                        }
                     }
                 }
+
                 return;
             }
 

@@ -3,24 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:control="clr-namespace:Core.Control;assembly=Core"
-             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-             mc:Ignorable="d"
-             >
-    <DockPanel Style="{StaticResource DXServices}">
-        <dxe:ListBoxEdit 
-            ItemsSource="{Binding ObjectList}"
-            EditValue="{Binding CurrentObject, UpdateSourceTrigger=PropertyChanged}" FontSize="16"
-        >
-            <dxmvvm:Interaction.Behaviors>
-                <dxmvvm:EventToCommand EventName="MouseDoubleClick"
-                                       Command="{Binding OkCommand}"/>
-                <dxmvvm:KeyToCommand  KeyGesture="Cancel"
-                                      Command="{Binding CancelCommand}"/>
-                <dxmvvm:CurrentWindowService Window="{Binding 
-                    RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>  
-            </dxmvvm:Interaction.Behaviors>
-        </dxe:ListBoxEdit>
-    </DockPanel>
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             mc:Ignorable="d">
+    <dxg:GridControl
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        AutoGenerateColumns="AddNew"
+        EnableSmartColumnsGeneration="True"
+        ItemsSource="{Binding ObjectList}"
+        CurrentItem="{Binding CurrentObject, UpdateSourceTrigger=PropertyChanged}" FontSize="14"
+        SelectionMode="Row"
+        AutoGeneratingColumn="DataControlBase_OnAutoGeneratingColumn">
+        <dxmvvm:Interaction.Behaviors>
+            <dxmvvm:EventToCommand EventName="MouseDoubleClick"
+                                   Command="{Binding OkCommand}" />
+            <dxmvvm:KeyToCommand KeyGesture="Cancel"
+                                 Command="{Binding CancelCommand}" />
+            <dxmvvm:CurrentWindowService
+                Window="{Binding 
+                    RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+        </dxmvvm:Interaction.Behaviors>
+        <dxg:GridControl.View>
+            <dxg:TableView
+                ShowColumnHeaders="False"
+                ShowGroupPanel="False"
+                ShowIndicator="False" />
+        </dxg:GridControl.View>
+    </dxg:GridControl>
 </UserControl>

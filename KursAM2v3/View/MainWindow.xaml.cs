@@ -190,7 +190,7 @@ namespace KursAM2.View
                         form.Show();
                         break;
 
-                    case "Реестр прямых затрат":
+                    case @"Реестр прямых затрат":
                         var aap = new AccuredAmountOfSupplierSearchViewModel();
                         form = new StandartSearchView
                         {
