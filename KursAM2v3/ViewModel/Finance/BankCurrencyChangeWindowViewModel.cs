@@ -3,7 +3,6 @@ using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.Bank;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
@@ -46,8 +45,10 @@ namespace KursAM2.ViewModel.Finance
                                                                && Document.CurrencyTo != null &&
                                                                Document.CurrencyFrom != null
                                                                && Document.CrsToDC != Document.CrsFromDC;
+
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
         public override bool IsDocNewCopyAllow => Document != null && Document.State != RowStatus.NewRow;
+
         public BankCurrencyChangeViewModel Document
         {
             get => myDocument;
@@ -58,7 +59,9 @@ namespace KursAM2.ViewModel.Finance
                 RaisePropertyChanged();
             }
         }
+
         public BankOperationsWindowViewModel2 ParentForm { set; get; }
+
         #endregion
 
         #region Commands
@@ -87,6 +90,7 @@ namespace KursAM2.ViewModel.Finance
                 Id = Document.Id;
                 return;
             }
+
             if (IsCanSaveData)
             {
                 var res = MessageBox.Show("В документ были внесены изменения, сохранить?", "Запрос",
@@ -101,6 +105,7 @@ namespace KursAM2.ViewModel.Finance
                         break;
                 }
             }
+
             if (Document?.Id != Guid.Empty)
             {
                 Document = manager.LoadBankCurrencyChange(Id);
@@ -111,8 +116,10 @@ namespace KursAM2.ViewModel.Finance
                         MessageBoxResult.None, MessageBoxOptions.None);
                     return;
                 }
+
                 oldDate = Document.DocDate;
             }
+
             RaisePropertyChanged(nameof(Document));
             Document.myState = RowStatus.NotEdited;
         }
@@ -135,15 +142,16 @@ namespace KursAM2.ViewModel.Finance
                     manager.AddBankCurrencyChange(Document);
                 }
             }
+
             if (ParentForm != null)
             {
                 var date = ParentForm.CurrentBankOperations.Date;
                 ParentForm.UpdateValueInWindow(ParentForm.CurrentBankOperations);
-                var dd = ParentForm.Periods.Where(_ => _.DateStart <= date 
+                var dd = ParentForm.Periods.Where(_ => _.DateStart <= date
                                                        && _.PeriodType == PeriodType.Day)
                     .Max(_ => _.DateStart);
-                var p = ParentForm.Periods.FirstOrDefault(_ => _.DateStart == dd 
-                                                               && _.DateEnd == dd 
+                var p = ParentForm.Periods.FirstOrDefault(_ => _.DateStart == dd
+                                                               && _.DateEnd == dd
                                                                && _.PeriodType == PeriodType.Day);
                 if (p != null)
                     ParentForm.CurrentPeriods = p;

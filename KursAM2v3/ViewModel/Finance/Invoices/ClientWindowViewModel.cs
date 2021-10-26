@@ -834,7 +834,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             if (Document == null) return;
             var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?", "Запрос",
-                MessageBoxButton.YesNoCancel,
+                MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             switch (res)
             {

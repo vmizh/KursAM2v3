@@ -182,7 +182,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         public override void DocDelete(object form)
         {
             var res = MessageBox.Show("Вы уверены, что хотите удалить данный документ?", "Запрос",
-                MessageBoxButton.YesNoCancel,
+                MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             switch (res)
             {

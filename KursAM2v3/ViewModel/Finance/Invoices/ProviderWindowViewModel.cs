@@ -1373,7 +1373,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (Document.State != RowStatus.Edited)
             {
                 var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?", "Запрос",
-                    MessageBoxButton.YesNoCancel,
+                    MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
                 if (res != MessageBoxResult.Yes) return;
                 switch (res)

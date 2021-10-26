@@ -115,13 +115,19 @@
                                          HorizontalAlignment="Stretch"
                                          VerticalAlignment="Stretch"
                                          ItemsSource="{Binding PermissionsList, UpdateSourceTrigger=PropertyChanged}"
+                                         CurrentItem="{Binding CurrentMenuItem, UpdateSourceTrigger=PropertyChanged}"
                                          MaxHeight="2000"
                                          MaxWidth="2000">
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
                                                IsSynchronizedWithCurrentItem="True"
                                                BestFitModeOnSourceChange="AllRows"
-                                               AllowEditing="False"/>
+                                               AllowEditing="False">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand EventName="CellValueChanged"
+                                                               Command="{Binding PermissionChangeCommand}"/>
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxg:TableView>
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </dxlc:LayoutItem>

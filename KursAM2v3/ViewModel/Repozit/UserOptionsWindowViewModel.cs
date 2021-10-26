@@ -14,8 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Input;
-using KursAM2.View.Repozit;
+using System.Windows.Input;using KursAM2.View.Repozit;
 
 namespace KursAM2.ViewModel.Repozit
 {
@@ -29,6 +28,12 @@ namespace KursAM2.ViewModel.Repozit
 
     public sealed class UserOptionsWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
     {
+        #region Field
+
+        private string oldUserNameForCopy = null;
+
+        #endregion
+
         #region Constructor
 
         public UserOptionsWindowViewModel() 
@@ -41,20 +46,22 @@ namespace KursAM2.ViewModel.Repozit
             IsLoginEnable = true;
         }
 
-        public UserOptionsWindowViewModel(TypeChangeUser typeOfChange, string loginName) 
+        public UserOptionsWindowViewModel(TypeChangeUser typeOfChange, string loginName)
         {
+            TypeChangeUser = typeOfChange;
             switch (typeOfChange)
             {
                 case TypeChangeUser.CopyUser:
                 {
                         // IsNewUser = true
+                    oldUserNameForCopy = loginName;
+                    WindowName = $"Создание нового пользователя, копия из {loginName}";
                     LoadRegisteredUsers();
                     LoadDataSourceAndRoleList();
                     TypeChangeUser = TypeChangeUser.CopyUser;
                     LoadExistingUser(loginName);
                     LoginName = null;
                     FullName = null;
-                    WindowName = "Создание нового пользователя";
                     ChangesViewAvailable = true;
                     IsLoginEnable = true;
                     break;
@@ -434,6 +441,7 @@ namespace KursAM2.ViewModel.Repozit
 
         private void UpdateLinkDataSource(object obj)
         {
+            if (TypeChangeUser == TypeChangeUser.CopyUser || TypeChangeUser == TypeChangeUser.CreateUser) return;
             if (!(obj is CellValueChangedEventArgs e)) return;
             using (var ctx = GlobalOptions.KursSystem())
             {
@@ -523,6 +531,19 @@ namespace KursAM2.ViewModel.Repozit
                                 {
                                     var old = ctx.DataSources.Include(_ => _.Users).FirstOrDefault(_ => _.Id == c.Id);
                                     old?.Users.Add(newUser);
+                                    var tt = ctx.UserMenuRight.Where(_ =>
+                                        _.LoginName == oldUserNameForCopy
+                                        && _.DBId == c.Id).ToList();
+                                    foreach (var u in tt)
+                                    {
+                                        ctx.UserMenuRight.Add(new UserMenuRight
+                                        {
+                                            Id = Guid.NewGuid(),
+                                            DBId = c.Id,
+                                            MenuId = u.MenuId,
+                                            LoginName = newUser.Name
+                                        });
+                                    }
                                 }
 
                             ctx.SaveChanges();
@@ -783,9 +804,10 @@ namespace KursAM2.ViewModel.Repozit
             return isValid;
         }
 
-        public bool ValidatePassword(string Password, string PasswordConfirm)
+        // ReSharper disable once UnusedMember.Global
+        public bool ValidatePassword(string password, string passwordConfirm)
         {
-            var isValid = Equals(Password, PasswordConfirm);
+            var isValid = Equals(password, passwordConfirm);
             SetError(isValid, "Введенные пароли не совпадают, повторите ввод.");
             return isValid;
         }

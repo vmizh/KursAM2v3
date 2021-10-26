@@ -269,10 +269,16 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void DeleteAccrual(object obj)
         {
-            if (CurrentAccrual.State != RowStatus.NewRow)
+            if (CurrentAccrual.State != RowStatus.NewRow) 
                 DeletedRows.Add(CurrentAccrual);
             UnitOfWork.Context.AccuredAmountOfSupplierRow.Remove(CurrentAccrual.Entity);
             Document.Rows.Remove(CurrentAccrual);
+            if (Form is AccruedAmountOfSupplierView frm)
+            {
+                frm.gridRows.UpdateTotalSummary();
+                frm.gridCashRows.UpdateTotalSummary();
+            }
+            Document.RaisePropertyChanged("Summa");
         }
 
         public override void RefreshData(object obj)
@@ -435,7 +441,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                     var winManager = new WindowManager();
                     var res = winManager.ShowWinUIMessageBox(
                         $"Сумма платежа {CurrentAccrual.Summa - CurrentAccrual.PaySumma:n2} " +
-                        $"меньше остатка по кассе {maxsumma:n2}! " +
+                        $"больше остатка по кассе {maxsumma:n2}! " +
                         $"Будет установлена сумма {maxsumma}.",
                         "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Stop);
                     if (res == MessageBoxResult.No) return;
@@ -475,7 +481,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 });
                 DocumentsOpenManager.Open(DocumentType.CashOut, vm, Form);
                 if (Form is AccruedAmountOfSupplierView frm)
+                {
                     frm.gridRows.UpdateTotalSummary();
+                    frm.gridCashRows.UpdateTotalSummary();
+                }
             }
         }
 
@@ -572,7 +581,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                         var winManager = new WindowManager();
                         var res = winManager.ShowWinUIMessageBox(
                             $"Сумма платежа {CurrentAccrual.Summa - CurrentAccrual.PaySumma:n2} " +
-                            $"меньше остатка по кассе {maxsumma:n2}! " +
+                            $"большу остатка по счету {maxsumma:n2}! " +
                             $"Будет установлена сумма {maxsumma}.",
                             "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Stop);
                         if (res == MessageBoxResult.No) return;
@@ -631,7 +640,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 }
 
                 if (Form is AccruedAmountOfSupplierView frm)
+                {
                     frm.gridRows.UpdateTotalSummary();
+                    frm.gridCashRows.UpdateTotalSummary();
+                }
             }
         }
 

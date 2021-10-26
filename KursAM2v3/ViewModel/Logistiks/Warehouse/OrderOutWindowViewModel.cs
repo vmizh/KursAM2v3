@@ -9,7 +9,6 @@ using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -23,11 +22,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public sealed class OrderOutWindowViewModel : RSWindowViewModelBase
     {
+        //private readonly NomenklManager nomManager = new NomenklManager();
         private readonly WarehouseManager orderManager;
+        private readonly WindowManager winManager = new WindowManager();
         private WarehouseOrderOutRow myCurrentRow;
         private WarehouseOrderOut myDocument;
-        private readonly NomenklManager nomManager = new NomenklManager();
-        private readonly WindowManager winManager = new WindowManager();
 
         [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         public OrderOutWindowViewModel(StandartErrorManager errManager)
@@ -72,15 +71,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 myDocument = value;
                 Rows.Clear();
                 if (myDocument != null)
-                {
-                    foreach (var r in Document.Rows) Rows.Add(r);
-                }
+                    foreach (var r in Document.Rows)
+                        Rows.Add(r);
 
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Rows));
             }
             get => myDocument;
         }
+
         public WarehouseOrderOutRow CurrentRow
         {
             set
@@ -91,13 +90,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
             get => myCurrentRow;
         }
+
         public ObservableCollection<WarehouseOrderOutRow> Rows { set; get; } =
             new ObservableCollection<WarehouseOrderOutRow>();
 
         #region Справочники
 
         public List<Kontragent> Kontragents => MainReferences.ActiveKontragents.Values.ToList();
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse> StoreDictionary => MainReferences.Warehouses.Values.ToList();
+
+        public List<Core.EntityViewModel.NomenklManagement.Warehouse> StoreDictionary =>
+            MainReferences.Warehouses.Values.ToList();
 
         #endregion
 
@@ -115,20 +117,22 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NotEdited;
+
         public override bool IsCanSaveData => Document != null && (Document.State != RowStatus.NotEdited
                                                                    || Document.Rows.Any(_ =>
                                                                        _.State != RowStatus.NotEdited)
                                                                    || Document.DeletedRows.Count > 0)
                                                                && Document.WarehouseOut != null &&
                                                                Document.WarehouseIn != null;
+
         public override RowStatus State => Document?.State ?? RowStatus.NewRow;
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new OrderOutView {Owner = Application.Current.MainWindow};
+            var frm = new OrderOutView { Owner = Application.Current.MainWindow };
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderOut", true))
-                {Form = frm};
+                { Form = frm };
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -136,10 +140,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocNewCopy(object form)
         {
             if (Document == null) return;
-            var frm = new OrderOutView {Owner = Application.Current.MainWindow};
+            var frm = new OrderOutView { Owner = Application.Current.MainWindow };
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderOut", true))
-                {Form = frm};
+                { Form = frm };
             ctx.Document = orderManager.NewOrderOutCopy(Document);
             frm.Show();
             frm.DataContext = ctx;
@@ -148,9 +152,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocNewCopyRequisite(object form)
         {
             if (Document == null) return;
-            var frm = new OrderOutView {Owner = Application.Current.MainWindow};
+            var frm = new OrderOutView { Owner = Application.Current.MainWindow };
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                "WarehouseOrderOut", true)) {Form = frm, Document = orderManager.NewOrderOutRecuisite(Document)};
+                "WarehouseOrderOut", true)) { Form = frm, Document = orderManager.NewOrderOutRecuisite(Document) };
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -167,16 +171,19 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 if (dc != 0)
                     Document = orderManager.GetOrderOut(dc);
             }
+
             if (Document != null)
             {
                 foreach (var r in Document.Rows)
                 {
                     r.MaxQuantity = NomenklManager.GetNomenklCount(Document.Date, r.DDT_NOMENKL_DC,
-                                        Document.WarehouseOut.DOC_CODE) + r.DDT_KOL_RASHOD;
+                        Document.WarehouseOut.DOC_CODE) + r.DDT_KOL_RASHOD;
                     r.myState = RowStatus.NotEdited;
                 }
+
                 Document.myState = RowStatus.NotEdited;
             }
+
             RaisePropertyChanged(nameof(Document));
             Document.RaisePropertyChanged("State");
             RaisePropertyChanged(nameof(Document.Sender));
@@ -197,7 +204,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void AddNomenkl(object obj)
         {
-            var nomenkls = StandartDialogs.SelectNomenkls(null,true);
+            var nomenkls = StandartDialogs.SelectNomenkls(null, true);
             if (nomenkls == null || nomenkls.Count <= 0) return;
             foreach (var n in nomenkls)
                 if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode && !n.IsUsluga))
@@ -209,9 +216,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
                                                        $"{MainReferences.Warehouses[Document.WarehouseOut.DOC_CODE]}" +
                                                        $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
-                            "Предупреждение",MessageBoxButton.OK,MessageBoxImage.Warning);
+                            "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                         continue;
                     }
+
                     Document.Rows.Add(new WarehouseOrderOutRow
                     {
                         DocCode = -1,
@@ -279,11 +287,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         return;
                 }
             }
+
             if (Form != null)
             {
                 Form.Close();
                 return;
             }
+
             var frm = form as Window;
             frm?.Close();
         }

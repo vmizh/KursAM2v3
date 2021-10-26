@@ -42,6 +42,7 @@ namespace KursAM2.ViewModel.Logistiks.PurchaseOverheads
         private decimal mySummaNotDistribute;
         private TypeDistribNakladOnNomenkl myTypeDistribute;
 
+        // ReSharper disable once UnusedParameter.Local
         public InvoiceSupplierNakladRowViewModel(InvoiceProvider invoice)
         {
         }

@@ -154,13 +154,16 @@ namespace KursAM2.ViewModel.Finance
                         foreach (var sr in SaleTaxRows)
                         {
                             if (sr.IsAutoTax != null) continue;
+                            // ReSharper disable PossibleMultipleEnumeration
                             var nomPurchases =
                                 AllPurchaseDocuments.Where(
                                         _ => _.DDT_NOMENKL_DC == sr.DDT_NOMENKL_DC && _.SD_24.DD_DATE <= sr.Date)
                                     .OrderBy(_ => _.TD_26.SD_26.SF_POSTAV_DATE)
                                     .ThenBy(_ => _.TD_26.SD_26.DOC_CODE);
                             if (!nomPurchases.Any()) continue;
+                            
                             var nomPurchaseLast = nomPurchases.Last();
+                            // ReSharper disable once ConstantConditionalAccessQualifier
                             if (nomPurchaseLast?.TD_26.SD_26.SF_CRS_DC == sr.TD_84.SD_84.SF_CRS_DC)
                             {
                                 sr.IsAutoTax = true;
@@ -177,7 +180,7 @@ namespace KursAM2.ViewModel.Finance
                             {
                                 continue;
                             }
-
+                            // ReSharper restore PossibleMultipleEnumeration
                             var r = ctx.TD_24.SingleOrDefault(_ => _.DOC_CODE == sr.DOC_CODE && _.CODE == sr.Code);
                             if (r == null) continue;
                             r.SaleTaxRate = sr.Rate;

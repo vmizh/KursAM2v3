@@ -594,7 +594,7 @@ namespace KursAM2.ViewModel.Dogovora
             {
                 var service = GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "Вы уверены, что хотите удалить данный документ?";
-                var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
+                var res = service.ShowDialog(MessageButton.YesNo, "Запрос", this);
                 if (res != MessageResult.Yes) return;
                 switch (res)
                 {

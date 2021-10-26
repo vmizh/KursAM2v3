@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ using Data;
 using DevExpress.Xpf.Bars;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.LayoutControl;
+using Helper;
 using KursAM2.Auxiliary;
 using KursAM2.Managers;
 using KursAM2.View.Base;
@@ -912,6 +914,92 @@ namespace KursAM2.View
             }
         }
 
+        private void LoadTiles()
+        {
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                var tileOrders = GlobalOptions.KursSystem().UserMenuOrder
+                    .Where(_ => _.UserId == GlobalOptions.UserInfo.KursId).ToList();
+                var tileItems = ctx.KursMenuGroup.ToList();
+                var tileUsersItems = ctx.UserMenuRight.Where(_ => _.DBId == GlobalOptions.DataBaseId
+                                                                  && _.LoginName.ToUpper() ==
+                                                                  GlobalOptions.UserInfo.NickName.ToUpper())
+                    .ToList();
+                var tileGroupsTemp = new List<TileGroup>();
+                foreach (var grp in tileItems.OrderBy(_ => _.OrderBy))
+                {
+                    var grpOrd = tileOrders.FirstOrDefault(_ => _.IsGroup && _.TileId == grp.Id);
+                    foreach (var t in grp.KursMenuItem)
+                        if (tileUsersItems.Any(_ => _.MenuId == t.Id) && tileGroupsTemp.All(_ => _.Id != grp.Id))
+                        {
+                            var newGrp = new TileGroup
+                            {
+                                Id = grp.Id,
+                                Name = grp.Name,
+                                Notes = grp.Note,
+                                Picture = ImageManager.ByteToImage(grp.Picture),
+                                // ReSharper disable once PossibleInvalidOperationException
+                                OrderBy = (int) (grpOrd != null ? grpOrd.Order : grp.Id)
+                            };
+                            tileGroupsTemp.Add(newGrp);
+                        }
+                }
+
+                var tileGroups = new List<TileGroup>(tileGroupsTemp.OrderBy(_ => _.OrderBy));
+                foreach (var grp in tileGroups)
+                {
+                    var tItems = new List<TileItem>();
+                    foreach (var tile in ctx.KursMenuItem.Where(t => t.GroupId == grp.Id).ToList())
+                    {
+                        if (tileUsersItems.All(_ => _.MenuId != tile.Id)) continue;
+                        var ord = tileOrders.FirstOrDefault(_ => !_.IsGroup && _.TileId == tile.Id);
+                        tItems.Add(new TileItem
+                        {
+                            Id = tile.Id,
+                            Name = tile.Name,
+                            Notes = tile.Note,
+                            Picture = ImageManager.ByteToImage(tile.Picture),
+                            GroupId = tile.GroupId,
+                            // ReSharper disable once PossibleInvalidOperationException
+                            OrderBy = (int) (ord != null ? ord.Order : tile.Id)
+                        });
+                    }
+
+                    grp.TileItems = new List<TileItem>(tItems.OrderBy(_ => _.OrderBy));
+                }
+
+                GlobalOptions.UserInfo.MainTileGroups = new List<TileGroup>(tileGroups.OrderBy(_ => _.OrderBy));
+                GlobalOptions.UserInfo.Groups =
+                    GlobalOptions.GetEntities().EXT_GROUPS.Select(
+                            grp => new UserGroup {Id = grp.GR_ID, Name = grp.GR_NAME})
+                        .ToList();
+                tileMainGroup.Children.Clear();
+                foreach (var tileGroup in GlobalOptions.UserInfo.MainTileGroups.OrderBy(_ => _.OrderBy))
+                {
+                    var newTileGroup = new Tile { Tag = tileGroup.Id };
+                    if (tileGroup.Picture != null)
+                    {
+                        newTileGroup.Width = tileGroup.Picture.Source.Width;
+                        newTileGroup.Height = tileGroup.Picture.Source.Height;
+                        newTileGroup.Margin = new Thickness(0, 0, 0, 0);
+                        newTileGroup.Padding = new Thickness(0, 0, 0, 0);
+                        newTileGroup.Content = tileGroup.Picture;
+                        var bc = new BrushConverter();
+                        var brush = (Brush)bc.ConvertFrom("#FFD0D6D3");
+                        if (brush != null)
+                        {
+                            brush.Freeze();
+                            newTileGroup.Background = brush;
+                            newTileGroup.Foreground = brush;
+                            newTileGroup.ToolTip = tileGroup.Notes;
+                        }
+                    }
+
+                    tileMainGroup.Children.Add(newTileGroup);
+                }
+            }
+        }
+
         private void DXWindow_Loaded(object sender, RoutedEventArgs e)
         {
             try
@@ -970,6 +1058,8 @@ namespace KursAM2.View
 
         private void BarButtonItem2_OnItemClick(object sender, ItemClickEventArgs e)
         {
+            LoadTiles();
+            MainReferences.Refresh();
         }
 
         private void tileMainGroup_ItemPositionChanged(object sender, ValueChangedEventArgs<int> e)

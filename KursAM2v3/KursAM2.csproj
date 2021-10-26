@@ -68,7 +68,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.10.0.0\lib\net461\AutoMapper.dll</HintPath>
+      <HintPath>..\packages\AutoMapper.10.1.1\lib\net461\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="DevExpress.Data.Desktop.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Data.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
@@ -348,7 +348,6 @@
     <Compile Include="ViewModel\Finance\MutualAcountingInfoWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\MutualAcountingWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\MutualAccountingWindowSearchViewModel.cs" />
-    <Compile Include="ViewModel\Finance\InvoiceSupplierWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\Invoices\SchetSupplierSelectViewModel.cs" />
     <Compile Include="ViewModel\Finance\KontragentPaymentInfo.cs" />
     <Compile Include="ViewModel\Finance\PurchaseRow.cs" />

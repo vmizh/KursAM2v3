@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
@@ -7,6 +8,7 @@ using Core;
 using Core.EntityViewModel.Systems;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Data;
 using DevExpress.Xpf.Grid;
 using KursRepositories.View;
 
@@ -43,6 +45,20 @@ namespace KursRepositories.ViewModels
             new();
 
         public bool IsPermissionEnable => CurrentCompany != null;
+
+
+        private KursMenuItemViewModel myCurrentMenuItem;
+
+        public KursMenuItemViewModel CurrentMenuItem
+        {
+            get => myCurrentMenuItem;
+            set
+            {
+                if (myCurrentMenuItem == value) return;
+                myCurrentMenuItem = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public DataSourcesViewModel CurrentCompany
         {
@@ -206,7 +222,7 @@ namespace KursRepositories.ViewModels
         private void EditUser(object obj)
         {
             var ctx = new UserCreationWindowViewModel(UserListCurrentItem.Name);
-            var form = new UserCreationWindow {DataContext = ctx};
+            var form = new UserCreationWindow { DataContext = ctx };
             ctx.Form = form;
             form.ShowDialog();
         }
@@ -219,7 +235,7 @@ namespace KursRepositories.ViewModels
         private void openWindowCreationRole(object obj)
         {
             var ctx = new RoleCreationWindowViewModel1();
-            var form = new RoleCreationWindow {DataContext = ctx};
+            var form = new RoleCreationWindow { DataContext = ctx };
             ctx.Form = form;
             form.ShowDialog();
             /*if (ctx.NewRole != null)
@@ -260,7 +276,7 @@ namespace KursRepositories.ViewModels
                 var menuItem = ctx.KursMenuItem.FirstOrDefault(_ => _.Id == CurrentPermission.Id);
                 if (role != null && menuItem != null)
                 {
-                    if ((bool) e.Value)
+                    if ((bool)e.Value)
                         role.KursMenuItem.Add(menuItem);
                     else
                         role.KursMenuItem.Remove(menuItem);
@@ -278,7 +294,7 @@ namespace KursRepositories.ViewModels
         private void openWindowCreationUser(object obj)
         {
             var ctx = new UserCreationWindowViewModel();
-            var form = new UserCreationWindow {DataContext = ctx};
+            var form = new UserCreationWindow { DataContext = ctx };
             ctx.Form = form;
             form.ShowDialog();
             // Чистой воды перепрограммирование
@@ -327,36 +343,38 @@ namespace KursRepositories.ViewModels
             }
         }
 
-        /*public ICommand SaveChangesInUsersGridControlCommand
+        public ICommand PermissionChangeCommand
         {
-            get { return new Command(saveChangesInUsersGridControl, _ => true); }
+            get { return new Command(PermissionChange, _ => true); }
         }
 
-        private void saveChangesInUsersGridControl(object obj)
+        private void PermissionChange(object obj)
         {
             using (var ctx = GlobalOptions.KursSystem())
             {
-                var oldUserList = ctx.Users.ToList();
-                foreach (var usr in UserList)
+                var old = ctx.UserMenuRight.FirstOrDefault(_ => _.LoginName == GlobalOptions.UserInfo.NickName
+                && _.MenuId == CurrentMenuItem.Id && _.DBId == CurrentCompany.Id);
+                if (CurrentMenuItem.IsSelectedItem)
                 {
-                    var rightUser = oldUserList.SingleOrDefault(_ => _.Id == usr.Id);
-
-                    if (rightUser != null)
-                    {
-                        rightUser.Id = usr.Id;
-                        rightUser.Name = usr.Name;
-                        rightUser.FullName = usr.FullName;
-                        rightUser.Note = usr.Note;
-                        rightUser.Avatar = usr.Avatar;
-                        rightUser.IsAdmin = usr.IsAdmin;
-                        rightUser.IsTester = usr.IsTester;
-                        rightUser.IsDeleted = usr.IsDeleted;
-                    }
+                    if (old == null)
+                        ctx.UserMenuRight.Add(new UserMenuRight
+                        {
+                            Id = Guid.NewGuid(),
+                            DBId = CurrentCompany.Id,
+                            MenuId = CurrentMenuItem.Id,
+                            LoginName = GlobalOptions.UserInfo.NickName
+                        });
                 }
+                else
+                {
+                    if (old != null)
+                        ctx.UserMenuRight.Remove(old);
+                }
+
                 ctx.SaveChanges();
-                MessageBox.Show("Данные сохранены.");
+
             }
-        }*/
+        }
 
         public ICommand UpdateUsersViewCommand
         {

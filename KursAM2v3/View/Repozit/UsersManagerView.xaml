@@ -59,7 +59,7 @@
                                 <dxg:TableView ShowTotalSummary="False"
                                                ShowAutoFilterRow="True">
                                     <dxmvvm:Interaction.Behaviors> 
-                                        <dxmvvm:EventToCommand EventName="CellValueChanging" 
+                                        <dxmvvm:EventToCommand EventName="CellValueChanged" 
                                                                Command="{Binding UpdateLinkToDocumentCommand}"
                                                                PassEventArgsToCommand="True"/> 
                                     </dxmvvm:Interaction.Behaviors> 

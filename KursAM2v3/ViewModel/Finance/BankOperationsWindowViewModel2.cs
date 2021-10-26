@@ -217,6 +217,10 @@ namespace KursAM2.ViewModel.Finance
 
         public override void DocDelete(object obj)
         {
+            var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить транзакцию?", "Запрос",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+            if (res != MessageBoxResult.Yes) return;
             var date = CurrentBankOperations.Date;
             manager.DeleteBankOperations(CurrentBankOperations, CurrentBankAccount.DocCode);
             UpdateValueInWindow(CurrentBankOperations);

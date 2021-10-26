@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
@@ -7,6 +8,7 @@ using Core;
 using Core.EntityViewModel.Systems;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Data;
 using DevExpress.Xpf.Grid;
 using KursAM2.View.Repozit;
 using KursRepositories.ViewModels;
@@ -313,34 +315,30 @@ namespace KursAM2.ViewModel.Repozit
 
         private void UpdateLinkToDocument(object obj)
         {
-            //if (!(obj is CellValueChangedEventArgs e)) return;
-            //using (var ctx = GlobalOptions.KursSystem())
-            //{
-            //    if (UserListCurrentItem != null)
-            //    {
-            //        var newItem = new UserMenuRight
-            //        {
-            //            Id = Guid.NewGuid(),
-            //            LoginName = UserListCurrentItem.Name,
-            //            DBId = CurrentCompany.Id,
-            //            MenuId = CurrentPermission.Id,
-            //            IsReadOnly = false
-            //        };
-            //        ctx.UserMenuRight.Add(newItem);
-            //    }
-            //    else
-            //    {
-            //        var linkdoc = ctx.UserMenuRight.FirstOrDefault(_ => _.LoginName == UserListCurrentItem.Name
-            //                                                            && _.DBId == CurrentCompany.Id &&
-            //                                                            _.MenuId == CurrentPermission.Id);
-            //        if (linkdoc != null)
-            //        {
-            //            ctx.UserMenuRight.Remove(linkdoc);
-            //        }
-            //    }
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                var old = ctx.UserMenuRight.FirstOrDefault(_ => _.LoginName == UserListCurrentItem.Name
+                                                                && _.MenuId == CurrentPermission.Id && _.DBId == CurrentCompany.Id);
+                if (obj is CellValueChangedEventArgs o && (bool)o.Value )
+                {
+                    if (old == null)
+                        ctx.UserMenuRight.Add(new UserMenuRight
+                        {
+                            Id = Guid.NewGuid(),
+                            DBId = CurrentCompany.Id,
+                            MenuId = CurrentPermission.Id,
+                            LoginName = UserListCurrentItem.Name
+                        });
+                }
+                else
+                {
+                    if (old != null)
+                        ctx.UserMenuRight.Remove(old);
+                }
 
-            //    ctx.SaveChanges();
-            //}
+                ctx.SaveChanges();
+
+            }
         }
 
         public ICommand UpdateLinkKursMenuItemCommand

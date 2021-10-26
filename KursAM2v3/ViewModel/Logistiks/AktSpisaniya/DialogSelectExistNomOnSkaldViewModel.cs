@@ -21,7 +21,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         private NomenklRemainsOnSkladWithPrice myCurrentNomenkl;
         private NomenklRemainsOnSkladWithPrice myCurrentSelectedNomenkl;
         private Core.EntityViewModel.NomenklManagement.Warehouse warehouse;
-        private DateTime Date = DateTime.Today;
+        private readonly DateTime Date;
         
         #endregion
 
@@ -31,6 +31,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public ObservableCollection<NomenklRemainsOnSkladWithPrice> NomenklList { set; get; } =
             new ObservableCollection<NomenklRemainsOnSkladWithPrice>();
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<NomenklRemainsOnSkladWithPrice> NomenklSkladRows { set; get; } =
             new ObservableCollection<NomenklRemainsOnSkladWithPrice>();
 

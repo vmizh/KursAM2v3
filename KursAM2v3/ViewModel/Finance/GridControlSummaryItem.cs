@@ -4,6 +4,7 @@ using DevExpress.Xpf.Grid;
 
 namespace KursAM2.ViewModel.Finance
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class GridControlSummaryItem
     {
         public SummaryItemType Type { get; set; }

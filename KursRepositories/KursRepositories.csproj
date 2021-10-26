@@ -168,6 +168,10 @@
       <Project>{ae6bdc42-9b1e-4f09-8923-2295b1c87212}</Project>
       <Name>Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Helper\Helper.csproj">
+      <Project>{45442B20-578B-4519-A31C-6BA5102B240F}</Project>
+      <Name>Helper</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="View\MainWindowPermissions.xaml">
