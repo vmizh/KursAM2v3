@@ -46,7 +46,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             StartDate = EndDate.AddDays(-30);
             IsCanDocNew = true;
             LayoutName = "AktSpisaniyaSearchView";
-            WindowName = "Акты списания";
+            WindowName = "Акты списания материалов";
         }
 
         #endregion

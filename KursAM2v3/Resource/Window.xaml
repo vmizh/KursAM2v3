@@ -68,7 +68,7 @@
                             <dx:DialogService.DialogStyle>
                                 <Style TargetType="Window">
                                     <Setter Property="WindowStyle" Value="ToolWindow" />
-                                    <Setter Property="SizeToContent" Value="WidthAndHeight" />  
+                                    <!--<Setter Property="SizeToContent" Value="WidthAndHeight" />-->  
                                 </Style>
                             </dx:DialogService.DialogStyle>
                         </dx:DialogService>
@@ -78,7 +78,7 @@
                             <dx:DialogService.DialogStyle>
                                 <Style TargetType="Window">
                                    <Setter Property="WindowStyle" Value="ToolWindow" />
-                                   <Setter Property="SizeToContent" Value="WidthAndHeight" />  
+                                   <!--<Setter Property="SizeToContent" Value="WidthAndHeight" />-->  
                                 </Style>
                             </dx:DialogService.DialogStyle>
                         </dx:DialogService>
@@ -98,6 +98,7 @@
                             <dx:DialogService.DialogStyle>
                                 <Style TargetType="Window">
                                     <Setter Property="WindowStyle" Value="ToolWindow" />
+                                    <Setter Property="MinWidth" Value="400"/>
                                 </Style>
                             </dx:DialogService.DialogStyle>
                         </dx:DialogService>

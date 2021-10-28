@@ -5,16 +5,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:finance="clr-namespace:KursAM2.ViewModel.Finance"
              mc:Ignorable="d">
     <dxg:GridControl
+        Name="gridControl"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         AutoGenerateColumns="AddNew"
         EnableSmartColumnsGeneration="True"
         ItemsSource="{Binding ObjectList}"
-        CurrentItem="{Binding CurrentObject, UpdateSourceTrigger=PropertyChanged}" FontSize="14"
+        CurrentItem="{Binding CurrentObject, UpdateSourceTrigger=PropertyChanged}" 
+        SelectedItem="{Binding CurrentObject, UpdateSourceTrigger=PropertyChanged}" 
+        FontSize="14"
         SelectionMode="Row"
-        AutoGeneratingColumn="DataControlBase_OnAutoGeneratingColumn">
+        AutoGeneratingColumn="DataControlBase_OnAutoGeneratingColumn" 
+        >
         <dxmvvm:Interaction.Behaviors>
             <dxmvvm:EventToCommand EventName="MouseDoubleClick"
                                    Command="{Binding OkCommand}" />
@@ -25,10 +31,20 @@
                     RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
         </dxmvvm:Interaction.Behaviors>
         <dxg:GridControl.View>
-            <dxg:TableView
+            <finance:MyTableView
                 ShowColumnHeaders="False"
                 ShowGroupPanel="False"
-                ShowIndicator="False" />
+                ShowIndicator="False"
+                x:Name="tableView"
+                FocusedRowChanging="TableView_OnFocusedRowChanging"
+                >
+                <finance:MyTableView.FormatConditions>
+                    <dxg:FormatCondition ApplyToRow="True" ValueRule="Equal" Value1="0" FieldName="Summa">
+                        <dx:Format Background="LightGray" />
+                    </dxg:FormatCondition>
+                </finance:MyTableView.FormatConditions>
+            </finance:MyTableView>
         </dxg:GridControl.View>
     </dxg:GridControl>
+   
 </UserControl>

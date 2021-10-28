@@ -5,7 +5,6 @@ using System.Linq;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Systems;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
@@ -43,16 +42,15 @@ namespace KursAM2.ViewModel.StartLogin
                 foreach (var h in ctx.LastDocument.Include(_ => _.Users)
                     .Where(_ => _.DbId == GlobalOptions.DataBaseId && _.LastOpen > d)
                     .OrderByDescending(_ => _.LastOpen))
-                {
                     LastDocuments.Add(new LastUsersDocumentViewModel(h));
-                }
             }
         }
 
         public override void DocumentOpen(object obj)
         {
             // ReSharper disable once PossibleInvalidOperationException
-            DocumentsOpenManager.Open((DocumentType)CurrentLastDocument.Entity.DocType, (decimal)CurrentLastDocument.Entity.DocDC);
+            DocumentsOpenManager.Open((DocumentType)CurrentLastDocument.Entity.DocType,
+                (decimal)CurrentLastDocument.Entity.DocDC, CurrentLastDocument.Entity.DocId);
             Form.Close();
         }
 
@@ -77,7 +75,5 @@ namespace KursAM2.ViewModel.StartLogin
         }
 
         #endregion
-
-
     }
 }

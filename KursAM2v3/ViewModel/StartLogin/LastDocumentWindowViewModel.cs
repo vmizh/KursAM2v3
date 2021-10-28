@@ -52,7 +52,7 @@ namespace KursAM2.ViewModel.StartLogin
         {
             DocumentsOpenManager.Open((DocumentType) CurrentLastDocument.Entity.DocType,
                 // ReSharper disable once PossibleInvalidOperationException
-                (decimal) CurrentLastDocument.Entity.DocDC);
+                CurrentLastDocument.Entity.DocDC ?? 0,CurrentLastDocument.Entity.DocId);
             //Form.Close();
         }
 

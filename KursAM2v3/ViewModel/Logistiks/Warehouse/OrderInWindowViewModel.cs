@@ -521,8 +521,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand DeleteNomenklCommand
         {
-            get { return new Command(DeleteNomenkl, _ => CurrentRow.State == RowStatus.NewRow 
-                                                         || CurrentRow.LinkInvoice == null); }
+            get { return new Command(DeleteNomenkl, _ => CurrentRow != null && (CurrentRow.State == RowStatus.NewRow 
+                                                                    || CurrentRow.LinkInvoice == null)); }
         }
 
         private void DeleteNomenkl(object obj)

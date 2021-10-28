@@ -108,7 +108,7 @@ namespace Core.EntityViewModel.CommonReferences
         /// <summary>
         /// “ипы начислений дл€ внебаласовых контрагентов
         /// </summary>
-        [Display(Name = "“ипы начислений дл€ внебаласовых контрагентов")]
+        [Display(Name = "ѕр€мые затраты")]
         AccruedAmountOfSupplier = 1005
 
     }

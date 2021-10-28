@@ -161,7 +161,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public override string LayoutName => "AktSpisaniyaNomenklTitleView";
 
         public override string WindowName =>
-            Document == null ? "Акт списания" : $"Акт списания №{Document?.DocNumber} от {Document?.DocDate}";
+            Document == null ? "Акт списания материалов(новый)" : $"Акт списания материалов №{Document?.DocNumber} от {Document?.DocDate}";
 
         // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<AktSpisaniyaRowViewModel> SelectedRows { set; get; }

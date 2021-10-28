@@ -162,7 +162,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         }
 
         public override string Description =>
-            $"Прямой расход от поставщиков №{Document.DocInNum}/{Document.DocExtNum} " +
+            $"Прямой расход №{Document.DocInNum}/{Document.DocExtNum} " +
             $"от {Document.DocDate.ToShortDateString()} Контрагент: {Document.Kontragent} на сумму {Document.Summa} " +
             $"{Document.Currency}";
 
@@ -427,18 +427,27 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         }
 
         private void AddCashDoc(object obj)
-        {
+        { 
             var ctx = new SelectCashBankDialogViewModel(true, Document.Currency);
             var service = GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(MessageButton.OKCancel, "Выбрать кассу", ctx) == MessageResult.OK)
+            if (service.ShowDialog(MessageButton.OKCancel, "Выбрать кассу", ctx) == MessageResult.OK
+            || ctx.DialogResult == MessageResult.OK)
             {
+                var winManager = new WindowManager();
                 if (ctx.CurrentObject == null) return;
                 var cash = ctx.CurrentObject;
                 var maxsumma =
                     CashManager.GetCashCurrencyRemains(cash.DocCode, Document.Currency.DocCode, DateTime.Today);
+                if (maxsumma <= 0)
+                {
+                    winManager.ShowWinUIMessageBox(
+                        $"Остаток по кассе 0 {Document.Currency}.Ордер не будет создан.",
+                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Stop);
+                    return;
+                }
                 if (CurrentAccrual.Summa - CurrentAccrual.PaySumma > maxsumma)
                 {
-                    var winManager = new WindowManager();
+                   
                     var res = winManager.ShowWinUIMessageBox(
                         $"Сумма платежа {CurrentAccrual.Summa - CurrentAccrual.PaySumma:n2} " +
                         $"больше остатка по кассе {maxsumma:n2}! " +
@@ -484,6 +493,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 {
                     frm.gridRows.UpdateTotalSummary();
                     frm.gridCashRows.UpdateTotalSummary();
+                    CurrentAccrual.RaisePropertyChanged("PaySumma");
                 }
             }
         }
@@ -548,7 +558,11 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             CurrentAccrual.CashDocs.Remove(CurrentCash);
 
             if (Form is AccruedAmountOfSupplierView frm)
+            {
                 frm.gridRows.UpdateTotalSummary();
+                frm.gridCashRows.UpdateTotalSummary();
+                CurrentAccrual.RaisePropertyChanged("PaySumma");
+            }
         }
 
         [Display(AutoGenerateField = false)]
@@ -569,6 +583,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             var service = GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.OK)
             {
+                var winManager = new WindowManager();
                 if (ctx.CurrentObject == null) return;
                 var CurrentBankAccount = ctx.CurrentObject;
                 if (CurrentBankAccount != null)
@@ -576,9 +591,15 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                     var manager = new BankOperationsManager();
                     var maxsumma = manager.GetRemains2(CurrentBankAccount.DocCode, DateTime.Today, DateTime.Today)
                         .SummaEnd;
+                    if (maxsumma <= 0)
+                    {
+                        winManager.ShowWinUIMessageBox(
+                            $"Остаток по банковскому счету = 0 {Document.Currency}.Транзакция не будет создана.",
+                            "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Stop);
+                        return;
+                    }
                     if (CurrentAccrual.Summa - CurrentAccrual.PaySumma > maxsumma)
                     {
-                        var winManager = new WindowManager();
                         var res = winManager.ShowWinUIMessageBox(
                             $"Сумма платежа {CurrentAccrual.Summa - CurrentAccrual.PaySumma:n2} " +
                             $"большу остатка по счету {maxsumma:n2}! " +
@@ -643,6 +664,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 {
                     frm.gridRows.UpdateTotalSummary();
                     frm.gridCashRows.UpdateTotalSummary();
+                    CurrentAccrual.RaisePropertyChanged("PaySumma");
                 }
             }
         }

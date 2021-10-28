@@ -55,10 +55,12 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         private CashBankItem myCurrentObject;
         private readonly bool IsCash;
         private Currency currency;
-
+        
         #endregion
 
         #region Properties
+
+        public new MessageResult DialogResult = MessageResult.No;
 
         public UserControl CustomDataUserControl { set; get; } = new SelectCashBankDialogView();
 
@@ -72,6 +74,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             set
             {
                 if (myCurrentObject == value) return;
+                if (value?.Summa <= 0)
+                {
+                    return;
+                }
                 myCurrentObject = value;
                 RaisePropertyChanged();
             }
@@ -89,7 +95,12 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         public override void Ok(object obj)
         {
             winCurrentService = GetService<ICurrentWindowService>();
-            if (winCurrentService != null) winCurrentService.Close();
+            if (winCurrentService != null)
+            {
+                DialogResult = MessageResult.OK;
+                winCurrentService.Close();
+            }
+
         }
 
         public override void Cancel(object obj)
@@ -98,6 +109,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             if (winCurrentService != null)
             {
                 CurrentObject = null;
+                DialogResult = MessageResult.Cancel;
                 winCurrentService.Close();
             }
         }

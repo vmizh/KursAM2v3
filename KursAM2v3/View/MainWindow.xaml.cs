@@ -227,7 +227,7 @@ namespace KursAM2.View
                         break;
 
                     // Акт списания материалов
-                    case "Списание материалов":
+                    case "Акт списания материалов":
                         var actCtx = new AktSpisaniyaNomenklSearchViewModel();
                         form = new StandartSearchView
                         {
