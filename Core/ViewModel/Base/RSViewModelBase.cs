@@ -179,8 +179,8 @@ namespace Core.ViewModel.Base
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return myDocCode == other.DocCode && myId.Equals(other.Id) && myCode.Equals(other.Code) &&
-                   myRowId.Equals(other.RowId);
+            return myDocCode == other.DocCode && myId == other.Id && myCode == other.Code &&
+                   myRowId == other.RowId;
         }
 
         public virtual bool IsCorrect()

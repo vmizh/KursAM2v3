@@ -15,6 +15,7 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
         {
             InitializeComponent();
             Loaded += AktSpisaniyaView_Loaded;
+
         }
 
         private void AktSpisaniyaView_Loaded(object sender, RoutedEventArgs e)
@@ -74,6 +75,22 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
                 FieldName = "Nomenkl",
                 ShowInColumn = "Nomenkl"
             });
+        }
+
+        private void DataControlBase_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+        {
+            e.Column.Name = e.Column.FieldName;
+            switch (e.Column.FieldName)
+            {
+                case "Note":
+                    e.Column.EditSettings = new TextEditSettings
+                    {
+                        AcceptsReturn = true,
+                        TextWrapping = TextWrapping.Wrap
+
+                    };
+                    break;
+            }
         }
     }
 }

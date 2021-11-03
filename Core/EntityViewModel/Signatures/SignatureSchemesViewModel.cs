@@ -22,6 +22,7 @@ namespace Core.EntityViewModel.Signatures
 
         private void LoadReference()
         {
+            Name = Entity.KursMenuItem.Name;
             if (Entity.SignatureSchemesInfo is {Count: > 0})
             {
                 foreach (var info in Entity.SignatureSchemesInfo)
@@ -43,7 +44,7 @@ namespace Core.EntityViewModel.Signatures
         #region Properties
 
         public ObservableCollection<SignatureSchemesInfoViewModel> SchemesInfo { set; get; }
-            = new();
+            = new ();
 
         [Display(AutoGenerateField = false)] public SignatureSchemes Entity { get; set; }
 
@@ -55,6 +56,7 @@ namespace Core.EntityViewModel.Signatures
             {
                 if (Entity.Id == value) return;
                 Entity.Id = value;
+                base.Id = value;
                 RaisePropertyChanged();
             }
         }
@@ -85,7 +87,8 @@ namespace Core.EntityViewModel.Signatures
             }
         }
 
-        [Display(Name = "Тип документа")] public string MenuItemName => Entity.KursMenuItem?.Name;
+        [Display(Name = "Тип документа")] 
+        public string MenuItemName => Entity.KursMenuItem?.Name;
 
         [Display(Name = "Наименование")]
         public override string Name

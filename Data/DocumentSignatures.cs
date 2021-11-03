@@ -18,5 +18,6 @@ namespace Data
         public int DocumentTypeId { get; set; }
         public System.Guid DocId { get; set; }
         public string Signatures { get; set; }
+        public bool IsSign { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
 
@@ -15,8 +16,10 @@ namespace Core.EntityViewModel.Signatures
 
         #region Properties
 
+        [Display(AutoGenerateField = false)]
         public SignatureSchemesInfo Entity { get; set; }
 
+        [Display(AutoGenerateField = false)]
         public override Guid Id
         {
             get => Entity.Id;
@@ -27,7 +30,7 @@ namespace Core.EntityViewModel.Signatures
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public override Guid? ParentId
         {
             get => Entity.ParentId;
@@ -38,7 +41,7 @@ namespace Core.EntityViewModel.Signatures
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public SignatureSchemesInfoViewModel ParentSignature
         {
             get
@@ -60,6 +63,8 @@ namespace Core.EntityViewModel.Signatures
                 RaisePropertyChanged();
             }
         }
+
+        [Display(AutoGenerateField = true, Name = "Тип подписи")]
         public SignatureTypeViewModel SignatureType
         {
             get => mySignatureType;
@@ -72,6 +77,10 @@ namespace Core.EntityViewModel.Signatures
             }
         }
 
+        [Display(AutoGenerateField = false)]
+        public override string Name => mySignatureType?.Name ?? "Не указан";
+
+        [Display(AutoGenerateField = true,Name="Обязателен")]
         public bool IsRequred
         {
             get => Entity.IsRequired;
@@ -83,6 +92,7 @@ namespace Core.EntityViewModel.Signatures
             }
         }
 
+        [Display(AutoGenerateField = true, Name = "Примечание")]
         public override string Note
         {
             get => Entity.Note;
@@ -106,6 +116,8 @@ namespace Core.EntityViewModel.Signatures
         public SignatureSchemesInfoViewModel(SignatureSchemesInfo entity)
         {
             Entity = entity ?? DefaultValue();
+            if(Entity.SignatureType != null)
+                SignatureType = new SignatureTypeViewModel(Entity.SignatureType);
         }
 
         #endregion

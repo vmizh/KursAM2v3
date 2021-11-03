@@ -175,6 +175,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                                                    || Document.Rows.Any(_ => _.State != RowStatus.NotEdited)) &&
             Document.Error == null;
 
+        public override bool IsDocDeleteAllow => Document.Rows.All(_ => _.CashDocs.Count == 0);
+
         public override void DocNewCopy(object form)
         {
             var ctx = new AccruedAmountOfSupplierWindowViewModel(Document.Id);
@@ -264,7 +266,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         [Display(AutoGenerateField = false)]
         public ICommand DeleteAccrualCommand
         {
-            get { return new Command(DeleteAccrual, _ => CurrentAccrual != null); }
+            get
+            {
+                return new Command(DeleteAccrual, _ => CurrentAccrual != null && CurrentAccrual.CashDocs.Count == 0);
+            }
         }
 
         private void DeleteAccrual(object obj)
@@ -283,8 +288,11 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         public override void RefreshData(object obj)
         {
+            bool isMustCheckState = true;
             base.RefreshData(obj);
-            if (IsCanSaveData)
+            if (obj is bool p)
+                isMustCheckState = p;
+            if (IsCanSaveData && isMustCheckState)
             {
                 var service = GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "В документ внесены изменения, сохранить?";
@@ -553,16 +561,14 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                     }
 
                     ctx.SaveChanges();
+                    CurrentAccrual.CashDocs.Remove(CurrentCash);
+                    if (Form is AccruedAmountOfSupplierView frm)
+                    {
+                        frm.gridRows.UpdateTotalSummary();
+                        frm.gridCashRows.UpdateTotalSummary();
+                        CurrentAccrual.RaisePropertyChanged("PaySumma");
+                    }
                 }
-
-            CurrentAccrual.CashDocs.Remove(CurrentCash);
-
-            if (Form is AccruedAmountOfSupplierView frm)
-            {
-                frm.gridRows.UpdateTotalSummary();
-                frm.gridCashRows.UpdateTotalSummary();
-                CurrentAccrual.RaisePropertyChanged("PaySumma");
-            }
         }
 
         [Display(AutoGenerateField = false)]
@@ -581,7 +587,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         {
             var ctx = new SelectCashBankDialogViewModel(false, Document.Currency);
             var service = GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.OK)
+            if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.OK
+            || ctx.DialogResult == MessageResult.OK)
             {
                 var winManager = new WindowManager();
                 if (ctx.CurrentObject == null) return;

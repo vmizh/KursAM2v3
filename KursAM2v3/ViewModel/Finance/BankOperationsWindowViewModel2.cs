@@ -15,7 +15,9 @@ using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.View.Finance;
+using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Helper;
+using KursAM2.ViewModel.Finance.AccruedAmount;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -229,6 +231,15 @@ namespace KursAM2.ViewModel.Finance
             var p = Periods.FirstOrDefault(_ => _.DateStart == dd && _.DateEnd == dd && _.PeriodType == PeriodType.Day);
             if (p != null)
                 CurrentPeriods = p;
+            switch (Parent)
+            {
+                case AccruedAmountOfSupplierView bw:
+                {
+                    if (bw.DataContext is AccruedAmountOfSupplierWindowViewModel vm)
+                        vm.RefreshData(false);
+                    break;
+                }
+            }
         }
 
         public override void DocNewCopy(object obj)

@@ -9,6 +9,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using DevExpress.Xpf.Reports.UserDesigner.Editors;
 using Helper;
 using KursAM2.Managers.Base;
 using KursAM2.View.Dogovors;
@@ -176,7 +177,7 @@ namespace KursAM2.Managers
                         "", cashIn.Document.Description);
                     break;
                 case DocumentType.CashOut:
-                    var cashOut = OpenCashOut(dc, parent);
+                    var cashOut = OpenCashOut(dc, (Window)parent);
                     SaveLastOpenInfo(docType, cashOut.Document.Id, cashOut.Document.DocCode, cashOut.Document.CREATOR,
                         "", cashOut.Document.Description);
                     break;
@@ -197,7 +198,7 @@ namespace KursAM2.Managers
                         "", osi.Document.Description);
                     break;
                 case DocumentType.Bank:
-                    OpenBank(dc);
+                    OpenBank(dc, parent);
                     break;
                 case DocumentType.Waybill:
                     var owb = OpenWayBill(dc);
@@ -307,13 +308,16 @@ namespace KursAM2.Managers
             }
         }
 
-        private static void OpenBank(RSWindowViewModelBase vm)
+        private static void OpenBank(RSWindowViewModelBase vm, object parent = null)
         {
             var form = new BankOperationsView2
             {
                 Owner = Application.Current.MainWindow
             };
-            var dtx = new BankOperationsWindowViewModel2(form);
+            var dtx = new BankOperationsWindowViewModel2(form)
+            {
+                Parent = parent
+            };
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var d = ctx.TD_101.Include(_ => _.SD_101).FirstOrDefault(_ => _.CODE == vm.Code);
@@ -335,13 +339,16 @@ namespace KursAM2.Managers
             }
         }
 
-        private static void OpenBank(decimal dc)
+        private static void OpenBank(decimal dc, object parent = null)
         {
             var form = new BankOperationsView2
             {
                 Owner = Application.Current.MainWindow
             };
-            var dtx = new BankOperationsWindowViewModel2(form);
+            var dtx = new BankOperationsWindowViewModel2(form)
+            {
+                Parent = parent
+            };
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var d = ctx.TD_101.Include(_ => _.SD_101).FirstOrDefault(_ => _.CODE == dc);
@@ -359,6 +366,8 @@ namespace KursAM2.Managers
             {
                 if (!(form.GridDocuments.GetRow(i) is BankOperationsViewModel row) || row.Code != dc) continue;
                 form.TableViewDocuments.FocusedRowHandle = i;
+                form.GridDocuments.SelectedItem = form.GridDocuments.GetRow(i);
+                form.TableViewDocuments.Focus();
                 return;
             }
         }
@@ -567,11 +576,11 @@ namespace KursAM2.Managers
             form.Show();
         }
 
-        private static CashOutWindowViewModel OpenCashOut(decimal dc, object parent)
+        private static CashOutWindowViewModel OpenCashOut(decimal dc, Window parent)
         {
             var ctx = new CashOutWindowViewModel(dc)
             {
-                BookView = parent as CashBookView
+                BookView = parent
             };
             var form = new CashOutView
             {

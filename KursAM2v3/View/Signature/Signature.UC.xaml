@@ -9,7 +9,7 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <DockPanel>
-        <dxg:TreeListControl AutoGenerateColumns="None" 
+        <dxg:TreeListControl AutoGenerateColumns="AddNew" 
                              EnableSmartColumnsGeneration="True" 
                              HorizontalAlignment="Stretch"  
                              MaxHeight="10000"
@@ -17,16 +17,31 @@
                              VerticalAlignment="Stretch"
                              dx:DXSerializer.SerializationID="gridSignatures"
                              dx:DXSerializer.StoreLayoutMode="All"
-                             dxg:DataControlSerializationOptions.AddNewColumns="False"
-                             dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                             dxg:DataControlSerializationOptions.AddNewColumns="True"
+                             dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                              SelectionMode="Row"
-                             ItemsSource="{Binding SignatureRows, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
-                             CurrentItem="{Binding CurrentSignature, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}">
-            <dxg:TreeListControl.Columns>
-                <dxg:TreeListColumn></dxg:TreeListColumn>
-            </dxg:TreeListControl.Columns>                
+                             ItemsSource="{Binding SignatureRows, UpdateSourceTrigger=PropertyChanged}"
+                             CurrentItem="{Binding CurrentSignature, UpdateSourceTrigger=PropertyChanged}"
+                             AutoGeneratingColumn="DataControlBase_OnAutoGeneratingColumn">
+                        
             <dxg:TreeListControl.View>
-                <dxg:TreeListView ShowTotalSummary="True"/>
+                <dxg:TreeListView ShowTotalSummary="False">
+                    <dxg:TreeListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Поставить подпись" Command="{Binding SignedCommand}">
+                                <MenuItem.Icon>
+                                    <Image Source="{StaticResource SignatureAddDrawingImage}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Снять подпись" Command="{Binding UnSignedCommand}">
+                                <MenuItem.Icon>
+                                    <Image Source="{StaticResource SignatureDeleteDrawingImage}" />
+                                </MenuItem.Icon>
+                            </MenuItem> 
+                        </ContextMenu>
+                    </dxg:TreeListView.ContextMenu>
+                </dxg:TreeListView>
+                
             </dxg:TreeListControl.View>
         </dxg:TreeListControl>
     </DockPanel>

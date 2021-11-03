@@ -63,9 +63,6 @@
     <ApplicationIcon>
     </ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup>
-    <LangVersion>7.0</LangVersion>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.10.1.1\lib\net461\AutoMapper.dll</HintPath>
@@ -298,6 +295,7 @@
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
     <Compile Include="Repositories\Logistik\SD_24Repository.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />
+    <Compile Include="Repositories\SignatureRepository.cs" />
     <Compile Include="Resource\ErrorContentConverter.cs" />
     <Compile Include="Resource\ErrorToBrushConverter.cs" />
     <Compile Include="Tests\TreeControlFluentTests.xaml.cs">
@@ -406,6 +404,7 @@
     <Compile Include="ViewModel\Shop\ShopParserExtFilesWindowViewModel.cs" />
     <Compile Include="ViewModel\Shop\NomenklInfo.cs" />
     <Compile Include="ViewModel\Shop\ShopExtFileOrderItem.cs" />
+    <Compile Include="ViewModel\Signatures\SignatureViewModel.cs" />
     <Compile Include="ViewModel\Signatures\SignaturesWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastDocumentWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastUsersDocumentWindowViewModel.cs" />

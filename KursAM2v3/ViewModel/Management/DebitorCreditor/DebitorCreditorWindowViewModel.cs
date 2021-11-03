@@ -13,7 +13,6 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Bars;
-using DevExpress.Xpf.DataAccess.DataSourceWizard;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Management.Calculations;
@@ -489,7 +488,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                 }
             }
 
-            DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, CurrentOperation.DocDC);
+            //DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, CurrentOperation.DocDC);
         }
 
         #endregion

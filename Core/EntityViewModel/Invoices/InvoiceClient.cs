@@ -11,7 +11,6 @@ using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.NomenklManagement;
 using Core.EntityViewModel.Vzaimozachet;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;

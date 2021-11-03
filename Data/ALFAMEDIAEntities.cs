@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity.Core.EntityClient;
+using System.Diagnostics;
 
 namespace Data
 {
@@ -19,6 +20,9 @@ namespace Data
             Configuration.ValidateOnSaveEnabled = validationMode;
             Configuration.LazyLoadingEnabled = lazyLoadingMode;
             Configuration.AutoDetectChangesEnabled = autoDetectMode;
+#if DEBUG
+            Database.Log = e => { Debug.WriteLine(e); };
+#endif
         }
     }
 }

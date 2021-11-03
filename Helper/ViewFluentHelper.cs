@@ -47,7 +47,9 @@ namespace Helper
             var oldContent = item.Content as BaseEdit;
             var defaultText = new TextEdit
             {
-                TextWrapping = TextWrapping.Wrap
+                TextWrapping = TextWrapping.Wrap,
+                AcceptsReturn = true,
+                AcceptsTab = true
             };
             BindingHelper.CopyBinding(oldContent, defaultText, BaseEdit.EditValueProperty);
             item.Content = defaultText;

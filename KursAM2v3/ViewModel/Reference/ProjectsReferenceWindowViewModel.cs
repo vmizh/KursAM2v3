@@ -14,7 +14,7 @@ using KursAM2.View.KursReferences;
 
 namespace KursAM2.ViewModel.Reference
 {
-    public class ProjectReferenceWindowViewModel : RSWindowViewModelBase
+    public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     {
         private Project myCurrentProject;
 

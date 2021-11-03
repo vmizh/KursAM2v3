@@ -10,8 +10,10 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Helper;
 using KursAM2.Managers;
+using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Helper;
+using KursAM2.ViewModel.Finance.AccruedAmount;
 using KursAM2.ViewModel.Management.Calculations;
 
 namespace KursAM2.ViewModel.Finance.Cash
@@ -31,7 +33,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         #region Fields
 
         private CashOut myDocument;
-        public CashBookView BookView;
+        public Window BookView;
         private readonly DateTime oldDate = DateTime.MaxValue;
         public decimal OldSumma;
 
@@ -128,8 +130,10 @@ namespace KursAM2.ViewModel.Finance.Cash
                 CashManager.UpdateDocument(CashDocumentType.CashOut, Document, oldDate);
             if (Document.State == RowStatus.NewRow)
                 CashManager.InsertDocument(CashDocumentType.CashOut, Document);
-            if (BookView?.DataContext is CashBookWindowViewModel ctx)
-                ctx.RefreshActual(Document);
+            if (BookView is CashBookView bw)
+                if (bw.DataContext is CashBookWindowViewModel ctx)
+                    ctx.RefreshActual(Document);
+
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.CashOut), null,
                 Document.DocCode, null, (string)Document.ToJson());
             if (Document.KONTRAGENT_DC != null)
@@ -174,6 +178,9 @@ namespace KursAM2.ViewModel.Finance.Cash
                     CashManager.DeleteDocument(CashDocumentType.CashOut, Document);
                     ctx1?.RefreshActual(Document);
                     CloseWindow(Form);
+                    if (BookView is AccruedAmountOfSupplierView bw)
+                        if (bw.DataContext is AccruedAmountOfSupplierWindowViewModel vm)
+                            vm.RefreshData(false);
                     return;
                 // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
                 case MessageBoxResult.No:

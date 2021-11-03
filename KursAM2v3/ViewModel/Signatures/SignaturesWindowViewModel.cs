@@ -41,6 +41,10 @@ namespace KursAM2.ViewModel.Signatures
         {
             if (Signatures.Any(_ => string.IsNullOrWhiteSpace(_.Name))) return false;
             if (Signatures.Select(_ => _.Name).Distinct().Count() < Signatures.Count) return false;
+            foreach (var ds in DocumentSchemes)
+            {
+                if (ds.SchemesInfo.Any(_ => _.SignatureType == null)) return false;
+            }
             return true;
         }
 
@@ -76,7 +80,7 @@ namespace KursAM2.ViewModel.Signatures
         private UsersViewModel myCurrentUser;
         private KursMenuItemViewModel myCurrentDocType;
         private SignatureSchemesViewModel myCurrentSchema;
-        private SignatureSchemesInfo myCurrentInfoSchema;
+        private SignatureSchemesInfoViewModel myCurrentInfoSchema;
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
@@ -141,7 +145,7 @@ namespace KursAM2.ViewModel.Signatures
             }
         }
 
-        public SignatureSchemesInfo CurrentInfoSchema
+        public SignatureSchemesInfoViewModel CurrentInfoSchema
         {
             get => myCurrentInfoSchema;
             set
@@ -191,27 +195,39 @@ namespace KursAM2.ViewModel.Signatures
             var newSch = new SignatureSchemesInfo
             {
                 Id = Guid.NewGuid(),
+                ParentId = null,
                 IsRequired = true,
                 SchemeId = CurrentSchema.Id
             };
+            CurrentSchema.Entity.SignatureSchemesInfo.Add(newSch);
             var newItem = new SignatureSchemesInfoViewModel(newSch);
             CurrentSchema.SchemesInfo.Add(newItem);
-            
         }
 
         public ICommand AddSchemaSignature2Command
         {
-            get { return new Command(AddSchemaSignature2, _ => CurrentSchema != null); }
+            get { return new Command(AddSchemaSignature2, _ => CurrentSchema != null 
+                                                               && CurrentInfoSchema != null); }
         }
 
         private void AddSchemaSignature2(object obj)
         {
-            
+            var newSch = new SignatureSchemesInfo
+            {
+                Id = Guid.NewGuid(),
+                ParentId = CurrentInfoSchema.Id,
+                IsRequired = true,
+                SchemeId = CurrentSchema.Id
+            };
+            SystemUnitOfWork.Context.SignatureSchemesInfo.Add(newSch);
+            var newItem = new SignatureSchemesInfoViewModel(newSch);
+            CurrentSchema.SchemesInfo.Add(newItem);
         }
 
         public ICommand DeleteSchemaSignatureCommand
         {
-            get { return new Command(DeleteSchemaSignature, _ => true); }
+            get { return new Command(DeleteSchemaSignature, _ => CurrentInfoSchema != null
+            && CurrentInfoSchema.ParentId == null); }
         }
 
         private void DeleteSchemaSignature(object obj)
@@ -294,6 +310,7 @@ namespace KursAM2.ViewModel.Signatures
             {
                 if (SystemUnitOfWork.Context.ChangeTracker.HasChanges())
                 {
+                    var s = SystemUnitOfWork.Context.GetValidationErrors();
                     //var e = SystemUnitOfWork.Context.Entry(CurrentSchema.Entity);
                     SystemUnitOfWork.CreateTransaction();
                     SystemUnitOfWork.Save();
@@ -311,6 +328,8 @@ namespace KursAM2.ViewModel.Signatures
             }
             catch (Exception ex)
             {
+                SystemUnitOfWork.Rollback();
+                UnitOfWork.Rollback();
                 var service = GetService<IDialogService>("WinUIDialogService");
                 MessageManager.ErrorShow(service, ex);
             }

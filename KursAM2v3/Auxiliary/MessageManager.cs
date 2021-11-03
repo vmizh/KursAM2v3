@@ -23,7 +23,7 @@ namespace KursAM2.Auxiliary
                 {
                     dialogServiceText = errText.ToString()
                 };
-                service.ShowDialog(MessageButton.YesNo, "Ошибка", vm);
+                service.ShowDialog(MessageButton.OK, "Ошибка", vm);
             }
         }
 

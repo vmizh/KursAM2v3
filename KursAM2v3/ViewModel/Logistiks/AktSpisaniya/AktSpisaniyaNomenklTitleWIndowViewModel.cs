@@ -18,6 +18,9 @@ using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories;
 using KursAM2.View.Logistiks.AktSpisaniya;
+using KursAM2.ViewModel.Signatures;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 // ReSharper disable IdentifierTypo
 
@@ -25,6 +28,54 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
     public sealed class AktSpisaniyaNomenklTitleWIndowViewModel : RSWindowViewModelBase
     {
+        #region Constructors
+
+        public AktSpisaniyaNomenklTitleWIndowViewModel(Guid? id = null)
+        {
+            GenericRepository = new GenericKursDBRepository<AktSpisaniyaNomenkl_Title>(unitOfWork);
+            AktSpisaniyaNomenklTitleRepository = new AktSpisaniyaNomenkl_TitleRepository(unitOfWork);
+            SignatureRepository = new SignatureRepository(unitOfWork);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
+            var doc = id != null ? GenericRepository.GetById(id.Value) : null;
+            if (doc == null)
+            {
+                Document = Document =
+                    new AktSpisaniyaNomenklTitleViewModel(AktSpisaniyaNomenklTitleRepository.CreateNew())
+                    {
+                        State = RowStatus.NewRow
+                    };
+            }
+            else
+            {
+                Document = new AktSpisaniyaNomenklTitleViewModel(doc)
+                {
+                    State = RowStatus.NotEdited
+                };
+                if (Document != null)
+                    WindowName = Document.ToString();
+                foreach (var r in Document.Rows)
+                {
+                    r.Prices = NomenklManager.NomenklPrice(r.Nomenkl.DocCode, Document.DocDate);
+                    r.MaxQuantity = r.Quantity + NomenklManager.GetNomenklCount(Document.DocDate, r.Nomenkl.DocCode);
+                    r.RaisePropertyAllChanged();
+                    r.myState = RowStatus.NotEdited;
+                }
+
+                Document.myState = RowStatus.NotEdited;
+            }
+
+            AktSpisaniyaNomenklTitleRepository.AktSpisaniya = Document.Entity;
+            var signs = SignatureRepository.CreateSignes(72, Document.Id,out var issign);
+            IsSigned = issign;
+            foreach (var s in signs)
+            {
+                SignatureRows.Add(s);
+            }
+        }
+
+        #endregion
+
         #region Methods
 
         public override bool IsCorrect()
@@ -87,12 +138,10 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public void ResetVisibleCurrency()
         {
             if (!(Form is AktSpisaniyaView f)) return;
-            var bandCrs = f.gridRows.Bands.FirstOrDefault(_ => (string) _.Header == "Валюта");
+            var bandCrs = f.gridRows.Bands.FirstOrDefault(_ => (string)_.Header == "Валюта");
             if (bandCrs != null)
                 foreach (var b in bandCrs.Bands)
-                {
                     b.Visible = Document.Rows.Any(_ => _.Currency.Name == (string)b.Header);
-                }
         }
 
         #endregion
@@ -104,6 +153,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         // ReSharper disable once InconsistentNaming
         private Guid myId;
+        private bool myIsSigned;
 
         // ReSharper disable once InconsistentNaming
         private AktSpisaniyaRowViewModel myCurrentRow;
@@ -115,57 +165,50 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public readonly GenericKursDBRepository<AktSpisaniyaNomenkl_Title> GenericRepository;
         public readonly IAktSpisaniyaNomenkl_TitleRepository AktSpisaniyaNomenklTitleRepository;
 
-        #endregion
-
-        #region Constructors
-
-        public AktSpisaniyaNomenklTitleWIndowViewModel(Guid? id = null) 
-        {
-            GenericRepository = new GenericKursDBRepository<AktSpisaniyaNomenkl_Title>(unitOfWork);
-            AktSpisaniyaNomenklTitleRepository = new AktSpisaniyaNomenkl_TitleRepository(unitOfWork);
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
-            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
-            var doc = id != null ? GenericRepository.GetById(id.Value) : null;
-            if (doc == null)
-            {
-                Document = Document = new AktSpisaniyaNomenklTitleViewModel(AktSpisaniyaNomenklTitleRepository.CreateNew())
-                {
-                    State = RowStatus.NewRow
-                };
-            }
-            else
-            {
-                Document = new AktSpisaniyaNomenklTitleViewModel(doc)
-                {
-                    State = RowStatus.NotEdited
-                };
-                if (Document != null)
-                    WindowName = Document.ToString();
-                foreach (var r in Document.Rows)
-                {
-                    r.Prices = NomenklManager.NomenklPrice(r.Nomenkl.DocCode, Document.DocDate);
-                    r.MaxQuantity = r.Quantity + NomenklManager.GetNomenklCount(Document.DocDate, r.Nomenkl.DocCode); 
-                    r.RaisePropertyAllChanged();
-                    r.myState = RowStatus.NotEdited;
-                }
-                Document.myState = RowStatus.NotEdited;
-            }
-
-            AktSpisaniyaNomenklTitleRepository.AktSpisaniya = Document.Entity;
-        }
+        public readonly ISignatureRepository SignatureRepository;
 
         #endregion
 
         #region Properties
-        
+
         public override string LayoutName => "AktSpisaniyaNomenklTitleView";
 
         public override string WindowName =>
-            Document == null ? "Акт списания материалов(новый)" : $"Акт списания материалов №{Document?.DocNumber} от {Document?.DocDate}";
+            Document == null
+                ? "Акт списания материалов(новый)"
+                : $"Акт списания материалов №{Document?.DocNumber} от {Document?.DocDate}";
 
         // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<AktSpisaniyaRowViewModel> SelectedRows { set; get; }
             = new ObservableCollection<AktSpisaniyaRowViewModel>();
+
+        public ObservableCollection<SignatureViewModel> SignatureRows { set; get; } =
+            new ObservableCollection<SignatureViewModel>();
+
+
+        public bool IsSigned
+        {
+            get => myIsSigned;
+            set
+            {
+                if (myIsSigned == value) return;
+                myIsSigned = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private SignatureViewModel myCurrentSignature;
+
+        public SignatureViewModel CurrentSignature
+        {
+            get => myCurrentSignature;
+            set
+            {
+                if (myCurrentSignature == value) return;
+                myCurrentSignature = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public List<Core.EntityViewModel.NomenklManagement.Warehouse> WarehouseList { set; get; }
             = MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList();
@@ -252,11 +295,10 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                         return;
                 }
             }
+
             foreach (var id in Document.Rows.Where(_ => _.State == RowStatus.NewRow).Select(_ => _.Id)
                 .ToList())
-            {
                 Document.Rows.Remove(Document.Rows.Single(_ => _.Id == id));
-            }
             EntityManager.EntityReload(unitOfWork.Context);
             foreach (var r in Document.Rows)
             {
@@ -265,22 +307,38 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 r.myState = RowStatus.NotEdited;
                 r.RaisePropertyAllChanged();
             }
+
             RaiseAll();
             Document.myState = RowStatus.NotEdited;
-            
             ResetVisibleCurrency();
         }
 
         public override void SaveData(object data)
         {
             if (Document.State == RowStatus.NewRow)
-            {
-               Document.DocNumber = unitOfWork.Context.AktSpisaniyaNomenkl_Title.Any()
+                Document.DocNumber = unitOfWork.Context.AktSpisaniyaNomenkl_Title.Any()
                     ? unitOfWork.Context.AktSpisaniyaNomenkl_Title.Max(_ => _.Num_Doc) + 1
                     : 1;
-            }
 
             unitOfWork.CreateTransaction();
+            var oldSign = unitOfWork.Context.DocumentSignatures.FirstOrDefault(_ => _.DocId == Document.Id);
+            if (oldSign == null)
+            {
+                unitOfWork.Context.DocumentSignatures.Add(new DocumentSignatures
+                {
+                    Id = Guid.NewGuid(),
+                    DocId = Document.Id,
+                    Signatures = JsonConvert.SerializeObject(SignatureRows.Select(_ => _.ToJson())),
+                    DocumentTypeId = 72,
+                    IsSign = IsSigned
+                });
+            }
+            else
+            {
+                oldSign.Signatures = JsonConvert.SerializeObject(SignatureRows.Select(_ => _.ToJson()));
+                oldSign.IsSign = IsSigned;
+            }
+
             unitOfWork.Save();
             NomenklCalculationManager.InsertNomenklForCalc(unitOfWork.Context,
                 Document.Rows.Select(_ => _.Nomenkl.DocCode).ToList());
@@ -300,11 +358,58 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                     return;
                 }
             }
+
             unitOfWork.Commit();
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
 
             Document.myState = RowStatus.NotEdited;
             Document.RaisePropertyChanged("State");
+        }
+
+        public ICommand SignedCommand
+        {
+            get
+            {
+                return new Command(Signed, _ => CurrentSignature != null
+                                                && IsCanSigned());
+            }
+        }
+
+        private bool IsCanSigned()
+        {
+            var isUser = CurrentSignature.UsersCanSigned.Any(_ => _.Id == GlobalOptions.UserInfo.KursId);
+
+            return SignatureRows.All(_ => _.ParentId != CurrentSignature.Id) || SignatureRows
+                .Where(_ => _.ParentId == CurrentSignature.Id).All(x => x.UserId != null) && isUser;
+        }
+
+        private void Signed(object obj)
+        {
+            CurrentSignature.UserId = GlobalOptions.UserInfo.KursId;
+            CurrentSignature.SignUserName = GlobalOptions.UserInfo.NickName;
+            CurrentSignature.SignUserFullName = GlobalOptions.UserInfo.FullName;
+            IsSigned = SignatureRows.Where(_ => _.IsRequired).All(x => x.UserId != null);
+            if (Document.State != RowStatus.NewRow)
+                Document.State = RowStatus.Edited;
+        }
+
+        public ICommand UnSignedCommand
+        {
+            get
+            {
+                return new Command(UnSigned,
+                    _ => CurrentSignature != null && CurrentSignature.UserId != null && IsCanSigned());
+            }
+        }
+
+        private void UnSigned(object obj)
+        {
+            CurrentSignature.UserId = null;
+            CurrentSignature.SignUserName = null;
+            CurrentSignature.SignUserFullName = null;
+            IsSigned = SignatureRows.Where(_ => _.IsRequired).All(x => x.UserId != null);
+            if (Document.State != RowStatus.NewRow)
+                Document.State = RowStatus.Edited;
         }
 
         public ICommand AddNomenklCommand

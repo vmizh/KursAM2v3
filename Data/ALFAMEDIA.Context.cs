@@ -778,12 +778,12 @@ namespace Data
         public virtual DbSet<AccruedAmountType> AccruedAmountType { get; set; }
         public virtual DbSet<DogovorOfSupplier> DogovorOfSupplier { get; set; }
         public virtual DbSet<DogovorOfSupplierRow> DogovorOfSupplierRow { get; set; }
-        public virtual DbSet<DocumentSignatures> DocumentSignatures { get; set; }
         public virtual DbSet<SignatureDocumentTypes> SignatureDocumentTypes { get; set; }
         public virtual DbSet<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
         public virtual DbSet<NOMENKL_PRIH_EXCLUDE> NOMENKL_PRIH_EXCLUDE { get; set; }
         public virtual DbSet<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
         public virtual DbSet<AccruedAmountOfSupplier> AccruedAmountOfSupplier { get; set; }
+        public virtual DbSet<DocumentSignatures> DocumentSignatures { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

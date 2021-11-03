@@ -1,10 +1,9 @@
-﻿using System.Data.Entity;
-using System.Data.Entity.Core.EntityClient;
-using System.Data.SqlClient;
+﻿using System.Data.Entity.Core.EntityClient;
+using System.Diagnostics;
 
 namespace Data
 {
-    public partial class KursSystemEntities : DbContext
+    public partial class KursSystemEntities
     {
         public KursSystemEntities(string connectionString,
             bool validationMode = true,
@@ -21,6 +20,9 @@ namespace Data
             Configuration.ValidateOnSaveEnabled = validationMode;
             Configuration.LazyLoadingEnabled = lazyLoadingMode;
             Configuration.AutoDetectChangesEnabled = autoDetectMode;
+#if DEBUG
+            Database.Log = e => { Debug.WriteLine(e); };
+#endif
         }
     }
 }

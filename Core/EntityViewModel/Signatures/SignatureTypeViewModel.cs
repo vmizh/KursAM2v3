@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
 using Data;
 using KursRepositories.ViewModels;
@@ -68,7 +67,6 @@ namespace Core.EntityViewModel.Signatures
                 }
 
                 return null;
-
             }
             set
             {
@@ -79,10 +77,9 @@ namespace Core.EntityViewModel.Signatures
         }
 
         public ObservableCollection<SignatureSchemesViewModel> Shemes { set; get; } =
-            new ObservableCollection<SignatureSchemesViewModel>();
+            new();
 
-        public ObservableCollection<UsersViewModel> Users { set; get; } = new ObservableCollection<UsersViewModel>();
-
+        public ObservableCollection<UsersViewModel> Users { set; get; } = new();
 
         #endregion
 
@@ -97,25 +94,22 @@ namespace Core.EntityViewModel.Signatures
         {
             Entity = entity ?? DefaultValue();
             LoadReference();
-        } 
-        
+        }
+
         #endregion
 
         #region Methods
 
         private void LoadReference()
         {
-            foreach (var u in Entity.Users)
-            {
-                Users.Add(new UsersViewModel(u));
-            }
+            foreach (var u in Entity.Users) Users.Add(new UsersViewModel(u));
         }
 
         public SignatureType DefaultValue()
         {
             return new SignatureType
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid()
             };
         }
 

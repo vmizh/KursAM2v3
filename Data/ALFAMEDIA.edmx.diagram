@@ -2077,7 +2077,6 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_SD_26_DogovorOfSupplierId" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorOfSupplierRow_NomenklDC" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_DogovorOfSupplier_DogType" />
-        <EntityTypeShape EntityType="ALFAMEDIAModel.DocumentSignatures" Width="1.5" PointX="47.375" PointY="4.75" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.SignatureDocumentTypes" Width="1.5" PointX="47.375" PointY="7.75" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.AccuredAmountForClientRow" Width="1.5" PointX="69.5" PointY="717.875" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountForClientRow_DocId" />
@@ -2094,6 +2093,7 @@
         <EntityTypeShape EntityType="ALFAMEDIAModel.AccruedAmountOfSupplier" Width="1.5" PointX="26.5" PointY="740.625" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccruedAmountOfSupplier_KontrDC" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_DocId" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.DocumentSignatures" Width="1.5" PointX="47.375" PointY="4.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
