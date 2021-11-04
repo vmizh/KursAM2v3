@@ -9,6 +9,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Core.EntityViewModel.CommonReferences;
+using Helper;
+using Newtonsoft.Json;
 
 namespace Core.EntityViewModel.AktSpisaniya
 {
@@ -57,6 +60,24 @@ namespace Core.EntityViewModel.AktSpisaniya
             if (this.Warehouse != null && DocNumber >= 0 && DocCreator != null && Rows.All(_ => _.IsCorrect()))
                 return true;
             return false;
+        }
+
+        public override object ToJson()
+        {
+            var res = new
+            {
+                Статус = CustomFormat.GetEnumName(State),
+                Id,
+                Номер = DocNumber.ToString(),
+                Дата = DocDate.ToShortDateString(),
+                Склад = Warehouse.Name,
+                Cоздатель = DocCreator,
+                Причина = ReasonCreation,
+                Примечание = Note,
+                Подписан = IsSign ? "Да" : "Нет",
+                Позиции = Rows.Select(_ => _.ToJson())
+            };
+            return JsonConvert.SerializeObject(res);
         }
 
 
@@ -127,6 +148,19 @@ namespace Core.EntityViewModel.AktSpisaniya
             {
                 if (Entity.Id == value) return;
                 Entity.Id = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        private bool myIsSign;
+        public bool IsSign
+        {
+            get => myIsSign;
+            set
+            {
+                if (myIsSign == value) return;
+                myIsSign = value;
                 RaisePropertyChanged();
             }
         }
@@ -233,5 +267,6 @@ namespace Core.EntityViewModel.AktSpisaniya
         public string Error => "";
 
         #endregion
+
     }
 }

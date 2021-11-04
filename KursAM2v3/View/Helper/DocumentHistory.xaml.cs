@@ -111,6 +111,8 @@ namespace KursAM2.View.Helper
                             .Select(d => new DocHistoryViewModel(d)));
                         break;
                     case DocumentType.DogovorOfSupplier:
+                    case DocumentType.AktSpisaniya:
+                    case DocumentType.AccruedAmountOfSupplier:
                         if (id == null) return;
                         hdoclist.AddRange(ctx.DocHistory.Where(_ => _.DocId == id)
                             .OrderByDescending(_ => _.Date)

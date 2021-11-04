@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Controls;
 using Core.EntityViewModel.Systems;
 using Core.Menu;
@@ -66,7 +67,7 @@ namespace KursAM2.ViewModel.Reference.Dialogs
         {
             if (context == null) return;
             MenuItems.Clear();
-            foreach (var d in context.KursMenuItem)
+            foreach (var d in context.KursMenuItem.Where(_ => _.IsSign))
                 MenuItems.Add(new KursMenuItemViewModel(d));
         }
 

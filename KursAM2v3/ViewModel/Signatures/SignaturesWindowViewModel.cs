@@ -310,8 +310,6 @@ namespace KursAM2.ViewModel.Signatures
             {
                 if (SystemUnitOfWork.Context.ChangeTracker.HasChanges())
                 {
-                    var s = SystemUnitOfWork.Context.GetValidationErrors();
-                    //var e = SystemUnitOfWork.Context.Entry(CurrentSchema.Entity);
                     SystemUnitOfWork.CreateTransaction();
                     SystemUnitOfWork.Save();
                     SystemUnitOfWork.Commit();
@@ -370,6 +368,7 @@ namespace KursAM2.ViewModel.Signatures
                 Name = ctx.CurrentMenu.Name,
                 DbId = CurrentDataSource.Id,
                 DocumentTYpeId = ctx.CurrentMenu.Id,
+                KursMenuItem = ctx.CurrentMenu.Entity
             };
             var schema = new SignatureSchemesViewModel(newEnt)
             {

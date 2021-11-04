@@ -8,6 +8,8 @@ using System.Windows.Input;
 using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.AktSpisaniya;
+using Core.EntityViewModel.CommonReferences;
+using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -17,10 +19,10 @@ using DevExpress.Mvvm;
 using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories;
+using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursAM2.ViewModel.Signatures;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 // ReSharper disable IdentifierTypo
 
@@ -66,12 +68,9 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             }
 
             AktSpisaniyaNomenklTitleRepository.AktSpisaniya = Document.Entity;
-            var signs = SignatureRepository.CreateSignes(72, Document.Id,out var issign);
+            var signs = SignatureRepository.CreateSignes(72, Document.Id, out var issign);
             IsSigned = issign;
-            foreach (var s in signs)
-            {
-                SignatureRows.Add(s);
-            }
+            foreach (var s in signs) SignatureRows.Add(s);
         }
 
         #endregion
@@ -193,6 +192,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             {
                 if (myIsSigned == value) return;
                 myIsSigned = value;
+                Document.IsSign = myIsSigned;
                 RaisePropertyChanged();
             }
         }
@@ -270,11 +270,15 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 {
                     case MessageResult.Yes:
                         unitOfWork.CreateTransaction();
+                        var dsign = SignatureRepository.UnitOfWork.Context
+                            .DocumentSignatures.FirstOrDefault(_ => _.DocId == Document.Id);
+                        if (dsign != null)
+                            SignatureRepository.UnitOfWork.Context
+                                .DocumentSignatures.Remove(dsign);
                         AktSpisaniyaNomenklTitleRepository.Delete();
                         unitOfWork.Save();
                         unitOfWork.Commit();
-                        if (Form != null)
-                            Form.Close();
+                        Form?.Close();
                         return;
                 }
             }
@@ -360,10 +364,18 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             }
 
             unitOfWork.Commit();
+            DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.AktSpisaniya), Document.Id,
+                0, null, (string)Document.ToJson());
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
 
             Document.myState = RowStatus.NotEdited;
             Document.RaisePropertyChanged("State");
+        }
+        
+        public override void ShowHistory(object data)
+        {
+            // ReSharper disable once RedundantArgumentDefaultValue
+            DocumentHistoryManager.LoadHistory(DocumentType.AktSpisaniya, Document.Id, 0, null );
         }
 
         public ICommand SignedCommand

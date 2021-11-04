@@ -9,6 +9,8 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using Helper;
+using Newtonsoft.Json;
 
 namespace Core.EntityViewModel.AccruedAmount
 {
@@ -256,5 +258,29 @@ namespace Core.EntityViewModel.AccruedAmount
         public string Error => null;
 
         #endregion
+
+        #region Methods
+
+        public override object ToJson()
+        {
+            var res = new
+            {
+                Статус = CustomFormat.GetEnumName(State),
+                Id,
+                Номер = DocInNum + (!string.IsNullOrWhiteSpace(DocExtNum) ? "/" + DocExtNum : null),
+                Дата = DocDate.ToShortDateString(),
+                Контрагент = Kontragent.Name,
+                Сумма = Summa.ToString("n2"),
+                Оплачено = PaySumma.ToString("n2"),
+                Cоздатель = Creator,
+                Валюта = Currency.Name,
+                Примечание = Note,
+                Позиции = Rows.Select(_ => _.ToJson())
+            };
+            return JsonConvert.SerializeObject(res);
+        }
+
+        #endregion
+
     }
 }

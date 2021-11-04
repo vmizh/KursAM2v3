@@ -99,17 +99,17 @@ namespace Core.EntityViewModel.CommonReferences
         /// Акт списания
         /// </summary>
         [Display(Name = "Акт списания")]
-        AktSpisaniya = 1003,
+        AktSpisaniya = 72,
         /// <summary>
         /// Внебалансовые начисления от поставщиков
         /// </summary>
-        [Display(Name = "Внебалансовые начисления от поставщиков")]
+        [Display(Name = "Внебалансовые начисления для клиентов")]
         AccruedAmountForClient = 1004,
         /// <summary>
         /// Типы начислений для внебаласовых контрагентов
         /// </summary>
         [Display(Name = "Прямые затраты")]
-        AccruedAmountOfSupplier = 1005
+        AccruedAmountOfSupplier = 74
 
     }
 }

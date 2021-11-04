@@ -209,7 +209,7 @@ namespace Core.EntityViewModel.AccruedAmount
                 СчетДоходовРасходов = SDRSchet?.ToString(),
                 Примечание = Note
             };
-            return JsonConvert.SerializeObject(res);
+            return res;
         }
 
         #endregion

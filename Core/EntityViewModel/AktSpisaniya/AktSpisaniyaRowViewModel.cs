@@ -347,6 +347,24 @@ namespace Core.EntityViewModel.AktSpisaniya
             return false;
         }
 
+        public override object ToJson()
+        {
+            return new
+            {
+                DocCode,
+                Code,
+                Номенклатурный_Номер = NomenklNumber,
+                Номенклатура = Nomenkl.Name,
+                Количество = Quantity.ToString("n3"),
+                Цена = Price.ToString("n2"),
+                Сумма = Summa.ToString("n2"),
+                Цена_Наклад = PriceWithNaklad.ToString("n2"),
+                Сумма_Наклад = SummaWithNaklad.ToString("n2"),
+                Валюта = Nomenkl.Currency.Name,
+                Примечание = Note
+            };
+        }
+
         #endregion
 
         #region Constructors

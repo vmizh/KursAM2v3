@@ -16,12 +16,13 @@ namespace KursAM2.Repositories
         List<SignatureViewModel> CreateSignes(int docType, Guid docId, out bool isSign);
         void SaveSignes();
         string LoadSignes();
+        UnitOfWork<ALFAMEDIAEntities> UnitOfWork { set; get; }
     }
 
     public class SignatureRepository : GenericKursDBRepository<DocumentSignatures>,
         ISignatureRepository
     {
-        public UnitOfWork<ALFAMEDIAEntities> UnitOfWork;
+        public UnitOfWork<ALFAMEDIAEntities> UnitOfWork { set; get; }
 
         public SignatureRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {

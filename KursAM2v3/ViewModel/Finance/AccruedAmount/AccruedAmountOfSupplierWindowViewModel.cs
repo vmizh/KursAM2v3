@@ -12,6 +12,7 @@ using Core.EntityViewModel.AccruedAmount;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
+using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -23,6 +24,7 @@ using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.View.Finance.AccruedAmount;
+using KursAM2.View.Helper;
 using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Management.Calculations;
 
@@ -169,6 +171,12 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         #endregion
 
         #region Commands
+
+        public override void ShowHistory(object data)
+        {
+            // ReSharper disable once RedundantArgumentDefaultValue
+            DocumentHistoryManager.LoadHistory(DocumentType.AccruedAmountOfSupplier, Document.Id, 0, null );
+        }
 
         public override bool IsCanSaveData =>
             (Document.State != RowStatus.NotEdited || DeletedRows.Count > 0
@@ -413,6 +421,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             UnitOfWork.CreateTransaction();
             UnitOfWork.Save();
             UnitOfWork.Commit();
+            DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.AccruedAmountOfSupplier), Document.Id,
+                0, null, (string)Document.ToJson());
             DeletedRows.Clear();
             RecalcKontragentBalans.CalcBalans(Document.Kontragent.DOC_CODE, Document.DocDate);
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;

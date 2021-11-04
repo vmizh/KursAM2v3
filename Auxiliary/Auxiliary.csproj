@@ -74,10 +74,6 @@
       <Project>{45442B20-578B-4519-A31C-6BA5102B240F}</Project>
       <Name>Helper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KursAM2v3\KursAM2.csproj">
-      <Project>{f81539f9-9431-4d87-9bf0-7e195911349d}</Project>
-      <Name>KursAM2</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
