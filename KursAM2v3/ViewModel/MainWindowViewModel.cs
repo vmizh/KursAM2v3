@@ -11,7 +11,7 @@ namespace KursAM2.ViewModel
 {
     public class MainWindowViewModel : RSWindowViewModelBase
     {
-        private LastDocumentViewModel myCurrentcLastDocument;
+        private LastDocumentViewModel myCurrentLastDocument;
 
         // ReSharper disable once EmptyConstructor
         public MainWindowViewModel()
@@ -21,16 +21,59 @@ namespace KursAM2.ViewModel
         public ObservableCollection<LastDocumentViewModel> LastDocuments { set; get; }
             = new ObservableCollection<LastDocumentViewModel>();
 
-        public LastDocumentViewModel CurrentcLastDocument
+        public LastDocumentViewModel CurrentLastDocument
         {
-            get => myCurrentcLastDocument;
+            get => myCurrentLastDocument;
             set
             {
-                if (myCurrentcLastDocument == value) return;
-                myCurrentcLastDocument = value;
+                if (myCurrentLastDocument == value) return;
+                myCurrentLastDocument = value;
                 RaisePropertyChanged();
             }
         }
+
+
+        private string mySearchMenuString;
+        public string SearchMenuString
+        {
+            get => mySearchMenuString;
+            set
+            {
+                if (mySearchMenuString == value) return;
+                mySearchMenuString = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ICommand AddMenuToFanCommand
+        {
+            get { return new Command(AddMenuToFan, _ => true); }
+        }
+
+        private void AddMenuToFan(object obj)
+        {
+        }
+
+        public ICommand SearchMenuCommand
+        {
+            get { return new Command(SearchMenu, _ => !string.IsNullOrWhiteSpace(SearchMenuString)); }
+        }
+
+        private void SearchMenu(object obj)
+        {
+            
+        }
+
+        public Command ClearSearchCommand
+        {
+            get { return new Command(ClearSearchMenu, _ => !string.IsNullOrWhiteSpace(SearchMenuString)); }
+        }
+
+        private void ClearSearchMenu(object obj)
+        {
+            SearchMenuString = null;
+        }
+
 
         public ICommand OpenLastDocumentDialogCommand
         {

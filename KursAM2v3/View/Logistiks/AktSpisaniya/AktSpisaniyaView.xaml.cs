@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Data;
 using DevExpress.Data;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -28,6 +29,7 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
 
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
+            var dtx = DataContext as AktSpisaniyaNomenklTitleWIndowViewModel;
             e.Column.Name = e.Column.FieldName;
             if (e.Column.Name.Contains("Price") || e.Column.Name.Contains("Summa"))
                 e.Column.EditSettings = new CalcEditSettings
@@ -45,7 +47,7 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
                         DisplayFormat = "n4",
                         MaskUseAsDisplayFormat = true
                     };
-                    break;
+                break;
                 case "Note":
                     e.Column.EditSettings = new TextEditSettings
                     {
@@ -92,5 +94,6 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
                     break;
             }
         }
+
     }
 }

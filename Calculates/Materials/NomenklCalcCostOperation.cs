@@ -1,7 +1,6 @@
 using System;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 
 namespace Calculates.Materials

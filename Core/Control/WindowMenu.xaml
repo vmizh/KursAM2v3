@@ -53,5 +53,12 @@
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
+        <Label DockPanel.Dock="Right"
+               Visibility="{Binding IsMenuInfoVisibility, UpdateSourceTrigger=PropertyChanged}"
+               VerticalAlignment="Center"
+               Foreground="Red"
+               FontSize="24"
+               Content="{Binding MenuInfoString, UpdateSourceTrigger=PropertyChanged}"
+               />
     </DockPanel>
 </UserControl>

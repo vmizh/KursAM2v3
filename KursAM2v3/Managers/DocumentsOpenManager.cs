@@ -9,7 +9,6 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
-using DevExpress.Xpf.Reports.UserDesigner.Editors;
 using Helper;
 using KursAM2.Managers.Base;
 using KursAM2.View.Dogovors;
@@ -134,6 +133,33 @@ namespace KursAM2.Managers
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
+            }
+        }
+
+        public static void DeleteFromLastDocument(Guid? id, decimal? dc)
+        {
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                if (id != null && id != Guid.Empty)
+                {
+                    var old = ctx.LastDocument.FirstOrDefault(_ => _.DocId == id);
+                    if (old != null)
+                    {
+                        ctx.LastDocument.Remove(old);
+                        ctx.SaveChanges();
+                    }
+                }
+
+                if (dc == null) return;
+                {
+                    var old = ctx.LastDocument
+                        .FirstOrDefault(_ => _.DocDC == dc && _.DbId == GlobalOptions.DataBaseId);
+                    if (old != null)
+                    {
+                        ctx.LastDocument.Remove(old);
+                        ctx.SaveChanges();
+                    }
+                }
             }
         }
 

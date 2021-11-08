@@ -29,6 +29,14 @@
           <Property Name="Note" Type="varchar" MaxLength="500" />
           <Property Name="Moment" Type="datetime" Nullable="false" />
         </EntityType>
+        <EntityType Name="FanMenuItems">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="MenuItemId" />
+          </Key>
+          <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="MenuItemId" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="FormLayout">
           <Key>
             <PropertyRef Name="Id" />
@@ -231,6 +239,30 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Errors">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FanMenuItems_MenuItemId">
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="FanMenuItems" Type="Self.FanMenuItems" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FanMenuItems">
+              <PropertyRef Name="MenuItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FanMenuItems_UserId">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="FanMenuItems" Type="Self.FanMenuItems" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FanMenuItems">
               <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
@@ -499,12 +531,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <!--Errors Found During Generation:
-warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of the key of the table on the primary side of the relationship. The relationship was excluded.
-        <Association Name="FK_VersionInfo" />-->
         <EntityContainer Name="KursSystemModelStoreContainer">
           <EntitySet Name="DataSources" EntityType="Self.DataSources" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Errors" EntityType="Self.Errors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FanMenuItems" EntityType="Self.FanMenuItems" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FormLayout" EntityType="Self.FormLayout" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KontragentCashes" EntityType="Self.KontragentCashes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KursMenuGroup" EntityType="Self.KursMenuGroup" Schema="dbo" store:Type="Tables" />
@@ -529,6 +559,14 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <AssociationSet Name="FK_Errors_UserId" Association="Self.FK_Errors_UserId">
             <End Role="Users" EntitySet="Users" />
             <End Role="Errors" EntitySet="Errors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FanMenuItems_MenuItemId" Association="Self.FK_FanMenuItems_MenuItemId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="FanMenuItems" EntitySet="FanMenuItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FanMenuItems_UserId" Association="Self.FK_FanMenuItems_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="FanMenuItems" EntitySet="FanMenuItems" />
           </AssociationSet>
           <AssociationSet Name="FK_FormLayout_FormId" Association="Self.FK_FormLayout_FormId">
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
@@ -724,6 +762,10 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             <End Role="SignatureType" EntitySet="SignatureType" />
             <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
           </AssociationSet>
+          <AssociationSet Name="FanMenuItems" Association="KursSystemModel.FanMenuItems">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="DataSources">
           <Key>
@@ -817,6 +859,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <NavigationProperty Name="UserRoles" Relationship="KursSystemModel.UserRolesLinkMenuItem" FromRole="KursMenuItem" ToRole="UserRoles" />
           <Property Name="IsSign" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId" FromRole="KursMenuItem" ToRole="SignatureSchemes" />
+          <NavigationProperty Name="Users" Relationship="KursSystemModel.FanMenuItems" FromRole="KursMenuItem" ToRole="Users" />
         </EntityType>
         <EntityType Name="LastDocument">
           <Key>
@@ -920,6 +963,7 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
           <NavigationProperty Name="LastDocument" Relationship="KursSystemModel.FK_LastDocument_UserId" FromRole="Users" ToRole="LastDocument" />
           <NavigationProperty Name="DataSources" Relationship="KursSystemModel.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
           <NavigationProperty Name="SignatureType" Relationship="KursSystemModel.SignatureLink" FromRole="Users" ToRole="SignatureType" />
+          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FanMenuItems" FromRole="Users" ToRole="KursMenuItem" />
         </EntityType>
         <Association Name="FK_Errors_DbId">
           <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
@@ -1177,6 +1221,10 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FanMenuItems">
+          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="*" />
+          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="*" />
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1405,6 +1453,14 @@ warning 6035: The relationship 'FK_VersionInfo' has columns that are not part of
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <AssociationSetMapping Name="FanMenuItems" TypeName="KursSystemModel.FanMenuItems" StoreEntitySet="FanMenuItems">
+            <EndProperty Name="Users">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+            <EndProperty Name="KursMenuItem">
+              <ScalarProperty Name="Id" ColumnName="MenuItemId" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

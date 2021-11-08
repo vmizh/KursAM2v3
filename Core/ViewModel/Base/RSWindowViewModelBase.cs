@@ -33,6 +33,8 @@ namespace Core.ViewModel.Base
         // ReSharper disable once InconsistentNaming
         protected string mySearchText;
         private string myWindowName;
+        private string myMenuInfoString;
+        private Visibility myIsMenuInfoVisibility;
 
         public RSWindowViewModelBase()
         {
@@ -97,6 +99,31 @@ namespace Core.ViewModel.Base
             {
                 if (Equals(myForm, value)) return;
                 myForm = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        [Display(AutoGenerateField = false)]
+        public virtual string MenuInfoString
+        {
+            get { return myMenuInfoString; }
+            set
+            {
+                if (myMenuInfoString == value) return;
+                myMenuInfoString = value;
+                RaisePropertyChanged();
+            }
+        }
+       
+        [Display(AutoGenerateField = false)]
+        public virtual Visibility IsMenuInfoVisibility
+        {
+            get => myIsMenuInfoVisibility;
+            set
+            {
+                if (myIsMenuInfoVisibility == value) return;
+                myIsMenuInfoVisibility = value;
                 RaisePropertyChanged();
             }
         }

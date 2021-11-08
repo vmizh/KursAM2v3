@@ -17,6 +17,7 @@ using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
 using Helper;
+using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories;
 using KursAM2.View.Helper;
@@ -64,13 +65,14 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                     r.myState = RowStatus.NotEdited;
                 }
 
-                Document.myState = RowStatus.NotEdited;
             }
 
             AktSpisaniyaNomenklTitleRepository.AktSpisaniya = Document.Entity;
             var signs = SignatureRepository.CreateSignes(72, Document.Id, out var issign);
             IsSigned = issign;
             foreach (var s in signs) SignatureRows.Add(s);
+            if(Document.myState != RowStatus.NewRow)
+                Document.myState = RowStatus.NotEdited;
         }
 
         #endregion
@@ -169,7 +171,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         #endregion
 
         #region Properties
-
+        public override string MenuInfoString => "Акцептован";
         public override string LayoutName => "AktSpisaniyaNomenklTitleView";
 
         public override string WindowName =>
@@ -184,7 +186,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public ObservableCollection<SignatureViewModel> SignatureRows { set; get; } =
             new ObservableCollection<SignatureViewModel>();
 
-
+        public override Visibility IsMenuInfoVisibility => IsSigned ? Visibility.Visible : Visibility.Hidden;
+        
         public bool IsSigned
         {
             get => myIsSigned;
@@ -194,6 +197,16 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 myIsSigned = value;
                 Document.IsSign = myIsSigned;
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(IsMenuInfoVisibility));
+                if (Form is AktSpisaniyaView view)
+                {
+                    var col = view.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Quantity");
+                    if (col != null)
+                    {
+                        col.ReadOnly = !IsSigned;
+                    }
+                }
+
             }
         }
 
@@ -278,6 +291,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                         AktSpisaniyaNomenklTitleRepository.Delete();
                         unitOfWork.Save();
                         unitOfWork.Commit();
+                        DocumentsOpenManager.DeleteFromLastDocument(Document.Id,null);
                         Form?.Close();
                         return;
                 }
@@ -311,10 +325,16 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 r.myState = RowStatus.NotEdited;
                 r.RaisePropertyAllChanged();
             }
-
+            SignatureRows.Clear();
+            // ReSharper disable once UnusedVariable
+            var signs = SignatureRepository.CreateSignes(72, Document.Id, out var issign);
+            foreach (var s in signs) 
+                SignatureRows.Add(s);
+            IsSigned = SignatureRows.Where(_ => _.IsRequired).All(x => x.UserId != null);
             RaiseAll();
-            Document.myState = RowStatus.NotEdited;
             ResetVisibleCurrency();
+            Document.myState = RowStatus.NotEdited;
+            Document.RaisePropertyChanged("State");
         }
 
         public override void SaveData(object data)
@@ -367,7 +387,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.AktSpisaniya), Document.Id,
                 0, null, (string)Document.ToJson());
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
-
             Document.myState = RowStatus.NotEdited;
             Document.RaisePropertyChanged("State");
         }
@@ -426,7 +445,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public ICommand AddNomenklCommand
         {
-            get { return new Command(AddNomenkl, _ => Document?.Warehouse != null); }
+            get { return new Command(AddNomenkl, _ => Document?.Warehouse != null && IsSigned == false); }
         }
 
         private void AddNomenkl(object obj)
@@ -466,9 +485,26 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             RaisePropertyChanged(nameof(Document));
         }
 
+        //public ICommand RowsCellValueChangingCommand
+        //{
+        //    get { return new Command(RowsCellValueChanging, _ => true); }
+        //}
+
+        //private void RowsCellValueChanging(object obj)
+        //{
+        //    if (obj is CellValueChangedEventArgs e)
+        //    {
+        //        if (IsSigned && e.Column.FieldName == "Quantity")
+        //        {
+        //            CurrentRow.Quantity = (decimal)e.OldValue;
+        //            Document.RaisePropertyChanged("Rows");
+        //        } 
+        //    }
+        //}
+
         public ICommand DeleteNomenklCommand
         {
-            get { return new Command(DeleteRow, _ => CurrentRow != null || SelectedRows.Count > 1); }
+            get { return new Command(DeleteRow, _ => (CurrentRow != null || SelectedRows.Count > 1) && IsSigned==false); }
         }
 
         private void DeleteRow(object obj)

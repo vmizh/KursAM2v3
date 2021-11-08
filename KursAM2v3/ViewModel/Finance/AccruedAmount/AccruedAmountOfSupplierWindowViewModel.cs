@@ -123,7 +123,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         public override string LayoutName => "AccruedAmountOfSupplierWindowViewModel";
         public override string WindowName => Document.ToString();
-
+       
         public ObservableCollection<AccruedAmountOfSupplierRowViewModel> SelectedRows { set; get; } =
             new ObservableCollection<AccruedAmountOfSupplierRowViewModel>();
 
@@ -421,6 +421,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             UnitOfWork.CreateTransaction();
             UnitOfWork.Save();
             UnitOfWork.Commit();
+            DocumentsOpenManager.DeleteFromLastDocument(Document.Id,null);
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.AccruedAmountOfSupplier), Document.Id,
                 0, null, (string)Document.ToJson());
             DeletedRows.Clear();

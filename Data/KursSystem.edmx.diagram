@@ -42,6 +42,7 @@
         <AssociationConnector Association="KursSystemModel.FK_SignatureSchemesInfo_SchemeId" />
         <AssociationConnector Association="KursSystemModel.FK_SignatureSchemesInfo_ParentId" />
         <AssociationConnector Association="KursSystemModel.FK_SignatureSchemesInfo_SignId" />
+        <AssociationConnector Association="KursSystemModel.FanMenuItems" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

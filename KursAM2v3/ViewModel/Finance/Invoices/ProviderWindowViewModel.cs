@@ -767,7 +767,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand PrintZajavkaCommand
         {
-            get { return new Command(PrintZajavka, param => true); }
+            get { return new Command(PrintZajavka, _ => true); }
         }
 
         private void PrintZajavka(object obj)
@@ -777,7 +777,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand PrintZajavkaExportCommand
         {
-            get { return new Command(PrintZajavkaExport, param => true); }
+            get { return new Command(PrintZajavkaExport, _ => true); }
         }
 
         private void PrintZajavkaExport(object obj)
@@ -787,7 +787,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public Command PrintWaybillExportCommand
         {
-            get { return new Command(PrintWaybillExport, param => true); }
+            get { return new Command(PrintWaybillExport, _ => true); }
         }
 
         private void PrintWaybillExport(object obj)
@@ -797,7 +797,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public Command PrintWaybillCommand
         {
-            get { return new Command(PrintWaybill, param => true); }
+            get { return new Command(PrintWaybill, _ => true); }
         }
 
         private void PrintWaybill(object obj)
@@ -807,7 +807,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public Command ExportSFCommand
         {
-            get { return new Command(ExportSF, param => true); }
+            get { return new Command(ExportSF, _ => true); }
         }
 
         public void ExportSF(object obj)
@@ -817,7 +817,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public Command PrintSFSchetCommand
         {
-            get { return new Command(PrintSChet, param => true); }
+            get { return new Command(PrintSChet, _ => true); }
         }
 
         public void PrintSChet(object obj)
@@ -827,7 +827,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public Command PrintSFSchetExportCommand
         {
-            get { return new Command(PrintSChetExport, param => true); }
+            get { return new Command(PrintSChetExport, _ => true); }
         }
 
         public void PrintSChetExport(object obj)
@@ -837,12 +837,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public Command PrintZakazCommand
         {
-            get { return new Command(PrintZakaz, param => true); }
+            get { return new Command(PrintZakaz, _ => true); }
         }
 
         public Command PrintZakazWOManagerCommand
         {
-            get { return new Command(PrintZakazWOManager, param => true); }
+            get { return new Command(PrintZakazWOManager, _ => true); }
         }
 
         public void PrintZakaz(object obj)
@@ -857,7 +857,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public Command PrintSFCommand
         {
-            get { return new Command(PrintSF, param => true); }
+            get { return new Command(PrintSF, _ => true); }
         }
 
         public void PrintSF(object obj)
@@ -1388,6 +1388,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             GenericProviderRepository.Delete(Document.Entity);
                             UnitOfWork.Save();
                             UnitOfWork.Commit();
+                            DocumentsOpenManager.DeleteFromLastDocument(null,Document.DocCode);
                         }
                         catch (Exception ex)
                         {
