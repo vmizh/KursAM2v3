@@ -157,7 +157,6 @@
     <Compile Include="EntityViewModel\Signatures\SignatureSchemesViewModel.cs" />
     <Compile Include="EntityViewModel\Signatures\SignatureTypeViewModel.cs" />
     <Compile Include="EntityViewModel\Systems\DataSourcesViewModel.cs" />
-    <Compile Include="EntityViewModel\Systems\DataSourceViewModel.cs" />
     <Compile Include="EntityViewModel\Systems\KursMenuGroupViewModel.cs" />
     <Compile Include="EntityViewModel\Systems\KursMenuItemViewModel.cs" />
     <Compile Include="EntityViewModel\Systems\KursUser.cs" />
@@ -186,6 +185,7 @@
     <Compile Include="EntityViewModel\Invoices\InvoicePaymentDocument.cs" />
     <Compile Include="EntityViewModel\Systems\UserRolesViewModel.cs" />
     <Compile Include="EntityViewModel\Systems\UsersViewModel.cs" />
+    <Compile Include="EntityViewModel\UserMenuFavorites.cs" />
     <Compile Include="Helper\DocumentHistoryHelper.cs" />
     <Compile Include="Helper\EnumExtensions.cs" />
     <Compile Include="Helper\KursConvert.cs" />
@@ -334,7 +334,6 @@
     <Compile Include="EntityViewModel\CommonReferences\SDRSchet.cs" />
     <Compile Include="EntityViewModel\CommonReferences\SDRState.cs" />
     <Compile Include="EntityViewModel\Systems\User.cs" />
-    <Compile Include="EntityViewModel\Systems\UserViewModel.cs" />
     <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentTypeEnum.cs" />
     <Compile Include="EntityViewModel\Vzaimozachet\TD_110ViewModel.cs" />
     <Compile Include="EntityViewModel\Vzaimozachet\SD_110ViewModel.cs" />

@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="1cb860f8bcf74fa4b3b81a6ac9efd58c" Name="Diagram1">
+      <Diagram DiagramId="1cb860f8bcf74fa4b3b81a6ac9efd58c" Name="Diagram1" ZoomLevel="51">
         <EntityTypeShape EntityType="KursSystemModel.DataSources" Width="1.5" PointX="0.75" PointY="12.75" />
         <EntityTypeShape EntityType="KursSystemModel.Errors" Width="1.5" PointX="6" PointY="9.25" />
         <EntityTypeShape EntityType="KursSystemModel.FormLayout" Width="1.5" PointX="7.5" PointY="21.375" />
@@ -42,7 +42,10 @@
         <AssociationConnector Association="KursSystemModel.FK_SignatureSchemesInfo_SchemeId" />
         <AssociationConnector Association="KursSystemModel.FK_SignatureSchemesInfo_ParentId" />
         <AssociationConnector Association="KursSystemModel.FK_SignatureSchemesInfo_SignId" />
-        <AssociationConnector Association="KursSystemModel.FanMenuItems" />
+        <EntityTypeShape EntityType="KursSystemModel.UserMenuFavorites" Width="1.5" PointX="8.5" PointY="15.25" />
+        <AssociationConnector Association="KursSystemModel.FK_UserMenuFavorites_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_UserMenuFavorites_MenuId" />
+        <AssociationConnector Association="KursSystemModel.FK_UserMenuFavorites_UserId" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

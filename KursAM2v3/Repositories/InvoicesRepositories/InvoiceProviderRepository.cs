@@ -38,7 +38,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
         void Delete(SD_26 entity);
     }
 
-   public class InvoiceProviderRepository : GenericKursDBRepository<InvoiceProvider>, IInvoiceProviderRepository
+    public class InvoiceProviderRepository : GenericKursDBRepository<InvoiceProvider>, IInvoiceProviderRepository
     {
         public InvoiceProviderRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {
@@ -68,7 +68,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 .Include("TD_26.SD_261")
                 .Include("TD_26.SD_301")
                 .Include("TD_26.SD_303")
-                .FirstOrDefault(_ => _.Id == id),new UnitOfWork<ALFAMEDIAEntities>());
+                .FirstOrDefault(_ => _.Id == id), new UnitOfWork<ALFAMEDIAEntities>());
         }
 
         public InvoiceProvider GetFullCopy(InvoiceProvider doc)
@@ -125,7 +125,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
         {
             DetachObjects();
             return new InvoiceProvider(Context.SD_26
-                .FirstOrDefault(_ => _.DOC_CODE == dc),new UnitOfWork<ALFAMEDIAEntities>());
+                .FirstOrDefault(_ => _.DOC_CODE == dc), new UnitOfWork<ALFAMEDIAEntities>());
         }
 
         public List<InvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd)
@@ -135,8 +135,8 @@ namespace KursAM2.Repositories.InvoicesRepositories
             var data = Context.SD_26
                 .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd)
                 .OrderByDescending(_ => _.SF_POSTAV_DATE).ToList();
-            foreach (var d in data) 
-                ret.Add(new InvoiceProvider(d,new UnitOfWork<ALFAMEDIAEntities>(),false));
+            foreach (var d in data)
+                ret.Add(new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>()));
             return ret;
         }
 
@@ -144,9 +144,10 @@ namespace KursAM2.Repositories.InvoicesRepositories
             DateTime? dateEnd)
         {
             DetachObjects();
-            var data = new List<SD_26>();
+            List<SD_26> data;
             var ret = new List<InvoiceProviderShort>();
             if (dateStart == null && dateEnd == null)
+                // ReSharper disable once RedundantAssignment
                 data = Context.SD_26
                     .Include(_ => _.TD_26)
                     .Include("TD_26.TD_24")
@@ -169,6 +170,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                     .ToList();
 
             if (dateStart == null && dateEnd != null)
+                // ReSharper disable once RedundantAssignment
                 data = Context.SD_26
                     .Include(_ => _.TD_26)
                     .Include("TD_26.TD_24")
@@ -221,7 +223,6 @@ namespace KursAM2.Repositories.InvoicesRepositories
                                 _.TD_26.SD_26.SF_POSTAV_DATE <= dateEnd).ToList();
                 foreach (var dc in invdc)
                 {
-
                     var doc = Context.SD_26
                         .Include(_ => _.TD_26)
                         .Include("TD_26.TD_24")
@@ -242,11 +243,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                         .Include("TD_26.SD_301")
                         .Include("TD_26.SD_303")
                         .FirstOrDefault(_ => _.DOC_CODE == dc.DOC_CODE);
-                    if (doc != null)
-                    {
-                        ret.Add(new InvoiceProviderShort(doc, new UnitOfWork<ALFAMEDIAEntities>()));
-                    }
-
+                    if (doc != null) ret.Add(new InvoiceProviderShort(doc, new UnitOfWork<ALFAMEDIAEntities>()));
                 }
 
                 foreach (var d in data) ret.Add(new InvoiceProviderShort(d, new UnitOfWork<ALFAMEDIAEntities>()));
@@ -333,7 +330,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                                                               && (_.NakladDistributedSumma ?? 0) <
                                                               _.SF_KONTR_CRS_SUMMA && _.SF_ACCEPTED == 1)
                     .ToList();
-            foreach (var d in data) ret.Add(new InvoiceProviderShort(d,new UnitOfWork<ALFAMEDIAEntities>()));
+            foreach (var d in data) ret.Add(new InvoiceProviderShort(d, new UnitOfWork<ALFAMEDIAEntities>()));
 
             return ret;
         }
@@ -376,7 +373,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 .Include(_ => _.SD_189)
                 .Include(_ => _.SD_40)
                 .SingleOrDefault(_ => _.Id == id);
-            return new InvoiceProviderShort(item,new UnitOfWork<ALFAMEDIAEntities>());
+            return new InvoiceProviderShort(item, new UnitOfWork<ALFAMEDIAEntities>());
         }
 
         public void Delete(SD_26 entity)

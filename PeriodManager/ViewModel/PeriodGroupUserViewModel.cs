@@ -8,10 +8,10 @@ namespace PeriodManager.ViewModel
     [SuppressMessage("ReSharper", "PossibleUnintendedReferenceComparison")]
     public class PeriodGroupUserViewModel : RSViewModelBase
     {
-        private UserViewModel myUser;
+        private UsersViewModel myUser;
 
         [Display(Name = "Пользователь")]
-        public UserViewModel User
+        public UsersViewModel User
         {
             get => myUser;
             set

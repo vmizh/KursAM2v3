@@ -29,14 +29,6 @@
           <Property Name="Note" Type="varchar" MaxLength="500" />
           <Property Name="Moment" Type="datetime" Nullable="false" />
         </EntityType>
-        <EntityType Name="FanMenuItems">
-          <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="MenuItemId" />
-          </Key>
-          <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="MenuItemId" Type="int" Nullable="false" />
-        </EntityType>
         <EntityType Name="FormLayout">
           <Key>
             <PropertyRef Name="Id" />
@@ -161,6 +153,15 @@
           <Property Name="TaskInfo" Type="nvarchar(max)" Nullable="false" />
           <Property Name="ExecTime" Type="datetime" Nullable="false" />
         </EntityType>
+        <EntityType Name="UserMenuFavorites">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DbId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="MenuId" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="UserMenuOrder">
           <Key>
             <PropertyRef Name="Id" />
@@ -239,30 +240,6 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Errors">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_FanMenuItems_MenuItemId">
-          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
-          <End Role="FanMenuItems" Type="Self.FanMenuItems" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="KursMenuItem">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="FanMenuItems">
-              <PropertyRef Name="MenuItemId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_FanMenuItems_UserId">
-          <End Role="Users" Type="Self.Users" Multiplicity="1" />
-          <End Role="FanMenuItems" Type="Self.FanMenuItems" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="FanMenuItems">
               <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
@@ -459,6 +436,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UserMenuFavorites_DbId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="UserMenuFavorites" Type="Self.UserMenuFavorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuFavorites">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMenuFavorites_MenuId">
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="UserMenuFavorites" Type="Self.UserMenuFavorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuFavorites">
+              <PropertyRef Name="MenuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMenuFavorites_UserId">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="UserMenuFavorites" Type="Self.UserMenuFavorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuFavorites">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_UserMenuRight_DBId">
           <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
           <End Role="UserMenuRight" Type="Self.UserMenuRight" Multiplicity="*" />
@@ -534,7 +547,6 @@
         <EntityContainer Name="KursSystemModelStoreContainer">
           <EntitySet Name="DataSources" EntityType="Self.DataSources" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Errors" EntityType="Self.Errors" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="FanMenuItems" EntityType="Self.FanMenuItems" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FormLayout" EntityType="Self.FormLayout" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KontragentCashes" EntityType="Self.KontragentCashes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KursMenuGroup" EntityType="Self.KursMenuGroup" Schema="dbo" store:Type="Tables" />
@@ -546,6 +558,7 @@
           <EntitySet Name="SignatureSchemesInfo" EntityType="Self.SignatureSchemesInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SignatureType" EntityType="Self.SignatureType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TasksLog" EntityType="Self.TasksLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserMenuFavorites" EntityType="Self.UserMenuFavorites" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMenuOrder" EntityType="Self.UserMenuOrder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMenuRight" EntityType="Self.UserMenuRight" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserRoles" EntityType="Self.UserRoles" Schema="dbo" store:Type="Tables" />
@@ -559,14 +572,6 @@
           <AssociationSet Name="FK_Errors_UserId" Association="Self.FK_Errors_UserId">
             <End Role="Users" EntitySet="Users" />
             <End Role="Errors" EntitySet="Errors" />
-          </AssociationSet>
-          <AssociationSet Name="FK_FanMenuItems_MenuItemId" Association="Self.FK_FanMenuItems_MenuItemId">
-            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
-            <End Role="FanMenuItems" EntitySet="FanMenuItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_FanMenuItems_UserId" Association="Self.FK_FanMenuItems_UserId">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="FanMenuItems" EntitySet="FanMenuItems" />
           </AssociationSet>
           <AssociationSet Name="FK_FormLayout_FormId" Association="Self.FK_FormLayout_FormId">
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
@@ -631,6 +636,18 @@
           <AssociationSet Name="FK_SignatureType_DbId" Association="Self.FK_SignatureType_DbId">
             <End Role="DataSources" EntitySet="DataSources" />
             <End Role="SignatureType" EntitySet="SignatureType" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuFavorites_DbId" Association="Self.FK_UserMenuFavorites_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuFavorites_MenuId" Association="Self.FK_UserMenuFavorites_MenuId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuFavorites_UserId" Association="Self.FK_UserMenuFavorites_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
           </AssociationSet>
           <AssociationSet Name="FK_UserMenuRight_DBId" Association="Self.FK_UserMenuRight_DBId">
             <End Role="DataSources" EntitySet="DataSources" />
@@ -762,9 +779,18 @@
             <End Role="SignatureType" EntitySet="SignatureType" />
             <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
           </AssociationSet>
-          <AssociationSet Name="FanMenuItems" Association="KursSystemModel.FanMenuItems">
+          <EntitySet Name="UserMenuFavorites" EntityType="KursSystemModel.UserMenuFavorites" />
+          <AssociationSet Name="FK_UserMenuFavorites_DbId" Association="KursSystemModel.FK_UserMenuFavorites_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuFavorites_MenuId" Association="KursSystemModel.FK_UserMenuFavorites_MenuId">
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuFavorites_UserId" Association="KursSystemModel.FK_UserMenuFavorites_UserId">
             <End Role="Users" EntitySet="Users" />
+            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="DataSources">
@@ -785,6 +811,7 @@
           <NavigationProperty Name="UserMenuRight" Relationship="KursSystemModel.FK_UserMenuRight_DBId" FromRole="DataSources" ToRole="UserMenuRight" />
           <NavigationProperty Name="Users" Relationship="KursSystemModel.UsersLinkDB" FromRole="DataSources" ToRole="Users" />
           <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DbId" FromRole="DataSources" ToRole="SignatureSchemes" />
+          <NavigationProperty Name="UserMenuFavorites" Relationship="KursSystemModel.FK_UserMenuFavorites_DbId" FromRole="DataSources" ToRole="UserMenuFavorites" />
         </EntityType>
         <EntityType Name="Errors">
           <Key>
@@ -859,7 +886,7 @@
           <NavigationProperty Name="UserRoles" Relationship="KursSystemModel.UserRolesLinkMenuItem" FromRole="KursMenuItem" ToRole="UserRoles" />
           <Property Name="IsSign" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId" FromRole="KursMenuItem" ToRole="SignatureSchemes" />
-          <NavigationProperty Name="Users" Relationship="KursSystemModel.FanMenuItems" FromRole="KursMenuItem" ToRole="Users" />
+          <NavigationProperty Name="UserMenuFavorites" Relationship="KursSystemModel.FK_UserMenuFavorites_MenuId" FromRole="KursMenuItem" ToRole="UserMenuFavorites" />
         </EntityType>
         <EntityType Name="LastDocument">
           <Key>
@@ -963,7 +990,7 @@
           <NavigationProperty Name="LastDocument" Relationship="KursSystemModel.FK_LastDocument_UserId" FromRole="Users" ToRole="LastDocument" />
           <NavigationProperty Name="DataSources" Relationship="KursSystemModel.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
           <NavigationProperty Name="SignatureType" Relationship="KursSystemModel.SignatureLink" FromRole="Users" ToRole="SignatureType" />
-          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FanMenuItems" FromRole="Users" ToRole="KursMenuItem" />
+          <NavigationProperty Name="UserMenuFavorites" Relationship="KursSystemModel.FK_UserMenuFavorites_UserId" FromRole="Users" ToRole="UserMenuFavorites" />
         </EntityType>
         <Association Name="FK_Errors_DbId">
           <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
@@ -1221,9 +1248,53 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FanMenuItems">
-          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="*" />
-          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="*" />
+        <EntityType Name="UserMenuFavorites">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <Property Name="DbId" Type="Guid" Nullable="false" />
+          <Property Name="MenuId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_UserMenuFavorites_DbId" FromRole="UserMenuFavorites" ToRole="DataSources" />
+          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_UserMenuFavorites_MenuId" FromRole="UserMenuFavorites" ToRole="KursMenuItem" />
+          <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_UserMenuFavorites_UserId" FromRole="UserMenuFavorites" ToRole="Users" />
+        </EntityType>
+        <Association Name="FK_UserMenuFavorites_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.UserMenuFavorites" Role="UserMenuFavorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuFavorites">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMenuFavorites_MenuId">
+          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="1" />
+          <End Type="KursSystemModel.UserMenuFavorites" Role="UserMenuFavorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuFavorites">
+              <PropertyRef Name="MenuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMenuFavorites_UserId">
+          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
+          <End Type="KursSystemModel.UserMenuFavorites" Role="UserMenuFavorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuFavorites">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -1453,14 +1524,16 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="FanMenuItems" TypeName="KursSystemModel.FanMenuItems" StoreEntitySet="FanMenuItems">
-            <EndProperty Name="Users">
-              <ScalarProperty Name="Id" ColumnName="UserId" />
-            </EndProperty>
-            <EndProperty Name="KursMenuItem">
-              <ScalarProperty Name="Id" ColumnName="MenuItemId" />
-            </EndProperty>
-          </AssociationSetMapping>
+          <EntitySetMapping Name="UserMenuFavorites">
+            <EntityTypeMapping TypeName="KursSystemModel.UserMenuFavorites">
+              <MappingFragment StoreEntitySet="UserMenuFavorites">
+                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+                <ScalarProperty Name="DbId" ColumnName="DbId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

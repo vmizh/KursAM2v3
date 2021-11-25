@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Windows.Input;
 using Core;
+using Core.EntityViewModel;
 using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
+using DevExpress.Xpf.LayoutControl;
 using KursAM2.View;
 using KursAM2.ViewModel.StartLogin;
 
@@ -11,7 +13,11 @@ namespace KursAM2.ViewModel
 {
     public class MainWindowViewModel : RSWindowViewModelBase
     {
+        private Tile myCurrentFavoriteMenu;
         private LastDocumentViewModel myCurrentLastDocument;
+
+
+        private string mySearchMenuString;
 
         // ReSharper disable once EmptyConstructor
         public MainWindowViewModel()
@@ -32,8 +38,6 @@ namespace KursAM2.ViewModel
             }
         }
 
-
-        private string mySearchMenuString;
         public string SearchMenuString
         {
             get => mySearchMenuString;
@@ -45,23 +49,9 @@ namespace KursAM2.ViewModel
             }
         }
 
-        public ICommand AddMenuToFanCommand
-        {
-            get { return new Command(AddMenuToFan, _ => true); }
-        }
-
-        private void AddMenuToFan(object obj)
-        {
-        }
-
         public ICommand SearchMenuCommand
         {
             get { return new Command(SearchMenu, _ => !string.IsNullOrWhiteSpace(SearchMenuString)); }
-        }
-
-        private void SearchMenu(object obj)
-        {
-            
         }
 
         public Command ClearSearchCommand
@@ -69,11 +59,19 @@ namespace KursAM2.ViewModel
             get { return new Command(ClearSearchMenu, _ => !string.IsNullOrWhiteSpace(SearchMenuString)); }
         }
 
-        private void ClearSearchMenu(object obj)
+        public Tile CurrentFavoriteMenu
         {
-            SearchMenuString = null;
+            get => myCurrentFavoriteMenu;
+            set
+            {
+                if (myCurrentFavoriteMenu == value) return;
+                myCurrentFavoriteMenu = value;
+                RaisePropertyChanged();
+            }
         }
 
+        public ObservableCollection<UserMenuFavoriteViewModel> FavoritesMenuItems { set; get; }
+            = new ObservableCollection<UserMenuFavoriteViewModel>();
 
         public ICommand OpenLastDocumentDialogCommand
         {
@@ -83,6 +81,15 @@ namespace KursAM2.ViewModel
         public ICommand ExpandDocumentListCommand
         {
             get { return new Command(ExpandDocumentList, _ => true); }
+        }
+
+        private void SearchMenu(object obj)
+        {
+        }
+
+        private void ClearSearchMenu(object obj)
+        {
+            SearchMenuString = null;
         }
 
         private void OpenLastDocumentDialog(object obj)

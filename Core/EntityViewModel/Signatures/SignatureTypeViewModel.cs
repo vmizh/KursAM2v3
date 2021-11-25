@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
 using Data;
 using KursRepositories.ViewModels;

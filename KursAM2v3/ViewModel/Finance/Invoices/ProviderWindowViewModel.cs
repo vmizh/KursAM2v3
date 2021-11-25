@@ -1484,7 +1484,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get
             {
                 return new Command(AddPaymentFromBank,
-                    _ => Document?.Kontragent != null && Document.PaySumma < Document.Summa);
+                    _ => Document?.Kontragent != null && Document.PaySumma < Document.Summa 
+                                                      && Document.State != RowStatus.NewRow);
             }
         }
 
@@ -1540,7 +1541,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get
             {
                 return new Command(AddPaymentFromCash,
-                    _ => Document?.Kontragent != null && Document.PaySumma < Document.Summa);
+                    _ => Document?.Kontragent != null && Document.PaySumma < Document.Summa
+                                                      && Document.State != RowStatus.NewRow);
             }
         }
 

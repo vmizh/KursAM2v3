@@ -453,7 +453,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             var ctx = new DialogSelectExistNomOnSkaldViewModel(Document.Warehouse, Document.DocDate);
             var service = GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
+            if (service.ShowDialog(MessageButton.OKCancel, $"Запрос для склада: {Document.Warehouse}", ctx) == MessageResult.Cancel) return;
             if (ctx.NomenklSelectedList.Count == 0) return;
             foreach (var n in ctx.NomenklSelectedList)
             {
@@ -484,23 +484,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             ResetVisibleCurrency();
             RaisePropertyChanged(nameof(Document));
         }
-
-        //public ICommand RowsCellValueChangingCommand
-        //{
-        //    get { return new Command(RowsCellValueChanging, _ => true); }
-        //}
-
-        //private void RowsCellValueChanging(object obj)
-        //{
-        //    if (obj is CellValueChangedEventArgs e)
-        //    {
-        //        if (IsSigned && e.Column.FieldName == "Quantity")
-        //        {
-        //            CurrentRow.Quantity = (decimal)e.OldValue;
-        //            Document.RaisePropertyChanged("Rows");
-        //        } 
-        //    }
-        //}
 
         public ICommand DeleteNomenklCommand
         {

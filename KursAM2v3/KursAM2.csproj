@@ -526,6 +526,9 @@
       <DependentUpon>AddNomenklFromInvoiceProviderRowUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\UC\AddNomenklFromRashOrderViewModel.cs" />
+    <Compile Include="View\MainWindow2.xaml.cs">
+      <DependentUpon>MainWindow2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Management\Controls\BalansCompareMoneyInPathUI.xaml.cs">
       <DependentUpon>BalansCompareMoneyInPathUI.xaml</DependentUpon>
     </Compile>
@@ -890,7 +893,6 @@
     <Compile Include="View\Logistiks\NomenklMove.xaml.cs">
       <DependentUpon>NomenklMove.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\MainWindow.xaml.cs" />
     <Compile Include="View\Management\BreakEvenForm.xaml.cs" />
     <Compile Include="View\Management\BreakEvenTemp.cs" />
     <Compile Include="View\Management\Controls\BalansComareKontragentOperationsUI.xaml.cs">
@@ -1307,6 +1309,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\MainWindow2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Management\Controls\BalansCompareMoneyInPathUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1626,10 +1632,6 @@
     <Page Include="View\Logistiks\NomenklMove.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Management\BreakEvenForm.xaml">
       <Generator>MSBuild:Compile</Generator>

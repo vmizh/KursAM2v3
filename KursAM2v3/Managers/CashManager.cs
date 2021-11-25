@@ -1069,7 +1069,7 @@ namespace KursAM2.Managers
                         myState = RowStatus.NotEdited
                     };
                     // ReSharper disable once PossibleNullReferenceException
-                    if (data.AccuredAmountOfSupplierRow != null)
+                    if (data?.AccuredAmountOfSupplierRow != null)
                     {
                         var acc = data.AccuredAmountOfSupplierRow;
                         var snum = string.IsNullOrWhiteSpace(acc.AccruedAmountOfSupplier.DocExtNum)

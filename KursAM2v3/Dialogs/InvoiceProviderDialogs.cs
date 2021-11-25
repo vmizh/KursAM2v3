@@ -14,7 +14,7 @@ using KursAM2.View.DialogUserControl;
 
 namespace KursAM2.Dialogs
 {
-    public class InvoiceProviderDialogs : KursBaseControlViewModel
+    public sealed class InvoiceProviderDialogs : KursBaseControlViewModel
     {
         #region Fields
 
@@ -63,6 +63,7 @@ namespace KursAM2.Dialogs
             get => GetValue<InvoiceProvider>();
         }
 
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<InvoiceProvider> SelectedItems { set; get; }
             = new ObservableCollection<InvoiceProvider>();
 
@@ -78,10 +79,8 @@ namespace KursAM2.Dialogs
             get => GetValue<DateTime?>();
             set => SetValue(value, () =>
             {
-                if (EndDate == null)
-                {
-                    EndDate = DateTime.Today;
-                }
+                if(EndDate < StartDate)
+                    EndDate = StartDate;
             });
         }
 

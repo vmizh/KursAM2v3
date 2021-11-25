@@ -8,7 +8,7 @@
     xmlns:viewModel="clr-namespace:KursAM2.ViewModel"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-    x:Class="KursAM2.View.MainWindow"
+    x:Class="KursAM2.View.MainWindow2"
     Title="Курс 2019" Height="700" Width="1100" SnapsToDevicePixels="True"
     UseLayoutRounding="True"
     Loaded="DXWindow_Loaded"
@@ -42,22 +42,6 @@
                     <dxb:BarDockInfo ContainerType="Top" />
                 </dxb:Bar.DockInfo>
                 <dxb:BarSubItemLink BarItemName="barSubItem1" />
-                <dxb:BarButtonItem Alignment="Far">
-                    <dxb:BarButtonItem.ContentTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="Избранное"
-                                       Margin="0 0 8 0" />
-                                <dxe:ComboBoxEdit
-                                    MinWidth="200"
-                                    IsReadOnly="True"
-                                    EditValue="{Binding CurrentFanMenuItem}"
-                                    ItemsSource="{Binding FanMenuItem}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </dxb:BarButtonItem.ContentTemplate>
-
-                </dxb:BarButtonItem>
                 <dxb:BarButtonItem Content="Последние документы"
                                    Command="{Binding OpenLastDocumentDialogCommand }" Alignment="Far" />
             </dxb:Bar>
@@ -120,7 +104,8 @@
                                     <DataTemplate>
                                         <dxlc:Tile>
                                             <TextBlock Margin="5"
-                                                       Text="{Binding Header}" />
+                                                       Text="{Binding Header}"
+                                                       TextWrapping="Wrap"/>
                                         </dxlc:Tile>
                                         <!--<DockPanel>
                                             <dxe:TextEdit Margin="5"

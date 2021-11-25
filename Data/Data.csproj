@@ -13,7 +13,7 @@
     <AssemblyName>Data</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-	<TargetFrameworkProfile />
+    <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -2050,6 +2050,9 @@
     </Compile>
     <Compile Include="UPDATE_KONTR.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserMenuFavorites.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="UserMenuOrder.cs">
       <DependentUpon>KursSystem.tt</DependentUpon>

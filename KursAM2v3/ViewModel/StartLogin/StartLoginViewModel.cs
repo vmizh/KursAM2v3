@@ -159,6 +159,21 @@ namespace KursAM2.ViewModel.StartLogin
                                                                   newUser.NickName.ToUpper())
                     .ToList();
                 var tileGroupsTemp = new List<TileGroup>();
+                var favorite = tileItems.FirstOrDefault(_ => _.Id == 11);
+                if (favorite != null)
+                {
+                    var newfavGrp = new TileGroup
+                    {
+                        Id = favorite.Id,
+                        Name = favorite.Name,
+                        Notes = favorite.Note,
+                        Picture = ImageManager.ByteToImage(favorite.Picture),
+                        // ReSharper disable once PossibleInvalidOperationException
+                        OrderBy = favorite.Id
+                    };
+                    tileGroupsTemp.Add(newfavGrp);
+                }
+
                 foreach (var grp in tileItems.OrderBy(_ => _.OrderBy))
                 {
                     var grpOrd = tileOrders.FirstOrDefault(_ => _.IsGroup && _.TileId == grp.Id);
@@ -186,7 +201,7 @@ namespace KursAM2.ViewModel.StartLogin
                     {
                         if (tileUsersItems.All(_ => _.MenuId != tile.Id)) continue;
                         var ord = tileOrders.FirstOrDefault(_ => !_.IsGroup && _.TileId == tile.Id);
-                        tItems.Add(new TileItem
+                        var newTItem = new TileItem
                         {
                             Id = tile.Id,
                             Name = tile.Name,
@@ -194,8 +209,9 @@ namespace KursAM2.ViewModel.StartLogin
                             Picture = ImageManager.ByteToImage(tile.Picture),
                             GroupId = tile.GroupId,
                             // ReSharper disable once PossibleInvalidOperationException
-                            OrderBy = (int) (ord != null ? ord.Order : tile.Id)
-                        });
+                            OrderBy = (int)(ord != null ? ord.Order : tile.Id)
+                        };
+                        tItems.Add(newTItem);
                     }
 
                     grp.TileItems = new List<TileItem>(tItems.OrderBy(_ => _.OrderBy));
@@ -206,6 +222,12 @@ namespace KursAM2.ViewModel.StartLogin
                     GlobalOptions.GetEntities().EXT_GROUPS.Select(
                             grp => new UserGroup {Id = grp.GR_ID, Name = grp.GR_NAME})
                         .ToList();
+                var fav = ctx.UserMenuFavorites.Where(_ => _.DbId == GlobalOptions.DataBaseId
+                                                           && _.UserId == newUser.KursId).ToList();
+                foreach (var f in fav)
+                {
+                    newUser.MenuFavorites.Add(f);
+                }
                 GlobalOptions.UserInfo = newUser;
                 Helper.CurrentUser.UserInfo = newUser;
                 GlobalOptions.SystemProfile = new SystemProfile();

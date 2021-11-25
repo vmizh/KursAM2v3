@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Data;
 
@@ -16,6 +17,10 @@ namespace Helper
         [DataMember] public List<UserGroup> Groups = new List<UserGroup>();
         [DataMember] public List<TileGroup> MainTileGroups = new List<TileGroup>();
         [DataMember] public List<UserProfile> Profile = new List<UserProfile>();
+
+        [DataMember]
+        public ObservableCollection<UserMenuFavorites> MenuFavorites { set; get; }
+            = new ObservableCollection<UserMenuFavorites>();
 
         [DataMember]
         public int Id { set; get; }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
 
-namespace KursRepositories.ViewModels
+namespace Core.EntityViewModel.Systems
 {
     public class DataSourcesViewModel : RSViewModelBase
     {

@@ -3,15 +3,27 @@ using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
 
-namespace KursRepositories.ViewModels
+namespace Core.EntityViewModel.Systems
 {
-    public class UsersViewModel : RSViewModelBase
+    public class UsersViewModel : RSViewModelBase, IEntity<Users>
     {
         public UsersViewModel(Users usersEntity)
         {
-            Entity = usersEntity;
+            Entity = usersEntity ?? DefaultValue();
         }
-        public UsersViewModel() { }
+
+        public UsersViewModel()
+        {
+            Entity = DefaultValue();
+        }
+
+        private Users DefaultValue()
+        {
+            return new Users
+            {
+                Id = Guid.NewGuid()
+            };
+        }
 
         #region Properties
 

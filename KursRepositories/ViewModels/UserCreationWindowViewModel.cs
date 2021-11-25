@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using Core;
+using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
 using Data;
 

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core;
@@ -62,7 +64,7 @@ namespace KursAM2.View
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : ILayout
+    public partial class MainWindow2 : ILayout
     {
         private int currentMainGroupId;
 
@@ -70,7 +72,7 @@ namespace KursAM2.View
 
         private Timer myVersionUpdateTimer;
 
-        public MainWindow()
+        public MainWindow2()
         {
             try
             {
@@ -96,6 +98,19 @@ namespace KursAM2.View
                 }
 
                 MessageBox.Show(s.ToString());
+            }
+        }
+
+
+        private Tile myCurrentTile;
+        public Tile CurrentTile
+        {
+            get => myCurrentTile;
+            set
+            {
+                // ReSharper disable once RedundantCheckBeforeAssignment
+                if (myCurrentTile == value) return;
+                myCurrentTile = value;
             }
         }
 
@@ -898,19 +913,113 @@ namespace KursAM2.View
                     t.BorderThickness = new Thickness(0, 0, 0, 0);
             tileClickEventArgs.Tile.BorderThickness = new Thickness(3, 3, 3, 3);
             tileClickEventArgs.Tile.BorderBrush = Brushes.Orange;
-
-            foreach (var tile in grp.TileItems.OrderBy(_ => _.OrderBy))
+            if (currentMainGroupId != 11)
             {
-                var newTile = new Tile
+                foreach (var tile in grp.TileItems.OrderBy(_ => _.OrderBy))
                 {
-                    Header = tile.Name,
-                    Width = 250,
-                    Height = 100,
-                    Tag = tile.Id
-                };
-                newTile.HorizontalAlignment = HorizontalAlignment.Center;
-                newTile.HorizontalHeaderAlignment = HorizontalAlignment.Center;
-                tileDocumentItems.Children.Add(newTile);
+                    var newTile = new Tile
+                    {
+                        Header = tile.Name,
+                        Width = 250,
+                        Height = 100,
+                        Tag = tile.Id,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        HorizontalHeaderAlignment = HorizontalAlignment.Center
+                    };
+                    newTile.MouseMove += NewTile_MouseMove;
+                    var menuAdd = new MenuItem
+                    {
+                        Header = "Добавить в избранное",
+
+                    };
+                    menuAdd.Click += AddToFun;
+                    newTile.ContextMenu = new ContextMenu();
+                    newTile.ContextMenu.Items.Add(menuAdd);
+                    tileDocumentItems.Children.Add(newTile);
+                }
+            }
+            else
+            {
+                using (var sctx = GlobalOptions.KursSystem())
+                {
+                    var data = sctx.UserMenuFavorites
+                        .Include(_ => _.DataSources)
+                        .Include(_ => _.Users)
+                        .Include(_ => _.KursMenuItem)
+                        .AsNoTracking()
+                        .Where(_ => _.DbId == GlobalOptions.DataBaseId
+                                                                 && _.UserId == GlobalOptions.UserInfo.KursId)
+                        .ToList();
+                    if (data.Any())
+                    {
+                        foreach (var d in data)
+                        {
+                            var newTile = new Tile
+                            {
+                                Header = d.KursMenuItem.Name,
+                                Width = 250,
+                                Height = 100,
+                                Tag = d.KursMenuItem.Id,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                HorizontalHeaderAlignment = HorizontalAlignment.Center
+                            };
+                            newTile.MouseMove += NewTile_MouseMove;
+                            var menuRemove = new MenuItem
+                            {
+                                Header = "Убрать из избранного",
+
+                            };
+                            menuRemove.Click += RemoveFromFun;
+                            newTile.ContextMenu = new ContextMenu();
+                            newTile.ContextMenu.Items.Add(menuRemove);
+                            tileDocumentItems.Children.Add(newTile);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void RemoveFromFun(object sender, RoutedEventArgs e)
+        {
+            if (CurrentTile != null)
+            {
+                using (var ctx = GlobalOptions.KursSystem())
+                {
+                    var old = ctx.UserMenuFavorites
+                        .FirstOrDefault(_ => _.DbId == GlobalOptions.DataBaseId
+                                             && _.UserId == GlobalOptions.UserInfo.KursId
+                                             && _.MenuId == (int)CurrentTile.Tag);
+                    if (old != null)
+                    {
+                        ctx.UserMenuFavorites.Remove(old);
+                        ctx.SaveChanges();
+                        tileDocumentItems.Children.Remove(CurrentTile);
+                    }
+                }
+            }
+        }
+
+        private void NewTile_MouseMove(object sender, MouseEventArgs e)
+        {
+            CurrentTile = sender as Tile;
+        }
+
+        private void AddToFun(object sender, EventArgs e)
+        {
+            if (CurrentTile != null)
+            {
+                using (var ctx = GlobalOptions.KursSystem())
+                {
+                    var id = Guid.NewGuid();
+                    ctx.UserMenuFavorites.Add(new UserMenuFavorites
+                    {
+                        Id = id,
+                        DbId = GlobalOptions.DataBaseId,
+                        UserId = GlobalOptions.UserInfo.KursId,
+                        MenuId = (int)CurrentTile.Tag
+                    });
+                    ctx.SaveChanges();
+                }
             }
         }
 
