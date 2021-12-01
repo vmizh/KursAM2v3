@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Data;
 using DevExpress.Data;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -16,15 +15,11 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
         {
             InitializeComponent();
             Loaded += AktSpisaniyaView_Loaded;
-
         }
 
         private void AktSpisaniyaView_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is AktSpisaniyaNomenklTitleWIndowViewModel ctx)
-            {
-                ctx.ResetVisibleCurrency();
-            }
+            if (DataContext is AktSpisaniyaNomenklTitleWIndowViewModel ctx) ctx.ResetVisibleCurrency();
         }
 
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
@@ -44,10 +39,10 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
                 case "Quantity":
                     e.Column.EditSettings = new CalcEditSettings
                     {
-                        DisplayFormat = "n4",
+                        DisplayFormat = "n",
                         MaskUseAsDisplayFormat = true
                     };
-                break;
+                    break;
                 case "Note":
                     e.Column.EditSettings = new TextEditSettings
                     {
@@ -89,11 +84,9 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
                     {
                         AcceptsReturn = true,
                         TextWrapping = TextWrapping.Wrap
-
                     };
                     break;
             }
         }
-
     }
 }

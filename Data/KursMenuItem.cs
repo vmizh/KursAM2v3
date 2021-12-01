@@ -22,6 +22,7 @@ namespace Data
             this.UserRoles = new HashSet<UserRoles>();
             this.SignatureSchemes = new HashSet<SignatureSchemes>();
             this.UserMenuFavorites = new HashSet<UserMenuFavorites>();
+            this.LastMenuUserSearch = new HashSet<LastMenuUserSearch>();
         }
     
         public int Id { get; set; }
@@ -44,5 +45,7 @@ namespace Data
         public virtual ICollection<SignatureSchemes> SignatureSchemes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserMenuFavorites> UserMenuFavorites { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LastMenuUserSearch> LastMenuUserSearch { get; set; }
     }
 }

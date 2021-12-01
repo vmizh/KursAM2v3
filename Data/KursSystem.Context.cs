@@ -42,5 +42,6 @@ namespace Data
         public virtual DbSet<SignatureSchemes> SignatureSchemes { get; set; }
         public virtual DbSet<SignatureSchemesInfo> SignatureSchemesInfo { get; set; }
         public virtual DbSet<UserMenuFavorites> UserMenuFavorites { get; set; }
+        public virtual DbSet<LastMenuUserSearch> LastMenuUserSearch { get; set; }
     }
 }

@@ -68,11 +68,11 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             }
 
             AktSpisaniyaNomenklTitleRepository.AktSpisaniya = Document.Entity;
-            var signs = SignatureRepository.CreateSignes(72, Document.Id, out var issign);
+            var signs = SignatureRepository.CreateSignes(72, Document.Id, out var issign, out var isSignNew);
             IsSigned = issign;
             foreach (var s in signs) SignatureRows.Add(s);
-            if(Document.myState != RowStatus.NewRow)
-                Document.myState = RowStatus.NotEdited;
+            if(Document.myState != RowStatus.NewRow) 
+                Document.myState = isSignNew ? RowStatus.Edited : RowStatus.NotEdited;
         }
 
         #endregion
@@ -327,13 +327,13 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             }
             SignatureRows.Clear();
             // ReSharper disable once UnusedVariable
-            var signs = SignatureRepository.CreateSignes(72, Document.Id, out var issign);
+            var signs = SignatureRepository.CreateSignes(72, Document.Id, out var issign, out var isSignNew);
             foreach (var s in signs) 
                 SignatureRows.Add(s);
             IsSigned = SignatureRows.Where(_ => _.IsRequired).All(x => x.UserId != null);
             RaiseAll();
             ResetVisibleCurrency();
-            Document.myState = RowStatus.NotEdited;
+            Document.myState = isSignNew ? RowStatus.Edited : RowStatus.NotEdited;
             Document.RaisePropertyChanged("State");
         }
 
@@ -388,6 +388,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 0, null, (string)Document.ToJson());
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
             Document.myState = RowStatus.NotEdited;
+            // ReSharper disable once UseNameofExpression
             Document.RaisePropertyChanged("State");
         }
         
@@ -509,6 +510,20 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
             Document.State = RowStatus.Edited;
             ResetVisibleCurrency();
+        }
+
+        public ICommand ResetSignatureSchemaCommand => new Command(ResetSignatureSchema,
+            _ => SignatureRows.Where(x => x.IsRequired)
+                .All(x => x.UserId == null));
+
+        private void ResetSignatureSchema(object obj)
+        {
+            var signs = SignatureRepository.ResetSignes(72);
+            IsSigned = false;
+            SignatureRows.Clear();
+            foreach (var s in signs) SignatureRows.Add(s);
+            if(Document.myState != RowStatus.NewRow) 
+                Document.myState = RowStatus.Edited;
         }
 
         #endregion

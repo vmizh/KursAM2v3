@@ -29,7 +29,6 @@ namespace KursAM2.Dialogs
             ModelView = new StandartDialogSelectWithDateUC(GetType().Name);
             RightMenuBar = MenuGenerator.RefreshOnlyRightBar(this);
             invoiceProviderRepository = new InvoiceProviderRepository(GlobalOptions.GetEntities());
-
         }
 
         public InvoiceProviderDialogs(IInvoiceProviderRepository repos) : this()
@@ -54,6 +53,10 @@ namespace KursAM2.Dialogs
         #endregion
 
         #region Properties
+
+        
+
+        public override string WindowName => "Распределние накладных расходов > Выбор поставщиков";
 
         public bool IsNakladInvoices { set; get; }
 

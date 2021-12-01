@@ -5,7 +5,7 @@
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     Title="{Binding WindowName}" Height="400" Width="1000"
     >
-    <Grid Name="grid">
+    <Grid Name="grid" Style="{StaticResource DXServices}">
         <Grid.RowDefinitions>
             <RowDefinition Height="239*" />
             <RowDefinition Height="50" />

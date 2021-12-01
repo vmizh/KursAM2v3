@@ -8,7 +8,7 @@
     xmlns:viewModel="clr-namespace:KursAM2.ViewModel"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-    x:Class="KursAM2.View.MainWindow2"
+    x:Class="KursAM2.View.MainWindow"
     Title="Курс 2019" Height="700" Width="1100" SnapsToDevicePixels="True"
     UseLayoutRounding="True"
     Loaded="DXWindow_Loaded"
@@ -16,9 +16,14 @@
     <dx:ThemedWindow.DataContext>
         <viewModel:MainWindowViewModel />
     </dx:ThemedWindow.DataContext>
+    <dx:ThemedWindow.Resources>
+
+    </dx:ThemedWindow.Resources>
     <dxb:BarManager Name="BarManager">
         <dxb:BarManager.Items>
-            <dxb:BarSubItem x:Name="barSubItem1" Content="Система">
+            <dxb:BarSubItem x:Name="barSubItem1" Content="Система" 
+                            BarItemDisplayMode="ContentAndGlyph"
+                            LargeGlyph="{dx:DXImage SvgImages/DiagramIcons/PropertiesPanel.svg}">
                 <dxb:BarButtonItemLink BarItemName="barButtonItem1" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem2" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem4" />
@@ -26,14 +31,16 @@
                 <dxb:BarButtonItemLink BarItemName="barButtonItem5" />
             </dxb:BarSubItem>
             <dxb:BarButtonItem x:Name="barButtonItem1" Content="Настройки пользователя"
-                               ItemClick="BarButtonItem1_OnItemClick" />
+                               ItemClick="BarButtonItem1_OnItemClick" 
+                               Glyph="{dx:DXImage SvgImages/Dashboards/YAxisSettings.svg}" />
             <dxb:BarButtonItem x:Name="barButtonItem2" Content="Обновить справочники"
-                               ItemClick="BarButtonItem2_OnItemClick" />
-            <dxb:BarButtonItem x:Name="barButtonItem5" Content="Сохранить историю"
-                               ItemClick="BarButtonItem5_OnItemClick" />
+                               ItemClick="BarButtonItem2_OnItemClick" 
+                               Glyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}" />
+            <!--<dxb:BarButtonItem x:Name="barButtonItem5" Content="Сохранить историю"
+                               ItemClick="BarButtonItem5_OnItemClick" />-->
             <dxb:BarButtonItem x:Name="barButtonItem4" Content="Сбросить разметку"
-                               ItemClick="BarButtonItem4_OnItemClick" />
-            <dxb:BarButtonItem x:Name="barButtonItem3" Content="Выход" ItemClick="BarButtonItem3_OnItemClick" />
+                               ItemClick="BarButtonItem4_OnItemClick" Glyph="{dx:DXImage SvgImages/Dashboards/FullExtent.svg}" />
+            <dxb:BarButtonItem x:Name="barButtonItem3" Content="Выход" ItemClick="BarButtonItem3_OnItemClick" Glyph="{dx:DXImage SvgImages/HybridDemoIcons/Editors/HybridDemo_Back Button.svg}" />
         </dxb:BarManager.Items>
         <dxb:BarManager.Bars>
             <dxb:Bar Caption="Курc" ShowDragWidget="False" IsMainMenu="True"
@@ -43,10 +50,18 @@
                 </dxb:Bar.DockInfo>
                 <dxb:BarSubItemLink BarItemName="barSubItem1" />
                 <dxb:BarButtonItem Content="Последние документы"
-                                   Command="{Binding OpenLastDocumentDialogCommand }" Alignment="Far" />
+                                   BarItemDisplayMode="ContentAndGlyph"
+                                   Command="{Binding OpenLastDocumentDialogCommand }" 
+                                   Alignment="Far" 
+                                   LargeGlyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}" />
             </dxb:Bar>
             <dxb:Bar x:Name="statusBar" Caption="Status Bar" IsStatusBar="True" UseWholeRow="True"
                      ShowDragWidget="False" AllowHide="False" AllowQuickCustomization="False" AllowDrop="False">
+                <dxb:BarButtonItem Name="SearchMenuBarItem"
+                                   BarItemDisplayMode="ContentAndGlyph"
+                                   Content="Найти"
+                                   LargeGlyph="{dx:DXImage SvgImages/Business Objects/BO_FileAttachment.svg}" 
+                                   ItemClick="SearchMenuBarItem_OnItemClick"/>
                 <dxb:Bar.DockInfo>
                     <dxb:BarDockInfo ContainerType="Bottom" />
                 </dxb:Bar.DockInfo>
@@ -107,11 +122,6 @@
                                                        Text="{Binding Header}"
                                                        TextWrapping="Wrap"/>
                                         </dxlc:Tile>
-                                        <!--<DockPanel>
-                                            <dxe:TextEdit Margin="5"
-                                                          Text="{Binding Header}"
-                                                          AcceptsReturn="True" />
-                                        </DockPanel>-->
                                     </DataTemplate>
                                 </dxlc:TileLayoutControl.ItemTemplate>
                             </dxlc:TileLayoutControl>

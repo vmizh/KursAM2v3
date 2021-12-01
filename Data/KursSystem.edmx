@@ -92,6 +92,17 @@
           <Property Name="LastOpen" Type="datetime" Nullable="false" />
           <Property Name="Description" Type="varchar(max)" />
         </EntityType>
+        <EntityType Name="LastMenuUserSearch">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DbId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="MenuId" Type="int" Nullable="false" />
+          <Property Name="LastOpen" Type="datetime" Nullable="false" />
+          <Property Name="OpenCount" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Log">
           <Key>
             <PropertyRef Name="Id" />
@@ -340,6 +351,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_LastMenuUserSearch_DbId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="LastMenuUserSearch" Type="Self.LastMenuUserSearch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastMenuUserSearch">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LastMenuUserSearch_MenuId">
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="LastMenuUserSearch" Type="Self.LastMenuUserSearch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastMenuUserSearch">
+              <PropertyRef Name="MenuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LastMenuUserSearch_UserId">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="LastMenuUserSearch" Type="Self.LastMenuUserSearch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastMenuUserSearch">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SignatureLink_SignId">
           <End Role="SignatureType" Type="Self.SignatureType" Multiplicity="1" />
           <End Role="SignatureLink" Type="Self.SignatureLink" Multiplicity="*" />
@@ -552,6 +599,7 @@
           <EntitySet Name="KursMenuGroup" EntityType="Self.KursMenuGroup" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KursMenuItem" EntityType="Self.KursMenuItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LastDocument" EntityType="Self.LastDocument" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LastMenuUserSearch" EntityType="Self.LastMenuUserSearch" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Log" EntityType="Self.Log" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SignatureLink" EntityType="Self.SignatureLink" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SignatureSchemes" EntityType="Self.SignatureSchemes" Schema="dbo" store:Type="Tables" />
@@ -604,6 +652,18 @@
           <AssociationSet Name="FK_LastDocument_UserId" Association="Self.FK_LastDocument_UserId">
             <End Role="Users" EntitySet="Users" />
             <End Role="LastDocument" EntitySet="LastDocument" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastMenuUserSearch_DbId" Association="Self.FK_LastMenuUserSearch_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastMenuUserSearch_MenuId" Association="Self.FK_LastMenuUserSearch_MenuId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastMenuUserSearch_UserId" Association="Self.FK_LastMenuUserSearch_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
           </AssociationSet>
           <AssociationSet Name="FK_SignatureLink_SignId" Association="Self.FK_SignatureLink_SignId">
             <End Role="SignatureType" EntitySet="SignatureType" />
@@ -792,6 +852,19 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
           </AssociationSet>
+          <EntitySet Name="LastMenuUserSearch" EntityType="KursSystemModel.LastMenuUserSearch" />
+          <AssociationSet Name="FK_LastMenuUserSearch_DbId" Association="KursSystemModel.FK_LastMenuUserSearch_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastMenuUserSearch_MenuId" Association="KursSystemModel.FK_LastMenuUserSearch_MenuId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastMenuUserSearch_UserId" Association="KursSystemModel.FK_LastMenuUserSearch_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="DataSources">
           <Key>
@@ -812,6 +885,7 @@
           <NavigationProperty Name="Users" Relationship="KursSystemModel.UsersLinkDB" FromRole="DataSources" ToRole="Users" />
           <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DbId" FromRole="DataSources" ToRole="SignatureSchemes" />
           <NavigationProperty Name="UserMenuFavorites" Relationship="KursSystemModel.FK_UserMenuFavorites_DbId" FromRole="DataSources" ToRole="UserMenuFavorites" />
+          <NavigationProperty Name="LastMenuUserSearch" Relationship="KursSystemModel.FK_LastMenuUserSearch_DbId" FromRole="DataSources" ToRole="LastMenuUserSearch" />
         </EntityType>
         <EntityType Name="Errors">
           <Key>
@@ -887,6 +961,7 @@
           <Property Name="IsSign" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId" FromRole="KursMenuItem" ToRole="SignatureSchemes" />
           <NavigationProperty Name="UserMenuFavorites" Relationship="KursSystemModel.FK_UserMenuFavorites_MenuId" FromRole="KursMenuItem" ToRole="UserMenuFavorites" />
+          <NavigationProperty Name="LastMenuUserSearch" Relationship="KursSystemModel.FK_LastMenuUserSearch_MenuId" FromRole="KursMenuItem" ToRole="LastMenuUserSearch" />
         </EntityType>
         <EntityType Name="LastDocument">
           <Key>
@@ -991,6 +1066,7 @@
           <NavigationProperty Name="DataSources" Relationship="KursSystemModel.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
           <NavigationProperty Name="SignatureType" Relationship="KursSystemModel.SignatureLink" FromRole="Users" ToRole="SignatureType" />
           <NavigationProperty Name="UserMenuFavorites" Relationship="KursSystemModel.FK_UserMenuFavorites_UserId" FromRole="Users" ToRole="UserMenuFavorites" />
+          <NavigationProperty Name="LastMenuUserSearch" Relationship="KursSystemModel.FK_LastMenuUserSearch_UserId" FromRole="Users" ToRole="LastMenuUserSearch" />
         </EntityType>
         <Association Name="FK_Errors_DbId">
           <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
@@ -1296,6 +1372,56 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="LastMenuUserSearch">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <Property Name="DbId" Type="Guid" Nullable="false" />
+          <Property Name="MenuId" Type="Int32" Nullable="false" />
+          <Property Name="LastOpen" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="OpenCount" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_LastMenuUserSearch_DbId" FromRole="LastMenuUserSearch" ToRole="DataSources" />
+          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_LastMenuUserSearch_MenuId" FromRole="LastMenuUserSearch" ToRole="KursMenuItem" />
+          <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_LastMenuUserSearch_UserId" FromRole="LastMenuUserSearch" ToRole="Users" />
+        </EntityType>
+        <Association Name="FK_LastMenuUserSearch_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.LastMenuUserSearch" Role="LastMenuUserSearch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastMenuUserSearch">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LastMenuUserSearch_MenuId">
+          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="1" />
+          <End Type="KursSystemModel.LastMenuUserSearch" Role="LastMenuUserSearch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastMenuUserSearch">
+              <PropertyRef Name="MenuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LastMenuUserSearch_UserId">
+          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
+          <End Type="KursSystemModel.LastMenuUserSearch" Role="LastMenuUserSearch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastMenuUserSearch">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1527,6 +1653,18 @@
           <EntitySetMapping Name="UserMenuFavorites">
             <EntityTypeMapping TypeName="KursSystemModel.UserMenuFavorites">
               <MappingFragment StoreEntitySet="UserMenuFavorites">
+                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+                <ScalarProperty Name="DbId" ColumnName="DbId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LastMenuUserSearch">
+            <EntityTypeMapping TypeName="KursSystemModel.LastMenuUserSearch">
+              <MappingFragment StoreEntitySet="LastMenuUserSearch">
+                <ScalarProperty Name="OpenCount" ColumnName="OpenCount" />
+                <ScalarProperty Name="LastOpen" ColumnName="LastOpen" />
                 <ScalarProperty Name="MenuId" ColumnName="MenuId" />
                 <ScalarProperty Name="DbId" ColumnName="DbId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />

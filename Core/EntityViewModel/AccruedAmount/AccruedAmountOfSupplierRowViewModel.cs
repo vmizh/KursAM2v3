@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows;
@@ -10,7 +11,6 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using Newtonsoft.Json;
 
 namespace Core.EntityViewModel.AccruedAmount
 {
@@ -35,7 +35,7 @@ namespace Core.EntityViewModel.AccruedAmount
     }
 
     [MetadataType(typeof(AccruedAmountOfSupplierRowViewModel_FluentAPI))]
-    public class AccruedAmountOfSupplierRowViewModel : RSViewModelBase
+    public class AccruedAmountOfSupplierRowViewModel : RSViewModelBase, IDataErrorInfo
     {
         #region Fields
 
@@ -121,7 +121,7 @@ namespace Core.EntityViewModel.AccruedAmount
 
                 if (value < PaySumma)
                 {
-                    WindowManager.ShowMessage($"Сумма начсисления {value} " +
+                    WindowManager.ShowMessage($"Сумма начисления {value} " +
                                               $"не можен быть меньше оплаченной суммы {PaySumma}",
                         "Предупреждение", MessageBoxImage.Stop);
                     return;
@@ -226,6 +226,8 @@ namespace Core.EntityViewModel.AccruedAmount
                         return Nomenkl == null ? "Тип начисления должен быть обязательно выбран" : null;
                     case nameof(Summa):
                         return Summa <= 0 ? "Сумма должна быть больше 0" : null;
+                    case nameof(SDRSchet):
+                        return SDRSchet == null ? "Счет доходов/расходов обязателен для связи с платежами" : null;
                     default:
                         return null;
                 }

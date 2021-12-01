@@ -74,9 +74,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Properties
 
-        public Helper.LayoutManager LayoutManager { get; set; }
+        public new Helper.LayoutManager LayoutManager { get; set; }
 
-        private ILayoutSerializationService LayoutSerializationService
+        private new ILayoutSerializationService LayoutSerializationService
             => GetService<ILayoutSerializationService>();
 
         public DateTime DateEnd

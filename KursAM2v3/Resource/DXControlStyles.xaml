@@ -4,7 +4,8 @@
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-                    xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v21.1">
+                    xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v21.1"
+                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors">
     <Style x:Key="GridControl.Base" TargetType="dxg:GridControl">
         <Setter Property="ShowBorder" Value="False" />
         <Setter Property="EnableSmartColumnsGeneration" Value="True" />
@@ -149,6 +150,22 @@
         <Setter Property="ShowAutoFilterRow" Value="True" />
         <Setter Property="EnableImmediatePosting" Value="True" />
         <Setter Property="EditFormPostMode" Value="Immediate" />
+        <Setter Property="CellTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Grid>
+                        <Border Name="PART_ValidationBorder" BorderThickness="2" BorderBrush="Black"
+                                Visibility="Collapsed" />
+                        <dxe:InplaceBaseEdit Name="PART_Editor" />
+                    </Grid>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding (dxe:BaseEdit.HasValidationError)}" Value="True">
+                            <Setter TargetName="PART_ValidationBorder" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
     <dx:DXSplashScreenService x:Key="WaitIndicatorService">
         <dx:DXSplashScreenService.ViewTemplate>

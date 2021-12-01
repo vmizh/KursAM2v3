@@ -172,12 +172,6 @@ namespace Core.ViewModel.Base
             get { return new Command(OnLayoutInitial, _ => true); }
         }
 
-
-        public virtual void OnWindowClosing(object obj)
-        {
-            LayoutManager?.Save();
-        }
-
         private bool IsSummaryExists(GridSummaryItemCollection tsums, string fname, SummaryItemType sumType)
         {
             foreach (var s in tsums)
@@ -185,6 +179,11 @@ namespace Core.ViewModel.Base
                     return true;
 
             return false;
+        }
+
+        public virtual void OnWindowClosing(object obj)
+        {
+            LayoutManager?.Save();
         }
 
         private void OnLayoutInitial(object obj)
@@ -208,6 +207,7 @@ namespace Core.ViewModel.Base
             {
                 foreach (var grid in grids)
                 {
+                    grid.FilterString = null;
                     foreach (var col in grid.Columns)
                     {
                         col.Name = col.FieldName;

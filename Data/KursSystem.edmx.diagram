@@ -46,6 +46,10 @@
         <AssociationConnector Association="KursSystemModel.FK_UserMenuFavorites_DbId" />
         <AssociationConnector Association="KursSystemModel.FK_UserMenuFavorites_MenuId" />
         <AssociationConnector Association="KursSystemModel.FK_UserMenuFavorites_UserId" />
+        <EntityTypeShape EntityType="KursSystemModel.LastMenuUserSearch" Width="1.5" PointX="8.5" PointY="11.25" />
+        <AssociationConnector Association="KursSystemModel.FK_LastMenuUserSearch_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_LastMenuUserSearch_MenuId" />
+        <AssociationConnector Association="KursSystemModel.FK_LastMenuUserSearch_UserId" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

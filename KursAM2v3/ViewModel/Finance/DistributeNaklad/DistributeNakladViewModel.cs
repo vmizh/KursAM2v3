@@ -103,9 +103,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Properties
 
-        [Display(AutoGenerateField = false)] public Helper.LayoutManager LayoutManager { get; set; }
+        [Display(AutoGenerateField = false)] public new Helper.LayoutManager LayoutManager { get; set; }
 
-        private ILayoutSerializationService LayoutSerializationService
+        private new ILayoutSerializationService LayoutSerializationService
             => GetService<ILayoutSerializationService>();
 
         public override Guid Id

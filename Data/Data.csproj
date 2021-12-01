@@ -611,6 +611,9 @@
     <Compile Include="LastDocument.cs">
       <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
+    <Compile Include="LastMenuUserSearch.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="LIC_SCHET_KONTR_Result.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

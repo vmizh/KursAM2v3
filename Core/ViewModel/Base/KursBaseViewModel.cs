@@ -54,6 +54,14 @@ namespace Core.ViewModel.Base
 
         #region Methods
 
+        public virtual void RaisePropertyAllChanged()
+        {
+            foreach (var prop in this.GetType().GetProperties())
+            {
+                RaisePropertyChanged(prop.Name);
+            }
+        }
+
         public virtual void SetChangeStatus(RowStatus state = RowStatus.Edited)
         {
             if (State != RowStatus.NewRow) State = state;

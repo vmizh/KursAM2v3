@@ -6,6 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Core.Menu;
 using Core.WindowsManager;
+using DevExpress.Data;
+using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Utils.CommonDialogs.Internal;
 using DevExpress.Xpf.Grid;
@@ -42,6 +44,10 @@ namespace Core.ViewModel.Base
         #region Fields
 
         private bool myIsCanSaveData;
+        [Display(AutoGenerateField = false)]
+        protected ILayoutSerializationService LayoutSerializationService
+            => GetService<ILayoutSerializationService>();
+        [Display(AutoGenerateField = false)] public global::Helper.LayoutManager LayoutManager { get; set; }
 
         #endregion
 
@@ -75,6 +81,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)] public ObservableCollection<MenuButtonInfo> LeftMenuBar { get; set; }
 
         [Display(AutoGenerateField = false)] public virtual string WindowName { get; set; }
+        [Display(AutoGenerateField = false)] public virtual string LayoutName { get; set; }
 
         #endregion
 
@@ -91,9 +98,89 @@ namespace Core.ViewModel.Base
         {
         }
 
+        private bool IsSummaryExists(GridSummaryItemCollection tsums, string fname, SummaryItemType sumType)
+        {
+            foreach (var s in tsums)
+                if (s.FieldName == fname && s.SummaryType == sumType)
+                    return true;
+
+            return false;
+        }
+
+        public virtual void OnWindowClosing(object obj)
+        {
+            LayoutManager?.Save();
+        }
+
+        private void OnLayoutInitial(object obj)
+        {
+            if (Form != null)
+                LayoutManager ??= new global::Helper.LayoutManager(Form, LayoutSerializationService,
+                    LayoutName, null);
+            else
+                LayoutManager = new global::Helper.LayoutManager(LayoutSerializationService,
+                    LayoutName, null);
+        }
+
+        public virtual void OnWindowLoaded(object obj)
+        {
+            if (LayoutManager == null) OnLayoutInitial(null);
+            LayoutManager.Load();
+            if (Form == null) return;
+            var grids = Form.FindVisualChildren<GridControl>();
+            var trees = Form.FindVisualChildren<TreeListControl>();
+            if (grids != null)
+            {
+                foreach (var grid in grids)
+                {
+                    grid.FilterString = null;
+                    foreach (var col in grid.Columns)
+                    {
+                        col.Name = col.FieldName;
+                        if (col.FieldType == typeof(decimal) ||
+                            col.FieldType == typeof(decimal?)
+                            || col.FieldType == typeof(float) || col.FieldType == typeof(float?)
+                            || col.FieldType == typeof(double) || col.FieldType == typeof(double?))
+                        {
+                            if (IsSummaryExists(grid.TotalSummary, col.FieldName, SummaryItemType.Sum)) continue;
+                            grid.TotalSummary.Add(new GridSummaryItem
+                            {
+                                DisplayFormat = "n2",
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Sum,
+                                ShowInColumn = col.FieldName
+                            });
+                        }
+
+                        if (col.FieldType == typeof(int) || col.FieldType == typeof(int?))
+                        {
+                            if (IsSummaryExists(grid.TotalSummary, col.FieldName, SummaryItemType.Count)) continue;
+                            grid.TotalSummary.Add(new GridSummaryItem
+                            {
+                                DisplayFormat = "n0",
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Count,
+                                ShowInColumn = col.FieldName
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (trees != null)
+            {
+                foreach (var t in trees)
+                {
+                    foreach (var col in t.Columns)
+                        col.Name = col.FieldName;
+                }
+            }
+        }
+
         [Display(AutoGenerateField = false)]
         public virtual ICommand RefreshDataCommand
         {
+            // ReSharper disable once UnusedParameter.Local
             get { return new Command(Load, param => CanLoad(null)); }
         }
 

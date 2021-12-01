@@ -126,6 +126,9 @@
                                     <Image Source="{StaticResource SignatureDeleteDrawingImage}" />
                                 </MenuItem.Icon>
                             </MenuItem> 
+                            <Separator/>
+                            <MenuItem Header="Загрузить актуальную схему" 
+                                      Command="{Binding ResetSignatureSchemaCommand}"/>
                         </ContextMenu>
                     </dxg:TreeListView.ContextMenu>
                 </dxg:TreeListView>

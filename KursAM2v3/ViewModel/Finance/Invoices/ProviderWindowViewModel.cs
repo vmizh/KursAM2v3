@@ -24,7 +24,6 @@ using DevExpress.Mvvm;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
-using KursAM2.Managers.Invoices;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
@@ -1370,9 +1369,28 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocDelete(object form)
         {
-            if (Document.State != RowStatus.Edited)
+
+            if (Document.State == RowStatus.NewRow)
             {
                 var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?", "Запрос",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+                switch (res)
+                {
+                    case MessageBoxResult.Yes:
+                        Form.Close();
+                        return;
+                    case MessageBoxResult.No:
+                        return;
+                }
+            }
+            else 
+            {
+                var isDistr = UnitOfWork.Context.DistributeNakladInfo.Any(_ => _.InvoiceNakladId == Document.Id);
+                var str = !isDistr
+                    ? "Вы уверены, что хотите удалить данный документ?"
+                    : "Документ участвует в распределении накладных.\nВы уверены, что хотите удалить данный документ?";
+                var res = WinManager.ShowWinUIMessageBox(str, "Запрос",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
                 if (res != MessageBoxResult.Yes) return;
@@ -1385,6 +1403,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         UnitOfWork.CreateTransaction();
                         try
                         {
+                            if (isDistr)
+                            {
+                                foreach (var d in UnitOfWork.Context.DistributeNakladInfo
+                                    .Where(_ => _.InvoiceNakladId == Document.Id).ToList())
+                                {
+                                    UnitOfWork.Context.DistributeNakladInfo.Remove(d);
+                                }
+
+                                foreach (var din in UnitOfWork.Context.DistributeNakladInvoices
+                                    .Where(_ => _.InvoiceId == Document.Id))
+                                {
+                                    UnitOfWork.Context.DistributeNakladInvoices.Remove(din);
+                                }
+                            }
+
                             GenericProviderRepository.Delete(Document.Entity);
                             UnitOfWork.Save();
                             UnitOfWork.Commit();
@@ -1394,6 +1427,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         {
                             UnitOfWork.Rollback();
                             WindowManager.ShowError(ex);
+                            return;
                         }
 
                         Form.Close();
@@ -1403,19 +1437,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     case MessageBoxResult.No:
                         Form.Close();
                         return;
-                    // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
-                    case MessageBoxResult.Cancel:
-                        return;
                 }
             }
-            else
-            {
-                InvoicesManager.DeleteProvider(Document.DocCode);
-                Form.Close();
-            }
-
-            InvoicesManager.DeleteProvider(Document.DocCode);
-            Form.Close();
         }
 
         public override void DocNewEmpty(object form)

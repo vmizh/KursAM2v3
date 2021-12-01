@@ -16,7 +16,6 @@ using KursAM2.View.Base;
 using KursAM2.View.Signature;
 using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reference.Dialogs;
-using KursRepositories.ViewModels;
 
 namespace KursAM2.ViewModel.Signatures
 {
@@ -226,13 +225,18 @@ namespace KursAM2.ViewModel.Signatures
 
         public ICommand DeleteSchemaSignatureCommand
         {
-            get { return new Command(DeleteSchemaSignature, _ => CurrentInfoSchema != null
-            && CurrentInfoSchema.ParentId == null); }
+            get
+            {
+                return new Command(DeleteSchemaSignature, _ => CurrentInfoSchema != null
+                                                               && CurrentSchema.SchemesInfo.All(x =>
+                                                                   x.ParentId != CurrentInfoSchema.Id));
+            }
         }
 
         private void DeleteSchemaSignature(object obj)
         {
-            
+            SystemUnitOfWork.Context.SignatureSchemesInfo.Remove(CurrentInfoSchema.Entity);
+            CurrentSchema.SchemesInfo.Remove(CurrentInfoSchema);
         }
 
         public ICommand AddSignatureCommand
@@ -346,6 +350,11 @@ namespace KursAM2.ViewModel.Signatures
             }
             else
             {
+                foreach (var si in CurrentSchema.SchemesInfo)
+                {
+                    SystemUnitOfWork.Context.SignatureSchemesInfo.Remove(si.Entity);
+                }
+                
                 SystemUnitOfWork.Context.SignatureSchemes.Remove(CurrentSchema.Entity);
             }
             DocumentSchemes.Remove(CurrentSchema);

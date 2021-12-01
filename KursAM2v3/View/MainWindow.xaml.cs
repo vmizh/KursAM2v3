@@ -31,6 +31,7 @@ using KursAM2.View.Personal;
 using KursAM2.View.Reconciliation;
 using KursAM2.View.Repozit;
 using KursAM2.View.Shop;
+using KursAM2.ViewModel;
 using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.AccruedAmount;
@@ -64,15 +65,18 @@ namespace KursAM2.View
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow2 : ILayout
+    public partial class MainWindow : ILayout
     {
         private int currentMainGroupId;
+
+
+        private Tile myCurrentTile;
 
         //private readonly string myLayoutFileName = $"{Environment.CurrentDirectory}\\Layout\\{"MainWindow"}.xml";
 
         private Timer myVersionUpdateTimer;
 
-        public MainWindow2()
+        public MainWindow()
         {
             try
             {
@@ -81,7 +85,7 @@ namespace KursAM2.View
                 myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, 1000 * 360 * 3, Timeout.Infinite);
 
 #endif
-                LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, dockLayout1);
+                LayoutManager = new LayoutManager.LayoutManager("MainWindow", this, dockLayout1);
                 Loaded += MainWindow_Loaded;
                 Closing += MainWindow_Closing;
                 Closed += MainWindow_Closed;
@@ -101,8 +105,6 @@ namespace KursAM2.View
             }
         }
 
-
-        private Tile myCurrentTile;
         public Tile CurrentTile
         {
             get => myCurrentTile;
@@ -173,7 +175,7 @@ namespace KursAM2.View
         {
         }
 
-        public void OpenWindow(string formName)
+        public static void OpenWindow(string formName)
         {
             try
             {
@@ -913,8 +915,20 @@ namespace KursAM2.View
                     t.BorderThickness = new Thickness(0, 0, 0, 0);
             tileClickEventArgs.Tile.BorderThickness = new Thickness(3, 3, 3, 3);
             tileClickEventArgs.Tile.BorderBrush = Brushes.Orange;
-            if (currentMainGroupId != 11)
+            List<UserMenuFavorites> fvrts;
+            using (var sctx = GlobalOptions.KursSystem())
             {
+                fvrts = sctx.UserMenuFavorites
+                    .Include(_ => _.DataSources)
+                    .Include(_ => _.Users)
+                    .Include(_ => _.KursMenuItem)
+                    .AsNoTracking()
+                    .Where(_ => _.DbId == GlobalOptions.DataBaseId
+                                && _.UserId == GlobalOptions.UserInfo.KursId)
+                    .ToList();
+            }
+
+            if (currentMainGroupId != 11)
                 foreach (var tile in grp.TileItems.OrderBy(_ => _.OrderBy))
                 {
                     var newTile = new Tile
@@ -926,20 +940,21 @@ namespace KursAM2.View
                         HorizontalAlignment = HorizontalAlignment.Center,
                         HorizontalHeaderAlignment = HorizontalAlignment.Center
                     };
-                    newTile.MouseMove += NewTile_MouseMove;
-                    var menuAdd = new MenuItem
+                    if (fvrts.All(_ => _.MenuId != tile.Id))
                     {
-                        Header = "Добавить в избранное",
+                        newTile.MouseMove += NewTile_MouseMove;
+                        var menuAdd = new MenuItem
+                        {
+                            Header = "Добавить в избранное"
+                        };
+                        menuAdd.Click += AddToFun;
+                        newTile.ContextMenu = new ContextMenu();
+                        newTile.ContextMenu.Items.Add(menuAdd);
+                    }
 
-                    };
-                    menuAdd.Click += AddToFun;
-                    newTile.ContextMenu = new ContextMenu();
-                    newTile.ContextMenu.Items.Add(menuAdd);
                     tileDocumentItems.Children.Add(newTile);
                 }
-            }
             else
-            {
                 using (var sctx = GlobalOptions.KursSystem())
                 {
                     var data = sctx.UserMenuFavorites
@@ -948,10 +963,9 @@ namespace KursAM2.View
                         .Include(_ => _.KursMenuItem)
                         .AsNoTracking()
                         .Where(_ => _.DbId == GlobalOptions.DataBaseId
-                                                                 && _.UserId == GlobalOptions.UserInfo.KursId)
+                                    && _.UserId == GlobalOptions.UserInfo.KursId)
                         .ToList();
                     if (data.Any())
-                    {
                         foreach (var d in data)
                         {
                             var newTile = new Tile
@@ -966,23 +980,19 @@ namespace KursAM2.View
                             newTile.MouseMove += NewTile_MouseMove;
                             var menuRemove = new MenuItem
                             {
-                                Header = "Убрать из избранного",
-
+                                Header = "Убрать из избранного"
                             };
                             menuRemove.Click += RemoveFromFun;
                             newTile.ContextMenu = new ContextMenu();
                             newTile.ContextMenu.Items.Add(menuRemove);
                             tileDocumentItems.Children.Add(newTile);
                         }
-                    }
                 }
-            }
         }
 
         private void RemoveFromFun(object sender, RoutedEventArgs e)
         {
             if (CurrentTile != null)
-            {
                 using (var ctx = GlobalOptions.KursSystem())
                 {
                     var old = ctx.UserMenuFavorites
@@ -996,7 +1006,6 @@ namespace KursAM2.View
                         tileDocumentItems.Children.Remove(CurrentTile);
                     }
                 }
-            }
         }
 
         private void NewTile_MouseMove(object sender, MouseEventArgs e)
@@ -1007,7 +1016,6 @@ namespace KursAM2.View
         private void AddToFun(object sender, EventArgs e)
         {
             if (CurrentTile != null)
-            {
                 using (var ctx = GlobalOptions.KursSystem())
                 {
                     var id = Guid.NewGuid();
@@ -1020,7 +1028,6 @@ namespace KursAM2.View
                     });
                     ctx.SaveChanges();
                 }
-            }
         }
 
         private void LoadTiles()
@@ -1048,7 +1055,7 @@ namespace KursAM2.View
                                 Notes = grp.Note,
                                 Picture = ImageManager.ByteToImage(grp.Picture),
                                 // ReSharper disable once PossibleInvalidOperationException
-                                OrderBy = (int) (grpOrd != null ? grpOrd.Order : grp.Id)
+                                OrderBy = (int)(grpOrd != null ? grpOrd.Order : grp.Id)
                             };
                             tileGroupsTemp.Add(newGrp);
                         }
@@ -1070,7 +1077,7 @@ namespace KursAM2.View
                             Picture = ImageManager.ByteToImage(tile.Picture),
                             GroupId = tile.GroupId,
                             // ReSharper disable once PossibleInvalidOperationException
-                            OrderBy = (int) (ord != null ? ord.Order : tile.Id)
+                            OrderBy = (int)(ord != null ? ord.Order : tile.Id)
                         });
                     }
 
@@ -1080,7 +1087,7 @@ namespace KursAM2.View
                 GlobalOptions.UserInfo.MainTileGroups = new List<TileGroup>(tileGroups.OrderBy(_ => _.OrderBy));
                 GlobalOptions.UserInfo.Groups =
                     GlobalOptions.GetEntities().EXT_GROUPS.Select(
-                            grp => new UserGroup {Id = grp.GR_ID, Name = grp.GR_NAME})
+                            grp => new UserGroup { Id = grp.GR_ID, Name = grp.GR_NAME })
                         .ToList();
                 tileMainGroup.Children.Clear();
                 foreach (var tileGroup in GlobalOptions.UserInfo.MainTileGroups.OrderBy(_ => _.OrderBy))
@@ -1157,6 +1164,30 @@ namespace KursAM2.View
 
         private void tileDocumentItems_TileClick(object sender, TileClickEventArgs e)
         {
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                var menuItem = ctx.LastMenuUserSearch
+                    .FirstOrDefault(_ => _.UserId == GlobalOptions.UserInfo.KursId
+                                         && _.DbId == GlobalOptions.DataBaseId && _.MenuId == (int)e.Tile.Tag);
+                if (menuItem == null)
+                {
+                    ctx.LastMenuUserSearch.Add(new LastMenuUserSearch
+                    {
+                        Id = Guid.NewGuid(),
+                        DbId = GlobalOptions.DataBaseId,
+                        UserId = GlobalOptions.UserInfo.KursId,
+                        MenuId = (int)e.Tile.Tag,
+                        LastOpen = DateTime.Now,
+                        OpenCount = 1
+                    });
+                }
+                else
+                {
+                    menuItem.OpenCount++;
+                }
+
+                ctx.SaveChanges();
+            }
             OpenWindow(e.Tile.Header as string);
         }
 
@@ -1247,9 +1278,22 @@ namespace KursAM2.View
             formUserProfile.Show();
         }
 
+        // ReSharper disable once UnusedMember.Local
+        // ReSharper disable once UnusedParameter.Local
         private void BarButtonItem5_OnItemClick(object sender, ItemClickEventArgs e)
         {
             SaveHistoryStart.SaveHistory();
+        }
+
+        private void SearchMenuBarItem_OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            var context = new MenuSearchWindowViewModel();
+            var frm = new MenuSearchView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = context
+            };
+            frm.Show();
         }
     }
 }
