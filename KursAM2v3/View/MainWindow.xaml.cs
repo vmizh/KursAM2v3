@@ -169,6 +169,8 @@ namespace KursAM2.View
         {
             LayoutManager.Load();
             DocumentLayoutPanel.Caption = "";
+            if (DataContext is MainWindowViewModel dtx)
+                dtx.Form = this;
         }
 
         public void OpenForm(Window win, Window owner, RSWindowViewModelBase datacontext)
@@ -988,7 +990,19 @@ namespace KursAM2.View
                             tileDocumentItems.Children.Add(newTile);
                         }
                 }
+
+            var dtx = DataContext as MainWindowViewModel;
+            if (dtx != null)
+            {
+                dtx.CurrentDocumentTiles.Clear();
+                foreach (var tile in tileDocumentItems.Children.Cast<Tile>())
+                {
+                    dtx.CurrentDocumentTiles.Add(tile);
+                }
+            }
         }
+
+
 
         private void RemoveFromFun(object sender, RoutedEventArgs e)
         {

@@ -27,6 +27,9 @@ namespace KursAM2.ViewModel
         public ObservableCollection<LastDocumentViewModel> LastDocuments { set; get; }
             = new ObservableCollection<LastDocumentViewModel>();
 
+        public ObservableCollection<Tile> CurrentDocumentTiles { set; get; }
+            = new ObservableCollection<Tile>();
+
         public LastDocumentViewModel CurrentLastDocument
         {
             get => myCurrentLastDocument;
@@ -47,16 +50,6 @@ namespace KursAM2.ViewModel
                 mySearchMenuString = value;
                 RaisePropertyChanged();
             }
-        }
-
-        public ICommand SearchMenuCommand
-        {
-            get { return new Command(SearchMenu, _ => !string.IsNullOrWhiteSpace(SearchMenuString)); }
-        }
-
-        public Command ClearSearchCommand
-        {
-            get { return new Command(ClearSearchMenu, _ => !string.IsNullOrWhiteSpace(SearchMenuString)); }
         }
 
         public Tile CurrentFavoriteMenu
@@ -83,13 +76,37 @@ namespace KursAM2.ViewModel
             get { return new Command(ExpandDocumentList, _ => true); }
         }
 
-        private void SearchMenu(object obj)
+        public override bool IsCanSearch => !string.IsNullOrWhiteSpace(SearchText);
+
+        public override void Search(object obj)
         {
+            if (Form is MainWindow frm)
+            {
+                frm.tileDocumentItems.Children.Clear();
+                if (!string.IsNullOrWhiteSpace(SearchText) && SearchText.Length >= 3)
+                {
+                    
+                    foreach (var tile in CurrentDocumentTiles)
+                    {
+                        if (((string)tile.Header).ToUpper().Contains(SearchText.ToUpper()))
+                        {
+                            frm.tileDocumentItems.Children.Add(tile);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var tile in CurrentDocumentTiles)
+                    {
+                        frm.tileDocumentItems.Children.Add(tile);
+                    }
+                }
+            }
         }
 
-        private void ClearSearchMenu(object obj)
+        public override void SearchClear(object obj)
         {
-            SearchMenuString = null;
+            SearchText = null;
         }
 
         private void OpenLastDocumentDialog(object obj)

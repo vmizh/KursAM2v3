@@ -1,9 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Data.Entity;
 using System.Windows.Input;
 using Core;
 using Core.ViewModel.Base;
+using Data;
 using KursAM2.View;
 
 namespace KursAM2.ViewModel
@@ -27,7 +29,7 @@ namespace KursAM2.ViewModel
                     .Include(_ => _.KursMenuItem)
                     .Where(_ => _.DbId == GlobalOptions.DataBaseId
                     && _.UserId == GlobalOptions.UserInfo.KursId)
-                    .OrderByDescending(_ => _.OpenCount).Take(5);
+                    .OrderByDescending(_ => _.OpenCount).Take(5).ToList();
                 foreach (var item in items)
                 {
                     OftenUsedMenuItems.Add(new SearchMenuItem
@@ -64,44 +66,30 @@ namespace KursAM2.ViewModel
 
         #region Commands
 
-        public ICommand ClearSearchMenuCommand
-        {
-            get { return new Command(ClearSearchMenu, _ => !string.IsNullOrWhiteSpace(SearchText)); }
-        }
-
-        private void ClearSearchMenu(object obj)
+        public override void SearchClear(object obj)
         {
             SearchText = null;
         }
 
-        public ICommand SearchMenuCommand
-        {
-            get
-            {
-                return new Command(SearchMenu, _ => !string.IsNullOrWhiteSpace(SearchText));
-            }
-        }
+        public override bool IsCanSearch => !string.IsNullOrWhiteSpace(SearchText);
 
-        private void SearchMenu(object obj)
+        public override void Search(object obj)
         {
             if (SearchText.Length >= 3)
             {
                 SearchMenuItems.Clear();
-                foreach (var grp in GlobalOptions.UserInfo.MainTileGroups)
+                foreach (var menu in from grp in GlobalOptions.UserInfo.MainTileGroups
+                    from menu in grp.TileItems
+                    where menu.Name.ToUpper().Contains(SearchText.ToUpper())
+                    where SearchMenuItems.All(_ => _.Id != menu.Id)
+                    select menu)
                 {
-                    foreach (var menu in grp.TileItems)
+                    SearchMenuItems.Add(new SearchMenuItem
                     {
-                        if (menu.Name.ToUpper().Contains(SearchText.ToUpper()))
-                        {
-                            if (SearchMenuItems.Any(_ => _.Id == menu.Id)) continue;
-                            SearchMenuItems.Add(new SearchMenuItem
-                            {
-                                Id = menu.Id,
-                                Name = menu.Name,
-                                Command = OpenCommand
-                            });
-                        }
-                    }
+                        Id = menu.Id,
+                        Name = menu.Name,
+                        Command = OpenCommand
+                    });
                 }
             }
             else
@@ -117,6 +105,36 @@ namespace KursAM2.ViewModel
 
         private void Open(object obj)
         {
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                var menuItem = ctx.LastMenuUserSearch
+                    .Include(_ => _.KursMenuItem)
+                    .FirstOrDefault(_ => _.UserId == GlobalOptions.UserInfo.KursId
+                                         && _.DbId == GlobalOptions.DataBaseId 
+                                         && _.KursMenuItem.Name == (string)obj);
+                if (menuItem == null)
+                {
+                    var newMenu = ctx.KursMenuItem.FirstOrDefault(_ => _.Name == (string)obj);
+                    if (newMenu != null)
+                    {
+                        ctx.LastMenuUserSearch.Add(new LastMenuUserSearch
+                        {
+                            Id = Guid.NewGuid(),
+                            DbId = GlobalOptions.DataBaseId,
+                            UserId = GlobalOptions.UserInfo.KursId,
+                            MenuId = newMenu.Id,
+                            LastOpen = DateTime.Now,
+                            OpenCount = 1
+                        });
+                    }
+                }
+                else
+                {
+                    menuItem.OpenCount++;
+                }
+
+                ctx.SaveChanges();
+            }
             MainWindow.OpenWindow((string)obj);
         }
 

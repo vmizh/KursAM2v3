@@ -5,9 +5,9 @@
     xmlns:dxd="http://schemas.devexpress.com/winfx/2008/xaml/docking"
     xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:viewModel="clr-namespace:KursAM2.ViewModel"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     x:Class="KursAM2.View.MainWindow"
     Title="Курс 2019" Height="700" Width="1100" SnapsToDevicePixels="True"
     UseLayoutRounding="True"
@@ -16,12 +16,9 @@
     <dx:ThemedWindow.DataContext>
         <viewModel:MainWindowViewModel />
     </dx:ThemedWindow.DataContext>
-    <dx:ThemedWindow.Resources>
-
-    </dx:ThemedWindow.Resources>
     <dxb:BarManager Name="BarManager">
         <dxb:BarManager.Items>
-            <dxb:BarSubItem x:Name="barSubItem1" Content="Система" 
+            <dxb:BarSubItem x:Name="barSubItem1" Content="Система"
                             BarItemDisplayMode="ContentAndGlyph"
                             LargeGlyph="{dx:DXImage SvgImages/DiagramIcons/PropertiesPanel.svg}">
                 <dxb:BarButtonItemLink BarItemName="barButtonItem1" />
@@ -31,16 +28,18 @@
                 <dxb:BarButtonItemLink BarItemName="barButtonItem5" />
             </dxb:BarSubItem>
             <dxb:BarButtonItem x:Name="barButtonItem1" Content="Настройки пользователя"
-                               ItemClick="BarButtonItem1_OnItemClick" 
+                               ItemClick="BarButtonItem1_OnItemClick"
                                Glyph="{dx:DXImage SvgImages/Dashboards/YAxisSettings.svg}" />
             <dxb:BarButtonItem x:Name="barButtonItem2" Content="Обновить справочники"
-                               ItemClick="BarButtonItem2_OnItemClick" 
+                               ItemClick="BarButtonItem2_OnItemClick"
                                Glyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}" />
             <!--<dxb:BarButtonItem x:Name="barButtonItem5" Content="Сохранить историю"
                                ItemClick="BarButtonItem5_OnItemClick" />-->
             <dxb:BarButtonItem x:Name="barButtonItem4" Content="Сбросить разметку"
-                               ItemClick="BarButtonItem4_OnItemClick" Glyph="{dx:DXImage SvgImages/Dashboards/FullExtent.svg}" />
-            <dxb:BarButtonItem x:Name="barButtonItem3" Content="Выход" ItemClick="BarButtonItem3_OnItemClick" Glyph="{dx:DXImage SvgImages/HybridDemoIcons/Editors/HybridDemo_Back Button.svg}" />
+                               ItemClick="BarButtonItem4_OnItemClick"
+                               Glyph="{dx:DXImage SvgImages/Dashboards/FullExtent.svg}" />
+            <dxb:BarButtonItem x:Name="barButtonItem3" Content="Выход" ItemClick="BarButtonItem3_OnItemClick"
+                               Glyph="{dx:DXImage SvgImages/HybridDemoIcons/Editors/HybridDemo_Back Button.svg}" />
         </dxb:BarManager.Items>
         <dxb:BarManager.Bars>
             <dxb:Bar Caption="Курc" ShowDragWidget="False" IsMainMenu="True"
@@ -51,8 +50,8 @@
                 <dxb:BarSubItemLink BarItemName="barSubItem1" />
                 <dxb:BarButtonItem Content="Последние документы"
                                    BarItemDisplayMode="ContentAndGlyph"
-                                   Command="{Binding OpenLastDocumentDialogCommand }" 
-                                   Alignment="Far" 
+                                   Command="{Binding OpenLastDocumentDialogCommand }"
+                                   Alignment="Far"
                                    LargeGlyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}" />
             </dxb:Bar>
             <dxb:Bar x:Name="statusBar" Caption="Status Bar" IsStatusBar="True" UseWholeRow="True"
@@ -60,8 +59,8 @@
                 <dxb:BarButtonItem Name="SearchMenuBarItem"
                                    BarItemDisplayMode="ContentAndGlyph"
                                    Content="Найти"
-                                   LargeGlyph="{dx:DXImage SvgImages/Business Objects/BO_FileAttachment.svg}" 
-                                   ItemClick="SearchMenuBarItem_OnItemClick"/>
+                                   LargeGlyph="{dx:DXImage SvgImages/Business Objects/BO_FileAttachment.svg}"
+                                   ItemClick="SearchMenuBarItem_OnItemClick" />
                 <dxb:Bar.DockInfo>
                     <dxb:BarDockInfo ContainerType="Bottom" />
                 </dxb:Bar.DockInfo>
@@ -110,6 +109,29 @@
                             </dxd:Appearance>
                         </dxd:LayoutPanel.Appearance>
                         <DockPanel>
+                            <DockPanel DockPanel.Dock="Top" LastChildFill="False">
+                                <dxe:ButtonEdit DockPanel.Dock="Right"
+                                                Width="300"
+                                                EditValue="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                                AllowDefaultButton="False">
+                                    <dxe:ButtonEdit.Buttons>
+                                        <dxe:ButtonInfo
+                                            GlyphKind="Search"
+                                            Command="{Binding SearchCommand}" />
+                                        <dxe:ButtonInfo
+                                            Command="{Binding SearchClearCommand}"
+                                            GlyphKind="Cancel" />
+                                    </dxe:ButtonEdit.Buttons>
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand EventName="EditValueChanging"
+                                                               Command="{Binding SearchCommand}" />
+                                        <dxmvvm:KeyToCommand EventName="KeyDown" KeyGesture="Enter"
+                                                             Command="{Binding SearchCommand}"/>
+                                        <dxmvvm:KeyToCommand EventName="KeyDown" KeyGesture="Esc"
+                                                             Command="{Binding SearchClearCommand}"/>
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:ButtonEdit>
+                            </DockPanel>
                             <dxlc:TileLayoutControl x:Name="tileDocumentItems"
                                                     Background="#FFD0D6D3"
                                                     Padding="10"
@@ -120,7 +142,7 @@
                                         <dxlc:Tile>
                                             <TextBlock Margin="5"
                                                        Text="{Binding Header}"
-                                                       TextWrapping="Wrap"/>
+                                                       TextWrapping="Wrap" />
                                         </dxlc:Tile>
                                     </DataTemplate>
                                 </dxlc:TileLayoutControl.ItemTemplate>

@@ -1,67 +1,48 @@
 ﻿<dx:ThemedWindow
-              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-              xmlns:local="clr-namespace:KursAM2.View"
-              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-              xmlns:dxnav="http://schemas.devexpress.com/winfx/2008/xaml/navigation"
-              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-              x:Class="KursAM2.View.MenuSearchView"
-              mc:Ignorable="d"
-              Title="Поиски и часто используемые" Height="450" Width="800">
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxnav="http://schemas.devexpress.com/winfx/2008/xaml/navigation"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    x:Class="KursAM2.View.MenuSearchView"
+    mc:Ignorable="d"
+    Title="Поиски и часто используемые" Height="450" Width="800">
     <dx:ThemedWindow.Resources>
         <Style TargetType="{x:Type dxnav:TileBarItem}" x:Key="TileBarItemStyleBase">
-            <Setter Property="ContentTemplate">  
-                <Setter.Value>  
-                    <DataTemplate>  
-                        <TextBlock Text="{Binding}" TextWrapping="Wrap"/>  
-                    </DataTemplate>  
-                </Setter.Value>  
-            </Setter>  
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Content" Value="{Binding Name}"/>
-            <Setter Property="Command" Value="{Binding Command}"/>
-            <Setter Property="CommandParameter" Value ="{Binding RelativeSource={RelativeSource Self}, Path=Content}"/>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Content" Value="{Binding Name}" />
+            <Setter Property="Command" Value="{Binding Command}" />
+            <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource Self}, Path=Content}" />
         </Style>
     </dx:ThemedWindow.Resources>
     <DockPanel LastChildFill="False" Style="{StaticResource DXServices}">
-        <Label Content="Часто используемые" DockPanel.Dock="Top"/>
+        <Label Content="Часто используемые" DockPanel.Dock="Top" />
         <dxnav:TileBar HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch" 
+                       VerticalAlignment="Stretch"
                        DockPanel.Dock="Top"
-                       ItemsSource="{Binding OftenUsedMenuItems}" 
+                       ItemsSource="{Binding OftenUsedMenuItems}"
                        ItemContainerStyle="{StaticResource TileBarItemStyleBase}"
-                       SelectedItem="{Binding CurrentTile, UpdateSourceTrigger=PropertyChanged }"
-                       
-        />
-        <Label Content="Найдено:" DockPanel.Dock="Top"/>
+                       SelectedItem="{Binding CurrentTile, UpdateSourceTrigger=PropertyChanged }" />
+        <Label Content="Найдено:" DockPanel.Dock="Top" />
         <dxnav:TileBar HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch" 
+                       VerticalAlignment="Stretch"
                        DockPanel.Dock="Top"
-                       ItemsSource="{Binding SearchMenuItems}" 
-                       ItemContainerStyle="{StaticResource TileBarItemStyleBase}" FlyoutShowMode="Popup"
-                       />
+                       ItemsSource="{Binding SearchMenuItems}"
+                       ItemContainerStyle="{StaticResource TileBarItemStyleBase}" FlyoutShowMode="Popup" />
         <dxe:ButtonEdit DockPanel.Dock="Bottom"
                         HorizontalAlignment="Left"
                         Width="300"
-                        AllowDefaultButton="False"
                         EditValue="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                        >
-            <dxmvvm:Interaction.Behaviors>
-                <dxmvvm:EventToCommand EventName="EditValueChanging" 
-                                       Command="{Binding SearchMenuCommand}">
-                </dxmvvm:EventToCommand>
-            </dxmvvm:Interaction.Behaviors>
-            <dxe:ButtonEdit.Buttons>
-                <dxe:ButtonInfo 
-                    GlyphKind="Search"
-                    Command="{Binding SearchMenuCommand}"/>
-                <dxe:ButtonInfo 
-                    Command="{Binding ClearSearchMenuCommand}"
-                    GlyphKind="Cancel"/>
-            </dxe:ButtonEdit.Buttons>
-        </dxe:ButtonEdit>
+                        Style="{StaticResource ButtonSearchStyle}"/>
     </DockPanel>
 </dx:ThemedWindow>

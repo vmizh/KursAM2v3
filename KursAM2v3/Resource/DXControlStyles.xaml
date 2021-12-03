@@ -201,4 +201,33 @@
             <Label Margin="5 0" Content="Оплата" />
         </StackPanel>
     </DataTemplate>
+    <Style x:Key="ButtonSearchStyle" TargetType="dxe:ButtonEdit">
+        <Setter Property="AllowDefaultButton" Value="False"/>
+        <Setter Property="Buttons">
+            <Setter.Value>
+                <dxe:ButtonInfoCollection>
+                    <dxe:ButtonInfo
+                            GlyphKind="Search"
+                            Command="{Binding SearchCommand}" />
+                        <dxe:ButtonInfo
+                            Command="{Binding SearchClearCommand}"
+                            GlyphKind="Cancel" />
+                </dxe:ButtonInfoCollection>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
+            <Setter.Value>
+               <DataTemplate>
+                   <ItemsControl>
+                       <dxmvvm:EventToCommand EventName="EditValueChanging"
+                                              Command="{Binding SearchCommand}" />
+                       <dxmvvm:KeyToCommand EventName="KeyDown" KeyGesture="Enter"
+                                            Command="{Binding SearchCommand}"/>
+                       <dxmvvm:KeyToCommand EventName="KeyDown" KeyGesture="Esc"
+                                            Command="{Binding SearchClearCommand}"/>
+                   </ItemsControl>
+               </DataTemplate> 
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

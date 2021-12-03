@@ -262,9 +262,10 @@ namespace KursAM2.View.Finance.Invoices
             if (dtx.Document.myState != RowStatus.NewRow)
                 dtx.Document.myState = RowStatus.Edited;
 
-            PaySummaEditor.Foreground = dtx.Document.PaySumma > dtx.Document.Summa
-                ? new SolidColorBrush(Colors.Red)
-                : new SolidColorBrush(Colors.Black);
+            if(PaySummaEditor != null)
+                PaySummaEditor.Foreground = dtx.Document.PaySumma > dtx.Document.Summa
+                    ? new SolidColorBrush(Colors.Red)
+                    : new SolidColorBrush(Colors.Black);
             dtx.Document.RaisePropertyChanged("PaySumma");
             dtx.RaisePropertyChanged("Document");
         }
