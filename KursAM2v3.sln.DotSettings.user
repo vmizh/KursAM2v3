@@ -13,6 +13,7 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Program Files (x86)\DevExpress 15.2\Components\Bin\Framework\DevExpress.Sparkline.v15.2.Core.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\System.Text.Json.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Data.v21.1.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:Boolean x:Key="/Default/Environment/Hierarchy/EntityFrameworkOptions/IsAlreadyNotifiedAboutEntityFramework/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1ba85c6e_002D6022_002D4df6_002D8894_002D817814924325/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetByDC #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;

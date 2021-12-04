@@ -18,7 +18,6 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
-using DevExpress.Utils.Extensions;
 using Helper;
 using KursAM2.Auxiliary;
 using KursAM2.Dialogs;
@@ -55,7 +54,10 @@ namespace KursAM2.ViewModel.Dogovora
                 };
                 if (Document != null)
                     WindowName = Document.ToString();
-                Document.Rows.ForEach(_ => _.State = RowStatus.NotEdited);
+                foreach (var r in  Document.Rows)
+                {
+                     r.State = RowStatus.NotEdited;
+                }
                 LoadLinkDocuments();
                 Document.myState = RowStatus.NotEdited;
             }

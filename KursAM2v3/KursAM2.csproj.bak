@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KursAM2</RootNamespace>
     <AssemblyName>KursAM2v3</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -63,19 +63,25 @@
     <ApplicationIcon>
     </ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup>
-    <LangVersion>7.0</LangVersion>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.10.0.0\lib\net461\AutoMapper.dll</HintPath>
+      <HintPath>..\packages\AutoMapper.10.1.1\lib\net461\AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.Data.Desktop.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Data.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.DataAccess.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.DataAccess.v21.1.UI, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.DataVisualization.v21.1.Core, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Docs.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Images.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="DevExpress.Mvvm.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Office.v21.1.Core, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Pdf.v21.1.Core, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Printing.v21.1.Core, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Snap.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Spreadsheet.v21.1.Core, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Utils.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Accordion.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Carousel.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
@@ -99,6 +105,7 @@
     <Reference Include="DevExpress.Xpf.Grid.v21.1.Extensions, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Layout.v21.1.Core, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.LayoutControl.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Map.v21.1.Core, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Map.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.NavBar.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Office.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
@@ -109,6 +116,7 @@
     <Reference Include="DevExpress.Xpf.PropertyGrid.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.ReportDesigner.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Ribbon.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.RichEdit.v21.1.Core, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.RichEdit.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Scheduler.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Scheduling.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
@@ -152,6 +160,8 @@
     <Reference Include="DevExpress.Xpf.Themes.Win10Light.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.TreeMap.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.TypedStyles.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraPrinting.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraReports.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -288,6 +298,7 @@
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
     <Compile Include="Repositories\Logistik\SD_24Repository.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />
+    <Compile Include="Repositories\SignatureRepository.cs" />
     <Compile Include="Resource\ErrorContentConverter.cs" />
     <Compile Include="Resource\ErrorToBrushConverter.cs" />
     <Compile Include="Tests\TreeControlFluentTests.xaml.cs">
@@ -338,7 +349,6 @@
     <Compile Include="ViewModel\Finance\MutualAcountingInfoWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\MutualAcountingWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\MutualAccountingWindowSearchViewModel.cs" />
-    <Compile Include="ViewModel\Finance\InvoiceSupplierWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\Invoices\SchetSupplierSelectViewModel.cs" />
     <Compile Include="ViewModel\Finance\KontragentPaymentInfo.cs" />
     <Compile Include="ViewModel\Finance\PurchaseRow.cs" />
@@ -379,10 +389,11 @@
     <Compile Include="ViewModel\Logistiks\Warehouse\OrderInWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorClientViewModel.cs" />
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorProviderViewModel.cs" />
+    <Compile Include="ViewModel\MenuSearchWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\AccruedAmountTypeWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\Dialogs\SelectKursMainMenuItemViewModel.cs" />
     <Compile Include="ViewModel\Reference\FormPayReferenceWindowViewModel.cs" />
-    <Compile Include="ViewModel\Reference\KontragentCategoryRefWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Kontragent\KontragentCategoryRefWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\CountriesRefWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\Nomenkl\TypeOfProductReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\ReferenceOfResponsibilityCentersWindowViewModel.cs" />
@@ -397,9 +408,13 @@
     <Compile Include="ViewModel\Shop\ShopParserExtFilesWindowViewModel.cs" />
     <Compile Include="ViewModel\Shop\NomenklInfo.cs" />
     <Compile Include="ViewModel\Shop\ShopExtFileOrderItem.cs" />
+    <Compile Include="ViewModel\Signatures\SignatureViewModel.cs" />
     <Compile Include="ViewModel\Signatures\SignaturesWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastDocumentWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastUsersDocumentWindowViewModel.cs" />
+    <Compile Include="View\Base\GridControlUC.xaml.cs">
+      <DependentUpon>GridControlUC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Base\KursStandartFormView.xaml.cs">
       <DependentUpon>KursStandartFormView.xaml</DependentUpon>
     </Compile>
@@ -515,6 +530,9 @@
       <DependentUpon>AddNomenklFromInvoiceProviderRowUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\UC\AddNomenklFromRashOrderViewModel.cs" />
+    <Compile Include="View\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Management\Controls\BalansCompareMoneyInPathUI.xaml.cs">
       <DependentUpon>BalansCompareMoneyInPathUI.xaml</DependentUpon>
     </Compile>
@@ -775,9 +793,9 @@
     <Compile Include="View\Finance\SaleTaxNomenklView.xaml.cs">
       <DependentUpon>SaleTaxNomenklView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\Reference\KontragentCardWindowViewModel.cs" />
-    <Compile Include="ViewModel\Reference\KontragentReferenceWindowViewModel.cs" />
-    <Compile Include="ViewModel\Reference\KontragentReferenceViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Kontragent\KontragentCardWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Kontragent\KontragentReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Kontragent\KontragentReferenceViewModel.cs" />
     <Compile Include="ViewModel\Splash\DebitorCreditorCalcKontrSplashViewModel.cs" />
     <Compile Include="ViewModel\Splash\SplashBaseViewModel.cs" />
     <Compile Include="View\Finance\KontragentRefOutView.xaml.cs">
@@ -879,7 +897,6 @@
     <Compile Include="View\Logistiks\NomenklMove.xaml.cs">
       <DependentUpon>NomenklMove.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\MainWindow.xaml.cs" />
     <Compile Include="View\Management\BreakEvenForm.xaml.cs" />
     <Compile Include="View\Management\BreakEvenTemp.cs" />
     <Compile Include="View\Management\Controls\BalansComareKontragentOperationsUI.xaml.cs">
@@ -961,6 +978,9 @@
     <Compile Include="View\KursReferences\KontragentReferenceView.xaml.cs">
       <DependentUpon>KontragentReferenceView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\MenuSearchView.xaml.cs">
+      <DependentUpon>MenuSearchView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Period\PeriodCloseManagementView.xaml.cs">
       <DependentUpon>PeriodCloseManagementView.xaml</DependentUpon>
     </Compile>
@@ -990,6 +1010,9 @@
     </Compile>
     <Compile Include="View\Shop\ShopParserExtFiles.xaml.cs">
       <DependentUpon>ShopParserExtFiles.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Signature\Signature.UC.xaml.cs">
+      <DependentUpon>Signature.UC.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Signature\SignatureReferenceUC.xaml.cs">
       <DependentUpon>SignatureReferenceUC.xaml</DependentUpon>
@@ -1056,6 +1079,12 @@
     <None Include="Reports\Account2.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\AccountNew.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\AccountNewSign.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Reports\HeadReport.repx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -1065,7 +1094,16 @@
     <None Include="Reports\SFClientReport.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\SFNew.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Reports\torg12.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\UPD.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\UPD1.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\WarehouseOrderOut.repx">
@@ -1127,6 +1165,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ViewModel\Finance\SelectCashBankDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\GridControlUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1273,6 +1315,10 @@
     <Page Include="View\Logistiks\UC\AddNomenklFromInvoiceProviderRowUC.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Management\Controls\BalansCompareMoneyInPathUI.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1594,10 +1640,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="View\Management\BreakEvenForm.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1718,6 +1760,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\MenuSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Period\PeriodCloseManagementView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1755,6 +1801,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Shop\ShopParserExtFiles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Signature\Signature.UC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

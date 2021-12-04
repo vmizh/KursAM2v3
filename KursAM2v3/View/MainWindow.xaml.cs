@@ -991,9 +991,9 @@ namespace KursAM2.View
                         }
                 }
 
-            var dtx = DataContext as MainWindowViewModel;
-            if (dtx != null)
+            if (DataContext is MainWindowViewModel dtx)
             {
+                dtx.SearchText = null;
                 dtx.CurrentDocumentTiles.Clear();
                 foreach (var tile in tileDocumentItems.Children.Cast<Tile>())
                 {

@@ -7,6 +7,7 @@ using DevExpress.Spreadsheet;
 using DevExpress.Xpf.Printing;
 using DevExpress.Xpf.Spreadsheet;
 
+
 namespace Reports.Base
 {
     public abstract class BaseReport

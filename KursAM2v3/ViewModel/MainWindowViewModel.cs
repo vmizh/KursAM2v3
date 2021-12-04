@@ -107,6 +107,14 @@ namespace KursAM2.ViewModel
         public override void SearchClear(object obj)
         {
             SearchText = null;
+            if (Form is MainWindow frm)
+            {
+                frm.tileDocumentItems.Children.Clear();
+                foreach (var tile in CurrentDocumentTiles)
+                {
+                    frm.tileDocumentItems.Children.Add(tile);
+                }
+            }
         }
 
         private void OpenLastDocumentDialog(object obj)
