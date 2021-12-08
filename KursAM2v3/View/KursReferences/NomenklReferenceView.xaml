@@ -112,7 +112,6 @@
                                     <dxg:FormatCondition.Format>  
                                         <dx:Format FontWeight="Bold" />  
                                     </dxg:FormatCondition.Format>  
-
                                 </dxg:FormatCondition>
                             </dxg:TreeListView.FormatConditions>
                         </dxg:TreeListView>
@@ -152,6 +151,8 @@
                             <dxg:GridColumn Name="col_1_8" Header="Рентабельность" FieldName="IsRentabelnost"
                                             ReadOnly="True" />
                             <dxg:GridColumn Name="col_1_9" Header="Валютный учет" FieldName="IsCurrencyTransfer"
+                                            ReadOnly="True" />
+                            <dxg:GridColumn Name="col_1_10" Header="Только гос.валюта" FieldName="IsOnlyState"
                                             ReadOnly="True" />
                         </dxg:GridControl.Columns>
                         <dxg:GridControl.View>

@@ -98,7 +98,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         }
 
         public string RecalcCrsName => $"Пересчет в {RecalcCurrency?.Name}";
-        public ICommand SummaryCommand => new Command(CalcTotalSummaries, param => true);
+        public ICommand SummaryCommand => new Command(CalcTotalSummaries, _ => true);
 
         public ICommand KontragentAccountOpenCommand
         {

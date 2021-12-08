@@ -462,7 +462,11 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public ICommand NomenklAddCommand
         {
-            get { return new Command(NomenklAdd, _ => true); }
+            get
+            {
+                return new Command(NomenklAdd,
+                    _ => CurrentNomenklMain != null && !CurrentNomenklMain.IsOnlyState);
+            }
         }
 
         private void NomenklAdd(object obj)
@@ -489,14 +493,15 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public ICommand NomenklMainAddCommand
         {
-            get { return new Command(NomenklMainNew, param => CurrentCategory != null); }
+            get { return new Command(NomenklMainNew, _ => CurrentCategory != null); }
         }
 
         private void NomenklMainNew(object obj)
         {
             var ctx = new MainCardWindowViewModel(Guid.Empty, CurrentCategory)
             {
-                ParentReference = this
+                ParentReference = this,
+                
             };
             // ReSharper disable once UseObjectOrCollectionInitializer
             var form = new NomenklMainCardView { Owner = Application.Current.MainWindow, DataContext = ctx };
@@ -504,6 +509,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             form.Show();
         }
 
+        // ReSharper disable once UnusedMember.Local
+        // ReSharper disable once UnusedParameter.Local
         private void SearchNomenkls(object obj)
         {
             NomenklMainCollection.Clear();
@@ -535,7 +542,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public ICommand NomenklMainEditCommand
         {
-            get { return new Command(NomenklMainEdit, param => CurrentNomenklMain != null); }
+            get { return new Command(NomenklMainEdit, _ => CurrentNomenklMain != null); }
         }
 
         public void NomenklMainEdit(object obj)
@@ -554,7 +561,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public ICommand NomenklMainCopyCommand
         {
-            get { return new Command(NomenklMainCopy, param => CurrentNomenklMain != null); }
+            get { return new Command(NomenklMainCopy, _ => CurrentNomenklMain != null); }
         }
 
         private void NomenklMainCopy(object obj)
@@ -590,7 +597,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public ICommand NomenklMainDeleteCommand
         {
-            get { return new Command(NomenklMainDelete, param => CurrentNomenklMain != null); }
+            get { return new Command(NomenklMainDelete, _ => CurrentNomenklMain != null); }
         }
 
         private void NomenklMainDelete(object obj)
@@ -636,7 +643,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public ICommand TreeAddInRootCommand
         {
-            get { return new Command(TreeAddInRoot, param => true); }
+            get { return new Command(TreeAddInRoot, _ => true); }
         }
 
         private void TreeAddInRoot(object obj)
@@ -657,7 +664,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public ICommand TreeAddChildCommand
         {
-            get { return new Command(TreeAddChild, param => true); }
+            get { return new Command(TreeAddChild, _ => true); }
         }
 
         private void TreeAddChild(object obj)
@@ -679,7 +686,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public ICommand TreeAddOneLevelCommand
         {
-            get { return new Command(TreeAddOneLevel, param => true); }
+            get { return new Command(TreeAddOneLevel, _ => true); }
         }
 
         private void TreeAddOneLevel(object obj)
@@ -700,7 +707,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public ICommand TreeEditCommand
         {
-            get { return new Command(TreeEdit, param => true); }
+            get { return new Command(TreeEdit, _ => true); }
         }
 
         private void TreeEdit(object obj)

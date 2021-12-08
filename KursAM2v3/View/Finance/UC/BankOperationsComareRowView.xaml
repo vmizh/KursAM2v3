@@ -42,7 +42,7 @@
         </Style>
     </UserControl.Resources>
     <DockPanel>
-        <dxlc:LayoutControl Orientation="Horizontal" VerticalAlignment="Center">
+        <dxlc:LayoutControl Orientation="Horizontal" VerticalAlignment="Center" Height="275" Margin="0,0,0,-25">
             <dxlc:LayoutGroup Orientation="Vertical" Margin="0 0 15 0">
                 <dxlc:LayoutItem Label="Дата">
                     <dxe:DateEdit
@@ -161,6 +161,12 @@
                                   Margin="0 0 0 5" 
                                   AllowDefaultButton="{Binding IsCanOpenAccured, UpdateSourceTrigger=PropertyChanged}"
                                   DefaultButtonClick="AccuredEdit_OnDefaultButtonClick"/>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="Курс(справочно)">
+                    <dxe:PopupCalcEdit EditValue="{Binding CurrentBankOperations.CurrencyRateForReference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    IsReadOnly="{Binding CurrentBankOperations.IsCurrencyRateNotCanSet, UpdateSourceTrigger=PropertyChanged}"
+                                    Margin="0 0 0 5" 
+                                    />
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Примечание">
                     <dxe:TextEdit EditValue="{Binding VVT_DOC_NUM, Mode=TwoWay}"

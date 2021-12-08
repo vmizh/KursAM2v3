@@ -21,16 +21,20 @@ namespace Core.EntityViewModel.NomenklManagement
 
         public NomenklMainViewModel()
         {
-            Entity = new NomenklMain {Id = Guid.NewGuid()};
+            Entity = new NomenklMain
+            {
+                Id = Guid.NewGuid(), 
+                IsOnlyState = true
+            };
         }
 
         public NomenklMainViewModel(NomenklMain entity)
         {
-            Entity = entity ?? new NomenklMain {Id = Guid.NewGuid()};
+            Entity = entity ?? new NomenklMain { Id = Guid.NewGuid(), IsOnlyState = true };
             LoadReference();
         }
 
-        public ObservableCollection<Nomenkl> NomenklCollection { set; get; } = new();
+        public ObservableCollection<Nomenkl> NomenklCollection { set; get; } = new ObservableCollection<Nomenkl>();
 
         public NomenklMain Entity
         {
@@ -115,6 +119,17 @@ namespace Core.EntityViewModel.NomenklManagement
 
                     RaisePropertyChanged();
                 }
+            }
+        }
+
+        public bool IsOnlyState
+        {
+            get => Entity.IsOnlyState ?? false;
+            set
+            {
+                if (Entity.IsOnlyState == value) return;
+                Entity.IsOnlyState = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -392,17 +407,17 @@ namespace Core.EntityViewModel.NomenklManagement
             ProductType = new NomenklProductKind(Entity.SD_50);
         }
 
-        public virtual NomenklMain Load(decimal dc)
+        public NomenklMain Load(decimal dc)
         {
             throw new NotImplementedException();
         }
 
-        public virtual NomenklMain Load(Guid id)
+        public NomenklMain Load(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void Save(NomenklMain doc)
+        public void Save(NomenklMain doc)
         {
             throw new NotImplementedException();
         }

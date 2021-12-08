@@ -1078,7 +1078,7 @@ namespace KursAM2.Managers
                         var nom = MainReferences.GetNomenkl(acc.NomenklDC);
                         var snom = $"{nom}({nom.NomenklNumber})";
                         doc.AccuredInfo = $"Прямой расход №{snum} от {acc.AccruedAmountOfSupplier.DocDate.ToShortDateString()} " +
-                                          $"{snom}";
+                                          $"Ном.№ {snom}";
                     }
                     return doc;
                 }

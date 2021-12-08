@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 
@@ -122,7 +121,7 @@ namespace Core.EntityViewModel.Bank
             }
             get => myRemainderCNY;
         }
-        
+
         private decimal? myRemainderEUR;
 
         public decimal? RemainderEUR

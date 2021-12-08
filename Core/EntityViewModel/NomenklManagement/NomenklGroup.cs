@@ -175,11 +175,13 @@ namespace Core.EntityViewModel.NomenklManagement
             };
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public SD_82 Load(decimal dc, bool isShort = true)
         {
             throw new NotImplementedException();
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public SD_82 Load(Guid id, bool isShort = true)
         {
             throw new NotImplementedException();

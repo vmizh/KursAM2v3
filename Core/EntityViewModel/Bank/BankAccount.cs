@@ -18,18 +18,22 @@ namespace Core.EntityViewModel.Bank
         private SD_114 myEntity;
         private int myKontrBankCode;
 
+
+        private int myLastYearOperationsCount;
+
         public BankAccount()
         {
-            Entity = new SD_114 {DOC_CODE = -1};
+            Entity = new SD_114 { DOC_CODE = -1 };
         }
 
         public BankAccount(SD_114 entity)
         {
-            Entity = entity ?? new SD_114 {DOC_CODE = -1};
+            Entity = entity ?? new SD_114 { DOC_CODE = -1 };
             if (Entity.SD_44 != null)
                 Bank = new Bank(Entity.SD_44);
             Name = $"{Bank?.Name} Сч.№ {Entity.BA_RASH_ACC} " +
-                   $"{MainReferences.Currencies[(decimal) Entity.CurrencyDC]}";
+                   // ReSharper disable once PossibleInvalidOperationException
+                   $"{MainReferences.Currencies[(decimal)Entity.CurrencyDC]}";
         }
 
         public Currency Currency
@@ -64,6 +68,19 @@ namespace Core.EntityViewModel.Bank
                 RaisePropertyChanged();
             }
         }
+
+        public int LastYearOperationsCount
+        {
+            get => myLastYearOperationsCount;
+            set
+            {
+                if (myLastYearOperationsCount == value) return;
+                myLastYearOperationsCount = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsLastYearOperations => myLastYearOperationsCount > 0;
 
         public Bank Bank
         {

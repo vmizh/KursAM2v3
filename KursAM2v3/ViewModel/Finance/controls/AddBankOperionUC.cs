@@ -47,6 +47,15 @@ namespace KursAM2.ViewModel.Finance.controls
         // ReSharper disable once UnusedParameter.Local
         public AddBankOperionUC(decimal docCode, BankOperationsViewModel row, BankAccount bankAcc, bool isNew) : this()
         {
+            decimal rate = 1;
+            if (row.Currency.DocCode != GlobalOptions.SystemProfile.NationalCurrency.DocCode)
+            {
+                var rates = CurrencyRate.GetRate(DateTime.Today);
+                if (rates.ContainsKey(row.Currency))
+                {
+                    rate = rates[row.Currency];
+                }
+            }
             BankAccount = bankAcc;
             CurrentBankOperations = new BankOperationsViewModel
             {
@@ -67,9 +76,13 @@ namespace KursAM2.ViewModel.Finance.controls
                 VVT_DOC_NUM = row.VVT_DOC_NUM,
                 State = isNew ? RowStatus.NewRow : RowStatus.NotEdited,
                 AccuredId = row.AccuredId,
-                AccuredInfo = row.AccuredInfo
+                AccuredInfo = row.AccuredInfo,
+                CurrencyRateForReference = rate
             };
         }
+
+        public bool IsCurrencyRateNotCanSet =>
+            CurrentBankOperations?.Currency != GlobalOptions.SystemProfile.NationalCurrency;
 
         // ReSharper disable once InconsistentNaming
         public List<SDRSchet> SHPZList => MainReferences.SDRSchets.Values.ToList();

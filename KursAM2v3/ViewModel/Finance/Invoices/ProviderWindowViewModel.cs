@@ -1539,10 +1539,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         // ReSharper disable once PossibleInvalidOperationException
                         DocSumma = (decimal)old.VVT_VAL_RASHOD,
                         DocDate = old.SD_101.VV_START_DATE,
-                        Rate = 1,
+                        Rate = old.CurrencyRateForReference ?? 1,
                         DocName = "Банковский платеж",
                         DocExtName = $"{old.SD_101.SD_114.BA_BANK_NAME} " +
-                                     $"р/с {old.SD_101.SD_114.BA_RASH_ACC}"
+                                     $"р/с {old.SD_101.SD_114.BA_RASH_ACC}",
+
                     };
                     Document.PaymentDocs.Add(newItem);
                     Document.Entity.ProviderInvoicePay.Add(newItem.Entity);

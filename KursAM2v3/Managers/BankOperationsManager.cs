@@ -345,6 +345,7 @@ namespace KursAM2.Managers
                         oldItem.VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC;
                         oldItem.VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC;
                         oldItem.AccuredId = item.AccuredId;
+                        oldItem.CurrencyRateForReference = item.CurrencyRateForReference;
 
                         if (item.VVT_SFACT_POSTAV_DC != null)
                         {
@@ -428,7 +429,8 @@ namespace KursAM2.Managers
                             VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode,
                             VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
                             VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
-                            AccuredId = item.AccuredId
+                            AccuredId = item.AccuredId,
+                            CurrencyRateForReference = item.CurrencyRateForReference
                         });
                         item.DOC_CODE = thisDate.DOC_CODE;
                         item.Code = code;
@@ -471,7 +473,8 @@ namespace KursAM2.Managers
                             VVT_KASS_PRIH_ORDER_DC = item.CashIn?.DocCode,
                             VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
                             VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
-                            AccuredId = item.AccuredId
+                            AccuredId = item.AccuredId,
+                            CurrencyRateForReference = item.CurrencyRateForReference
                         });
                     }
 
@@ -546,7 +549,8 @@ namespace KursAM2.Managers
                     VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
                     VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
                     IsCurrencyChange = true,
-                    AccuredId = item.AccuredId
+                    AccuredId = item.AccuredId,
+                    CurrencyRateForReference = item.CurrencyRateForReference
                 });
                 item.DOC_CODE = thisDate.DOC_CODE;
                 ctx.SaveChanges();
@@ -590,7 +594,8 @@ namespace KursAM2.Managers
                     VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
                     VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
                     IsCurrencyChange = true,
-                    AccuredId = item.AccuredId
+                    AccuredId = item.AccuredId,
+                    CurrencyRateForReference = item.CurrencyRateForReference
                 });
                 ctx.SaveChanges();
                 item.myState = RowStatus.NotEdited;

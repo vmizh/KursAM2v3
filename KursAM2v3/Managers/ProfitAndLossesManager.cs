@@ -305,13 +305,13 @@ namespace KursAM2.Managers
                 var data = ent.Database.SqlQuery<BreakEvenTemp>(sql).ToList();
                 var dictProds = data.Select(_ => _.TypeProdName)
                     .Distinct()
-                    .ToDictionary(d => d, d => Guid.NewGuid());
+                    .ToDictionary(d => d, _ => Guid.NewGuid());
                 var dictLosses = data.Select(_ => _.TypeProdName)
                     .Distinct()
-                    .ToDictionary(d => d, d => Guid.NewGuid());
+                    .ToDictionary(d => d, _ => Guid.NewGuid());
                 foreach (var e in from d in data
                     let nom = MainReferences.GetNomenkl(d.NomenklDC)
-                    let kontr = MainReferences.ActiveKontragents[d.KontragentDC]
+                    let kontr = MainReferences.GetKontragent(d.KontragentDC)
                     // ReSharper disable once PossibleInvalidOperationException
                     let nomRate = GetRate(MyRates, (decimal) nom.NOM_SALE_CRS_DC,
                         GlobalOptions.SystemProfile.MainCurrency.DocCode, d.DATE)
@@ -362,7 +362,7 @@ namespace KursAM2.Managers
 
                 foreach (var e in from d in data
                     let nom = MainReferences.GetNomenkl(d.NomenklDC)
-                    let kontr = MainReferences.ActiveKontragents[d.KontragentDC]
+                    let kontr = MainReferences.GetKontragent(d.KontragentDC)
                     // ReSharper disable once PossibleInvalidOperationException
                     let nomRate = GetRate(MyRates, (decimal) nom.NOM_SALE_CRS_DC,
                         GlobalOptions.SystemProfile.MainCurrency.DocCode, d.DATE)
@@ -1481,12 +1481,12 @@ namespace KursAM2.Managers
                 if (Project == null)
                 {
                     dictCOIns1 = new List<string>(dataIn.Select(_ => _.COName).Distinct());
-                    dictCOIns = dictCOIns1.ToDictionary(d => d, d => Guid.NewGuid());
+                    dictCOIns = dictCOIns1.ToDictionary(d => d, _ => Guid.NewGuid());
                     foreach (var d in dataIn)
                         if (!dictCOIns.ContainsKey(d.COName))
                             dictCOIns.Add(d.COName, Guid.NewGuid());
                     dictCOOut1 = new List<string>(dataOut.Select(_ => _.COName).Distinct());
-                    dictCOOuts = dictCOOut1.ToDictionary(d => d, d => Guid.NewGuid());
+                    dictCOOuts = dictCOOut1.ToDictionary(d => d, _ => Guid.NewGuid());
                     foreach (var d in dataOut)
                         if (!dictCOOuts.ContainsKey(d.COName))
                             dictCOOuts.Add(d.COName, Guid.NewGuid());
@@ -1495,13 +1495,13 @@ namespace KursAM2.Managers
                 {
                     dictCOIns1 = new List<string>(dataIn.Where(_ => ProjectDocDC.Contains(_.DocCode))
                         .Select(_ => _.COName).Distinct());
-                    dictCOIns = dictCOIns1.ToDictionary(d => d, d => Guid.NewGuid());
+                    dictCOIns = dictCOIns1.ToDictionary(d => d, _ => Guid.NewGuid());
                     foreach (var d in dataIn.Where(_ => ProjectDocDC.Contains(_.DocCode)))
                         if (!dictCOIns.ContainsKey(d.COName))
                             dictCOIns.Add(d.COName, Guid.NewGuid());
                     dictCOOut1 = new List<string>(dataOut.Where(_ => ProjectDocDC.Contains(_.DocCode))
                         .Select(_ => _.COName).Distinct());
-                    dictCOOuts = dictCOOut1.ToDictionary(d => d, d => Guid.NewGuid());
+                    dictCOOuts = dictCOOut1.ToDictionary(d => d, _ => Guid.NewGuid());
                     foreach (var d in dataOut.Where(_ => ProjectDocDC.Contains(_.DocCode)))
                         if (!dictCOOuts.ContainsKey(d.COName))
                             dictCOOuts.Add(d.COName, Guid.NewGuid());

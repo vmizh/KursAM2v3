@@ -148,8 +148,10 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         public override void DocNewEmpty(object form)
         {
             Id = Guid.NewGuid();
-            NomenklMain = new NomenklMainViewModel();
-            NomenklMain.State = RowStatus.NewRow;
+            NomenklMain = new NomenklMainViewModel
+            {
+                State = RowStatus.NewRow
+            };
         }
 
         public override void RefreshData(object obj)
@@ -219,7 +221,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     UnitDC = NomenklMain.UnitDC,
                                     ProductDC = NomenklMain.ProductType.DOC_CODE,
                                     IsRentabelnost = NomenklMain.IsRentabelnost,
-                                    IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer
+                                    IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer,
+                                    IsOnlyState = NomenklMain.IsOnlyState
                                 };
                                 ctx.NomenklMain.Add(newItem);
                                 var crsDC = GlobalOptions.SystemProfile.NationalCurrency.DocCode;
@@ -273,6 +276,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 old.ProductDC = NomenklMain.ProductType.DOC_CODE;
                                 old.IsRentabelnost = NomenklMain.IsRentabelnost;
                                 old.IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
+                                old.IsOnlyState = NomenklMain.IsOnlyState;
                                 var oldNoms = ctx.SD_83.Where(_ => _.MainId == NomenklMain.Id);
                                 foreach (var nom in oldNoms)
                                 {

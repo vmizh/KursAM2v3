@@ -128,6 +128,9 @@
             </DataTrigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
+    <Style TargetType="dxg:GridColumn">
+        <Setter Property="SortMode" Value="Value"/>
+    </Style>
     <Style TargetType="dxg:TableView">
         <Setter Property = "EnableImmediatePosting" Value="True"/>
         <Setter Property="AllowGrouping" Value="True" />

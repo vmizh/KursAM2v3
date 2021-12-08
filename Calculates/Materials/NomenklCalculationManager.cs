@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -682,82 +682,9 @@ namespace Calculates.Materials
         /// <returns></returns>
         public static List<NomenklStoreRemainItem> GetNomenklStoreRemains(DateTime date, decimal storeDC)
         {
-            var sql =
-                "SELECT tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC StoreDC,SUM(tab.Prihod) AS Prihod, SUM(tab.Rashod)AS Rashod " +
-                ", SUM(tab.Prihod) - SUM(tab.Rashod) AS Remain, ROUND(ISNULL(p.Price, 0), 2) AS PriceWithNaklad, ROUND(ISNULL(p.PRICE_WO_NAKLAD, 0), 2) AS Price " +
-                ", ROUND((SUM(tab.Prihod) - SUM(tab.Rashod)), 2) * ROUND(ISNULL(p.PRICE_WO_NAKLAD, 0), 2) AS Summa,  " +
-                "ROUND((SUM(tab.Prihod) - SUM(tab.Rashod)), 2) * ROUND(ISNULL(p.Price, 0), 2) AS SummaWithNaklad  " +
-                "FROM(SELECT " +
-                "T24.DDT_NOMENKL_DC AS NomenklDC " +
-                ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                ", S24.DD_SKLAD_POL_DC AS SkladDC " +
-                ", SUM(T24.DDT_KOL_PRIHOD) AS Prihod " +
-                ", CAST(0 AS NUMERIC(18, 4)) AS Rashod " +
-                "FROM TD_24 T24 " +
-                " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
-                " INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC " +
-                $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                "AND NOT EXISTS (SELECT 1 FROM NOMENKL_PRIH_EXCLUDE tt WHERE tt.DOC_CODE = t.DOC_CODE AND tt.CODE = t.CODE) " +
-                "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_POL_DC " +
-                "UNION ALL " +
-                "SELECT T24.DDT_NOMENKL_DC AS NomenklDC " +
-                ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                ", S24.DD_SKLAD_OTPR_DC AS SkladDC " +
-                ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
-                ", SUM(DDT_KOL_RASHOD) AS Rashod " +
-                "FROM TD_24 T24 " +
-                " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
-                " INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC " +
-                $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_OTPR_DC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                "AND NOT EXISTS (SELECT 1 FROM NOMENKL_PRIH_EXCLUDE tt WHERE tt.DOC_CODE = t.DOC_CODE AND tt.CODE = t.CODE) " +
-                "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_OTPR_DC " +
-                "UNION ALL " +
-                "SELECT ntr.NomenklInDC AS NomenklDC " +
-                ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                ", nt.SkladDC AS SkladDC " +
-                ", ntr.Quantity AS Prihod " +
-                ", CAST(0 AS NUMERIC(18, 4))AS Rashod " +
-                "FROM NomenklTransfer nt " +
-                "   INNER JOIN NomenklTransferRow ntr ON ntr.DocId = nt.Id " +
-                "   INNER JOIN SD_83 S83 ON S83.DOC_CODE = ntr.NomenklInDC " +
-                $"WHERE NT.Date <= '{CustomFormat.DateToString(date)}' AND ISNULL(NTR.IsAccepted,0) = 1  AND nt.SkladDC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                "UNION all  " +
-                "SELECT ntr.NomenklOutDC AS NomenklDC " +
-                ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                ", nt.SkladDC AS SkladDC " +
-                ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
-                ", ntr.Quantity AS Rashod " +
-                "FROM NomenklTransfer nt " +
-                "   INNER JOIN NomenklTransferRow ntr ON ntr.DocId = nt.Id  " +
-                "   INNER JOIN SD_83 S83 ON S83.DOC_CODE = ntr.NomenklOutDC " +
-                $"WHERE nt.DATE <= '{CustomFormat.DateToString(date)}' AND ISNULL(NTR.IsAccepted,0) = 1  AND nt.SkladDC = '{CustomFormat.DecimalToSqlDecimal(storeDC)}' " +
-                "UNION ALL " +
-                "SELECT s83.DOC_CODE, s83.NOM_SALE_CRS_DC,s83.nom_name,tcc.StoreDC, tcc.Quantity, 0 " +
-                "FROM TD_26_CurrencyConvert tcc " +
-                "INNER JOIN SD_83 s83 ON s83.Id = tcc.NomenklId " +
-                "INNER JOIN TD_26 t26 ON tcc.DOC_CODE = t26.DOC_CODE AND tcc.CODE = t26.CODE " +
-                "INNER JOIN SD_26 s26 ON t26.DOC_CODE = s26.DOC_CODE " +
-                "INNER JOIN TD_24 t24 ON t26.DOC_CODE = t24.DDT_SPOST_DC AND t26.CODE = t24.DDT_SPOST_ROW_CODE " +
-                "INNER JOIN SD_24 s24 ON t24.DOC_CODE = s24.DOC_CODE " +
-                $"WHERE tcc.Date <=  '{CustomFormat.DateToString(date)}' " +
-                "UNION ALL " +
-                "SELECT s83.DOC_CODE, s83.NOM_SALE_CRS_DC,s83.nom_name,tcc.StoreDC, 0, tcc.Quantity " +
-                "FROM TD_26_CurrencyConvert tcc " +
-                "INNER JOIN TD_26 t26 ON tcc.DOC_CODE = t26.DOC_CODE AND tcc.CODE = t26.CODE " +
-                "INNER JOIN SD_83 s83 ON s83.DOC_CODE = T26.SFT_NEMENKL_DC " +
-                "INNER JOIN SD_26 s26 ON t26.DOC_CODE = s26.DOC_CODE " +
-                "INNER JOIN TD_24 t24 ON t26.DOC_CODE = t24.DDT_SPOST_DC AND t26.CODE = t24.DDT_SPOST_ROW_CODE " +
-                "INNER JOIN SD_24 s24 ON t24.DOC_CODE = s24.DOC_CODE " +
-                $"WHERE tcc.Date <=  '{CustomFormat.DateToString(date)}') tab " +
-                "LEFT OUTER JOIN NOM_PRICE p ON p.NOM_DC = tab.NomenklDC " +
-                $"AND p.DATE = (SELECT MAX(pp.DATE) FROM NOM_PRICE pp WHERE pp.NOM_DC = tab.NomenklDC AND pp.DATE <= '{CustomFormat.DateToString(date)}') " +
-                "GROUP BY tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,p.PRICE_WO_NAKLAD,p.Price " +
-                "HAVING SUM(tab.Prihod) - SUM(tab.Rashod) != 0 ";
-            var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>(sql).ToList();
+            //var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>(sql).ToList();
+            var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>("GetNomenklRemains @date",  
+                new SqlParameter("@date", date)).Where(_ => _.StoreDC == storeDC).ToList(); 
             return data;
         }
 
@@ -767,85 +694,8 @@ namespace Calculates.Materials
         /// <returns></returns>
         public static List<NomenklStoreRemainItem> GetNomenklStoreRemains(DateTime date)
         {
-            string sql = null;
-            switch (GlobalOptions.SystemProfile.NomenklCalcType)
-            {
-                case NomenklCalcType.NakladSeparately:
-                    sql = "SELECT n.NomDC NomenklDC, n.NomCrsDC NomCurrencyDC, n.NomName NomenklName, " +
-                          "n.StoreDC StoreDC, SUM(n.Prihod) Prihod, SUM(n.Rashod) Rashod, SUM(n.Prihod) - SUM(n.Rashod) Remain " +
-                          ",ISNULL(p.Price, 0) AS PriceWithNaklad, ISNULL(p.PRICE_WO_NAKLAD, 0) AS Price, " +
-                          "(SUM(n.Prihod) - SUM(n.Rashod)) * ISNULL(p.PRICE_WO_NAKLAD, 0) AS Summa " +
-                          ",(SUM(n.Prihod) - SUM(n.Rashod)) * ISNULL(p.Price, 0) AS SummaWithNaklad " +
-                          "FROM NomenklMoveForCalc n " +
-                          "inner JOIN NOM_PRICE p " +
-                          "ON p.NOM_DC = n.NomDC AND p.DATE = (SELECT MAX(pp.Date) FROM NOM_PRICE pp " +
-                          $"WHERE pp.NOM_DC = n.NomDC AND pp.Date <= '{CustomFormat.DateToString(date)}' ) " +
-                          $"WHERE n.Date <= '{CustomFormat.DateToString(date)}' " +
-                          "GROUP BY n.NomDC,n.NomCrsDC,n.NomName,n.StoreDC,p.PRICE,p.PRICE_WO_NAKLAD " +
-                          "HAVING SUM(n.Prihod) - SUM(n.Rashod) != 0;";
-                    break;
-                case NomenklCalcType.Standart:
-                    sql =
-                        "SELECT tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC as StoreDC,SUM(tab.Prihod) AS Prihod, SUM(tab.Rashod)AS Rashod " +
-                        ", SUM(tab.Prihod) - SUM(tab.Rashod) AS Remain, ISNULL(p.Price, 0) AS PriceWithNaklad, ISNULL(p.PRICE_WO_NAKLAD, 0) AS Price " +
-                        ", (SUM(tab.Prihod) - SUM(tab.Rashod)) * ISNULL(p.PRICE_WO_NAKLAD, 0) AS Summa,  " +
-                        "(SUM(tab.Prihod) - SUM(tab.Rashod)) * ISNULL(p.Price, 0) AS SummaWithNaklad  " +
-                        "FROM(SELECT " +
-                        "T24.DDT_NOMENKL_DC AS NomenklDC " +
-                        ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                        ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                        ", S24.DD_SKLAD_POL_DC AS SkladDC " +
-                        ", SUM(T24.DDT_KOL_PRIHOD) AS Prihod " +
-                        ", CAST(0 AS NUMERIC(18, 4)) AS Rashod " +
-                        "FROM TD_24 T24 " +
-                        " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
-                        " INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC " +
-                        $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_POL_DC IS NOT NULL " +
-                        "AND NOT EXISTS (SELECT 1 FROM NOMENKL_PRIH_EXCLUDE tt WHERE tt.DOC_CODE = t.DOC_CODE AND tt.CODE = t.CODE) " +
-                        "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_POL_DC " +
-                        "UNION ALL " +
-                        "SELECT T24.DDT_NOMENKL_DC AS NomenklDC " +
-                        ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                        ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                        ", S24.DD_SKLAD_OTPR_DC AS SkladDC " +
-                        ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
-                        ", SUM(DDT_KOL_RASHOD) AS Rashod " +
-                        "FROM TD_24 T24 " +
-                        " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
-                        " INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC " +
-                        $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_OTPR_DC IS NOT NULL " +
-                        "AND NOT EXISTS (SELECT 1 FROM NOMENKL_PRIH_EXCLUDE tt WHERE tt.DOC_CODE = t.DOC_CODE AND tt.CODE = t.CODE) " +
-                        "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_OTPR_DC " +
-                        "UNION ALL " +
-                        "SELECT ntr.NomenklInDC AS NomenklDC " +
-                        ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                        ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                        ", nt.SkladDC AS SkladDC " +
-                        ", ntr.Quantity AS Prihod " +
-                        ", CAST(0 AS NUMERIC(18, 4))AS Rashod " +
-                        "FROM NomenklTransfer nt " +
-                        "   INNER JOIN NomenklTransferRow ntr ON ntr.DocId = nt.Id " +
-                        "   INNER JOIN SD_83 S83 ON S83.DOC_CODE = ntr.NomenklInDC " +
-                        $"WHERE NT.Date <= '{CustomFormat.DateToString(date)}' AND ISNULL(NTR.IsAccepted,0) = 1 " +
-                        "UNION all  " +
-                        "SELECT ntr.NomenklOutDC AS NomenklDC " +
-                        ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                        ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                        ", nt.SkladDC AS SkladDC " +
-                        ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
-                        ", ntr.Quantity AS Rashod " +
-                        "FROM NomenklTransfer nt " +
-                        "   INNER JOIN NomenklTransferRow ntr ON ntr.DocId = nt.Id  " +
-                        "   INNER JOIN SD_83 S83 ON S83.DOC_CODE = ntr.NomenklOutDC " +
-                        $"WHERE nt.DATE <= '{CustomFormat.DateToString(date)}' AND ISNULL(NTR.IsAccepted,0) = 1) tab " +
-                        "LEFT OUTER JOIN NOM_PRICE p ON p.NOM_DC = tab.NomenklDC " +
-                        $"AND p.DATE = (SELECT MAX(pp.DATE) FROM NOM_PRICE pp WHERE pp.NOM_DC = tab.NomenklDC AND pp.DATE <= '{CustomFormat.DateToString(date)}') " +
-                        "GROUP BY tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,p.PRICE_WO_NAKLAD,p.Price " +
-                        "HAVING SUM(tab.Prihod) - SUM(tab.Rashod) != 0 ";
-                    break;
-            }
-
-            var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>(sql).ToList();
+            var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>("GetNomenklRemains @date",  
+                new SqlParameter("@date", date)); 
             return new List<NomenklStoreRemainItem>(data.OrderBy(_ => _.NomenklDC).ThenBy(_ => _.StoreDC)
                 .ThenBy(_ => _.Prihod));
         }
@@ -856,64 +706,8 @@ namespace Calculates.Materials
         /// <returns></returns>
         public static List<NomenklStoreRemainItem> GetNomenklAllStoreRemains(DateTime date, decimal nomDC)
         {
-            var sql =
-                "SELECT tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC StoreDC,SUM(tab.Prihod) AS Prihod, SUM(tab.Rashod)AS Rashod " +
-                ", SUM(tab.Prihod) - SUM(tab.Rashod) AS Remain, ROUND(ISNULL(p.Price, 0), 2) AS PriceWithNaklad, ROUND(ISNULL(p.PRICE_WO_NAKLAD, 0), 2) AS Price " +
-                ", ROUND((SUM(tab.Prihod) - SUM(tab.Rashod)), 2) * ROUND(ISNULL(p.PRICE_WO_NAKLAD, 0), 2) AS Summa,  " +
-                "ROUND((SUM(tab.Prihod) - SUM(tab.Rashod)), 2) * ROUND(ISNULL(p.Price, 0), 2) AS SummaWithNaklad  " +
-                "FROM(SELECT " +
-                "T24.DDT_NOMENKL_DC AS NomenklDC " +
-                ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                ", S24.DD_SKLAD_POL_DC AS SkladDC " +
-                ", SUM(T24.DDT_KOL_PRIHOD) AS Prihod " +
-                ", CAST(0 AS NUMERIC(18, 4)) AS Rashod " +
-                "FROM TD_24 T24 " +
-                " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
-                $" INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_POL_DC IS NOT NULL " +
-                "AND NOT EXISTS (SELECT 1 FROM NOMENKL_PRIH_EXCLUDE tt WHERE tt.DOC_CODE = t.DOC_CODE AND tt.CODE = t.CODE) " +
-                "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_POL_DC " +
-                "UNION ALL " +
-                "SELECT T24.DDT_NOMENKL_DC AS NomenklDC " +
-                ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                ", S24.DD_SKLAD_OTPR_DC AS SkladDC " +
-                ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
-                ", SUM(DDT_KOL_RASHOD) AS Rashod " +
-                "FROM TD_24 T24 " +
-                " INNER JOIN SD_24 S24 ON S24.DOC_CODE = T24.DOC_CODE " +
-                $" INNER JOIN SD_83 S83 ON S83.DOC_CODE = T24.DDT_NOMENKL_DC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                $"WHERE DD_DATE <= '{CustomFormat.DateToString(date)}' AND S24.DD_SKLAD_OTPR_DC IS NOT NULL " +
-                "AND NOT EXISTS (SELECT 1 FROM NOMENKL_PRIH_EXCLUDE tt WHERE tt.DOC_CODE = t.DOC_CODE AND tt.CODE = t.CODE) " +
-                "GROUP BY T24.DDT_NOMENKL_DC, S83.NOM_SALE_CRS_DC, S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')', S24.DD_SKLAD_OTPR_DC " +
-                "UNION ALL " +
-                "SELECT ntr.NomenklInDC AS NomenklDC " +
-                ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                ", nt.SkladDC AS SkladDC " +
-                ", ntr.Quantity AS Prihod " +
-                ", CAST(0 AS NUMERIC(18, 4))AS Rashod " +
-                "FROM NomenklTransfer nt " +
-                "   INNER JOIN NomenklTransferRow ntr ON ntr.DocId = nt.Id " +
-                $"   INNER JOIN SD_83 S83 ON S83.DOC_CODE = ntr.NomenklInDC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                $"WHERE NT.Date <= '{CustomFormat.DateToString(date)}' AND ISNULL(NTR.IsAccepted,0) = 1 " +
-                "UNION all  " +
-                "SELECT ntr.NomenklOutDC AS NomenklDC " +
-                ", S83.NOM_SALE_CRS_DC AS NomCurrencyDC " +
-                ", S83.NOM_NAME + '(' + S83.NOM_NOMENKL + ')' AS NomenklName " +
-                ", nt.SkladDC AS SkladDC " +
-                ", CAST(0 AS NUMERIC(18, 4)) AS Prihod " +
-                ", ntr.Quantity AS Rashod " +
-                "FROM NomenklTransfer nt " +
-                "   INNER JOIN NomenklTransferRow ntr ON ntr.DocId = nt.Id  " +
-                $"   INNER JOIN SD_83 S83 ON S83.DOC_CODE = ntr.NomenklOutDC  AND S83.DOC_CODE = '{CustomFormat.DecimalToSqlDecimal(nomDC)}' " +
-                $"WHERE nt.DATE <= '{CustomFormat.DateToString(date)} AND ISNULL(NTR.IsAccepted,0) = 1 ') tab " +
-                "LEFT OUTER JOIN NOM_PRICE p ON p.NOM_DC = tab.NomenklDC " +
-                $"AND p.DATE = (SELECT MAX(pp.DATE) FROM NOM_PRICE pp WHERE pp.NOM_DC = tab.NomenklDC AND pp.DATE <= '{CustomFormat.DateToString(date)}') " +
-                "GROUP BY tab.NomenklDC,tab.NomCurrencyDC,tab.NomenklName,tab.SkladDC,p.PRICE_WO_NAKLAD,p.Price " +
-                "HAVING SUM(tab.Prihod) - SUM(tab.Rashod) != 0 ";
-            var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>(sql).ToList();
+            var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>("GetNomenklRemains @date",  
+                new SqlParameter("@date", date)).Where(_ => _.NomenklDC == nomDC).ToList(); 
             return data;
         }
 

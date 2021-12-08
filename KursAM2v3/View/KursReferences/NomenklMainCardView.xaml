@@ -60,6 +60,9 @@
                 <Label DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center">Валютный учет</Label>
                 <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsCurrencyTransfer, Mode=TwoWay}" DockPanel.Dock="Left"
                                Margin="5,0,0,0" VerticalAlignment="Center"/>
+                <Label DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center">Только гос.валюта</Label>
+                <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsOnlyState, Mode=TwoWay}" DockPanel.Dock="Left"
+                               Margin="5,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
             <DockPanel Height="40" Margin="0,5,0,5" LastChildFill="False">
                 <StackPanel Orientation="Horizontal">

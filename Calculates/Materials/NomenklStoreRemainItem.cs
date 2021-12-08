@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Globalization;
-using Core.Invoices.EntityViewModel;
-using DevExpress.Mvvm.DataAnnotations;
 
 namespace Calculates.Materials
 {

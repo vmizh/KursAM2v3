@@ -57,6 +57,7 @@ namespace Data
         public Nullable<int> BankFromTransactionCode { get; set; }
         public Nullable<bool> IsCurrencyChange { get; set; }
         public Nullable<System.Guid> AccuredId { get; set; }
+        public Nullable<decimal> CurrencyRateForReference { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProviderInvoicePay> ProviderInvoicePay { get; set; }

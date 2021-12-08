@@ -900,5 +900,35 @@ namespace Data
     
             return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<LIC_SCHET_KONTR_TABLE_Result>("[Entities].[LIC_SCHET_KONTR_TABLE](@nKontrDC, @dtStart, @dtStop)", nKontrDCParameter, dtStartParameter, dtStopParameter);
         }
+    
+        public virtual int GetNomenklMoveForAll(Nullable<System.DateTime> dateStart, Nullable<System.DateTime> dateEnd)
+        {
+            var dateStartParameter = dateStart.HasValue ?
+                new ObjectParameter("DateStart", dateStart) :
+                new ObjectParameter("DateStart", typeof(System.DateTime));
+    
+            var dateEndParameter = dateEnd.HasValue ?
+                new ObjectParameter("DateEnd", dateEnd) :
+                new ObjectParameter("DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNomenklMoveForAll", dateStartParameter, dateEndParameter);
+        }
+    
+        public virtual int GetNomenklMoveForStore(Nullable<System.DateTime> dateStart, Nullable<System.DateTime> dateEnd, Nullable<decimal> storeDC)
+        {
+            var dateStartParameter = dateStart.HasValue ?
+                new ObjectParameter("DateStart", dateStart) :
+                new ObjectParameter("DateStart", typeof(System.DateTime));
+    
+            var dateEndParameter = dateEnd.HasValue ?
+                new ObjectParameter("DateEnd", dateEnd) :
+                new ObjectParameter("DateEnd", typeof(System.DateTime));
+    
+            var storeDCParameter = storeDC.HasValue ?
+                new ObjectParameter("StoreDC", storeDC) :
+                new ObjectParameter("StoreDC", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNomenklMoveForStore", dateStartParameter, dateEndParameter, storeDCParameter);
+        }
     }
 }
