@@ -109,12 +109,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public Command ExportSFCommand
         {
-            get { return new Command(ExportSF, param => IsDocumentOpenAllow); }
+            get { return new Command(ExportSF, _ => IsDocumentOpenAllow); }
         }
 
         public Command PrintSFCommand
         {
-            get { return new Command(PrintSF, param => IsDocumentOpenAllow); }
+            get { return new Command(PrintSF, _ => IsDocumentOpenAllow); }
         }
 
         public override void Print(object form)
@@ -179,6 +179,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (CurrentDocument == null) return;
             var ctx = new WaybillWindowViewModel(CurrentDocument.DocCode);
             var frm = new WaybillView {Owner = Application.Current.MainWindow, DataContext = ctx};
+            ctx.Form = frm;
             frm.Show();
         }
 

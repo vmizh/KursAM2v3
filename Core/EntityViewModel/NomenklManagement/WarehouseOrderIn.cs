@@ -39,8 +39,8 @@ namespace Core.EntityViewModel.NomenklManagement
             if (KontragentSender != null)
                 WarehouseSenderType = WarehouseSenderType.Kontragent;
             var rtemp = new List<WarehouseOrderInRow>();
-            if (entity.TD_24 != null && entity.TD_24.Count != 0)
-                foreach (var item in entity.TD_24)
+            if (Entity.TD_24 != null && Entity.TD_24.Count != 0)
+                foreach (var item in Entity.TD_24)
                     rtemp.Add(new WarehouseOrderInRow(item) {Parent = this});
             Rows = new ObservableCollection<WarehouseOrderInRow>(rtemp);
         }

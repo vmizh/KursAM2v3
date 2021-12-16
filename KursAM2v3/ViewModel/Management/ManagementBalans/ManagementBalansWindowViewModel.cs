@@ -9,6 +9,7 @@ using System.Windows.Input;
 using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.NomenklManagement;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
@@ -430,6 +431,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 GetNomenkl();
                 GetZarplata();
                 GetMoneyInPath();
+                GetTovarInPath();
                 var ch = BalansStructure.Single(_ => _.Tag == BalansSection.Head);
                 //ch.Summa =
                 //    BalansStructure.Where(_ => _.ParentId == Guid.Parse("{9DC33178-1DAA-4A65-88BD-E1AD617B12D9}"))
@@ -497,6 +499,109 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             {
                 WindowManager.ShowError(ex);
             }
+        }
+
+        /// <summary>
+        /// товар в пути
+        /// </summary>
+        public void GetTovarInPath()
+        {
+            var ch = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
+                .Single(t => t.Tag == BalansSection.Store)
+                .Id);
+            ch.Summa = 0;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var data = ctx.TD_24.Include(_ => _.SD_24)
+                    .Include(_ => _.SD_83)
+                    .Where(_ => _.SD_24.DD_TYPE_DC == 2010000003
+                                && _.SD_24.DD_SKLAD_POL_DC != null
+                                && _.SD_24.DD_DATE <= CurrentDate).ToList();
+                var prihData = ctx.TD_24.Include(_ => _.SD_24).Where(_ => _.SD_24.DD_TYPE_DC == 2010000001
+                                                                          && _.DDT_RASH_ORD_DC != null
+                                                                          && _.SD_24.DD_DATE <= CurrentDate).ToList();
+                List<TD_24> inPanth = new List<TD_24>();
+                foreach (var d in data)
+                {
+                    if (prihData.Any(_ => _.DDT_RASH_ORD_DC == d.DOC_CODE && _.DDT_RASH_ORD_CODE == d.CODE)) continue;
+                    inPanth.Add(d);
+                }
+
+                if (inPanth.Count > 0)
+                {
+                    var newId = Guid.NewGuid();
+                    foreach (var p in inPanth)
+                    {
+                        var prc = Nomenkl.Price(p.DDT_NOMENKL_DC, p.SD_24.DD_DATE);
+                        var nom = MainReferences.GetNomenkl(p.DDT_NOMENKL_DC);
+                        var newItem = new ManagementBalanceExtendRowViewModel
+                        {
+                            GroupId = newId,
+                            Name = p.SD_83.NOM_NAME,
+                            Quantity = p.DDT_KOL_RASHOD,
+                            Price = prc,
+                            Summa = prc * p.DDT_KOL_RASHOD,
+                            Nom = nom,
+                            Nomenkl = nom.NomenklNumber,
+                            // ReSharper disable once PossibleInvalidOperationException
+                            CurrencyName = nom.Currency.Name,
+                            SummaEUR = nom.Currency.DocCode == CurrencyCode.EUR ? prc * p.DDT_KOL_RASHOD : 0,
+                            PriceEUR = nom.Currency.DocCode == CurrencyCode.EUR ? prc : 0,
+                            SummaUSD = nom.Currency.DocCode == CurrencyCode.USD ? prc * p.DDT_KOL_RASHOD : 0,
+                            PriceUSD = nom.Currency.DocCode == CurrencyCode.USD ? prc : 0,
+                            SummaRUB = nom.Currency.DocCode == CurrencyCode.RUB ? prc * p.DDT_KOL_RASHOD : 0,
+                            PriceRUB = nom.Currency.DocCode == CurrencyCode.RUB ? prc : 0,
+                            SummaCNY = nom.Currency.DocCode == CurrencyCode.CNY ? prc * p.DDT_KOL_RASHOD : 0,
+                            PriceCNY = nom.Currency.DocCode == CurrencyCode.CNY ? prc : 0,
+                            SummaCHF = nom.Currency.DocCode == CurrencyCode.CHF ? prc * p.DDT_KOL_RASHOD : 0,
+                            PriceCHF = nom.Currency.DocCode == CurrencyCode.CHF ? prc : 0,
+                            SummaGBP = nom.Currency.DocCode == CurrencyCode.GBP ? prc * p.DDT_KOL_RASHOD : 0,
+                            PriceGBP = nom.Currency.DocCode == CurrencyCode.GBP ? prc : 0,
+                        };
+                        ExtendRows.Add(newItem);
+                    }
+
+                    var newGrp = new ManagementBalanceGroupViewModel
+                    {
+                        Id = newId,
+                        ParentId = ch.Id,
+                        Name = "Товары в пути",
+                        Order = 1,
+                        SummaEUR = ExtendRows.Where(_ => _.GroupId == newId).Sum(_ => _.SummaEUR),
+                        SummaUSD = ExtendRows.Where(_ => _.GroupId == newId).Sum(_ => _.SummaUSD),
+                        SummaRUB = ExtendRows.Where(_ => _.GroupId == newId).Sum(_ => _.SummaRUB),
+                        SummaCNY = ExtendRows.Where(_ => _.GroupId == newId).Sum(_ => _.SummaCNY),
+                        SummaCHF = ExtendRows.Where(_ => _.GroupId == newId).Sum(_ => _.SummaCHF),
+                        SummaGBP = ExtendRows.Where(_ => _.GroupId == newId).Sum(_ => _.SummaGBP),
+                        ObjectDC = 10270000000
+                    };
+                    BalansStructure.Add(newGrp);
+                }
+            }
+            ch.Summa =
+                BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    .Sum(_ => _.Summa);
+            ch.SummaEUR =
+                BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    .Sum(_ => _.SummaEUR);
+            ch.SummaUSD =
+                BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    .Sum(_ => _.SummaUSD);
+            ch.SummaRUB =
+                BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    .Sum(_ => _.SummaRUB);
+            ch.SummaGBP =
+                BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    .Sum(_ => _.SummaGBP);
+            ch.SummaCHF =
+                BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    .Sum(_ => _.SummaCHF);
+            ch.SummaSEK =
+                BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    .Sum(_ => _.SummaSEK);
+            ch.SummaCNY =
+                BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    .Sum(_ => _.SummaCNY);
         }
 
         /// <summary>

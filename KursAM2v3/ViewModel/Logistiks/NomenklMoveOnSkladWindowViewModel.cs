@@ -860,6 +860,10 @@ namespace KursAM2.ViewModel.Logistiks
                 var listTemp = new List<NomenklMoveOnSkladViewModel>();
                 foreach (var item in nnomlist)
                 {
+                    if (MainReferences.GetNomenkl(item.NomDC).NomenklNumber == "1434")
+                    {
+                        var i = 1;
+                    }
                     var summaIn = item.SummaIn;
                     var summaOut = item.SummaOut;
                     var newitem = new NomenklMoveOnSkladViewModel

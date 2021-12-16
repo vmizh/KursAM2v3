@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     Name="win"
     mc:Ignorable="d"
     Title="{Binding WindowName}" Height="400" Width="500">
@@ -15,8 +16,15 @@
         </Grid.RowDefinitions>
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
                Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
-        <ContentControl Grid.Row="0" Content="{Binding DataUserControl}" Name="contentControl" />
-        <DockPanel Style="{StaticResource DXServices}" Grid.Row="1" LastChildFill="False">
+        <ContentControl Grid.Row="0" Content="{Binding DataUserControl}" Name="contentControl">
+            <dxmvvm:Interaction.Behaviors>
+                <dxmvvm:EventToCommand EventName="MouseDoubleClick"
+                                       Command="{Binding OkCommand}"/>
+                <dxmvvm:KeyToCommand  KeyGesture="Cancel"
+                                      Command="{Binding CancelCommand}"/>
+            </dxmvvm:Interaction.Behaviors>
+        </ContentControl>
+        <DockPanel Grid.Row="1" LastChildFill="False">
             <Button DockPanel.Dock="Left"
                     Content="Разметка" Margin="10,0,0,0"
                     ToolTip="Удалить текущую разметку"

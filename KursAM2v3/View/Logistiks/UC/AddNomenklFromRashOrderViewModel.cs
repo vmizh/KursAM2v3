@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -22,6 +22,7 @@ namespace KursAM2.View.Logistiks.UC
         {
         }
 
+        [Display(AutoGenerateField = true, Name = "Выбор")]
         public bool IsSelected
         {
             set
@@ -51,9 +52,6 @@ namespace KursAM2.View.Logistiks.UC
             RefreshData(null);
         }
 
-        public ObservableCollection<WarehouseOrderOutRowSelect> CurrentItem { set; get; } =
-            new ObservableCollection<WarehouseOrderOutRowSelect>();
-
         public ObservableCollection<WarehouseOrderOutRowSelect> ItemsCollection { set; get; } =
             new ObservableCollection<WarehouseOrderOutRowSelect>();
 
@@ -73,7 +71,7 @@ namespace KursAM2.View.Logistiks.UC
             get => myDataUserControl;
         }
 
-        public WarehouseOrderOutRowSelect CurrentNomenkl
+        public WarehouseOrderOutRowSelect CurrentItem
         {
             set
             {
@@ -118,18 +116,40 @@ namespace KursAM2.View.Logistiks.UC
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    var sql = "SELECT t.DOC_CODE DocCode, t.CODE Code FROM TD_24 t " +
-                              "INNER JOIN SD_24 s ON t.DOC_CODE = s.DOC_CODE " +
-                              "AND s.DD_TYPE_DC = 2010000003 " +
-                              $"AND s.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(Store.DOC_CODE)}' " +
-                              "WHERE s.doc_code NOT IN (SELECT t1.DDT_RASH_ORD_DC FROM td_24 t1 " +
-                              "INNER HASH JOIN sd_24 s1 ON t1.DOC_CODE = s1.DOC_CODE AND s.DD_TYPE_DC = 2010000001 " +
-                              $"AND s.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(Store.DOC_CODE)}' )";
+                    var sql = $@"SELECT 
+                                  t.DOC_CODE DocCode 
+                                 ,t.CODE Code 
+                                FROM TD_24 t 
+                                INNER JOIN SD_24 s 
+                                  ON t.DOC_CODE = s.DOC_CODE 
+                                    AND s.DD_TYPE_DC = 2010000003 
+                                    AND s.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(Store.DOC_CODE)}' 
+                                LEFT OUTER JOIN td_24 t1 ON t1.DDT_RASH_ORD_CODE = t.DOC_CODE AND t1.CODE = t.DDT_RASH_ORD_CODE 
+                                LEFT OUTER JOIN sd_24 s1 
+                                    ON t1.DOC_CODE = s1.DOC_CODE 
+                                    AND s1.DD_TYPE_DC = 2010000001 
+                                    AND s1.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(Store.DOC_CODE)}' 
+                                  WHERE t1.DOC_CODE IS null";
                     var rowslist = ctx.Database.SqlQuery<TempList>(sql).ToList();
                     foreach (var r in rowslist)
                     {
                         var d = ctx.TD_24
                             .Include(_ => _.SD_24)
+                            .Include(_ => _.SD_175)
+                            .Include(_ => _.SD_1751)
+                            .Include(_ => _.SD_301)
+                            .Include(_ => _.SD_3011)
+                            .Include(_ => _.SD_3012)
+                            .Include(_ => _.SD_303)
+                            .Include(_ => _.SD_384)
+                            .Include(_ => _.SD_43)
+                            .Include(_ => _.SD_83)
+                            .Include(_ => _.SD_831)
+                            .Include(_ => _.SD_832)
+                            .Include(_ => _.SD_84)
+                            .Include(_ => _.TD_73)
+                            .Include(_ => _.TD_9)
+                            .AsNoTracking()
                             .FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.Code);
                         if (d != null)
                             ItemsCollection.Add(new WarehouseOrderOutRowSelect(d));

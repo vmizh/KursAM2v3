@@ -37,6 +37,7 @@ namespace KursAM2.Dialogs
         ///     все
         /// </param>
         /// <returns></returns>
+        // ReSharper disable once InvalidXmlDocComment
         public static Kontragent SelectKontragent(Currency crs = null, bool? isBalans = null)
         {
             //MainReferences.CheckUpdateKontragentAndLoad();
@@ -97,8 +98,7 @@ namespace KursAM2.Dialogs
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
-            if (!ctx.DialogResult) return null;
-            return new List<WarehouseOrderOutRowSelect>(ctx.ItemsCollection);
+            return !ctx.DialogResult ? null : new List<WarehouseOrderOutRowSelect>(ctx.ItemsCollection.Where(_ => _.IsSelected));
         }
 
         public static List<EXT_USERSViewModel> SelectUsers()
@@ -456,7 +456,7 @@ namespace KursAM2.Dialogs
         public static Bank SelectBank()
         {
             var ctx = new BankSelectDialogViewModel();
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var dlg = new SelectDialogView2 {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;

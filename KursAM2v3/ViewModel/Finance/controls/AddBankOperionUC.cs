@@ -48,6 +48,9 @@ namespace KursAM2.ViewModel.Finance.controls
         public AddBankOperionUC(decimal docCode, BankOperationsViewModel row, BankAccount bankAcc, bool isNew) : this()
         {
             decimal rate = 1;
+            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
+            if (row.Currency == null)
+                row.Currency = bankAcc.Currency;
             if (row.Currency.DocCode != GlobalOptions.SystemProfile.NationalCurrency.DocCode)
             {
                 var rates = CurrencyRate.GetRate(DateTime.Today);

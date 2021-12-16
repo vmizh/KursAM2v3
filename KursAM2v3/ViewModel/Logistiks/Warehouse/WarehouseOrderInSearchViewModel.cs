@@ -118,7 +118,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand DeleteCommand
         {
-            get { return new Command(Delete, param => true); }
+            get { return new Command(Delete, _ => true); }
         }
 
         public override void SearchClear(object obj)
@@ -139,7 +139,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
                         _.DD_TYPE_DC == 2010000001).ToList(); /*приходный складской ордер*/
                     foreach (var item in d)
-                        rows.Add(new WarehouseOrderIn(item) {State = RowStatus.NotEdited});
+                        rows.Add(new WarehouseOrderIn(item) { State = RowStatus.NotEdited });
                     Documents = new ObservableCollection<WarehouseOrderIn>(rows);
                     RaisePropertyChanged(nameof(Documents));
                 }
@@ -171,9 +171,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new OrderInView {Owner = Application.Current.MainWindow};
+            var frm = new OrderInView { Owner = Application.Current.MainWindow };
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                "WarehouseOrderIn", true)) {Form = frm};
+                "WarehouseOrderIn", true)) { Form = frm };
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -181,10 +181,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocNewCopy(object obj)
         {
             if (CurrentDocument == null) return;
-            var frm = new OrderInView {Owner = Application.Current.MainWindow};
+            var frm = new OrderInView { Owner = Application.Current.MainWindow };
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderIn", true))
-                {Form = frm};
+                { Form = frm };
             ctx.Document = orderManager.NewOrderInCopy(CurrentDocument);
             frm.Show();
             frm.DataContext = ctx;
@@ -193,10 +193,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocNewCopyRequisite(object obj)
         {
             if (CurrentDocument == null) return;
-            var frm = new OrderInView {Owner = Application.Current.MainWindow};
+            var frm = new OrderInView { Owner = Application.Current.MainWindow };
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderIn", true))
-                {Form = frm};
+                { Form = frm };
             ctx.Document = orderManager.NewOrderInRecuisite(CurrentDocument);
             frm.Show();
             frm.DataContext = ctx;

@@ -206,11 +206,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             ctx.SaveChanges();
                         }
 
-                        Form.Close();
+                        Form?.Close();
                         return;
                     // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
                     case MessageBoxResult.No:
-                        Form.Close();
+                        Form?.Close();
                         return;
                     // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
                     case MessageBoxResult.Cancel:
@@ -220,11 +220,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             else
             {
                 InvoicesManager.DeleteProvider(Document.DocCode);
-                Form.Close();
+                Form?.Close();
             }
 
             InvoicesManager.DeleteProvider(Document.DocCode);
-            Form.Close();
+            Form?.Close();
         }
 
         public ICommand AddFromDocumentCommand
@@ -342,7 +342,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public Command ExportCommand
         {
-            get { return new Command(ExportWayBill, param => true); }
+            get { return new Command(ExportWayBill, _ => true); }
         }
 
         public void ExportWayBill(object obj)
@@ -352,7 +352,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public Command PrintWaybillCommand
         {
-            get { return new Command(PrintWaybill, param => true); }
+            get { return new Command(PrintWaybill, _ => true); }
         }
 
         public void PrintWaybill(object obj)
@@ -446,7 +446,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public Command SelectKontragentCommand
         {
-            get { return new Command(SelectKontragent, param => Document.InvoiceClient == null); }
+            get { return new Command(SelectKontragent, _ => Document.InvoiceClient == null); }
         }
 
         public void SelectKontragent(object obj)

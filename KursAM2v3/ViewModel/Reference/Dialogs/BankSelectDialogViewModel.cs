@@ -29,7 +29,6 @@ namespace KursAM2.ViewModel.Reference.Dialogs
         {
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             WindowName = "Выбор банка";
-            Items = new ObservableCollection<Bank>();
             RefreshData(null);
         }
 
@@ -38,10 +37,10 @@ namespace KursAM2.ViewModel.Reference.Dialogs
         #region Properties
 
         private ICurrentWindowService winCurrentService;
-        public UserControl CustomDataUserControl { set; get; } = new GridControlUC();
+        public UserControl DataUserControl { set; get; } = new GridControlUC();
         public override string LayoutName => "BankSelectDialogViewModel";
 
-        public ObservableCollection<Bank> Items { set; get; }
+        public ObservableCollection<Bank> Items { set; get; } = new ObservableCollection<Bank>();
 
         public Bank CurrentItem
         {
@@ -78,6 +77,7 @@ namespace KursAM2.ViewModel.Reference.Dialogs
             winCurrentService = GetService<ICurrentWindowService>();
             if (winCurrentService != null)
             {
+                DialogResult = true;
                 winCurrentService.Close();
             }
         }
@@ -89,9 +89,9 @@ namespace KursAM2.ViewModel.Reference.Dialogs
             {
                 CurrentItem = null;
                 winCurrentService.Close();
+                DialogResult = false;
             }
         }
-
 
         public ICommand AddNewBankCommand
         {

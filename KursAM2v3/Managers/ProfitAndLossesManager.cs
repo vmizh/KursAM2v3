@@ -180,7 +180,7 @@ namespace KursAM2.Managers
                         if (Project == null)
                             sql =
                                 "SELECT s83.NOM_0MATER_1USLUGA IsUsluga, DD_DATE DATE ,SFT_NEMENKL_DC NomenklDC, s50.PROD_NAME AS TypeProdName ,ISNULL(SF_CENTR_OTV_DC, 0) CentrOfResponsibility ,ISNULL(SF_CLIENT_DC, 0) KontragentDC " +
-                                " ,ISNULL(SF_CRS_DC, 0) Currency ,ISNULL(S2.DOC_CODE, 0) Manager ,CAST(DDT_KOL_RASHOD AS NUMERIC(18, 8)) Quantity ,CAST(ISNULL(SFT_ED_CENA, 0) AS NUMERIC(18, 4)) Price , " +
+                                " ,ISNULL(SF_CRS_DC, 0) Currency ,ISNULL(S2.DOC_CODE, 0) Manager ,CAST(DDT_KOL_RASHOD AS NUMERIC(18, 8)) Quantity ,CAST(ISNULL(KONTR_CRS / CAST(DDT_KOL_RASHOD AS NUMERIC(18, 8)), 0) AS NUMERIC(18, 2)) Price , " +
                                 " CAST(ISNULL(KONTR_CRS, 0) AS NUMERIC(18, 4)) SummaKontrCrs ,CAST(ISNULL(NomenklSum, 0) AS NUMERIC(18, 4)) NomSumm ,SF_DATE AS SF_DATE ,SF_NUM AS SF_NUM " +
                                 " ,ISNULL(SF_NOTES, '') AS SF_NOTES, NAKL_NUM AS NAKL_NUM, ISNULL(NAKL_NOTES, '') AS NAKL_NOTES, ISNULL(SF_DILER_DC, 0) Diler ,ISNULL(DILER_SUMMA, 0) DilerSumma ,ISNULL(NomenklSumWOReval, 0) AS NomenklSumWOReval " +
                                 " , s43.VALUTA_DC KontrCrsDC, s83.NOM_SALE_CRS_DC NomenklCrsDC " +
@@ -209,7 +209,7 @@ namespace KursAM2.Managers
                         else
                             sql =
                                 "SELECT s83.NOM_0MATER_1USLUGA IsUsluga, DD_DATE DATE ,SFT_NEMENKL_DC NomenklDC, s50.PROD_NAME AS TypeProdName ,ISNULL(SF_CENTR_OTV_DC, 0) CentrOfResponsibility ,ISNULL(SF_CLIENT_DC, 0) KontragentDC " +
-                                " ,ISNULL(SF_CRS_DC, 0) Currency ,ISNULL(S2.DOC_CODE, 0) Manager ,CAST(DDT_KOL_RASHOD AS NUMERIC(18, 8)) Quantity ,CAST(ISNULL(SFT_ED_CENA, 0) AS NUMERIC(18, 4)) Price , " +
+                                " ,ISNULL(SF_CRS_DC, 0) Currency ,ISNULL(S2.DOC_CODE, 0) Manager ,CAST(DDT_KOL_RASHOD AS NUMERIC(18, 8)) Quantity ,CAST(ISNULL(KONTR_CRS / CAST(DDT_KOL_RASHOD AS NUMERIC(18, 8)), 0) AS NUMERIC(18, 2)) Price , " +
                                 " CAST(ISNULL(KONTR_CRS, 0) AS NUMERIC(18, 4)) SummaKontrCrs ,CAST(ISNULL(NomenklSum, 0) AS NUMERIC(18, 4)) NomSumm ,SF_DATE AS SF_DATE ,SF_NUM AS SF_NUM " +
                                 " ,ISNULL(SF_NOTES, '') AS SF_NOTES, NAKL_NUM AS NAKL_NUM, ISNULL(NAKL_NOTES, '') AS NAKL_NOTES, ISNULL(SF_DILER_DC, 0) Diler ,ISNULL(DILER_SUMMA, 0) DilerSumma ,ISNULL(NomenklSumWOReval, 0) AS NomenklSumWOReval " +
                                 " , s43.VALUTA_DC KontrCrsDC, s83.NOM_SALE_CRS_DC NomenklCrsDC " +
@@ -242,7 +242,7 @@ namespace KursAM2.Managers
                         if (Project == null)
                             sql =
                                 "SELECT s83.NOM_0MATER_1USLUGA IsUsluga, DD_DATE DATE ,SFT_NEMENKL_DC NomenklDC, s50.PROD_NAME AS TypeProdName ,ISNULL(SF_CENTR_OTV_DC, 0) CentrOfResponsibility ,ISNULL(SF_CLIENT_DC, 0) KontragentDC " +
-                                " ,ISNULL(SF_CRS_DC, 0) Currency ,ISNULL(S2.DOC_CODE, 0) Manager ,CAST(DDT_KOL_RASHOD AS NUMERIC(18, 8)) Quantity ,CAST(ISNULL(SFT_ED_CENA, 0) AS NUMERIC(18, 4)) Price , " +
+                                " ,ISNULL(SF_CRS_DC, 0) Currency ,ISNULL(S2.DOC_CODE, 0) Manager ,CAST(DDT_KOL_RASHOD AS NUMERIC(18, 8)) Quantity ,CAST(ISNULL(KONTR_CRS / CAST(DDT_KOL_RASHOD AS NUMERIC(18, 8)), 0) AS NUMERIC(18, 2)) Price , " +
                                 " CAST(ISNULL(KONTR_CRS, 0) AS NUMERIC(18, 4)) SummaKontrCrs ,CAST(ISNULL(NomenklSum, 0) AS NUMERIC(18, 4)) NomSumm ,SF_DATE AS SF_DATE ,SF_NUM AS SF_NUM " +
                                 " ,ISNULL(SF_NOTES, '') AS SF_NOTES, NAKL_NUM AS NAKL_NUM, ISNULL(NAKL_NOTES, '') AS NAKL_NOTES, ISNULL(SF_DILER_DC, 0) Diler ,ISNULL(DILER_SUMMA, 0) DilerSumma ,ISNULL(NomenklSumWOReval, 0) AS NomenklSumWOReval " +
                                 " , s43.VALUTA_DC KontrCrsDC, s83.NOM_SALE_CRS_DC NomenklCrsDC " +
@@ -271,7 +271,7 @@ namespace KursAM2.Managers
                         else
                             sql =
                                 "SELECT s83.NOM_0MATER_1USLUGA IsUsluga, DD_DATE DATE ,SFT_NEMENKL_DC NomenklDC, s50.PROD_NAME AS TypeProdName ,ISNULL(SF_CENTR_OTV_DC, 0) CentrOfResponsibility ,ISNULL(SF_CLIENT_DC, 0) KontragentDC " +
-                                " ,ISNULL(SF_CRS_DC, 0) Currency ,ISNULL(S2.DOC_CODE, 0) Manager ,CAST(DDT_KOL_RASHOD AS NUMERIC(18, 8)) Quantity ,CAST(ISNULL(SFT_ED_CENA, 0) AS NUMERIC(18, 4)) Price , " +
+                                " ,ISNULL(SF_CRS_DC, 0) Currency ,ISNULL(S2.DOC_CODE, 0) Manager ,CAST(DDT_KOL_RASHOD AS NUMERIC(18, 8)) Quantity ,CAST(ISNULL(KONTR_CRS / CAST(DDT_KOL_RASHOD AS NUMERIC(18, 8)), 0) AS NUMERIC(18, 2)) Price , " +
                                 " CAST(ISNULL(KONTR_CRS, 0) AS NUMERIC(18, 4)) SummaKontrCrs ,CAST(ISNULL(NomenklSum, 0) AS NUMERIC(18, 4)) NomSumm ,SF_DATE AS SF_DATE ,SF_NUM AS SF_NUM " +
                                 " ,ISNULL(SF_NOTES, '') AS SF_NOTES, NAKL_NUM AS NAKL_NUM, ISNULL(NAKL_NOTES, '') AS NAKL_NOTES, ISNULL(SF_DILER_DC, 0) Diler ,ISNULL(DILER_SUMMA, 0) DilerSumma ,ISNULL(NomenklSumWOReval, 0) AS NomenklSumWOReval " +
                                 " , s43.VALUTA_DC KontrCrsDC, s83.NOM_SALE_CRS_DC NomenklCrsDC " +
@@ -2018,7 +2018,7 @@ namespace KursAM2.Managers
                                         MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
                                     : null
                         };
-                        SetCurrenciesValue(newOp, nom.Currency.DocCode, d.Profit, 0m);
+                        SetCurrenciesValue(newOp, nom.Currency.DocCode, d.Price*d.Quantity, 0m);
 
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);
@@ -2367,9 +2367,11 @@ namespace KursAM2.Managers
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var outBalansClient = ctx.AccruedAmountForClient
-                    .Include(_ => _.AccuredAmountForClientRow);
+                    .Include(_ => _.AccuredAmountForClientRow)
+                    .Where(_ => _.DocDate >= DateStart && _.DocDate <= DateEnd);
                 var outBalansSupplier = ctx.AccruedAmountOfSupplier
-                    .Include(_ => _.AccuredAmountOfSupplierRow);
+                    .Include(_ => _.AccuredAmountOfSupplierRow)
+                    .Where(_ => _.DocDate >= DateStart && _.DocDate <= DateEnd);
                 foreach (var d in outBalansClient)
                 {
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
@@ -2404,7 +2406,7 @@ namespace KursAM2.Managers
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier,
-                        Name = "Внебалансовые начисления поставщиков",
+                        Name = "Прямые затраты",
                         Note =
                             string.Format($"Дата {d.DocDate.ToShortDateString()} №{d.DocInNum}/{d.DocExtNum} {d.Note}"),
                         DocCode = 0,

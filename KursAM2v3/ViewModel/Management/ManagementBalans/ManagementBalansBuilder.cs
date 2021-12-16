@@ -9,6 +9,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
     {
         public static Guid Root = Guid.Parse("{9DC33178-1DAA-4A65-88BD-E1AD617B12D9}");
         public static Guid MoneyInPah = Guid.Parse("{CF0D1836-59BF-4749-969A-63135522B2D0}");
+        public static Guid TovarInPath = Guid.Parse("{47741975-8DAA-4B15-AA4D-209E6373AD5E}");
     }
 
     public class ManagementBalansBuilder

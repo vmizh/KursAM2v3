@@ -33,7 +33,7 @@
                                             Visible="True" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" IsTextEditable="False"/>
+                                                          Mask="n2" IsTextEditable="False"/>
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     
@@ -42,19 +42,19 @@
                     <dxg:GridColumn Name="col4" FieldName="ProfitRUB" Header="Доход" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <dxg:GridColumn Name="col5" FieldName="LossRUB" Header="Расход" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <dxg:GridColumn Name="col6" FieldName="ResultRUB" Header="Результат" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                 </dxg:GridControlBand>
@@ -62,19 +62,19 @@
                     <dxg:GridColumn Name="colu4" FieldName="ProfitUSD" Header="Доход" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <dxg:GridColumn Name="xcolu5" FieldName="LossUSD" Header="Расход" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <dxg:GridColumn Name="colu6" FieldName="ResultUSD" Header="Результат" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                 </dxg:GridControlBand>
@@ -82,19 +82,19 @@
                     <dxg:GridColumn Name="cole4" FieldName="ProfitEUR" Header="Доход" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <dxg:GridColumn Name="cole5" FieldName="LossEUR" Header="Расход" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <dxg:GridColumn Name="cole6" FieldName="ResultEUR" Header="Результат" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                 </dxg:GridControlBand>
@@ -102,19 +102,19 @@
                     <dxg:GridColumn Name="colg4" FieldName="ProfitGBP" Header="Доход" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <dxg:GridColumn Name="colg5" FieldName="LossGBP" Header="Расход" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <dxg:GridColumn Name="colg6" FieldName="ResultGBP" Header="Результат" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                 </dxg:GridControlBand>
@@ -122,19 +122,19 @@
                     <dxg:GridColumn Name="colc4" FieldName="ProfitCHF" Header="Доход" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <dxg:GridColumn Name="colc5" FieldName="LossCHF" Header="Расход" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <dxg:GridColumn Name="colc6" FieldName="ResultCHF" Header="Результат" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                 </dxg:GridControlBand>
@@ -142,19 +142,19 @@
                     <dxg:GridColumn Name="cols4" FieldName="ProfitSEK" Header="Доход" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <dxg:GridColumn Name="cols5" FieldName="LossSEK" Header="Расход" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <dxg:GridColumn Name="cols6" FieldName="ResultSEK" Header="Результат" ReadOnly="True">
                         <dxg:GridColumn.EditSettings>
                             <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                 </dxg:GridControlBand>
@@ -269,7 +269,7 @@
                             <dxg:GridColumn Name="colz5" FieldName="Summa" Header="Сумма"  ReadOnly="True">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                                          MaskUseAsDisplayFormat="True" />
+                                                                          Mask="n2" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                             <dxg:GridColumn Name="colz6" FieldName="Note" Header="Примечание"  ReadOnly="True"/>
@@ -278,19 +278,19 @@
                                 <dxg:GridColumn Name="xcol4" FieldName="ProfitRUB" Header="Доход" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="xcol5" FieldName="LossRUB" Header="Расход" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="xcol6" FieldName="ResultRUB" Header="Результат" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                             </dxg:GridControlBand>
@@ -298,19 +298,19 @@
                                 <dxg:GridColumn Name="xcolu4" FieldName="ProfitUSD" Header="Доход" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="colu5" FieldName="LossUSD" Header="Расход" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="xcolu6" FieldName="ResultUSD" Header="Результат" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                             </dxg:GridControlBand>
@@ -318,19 +318,19 @@
                                 <dxg:GridColumn Name="xcole4" FieldName="ProfitEUR" Header="Доход" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="xcole5" FieldName="LossEUR" Header="Расход" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="xcole6" FieldName="ResultEUR" Header="Результат" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                             </dxg:GridControlBand>
@@ -338,19 +338,19 @@
                                 <dxg:GridColumn Name="xcolg4" FieldName="ProfitGBP" Header="Доход" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="xcolg5" FieldName="LossGBP" Header="Расход" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="xcolg6" FieldName="ResultGBP" Header="Результат" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                             </dxg:GridControlBand>
@@ -358,19 +358,19 @@
                                 <dxg:GridColumn Name="xcolc4" FieldName="ProfitCHF" Header="Доход" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="xcolc5" FieldName="LossCHF" Header="Расход" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="xcolc6" FieldName="ResultCHF" Header="Результат" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                             </dxg:GridControlBand>
@@ -378,19 +378,19 @@
                                 <dxg:GridColumn Name="xcols4" FieldName="ProfitSEK" Header="Доход" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="xcols5" FieldName="LossSEK" Header="Расход" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="xcols6" FieldName="ResultSEK" Header="Результат" ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          MaskUseAsDisplayFormat="True" />
+                                                          Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                             </dxg:GridControlBand>

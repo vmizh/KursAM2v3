@@ -474,6 +474,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void AddNomenkl(object obj)
         {
+            if (Document.WarehouseIn == null)
+            {
+                WinManager.ShowWinUIMessageBox("Не выбран склад получатель","Предупреждение",MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             if (Document.WarehouseSenderType == WarehouseSenderType.Kontragent)
             {

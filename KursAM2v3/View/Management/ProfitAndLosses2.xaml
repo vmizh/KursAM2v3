@@ -112,7 +112,7 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -120,14 +120,14 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="tcol4" FieldName="ResultRUB" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -136,7 +136,7 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -144,14 +144,14 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="tcol24" FieldName="ResultUSD" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -160,7 +160,7 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -168,14 +168,14 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="tcol34" FieldName="ResultEUR" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -184,7 +184,7 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -192,14 +192,14 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="tcol44" FieldName="ResultGBP" Header="Результат"
-                                                    ReadOnly="True">
+                                                            ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -208,7 +208,7 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -216,14 +216,14 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="tcol54" FieldName="ResultCHF" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -232,7 +232,7 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -240,14 +240,14 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="tcol64" FieldName="ResultSEK" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -256,7 +256,7 @@
                                                             ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                                      MaskUseAsDisplayFormat="True" />
+                                                                      Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -264,14 +264,14 @@
                                                             ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                                      MaskUseAsDisplayFormat="True" />
+                                                                      Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="tcol74" FieldName="ResultCNY" Header="Результат"
                                                             ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                                      MaskUseAsDisplayFormat="True" />
+                                                                      Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -281,21 +281,21 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="colr15" FieldName="RecalcLoss" Header="Расход"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="colr16" FieldName="RecalcResult" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -362,7 +362,7 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -370,14 +370,14 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="ncol4" FieldName="ResultRUB" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -386,7 +386,7 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -394,14 +394,14 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="ncol24" FieldName="ResultUSD" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -410,7 +410,7 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -418,14 +418,14 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="ncol34" FieldName="ResultEUR" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -434,7 +434,7 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -442,14 +442,14 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="tcold44" FieldName="ResultGBP" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -458,7 +458,7 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -466,14 +466,14 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="tcold54" FieldName="ResultCHF" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -482,7 +482,7 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -490,14 +490,14 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="tcold64" FieldName="ResultSEK" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -506,7 +506,7 @@
                                                             ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                                      MaskUseAsDisplayFormat="True" />
+                                                                      Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
 
                                         </dxg:TreeListColumn>
@@ -514,14 +514,14 @@
                                                             ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                                      MaskUseAsDisplayFormat="True" />
+                                                                      Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="tcol84" FieldName="ResultCNY" Header="Результат"
                                                             ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                                      MaskUseAsDisplayFormat="True" />
+                                                                      Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>
@@ -531,20 +531,20 @@
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="colr5" FieldName="RecalcLoss" Header="Расход" ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                         <dxg:TreeListColumn Name="colr6" FieldName="RecalcResult" Header="Результат"
                                                     ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                              MaskUseAsDisplayFormat="True" />
+                                                              Mask="n2" />
                                             </dxg:TreeListColumn.EditSettings>
                                         </dxg:TreeListColumn>
                                     </dxg:TreeListControlBand>

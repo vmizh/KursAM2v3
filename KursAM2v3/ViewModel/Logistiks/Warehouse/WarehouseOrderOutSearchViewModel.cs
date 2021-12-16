@@ -38,7 +38,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand PrintOrderCommand
         {
-            get { return new Command(PrintOrder, param => CurrentDocument != null); }
+            get { return new Command(PrintOrder, _ => CurrentDocument != null); }
         }
 
         public ObservableCollection<WarehouseOrderOut> Documents { set; get; } =
@@ -132,7 +132,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand DeleteCommand
         {
-            get { return new Command(Delete, param => true); }
+            get { return new Command(Delete, _ => true); }
         }
 
         public override void SearchClear(object obj)

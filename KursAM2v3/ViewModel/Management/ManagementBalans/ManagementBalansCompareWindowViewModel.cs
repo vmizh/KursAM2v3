@@ -390,6 +390,14 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaStart = d.Summa
                 };
                 newNom.SetSumma(newNom.Currency, d.Summa, 0);
+                //var sec = mySecondBalans.ExtendRows.FirstOrDefault(_ => _.Nom != null &&_.Nom.DocCode == newNom.NomenklDC);
+                //if (sec != null && (sec.Quantity != newNom.QuantityStart || sec.Price != newNom.PriceStart))
+                //{
+                //    newNom.QuantityEnd = sec.Quantity;
+                //    newNom.PriceEnd = sec.Price;
+                //    newNom.SummaEnd = sec.Summa;
+                //    newNom.SetSumma(newNom.Currency, 0, sec.Summa);
+                //}
                 NomenklDeltaListTemp.Add(newNom);
             }
 
@@ -416,6 +424,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 }
                 else
                 {
+                    old.QuantityEnd = d.Quantity;
+                    old.PriceEnd = d.Price;
+                    old.SummaEnd = d.Summa;
                     old.SetSumma2(old.Currency, d.Summa);
                 }
             }
@@ -899,12 +910,43 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
         public override void RefreshData(object obj)
         {
+            var myBalansBuilder = new ManagementBalansBuilder();
+            
             var frm = Form as ManagementBalansCompareView;
             frm?.NavigateTo(typeof(EmptyUI));
             myFirstBalans = new ManagementBalansWindowViewModel {CurrentDate = FirstDate};
             myFirstBalans.RefreshData(null);
             mySecondBalans = new ManagementBalansWindowViewModel {CurrentDate = SecondDate};
             mySecondBalans.RefreshData(null);
+            var storeSection = myFirstBalans.BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
+                .Single(t => t.Tag == BalansSection.Store)
+                .Id);
+            var newId = Guid.NewGuid();
+                var newGrp = new ManagementBalanceGroupViewModel
+                {
+                    Id = newId,
+                    ParentId = storeSection.Id,
+                    Name = "Товары в пути",
+                    Order = 1,
+                    Summa = 0,
+                    SummaEUR = 0,
+                    SummaUSD = 0,
+                    SummaRUB = 0,
+                    SummaCNY = 0,
+                    SummaCHF = 0,
+                    SummaGBP = 0,
+                    ObjectDC = 10270000000
+                };
+            if (myFirstBalans.BalansStructure.Any(_ => _.Name == "Товары в пути") &&
+                !mySecondBalans.BalansStructure.Any(_ => _.Name == "Товары в пути"))
+            {
+                mySecondBalans.BalansStructure.Add(newGrp);
+            }
+            if (!myFirstBalans.BalansStructure.Any(_ => _.Name == "Товары в пути") &&
+                mySecondBalans.BalansStructure.Any(_ => _.Name == "Товары в пути"))
+            {
+                myFirstBalans.BalansStructure.Add(newGrp);
+            }
             Data.Clear();
             var head = myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Head);
             Data.Add(new ManagementBalansCompareGroupViewModel

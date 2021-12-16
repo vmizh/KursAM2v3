@@ -242,16 +242,18 @@ namespace KursAM2.View.Finance.UC
                     case BankOperationType.Kontragent:
                         var k = StandartDialogs.SelectKontragent(dtc.Currency);
                         if (k == null) return;
-                        if (dtc.Payment == null)
-                        {
-                            dtc.Payment = k;
-                            Payment.Text = k.Name;
-                        }
-                        if (dtc.Kontragent != null) return;
+                        //if (dtc.Payment == null)
+                        //{
+                        //    dtc.Payment = k;
+                        //    Payment.Text = k.Name;
+                        //}
+                        //if (dtc.Kontragent != null) return;
                         if (dtc.BankOperationType == BankOperationType.Kontragent)
                         {
                             dtc.Kontragent = k;
                             Kontragent.Text = dtc.Kontragent.Name;
+                            dtc.Payment = k;
+                            Payment.Text = k.Name;
                         }
                         break;
                     case BankOperationType.CashOut:

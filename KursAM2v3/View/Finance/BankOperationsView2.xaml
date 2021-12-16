@@ -8,53 +8,51 @@
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-    Title="Банковские операции" Height="350" Width="525"
-    >
-<DockPanel>
+    Title="Банковские операции" Height="350" Width="525">
+    <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
                Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
         <DockPanel DockPanel.Dock="Top">
-           <StackPanel Orientation="Horizontal">
-               <Label Content="Счет"/>
-               <dxe:ComboBoxEdit
-                   Margin="28,0,0,0"
-                   AutoComplete="True"
-                   HorizontalAlignment="Left"
-                   ItemsSource="{Binding BankAccountCollection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                   EditValue="{Binding CurrentBankAccount, UpdateSourceTrigger=PropertyChanged}"
-                   DisplayMember="Name"
-                   MinWidth="400"
-                   Height="20"
-               >
-                   <dxe:ComboBoxEdit.ItemTemplate>
-                       <DataTemplate>
-                           <TextBlock Name="showName" Text="{Binding Path=Name}" >
-                               <TextBlock.Style>
-                                   <Style TargetType="TextBlock">
-                                       <Style.Triggers>
-                                           <DataTrigger Binding="{Binding IsLastYearOperations}" Value="True" > 
-                                               <Setter Property="Foreground" 
-                                                       Value="Black" /> 
-                                               <Setter Property="FontWeight" Value="Bold"/>
-                                           </DataTrigger>
-                                           <DataTrigger Binding="{Binding IsLastYearOperations}" Value="False" > 
-                                               <Setter Property="Foreground" 
-                                                       Value="Gray" /> 
-                                               <Setter Property="FontWeight" Value="Normal"/>
-                                           </DataTrigger>
-                                       </Style.Triggers>
-                                   </Style>
-                               </TextBlock.Style>
-                           </TextBlock>
-                       </DataTemplate>
-                   </dxe:ComboBoxEdit.ItemTemplate>
-               </dxe:ComboBoxEdit>
-               <dxe:TextEdit EditValue="{Binding Currency, UpdateSourceTrigger=PropertyChanged}" 
-                             IsEnabled="False" 
-                             IsReadOnly="True"
-                             Margin="5 0 0 0"/>
-           </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Счет" />
+                <dxe:ComboBoxEdit
+                    Margin="28,0,0,0"
+                    AutoComplete="True"
+                    HorizontalAlignment="Left"
+                    ItemsSource="{Binding BankAccountCollection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                    EditValue="{Binding CurrentBankAccount, UpdateSourceTrigger=PropertyChanged}"
+                    DisplayMember="Name"
+                    MinWidth="400"
+                    Height="20">
+                    <dxe:ComboBoxEdit.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Name="showName" Text="{Binding Path=Name}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsLastYearOperations}" Value="True">
+                                                <Setter Property="Foreground"
+                                                        Value="Black" />
+                                                <Setter Property="FontWeight" Value="Bold" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsLastYearOperations}" Value="False">
+                                                <Setter Property="Foreground"
+                                                        Value="Gray" />
+                                                <Setter Property="FontWeight" Value="Normal" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </dxe:ComboBoxEdit.ItemTemplate>
+                </dxe:ComboBoxEdit>
+                <dxe:TextEdit EditValue="{Binding Currency, UpdateSourceTrigger=PropertyChanged}"
+                              IsEnabled="False"
+                              IsReadOnly="True"
+                              Margin="5 0 0 0" />
+            </StackPanel>
             <dxlc:LayoutItem Label="Поиск"
                              ToolTip="Строка поиска по полям документов"
                              Height="26"
@@ -95,15 +93,14 @@
                                          CurrentItem="{Binding CurrentPeriods, UpdateSourceTrigger=PropertyChanged}"
                                          SelectionMode="Row"
                                          AutoGeneratingColumn="TreePeriods_OnAutoGeneratingColumn"
-                                         AutoGeneratedColumns="TreePeriods_OnAutoGeneratedColumns"
-                                         >
+                                         AutoGeneratedColumns="TreePeriods_OnAutoGeneratedColumns">
                         <dxg:TreeListControl.View>
                             <dxg:TreeListView Name="ListView"
-                                              ParentFieldName="ParentId" 
+                                              ParentFieldName="ParentId"
                                               KeyFieldName="Id"
                                               ShowTotalSummary="False"
-                                              
-                                              
+
+
                                               AllowSorting="False">
                                 <dxg:TreeListView.ContextMenu>
                                     <ContextMenu>
@@ -139,20 +136,18 @@
                                  ItemsSource="{Binding BankOperationsCollection, UpdateSourceTrigger=PropertyChanged}"
                                  CurrentItem="{Binding CurrentBankOperations, UpdateSourceTrigger=PropertyChanged}"
                                  AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn"
-                                 AutoGeneratedColumns="GridDocuments_OnAutoGeneratedColumns"
-                                 >
+                                 AutoGeneratedColumns="GridDocuments_OnAutoGeneratedColumns">
                     <dxg:GridControl.View>
                         <dxg:TableView ShowTotalSummary="True"
                                        Name="TableViewDocuments"
                                        ShowAutoFilterRow="True"
-                                       EditorShowMode="MouseDownFocused"
-                                       >
+                                       EditorShowMode="MouseDownFocused">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="Открыть" Command="{Binding DocumentOpenCommand}"/>
+                                    <MenuItem Header="Открыть" Command="{Binding DocumentOpenCommand}" />
                                     <MenuItem Header="Добавить">
                                         <MenuItem Header="Добавить приход/расход"
-                                                  Command="{Binding DocNewEmptyCommand}"/>
+                                                  Command="{Binding DocNewEmptyCommand}" />
                                         <MenuItem Header="Добавить обмен валюты"
                                                   Command="{Binding AddCurrencyChangedCommand}" />
                                     </MenuItem>
@@ -160,8 +155,8 @@
                                               Command="{Binding DocNewCopyCommand}" />
                                     <MenuItem Header="Удалить"
                                               Command="{Binding RemoveCommand}" />
-                                    <MenuItem Header="Показать историю" Command="{Binding ShowHistoryCommand}"/>
-                                    <Separator/>
+                                    <MenuItem Header="Показать историю" Command="{Binding ShowHistoryCommand}" />
+                                    <Separator />
                                     <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                               CommandParameter="{Binding Path=PlacementTarget, 
                            RelativeSource={RelativeSource Mode=FindAncestor,
@@ -173,6 +168,15 @@
                                     </MenuItem>
                                 </ContextMenu>
                             </dxg:TableView.ContextMenu>
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand EventName="MouseDoubleClick"
+                                                       Command="{Binding DocumentOpenCommand}"
+                                                       PassEventArgsToCommand="True" MarkRoutedEventsAsHandled="True">
+                                    <dxmvvm:EventToCommand.EventArgsConverter>
+                                        <dx:EventArgsToDataRowConverter />
+                                    </dxmvvm:EventToCommand.EventArgsConverter>
+                                </dxmvvm:EventToCommand>
+                            </dxmvvm:Interaction.Behaviors>
                         </dxg:TableView>
                     </dxg:GridControl.View>
                 </dxg:GridControl>

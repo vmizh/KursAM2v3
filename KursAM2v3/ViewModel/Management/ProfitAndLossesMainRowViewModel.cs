@@ -644,7 +644,7 @@ namespace KursAM2.ViewModel.Management
                 {
                     Id = OutBalansAccrualAmmountSupplier,
                     ParentId = Rashod,
-                    Name = @"Внебалансовые начисления поставщиков",
+                    Name = @"Прямые затраты",
                     CalcType = TypeProfitAndLossCalc.IsLoss
                 },
 

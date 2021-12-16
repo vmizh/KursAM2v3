@@ -18,6 +18,7 @@
             dx:DXSerializer.SerializationID="gridItems"
             ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}"
             CurrentItem="{Binding CurrentItem, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItems="{Binding SelectedBanks, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
             CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
             <dxg:GridControl.View>
                 <dxg:TableView

@@ -508,13 +508,7 @@
                                  CurrentItem="{Binding CurrentOperation}"
                                  SelectionMode="Row"
                                  CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
-                    <!--<dxb:BarManager.DXContextMenu>
-                        <dxb:PopupMenu>
-                            <dxb:BarButtonItemLink BarItemName="ctxDocOpen" />
-                            <dxb:BarItemLinkSeparator BarItemName="" />
-                            <dxb:BarButtonItemLink BarItemName="ctxExport1" />
-                        </dxb:PopupMenu>
-                    </dxb:BarManager.DXContextMenu>-->
+
                     <dxg:GridControl.Columns>
                         <dxg:GridColumn x:Name="DocName1" FieldName="DocName" Header="Документ" ReadOnly="True" />
                         <dxg:GridColumn x:Name="DocNum1" FieldName="DocNum" Header="№" ReadOnly="True" />

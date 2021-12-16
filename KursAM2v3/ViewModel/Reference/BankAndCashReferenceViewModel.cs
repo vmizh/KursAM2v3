@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,13 +13,13 @@ using Core;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Helper;
 using KursAM2.Dialogs;
+using KursAM2.View.KursReferences;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -52,12 +53,16 @@ namespace KursAM2.ViewModel.Reference
         public ObservableCollection<BankAccountReference> Banks { set; get; } =
             new ObservableCollection<BankAccountReference>();
 
+        public ObservableCollection<BankAccountReference> SelectedBanks { set; get; } =
+            new ObservableCollection<BankAccountReference>();
+
         public ObservableCollection<BankCashItem> BankCash { set; get; } = new ObservableCollection<BankCashItem>();
 
         public ObservableCollection<BankCashItem> SelectedBankCash { set; get; } =
             new ObservableCollection<BankCashItem>();
 
         public ObservableCollection<SelectUser> Users { set; get; } = new ObservableCollection<SelectUser>();
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<SelectUser> SelectedUsers { set; get; } = new ObservableCollection<SelectUser>();
         private BankCashItem myCurrentBankCash;
 
@@ -176,7 +181,7 @@ namespace KursAM2.ViewModel.Reference
 
         #region Commands
 
-        public override void RefreshData(object obj)
+        public sealed override void RefreshData(object obj)
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -279,6 +284,12 @@ namespace KursAM2.ViewModel.Reference
             if (string.IsNullOrWhiteSpace(newBank.Name))
                 newBank.Name = bank.Name;
             Banks.Add(newBank);
+            if (Form is CashAndBanksReferenceView frm)
+            {
+                frm.tableViewBank.FocusedRowHandle = frm.gridBank.GetRowHandleByListIndex(((IList)frm.gridBank.ItemsSource).Count - 1);
+                frm.gridBank.SelectedItems.Clear();
+                frm.gridBank.SelectedItems.Add(CurrentBank);
+            }
             RaisePropertiesChanged(nameof(IsCanUserRight));
         }
 
@@ -560,7 +571,6 @@ namespace KursAM2.ViewModel.Reference
                 StartSumma = bAcc.StartSumma,
                 StartDate = bAcc.StartDate,
                 DateNonZero = bAcc.DateNonZero
-                
             });
             bAcc.DocCode = newDC;
             bAcc.Code = newKontrAccCode;
@@ -575,7 +585,7 @@ namespace KursAM2.ViewModel.Reference
                 CA_NAME = cash.Name,
                 CA_CENTR_OTV_DC = cash.CO?.DocCode,
                 CA_CRS_DC = cash.DefaultCurrency.DocCode,
-                CA_NEGATIVE_RESTS = (short?) (cash.IsCanNegative ? 1 : 0),
+                CA_NEGATIVE_RESTS = (short?)(cash.IsCanNegative ? 1 : 0),
                 CA_NO_BALANS = 0,
                 CA_KONTRAGENT_DC = null,
                 CA_KONTR_DC = null
@@ -618,9 +628,9 @@ namespace KursAM2.ViewModel.Reference
             var old = ctx.SD_22.FirstOrDefault(_ => _.DOC_CODE == cash.DocCode);
             if (old == null) return;
             old.CA_NAME = cash.Name;
-            old.CA_CENTR_OTV_DC = cash.CO == null || cash.CO.DocCode == 0 ? (decimal?) null : cash.CO.DocCode;
+            old.CA_CENTR_OTV_DC = cash.CO?.DocCode;
             old.CA_CRS_DC = cash.DefaultCurrency.DocCode;
-            old.CA_NEGATIVE_RESTS = (short?) (cash.IsCanNegative ? 1 : 0);
+            old.CA_NEGATIVE_RESTS = (short?)(cash.IsCanNegative ? 1 : 0);
             old.CA_NO_BALANS = 0;
             old.CA_KONTRAGENT_DC = null;
             old.CA_KONTR_DC = null;
@@ -675,8 +685,8 @@ namespace KursAM2.ViewModel.Reference
                                 if (ctx.SD_33.Any(_ => _.CA_DC == r.DocCode && _.CRS_DC == r.CRS_DC)
                                     || ctx.SD_34.Any(_ => _.CA_DC == r.DocCode && _.CRS_DC == r.CRS_DC)
                                     || ctx.SD_251.Any(_ => _.CH_CASH_DC == r.DocCode && (_.CH_CRS_IN_DC == r.CRS_DC
-                                                                                         || _.CH_CRS_OUT_DC ==
-                                                                                         r.CRS_DC)))
+                                        || _.CH_CRS_OUT_DC ==
+                                        r.CRS_DC)))
                                 {
                                     WinManager.ShowWinUIMessageBox(
                                         $"По кассе {CurrentCash} и валюте {r.Currency} существуют документы до {r.DATE_START} . Изменение не возможно.",
@@ -701,7 +711,7 @@ namespace KursAM2.ViewModel.Reference
                             MONEY_START = r.SUMMA_START,
                             MONEY_STOP = r.SUMMA_START
                         });
-                        var code = (int) ctx.TD_22.Where(_ => _.DOC_CODE == cash.DocCode).Max(_ => _.CODE) + 1;
+                        var code = (int)ctx.TD_22.Where(_ => _.DOC_CODE == cash.DocCode).Max(_ => _.CODE) + 1;
                         var newRem = new TD_22
                         {
                             DOC_CODE = cash.DocCode,
