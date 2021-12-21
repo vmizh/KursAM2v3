@@ -187,6 +187,18 @@ namespace KursAM2.View
                 Window form;
                 switch (formName)
                 {
+                    //насчисления для акционеров
+                    case "Начисление акционерам":
+                        var sholdat = new StockHolderAccrualTypeWindowViewModel();
+                        form = new StockHolderAccrualTypeView
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = sholdat
+                        };
+                        sholdat.Form = form;
+                        form.Show();
+                        break;
+
                     //Реестр акционеров
                     case "Реестр акционеров":
                         var shold = new StockHolderReestrWindowViewModel();

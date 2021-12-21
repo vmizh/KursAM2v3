@@ -10,6 +10,7 @@ using Core.EntityViewModel.StockHolder;
 using Core.EntityViewModel.Systems;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
@@ -25,7 +26,7 @@ namespace KursAM2.ViewModel.StockHolder
         public StockHolderReestrWindowViewModel()
         {
             repository =
-                new StockHolderReestrRepository(unitOfWork);
+                new StockHolderRepository(unitOfWork);
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -37,7 +38,7 @@ namespace KursAM2.ViewModel.StockHolder
 
         #region Fields
 
-        private readonly IStockHolderReestrRepository repository;
+        private readonly IStockHolderRepository repository;
 
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
@@ -209,40 +210,48 @@ namespace KursAM2.ViewModel.StockHolder
             }
 
             StockHolders.Clear();
-            foreach (var sh in repository.GenericRepository.GetAll()) 
-                StockHolders.Add(new StockHolderViewModel(sh)
-                {
-                    State = RowStatus.NotEdited
-                });
-            foreach (var sh in StockHolders)
+            try
             {
-                var rights = unitOfWork.Context.StockHolderUserRights
-                    .Where(_ => _.StockHolderId == sh.Id).ToList();
-                foreach (var u in Users)
+                foreach (var sh in repository.GenericRepository.GetAll())
+                    StockHolders.Add(new StockHolderViewModel(sh)
+                    {
+                        State = RowStatus.NotEdited
+                    });
+                foreach (var sh in StockHolders)
                 {
-                    if (rights.Any(_ => _.UserId == u.Id))
+                    var rights = unitOfWork.Context.StockHolderUserRights
+                        .Where(_ => _.StockHolderId == sh.Id).ToList();
+                    foreach (var u in Users)
                     {
-                        sh.UserRights.Add(new UserRights
+                        if (rights.Any(_ => _.UserId == u.Id))
                         {
-                            User = new KursUser(u),
-                            IsSelected = true,
-                            myState = RowStatus.NotEdited,
-                            Parent = sh
-                        });
-                    }
-                    else
-                    {
-                        sh.UserRights.Add(new UserRights
+                            sh.UserRights.Add(new UserRights
+                            {
+                                User = new KursUser(u),
+                                IsSelected = true,
+                                myState = RowStatus.NotEdited,
+                                Parent = sh
+                            });
+                        }
+                        else
                         {
-                            User = new KursUser(u),
-                            IsSelected = false,
-                            myState = RowStatus.NotEdited,
-                            Parent = sh
-                        });
+                            sh.UserRights.Add(new UserRights
+                            {
+                                User = new KursUser(u),
+                                IsSelected = false,
+                                myState = RowStatus.NotEdited,
+                                Parent = sh
+                            });
+                        }
                     }
                 }
+
+                isHoldersDeleted = false;
             }
-            isHoldersDeleted = false;
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
         }
 
         public override void SaveData(object data)
@@ -252,22 +261,32 @@ namespace KursAM2.ViewModel.StockHolder
             {
                 unitOfWork.Context.StockHolderUserRights.Remove(d);
             }
-            unitOfWork.CreateTransaction();
-            foreach (var sh in StockHolders)
+
+            try
             {
-                foreach (var r in sh.UserRights.Where(_ => _.IsSelected))
+                unitOfWork.CreateTransaction();
+                foreach (var sh in StockHolders)
                 {
-                    unitOfWork.Context.StockHolderUserRights.Add(new StockHolderUserRights
+                    foreach (var r in sh.UserRights.Where(_ => _.IsSelected))
                     {
-                        Id = Guid.NewGuid(),
-                        StockHolderId = sh.Id,
-                        UserId = r.User.Id
-                    });
+                        unitOfWork.Context.StockHolderUserRights.Add(new StockHolderUserRights
+                        {
+                            Id = Guid.NewGuid(),
+                            StockHolderId = sh.Id,
+                            UserId = r.User.Id
+                        });
+                    }
                 }
-            } 
-            unitOfWork.Save();
-            unitOfWork.Commit();
-            foreach (var s in StockHolders) s.myState = RowStatus.NotEdited;
+
+                unitOfWork.Save();
+                unitOfWork.Commit();
+                foreach (var s in StockHolders) s.myState = RowStatus.NotEdited;
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                WindowManager.ShowError(ex);
+            }
         }
 
         #endregion

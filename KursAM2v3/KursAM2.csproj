@@ -415,6 +415,7 @@
     <Compile Include="ViewModel\StartLogin\LastDocumentWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastUsersDocumentWindowViewModel.cs" />
     <Compile Include="ViewModel\StockHolder\ReestrRepository.cs" />
+    <Compile Include="ViewModel\StockHolder\StockHolderAccrualTypeWindowViewModel.cs" />
     <Compile Include="ViewModel\StockHolder\StockHolderReestrWindowViewModel.cs" />
     <Compile Include="View\Base\GridControlUC.xaml.cs">
       <DependentUpon>GridControlUC.xaml</DependentUpon>
@@ -1033,6 +1034,9 @@
     <Compile Include="View\Personal\UsersRightToPayRoll.xaml.cs" />
     <Compile Include="View\Reconciliation\ActOfReconciliation.xaml.cs" />
     <Compile Include="View\StartLogin.xaml.cs" />
+    <Compile Include="View\StockHolder\StockHolderAccrualTypeView.xaml.cs">
+      <DependentUpon>StockHolderAccrualTypeView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\StockHolder\StockHolderReestrView.xaml.cs">
       <DependentUpon>StockHolderReestrView.xaml</DependentUpon>
     </Compile>
@@ -1858,6 +1862,10 @@
     <Page Include="View\StartLogin.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\StockHolder\StockHolderAccrualTypeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\StockHolder\StockHolderReestrView.xaml">
       <SubType>Designer</SubType>
