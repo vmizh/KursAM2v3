@@ -247,7 +247,7 @@ namespace Core.EntityViewModel.Dogovora
                 $"{Currency}";
         }
 
-        private DogovorOfSupplier DefaultValue()
+        public DogovorOfSupplier DefaultValue()
         {
             return new()
             {

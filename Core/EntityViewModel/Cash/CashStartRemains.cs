@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
@@ -20,7 +19,12 @@ namespace Core.EntityViewModel.Cash
 
         public CashStartRemains()
         {
-            Entity = new TD_22 {DOC_CODE = -1};
+            Entity = DefaultValue();
+        }
+
+        public  TD_22 DefaultValue()
+        {
+            return new TD_22 {DOC_CODE = -1};
         }
 
         public CashStartRemains(TD_22 entity)

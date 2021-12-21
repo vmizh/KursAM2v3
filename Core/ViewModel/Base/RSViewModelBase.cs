@@ -26,7 +26,7 @@ namespace Core.ViewModel.Base
         private Guid myId;
         public string myName;
         protected string myNote;
-        private object myParent;
+        protected object myParent;
         private decimal? myParentDC;
         private Guid? myParentId;
         private Guid myRowId;

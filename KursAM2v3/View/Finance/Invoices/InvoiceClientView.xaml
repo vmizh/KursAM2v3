@@ -230,7 +230,6 @@
                             <dxg:GridControl Name="gridRows"
                                              Style="{StaticResource GridControl.Base}"
                                              dx:DXSerializer.SerializationID="gridRows"
-                                             dx:DXSerializer.StoreLayoutMode="All"
                                              Margin="0,10,0,0"
                                              ItemsSource="{Binding Document.Rows, UpdateSourceTrigger=PropertyChanged}"
                                              CurrentItem="{Binding CurrentRow, UpdateSourceTrigger=PropertyChanged}"

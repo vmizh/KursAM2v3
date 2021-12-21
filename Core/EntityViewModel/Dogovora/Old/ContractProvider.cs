@@ -21,12 +21,17 @@ namespace Core.EntityViewModel.Dogovora.Old
 
         public ContractProvider()
         {
-            Entity = new SD_112 {DOC_CODE = -1};
+            Entity = DefaultValue();
+        }
+
+        public SD_112 DefaultValue()
+        {
+            return new SD_112 {DOC_CODE = -1};
         }
 
         public ContractProvider(SD_112 entity)
         {
-            Entity = entity ?? new SD_112 {DOC_CODE = -1};
+            Entity = entity ?? DefaultValue();
         }
 
         public SD_112 Entity

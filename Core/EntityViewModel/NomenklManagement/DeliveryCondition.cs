@@ -14,7 +14,12 @@ namespace Core.EntityViewModel.NomenklManagement
 
         public DeliveryCondition()
         {
-            Entity = new SD_103 {DOC_CODE = -1};
+            Entity = DefaultValue();
+        }
+
+        public SD_103 DefaultValue()
+        {
+            return new SD_103 {DOC_CODE = -1};
         }
 
         public DeliveryCondition(SD_103 entity)

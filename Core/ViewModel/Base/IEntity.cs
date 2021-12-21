@@ -8,6 +8,7 @@ namespace Core.ViewModel.Base
     public interface IEntity<T>
     {
         T Entity { set; get; }
+        T DefaultValue();
     }
 
     public interface IEntityDocument<T, R> : IEntity<T>

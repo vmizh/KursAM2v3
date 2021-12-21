@@ -1,0 +1,108 @@
+﻿<dx:ThemedWindow
+    x:Class="KursAM2.View.StockHolder.StockHolderReestrView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:control="clr-namespace:Core.Control;assembly=Core"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    xmlns:native="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
+    xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    Title="{Binding WindowName}" MinHeight="450" MinWidth="800">
+    <dx:ThemedWindow.Resources>
+        <native:RenderTemplate
+            x:Key="{themes:InplaceBaseEditThemeKey ResourceKey=CriticalErrorTemplate, IsThemeIndependent=True}">
+            <native:RenderImage />
+        </native:RenderTemplate>
+
+        <Style TargetType="dxe:ErrorControl">
+            <Setter Property="Visibility" Value="Collapsed" />
+        </Style>
+    </dx:ThemedWindow.Resources>
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
+    <DockPanel Style="{StaticResource DXServices}">
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />
+        <!--<dxb:BarManager Name="BarManager">
+            <dxb:BarManager.Items>
+        <dxb:BarSubItem x:Name="barSubItem1" Content="Система"
+                        BarItemDisplayMode="ContentAndGlyph" Glyph="{dx:DXImage SvgImages/Snap/RemoveGroupHeader.svg}"
+                        >
+            </dxb:BarSubItem>
+                </dxb:BarManager.Items>
+            </dxb:BarManager>-->
+        <dxlc:LayoutControl Padding="0">
+            <dxlc:LayoutGroup Orientation="Vertical">
+                <dxlc:LayoutGroup Header="Список акционеров" 
+                                  View="GroupBox" 
+                                  dxlc:LayoutControl.AllowVerticalSizing="True"
+                                  >
+                    <dxg:GridControl x:Name="GridControlStockHolder"
+                                     Style="{StaticResource GridControl.Base}"
+                                     dx:DXSerializer.SerializationID="GridControlStockHolder"
+                                     ItemsSource="{Binding StockHolders, UpdateSourceTrigger=PropertyChanged}"
+                                     CurrentItem="{Binding CurrentHolder, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectedItems="{Binding SelectedHolders, UpdateSourceTrigger=PropertyChanged}"
+                                     AutoGeneratingColumn="GridControlStockHolder_OnAutoGeneratingColumn"
+                                    >
+                        <dxg:GridControl.View>
+                            <dxg:TableView x:Name="TableViewStockHolder" Style="{StaticResource TableView.Standart}">
+                                <dxg:TableView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Новый акционер" 
+                                              Command="{Binding AddStockHolderCommand}" 
+                                              >
+                                        <MenuItem.Icon>
+                                            <Image
+                                                Source="{dx:DXImage SvgImages/Snap/InsertGroupHeader.svg}" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Удалить акционера" 
+                                              Command="{Binding DeleteStockHolderCommand}" 
+                                              >
+                                        <MenuItem.Icon>
+                                            <Image
+                                                Source="{dx:DXImage SvgImages/Snap/RemoveGroupHeader.svg}" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                              CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}">
+                                        <MenuItem.Icon>
+                                            <Image
+                                        Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                 </ContextMenu>
+                            </dxg:TableView.ContextMenu>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Header="Доступ к лицевым счета" View="GroupBox"  dxlc:LayoutControl.AllowVerticalSizing="True">
+                    <dxg:GridControl Name="GridControlUserRights"
+                                     Style="{StaticResource GridControl.Base}"
+                                     dx:DXSerializer.SerializationID="GridControlUserRights"
+                                     ItemsSource="{Binding CurrentHolder.UserRights, UpdateSourceTrigger=PropertyChanged}"
+                                     CurrentItem="{Binding CurrentUserRight, UpdateSourceTrigger=PropertyChanged}"
+                                     >
+                        <dxg:GridControl.View>
+                            <dxg:TableView Name="TableViewUserRights" 
+                                           Style="{StaticResource TableView.Standart}">
+
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:ThemedWindow>

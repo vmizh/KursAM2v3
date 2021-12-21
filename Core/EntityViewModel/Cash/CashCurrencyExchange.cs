@@ -37,7 +37,7 @@ namespace Core.EntityViewModel.Cash
 
         public CashCurrencyExchange()
         {
-            Entity = new SD_251 {DOC_CODE = -1};
+            Entity = DefaultValue();
             KontragentType = CashCurrencyExchangeKontragentType.NotChoice;
         }
 
@@ -597,6 +597,11 @@ namespace Core.EntityViewModel.Cash
                 myEntity = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public SD_251 DefaultValue()
+        {
+            return new SD_251 { DOC_CODE = -1 };
         }
 
         public decimal DOC_CODE

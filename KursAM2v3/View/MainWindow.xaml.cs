@@ -31,6 +31,7 @@ using KursAM2.View.Personal;
 using KursAM2.View.Reconciliation;
 using KursAM2.View.Repozit;
 using KursAM2.View.Shop;
+using KursAM2.View.StockHolder;
 using KursAM2.ViewModel;
 using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance;
@@ -56,6 +57,7 @@ using KursAM2.ViewModel.Repozit;
 using KursAM2.ViewModel.Shop;
 using KursAM2.ViewModel.Signatures;
 using KursAM2.ViewModel.StartLogin;
+using KursAM2.ViewModel.StockHolder;
 using LayoutManager;
 using NomenklCostReset = KursAM2.View.Logistiks.NomenklCostReset;
 
@@ -185,6 +187,18 @@ namespace KursAM2.View
                 Window form;
                 switch (formName)
                 {
+                    //Реестр акционеров
+                    case "Реестр акционеров":
+                        var shold = new StockHolderReestrWindowViewModel();
+                        form = new StockHolderReestrView()
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = shold
+                        };
+                        shold.Form = form;
+                        form.Show();
+                        break;
+
                     //Настройка подписей
                     case "Настройка подписей":
                         form = new KursStandartFormView

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
@@ -23,7 +22,7 @@ namespace Core.EntityViewModel.Bank
 
         public BankAccountReference()
         {
-            Entity = new SD_114 {DOC_CODE = -1};
+            Entity = DefaultValue();
         }
 
         public BankAccountReference(SD_114 entity)
@@ -43,6 +42,11 @@ namespace Core.EntityViewModel.Bank
                 myEntity = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public SD_114 DefaultValue()
+        {
+            return new SD_114 { DOC_CODE = -1 };
         }
 
         public decimal DOC_CODE

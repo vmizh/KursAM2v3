@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
@@ -32,23 +31,17 @@ namespace Core.EntityViewModel.Invoices
 
         public InvoiceProviderRowCurrencyConvertViewModel()
         {
-            Entity = new TD_26_CurrencyConvert {Id = Guid.NewGuid()};
+            Entity = DefaultValue();
+        }
+
+        public TD_26_CurrencyConvert DefaultValue()
+        {
+            return new TD_26_CurrencyConvert { Id = Guid.NewGuid() };
         }
 
         public InvoiceProviderRowCurrencyConvertViewModel(TD_26_CurrencyConvert entity)
         {
-            Entity = entity ?? new TD_26_CurrencyConvert {Id = Guid.NewGuid()};
-        }
-
-        public TD_26_CurrencyConvert Entity
-        {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
+            Entity = entity ?? new TD_26_CurrencyConvert { Id = Guid.NewGuid() };
         }
 
         public override Guid Id
@@ -64,7 +57,7 @@ namespace Core.EntityViewModel.Invoices
 
         public override decimal DocCode
         {
-            get => (decimal) Entity.DOC_CODE;
+            get => Entity.DOC_CODE ?? 0;
             set
             {
                 if (Entity.DOC_CODE == value) return;
@@ -75,7 +68,7 @@ namespace Core.EntityViewModel.Invoices
 
         public override int Code
         {
-            get => (int) Entity.CODE;
+            get => Entity.CODE ?? 0;
             set
             {
                 if (Entity.CODE == value) return;
@@ -114,7 +107,7 @@ namespace Core.EntityViewModel.Invoices
             MainReferences.Warehouses.ContainsKey(Entity.StoreDC)
                 ? MainReferences.Warehouses[Entity.StoreDC]
                 : null;
-        
+
         public decimal StoreDC
         {
             get => Entity.StoreDC;
@@ -225,6 +218,17 @@ namespace Core.EntityViewModel.Invoices
 
         public bool IsAccessRight { get; set; }
 
+        public TD_26_CurrencyConvert Entity
+        {
+            get => myEntity;
+            set
+            {
+                if (myEntity == value) return;
+                myEntity = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public List<TD_26_CurrencyConvert> LoadList()
         {
             throw new NotImplementedException();
@@ -244,35 +248,35 @@ namespace Core.EntityViewModel.Invoices
             {
                 case DirectCalc.Price:
                     if (Currency.Id == GlobalOptions.SystemProfile.NationalCurrency.Id)
-                        Rate = Math.Round(Price / OLdPrice,2);
+                        Rate = Math.Round(Price / OLdPrice, 2);
                     else
-                        Rate = Math.Round(OLdPrice / Price,2);
-                    PriceWithNaklad = Math.Round(OLdNakladPrice * Rate,2);
+                        Rate = Math.Round(OLdPrice / Price, 2);
+                    PriceWithNaklad = Math.Round(OLdNakladPrice * Rate, 2);
                     break;
                 case DirectCalc.PriceWithNaklad:
                     if (Currency.Id == GlobalOptions.SystemProfile.NationalCurrency.Id)
-                        Rate = Math.Round(PriceWithNaklad / OLdNakladPrice,2);
+                        Rate = Math.Round(PriceWithNaklad / OLdNakladPrice, 2);
                     else
-                        Rate = Math.Round(OLdNakladPrice / PriceWithNaklad,2);
-                    Price = Math.Round(OLdPrice * Rate,2);
+                        Rate = Math.Round(OLdNakladPrice / PriceWithNaklad, 2);
+                    Price = Math.Round(OLdPrice * Rate, 2);
                     break;
                 case DirectCalc.Rate:
                     if (Currency.Id == GlobalOptions.SystemProfile.NationalCurrency.Id)
                     {
-                        Price = Math.Round(OLdPrice * Rate,2);
-                        PriceWithNaklad = Math.Round(OLdNakladPrice * Rate,2);
+                        Price = Math.Round(OLdPrice * Rate, 2);
+                        PriceWithNaklad = Math.Round(OLdNakladPrice * Rate, 2);
                     }
                     else
                     {
-                        Price = Math.Round(OLdPrice / Rate,2);
-                        PriceWithNaklad = Math.Round(OLdNakladPrice / Rate,2);
+                        Price = Math.Round(OLdPrice / Rate, 2);
+                        PriceWithNaklad = Math.Round(OLdNakladPrice / Rate, 2);
                     }
 
                     break;
             }
 
-            Summa = Math.Round(Price * Quantity,2);
-            SummaWithNaklad = Math.Round(PriceWithNaklad * Quantity,2);
+            Summa = Math.Round(Price * Quantity, 2);
+            SummaWithNaklad = Math.Round(PriceWithNaklad * Quantity, 2);
         }
 
         public TD_26_CurrencyConvert Load(decimal dc)

@@ -29,7 +29,7 @@ namespace Core.EntityViewModel.Dogovora
 
         #region Methods
 
-        private DogovorClient DefaultValue()
+        public DogovorClient DefaultValue()
         {
             return new DogovorClient
             {

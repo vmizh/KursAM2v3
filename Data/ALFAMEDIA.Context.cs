@@ -707,7 +707,6 @@ namespace Data
         public virtual DbSet<NomenklMove> NomenklMove { get; set; }
         public virtual DbSet<NomenklMoveForCalc> NomenklMoveForCalc { get; set; }
         public virtual DbSet<NomenklMoveForCalcCosts> NomenklMoveForCalcCosts { get; set; }
-        public virtual DbSet<NomenklMoveStore> NomenklMoveStore { get; set; }
         public virtual DbSet<NomenklMoveWithPrice> NomenklMoveWithPrice { get; set; }
         public virtual DbSet<ProjectsDocuments> ProjectsDocuments { get; set; }
         public virtual DbSet<ProjectsInfo> ProjectsInfo { get; set; }
@@ -784,6 +783,12 @@ namespace Data
         public virtual DbSet<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
         public virtual DbSet<AccruedAmountOfSupplier> AccruedAmountOfSupplier { get; set; }
         public virtual DbSet<DocumentSignatures> DocumentSignatures { get; set; }
+        public virtual DbSet<StockHolderAccrual> StockHolderAccrual { get; set; }
+        public virtual DbSet<StockHolderAccrualRows> StockHolderAccrualRows { get; set; }
+        public virtual DbSet<StockHolders> StockHolders { get; set; }
+        public virtual DbSet<StockHolderUserRights> StockHolderUserRights { get; set; }
+        public virtual DbSet<StockHolderAccrualType> StockHolderAccrualType { get; set; }
+        public virtual DbSet<NomenklMoveStore> NomenklMoveStore { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

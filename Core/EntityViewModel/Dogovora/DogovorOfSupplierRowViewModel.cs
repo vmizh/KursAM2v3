@@ -193,7 +193,7 @@ namespace Core.EntityViewModel.Dogovora
             return summa;
         }
 
-        private DogovorOfSupplierRow DefaultValue()
+        public DogovorOfSupplierRow DefaultValue()
         {
             return new()
             {

@@ -12,26 +12,23 @@ namespace Core.EntityViewModel.CommonReferences.Kontragent
 
         public KontragentBank()
         {
-            Entity = new TD_43 {DOC_CODE = -1, CODE = -1};
+            Entity = DefaultValue();
         }
 
-        public KontragentBank(TD_43 entity) 
+        public TD_43 DefaultValue()
         {
-            if (entity == null)
-                Entity = new TD_43
-                {
-                    DOC_CODE = -1, CODE = -1
-                };
-            else
-            {
-                Entity = entity;
-                if (entity.SD_44 != null)
-                {
-                    Bank = new Bank.Bank(entity.SD_44);
-                }
-            }
-
+            return new TD_43 {DOC_CODE = -1, CODE = -1};
         }
+
+        public KontragentBank(TD_43 entity)
+        {
+            Entity = entity ?? DefaultValue();
+            if (Entity.SD_44 != null)
+            {
+                Bank = new Bank.Bank(Entity.SD_44);
+            }
+        }
+
         [Display(AutoGenerateField = false)]
         public override decimal DocCode
         {

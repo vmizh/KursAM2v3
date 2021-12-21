@@ -16,7 +16,7 @@ namespace Core.EntityViewModel.Bank
 
         public BankPeriodsOperationsViewModel(BankPeriodsOperations entity)
         {
-            Entity = entity ?? new BankPeriodsOperations();
+            Entity = entity ?? DefaultValue();
         }
 
         public BankPeriodsOperations Entity
@@ -28,6 +28,11 @@ namespace Core.EntityViewModel.Bank
                 myEntity = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public BankPeriodsOperations DefaultValue()
+        {
+            return new BankPeriodsOperations();
         }
 
         public decimal BankDC

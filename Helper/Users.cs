@@ -14,6 +14,7 @@ namespace Helper
     [DataContract]
     public class User
     {
+
         [DataMember] public List<UserGroup> Groups = new List<UserGroup>();
         [DataMember] public List<TileGroup> MainTileGroups = new List<TileGroup>();
         [DataMember] public List<UserProfile> Profile = new List<UserProfile>();

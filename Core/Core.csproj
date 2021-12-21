@@ -157,6 +157,11 @@
     <Compile Include="EntityViewModel\Signatures\SignatureSchemesInfoViewModel.cs" />
     <Compile Include="EntityViewModel\Signatures\SignatureSchemesViewModel.cs" />
     <Compile Include="EntityViewModel\Signatures\SignatureTypeViewModel.cs" />
+    <Compile Include="EntityViewModel\StockHolder\StockHolderAccrualRowViewModel.cs" />
+    <Compile Include="EntityViewModel\StockHolder\StockHolderAccrualType.cs" />
+    <Compile Include="EntityViewModel\StockHolder\StockHolderAccrualViewModel.cs" />
+    <Compile Include="EntityViewModel\StockHolder\StockHolderUserRights.cs" />
+    <Compile Include="EntityViewModel\StockHolder\StockHolderViewModel.cs" />
     <Compile Include="EntityViewModel\Systems\DataSourcesViewModel.cs" />
     <Compile Include="EntityViewModel\Systems\KursMenuGroupViewModel.cs" />
     <Compile Include="EntityViewModel\Systems\KursMenuItemViewModel.cs" />

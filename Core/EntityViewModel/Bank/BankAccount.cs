@@ -23,7 +23,7 @@ namespace Core.EntityViewModel.Bank
 
         public BankAccount()
         {
-            Entity = new SD_114 { DOC_CODE = -1 };
+            Entity = DefaultValue();
         }
 
         public BankAccount(SD_114 entity)
@@ -340,6 +340,11 @@ namespace Core.EntityViewModel.Bank
                 myEntity = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public SD_114 DefaultValue()
+        {
+            return new SD_114 { DOC_CODE = -1 };
         }
 
         public List<SD_114> LoadList()

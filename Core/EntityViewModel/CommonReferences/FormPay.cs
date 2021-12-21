@@ -18,12 +18,17 @@ namespace Core.EntityViewModel.CommonReferences
 
         public FormPay()
         {
-            Entity = new SD_189 {DOC_CODE = -1};
+            Entity = DefaultValue();
+        }
+
+        public SD_189 DefaultValue()
+        {
+            return new SD_189 {DOC_CODE = -1};
         }
 
         public FormPay(SD_189 entity)
         {
-            Entity = entity ?? new SD_189 {DOC_CODE = -1};
+            Entity = entity ?? DefaultValue();
         }
 
         public SD_189 Entity
@@ -88,7 +93,7 @@ namespace Core.EntityViewModel.CommonReferences
             get => Entity.OOT_NALOG_PERCENT;
             set
             {
-                if (Entity.OOT_NALOG_PERCENT == value) return;
+                if (Math.Abs(Math.Round(Entity.OOT_NALOG_PERCENT ?? 0,2) - Math.Round(value ?? 0,2)) < 0.01) return;
                 Entity.OOT_NALOG_PERCENT = value;
                 RaisePropertyChanged();
             }
@@ -123,17 +128,17 @@ namespace Core.EntityViewModel.CommonReferences
             throw new NotImplementedException();
         }
 
-        public virtual SD_189 Load(decimal dc)
+        public SD_189 Load(decimal dc)
         {
             throw new NotImplementedException();
         }
 
-        public virtual SD_189 Load(Guid id)
+        public SD_189 Load(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void Save(SD_189 doc)
+        public void Save(SD_189 doc)
         {
             throw new NotImplementedException();
         }

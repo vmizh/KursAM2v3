@@ -683,7 +683,6 @@
         <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMove" Width="1.5" PointX="28.75" PointY="35.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveForCalc" Width="1.5" PointX="34.75" PointY="32.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveForCalcCosts" Width="1.5" PointX="14.75" PointY="36.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveStore" Width="1.5" PointX="16.75" PointY="36.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveWithPrice" Width="1.5" PointX="36.75" PointY="1.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.ProjectsDocuments" Width="1.5" PointX="36.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.ProjectsInfo" Width="1.5" PointX="36.75" PointY="12.75" IsExpanded="true" />
@@ -2094,6 +2093,18 @@
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccruedAmountOfSupplier_KontrDC" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_AccuredAmountOfSupplierRow_DocId" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.DocumentSignatures" Width="1.5" PointX="47.375" PointY="4.75" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.StockHolderAccrual" Width="1.5" PointX="29.5" PointY="773.375" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.StockHolderAccrualRows" Width="1.5" PointX="31.75" PointY="725.125" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.StockHolders" Width="1.5" PointX="26.5" PointY="789.625" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.StockHolderUserRights" Width="1.5" PointX="28.75" PointY="793.625" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_StockHolderAccrualRows_CurrencyDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_StockHolders_KontrDC" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_StockHolderAccrualRows_DocId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_StockHolderAccrualRows_StockHolderId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_StockHolderUserRights_StockHolderId" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.StockHolderAccrualType" Width="1.5" PointX="47.375" PointY="13.875" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_StockHolderAccrualRows_AcrrualTypeId" />
+        <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveStore" Width="1.5" PointX="15.375" PointY="47.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

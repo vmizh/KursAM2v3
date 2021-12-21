@@ -17,7 +17,7 @@ namespace Core.EntityViewModel.Systems
             Entity = DefaultValue();
         }
 
-        private Users DefaultValue()
+        public Users DefaultValue()
         {
             return new Users
             {

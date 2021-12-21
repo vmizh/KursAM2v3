@@ -21,7 +21,12 @@ namespace Core.EntityViewModel.NomenklManagement
 
         public NomenklMainViewModel()
         {
-            Entity = new NomenklMain
+            Entity = DefaultValue();
+        }
+
+        public NomenklMain DefaultValue()
+        {
+            return new NomenklMain
             {
                 Id = Guid.NewGuid(), 
                 IsOnlyState = true
@@ -30,7 +35,7 @@ namespace Core.EntityViewModel.NomenklManagement
 
         public NomenklMainViewModel(NomenklMain entity)
         {
-            Entity = entity ?? new NomenklMain { Id = Guid.NewGuid(), IsOnlyState = true };
+            Entity = entity ?? DefaultValue();
             LoadReference();
         }
 

@@ -16,12 +16,17 @@ namespace Core.EntityViewModel.Dogovora
 
         public ContractType()
         {
-            Entity = new SD_102 {DOC_CODE = -1};
+            Entity = DefaultValue();
+        }
+
+        public SD_102 DefaultValue()
+        {
+            return new SD_102 {DOC_CODE = -1};
         }
 
         public ContractType(SD_102 entity)
         {
-            Entity = entity ?? new SD_102 {DOC_CODE = -1};
+            Entity = entity ?? DefaultValue();
         }
 
         public SD_102 Entity

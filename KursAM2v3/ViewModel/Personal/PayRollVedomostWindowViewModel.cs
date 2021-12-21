@@ -211,35 +211,35 @@ namespace KursAM2.ViewModel.Personal
             //var res = DialogService.ShowDialog(MessageBoxButton.OKCancel, "Добавить сотрудников", "EmploeeSelectUC", ctx);
             //if (res != MessageBoxResult.OK) return;
             foreach (var newEmp in ctx.SelectedCollection.Where(
-                    item => Employees.All(t => t.Employee.DocCode != item.Persona.DocCode))
-                .Select(item => new PayRollVedomostEmployeeViewModel
-                {
-                    State = RowStatus.NewRow,
-                    Employee = item.Persona,
-                    EURSumma = (decimal)0.0,
-                    RUBSumma = (decimal)0.0,
-                    USDSumma = (decimal)0.0,
-                    Rows = PayrollTypeCollection.FirstOrDefault(_ => _.DocCode == 19000000001) != null
-                        ? new ObservableCollection<PayRollVedomostEmployeeRowViewModel>
-                        {
-                            new PayRollVedomostEmployeeRowViewModel
-                            {
-                                Id = Id,
-                                RowId = Guid.NewGuid(),
-                                Name = item.Name,
-                                State = RowStatus.NewRow,
-                                Employee = item.Persona,
-                                Crs = MainReferences.Currencies[
-                                    GlobalOptions.SystemProfile.EmployeeDefaultCurrency.DocCode],
-                                PRType = PayrollTypeCollection.Single(_ =>
-                                    _.DocCode == GlobalOptions.SystemProfile.DafaultPayRollType.DocCode),
-                                Summa = 0,
-                                Rate = 0,
-                                NachDate = Date
-                            }
-                        }
-                        : new ObservableCollection<PayRollVedomostEmployeeRowViewModel>()
-                }))
+                             item => Employees.All(t => t.Employee.DocCode != item.Persona.DocCode))
+                         .Select(item => new PayRollVedomostEmployeeViewModel
+                         {
+                             State = RowStatus.NewRow,
+                             Employee = item.Persona,
+                             EURSumma = (decimal)0.0,
+                             RUBSumma = (decimal)0.0,
+                             USDSumma = (decimal)0.0,
+                             Rows = PayrollTypeCollection.FirstOrDefault(_ => _.DocCode == 19000000001) != null
+                                 ? new ObservableCollection<PayRollVedomostEmployeeRowViewModel>
+                                 {
+                                     new PayRollVedomostEmployeeRowViewModel
+                                     {
+                                         Id = Id,
+                                         RowId = Guid.NewGuid(),
+                                         Name = item.Name,
+                                         State = RowStatus.NewRow,
+                                         Employee = item.Persona,
+                                         Crs = MainReferences.Currencies[
+                                             GlobalOptions.SystemProfile.EmployeeDefaultCurrency.DocCode],
+                                         PRType = PayrollTypeCollection.Single(_ =>
+                                             _.DocCode == GlobalOptions.SystemProfile.DafaultPayRollType.DocCode),
+                                         Summa = 0,
+                                         Rate = 0,
+                                         NachDate = Date
+                                     }
+                                 }
+                                 : new ObservableCollection<PayRollVedomostEmployeeRowViewModel>()
+                         }))
             {
                 if (newEmp.Rows.Count == 0)
                     newEmp.Rows.Add(new PayRollVedomostEmployeeRowViewModel());
@@ -497,35 +497,35 @@ namespace KursAM2.ViewModel.Personal
                     foreach (var dd in docs.Where(dd => !emps.Exists(_ => _ == dd.EMP_DC)))
                         emps.Add(dd.EMP_DC);
                     foreach (var newEmp in from dc in emps
-                        select MainReferences.Employees[dc]
-                        into emp
-                        where emp != null
-                        select new PayRollVedomostEmployeeViewModel
-                        {
-                            Employee = emp,
-                            Name = emp.Name,
-                            EURSumma = 0,
-                            USDSumma = 0,
-                            RUBSumma = 0,
-                            Rows = new ObservableCollection<PayRollVedomostEmployeeRowViewModel>()
-                        })
+                             select MainReferences.Employees[dc]
+                             into emp
+                             where emp != null
+                             select new PayRollVedomostEmployeeViewModel
+                             {
+                                 Employee = emp,
+                                 Name = emp.Name,
+                                 EURSumma = 0,
+                                 USDSumma = 0,
+                                 RUBSumma = 0,
+                                 Rows = new ObservableCollection<PayRollVedomostEmployeeRowViewModel>()
+                             })
                     {
                         foreach (var row in from d in docs.Where(_ => _.EMP_DC == newEmp.Employee.DocCode)
-                            let crs1 = MainReferences.Currencies[d.CRS_DC]
-                            select new PayRollVedomostEmployeeRowViewModel
-                            {
-                                Summa = d.SUMMA,
-                                PRType = PayrollTypeCollection.Single(_ => _.DocCode == d.PR_TYPE_DC),
-                                Crs = crs1,
-                                Note = d.NOTES,
-                                RowId = Guid.Parse(d.ROW_ID),
-                                Rate = CurrencyRate.GetRate(crs1.DocCode, newEmp.Employee.Currency.DocCode, Date),
-                                NachEmpRate =
-                                    CurrencyRate.GetSummaRate(crs1.DocCode, newEmp.Employee.Currency.DocCode, Date,
-                                        d.SUMMA),
-                                Parent = newEmp,
-                                NachDate = d.NachDate ?? DateTime.Today
-                            })
+                                 let crs1 = MainReferences.Currencies[d.CRS_DC]
+                                 select new PayRollVedomostEmployeeRowViewModel
+                                 {
+                                     Summa = d.SUMMA,
+                                     PRType = PayrollTypeCollection.Single(_ => _.DocCode == d.PR_TYPE_DC),
+                                     Crs = crs1,
+                                     Note = d.NOTES,
+                                     RowId = Guid.Parse(d.ROW_ID),
+                                     Rate = CurrencyRate.GetRate(crs1.DocCode, newEmp.Employee.Currency.DocCode, Date),
+                                     NachEmpRate =
+                                         CurrencyRate.GetSummaRate(crs1.DocCode, newEmp.Employee.Currency.DocCode, Date,
+                                             d.SUMMA),
+                                     Parent = newEmp,
+                                     NachDate = d.NachDate ?? DateTime.Today
+                                 })
                         {
                             row.StateChanged += row_StateChanged;
                             row.myState = RowStatus.NotEdited;
@@ -741,7 +741,7 @@ namespace KursAM2.ViewModel.Personal
 
         public ICommand AddNachCommand
         {
-            get { return new Command(AddNach, param => CurrentEmployee != null); }
+            get { return new Command(AddNach, _ => CurrentEmployee != null); }
         }
 
         private void AddNach(object obj)
@@ -763,7 +763,7 @@ namespace KursAM2.ViewModel.Personal
 
         public ICommand DeleteNachCommand
         {
-            get { return new Command(DeleteNach, param => CurrentNach != null); }
+            get { return new Command(DeleteNach, _ => CurrentNach != null); }
         }
 
         private void DeleteNach(object obj)
@@ -778,7 +778,7 @@ namespace KursAM2.ViewModel.Personal
 
         public ICommand RefreshCommand
         {
-            get { return new Command(Refresh, param => true); }
+            get { return new Command(Refresh, _ => true); }
         }
 
         private void Refresh(object obj)
@@ -788,7 +788,7 @@ namespace KursAM2.ViewModel.Personal
 
         public ICommand DeleteEmployeeCommand
         {
-            get { return new Command(DeleteEmployee, param => true); }
+            get { return new Command(DeleteEmployee, _ => true); }
         }
 
         private void DeleteEmployee(object obj)

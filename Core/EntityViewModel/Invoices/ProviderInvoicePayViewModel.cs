@@ -22,12 +22,17 @@ namespace Core.EntityViewModel.Invoices
 
         public ProviderInvoicePayViewModel()
         {
-            Entity = new ProviderInvoicePay {Id = Guid.NewGuid()};
+            Entity = DefaultValue();
+        }
+
+        public ProviderInvoicePay DefaultValue()
+        {
+            return new ProviderInvoicePay {Id = Guid.NewGuid()};
         }
 
         public ProviderInvoicePayViewModel(ProviderInvoicePay entity)
         {
-            Entity = entity ?? new ProviderInvoicePay {Id = Guid.NewGuid()};
+            Entity = entity ?? DefaultValue();
         }
 
         public ProviderInvoicePay Entity

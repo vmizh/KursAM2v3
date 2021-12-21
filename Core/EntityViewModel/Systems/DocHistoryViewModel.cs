@@ -18,7 +18,7 @@ namespace Core.EntityViewModel.Systems
 
         public DocHistoryViewModel(DocHistory entity)
         {
-            Entity = entity ?? new DocHistory {Id = Guid.NewGuid()};
+            Entity = entity ?? DefaultValue();
         }
 
         [DisplayName("Id")]
@@ -141,6 +141,11 @@ namespace Core.EntityViewModel.Systems
                 myEntity = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public DocHistory DefaultValue()
+        {
+            return new DocHistory {Id = Guid.NewGuid()};
         }
 
         public List<DocHistory> LoadList()

@@ -88,7 +88,7 @@ namespace Core.EntityViewModel
 
         [Display(AutoGenerateField = false)] public UserMenuFavorites Entity { get; set; }
 
-        private UserMenuFavorites DefaultValue()
+        public UserMenuFavorites DefaultValue()
         {
             return new UserMenuFavorites { Id = Guid.NewGuid() };
         }

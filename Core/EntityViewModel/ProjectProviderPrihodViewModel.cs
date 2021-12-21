@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Core.ViewModel.Base;
 using Data;
 
-namespace Core.Invoices.EntityViewModel
+namespace Core.EntityViewModel
 {
     public class ProjectProviderPrihodViewModel : RSViewModelBase, IEntity<ProjectProviderPrihod>
     {
@@ -11,12 +11,17 @@ namespace Core.Invoices.EntityViewModel
 
         public ProjectProviderPrihodViewModel()
         {
-            Entity = new ProjectProviderPrihod {Id = Guid.NewGuid()};
+            Entity = DefaultValue();
+        }
+
+        public ProjectProviderPrihod DefaultValue()
+        {
+            return new ProjectProviderPrihod {Id = Guid.NewGuid()};
         }
 
         public ProjectProviderPrihodViewModel(ProjectProviderPrihod entity)
         {
-            Entity = entity ?? new ProjectProviderPrihod {Id = Guid.NewGuid()};
+            Entity = entity ?? DefaultValue();
         }
 
         public ProjectProviderPrihod Entity

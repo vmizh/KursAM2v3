@@ -22,7 +22,12 @@ namespace Core.EntityViewModel.CommonReferences
 
         public SDRSchet()
         {
-            Entity = new SD_303 {DOC_CODE = -1};
+            Entity = DefaultValue();
+        }
+
+        public SD_303 DefaultValue()
+        {
+            return new SD_303 {DOC_CODE = -1};
         }
 
         public SDRSchet(SD_303 entity)

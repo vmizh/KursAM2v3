@@ -14,12 +14,17 @@ namespace Core.EntityViewModel.Periods
 
         public Period()
         {
-            Entity = new SD_138 {DOC_CODE = -1};
+            Entity = DefaultValue();
+        }
+
+        public SD_138 DefaultValue()
+        {
+            return new SD_138 {DOC_CODE = -1};
         }
 
         public Period(SD_138 entity)
         {
-            Entity = entity ?? new SD_138 {DOC_CODE = -1};
+            Entity = entity ?? DefaultValue();
         }
 
         public SD_138 Entity

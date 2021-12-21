@@ -14,19 +14,20 @@ namespace Core.EntityViewModel.CommonReferences.Kontragent
 
         public KontragentBanks()
         {
-            Entity = DefaultValue(-1);
+            Entity = DefaultValue();
         }
 
         public KontragentBanks(TD_43 entity, decimal parentDC)
         {
-            Entity = entity ?? DefaultValue(parentDC);
+            Entity = entity ?? DefaultValue();
+            Entity.DOC_CODE = parentDC;
         }
 
-        private TD_43 DefaultValue(decimal dc)
+        public TD_43 DefaultValue()
         {
             return new TD_43
             {
-                DOC_CODE = dc,
+                DOC_CODE = -1,
                 CODE = -1
             };
         }

@@ -81,7 +81,7 @@ namespace Core.EntityViewModel.Systems
             return null;
         }
 
-        private LastDocument DefaultValue()
+        public LastDocument DefaultValue()
         {
             return new()
             {

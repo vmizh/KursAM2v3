@@ -47,7 +47,7 @@ namespace Core.EntityViewModel.AktSpisaniya
 
         #region Methods
 
-        private AktSpisaniyaNomenkl_Title DefaultValue()
+        public AktSpisaniyaNomenkl_Title DefaultValue()
         {
             return new()
             {

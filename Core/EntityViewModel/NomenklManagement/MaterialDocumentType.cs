@@ -14,12 +14,17 @@ namespace Core.EntityViewModel.NomenklManagement
 
         public MaterialDocumentType()
         {
-            Entity = new SD_201 {DOC_CODE = -1};
+            Entity = DefaultValue();
+        }
+
+        public SD_201 DefaultValue()
+        {
+            return new SD_201 {DOC_CODE = -1};
         }
 
         public MaterialDocumentType(SD_201 entity)
         {
-            Entity = entity ?? new SD_201 {DOC_CODE = -1};
+            Entity = entity ?? DefaultValue();
         }
 
         public SD_201 Entity

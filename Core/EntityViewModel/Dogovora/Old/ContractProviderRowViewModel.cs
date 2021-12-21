@@ -14,7 +14,12 @@ namespace Core.EntityViewModel.Dogovora.Old
 
         public ContractProviderRowViewModel()
         {
-            Entity = new TD_112 {DOC_CODE = -1};
+            Entity = DefaultValue();
+        }
+
+        public TD_112 DefaultValue()
+        {
+            return new TD_112 {DOC_CODE = -1};
         }
 
         public ContractProviderRowViewModel(TD_112 entity)
@@ -82,7 +87,7 @@ namespace Core.EntityViewModel.Dogovora.Old
             get => Entity.DOT_KOL;
             set
             {
-                if (Entity.DOT_KOL == value) return;
+                if (Entity.DOT_KOL - value < 0.01) return;
                 Entity.DOT_KOL = value;
                 RaisePropertyChanged();
             }
@@ -104,7 +109,7 @@ namespace Core.EntityViewModel.Dogovora.Old
             get => Entity.DOT_NDS_PERCENT;
             set
             {
-                if (Entity.DOT_NDS_PERCENT == value) return;
+                if (Entity.DOT_NDS_PERCENT - value < 0.01) return;
                 Entity.DOT_NDS_PERCENT = value;
                 RaisePropertyChanged();
             }

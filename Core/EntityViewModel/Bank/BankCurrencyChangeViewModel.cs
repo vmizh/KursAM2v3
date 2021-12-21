@@ -75,7 +75,7 @@ namespace Core.EntityViewModel.Bank
 
         public BankCurrencyChangeViewModel()
         {
-            Entity = new BankCurrencyChange {Id = Guid.NewGuid()};
+            Entity = DefaultValue();
         }
 
         public BankCurrencyChangeViewModel(BankCurrencyChange entity)
@@ -98,6 +98,11 @@ namespace Core.EntityViewModel.Bank
                 myEntity = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public BankCurrencyChange DefaultValue()
+        {
+            return new BankCurrencyChange {Id = Guid.NewGuid()};
         }
 
         public override Guid Id

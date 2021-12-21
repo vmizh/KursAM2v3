@@ -18,12 +18,17 @@ namespace Core.EntityViewModel.NomenklManagement
 
         public NomenklProductKind()
         {
-            Entity = new SD_50 {DOC_CODE = -1};
+            Entity = DefaultValue();
+        }
+
+        public SD_50 DefaultValue()
+        {
+            return new SD_50 {DOC_CODE = -1};
         }
 
         public NomenklProductKind(SD_50 entity)
         {
-            Entity = entity ?? new SD_50 {DOC_CODE = -1};
+            Entity = entity ?? DefaultValue();
         }
 
         public SD_50 Entity
