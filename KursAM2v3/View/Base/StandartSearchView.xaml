@@ -8,7 +8,6 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     mc:Ignorable="d"
     Title="{Binding WindowName}" MinHeight="450" Height="600" MinWidth="800"
     Icon="{Binding Source={StaticResource imageStandartSearch},
@@ -35,6 +34,8 @@
             dx:DXSerializer.SerializationID="gridDocuments"
             ItemsSource="{Binding Documents, UpdateSourceTrigger=PropertyChanged}"
             CurrentItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItems="{Binding SelectedDocuments, UpdateSourceTrigger=PropertyChanged}"
             CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
             <dxg:GridControl.View>
                 <dxg:TableView

@@ -1,4 +1,7 @@
-﻿using Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Data;
 using Data.Repository;
 
 namespace KursAM2.ViewModel.StockHolder
@@ -30,7 +33,8 @@ namespace KursAM2.ViewModel.StockHolder
     }
 
 
-    public class StockHolderAccrualTypeRepository : GenericKursDBRepository<StockHolderAccrualType>, IStockHolderAccrualTypeRepository
+    public class StockHolderAccrualTypeRepository : GenericKursDBRepository<StockHolderAccrualType>,
+        IStockHolderAccrualTypeRepository
     {
         public StockHolderAccrualTypeRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {
@@ -43,5 +47,33 @@ namespace KursAM2.ViewModel.StockHolder
         }
 
         public GenericKursDBRepository<StockHolderAccrualType> GenericRepository { get; set; }
+    }
+
+    public interface IStockHolderAccrualsRepository
+    {
+        GenericKursDBRepository<StockHolderAccrual> GenericRepository { set; get; }
+        List<StockHolderAccrual> GetAllByDate(DateTime start, DateTime end);
+    }
+
+
+    public class StockHolderAccrualsRepository : GenericKursDBRepository<StockHolderAccrual>,
+        IStockHolderAccrualsRepository
+    {
+        public StockHolderAccrualsRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
+        {
+            GenericRepository = new GenericKursDBRepository<StockHolderAccrual>(unitOfWork);
+        }
+
+        public StockHolderAccrualsRepository(ALFAMEDIAEntities context) : base(context)
+        {
+            GenericRepository = new GenericKursDBRepository<StockHolderAccrual>(context);
+        }
+
+        public GenericKursDBRepository<StockHolderAccrual> GenericRepository { get; set; }
+
+        public List<StockHolderAccrual> GetAllByDate(DateTime start, DateTime end)
+        {
+            return Context.StockHolderAccrual.Where(_ => _.Date >= start && _.Date <= end).ToList();
+        }
     }
 }

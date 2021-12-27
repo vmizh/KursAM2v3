@@ -41,6 +41,7 @@
                          dx:DXSerializer.SerializationID="GridControlStockHolderAccrual"
                          ItemsSource="{Binding StockHolderAccruals, UpdateSourceTrigger=PropertyChanged}"
                          CurrentItem="{Binding CurrentHolderAccrual, UpdateSourceTrigger=PropertyChanged}"
+                         SelectedItem="{Binding CurrentHolderAccrual, UpdateSourceTrigger=PropertyChanged}"
                          SelectedItems="{Binding SelectedHolderAccruals, UpdateSourceTrigger=PropertyChanged}"
                          AutoGeneratingColumn="GridControlStockHolderAccrual_OnAutoGeneratingColumn">
             <dxg:GridControl.View>

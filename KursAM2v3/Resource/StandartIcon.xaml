@@ -508,6 +508,28 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
+    <DrawingImage x:Key="AccrualAddDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                <DrawingGroup>
+                    <GeometryDrawing Brush="Green" Geometry="F1 M512,512z M0,0z M368,307.531C376.5,315.187 387.655,320 400,320 426.5,320 448,298.5 448,272 448,245.5 426.5,224 400,224 387.655,224 376.5,228.813 368,236.47 359.5,228.814 348.344,224 336,224 309.5,224 288,245.5 288,272 288,298.5 309.5,320 336,320 348.344,320 359.5,315.188 368,307.531z" />
+                    <GeometryDrawing Brush="Green" Geometry="F1 M512,512z M0,0z M480,64L96,64C78.312,64,64,78.313,64,96L64,192 96,192 256,192 480,192 480,352 256,352 256,384 480,384C497.688,384,512,369.687,512,352L512,96C512,78.313,497.688,64,480,64z M480,128L96,128 96,96 480,96 480,128z" />
+                    <GeometryDrawing Brush="Green" Geometry="F1 M512,512z M0,0z M112,224C50.125,224 0,274.125 0,336 0,397.875 50.125,448 112,448 173.875,448 224,397.875 224,336 224,274.125 173.875,224 112,224z M192,352L128,352 128,416 96,416 96,352 32,352 32,320 96,320 96,256 128,256 128,320 192,320 192,352z" />
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <DrawingImage x:Key="AccrualDeleteDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                <DrawingGroup>
+                    <GeometryDrawing Brush="Red" Geometry="F1 M512,512z M0,0z M336,320C348.344,320 359.5,315.187 368,307.531 376.5,315.187 387.656,320 400,320 426.5,320 448,298.5 448,272 448,245.5 426.5,224 400,224 387.656,224 376.5,228.813 368,236.469 359.5,228.813 348.344,224 336,224 309.5,224 288,245.5 288,272 288,298.5 309.5,320 336,320z" />
+                    <GeometryDrawing Brush="Red" Geometry="F1 M512,512z M0,0z M480,64L96,64C78.312,64,64,78.313,64,96L64,192 96,192 256,192 480,192 480,352 256,352 256,384 480,384C497.688,384,512,369.687,512,352L512,96C512,78.313,497.688,64,480,64z M480,128L96,128 96,96 480,96 480,128z" />
+                    <GeometryDrawing Brush="Red" Geometry="F1 M512,512z M0,0z M112,224C50.125,224 0,274.125 0,336 0,397.875 50.125,448 112,448 173.875,448 224,397.875 224,336 224,274.125 173.875,224 112,224z M179.875,381.25L157.25,403.875 112,358.625 66.75,403.875 44.125,381.25 89.375,336 44.125,290.75 66.75,268.125 112,313.375 157.25,268.125 179.875,290.75 134.625,336 179.875,381.25z" />
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
     <Image x:Key="imageStandartReference" Source="{StaticResource drawingStandartReference}" />
     <convertors:ImageSourceToIconConverter x:Key="ImageSourceToIconConverter" />
 </ResourceDictionary>

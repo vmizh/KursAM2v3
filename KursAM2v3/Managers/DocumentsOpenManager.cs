@@ -5,6 +5,7 @@ using System.Windows;
 using Core;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.StockHolder;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -21,6 +22,7 @@ using KursAM2.View.Logistiks;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.View.Personal;
+using KursAM2.View.StockHolder;
 using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.AccruedAmount;
@@ -31,6 +33,7 @@ using KursAM2.ViewModel.Logistiks.AktSpisaniya;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reference;
+using KursAM2.ViewModel.StockHolder;
 
 namespace KursAM2.Managers
 {
@@ -64,6 +67,7 @@ namespace KursAM2.Managers
                 case DocumentType.AccruedAmountForClient:
                 case DocumentType.AccruedAmountOfSupplier:
                 case DocumentType.DogovorOfSupplier:
+                case DocumentType.StockHolderAccrual:
                     return true;
                 default:
                     return false;
@@ -169,6 +173,11 @@ namespace KursAM2.Managers
             if (!IsDocumentOpen(docType)) return;
             switch (docType)
             {
+                case DocumentType.StockHolderAccrual:
+                    var accr = OpenStockHolderAccrual(id);
+                    SaveLastOpenInfo(docType, accr.Document.Id, null, accr.Document.Creator,
+                        "", accr.Document.Description);
+                    break;
                 case DocumentType.DogovorClient:
                     var dog = OpenDogovorClient(id);
                     SaveLastOpenInfo(docType, dog.Document.Id, null, dog.Document.Creator,
@@ -530,6 +539,20 @@ namespace KursAM2.Managers
             view.Show();
             ctx.Document.State = RowStatus.NotEdited;
             ctx.RaisePropertyChanged(nameof(ctx.IsCanSaveData));
+            return ctx;
+        }
+
+        private static StockHolderAccrualWindowViewModel OpenStockHolderAccrual(Guid? id)
+        {
+            var ctx = new StockHolderAccrualWindowViewModel();
+            var form = new StockHolderAccrualsView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = form; 
+            form.Show();
+            ctx.RefreshData(id);
             return ctx;
         }
 

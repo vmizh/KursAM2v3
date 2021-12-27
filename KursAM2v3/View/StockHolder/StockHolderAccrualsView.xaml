@@ -1,0 +1,191 @@
+﻿<dx:ThemedWindow
+    x:Class="KursAM2.View.StockHolder.StockHolderAccrualsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:native="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
+    xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:control="clr-namespace:Core.Control;assembly=Core"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=Core"
+    Title="{Binding WindowName}" MinHeight="450" MinWidth="1200">
+    <dx:ThemedWindow.Resources>
+        <native:RenderTemplate
+            x:Key="{themes:InplaceBaseEditThemeKey ResourceKey=CriticalErrorTemplate, IsThemeIndependent=True}">
+            <native:RenderImage />
+        </native:RenderTemplate>
+
+        <Style TargetType="dxe:ErrorControl">
+            <Setter Property="Visibility" Value="Collapsed" />
+        </Style>
+    </dx:ThemedWindow.Resources>
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
+    <DockPanel Style="{StaticResource DXServices}">
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />
+        <!--<dxb:BarManager Name="BarManager">
+            <dxb:BarManager.Items>
+        <dxb:BarSubItem x:Name="barSubItem1" Content="Система"
+                        BarItemDisplayMode="ContentAndGlyph" Glyph="{dx:DXImage SvgImages/Snap/InsertGroupFooter.svg}"
+                        />
+            </dxb:BarManager.Items>
+            </dxb:BarManager>-->
+        <dxlc:LayoutControl>
+            <dxlc:LayoutGroup Orientation="Vertical">
+                <dxlc:LayoutGroup Header="Документ" View="GroupBox">
+                    <dxlc:LayoutItem>
+                        <DockPanel LastChildFill="False">
+                            <Label VerticalAlignment="Center" Content="№: " DockPanel.Dock="Left" />
+                            <dxe:TextEdit MinWidth="80"
+                                          VerticalAlignment="Center"
+                                          Margin="48,0,0,0"
+                                          EditValue="{Binding Document.Num, 
+                                    UpdateSourceTrigger=PropertyChanged}"
+                                          DockPanel.Dock="Left" />
+                            <Label Content="  от " DockPanel.Dock="Left" VerticalAlignment="Center" />
+                            <dxe:DateEdit MinWidth="100" DockPanel.Dock="Left"
+                                          VerticalAlignment="Center"
+                                          EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" />
+                            <Label Content="Примечания " DockPanel.Dock="Left" VerticalAlignment="Center" />
+                            <dxe:TextEdit Margin="10 0"
+                                          AcceptsReturn="True"
+                                          TextWrapping="Wrap"
+                                          EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
+                                          MinWidth="200"
+                                          MaxWidth="300"
+                                          VerticalAlignment="Center" />
+                            <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
+                                              VerticalAlignment="Center"
+                                              IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EnumItemsSourceBehavior
+                                        EnumType="{x:Type base:RowStatus}" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:ComboBoxEdit>
+                            <Label Content="  Статус:" DockPanel.Dock="Right" VerticalAlignment="Center" />
+                            <dxe:TextEdit MinWidth="100" DockPanel.Dock="Right"
+                                          EditValue="{Binding Document.Creator}" IsReadOnly="True"
+                                          VerticalAlignment="Center" />
+                            <Label Content="Создатель: " DockPanel.Dock="Right" VerticalAlignment="Center" />
+                        </DockPanel>
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Header="LayoutGroup" View="Group">
+                    <dxlc:LayoutGroup Header="Акционеры"
+                                      View="GroupBox"
+                                      dxlc:LayoutControl.AllowHorizontalSizing="True">
+                        <dxg:GridControl x:Name="GridControlStockHolder"
+                                         Style="{StaticResource GridControl.Base}"
+                                         dx:DXSerializer.SerializationID="GridControlStockHolder"
+                                         ItemsSource="{Binding StockHolders, UpdateSourceTrigger=PropertyChanged}"
+                                         CurrentItem="{Binding CurrentStockHolder, UpdateSourceTrigger=PropertyChanged}"
+                                         SelectedItems="{Binding SelectedHolders, UpdateSourceTrigger=PropertyChanged}"
+                                         AutoGeneratingColumn="GridControlStockHolder_OnAutoGeneratingColumn">
+                            <dxg:GridControl.View>
+                                <dxg:TableView x:Name="TableViewStockHolders"
+                                               Style="{StaticResource TableView.Standart}">
+                                    <dxg:TableView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Добавить акционера"
+                                                      Command="{Binding AddStockHolderCommand}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="{dx:DXImage SvgImages/Snap/InsertGroupHeader.svg}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Добавить всех акционеров"
+                                                      Command="{Binding AddAllStockHolderCommand}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="{dx:DXImage SvgImages/Snap/InsertGroupFooter.svg}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Удалить акционера"
+                                                      Command="{Binding DeleteStockHolderCommand}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="{dx:DXImage SvgImages/Snap/RemoveGroupHeader.svg}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
+                                            <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                                      CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </dxg:TableView.ContextMenu>
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup Header="Начисления" View="GroupBox"
+                                      dxlc:LayoutControl.AllowHorizontalSizing="True">
+                        <dxg:GridControl x:Name="GridControlStockAccruals"
+                                         Style="{StaticResource GridControl.Base}"
+                                         dx:DXSerializer.SerializationID="GridControlStockAccruals"
+                                         ItemsSource="{Binding CurrentStockHolder.Accruals, UpdateSourceTrigger=PropertyChanged}"
+                                         CurrentItem="{Binding CurrentAccrual, UpdateSourceTrigger=PropertyChanged}"
+                                         SelectedItem="{Binding CurrentAccrual, UpdateSourceTrigger=PropertyChanged}"
+                                         AutoGeneratingColumn="GridControlStockAccruals_OnAutoGeneratingColumn">
+                            <dxg:GridControl.View>
+                                <dxg:TableView x:Name="TableViewControlStockAccruals"
+                                               Style="{StaticResource TableView.Standart}" CellValueChanging="TableViewControlStockAccruals_CellValueChanging">
+                                    <dxg:TableView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Добавить начисление"
+                                                      Command="{Binding AddStockHolderAccrualCommand}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="{StaticResource AccrualAddDrawingImage}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Удалить начисление"
+                                                      Command="{Binding DeleteStockHolderAccrualCommand}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="{StaticResource AccrualDeleteDrawingImage}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
+                                            <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                                      CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </dxg:TableView.ContextMenu>
+                                    <!--<dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand EventName="CellValueChanging"
+                                                               Command="{Binding AccrualChangingCommand}"
+                                                               PassEventArgsToCommand="True"
+                                                               MarkRoutedEventsAsHandled="True">
+                                            <dxmvvm:EventToCommand.EventArgsConverter>
+                                                <dx:EventArgsToDataRowConverter />
+                                            </dxmvvm:EventToCommand.EventArgsConverter>
+                                        </dxmvvm:EventToCommand>
+                                    </dxmvvm:Interaction.Behaviors>-->
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</dx:ThemedWindow>

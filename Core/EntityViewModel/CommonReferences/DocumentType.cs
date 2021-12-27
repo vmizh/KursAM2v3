@@ -109,7 +109,12 @@ namespace Core.EntityViewModel.CommonReferences
         /// Типы начислений для внебаласовых контрагентов
         /// </summary>
         [Display(Name = "Прямые затраты")]
-        AccruedAmountOfSupplier = 74
+        AccruedAmountOfSupplier = 74,
+
+        //Ведомости начислений акционерам
+        [Display(Name = "Ведомости начислений акционерам")]
+        StockHolderAccrual = 79
+
 
     }
 }

@@ -44,7 +44,7 @@ namespace KursAM2.ViewModel.StockHolder
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private bool isHoldersDeleted;
-        List<Users> Users = GlobalOptions.KursSystem().Users.Where(_ => !_.IsDeleted).AsNoTracking().ToList();
+        readonly List<Users> Users = GlobalOptions.KursSystem().Users.Where(_ => !_.IsDeleted).AsNoTracking().ToList();
 
         #endregion
 
