@@ -116,7 +116,7 @@ namespace Core.EntityViewModel.Invoices
         public ObservableCollection<InvoicePaymentDocument> PaymentDocs { set; get; } =
             new();
 
-        public decimal DilerSumma => Rows.Sum(_ => _.SFT_NACENKA_DILERA ?? 0);
+        public decimal DilerSumma => Rows.Sum(_ => _.Quantity * _.SFT_NACENKA_DILERA ?? 0);
 
         public Kontragent Receiver
         {

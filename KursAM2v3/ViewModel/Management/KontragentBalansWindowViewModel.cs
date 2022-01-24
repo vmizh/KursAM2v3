@@ -493,7 +493,7 @@ namespace KursAM2.ViewModel.Management
 
         public new Command DocumentOpenCommand
         {
-            get { return new Command(DocumentOpen, param => IsDocumentOpenAllow); }
+            get { return new Command(DocumentOpen, _ => IsDocumentOpenAllow); }
         }
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null &&

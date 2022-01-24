@@ -10,6 +10,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using DevExpress.Xpf.Editors.Settings;
 using Helper;
 using KursAM2.Managers.Base;
 using KursAM2.View.Dogovors;
@@ -553,6 +554,7 @@ namespace KursAM2.Managers
             ctx.Form = form; 
             form.Show();
             ctx.RefreshData(id);
+            
             return ctx;
         }
 
@@ -655,7 +657,6 @@ namespace KursAM2.Managers
             ctx.Form = form;
             ctx.CreateMenu();
             form.Show();
-            form.DataContext = ctx;
         }
 
         private static CashInWindowViewModel OpenCashIn(decimal dc, object parent)
@@ -682,12 +683,13 @@ namespace KursAM2.Managers
             ctx.BookView = parent as CashBookView;
             var form = new CashInView
             {
-                Owner = Application.Current.MainWindow,
+                Owner = Application.Current.MainWindow, 
+                DataContext = ctx
             };
             ctx.Form = form;
             ctx.CreateMenu();
             form.Show();
-            form.DataContext = ctx;
+           
         }
 
         /// <summary>

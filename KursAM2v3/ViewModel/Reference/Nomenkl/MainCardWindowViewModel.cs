@@ -347,6 +347,16 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         #region Command
 
+        public ICommand ClearCountryCommand
+        {
+            get { return new Command(ClearCountry, _ => NomenklMain?.Country != null); }
+        }
+
+        private void ClearCountry(object obj)
+        {
+            NomenklMain.Country = null;
+        }
+
         public ICommand CategoryEditCommand
         {
             get { return new Command(CategoryEdit, _ => true); }

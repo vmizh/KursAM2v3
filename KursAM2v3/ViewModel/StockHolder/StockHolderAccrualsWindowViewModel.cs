@@ -13,7 +13,9 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
+using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
+using KursAM2.Dialogs;
 using KursAM2.View.StockHolder;
 
 namespace KursAM2.ViewModel.StockHolder
@@ -203,6 +205,27 @@ namespace KursAM2.ViewModel.StockHolder
             }
         }
 
+        public ICommand AddStockHolderCommand
+        {
+            get { return new Command(AddStockHolder, _ => true); }
+        }
+
+        private void AddStockHolder(object obj)
+        {
+            var service = GetService<IDialogService>("DialogServiceUI");
+            var sh = StandartDialogs.SelectStockHolder(service);
+            if (sh != null)
+            {
+                StockHolders.Add(new StockHolderItem
+                {
+                    Id = Guid.NewGuid(),
+                    StockHolder = sh,
+                    myState = RowStatus.NewRow,
+                    Parent = Document
+                });
+            }
+        }
+
         public ICommand AddAllStockHolderCommand
         {
             get { return new Command(AddAllStockHolder, _ => true); }
@@ -259,6 +282,7 @@ namespace KursAM2.ViewModel.StockHolder
             };
             Document.Entity.StockHolderAccrualRows.Add(newItem);
             CurrentStockHolder.Accruals.Add(new StockHolderAccrualRowViewModel(newItem));
+            SetVisibleColums();
         }
 
         public override void DocNewCopy(object form)

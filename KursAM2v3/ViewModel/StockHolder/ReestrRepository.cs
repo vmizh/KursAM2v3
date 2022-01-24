@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using Data;
 using Data.Repository;
@@ -73,7 +74,8 @@ namespace KursAM2.ViewModel.StockHolder
 
         public List<StockHolderAccrual> GetAllByDate(DateTime start, DateTime end)
         {
-            return Context.StockHolderAccrual.Where(_ => _.Date >= start && _.Date <= end).ToList();
+            return Context.StockHolderAccrual
+                .Include(_ => _.StockHolderAccrualRows).Where(_ => _.Date >= start && _.Date <= end).ToList();
         }
     }
 }

@@ -128,6 +128,13 @@ namespace KursAM2.ViewModel.Personal
                                 ed.DELETED = CurrentPersona.DELETED ?? 0;
                                 ed.STATUS_NOTES = CurrentPersona.StatusNotes;
                                 ed.NAME = CurrentPersona.Name;
+                                if (ed.crs_dc != CurrentPersona.Currency.DocCode)
+                                {
+                                    if(!(ctxsave.SD_33.Any(_ => _.TABELNUMBER == CurrentPersona.TabelNumber)
+                                       || ctxsave.SD_34.Any(_ => _.TABELNUMBER == CurrentPersona.TabelNumber)))
+                                    ed.crs_dc = CurrentPersona.Currency.DocCode;
+                                }
+
                                 break;
                             case RowStatus.NewRow:
                                 if (CurrentPersona.TabelNumber == 0 || CurrentPersona.Currency == null)

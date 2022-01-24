@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Core;
+using Core.ViewModel.Base;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.StockHolder;
@@ -18,6 +19,7 @@ namespace KursAM2.View.StockHolder
 
         private void GridControlStockAccruals_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
+            e.Column.Name = e.Column.FieldName;
             var dtx = DataContext as StockHolderAccrualWindowViewModel;
             switch (e.Column.FieldName)
             {
@@ -46,10 +48,8 @@ namespace KursAM2.View.StockHolder
 
         private void GridControlStockHolder_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
-            //switch (e.Column.FieldName)
-            //{
-                
-            //}
+            e.Column.Name = e.Column.FieldName;
+            e.Column.ReadOnly = true;
         }
 
         private void TableViewControlStockAccruals_CellValueChanging(object sender, CellValueChangedEventArgs e)
@@ -61,7 +61,18 @@ namespace KursAM2.View.StockHolder
                     sh.RaisePropertyAllChanged();
                 }
                 dtx.SetVisibleColums();
+                if (dtx.State != RowStatus.NewRow)
+                {
+                    dtx.Document.State = RowStatus.Edited;
+                    dtx.Document.RaisePropertyChanged("State");
+                    GridControlStockHolder.UpdateTotalSummary();
+                }
             } 
+        }
+
+        private void TableViewControlStockAccruals_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
+        {
+            GridControlStockHolder.UpdateTotalSummary();
         }
     }
 }

@@ -19,6 +19,9 @@ namespace Data
         {
             this.StockHolderAccrualRows = new HashSet<StockHolderAccrualRows>();
             this.StockHolderUserRights = new HashSet<StockHolderUserRights>();
+            this.SD_33 = new HashSet<SD_33>();
+            this.SD_34 = new HashSet<SD_34>();
+            this.TD_101 = new HashSet<TD_101>();
         }
     
         public System.Guid Id { get; set; }
@@ -33,5 +36,11 @@ namespace Data
         public virtual ICollection<StockHolderAccrualRows> StockHolderAccrualRows { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<StockHolderUserRights> StockHolderUserRights { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SD_33> SD_33 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SD_34> SD_34 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TD_101> TD_101 { get; set; }
     }
 }

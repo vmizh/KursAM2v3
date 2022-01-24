@@ -544,7 +544,8 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                         if (doc != null)
                         {
                             if (doc.FLAG_BALANS != Kontragent.FLAG_BALANS)
-                                if (ctx.AccruedAmountForClient.Any() || ctx.AccruedAmountOfSupplier.Any())
+                                if (ctx.AccruedAmountForClient.Any(_ => _.KontrDC == Kontragent.DocCode) 
+                                    || ctx.AccruedAmountOfSupplier.Any(_ => _.KontrDC == Kontragent.DocCode))
                                 {
                                     WinManager.ShowWinUIMessageBox(@"Для контрагента есть документы " +
                                                                    "по внебалансовым начислениям! Смена статуса учета в балансе " +

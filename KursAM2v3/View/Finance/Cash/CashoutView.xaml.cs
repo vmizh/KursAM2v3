@@ -37,8 +37,8 @@ namespace KursAM2.View.Finance.Cash
         {
             InitializeComponent();
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, layoutItems);
-            Loaded += CashoutView_Loaded;
-            Unloaded += CashoutView_Unloaded;
+            //Loaded += CashoutView_Loaded;
+            //Unloaded += CashoutView_Unloaded;
             MinWidth = 1000;
         }
 
@@ -391,6 +391,10 @@ namespace KursAM2.View.Finance.Cash
                 case CashKontragentType.Kontragent:
                     var kontr = StandartDialogs.SelectKontragent(ctx.Document.Currency);
                     if (kontr == null) return;
+                    ctx.Document.BankAccount = null;
+                    ctx.Document.CashTo = null;
+                    ctx.Document.Employee = null;
+                    ctx.Document.StockHolder = null;
                     ctx.Document.KONTRAGENT_DC = kontr.DocCode;
                     ctx.Document.NAME_ORD = kontr?.Name;
                     ctx.Document.KONTR_CRS_DC = kontr?.BalansCurrency.DocCode;
@@ -402,6 +406,10 @@ namespace KursAM2.View.Finance.Cash
                 case CashKontragentType.Employee:
                     var emp = StandartDialogs.SelectEmployee();
                     if (emp == null) return;
+                    ctx.Document.BankAccount = null;
+                    ctx.Document.CashTo = null;
+                    ctx.Document.StockHolder = null;
+                    ctx.Document.KONTRAGENT_DC = null;
                     ctx.Document.Employee = emp;
                     ctx.Document.NAME_ORD = emp?.Name;
                     ctx.Document.SPostName = null;
@@ -412,6 +420,11 @@ namespace KursAM2.View.Finance.Cash
                 case CashKontragentType.Bank:
                     var bank = StandartDialogs.SelectBankAccount();
                     if (bank == null) return;
+                    ctx.Document.KONTRAGENT_DC = null;
+                    ctx.Document.BankAccount = null;
+                    ctx.Document.CashTo = null;
+                    ctx.Document.Employee = null;
+                    ctx.Document.StockHolder = null;
                     ctx.Document.NAME_ORD = bank.Name;
                     ctx.Document.BankAccount = bank;
                     ctx.Document.SPostName = null;
@@ -422,9 +435,17 @@ namespace KursAM2.View.Finance.Cash
                 case CashKontragentType.Cash:
                     var ch = StandartDialogs.SelectCash(new List<Core.EntityViewModel.Cash.Cash> { ctx.Document.Cash });
                     if (ch != null) ctx.Document.CashTo = ch;
+                    ctx.Document.KONTRAGENT_DC = null;
+                    ctx.Document.BankAccount = null;
+                    ctx.Document.CashTo = null;
+                    ctx.Document.Employee = null;
+                    ctx.Document.StockHolder = null;
                     ctx.Document.NAME_ORD = ch?.Name;
                     ctx.Document.SPostName = null;
                     ctx.Document.SPOST_DC = null;
+                    break;
+                case CashKontragentType.StockHolder:
+                    ctx.SelectStockHolder();
                     break;
             }
         }

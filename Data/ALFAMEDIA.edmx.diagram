@@ -2105,6 +2105,9 @@
         <EntityTypeShape EntityType="ALFAMEDIAModel.StockHolderAccrualType" Width="1.5" PointX="47.375" PointY="13.875" />
         <AssociationConnector Association="ALFAMEDIAModel.FK_StockHolderAccrualRows_AcrrualTypeId" />
         <EntityTypeShape EntityType="ALFAMEDIAModel.NomenklMoveStore" Width="1.5" PointX="15.375" PointY="47.75" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_33_StockHolderId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_SD_34_StockHolderId" />
+        <AssociationConnector Association="ALFAMEDIAModel.FK_TD_101_StockHolderId" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

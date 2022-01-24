@@ -169,7 +169,7 @@ namespace Core.EntityViewModel.StockHolder
 
         #endregion
 
-        #region IDztaErrorInfo
+        #region IDataErrorInfo
 
         public string this[string columnName]
         {

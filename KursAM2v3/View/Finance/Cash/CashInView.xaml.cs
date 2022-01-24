@@ -7,6 +7,7 @@ using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
@@ -32,8 +33,8 @@ namespace KursAM2.View.Finance.Cash
         {
             InitializeComponent();
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, layoutItems);
-            Loaded += CashInView_Loaded;
-            Unloaded += CashInView_Unloaded;
+            //Loaded += CashInView_Loaded;
+            //Unloaded += CashInView_Unloaded;
             MinWidth = 1000;
         }
 
@@ -380,6 +381,10 @@ namespace KursAM2.View.Finance.Cash
                         var kontr = StandartDialogs.SelectKontragent(ctx.Document.Currency);
                         if (kontr == null) return;
                         ctx.Document.Currency = kontr.BalansCurrency;
+                        ctx.Document.TABELNUMBER = null;
+                        ctx.Document.BankAccount = null;
+                        ctx.Document.RASH_ORDER_FROM_DC = null;
+                        ctx.Document.StockHolder = null;
                         ctx.Document.KONTRAGENT_DC = kontr.DocCode;
                         ctx.Document.NAME_ORD = kontr.Name;
                         ctx.Document.KONTR_CRS_DC = kontr.BalansCurrency.DocCode;
@@ -419,6 +424,9 @@ namespace KursAM2.View.Finance.Cash
                         ctx.Document.NAME_ORD = order.ToString();
                         ctx.Document.SFactName = null;
                         doc.SFACT_DC = null;
+                        break;
+                    case CashKontragentType.StockHolder:
+                        ctx.SelectStockHolder();
                         break;
                 }
             }

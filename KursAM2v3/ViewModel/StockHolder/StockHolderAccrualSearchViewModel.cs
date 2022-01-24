@@ -60,18 +60,19 @@ namespace KursAM2.ViewModel.StockHolder
         }
 
         public override void DocNewEmpty(object form)
-        {
-            var view = new StockHolderAccrualsView
+        { 
+            var ctx = new StockHolderAccrualWindowViewModel
             {
-                Owner = Application.Current.MainWindow
-            };
-            var ctx = new StockHolderAccrualWindowViewModel()
-            {
-                Form = view,
                 ParentFormViewModel = this
             };
-            view.DataContext = ctx;
+            var view = new StockHolderAccrualsView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.RefreshData(null);
             view.Show();
+            
         }
 
         public override void DocNewCopyRequisite(object form)

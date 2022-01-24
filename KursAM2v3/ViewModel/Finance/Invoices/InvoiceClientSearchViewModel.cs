@@ -119,24 +119,24 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public Command ExportSFCommand
         {
-            get { return new Command(ExportSF, param => IsDocumentOpenAllow); }
+            get { return new Command(ExportSF, _ => IsDocumentOpenAllow); }
         }
 
         public Command PrintSFCommand
         {
-            get { return new Command(PrintSF, param => IsDocumentOpenAllow); }
+            get { return new Command(PrintSF, _ => IsDocumentOpenAllow); }
         }
 
         public Command PrintZakazCommand
         {
-            get { return new Command(PrintZakaz, param => true); }
+            get { return new Command(PrintZakaz, _ => true); }
         }
 
         public override bool IsPrintAllow => CurrentDocument != null;
 
         public Command PrintSFSchetCommand
         {
-            get { return new Command(PrintSChet, param => true); }
+            get { return new Command(PrintSChet, _ => true); }
         }
 
         private void PrintSChet(object obj)
@@ -225,7 +225,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand DeleteCommand
         {
-            get { return new Command(Delete, param => true); }
+            get { return new Command(Delete, _ => true); }
         }
 
         public override void SearchClear(object obj)

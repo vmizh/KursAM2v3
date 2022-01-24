@@ -17,7 +17,6 @@
             x:Key="{themes:InplaceBaseEditThemeKey ResourceKey=CriticalErrorTemplate, IsThemeIndependent=True}">
             <native:RenderImage />
         </native:RenderTemplate>
-
         <Style TargetType="dxe:ErrorControl">
             <Setter Property="Visibility" Value="Collapsed" />
         </Style>
@@ -44,6 +43,7 @@
                         <DockPanel LastChildFill="False">
                             <Label VerticalAlignment="Center" Content="№: " DockPanel.Dock="Left" />
                             <dxe:TextEdit MinWidth="80"
+                                          IsReadOnly="True"
                                           VerticalAlignment="Center"
                                           Margin="48,0,0,0"
                                           EditValue="{Binding Document.Num, 
@@ -80,7 +80,8 @@
                 <dxlc:LayoutGroup Header="LayoutGroup" View="Group">
                     <dxlc:LayoutGroup Header="Акционеры"
                                       View="GroupBox"
-                                      dxlc:LayoutControl.AllowHorizontalSizing="True">
+                                      dxlc:LayoutControl.AllowHorizontalSizing="True"
+                                      dx:DXSerializer.SerializationID="GridControlStockHolderGroup">
                         <dxg:GridControl x:Name="GridControlStockHolder"
                                          Style="{StaticResource GridControl.Base}"
                                          dx:DXSerializer.SerializationID="GridControlStockHolder"
@@ -141,7 +142,9 @@
                                          AutoGeneratingColumn="GridControlStockAccruals_OnAutoGeneratingColumn">
                             <dxg:GridControl.View>
                                 <dxg:TableView x:Name="TableViewControlStockAccruals"
-                                               Style="{StaticResource TableView.Standart}" CellValueChanging="TableViewControlStockAccruals_CellValueChanging">
+                                               Style="{StaticResource TableView.Standart}" 
+                                               CellValueChanging="TableViewControlStockAccruals_CellValueChanging"
+                                               CellValueChanged="TableViewControlStockAccruals_OnCellValueChanged">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Добавить начисление"

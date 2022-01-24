@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:viewModel="clr-namespace:Core.ViewModel;assembly=Core"
                     xmlns:menu="clr-namespace:Core.Menu;assembly=Core">
     <ControlTemplate x:Key="buttonRefreshCircle" TargetType="{x:Type Button}">
         <ContentControl ToolTip="Обновить данные">
@@ -186,9 +185,6 @@
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="PART_1" Property="Fill" Value="LightGray" />
-            </Trigger>
-            <Trigger Property="IsNewDocument" Value="True">
-                <Setter TargetName="PART_1" Property="Fill" Value="OrangeRed" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
                 <Setter Property="RenderTransform">

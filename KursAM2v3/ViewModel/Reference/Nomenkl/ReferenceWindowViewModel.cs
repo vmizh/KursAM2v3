@@ -550,7 +550,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             var ctx = new MainCardWindowViewModel(CurrentNomenklMain.Id, null)
             {
                 ParentReference = this,
-                NomenklMain = CurrentNomenklMain
+                NomenklMain = CurrentNomenklMain,
+                State =CurrentNomenklMain.State
             };
             // ReSharper disable once UseObjectOrCollectionInitializer
             var form = new NomenklMainCardView { Owner = Application.Current.MainWindow, DataContext = ctx };

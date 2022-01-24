@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
@@ -981,8 +980,8 @@ namespace KursAM2.Managers
                         Nomenkl = nom,
                         DocTypeCode = (DocumentType) 357
                     };
-                    var p = NomenklCalculationManager.NomenklPrice(d.SD_24.DD_DATE, nom.DocCode);
-                    SetCurrenciesValue(newOp1, nom.Currency.DocCode, p.Item1 * d.DDT_KOL_PRIHOD, 0);
+                    var p = NomenklManager.NomenklPrice(nom.DocCode,d.SD_24.DD_DATE,ent );
+                    SetCurrenciesValue(newOp1, nom.Currency.DocCode, p.Price * d.DDT_KOL_PRIHOD, 0);
 
                     Extend.Add(newOp1);
                     ExtendNach.Add(newOp1);

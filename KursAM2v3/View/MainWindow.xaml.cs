@@ -187,6 +187,17 @@ namespace KursAM2.View
                 Window form;
                 switch (formName)
                 {
+                    //Лицевые счета акционеров
+                    case "Лицевые счета акционеров":
+                        var shbls = new StockHoldersBalancesWindowViewModel();
+                        form = new StockHoldersBalancesView
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = shbls
+                        };
+                        shbls.Form = form;
+                        form.Show();
+                        break;
                     //Ведомости наяислений акционерам
                     case "Ведомости начислений акционерам":
                         var sholda = new StockHolderAccrualSearchViewModel();
@@ -1330,10 +1341,12 @@ namespace KursAM2.View
             formUserProfile.Show();
         }
 
-        // ReSharper disable once UnusedMember.Local
         // ReSharper disable once UnusedParameter.Local
+        // ReSharper disable once UnusedMember.Local
         private void BarButtonItem5_OnItemClick(object sender, ItemClickEventArgs e)
         {
+            // ReSharper disable once UnusedVariable
+            var e1 = e;
             SaveHistoryStart.SaveHistory();
         }
 

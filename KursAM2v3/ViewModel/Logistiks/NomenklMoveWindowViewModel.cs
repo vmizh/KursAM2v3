@@ -229,7 +229,6 @@ namespace KursAM2.ViewModel.Logistiks
                 var newSklad = new NomenklOstatkiWithPrice
                 {
                     Quantity = q,
-                    StoreName = s,
                     PriceWONaklad = prc.CalcPrice,
                     Price = prc.CalcPriceNaklad,
                     SummaWONaklad = prc.CalcPrice * q,

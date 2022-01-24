@@ -68,33 +68,13 @@ namespace Calculates.Materials
         /// <returns></returns>
         public static decimal GetNomenklStoreRemain(DateTime date, decimal nomDC, decimal storeDC)
         {
-            var sql = "DECLARE @tab TABLE (  NomDC NUMERIC(18, 0) " +
-                      ",StoreDC NUMERIC(18, 0) " +
-                      ",Date DATETIME ,Prihod NUMERIC(18, 4) ,Rashod NUMERIC(18, 4) " +
-                      ",OrderBy INT ,SumPrihod NUMERIC(18, 4) ,SumRashod NUMERIC(18, 4) );  " +
-                      "INSERT INTO @tab  SELECT    NomDC   ,StoreDC   ,Date   ,Prihod   ,Rashod   " +
-                      ",CASE      WHEN Prihod > 0 THEN 0      ELSE 1    END OrderBy   " +
-                      ",SUM(Prihod) OVER (PARTITION BY NomDC, StoreDC    ORDER BY Date    " +
-                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumPrihod   " +
-                      ",SUM(Rashod) OVER (PARTITION BY NomDC, StoreDC    ORDER BY Date    " +
-                      "ROWS BETWEEN UNBOUNDED PRECEDING    AND CURRENT ROW) AS SumRashod  " +
-                      "FROM NomenklMoveForCalc  " +
-                      $"WHERE NomDC = {CustomFormat.DecimalToSqlDecimal(nomDC)} " +
-                      $"AND StoreDC = {CustomFormat.DecimalToSqlDecimal(storeDC)}  " +
-                      "ORDER BY NomDC, OrderBy;  " +
-                      "SELECT  NomDC ,NOM_NOMENKL AS NomNumber ,NOM_NAME AS NomName ,StoreDC ,SD_27.SKL_NAME as StoreName ,Date " +
-                      ",Prihod ,Rashod " +
-                      ",SUM(Prihod - Rashod) OVER (PARTITION BY NomDC,StoreDC  ORDER BY Date, OrderBy  " +
-                      "ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW) AS Ostatok " +
-                      "FROM @tab " +
-                      "INNER JOIN SD_83  ON NomDC = SD_83.DOC_CODE " +
-                      "INNER JOIN SD_27  ON SD_27.DOC_CODE = StoreDC " +
-                      $"WHERE Date <= '{CustomFormat.DateToString(date)}' " +
-                      "ORDER BY Date;";
-            var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklCalcMove>(sql).ToList();
-            if (data.Count == 0)
-                return 0;
-            return data.Last().Ostatok;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var data = ctx.Database.SqlQuery<NomenklStoreRemainItem>($"GetNomenklRemain {CustomFormat.DecimalToSqlDecimal(nomDC)}," +
+                                                                         $"'{CustomFormat.DateToString(date)}'");
+                var r = data.FirstOrDefault(_ => _.StoreDC == storeDC);
+                return r?.Remain ?? 0;
+            }
         }
 
         public static decimal GetNomenklStoreRemain(ALFAMEDIAEntities ctx, DateTime date, decimal nomDC,
@@ -692,12 +672,57 @@ namespace Calculates.Materials
         ///     все остатки по всем складам
         /// </summary>
         /// <returns></returns>
-        public static List<NomenklStoreRemainItem> GetNomenklStoreRemains(DateTime date)
+        public static List<NomenklStoreRemainItem> GetNomenklStoreRemains(DateTime date, bool isIncludeExclud = false)
         {
+            var dataExclude = new List<NomenklStoreRemainItem>();
+            if (isIncludeExclud)
+            {
+                var sql = $@"SELECT
+                      s83.doc_code AS NomenklDC,
+                      s83.NOM_SALE_CRS_DC AS NomCurrencyDC,
+                      s83.nom_name AS NomenklName,
+                      s24.DD_SKLAD_POL_DC AS StoreDC,
+                      s27.SKL_NAME AS StoreName,
+                      t.DDT_KOL_PRIHOD AS Prihod,
+                      cast(0 as numeric(18,2)) AS Rashod,
+                      t.DDT_KOL_PRIHOD AS Remain,
+                      t26.SFT_ED_CENA AS PriceWithNaklad,
+                      t26.SFT_ED_CENA AS Price,
+                      t26.SFT_ED_CENA*t.DDT_KOL_PRIHOD AS Summa,
+                       t26.SFT_ED_CENA*t.DDT_KOL_PRIHOD AS SummaWithNaklad
+                    FROM NOMENKL_PRIH_EXCLUDE
+                    INNER JOIN TD_24 t
+                      ON NOMENKL_PRIH_EXCLUDE.DOC_CODE = t.DOC_CODE
+                        AND NOMENKL_PRIH_EXCLUDE.CODE = t.CODE
+                    INNER JOIN td_26 t26
+                      ON t.DDT_SPOST_DC = t26.DOC_CODE
+                        AND t.DDT_SPOST_ROW_CODE = t26.CODE
+                    INNER JOIN sd_24 s24
+                      ON t.DOC_CODE = s24.DOC_CODE
+                        AND s24.dd_date >=' {CustomFormat.DateToString(date)}' 
+                    INNER JOIN sd_83 s83
+                      ON t.DDT_NOMENKL_DC = s83.DOC_CODE
+                      INNER JOIN sd_27 s27 ON s27.DOC_CODE = s24.DD_SKLAD_POL_DC
+                    WHERE s24.DD_DATE <=' {CustomFormat.DateToString(date)}'";
+                var dex = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>(sql);
+                foreach (var d in dex)
+                {
+                    dataExclude.Add(d);
+                }
+            }
+
             var data = GlobalOptions.GetEntities().Database.SqlQuery<NomenklStoreRemainItem>("GetNomenklRemains @date",  
                 new SqlParameter("@date", date)); 
-            return new List<NomenklStoreRemainItem>(data.OrderBy(_ => _.NomenklDC).ThenBy(_ => _.StoreDC)
-                .ThenBy(_ => _.Prihod));
+            var ret = new List<NomenklStoreRemainItem>(data);
+            if (isIncludeExclud)
+            {
+                foreach (var d in dataExclude)
+                {
+                    ret.Add(d);
+                }
+            }
+
+            return new  List<NomenklStoreRemainItem>(ret.OrderBy(_ => _.NomenklDC).ThenBy(_ => _.StoreDC).ThenBy(_ => _.Prihod));
         }
 
         /// <summary>

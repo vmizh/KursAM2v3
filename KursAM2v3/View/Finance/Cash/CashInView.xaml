@@ -11,7 +11,7 @@
              Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
              Title="{Binding WindowName}" Height="300" Width="300">
 
-    <DockPanel>
+    <DockPanel Style="{StaticResource DXServices}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
                Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />

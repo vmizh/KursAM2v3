@@ -633,9 +633,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 //                                                           _.VVT_RASH_KASS_ORDER_DC == null)).ToList();
                 foreach (var d in CashOut)
                 {
-                    var pay = ent.SD_33.FirstOrDefault(_ => _.RASH_ORDER_FROM_DC == d.DOC_CODE);
+                    var pay = ent.SD_33.FirstOrDefault(_ => _.RASH_ORDER_FROM_DC == d.DOC_CODE && _.DATE_ORD <= CurrentDate);
                     var bankpay = ent.TD_101.Include(_ => _.SD_101)
-                        .FirstOrDefault(_ => _.VVT_RASH_KASS_ORDER_DC == d.DOC_CODE);
+                        .FirstOrDefault(_ => _.VVT_RASH_KASS_ORDER_DC == d.DOC_CODE && _.SD_101.VV_STOP_DATE <= CurrentDate);
                     var name = d.CASH_TO_DC != null
                         ? MainReferences.CashsAll[d.CASH_TO_DC.Value].Name
                         // ReSharper disable once PossibleInvalidOperationException
@@ -1078,7 +1078,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             ch.Summa = 0;
             var chNach = BalansStructure.Single(_ => _.Id == ch.Id);
             chNach.Summa = 0;
-            var data = NomenklCalculationManager.GetNomenklStoreRemains(CurrentDate);
+            var data = NomenklCalculationManager.GetNomenklStoreRemains(CurrentDate,true);
             if (data.Count == 0) return;
             if (data.Select(_ => _.StoreDC).ToList().Count == 0) return;
             var skl = data.Select(_ => _.StoreDC).Distinct().ToList();

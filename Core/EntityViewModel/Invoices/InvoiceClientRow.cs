@@ -285,7 +285,7 @@ namespace Core.EntityViewModel.Invoices
                 Entity.SFT_NACENKA_DILERA = value;
                 if (Parent is InvoiceClient doc)
                     // ReSharper disable once PossibleInvalidOperationException
-                    doc.SF_DILER_SUMMA = (decimal?) doc.Rows.Sum(_ => _.Entity.SFT_KOL * (double) _.SFT_NACENKA_DILERA);
+                    doc.SF_DILER_SUMMA = (decimal?) doc.Rows.Sum(_ => _.Entity.SFT_KOL * (double)( _.SFT_NACENKA_DILERA ?? 0));
                 RaisePropertyChanged();
             }
         }

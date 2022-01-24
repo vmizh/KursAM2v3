@@ -152,7 +152,8 @@ namespace KursAM2.Managers
                 KONTR_CRS_SUM_CORRECT_PERCENT = ent.KONTR_CRS_SUM_CORRECT_PERCENT,
                 V_TOM_CHISLE = ent.V_TOM_CHISLE,
                 KONTR_FROM_DC = ent.KONTR_FROM_DC,
-                SFACT_FLAG = ent.SFACT_FLAG
+                SFACT_FLAG = ent.SFACT_FLAG,
+                StockHolderId = ent.StockHolder?.Id
             };
             return ret;
         }
@@ -179,6 +180,7 @@ namespace KursAM2.Managers
                         .Include(_ => _.SD_43)
                         .Include(_ => _.AccuredAmountForClientRow)
                         .Include(_ => _.AccuredAmountForClientRow.Select(x => x.AccruedAmountForClient))
+                        .Include(_ => _.StockHolders)
                         .AsNoTracking()
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
                     var doc = new CashIn(data)
@@ -584,22 +586,31 @@ namespace KursAM2.Managers
                                         }
                                 }
 
-                                var s = ctx.SD_34.Where(_ =>
-                                        _.AccuredId == updateCashOut.AccuredId && _.DOC_CODE != updateCashOut.DocCode)
-                                    .Sum(_ => _.SUMM_ORD);
-                                var s2 = ctx.AccuredAmountOfSupplierRow.Single(_ => _.Id == updateCashOut.AccuredId)
-                                    .Summa;
-                                if (s + updateCashOut.SUMM_ORD > s2)
+                                if (updateCashOut.AccuredId != null)
                                 {
-                                    var res = winManager.ShowWinUIMessageBox(
-                                        $"Сумма прямых затрат {s2:n2} меньше сумм оплат {s + updateCashOut.SUMM_ORD:n2}! " +
-                                        $"Установить максимально возможную сумму {s2-s}?",
-                                        "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Stop);
-                                    if (res == MessageBoxResult.Yes)
+                                    var s = ctx.SD_34.Where(_ =>
+                                            _.AccuredId == updateCashOut.AccuredId &&
+                                            _.DOC_CODE != updateCashOut.DocCode
+                                                )?
+                                        .Sum(_ => _.SUMM_ORD) ?? 0;
+                                    decimal s2 = 0;
+                                   s2 = ctx.AccuredAmountOfSupplierRow
+                                            .FirstOrDefault(_ => _.Id == updateCashOut.AccuredId)?
+                                            .Summa ?? 0;
+
+                                   if (s + updateCashOut.SUMM_ORD > s2)
                                     {
-                                        updateCashOut.SUMM_ORD = s2 - s;
-                                    } else 
-                                        return;
+                                        var res = winManager.ShowWinUIMessageBox(
+                                            $"Сумма прямых затрат {s2:n2} меньше сумм оплат {s + updateCashOut.SUMM_ORD:n2}! " +
+                                            $"Установить максимально возможную сумму {s2 - s}?",
+                                            "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Stop);
+                                        if (res == MessageBoxResult.Yes)
+                                        {
+                                            updateCashOut.SUMM_ORD = s2 - s;
+                                        }
+                                        else
+                                            return;
+                                    }
                                 }
 
                                 ctx.Entry(CashOutViewModelToEntity(updateCashOut)).State = EntityState.Modified;
@@ -1036,7 +1047,8 @@ namespace KursAM2.Managers
                 TSTAMP = ent.TSTAMP,
                 PLAT_VED_DC = ent.PLAT_VED_DC,
                 PLAT_VED_ROW_CODE = ent.PLAT_VED_ROW_CODE,
-                AccuredId = ent.AccuredId
+                AccuredId = ent.AccuredId,
+                StockHolderId = ent.StockHolder?.Id
                 
             };
             return ret;
@@ -1062,6 +1074,7 @@ namespace KursAM2.Managers
                         .Include(_ => _.SD_43)
                         .Include(_ => _.AccuredAmountOfSupplierRow)
                         .Include(_ => _.AccuredAmountOfSupplierRow.AccruedAmountOfSupplier)
+                        .Include(_ => _.StockHolders)
                         .AsNoTracking()
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
                     var doc = new CashOut(data)
@@ -1256,6 +1269,7 @@ namespace KursAM2.Managers
                             .Include(_ => _.SD_2)
                             .Include(_ => _.SD_114)
                             .Include(_ => _.SD_303)
+                            .Include(_ => _.StockHolders)
                             .Where(_ => _.NUM_ORD.ToString().Contains(searchText)
                                         || _.CREATOR.Contains(searchText)
                                         || _.CRS_SUMMA.ToString().Contains(searchText)
@@ -1311,6 +1325,11 @@ namespace KursAM2.Managers
                             if (c != null) doc.KontragnetName = MainReferences.CashsAll[(decimal) c.CA_DC].Name;
                         }
 
+                        if (d.StockHolderId != null)
+                        {
+                            doc.KontragnetTypeName = "Акционер";
+                            doc.KontragnetName = d.StockHolders.Name;
+                        }
                         ret.Add(doc);
                     }
                 }
@@ -1348,6 +1367,7 @@ namespace KursAM2.Managers
                             .Include(_ => _.SD_2)
                             .Include(_ => _.SD_114)
                             .Include(_ => _.SD_303)
+                            .Include(_ => _.StockHolders)
                             .Where(_ => _.NUM_ORD.ToString().Contains(searchText)
                                         || _.CREATOR.Contains(searchText)
                                         || _.CRS_SUMMA.ToString().Contains(searchText)
@@ -1402,6 +1422,12 @@ namespace KursAM2.Managers
                             var prihOrder = ctx.SD_33.FirstOrDefault(_ => _.RASH_ORDER_FROM_DC == d.DOC_CODE);
                             if (prihOrder != null)
                                 doc.KontragnetName = MainReferences.CashsAll[(decimal) prihOrder.CA_DC].Name;
+                        }
+
+                        if (d.StockHolders != null)
+                        {
+                            doc.KontragnetTypeName = "Акционер";
+                            doc.KontragnetName = d.StockHolders.Name;
                         }
 
                         ret.Add(doc);

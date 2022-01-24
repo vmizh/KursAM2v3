@@ -40,7 +40,7 @@ namespace Core.EntityViewModel.AccruedAmount
         #region Fields
 
         private AccuredAmountOfSupplierRow myEntity;
-        private AccruedAmountOfSupplierViewModel myParent;
+        private new AccruedAmountOfSupplierViewModel myParent;
 
         private SDRSchet mySDRSchet;
         //private CashOut myCashDoc;
@@ -220,17 +220,15 @@ namespace Core.EntityViewModel.AccruedAmount
         {
             get
             {
-                switch (columnName)
+                return columnName switch
                 {
-                    case nameof(Nomenkl):
-                        return Nomenkl == null ? "Тип начисления должен быть обязательно выбран" : null;
-                    case nameof(Summa):
-                        return Summa <= 0 ? "Сумма должна быть больше 0" : null;
-                    case nameof(SDRSchet):
-                        return SDRSchet == null ? "Счет доходов/расходов обязателен для связи с платежами" : null;
-                    default:
-                        return null;
-                }
+                    nameof(Nomenkl) => Nomenkl == null ? "Тип начисления должен быть обязательно выбран" : null,
+                    nameof(Summa) => Summa <= 0 ? "Сумма должна быть больше 0" : null,
+                    nameof(SDRSchet) => SDRSchet == null
+                        ? "Счет доходов/расходов обязателен для связи с платежами"
+                        : null,
+                    _ => null
+                };
             }
         }
 

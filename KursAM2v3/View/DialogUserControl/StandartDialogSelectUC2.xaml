@@ -57,8 +57,6 @@
             <dxg:GridControl.View>
                 <dxg:TableView x:Name="gridViewDocument"
                                ShowAutoFilterRow="True"
-                               
-                               
                                RowDoubleClick="GridViewDocument_OnRowDoubleClick"
                                CellValueChanged="GridViewDocument_OnCellValueChanged">
                     <dxg:TableView.ContextMenu>

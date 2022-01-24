@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
@@ -9,11 +8,8 @@ using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
-using Data;
-using Helper;
 using KursAM2.Managers;
 using KursAM2.View.Logistiks;
 
@@ -28,8 +24,6 @@ namespace KursAM2.ViewModel.Logistiks
         private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentWarehouse;
         private bool myIsPeriodSet;
         private DateTime myOstatokDate;
-        private DateTime? myPeriodDateEnd;
-        private DateTime? myPeriodDateStart;
 
         public SkladOstatkiWindowViewModel()
         {
@@ -37,8 +31,6 @@ namespace KursAM2.ViewModel.Logistiks
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             myIsPeriodSet = false;
             myOstatokDate = DateTime.Today;
-            PeriodDateEnd = DateTime.Today;
-            PeriodDateStart = new DateTime(PeriodDateEnd.Value.Year, 1, 1);
             while (!MainReferences.IsReferenceLoadComplete) Thread.Sleep(5000);
             RefreshReferences();
         }
@@ -50,12 +42,16 @@ namespace KursAM2.ViewModel.Logistiks
         public List<NomPrice> Prices { set; get; } = new List<NomPrice>();
 
         // ReSharper disable once CollectionNeverQueried.Global
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<OperationNomenklMove> NomenklOperationsForSklad { set; get; } =
             new ObservableCollection<OperationNomenklMove>();
 
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<NomenklCalcCostOperation> NomenklOperations { set; get; } =
             new ObservableCollection<NomenklCalcCostOperation>();
+
+        public List<NomenklStoreRemainItem> LoadedRemains { set; get; } = new List<NomenklStoreRemainItem>();
+
         public NomenklCalcCostOperation CurrentOperation
         {
             get => myCurrentOperation;
@@ -66,6 +62,7 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
             }
         }
+
         public DateTime OstatokDate
         {
             get => myOstatokDate;
@@ -77,6 +74,7 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
             }
         }
+
         public bool IsPeriodSet
         {
             get => myIsPeriodSet;
@@ -88,32 +86,7 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
             }
         }
-        public DateTime? PeriodDateStart
-        {
-            get => myPeriodDateStart;
-            set
-            {
-                if (myPeriodDateStart == value) return;
-                myPeriodDateStart = value;
-                if (myPeriodDateStart > PeriodDateEnd)
-                    PeriodDateEnd = myPeriodDateStart;
-                if (IsPeriodSet) RefreshData(null);
-                RaisePropertyChanged();
-            }
-        }
-        public DateTime? PeriodDateEnd
-        {
-            get => myPeriodDateEnd;
-            set
-            {
-                if (myPeriodDateEnd == value) return;
-                myPeriodDateEnd = value;
-                if (PeriodDateStart > myPeriodDateEnd)
-                    PeriodDateStart = myPeriodDateEnd;
-                if (IsPeriodSet) RefreshData(null);
-                RaisePropertyChanged();
-            }
-        }
+
         public Core.EntityViewModel.NomenklManagement.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
@@ -123,13 +96,15 @@ namespace KursAM2.ViewModel.Logistiks
                 myCurrentWarehouse = value;
                 if (myCurrentWarehouse != null)
                 {
-                    RefreshData(null);
+                    NomenklsForSklad.Clear();
+                    LoadNomForSklad();
                 }
                 else
                 {
                     NomenklOperationsForSklad.Clear();
                     RaisePropertyChanged(nameof(NomenklOperationsForSklad));
                 }
+
                 RaisePropertyChanged();
             }
         }
@@ -137,6 +112,7 @@ namespace KursAM2.ViewModel.Logistiks
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<NomenklQuantity> NomenklQuantity { set; get; } =
             new ObservableCollection<NomenklQuantity>();
+
         public NomenklOstatkiWithPrice CurrentNomenklStore
         {
             get => myCurrentNomenklStore;
@@ -151,12 +127,15 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<SkladQuantity> NomenklOnSklads { set; get; } =
             new ObservableCollection<SkladQuantity>();
 
         // ReSharper disable once CollectionNeverQueried.Global
+        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<NomenklOstatkiWithPrice> NomenklsForSklad { set; get; } =
             new ObservableCollection<NomenklOstatkiWithPrice>();
+
         public NomenklOstatkiForSklad CurrentNomenklForSklad
         {
             get => myCurrentNomenklForSklad;
@@ -173,18 +152,29 @@ namespace KursAM2.ViewModel.Logistiks
                     NomenklOperationsForSklad.Clear();
                     RaisePropertyChanged(nameof(NomenklOperationsForSklad));
                 }
+
                 RaisePropertyChanged();
             }
         }
+
         public ICommand DocumentTovarOpenCommand
         {
-            get { return new Command(DocumentTovarOpen,
-                _ => CurrentOperation != null && CurrentOperation.TovarDocDC != null); }
+            get
+            {
+                return new Command(DocumentTovarOpen,
+                    _ => CurrentOperation != null && CurrentOperation.TovarDocDC != null);
+            }
         }
+
         public ICommand DocumentFinanceOpenCommand
         {
-            get { return new Command(DocumentFinanceOpen, _ => CurrentOperation != null && CurrentOperation.FinDocumentDC != null); }
+            get
+            {
+                return new Command(DocumentFinanceOpen,
+                    _ => CurrentOperation != null && CurrentOperation.FinDocumentDC != null);
+            }
         }
+
         public ICommand NomenklCalcOpenCommand
         {
             get { return new Command(NomenklCalcOpen, _ => CurrentNomenklStore != null); }
@@ -205,129 +195,34 @@ namespace KursAM2.ViewModel.Logistiks
 
         public override void RefreshData(object obj)
         {
-            if (CurrentWarehouse == null) return;
-            NomenklsForSklad.Clear();
-            using (var ctx = GlobalOptions.GetEntities())
+            while (!MainReferences.IsReferenceLoadComplete)
             {
-                DateTime dateStart, dateEnd;
-                if (IsPeriodSet)
-                {
-                    dateStart = (DateTime) PeriodDateStart;
-                    dateEnd = (DateTime) PeriodDateEnd;
-                }
-                else
-                {
-                    dateStart = dateEnd = OstatokDate;
-                }
-                var sql1 = "SELECT  NomDC ,Date ,StoreDC ,Start ,Prihod ,Rashod ,Nakopit ," +
-                           "SummaIn ,SummaNakladIn ,SummaOut ,SummaNakladOut ,Price ," +
-                           "PriceWithNaklad " +
-                           "FROM dbo.NomenklMoveStore n1 " +
-                           $"WHERE StoreDC = {CustomFormat.DecimalToSqlDecimal(CurrentWarehouse.DOC_CODE)} " +
-                           "AND n1.Date = (SELECT MAX(n2.Date) FROM NomenklMoveForCalc n2  " +
-                           "WHERE n1.NomDC = n2.NomDC  AND n1.StoreDC = n2.StoreDC  " +
-                           $"AND n2.Date <= '{CustomFormat.DateToString(dateStart)}') " +
-                           "AND n1.Nakopit != 0 " +
-                           "UNION " +
-                           "SELECT  NomDC ,Date ,StoreDC ,Start ,Prihod ,Rashod ," +
-                           "Nakopit ,SummaIn ,SummaNakladIn ," +
-                           "SummaOut ,SummaNakladOut ,Price ,PriceWithNaklad " +
-                           "FROM NomenklMoveStore " +
-                           $"WHERE StoreDC = {CustomFormat.DecimalToSqlDecimal(CurrentWarehouse.DOC_CODE)} " +
-                           $"AND Date >= '{CustomFormat.DateToString(dateStart)}' " +
-                           $"AND Date <= '{CustomFormat.DateToString(dateEnd)}'";
-                var data = ctx.Database.SqlQuery<NomenklMoveStore>(sql1).ToList();
-                var nomList = data.Select(_ => _.NomDC).Distinct().ToList();
-                foreach (var dc in nomList)
-                {
-                    //if (dc == 10830000587)
-                    //{
-                    //    var i = 1;
-                    //}
-                    var dtemp = data.Where(_ => _.NomDC == dc).ToList();
-                    var kolIn = (decimal) dtemp.Where(_ => _.Date >= dateStart && _.Date <= dateEnd).Sum(_ => _.Prihod);
-                    var kolOut = (decimal) dtemp.Where(_ => _.Date >= dateStart && _.Date <= dateEnd)
-                        .Sum(_ => _.Rashod);
-                    var dStartrows = dtemp.Where(_ => _.Date <= dateStart);
-                    var dEnd = dtemp.Where(_ => _.Date <= dateEnd).Max(_ => _.Date);
-                    var datarow = dtemp.First(_ => _.Date == dEnd);
-                    decimal start;
-                    if (dStartrows.Any())
-                    {
-                        var dt = dStartrows.Max(d => d.Date);
-                        if (dt < dateStart)
-                            start = (decimal) dtemp.First(_ => _.Date == dt).Nakopit;
-                        else
-                            start = (decimal) dtemp.First(_ => _.Date == dt).Start;
-                    }
-                    else
-                    {
-                        start = 0;
-                    }
-                    var summaIn = (decimal) dtemp.Where(_ => _.Date >= dateStart && _.Date <= dateEnd)
-                        .Sum(_ => _.SummaIn);
-                    var summaOut = (decimal) dtemp.Where(_ => _.Date >= dateStart && _.Date <= dateEnd)
-                        .Sum(_ => _.SummaOut);
-                    var summaInNaklad = (decimal) dtemp.Where(_ => _.Date >= dateStart && _.Date <= dateEnd)
-                        .Sum(_ => _.SummaNakladIn);
-                    var summaOutNaklad = (decimal) dtemp.Where(_ => _.Date >= dateStart && _.Date <= dateEnd)
-                        .Sum(_ => _.SummaNakladOut);
-                    if (start == 0 && kolIn == 0 && kolOut == 0 && datarow.Nakopit == 0) continue;
-                    NomenklsForSklad.Add(new NomenklOstatkiWithPrice
-                    {
-                        Nomenkl = MainReferences.GetNomenkl(dc),
-                        Warehouse = CurrentWarehouse,
-                        Prihod = kolIn,
-                        Rashod = kolOut,
-                        Quantity = (decimal) datarow.Nakopit,
-                        StartQuantity = start,
-                        PriceWONaklad = datarow.Price,
-                        Price = datarow.PriceWithNaklad,
-                        SummaWONaklad = Math.Round((decimal) (datarow.Price * datarow.Nakopit), 2),
-                        Summa = Math.Round((decimal) (datarow.Price * datarow.Nakopit), 2),
-                        CurrencyName = MainReferences.GetNomenkl(datarow.NomDC).Currency.Name,
-                        SummaIn = summaInNaklad,
-                        SummaOut = summaOutNaklad,
-                        SummaInWONaklad = summaIn,
-                        SummaOutWONaklad = summaOut
-                    });
-                }
-                RaisePropertiesChanged(nameof(NomenklsForSklad));
             }
+            NomenklsForSklad.Clear();
+            LoadedRemains.Clear();
+            LoadedRemains = NomenklCalculationManager.GetNomenklStoreRemains(OstatokDate, true);
+            if (CurrentWarehouse != null) LoadNomForSklad();
+
+            RaisePropertiesChanged(nameof(NomenklsForSklad));
         }
 
-        /*switch (oper.OperCode)
-                        {
-                            case 1:
-                                oper.TovarDocument = "Приходный складской ордер ";
-                                break;
-                            case 2:
-                                oper.TovarDocument = "Расходный складской ордер ";
-                                break;
-                            case 5:
-                                oper.TovarDocument = "Инвентаризационная ведомость ";
-                                break;
-                            case 7:
-                                oper.TovarDocument = "Акт приемки готовой продукции ";
-                                break;
-                            case 8:
-                                oper.TovarDocument = "Акт разукомплектации готовой продукции ";
-                                break;
-                            case 9:
-                                oper.TovarDocument = "Акт списания материалов ";
-                                break;
-                            case 12:
-                                oper.TovarDocument = "Расходная накладная (без требования) ";
-                                break;
-                            case 13:
-                                oper.TovarDocument = "Накладная на внутренее перемещение ";
-                                break;
-                            case 18:
-                                oper.TovarDocument = "Продажа за наличный расчет ";
-                                break;
-                            case 25:
-                                oper.TovarDocument = "Возврат товара ";
-                                break;*/
+        private void LoadNomForSklad()
+        {
+            foreach (var d in LoadedRemains)
+                if (d.StoreDC == CurrentWarehouse.DocCode)
+                    NomenklsForSklad.Add(new NomenklOstatkiWithPrice
+                    {
+                        Nomenkl = MainReferences.GetNomenkl(d.NomenklDC),
+                        Warehouse = MainReferences.GetWarehouse(d.StoreDC),
+                        Quantity = d.Remain,
+                        CurrencyName = MainReferences
+                            .Currencies[MainReferences.GetNomenkl(d.NomenklDC).Currency.DocCode].Name,
+                        Price = d.PriceWithNaklad,
+                        PriceWONaklad = d.Price,
+                        Summa = d.Remain * d.PriceWithNaklad,
+                        SummaWONaklad = d.Remain * d.Price
+                    });
+        }
 
         private void DocumentTovarOpen(object obj)
         {
@@ -335,13 +230,16 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 case 1:
                 case 25:
-                    DocumentsOpenManager.Open(DocumentType.StoreOrderIn, (decimal) CurrentOperation.TovarDocDC);
+                    // ReSharper disable once PossibleInvalidOperationException
+                    DocumentsOpenManager.Open(DocumentType.StoreOrderIn, (decimal)CurrentOperation.TovarDocDC);
                     break;
                 case 5:
-                    DocumentsOpenManager.Open(DocumentType.InventoryList, (decimal) CurrentOperation.TovarDocDC);
+                    // ReSharper disable once PossibleInvalidOperationException
+                    DocumentsOpenManager.Open(DocumentType.InventoryList, (decimal)CurrentOperation.TovarDocDC);
                     break;
                 case 12:
-                    DocumentsOpenManager.Open(DocumentType.Waybill, (decimal) CurrentOperation.TovarDocDC);
+                    // ReSharper disable once PossibleInvalidOperationException
+                    DocumentsOpenManager.Open(DocumentType.Waybill, (decimal)CurrentOperation.TovarDocDC);
                     break;
             }
         }
@@ -351,10 +249,12 @@ namespace KursAM2.ViewModel.Logistiks
             switch (CurrentOperation.OperCode)
             {
                 case 1:
-                    DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal) CurrentOperation.FinDocumentDC);
+                    // ReSharper disable once PossibleInvalidOperationException
+                    DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)CurrentOperation.FinDocumentDC);
                     break;
                 case 12:
-                    DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal) CurrentOperation.FinDocumentDC);
+                    // ReSharper disable once PossibleInvalidOperationException
+                    DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal)CurrentOperation.FinDocumentDC);
                     break;
             }
         }
@@ -378,15 +278,9 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 var clc = new NomenklCostMediumSliding(ctx);
                 NomenklOperations.Clear();
-                foreach (var op in clc.GetOperations(CurrentNomenklStore.Nomenkl.DocCode, false))
-                    if (IsPeriodSet)
-                    {
-                        if (op.DocDate >= PeriodDateStart && op.DocDate <= PeriodDateEnd) NomenklOperations.Add(op);
-                    }
-                    else
-                    {
-                        if (op.DocDate == OstatokDate) NomenklOperations.Add(op);
-                    }
+                var data = clc.GetOperations(CurrentNomenklStore.Nomenkl.DocCode, false);
+                foreach (var op in data)
+                    NomenklOperations.Add(op);
             }
         }
 
@@ -426,6 +320,12 @@ namespace KursAM2.ViewModel.Logistiks
         #endregion
     }
 
+    public class NomenklPrice
+    {
+        public decimal Price { set; get; }
+        public decimal PricWithNaklad { set; get; }
+    }
+
     public class NomenklQuantity
     {
         public Nomenkl Nomenkl { set; get; }
@@ -448,9 +348,9 @@ namespace KursAM2.ViewModel.Logistiks
     public class NomenklOstatkiForSklad
     {
         public Nomenkl Nomenkl { set; get; }
-        public string NomenklName { set; get; }
+        public string NomenklName => Nomenkl?.Name;
         public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse { set; get; }
-        public string StoreName { set; get; }
+        public string StoreName => Warehouse?.Name;
         public string NomenklNumber => Nomenkl?.NomenklNumber;
         public string Name => Nomenkl?.Name;
         public decimal Prihod { set; get; }

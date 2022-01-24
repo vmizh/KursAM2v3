@@ -149,6 +149,7 @@ namespace Calculates.Materials
 
                         oper.TovarDocument +=
                             $"№{d.SD_24.DD_IN_NUM}/{d.SD_24.DD_EXT_NUM} от {d.SD_24.DD_DATE.ToShortDateString()}";
+                        if (oper.OperCode == 3 && oper.QuantityIn <= 0) continue;
                         ret.Operations.Add(oper);
                     }
                 }
@@ -325,6 +326,7 @@ namespace Calculates.Materials
                 var spisanieData = from spisRow in context.AktSpisaniya_row
                     join spisHead in context.AktSpisaniyaNomenkl_Title on spisRow.Doc_Id equals spisHead.Id
                     join sign in context.DocumentSignatures.Where(_ => _.IsSign == true) on spisHead.Id equals sign.DocId 
+                    where spisRow.Nomenkl_DC == nomDC
                     select new 
                     {
                         Note = spisRow.Note + " " + spisHead.Note + " " + spisHead.Reason_Creation,

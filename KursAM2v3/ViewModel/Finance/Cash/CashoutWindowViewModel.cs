@@ -8,7 +8,9 @@ using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
+using DevExpress.Mvvm;
 using Helper;
+using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Finance.Cash;
@@ -26,6 +28,24 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
+        }
+
+        public void SelectStockHolder()
+        {
+            var service = GetService<IDialogService>("DialogServiceUI");
+            var sh = StandartDialogs.SelectStockHolder(service);
+            if (sh != null)
+            {
+                Document.KONTRAGENT_DC = null;
+                Document.BankAccount = null;
+                Document.CashTo = null;
+                Document.Employee = null;
+                Document.StockHolder = sh;
+                Document.NAME_ORD = sh.Name;
+                Document.SPostName = null;
+                Document.SPOST_DC = null;
+                Document.RaisePropertyChanged("Kontragent");
+            }
         }
 
         #endregion
@@ -104,8 +124,9 @@ namespace KursAM2.ViewModel.Finance.Cash
             }
         }
 
-
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
+
+        public override string LayoutName => "CashOutView";
 
         public CashOut Document
         {

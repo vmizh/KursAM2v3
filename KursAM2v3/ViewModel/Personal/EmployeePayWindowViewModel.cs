@@ -89,7 +89,7 @@ namespace KursAM2.ViewModel.Personal
 
         public ICommand PayDocumentOpenCommand
         {
-            get { return new Command(PayDocumentOpen, param => IsDocPayVedomost); }
+            get { return new Command(PayDocumentOpen, _ => IsDocPayVedomost); }
         }
 
         public bool IsDocPayVedomost => CurrentPayDocument != null && CurrentPayDocument.PayType == "Начисление";
@@ -275,8 +275,8 @@ namespace KursAM2.ViewModel.Personal
         public void UpdateDocumentsForPeriod(NachEmployeeForPeriod item)
         {
             List<EmployeePayDocumentViewModel> tempList = new List<EmployeePayDocumentViewModel>();
-            var data = DocumentsForEmployee
-                .Where(_ => _.DocDate >= item.DateStart && _.DocDate <= item.DateEnd).ToList();
+            //var data = DocumentsForEmployee
+            //    .Where(_ => _.DocDate >= item.DateStart && _.DocDate <= item.DateEnd).ToList();
             foreach (
                 var r in DocumentsForEmployee
                     .Where(_ => _.DocDate >= item.DateStart && _.DocDate <= item.DateEnd))

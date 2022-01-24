@@ -10,9 +10,12 @@ using Core.EntityViewModel.Employee;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.NomenklManagement;
 using Core.EntityViewModel.Periods;
+using Core.EntityViewModel.StockHolder;
 using Core.EntityViewModel.Systems;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
+using Data;
+using DevExpress.Mvvm;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
 using KursAM2.View.Finance.UC;
@@ -24,6 +27,7 @@ using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Management.Projects;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.Reference.Dialogs;
+using KursAM2.ViewModel.StockHolder;
 
 namespace KursAM2.Dialogs
 {
@@ -47,6 +51,11 @@ namespace KursAM2.Dialogs
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentKontragent;
         }
+
+        //public static SelectStockHolder()
+        //{
+
+        //}
 
         public static List<CashOrder> SelectCashOrders(BankAccount bankAcc, SelectCashOrdersDelegate selectMethod)
         {
@@ -277,6 +286,18 @@ namespace KursAM2.Dialogs
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
+        }
+
+        public static StockHolderViewModel SelectStockHolder(IDialogService service)
+        {
+            //DefaultTableSelectUC
+            var ctx = new SelectStockHolderDialogViewModel();
+            if (service.ShowDialog(MessageButton.OKCancel, "Выбрать акционера", ctx) == MessageResult.OK
+                || ctx.DialogResult == MessageResult.OK)
+            {
+                return ctx.CurrentItem;
+            }
+            return null;
         }
 
         public static Cash SelectCash(List<Cash> exclude)

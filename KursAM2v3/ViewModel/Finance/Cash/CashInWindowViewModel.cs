@@ -6,7 +6,9 @@ using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
+using DevExpress.Mvvm;
 using Helper;
+using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Helper;
@@ -22,6 +24,21 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
+        }
+
+        public void SelectStockHolder()
+        {
+            var service = GetService<IDialogService>("DialogServiceUI");
+            var sh = StandartDialogs.SelectStockHolder(service);
+            if (sh != null)
+            {
+                Document.TABELNUMBER = null;
+                Document.BankAccount = null;
+                Document.RASH_ORDER_FROM_DC = null;
+                Document.StockHolder = sh;
+                Document.KONTRAGENT_DC = null;
+                Document.RaisePropertyChanged("Kontragent");
+            }
         }
 
         #endregion
@@ -58,6 +75,8 @@ namespace KursAM2.ViewModel.Finance.Cash
         #region Properties
 
         public bool IsAccuredOpenEnable => !string.IsNullOrWhiteSpace(Document?.AccuredInfo);
+
+        public override string LayoutName => "CashInView";
 
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
 

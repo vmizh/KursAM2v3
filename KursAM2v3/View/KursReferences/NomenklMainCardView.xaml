@@ -162,7 +162,13 @@
                                 HorizontalAlignment="Left"
                                 ItemsSource="{Binding CountryCollection}"
                                 EditValue="{Binding NomenklMain.Country.Id,UpdateSourceTrigger=PropertyChanged}"
-                                SelectedItem="{Binding NomenklMain.Country, UpdateSourceTrigger=PropertyChanged}"/>
+                                SelectedItem="{Binding NomenklMain.Country, UpdateSourceTrigger=PropertyChanged}"
+                                AllowDefaultButton="False">
+                    <dxe:ComboBoxEdit.Buttons>  
+                        <dxe:ButtonInfo GlyphKind="DropDown" Command="{Binding (dxe:ButtonEdit.OwnerEdit).OpenPopupCommand, RelativeSource={RelativeSource Self}}"/>  
+                        <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding ClearCountryCommand}"/>
+                    </dxe:ComboBoxEdit.Buttons>  
+                </dxe:ComboBoxEdit>
             </DockPanel>
             <DockPanel Height="90">
                 <Label DockPanel.Dock="Left" VerticalAlignment="Center">Примечание</Label>

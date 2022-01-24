@@ -69,6 +69,7 @@ namespace Data
         public Nullable<decimal> KONTR_FROM_DC { get; set; }
         public Nullable<int> SFACT_FLAG { get; set; }
         public byte[] TSTAMP { get; set; }
+        public Nullable<System.Guid> StockHolderId { get; set; }
     
         public virtual SD_114 SD_114 { get; set; }
         public virtual SD_2 SD_2 { get; set; }
@@ -97,5 +98,6 @@ namespace Data
         public virtual ICollection<UD_281> UD_281 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
+        public virtual StockHolders StockHolders { get; set; }
     }
 }

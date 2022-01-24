@@ -12,7 +12,7 @@ using Data;
 
 namespace KursAM2.ViewModel.Reference
 {
-    public class SDRReferenceWindowViewModel : RSWindowViewModelBase
+    public sealed class SDRReferenceWindowViewModel : RSWindowViewModelBase
     {
         #region Constructors
 
@@ -287,6 +287,7 @@ namespace KursAM2.ViewModel.Reference
                             if (sch.SHPZ_STATIA_DC < 0)
                                 newStateDC = changedDC[sch.DocCode];
                             else
+                                // ReSharper disable once PossibleInvalidOperationException
                                 newStateDC = sch.SHPZ_STATIA_DC.Value;
                             ctx.SD_303.Add(new SD_303
                             {
@@ -307,13 +308,16 @@ namespace KursAM2.ViewModel.Reference
                             newSchetDC++;
                         }
 
-                        //foreach (var sch in SDRSchetCollection.Where(_ => _.State == RowStatus.Edited))
-                        //{
-                        //    var edSch = ctx.SD_303.FirstOrDefault(_ => _.DOC_CODE == sch.DocCode);
-                        //    if (edSch == null) continue;
-                        //}
+                        foreach (var sch in SDRSchetCollectionEdited.Where(_ => _.State == RowStatus.Edited))
+                        {
+                            var edSch = ctx.SD_303.FirstOrDefault(_ => _.DOC_CODE == sch.DocCode);
+                            if (edSch == null) continue;
+                            edSch.SHPZ_NAME = sch.Name;
+                            edSch.SHPZ_SHIRF = sch.SHPZ_SHIRF;
+                        }
                         ctx.SaveChanges();
                         tnx.Commit();
+                        MainReferences.Refresh();
                         RefreshData(null);
                     }
                     catch (Exception ex)
@@ -331,18 +335,43 @@ namespace KursAM2.ViewModel.Reference
 
         private void LoadSchetsForCurrentState()
         {
+            foreach (var sch in SDRSchetCollection.Where(_ => _.State == RowStatus.Edited))
+            {
+                var o = SDRSchetCollectionEdited.FirstOrDefault(_ => _.DocCode == sch.DocCode);
+                if (o == null)
+                {
+                    SDRSchetCollectionEdited.Add(sch);
+                }
+                else
+                {
+                    // ReSharper disable once PossibleNullReferenceException
+                    o.Name = sch.Name;
+                    o.SHPZ_SHIRF = sch.SHPZ_SHIRF;
+                }
+            }
             SDRSchetCollection.Clear();
             if (CurrentSDRSTate == null)
                 return;
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var d in ctx.SD_303.Where(_ => _.SHPZ_STATIA_DC == CurrentSDRSTate.DocCode).ToList())
-                    SDRSchetCollection.Add(new SDRSchet(d)
+                {
+                    var ed = SDRSchetCollectionEdited.FirstOrDefault(_ => _.DocCode == d.DOC_CODE);
+                    if (ed != null)
                     {
-                        State = RowStatus.NotEdited
-                    });
+                        SDRSchetCollection.Add(ed);
+                    }
+                    else
+                    {
+                        SDRSchetCollection.Add(new SDRSchet(d)
+                        {
+                            State = RowStatus.NotEdited
+                        });
+                    }
+                }
+
                 foreach (var d in SDRSchetCollectionAdded.Where(_ => _.SHPZ_STATIA_DC == CurrentSDRSTate.DocCode)
-                    .ToList()) SDRSchetCollection.Add(d);
+                             .ToList()) SDRSchetCollection.Add(d);
             }
         }
 

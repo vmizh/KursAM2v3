@@ -61,6 +61,11 @@ namespace KursAM2.View.Finance.Invoices
                     break;
                 case nameof(inv.Note):
                     break;
+                //case nameof(inv.SFT_NACENKA_DILERA):
+                //    e.Column.ReadOnly = ctx.Document.Diler == null;
+                //    if(e.Column.EditSettings is CalcEditSettings ed)
+                //        ed.IsTextEditable = ctx.Document.Diler == null;
+                //    break;
                 case nameof(inv.SDRSchet):
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
@@ -164,6 +169,22 @@ namespace KursAM2.View.Finance.Invoices
         private void TableViewRows_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
         {
             gridRows.UpdateTotalSummary();
+            if (DataContext is ClientWindowViewModel ctx)
+            {
+                ctx.Document.RaisePropertyChanged("DilerSumma");
+            }
+        }
+
+        private void tableViewRows_ShownEditor(object sender, EditorEventArgs e)
+        {
+            if (e.Column.FieldName == "SFT_NACENKA_DILERA")
+            {
+                if (DataContext is ClientWindowViewModel ctx)
+                {
+                    e.Editor.IsReadOnly = ctx.Document.Diler == null;
+                    e.Column.ReadOnly = ctx.Document.Diler == null;
+                }
+            }
         }
     }
 }

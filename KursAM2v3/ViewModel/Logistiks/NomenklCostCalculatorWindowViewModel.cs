@@ -207,7 +207,6 @@ namespace KursAM2.ViewModel.Logistiks
                     var newSklad = new NomenklOstatkiWithPrice
                     {
                         Quantity = (decimal) s.Nakopit,
-                        StoreName = MainReferences.Warehouses[(decimal) sdc].Name,
                         PriceWONaklad = s.Price,
                         Price = s.PriceWithNaklad,
                         SummaWONaklad = (decimal) (s.Price * s.Nakopit),

@@ -58,6 +58,7 @@ namespace Data
         public Nullable<bool> IsCurrencyChange { get; set; }
         public Nullable<System.Guid> AccuredId { get; set; }
         public Nullable<decimal> CurrencyRateForReference { get; set; }
+        public Nullable<System.Guid> StockHolderId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProviderInvoicePay> ProviderInvoicePay { get; set; }
@@ -88,5 +89,6 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
         public virtual AccuredAmountOfSupplierRow AccuredAmountOfSupplierRow { get; set; }
+        public virtual StockHolders StockHolders { get; set; }
     }
 }

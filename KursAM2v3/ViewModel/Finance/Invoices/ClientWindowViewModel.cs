@@ -571,7 +571,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (Document.Rows.Any(_ => !_.IsUsluga && _.Nomenkl.Currency.DocCode != kontr.BalansCurrency.DocCode))
             {
                 WindowManager.ShowMessage(
-                    "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
+                    "По счету есть товары с валютой, отличной от валюты дилера. Изменить контрагента нельзя.",
                     "Предупреждение", MessageBoxImage.Information);
                 return;
             }
@@ -580,6 +580,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Document.SF_DILER_CRS_DC = kontr.BalansCurrency.DocCode;
             Document.SF_DILER_SUMMA = 0;
             Document.SF_DILER_RATE = 1;
+            if (Form is InvoiceClientView frm)
+            {
+                var colDiler = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "SFT_NACENKA_DILERA");
+                if (colDiler != null)
+                    colDiler.ReadOnly = false;
+            }
         }
 
         public ICommand ReceiverSelectCommand

@@ -415,10 +415,13 @@
     <Compile Include="ViewModel\StartLogin\LastDocumentWindowViewModel.cs" />
     <Compile Include="ViewModel\StartLogin\LastUsersDocumentWindowViewModel.cs" />
     <Compile Include="ViewModel\StockHolder\ReestrRepository.cs" />
+    <Compile Include="ViewModel\StockHolder\SelectStockHolderDialogViewModel.cs" />
     <Compile Include="ViewModel\StockHolder\StockHolderAccrualSearchViewModel.cs" />
     <Compile Include="ViewModel\StockHolder\StockHolderAccrualsWindowViewModel.cs" />
     <Compile Include="ViewModel\StockHolder\StockHolderAccrualTypeWindowViewModel.cs" />
+    <Compile Include="ViewModel\StockHolder\StockHolderBalanseItem.cs" />
     <Compile Include="ViewModel\StockHolder\StockHolderReestrWindowViewModel.cs" />
+    <Compile Include="ViewModel\StockHolder\StockHoldersBalancesWindowViewModel.cs" />
     <Compile Include="View\Base\GridControlUC.xaml.cs">
       <DependentUpon>GridControlUC.xaml</DependentUpon>
     </Compile>
@@ -427,6 +430,12 @@
     </Compile>
     <Compile Include="View\Base\StandartSearchView.xaml.cs">
       <DependentUpon>StandartSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\DefaultTableSelectUC.xaml.cs">
+      <DependentUpon>DefaultTableSelectUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\ViewModel\StockHolderSelectUC.xaml.cs">
+      <DependentUpon>StockHolderSelectUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Dogovors\DialogSelectDogovorAndPosition.xaml.cs">
       <DependentUpon>DialogSelectDogovorAndPosition.xaml</DependentUpon>
@@ -1045,6 +1054,9 @@
     <Compile Include="View\StockHolder\StockHolderReestrView.xaml.cs">
       <DependentUpon>StockHolderReestrView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\StockHolder\StockHoldersBalancesView.xaml.cs">
+      <DependentUpon>StockHoldersBalancesView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\WindowStart.xaml.cs">
       <DependentUpon>WindowStart.xaml</DependentUpon>
     </Compile>
@@ -1193,6 +1205,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Base\StandartSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\DefaultTableSelectUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\ViewModel\StockHolderSelectUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1877,6 +1897,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\StockHolder\StockHolderReestrView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\StockHolder\StockHoldersBalancesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

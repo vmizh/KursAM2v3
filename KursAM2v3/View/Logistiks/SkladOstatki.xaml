@@ -10,20 +10,12 @@
     Title="Остатки товаров по складам" Height="350" Width="578.165">
     <DockPanel>
         <control1:WindowMenu DockPanel.Dock="Top" />
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-            <StackPanel Margin="0,0,0,5" VerticalAlignment="Center" Orientation="Horizontal">
-                <Label>На дату</Label>
+            <StackPanel Margin="0,0,0,5"
+                        DockPanel.Dock="Top"
+                        VerticalAlignment="Center" Orientation="Horizontal">
+                <Label Content="На дату: "/>
                 <dxe:DateEdit EditValue="{Binding OstatokDate}" Margin="5,0,0,0" Width="100" />
             </StackPanel>
-            <StackPanel Margin="0,0,0,5" VerticalAlignment="Center" Orientation="Horizontal">
-                <Label Margin="5,0,5,0">Движение за период</Label>
-                <dxe:CheckEdit EditValue="{Binding IsPeriodSet, Mode=TwoWay}" />
-                <Label Margin="5,0,5,0">C</Label>
-                <dxe:DateEdit EditValue="{Binding PeriodDateStart}" Width="100" />
-                <Label Margin="5,0,5,0">по</Label>
-                <dxe:DateEdit EditValue="{Binding PeriodDateEnd}" Width="100" />
-            </StackPanel>
-        </StackPanel>
         <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Vertical" Padding="0"
                             dx:DXSerializer.StoreLayoutMode="All">
             <dxlc:LayoutGroup View="Tabs" Padding="0">
@@ -59,21 +51,6 @@
                                                     ReadOnly="True" />
                                     <dxg:GridColumn Header="Наименование" FieldName="Name" Name="tbl1_col2"
                                                     ReadOnly="True" />
-                                    <dxg:GridColumn Header="Приход" FieldName="Prihod" Name="tbl1_col3" ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:CalcEditSettings DisplayFormat="n2"
-                                                                  MaskUseAsDisplayFormat="True"
-                                                                  AllowDefaultButton="False" IsTextEditable="False" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Header="Расход" FieldName="Rashod" Name="tbl1_col4" ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:CalcEditSettings DisplayFormat="n2"
-                                                                  MaskUseAsDisplayFormat="True"
-                                                                  AllowDefaultButton="False"
-                                                                  IsTextEditable="False" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
                                     <dxg:GridColumn Header="Остаток" FieldName="Quantity" Name="tbl1_col6"
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
@@ -121,79 +98,13 @@
                                                                   IsTextEditable="False" />
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
-
-                                    <!-- Для периода-->
-                                    <dxg:GridColumn Name="pcols_9" Header="На начало (кол-во)"
-                                                    FieldName="StartQuantity"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:CalcEditSettings DisplayFormat="n2"
-                                                                  MaskUseAsDisplayFormat="True"
-                                                                  AllowDefaultButton="False"
-                                                                  IsTextEditable="False" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="pcols_3" Header="Сумма прихода(б/н)"
-                                                    FieldName="SummaInWONaklad"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:CalcEditSettings DisplayFormat="n2"
-                                                                  MaskUseAsDisplayFormat="True"
-                                                                  AllowDefaultButton="False"
-                                                                  IsTextEditable="False" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="pcols_4" Header="Сумма прихода" FieldName="SummaIn"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:CalcEditSettings DisplayFormat="n2"
-                                                                  MaskUseAsDisplayFormat="True"
-                                                                  AllowDefaultButton="False"
-                                                                  IsTextEditable="False" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="pcols_5" Header="Сумма расхода" FieldName="SummaOut"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:CalcEditSettings DisplayFormat="n2"
-                                                                  MaskUseAsDisplayFormat="True"
-                                                                  AllowDefaultButton="False"
-                                                                  IsTextEditable="False" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="pcols_6" Header="Сумма расхода(б/н)"
-                                                    FieldName="SummaOutWONaklad"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:CalcEditSettings DisplayFormat="n2"
-                                                                  MaskUseAsDisplayFormat="True"
-                                                                  AllowDefaultButton="False"
-                                                                  IsTextEditable="False" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
                                 </dxg:GridControl.Columns>
                                 <dxg:GridControl.TotalSummary>
-                                    <dxg:GridSummaryItem FieldName="Name" SummaryType="Count"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="Prihod" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="Rashod" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
                                     <dxg:GridSummaryItem FieldName="Quantity" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="StartQuantity" SummaryType="Sum"
                                                          DisplayFormat="n2" />
                                     <dxg:GridSummaryItem FieldName="SummaWONaklad" SummaryType="Sum"
                                                          DisplayFormat="n2" />
                                     <dxg:GridSummaryItem FieldName="Summa" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="SummaInWONaklad" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="SummaIn" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="SummaOut" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="SummaOutWONaklad" SummaryType="Sum"
                                                          DisplayFormat="n2" />
                                 </dxg:GridControl.TotalSummary>
                                 <dxg:GridControl.View>

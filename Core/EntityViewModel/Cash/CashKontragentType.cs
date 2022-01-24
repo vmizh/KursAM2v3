@@ -12,7 +12,9 @@ namespace Core.EntityViewModel.Cash
         Cash = 3,
         [Display(Name = "Банк")] 
         Bank = 4,
-        [Display(Name = "Не выбран")] 
-        NotChoice = 5
+        [Display(Name = "Акционер")] 
+        StockHolder = 5,
+        [Display(Name = "Не выбран")]
+        NotChoice = 0,
     }
 }

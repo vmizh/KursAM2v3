@@ -12,6 +12,11 @@ using KursAM2.Managers;
 
 namespace KursAM2.View.DialogUserControl
 {
+    public class StockHolderSelectDialog : RSWindowViewModelBase, IDataUserControl
+    {
+        public DependencyObject LayoutControl { get; }
+    }
+
     public class KontragentSelectDialog : RSWindowViewModelBase, IDataUserControl
     {
         private readonly bool? IsBalans;

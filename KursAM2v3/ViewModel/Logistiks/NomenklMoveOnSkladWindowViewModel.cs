@@ -186,7 +186,7 @@ namespace KursAM2.ViewModel.Logistiks
                         _ =>
                             _.DDT_NOMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
                             _.SD_24.DD_DATE >= StartDate && _.SD_24.DD_DATE <= EndDate &&
-                            _.SD_24.DD_TYPE_DC == 2010000005)
+                            _.SD_24.DD_TYPE_DC == 2010000005 && _.DDT_KOL_PRIHOD > 0)
                     .ToList();
                 foreach (var doc in docs)
                 {
@@ -239,10 +239,10 @@ namespace KursAM2.ViewModel.Logistiks
                         From = doc.SD_24.DD_KONTR_OTPR_DC != null
                             ? MainReferences.GetKontragent(doc.SD_24.DD_KONTR_OTPR_DC).Name
                             // ReSharper disable once PossibleInvalidOperationException
-                            : MainReferences.Warehouses[doc.SD_24.DD_SKLAD_OTPR_DC.Value].Name,
+                            : MainReferences.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC).Name,
                         // ReSharper disable once AssignNullToNotNullAttribute
                         // ReSharper disable once PossibleInvalidOperationException
-                        To = MainReferences.Warehouses[doc.SD_24.DD_SKLAD_POL_DC.Value].Name
+                        To = MainReferences.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC).Name
                     };
                     if (doc.TD_26 != null)
                     {
@@ -257,7 +257,7 @@ namespace KursAM2.ViewModel.Logistiks
                     }
                     else
                     {
-                        newItem.DocumentName = newItem.DocumentName + " (Возврат товара)";
+                        newItem.DocumentName = newItem.DocumentName + (doc.SD_24.DD_VOZVRAT == 1 ?  " (Возврат товара)" : " (Внутреннее перемещение)");
                         newItem.SummaIn = Nomenkl.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE) *
                                           doc.DDT_KOL_PRIHOD;
                         newItem.SummaOut = 0;
@@ -300,6 +300,41 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaOut = doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceStart,
                         SummaDelta = -doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceEnd,
                         Note = doc.SD_24.DD_NOTES + " / " + doc.TD_84.SD_84.SF_NOTE
+                    });
+                }
+
+                docs = ctx.TD_24
+                    .Include(_ => _.SD_24)
+                    .Include(_ => _.SD_24.SD_201)
+                    .Include(_ => _.TD_84)
+                    .Include(_ => _.TD_84.SD_84)
+                    .Where(
+                        _ =>
+                            _.DDT_NOMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
+                            _.SD_24.DD_DATE >= StartDate && _.SD_24.DD_DATE <= EndDate &&
+                            _.SD_24.DD_TYPE_DC == 2010000003)
+                    .ToList();
+                foreach (var doc in docs)
+                {
+                    if (MustExclude(exclude, doc)) continue;
+                    DocumentList.Add(new NomPriceDocumentViewModel
+                    {
+                        DocCode = doc.DOC_CODE,
+                        DocumentName = doc.SD_24.SD_201.D_NAME + (doc.TD_84 == null ? "  (внутреннее перемещение)" : " (отгрузка)"),
+                        DocumentNum = doc.SD_24.DD_IN_NUM + "/" + doc.SD_24.DD_EXT_NUM,
+                        DocumentDate = doc.SD_24.DD_DATE,
+                        QuantityIn = 0,
+                        QuantityOut = doc.DDT_KOL_RASHOD,
+                        QuantityDelta = - doc.DDT_KOL_RASHOD,
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        // ReSharper disable once PossibleInvalidOperationException
+                        From = MainReferences.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC).Name,
+                        To = doc.SD_24.DD_KONTR_POL_DC != null ? MainReferences.GetKontragent(doc.SD_24.DD_KONTR_POL_DC)?.Name
+                        : MainReferences.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC)?.Name,
+                        SummaIn = 0,
+                        SummaOut = doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceStart,
+                        SummaDelta = -doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceEnd,
+                        Note = doc.SD_24.DD_NOTES + " / " + (doc.TD_84 != null ? doc.TD_84.SD_84.SF_NOTE : string.Empty) 
                     });
                 }
 
@@ -445,7 +480,7 @@ namespace KursAM2.ViewModel.Logistiks
                         QuantityDelta = doc.DDT_KOL_PRIHOD - doc.DDT_KOL_RASHOD,
                         // ReSharper disable once PossibleInvalidOperationException
                         // ReSharper disable once AssignNullToNotNullAttribute
-                        From = MainReferences.Warehouses[doc.SD_24.DD_SKLAD_POL_DC.Value].Name,
+                        From = MainReferences.Warehouses[doc.SD_24.DD_SKLAD_OTPR_DC.Value].Name,
                         // ReSharper disable once AssignNullToNotNullAttribute
                         // ReSharper disable once PossibleInvalidOperationException
                         To = MainReferences.Warehouses[doc.SD_24.DD_SKLAD_POL_DC.Value].Name,
@@ -507,7 +542,7 @@ namespace KursAM2.ViewModel.Logistiks
                         _ =>
                             _.DDT_NOMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
                             _.SD_24.DD_DATE >= StartDate && _.SD_24.DD_DATE <= EndDate &&
-                            _.SD_24.DD_TYPE_DC == 2010000005
+                            _.SD_24.DD_TYPE_DC == 2010000005 && _.DDT_KOL_PRIHOD > 0
                             && (_.SD_24.DD_SKLAD_POL_DC == storeDC || _.SD_24.DD_SKLAD_OTPR_DC == storeDC))
                     .ToList();
                 foreach (var doc in docs)
@@ -545,7 +580,7 @@ namespace KursAM2.ViewModel.Logistiks
                             _.DDT_NOMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
                             _.SD_24.DD_DATE >= StartDate && _.SD_24.DD_DATE <= EndDate &&
                             _.SD_24.DD_TYPE_DC == 2010000001
-                            && (_.SD_24.DD_SKLAD_POL_DC == storeDC || _.SD_24.DD_SKLAD_OTPR_DC == storeDC))
+                            && _.SD_24.DD_SKLAD_POL_DC == storeDC)
                     .ToList();
                 foreach (var doc in docs)
                 {
@@ -562,10 +597,10 @@ namespace KursAM2.ViewModel.Logistiks
                         From = doc.SD_24.DD_KONTR_OTPR_DC != null
                             ? MainReferences.GetKontragent(doc.SD_24.DD_KONTR_OTPR_DC).Name
                             // ReSharper disable once PossibleInvalidOperationException
-                            : MainReferences.Warehouses[doc.SD_24.DD_SKLAD_OTPR_DC.Value].Name,
+                            : MainReferences.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC).Name,
                         // ReSharper disable once AssignNullToNotNullAttribute
                         // ReSharper disable once PossibleInvalidOperationException
-                        To = MainReferences.Warehouses[doc.SD_24.DD_SKLAD_POL_DC.Value].Name
+                        To = MainReferences.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC).Name
                     };
                     if (doc.TD_26 != null)
                     {
@@ -581,7 +616,7 @@ namespace KursAM2.ViewModel.Logistiks
                     else
                     {
                         if (doc.SD_24.DD_SKLAD_OTPR_DC == null)
-                            newItem.DocumentName = newItem.DocumentName + " (Возврат товара)";
+                            newItem.DocumentName = newItem.DocumentName + (doc.SD_24.DD_VOZVRAT == 1 ?  " (Возврат товара)" : " (Внутреннее перемещение)");
 
                         newItem.SummaIn = Nomenkl.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE) *
                                           doc.DDT_KOL_PRIHOD;
@@ -625,6 +660,43 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = -doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceEnd,
                         Note = doc.SD_24.DD_NOTES + " / " + doc.TD_84?.SD_84.SF_NOTE
                     });
+
+                docs = ctx.TD_24
+                    .Include(_ => _.SD_24)
+                    .Include(_ => _.SD_24.SD_201)
+                    .Include(_ => _.TD_84)
+                    .Include(_ => _.TD_84.SD_84)
+                    .Where(
+                        _ =>
+                            _.DDT_NOMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
+                            _.SD_24.DD_DATE >= StartDate && _.SD_24.DD_DATE <= EndDate &&
+                            _.SD_24.DD_SKLAD_OTPR_DC == storeDC &&
+                            _.SD_24.DD_TYPE_DC == 2010000003)
+                    .ToList();
+                foreach (var doc in docs)
+                {
+                    if (MustExclude(exclude, doc)) continue;
+                    DocumentList.Add(new NomPriceDocumentViewModel
+                    {
+                        DocCode = doc.DOC_CODE,
+                        DocumentName = doc.SD_24.SD_201.D_NAME + (doc.TD_84 == null ? "  (внутреннее перемещение)" : " (отгрузка)"),
+                        DocumentNum = doc.SD_24.DD_IN_NUM + "/" + doc.SD_24.DD_EXT_NUM,
+                        DocumentDate = doc.SD_24.DD_DATE,
+                        QuantityIn = 0,
+                        QuantityOut = doc.DDT_KOL_RASHOD,
+                        QuantityDelta = - doc.DDT_KOL_RASHOD,
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        // ReSharper disable once PossibleInvalidOperationException
+                        From = MainReferences.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC).Name,
+                        To = doc.SD_24.DD_KONTR_POL_DC != null ? MainReferences.GetKontragent(doc.SD_24.DD_KONTR_POL_DC)?.Name
+                        : MainReferences.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC)?.Name,
+                        SummaIn = 0,
+                        SummaOut = doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceStart,
+                        SummaDelta = -doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceEnd,
+                        Note = doc.SD_24.DD_NOTES + " / " + (doc.TD_84 != null ? doc.TD_84.SD_84.SF_NOTE : string.Empty) 
+                    });
+                }
+
                 var docs2 = ctx.NomenklTransferRow
                     .Include(_ => _.NomenklTransfer)
                     .Where(_ => _.NomenklOutDC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
@@ -839,6 +911,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void LoadForCurrentSklad3()
         {
+            var startdata = NomenklCalculationManager.GetNomenklStoreRemains(StartDate, true);
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var data = ctx.Database.SqlQuery<NomenklCalcMove>("GetNomenklMoveForStore @DateStart, @DateEnd, @StoreDC",  
@@ -860,10 +933,6 @@ namespace KursAM2.ViewModel.Logistiks
                 var listTemp = new List<NomenklMoveOnSkladViewModel>();
                 foreach (var item in nnomlist)
                 {
-                    if (MainReferences.GetNomenkl(item.NomDC).NomenklNumber == "1434")
-                    {
-                        var i = 1;
-                    }
                     var summaIn = item.SummaIn;
                     var summaOut = item.SummaOut;
                     var newitem = new NomenklMoveOnSkladViewModel
@@ -876,6 +945,9 @@ namespace KursAM2.ViewModel.Logistiks
                         QuantityIn = item.Prihod,
                         QuantityOut = item.Rashod
                     };
+                    newitem.QuantityStart = startdata.FirstOrDefault(_ => _.NomenklDC == newitem.Nomenkl.DocCode)?.Remain ?? 0;
+                    var t = startdata.FirstOrDefault(_ => _.NomenklDC == newitem.Nomenkl.DocCode);
+                    newitem.PriceStart = t?.Price ?? 0;
                     listTemp.Add(newitem);
                     switch (newitem.CurrencyName)
                     {
@@ -918,6 +990,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void LoadForAllSklads3()
         {
+            var startdata = NomenklCalculationManager.GetNomenklStoreRemains(StartDate, true);
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var data = ctx.Database.SqlQuery<NomenklCalcMove>("GetNomenklMoveForAll @DateStart, @DateEnd",
@@ -950,6 +1023,9 @@ namespace KursAM2.ViewModel.Logistiks
                         QuantityIn = item.Prihod,
                         QuantityOut = item.Rashod
                     };
+                    newitem.QuantityStart = startdata.Where(_ => _.NomenklDC == newitem.Nomenkl.DocCode).Sum(_ => _.Remain);
+                    var t = startdata.FirstOrDefault(_ => _.NomenklDC == newitem.Nomenkl.DocCode);
+                    newitem.PriceStart = t?.Price ?? 0;
                     listTemp.Add(newitem);
                     switch (newitem.CurrencyName)
                     {
@@ -979,11 +1055,55 @@ namespace KursAM2.ViewModel.Logistiks
                             newitem.SummaAllOut = summaOut;
                             continue;
                     }
+                }  
+                foreach (var d in startdata)
+                {
+                    if(listTemp.Any(_ => _.Nomenkl.DocCode == d.NomenklDC)) continue;
+                    var nItem = new NomenklMoveOnSkladViewModel
+                    {
+                        Nomenkl = MainReferences.GetNomenkl(d.NomenklDC),
+                        PriceStart = d.Price,
+                        PriceEnd = d.Price,
+                        QuantityEnd = d.Remain,
+                        QuantityStart = d.Remain,
+                        QuantityIn = 0,
+                        QuantityOut = 0
+                    };
+                    switch (nItem.CurrencyName)
+                    {
+                        case CurrencyCode.RUBName:
+                        case CurrencyCode.RURName:
+                            nItem.SummaRUBStart = nItem.PriceStart * nItem.QuantityStart;
+                            nItem.SummaRUBEnd = nItem.PriceEnd * nItem.QuantityEnd;
+                            nItem.SummaRUBIn = 0;
+                            nItem.SummaRUBOut = 0;
+                            break;
+                        case CurrencyCode.USDName:
+                            nItem.SummaUSDStart = nItem.PriceStart * nItem.QuantityStart;
+                            nItem.SummaUSDEnd = nItem.PriceEnd * nItem.QuantityEnd;
+                            nItem.SummaUSDIn = 0;
+                            nItem.SummaUSDOut = 0;
+                            break;
+                        case CurrencyCode.EURName:
+                            nItem.SummaEURStart = nItem.PriceStart * nItem.QuantityStart;
+                            nItem.SummaEUREnd = nItem.PriceEnd * nItem.QuantityEnd;
+                            nItem.SummaEURIn = 0;
+                            nItem.SummaEUROut = 0;
+                            break;
+                        default:
+                            nItem.SummaAllStart = nItem.PriceStart * nItem.QuantityStart;
+                            nItem.SummaAllEnd = nItem.PriceEnd * nItem.QuantityEnd;
+                            nItem.SummaAllIn = 0;
+                            nItem.SummaAllOut = 0;
+                            break;
+                    }
+                    listTemp.Add(nItem);
                 }
-
                 var delList = new List<NomenklMoveOnSkladViewModel>(listTemp.Where(nl => nl.QuantityStart == 0
                     && nl.QuantityIn == 0 && nl.QuantityOut == 0 && nl.QuantityEnd == 0));
                 foreach (var nl in delList) listTemp.Remove(nl);
+
+              
 
                 NomenklMoveList = new ObservableCollection<NomenklMoveOnSkladViewModel>(listTemp);
                 RaisePropertyChanged(nameof(NomenklMoveList));
