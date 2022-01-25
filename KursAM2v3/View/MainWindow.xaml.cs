@@ -197,6 +197,7 @@ namespace KursAM2.View
                         };
                         shbls.Form = form;
                         form.Show();
+                        shbls.RefreshData(null);
                         break;
                     //Ведомости наяислений акционерам
                     case "Ведомости начислений акционерам":

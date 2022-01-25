@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
@@ -229,11 +228,80 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand AddFromDocumentCommand
         {
-            get { return new Command(AddFromDocument, _ => true); }
+            get { return new Command(AddFromDocument, _ => Document.InvoiceClient != null); }
         }
 
         private void AddFromDocument(object obj)
         {
+            var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                foreach (var r in Document.InvoiceClient.Rows)
+                {
+                    var oldf = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Entity.SFT_NEMENKL_DC);
+                    if (oldf != null)
+                    {
+                        if (oldf.DDT_SFACT_DC == r.DocCode && oldf.DDT_SFACT_ROW_CODE == r.Code)
+                            oldf.DDT_KOL_RASHOD = r.Quantity;
+                        continue;
+                    }
+
+                    var otgr = ctx.TD_24.Where(_ => _.DDT_SFACT_DC == r.DocCode
+                                                    && _.DDT_SFACT_ROW_CODE == r.Code);
+                    if (otgr.Any())
+                    {
+                        var kol = otgr.Sum(_ => _.DDT_KOL_RASHOD);
+                        if (kol < r.Quantity)
+                        {
+                            var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
+                            var newItem = new WaybillRow
+                            {
+                                DocCode = Document.DocCode,
+                                Code = newCode,
+                                Nomenkl = n,
+                                DDT_KOL_RASHOD = r.Quantity - kol,
+                                Unit = n.Unit,
+                                Currency = n.Currency,
+                                SchetLinkedRow = r,
+                                State = RowStatus.NewRow,
+                                DDT_SFACT_DC = r.DocCode,
+                                DDT_SFACT_ROW_CODE = r.Code
+                            };
+                            Document.Rows.Add(newItem);
+                        }
+                    }
+                    else
+                    {
+                        var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
+                        var m = NomenklManager.GetNomenklCount(Document.Date, n.DocCode,
+                            Document.WarehouseOut.DocCode);
+                        if (m <= 0)
+                        {
+                            winManager.ShowWinUIMessageBox(
+                                $"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
+                                $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
+                                $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
+                                "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            continue;
+                        }
+
+                        var newItem = new WaybillRow
+                        {
+                            DocCode = Document.DocCode,
+                            Code = newCode,
+                            Nomenkl = n,
+                            DDT_KOL_RASHOD = r.Quantity,
+                            Unit = n.Unit,
+                            Currency = n.Currency,
+                            SchetLinkedRow = r,
+                            State = RowStatus.NewRow,
+                            DDT_SFACT_DC = r.DocCode,
+                            DDT_SFACT_ROW_CODE = r.Code
+                        };
+                        Document.Rows.Add(newItem);
+                    }
+                }
+            }
         }
 
         public ICommand AddNomenklCommand
@@ -248,7 +316,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (nomenkls == null || nomenkls.Count <= 0) return;
             foreach (var n in nomenkls)
             {
-                var m = NomenklCalculationManager.NomenklRemain(Document.Date, n.DocCode,
+                var m = NomenklManager.GetNomenklCount(Document.Date, n.DocCode,
                     Document.WarehouseOut.DocCode);
                 if (m <= 0)
                 {
@@ -402,10 +470,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                     Unit = n.Unit,
                                     Currency = n.Currency,
                                     SchetLinkedRow = r,
-                                    State = RowStatus.NewRow
+                                    State = RowStatus.NewRow,
+                                    DDT_SFACT_DC = r.DocCode,
+                                    DDT_SFACT_ROW_CODE = r.Code
                                 };
-                                newItem.DDT_SFACT_DC = r.DocCode;
-                                newItem.DDT_SFACT_ROW_CODE = r.Code;
                                 Document.Rows.Add(newItem);
                             }
                         }
