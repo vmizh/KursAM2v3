@@ -10,7 +10,6 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.StockHolder;
 using Core.Menu;
 using Core.ViewModel.Base;
-using DevExpress.Mvvm.POCO;
 using KursAM2.View.StockHolder;
 
 namespace KursAM2.ViewModel.StockHolder
@@ -183,14 +182,46 @@ namespace KursAM2.ViewModel.StockHolder
 
         private void LoadPeriods()
         {
+            LoadMoneyMove();
+            Periods.Clear();
+            var dates = StockHolderMoneyMoves.Select(_ => _.DocumentDate).Distinct().ToList();
+            var dPeriods = DatePeriod.GenerateIerarhy(dates, PeriodIerarhy.YearMonth).ToList();
+            foreach (var newDate in dPeriods.Select(d => new StockHolderBalanseItemPeriod
+                     {
+                         Id = d.Id,
+                         ParentId = d.ParentId,
+                         DateStart = d.DateStart,
+                         DateEnd = d.DateEnd,
+                         Name = d.Name
+
+                     }))
+            {
+                Periods.Add(newDate);
+            }
         }
 
         private void LoadMoneyMove()
         {
+            if (CurrentStockHolder == null) return;
             StockHolderMoneyMoves.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var вфtaCashIn  = ctx.SD_33.Where(_ => _.StockHolderId == CurrentStockHolder.StockHolder.Id);
+                var dataCashIn  = ctx.SD_33.Where(_ => _.StockHolderId == CurrentStockHolder.StockHolder.Id);
+                var dataCashOut = ctx.SD_34.Where(_ => _.StockHolderId == CurrentStockHolder.StockHolder.Id);
+                foreach (var d in dataCashOut)
+                {
+                    var newItem = new StockHolderMoneyMove
+                    {
+                        DocCode = d.DOC_CODE,
+                        DocumentDate = d.DATE_ORD ?? DateTime.Today,
+                        Currency = MainReferences.GetCurrency(d.CRS_DC),
+                        DocumentName = "Расходный кассовый ордер",
+                        DocumentNumber = d.NUM_ORD.ToString(),
+                        SummaOut = d.SUMM_ORD ?? 0
+
+                    };
+                    StockHolderMoneyMoves.Add(newItem);
+                }
             }
         }
 
@@ -254,6 +285,10 @@ namespace KursAM2.ViewModel.StockHolder
         [Display(AutoGenerateField = true, Name = "№", GroupName = "Документ")]
         [Editable(false)]
         public string DocumentNumber { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Дата", GroupName = "Документ")]
+        [Editable(false)]
+        public DateTime DocumentDate { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Валюта", GroupName = "Документ")]
         [Editable(false)]

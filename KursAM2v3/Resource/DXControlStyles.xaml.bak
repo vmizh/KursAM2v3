@@ -4,15 +4,17 @@
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-                    xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v20.1">
+                    xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v21.1"
+                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors">
     <Style x:Key="GridControl.Base" TargetType="dxg:GridControl">
         <Setter Property="ShowBorder" Value="False" />
         <Setter Property="EnableSmartColumnsGeneration" Value="True" />
-        <Setter Property="AutoGenerateColumns" Value="AddNew" />
+        <Setter Property="AutoGenerateColumns" Value="RemoveOld" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="MaxHeight" Value="10000" />
         <Setter Property="MaxWidth" Value="10000" />
+        <Setter Property="dx:DXSerializer.Enabled" Value="True"/>
         <Setter Property="dx:DXSerializer.StoreLayoutMode" Value="All" />
         <Setter Property="dxg:DataControlSerializationOptions.AddNewColumns" Value="True" />
         <Setter Property="dxg:DataControlSerializationOptions.RemoveOldColumns" Value="True" />
@@ -36,6 +38,7 @@
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="MaxHeight" Value="10000" />
         <Setter Property="MaxWidth" Value="10000" />
+        <Setter Property="dx:DXSerializer.Enabled" Value="True"/>
         <Setter Property="dx:DXSerializer.SerializationID" Value="gridRows" />
         <Setter Property="dx:DXSerializer.StoreLayoutMode" Value="All" />
         <Setter Property="dxg:DataControlSerializationOptions.AddNewColumns" Value="True" />
@@ -57,32 +60,27 @@
                 <ContextMenu>
                     <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}">
                         <MenuItem.Icon>
-                            <Image
-                                Source="{StaticResource DocOpenDrawingImage}" />
+                            <Image Source="{StaticResource DocOpenDrawingImage}" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
                     <MenuItem Header="Создать новый документ">
                         <MenuItem.Icon>
-                            <Image
-                                Source="{StaticResource AddDrawingImage}" />
+                            <Image Source="{StaticResource AddDrawingImage}" />
                         </MenuItem.Icon>
                         <MenuItem Header="Пустой документ" Command="{Binding DocNewEmptyCommand}">
                             <MenuItem.Icon>
-                                <Image
-                                    Source="{StaticResource AddEmptyDrawingImage}" />
+                                <Image Source="{StaticResource AddEmptyDrawingImage}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="С текущими реквизитами" Command="{Binding DocNewCopyRequisiteCommand}">
                             <MenuItem.Icon>
-                                <Image
-                                    Source="{StaticResource AddRequisiteDrawingImage}" />
+                                <Image Source="{StaticResource AddRequisiteDrawingImage}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Копия текущего" Command="{Binding DocNewCopyCommand}">
                             <MenuItem.Icon>
-                                <Image
-                                    Source="{StaticResource AddCopyDrawingImage}" />
+                                <Image Source="{StaticResource AddCopyDrawingImage}" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
@@ -92,13 +90,40 @@
                               CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
                                               AncestorType={x:Type ContextMenu}}}">
                         <MenuItem.Icon>
-                            <Image
-                                Source="{StaticResource ExportDrawingImage}" />
+                            <Image Source="{StaticResource ExportDrawingImage}" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>
             </Setter.Value>
         </Setter>
+        <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <ItemsControl>
+                        <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding DocumentOpenCommand}"
+                                               PassEventArgsToCommand="True" MarkRoutedEventsAsHandled="True">
+                            <dxmvvm:EventToCommand.EventArgsConverter>
+                                <dx:EventArgsToDataRowConverter />
+                            </dxmvvm:EventToCommand.EventArgsConverter>
+                        </dxmvvm:EventToCommand>
+                        <dxmvvm:KeyToCommand Command="{Binding DocumentOpenCommand}"
+                                             KeyGesture="Enter" />
+                        <dxmvvm:EventToCommand EventName="AutoGeneratingColumn"
+                                               Command="{Binding AutoGeneratingColumnCommand}"
+                                               PassEventArgsToCommand="True" />
+                    </ItemsControl>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="TableView.SearchWithoutMenu" TargetType="dxg:TableView">
+        <Setter Property="AllowEditing" Value="False" />
+        <Setter Property="ShowFixedTotalSummary" Value="True" />
+        <Setter Property="AllowPerPixelScrolling" Value="True" />
+        <Setter Property="ShowTotalSummary" Value="True" />
+        <Setter Property="ShowAutoFilterRow" Value="True" />
+        <Setter Property="EnableImmediatePosting" Value="True" />
+        <Setter Property="ShowGroupPanel" Value="True" />
         <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -125,6 +150,22 @@
         <Setter Property="ShowAutoFilterRow" Value="True" />
         <Setter Property="EnableImmediatePosting" Value="True" />
         <Setter Property="EditFormPostMode" Value="Immediate" />
+        <Setter Property="CellTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Grid>
+                        <Border Name="PART_ValidationBorder" BorderThickness="2" BorderBrush="Black"
+                                Visibility="Collapsed" />
+                        <dxe:InplaceBaseEdit Name="PART_Editor" />
+                    </Grid>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding (dxe:BaseEdit.HasValidationError)}" Value="True">
+                            <Setter TargetName="PART_ValidationBorder" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
     <dx:DXSplashScreenService x:Key="WaitIndicatorService">
         <dx:DXSplashScreenService.ViewTemplate>
@@ -160,4 +201,33 @@
             <Label Margin="5 0" Content="Оплата" />
         </StackPanel>
     </DataTemplate>
+    <Style x:Key="ButtonSearchStyle" TargetType="dxe:ButtonEdit">
+        <Setter Property="AllowDefaultButton" Value="False"/>
+        <Setter Property="Buttons">
+            <Setter.Value>
+                <dxe:ButtonInfoCollection>
+                    <dxe:ButtonInfo
+                            GlyphKind="Search"
+                            Command="{Binding SearchCommand}" />
+                        <dxe:ButtonInfo
+                            Command="{Binding SearchClearCommand}"
+                            GlyphKind="Cancel" />
+                </dxe:ButtonInfoCollection>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
+            <Setter.Value>
+               <DataTemplate>
+                   <ItemsControl>
+                       <dxmvvm:EventToCommand EventName="EditValueChanging"
+                                              Command="{Binding SearchCommand}" />
+                       <dxmvvm:KeyToCommand EventName="KeyDown" KeyGesture="Enter"
+                                            Command="{Binding SearchCommand}"/>
+                       <dxmvvm:KeyToCommand EventName="KeyDown" KeyGesture="Esc"
+                                            Command="{Binding SearchClearCommand}"/>
+                   </ItemsControl>
+               </DataTemplate> 
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

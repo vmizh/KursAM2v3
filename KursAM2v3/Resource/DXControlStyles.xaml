@@ -4,7 +4,7 @@
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-                    xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v21.1"
+                    xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v21.2"
                     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors">
     <Style x:Key="GridControl.Base" TargetType="dxg:GridControl">
         <Setter Property="ShowBorder" Value="False" />
@@ -14,7 +14,7 @@
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="MaxHeight" Value="10000" />
         <Setter Property="MaxWidth" Value="10000" />
-        <Setter Property="dx:DXSerializer.Enabled" Value="True"/>
+        <Setter Property="dx:DXSerializer.Enabled" Value="True" />
         <Setter Property="dx:DXSerializer.StoreLayoutMode" Value="All" />
         <Setter Property="dxg:DataControlSerializationOptions.AddNewColumns" Value="True" />
         <Setter Property="dxg:DataControlSerializationOptions.RemoveOldColumns" Value="True" />
@@ -38,7 +38,7 @@
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="MaxHeight" Value="10000" />
         <Setter Property="MaxWidth" Value="10000" />
-        <Setter Property="dx:DXSerializer.Enabled" Value="True"/>
+        <Setter Property="dx:DXSerializer.Enabled" Value="True" />
         <Setter Property="dx:DXSerializer.SerializationID" Value="gridRows" />
         <Setter Property="dx:DXSerializer.StoreLayoutMode" Value="All" />
         <Setter Property="dxg:DataControlSerializationOptions.AddNewColumns" Value="True" />
@@ -107,7 +107,8 @@
                             </dxmvvm:EventToCommand.EventArgsConverter>
                         </dxmvvm:EventToCommand>
                         <dxmvvm:KeyToCommand Command="{Binding DocumentOpenCommand}"
-                                             KeyGesture="Enter" />
+                                             KeyGesture="Enter"
+                                            />
                         <dxmvvm:EventToCommand EventName="AutoGeneratingColumn"
                                                Command="{Binding AutoGeneratingColumnCommand}"
                                                PassEventArgsToCommand="True" />
@@ -135,7 +136,8 @@
                             </dxmvvm:EventToCommand.EventArgsConverter>
                         </dxmvvm:EventToCommand>
                         <dxmvvm:KeyToCommand Command="{Binding DocumentOpenCommand}"
-                                             KeyGesture="Enter" />
+                                             KeyGesture="Enter"
+                                            />
                         <dxmvvm:EventToCommand EventName="AutoGeneratingColumn"
                                                Command="{Binding AutoGeneratingColumnCommand}"
                                                PassEventArgsToCommand="True" />
@@ -202,15 +204,13 @@
         </StackPanel>
     </DataTemplate>
     <Style x:Key="ButtonSearchStyle" TargetType="dxe:ButtonEdit">
-        <Setter Property="AllowDefaultButton" Value="False"/>
+        <Setter Property="AllowDefaultButton" Value="False" />
         <Setter Property="Buttons">
             <Setter.Value>
                 <dxe:ButtonInfoCollection>
-                    <dxe:ButtonInfo
-                            GlyphKind="Search"
+                    <dxe:ButtonInfo GlyphKind="Search"
                             Command="{Binding SearchCommand}" />
-                        <dxe:ButtonInfo
-                            Command="{Binding SearchClearCommand}"
+                        <dxe:ButtonInfo Command="{Binding SearchClearCommand}"
                             GlyphKind="Cancel" />
                 </dxe:ButtonInfoCollection>
             </Setter.Value>
@@ -222,9 +222,9 @@
                        <dxmvvm:EventToCommand EventName="EditValueChanging"
                                               Command="{Binding SearchCommand}" />
                        <dxmvvm:KeyToCommand EventName="KeyDown" KeyGesture="Enter"
-                                            Command="{Binding SearchCommand}"/>
+                                            Command="{Binding SearchCommand}" />
                        <dxmvvm:KeyToCommand EventName="KeyDown" KeyGesture="Esc"
-                                            Command="{Binding SearchClearCommand}"/>
+                                            Command="{Binding SearchClearCommand}" />
                    </ItemsControl>
                </DataTemplate> 
             </Setter.Value>

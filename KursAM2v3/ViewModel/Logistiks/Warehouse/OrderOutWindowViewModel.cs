@@ -107,7 +107,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand PrintOrderCommand
         {
-            get { return new Command(PrintOrder, param => State != RowStatus.NewRow); }
+            get { return new Command(PrintOrder, _ => State != RowStatus.NewRow); }
         }
 
         private void PrintOrder(object obj)
@@ -209,8 +209,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             foreach (var n in nomenkls)
                 if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode && !n.IsUsluga))
                 {
-                    var m = NomenklCalculationManager.NomenklRemain(Document.Date, n.DocCode,
-                        Document.WarehouseOut.DOC_CODE);
+                    var m = NomenklManager.GetNomenklCount(Document.Date, n.DocCode,
+                        Document.WarehouseOut.DocCode);
                     if (m <= 0)
                     {
                         winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
