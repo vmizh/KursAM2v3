@@ -11,6 +11,7 @@ using Core.EntityViewModel.StockHolder;
 using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
@@ -178,6 +179,47 @@ namespace KursAM2.ViewModel.StockHolder
         #endregion
 
         #region Commands
+
+        public override bool IsDocDeleteAllow => Document?.State != RowStatus.NewRow;
+
+        public override void DocDelete(object form)
+        {
+            var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?", "Запрос",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+            switch (res)
+            {
+                case MessageBoxResult.Yes:
+                    if (Document.State == RowStatus.NewRow)
+                    {
+                        Form.Close();
+                    }
+                    else
+                    {
+                        unitOfWork.CreateTransaction();
+                        try
+                        {
+                            foreach (var r in Document.Rows)
+                            {
+                                unitOfWork.Context.StockHolderAccrualRows.Remove(r.Entity);
+                            }
+                            unitOfWork.Context.StockHolderAccrual.Remove(Document.Entity);
+                            unitOfWork.Context.SaveChanges();
+                            unitOfWork.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            unitOfWork.Rollback();
+                            WindowManager.ShowError(ex);
+                        }
+                    }
+
+                    Form.Close();
+                    return;
+                case MessageBoxResult.No:
+                    break;
+            }
+        }
 
         public ICommand DeleteStockHolderCommand
         {
@@ -351,13 +393,23 @@ namespace KursAM2.ViewModel.StockHolder
 
         public override void SaveData(object data)
         {
-            if (Document.State == RowStatus.NewRow)
-                Document.Num = unitOfWork.Context.StockHolderAccrual.Any()
-                    ? unitOfWork.Context.StockHolderAccrual.Max(_ => _.Num) + 1
-                    : 1;
-            unitOfWork.CreateTransaction();
-            unitOfWork.Save();
-            unitOfWork.Commit();
+            try
+            {
+                if (Document.State == RowStatus.NewRow)
+                    Document.Num = unitOfWork.Context.StockHolderAccrual.Any()
+                        ? unitOfWork.Context.StockHolderAccrual.Max(_ => _.Num) + 1
+                        : 1;
+                unitOfWork.CreateTransaction();
+                unitOfWork.Save();
+                unitOfWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                WindowManager.ShowError(ex);
+                return;
+            }
+
             RefreshData(Document.Id);
         }
 

@@ -10,6 +10,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.StockHolder;
 using Core.Menu;
 using Core.ViewModel.Base;
+using KursAM2.Managers;
 using KursAM2.View.StockHolder;
 
 namespace KursAM2.ViewModel.StockHolder
@@ -28,6 +29,27 @@ namespace KursAM2.ViewModel.StockHolder
 
         #region Commands
 
+        public override bool IsDocumentOpenAllow => CurrentMoneyDoc != null;
+
+        public override void DocumentOpen(object obj)
+        {
+            switch (CurrentMoneyDoc.DocumentName)
+            {
+                 case "Приходный кассовый ордер":
+                     // ReSharper disable once PossibleInvalidOperationException
+                     DocumentsOpenManager.Open(DocumentType.CashIn, (decimal)CurrentMoneyDoc.DocCode);
+                    break;
+                 case "Расходный кассовый ордер":
+                     // ReSharper disable once PossibleInvalidOperationException
+                     DocumentsOpenManager.Open(DocumentType.CashOut, (decimal)CurrentMoneyDoc.DocCode);
+                     break;
+                 case "Начисление акционеру":
+                     // ReSharper disable once PossibleInvalidOperationException
+                     DocumentsOpenManager.Open(DocumentType.StockHolderAccrual,0, (Guid)CurrentMoneyDoc.DocId);
+                     break;
+            }
+        }
+
         public override void RefreshData(object obj)
         {
             stockHoldersAll.Clear();
@@ -40,7 +62,7 @@ namespace KursAM2.ViewModel.StockHolder
                 var indata = ctx.SD_33.Where(_ => _.StockHolderId != null).ToList();
                 var outdata = ctx.SD_34.Where(_ => _.StockHolderId != null).ToList();
 
-                var shIds = nachdata.Select(_ => _.StockHolderId).ToList();
+                var shIds = nachdata.Select(_ => _.StockHolderId).Distinct().ToList();
                 // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
                 foreach (Guid id in indata.Select(_ => _.StockHolderId))
                 {
@@ -74,8 +96,11 @@ namespace KursAM2.ViewModel.StockHolder
                     StockHolders.Add(newItem);
                 }
             }
-
             SetCrsVisibleStockHolder();
+            if (StockHolders.Count > 0)
+            {
+                CurrentStockHolder = StockHolders.First();
+            }
         }
 
         #endregion
@@ -84,8 +109,10 @@ namespace KursAM2.ViewModel.StockHolder
 
         private StockHolderBalanseItem myCurrentStockHolder;
         private readonly List<StockHolderViewModel> stockHoldersAll = new List<StockHolderViewModel>();
-        private StockHolderBalanseItem myCurrentPeriod;
-        private List<StockHolderMoneyMove> StockHolderMoneyMoves { set; get; } =
+        private StockHolderBalanseItemPeriod myCurrentPeriod;
+        private StockHolderMoneyMove myCurrentMoneyDoc;
+
+        private List<StockHolderMoneyMove> StockHolderMoneyMoves { get; } =
             new List<StockHolderMoneyMove>();
 
         #endregion
@@ -104,13 +131,25 @@ namespace KursAM2.ViewModel.StockHolder
         public ObservableCollection<StockHolderMoneyMove> MoneyMoves { set; get; } =
             new ObservableCollection<StockHolderMoneyMove>();
 
-        public StockHolderBalanseItem CurrentPeriod
+        public StockHolderMoneyMove CurrentMoneyDoc
+        {
+            get => myCurrentMoneyDoc;
+            set
+            {
+                if (myCurrentMoneyDoc == value) return;
+                myCurrentMoneyDoc = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public StockHolderBalanseItemPeriod CurrentPeriod
         {
             get => myCurrentPeriod;
             set
             {
                 if (myCurrentPeriod == value) return;
                 myCurrentPeriod = value;
+                LoadDocumentsForPeriod();
                 RaisePropertyChanged();
             }
         }
@@ -121,8 +160,10 @@ namespace KursAM2.ViewModel.StockHolder
             set
             {
                 if (myCurrentStockHolder == value) return;
-                LoadPeriods();
                 myCurrentStockHolder = value;
+                LoadPeriods();
+                SetCrsVisiblePeriod();
+                CalcPeriodNakopit();
                 RaisePropertyChanged();
             }
         }
@@ -130,6 +171,18 @@ namespace KursAM2.ViewModel.StockHolder
         #endregion
 
         #region Methods
+
+        private void LoadDocumentsForPeriod()
+        {
+            if (CurrentPeriod == null) return;
+            MoneyMoves.Clear();
+            foreach (var m in StockHolderMoneyMoves
+                         .Where(_ => _.DocumentDate >= CurrentPeriod.DateStart &&
+                                     _.DocumentDate <= CurrentPeriod.DateEnd))
+            {
+                MoneyMoves.Add(m);
+            }
+        }
 
         private void SetSumm(StockHolderBalanseItem item, decimal crsDC, decimal? sNach, decimal? sIn, decimal? sOut)
         {
@@ -192,13 +245,59 @@ namespace KursAM2.ViewModel.StockHolder
                          ParentId = d.ParentId,
                          DateStart = d.DateStart,
                          DateEnd = d.DateEnd,
-                         Name = d.Name
-
+                         Name = d.Name,
+                         PeriodType = d.PeriodType
                      }))
             {
+                SetPeriodSum(newDate);
                 Periods.Add(newDate);
             }
         }
+
+        private void SetPeriodSum(StockHolderBalanseItemPeriod periodItem)
+        {
+            foreach (var m in StockHolderMoneyMoves.Where(_ =>
+                         _.DocumentDate >= periodItem.DateStart && _.DocumentDate <= periodItem.DateEnd))
+                switch (m.Currency.DocCode)
+                {
+                    case CurrencyCode.RUB:
+                        periodItem.InRUB += m.SummaIn;
+                        periodItem.OutRUB += m.SummaOut;
+                        periodItem.NachRUB += m.SummaNach;
+                        break;
+                    case CurrencyCode.USD:
+                        periodItem.InUSD += m.SummaIn;
+                        periodItem.OutUSD += m.SummaOut;
+                        periodItem.NachUSD += m.SummaNach;
+                        break;
+                    case CurrencyCode.EUR:
+                        periodItem.InEUR += m.SummaIn;
+                        periodItem.OutEUR += m.SummaOut;
+                        periodItem.NachEUR += m.SummaNach;
+                        break;
+                    case CurrencyCode.GBP:
+                        periodItem.InGBP += m.SummaIn;
+                        periodItem.OutGBP += m.SummaOut;
+                        periodItem.NachGBP += m.SummaNach;
+                        break;
+                    case CurrencyCode.CHF:
+                        periodItem.InCHF += m.SummaIn;
+                        periodItem.OutCHF += m.SummaOut;
+                        periodItem.NachCHF += m.SummaNach;
+                        break;
+                    case CurrencyCode.CNY:
+                        periodItem.InCNY += m.SummaIn;
+                        periodItem.OutCNY += m.SummaOut;
+                        periodItem.NachCNY += m.SummaNach;
+                        break;
+                    case CurrencyCode.SEK:
+                        periodItem.InSEK += m.SummaIn;
+                        periodItem.OutSEK += m.SummaOut;
+                        periodItem.NachSEK += m.SummaNach;
+                        break;
+                }
+        }
+
 
         private void LoadMoneyMove()
         {
@@ -206,8 +305,24 @@ namespace KursAM2.ViewModel.StockHolder
             StockHolderMoneyMoves.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var dataCashIn  = ctx.SD_33.Where(_ => _.StockHolderId == CurrentStockHolder.StockHolder.Id);
+                var dataCashIn = ctx.SD_33.Where(_ => _.StockHolderId == CurrentStockHolder.StockHolder.Id);
                 var dataCashOut = ctx.SD_34.Where(_ => _.StockHolderId == CurrentStockHolder.StockHolder.Id);
+                var dataNach = ctx.StockHolderAccrualRows.Include(_ => _.StockHolderAccrual)
+                    .Where(_ => _.StockHolderId == CurrentStockHolder.StockHolder.Id);
+                foreach (var d in dataCashIn)
+                {
+                    var newItem = new StockHolderMoneyMove
+                    {
+                        DocCode = d.DOC_CODE,
+                        DocumentDate = d.DATE_ORD ?? DateTime.Today,
+                        Currency = MainReferences.GetCurrency(d.CRS_DC),
+                        DocumentName = "Приходный кассовый ордер",
+                        DocumentNumber = d.NUM_ORD.ToString(),
+                        SummaIn = d.SUMM_ORD ?? 0
+                    };
+                    StockHolderMoneyMoves.Add(newItem);
+                }
+
                 foreach (var d in dataCashOut)
                 {
                     var newItem = new StockHolderMoneyMove
@@ -218,10 +333,78 @@ namespace KursAM2.ViewModel.StockHolder
                         DocumentName = "Расходный кассовый ордер",
                         DocumentNumber = d.NUM_ORD.ToString(),
                         SummaOut = d.SUMM_ORD ?? 0
-
                     };
                     StockHolderMoneyMoves.Add(newItem);
                 }
+
+                foreach (var d in dataNach)
+                {
+                    var newItem = new StockHolderMoneyMove
+                    {
+                        DocId = d.DocId,
+                        DocumentDate = d.StockHolderAccrual.Date,
+                        Currency = MainReferences.GetCurrency(d.CurrencyDC),
+                        DocumentName = "Начисление акционеру",
+                        DocumentNumber = d.StockHolderAccrual.Num.ToString(),
+                        SummaNach = d.Summa ?? 0
+                    };
+                    StockHolderMoneyMoves.Add(newItem);
+                }
+            }
+        }
+
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        private void CalcPeriodNakopit()
+        {
+            foreach (var p in Periods.OrderByDescending(_ => _.DateEnd))
+            {
+                var d = Periods.Where(_ => _.DateEnd <= p.DateEnd && _.PeriodType == PeriodType.Day);
+                // ReSharper disable once PossibleMultipleEnumeration
+                if (!d.Any()) continue;
+
+                p.ResultRUB = d.Sum(_ => _.OutRUB) - d.Sum(_ => _.InRUB) - d.Sum(_ => _.NachRUB);
+                p.ResultUSD = d.Sum(_ => _.OutUSD) - d.Sum(_ => _.InUSD) - d.Sum(_ => _.NachUSD);
+                p.ResultEUR = d.Sum(_ => _.OutEUR) - d.Sum(_ => _.InEUR) - d.Sum(_ => _.NachEUR);
+                p.ResultGBP = d.Sum(_ => _.OutGBP) - d.Sum(_ => _.InGBP) - d.Sum(_ => _.NachGBP);
+                p.ResultCHF = d.Sum(_ => _.OutCHF) - d.Sum(_ => _.InCHF) - d.Sum(_ => _.NachCHF);
+                p.ResultSEK = d.Sum(_ => _.OutSEK) - d.Sum(_ => _.InSEK) - d.Sum(_ => _.NachSEK);
+                p.ResultCNY = d.Sum(_ => _.OutCNY) - d.Sum(_ => _.InCNY) - d.Sum(_ => _.NachCNY);
+            }
+        }
+
+        private void SetCrsVisiblePeriod()
+        {
+            if (Form is StockHoldersBalancesView frm)
+            {
+                var bandUSD = frm.treePeriods.Bands.FirstOrDefault(_ => (string)_.Header == "USD");
+                var bandRUB = frm.treePeriods.Bands.FirstOrDefault(_ => (string)_.Header == "RUB");
+                var bandEUR = frm.treePeriods.Bands.FirstOrDefault(_ => (string)_.Header == "EUR");
+                var bandSEK = frm.treePeriods.Bands.FirstOrDefault(_ => (string)_.Header == "SEK");
+                var bandCNY = frm.treePeriods.Bands.FirstOrDefault(_ => (string)_.Header == "CNY");
+                var bandCHF = frm.treePeriods.Bands.FirstOrDefault(_ => (string)_.Header == "CHF");
+                var bandGBP = frm.treePeriods.Bands.FirstOrDefault(_ => (string)_.Header == "GBP");
+                if (bandUSD != null)
+                    bandUSD.Visible = !(StockHolderMoneyMoves.Sum(_ => _.NachUSD) == 0 &&
+                                        StockHolderMoneyMoves.Sum(_ => _.InUSD) == 0 &&
+                                        StockHolderMoneyMoves.Sum(_ => _.OutUSD) == 0);
+                if (bandRUB != null)
+                    bandRUB.Visible = !(StockHolders.Sum(_ => _.NachRUB) == 0 && StockHolders.Sum(_ => _.InRUB) == 0 &&
+                                        StockHolders.Sum(_ => _.OutRUB) == 0);
+                if (bandEUR != null)
+                    bandEUR.Visible = !(StockHolders.Sum(_ => _.NachEUR) == 0 && StockHolders.Sum(_ => _.InEUR) == 0
+                                                                              && StockHolders.Sum(_ => _.OutEUR) == 0);
+                if (bandSEK != null)
+                    bandSEK.Visible = !(StockHolders.Sum(_ => _.NachSEK) == 0 && StockHolders.Sum(_ => _.InSEK) == 0
+                                                                              && StockHolders.Sum(_ => _.OutSEK) == 0);
+                if (bandCNY != null)
+                    bandCNY.Visible = !(StockHolders.Sum(_ => _.NachCNY) == 0 && StockHolders.Sum(_ => _.InCNY) == 0
+                                                                              && StockHolders.Sum(_ => _.OutCNY) == 0);
+                if (bandCHF != null)
+                    bandCHF.Visible = !(StockHolders.Sum(_ => _.NachCHF) == 0 && StockHolders.Sum(_ => _.InCHF) == 0
+                                                                              && StockHolders.Sum(_ => _.OutCHF) == 0);
+                if (bandGBP != null)
+                    bandGBP.Visible = !(StockHolders.Sum(_ => _.NachGBP) == 0 && StockHolders.Sum(_ => _.InGBP) == 0
+                                                                              && StockHolders.Sum(_ => _.OutGBP) == 0);
             }
         }
 
@@ -280,6 +463,11 @@ namespace KursAM2.ViewModel.StockHolder
 
         [Display(AutoGenerateField = false)]
         [Editable(false)]
+        public Guid? DocId { set; get; }
+
+
+        [Display(AutoGenerateField = false)]
+        [Editable(false)]
         public int? Code { set; get; }
 
         [Display(AutoGenerateField = true, Name = "№", GroupName = "Документ")]
@@ -312,141 +500,141 @@ namespace KursAM2.ViewModel.StockHolder
         [Display(AutoGenerateField = true, Name = "Начислено", GroupName = "RUB")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal NachRUB { set; get; }
+        public decimal NachRUB { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Поступило", GroupName = "RUB")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal InRUB { set; get; }
+        public decimal InRUB { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Выплачено", GroupName = "RUB")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal OutRUB { set; get; }
+        public decimal OutRUB { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Накопительно", GroupName = "RUB")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal ResultRUB { set; get; }
+        public decimal ResultRUB { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Начислено", GroupName = "USD")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal NachUSD { set; get; }
+        public decimal NachUSD { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Поступило", GroupName = "USD")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal InUSD { set; get; }
+        public decimal InUSD { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Выплачено", GroupName = "USD")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal OutUSD { set; get; }
+        public decimal OutUSD { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Накопительно", GroupName = "USD")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal ResultUSD { set; get; }
+        public decimal ResultUSD { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Начислено", GroupName = "EUR")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal NachEUR { set; get; }
+        public decimal NachEUR { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Поступило", GroupName = "EUR")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal InEUR { set; get; }
+        public decimal InEUR { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Выплачено", GroupName = "EUR")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal OutEUR { set; get; }
+        public decimal OutEUR { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Накопительно", GroupName = "EUR")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal ResultEUR { set; get; }
+        public decimal ResultEUR { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Начислено", GroupName = "GBP")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal NachGBP { set; get; }
+        public decimal NachGBP { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Поступило", GroupName = "GBP")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal InGBP { set; get; }
+        public decimal InGBP { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Выплачено", GroupName = "GBP")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal OutGBP { set; get; }
+        public decimal OutGBP { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Накопительно", GroupName = "GBP")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal ResultGBP { set; get; }
+        public decimal ResultGBP { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Начислено", GroupName = "CHF")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal NachCHF { set; get; }
+        public decimal NachCHF { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Поступило", GroupName = "CHF")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal InCHF { set; get; }
+        public decimal InCHF { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Выплачено", GroupName = "CHF")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal OutCHF { set; get; }
+        public decimal OutCHF { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Накопительно", GroupName = "CHF")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal ResultCHF { set; get; }
+        public decimal ResultCHF { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Начислено", GroupName = "SEK")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal NachSEK { set; get; }
+        public decimal NachSEK { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Поступило", GroupName = "SEK")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal InSEK { set; get; }
+        public decimal InSEK { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Выплачено", GroupName = "SEK")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal OutSEK { set; get; }
+        public decimal OutSEK { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Накопительно", GroupName = "SEK")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal ResultSEK { set; get; }
+        public decimal ResultSEK { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Начислено", GroupName = "CNY")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal NachCNY { set; get; }
+        public decimal NachCNY { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Поступило", GroupName = "CNY")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal InCNY { set; get; }
+        public decimal InCNY { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Выплачено", GroupName = "CNY")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal OutCNY { set; get; }
+        public decimal OutCNY { set; get; }
 
         [Display(AutoGenerateField = true, Name = "Накопительно", GroupName = "CNY")]
         [Editable(false)]
         [DisplayFormat(DataFormatString = "n2")]
-        private decimal ResultCNY { set; get; }
+        public decimal ResultCNY { set; get; }
     }
 }

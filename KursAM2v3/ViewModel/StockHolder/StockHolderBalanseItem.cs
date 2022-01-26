@@ -6,6 +6,7 @@ namespace KursAM2.ViewModel.StockHolder
 {
     public class StockHolderBalanseItem : IStockHolderMoney
     {
+        
         [Display(AutoGenerateField = true, Name = "Акционер",GroupName = "Наименование")]
         public StockHolderViewModel StockHolder { set; get; }
 

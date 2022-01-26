@@ -9,6 +9,7 @@
     xmlns:control="clr-namespace:Core.Control;assembly=Core"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     Title="{Binding WindowName}" MinHeight="450" MinWidth="1200">
     <dx:ThemedWindow.Resources>
         <native:RenderTemplate
@@ -284,6 +285,8 @@
                                                Style="{StaticResource TableView.Standart}">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
+                                            <MenuItem Header="Открыть документ"
+                                                      Command="{Binding DocumentOpenCommand}"/>
                                             <MenuItem Header="Экспорт"
                                                       Command="{Binding VisualControlExportCommand}"
                                                       CommandParameter="{Binding Path=PlacementTarget, 
@@ -296,6 +299,9 @@
                                             </MenuItem>
                                         </ContextMenu>
                                     </dxg:TableView.ContextMenu>
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding DocumentOpenCommand}"/>
+                                    </dxmvvm:Interaction.Behaviors>
                                 </dxg:TableView>
                             </dxg:GridControl.View>
                         </dxg:GridControl>
