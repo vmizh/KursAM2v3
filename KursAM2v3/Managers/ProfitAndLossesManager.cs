@@ -989,6 +989,40 @@ namespace KursAM2.Managers
             }
         }
 
+        public void CalcStockHolders()
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var data = ctx.StockHolderAccrualRows
+                    .Include(_ => _.StockHolderAccrual)
+                    .Include(_ => _.StockHolders)
+                    .Where(_ => _.StockHolderAccrual.Date >= DateStart && _.StockHolderAccrual.Date <= DateEnd).ToList();
+                foreach (var d in data)
+                {
+                    var newOp = new ProfitAndLossesExtendRowViewModel
+                    {
+                        Date = d.StockHolderAccrual.Date,
+                        GroupId = ProfitAndLossesMainRowViewModel.StockHolder,
+                        Name = d.StockHolders.Name,
+                        Id = d.DocId,
+                        Quantity = 1,
+                        Kontragent = null,
+                        DocTypeCode = DocumentType.StockHolderAccrual,
+                        Currency = MainReferences.GetCurrency(d.CurrencyDC),
+                        CurrencyName = MainReferences.GetCurrency(d.CurrencyDC).Name,
+                        DocNum = d.StockHolderAccrual.Num.ToString(),
+                        Price = (decimal)d.Summa
+                    };
+                    SetCurrenciesValue(newOp, d.CurrencyDC, 0,
+                        d.Summa);
+
+                    Extend.Add(newOp);
+                    ExtendNach.Add(newOp);
+                }
+
+            }
+        }
+
         public void CalcDilers()
         {
             using (var ctx = GlobalOptions.GetEntities())

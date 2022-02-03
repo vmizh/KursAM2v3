@@ -432,6 +432,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 GetZarplata();
                 GetMoneyInPath();
                 GetTovarInPath();
+                CalcStockHolder();
                 var ch = BalansStructure.Single(_ => _.Tag == BalansSection.Head);
                 //ch.Summa =
                 //    BalansStructure.Where(_ => _.ParentId == Guid.Parse("{9DC33178-1DAA-4A65-88BD-E1AD617B12D9}"))
@@ -499,6 +500,99 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             {
                 WindowManager.ShowError(ex);
             }
+        }
+
+        public void CalcStockHolder()
+        {
+            var ch = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
+                .Single(t => t.Tag == BalansSection.StockHolder)
+                .Id);
+            ch.Summa = 0;
+            ch.SummaRUB = 0;
+            ch.SummaEUR = 0;
+            ch.SummaUSD = 0;
+            ch.SummaCNY = 0;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var dataNach = ctx.StockHolderAccrualRows.Include(_ => _.StockHolderAccrual)
+                    .Where(_ => _.StockHolderAccrual.Date <= CurrentDate).ToList();
+                var dataOut = ctx.SD_34.Where(_ => _.StockHolderId != null && _.DATE_ORD <= CurrentDate).ToList();
+                var listSH = ctx.StockHolders.ToList();
+                foreach (var sh in listSH)
+                {
+                    var newItem = new ManagementBalanceExtendRowViewModel
+                    {
+                        GroupId = ch.Id,
+                        Name = sh.Name,
+                        Quantity = 1,
+                        Price = 0,
+                        Summa = 0,
+                        Nom = null,
+                        Nomenkl = null,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        CurrencyName = null,
+                        SummaEUR = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.EUR)
+                                       .Sum(x => x.SUMM_ORD) ?? 0) -
+                                   (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.EUR)
+                                       .Sum(x => x.Summa) ?? 0),
+                        PriceEUR = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.EUR)
+                                       .Sum(x => x.SUMM_ORD) ?? 0) -
+                                   (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.EUR)
+                                       .Sum(x => x.Summa) ?? 0),
+                        SummaUSD = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.USD)
+                                       .Sum(x => x.SUMM_ORD) ?? 0) -
+                                   (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.USD)
+                                       .Sum(x => x.Summa) ?? 0),
+                        PriceUSD = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.USD)
+                                       .Sum(x => x.SUMM_ORD) ?? 0) -
+                                   (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.USD)
+                                       .Sum(x => x.Summa) ?? 0),
+                        SummaRUB = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.RUB)
+                                       .Sum(x => x.SUMM_ORD) ?? 0) -
+                                   (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.RUB)
+                                       .Sum(x => x.Summa) ?? 0),
+                        PriceRUB = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.RUB)
+                                       .Sum(x => x.SUMM_ORD) ?? 0) -
+                                   (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.RUB)
+                                       .Sum(x => x.Summa) ?? 0),
+                        SummaCNY = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.CNY)
+                                       .Sum(x => x.SUMM_ORD) ?? 0) -
+                                   (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.CNY)
+                                       .Sum(x => x.Summa) ?? 0),
+                        PriceCNY = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.CNY)
+                                       .Sum(x => x.SUMM_ORD) ?? 0) -
+                                   (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.CNY)
+                                       .Sum(x => x.Summa) ?? 0),
+                        SummaCHF = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.CHF)
+                                       .Sum(x => x.SUMM_ORD) ?? 0) -
+                                   (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.CHF)
+                                       .Sum(x => x.Summa) ?? 0),
+                        PriceCHF = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.CHF)
+                                       .Sum(x => x.SUMM_ORD) ?? 0) -
+                                   (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.CHF)
+                                       .Sum(x => x.Summa) ?? 0),
+                        SummaGBP = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.GBP)
+                                       .Sum(x => x.SUMM_ORD) ?? 0) -
+                                   (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.GBP)
+                                       .Sum(x => x.Summa) ?? 0),
+                        PriceGBP = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.GBP)
+                                       .Sum(x => x.SUMM_ORD) ?? 0) -
+                                   (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.GBP)
+                                       .Sum(x => x.Summa) ?? 0),
+                    };
+                    ExtendRows.Add(newItem);
+                }
+
+            }
+
+            ch.Summa =0;
+            ch.SummaEUR =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaEUR);
+            ch.SummaUSD =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaUSD);
+            ch.SummaRUB =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaRUB);
+            ch.SummaGBP =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaGBP);
+            ch.SummaCHF =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaCHF);
+            ch.SummaSEK =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaSEK);
+            ch.SummaCNY =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaCNY);
         }
 
         /// <summary>

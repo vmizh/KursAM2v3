@@ -37,7 +37,7 @@ namespace KursAM2.ViewModel.Dogovora
             DogovorClientRepository = new DogovorClientRepository(unitOfWork);
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
-            DialogService = GetService<IDialogService>();
+            //DialogService = GetService<IDialogService>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             var doc = id != null ? BaseRepository.GetById(id.Value) : null;

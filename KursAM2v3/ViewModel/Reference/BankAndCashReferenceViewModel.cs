@@ -62,6 +62,7 @@ namespace KursAM2.ViewModel.Reference
             new ObservableCollection<BankCashItem>();
 
         public ObservableCollection<SelectUser> Users { set; get; } = new ObservableCollection<SelectUser>();
+
         // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<SelectUser> SelectedUsers { set; get; } = new ObservableCollection<SelectUser>();
         private BankCashItem myCurrentBankCash;
@@ -286,10 +287,12 @@ namespace KursAM2.ViewModel.Reference
             Banks.Add(newBank);
             if (Form is CashAndBanksReferenceView frm)
             {
-                frm.tableViewBank.FocusedRowHandle = frm.gridBank.GetRowHandleByListIndex(((IList)frm.gridBank.ItemsSource).Count - 1);
+                frm.tableViewBank.FocusedRowHandle =
+                    frm.gridBank.GetRowHandleByListIndex(((IList)frm.gridBank.ItemsSource).Count - 1);
                 frm.gridBank.SelectedItems.Clear();
                 frm.gridBank.SelectedItems.Add(CurrentBank);
             }
+
             RaisePropertiesChanged(nameof(IsCanUserRight));
         }
 
@@ -322,9 +325,9 @@ namespace KursAM2.ViewModel.Reference
                             _.DOC_CODE == CurrentRemain.DocCode && _.CODE == CurrentRemain.Code);
                         if (rem != null)
                             ctx.TD_22.Remove(rem);
-                        var s39 = ctx.SD_39.Where(_ =>
-                            _.CA_DC == CurrentRemain.Cash.DocCode && _.CRS_DC == CurrentRemain.Currency.DocCode);
-                        foreach (var s in s39) ctx.SD_39.Remove(s);
+                        //var s39 = ctx.SD_39.Where(_ =>
+                        //    _.CA_DC == CurrentRemain.Cash.DocCode && _.CRS_DC == CurrentRemain.Currency.DocCode);
+                        //foreach (var s in s39) ctx.SD_39.Remove(s);
                         ctx.SaveChanges();
                         transaction.Commit();
                         CurrentRemain.Cash.StartRemains.Remove(CurrentRemain);
@@ -635,52 +638,29 @@ namespace KursAM2.ViewModel.Reference
             old.CA_KONTRAGENT_DC = null;
             old.CA_KONTR_DC = null;
             foreach (var r in cash.StartRemains)
-            {
-                decimal codeCashDC;
                 switch (r.State)
                 {
                     case RowStatus.Edited:
-                        //var oldSD39 = ctx.SD_39.FirstOrDefault(_ =>
-                        //    _.CA_DC == cash.DocCode && _.CRS_DC == r.Currency.DocCode
-                        //                            && _.DATE_CASS == r.DATE_START);
-                        //if (oldSD39 == null)
-                        //    return;
                         var oldTD22 = ctx.TD_22.FirstOrDefault(_ =>
                             _.DOC_CODE == cash.DocCode && _.CRS_DC == r.Currency.DocCode);
                         if (oldTD22 == null)
-                            return;
-                        if (oldTD22.DATE_START != r.DATE_START)
                         {
-                            if (oldTD22.DATE_START > r.DATE_START)
+                            var mcode = ctx.TD_22.Any(_ => _.DOC_CODE == cash.DocCode)
+                                ? ctx.TD_22.Where(_ => _.DOC_CODE == cash.DocCode).Max(_ => _.CODE) + 1
+                                : 1;
+                            var newRem2 = new TD_22
                             {
-                                var oldList2 = ctx.SD_39.Where(_ =>
-                                    _.CA_DC == cash.DocCode && _.DATE_CASS <= r.DATE_START).ToList();
-                                foreach (var d in oldList2.Select(_ => _.DATE_CASS))
-                                {
-                                    var olditem = oldList2.FirstOrDefault(_ =>
-                                        _.DATE_CASS == d && _.CRS_DC == r.Currency.DocCode);
-                                    if (olditem != null)
-                                    {
-                                        olditem.DATE_CASS = d;
-                                        olditem.MONEY_START = r.SUMMA_START;
-                                        olditem.MONEY_STOP = r.SUMMA_START;
-                                    }
-                                    else
-                                    {
-                                        codeCashDC = ctx.SD_39.Any() ? ctx.SD_39.Max(_ => _.DOC_CODE) + 1 : 10390000001;
-                                        ctx.SD_39.Add(new SD_39
-                                        {
-                                            DOC_CODE = codeCashDC,
-                                            CA_DC = cash.DocCode,
-                                            CRS_DC = r.Currency.DocCode,
-                                            DATE_CASS = d,
-                                            MONEY_START = r.SUMMA_START,
-                                            MONEY_STOP = r.SUMMA_START
-                                        });
-                                    }
-                                }
-                            }
-
+                                DOC_CODE = cash.DocCode,
+                                CODE = mcode,
+                                CRS_DC = r.Currency.DocCode,
+                                DATE_START = r.DATE_START,
+                                SUMMA_START = r.SUMMA_START,
+                                CASH_DATE_DC = null
+                            };
+                            ctx.TD_22.Add(newRem2);
+                        }
+                        else
+                        {
                             if (oldTD22.DATE_START < r.DATE_START)
                                 if (ctx.SD_33.Any(_ => _.CA_DC == r.DocCode && _.CRS_DC == r.CRS_DC)
                                     || ctx.SD_34.Any(_ => _.CA_DC == r.DocCode && _.CRS_DC == r.CRS_DC)
@@ -693,25 +673,15 @@ namespace KursAM2.ViewModel.Reference
                                         "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Stop);
                                     return;
                                 }
-
+                            oldTD22.CASH_DATE_DC = null;
+                            oldTD22.SUMMA_START = r.SUMMA_START;
                             oldTD22.DATE_START = r.DATE_START;
-                        }
-
-                        oldTD22.SUMMA_START = r.SUMMA_START;
+                        } 
                         break;
-                    case RowStatus.NewRow:
-                        // ReSharper disable once TooWideLocalVariableScope
-                        codeCashDC = ctx.SD_39.Any() ? ctx.SD_39.Max(_ => _.DOC_CODE) + 1 : 10390000001;
-                        ctx.SD_39.Add(new SD_39
-                        {
-                            DOC_CODE = codeCashDC,
-                            CA_DC = cash.DocCode,
-                            CRS_DC = r.Currency.DocCode,
-                            DATE_CASS = r.DATE_START,
-                            MONEY_START = r.SUMMA_START,
-                            MONEY_STOP = r.SUMMA_START
-                        });
-                        var code = (int)ctx.TD_22.Where(_ => _.DOC_CODE == cash.DocCode).Max(_ => _.CODE) + 1;
+                    case RowStatus.NewRow:                        // ReSharper disable once TooWideLocalVariableScope
+                        var code = ctx.TD_22.Any(_ => _.DOC_CODE == cash.DocCode)
+                            ? (int)ctx.TD_22.Where(_ => _.DOC_CODE == cash.DocCode).Max(_ => _.CODE) + 1
+                            : 1;
                         var newRem = new TD_22
                         {
                             DOC_CODE = cash.DocCode,
@@ -719,32 +689,12 @@ namespace KursAM2.ViewModel.Reference
                             CRS_DC = r.Currency.DocCode,
                             DATE_START = r.DATE_START,
                             SUMMA_START = r.SUMMA_START,
-                            CASH_DATE_DC = codeCashDC
+                            CASH_DATE_DC = null
                         };
                         ctx.TD_22.Add(newRem);
                         r.Code = code;
-                        var oldCashsList =
-                            ctx.SD_39.Where(_ =>
-                                _.CA_DC == cash.DocCode && _.DATE_CASS > r.DATE_START &&
-                                _.CRS_DC != r.Currency.DocCode).ToList();
-                        if (oldCashsList.Any())
-                            foreach (var o in oldCashsList.Select(_ => _.DATE_CASS).Distinct())
-                            {
-                                codeCashDC = ctx.SD_39.Any() ? ctx.SD_39.Max(_ => _.DOC_CODE) + 1 : 10390000001;
-                                ctx.SD_39.Add(new SD_39
-                                {
-                                    DOC_CODE = codeCashDC,
-                                    CA_DC = cash.DocCode,
-                                    CRS_DC = r.Currency.DocCode,
-                                    DATE_CASS = o,
-                                    MONEY_START = r.SUMMA_START,
-                                    MONEY_STOP = r.SUMMA_START
-                                });
-                            }
-
                         break;
                 }
-            }
         }
 
         #endregion

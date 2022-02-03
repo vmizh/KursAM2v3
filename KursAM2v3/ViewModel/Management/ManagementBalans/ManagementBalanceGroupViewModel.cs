@@ -798,7 +798,12 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         /// <summary>
         ///     Деньги в пути
         /// </summary>
-        MoneyInPath = 10
+        MoneyInPath = 10,
+
+        /// <summary>
+        /// Акционеры
+        /// </summary>
+        StockHolder = 11
     }
 
     [MetadataType(typeof(DataAnnotationsNomenklCompareBalansOperation))]

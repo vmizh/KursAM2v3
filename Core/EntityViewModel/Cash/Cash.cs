@@ -245,11 +245,13 @@ namespace Core.EntityViewModel.Cash
             };
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public virtual SD_22 Load(decimal dc, bool isShort = true)
         {
             throw new NotImplementedException();
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public virtual SD_22 Load(Guid id, bool isShort = true)
         {
             throw new NotImplementedException();

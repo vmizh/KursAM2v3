@@ -231,15 +231,15 @@ namespace KursAM2.View.KursReferences
                         case "Касса":
                             ctx.Database.ExecuteSqlCommand(
                                 dtx.CurrentUser.IsSelected
-                                    ? "INSERT INTO HD_22 (DOC_CODE,USR_ID) VALUES({0},{1})"
-                                    : "DELETE FROM HD_22 WHERE DOC_CODE = {0} AND USR_ID = {1})",
+                                    ? "INSERT INTO HD_22 (DOC_CODE,USR_ID) VALUES({0},{1}) "
+                                    : "DELETE FROM HD_22 WHERE DOC_CODE = {0} AND USR_ID = {1} ",
                                 dtx.CurrentBankCash.DocCode, dtx.CurrentUser.UserId);
                             break;
                         case "Банк":
                             ctx.Database.ExecuteSqlCommand(
                                 dtx.CurrentUser.IsSelected
-                                    ? "INSERT INTO HD_114 (DOC_CODE,USR_ID) VALUES({0},{1})"
-                                    : "DELETE FROM HD_114 WHERE DOC_CODE = {0} AND USR_ID = {1})",
+                                    ? "INSERT INTO HD_114 (DOC_CODE,USR_ID) VALUES({0},{1}) "
+                                    : "DELETE FROM HD_114 WHERE DOC_CODE = {0} AND USR_ID = {1} ",
                                 dtx.CurrentBankCash.DocCode, dtx.CurrentUser.UserId);
                             break;
                     }

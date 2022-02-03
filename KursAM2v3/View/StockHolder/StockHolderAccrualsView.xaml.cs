@@ -73,6 +73,28 @@ namespace KursAM2.View.StockHolder
         private void TableViewControlStockAccruals_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
         {
             GridControlStockHolder.UpdateTotalSummary();
+            if (DataContext is StockHolderAccrualWindowViewModel ctx)
+            {
+                foreach (var sh in ctx.StockHolders)
+                {
+                    sh.RaisePropertyAllChanged();
+                }
+            }
+        }
+
+        private void DateEdit_EditValueChanging(object sender, DevExpress.Xpf.Editors.EditValueChangingEventArgs e)
+        {
+            if (DataContext is StockHolderAccrualWindowViewModel dtx)
+            {
+                dtx.Document.RaisePropertyChanged("State");
+                dtx.RaisePropertyChanged("IsCanSaveData");
+                //if (dtx.State != RowStatus.NewRow)
+                //{
+                //    dtx.Document.State = RowStatus.Edited;
+                //    dtx.Document.RaisePropertyChanged("State");
+                //    
+                //}
+            } 
         }
     }
 }

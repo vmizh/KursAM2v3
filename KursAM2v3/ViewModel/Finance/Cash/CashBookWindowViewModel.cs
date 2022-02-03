@@ -410,7 +410,8 @@ namespace KursAM2.ViewModel.Finance.Cash
                                 _.DOC_CODE == d.DOC_CODE && _.CRS_DC == d.Currency.DocCode);
                             if (old == null)
                             {
-                                var newCode = ctx.TD_22.Max(_ => _.CODE) + 1;
+                                var newCode = ctx.TD_22.Any(_ => _.DOC_CODE == d.DOC_CODE) ?
+                                    (int)ctx.TD_22.Max(_ => _.CODE) + 1 : 1;
                                 var newItem = new TD_22
                                 {
                                     DOC_CODE = CurrentCash.DocCode,

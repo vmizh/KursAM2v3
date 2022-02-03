@@ -443,7 +443,16 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 "Предупреждение.", MessageBoxImage.Warning);
                             return;
                         }
-
+                        var prices = ctx.NOM_PRICE.Where(_ => _.NOM_DC == CurrentNomenkl.DocCode);
+                        foreach (var np in prices)
+                        {
+                            ctx.NOM_PRICE.Remove(np);
+                        }
+                        var wd27 = ctx.WD_27.Where(_ => _.SKLW_NOMENKL_DC == CurrentNomenkl.DocCode);
+                        foreach (var w in wd27)
+                        {
+                            ctx.WD_27.Remove(w);
+                        }
                         var oldItem = ctx.SD_83.FirstOrDefault(_ => _.DOC_CODE == CurrentNomenkl.DocCode);
                         if (oldItem != null)
                             ctx.SD_83.Remove(oldItem);
@@ -621,6 +630,16 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 return;
                             }
 
+                            var prices = ctx.NOM_PRICE.Where(_ => _.NOM_DC == nom.DocCode);
+                            foreach (var np in prices)
+                            {
+                                ctx.NOM_PRICE.Remove(np);
+                            }
+                            var wd27 = ctx.WD_27.Where(_ => _.SKLW_NOMENKL_DC == nom.DocCode);
+                            foreach (var w in wd27)
+                            {
+                                ctx.WD_27.Remove(w);
+                            }
                             var oldItem = ctx.SD_83.FirstOrDefault(_ => _.DOC_CODE == nom.DocCode);
                             if (oldItem != null)
                                 ctx.SD_83.Remove(oldItem);

@@ -688,6 +688,9 @@ namespace KursAM2.ViewModel.Management
                     if(CurrentExtend.DocumentDC != null)
                         DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, CurrentExtend.DocumentDC.Value);
                     break;
+                case DocumentType.StockHolderAccrual:
+                    DocumentsOpenManager.Open(DocumentType.StockHolderAccrual, 0, CurrentExtend.Id);
+                    break;
                 default:
                     DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, CurrentExtend.DocCode);
                     break;
@@ -1233,6 +1236,7 @@ namespace KursAM2.ViewModel.Management
                 Manager.CalcCashPercent();
                 Manager.CalcNomenklCurrencyChanged();
                 Manager.CalcAccruedAmmount();
+                Manager.CalcStockHolders();
                 //manager.CalcMoneyInWay();
                 //CalcCashAvans();
                 CalcTreeSumm();

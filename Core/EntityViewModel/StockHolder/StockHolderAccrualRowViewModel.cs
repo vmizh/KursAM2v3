@@ -73,14 +73,14 @@ namespace Core.EntityViewModel.StockHolder
             }
         }
 
-        public new StockHolderAccrual Parent
+        public new StockHolderAccrualViewModel Parent
         {
-            get => (StockHolderAccrual)myParent;
+            get => (StockHolderAccrualViewModel)myParent;
             set
             {
                 if (myParent == value) return;
                 myParent = value;
-                if (myParent is StockHolderAccrual p)
+                if (myParent is StockHolderAccrualViewModel p)
                 {
                     Entity.DocId = p.Id;
                 }

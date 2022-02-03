@@ -36,7 +36,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             GenericRepository = new GenericKursDBRepository<AccruedAmountForClient>(UnitOfWork);
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
-            DialogService = GetService<IDialogService>();
+            //DialogService = GetService<IDialogService>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             var doc = id != null ? GenericRepository.GetById(id.Value) : null;

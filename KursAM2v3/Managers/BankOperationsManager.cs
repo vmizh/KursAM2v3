@@ -221,7 +221,58 @@ namespace KursAM2.Managers
                     return $"Возникли отрицательные остатки на {firstZero.Date.Value.ToShortDateString()}" +
                            $" в размере {firstZero.End}";
             }
+            return null;
+        }
 
+
+        private void recalcRest(List<BankOperations> opers)
+        {
+            decimal d = opers.First().Start ?? 0;
+            foreach (var op in opers)
+            {
+                op.End = d + op.SummaIn - op.SummaOut;
+                d = op.End ?? 0;
+            }
+        }
+
+        public string CheckForNonzero(decimal bankDC,DateTime date, decimal sumOut)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var sql = "SELECT  AccountDC ,Date ,Start ," +
+                          "SummaIn ,SummaOut ,[End] " +
+                          $"FROM dbo.BankOperations (nolock) WHERE AccountDC = {CustomFormat.DecimalToSqlDecimal(bankDC)} " +
+                          " order by 2";
+                var data = ctx.Database.SqlQuery<BankOperations>(sql).ToList();
+                var accountInfo = ctx.SD_114.SingleOrDefault(_ => _.DOC_CODE == bankDC);
+                if (accountInfo == null) return $"Нет счета с кодом {bankDC}";
+                if ((accountInfo.BA_NEGATIVE_RESTS ?? 0) == 0)
+                {
+                    var old = data.FirstOrDefault(_ => _.Date == date);
+                    if (old != null)
+                    {
+                        old.SummaOut += sumOut;
+                    }
+                    else
+                    {
+                        data.Add(new BankOperations
+                        {
+                            Date = date,
+                            Start = (data.FirstOrDefault(_ => _.Date < date)?.End ?? 0),
+                            SummaIn = 0,
+                            SummaOut = sumOut,
+                            End = (data.FirstOrDefault(_ => _.Date < date)?.End ?? 0) - sumOut
+                        });
+                    }
+                    recalcRest(data);
+                    var firstZero = data.FirstOrDefault(_ => _.Date >= (accountInfo.DateNonZero ?? DateTime.MinValue)
+                                                             && _.End < 0);
+                    if (firstZero != null)
+                        // ReSharper disable once PossibleInvalidOperationException
+                        return $"Возникли отрицательные остатки на {firstZero.Date.Value.ToShortDateString()}" +
+                               $" в размере {firstZero.End}. Сохранение не возможно";
+                }
+            }
 
             return null;
         }
@@ -230,6 +281,15 @@ namespace KursAM2.Managers
         {
             if (item.State == RowStatus.NewRow)
             {
+                if (item.VVT_VAL_RASHOD > 0)
+                {
+                    var errStr = CheckForNonzero(bankDc, item.Date, item.VVT_VAL_RASHOD ?? 0);
+                    if (!string.IsNullOrEmpty(errStr))
+                    {
+                        winManager.ShowWinUIMessageBox(errStr, "Предупреждение", MessageBoxButton.OK);
+                        return;
+                    }
+                }
                 AddBankOperation(item, bankDc);
                 return;
             }
@@ -237,6 +297,19 @@ namespace KursAM2.Managers
             if (item.State == RowStatus.Edited)
                 using (var ctx = GlobalOptions.GetEntities())
                 {
+                    if (item.VVT_VAL_RASHOD > 0)
+                    {
+                        var s = 0m;
+                        var old = ctx.TD_101.FirstOrDefault(_ => _.CODE == item.Code) ;
+                        if (old != null)
+                            s = old.VVT_VAL_RASHOD ?? 0;
+                        var errStr = CheckForNonzero(bankDc, item.Date, s - item.VVT_VAL_RASHOD ?? 0);
+                        if (!string.IsNullOrEmpty(errStr))
+                        {
+                            winManager.ShowWinUIMessageBox(errStr, "Предупреждение", MessageBoxButton.OK);
+                            return;
+                        }
+                    }
                     var tran = ctx.Database.BeginTransaction();
                     try
                     {
@@ -606,9 +679,18 @@ namespace KursAM2.Managers
 
         public void DeleteBankOperations(BankOperationsViewModel item, decimal bankDc)
         {
-            if (winManager.ShowWinUIMessageBox("Вы уверенны, что хотите удалить транзакцию?",
-                "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-                return;
+            //if (winManager.ShowWinUIMessageBox("Вы уверенны, что хотите удалить транзакцию?",
+            //    "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            //    return;
+            if (item.VVT_VAL_PRIHOD > 0)
+            {
+                var errStr = CheckForNonzero(bankDc, item.Date, item.VVT_VAL_PRIHOD ?? 0);
+                if (!string.IsNullOrEmpty(errStr))
+                {
+                    winManager.ShowWinUIMessageBox(errStr, "Предупреждение", MessageBoxButton.OK);
+                    return;
+                }
+            }
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var tran = ctx.Database.BeginTransaction();

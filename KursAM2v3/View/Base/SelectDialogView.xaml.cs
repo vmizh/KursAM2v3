@@ -1,6 +1,11 @@
 ﻿using System.ComponentModel;
+using System.Linq;
 using System.Windows;
+using Core;
 using Core.ViewModel.Base;
+using Core.WindowsManager;
+using KursAM2.Managers;
+using KursAM2.ViewModel.Finance.controls;
 using LayoutManager;
 
 namespace KursAM2.View.Base
@@ -41,6 +46,28 @@ namespace KursAM2.View.Base
         {
             if (DataContext is RSWindowViewModelBase ctx)
             {
+                if (DataContext is AddBankOperionUC bank)
+                {
+                    var manager = new BankOperationsManager();
+                    var  winManager = new WindowManager();
+                    using(var context = GlobalOptions.GetEntities())
+                    {
+                        if (bank.VVT_VAL_RASHOD > 0)
+                        {
+                            var s = 0m;
+                            var old = context.TD_101.FirstOrDefault(_ => _.CODE == bank.Code);
+                            if (old != null)
+                                s = old.VVT_VAL_RASHOD ?? 0;
+                            var errStr = manager.CheckForNonzero(bank.BankAccount.DocCode, 
+                                bank.Date, s > 0 ? s - bank.VVT_VAL_RASHOD : bank.VVT_VAL_RASHOD);
+                            if (!string.IsNullOrEmpty(errStr))
+                            {
+                                winManager.ShowWinUIMessageBox(errStr, "Предупреждение", MessageBoxButton.OK);
+                                return;
+                            }
+                        }
+                    }
+                }
                 DialogResult = true;
                 ctx.DialogResult = true;
                 Close();

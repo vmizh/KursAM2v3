@@ -55,7 +55,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         protected ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
 
-        [Display(AutoGenerateField = false)] protected IDialogService DialogService { set; get; }
+        [Display(AutoGenerateField = false)] protected IDialogService DialogService => GetService<IDialogService>();
 
         [Display(AutoGenerateField = false)]
         protected ILayoutSerializationService LayoutSerializationService

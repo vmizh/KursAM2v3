@@ -36,9 +36,9 @@
                         />
             </dxb:BarManager.Items>
             </dxb:BarManager>-->
-        <dxlc:LayoutControl>
-            <dxlc:LayoutGroup Orientation="Vertical">
-                <dxlc:LayoutGroup Header="Документ" View="GroupBox">
+        <dxlc:LayoutControl x:Name="mainLayoutControl">
+            <dxlc:LayoutGroup Orientation="Vertical" x:Name="LayoutGroup1">
+                <dxlc:LayoutGroup Header="Документ" View="GroupBox" x:Name="LayoutGroup2">
                     <dxlc:LayoutItem>
                         <DockPanel LastChildFill="False">
                             <Label VerticalAlignment="Center" Content="№: " DockPanel.Dock="Left" />
@@ -52,18 +52,18 @@
                             <Label Content="  от " DockPanel.Dock="Left" VerticalAlignment="Center" />
                             <dxe:DateEdit MinWidth="100" DockPanel.Dock="Left"
                                           VerticalAlignment="Center"
-                                          EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" />
+                                          EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" EditValueChanging="DateEdit_EditValueChanging" />
                             <Label Content="Примечания " DockPanel.Dock="Left" VerticalAlignment="Center" />
                             <dxe:TextEdit Margin="10 0"
                                           AcceptsReturn="True"
                                           TextWrapping="Wrap"
-                                          EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
+                                          EditValue="{Binding Document.Note, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
                                           MinWidth="200"
                                           MaxWidth="300"
                                           VerticalAlignment="Center" />
                             <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
                                               VerticalAlignment="Center"
-                                              IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
+                                              IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay, UpdateSourceTrigger=PropertyChanged }">
                                 <dxmvvm:Interaction.Behaviors>
                                     <dxmvvm:EnumItemsSourceBehavior
                                         EnumType="{x:Type base:RowStatus}" />
@@ -77,8 +77,9 @@
                         </DockPanel>
                     </dxlc:LayoutItem>
                 </dxlc:LayoutGroup>
-                <dxlc:LayoutGroup Header="LayoutGroup" View="Group">
+                <dxlc:LayoutGroup Header="LayoutGroup" View="Group" x:Name="LayoutGroup3">
                     <dxlc:LayoutGroup Header="Акционеры"
+                                      x:Name="LayoutGroup4"
                                       View="GroupBox"
                                       dxlc:LayoutControl.AllowHorizontalSizing="True"
                                       dx:DXSerializer.SerializationID="GridControlStockHolderGroup">
@@ -132,6 +133,7 @@
                         </dxg:GridControl>
                     </dxlc:LayoutGroup>
                     <dxlc:LayoutGroup Header="Начисления" View="GroupBox"
+                                      x:Name="LayoutGroup5"
                                       dxlc:LayoutControl.AllowHorizontalSizing="True">
                         <dxg:GridControl x:Name="GridControlStockAccruals"
                                          Style="{StaticResource GridControl.Base}"

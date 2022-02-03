@@ -12,11 +12,11 @@
 	xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
 	mc:Ignorable="d"
 	Title="Справочник контрагентов" Height="450" Width="800">
-    <dxmvvm:Interaction.Behaviors>
+    <!--<dxmvvm:Interaction.Behaviors>
         <dxwui:WinUIDialogService />
         <dxwui:WinUIMessageBoxService />
-    </dxmvvm:Interaction.Behaviors>
-    <DockPanel>
+    </dxmvvm:Interaction.Behaviors>-->
+    <DockPanel Style="{StaticResource DXServicesDialogOnly}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
 			Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />

@@ -650,11 +650,18 @@ namespace KursAM2.ViewModel.Management
 
                 new ProfitAndLossesMainRowViewModel
                 {
-                Id = AktSpisaniaNomenkl,
-                ParentId = Rashod,
-                Name = @"Списание ",
-                CalcType = TypeProfitAndLossCalc.IsLoss
-            }
+                    Id = AktSpisaniaNomenkl,
+                    ParentId = Rashod,
+                    Name = @"Списание ",
+                    CalcType = TypeProfitAndLossCalc.IsLoss
+                },
+                new ProfitAndLossesMainRowViewModel
+                {
+                    Id = StockHolder,
+                    ParentId = Rashod,
+                    Name = @"Начисления акционерам ",
+                    CalcType = TypeProfitAndLossCalc.IsLoss
+                },
             };
             return res;
         }
@@ -695,14 +702,23 @@ namespace KursAM2.ViewModel.Management
 
         #region Внебалансовые начисления
 
-        public static readonly Guid OutBalansAccrualAmmountClient = Guid.Parse("{7338B45D-B137-4B53-B641-554DEED3F1B3}");
-        public static readonly Guid OutBalansAccrualAmmountSupplier = Guid.Parse("{4CEA8D09-030E-49E8-B6F7-EB83D5E0D6EA}");
-        
+        public static readonly Guid OutBalansAccrualAmmountClient =
+            Guid.Parse("{7338B45D-B137-4B53-B641-554DEED3F1B3}");
+
+        public static readonly Guid OutBalansAccrualAmmountSupplier =
+            Guid.Parse("{4CEA8D09-030E-49E8-B6F7-EB83D5E0D6EA}");
+
         #endregion
 
         #region Акт списания номенклатур
 
         public static readonly Guid AktSpisaniaNomenkl = Guid.Parse("{7E2AB2E0-B2B2-495D-A403-E746647CA99D}");
+
+        #endregion
+
+        #region Акционеры
+
+        public static readonly Guid StockHolder = Guid.Parse("{8FC37BDA-4509-4DC8-BC53-7A8869D17364}");
 
         #endregion
 

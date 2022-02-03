@@ -7,7 +7,6 @@ using System.Windows.Input;
 using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Dialogs;
@@ -162,22 +161,6 @@ namespace KursAM2.ViewModel.Logistiks
         public List<Core.EntityViewModel.NomenklManagement.Warehouse> StoreCollection => myManager.StoreCollection;
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
         public override bool IsDocDeleteAllow => true;
-
-        //private void LoadReference()
-        //{
-        //    try
-        //    {
-        //        using (var ctx = GlobalOptions.GetEntities())
-        //        {
-        //            foreach (var c in ctx.SD_27)
-        //                myManager.StoreCollection.Add(new WarehouseIn(c));
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        WindowManager.ShowError(ex);
-        //    }
-        //}
 
         private List<decimal> GetNomenklGroupChilds(NomenklGroup2 grp)
         {
@@ -359,7 +342,8 @@ namespace KursAM2.ViewModel.Logistiks
                         NomenklManager.GetNomenklCount(Document.Date, nom.DocCode, Document.Warehouse.DocCode),
                     QuantityCalc =
                         NomenklManager.GetNomenklCount(Document.Date, nom.DocCode, Document.Warehouse.DocCode),
-                    State = RowStatus.NewRow
+                    State = RowStatus.NewRow,
+                    Id = Guid.NewGuid()
                 });
         }
 

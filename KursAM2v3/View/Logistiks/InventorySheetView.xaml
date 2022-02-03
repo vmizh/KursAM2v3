@@ -37,7 +37,7 @@
                                   DisplayMember="Name"
                                   ValueMember="DocCode"
                                   AutoComplete="True"
-                                  SelectedItem="{Binding Document.Store, Mode=TwoWay, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                  SelectedItem="{Binding Document.Warehouse, Mode=TwoWay, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
                                   Width="300"
                                   HorizontalAlignment="Left"
                                   VerticalAlignment="Center" />

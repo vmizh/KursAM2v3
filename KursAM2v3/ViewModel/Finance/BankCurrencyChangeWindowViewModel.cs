@@ -5,6 +5,7 @@ using Core;
 using Core.EntityViewModel.Bank;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Core.WindowsManager;
 using KursAM2.Managers;
 using KursAM2.View.Finance;
 
@@ -17,6 +18,7 @@ namespace KursAM2.ViewModel.Finance
         private BankCurrencyChangeViewModel myDocument;
         private readonly BankOperationsManager manager = new BankOperationsManager();
         private DateTime oldDate;
+        private readonly WindowManager winManager = new WindowManager();
 
         #endregion
 
@@ -126,6 +128,23 @@ namespace KursAM2.ViewModel.Finance
 
         public override void SaveData(object data)
         {
+            using(var context = GlobalOptions.GetEntities())
+            {
+                if (Document.SummaFrom > 0)
+                {
+                    var s = 0m;
+                    var old = context.BankCurrencyChange.FirstOrDefault(_ => _.Id == Document.Id);
+                    if (old != null)
+                        s = old.SummaFrom;
+                    var errStr = manager.CheckForNonzero(Document.BankFromDC, 
+                        Document.DocDate, s > 0 ? s - Document.SummaFrom : Document.SummaFrom);
+                    if (!string.IsNullOrEmpty(errStr))
+                    {
+                        winManager.ShowWinUIMessageBox(errStr, "Предупреждение", MessageBoxButton.OK);
+                        return;
+                    }
+                }
+            }
             if (Document.State == RowStatus.NewRow)
             {
                 manager.AddBankCurrencyChange(Document);
@@ -160,6 +179,23 @@ namespace KursAM2.ViewModel.Finance
 
         public override void DocDelete(object form)
         {
+            using(var context = GlobalOptions.GetEntities())
+            {
+                if (Document.SummaFrom > 0)
+                {
+                    var s = 0m;
+                    var old = context.BankCurrencyChange.FirstOrDefault(_ => _.Id == Document.Id);
+                    if (old != null)
+                        s = old.SummaTo;
+                    var errStr = manager.CheckForNonzero(Document.BankToDC, 
+                        Document.DocDate, s > 0 ? s - Document.SummaTo : Document.SummaTo);
+                    if (!string.IsNullOrEmpty(errStr))
+                    {
+                        winManager.ShowWinUIMessageBox(errStr, "Предупреждение", MessageBoxButton.OK);
+                        return;
+                    }
+                }
+            }
             if (manager.DeleteBankCurrencyChange(Document))
                 Form.Close();
         }

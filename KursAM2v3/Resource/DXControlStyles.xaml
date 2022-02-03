@@ -203,7 +203,7 @@
             <Label Margin="5 0" Content="Оплата" />
         </StackPanel>
     </DataTemplate>
-    <Style x:Key="ButtonSearchStyle" TargetType="dxe:ButtonEdit">
+    <Style x:Key="ButtonSearchStyle" TargetType="dxe:ButtonEdit" x:Shared="False">
         <Setter Property="AllowDefaultButton" Value="False" />
         <Setter Property="Buttons">
             <Setter.Value>

@@ -66,7 +66,8 @@ namespace KursAM2.View
 
         private void dataSources_EditValueChanged(object sender, EditValueChangedEventArgs e)
         {
-            dtx.SelectedDataSource = e.NewValue as DataSource;
+            if( dtx != null)
+                dtx.SelectedDataSource = e.NewValue as DataSource;
         }
 
         private void BarSplitItemThemeSelectorBehavior_Changed(object sender, EventArgs e)

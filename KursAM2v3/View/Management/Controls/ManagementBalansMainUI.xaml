@@ -19,7 +19,7 @@
                          SelectionMode="Row"
                          x:Name="treeListBalans">
         <dxg:TreeListControl.Columns>
-            <dxg:TreeListColumn Name="tcol1_2" FieldName="Name" Header="Позиция" ReadOnly="True" Fixed="Left" />
+            <dxg:TreeListColumn Name="tcol1_2" FieldName="Name" Header="Позиция" ReadOnly="True" Fixed="Left" AllowSorting="False" />
             <dxg:TreeListColumn Name="tcol2_5" FieldName="SummaUSD" Header="USD" ReadOnly="True">
                 <dxg:TreeListColumn.EditSettings>
                     <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" Mask="n2" />
@@ -80,7 +80,9 @@
                 Name="treeListViewBalans"
                 ShowTotalSummary="False"
                 KeyFieldName="Id"
-                ParentFieldName="ParentId">
+                ParentFieldName="ParentId"
+                AllowSorting="False"
+                >
                 <dxg:TreeListView.RowStyle>
                     <Style TargetType="{x:Type dxg:RowControl}">
                         <Style.Triggers>

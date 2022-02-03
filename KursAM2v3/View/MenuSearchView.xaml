@@ -39,7 +39,8 @@
                        DockPanel.Dock="Top"
                        ItemsSource="{Binding SearchMenuItems}"
                        ItemContainerStyle="{StaticResource TileBarItemStyleBase}" FlyoutShowMode="Popup" />
-        <dxe:ButtonEdit DockPanel.Dock="Bottom"
+        <dxe:ButtonEdit 
+                        DockPanel.Dock="Bottom"
                         HorizontalAlignment="Left"
                         Width="300"
                         EditValue="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"

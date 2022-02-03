@@ -51,6 +51,7 @@ namespace KursAM2.View.Management
         private void ManagementBalansView_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
+            ManagementBalansMainUI.treeListViewBalans.AllowSorting = false;
         }
 
         private void ManagementBalansView_Closing(object sender, CancelEventArgs e)

@@ -1356,7 +1356,7 @@ namespace KursAM2.View
             var context = new MenuSearchWindowViewModel();
             var frm = new MenuSearchView
             {
-                Owner = Application.Current.MainWindow,
+               // Owner = Application.Current.MainWindow,
                 DataContext = context
             };
             frm.Show();

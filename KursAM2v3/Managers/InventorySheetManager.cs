@@ -118,7 +118,7 @@ namespace KursAM2.Managers
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                using (var tnx = new TransactionScope())
+                using (var tnx = ctx.Database.BeginTransaction())
                 {
                     try
                     {
@@ -170,7 +170,7 @@ namespace KursAM2.Managers
                                                     DocId = doc.Id,
                                                     Id = Guid.NewGuid(),
                                                     DDT_CENA_V_UCHET_VALUTE = 0,
-                                                    DDT_SUMMA_V_UCHET_VALUTE = 0
+                                                    DDT_SUMMA_V_UCHET_VALUTE = 0,
                                                 }
                                             ));
                                             code++;
@@ -197,7 +197,7 @@ namespace KursAM2.Managers
                                     }
                                 break;
                             case RowStatus.NewRow:
-                                var dc = ctx.SD_24.Max(_ => _.DOC_CODE) + 1;
+                                var dc = ctx.SD_24.Any() ? ctx.SD_24.Max(_ => _.DOC_CODE) + 1 : 10240000001;
                                 var id = Guid.NewGuid();
                                 doc.DocCode = dc;
                                 ctx.SD_24.Add(new SD_24
@@ -258,11 +258,12 @@ namespace KursAM2.Managers
                             }
                         }
                         ctx.SaveChanges();
-                        tnx.Complete();
+                        tnx.Commit();
                         return null;
                     }
                     catch (Exception ex)
                     {
+                        tnx.Rollback();
                         WindowManager.ShowError(ex);
                         return null;
                     }
@@ -404,7 +405,10 @@ namespace KursAM2.Managers
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var n = ctx.SD_24.Where(_ => _.DD_TYPE_DC == 2010000005);
-                num = n.Max(_ => _.DD_IN_NUM) + 1;
+                if (!n.Any())
+                    num = 1;
+                else
+                    num = n.Max(_ => _.DD_IN_NUM) + 1;
             }
             var ret = new InventorySheetViewModel
             {

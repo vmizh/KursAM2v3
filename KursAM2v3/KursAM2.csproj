@@ -1003,6 +1003,9 @@
     <Compile Include="View\Personal\EmploeeSelectUC.xaml.cs">
       <DependentUpon>EmploeeSelectUC.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Personal\PayRollTypeReference.xaml.cs">
+      <DependentUpon>PayRollTypeReference.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Personal\PersonaAddUserRightsUC.xaml.cs">
       <DependentUpon>PersonaAddUserRightsUC.xaml</DependentUpon>
     </Compile>
@@ -1038,7 +1041,6 @@
     </Compile>
     <Compile Include="View\Personal\DialogSelectPersona.xaml.cs" />
     <Compile Include="View\Personal\PayRollDocSearch.xaml.cs" />
-    <Compile Include="View\Personal\PayRollTypeReference.xaml.cs" />
     <Compile Include="View\Personal\PayRollVedomost.xaml.cs" />
     <Compile Include="View\Personal\PersonalPaysView.xaml.cs" />
     <Compile Include="View\Personal\PersonaReference.xaml.cs" />
@@ -1808,6 +1810,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Personal\PayRollTypeReference.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Personal\PersonaAddUserRightsUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1857,10 +1863,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Personal\PayRollDocSearch.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Personal\PayRollTypeReference.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
