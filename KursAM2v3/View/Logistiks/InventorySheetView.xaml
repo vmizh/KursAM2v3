@@ -7,12 +7,14 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=Core"
     Title="Инвентаризационная ведомость" Height="350" Width="525">
-    <DockPanel>
+    <DockPanel Style="{StaticResource DXServices }">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0" DockPanel.Dock="Top"
                Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
-        <dxlc:LayoutControl Name="mainLayoutControl" Orientation="Vertical" Padding="0">
+        <dxlc:LayoutControl Name="mainLayoutControl1" Orientation="Vertical" Padding="0">
             <dxlc:LayoutGroup Header="LayoutGroup" View="Group" />
             <dxlc:LayoutGroup Margin="0,0,0,10">
                 <dxlc:LayoutItem Label="№">
@@ -27,7 +29,19 @@
                 <dxlc:LayoutItem Label="Закрыта">
                     <dxe:CheckEdit IsChecked="{Binding Document.IsClosed}" />
                 </dxlc:LayoutItem>
-
+                <dxlc:LayoutItem>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="  Статус: " />
+                        <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
+                                          IsEnabled="False"
+                                          EditValue="{Binding Document.State, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EnumItemsSourceBehavior
+                                    EnumType="{x:Type base:RowStatus}" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:ComboBoxEdit>
+                    </StackPanel>
+                </dxlc:LayoutItem>
             </dxlc:LayoutGroup>
             <dxlc:LayoutItem Label="Склад">
                 <dxe:ComboBoxEdit x:Name="storecomboBox"
@@ -37,7 +51,7 @@
                                   DisplayMember="Name"
                                   ValueMember="DocCode"
                                   AutoComplete="True"
-                                  SelectedItem="{Binding Document.Warehouse, Mode=TwoWay, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                  EditValue="{Binding Document.Warehouse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   Width="300"
                                   HorizontalAlignment="Left"
                                   VerticalAlignment="Center" />
@@ -45,11 +59,10 @@
             <dxlc:LayoutGroup>
                 <dxlc:LayoutGroup Header="LayoutGroup" View="Group" Orientation="Vertical">
                     <dxlc:LayoutItem Label="Примечание" Margin="0,0,0,10">
-                        <dxe:MemoEdit x:Name="memoNote"
+                        <dxe:TextEdit x:Name="memoNote"
                                       EditValue="{Binding Document.Note}"
-                                      MemoTextWrapping="Wrap"
-                                      MemoVerticalScrollBarVisibility="Auto"
-                                      ShowIcon="False"
+                                      AcceptsReturn="True"
+                                      TextWrapping="Wrap"
                                       Height="50" />
                     </dxlc:LayoutItem>
                     <dxlc:LayoutItem Label="Показать все">
@@ -177,8 +190,6 @@
                         <dxg:GridControl.View>
                             <dxg:TableView AllowPerPixelScrolling="True"
                                            ShowTotalSummary="True"
-
-
                                            ShowAutoFilterRow="True"
                                            x:Name="gridRowsTableView"
                                            EnableImmediatePosting="True"

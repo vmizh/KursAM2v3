@@ -1,18 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
+using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.NomenklManagement;
+using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Core.WindowsManager;
+using Data;
+using Data.Repository;
+using DevExpress.Mvvm;
+using Helper;
 using KursAM2.Dialogs;
-using KursAM2.Managers;
-using KursAM2.Managers.Base;
 using KursAM2.Managers.Nomenkl;
+using KursAM2.Repositories;
 using KursAM2.View.Logistiks;
 
 namespace KursAM2.ViewModel.Logistiks
@@ -35,7 +42,15 @@ namespace KursAM2.ViewModel.Logistiks
 
     public sealed class InventorySheetWindowViewModel : RSWindowViewModelBase
     {
-        private readonly InventorySheetManager myManager = new InventorySheetManager();
+        #region Fields
+
+        public readonly GenericKursDBRepository<SD_24> GenericInventorySheetRepository;
+
+        // ReSharper disable once NotAccessedField.Local
+        public readonly ISD_24Repository SD_24Repository;
+        public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
+            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+
         private readonly NomenklManager myNomenklManager = new NomenklManager();
         private InventorySheetRowViewModel myCurrentNomenkl;
         private NomenklGroup2 myCurrentNomenklGroup;
@@ -44,33 +59,51 @@ namespace KursAM2.ViewModel.Logistiks
         private bool myIsGroupEnabled;
         private ObservableCollection<InventorySheetRowViewModel> myRows;
 
+        #endregion
+
+        #region Constructors
+
         public InventorySheetWindowViewModel()
         {
+            GenericInventorySheetRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
+            SD_24Repository = new SD_24Repository(UnitOfWork);
             // ReSharper disable once VirtualMemberCallInContructor
             IsDocNewCopyRequisiteAllow = true;
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
-            //LoadReference();
             LoadNomenklGroup();
             IsAllNomekl = true;
         }
 
-        public InventorySheetWindowViewModel(decimal docCode) : this()
+        public InventorySheetWindowViewModel(decimal? docCode = null) : this()
         {
-            Document = new InventorySheetViewModel
+            if (docCode == null)
             {
-                DocCode = docCode
-            };
-            RefreshData(null);
+                Document = new InventorySheetViewModel(SD_24Repository.CreateNew(MatearialDocumentType.InventorySheet));
+            }
+            else
+            {
+                Document = new InventorySheetViewModel(SD_24Repository.GetByDC(docCode.Value));
+                myState = RowStatus.NotEdited;
+            }
         }
 
-        public bool IsCannotChangeStore
-        {
-            get => Document.State == RowStatus.NewRow;
-            // ReSharper disable once ValueParameterNotUsed
-            private set => RaisePropertiesChanged();
-        }
+        #endregion
 
+        #region Properties
+
+        public override string WindowName => Document.State == RowStatus.NewRow
+            ? "Инвентаризационная ведомость (новая)"
+            : $"Инвентаризационная ведомость №{Document.Num} от {Document.Date.ToShortDateString()}" +
+              $" на склад {Document.Warehouse}";
+
+        public override string LayoutName => "InventorySheetWindowViewModel";
+
+        public List<Core.EntityViewModel.NomenklManagement.Warehouse> StoreCollection { set; get; } =
+            new List<Core.EntityViewModel.NomenklManagement.Warehouse>(MainReferences.Warehouses.Values);
+
+        public bool IsCannotChangeStore => Document.State == RowStatus.NewRow;
+   
         public InventorySheetViewModel Document
         {
             get => myDocument;
@@ -119,7 +152,7 @@ namespace KursAM2.ViewModel.Logistiks
                 var listDC = GetNomenklGroupChilds(CurrentNomenklGroup).Distinct().ToList();
                 var ret = new ObservableCollection<InventorySheetRowViewModel>();
                 foreach (var n in from dc in listDC from n in Document.Rows where n.Nomenkl.Group.DocCode == dc select n
-                )
+                        )
                     ret.Add(n);
                 return ret;
             }
@@ -156,11 +189,9 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public override bool IsRedoAllow => Document != null && Document.DeletedRows.Count > 0;
-        public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited;
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse> StoreCollection => myManager.StoreCollection;
-        public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
-        public override bool IsDocDeleteAllow => true;
+        #endregion
+
+        #region Methods
 
         private List<decimal> GetNomenklGroupChilds(NomenklGroup2 grp)
         {
@@ -214,29 +245,132 @@ namespace KursAM2.ViewModel.Logistiks
             RaisePropertiesChanged(nameof(NomenklGroups));
         }
 
+        #endregion
+
+        #region IDataErrorInfo
+
+        #endregion
+
+        #region Commands
+
+        public override bool IsRedoAllow => Document != null && Document.DeletedRows.Count > 0;
+        public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited && Document.Warehouse != null;
+        public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
+        public override bool IsDocDeleteAllow => true;
+
+        public override void ResetLayout(object form)
+        {
+            if (IsCanSaveData)
+            {
+                var service = GetService<IDialogService>("WinUIDialogService");
+                dialogServiceText = "В документ внесены изменения, сохранить?";
+                var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
+                switch (res)
+                {
+                    case MessageResult.Yes:
+                        SaveData(null);
+                        break;
+                }
+            } 
+            Form?.Close();
+            using (var sctx = GlobalOptions.KursSystem())
+            {
+                var oldLayout = sctx.FormLayout.FirstOrDefault(_ =>
+                    _.UserId == GlobalOptions.UserInfo.KursId && _.ControlName == LayoutName);
+                if (oldLayout != null)
+                {
+                    sctx.FormLayout.Remove(oldLayout);
+                    sctx.SaveChanges();
+                }
+            }
+           
+            var f = new InventorySheetView2
+            {
+                DataContext = new InventorySheetWindowViewModel(Document.DocCode),
+                Owner = Application.Current.MainWindow
+            };
+            ((InventorySheetWindowViewModel)f.DataContext).Form = f;
+            f.Show();
+        }
+
         public override void RefreshData(object obj)
         {
             base.RefreshData(obj);
-            RaisePropertiesChanged(nameof(StoreCollection));
-            var dc = Document.DocCode;
-            Document = myManager.Load(dc);
-            if (Document == null) return;
+            if (IsCanSaveData)
+            {
+                var service = GetService<IDialogService>("WinUIDialogService");
+                dialogServiceText = "В документ внесены изменения, сохранить?";
+                var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
+                switch (res)
+                {
+                    case MessageResult.Yes:
+                        SaveData(null);
+                        break;
+                }
+            } 
+           
+            if (Document != null) Document = new InventorySheetViewModel(SD_24Repository.GetByDC(Document.DocCode));
+            
             LoadNomenklGroup();
-            //if (Document.WarehouseIn != null)
-            //{
-            //    Document.WarehouseIn = myManager.StoreCollection.SingleOrDefault(_ => _.DocCode == Document.WarehouseIn.DocCode);
-            //}
-            Document.State = RowStatus.NotEdited;
-            RaisePropertiesChanged(nameof(NomenklGroups));
             CurrentNomenklGroup = null;
-            IsCannotChangeStore = true;
-            RaisePropertiesChanged(nameof(Document));
+            Document.myState = RowStatus.NotEdited;
         }
 
         public override void SaveData(object data)
         {
-            myManager.Save(Document);
-            RefreshData(null);
+            try
+            {
+                if (Document.State == RowStatus.NewRow)
+                {
+                    Document.DocCode = UnitOfWork.Context.SD_24.Any()
+                        ? UnitOfWork.Context.SD_24.Max(_ => _.DOC_CODE) + 1
+                        : 10240000001;
+                    Document.Num = UnitOfWork.Context.SD_24.Any(_ =>
+                        _.DD_TYPE_DC == MatearialDocumentType.InventorySheet
+                        && _.DD_DATE.Year == DateTime.Today.Year)
+                        ? UnitOfWork.Context.SD_24.Where(_ => _.DD_TYPE_DC == MatearialDocumentType.InventorySheet
+                                                              && _.DD_DATE.Year == DateTime.Today.Year)
+                            .Max(_ => _.DD_IN_NUM) + 1
+                        : 1;
+                    foreach (var t in Document.Rows)
+                    {
+                        t.DocCode = Document.DocCode;
+                    }
+                }
+
+                UnitOfWork.CreateTransaction();
+
+                UnitOfWork.Save();
+                NomenklCalculationManager.InsertNomenklForCalc(UnitOfWork.Context,
+                    Document.Rows.Select(_ => _.Nomenkl.DocCode).ToList());
+                NomenklCalculationManager.CalcAllNomenklRemains(UnitOfWork.Context);
+                foreach (var n in Document.Rows.Select(_ => _.Nomenkl.DocCode))
+                {
+                    var c = NomenklCalculationManager.GetNomenklStoreRemain(UnitOfWork.Context, Document.Date,
+                        n, Document.Warehouse.DocCode);
+                    if (c < 0)
+                    {
+                        UnitOfWork.Rollback();
+                        var nom = MainReferences.GetNomenkl(n);
+                        WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
+                                                  // ReSharper disable once PossibleInvalidOperationException
+                                                  $"склад {Document.Warehouse} в кол-ве {c} ",
+                            "Отрицательные остатки", MessageBoxImage.Error);
+                        return;
+                    }
+                }
+
+                UnitOfWork.Commit();
+                DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InventoryList), Document.Id,
+                    0, null, (string)Document.ToJson());
+                foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
+                Document.myState = RowStatus.NotEdited;
+            }
+            catch (Exception ex)
+            {
+                UnitOfWork.Rollback();
+                WindowManager.ShowError(ex);
+            }
         }
 
         public override void Redo(object form)
@@ -262,8 +396,20 @@ namespace KursAM2.ViewModel.Logistiks
                         return;
                     }
 
-                    myManager.Delete(Document.DocCode);
-                    f?.Close();
+                    try
+                    {
+                        UnitOfWork.CreateTransaction();
+                        GenericInventorySheetRepository.Delete(Document.Entity);
+                        UnitOfWork.Save();
+                        UnitOfWork.Commit();
+                        f?.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        WindowManager.ShowError(ex);
+                        UnitOfWork.Rollback();
+                    }
+
                     return;
                 case MessageBoxResult.No:
                     break;
@@ -278,7 +424,7 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 DataContext = new InventorySheetWindowViewModel
                 {
-                    Document = myManager.CreateNew()
+                    Document = new InventorySheetViewModel(SD_24Repository.CreateNew())
                 },
                 Owner = Application.Current.MainWindow
             };
@@ -291,14 +437,25 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 DataContext = new InventorySheetWindowViewModel
                 {
-                    Document = myManager.CreateNew(Document, DocumentCopyType.Requisite)
+                    Document = new InventorySheetViewModel(SD_24Repository.CreateRequisiteCopy(Document.DocCode))
                 },
                 Owner = Application.Current.MainWindow
             };
             frm.Show();
         }
 
-        #region Commands
+        public override void DocNewCopy(object form)
+        {
+            var frm = new InventorySheetView
+            {
+                DataContext = new InventorySheetWindowViewModel
+                {
+                    Document = new InventorySheetViewModel(SD_24Repository.CreateCopy(Document.DocCode))
+                },
+                Owner = Application.Current.MainWindow
+            };
+            frm.Show();
+        }
 
         public ICommand AddAllNomenklCommand
         {
@@ -307,11 +464,16 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void AddAllNomenkl(object obj)
         {
-            foreach (
-                var nom in NomenklCalculationManager.GetNomenklStoreRemains(Document.Date, Document.Warehouse.DocCode)
-                    .Where(_ => _.Remain != 0)
-                    .Where(nom => Document.Rows.All(_ => _.Nomenkl.DocCode != nom.NomenklDC)))
-                Document.Rows.Add(new InventorySheetRowViewModel
+            var noms = NomenklCalculationManager
+                .GetNomenklStoreRemains(Document.Date, Document.Warehouse.DocCode)
+                .Where(_ => _.Remain != 0)
+                .Where(nom => Document.Rows.All(_ => _.Nomenkl.DocCode != nom.NomenklDC));
+            // ReSharper disable once PossibleMultipleEnumeration
+            if (noms.Any() && Document.State != RowStatus.NewRow) Document.myState = RowStatus.Edited;
+            // ReSharper disable once PossibleMultipleEnumeration
+            foreach (var nom in noms)
+            {
+                var newItem = new InventorySheetRowViewModel(null)
                 {
                     DocCode = Document.DocCode,
                     Nomenkl = MainReferences.GetNomenkl(nom.NomenklDC),
@@ -319,8 +481,12 @@ namespace KursAM2.ViewModel.Logistiks
                     QuantityCalc = nom.Remain,
                     Price = nom.PriceWithNaklad != 0 ? nom.PriceWithNaklad : nom.Price,
                     State = RowStatus.NewRow,
-                    Id = Guid.NewGuid()
-                });
+                    Id = Guid.NewGuid(),
+                    DocId = Document.Id,
+                    Parent = Document
+                };
+                Document.Rows.Add(newItem);
+            }
         }
 
         public ICommand AddNewNomenklCommand
@@ -333,18 +499,29 @@ namespace KursAM2.ViewModel.Logistiks
             var noms = StandartDialogs.SelectNomenklsDialog();
             if (noms == null || noms.Count == 0) return;
             IsAllNomekl = true;
+            if (Document.State != RowStatus.NewRow)
+                Document.myState = RowStatus.Edited;
+            var code = Document.Rows.Any() ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             foreach (var nom in noms.Where(nom => Document.Rows.All(_ => _.Nomenkl.DocCode != nom.DocCode)))
-                Document.Rows.Add(new InventorySheetRowViewModel
+            {
+                var newItem = new InventorySheetRowViewModel(new TD_24())
                 {
                     DocCode = Document.DocCode,
+                    Code = code,
                     Nomenkl = MainReferences.GetNomenkl(nom.DocCode),
                     QuantityFact =
                         NomenklManager.GetNomenklCount(Document.Date, nom.DocCode, Document.Warehouse.DocCode),
                     QuantityCalc =
                         NomenklManager.GetNomenklCount(Document.Date, nom.DocCode, Document.Warehouse.DocCode),
                     State = RowStatus.NewRow,
-                    Id = Guid.NewGuid()
-                });
+                    Id = Guid.NewGuid(),
+                    DocId = Document.Id,
+                    Parent = Document
+                };
+                Document.Rows.Add(newItem);
+                UnitOfWork.Context.TD_24.Add(newItem.Entity);
+                code++;
+            }
         }
 
         public ICommand RemoveNomenklCommand
@@ -355,8 +532,13 @@ namespace KursAM2.ViewModel.Logistiks
         private void RemoveNomenkl(object obj)
         {
             if (CurrentNomenkl.State != RowStatus.NewRow)
+            {
                 Document.DeletedRows.Add(CurrentNomenkl);
+                UnitOfWork.Context.TD_24.Remove(CurrentNomenkl.Entity);
+            }
             Rows.Remove(CurrentNomenkl);
+            UnitOfWork.Context.Entry(CurrentNomenkl.Entity).State = EntityState.Detached;
+            Document.State = RowStatus.Edited;
             RaisePropertiesChanged(nameof(IsRedoAllow));
         }
 

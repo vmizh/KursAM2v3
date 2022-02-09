@@ -1,105 +1,171 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+using System.Linq;
+using Core;
 using Core.ViewModel.Base;
+using Data;
+using Helper;
+using Newtonsoft.Json;
 
 namespace KursAM2.ViewModel.Logistiks
 {
-    public class InventorySheetViewModel : RSViewModelData
+    public class InventorySheetViewModel : RSViewModelData, IEntity<SD_24>
     {
-        private string myCreator;
-        private DateTime myDate;
-        private bool myIsClosed;
-        private int myNum;
-        private ObservableCollection<InventorySheetRowViewModel> myRows;
-        private Core.EntityViewModel.NomenklManagement.Warehouse myWarehouse;
-
-        public InventorySheetViewModel()
+        public InventorySheetViewModel(SD_24 entity)
         {
-            Rows = new ObservableCollection<InventorySheetRowViewModel>();
-            Rows.CollectionChanged += Rows_CollectionChanged;
-            DeletedRows = new ObservableCollection<InventorySheetRowViewModel>();
-            DeletedRows.CollectionChanged += DeletedRows_CollectionChanged;
+            Entity = entity ?? DefaultValue();
+            
+            LoadReference();
         }
 
-        public ObservableCollection<InventorySheetRowViewModel> Rows
+        public override decimal DocCode
         {
-            get => myRows;
+            get => Entity.DOC_CODE;
             set
             {
-                if (myRows == value) return;
-                myRows = value;
+                if (Entity.DOC_CODE == value) return;
+                Entity.DOC_CODE = value;
                 RaisePropertyChanged();
             }
         }
 
-        public ObservableCollection<InventorySheetRowViewModel> DeletedRows { set; get; }
+        public override Guid Id
+        {
+            get => Entity.Id;
+            set
+            {
+                if (Entity.Id == value) return;
+                Entity.Id = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<InventorySheetRowViewModel> Rows { set; get; } =
+            new ObservableCollection<InventorySheetRowViewModel>();
+
+
+        public ObservableCollection<InventorySheetRowViewModel> DeletedRows { set; get; } =
+            new ObservableCollection<InventorySheetRowViewModel>();
 
         public DateTime Date
         {
-            get => myDate;
+            get => Entity.DD_DATE;
             set
             {
-                if (myDate == value) return;
-                myDate = value;
+                if (Entity.DD_DATE == value) return;
+                Entity.DD_DATE = value;
                 RaisePropertyChanged();
             }
         }
 
         public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse
         {
-            get => myWarehouse;
+            get => MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC);
             set
             {
-                if (myWarehouse != null && myWarehouse.Equals(value)) return;
-                myWarehouse = value;
+                if (MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC) == value) return;
+                Entity.DD_SKLAD_POL_DC = value?.DOC_CODE;
+                Entity.DD_SKLAD_OTPR_DC = value?.DOC_CODE;
+                Entity.DD_POLUCH_NAME = MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC).Name.Length > 50 ?
+                        MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC) .Name.Substring(0,50) :
+                        MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC).Name;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Core.EntityViewModel.NomenklManagement.Warehouse WarehouseIn
+        {
+            get => MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC);
+            set
+            {
+                if (MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC) == value) return;
+                Entity.DD_SKLAD_POL_DC = value?.DOC_CODE;
+                Entity.DD_SKLAD_OTPR_DC = value?.DOC_CODE;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Core.EntityViewModel.NomenklManagement.Warehouse WarehouseOut
+        {
+            get => MainReferences.GetWarehouse(Entity.DD_SKLAD_OTPR_DC);
+            set
+            {
+                if (MainReferences.GetWarehouse(Entity.DD_SKLAD_OTPR_DC) == value) return;
+                Entity.DD_SKLAD_POL_DC = value?.DOC_CODE;
+                Entity.DD_SKLAD_OTPR_DC = value?.DOC_CODE;
                 RaisePropertyChanged();
             }
         }
 
         public int Num
         {
-            get => myNum;
+            get => Entity.DD_IN_NUM;
             set
             {
-                if (myNum == value) return;
-                myNum = value;
+                if (Entity.DD_IN_NUM == value) return;
+                Entity.DD_IN_NUM = value;
                 RaisePropertyChanged();
             }
         }
 
         public bool IsClosed
         {
-            get => myIsClosed;
+            get => Entity.DD_EXECUTED != 0;
             set
             {
-                if (myIsClosed == value) return;
-                myIsClosed = value;
+                if (Entity.DD_EXECUTED == (short)(value ? 1 : 0)) return;
+                Entity.DD_EXECUTED = (short)(value ? 1 : 0);
                 RaisePropertyChanged();
             }
         }
 
         public string Creator
         {
-            get => myCreator;
+            get => Entity.CREATOR;
             set
             {
-                if (myCreator == value) return;
-                myCreator = value;
+                if (Entity.CREATOR == value) return;
+                Entity.CREATOR = value;
                 RaisePropertyChanged();
             }
         }
 
-        private void Rows_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        public SD_24 DefaultValue()
         {
-            if (State == RowStatus.NotEdited)
-                State = RowStatus.Edited;
+            return new SD_24
+            {
+                DOC_CODE = -1,
+            };
         }
 
-        private void DeletedRows_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        public SD_24 Entity { get; set; }
+
+        private void LoadReference()
         {
-            if (State == RowStatus.NotEdited)
-                State = RowStatus.Edited;
+            if (Entity.TD_24 != null)
+                foreach (var t in Entity.TD_24)
+                    Rows.Add(new InventorySheetRowViewModel(t)
+                    {
+                        Parent = this,
+                        myState = RowStatus.NotEdited
+                    });
+        }
+        public override object ToJson()
+        {
+            var res = new
+            {
+                Статус = CustomFormat.GetEnumName(State),
+                Id,
+                DocCode,
+                Номер = Num.ToString(),
+                Дата = Date.ToShortDateString(),
+                Склад = Warehouse.Name,
+                Cоздатель = Creator,
+                Примечание = Note,
+                Закрыт = IsClosed ? "Да" : "Нет",
+                Позиции = Rows.Select(_ => _.ToJson())
+            };
+            return JsonConvert.SerializeObject(res);
         }
     }
 }

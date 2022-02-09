@@ -187,6 +187,17 @@ namespace KursAM2.View
                 Window form;
                 switch (formName)
                 {
+                    //Справочник валют
+                    case "Справочник валют":
+                        var crsref = new CurrencyReferenceWindowViewModel();
+                        var formcrs = new KursStandartFormView()
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = crsref
+                        };
+                        formcrs.Show();
+                        break;
+
                     //Лицевые счета акционеров
                     case "Лицевые счета акционеров":
                         var shbls = new StockHoldersBalancesWindowViewModel();

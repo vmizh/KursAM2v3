@@ -36,7 +36,6 @@
                                       Margin="5,0,0,0"
                                       EditValue="{Binding Document.DocNumber, UpdateSourceTrigger=PropertyChanged}"
                                       DockPanel.Dock="Left" />
-
                         <Label Content="  Дата " DockPanel.Dock="Left" />
                         <dxe:DateEdit MinWidth="100"
                                       DockPanel.Dock="Left"

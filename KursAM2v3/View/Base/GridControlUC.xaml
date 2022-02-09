@@ -23,7 +23,7 @@
             <dxg:GridControl.View>
                 <dxg:TableView
                     Name="gridDocumentsTableView"
-                    Style="{StaticResource TableView.Search}" />
+                    Style="{StaticResource TableView.SearchWithAddItems}" />
             </dxg:GridControl.View>
         </dxg:GridControl>
             <dxmvvm:Interaction.Behaviors>

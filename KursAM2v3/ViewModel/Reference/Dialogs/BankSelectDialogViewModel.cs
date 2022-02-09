@@ -103,6 +103,11 @@ namespace KursAM2.ViewModel.Reference.Dialogs
             get { return new Command(DeleteBank, _ => CurrentItem != null); }
         }
 
+        public override void DocNewEmpty(object form)
+        {
+            base.DocNewEmpty(form);
+        }
+
         private void DeleteBank(object obj)
         {
             using (var ctx = GlobalOptions.GetEntities())

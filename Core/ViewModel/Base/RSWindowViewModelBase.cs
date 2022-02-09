@@ -23,7 +23,7 @@ namespace Core.ViewModel.Base
         // ReSharper disable once ArrangeObjectCreationWhenTypeEvident
         public readonly WindowManager WinManager = new WindowManager();
         private bool myDialogResult;
-        private Window myForm;
+        public Window myForm;
 
         // ReSharper disable once MemberInitializerValueIgnored
         private bool myIsCanRefresh = true;
@@ -107,7 +107,7 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public virtual string MenuInfoString
         {
-            get { return myMenuInfoString; }
+            get => myMenuInfoString;
             set
             {
                 if (myMenuInfoString == value) return;

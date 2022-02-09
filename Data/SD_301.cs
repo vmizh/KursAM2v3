@@ -115,6 +115,7 @@ namespace Data
             this.VD_193 = new HashSet<VD_193>();
             this.SD_43 = new HashSet<SD_43>();
             this.StockHolderAccrualRows = new HashSet<StockHolderAccrualRows>();
+            this.AktSpisaniyaNomenkl_Title = new HashSet<AktSpisaniyaNomenkl_Title>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -327,5 +328,7 @@ namespace Data
         public virtual ICollection<SD_43> SD_43 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<StockHolderAccrualRows> StockHolderAccrualRows { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AktSpisaniyaNomenkl_Title> AktSpisaniyaNomenkl_Title { get; set; }
     }
 }

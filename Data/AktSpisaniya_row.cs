@@ -19,6 +19,7 @@ namespace Data
         public decimal Nomenkl_DC { get; set; }
         public decimal Quantity { get; set; }
         public string Note { get; set; }
+        public Nullable<bool> IsSaveOnOutBalansSklad { get; set; }
     
         public virtual AktSpisaniyaNomenkl_Title AktSpisaniyaNomenkl_Title { get; set; }
         public virtual SD_83 SD_83 { get; set; }

@@ -293,6 +293,7 @@
     </Compile>
     <Compile Include="Repositories\AccruedAmount\AccruedAmountRepositories.cs" />
     <Compile Include="Repositories\AktSpisaniyaNomenkl_TitleRepository.cs" />
+    <Compile Include="Repositories\CurrencyRepozitories.cs" />
     <Compile Include="Repositories\DistributeNakladRepository.cs" />
     <Compile Include="Repositories\DogovorsRepositories\DogovorClientRepository.cs" />
     <Compile Include="Repositories\DogovorsRepositories\DogovorOfSupplierRepository.cs" />
@@ -393,6 +394,7 @@
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorProviderViewModel.cs" />
     <Compile Include="ViewModel\MenuSearchWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\AccruedAmountTypeWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\CurrencyReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\Dialogs\SelectKursMainMenuItemViewModel.cs" />
     <Compile Include="ViewModel\Reference\FormPayReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\Kontragent\KontragentCategoryRefWindowViewModel.cs" />
@@ -445,6 +447,9 @@
     </Compile>
     <Compile Include="View\Finance\AccruedAmount\DialogSelectCashBankView.xaml.cs">
       <DependentUpon>DialogSelectCashBankView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\KursReferences\UC\CurrencyReferenceUC.xaml.cs">
+      <DependentUpon>CurrencyReferenceUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\KursReferences\UC\SelectKursMainMenuItem.xaml.cs">
       <DependentUpon>SelectKursMainMenuItem.xaml</DependentUpon>
@@ -532,6 +537,9 @@
     </Compile>
     <Compile Include="View\Logistiks\AktSpisaniya\SelectExistNomenklOnSkladView.xaml.cs">
       <DependentUpon>SelectExistNomenklOnSkladView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\InventorySheetView2.xaml.cs">
+      <DependentUpon>InventorySheetView2.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\UC\AddNomenklFromOrderInViewModel.cs" />
     <Compile Include="View\Logistiks\UC\AddNomenklFromOrderInUC.xaml.cs">
@@ -1230,6 +1238,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\KursReferences\UC\CurrencyReferenceUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\KursReferences\UC\SelectKursMainMenuItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1339,6 +1351,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Logistiks\AktSpisaniya\SelectExistNomenklOnSkladView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\InventorySheetView2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

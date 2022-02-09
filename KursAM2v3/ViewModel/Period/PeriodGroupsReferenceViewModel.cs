@@ -60,7 +60,7 @@ namespace KursAM2.ViewModel.Period
         public ObservableCollection<PeriodGroupsExludeViewModel> BasePeriodExclude { set; get; } =
             new ObservableCollection<PeriodGroupsExludeViewModel>();
 
-        private Window myForm;
+        private new Window myForm;
 
         public override Window Form
         {

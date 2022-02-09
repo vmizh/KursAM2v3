@@ -1011,7 +1011,7 @@ namespace KursAM2.Managers
                         Currency = MainReferences.GetCurrency(d.CurrencyDC),
                         CurrencyName = MainReferences.GetCurrency(d.CurrencyDC).Name,
                         DocNum = d.StockHolderAccrual.Num.ToString(),
-                        Price = (decimal)d.Summa
+                        Price = d.Summa ?? 0
                     };
                     SetCurrenciesValue(newOp, d.CurrencyDC, 0,
                         d.Summa);

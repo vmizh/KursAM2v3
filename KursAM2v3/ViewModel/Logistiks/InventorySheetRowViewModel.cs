@@ -1,23 +1,87 @@
+using System;
+using Core;
 using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
+using Data;
+using Helper;
+using Newtonsoft.Json;
 
 namespace KursAM2.ViewModel.Logistiks
 {
-    public class InventorySheetRowViewModel : RSViewModelData
+    public class InventorySheetRowViewModel : RSViewModelData, IEntity<TD_24>
     {
-        private bool myIsTaxExecuted;
-        private Nomenkl myNomenkl;
-        private decimal myPrice;
-        private decimal myQuantityCalc;
-        private decimal myQuantityFact;
+        #region Constructors
+
+        public InventorySheetRowViewModel(TD_24 entity)
+        {
+            Entity = entity ?? DefaultValue();
+            LoadReference();
+        }
+
+        #endregion
+
+        #region Fields
+
+        #endregion
+
+        #region Properties
+
+        public override Guid Id
+        {
+            get => Entity.Id;
+            set
+            {
+                if (Entity.Id == value) return;
+                Entity.Id = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Guid DocId
+        {
+            get => Entity.DocId;
+            set
+            {
+                if (Entity.DocId == value)
+                    return;
+                Entity.DocId = value;
+                RaisePropertiesChanged();
+            }
+        }
+
+        public override decimal DocCode
+        {
+            get => Entity.DOC_CODE;
+            set
+            {
+                if (Entity.DOC_CODE == value) return;
+                Entity.DOC_CODE = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public override int Code { 
+            get => Entity.CODE;
+            set
+            {
+                if (Entity.CODE == value) return;
+                Entity.CODE = value;
+                RaisePropertyChanged();
+            } }
 
         public Nomenkl Nomenkl
         {
-            get => myNomenkl;
+            get => Entity.DDT_NOMENKL_DC != 0 ? MainReferences.GetNomenkl(Entity.DDT_NOMENKL_DC) : null;
             set
             {
-                if (myNomenkl != null && myNomenkl.Equals(value)) return;
-                myNomenkl = value;
+                if (MainReferences.GetNomenkl(Entity.DDT_NOMENKL_DC) == value) return;
+                Entity.DDT_NOMENKL_DC = value?.DOC_CODE ?? 0;
+                if (value != null)
+                {
+                    Entity.DDT_ED_IZM_DC = value.Unit.DocCode;
+                    Entity.DDT_POST_ED_IZM_DC = value.Unit.DocCode;
+                    Entity.DDT_CRS_DC = value.Currency.DocCode;
+                }
                 RaisePropertyChanged();
             }
         }
@@ -29,11 +93,11 @@ namespace KursAM2.ViewModel.Logistiks
 
         public decimal QuantityCalc
         {
-            get => myQuantityCalc;
+            get => (decimal)(Entity.DDT_OSTAT_STAR ?? 0);
             set
             {
-                if (myQuantityCalc == value) return;
-                myQuantityCalc = value;
+                if ((decimal)(Entity.DDT_OSTAT_STAR ?? 0) == value) return;
+                Entity.DDT_OSTAT_STAR = (double?)value;
                 RaisePropertyChanged();
                 RaisePropertiesChanged(nameof(Summa));
             }
@@ -41,18 +105,19 @@ namespace KursAM2.ViewModel.Logistiks
 
         public decimal QuantityFact
         {
-            get => myQuantityFact;
+            get => (decimal)(Entity.DDT_OSTAT_NOV ?? 0);
             set
             {
-                if (value < 0)
+                if ((decimal)(Entity.DDT_OSTAT_NOV ?? 0) == value) return;
+                Entity.DDT_OSTAT_NOV = (double?)value;
+                if (Difference > 0)
                 {
-                    //WindowManager.ShowMessage(Application.Current.MainWindow,"Остаток не может быть меньше 0.","Ошибка",MessageBoxImage.Error);
-                    RaisePropertyChanged();
-                    return;
+                    Entity.DDT_KOL_PRIHOD = Difference;
                 }
-
-                if (myQuantityFact == value) return;
-                myQuantityFact = value;
+                else
+                {
+                    Entity.DDT_KOL_RASHOD = Difference;
+                }
                 RaisePropertyChanged();
                 RaisePropertiesChanged(nameof(Difference));
                 RaisePropertiesChanged(nameof(Summa));
@@ -61,13 +126,15 @@ namespace KursAM2.ViewModel.Logistiks
 
         public decimal Difference => QuantityFact - QuantityCalc;
 
+        
+
         public bool IsTaxExecuted
         {
-            get => myIsTaxExecuted;
+            get => Entity.DDT_TAX_EXECUTED != 0;
             set
             {
-                if (myIsTaxExecuted == value) return;
-                myIsTaxExecuted = value;
+                if (Entity.DDT_TAX_EXECUTED == (value ? 1 : 0)) return;
+                Entity.DDT_TAX_EXECUTED = (short)(value ? 1 : 0);
                 RaisePropertyChanged();
             }
         }
@@ -76,14 +143,67 @@ namespace KursAM2.ViewModel.Logistiks
 
         public decimal Price
         {
-            get => myPrice;
+            get => Entity.DDT_TAX_CRS_CENA ?? 0;
             set
             {
-                if (myPrice == value) return;
-                myPrice = value;
+                if ((Entity.DDT_TAX_CRS_CENA ?? 0) == value) return;
+                Entity.DDT_TAX_CRS_CENA = value;
                 RaisePropertyChanged();
                 RaisePropertiesChanged(nameof(Summa));
             }
         }
+
+        public TD_24 Entity { get; set; }
+
+        #endregion
+
+        #region Commands
+
+        #endregion
+
+        #region Methods
+
+        private void LoadReference()
+        {
+        }
+
+        public TD_24 DefaultValue()
+        {
+            return new TD_24
+            {
+                DOC_CODE = -1,
+                CODE = -1
+            };
+        }
+
+        public override object ToJson()
+        {
+            var res = new
+            {
+                Статус = CustomFormat.GetEnumName(State),
+                Id,
+                DocCode,
+                Code,
+                Номенклатурный_Номер = NomenklNumber,
+                Номенклатура = NomenklName,
+                Ед_Изм = NomenklUnit,
+                Валюта = NomenklCrsName,
+                Кол_расчетное = QuantityCalc,
+                Кол_фактическое = QuantityFact,
+                Разница = Difference,
+                Таксировано =IsTaxExecuted,
+                Цена = Price,
+                Сумма = Summa,
+                Примечание = Note
+
+            };
+            return JsonConvert.SerializeObject(res);
+        }
+
+        #endregion
+
+        #region IDataErrorInfo
+
+        #endregion
     }
 }

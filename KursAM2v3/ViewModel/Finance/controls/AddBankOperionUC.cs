@@ -69,6 +69,8 @@ namespace KursAM2.ViewModel.Finance.controls
                 Currency = bankAcc.Currency,
                 Kontragent = row.Kontragent,
                 BankOperationType = row.BankOperationType,
+                BankAccountOut = row.BankAccountOut,
+                BankAccountIn = row.BankAccountIn,
                 Payment = row.Payment,
                 VVT_VAL_RASHOD = row.VVT_VAL_RASHOD,
                 VVT_VAL_PRIHOD = row.VVT_VAL_PRIHOD,

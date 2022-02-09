@@ -6,7 +6,6 @@ using System.Transactions;
 using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -32,18 +31,7 @@ namespace KursAM2.Managers
                         .ToList();
             }
             ret.Clear();
-            ret.AddRange(docs.Select(d => new InventorySheetViewModel
-            {
-                DocCode = d.DOC_CODE,
-                Creator = d.CREATOR,
-                Date = d.DD_DATE,
-                IsClosed = d.DD_EXECUTED == 1,
-                Note = d.DD_NOTES,
-                Num = d.DD_IN_NUM,
-                // ReSharper disable once PossibleInvalidOperationException
-                // ReSharper disable once AssignNullToNotNullAttribute
-                Warehouse = MainReferences.Warehouses[d.DD_SKLAD_POL_DC.Value]
-            }));
+            ret.AddRange(docs.Select(d => new InventorySheetViewModel(d)));
             return ret;
         }
 
@@ -55,21 +43,15 @@ namespace KursAM2.Managers
             {
                 docs =
                     ctx.SD_24
+                        .Include(_ => _.TD_24)
                         .Where(_ => _.DD_TYPE_DC == 2010000005 && _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd)
                         .ToList();
             }
-            ret.AddRange(docs.Select(d => new InventorySheetViewModel
+
+            foreach (var d in docs)
             {
-                DocCode = d.DOC_CODE,
-                Creator = d.CREATOR,
-                Date = d.DD_DATE,
-                IsClosed = d.DD_EXECUTED == 1,
-                Note = d.DD_NOTES,
-                Num = d.DD_IN_NUM,
-                // ReSharper disable once PossibleInvalidOperationException
-                // ReSharper disable once AssignNullToNotNullAttribute
-                Warehouse = MainReferences.Warehouses[d.DD_SKLAD_POL_DC.Value]
-            }));
+                ret.Add(new InventorySheetViewModel(d));
+            }
             return ret;
         }
 
@@ -100,18 +82,7 @@ namespace KursAM2.Managers
                     from n in noms let dcs = docs.Where(_ => _.DOC_CODE == n.DOC_CODE) where !dcs.Any() select n)
                     docs.Add(n);
             }
-            return docs.Select(d => new InventorySheetViewModel
-            {
-                DocCode = d.DOC_CODE,
-                Creator = d.CREATOR,
-                Date = d.DD_DATE,
-                IsClosed = d.DD_EXECUTED == 1,
-                Note = d.DD_NOTES,
-                Num = d.DD_IN_NUM,
-                // ReSharper disable once PossibleInvalidOperationException
-                // ReSharper disable once AssignNullToNotNullAttribute
-                Warehouse = MainReferences.Warehouses[d.DD_SKLAD_POL_DC.Value]
-            }).ToList();
+            return docs.Select(d => new InventorySheetViewModel(d)).ToList();
         }
 
         public override InventorySheetViewModel Save(InventorySheetViewModel doc)
@@ -127,8 +98,12 @@ namespace KursAM2.Managers
                             case RowStatus.Edited:
                                 var dh = ctx.SD_24.SingleOrDefault(_ => _.DOC_CODE == doc.DocCode);
                                 if (dh == null) return null;
+                                dh.DD_SKLAD_OTPR_DC = doc.Warehouse.DocCode;
+                                dh.DD_SKLAD_POL_DC = doc.Warehouse.DocCode;
                                 dh.DD_DATE = doc.Date;
                                 dh.DD_EXECUTED = (short) (doc.IsClosed ? 1 : 0);
+                                dh.DD_POLUCH_NAME = doc.Warehouse.Name;
+                                dh.DD_OTRPAV_NAME = doc.Warehouse.Name;
                                 dh.DD_NOTES = doc.Note;
                                 foreach (
                                     var delrow in
@@ -212,7 +187,8 @@ namespace KursAM2.Managers
                                     DD_SKLAD_OTPR_DC = doc.Warehouse.DocCode,
                                     DD_SKLAD_POL_DC = doc.Warehouse.DocCode,
                                     DD_POLUCH_NAME = doc.Warehouse.Name,
-                                    DD_OTRPAV_NAME = doc.Warehouse.Name
+                                    DD_OTRPAV_NAME = doc.Warehouse.Name,
+                                    CREATOR = GlobalOptions.UserInfo.NickName
                                 });
                                 var rowNum = 1;
                                 foreach (var dr in doc.Rows)
@@ -310,34 +286,9 @@ namespace KursAM2.Managers
                         .Include(_ => _.TD_24)
                         .SingleOrDefault(_ => _.DOC_CODE == docCode);
                 if (doc == null) return null;
-                var ret = new InventorySheetViewModel
-                {
-                    DocCode = doc.DOC_CODE,
-                    Creator = doc.CREATOR,
-                    Date = doc.DD_DATE,
-                    IsClosed = doc.DD_EXECUTED == 1,
-                    Note = doc.DD_NOTES,
-                    Num = doc.DD_IN_NUM,
-                    // ReSharper disable once PossibleInvalidOperationException
-                    // ReSharper disable once AssignNullToNotNullAttribute
-                    Warehouse = StoreCollection.FirstOrDefault(_ => _.DocCode == doc.DD_SKLAD_POL_DC),
-                    Id = doc.Id
-                };
+                var ret = new InventorySheetViewModel(doc);
                 foreach (var row in doc.TD_24)
-                    ret.Rows.Add(new InventorySheetRowViewModel
-                    {
-                        Parent = ret,
-                        DocCode = row.DOC_CODE,
-                        Nomenkl = MainReferences.GetNomenkl(row.DDT_NOMENKL_DC),
-                        IsTaxExecuted = row.DDT_TAX_EXECUTED == 1,
-                        // ReSharper disable once PossibleInvalidOperationException
-                        QuantityCalc = (decimal) row.DDT_OSTAT_STAR,
-                        // ReSharper disable once PossibleInvalidOperationException
-                        QuantityFact = (decimal) row.DDT_OSTAT_NOV,
-                        // ReSharper disable once PossibleInvalidOperationException
-                        Price = (decimal) row.DDT_TAX_CRS_CENA,
-                        Id = row.Id
-                    });
+                    ret.Rows.Add(new InventorySheetRowViewModel(row));
                 foreach (var r in ret.Rows)
                     r.State = RowStatus.NotEdited;
                 ret.State = RowStatus.NotEdited;
@@ -410,9 +361,8 @@ namespace KursAM2.Managers
                 else
                     num = n.Max(_ => _.DD_IN_NUM) + 1;
             }
-            var ret = new InventorySheetViewModel
+            var ret = new InventorySheetViewModel(null)
             {
-                DocCode = -1,
                 Date = DateTime.Today,
                 Creator = GlobalOptions.UserInfo.NickName,
                 Id = Guid.NewGuid(),
@@ -429,18 +379,16 @@ namespace KursAM2.Managers
             switch (copyType)
             {
                 case DocumentCopyType.Requisite:
-                    ret = new InventorySheetViewModel
+                    ret = new InventorySheetViewModel(null)
                     {
-                        DocCode = -1,
                         Date = doc.Date,
                         Creator = GlobalOptions.UserInfo.NickName,
                         Id = Guid.NewGuid()
                     };
                     break;
                 case DocumentCopyType.Full:
-                    ret = new InventorySheetViewModel
+                    ret = new InventorySheetViewModel(null)
                     {
-                        DocCode = -1,
                         Date = doc.Date,
                         Creator = GlobalOptions.UserInfo.NickName,
                         Id = Guid.NewGuid()
@@ -453,9 +401,8 @@ namespace KursAM2.Managers
         public InventorySheetViewModel CreateNew(decimal docCode,
             DocumentCopyType copyType = DocumentCopyType.Empty)
         {
-            var ret = new InventorySheetViewModel
+            var ret = new InventorySheetViewModel(null)
             {
-                DocCode = -1,
                 Date = DateTime.Today,
                 Creator = GlobalOptions.UserInfo.NickName,
                 Id = Guid.NewGuid(),
@@ -466,9 +413,8 @@ namespace KursAM2.Managers
 
         public InventorySheetViewModel CreateNew(Guid id, DocumentCopyType copyType = DocumentCopyType.Empty)
         {
-            var ret = new InventorySheetViewModel
+            var ret = new InventorySheetViewModel(null)
             {
-                DocCode = -1,
                 Date = DateTime.Today,
                 Creator = GlobalOptions.UserInfo.NickName,
                 Id = Guid.NewGuid(),

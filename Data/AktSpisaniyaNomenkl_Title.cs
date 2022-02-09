@@ -27,9 +27,11 @@ namespace Data
         public string Creator { get; set; }
         public string Reason_Creation { get; set; }
         public string Note { get; set; }
+        public Nullable<decimal> CurrencyDC { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AktSpisaniya_row> AktSpisaniya_row { get; set; }
         public virtual SD_27 SD_27 { get; set; }
+        public virtual SD_301 SD_301 { get; set; }
     }
 }

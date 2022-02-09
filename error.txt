@@ -1,1 +1,1 @@
-C:\Users\vmizh\Work\KursAM2v3\Version.xml / Индекс находился вне границ массива.
+C:\Users\user\WorkProject\DX19\KursAM2v3\Version.xml / Индекс находился вне границ массива.

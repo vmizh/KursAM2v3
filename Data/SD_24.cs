@@ -95,6 +95,7 @@ namespace Data
         public string SUPPLIER_TEXT { get; set; }
         public Nullable<System.Guid> GRUZO_INFO_ID { get; set; }
         public System.Guid Id { get; set; }
+        public Nullable<decimal> DD_CRS_DC { get; set; }
     
         public virtual GROZO_REQUISITE GROZO_REQUISITE { get; set; }
         public virtual SD_112 SD_112 { get; set; }

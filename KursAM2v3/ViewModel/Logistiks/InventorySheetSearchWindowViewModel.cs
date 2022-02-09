@@ -1,25 +1,38 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using Core;
 using Core.Menu;
 using Core.ViewModel.Base;
-using KursAM2.Managers;
-using KursAM2.Managers.Base;
+using Data;
+using Data.Repository;
+using KursAM2.Repositories;
 using KursAM2.View.Logistiks;
 
 namespace KursAM2.ViewModel.Logistiks
 {
     public sealed class InventorySheetSearchWindowViewModel : RSWindowViewModelBase
     {
-        private readonly InventorySheetManager myManager = new InventorySheetManager();
+        public readonly GenericKursDBRepository<SD_24> GenericInventorySheetRepository;
+
+        // ReSharper disable once NotAccessedField.Local
+        public readonly ISD_24Repository SD_24Repository;
+
+        public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
+            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+
+        // private readonly InventorySheetManager myManager = new InventorySheetManager();
         private InventorySheetViewModel myCurrentRow;
         private DateTime myDateEnd;
         private DateTime myDateStart;
 
         public InventorySheetSearchWindowViewModel()
         {
+            GenericInventorySheetRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
+            SD_24Repository = new SD_24Repository(UnitOfWork);
             WindowName = "Инвентаризационные ведомости";
             IsDocNewCopyRequisiteAllow = true;
+            IsCanDocNew = true;
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             DateEnd = DateTime.Today;
@@ -81,33 +94,62 @@ namespace KursAM2.ViewModel.Logistiks
         {
             base.RefreshData(obj);
             Documents.Clear();
-            if (string.IsNullOrWhiteSpace(SearchText))
-                foreach (var d in myManager.GetDocuments(DateStart, DateEnd))
-                    Documents.Add(d);
-            else
-                foreach (var d in myManager.GetDocuments(DateStart, DateEnd, SearchText))
-                    Documents.Add(d);
+            foreach (var d in SD_24Repository.GetDocuments(MatearialDocumentType.InventorySheet, DateStart, DateEnd))
+            {
+                var newItem = new InventorySheetViewModel(d)
+                {
+                    State = RowStatus.NotEdited,
+                    myState = RowStatus.NotEdited
+                };
+                Documents.Add(newItem);
+            }
+
             RaisePropertiesChanged(nameof(Documents));
         }
 
         public override void DocumentOpen(object obj)
         {
-            var form = new InventorySheetView
+            var form = new InventorySheetView2
             {
-                DataContext = new InventorySheetWindowViewModel(CurrentRow.DocCode),
+                //DataContext = dtx,
                 Owner = Application.Current.MainWindow
             };
+            form.DataContext = new InventorySheetWindowViewModel(CurrentRow.DocCode)
+            {
+                Form = form,
+                myState = RowStatus.NotEdited
+            };
             form.Show();
-            ((InventorySheetWindowViewModel) form.DataContext).RefreshData(null);
         }
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new InventorySheetView
+            var doc = new InventorySheetViewModel(SD_24Repository.CreateNew(MatearialDocumentType.InventorySheet))
+            {
+                myState = RowStatus.NewRow
+            };
+            var dtx = new InventorySheetWindowViewModel
+            {
+                Document = doc,
+                State = RowStatus.NewRow
+            };
+            dtx.UnitOfWork.Context.SD_24.Add(doc.Entity);
+            var frm = new InventorySheetView2
+            {
+                DataContext = dtx,
+                Owner = Application.Current.MainWindow
+            };
+            frm.Show();
+        }
+
+        public override void DocNewCopy(object form)
+        {
+            if (CurrentRow == null) return;
+            var frm = new InventorySheetView2
             {
                 DataContext = new InventorySheetWindowViewModel
                 {
-                    Document = myManager.CreateNew()
+                    Document = new InventorySheetViewModel(SD_24Repository.CreateCopy(CurrentRow.DocCode))
                 },
                 Owner = Application.Current.MainWindow
             };
@@ -117,13 +159,11 @@ namespace KursAM2.ViewModel.Logistiks
         public override void DocNewCopyRequisite(object form)
         {
             if (CurrentRow == null) return;
-            var doc = myManager.Load(CurrentRow.DocCode);
-            if (doc == null) return;
-            var frm = new InventorySheetView
+            var frm = new InventorySheetView2
             {
                 DataContext = new InventorySheetWindowViewModel
                 {
-                    Document = myManager.CreateNew(doc, DocumentCopyType.Requisite)
+                    Document = new InventorySheetViewModel(SD_24Repository.CreateRequisiteCopy(CurrentRow.DocCode))
                 },
                 Owner = Application.Current.MainWindow
             };

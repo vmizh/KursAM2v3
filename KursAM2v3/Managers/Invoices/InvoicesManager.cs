@@ -18,7 +18,6 @@ using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
-using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.ViewModel.Management.Calculations;
 
@@ -60,6 +59,7 @@ namespace KursAM2.Managers.Invoices
         public static InvoiceProvider GetInvoiceProvider(decimal dc)
         {
             var doc = new InvoiceProvider(new UnitOfWork<ALFAMEDIAEntities>());
+            // ReSharper disable once CollectionNeverQueried.Local
             var pDocs = new List<InvoicePaymentDocument>();
             try
             {
@@ -171,6 +171,7 @@ namespace KursAM2.Managers.Invoices
         public InvoiceProvider GetInvoiceProvider2(decimal dc)
         {
             InvoiceProvider doc;
+            // ReSharper disable once CollectionNeverQueried.Local
             var pDocs = new List<InvoicePaymentDocument>();
             var i = genericProviderRepository.GetById(dc);
             foreach (var c in UnitOfWork.Context.SD_34.Where(_ => _.SPOST_DC == dc).ToList())
@@ -990,9 +991,20 @@ namespace KursAM2.Managers.Invoices
                     var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
-                       
-                        var newDoc = new InvoiceProvider(d,new UnitOfWork<ALFAMEDIAEntities>());  
-                        ret.Add(newDoc);
+                        if (isUsePayment)
+                        {
+                            var psums = pays.Where(_ => _.DocCode == d.DOC_CODE).Sum(_ => _.Summa);
+                            if (psums < d.SF_CRS_SUMMA)
+                            {
+                                var newDoc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>());
+                                ret.Add(newDoc);
+                            }
+                        }
+                        else
+                        {
+                            var newDoc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>());
+                            ret.Add(newDoc);
+                        }
                     }
                 }
             }
@@ -1136,24 +1148,7 @@ namespace KursAM2.Managers.Invoices
                             if (pd == null)
                             {
                                 ret.Add(newDoc);
-                                continue;
                             }
-                            // if (newDoc.SF_CRS_SUMMA > pd.PaySumma)
-                            // {
-                            //     newDoc.PaymentDocs.Add(new InvoicePaymentDocument
-                            //     {
-                            //         Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
-                            //     });
-                            //     ret.Add(newDoc);
-                            // }
-                        }
-                        else
-                        {
-                            // newDoc.PaymentDocs.Add(new InvoicePaymentDocument
-                            // {
-                            //     Summa = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode)?.PaySumma ?? 0
-                            // });
-                            // ret.Add(newDoc);
                         }
                     }
                 }
@@ -1210,15 +1205,15 @@ namespace KursAM2.Managers.Invoices
                                 on sd26.DOC_CODE equals td26.DOC_CODE
                             //where 
                             select sd26).ToList();
-                    var sql =
-                        "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_PRIHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
-                        "FROM sd_26 s26 " +
-                        "LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DOC_CODE " +
-                        "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_POSTAV_DC = s26.DOC_CODE " +
-                        "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SPOST_DC = s26.DOC_CODE " +
-                        $"WHERE s26.SF_POSTAV_DATE >= '{CustomFormat.DateToString(dateStart)}' AND s26.SF_POSTAV_DATE <= '{CustomFormat.DateToString(dateEnd)}'" +
-                        "GROUP BY s26.doc_code, s26.SF_CRS_SUMMA ";
-                    var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
+                    //var sql =
+                    //    "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_PRIHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
+                    //    "FROM sd_26 s26 " +
+                    //    "LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DOC_CODE " +
+                    //    "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_POSTAV_DC = s26.DOC_CODE " +
+                    //    "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SPOST_DC = s26.DOC_CODE " +
+                    //    $"WHERE s26.SF_POSTAV_DATE >= '{CustomFormat.DateToString(dateStart)}' AND s26.SF_POSTAV_DATE <= '{CustomFormat.DateToString(dateEnd)}'" +
+                    //    "GROUP BY s26.doc_code, s26.SF_CRS_SUMMA ";
+                    //var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
@@ -1576,6 +1571,7 @@ namespace KursAM2.Managers.Invoices
         /// <summary>
         ///     Список без учета дат
         /// </summary>
+        /// <param name="context"></param>
         /// <param name="searchText"></param>
         /// <param name="isUsePayment"></param>
         /// <param name="isAccepted"></param>
@@ -1593,7 +1589,6 @@ namespace KursAM2.Managers.Invoices
         /// <param name="dateStart"></param>
         /// <param name="dateEnd"></param>
         /// <param name="isUsePayment"></param>
-        /// <param name="kontragentDC"></param>
         /// <param name="context"></param>
         /// <param name="searchText"></param>
         /// <param name="isAccepted"></param>

@@ -1,16 +1,14 @@
 ﻿using System.Windows.Controls;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm;
-using KursAM2.ViewModel.Finance;
 
 namespace KursAM2.View.DialogUserControl.ViewModel
 {
     public class NameNoteViewModel : RSViewModelBase
     {
+        public MessageResult DialogResult = MessageResult.No;
         private string myHeaderName;
         private string myHeaderNote;
-
-        public new MessageResult DialogResult = MessageResult.No;
 
         public UserControl CustomDataUserControl { set; get; } = new NameNoteUC();
 

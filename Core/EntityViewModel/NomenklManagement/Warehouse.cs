@@ -95,6 +95,17 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
+        public bool IsOutBalans
+        {
+            get => Entity.IsOutBalans ?? false;
+            set
+            {
+                if (Entity.IsOutBalans == value) return;
+                Entity.IsOutBalans = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public int TABELNUMBER
         {
             get => Entity.TABELNUMBER;
