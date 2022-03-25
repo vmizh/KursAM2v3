@@ -16,13 +16,26 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
     public sealed class DialogSelectExistNomOnSkaldViewModel : RSWindowViewModelBase
     {
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+        #region Constructors
+
+        public DialogSelectExistNomOnSkaldViewModel(Core.EntityViewModel.NomenklManagement.Warehouse sklad,
+            DateTime date)
+        {
+            warehouse = sklad;
+            Date = date;
+            RefreshData(null);
+        }
+
+        #endregion
+
         #region Fields
 
         private NomenklRemainsOnSkladWithPrice myCurrentNomenkl;
         private NomenklRemainsOnSkladWithPrice myCurrentSelectedNomenkl;
-        private Core.EntityViewModel.NomenklManagement.Warehouse warehouse;
+        private readonly Core.EntityViewModel.NomenklManagement.Warehouse warehouse;
         private readonly DateTime Date;
-        
+
         #endregion
 
         #region Properties
@@ -31,11 +44,12 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public ObservableCollection<NomenklRemainsOnSkladWithPrice> NomenklList { set; get; } =
             new ObservableCollection<NomenklRemainsOnSkladWithPrice>();
+
         // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<NomenklRemainsOnSkladWithPrice> NomenklSkladRows { set; get; } =
             new ObservableCollection<NomenklRemainsOnSkladWithPrice>();
 
-        public UserControl CustomDataUserControl { set; get; } = new SelectExistNomenklOnSkladView(); 
+        public UserControl CustomDataUserControl { set; get; } = new SelectExistNomenklOnSkladView();
 
         public NomenklRemainsOnSkladWithPrice CurrentNomenkl
         {
@@ -50,6 +64,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public ObservableCollection<NomenklRemainsOnSkladWithPrice> NomenklSelectedList { set; get; } =
             new ObservableCollection<NomenklRemainsOnSkladWithPrice>();
+
         public ObservableCollection<NomenklRemainsOnSkladWithPrice> SelectedRows { set; get; } =
             new ObservableCollection<NomenklRemainsOnSkladWithPrice>();
 
@@ -66,17 +81,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         #endregion
 
-        #region Constructors
-
-        public DialogSelectExistNomOnSkaldViewModel(Core.EntityViewModel.NomenklManagement.Warehouse sklad, DateTime date )
-        {
-            warehouse = sklad;
-            Date = date; 
-            RefreshData(null);
-        }
-
-        #endregion
-
         #region Commands
 
         public ICommand AddNomenklToSelectedCommand
@@ -89,19 +93,13 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             if (NomenklSkladRows.Count > 1)
             {
                 foreach (var ns in NomenklSkladRows)
-                {
                     if (NomenklSelectedList.All(_ => _.Nomenkl.DocCode != ns.Nomenkl.DocCode))
-                    {
                         NomenklSelectedList.Add(ns);
-                    }
-                }
             }
             else
             {
                 if (NomenklSelectedList.All(_ => _.Nomenkl.DocCode != CurrentNomenkl.Nomenkl.DocCode))
-                {
                     NomenklSelectedList.Add(CurrentNomenkl);
-                }
             }
         }
 
@@ -114,7 +112,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                           ",@StartKol NUMERIC(18,4) " +
                           ",@nomDC NUMERIC(18, 0) " +
                           ",@startDate DATETIME " +
-                          $",@DateStart DATETIME = '{CustomFormat.DateToString(new DateTime(2000,1,1))}' " +
+                          $",@DateStart DATETIME = '{CustomFormat.DateToString(new DateTime(2000, 1, 1))}' " +
                           $",@DateEnd DATETIME = '{CustomFormat.DateToString(Date)}' " +
                           $",@StoreDC NUMERIC(18, 0) = {CustomFormat.DecimalToSqlDecimal(warehouse.DocCode)}; " +
                           " " +
@@ -283,18 +281,15 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 foreach (var nl in delList) listTemp.Remove(nl);
                 NomenklList.Clear();
                 foreach (var n in listTemp.Where(_ => _.QuantityEnd > 0))
-                {
                     NomenklList.Add(new NomenklRemainsOnSkladWithPrice
                     {
                         Nomenkl = n.Nomenkl,
                         Quantity = n.QuantityEnd,
-                        Prices = NomenklManager.NomenklPrice(n.Nomenkl.DocCode,DateTime.Today),
+                        Prices = nomenklManager.GetNomenklPrice(n.Nomenkl.DocCode, DateTime.Today)
                     });
-                }
             }
         }
 
         #endregion
-
     }
 }

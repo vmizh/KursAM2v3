@@ -258,7 +258,7 @@ namespace KursAM2.Managers
                         data.Add(new BankOperations
                         {
                             Date = date,
-                            Start = (data.FirstOrDefault(_ => _.Date < date)?.End ?? 0),
+                            Start = data.FirstOrDefault(_ => _.Date < date)?.End ?? 0,
                             SummaIn = 0,
                             SummaOut = sumOut,
                             End = (data.FirstOrDefault(_ => _.Date < date)?.End ?? 0) - sumOut
@@ -330,6 +330,7 @@ namespace KursAM2.Managers
                                 var pays = ctx.Database.SqlQuery<InvoicesManager.InvoicePayment>(sql)
                                     .FirstOrDefault();
                                 if (pays != null)
+                                {
                                     if (pays.Summa < pays.PaySumma + item.VVT_VAL_RASHOD)
                                     {
                                         var res = winManager.ShowWinUIMessageBox(Application.Current.MainWindow,
@@ -345,6 +346,7 @@ namespace KursAM2.Managers
                                                 return;
                                         }
                                     }
+                                }
                             }
                             else
                             {
@@ -429,10 +431,15 @@ namespace KursAM2.Managers
                                     Id = Guid.NewGuid(),
                                     BankCode = item.Code,
                                     DocDC = item.VVT_SFACT_POSTAV_DC.Value,
-                                    Summa = item.VVT_VAL_RASHOD ?? 0
+                                    Summa = item.VVT_VAL_RASHOD ?? 0,
+                                    Rate = item.CurrencyRateForReference
                                 });
                             else
+                            {
                                 oldPay.Summa = item.VVT_VAL_RASHOD ?? 0;
+                                oldPay.Rate = item.CurrencyRateForReference;
+                            }
+
                         }
 
                         DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.Bank), null,

@@ -27,6 +27,7 @@ namespace KursAM2.Managers
         private Project myProject;
         public List<CURRENCY_RATES_CB> MyRates = new List<CURRENCY_RATES_CB>();
         private Guid spisanieTovara;
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         public ProfitAndLossesManager(ProfitAndLossesWindowViewModel vm)
         {
@@ -980,7 +981,7 @@ namespace KursAM2.Managers
                         Nomenkl = nom,
                         DocTypeCode = (DocumentType) 357
                     };
-                    var p = NomenklManager.NomenklPrice(nom.DocCode,d.SD_24.DD_DATE,ent );
+                    var p = nomenklManager.GetNomenklPrice(nom.DocCode,d.SD_24.DD_DATE);
                     SetCurrenciesValue(newOp1, nom.Currency.DocCode, p.Price * d.DDT_KOL_PRIHOD, 0);
 
                     Extend.Add(newOp1);
@@ -2382,7 +2383,7 @@ namespace KursAM2.Managers
                         Note = d.Note,
                         DocCode = 0,
                         Quantity = d.Quantity,
-                        Price = NomenklManager.NomenklPrice(d.Nomenkl_DC, d.AktSpisaniyaNomenkl_Title.Date_Doc).Price,
+                        Price = nomenklManager.GetNomenklPrice(d.Nomenkl_DC, d.AktSpisaniyaNomenkl_Title.Date_Doc).Price,
                         Date = d.AktSpisaniyaNomenkl_Title.Date_Doc,
                         DocTypeCode = DocumentType.AktSpisaniya,
                         StringId = d.Doc_Id.ToString()

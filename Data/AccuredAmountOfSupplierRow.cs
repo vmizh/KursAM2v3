@@ -19,6 +19,8 @@ namespace Data
         {
             this.SD_34 = new HashSet<SD_34>();
             this.TD_101 = new HashSet<TD_101>();
+            this.DistributeNakladInfo = new HashSet<DistributeNakladInfo>();
+            this.DistributeNakladInvoices = new HashSet<DistributeNakladInvoices>();
         }
     
         public System.Guid Id { get; set; }
@@ -28,12 +30,16 @@ namespace Data
         public Nullable<decimal> SHPZ_DC { get; set; }
         public decimal NomenklDC { get; set; }
     
+        public virtual AccruedAmountOfSupplier AccruedAmountOfSupplier { get; set; }
         public virtual SD_303 SD_303 { get; set; }
         public virtual SD_83 SD_83 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_34> SD_34 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TD_101> TD_101 { get; set; }
-        public virtual AccruedAmountOfSupplier AccruedAmountOfSupplier { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DistributeNakladInfo> DistributeNakladInfo { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DistributeNakladInvoices> DistributeNakladInvoices { get; set; }
     }
 }

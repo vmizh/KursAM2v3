@@ -17,10 +17,10 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public SD_179()
         {
+            this.DogovorClient = new HashSet<DogovorClient>();
             this.SD_189 = new HashSet<SD_189>();
             this.SD_26 = new HashSet<SD_26>();
             this.SD_84 = new HashSet<SD_84>();
-            this.DogovorClient = new HashSet<DogovorClient>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -29,12 +29,12 @@ namespace Data
         public Nullable<double> PT_DAYS_OPL { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DogovorClient> DogovorClient { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_189> SD_189 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_26> SD_26 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_84> SD_84 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DogovorClient> DogovorClient { get; set; }
     }
 }

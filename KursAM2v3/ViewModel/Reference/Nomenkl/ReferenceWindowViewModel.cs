@@ -528,19 +528,17 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    foreach (var n in ctx.NomenklMain.Include(_ => _.Countries)
-                        .Include(_ => _.SD_119)
-                        .Include(_ => _.SD_175)
-                        .Include(_ => _.SD_82)
-                        .Include(_ => _.SD_83)
-                        .ToList())
-                        if (n.Name.ToUpper().Contains(SearchText.ToUpper())
-                            || n.NomenklNumber.ToUpper().Contains(SearchText.ToUpper())
-                            || n.FullName.ToUpper().Contains(SearchText.ToUpper()))
-                        {
-                            var nn = new NomenklMainViewModel(n) { State = RowStatus.NotEdited };
-                            NomenklMainCollection.Add(nn);
-                        }
+                    foreach (var nn in from n in ctx.NomenklMain.Include(_ => _.Countries)
+                                 .Include(_ => _.SD_119)
+                                 .Include(_ => _.SD_175)
+                                 .Include(_ => _.SD_82)
+                                 .Include(_ => _.SD_83)
+                                 .ToList()
+                             where n.Name.ToUpper().Contains(SearchText.ToUpper())
+                                   || n.NomenklNumber.ToUpper().Contains(SearchText.ToUpper())
+                                   || n.FullName.ToUpper().Contains(SearchText.ToUpper())
+                             select new NomenklMainViewModel(n) { State = RowStatus.NotEdited })
+                        NomenklMainCollection.Add(nn);
                 }
             }
             catch (Exception ex)

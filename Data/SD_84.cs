@@ -102,6 +102,7 @@ namespace Data
         public Nullable<decimal> PersonalResponsibleDC { get; set; }
         public Nullable<System.Guid> DogovorClientId { get; set; }
     
+        public virtual DogovorClient DogovorClient { get; set; }
         public virtual GROZO_REQUISITE GROZO_REQUISITE { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SCHET_FACT_KONTR_OUT> SCHET_FACT_KONTR_OUT { get; set; }
@@ -144,6 +145,5 @@ namespace Data
         public virtual ICollection<VD_60> VD_60 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VD_84> VD_84 { get; set; }
-        public virtual DogovorClient DogovorClient { get; set; }
     }
 }

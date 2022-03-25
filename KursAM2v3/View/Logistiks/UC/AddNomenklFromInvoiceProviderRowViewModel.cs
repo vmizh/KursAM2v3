@@ -16,6 +16,7 @@ namespace KursAM2.View.Logistiks.UC
     public sealed class AddNomenklFromInvoiceProviderRowViewModel : RSWindowViewModelBase, IDataUserControl
     {
         private readonly Kontragent Kontragent;
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         #region Constructors
 
@@ -61,6 +62,7 @@ namespace KursAM2.View.Logistiks.UC
                             Date = d.SF_POSTAV_DATE,
                             DocCode = d.DOC_CODE,
                             Num = d.SF_POSTAV_NUM,
+                            // ReSharper disable once PossibleInvalidOperationException
                             Currency = MainReferences.Currencies[(decimal)d.SF_CRS_DC],
                             Rows = new List<InvoiceShortRow>()
                         };
@@ -69,21 +71,28 @@ namespace KursAM2.View.Logistiks.UC
                         {
                             var s = data.FirstOrDefault(_ => _.DOC_CODE == dc && _.CODE == r.CODE);
                             if (s == null) continue;
+                            var q = nomenklManager.GetNomenklQuantity(Warehouse.DocCode, r.SFT_NEMENKL_DC,
+                                DateTime.Today, DateTime.Today);
+                            decimal quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                             var newRow = new InvoiceShortRow
                             {
                                 Id = r.Id,
                                 DocCode = r.DOC_CODE,
+                                // ReSharper disable once PossibleInvalidOperationException
                                 DocId = (Guid)r.DocId,
                                 InvoiceQuantity = r.SFT_KOL,
                                 Nomenkl = MainReferences.GetNomenkl(r.SFT_NEMENKL_DC),
+                                // ReSharper disable once PossibleInvalidOperationException
                                 AlreadyShippedQuantity = (decimal)s.Shipped,
                                 Code = r.CODE,
                                 Note = r.SFT_TEXT,
+                                // ReSharper disable once PossibleInvalidOperationException
                                 Price = (decimal)(r.SFT_SUMMA_K_OPLATE / r.SFT_KOL),
                                 AlreadyShippedSumma =
+                                    // ReSharper disable once PossibleInvalidOperationException
                                     (decimal)(r.SFT_SUMMA_K_OPLATE / r.SFT_KOL) * (decimal)s.Shipped,
                                 IsChecked = false,
-                                QuantityOnSklad = NomenklManager.GetNomenklCount(r.SFT_NEMENKL_DC, Warehouse.DocCode),
+                                QuantityOnSklad = quan , 
                                 Quantity = r.SFT_KOL - (decimal)s.Shipped,
                                 Invoice = doc
                             };
@@ -104,7 +113,6 @@ namespace KursAM2.View.Logistiks.UC
 
         private InvoiceShort myCurrentInvoice;
         private InvoiceShortRow myCurrentNomenkl;
-        private readonly NomenklManager nomManager = new NomenklManager();
         private readonly Core.EntityViewModel.NomenklManagement.Warehouse Warehouse;
         private AddNomenklFromInvoiceProviderRowUC myDataUserControl;
 

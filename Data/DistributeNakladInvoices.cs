@@ -14,17 +14,27 @@ namespace Data
     
     public partial class DistributeNakladInvoices
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public DistributeNakladInvoices()
+        {
+            this.DistributeNakladInfo = new HashSet<DistributeNakladInfo>();
+        }
+    
         public System.Guid Id { get; set; }
         public System.Guid DocId { get; set; }
-        public System.Guid InvoiceId { get; set; }
+        public Nullable<System.Guid> InvoiceId { get; set; }
         public short DistributeType { get; set; }
         public string Note { get; set; }
         public decimal CrsDC { get; set; }
         public decimal Rate { get; set; }
         public decimal SummaInvoice { get; set; }
         public decimal SummaDistribute { get; set; }
+        public Nullable<System.Guid> AccrualAmountId { get; set; }
     
         public virtual DistributeNaklad DistributeNaklad { get; set; }
         public virtual SD_301 SD_301 { get; set; }
+        public virtual AccuredAmountOfSupplierRow AccuredAmountOfSupplierRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DistributeNakladInfo> DistributeNakladInfo { get; set; }
     }
 }

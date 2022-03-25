@@ -9,7 +9,6 @@ using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -45,7 +44,7 @@ namespace KursAM2.ViewModel.Logistiks
         {
             Document = id == null
                 ? NomenklTransferViewModelExt.New()
-                : NomenklTransferViewModelExt.Load((Guid) id, myDBContext);
+                : NomenklTransferViewModelExt.Load((Guid)id, myDBContext);
             if (Document.Warehouse != null)
                 Document.Warehouse = StoreCollection.SingleOrDefault(_ => _.DocCode == Document.Warehouse.DocCode);
             Document.State = RowStatus.NotEdited;
@@ -121,7 +120,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         public ICommand AddForStoreCommand
         {
-            get { return new Command(AddForStore, param => Document.Warehouse != null); }
+            get { return new Command(AddForStore, _ => Document.Warehouse != null); }
         }
 
         public ICommand UpdateStartPriceCommand
@@ -231,26 +230,26 @@ namespace KursAM2.ViewModel.Logistiks
                                 $"№{dd.TD_26.SD_26.SF_IN_NUM}  \"/\" {dd.TD_26.SD_26.SF_POSTAV_NUM} от {dd.TD_26.SD_26.SF_POSTAV_DATE:d}",
                             Quantity = dd.DDT_KOL_PRIHOD,
                             // ReSharper disable once PossibleInvalidOperationException
-                            Price = Math.Round((decimal) dd.TD_26.SFT_ED_CENA),
+                            Price = Math.Round((decimal)dd.TD_26.SFT_ED_CENA),
                             PriceWithNaklad =
                                 Math.Round(
-                                    (decimal) dd.TD_26.SFT_ED_CENA +
+                                    (decimal)dd.TD_26.SFT_ED_CENA +
                                     (dd.TD_26.SFT_SUMMA_NAKLAD != null && dd.TD_26.SFT_KOL != 0
                                         ? dd.TD_26.SFT_SUMMA_NAKLAD.Value / dd.TD_26.SFT_KOL
                                         : 0), 2),
                             // ReSharper disable once PossibleInvalidOperationException
-                            Currency = MainReferences.Currencies[(decimal) dd.TD_26.SD_26.SF_CRS_DC].Name,
+                            Currency = MainReferences.Currencies[(decimal)dd.TD_26.SD_26.SF_CRS_DC].Name,
                             UnitNaklad =
                                 Math.Round(dd.TD_26.SFT_SUMMA_NAKLAD != null && dd.TD_26.SFT_KOL != 0
                                     ? dd.TD_26.SFT_SUMMA_NAKLAD.Value / dd.TD_26.SFT_KOL
                                     : 0, 2),
-                            SummaIn = Math.Round((decimal) dd.TD_26.SFT_ED_CENA * dd.DDT_KOL_PRIHOD, 2),
+                            SummaIn = Math.Round((decimal)dd.TD_26.SFT_ED_CENA * dd.DDT_KOL_PRIHOD, 2),
                             SummaNaklad =
                                 Math.Round((dd.TD_26.SFT_SUMMA_NAKLAD != null && dd.TD_26.SFT_KOL != 0
-                                               ? dd.TD_26.SFT_SUMMA_NAKLAD.Value / dd.TD_26.SFT_KOL
-                                               : 0) * dd.DDT_KOL_PRIHOD, 2),
+                                    ? dd.TD_26.SFT_SUMMA_NAKLAD.Value / dd.TD_26.SFT_KOL
+                                    : 0) * dd.DDT_KOL_PRIHOD, 2),
                             SummaWithNaklad =
-                                Math.Round((decimal) dd.TD_26.SFT_ED_CENA * dd.DDT_KOL_PRIHOD +
+                                Math.Round((decimal)dd.TD_26.SFT_ED_CENA * dd.DDT_KOL_PRIHOD +
                                            (dd.TD_26.SFT_SUMMA_NAKLAD != null && dd.TD_26.SFT_KOL != 0
                                                ? dd.TD_26.SFT_SUMMA_NAKLAD.Value / dd.TD_26.SFT_KOL
                                                : 0) * dd.DDT_KOL_PRIHOD, 2),
@@ -266,14 +265,14 @@ namespace KursAM2.ViewModel.Logistiks
                             InvoiceInfo = null,
                             Quantity = Math.Round(dd.DDT_KOL_PRIHOD, 2),
                             // ReSharper disable once PossibleInvalidOperationException
-                            Price = (decimal) dd.DDT_TAX_CRS_CENA,
-                            PriceWithNaklad = Math.Round((decimal) dd.DDT_TAX_CRS_CENA, 2),
+                            Price = (decimal)dd.DDT_TAX_CRS_CENA,
+                            PriceWithNaklad = Math.Round((decimal)dd.DDT_TAX_CRS_CENA, 2),
                             Currency =
                                 MainReferences.GetNomenkl(nomDC).Currency.Name,
                             UnitNaklad = 0,
-                            SummaIn = Math.Round((decimal) dd.DDT_TAX_CRS_CENA * dd.DDT_KOL_PRIHOD, 2),
+                            SummaIn = Math.Round((decimal)dd.DDT_TAX_CRS_CENA * dd.DDT_KOL_PRIHOD, 2),
                             SummaNaklad = 0,
-                            SummaWithNaklad = Math.Round((decimal) dd.DDT_TAX_CRS_CENA * dd.DDT_KOL_PRIHOD, 2),
+                            SummaWithNaklad = Math.Round((decimal)dd.DDT_TAX_CRS_CENA * dd.DDT_KOL_PRIHOD, 2),
                             Date = dd.SD_24.DD_DATE
                         });
                 var transf =
@@ -336,7 +335,7 @@ namespace KursAM2.ViewModel.Logistiks
         private void SchetFacturaSelect(object obj)
         {
             var ctxTransf = new SchetSupplierSelectViewModel("Выбор счета поставщика");
-            var dlg = new SelectDialogView {DataContext = ctxTransf};
+            var dlg = new SelectDialogView { DataContext = ctxTransf };
             dlg.ShowDialog();
             if (!ctxTransf.DialogResult) return;
             var data = ctxTransf.CurrentInvoice;
@@ -354,7 +353,7 @@ namespace KursAM2.ViewModel.Logistiks
         private void SelectStore(object obj)
         {
             var ctxTransf = new SimpleObjectsSelectWindowViewModel("Выбор склада");
-            var dlg = new SelectDialogView {DataContext = ctxTransf};
+            var dlg = new SelectDialogView { DataContext = ctxTransf };
             dlg.ShowDialog();
             if (!ctxTransf.DialogResult) return;
             if (ctxTransf.CurrentObject is Core.EntityViewModel.NomenklManagement.Warehouse skl)
@@ -364,7 +363,7 @@ namespace KursAM2.ViewModel.Logistiks
         private void SelectStoreRow(object obj)
         {
             var ctxTransf = new SimpleObjectsSelectWindowViewModel("Выбор склада");
-            var dlg = new SelectDialogView {DataContext = ctxTransf};
+            var dlg = new SelectDialogView { DataContext = ctxTransf };
             dlg.ShowDialog();
             if (!ctxTransf.DialogResult) return;
             if (ctxTransf.CurrentObject is Core.EntityViewModel.NomenklManagement.Warehouse skl)
@@ -484,7 +483,7 @@ namespace KursAM2.ViewModel.Logistiks
                         return;
                     }
 
-                    var dlg = new SelectDialogView {DataContext = ctxNom};
+                    var dlg = new SelectDialogView { DataContext = ctxNom };
                     dlg.ShowDialog();
                     if (!ctxNom.DialogResult) return;
                     CurrentRow.NomenklIn = ctxNom.CurrentNomenkl;
@@ -558,7 +557,8 @@ namespace KursAM2.ViewModel.Logistiks
                 calc.Calc(null);
                 Refresh();
                 RaisePropertyChanged(nameof(Document));
-                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.NomenklTransfer, Document.Id, Document.DocCode, Document.Creator,
+                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.NomenklTransfer, Document.Id, Document.DocCode,
+                    Document.Creator,
                     "", Document.Description);
             }
             catch (Exception ex)

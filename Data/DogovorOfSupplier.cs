@@ -33,12 +33,12 @@ namespace Data
         public decimal DogType { get; set; }
         public Nullable<bool> IsNDSInPrice { get; set; }
     
+        public virtual SD_102 SD_102 { get; set; }
         public virtual SD_43 SD_43 { get; set; }
         public virtual SD_2 SD_2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DogovorOfSupplierRow> DogovorOfSupplierRow { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_26> SD_26 { get; set; }
-        public virtual SD_102 SD_102 { get; set; }
     }
 }

@@ -6,7 +6,6 @@ using System.Transactions;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -27,8 +26,10 @@ namespace KursAM2.ViewModel.Reference
             RefreshData(null);
         }
 
+        public override string LayoutName => "StoreReferenceWindowViewModel";
         public ObservableCollection<Warehouse> StoreCollection { set; get; } = new ObservableCollection<Warehouse>();
         public override bool IsCanSaveData => StoreCollection.Any(_ => _.State != RowStatus.NotEdited);
+        public ObservableCollection<SelectUser> SelectedUsers { set; get; } = new ObservableCollection<SelectUser>();
 
         public ICommand AddNewStore
         {

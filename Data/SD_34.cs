@@ -71,6 +71,7 @@ namespace Data
         public Nullable<System.Guid> AccuredId { get; set; }
         public Nullable<System.Guid> StockHolderId { get; set; }
     
+        public virtual AccuredAmountOfSupplierRow AccuredAmountOfSupplierRow { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProviderInvoicePay> ProviderInvoicePay { get; set; }
         public virtual SD_114 SD_114 { get; set; }
@@ -90,11 +91,10 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_33> SD_33 { get; set; }
         public virtual SD_43 SD_43 { get; set; }
+        public virtual StockHolders StockHolders { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TD_101> TD_101 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UD_281> UD_281 { get; set; }
-        public virtual AccuredAmountOfSupplierRow AccuredAmountOfSupplierRow { get; set; }
-        public virtual StockHolders StockHolders { get; set; }
     }
 }

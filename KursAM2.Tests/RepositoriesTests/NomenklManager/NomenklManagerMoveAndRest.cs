@@ -84,15 +84,15 @@ namespace KursAM2.Tests.RepositoriesTests.NomenklManager
             //foreach (var n in storePriceMove.OrderBy(_ => _.NomDC).ThenBy(_ => _.Date))
             //    Console.WriteLine(
             //        $@"{n.NomDC} {n.NomNomenkl} {n.NomName} {n.Start} {n.Prihod} {n.Rashod} {n.Ostatok} {n.Price} {n.PriceWithNaklad}");
-            var data = Managers.Nomenkl.NomenklManager.GetAllStoreRemain(new DateTime(2020, 12, 31));
-            Assert.AreNotEqual(data.Count, 0, "Данные не вернулись");
-            foreach (var store in data.Select(_ => new {StoreDC = _.StoreDC, StoreName = _.StoreName}).Distinct())
-            {
-                Console.WriteLine($@"{store.StoreDC} {store.StoreName}");
-                foreach (var n in data.Where(_ => _.StoreDC == store.StoreDC).OrderBy(_ => _.NomDC).ThenBy(_ => _.Date))
-                    Console.WriteLine(
-                        $@"{n.NomDC} {n.NomNomenkl} {n.NomName} {n.Ostatok} {n.Price} {n.PriceWithNaklad}");
-            }
+           // var data = Managers.Nomenkl.NomenklManager.GetAllStoreRemain(new DateTime(2020, 12, 31));
+            //Assert.AreNotEqual(data.Count, 0, "Данные не вернулись");
+            //foreach (var store in data.Select(_ => new {StoreDC = _.StoreDC, StoreName = _.StoreName}).Distinct())
+            //{
+            //    Console.WriteLine($@"{store.StoreDC} {store.StoreName}");
+            //    foreach (var n in data.Where(_ => _.StoreDC == store.StoreDC).OrderBy(_ => _.NomDC).ThenBy(_ => _.Date))
+            //        Console.WriteLine(
+            //            $@"{n.NomDC} {n.NomNomenkl} {n.NomName} {n.Ostatok} {n.Price} {n.PriceWithNaklad}");
+            //}
 
         }
     }

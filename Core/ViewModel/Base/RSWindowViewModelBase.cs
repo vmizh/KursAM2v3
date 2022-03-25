@@ -303,7 +303,7 @@ namespace Core.ViewModel.Base
         {
             get { return new Command(GridControlExport, _ => true); }
         }
-
+        [Display(AutoGenerateField = false)] 
         public string DatabaseName => GlobalOptions.DataBaseName;
 
         [Display(AutoGenerateField = false)] public Brush DatabaseColor => GlobalOptions.DatabaseColor;
@@ -329,6 +329,7 @@ namespace Core.ViewModel.Base
             get { return new Command(CloseWindow, _ => true); }
         }
 
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsSearchTextNull => string.IsNullOrEmpty(SearchText);
 
         public virtual void CloseWindow(object form)
@@ -365,7 +366,7 @@ namespace Core.ViewModel.Base
         {
             get { return new Command(RefreshData, _ => IsCanRefresh); }
         }
-
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsCanRefresh
         {
             get => myIsCanRefresh;
@@ -410,7 +411,7 @@ namespace Core.ViewModel.Base
         {
             get { return new Command(Done, _ => IsCanDone); }
         }
-
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsCanDone { get; set; } = false;
 
         public virtual void Done(object obj)
@@ -434,7 +435,7 @@ namespace Core.ViewModel.Base
             {
                 if (Equals(myCurrentColumn, value)) return;
                 myCurrentColumn = value;
-                RaisePropertyChanged();
+                //RaisePropertyChanged();
             }
         }
 
@@ -471,7 +472,7 @@ namespace Core.ViewModel.Base
             var ctrl = obj as DataViewBase;
             ctrl?.ShowPrintPreview(Application.Current.MainWindow);
         }
-
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsDocumentOpenAllow { get; set; }
 
         public virtual void DocumentOpen(object obj)
@@ -480,7 +481,7 @@ namespace Core.ViewModel.Base
         }
 
         private string mySaveInfo;
-
+        [Display(AutoGenerateField = false)] 
         public virtual string SaveInfo
         {
             get => mySaveInfo;
@@ -493,7 +494,7 @@ namespace Core.ViewModel.Base
         }
 
         private bool myIsCanDocNew = true;
-
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsCanDocNew
         {
             get => myIsCanDocNew;
@@ -506,7 +507,7 @@ namespace Core.ViewModel.Base
         }
 
         private bool myIsCanSaveData;
-
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsCanSaveData
         {
             get => myIsCanSaveData;
@@ -534,7 +535,7 @@ namespace Core.ViewModel.Base
 
         // ReSharper disable once InconsistentNaming
         private bool myIsDocNewEmptyAllow = true;
-
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsDocNewEmptyAllow
         {
             get => myIsDocNewEmptyAllow;
@@ -547,7 +548,7 @@ namespace Core.ViewModel.Base
         }
 
         private bool myIsDocNewCopyAllow = true;
-
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsDocNewCopyAllow
         {
             get => myIsDocNewCopyAllow;
@@ -570,7 +571,7 @@ namespace Core.ViewModel.Base
         }
 
         private bool myIsDocNewCopyRequisiteAllow = true;
-
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsDocNewCopyRequisiteAllow
         {
             get => myIsDocNewCopyRequisiteAllow;
@@ -583,7 +584,7 @@ namespace Core.ViewModel.Base
         }
 
         private bool myIsDocDeleteAllow = true;
-
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsDocDeleteAllow
         {
             get => myIsDocDeleteAllow;
@@ -606,7 +607,7 @@ namespace Core.ViewModel.Base
         }
 
         private bool myIsRedoAllow = true;
-
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsRedoAllow
         {
             get => myIsRedoAllow;
@@ -639,7 +640,7 @@ namespace Core.ViewModel.Base
         }
 
         private bool myIsPrintAllow = true;
-
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsPrintAllow
         {
             get => myIsPrintAllow;
@@ -667,7 +668,7 @@ namespace Core.ViewModel.Base
         {
             return true;
         }
-
+        [Display(AutoGenerateField = false)] 
         public bool DialogResult
         {
             get => myDialogResult;
@@ -722,9 +723,10 @@ namespace Core.ViewModel.Base
         public virtual void ShowHistory(object data)
         {
         }
-
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsAllowHistoryShow { set; get; } = true;
 
+        [Display(AutoGenerateField = false)] 
         public virtual string SearchText
         {
             get => mySearchText;
@@ -740,6 +742,7 @@ namespace Core.ViewModel.Base
         private bool myIsCanSearch;
         private string myFooterText;
 
+        [Display(AutoGenerateField = false)] 
         public virtual bool IsCanSearch
         {
             get => myIsCanSearch;

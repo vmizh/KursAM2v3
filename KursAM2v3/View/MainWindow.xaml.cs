@@ -158,9 +158,9 @@ namespace KursAM2.View
                     if (s.DataContext is DistributeNakladSearchViewModel ctx)
                         ctx.OnWindowClosing();
 
-                if (f is KursBaseWindow b)
-                    if (b.DataContext is DistributeNakladViewModel ctx)
-                        ctx.OnWindowClosing();
+                //if (f is KursBaseWindow b)
+                //    if (b.DataContext is DistributeNakladViewModel ctx)
+                //        ctx.OnWindowClosing();
                 if (f is ILayout l) l.SaveLayout();
                 f.Close();
             }
@@ -479,7 +479,7 @@ namespace KursAM2.View
                         form.DataContext = ctxRef;
                         break;
                     case "Справочник складов":
-                        var frm = new TreeListFormBaseView
+                        var frm = new TreeListFormBaseView2
                         {
                             LayoutManagerName = "NomenklStore",
                             Owner = Application.Current.MainWindow

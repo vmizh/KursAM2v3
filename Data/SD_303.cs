@@ -17,6 +17,8 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public SD_303()
         {
+            this.AccuredAmountForClientRow = new HashSet<AccuredAmountForClientRow>();
+            this.AccuredAmountOfSupplierRow = new HashSet<AccuredAmountOfSupplierRow>();
             this.ND_303 = new HashSet<ND_303>();
             this.OffBalanceSheetInRow = new HashSet<OffBalanceSheetInRow>();
             this.OffBalanceSheetOutRow = new HashSet<OffBalanceSheetOutRow>();
@@ -65,8 +67,6 @@ namespace Data
             this.EXT_ANALS = new HashSet<EXT_ANALS>();
             this.TYPES = new HashSet<TYPES>();
             this.SD_201 = new HashSet<SD_201>();
-            this.AccuredAmountForClientRow = new HashSet<AccuredAmountForClientRow>();
-            this.AccuredAmountOfSupplierRow = new HashSet<AccuredAmountOfSupplierRow>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -83,6 +83,10 @@ namespace Data
         public Nullable<short> SHPZ_1ZARPLATA_0NO { get; set; }
         public Nullable<short> SHPZ_NOT_USE_IN_OTCH_DDS { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ND_303> ND_303 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -181,9 +185,5 @@ namespace Data
         public virtual ICollection<TYPES> TYPES { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_201> SD_201 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
     }
 }

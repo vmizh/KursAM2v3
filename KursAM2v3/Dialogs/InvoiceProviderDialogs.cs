@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
+using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.NomenklManagement;
 using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Data;
 using JetBrains.Annotations;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
@@ -14,6 +20,123 @@ using KursAM2.View.DialogUserControl;
 
 namespace KursAM2.Dialogs
 {
+    public class AccruedAmountSelectRow
+    {
+        [Display(AutoGenerateField = false)] public Guid Id { set; get; }
+
+        [Display(AutoGenerateField = false)] public Guid DocId { set; get; }
+
+        [Display(AutoGenerateField = false)] public AccuredAmountOfSupplierRow Entity { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Выбран")]
+        public bool IsSelected { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "№")]
+        [ReadOnly(true)]
+        public string DocNum { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Дата")]
+        [ReadOnly(true)]
+        public DateTime DocDate { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Контрагент")]
+        [ReadOnly(true)]
+        public Kontragent Kongtragent { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Начисление")]
+        [ReadOnly(true)]
+        public Nomenkl Nomenkl { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Сумма")]
+        [ReadOnly(true)]
+        public decimal Summa { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Оплачено")]
+        [ReadOnly(true)]
+        public decimal PaySumma { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Распределено")]
+        [ReadOnly(true)]
+        public decimal DistributeSumm { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Счет дох/расх")]
+        [ReadOnly(true)]
+        public SDRSchet SDRSchet { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Примечание")]
+        [ReadOnly(true)]
+        public string Note { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Создатель")]
+        [ReadOnly(true)]
+        public string Creator { set; get; }
+    }
+
+    public sealed class AccrualAmountDialogs : KursBaseControlViewModel
+    {
+        public AccrualAmountDialogs()
+        {
+            ModelView = new StandartDialogSelectUC3(GetType().Name);
+            RightMenuBar = MenuGenerator.RefreshOnlyRightBar(this);
+        }
+        public override string WindowName => "Распределние накладных расходов > Выбор прямых расходов";
+        public ObservableCollection<AccruedAmountSelectRow> ItemsCollection { set; get; }
+            = new ObservableCollection<AccruedAmountSelectRow>();
+
+        public bool? ShowDialog()
+        {
+            ItemsCollection.Clear();
+            var dsForm = new KursBaseDialog
+            {
+                Owner = Application.Current.MainWindow
+            };
+            Form = dsForm;
+            dsForm.DataContext = this;
+            ((AccrualAmountDialogs)dsForm.DataContext).RefreshData(null);
+            return dsForm.ShowDialog();
+        }
+
+        public override void RefreshData(object obj)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                ItemsCollection.Clear();
+                var data = ctx.AccuredAmountOfSupplierRow
+                    .Include(_ => _.SD_34)
+                    .Include(_ => _.TD_101)
+                    .Include(_ => _.AccruedAmountOfSupplier)
+                    .Include(_ => _.DistributeNakladInfo).OrderByDescending(v => v.AccruedAmountOfSupplier.DocDate).ToList();
+                foreach (var d in data)
+                {
+                    if (d.Summa > d.DistributeNakladInfo.Sum(x => x.DistributeSumma))
+                    {
+                        ItemsCollection.Add(new AccruedAmountSelectRow
+                        {
+                            Id = d.Id,
+                            DocId = d.DocId,
+                            DocNum = d.AccruedAmountOfSupplier.DocInNum + (string.IsNullOrWhiteSpace(d.AccruedAmountOfSupplier.DocExtNum) ? string.Empty :
+                                $"/{d.AccruedAmountOfSupplier.DocExtNum}"),
+                            DocDate = d.AccruedAmountOfSupplier.DocDate,
+                            Kongtragent = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC),
+                            Nomenkl = MainReferences.GetNomenkl(d.NomenklDC),
+                            Summa = d.Summa,
+                            DistributeSumm = d.DistributeNakladInfo.Sum(x => x.DistributeSumma),
+                            // ReSharper disable once MergeConditionalExpression
+                            // ReSharper disable once PossibleInvalidOperationException
+                            PaySumma = (decimal)((d.SD_34 != null ? d.SD_34.Sum(x => x.SUMM_ORD ?? 0m) : 0) 
+                                                 +(d.TD_101 != null ? d.TD_101.Sum(x => x.VVT_VAL_RASHOD) : 0)),
+                            IsSelected = false,
+                            SDRSchet = d.SHPZ_DC != null ? MainReferences.SDRSchets[(decimal)d.SHPZ_DC] : null,
+                            Creator = d.AccruedAmountOfSupplier.Creator,
+                            Note = d.AccruedAmountOfSupplier.Note + " " + d.Note,
+                            Entity = d
+                        });
+                    }
+                }
+            }
+        }
+    }
+
     public sealed class InvoiceProviderDialogs : KursBaseControlViewModel
     {
         #region Fields
@@ -36,6 +159,8 @@ namespace KursAM2.Dialogs
             invoiceProviderRepository = repos;
         }
 
+        public bool IsLoadForDistributeNaklad = false;
+
         public ObservableCollection<InvoiceProvider> ItemsCollection { set; get; }
             = new ObservableCollection<InvoiceProvider>();
 
@@ -53,8 +178,6 @@ namespace KursAM2.Dialogs
         #endregion
 
         #region Properties
-
-        
 
         public override string WindowName => "Распределние накладных расходов > Выбор поставщиков";
 
@@ -82,7 +205,7 @@ namespace KursAM2.Dialogs
             get => GetValue<DateTime?>();
             set => SetValue(value, () =>
             {
-                if(EndDate < StartDate)
+                if (EndDate < StartDate)
                     EndDate = StartDate;
             });
         }
@@ -105,17 +228,25 @@ namespace KursAM2.Dialogs
         {
             ItemsCollection.Clear();
             if (!IsNakladInvoices)
-            {
                 foreach (var d in invoiceProviderRepository.GetAllForNakladDistribute(Currency,
-                    StartDate, EndDate).OrderByDescending(_ => _.DocDate))
-                    ItemsCollection.Add(d);
-            }
+                             StartDate, EndDate).OrderByDescending(_ => _.DocDate))
+                    if (IsLoadForDistributeNaklad)
+                    {
+                        if (d.IsInvoiceNakald || d.Rows.All(_ => _.IsUsluga)) continue;
+                        ItemsCollection.Add(d);
+                    }
+                    else
+                        ItemsCollection.Add(d);
             else
-            {
                 foreach (var d in invoiceProviderRepository.GetNakladInvoices(StartDate, EndDate)
-                    .OrderByDescending(_ => _.DocDate))
-                    ItemsCollection.Add(d);
-            }
+                             .OrderByDescending(_ => _.DocDate))
+                    if (IsLoadForDistributeNaklad)
+                    {
+                        if (d.IsInvoiceNakald || d.Rows.All(_ => _.IsUsluga)) continue;
+                        ItemsCollection.Add(d);
+                    }
+                    else
+                        ItemsCollection.Add(d);
         }
 
         public override bool IsCanRefresh { set; get; } = true;

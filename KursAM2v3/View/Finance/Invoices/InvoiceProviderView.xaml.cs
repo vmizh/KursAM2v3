@@ -183,9 +183,18 @@ namespace KursAM2.View.Finance.Invoices
                     if (col.FieldName == "Rate")
                     {
                         var p = hasPaysTotalSummary(col.FieldName);
-                        if (p == null) continue;
-                        p.SummaryType = SummaryItemType.Custom;
-                        p.DisplayFormat = "n4";
+                        if (p == null) 
+                            gridPays.TotalSummary.Add(new GridSummaryItem
+                            {
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Custom,
+                                DisplayFormat = "n4"
+                            });
+                        else
+                        {
+                            p.SummaryType = SummaryItemType.Custom;
+                            p.DisplayFormat = "n4";
+                        }
                     }
                     else
                     {

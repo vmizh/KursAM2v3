@@ -25,6 +25,7 @@ namespace Data
         public string SFT_COUNTRY_FROM { get; set; }
         public Nullable<decimal> SFT_AKCIZ { get; set; }
     
+        public virtual SD_246 SD_246 { get; set; }
         public virtual SD_83 SD_83 { get; set; }
     }
 }

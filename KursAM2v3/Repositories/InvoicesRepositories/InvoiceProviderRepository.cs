@@ -28,6 +28,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
         List<InvoiceProviderShort> GetNakladInvoices(DateTime? dateStart,
             DateTime? dateEnd);
 
+      
         InvoiceProviderRowShort GetInvoiceRow(Guid id);
 
         InvoiceProviderRowCurrencyConvertViewModel GetTransferRow(Guid id);

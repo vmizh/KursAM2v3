@@ -17,9 +17,13 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public SD_83()
         {
+            this.AccuredAmountForClientRow = new HashSet<AccuredAmountForClientRow>();
+            this.AccuredAmountOfSupplierRow = new HashSet<AccuredAmountOfSupplierRow>();
             this.AD_27 = new HashSet<AD_27>();
             this.AD_83 = new HashSet<AD_83>();
+            this.AktSpisaniya_row = new HashSet<AktSpisaniya_row>();
             this.BD_83 = new HashSet<BD_83>();
+            this.DogovorOfSupplierRow = new HashSet<DogovorOfSupplierRow>();
             this.NOM_CRS_PRICE = new HashSet<NOM_CRS_PRICE>();
             this.NOM_PRICE = new HashSet<NOM_PRICE>();
             this.NomenklTransferRow = new HashSet<NomenklTransferRow>();
@@ -100,10 +104,6 @@ namespace Data
             this.UD_83 = new HashSet<UD_83>();
             this.UD_831 = new HashSet<UD_83>();
             this.SD_821 = new HashSet<SD_82>();
-            this.AktSpisaniya_row = new HashSet<AktSpisaniya_row>();
-            this.DogovorOfSupplierRow = new HashSet<DogovorOfSupplierRow>();
-            this.AccuredAmountForClientRow = new HashSet<AccuredAmountForClientRow>();
-            this.AccuredAmountOfSupplierRow = new HashSet<AccuredAmountOfSupplierRow>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -176,11 +176,19 @@ namespace Data
         public Nullable<bool> IsCurrencyTransfer { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AD_27> AD_27 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AD_83> AD_83 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AktSpisaniya_row> AktSpisaniya_row { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BD_83> BD_83 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DogovorOfSupplierRow> DogovorOfSupplierRow { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<NOM_CRS_PRICE> NOM_CRS_PRICE { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -355,13 +363,5 @@ namespace Data
         public virtual ICollection<UD_83> UD_831 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_82> SD_821 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AktSpisaniya_row> AktSpisaniya_row { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DogovorOfSupplierRow> DogovorOfSupplierRow { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
     }
 }

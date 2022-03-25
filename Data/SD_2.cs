@@ -20,6 +20,7 @@ namespace Data
             this.AD_2 = new HashSet<AD_2>();
             this.BD_2 = new HashSet<BD_2>();
             this.CD_2 = new HashSet<CD_2>();
+            this.DogovorOfSupplier = new HashSet<DogovorOfSupplier>();
             this.PD_2 = new HashSet<PD_2>();
             this.SD_10 = new HashSet<SD_10>();
             this.SD_101 = new HashSet<SD_10>();
@@ -92,7 +93,6 @@ namespace Data
             this.ZD_2 = new HashSet<ZD_2>();
             this.SD_24 = new HashSet<SD_24>();
             this.EMP_PR_DOC = new HashSet<EMP_PR_DOC>();
-            this.DogovorOfSupplier = new HashSet<DogovorOfSupplier>();
         }
     
         public int TABELNUMBER { get; set; }
@@ -119,6 +119,8 @@ namespace Data
         public virtual ICollection<BD_2> BD_2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CD_2> CD_2 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DogovorOfSupplier> DogovorOfSupplier { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PD_2> PD_2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -265,7 +267,5 @@ namespace Data
         public virtual ICollection<SD_24> SD_24 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EMP_PR_DOC> EMP_PR_DOC { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DogovorOfSupplier> DogovorOfSupplier { get; set; }
     }
 }

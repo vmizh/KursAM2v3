@@ -27,6 +27,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private readonly WarehouseManager docManager = new WarehouseManager(new StandartErrorManager(
             GlobalOptions.GetEntities(),
             "WaybillViewModel"));
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         private readonly WindowManager winManager = new WindowManager();
 
@@ -273,8 +274,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     else
                     {
                         var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-                        var m = NomenklManager.GetNomenklCount(Document.Date, n.DocCode,
-                            Document.WarehouseOut.DocCode);
+                        var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DOC_CODE,
+                            Document.Date, Document.Date);
+                        decimal m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                         if (m <= 0)
                         {
                             winManager.ShowWinUIMessageBox(
@@ -316,8 +318,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (nomenkls == null || nomenkls.Count <= 0) return;
             foreach (var n in nomenkls)
             {
-                var m = NomenklManager.GetNomenklCount(Document.Date, n.DocCode,
-                    Document.WarehouseOut.DocCode);
+                var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DOC_CODE,
+                    Document.Date, Document.Date);
+                decimal m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                 if (m <= 0)
                 {
                     winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
@@ -480,9 +483,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         else
                         {
                             var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-                            var m = NomenklManager.GetNomenklCount(Document.Date, n.DocCode,
-                                Document.WarehouseOut.DocCode);
-                            if (m <= 0)
+                            var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DOC_CODE,
+                                Document.Date, Document.Date);
+                            decimal m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
+                           if (m <= 0)
                             {
                                 winManager.ShowWinUIMessageBox(
                                     $"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +

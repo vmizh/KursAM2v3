@@ -330,7 +330,8 @@ namespace Core.ViewModel.Base
             ctrl?.ShowPrintPreview(Application.Current.MainWindow);
         }
 
-        [Display(AutoGenerateField = false)] public virtual bool IsDocumentOpenAllow { get; set; }
+        [Display(AutoGenerateField = false)] 
+        public virtual bool IsDocumentOpenAllow { get; set; }
 
         public virtual void DocumentOpen(object obj)
         {

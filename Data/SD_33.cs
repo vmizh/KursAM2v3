@@ -17,13 +17,13 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public SD_33()
         {
+            this.AccuredAmountForClientRow = new HashSet<AccuredAmountForClientRow>();
             this.SD_327 = new HashSet<SD_327>();
             this.TD_101 = new HashSet<TD_101>();
             this.TD_397 = new HashSet<TD_397>();
             this.TD_60 = new HashSet<TD_60>();
             this.UD_259 = new HashSet<UD_259>();
             this.UD_281 = new HashSet<UD_281>();
-            this.AccuredAmountForClientRow = new HashSet<AccuredAmountForClientRow>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -71,6 +71,8 @@ namespace Data
         public byte[] TSTAMP { get; set; }
         public Nullable<System.Guid> StockHolderId { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
         public virtual SD_114 SD_114 { get; set; }
         public virtual SD_2 SD_2 { get; set; }
         public virtual SD_22 SD_22 { get; set; }
@@ -86,6 +88,7 @@ namespace Data
         public virtual SD_90 SD_90 { get; set; }
         public virtual SD_84 SD_84 { get; set; }
         public virtual SD_43 SD_43 { get; set; }
+        public virtual StockHolders StockHolders { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TD_101> TD_101 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -96,8 +99,5 @@ namespace Data
         public virtual ICollection<UD_259> UD_259 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UD_281> UD_281 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
-        public virtual StockHolders StockHolders { get; set; }
     }
 }

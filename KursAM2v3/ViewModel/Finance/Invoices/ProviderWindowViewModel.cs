@@ -218,6 +218,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Fields
 
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+
         private InvoiceProvider myDocument;
         private InvoiceProviderRow myCurrentRow;
         public readonly GenericKursDBRepository<SD_26> GenericProviderRepository;
@@ -1305,7 +1307,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceProvider), null,
                     Document.DocCode, null, (string)Document.ToJson());
                 RecalcKontragentBalans.CalcBalans(Document.Entity.SF_POST_DC, Document.DocDate);
-                NomenklManager.RecalcPrice(myUsedNomenklsDC);
+                nomenklManager.RecalcPrice(myUsedNomenklsDC);
                 myUsedNomenklsDC.Clear();
                 foreach (var r in Document.Rows)
                 {

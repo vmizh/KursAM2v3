@@ -84,7 +84,6 @@ namespace KursAM2.ViewModel.Finance
                         {
                             rate = rates[CurrentBankAccount.Currency];
                         }
-
                         CurrentBankOperations.CurrencyRateForReference = rate;
                     }
 

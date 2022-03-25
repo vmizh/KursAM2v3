@@ -11,6 +11,7 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
+using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -24,6 +25,7 @@ namespace KursAM2.ViewModel.Logistiks
         private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentWarehouse;
         private bool myIsPeriodSet;
         private DateTime myOstatokDate;
+        private NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         public SkladOstatkiWindowViewModel()
         {
@@ -200,7 +202,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
             NomenklsForSklad.Clear();
             LoadedRemains.Clear();
-            LoadedRemains = NomenklCalculationManager.GetNomenklStoreRemains(OstatokDate, true);
+            //LoadedRemains = NomenklCalculationManager.GetNomenklStoreRemains(OstatokDate, true);
             if (CurrentWarehouse != null) LoadNomForSklad();
 
             RaisePropertiesChanged(nameof(NomenklsForSklad));
@@ -208,20 +210,25 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void LoadNomForSklad()
         {
-            foreach (var d in LoadedRemains)
-                if (d.StoreDC == CurrentWarehouse.DocCode)
+            var data = nomenklManager.GetNomenklStoreQuantity(CurrentWarehouse.DocCode, new DateTime(2000,1,1),
+                DateTime.Today);
+            if(data != null)  {
+                foreach (var d in data)
+                {
                     NomenklsForSklad.Add(new NomenklOstatkiWithPrice
                     {
-                        Nomenkl = MainReferences.GetNomenkl(d.NomenklDC),
-                        Warehouse = MainReferences.GetWarehouse(d.StoreDC),
-                        Quantity = d.Remain,
+                        Nomenkl = MainReferences.GetNomenkl(d.NomDC),
+                        Warehouse = MainReferences.GetWarehouse(CurrentWarehouse.DocCode),
+                        Quantity = d.OstatokQuantity,
                         CurrencyName = MainReferences
-                            .Currencies[MainReferences.GetNomenkl(d.NomenklDC).Currency.DocCode].Name,
-                        Price = d.PriceWithNaklad,
-                        PriceWONaklad = d.Price,
-                        Summa = d.Remain * d.PriceWithNaklad,
-                        SummaWONaklad = d.Remain * d.Price
+                            .Currencies[MainReferences.GetNomenkl(d.NomDC).Currency.DocCode].Name,
+                        Price = d.OstatokQuantity != 0 ? Math.Round(d.OstatokNaklSumma / d.OstatokQuantity, 2) : 0,
+                        PriceWONaklad =  d.OstatokQuantity != 0 ? Math.Round(d.OstatokSumma / d.OstatokQuantity, 2) : 0,
+                        Summa = d.OstatokNaklSumma,
+                        SummaWONaklad = d.OstatokSumma
                     });
+                }
+            }
         }
 
         private void DocumentTovarOpen(object obj)

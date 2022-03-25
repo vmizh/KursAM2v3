@@ -60,15 +60,41 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
+        [DisplayName("FinanceDocId")]
+        [Display(AutoGenerateField = false)]
+        public Guid? FinanceDocId
+        {
+            get => Entity.FinanceDocId;
+            set
+            {
+                if (Entity.FinanceDocId == value) return;
+                Entity.FinanceDocId = value;
+                SetChangeStatus();
+            }
+        }
+
         [DisplayName("InvoiceNakladId")]
         [Display(AutoGenerateField = false)]
-        public Guid InvoiceNakladId
+        public Guid? InvoiceNakladId
         {
             get => Entity.InvoiceNakladId;
             set
             {
                 if (Entity.InvoiceNakladId == value) return;
                 Entity.InvoiceNakladId = value;
+                SetChangeStatus();
+            }
+        }
+
+        [DisplayName("InvoiceNakladId")]
+        [Display(AutoGenerateField = false)]
+        public Guid? AccrualAmountId
+        {
+            get => Entity.AccrualAmountId;
+            set
+            {
+                if (Entity.AccrualAmountId == value) return;
+                Entity.AccrualAmountId = value;
                 SetChangeStatus();
             }
         }

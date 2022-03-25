@@ -17,14 +17,14 @@ namespace Data
         public System.Guid Id { get; set; }
         public System.Guid DocId { get; set; }
         public System.Guid StockHolderId { get; set; }
+        public System.Guid AcrrualTypeId { get; set; }
         public Nullable<decimal> Summa { get; set; }
         public Nullable<decimal> CurrencyDC { get; set; }
         public string Note { get; set; }
-        public System.Guid AcrrualTypeId { get; set; }
     
         public virtual SD_301 SD_301 { get; set; }
         public virtual StockHolderAccrual StockHolderAccrual { get; set; }
-        public virtual StockHolders StockHolders { get; set; }
         public virtual StockHolderAccrualType StockHolderAccrualType { get; set; }
+        public virtual StockHolders StockHolders { get; set; }
     }
 }

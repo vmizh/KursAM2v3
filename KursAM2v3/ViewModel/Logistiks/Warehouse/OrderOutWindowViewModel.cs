@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.NomenklManagement;
@@ -27,6 +26,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private readonly WindowManager winManager = new WindowManager();
         private WarehouseOrderOutRow myCurrentRow;
         private WarehouseOrderOut myDocument;
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         public OrderOutWindowViewModel(StandartErrorManager errManager)
@@ -176,8 +176,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 foreach (var r in Document.Rows)
                 {
-                    r.MaxQuantity = NomenklManager.GetNomenklCount(Document.Date, r.DDT_NOMENKL_DC,
-                        Document.WarehouseOut.DOC_CODE) + r.DDT_KOL_RASHOD;
+                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, r.DDT_NOMENKL_DC,
+                        Document.Date, Document.Date);
+                    decimal quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
+                    r.MaxQuantity = quan + r.DDT_KOL_RASHOD;
                     r.myState = RowStatus.NotEdited;
                 }
 
@@ -209,8 +211,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             foreach (var n in nomenkls)
                 if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode && !n.IsUsluga))
                 {
-                    var m = NomenklManager.GetNomenklCount(Document.Date, n.DocCode,
-                        Document.WarehouseOut.DocCode);
+                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
+                        Document.Date, Document.Date);
+                    decimal m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                     if (m <= 0)
                     {
                         winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +

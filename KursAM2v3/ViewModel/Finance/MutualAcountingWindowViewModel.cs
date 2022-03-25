@@ -325,7 +325,11 @@ namespace KursAM2.ViewModel.Finance
                 if (l.Kontragent?.IsBalans == true)
                     // ReSharper disable once PossibleInvalidOperationException
                     sumRight += (decimal) l.VZT_KONTR_CRS_SUMMA;
-            return sumRight - sumLeft;
+            if (!IsCurrencyConvert)
+                return sumRight - sumLeft;
+            var d = CurrencyConvertRate != 0 ? (Document.CreditorCurrency.DocCode == CurrencyCode.RUB ? sumRight / CurrencyConvertRate : sumRight) -
+                (Document.DebitorCurrency.DocCode == CurrencyCode.RUB ? sumLeft / CurrencyConvertRate : sumLeft) : 0;
+            return d;
         }
 
         private void UpdateCalcSumma(object obj)
@@ -385,6 +389,7 @@ namespace KursAM2.ViewModel.Finance
                 if (Document?.DocCode > 0)
                 {
                     Document = Manager.Load(Document.DocCode);
+                    IsCurrencyConvert = Document.Entity.SD_111.IsCurrencyConvert;
                     RaisePropertyChanged(nameof(Document));
                 }
                 else
@@ -392,6 +397,7 @@ namespace KursAM2.ViewModel.Finance
                     if (obj == null) return;
                     var dc = (decimal) obj;
                     Document = Manager.Load(dc);
+                    IsCurrencyConvert = Document.Entity.SD_111.IsCurrencyConvert;
                     if (Document == null)
                     {
                         WinManager.ShowWinUIMessageBox($"Не найден документ с кодом {dc}!",

@@ -8,7 +8,6 @@ using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;
 using Helper;

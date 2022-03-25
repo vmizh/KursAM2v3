@@ -17,6 +17,7 @@ namespace KursAM2.Managers
     public class WarehouseManager
     {
         private readonly ErrorMessageBase myErrorMessager;
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         public WarehouseManager(ErrorMessageBase errMessager)
         {
@@ -1967,7 +1968,7 @@ namespace KursAM2.Managers
                         ctx.SaveChanges();
                         var nomDCList = new List<decimal>();
                         foreach (var n in doc.Rows.Select(_ => _.Nomenkl.DocCode)) nomDCList.Add(n);
-                        NomenklManager.RecalcPrice(nomDCList, ctx);
+                        nomenklManager.RecalcPrice();
                         transaction.Commit();
                         doc.myState = RowStatus.NotEdited;
                         foreach (var r in doc.Rows) r.myState = RowStatus.NotEdited;

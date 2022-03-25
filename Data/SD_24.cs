@@ -107,6 +107,7 @@ namespace Data
         public virtual SD_189 SD_189 { get; set; }
         public virtual SD_2 SD_2 { get; set; }
         public virtual SD_201 SD_201 { get; set; }
+        public virtual SD_301 SD_301 { get; set; }
         public virtual SD_9 SD_9 { get; set; }
         public virtual SD_84 SD_84 { get; set; }
         public virtual SD_26 SD_26 { get; set; }
@@ -116,8 +117,8 @@ namespace Data
         public virtual SD_257 SD_257 { get; set; }
         public virtual SD_432 SD_432 { get; set; }
         public virtual XD_43 XD_43 { get; set; }
-        public virtual SD_301 SD_301 { get; set; }
         public virtual SD_301 SD_3011 { get; set; }
+        public virtual SD_301 SD_3012 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_259> SD_259 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
@@ -78,38 +79,75 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         }
 
         [Display(AutoGenerateField = false)] public SD_26 Invoice { set; get; }
+        [Display(AutoGenerateField = false)] public AccuredAmountOfSupplierRow AccruedAmountRow { set; get; }
+
+        [Display(AutoGenerateField = true,Name="Тип документа")]
+        public string DocumentName
+        {
+            get
+            {
+                if (Invoice != null) return "Счет-фактура поставщика";
+                if (AccruedAmountRow != null) return "Прямой расход";
+                return null;
+            }
+        }
 
         [DisplayName("Номер")]
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
-        public string DocNum => $"{Invoice?.SF_IN_NUM} / {Invoice?.SF_POSTAV_NUM} ";
+        public string DocNum
+        {
+            get
+            {
+                if(Invoice != null)  return $"{Invoice?.SF_IN_NUM} / {Invoice?.SF_POSTAV_NUM}";
+                if (AccruedAmountRow?.AccruedAmountOfSupplier != null)
+                    return string.IsNullOrWhiteSpace(AccruedAmountRow?.AccruedAmountOfSupplier.DocExtNum) ?
+                        $"{AccruedAmountRow?.AccruedAmountOfSupplier.DocInNum}" :  
+                        $"{AccruedAmountRow?.AccruedAmountOfSupplier.DocInNum} / {AccruedAmountRow?.AccruedAmountOfSupplier.DocExtNum} ";
+                return null;
+            }
+        }
 
         [DisplayName("Дата сф")]
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
-        public string DocDate => Invoice?.SF_POSTAV_DATE.ToShortDateString();
+        public string DocDate
+        {
+            get
+            {
+                if (Invoice != null) return Invoice.SF_POSTAV_DATE.ToShortDateString();
+                if(AccruedAmountRow?.AccruedAmountOfSupplier != null) return AccruedAmountRow.AccruedAmountOfSupplier.DocDate.ToShortDateString();
+                return null;
+            }
+        }
 
 
         [DisplayName("Поставщик")]
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
-        public string ProviderName => Invoice != null
-            ? MainReferences.GetKontragent(Invoice.SF_POST_DC).Name
-            : null;
-
+        public string ProviderName
+        {
+            get
+            {
+                if (Invoice != null) return MainReferences.GetKontragent(Invoice.SF_POST_DC).Name;
+                if (AccruedAmountRow?.AccruedAmountOfSupplier != null)
+                    return MainReferences.GetKontragent(AccruedAmountRow.AccruedAmountOfSupplier.KontrDC).Name;
+                return null;
+            }
+        }
 
         [DisplayName("Сумма накладных")]
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
         public decimal? Summa
         {
-            get => Invoice.SF_KONTR_CRS_SUMMA;
-            set
+            get
             {
-                if (Invoice.SF_KONTR_CRS_SUMMA == value) return;
-                Invoice.SF_KONTR_CRS_SUMMA = value;
-                RaisePropertiesChanged();
-                RaisePropertiesChanged(nameof(SummaRemain));
+                if(Invoice != null)
+                    return Invoice.SF_KONTR_CRS_SUMMA;
+                if (AccruedAmountRow != null)
+                    return AccruedAmountRow.Summa ;
+                return 0;
             }
         }
 
@@ -118,13 +156,23 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [ReadOnly(true)]
         public decimal? SummaDistribute
         {
-            get => Invoice.NakladDistributedSumma;
+            get
+            {
+                if (Invoice != null)
+                    return Invoice.NakladDistributedSumma;
+                if (AccruedAmountRow?.DistributeNakladInfo != null)
+                    return AccruedAmountRow.DistributeNakladInfo.Sum(_ => _.DistributeSumma);
+                return 0;
+            }
             set
             {
-                if (Invoice.NakladDistributedSumma == value) return;
-                Invoice.NakladDistributedSumma = value;
-                RaisePropertiesChanged();
-                RaisePropertiesChanged(nameof(SummaRemain));
+                if (Invoice != null)
+                {
+                    if (Invoice.NakladDistributedSumma == value) return;
+                    Invoice.NakladDistributedSumma = value;
+                    RaisePropertiesChanged();
+                    RaisePropertiesChanged(nameof(SummaRemain));
+                }
             }
         }
 

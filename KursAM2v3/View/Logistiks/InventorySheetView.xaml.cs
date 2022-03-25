@@ -1,8 +1,4 @@
-﻿using System.ComponentModel;
-using System.Windows;
-using LayoutManager;
-
-namespace KursAM2.View.Logistiks
+﻿namespace KursAM2.View.Logistiks
 {
     /// <summary>
     ///     Interaction logic for InventorySheetView.xaml

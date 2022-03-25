@@ -37,6 +37,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         #region Fields
 
         private InvoicePaymentDocument myCurrentPaymentDoc;
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         // ReSharper disable once InconsistentNaming
         private InvoiceClientRow myCurrentRow;
@@ -734,9 +735,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
                 RecalcKontragentBalans.CalcBalans(Document.Client.DocCode, Document.DocDate);
-                NomenklManager.RecalcPrice(myUsedNomenklsDC);
+                nomenklManager.RecalcPrice(myUsedNomenklsDC);
                 foreach (var ndc in Document.Rows.Select(_ => _.Nomenkl.DocCode)) AddUsedNomenkl(ndc);
-                NomenklManager.RecalcPrice(myUsedNomenklsDC);
+                nomenklManager.RecalcPrice(myUsedNomenklsDC);
                 myUsedNomenklsDC.Clear();
                 //foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
                 //RaiseAll();

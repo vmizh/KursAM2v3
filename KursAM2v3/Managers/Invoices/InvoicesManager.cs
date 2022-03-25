@@ -31,6 +31,8 @@ namespace KursAM2.Managers.Invoices
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+        private static readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+
 
         public InvoicesManager()
         {
@@ -708,7 +710,7 @@ namespace KursAM2.Managers.Invoices
                         WindowManager.ShowError(ex);
                         return -1;
                     }
-                    NomenklManager.RecalcPrice();
+                    nomenklManager.RecalcPrice();
                 }
             }
             return newDC;
@@ -828,7 +830,7 @@ namespace KursAM2.Managers.Invoices
                         ctx.SD_26.Remove(doc);
                         ctx.SaveChanges();
                         transaction.Commit();
-                        NomenklManager.RecalcPrice();
+                        nomenklManager.RecalcPrice();
                         RecalcKontragentBalans.CalcBalans(doc.SF_POST_DC, doc.SF_POSTAV_DATE);
                     }
                     catch (Exception ex)
@@ -1922,7 +1924,7 @@ namespace KursAM2.Managers.Invoices
                     }
                 }
             }
-            NomenklManager.RecalcPrice();
+            nomenklManager.RecalcPrice();
         }
 
         public static decimal SaveClient(InvoiceClient doc, StandartSearchView searchWindow = null)
@@ -2158,7 +2160,7 @@ namespace KursAM2.Managers.Invoices
                             ctx.Database.ExecuteSqlCommand(sql);
                         }
                         ctx.SaveChanges();
-                        NomenklManager.RecalcPrice();
+                        nomenklManager.RecalcPrice();
                     }
                     catch (Exception e)
                     {

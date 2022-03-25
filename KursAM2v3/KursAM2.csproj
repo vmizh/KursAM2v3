@@ -259,6 +259,7 @@
     <Compile Include="Managers\AccessRightsManager.cs" />
     <Compile Include="Managers\CashDocumentType.cs" />
     <Compile Include="Managers\CashManager.cs" />
+    <Compile Include="Managers\Nomenkl\NomenklManager2.cs" />
     <Compile Include="Managers\WarehouseManager.cs" />
     <Compile Include="Managers\OffBalansOperationManagers\OffBalansInManager.cs" />
     <Compile Include="Managers\OffBalansOperationManagers\OffBalansOutManager.cs" />
@@ -318,6 +319,8 @@
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountOfSupplierSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountForClientSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\SelectCashBankDialogViewModel.cs" />
+    <Compile Include="ViewModel\Finance\DistributeNaklad2\DistributeNakladRowViewModel2.cs" />
+    <Compile Include="ViewModel\Finance\DistributeNaklad2\DistributeNakladInfoViewModel2.cs" />
     <Compile Include="ViewModel\Finance\SelectCashBankDialogView.xaml.cs">
       <DependentUpon>SelectCashBankDialogView.xaml</DependentUpon>
     </Compile>
@@ -433,8 +436,14 @@
     <Compile Include="View\Base\StandartSearchView.xaml.cs">
       <DependentUpon>StandartSearchView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Base\TreeListFormBaseView2.xaml.cs">
+      <DependentUpon>TreeListFormBaseView2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\DialogUserControl\DefaultTableSelectUC.xaml.cs">
       <DependentUpon>DefaultTableSelectUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\StandartDialogSelectUC3.xaml.cs">
+      <DependentUpon>StandartDialogSelectUC3.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\DialogUserControl\ViewModel\StockHolderSelectUC.xaml.cs">
       <DependentUpon>StockHolderSelectUC.xaml</DependentUpon>
@@ -1218,9 +1227,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Base\TreeListFormBaseView2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\DialogUserControl\DefaultTableSelectUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\StandartDialogSelectUC3.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\DialogUserControl\ViewModel\StockHolderSelectUC.xaml">
       <SubType>Designer</SubType>

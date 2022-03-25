@@ -82,7 +82,7 @@ namespace KursAM2.ViewModel.Finance.controls
                 State = isNew ? RowStatus.NewRow : RowStatus.NotEdited,
                 AccuredId = row.AccuredId,
                 AccuredInfo = row.AccuredInfo,
-                CurrencyRateForReference = rate
+                CurrencyRateForReference = row.CurrencyRateForReference
             };
         }
 

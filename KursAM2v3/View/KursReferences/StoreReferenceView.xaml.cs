@@ -1,24 +1,25 @@
 ﻿using System.ComponentModel;
 using System.Windows;
-using LayoutManager;
+using DevExpress.Xpf.Grid;
 
 namespace KursAM2.View.KursReferences
 {
     /// <summary>
     ///     Interaction logic for StoreReferenceView.xaml
     /// </summary>
-    public partial class StoreReferenceView : ILayout
+    public partial class StoreReferenceView
     {
         public StoreReferenceView()
         {
             InitializeComponent();
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, gridControl);
-            Loaded += StoreReferenceView_Loaded;
-            Closing += StoreReferenceView_Closing;
+            //Loaded += StoreReferenceView_Loaded;
+            //Closing += StoreReferenceView_Closing;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -32,6 +33,11 @@ namespace KursAM2.View.KursReferences
         private void StoreReferenceView_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
+        }
+
+        private void GridControlUsers_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+        {
+            e.Column.Name = e.Column.FieldName;
         }
     }
 }

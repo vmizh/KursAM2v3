@@ -353,21 +353,6 @@ namespace KursAM2.ViewModel.Management.BreakEven
                             : new CentrOfResponsibility {Entity = new SD_40 {DOC_CODE = 0, CENT_NAME = "Не указан"}};
                         var emp = empls.FirstOrDefault(_ => _.DOC_CODE == d.Manager);
                         var crs = MainReferences.Currencies[d.Currency];
-                        //var krate = GetRate(rates, d.KontrCrsDC, GlobalOptions.SystemProfile.NationalCurrency.DocCode,
-                        //    d.DATE);
-                        //var nrate = GetRate(rates, d.NomenklCrsDC,
-                        //    GlobalOptions.SystemProfile.NationalCurrency.DocCode,
-                        //    d.DATE);
-                        //var drate = GetRate(rates, d.Currency, GlobalOptions.SystemProfile.NationalCurrency.DocCode,
-                        //    d.DATE);
-                        //var crsKontrRate = GetRate(rates, d.KontrCrsDC,
-                        //    GlobalOptions.SystemProfile.NationalCurrency.DocCode /*crs.DocCode*/, d.DATE);
-                        // ReSharper disable once PossibleInvalidOperationException
-                        //var crsNomenklRate = nom != null
-                        //    ? GetRate(rates, (decimal) nom.NOM_SALE_CRS_DC,
-                        //        GlobalOptions.SystemProfile.NationalCurrency.DocCode
-                        //        /*crs.DocCode*/, d.DATE)
-                        //    : 0;
                         DataAll.Add(new BreakEvenRow
                         {
                             Kontragent = MainReferences.AllKontragents[d.KontragentDC].Name,
@@ -411,6 +396,42 @@ namespace KursAM2.ViewModel.Management.BreakEven
                             DocType = DocumentsOpenManager.GetMaterialDocTypeFromDC(d.TypeDC)
                         });
                     }
+
+                    var dirctCost = ent.AccuredAmountOfSupplierRow.Include(_ => _.AccruedAmountOfSupplier).Where(_ =>
+                        _.AccruedAmountOfSupplier.DocDate >= StartDate
+                        && _.AccruedAmountOfSupplier.DocDate <= EndDate).ToList();
+                    foreach (var d in dirctCost)
+                    {
+                        var kontr = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC);
+                        DataAll.Add(new BreakEvenRow
+                        {
+                            Kontragent = kontr.Name,
+                            Kontr = kontr,
+                            Nomenkl = MainReferences.GetNomenkl((d.NomenklDC)),
+                            CentrOfResponsibility = new CentrOfResponsibility {Entity = new SD_40 {DOC_CODE = 0, CENT_NAME = "Не указан"}},
+                            Date = d.AccruedAmountOfSupplier.DocDate,
+                            Diler = null,
+                            DilerSumma = 0,
+                            IsUsluga =  true,
+                            KontrSumma = d.Summa, //Convert.ToDecimal(d.KontrSumma),
+                            KontrSummaCrs = d.Summa ,
+                            Manager =  "Менеджер не указан",
+                            Naklad =null,
+                            NomenklSumWOReval = d.Summa,
+                            OperCrsName = kontr.BalansCurrency.Name, // crsInfo.Name,
+                            OperCurrency = kontr.BalansCurrency,
+                            Schet = null,
+                            Quantity = 1,
+                            SummaNomenkl = d.Summa,
+                            SummaNomenklCrs = d.Summa,
+                            Price = d.Summa,
+                            KontrOperSummaCrs = d.Summa, //* crsKontrRate,
+                            SummaOperNomenkl =d.Summa,
+                            SummaOperNomenklCrs =d.Summa,
+                            NomenklOperSumWOReval =d.Summa,
+                            DocType =DocumentType.None
+                        });
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -419,17 +440,6 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 SetMain();
             }
         }
-
-        //private static decimal GetRate(List<CURRENCY_RATES_CB> rates, decimal firstDC, decimal secondDC, DateTime date)
-        //{
-        //    if (firstDC == secondDC) return 1;
-        //    var date1 = rates.Where(_ => _.RATE_DATE <= date).Max(_ => _.RATE_DATE);
-        //    var f = rates.SingleOrDefault(_ => _.CRS_DC == firstDC && _.RATE_DATE == date1);
-        //    var s = rates.SingleOrDefault(_ => _.CRS_DC == secondDC && _.RATE_DATE == date1);
-        //    if (f != null && s != null && s.RATE != 0)
-        //        return f.RATE / f.NOMINAL / (s.RATE / s.NOMINAL);
-        //    return -1;
-        //}
 
         public void SetMain()
         {

@@ -31,6 +31,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
     public sealed class AktSpisaniyaNomenklTitleWIndowViewModel : RSWindowViewModelBase
     {
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
         #region Constructors
 
         public AktSpisaniyaNomenklTitleWIndowViewModel(Guid? id = null)
@@ -59,8 +60,12 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                     WindowName = Document.ToString();
                 foreach (var r in Document.Rows)
                 {
-                    r.Prices = NomenklManager.NomenklPrice(r.Nomenkl.DocCode, Document.DocDate);
-                    r.MaxQuantity = r.Quantity + NomenklManager.GetNomenklCount(Document.DocDate, r.Nomenkl.DocCode);
+                    var q = nomenklManager.GetNomenklQuantity(Document.Warehouse.DocCode, r.Nomenkl.DocCode,
+                        Document.DocDate,
+                        Document.DocDate);
+                    decimal quan = q.Count > 0 ? q.First().OstatokQuantity : 0;
+                    r.Prices = nomenklManager.GetNomenklPrice(r.Nomenkl.DocCode, Document.DocDate);
+                    r.MaxQuantity = r.Quantity + quan;
                     r.RaisePropertyAllChanged();
                     r.myState = RowStatus.NotEdited;
                 }
@@ -320,8 +325,12 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             EntityManager.EntityReload(unitOfWork.Context);
             foreach (var r in Document.Rows)
             {
-                r.Prices = NomenklManager.NomenklPrice(r.Nomenkl.DocCode, Document.DocDate);
-                r.MaxQuantity = r.Quantity + NomenklManager.GetNomenklCount(Document.DocDate, r.Nomenkl.DocCode);
+                var q = nomenklManager.GetNomenklQuantity(Document.Warehouse.DocCode, r.Nomenkl.DocCode,
+                    Document.DocDate,
+                    Document.DocDate);
+                decimal quan = q.Count > 0 ? q.First().OstatokQuantity : 0;
+                r.Prices = nomenklManager.GetNomenklPrice(r.Nomenkl.DocCode, Document.DocDate);
+                r.MaxQuantity = r.Quantity + quan;
                 r.myState = RowStatus.NotEdited;
                 r.RaisePropertyAllChanged();
             }
@@ -460,7 +469,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             {
                 if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.Nomenkl.DocCode))
                 {
-                    var nPrice = NomenklManager.NomenklPrice(n.Nomenkl.DocCode, Document.DocDate);
+                    var nPrice = nomenklManager.GetNomenklPrice(n.Nomenkl.DocCode, Document.DocDate);
                     var newItem = new AktSpisaniyaRowViewModel
                     {
                         Id = Guid.NewGuid(),

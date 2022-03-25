@@ -10,7 +10,10 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using DevExpress.Data;
+using DevExpress.Xpf.Bars.Helpers;
 using DevExpress.Xpf.Editors.Settings;
+using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Managers.Base;
 using KursAM2.View.Dogovors;
@@ -538,8 +541,9 @@ namespace KursAM2.Managers
             };
             ctx.Form = view;
             view.Show();
-            ctx.Document.State = RowStatus.NotEdited;
-            ctx.RaisePropertyChanged(nameof(ctx.IsCanSaveData));
+            foreach (var col in view.gridPays.TotalSummary)
+                if (col.FieldName == "Rate")
+                    col.SummaryType = SummaryItemType.Custom;
             return ctx;
         }
 

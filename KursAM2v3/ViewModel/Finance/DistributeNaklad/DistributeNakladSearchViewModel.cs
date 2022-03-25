@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using Core;
 using Core.Menu;
@@ -11,12 +12,11 @@ using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.Repositories;
-using KursAM2.View.Base;
 using KursAM2.View.Finance.DistributeNaklad;
 
 namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {
-    [POCOViewModel]
+
     public sealed class DistributeNakladSearchViewModel : KursWindowSearchBaseViewModel,
         ISearchWindowViewModel<DistributeNakladViewModel>, IKursLayoutManager
     {
@@ -74,8 +74,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Properties
 
+        [Display(AutoGenerateField = false)]
         public new Helper.LayoutManager LayoutManager { get; set; }
 
+        [Display(AutoGenerateField = false)]
         private new ILayoutSerializationService LayoutSerializationService
             => GetService<ILayoutSerializationService>();
 
@@ -146,52 +148,67 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         public override void DocNewEmpty(object form)
         {
-            var dsForm = new KursBaseWindow
+            var dsForm = new DistributedNakladView
             {
                 Owner = Application.Current.MainWindow
+
             };
-            var v = new DistributedNakladView(dsForm, new DocumentOpenType
+            var dtx = new DistributeNakladViewModel(Form, new DocumentOpenType
             {
-                OpenType = DocumentCreateTypeEnum.New
-            });
-            dsForm.modelViewControl.Content = v;
-            dsForm.DataContext = v.DataContext;
+                OpenType = DocumentCreateTypeEnum.New,
+                })
+            {
+                Form = dsForm
+            };
+            dsForm.DataContext = dtx;
             dsForm.Show();
         }
 
+        public override bool IsDocNewCopyAllow => CurrentDocument != null;
+
         public override void DocNewCopy(object form)
         {
-            var dsForm = new KursBaseWindow
+            var dsForm = new DistributedNakladView
             {
                 Owner = Application.Current.MainWindow
             };
-            var v = new DistributedNakladView(dsForm, new DocumentOpenType
+            var dtx = new DistributeNakladViewModel(Form, new DocumentOpenType
             {
                 Id = CurrentDocument.Id,
-                OpenType = DocumentCreateTypeEnum.Copy
-            });
-            dsForm.modelViewControl.Content = v;
-            dsForm.DataContext = v.DataContext;
+                OpenType = DocumentCreateTypeEnum.Copy,
+            })
+            {
+                Form = dsForm
+            };
+            dsForm.DataContext = dtx;
             dsForm.Show();
         }
 
         public override void DocumentOpen(object obj)
         {
-            var dsForm = new KursBaseWindow
+            var dsForm = new DistributedNakladView
             {
                 Owner = Application.Current.MainWindow
             };
-            var v = new DistributedNakladView(dsForm, new DocumentOpenType
+            var dtx = new DistributeNakladViewModel(Form, new DocumentOpenType
             {
                 Id = CurrentDocument.Id,
-                OpenType = DocumentCreateTypeEnum.Open
-            });
-            dsForm.modelViewControl.Content = v;
-            dsForm.DataContext = v.DataContext;
+                OpenType = DocumentCreateTypeEnum.Open,
+            })
+            {
+                Form = dsForm
+            };
+            dsForm.DataContext = dtx; 
+            dtx.myState = RowStatus.NotEdited;
+            foreach (var t in dtx.Tovars)
+            {
+                t.State = RowStatus.NotEdited;
+            }
             dsForm.Show();
         }
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyRequisiteAllow => false;
 
         public override bool CanSave()
         {

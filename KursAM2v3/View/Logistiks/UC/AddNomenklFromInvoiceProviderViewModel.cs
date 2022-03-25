@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
@@ -19,8 +19,10 @@ using KursAM2.Managers.Nomenkl;
 
 namespace KursAM2.View.Logistiks.UC
 {
-    public class AddNomenklFromInvoiceProviderViewModel : RSWindowViewModelBase, IDataUserControl
+    [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
+    public sealed class AddNomenklFromInvoiceProviderViewModel : RSWindowViewModelBase, IDataUserControl
     {
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
         #region Constructors
 
         public AddNomenklFromInvoiceProviderViewModel(Core.EntityViewModel.NomenklManagement.Warehouse warehouse, Kontragent kontr = null)
@@ -29,11 +31,12 @@ namespace KursAM2.View.Logistiks.UC
             Warehouse = warehouse;
             LayoutControl = myDataUserControl = new AddNomenklFromInvoiceProviderUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            WindowName = "Выбор счета";
             RefreshData(null);
         }
 
         #endregion
+
+        public override string WindowName => "Выбор счета";
 
         #region Commands
 
@@ -76,6 +79,9 @@ namespace KursAM2.View.Logistiks.UC
                         {
                             var s = data.FirstOrDefault(_ => _.DOC_CODE == dc && _.CODE == r.CODE);
                             if (s == null) continue;
+                            var q = nomenklManager.GetNomenklQuantity(Warehouse.DocCode, r.SFT_NEMENKL_DC,
+                                DateTime.Today, DateTime.Today);
+                            decimal quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                             var newRow = new InvoiceShortRow
                             {
                                 Id = r.Id,
@@ -90,7 +96,7 @@ namespace KursAM2.View.Logistiks.UC
                                 AlreadyShippedSumma =
                                     (decimal) (r.SFT_SUMMA_K_OPLATE / r.SFT_KOL) * (decimal) s.Shipped,
                                 IsChecked = true,
-                                QuantityOnSklad = NomenklManager.GetNomenklCount(r.SFT_NEMENKL_DC, Warehouse.DocCode),
+                                QuantityOnSklad =  quan,
                                 Quantity = r.SFT_KOL - (decimal) s.Shipped
                             };
                             doc.Rows.Add(newRow);
@@ -115,7 +121,6 @@ namespace KursAM2.View.Logistiks.UC
         private readonly Kontragent Kontragent;
         private InvoiceShort myCurrentInvoice;
         private InvoiceShortRow myCurrentNomenkl;
-        private readonly NomenklManager nomManager = new NomenklManager();
         private readonly Core.EntityViewModel.NomenklManagement.Warehouse Warehouse;
         private AddNomenklFromInvoiceProviderUC myDataUserControl;
 

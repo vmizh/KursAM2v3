@@ -16,13 +16,17 @@ namespace Data
     {
         public System.Guid Id { get; set; }
         public System.Guid RowId { get; set; }
-        public System.Guid InvoiceNakladId { get; set; }
+        public Nullable<System.Guid> InvoiceNakladId { get; set; }
         public decimal InvoiceCrsDC { get; set; }
         public decimal Rate { get; set; }
         public decimal DistributeSumma { get; set; }
         public Nullable<decimal> NakladSumma { get; set; }
+        public Nullable<System.Guid> AccrualAmountId { get; set; }
+        public Nullable<System.Guid> FinanceDocId { get; set; }
     
         public virtual SD_301 SD_301 { get; set; }
         public virtual DistributeNakladRow DistributeNakladRow { get; set; }
+        public virtual AccuredAmountOfSupplierRow AccuredAmountOfSupplierRow { get; set; }
+        public virtual DistributeNakladInvoices DistributeNakladInvoices { get; set; }
     }
 }

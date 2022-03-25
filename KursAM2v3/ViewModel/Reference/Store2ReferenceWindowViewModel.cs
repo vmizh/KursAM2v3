@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -13,11 +13,9 @@ using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
-using KursAM2.View.Base;
-
 namespace KursAM2.ViewModel.Reference
 {
-    public class Store2ReferenceWindowViewModel : TreeReferenceBaseWindowViewModel, ILayoutFluentSetEditors
+    public sealed class Store2ReferenceWindowViewModel : TreeReferenceBaseWindowViewModel, ILayoutFluentSetEditors
     {
         #region Fields
 
@@ -29,7 +27,6 @@ namespace KursAM2.ViewModel.Reference
 
         public Store2ReferenceWindowViewModel()
         {
-            WindowName = "Справочник складов";
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
             var errorManager = new StandartErrorManager(GlobalOptions.GetEntities(), Name, true)
@@ -50,6 +47,11 @@ namespace KursAM2.ViewModel.Reference
 
         public override string Key => "Id";
         public override string ParentKey => "ParentId";
+        public override string WindowName => "Справочник складов";
+        public override string LayoutName => "Store2ReferenceWindowViewModel";
+
+        public ObservableCollection<SelectUser> SelectedUsers { set; get; } = new ObservableCollection<SelectUser>();
+
 
         public void SetGridColumn(GridColumn col)
         {
@@ -110,7 +112,7 @@ namespace KursAM2.ViewModel.Reference
                 if (row.State != RowStatus.NotEdited)
                     lst.Add(row);
             foreach (var row in DeletedRows)
-                lst.Add((Warehouse) row);
+                lst.Add((Warehouse)row);
             if (lst.Count <= 0) return;
             if (!Manager.Save(lst)) return;
             foreach (var r in Rows)
@@ -123,7 +125,7 @@ namespace KursAM2.ViewModel.Reference
         {
             if (CurrentRow != null)
             {
-                var newItem = Manager.New((Warehouse) CurrentRow);
+                var newItem = Manager.New((Warehouse)CurrentRow);
                 newItem.Parent = CurrentRow;
                 Rows.Add(newItem);
                 SetNewItemInControl(newItem);
@@ -138,26 +140,26 @@ namespace KursAM2.ViewModel.Reference
 
         public override void ItemNewChildEmpty(object obj)
         {
-            var newItem = Manager.New((Warehouse) CurrentRow);
+            var newItem = Manager.New((Warehouse)CurrentRow);
             Rows.Add(newItem);
             SetNewItemInControl(newItem);
         }
 
         public override void ItemNewCopy(object obj)
         {
-            var newItem = Manager.NewCopy((Warehouse) CurrentRow);
+            var newItem = Manager.NewCopy((Warehouse)CurrentRow);
             Rows.Add(newItem);
             SetNewItemInControl(newItem);
         }
 
         public override void RefreshData(object obj)
         {
-            if (!(Form is TreeListFormBaseView frm)) return;
+            //if (!(Form is TreeListFormBaseView2 frm)) return;
             Rows.Clear();
             DeletedRows.Clear();
             Rows.AddRange(Manager.Load());
             //if (Rows.Count == 0) ItemNewEmpty(null);
-            frm.gridDocuments.RefreshData();
+            //frm.gridDocuments.RefreshData();
         }
 
         private bool IsDataCorrect()

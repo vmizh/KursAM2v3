@@ -45,6 +45,7 @@ namespace KursAM2.ViewModel.Logistiks
         #region Fields
 
         public readonly GenericKursDBRepository<SD_24> GenericInventorySheetRepository;
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         // ReSharper disable once NotAccessedField.Local
         public readonly ISD_24Repository SD_24Repository;
@@ -504,15 +505,16 @@ namespace KursAM2.ViewModel.Logistiks
             var code = Document.Rows.Any() ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             foreach (var nom in noms.Where(nom => Document.Rows.All(_ => _.Nomenkl.DocCode != nom.DocCode)))
             {
+                var q = nomenklManager.GetNomenklQuantity(Document.Warehouse.DocCode, nom.DOC_CODE,
+                    DateTime.Today, DateTime.Today);
+                decimal quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                 var newItem = new InventorySheetRowViewModel(new TD_24())
                 {
                     DocCode = Document.DocCode,
                     Code = code,
                     Nomenkl = MainReferences.GetNomenkl(nom.DocCode),
-                    QuantityFact =
-                        NomenklManager.GetNomenklCount(Document.Date, nom.DocCode, Document.Warehouse.DocCode),
-                    QuantityCalc =
-                        NomenklManager.GetNomenklCount(Document.Date, nom.DocCode, Document.Warehouse.DocCode),
+                    QuantityFact = quan,
+                    QuantityCalc =quan,
                     State = RowStatus.NewRow,
                     Id = Guid.NewGuid(),
                     DocId = Document.Id,

@@ -18,6 +18,7 @@ namespace Data
         public SD_27()
         {
             this.AD_27 = new HashSet<AD_27>();
+            this.AktSpisaniyaNomenkl_Title = new HashSet<AktSpisaniyaNomenkl_Title>();
             this.ND_27 = new HashSet<ND_27>();
             this.NomenklTransfer = new HashSet<NomenklTransfer>();
             this.PD_27 = new HashSet<PD_27>();
@@ -56,7 +57,6 @@ namespace Data
             this.EXT_USERS1 = new HashSet<EXT_USERS>();
             this.EXT_USERS2 = new HashSet<EXT_USERS>();
             this.SD_40 = new HashSet<SD_40>();
-            this.AktSpisaniyaNomenkl_Title = new HashSet<AktSpisaniyaNomenkl_Title>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -78,6 +78,8 @@ namespace Data
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AD_27> AD_27 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AktSpisaniyaNomenkl_Title> AktSpisaniyaNomenkl_Title { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ND_27> ND_27 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -155,7 +157,5 @@ namespace Data
         public virtual ICollection<EXT_USERS> EXT_USERS2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_40> SD_40 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AktSpisaniyaNomenkl_Title> AktSpisaniyaNomenkl_Title { get; set; }
     }
 }

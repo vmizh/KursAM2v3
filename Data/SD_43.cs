@@ -17,6 +17,10 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public SD_43()
         {
+            this.AccruedAmountForClient = new HashSet<AccruedAmountForClient>();
+            this.AccruedAmountOfSupplier = new HashSet<AccruedAmountOfSupplier>();
+            this.DogovorClient = new HashSet<DogovorClient>();
+            this.DogovorOfSupplier = new HashSet<DogovorOfSupplier>();
             this.KONTR_BALANS_OPER_ARC = new HashSet<KONTR_BALANS_OPER_ARC>();
             this.KONTRAGENT_REF_OUT = new HashSet<KONTRAGENT_REF_OUT>();
             this.ND_43 = new HashSet<ND_43>();
@@ -40,6 +44,8 @@ namespace Data
             this.SD_2361 = new HashSet<SD_236>();
             this.SD_24 = new HashSet<SD_24>();
             this.SD_241 = new HashSet<SD_24>();
+            this.SD_246 = new HashSet<SD_246>();
+            this.SD_2461 = new HashSet<SD_246>();
             this.SD_251 = new HashSet<SD_251>();
             this.SD_259 = new HashSet<SD_259>();
             this.SD_2591 = new HashSet<SD_259>();
@@ -81,6 +87,7 @@ namespace Data
             this.SD_91 = new HashSet<SD_9>();
             this.SD_93 = new HashSet<SD_9>();
             this.SD_950 = new HashSet<SD_950>();
+            this.StockHolders = new HashSet<StockHolders>();
             this.TD_101 = new HashSet<TD_101>();
             this.TD_1011 = new HashSet<TD_101>();
             this.TD_110 = new HashSet<TD_110>();
@@ -102,14 +109,7 @@ namespace Data
             this.XD_92 = new HashSet<XD_9>();
             this.YD_43 = new HashSet<YD_43>();
             this.ZD_43 = new HashSet<ZD_43>();
-            this.SD_246 = new HashSet<SD_246>();
-            this.SD_2461 = new HashSet<SD_246>();
             this.SD_396 = new HashSet<SD_396>();
-            this.DogovorClient = new HashSet<DogovorClient>();
-            this.AccruedAmountForClient = new HashSet<AccruedAmountForClient>();
-            this.DogovorOfSupplier = new HashSet<DogovorOfSupplier>();
-            this.AccruedAmountOfSupplier = new HashSet<AccruedAmountOfSupplier>();
-            this.StockHolders = new HashSet<StockHolders>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -166,6 +166,14 @@ namespace Data
         public System.Guid Id { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccruedAmountForClient> AccruedAmountForClient { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccruedAmountOfSupplier> AccruedAmountOfSupplier { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DogovorClient> DogovorClient { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DogovorOfSupplier> DogovorOfSupplier { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<KONTR_BALANS_OPER_ARC> KONTR_BALANS_OPER_ARC { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<KONTRAGENT_REF_OUT> KONTRAGENT_REF_OUT { get; set; }
@@ -214,6 +222,10 @@ namespace Data
         public virtual ICollection<SD_24> SD_24 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_24> SD_241 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SD_246> SD_246 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SD_246> SD_2461 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_251> SD_251 { get; set; }
         public virtual SD_252 SD_252 { get; set; }
@@ -304,6 +316,8 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_950> SD_950 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StockHolders> StockHolders { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TD_101> TD_101 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TD_101> TD_1011 { get; set; }
@@ -346,20 +360,6 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ZD_43> ZD_43 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SD_246> SD_246 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SD_246> SD_2461 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_396> SD_396 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DogovorClient> DogovorClient { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccruedAmountForClient> AccruedAmountForClient { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DogovorOfSupplier> DogovorOfSupplier { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccruedAmountOfSupplier> AccruedAmountOfSupplier { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<StockHolders> StockHolders { get; set; }
     }
 }

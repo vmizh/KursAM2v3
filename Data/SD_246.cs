@@ -14,6 +14,12 @@ namespace Data
     
     public partial class SD_246
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public SD_246()
+        {
+            this.TD_246 = new HashSet<TD_246>();
+        }
+    
         public decimal DOC_CODE { get; set; }
         public System.DateTime SF_DATE { get; set; }
         public int SF_IN_NUM { get; set; }
@@ -27,5 +33,7 @@ namespace Data
     
         public virtual SD_43 SD_43 { get; set; }
         public virtual SD_43 SD_431 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TD_246> TD_246 { get; set; }
     }
 }

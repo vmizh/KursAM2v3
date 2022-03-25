@@ -59,7 +59,7 @@ namespace KursAM2.View.Base
                             if (old != null)
                                 s = old.VVT_VAL_RASHOD ?? 0;
                             var errStr = manager.CheckForNonzero(bank.BankAccount.DocCode, 
-                                bank.Date, s > 0 ? s - bank.VVT_VAL_RASHOD : bank.VVT_VAL_RASHOD);
+                                bank.Date, s > 0 ? s - bank.VVT_VAL_RASHOD : 0);
                             if (!string.IsNullOrEmpty(errStr))
                             {
                                 winManager.ShowWinUIMessageBox(errStr, "Предупреждение", MessageBoxButton.OK);

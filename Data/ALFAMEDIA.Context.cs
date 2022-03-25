@@ -28,10 +28,17 @@ namespace Data
         }
     
         public virtual DbSet<AccountInvoice> AccountInvoice { get; set; }
+        public virtual DbSet<AccruedAmountForClient> AccruedAmountForClient { get; set; }
+        public virtual DbSet<AccruedAmountOfSupplier> AccruedAmountOfSupplier { get; set; }
+        public virtual DbSet<AccruedAmountType> AccruedAmountType { get; set; }
+        public virtual DbSet<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
+        public virtual DbSet<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
         public virtual DbSet<AD_149> AD_149 { get; set; }
         public virtual DbSet<AD_2> AD_2 { get; set; }
         public virtual DbSet<AD_27> AD_27 { get; set; }
         public virtual DbSet<AD_83> AD_83 { get; set; }
+        public virtual DbSet<AktSpisaniya_row> AktSpisaniya_row { get; set; }
+        public virtual DbSet<AktSpisaniyaNomenkl_Title> AktSpisaniyaNomenkl_Title { get; set; }
         public virtual DbSet<BALANS_OPER_CROSS> BALANS_OPER_CROSS { get; set; }
         public virtual DbSet<BALANS_OPER_TYPE> BALANS_OPER_TYPE { get; set; }
         public virtual DbSet<BankCurrencyChange> BankCurrencyChange { get; set; }
@@ -52,6 +59,12 @@ namespace Data
         public virtual DbSet<DistributeNakladInvoices> DistributeNakladInvoices { get; set; }
         public virtual DbSet<DistributeNakladRow> DistributeNakladRow { get; set; }
         public virtual DbSet<DOC_FILES> DOC_FILES { get; set; }
+        public virtual DbSet<DocHistory> DocHistory { get; set; }
+        public virtual DbSet<DocumentSignatures> DocumentSignatures { get; set; }
+        public virtual DbSet<DogovorClient> DogovorClient { get; set; }
+        public virtual DbSet<DogovorClientRow> DogovorClientRow { get; set; }
+        public virtual DbSet<DogovorOfSupplier> DogovorOfSupplier { get; set; }
+        public virtual DbSet<DogovorOfSupplierRow> DogovorOfSupplierRow { get; set; }
         public virtual DbSet<dtproperties> dtproperties { get; set; }
         public virtual DbSet<EMP_PAYROLL_TYPE> EMP_PAYROLL_TYPE { get; set; }
         public virtual DbSet<EMP_PR_DOC> EMP_PR_DOC { get; set; }
@@ -158,6 +171,7 @@ namespace Data
         public virtual DbSet<NOM_PRICE> NOM_PRICE { get; set; }
         public virtual DbSet<NOM_SKLAD_CURRENCY_PRICE> NOM_SKLAD_CURRENCY_PRICE { get; set; }
         public virtual DbSet<NOMENKL_MOVES> NOMENKL_MOVES { get; set; }
+        public virtual DbSet<NOMENKL_PRIH_EXCLUDE> NOMENKL_PRIH_EXCLUDE { get; set; }
         public virtual DbSet<NomenklCostReset> NomenklCostReset { get; set; }
         public virtual DbSet<NomenklCostResetRows> NomenklCostResetRows { get; set; }
         public virtual DbSet<NomenklMain> NomenklMain { get; set; }
@@ -275,6 +289,7 @@ namespace Data
         public virtual DbSet<SD_236> SD_236 { get; set; }
         public virtual DbSet<SD_24> SD_24 { get; set; }
         public virtual DbSet<SD_241> SD_241 { get; set; }
+        public virtual DbSet<SD_246> SD_246 { get; set; }
         public virtual DbSet<SD_247> SD_247 { get; set; }
         public virtual DbSet<SD_248> SD_248 { get; set; }
         public virtual DbSet<SD_249> SD_249 { get; set; }
@@ -411,6 +426,11 @@ namespace Data
         public virtual DbSet<SD_97> SD_97 { get; set; }
         public virtual DbSet<SD_99> SD_99 { get; set; }
         public virtual DbSet<SHOP_OSTATKI_20141101> SHOP_OSTATKI_20141101 { get; set; }
+        public virtual DbSet<StockHolderAccrual> StockHolderAccrual { get; set; }
+        public virtual DbSet<StockHolderAccrualRows> StockHolderAccrualRows { get; set; }
+        public virtual DbSet<StockHolderAccrualType> StockHolderAccrualType { get; set; }
+        public virtual DbSet<StockHolders> StockHolders { get; set; }
+        public virtual DbSet<StockHolderUserRights> StockHolderUserRights { get; set; }
         public virtual DbSet<STORED_GTD> STORED_GTD { get; set; }
         public virtual DbSet<Tablica> Tablica { get; set; }
         public virtual DbSet<TaxUpdateHistory> TaxUpdateHistory { get; set; }
@@ -680,7 +700,6 @@ namespace Data
         public virtual DbSet<OLAP_BALANS_KURS> OLAP_BALANS_KURS { get; set; }
         public virtual DbSet<REMAINS_STATUS> REMAINS_STATUS { get; set; }
         public virtual DbSet<SD_176> SD_176 { get; set; }
-        public virtual DbSet<SD_246> SD_246 { get; set; }
         public virtual DbSet<SD_43_1> SD_43_1 { get; set; }
         public virtual DbSet<SD_54> SD_54 { get; set; }
         public virtual DbSet<SD_91> SD_91 { get; set; }
@@ -707,6 +726,7 @@ namespace Data
         public virtual DbSet<NomenklMove> NomenklMove { get; set; }
         public virtual DbSet<NomenklMoveForCalc> NomenklMoveForCalc { get; set; }
         public virtual DbSet<NomenklMoveForCalcCosts> NomenklMoveForCalcCosts { get; set; }
+        public virtual DbSet<NomenklMoveStore> NomenklMoveStore { get; set; }
         public virtual DbSet<NomenklMoveWithPrice> NomenklMoveWithPrice { get; set; }
         public virtual DbSet<ProjectsDocuments> ProjectsDocuments { get; set; }
         public virtual DbSet<ProjectsInfo> ProjectsInfo { get; set; }
@@ -716,6 +736,7 @@ namespace Data
         public virtual DbSet<SHORT_KONTRAGENT> SHORT_KONTRAGENT { get; set; }
         public virtual DbSet<SHORT_NOMENKL> SHORT_NOMENKL { get; set; }
         public virtual DbSet<SHORT_PERSONA> SHORT_PERSONA { get; set; }
+        public virtual DbSet<SignatureDocumentTypes> SignatureDocumentTypes { get; set; }
         public virtual DbSet<V_101> V_101 { get; set; }
         public virtual DbSet<V_110> V_110 { get; set; }
         public virtual DbSet<V_24> V_24 { get; set; }
@@ -768,27 +789,6 @@ namespace Data
         public virtual DbSet<VH_SD_77> VH_SD_77 { get; set; }
         public virtual DbSet<VH_SD_82> VH_SD_82 { get; set; }
         public virtual DbSet<VVD_24> VVD_24 { get; set; }
-        public virtual DbSet<DocHistory> DocHistory { get; set; }
-        public virtual DbSet<DogovorClient> DogovorClient { get; set; }
-        public virtual DbSet<DogovorClientRow> DogovorClientRow { get; set; }
-        public virtual DbSet<AktSpisaniya_row> AktSpisaniya_row { get; set; }
-        public virtual DbSet<AktSpisaniyaNomenkl_Title> AktSpisaniyaNomenkl_Title { get; set; }
-        public virtual DbSet<AccruedAmountForClient> AccruedAmountForClient { get; set; }
-        public virtual DbSet<AccruedAmountType> AccruedAmountType { get; set; }
-        public virtual DbSet<DogovorOfSupplier> DogovorOfSupplier { get; set; }
-        public virtual DbSet<DogovorOfSupplierRow> DogovorOfSupplierRow { get; set; }
-        public virtual DbSet<SignatureDocumentTypes> SignatureDocumentTypes { get; set; }
-        public virtual DbSet<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
-        public virtual DbSet<NOMENKL_PRIH_EXCLUDE> NOMENKL_PRIH_EXCLUDE { get; set; }
-        public virtual DbSet<AccuredAmountOfSupplierRow> AccuredAmountOfSupplierRow { get; set; }
-        public virtual DbSet<AccruedAmountOfSupplier> AccruedAmountOfSupplier { get; set; }
-        public virtual DbSet<DocumentSignatures> DocumentSignatures { get; set; }
-        public virtual DbSet<StockHolderAccrual> StockHolderAccrual { get; set; }
-        public virtual DbSet<StockHolderAccrualRows> StockHolderAccrualRows { get; set; }
-        public virtual DbSet<StockHolders> StockHolders { get; set; }
-        public virtual DbSet<StockHolderUserRights> StockHolderUserRights { get; set; }
-        public virtual DbSet<StockHolderAccrualType> StockHolderAccrualType { get; set; }
-        public virtual DbSet<NomenklMoveStore> NomenklMoveStore { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()
@@ -904,36 +904,6 @@ namespace Data
                 new ObjectParameter("dtStop", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<LIC_SCHET_KONTR_TABLE_Result>("[Entities].[LIC_SCHET_KONTR_TABLE](@nKontrDC, @dtStart, @dtStop)", nKontrDCParameter, dtStartParameter, dtStopParameter);
-        }
-    
-        public virtual int GetNomenklMoveForAll(Nullable<System.DateTime> dateStart, Nullable<System.DateTime> dateEnd)
-        {
-            var dateStartParameter = dateStart.HasValue ?
-                new ObjectParameter("DateStart", dateStart) :
-                new ObjectParameter("DateStart", typeof(System.DateTime));
-    
-            var dateEndParameter = dateEnd.HasValue ?
-                new ObjectParameter("DateEnd", dateEnd) :
-                new ObjectParameter("DateEnd", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNomenklMoveForAll", dateStartParameter, dateEndParameter);
-        }
-    
-        public virtual int GetNomenklMoveForStore(Nullable<System.DateTime> dateStart, Nullable<System.DateTime> dateEnd, Nullable<decimal> storeDC)
-        {
-            var dateStartParameter = dateStart.HasValue ?
-                new ObjectParameter("DateStart", dateStart) :
-                new ObjectParameter("DateStart", typeof(System.DateTime));
-    
-            var dateEndParameter = dateEnd.HasValue ?
-                new ObjectParameter("DateEnd", dateEnd) :
-                new ObjectParameter("DateEnd", typeof(System.DateTime));
-    
-            var storeDCParameter = storeDC.HasValue ?
-                new ObjectParameter("StoreDC", storeDC) :
-                new ObjectParameter("StoreDC", typeof(decimal));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNomenklMoveForStore", dateStartParameter, dateEndParameter, storeDCParameter);
         }
     }
 }
