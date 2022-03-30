@@ -20,7 +20,9 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using DevExpress.Data;
 using DevExpress.Mvvm;
+using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -44,6 +46,29 @@ namespace KursAM2.ViewModel.Finance.Invoices
     public sealed class ProviderWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
     {
         #region Methods
+
+        public override void UpdateVisualObjects()
+        {
+            if (Form is InvoiceProviderView view)
+            {
+                var cols = view.gridPays.TotalSummary.GetForName("Rate");
+                if (cols.Count > 0l)
+                {
+                    view.gridPays.TotalSummary.BeginUpdate();
+                    foreach (var c in cols)
+                    {
+                        view.gridPays.TotalSummary.Remove(c);
+                    }
+
+                    view.gridPays.TotalSummary.Add(new GridSummaryItem
+                    {
+                        FieldName = "Rate",
+                        SummaryType = SummaryItemType.Custom
+                    });
+                    view.gridPays.TotalSummary.EndUpdate();
+                }
+            }
+        }
 
         private void CreateReportsMenu()
         {
@@ -514,7 +539,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 return;
             }
 
-            var kontr = StandartDialogs.SelectKontragent();
+            var kontr = StandartDialogs.SelectKontragent(Document.Currency);
             if (kontr == null) return;
             Document.Kontragent = kontr;
             Document.Currency = kontr.BalansCurrency;
@@ -702,7 +727,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand OpenPayDocumentCommand
         {
-            get { return new Command(OpenPayDocument, _ => CurrentPaymentDoc != null); }
+            get { return new Command(OpenPayDocument, _ => CurrentPaymentDoc == null); }
         }
 
         private void OpenPayDocument(object obj)

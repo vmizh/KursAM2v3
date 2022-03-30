@@ -385,7 +385,7 @@ namespace Core.EntityViewModel.Cash
             get => myCashTo;
             set
             {
-                if (myCashTo != null && myCashTo.Equals(value)) return;
+                if (myCashTo== value) return;
                 myCashTo = value;
                 CASH_TO_DC = myCashTo?.DocCode;
                 RaisePropertyChanged();

@@ -19,14 +19,21 @@ namespace KursAM2.View.Base
         {
             InitializeComponent();
             DataContextChanged += SelectDialogView_DataContextChanged;
+            Loaded += SelectDialogView_Loaded;
             Closing += SelectDialogView_Closing;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
+        }
+
+        private void SelectDialogView_Loaded(object sender, RoutedEventArgs e)
+        {
+            LayoutManager.Load();
         }
 
         private void SelectDialogView_Closing(object sender, CancelEventArgs e)
@@ -36,10 +43,13 @@ namespace KursAM2.View.Base
 
         private void SelectDialogView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            var ctrl = DataContext as IDataUserControl;
-            LayoutManager = new LayoutManager.LayoutManager($"{GetType().Name}.{DataContext.GetType()}", this,
-                ctrl?.LayoutControl);
-            LayoutManager.Load();
+            if (LayoutManager == null)
+            {
+                var ctrl = DataContext as IDataUserControl;
+                LayoutManager = new LayoutManager.LayoutManager($"{GetType().Name}.{DataContext.GetType()}", this,
+                    ctrl?.LayoutControl);
+            }
+            //LayoutManager.Load();
         }
 
         private void Ok_OnClick(object sender, RoutedEventArgs e)
@@ -49,8 +59,8 @@ namespace KursAM2.View.Base
                 if (DataContext is AddBankOperionUC bank)
                 {
                     var manager = new BankOperationsManager();
-                    var  winManager = new WindowManager();
-                    using(var context = GlobalOptions.GetEntities())
+                    var winManager = new WindowManager();
+                    using (var context = GlobalOptions.GetEntities())
                     {
                         if (bank.VVT_VAL_RASHOD > 0)
                         {
@@ -58,7 +68,7 @@ namespace KursAM2.View.Base
                             var old = context.TD_101.FirstOrDefault(_ => _.CODE == bank.Code);
                             if (old != null)
                                 s = old.VVT_VAL_RASHOD ?? 0;
-                            var errStr = manager.CheckForNonzero(bank.BankAccount.DocCode, 
+                            var errStr = manager.CheckForNonzero(bank.BankAccount.DocCode,
                                 bank.Date, s > 0 ? s - bank.VVT_VAL_RASHOD : 0);
                             if (!string.IsNullOrEmpty(errStr))
                             {
@@ -68,6 +78,7 @@ namespace KursAM2.View.Base
                         }
                     }
                 }
+
                 DialogResult = true;
                 ctx.DialogResult = true;
                 Close();

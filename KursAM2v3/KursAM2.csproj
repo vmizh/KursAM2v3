@@ -319,8 +319,6 @@
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountOfSupplierSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountForClientSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\SelectCashBankDialogViewModel.cs" />
-    <Compile Include="ViewModel\Finance\DistributeNaklad2\DistributeNakladRowViewModel2.cs" />
-    <Compile Include="ViewModel\Finance\DistributeNaklad2\DistributeNakladInfoViewModel2.cs" />
     <Compile Include="ViewModel\Finance\SelectCashBankDialogView.xaml.cs">
       <DependentUpon>SelectCashBankDialogView.xaml</DependentUpon>
     </Compile>

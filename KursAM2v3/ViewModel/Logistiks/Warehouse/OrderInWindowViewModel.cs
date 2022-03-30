@@ -253,7 +253,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand PrintOrderCommand
         {
-            get { return new Command(PrintOrder, param => State != RowStatus.NewRow); }
+            get { return new Command(PrintOrder, _ => State != RowStatus.NewRow); }
         }
 
         private void PrintOrder(object obj)

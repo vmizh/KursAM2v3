@@ -108,13 +108,11 @@ namespace KursAM2.Managers.Nomenkl
         {
             try
             {
-
                 return Context.Database.SqlQuery<NomenklQuantityInfo>(
-                    $"EXEC GetNomenklQuantityInfo {CustomFormat.DecimalToSqlDecimal(skladDC)},{CustomFormat.DecimalToSqlDecimal(nomDC)}," +
-                    $"'{CustomFormat.DateToString(dateStart)}',{CustomFormat.DateToString(dateEnd)}").ToList();
-
+                        $"EXEC GetNomenklQuantityInfo {CustomFormat.DecimalToSqlDecimal(skladDC)},{CustomFormat.DecimalToSqlDecimal(nomDC)}," +
+                        $"'{CustomFormat.DateToString(dateStart)}','{CustomFormat.DateToString(dateEnd)}'").ToList();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
                 return null;

@@ -196,6 +196,15 @@ namespace Core.ViewModel.Base
                     LayoutName, null);
         }
 
+        /// <summary>
+        /// Устанавливае особенные свойства для таблиц, колонок или других
+        /// визуальных объектов после загрузки Layout
+        /// </summary>
+        public virtual void UpdateVisualObjects()
+        {
+
+        }
+
         public virtual void OnWindowLoaded(object obj)
         {
             if (LayoutManager == null) OnLayoutInitial(null);
@@ -249,6 +258,8 @@ namespace Core.ViewModel.Base
                         col.Name = col.FieldName;
                 }
             }
+
+            UpdateVisualObjects();
         }
 
         public void RefreshData()

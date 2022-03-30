@@ -437,7 +437,6 @@ namespace KursAM2.View.Finance.Cash
                     if (ch != null) ctx.Document.CashTo = ch;
                     ctx.Document.KONTRAGENT_DC = null;
                     ctx.Document.BankAccount = null;
-                    ctx.Document.CashTo = null;
                     ctx.Document.Employee = null;
                     ctx.Document.StockHolder = null;
                     ctx.Document.NAME_ORD = ch?.Name;

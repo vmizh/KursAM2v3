@@ -12,6 +12,8 @@ using Data;
 using Data.Repository;
 using DevExpress.Data;
 using DevExpress.Xpf.Bars.Helpers;
+using DevExpress.Xpf.Bars.Themes;
+using DevExpress.Xpf.Core.Native;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -530,7 +532,7 @@ namespace KursAM2.Managers
             view.Show();
             return ctx;
         }
-
+        
         private static ProviderWindowViewModel OpenSFProvider(decimal docCode)
         {
             var ctx = new ProviderWindowViewModel(docCode);
@@ -541,9 +543,6 @@ namespace KursAM2.Managers
             };
             ctx.Form = view;
             view.Show();
-            foreach (var col in view.gridPays.TotalSummary)
-                if (col.FieldName == "Rate")
-                    col.SummaryType = SummaryItemType.Custom;
             return ctx;
         }
 
