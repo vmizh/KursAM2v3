@@ -157,19 +157,23 @@ namespace Core.ViewModel.Base
         [Display(AutoGenerateField = false)]
         public ICommand OnWindowClosingCommand
         {
-            get { return new Command(OnWindowClosing, _ => true); }
+            get { return new Command(OnWindowClosing, _ => IsLayoutLoaded); }
         }
 
+
+        [Display(AutoGenerateField = false)] 
+        protected bool IsLayoutLoaded = false;
+        
         [Display(AutoGenerateField = false)]
         public ICommand OnWindowLoadedCommand
         {
-            get { return new Command(OnWindowLoaded, _ => true); }
+            get { return new Command(OnWindowLoaded, _ => !IsLayoutLoaded); }
         }
 
         [Display(AutoGenerateField = false)]
         public ICommand OnLayoutInitialCommand
         {
-            get { return new Command(OnLayoutInitial, _ => true); }
+            get { return new Command(OnLayoutInitial, _ => IsLayoutLoaded); }
         }
 
         private bool IsSummaryExists(GridSummaryItemCollection tsums, string fname, SummaryItemType sumType)
@@ -205,11 +209,16 @@ namespace Core.ViewModel.Base
 
         }
 
-        public virtual void OnWindowLoaded(object obj)
+        protected virtual void OnWindowLoaded(object obj)
         {
+            if (IsLayoutLoaded) return;
             if (LayoutManager == null) OnLayoutInitial(null);
             LayoutManager.Load();
-            if (Form == null) return;
+            if (Form == null)
+            {
+                IsLayoutLoaded = true;
+                return;
+            }
             var grids = Form.FindVisualChildren<GridControl>();
             var trees = Form.FindVisualChildren<TreeListControl>();
             if (grids != null)
@@ -260,6 +269,7 @@ namespace Core.ViewModel.Base
             }
 
             UpdateVisualObjects();
+            IsLayoutLoaded = true;
         }
 
         public void RefreshData()
@@ -269,7 +279,7 @@ namespace Core.ViewModel.Base
 
         public void Save()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public bool Check()
@@ -533,6 +543,19 @@ namespace Core.ViewModel.Base
         public virtual void SaveData(object data)
         {
         }
+
+        [Display(AutoGenerateField = false)]
+        public ICommand DocNewCommand
+        {
+            get { return new Command(DocNew, _ => IsDocNewEmptyAllow); }
+        }
+
+        public virtual void DocNew(object obj)
+        {
+            if (!IsDocNewCopyAllow && !IsDocNewCopyAllow)
+                DocNewEmpty(obj);
+        }
+
 
         [Display(AutoGenerateField = false)]
         public ICommand DocNewEmptyCommand

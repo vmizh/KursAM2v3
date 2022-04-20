@@ -87,7 +87,7 @@ namespace KursAM2.ViewModel.Shop
                         FormRaschet = MainReferences.GetFormPay(11890000001),
                         IsNDSInPrice = true,
                         CREATOR = GlobalOptions.UserInfo.NickName,
-                        PersonaResponsible = MainReferences.GetEmployee(104),
+                        PersonaResponsible = MainReferences.GetEmployee((int?)104),
                         Currency = GlobalOptions.SystemProfile.NationalCurrency,
                         State = RowStatus.NewRow,
                         DocCode = -1,

@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="034713bc6de54591a1493d5aa5b6510b" Name="Diagram1">
+      <Diagram DiagramId="034713bc6de54591a1493d5aa5b6510b" Name="Diagram1" ZoomLevel="56">
         <EntityTypeShape EntityType="ALFAMEDIA.AccountInvoice" Width="1.5" PointX="7.75" PointY="1.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.AccruedAmountForClient" Width="1.5" PointX="22.5" PointY="694.875" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.AccruedAmountOfSupplier" Width="1.5" PointX="22.5" PointY="698.375" IsExpanded="true" />
@@ -2114,6 +2114,8 @@
         <AssociationConnector Association="ALFAMEDIA.FK_DistributeNakladInfo_AccrualAmountId" />
         <AssociationConnector Association="ALFAMEDIA.FK_DistributeNakladInvoices_AccrualAmountId" />
         <AssociationConnector Association="ALFAMEDIA.FK_DistributeNakladInfo_FinanceDocId" />
+        <EntityTypeShape EntityType="ALFAMEDIA.InvoicePostQuery" Width="1.5" PointX="46.375" PointY="31.75" />
+        <EntityTypeShape EntityType="ALFAMEDIA.InvoiceClientQuery" Width="1.5" PointX="46.375" PointY="20.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

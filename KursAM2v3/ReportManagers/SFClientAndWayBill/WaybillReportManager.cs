@@ -33,6 +33,11 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             ViewModel = viewmodel;
         }
 
+        public WaybillTorg12(WaybillWindowViewModel2 viewmodel)
+        {
+            ViewModel = viewmodel;
+        }
+
         private void WaibillSetRow(Worksheet sheet, int row, int rowId, WaybillRow item)
         {
             sheet.Cells[$"A{rowId}"].Value = row;

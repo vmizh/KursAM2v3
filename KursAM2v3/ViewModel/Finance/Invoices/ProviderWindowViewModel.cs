@@ -52,7 +52,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (Form is InvoiceProviderView view)
             {
                 var cols = view.gridPays.TotalSummary.GetForName("Rate");
-                if (cols.Count > 0l)
+                if (cols.Count > 0)
                 {
                     view.gridPays.TotalSummary.BeginUpdate();
                     foreach (var c in cols)
@@ -312,16 +312,28 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (Document != null)
                     WindowName = Document.ToString();
                 Document.myState = RowStatus.NotEdited;
+                var crsrates = new CurrencyRates( DateTime.Today, DateTime.Today);
+                decimal rate = Math.Round(crsrates.GetRate(Document.Currency.DocCode,
+                    GlobalOptions.SystemProfile.NationalCurrency.DocCode, DateTime.Today), 4);
+                if (Document.PaymentDocs.Count > 0)
+                {
+                    rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
+                }
                 foreach (var r in Document.Rows)
                 {
-                    r.myState = RowStatus.NotEdited;
+                   
                     AddUsedNomenkl(r.Nomenkl.DocCode);
                     foreach (var rr in r.CurrencyConvertRows)
                     {
-                        rr.State = RowStatus.NotEdited;
+                        rr.Rate = rate;
+                        rr.myState = RowStatus.NotEdited;
                         AddUsedNomenkl(rr.Nomenkl.DocCode);
-                    }
+                    } 
+                    r.myState = RowStatus.NotEdited;
                 }
+
+                Document.myState = RowStatus.NotEdited;
+                //RaiseAll();
             }
         }
 
@@ -436,7 +448,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.Yes) Document.Contract = null;
         }
 
-        public override void OnWindowLoaded(object obj)
+        protected override void OnWindowLoaded(object obj)
         {
             base.OnWindowLoaded(obj);
             if (Form is InvoiceProviderView frm)
@@ -767,25 +779,35 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
 
                         RaiseAll();
-                        Document.myState = RowStatus.NotEdited;
+                        
                         foreach (var r in Document.Rows)
                         {
                             r.myState = RowStatus.NotEdited;
                             AddUsedNomenkl(r.Nomenkl.DocCode);
-                        }
-
+                        }  
+                        Document.myState = RowStatus.NotEdited;
                         return;
                 }
             }
 
             foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
-
-            RaiseAll();
-
+            var crsrates = new CurrencyRates( DateTime.Today, DateTime.Today);
+                decimal rate = Math.Round(crsrates.GetRate(Document.Currency.DocCode,
+                    GlobalOptions.SystemProfile.NationalCurrency.DocCode, DateTime.Today), 4);
+                if (Document.PaymentDocs.Count > 0)
+                {
+                    rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
+                }
             foreach (var r in Document.Rows)
             {
+                foreach (var cr in r.CurrencyConvertRows)
+                {
+                    cr.Rate = rate;
+                    cr.myState = RowStatus.NotEdited;
+                }
                 r.myState = RowStatus.NotEdited;
                 AddUsedNomenkl(r.Nomenkl.DocCode);
+                RaiseAll();
             }
 
             Document.myState = RowStatus.NotEdited;
@@ -1032,6 +1054,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 : CurrentRow.CurrencyConvertRows.Sum(_ => _.Quantity);
             dt = UnitOfWork.Context.SD_24.Where(_ => _.DOC_CODE == factnom.DOC_CODE).OrderBy(_ => _.DD_DATE).First()
                 .DD_DATE;
+            decimal rate = Math.Round(crsrates.GetRate(CurrentRow.Nomenkl.Currency.DocCode,
+                n.Currency.DocCode, dt), 4);
+            if (Document.PaymentDocs.Count > 0)
+            {
+                rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
+            }
             var newItem = new InvoiceProviderRowCurrencyConvertViewModel
             {
                 Id = Guid.NewGuid(),
@@ -1046,8 +1074,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                             (CurrentRow.SFT_SUMMA_NAKLAD ?? 0) / CurrentRow.Quantity,
                     2),
                 Quantity = CurrentRow.Quantity - oldQuan,
-                Rate = Math.Round(crsrates.GetRate(CurrentRow.Nomenkl.Currency.DocCode,
-                    n.Currency.DocCode, dt), 4),
+                Rate = rate,
                 // ReSharper disable once PossibleInvalidOperationException
                 StoreDC = (decimal)store.DD_SKLAD_POL_DC
             };

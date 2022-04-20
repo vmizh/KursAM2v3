@@ -199,12 +199,14 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 Form = dsForm
             };
             dsForm.DataContext = dtx; 
-            dtx.myState = RowStatus.NotEdited;
+            
             foreach (var t in dtx.Tovars)
             {
                 t.State = RowStatus.NotEdited;
             }
+            
             dsForm.Show();
+            dtx.myState = RowStatus.NotEdited;
         }
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;

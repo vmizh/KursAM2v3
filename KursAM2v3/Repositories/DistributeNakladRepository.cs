@@ -107,11 +107,11 @@ namespace KursAM2.Repositories
 
         public List<DistributeNaklad> GetAllByDates(DateTime dateStart, DateTime dateEnd)
         {
-            return Context.DistributeNaklad.Include(_ => _.DistributeNakladRow)
-                .Include(_ => _.DistributeNakladRow.Select(x => x.DistributeNakladInfo))
-                .Where(_ => _.DocDate >= dateStart && _.DocDate <= dateEnd)
-                .AsNoTracking()
-                .ToList();
+           return Context.DistributeNaklad.Include(_ => _.DistributeNakladRow)
+                    .Include(y => y.DistributeNakladRow.Select(x => x.DistributeNakladInfo))
+                    .Where(z => z.DocDate >= dateStart && z.DocDate <= dateEnd)
+                    .AsNoTracking()
+                    .ToList();
         }
 
         public List<DistributeNakladRow> GetTovarFromInvoiceProviders(DistributeNaklad ent)

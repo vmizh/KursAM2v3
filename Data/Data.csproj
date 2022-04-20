@@ -553,6 +553,12 @@
     <Compile Include="IMP_TURNOFF.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="InvoiceClientQuery.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="InvoicePostQuery.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="INVOICE_SEARCH_VIEW.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

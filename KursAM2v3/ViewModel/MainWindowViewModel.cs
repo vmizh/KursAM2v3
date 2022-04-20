@@ -85,7 +85,6 @@ namespace KursAM2.ViewModel
                 frm.tileDocumentItems.Children.Clear();
                 if (!string.IsNullOrWhiteSpace(SearchText) && SearchText.Length >= 3)
                 {
-                    
                     foreach (var tile in CurrentDocumentTiles)
                     {
                         if (((string)tile.Header).ToUpper().Contains(SearchText.ToUpper()))

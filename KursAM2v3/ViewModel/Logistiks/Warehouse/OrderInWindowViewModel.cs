@@ -327,8 +327,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void SaveData(object data)
         {
-            Document.DD_POLUCH_NAME = Document.WarehouseIn.Name;
-            Document.DD_OTRPAV_NAME = Document.Sender;
+            //Document.DD_POLUCH_NAME = Document.WarehouseIn.Name;
+            //Document.DD_OTRPAV_NAME = Document.Sender;
             Document.Entity.DD_TYPE_DC = 2010000001;
             var dc = orderManager.SaveOrderIn(Document);
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.StoreOrderIn), null,

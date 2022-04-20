@@ -28,6 +28,8 @@ namespace Core.EntityViewModel.NomenklManagement
         private decimal mySummaUSDOut;
         private decimal mySummaUSDStart;
 
+        public override decimal DocCode => myNomenkl?.DocCode ?? 0;
+
         public Nomenkl Nomenkl
         {
             get => myNomenkl;

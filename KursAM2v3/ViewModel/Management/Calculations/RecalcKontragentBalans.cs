@@ -43,13 +43,41 @@ namespace KursAM2.ViewModel.Management.Calculations
     /// </summary>
     public static class RecalcKontragentBalans
     {
-        private static List<KONTR_BALANS_OPER_ARC> GetOperationsOld(decimal kontrDC, DateTime start, DateTime end)
+        private static List<KONTR_BALANS_OPER_ARC> GetOperationsOld(decimal kontrDC, DateTime start, DateTime end, ALFAMEDIAEntities ctx = null)
         {
             var ret = new List<KONTR_BALANS_OPER_ARC>();
-            using (var ent = GlobalOptions.GetEntities())
+            if (ctx == null)
             {
+                using (var ent =  GlobalOptions.GetEntities())
+                {
 
-                var data = ent.H184000_DVIZH_LIC_SCHET_KONTR_TABLE(kontrDC, start, end).ToList();
+                    var data = ent.H184000_DVIZH_LIC_SCHET_KONTR_TABLE(kontrDC, start, end).ToList();
+                    ret.AddRange(
+                        data
+                            .Select(d => new KONTR_BALANS_OPER_ARC
+                            {
+                                DOC_NAME = d.DOC_NAME,
+                                DOC_NUM = d.DOC_NUM,
+                                DOC_DATE = Convert.ToDateTime(d.DOC_DATE),
+                                CRS_KONTR_IN = Convert.ToDouble(d.CRS_KONTR_IN),
+                                CRS_KONTR_OUT = Convert.ToDouble(d.CRS_KONTR_OUT),
+                                DOC_DC = Convert.ToDecimal(d.DOC_DC),
+                                DOC_ROW_CODE = Convert.ToInt32(d.DOC_ROW_CODE),
+                                KONTR_DC = kontrDC,
+                                DOC_TYPE_CODE = Convert.ToInt32(d.DOC_TYPE_CODE),
+                                CRS_OPER_IN = Convert.ToDouble(d.CRS_OPER_IN),
+                                CRS_OPER_OUT = Convert.ToDouble(d.CRS_OPER_OUT),
+                                OPER_CRS_DC = Convert.ToDecimal(d.OPER_CRS_DC),
+                                OPER_CRS_RATE = Convert.ToDouble(d.OPER_CRS_RATE),
+                                UCH_CRS_RATE = Convert.ToDouble(d.UCH_CRS_RATE),
+                                ID = Guid.NewGuid().ToString().ToUpper().Replace("-", string.Empty),
+                                DOC_EXT_NUM = d.DOC_EXT_NUM
+                            }));
+                }
+            }
+            else
+            {
+                var data = ctx.H184000_DVIZH_LIC_SCHET_KONTR_TABLE(kontrDC, start, end).ToList();
                 ret.AddRange(
                     data
                         .Select(d => new KONTR_BALANS_OPER_ARC
@@ -72,7 +100,6 @@ namespace KursAM2.ViewModel.Management.Calculations
                             DOC_EXT_NUM = d.DOC_EXT_NUM
                         }));
             }
-
 
             return ret;
         }
@@ -990,63 +1017,115 @@ namespace KursAM2.ViewModel.Management.Calculations
             return operations;
         }
 
-        public static void CalcBalans(decimal kontrDC, DateTime start)
+        public static void CalcBalans(decimal kontrDC, DateTime start, ALFAMEDIAEntities ctx = null)
         {
             //var kontr = MainReferences.GetKontragent(kontrDC);
-            using (var ent = GlobalOptions.GetEntities())
+            if (ctx == null)
             {
-                using (var tnx = ent.Database.BeginTransaction(IsolationLevel.ReadCommitted))
+                using (var ent = GlobalOptions.GetEntities())
                 {
-                    var operations = GetOperationsOld(kontrDC, new DateTime(2000, 1, 1), DateTime.Today);
-                    try
+                    using (var tnx = ent.Database.BeginTransaction(IsolationLevel.ReadCommitted))
                     {
-                        if (operations == null || operations.Count == 0)
+                        var operations = GetOperationsOld(kontrDC, new DateTime(2000, 1, 1), DateTime.Today, ctx);
+                        try
                         {
+                            if (operations == null || operations.Count == 0)
+                            {
+                                ent.Database.ExecuteSqlCommand(
+                                    $"DELeTE from KONTR_BLS_RECALC where kontr_dc = {CustomFormat.DecimalToSqlDecimal(kontrDC)} ");
+                                tnx.Commit();
+                                return;
+                            }
+
                             ent.Database.ExecuteSqlCommand(
-                                $"DELeTE from KONTR_BLS_RECALC where kontr_dc = {CustomFormat.DecimalToSqlDecimal(kontrDC)} ");
+                                $"DELeTE from KONTR_BALANS_OPER_ARC where kontr_dc = {CustomFormat.DecimalToSqlDecimal(kontrDC)}");
+                            var sqlQuery = new StringBuilder();
+                            if (operations.Any())
+                            {
+                                foreach (
+                                    var query in
+                                    operations.Where(_ => _.OPER_CRS_DC > 0)
+                                        .Select(o =>
+                                            "INSERT INTO dbo.KONTR_BALANS_OPER_ARC " +
+                                            "(DOC_NAME ,DOC_NUM ,DOC_DATE ,CRS_KONTR_IN ,CRS_KONTR_OUT, DOC_DC, DOC_ROW_CODE, DOC_TYPE_CODE, CRS_OPER_IN " +
+                                            ",CRS_OPER_OUT, OPER_CRS_DC, OPER_CRS_RATE, UCH_CRS_RATE, KONTR_DC, ID, NEW_CALC, DOC_EXT_NUM) " +
+                                            "VALUES( " + $"'{o.DOC_NAME}', " + $"'{removeChars(o.DOC_NUM)}' " +
+                                            $",'{CustomFormat.DateToString(o.DOC_DATE)}' " +
+                                            $",{CustomFormat.DecimalToSqlDecimal((decimal)o.CRS_KONTR_IN)} " +
+                                            $",{CustomFormat.DecimalToSqlDecimal((decimal)o.CRS_KONTR_OUT)} " +
+                                            $",{o.DOC_DC}  " +
+                                            $",{o.DOC_ROW_CODE} " + $",{o.DOC_TYPE_CODE} " +
+                                            $",{CustomFormat.DecimalToSqlDecimal((decimal)o.CRS_OPER_IN)} " +
+                                            $",{CustomFormat.DecimalToSqlDecimal((decimal)o.CRS_OPER_OUT)} " +
+                                            $",{o.OPER_CRS_DC} " +
+                                            $",{CustomFormat.DecimalToSqlDecimal((decimal)o.OPER_CRS_RATE)}  " +
+                                            $",{CustomFormat.DecimalToSqlDecimal((decimal)o.UCH_CRS_RATE)} " +
+                                            $",{o.KONTR_DC} " +
+                                            $",'{o.ID}',1 " +
+                                            $",'{removeChars(o.DOC_EXT_NUM)}')"))
+                                    sqlQuery.Append(query + "; " + "\n ");
+                                ent.Database.ExecuteSqlCommand(sqlQuery.ToString());
+                            }
+
+                            ent.Database.ExecuteSqlCommand($"DELeTE from KONTR_BLS_RECALC where kontr_dc = {kontrDC} ");
                             tnx.Commit();
-                            return;
                         }
-
-                        ent.Database.ExecuteSqlCommand(
-                            $"DELeTE from KONTR_BALANS_OPER_ARC where kontr_dc = {CustomFormat.DecimalToSqlDecimal(kontrDC)}");
-                        var sqlQuery = new StringBuilder();
-                        if (operations.Any())
+                        catch (Exception ex)
                         {
-                            foreach (
-                                var query in
-                                operations.Where(_ => _.OPER_CRS_DC > 0)
-                                    .Select(o =>
-                                        "INSERT INTO dbo.KONTR_BALANS_OPER_ARC " +
-                                        "(DOC_NAME ,DOC_NUM ,DOC_DATE ,CRS_KONTR_IN ,CRS_KONTR_OUT, DOC_DC, DOC_ROW_CODE, DOC_TYPE_CODE, CRS_OPER_IN " +
-                                        ",CRS_OPER_OUT, OPER_CRS_DC, OPER_CRS_RATE, UCH_CRS_RATE, KONTR_DC, ID, NEW_CALC, DOC_EXT_NUM) " +
-                                        "VALUES( " + $"'{o.DOC_NAME}', " + $"'{removeChars(o.DOC_NUM)}' " +
-                                        $",'{CustomFormat.DateToString(o.DOC_DATE)}' " +
-                                        $",{CustomFormat.DecimalToSqlDecimal((decimal) o.CRS_KONTR_IN)} " +
-                                        $",{CustomFormat.DecimalToSqlDecimal((decimal) o.CRS_KONTR_OUT)} " +
-                                        $",{o.DOC_DC}  " +
-                                        $",{o.DOC_ROW_CODE} " + $",{o.DOC_TYPE_CODE} " +
-                                        $",{CustomFormat.DecimalToSqlDecimal((decimal) o.CRS_OPER_IN)} " +
-                                        $",{CustomFormat.DecimalToSqlDecimal((decimal) o.CRS_OPER_OUT)} " +
-                                        $",{o.OPER_CRS_DC} " +
-                                        $",{CustomFormat.DecimalToSqlDecimal((decimal) o.OPER_CRS_RATE)}  " +
-                                        $",{CustomFormat.DecimalToSqlDecimal((decimal) o.UCH_CRS_RATE)} " +
-                                        $",{o.KONTR_DC} " +
-                                        $",'{o.ID}',1 " +
-                                        $",'{removeChars(o.DOC_EXT_NUM)}')"))
-                                sqlQuery.Append(query + "; " + "\n ");
-                            ent.Database.ExecuteSqlCommand(sqlQuery.ToString());
+                            tnx.Rollback();
+                            WindowManager.ShowError(null, ex);
                         }
-
-                        ent.Database.ExecuteSqlCommand($"DELeTE from KONTR_BLS_RECALC where kontr_dc = {kontrDC} ");
-                        tnx.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        tnx.Rollback();
-                        WindowManager.ShowError(null, ex);
                     }
                 }
+            }
+            else
+            {
+                var operations = GetOperationsOld(kontrDC, new DateTime(2000, 1, 1), DateTime.Today, ctx);
+                        try
+                        {
+                            if (operations == null || operations.Count == 0)
+                            {
+                                ctx.Database.ExecuteSqlCommand(
+                                    $"DELeTE from KONTR_BLS_RECALC where kontr_dc = {CustomFormat.DecimalToSqlDecimal(kontrDC)} ");
+                                return;
+                            }
+
+                            ctx.Database.ExecuteSqlCommand(
+                                $"DELeTE from KONTR_BALANS_OPER_ARC where kontr_dc = {CustomFormat.DecimalToSqlDecimal(kontrDC)}");
+                            var sqlQuery = new StringBuilder();
+                            if (operations.Any())
+                            {
+                                foreach (
+                                    var query in
+                                    operations.Where(_ => _.OPER_CRS_DC > 0)
+                                        .Select(o =>
+                                            "INSERT INTO dbo.KONTR_BALANS_OPER_ARC " +
+                                            "(DOC_NAME ,DOC_NUM ,DOC_DATE ,CRS_KONTR_IN ,CRS_KONTR_OUT, DOC_DC, DOC_ROW_CODE, DOC_TYPE_CODE, CRS_OPER_IN " +
+                                            ",CRS_OPER_OUT, OPER_CRS_DC, OPER_CRS_RATE, UCH_CRS_RATE, KONTR_DC, ID, NEW_CALC, DOC_EXT_NUM) " +
+                                            "VALUES( " + $"'{o.DOC_NAME}', " + $"'{removeChars(o.DOC_NUM)}' " +
+                                            $",'{CustomFormat.DateToString(o.DOC_DATE)}' " +
+                                            $",{CustomFormat.DecimalToSqlDecimal((decimal)o.CRS_KONTR_IN)} " +
+                                            $",{CustomFormat.DecimalToSqlDecimal((decimal)o.CRS_KONTR_OUT)} " +
+                                            $",{o.DOC_DC}  " +
+                                            $",{o.DOC_ROW_CODE} " + $",{o.DOC_TYPE_CODE} " +
+                                            $",{CustomFormat.DecimalToSqlDecimal((decimal)o.CRS_OPER_IN)} " +
+                                            $",{CustomFormat.DecimalToSqlDecimal((decimal)o.CRS_OPER_OUT)} " +
+                                            $",{o.OPER_CRS_DC} " +
+                                            $",{CustomFormat.DecimalToSqlDecimal((decimal)o.OPER_CRS_RATE)}  " +
+                                            $",{CustomFormat.DecimalToSqlDecimal((decimal)o.UCH_CRS_RATE)} " +
+                                            $",{o.KONTR_DC} " +
+                                            $",'{o.ID}',1 " +
+                                            $",'{removeChars(o.DOC_EXT_NUM)}')"))
+                                    sqlQuery.Append(query + "; " + "\n ");
+                                ctx.Database.ExecuteSqlCommand(sqlQuery.ToString());
+                            }
+
+                            ctx.Database.ExecuteSqlCommand($"DELeTE from KONTR_BLS_RECALC where kontr_dc = {kontrDC} ");
+                        }
+                        catch (Exception ex)
+                        {
+                            WindowManager.ShowError(null, ex);
+                        }
             }
         }
 

@@ -12,6 +12,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Xpf.Core.Native;
 using KursAM2.View.Personal;
 
 namespace KursAM2.ViewModel.Personal
@@ -23,6 +24,7 @@ namespace KursAM2.ViewModel.Personal
         private EmployeePayMainViewModel myCurrentEmploee;
         private EmployeePayDocumentViewModel myCurrentPayDocument;
         private EmployeePayMainViewModel mySelectEmployee;
+        private NachEmployeeForPeriod myCurrentPeriod;
 
         public EmployeePayWindowViewModel()
         {
@@ -52,6 +54,18 @@ namespace KursAM2.ViewModel.Personal
         public ObservableCollection<EmployeePayDocumentViewModel> Documents { set; get; }
         public ObservableCollection<EmployeePayDocumentViewModel> DocumentsForEmployee { set; get; }
         public ObservableCollection<EmployeePayMainViewModel> EmployeeMain { get; }
+
+        public NachEmployeeForPeriod CurrentPeriod
+        {
+            get => myCurrentPeriod;
+            set
+            {
+                if (myCurrentPeriod == value) return;
+                myCurrentPeriod = value;
+                UpdateDocumentsForPeriod(myCurrentPeriod);
+                RaisePropertyChanged();
+            }
+        }
 
         public EmployeePayMainViewModel CurrentEmploee
         {
@@ -275,8 +289,8 @@ namespace KursAM2.ViewModel.Personal
         public void UpdateDocumentsForPeriod(NachEmployeeForPeriod item)
         {
             List<EmployeePayDocumentViewModel> tempList = new List<EmployeePayDocumentViewModel>();
-            //var data = DocumentsForEmployee
-            //    .Where(_ => _.DocDate >= item.DateStart && _.DocDate <= item.DateEnd).ToList();
+            DocumentsForPeriod.Clear();
+            if (item == null) return;
             foreach (
                 var r in DocumentsForEmployee
                     .Where(_ => _.DocDate >= item.DateStart && _.DocDate <= item.DateEnd))
@@ -330,7 +344,6 @@ namespace KursAM2.ViewModel.Personal
                     old.SummaEmp += r.SummaEmp;
                 }
             }
-            DocumentsForPeriod.Clear();
             foreach (var d in tempList)
             {
                 DocumentsForPeriod.Add(d);
@@ -492,6 +505,9 @@ namespace KursAM2.ViewModel.Personal
 
         public override void RefreshData(object obj)
         {
+            CurrentEmploee = null;
+            CurrentPeriod = null;
+            CurrentPayDocument = null;
             var tempMain = new ObservableCollection<EmployeePayMainViewModel>();
             var d = obj as DateTime?;
             DocumentsLoad(obj != null ? d : null);

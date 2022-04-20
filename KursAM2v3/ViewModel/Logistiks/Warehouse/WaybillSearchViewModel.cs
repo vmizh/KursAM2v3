@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Core;
+using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.NomenklManagement;
 using Core.Menu;
 using Core.ViewModel.Base;
@@ -31,14 +32,14 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
-        private Waybill myCurrentDocument;
+        private WayBillShort myCurrentDocument;
 
         public WaybillSearchViewModel()
         {
             GenericProviderRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
             WindowName = "Расходные накладные для клиентов";
-            Documents = new ObservableCollection<Waybill>();
+            Documents = new ObservableCollection<WayBillShort>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
@@ -82,27 +83,24 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             EndDate = DateTime.Today;
         }
 
-        public Waybill CurrentDocument
+        public WayBillShort CurrentDocument
         {
             get => myCurrentDocument;
             set
             {
-                if (myCurrentDocument != null && myCurrentDocument.Equals(value)) return;
+                if (myCurrentDocument?.DocCode  == value?.DocCode) return;
                 myCurrentDocument = value;
-                if (myCurrentDocument != null)
-                {
-                    IsDocumentOpenAllow = true;
-                    IsDocNewCopyAllow = true;
-                    IsDocNewCopyRequisiteAllow = true;
-                    IsPrintAllow = true;
-                }
-
                 RaisePropertyChanged();
             }
         }
 
+        public override bool IsDocumentOpenAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
+        public override bool IsPrintAllow => CurrentDocument != null;
+
         // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<Waybill> Documents { set; get; } = new ObservableCollection<Waybill>();
+        public ObservableCollection<WayBillShort> Documents { set; get; } = new ObservableCollection<WayBillShort>();
 
         public override string WindowName => "Поиск расходных ракладных для клипентов";
         public override string LayoutName => "WaybillSearchViewModel";
@@ -143,11 +141,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var res = Task.Factory.StartNew(() =>
             {
                 var data = SD_24Repository.GetWayBillAllByDates(StartDate, EndDate);
-                List<Waybill> w = new List<Waybill>();
+                List<WayBillShort> w = new List<WayBillShort>();
                 foreach (var d in data)
                 {
-                    w.Add(new Waybill(d)
+                    w.Add(new WayBillShort(d)
                     {
+                        DocCode = d.DOC_CODE,
+                        InvoiceClient = d.SD_84 != null ? $"С/ф №{d.SD_84.SF_IN_NUM}/{d.SD_84.SF_OUT_NUM} от {d.SD_84.SF_DATE.ToShortDateString()}" : null,
                         State=RowStatus.NotEdited
                     });
                 }
@@ -163,10 +163,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override async void RefreshData(object data)
         {
             SplashScreenService.ShowSplashScreen();
-            IsDocumentOpenAllow = false;
-            IsDocNewCopyAllow = false;
-            IsDocNewCopyRequisiteAllow = false;
-            IsPrintAllow = false;
             while (!MainReferences.IsReferenceLoadComplete)
             {
             }
@@ -176,42 +172,41 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void DocumentOpen(object form)
         {
-            if (CurrentDocument == null) return;
-            var ctx = new WaybillWindowViewModel(CurrentDocument.DocCode);
-            var frm = new WaybillView {Owner = Application.Current.MainWindow, DataContext = ctx};
-            ctx.Form = frm;
-            frm.Show();
+            DocumentsOpenManager.Open(DocumentType.Waybill,CurrentDocument.DocCode);
         }
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new WaybillView {Owner = Application.Current.MainWindow};
-            var ctx = new WaybillWindowViewModel {Form = frm};
-            frm.Show();
+            var frm = new WayBillView2 {Owner = Application.Current.MainWindow};
+            var ctx = new WaybillWindowViewModel2(null) {Form = frm}; 
             frm.DataContext = ctx;
+            frm.Show();
+           
         }
 
         public override void DocNewCopy(object obj)
         {
             if (CurrentDocument == null) return;
-            var frm = new WaybillView {Owner = Application.Current.MainWindow};
-            var ctx = new WaybillWindowViewModel
+            var frm = new WayBillView2 {Owner = Application.Current.MainWindow};
+            var ctx = new WaybillWindowViewModel2(null)
             {
                 Form = frm, Document = DocManager.NewWaybillCopy(CurrentDocument.DocCode)
             };
-            frm.Show();
             frm.DataContext = ctx;
+            frm.Show();
+            
         }
 
         public override void DocNewCopyRequisite(object obj)
         {
             if (CurrentDocument == null) return;
-            var frm = new WaybillView {Owner = Application.Current.MainWindow};
-            var ctx = new WaybillWindowViewModel
+            var frm = new WayBillView2 {Owner = Application.Current.MainWindow};
+            var ctx = new WaybillWindowViewModel2(null)
                 {Form = frm};
-            ctx.Document = DocManager.NewWaybillRecuisite(CurrentDocument.DocCode);
-            frm.Show();
+            ctx.Document = DocManager.NewWaybillRecuisite(CurrentDocument.DocCode); 
             frm.DataContext = ctx;
+            frm.Show();
+           
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows;
@@ -14,6 +15,75 @@ using DevExpress.Mvvm.DataAnnotations;
 // ReSharper disable InconsistentNaming
 namespace Core.EntityViewModel.Invoices
 {
+    public class InvoiceClientRowShort
+    {
+        [Display(AutoGenerateField = false)]
+        public decimal DocCode { set; get; }
+        [Display(AutoGenerateField = false)]
+        public int Code { set; get; }
+        [Display(AutoGenerateField = false)]
+        public Guid Id { set; get; }
+        [Display(AutoGenerateField = false)]
+        public Guid DocId { set; get; }
+        [Display(AutoGenerateField = true, Name = "Номенклатура")]
+        [ReadOnly(true)]
+        public string Nomenkl { set; get; }
+        [Display(AutoGenerateField = true, Name = "Ном.№")]
+        [ReadOnly(true)]
+        public string NomNomenkl { set; get; }
+        [Display(AutoGenerateField = true, Name = "Услуга")]
+        [ReadOnly(true)]
+        public bool IsUsluga { set; get; }
+        [Display(AutoGenerateField = true, Name = "Кол-во")]
+        [DisplayFormat(DataFormatString = "n4")]
+        [ReadOnly(true)]
+        public decimal Quantity { set; get; }
+        [Display(AutoGenerateField = true, Name = "Цена")]
+        [DisplayFormat(DataFormatString = "n2")]
+        [ReadOnly(true)]
+        public decimal Price { set; get; }
+        [Display(AutoGenerateField = true, Name = "Сумма")]
+        [DisplayFormat(DataFormatString = "n2")]
+        [ReadOnly(true)]
+        public decimal Summa { set; get; }
+        [Display(AutoGenerateField = true, Name = "Наценка дилера на единицу")]
+        [DisplayFormat(DataFormatString = "n2")]
+        [ReadOnly(true)]
+        public decimal SFT_NACENKA_DILERA { set; get; }
+        [Display(AutoGenerateField = true, Name = "Отгружено")]
+        [DisplayFormat(DataFormatString = "n4")]
+        [ReadOnly(true)]
+        public decimal Shipped { set; get; }
+        [Display(AutoGenerateField = true, Name = "Остаток")]
+        [DisplayFormat(DataFormatString = "n4")]
+        [ReadOnly(true)]
+        public decimal Rest { set; get; }
+        [Display(AutoGenerateField = true, Name = "Текущий остаток")]
+        [DisplayFormat(DataFormatString = "n4")]
+        [ReadOnly(true)]
+        public decimal CurrentRemains { set; get; }
+        [Display(AutoGenerateField = true, Name = "Примечание")]
+        [ReadOnly(true)]
+        public string Note { set; get; }
+        [Display(AutoGenerateField = true, Name = "НДС %")]
+        [DisplayFormat(DataFormatString = "n2")]
+        [ReadOnly(true)]
+        public decimal NDSPercent { set; get; }
+        [Display(AutoGenerateField = true, Name = "Сумма НДС")]
+        [DisplayFormat(DataFormatString = "n2")]
+        [ReadOnly(true)]
+        public decimal SFT_SUMMA_NDS { set; get; }
+        [Display(AutoGenerateField = true, Name = "Счет дох./расх.")]
+        [ReadOnly(true)]
+        public string SDRSchet { set; get; }
+        [Display(AutoGenerateField = true, Name = "Груз. декларация")]
+        [ReadOnly(true)]
+        public string GruzoDeclaration { set; get; }
+        [Display(AutoGenerateField = true, Name = "Выбран")]
+        public bool IsSelected { set; get; }
+    } 
+
+
     [MetadataType(typeof(DataAnnotationsSFClientRowViewModel))]
     public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>
     {

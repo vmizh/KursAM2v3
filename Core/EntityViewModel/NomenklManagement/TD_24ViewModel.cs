@@ -59,6 +59,17 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
+        public override Guid Id
+        {
+            get => Entity.Id;
+            set
+            {
+                if (Entity.Id == value) return;
+                Entity.Id = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public override int Code
         {
             get => Entity.CODE;

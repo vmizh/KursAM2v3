@@ -155,6 +155,24 @@ namespace Helper
             }
         }
 
+        public bool IsLayoutExists()
+        {
+            if (CurrentUser.UserInfo == null) return false;
+            var connString = new SqlConnectionStringBuilder
+            {
+                DataSource = "172.16.0.1",
+                InitialCatalog = "KursSystem",
+                UserID = "sa",
+                Password = "CbvrfFhntvrf65"
+            }.ToString();
+            using (var ctx = new KursSystemEntities(connString))
+            {
+                return ctx.FormLayout.Any(_ => _.UserId == CurrentUser.UserInfo.KursId
+                                                           && _.FormName == FormName
+                                                           && _.ControlName == FormName);
+            }
+        }
+
         public void Load()
         {
             if (CurrentUser.UserInfo == null) return;

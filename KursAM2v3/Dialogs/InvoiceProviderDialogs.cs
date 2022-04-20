@@ -70,6 +70,10 @@ namespace KursAM2.Dialogs
         [Display(AutoGenerateField = true, Name = "Создатель")]
         [ReadOnly(true)]
         public string Creator { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Валюта")]
+        [ReadOnly(true)]
+        public Currency Currency { set; get; }
     }
 
     public sealed class AccrualAmountDialogs : KursBaseControlViewModel
@@ -120,6 +124,7 @@ namespace KursAM2.Dialogs
                             Kongtragent = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC),
                             Nomenkl = MainReferences.GetNomenkl(d.NomenklDC),
                             Summa = d.Summa,
+                            Currency = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC).BalansCurrency,
                             DistributeSumm = d.DistributeNakladInfo.Sum(x => x.DistributeSumma),
                             // ReSharper disable once MergeConditionalExpression
                             // ReSharper disable once PossibleInvalidOperationException

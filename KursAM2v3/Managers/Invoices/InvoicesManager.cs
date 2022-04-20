@@ -1261,6 +1261,7 @@ namespace KursAM2.Managers.Invoices
                         .Include(_ => _.SD_431)
                         .Include(_ => _.SD_432)
                         .Include(_ => _.TD_84)
+                        .Include(_ => _.TD_101)
                         .Include("TD_84.SD_175")
                         .Include("TD_84.SD_83")
                         .Include("TD_84.SD_83.SD_175")
@@ -1768,11 +1769,13 @@ namespace KursAM2.Managers.Invoices
                         ? "SELECT t84.doc_code, t84.code, cast(sft_kol as numeric(18,4)), " +
                           "SUM(isnull(t24.DDT_KOL_RASHOD,0)) Shipped FROM td_84 t84 " +
                           "INNER JOIN sd_84 s84 ON t84.DOC_CODE = s84.DOC_CODE " +
+                          "INNER JOIN sd_83 s83 ON t84.SFT_NEMENKL_DC = s83.DOC_CODE AND s83.NOM_0MATER_1USLUGA = 0" +
                           "LEFT OUTER JOIN td_24 t24 ON t84.DOC_CODE = T24.DDT_SFACT_DC AND t84.CODE = T24.DDT_SFACT_ROW_CODE " +
                           "GROUP BY t84.doc_code, t84.code, sft_kol " +
                           "HAVING sft_kol - SUM(isnull(t24.DDT_KOL_RASHOD,0)) > 0"
                         : "SELECT t84.doc_code, t84.code, cast(sft_kol as numeric(18,4)), " +
                           "SUM(isnull(t24.DDT_KOL_RASHOD,0)) Shipped FROM td_84 t84 " +
+                          "INNER JOIN sd_83 s83 ON t84.SFT_NEMENKL_DC = s83.DOC_CODE AND s83.NOM_0MATER_1USLUGA = 0" +
                           $"INNER JOIN sd_84 s84 ON t84.DOC_CODE = s84.DOC_CODE AND S84.SF_CLIENT_DC = {CustomFormat.DecimalToSqlDecimal(waybill.Client.DocCode)} " +
                           "LEFT OUTER JOIN td_24 t24 ON t84.DOC_CODE = T24.DDT_SFACT_DC AND t84.CODE = T24.DDT_SFACT_ROW_CODE " +
                           "GROUP BY t84.doc_code, t84.code, sft_kol " +
@@ -1781,25 +1784,25 @@ namespace KursAM2.Managers.Invoices
                     foreach (var dc in data.Select(_ => _.DOC_CODE).Distinct())
                     {
                         var inv = GetInvoiceClient(dc);
-                        if (inv == null) continue;
-                        var dcs = data.Where(_ => _.DOC_CODE == dc).ToList();
-                        var deldcs = new List<int>();
-                        foreach (var r in dcs.Where(_ => _.DOC_CODE == dc))
-                        {
-                            var item = inv.Rows.FirstOrDefault(_ => _.Code == r.CODE);
-                            if (item != null)
-                            {
-                                item.Shipped = r.Shipped ?? 0;
-                                continue;
-                            }
-                            deldcs.Add(r.CODE);
-                        }
-                        foreach (var code in deldcs)
-                        {
-                            var r = inv.Rows.FirstOrDefault(_ => _.Code == code);
-                            if (r != null)
-                                inv.Rows.Remove(r);
-                        }
+                        //if (inv == null) continue;
+                        //var dcs = data.Where(_ => _.DOC_CODE == dc).ToList();
+                        //var deldcs = new List<int>();
+                        //foreach (var r in dcs.Where(_ => _.DOC_CODE == dc))
+                        //{
+                        //    var item = inv.Rows.FirstOrDefault(_ => _.Code == r.CODE);
+                        //    if (item != null)
+                        //    {
+                        //        item.Shipped = r.Shipped ?? 0;
+                        //        continue;
+                        //    }
+                        //    deldcs.Add(r.CODE);
+                        //}
+                        //foreach (var code in deldcs)
+                        //{
+                        //    var r = inv.Rows.FirstOrDefault(_ => _.Code == code);
+                        //    if (r != null)
+                        //        inv.Rows.Remove(r);
+                        //}
                         ret.Add(inv);
                     }
                 }

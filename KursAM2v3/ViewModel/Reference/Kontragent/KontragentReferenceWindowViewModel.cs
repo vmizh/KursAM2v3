@@ -168,10 +168,9 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                                 .Include(_ => _.SD_148)
                                 .Include(_ => _.SD_43_GRUZO)
                                 .Include(_ => _.TD_43)
-                                .AsNoTracking().ToList();
-                        foreach (var k in data2)
+                                .AsNoTracking().Where(_ => _.EG_ID == 0 || _.EG_ID == null).ToList();
+                        foreach (var k in data2.Where(k => IsShowDeleted || k.DELETED != 1))
                         {
-                            if (!IsShowDeleted && k.DELETED == 1) continue;
                             KontragentsInGroup.Add(new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent(k));
                         }
 
@@ -255,6 +254,14 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         public override void RefreshData(object data)
         {
             Groups.Clear();
+            Groups.Add(new KontragentGroup
+            {
+                Entity = new UD_43
+                {
+                    EG_ID = 0,
+                    EG_NAME = "Вне групп"
+                }
+            });
             foreach (var item in GlobalOptions.GetEntities().UD_43.Where(_ => (_.EG_DELETED ?? 0) != 1))
                 Groups.Add(new KontragentGroup(item));
             RaisePropertyChanged(nameof(Groups));

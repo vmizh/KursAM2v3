@@ -142,7 +142,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Display(AutoGenerateField = true)]
         public decimal Rate
         {
-            get => Entity.Rate;
+            get => Entity.Rate == 0 ? 1 : Entity.Rate;
             set
             {
                 if (Entity.Rate == value) return;

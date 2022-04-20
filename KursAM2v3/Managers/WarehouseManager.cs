@@ -9,6 +9,7 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 
@@ -234,10 +235,10 @@ namespace KursAM2.Managers
                                 DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC,
                                 DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC,
                                 DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN,
-                                DD_EXECUTED = doc.DD_EXECUTED,
+                                DD_EXECUTED = (short)(doc.IsExecuted ? 1 : 0),
                                 DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN,
-                                DD_OTRPAV_NAME = doc.DD_OTRPAV_NAME,
-                                DD_POLUCH_NAME = doc.DD_POLUCH_NAME,
+                                DD_OTRPAV_NAME = doc.Sender,
+                                DD_POLUCH_NAME = doc.Receiver,
                                 DD_KTO_SDAL_TN = doc.DD_KTO_SDAL_TN,
                                 DD_KOMU_PEREDANO = doc.DD_KOMU_PEREDANO,
                                 DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO,
@@ -400,10 +401,10 @@ namespace KursAM2.Managers
                             old.DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC;
                             old.DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC;
                             old.DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN;
-                            old.DD_EXECUTED = doc.DD_EXECUTED;
+                            old.DD_EXECUTED = (short)(doc.IsExecuted ? 1 : 0);
                             old.DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN;
-                            old.DD_OTRPAV_NAME = doc.DD_OTRPAV_NAME;
-                            old.DD_POLUCH_NAME = doc.DD_POLUCH_NAME;
+                            old.DD_OTRPAV_NAME = doc.Sender;
+                            old.DD_POLUCH_NAME = doc.Receiver;
                             old.DD_KTO_SDAL_TN = doc.DD_KTO_SDAL_TN;
                             old.DD_KOMU_PEREDANO = doc.DD_KOMU_PEREDANO;
                             old.DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO;
@@ -904,10 +905,10 @@ namespace KursAM2.Managers
                                 DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC,
                                 DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC,
                                 DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN,
-                                DD_EXECUTED = doc.DD_EXECUTED,
+                                DD_EXECUTED = (short)(doc.IsExecuted ? 1 : 0),
                                 DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN,
-                                DD_OTRPAV_NAME = doc.DD_OTRPAV_NAME,
-                                DD_POLUCH_NAME = doc.DD_POLUCH_NAME,
+                                DD_OTRPAV_NAME = doc.Sender,
+                                DD_POLUCH_NAME = doc.Receiver,
                                 DD_KTO_SDAL_TN = doc.DD_KTO_SDAL_TN,
                                 DD_KOMU_PEREDANO = doc.DD_KOMU_PEREDANO,
                                 DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO,
@@ -1070,10 +1071,10 @@ namespace KursAM2.Managers
                             old.DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC;
                             old.DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC;
                             old.DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN;
-                            old.DD_EXECUTED = doc.DD_EXECUTED;
+                            old.DD_EXECUTED = (short)(doc.IsExecuted ? 1 : 0);
                             old.DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN;
-                            old.DD_OTRPAV_NAME = doc.DD_OTRPAV_NAME;
-                            old.DD_POLUCH_NAME = doc.DD_POLUCH_NAME;
+                            old.DD_OTRPAV_NAME = doc.Sender;
+                            old.DD_POLUCH_NAME = doc.Receiver;
                             old.DD_KTO_SDAL_TN = doc.DD_KTO_SDAL_TN;
                             old.DD_KOMU_PEREDANO = doc.DD_KOMU_PEREDANO;
                             old.DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO;
@@ -1491,7 +1492,7 @@ namespace KursAM2.Managers
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
                 Date = DateTime.Today,
-                CREATOR = GlobalOptions.UserInfo.Name
+                CREATOR = GlobalOptions.UserInfo.Name,
             };
             foreach (var r in res.Rows)
             {
@@ -1565,10 +1566,10 @@ namespace KursAM2.Managers
                                 DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC,
                                 DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC,
                                 DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN,
-                                DD_EXECUTED = doc.DD_EXECUTED,
+                                DD_EXECUTED = (short)(doc.IsExecuted ? 1 : 0),
                                 DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN,
-                                DD_OTRPAV_NAME = doc.DD_OTRPAV_NAME,
-                                DD_POLUCH_NAME = doc.DD_POLUCH_NAME,
+                                DD_OTRPAV_NAME = doc.Sender,
+                                DD_POLUCH_NAME = doc.Receiver,
                                 DD_KTO_SDAL_TN = doc.DD_KTO_SDAL_TN,
                                 DD_KOMU_PEREDANO = doc.DD_KOMU_PEREDANO,
                                 DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO,
@@ -1731,10 +1732,10 @@ namespace KursAM2.Managers
                             old.DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC;
                             old.DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC;
                             old.DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN;
-                            old.DD_EXECUTED = doc.DD_EXECUTED;
+                            old.DD_EXECUTED = (short)(doc.IsExecuted ? 1 : 0);
                             old.DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN;
-                            old.DD_OTRPAV_NAME = doc.DD_OTRPAV_NAME;
-                            old.DD_POLUCH_NAME = doc.DD_POLUCH_NAME;
+                            old.DD_OTRPAV_NAME = doc.Sender;
+                            old.DD_POLUCH_NAME = doc.Receiver;
                             old.DD_KTO_SDAL_TN = doc.DD_KTO_SDAL_TN;
                             old.DD_KOMU_PEREDANO = doc.DD_KOMU_PEREDANO;
                             old.DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO;
@@ -1968,7 +1969,7 @@ namespace KursAM2.Managers
                         ctx.SaveChanges();
                         var nomDCList = new List<decimal>();
                         foreach (var n in doc.Rows.Select(_ => _.Nomenkl.DocCode)) nomDCList.Add(n);
-                        nomenklManager.RecalcPrice();
+                        nomenklManager.RecalcPrice(ctx);
                         transaction.Commit();
                         doc.myState = RowStatus.NotEdited;
                         foreach (var r in doc.Rows) r.myState = RowStatus.NotEdited;

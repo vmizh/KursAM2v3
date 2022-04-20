@@ -7,24 +7,24 @@ using Core.EntityViewModel.Periods;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.Mvvm.Native;
 
 namespace Core.EntityViewModel.NomenklManagement
 {
     public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
     {
+        #region Fields
+
         private MaterialDocumentType myDocumentType;
         private SD_24 myEntity;
-        private Warehouse myInFromWarehouse;
         private InvoiceClient myInvoiceClient;
         private InvoiceProvider myInvoiceProvider;
-        private Employee.Employee myKladovshik;
-        private Kontragent myKontragentReceiver;
-        private Kontragent myKontragentSender;
-        private Warehouse myOutOnWarehouse;
         private Period myPeriod;
-        private Warehouse myWarehouseIn;
-        private Warehouse myWarehouseOut;
 
+        #endregion
+
+        #region Constructors  
+        
         public SD_24ViewModel()
         {
             Entity = DefaultValue();
@@ -34,9 +34,9 @@ namespace Core.EntityViewModel.NomenklManagement
         {
             Entity = entity ?? DefaultValue();
             LoadReferences();
-            DD_OTRPAV_NAME = Sender;
-            DD_POLUCH_NAME = Receiver;
         }
+
+        #endregion
 
         public string Sender => KontragentSender?.Name ?? WarehouseOut?.Name;
         public string Receiver => KontragentReceiver?.Name ?? WarehouseIn?.Name;
@@ -105,13 +105,12 @@ namespace Core.EntityViewModel.NomenklManagement
         /// </summary>
         public Warehouse WarehouseOut
         {
-            get => myWarehouseOut;
+            get => MainReferences.GetWarehouse(Entity.DD_SKLAD_OTPR_DC);
             set
             {
-                if (myWarehouseOut != null && myWarehouseOut.Equals(value)) return;
-                myWarehouseOut = value;
-                Entity.DD_SKLAD_OTPR_DC = myWarehouseOut?.DocCode;
-                DD_OTRPAV_NAME = myWarehouseOut?.Name;
+                if (Entity.DD_SKLAD_OTPR_DC == value?.DocCode) return;
+                Entity.DD_SKLAD_OTPR_DC = value?.DocCode;
+                Entity.DD_OTRPAV_NAME = MainReferences.GetWarehouse(Entity.DD_SKLAD_OTPR_DC).Name;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Sender));
             }
@@ -122,13 +121,12 @@ namespace Core.EntityViewModel.NomenklManagement
         /// </summary>
         public Warehouse WarehouseIn
         {
-            get => myWarehouseIn;
+            get => MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC);
             set
             {
-                if (myWarehouseIn != null && myWarehouseIn.Equals(value)) return;
-                myWarehouseIn = value;
-                Entity.DD_SKLAD_POL_DC = myWarehouseIn?.DocCode;
-                DD_POLUCH_NAME = myWarehouseIn?.Name;
+                if (Entity.DD_SKLAD_POL_DC == value?.DocCode) return;
+                Entity.DD_SKLAD_POL_DC = value?.DocCode;
+                Entity.DD_POLUCH_NAME = MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC).Name;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Receiver));
             }
@@ -139,17 +137,12 @@ namespace Core.EntityViewModel.NomenklManagement
         /// </summary>
         public Kontragent KontragentSender
         {
-            get => myKontragentSender;
+            get => MainReferences.GetKontragent( Entity.DD_KONTR_OTPR_DC);
             set
             {
-                if (myKontragentSender != null && myKontragentSender.Equals(value)) return;
-                myKontragentSender = value;
-                if (myKontragentSender != null)
-                {
-                    Entity.DD_KONTR_OTPR_DC = myKontragentSender.DocCode;
-                    DD_OTRPAV_NAME = myKontragentSender.Name;
-                }
-
+                if(Entity.DD_KONTR_OTPR_DC == value?.DocCode) return;
+                Entity.DD_KONTR_OTPR_DC = value?.DocCode;
+                Entity.DD_OTRPAV_NAME = MainReferences.GetKontragent(Entity.DD_KONTR_OTPR_DC).Name;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Sender));
             }
@@ -160,17 +153,12 @@ namespace Core.EntityViewModel.NomenklManagement
         /// </summary>
         public Kontragent KontragentReceiver
         {
-            get => myKontragentReceiver;
+            get => MainReferences.GetKontragent(Entity.DD_KONTR_POL_DC);
             set
             {
-                if (myKontragentReceiver != null && myKontragentReceiver.Equals(value)) return;
-                myKontragentReceiver = value;
-                if (myKontragentReceiver != null)
-                {
-                    Entity.DD_KONTR_POL_DC = myKontragentReceiver.DocCode;
-                    DD_POLUCH_NAME = myKontragentReceiver.Name;
-                }
-
+                if (Entity.DD_KONTR_POL_DC == value?.DocCode) return; 
+                Entity.DD_KONTR_POL_DC = value?.DocCode;
+                Entity.DD_POLUCH_NAME = MainReferences.GetKontragent(Entity.DD_KONTR_POL_DC).Name;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Sender));
             }
@@ -178,26 +166,38 @@ namespace Core.EntityViewModel.NomenklManagement
 
         public Employee.Employee Kladovshik
         {
-            get => myKladovshik;
+            // ReSharper disable once RedundantCast
+            get => MainReferences.GetEmployee(Entity.DD_KLADOV_TN as int?);
             set
             {
-                if (myKladovshik != null && myKladovshik.Equals(value)) return;
-                myKladovshik = value;
-                Entity.DD_KLADOV_TN = myKladovshik?.TabelNumber;
+                if (Entity.DD_KLADOV_TN == value?.TabelNumber) return;
+                Entity.DD_KLADOV_TN = value?.TabelNumber;
                 RaisePropertyChanged();
             }
         }
 
-        public short DD_EXECUTED
+        public bool IsExecuted
         {
-            get => Entity.DD_EXECUTED;
+            get => Entity.DD_EXECUTED == 1;
             set
             {
-                if (Entity.DD_EXECUTED == value) return;
-                Entity.DD_EXECUTED = value;
+                if (Entity.DD_EXECUTED == 1 == value) return;
+                Entity.DD_EXECUTED = (short)(value ? 1 : 0);
                 RaisePropertyChanged();
             }
         }
+
+
+        //public short DD_EXECUTED
+        //{
+        //    get => Entity.DD_EXECUTED;
+        //    set
+        //    {
+        //        if (Entity.DD_EXECUTED == value) return;
+        //        Entity.DD_EXECUTED = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public int? DD_POLUCHATEL_TN
         {
@@ -210,27 +210,27 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
-        public string DD_OTRPAV_NAME
-        {
-            get => Entity.DD_OTRPAV_NAME;
-            set
-            {
-                if (Entity.DD_OTRPAV_NAME == value) return;
-                Entity.DD_OTRPAV_NAME = value;
-                RaisePropertyChanged();
-            }
-        }
+        //public string DD_OTRPAV_NAME
+        //{
+        //    get => Entity.DD_OTRPAV_NAME;
+        //    set
+        //    {
+        //        if (Entity.DD_OTRPAV_NAME == value) return;
+        //        Entity.DD_OTRPAV_NAME = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
-        public string DD_POLUCH_NAME
-        {
-            get => Entity.DD_POLUCH_NAME;
-            set
-            {
-                if (Entity.DD_POLUCH_NAME == value) return;
-                Entity.DD_POLUCH_NAME = value;
-                RaisePropertyChanged();
-            }
-        }
+        //public string DD_POLUCH_NAME
+        //{
+        //    get => Entity.DD_POLUCH_NAME;
+        //    set
+        //    {
+        //        if (Entity.DD_POLUCH_NAME == value) return;
+        //        Entity.DD_POLUCH_NAME = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public int? DD_KTO_SDAL_TN
         {
@@ -288,37 +288,37 @@ namespace Core.EntityViewModel.NomenklManagement
         }
 
         
-        /// <summary>
-        ///     Отпуск на склад
-        /// </summary>
-        public Warehouse OutOnWarehouse
-        {
-            get => myOutOnWarehouse;
-            set
-            {
-                if (myOutOnWarehouse != null && myOutOnWarehouse.Equals(value)) return;
-                myOutOnWarehouse = value;
-                if (myOutOnWarehouse != null)
-                    Entity.DD_OTPUSK_NA_SKLAD_DC = myOutOnWarehouse.DocCode;
-                RaisePropertyChanged();
-            }
-        }
+        ///// <summary>
+        /////     Отпуск на склад
+        ///// </summary>
+        //public Warehouse OutOnWarehouse
+        //{
+        //    get => myOutOnWarehouse;
+        //    set
+        //    {
+        //        if (myOutOnWarehouse != null && myOutOnWarehouse.Equals(value)) return;
+        //        myOutOnWarehouse = value;
+        //        if (myOutOnWarehouse != null)
+        //            Entity.DD_OTPUSK_NA_SKLAD_DC = myOutOnWarehouse.DocCode;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
-        /// <summary>
-        ///     Приход со склада
-        /// </summary>
-        public Warehouse InFromWarehouse
-        {
-            get => myInFromWarehouse;
-            set
-            {
-                if (myInFromWarehouse != null && myInFromWarehouse.Equals(value)) return;
-                myInFromWarehouse = value;
-                if (myInFromWarehouse != null)
-                    Entity.DD_PRIHOD_SO_SKLADA_DC = myInFromWarehouse.DocCode;
-                RaisePropertyChanged();
-            }
-        }
+        ///// <summary>
+        /////     Приход со склада
+        ///// </summary>
+        //public Warehouse InFromWarehouse
+        //{
+        //    get => myInFromWarehouse;
+        //    set
+        //    {
+        //        if (myInFromWarehouse != null && myInFromWarehouse.Equals(value)) return;
+        //        myInFromWarehouse = value;
+        //        if (myInFromWarehouse != null)
+        //            Entity.DD_PRIHOD_SO_SKLADA_DC = myInFromWarehouse.DocCode;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public short DD_SHABLON
         {
@@ -475,6 +475,17 @@ namespace Core.EntityViewModel.NomenklManagement
             }
         }
 
+        public override Guid Id
+        {
+            get => Entity.Id;
+            set
+            {
+                if (Entity.Id == value) return;
+                Entity.Id = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public override string Note
         {
             get => Entity.DD_NOTES;
@@ -537,10 +548,9 @@ namespace Core.EntityViewModel.NomenklManagement
             get => myInvoiceProvider;
             set
             {
-                if (myInvoiceProvider != null && myInvoiceProvider.Equals(value)) return;
+                if (myInvoiceProvider?.DocCode == value?.DocCode) return;
                 myInvoiceProvider = value;
-                if (myInvoiceProvider != null)
-                    Entity.DD_SPOST_DC = myInvoiceProvider.DocCode;
+                Entity.DD_SPOST_DC = value?.DocCode;
                 RaisePropertyChanged();
             }
         }
@@ -550,10 +560,9 @@ namespace Core.EntityViewModel.NomenklManagement
             get => myInvoiceClient;
             set
             {
-                if (myInvoiceClient != null && myInvoiceClient.Equals(value)) return;
+                if (myInvoiceClient?.DocCode == value?.DocCode) return;
                 myInvoiceClient = value;
-                if (myInvoiceClient != null && myInvoiceClient.DocCode > 0)
-                    Entity.DD_SFACT_DC = myInvoiceClient.DocCode;
+                Entity.DD_SFACT_DC = value?.DocCode;
                 RaisePropertyChanged();
             }
         }
@@ -848,19 +857,19 @@ namespace Core.EntityViewModel.NomenklManagement
         {
             if (Entity.SD_201 != null)
                 DocumentType = new MaterialDocumentType(Entity.SD_201);
-            if (Entity.DD_SKLAD_POL_DC != null && MainReferences.Warehouses.ContainsKey(Entity.DD_SKLAD_POL_DC.Value))
-                WarehouseIn = MainReferences.Warehouses[Entity.DD_SKLAD_POL_DC.Value];
-            if (Entity.DD_SKLAD_OTPR_DC != null && MainReferences.Warehouses.ContainsKey(Entity.DD_SKLAD_OTPR_DC.Value))
-                WarehouseOut = MainReferences.Warehouses[Entity.DD_SKLAD_OTPR_DC.Value];
-            if (Entity.DD_KONTR_OTPR_DC != null)
-                KontragentSender = MainReferences.GetKontragent(Entity.DD_KONTR_OTPR_DC);
-            if (Entity.DD_KONTR_POL_DC != null)
-                KontragentReceiver = MainReferences.GetKontragent(Entity.DD_KONTR_POL_DC);
-            if (Entity.DD_OTPUSK_NA_SKLAD_DC != null && MainReferences.Warehouses.ContainsKey(Entity.DD_OTPUSK_NA_SKLAD_DC.Value))
-                WarehouseIn = MainReferences.Warehouses[Entity.DD_OTPUSK_NA_SKLAD_DC.Value];
-            if (Entity.DD_KLADOV_TN != null)
-                Kladovshik =
-                    MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == Entity.DD_KLADOV_TN.Value);
+            //if (Entity.DD_SKLAD_POL_DC != null && MainReferences.Warehouses.ContainsKey(Entity.DD_SKLAD_POL_DC.Value))
+            //    WarehouseIn = MainReferences.Warehouses[Entity.DD_SKLAD_POL_DC.Value];
+            //if (Entity.DD_SKLAD_OTPR_DC != null && MainReferences.Warehouses.ContainsKey(Entity.DD_SKLAD_OTPR_DC.Value))
+            //    WarehouseOut = MainReferences.Warehouses[Entity.DD_SKLAD_OTPR_DC.Value];
+            //if (Entity.DD_KONTR_OTPR_DC != null)
+            //    KontragentSender = MainReferences.GetKontragent(Entity.DD_KONTR_OTPR_DC);
+            //if (Entity.DD_KONTR_POL_DC != null)
+            //    KontragentReceiver = MainReferences.GetKontragent(Entity.DD_KONTR_POL_DC);
+            //if (Entity.DD_OTPUSK_NA_SKLAD_DC != null && MainReferences.Warehouses.ContainsKey(Entity.DD_OTPUSK_NA_SKLAD_DC.Value))
+            //    WarehouseIn = MainReferences.Warehouses[Entity.DD_OTPUSK_NA_SKLAD_DC.Value];
+            //if (Entity.DD_KLADOV_TN != null)
+            //    Kladovshik =
+            //        MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == Entity.DD_KLADOV_TN.Value);
         }
 
         public virtual void Save(SD_24 doc)

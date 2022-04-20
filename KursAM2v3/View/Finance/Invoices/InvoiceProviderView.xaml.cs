@@ -65,10 +65,10 @@ namespace KursAM2.View.Finance.Invoices
                     e.Column.ReadOnly = true;
                     break;
                 case nameof(row.Note):
-                    e.Column.EditSettings = new MemoEditSettings
-                    {
-                        ShowIcon = false
-                    };
+                    //e.Column.EditSettings = new MemoEditSettings
+                    //{
+                    //    ShowIcon = false
+                    //};
                     break;
                 case nameof(row.KontragentForNaklad):
                     var kontrForNakladEdit = new ButtonEditSettings

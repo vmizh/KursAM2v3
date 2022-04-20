@@ -172,17 +172,15 @@ namespace Core.EntityViewModel.Dogovora
 
         public Employee.Employee OtvetstvenLico
         {
-            get => Entity.OtvetstvenTN == 0 ? null : MainReferences.GetEmployee(Entity.OtvetstvenTN);
+            get => MainReferences.GetEmployee((int?)Entity.OtvetstvenTN);
             set
             {
-                if (MainReferences.GetEmployee(Entity.OtvetstvenTN) == value) return;
+                if (MainReferences.GetEmployee(Entity.OtvetstvenTN as int?) == value) return;
                 Entity.OtvetstvenTN = value?.TabelNumber ?? 0;
                 RaisePropertyChanged();
-                RaisePropertyChanged(nameof(OtvetstvenLicoTN));
+                RaisePropertyChanged(nameof(Entity.OtvetstvenTN));
             }
         }
-
-        public int? OtvetstvenLicoTN => Entity.OtvetstvenTN == 0 ? null : Entity.OtvetstvenTN;
 
         public ContractType DogType
         {

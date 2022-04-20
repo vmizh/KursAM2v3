@@ -542,7 +542,10 @@ namespace KursAM2.Managers
                 DataContext = ctx
             };
             ctx.Form = view;
+            var state = ctx.Document.State;
             view.Show();
+            ctx.Document.myState = state;
+            ctx.Document.RaisePropertyChanged("State");
             return ctx;
         }
 
@@ -716,15 +719,15 @@ namespace KursAM2.Managers
         ///     Расходная накладная
         /// </summary>
         /// <param name="dc"></param>
-        private static WaybillWindowViewModel OpenWayBill(decimal dc)
+        private static WaybillWindowViewModel2 OpenWayBill(decimal dc)
         {
-            var form = new WaybillView
+            var form = new WayBillView2
             {
                 Owner = Application.Current.MainWindow
             };
-            var ctx = new WaybillWindowViewModel(dc) {Form = form};
-            form.Show();
+            var ctx = new WaybillWindowViewModel2(dc) {Form = form}; 
             form.DataContext = ctx;
+            form.Show();
             return ctx;
         }
 

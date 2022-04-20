@@ -397,41 +397,41 @@ namespace KursAM2.ViewModel.Management.BreakEven
                         });
                     }
 
-                    var dirctCost = ent.AccuredAmountOfSupplierRow.Include(_ => _.AccruedAmountOfSupplier).Where(_ =>
-                        _.AccruedAmountOfSupplier.DocDate >= StartDate
-                        && _.AccruedAmountOfSupplier.DocDate <= EndDate).ToList();
-                    foreach (var d in dirctCost)
-                    {
-                        var kontr = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC);
-                        DataAll.Add(new BreakEvenRow
-                        {
-                            Kontragent = kontr.Name,
-                            Kontr = kontr,
-                            Nomenkl = MainReferences.GetNomenkl((d.NomenklDC)),
-                            CentrOfResponsibility = new CentrOfResponsibility {Entity = new SD_40 {DOC_CODE = 0, CENT_NAME = "Не указан"}},
-                            Date = d.AccruedAmountOfSupplier.DocDate,
-                            Diler = null,
-                            DilerSumma = 0,
-                            IsUsluga =  true,
-                            KontrSumma = d.Summa, //Convert.ToDecimal(d.KontrSumma),
-                            KontrSummaCrs = d.Summa ,
-                            Manager =  "Менеджер не указан",
-                            Naklad =null,
-                            NomenklSumWOReval = d.Summa,
-                            OperCrsName = kontr.BalansCurrency.Name, // crsInfo.Name,
-                            OperCurrency = kontr.BalansCurrency,
-                            Schet = null,
-                            Quantity = 1,
-                            SummaNomenkl = d.Summa,
-                            SummaNomenklCrs = d.Summa,
-                            Price = d.Summa,
-                            KontrOperSummaCrs = d.Summa, //* crsKontrRate,
-                            SummaOperNomenkl =d.Summa,
-                            SummaOperNomenklCrs =d.Summa,
-                            NomenklOperSumWOReval =d.Summa,
-                            DocType =DocumentType.None
-                        });
-                    }
+                    //var dirctCost = ent.AccuredAmountOfSupplierRow.Include(_ => _.AccruedAmountOfSupplier).Where(_ =>
+                    //    _.AccruedAmountOfSupplier.DocDate >= StartDate
+                    //    && _.AccruedAmountOfSupplier.DocDate <= EndDate).ToList();
+                    //foreach (var d in dirctCost)
+                    //{
+                    //    var kontr = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC);
+                    //    DataAll.Add(new BreakEvenRow
+                    //    {
+                    //        Kontragent = kontr.Name,
+                    //        Kontr = kontr,
+                    //        Nomenkl = MainReferences.GetNomenkl((d.NomenklDC)),
+                    //        CentrOfResponsibility = new CentrOfResponsibility {Entity = new SD_40 {DOC_CODE = 0, CENT_NAME = "Не указан"}},
+                    //        Date = d.AccruedAmountOfSupplier.DocDate,
+                    //        Diler = null,
+                    //        DilerSumma = 0,
+                    //        IsUsluga =  true,
+                    //        KontrSumma = d.Summa, //Convert.ToDecimal(d.KontrSumma),
+                    //        KontrSummaCrs = d.Summa ,
+                    //        Manager =  "Менеджер не указан",
+                    //        Naklad =null,
+                    //        NomenklSumWOReval = d.Summa,
+                    //        OperCrsName = kontr.BalansCurrency.Name, // crsInfo.Name,
+                    //        OperCurrency = kontr.BalansCurrency,
+                    //        Schet = null,
+                    //        Quantity = 1,
+                    //        SummaNomenkl = d.Summa,
+                    //        SummaNomenklCrs = d.Summa,
+                    //        Price = d.Summa,
+                    //        KontrOperSummaCrs = d.Summa, //* crsKontrRate,
+                    //        SummaOperNomenkl =d.Summa,
+                    //        SummaOperNomenklCrs =d.Summa,
+                    //        NomenklOperSumWOReval =d.Summa,
+                    //        DocType =DocumentType.None
+                    //    });
+                    //}
                 }
                 catch (Exception ex)
                 {

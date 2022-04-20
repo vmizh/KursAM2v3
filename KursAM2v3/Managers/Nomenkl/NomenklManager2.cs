@@ -11,15 +11,14 @@ namespace KursAM2.Managers.Nomenkl
 {
     public class NomenklManager2
     {
-        [NotNull]
-        private readonly ALFAMEDIAEntities Context;
+        [NotNull] private readonly ALFAMEDIAEntities Context;
 
         public NomenklManager2(ALFAMEDIAEntities context)
         {
             Context = context ?? GlobalOptions.GetEntities();
         }
 
-         public void RecalcPrice()
+        public void RecalcPrice(ALFAMEDIAEntities context = null)
         {
             var sql = "DECLARE @NomDC NUMERIC(15, 0); " +
                       " DECLARE NomenklList CURSOR FOR " +
@@ -44,13 +43,41 @@ namespace KursAM2.Managers.Nomenkl
                       " GROUP BY n.nomdc, n.StoreDc, n.DATE " +
                       " HAVING SUM(n.prihod) - SUM(n.rashod) > 0; " +
                       " DELETE FROM NOMENKL_RECALC;";
+            if (context != null)
+                context.Database.ExecuteSqlCommand(sql);
+            else
+
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    using (var transaction = ctx.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            ctx.Database.ExecuteSqlCommand(sql);
+                            transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            if (transaction.UnderlyingTransaction.Connection != null)
+                                transaction.Rollback();
+                            WindowManager.ShowError(ex);
+                        }
+                    }
+                }
+        }
+
+        public void RecalcPrice(List<decimal> nomdcs)
+        {
             using (var ctx = GlobalOptions.GetEntities())
             {
                 using (var transaction = ctx.Database.BeginTransaction())
                 {
                     try
                     {
-                        ctx.Database.ExecuteSqlCommand(sql);
+                        foreach (var n in nomdcs)
+                            ctx.Database.ExecuteSqlCommand("INSERT INTO NOMENKL_RECALC (NOM_DC, OPER_DATE) " +
+                                                           $"VALUES ({CustomFormat.DecimalToSqlDecimal(n)}, '20000101');");
+
                         transaction.Commit();
                     }
                     catch (Exception ex)
@@ -60,46 +87,24 @@ namespace KursAM2.Managers.Nomenkl
                         WindowManager.ShowError(ex);
                     }
                 }
+
+                RecalcPrice();
             }
         }
 
-         public  void RecalcPrice(List<decimal> nomdcs)
-         {
-             using (var ctx = GlobalOptions.GetEntities())
-             {
-                 using (var transaction = ctx.Database.BeginTransaction())
-                 {
-                     try
-                     {
-                         foreach (var n in nomdcs)
-                             ctx.Database.ExecuteSqlCommand("INSERT INTO NOMENKL_RECALC (NOM_DC, OPER_DATE) " +
-                                                            $"VALUES ({CustomFormat.DecimalToSqlDecimal(n)}, '20000101');");
-
-                         transaction.Commit();
-                     }
-                     catch (Exception ex)
-                     {
-                         if (transaction.UnderlyingTransaction.Connection != null)
-                             transaction.Rollback();
-                         WindowManager.ShowError(ex);
-                     }
-                 }
-                 RecalcPrice();
-             }
-         }
-
-         public Prices GetNomenklPrice(decimal nomdc, DateTime date)
+        public Prices GetNomenklPrice(decimal nomdc, DateTime date)
         {
             var sql = "SELECT np.PRICE_WO_NAKLAD as Price, np.PRICE as PriceWithNaklad FROM nom_price np " +
                       $"WHERE np.nom_dc = {CustomFormat.DecimalToSqlDecimal(nomdc)} " +
                       "AND Date = (select MAX(np1.Date) " +
                       $"FROM NOM_PRICE np1 WHERE np1.NOM_DC = np.NOM_DC AND np1.DATE <= '{CustomFormat.DateToString(date)}')";
-           var data1 = Context.Database.SqlQuery<Prices>(sql).ToList();
-            if (data1.Count == 0) return new Prices()
-            {
-                Price = 0,
-                PriceWithNaklad = 0
-            };
+            var data1 = Context.Database.SqlQuery<Prices>(sql).ToList();
+            if (data1.Count == 0)
+                return new Prices
+                {
+                    Price = 0,
+                    PriceWithNaklad = 0
+                };
             return data1.First();
         }
 
@@ -109,8 +114,8 @@ namespace KursAM2.Managers.Nomenkl
             try
             {
                 return Context.Database.SqlQuery<NomenklQuantityInfo>(
-                        $"EXEC GetNomenklQuantityInfo {CustomFormat.DecimalToSqlDecimal(skladDC)},{CustomFormat.DecimalToSqlDecimal(nomDC)}," +
-                        $"'{CustomFormat.DateToString(dateStart)}','{CustomFormat.DateToString(dateEnd)}'").ToList();
+                    $"EXEC GetNomenklQuantityInfo {CustomFormat.DecimalToSqlDecimal(skladDC)},{CustomFormat.DecimalToSqlDecimal(nomDC)}," +
+                    $"'{CustomFormat.DateToString(dateStart)}','{CustomFormat.DateToString(dateEnd)}'").ToList();
             }
             catch (Exception ex)
             {
@@ -126,11 +131,11 @@ namespace KursAM2.Managers.Nomenkl
             {
                 var sql = $"EXEC GetNomenklAllQuantityInfo {CustomFormat.DecimalToSqlDecimal(skladDC)}," +
                           $"'{CustomFormat.DateToString(dateStart)}','{CustomFormat.DateToString(dateEnd)}'";
-                return Context.Database.SqlQuery<NomenklQuantityInfo>(sql)
+                var ret = Context.Database.SqlQuery<NomenklQuantityInfo>(sql)
                     .ToList();
-
+                return ret;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
                 return null;
@@ -146,15 +151,13 @@ namespace KursAM2.Managers.Nomenkl
                           $"'{CustomFormat.DateToString(dateStart)}','{CustomFormat.DateToString(dateEnd)}'";
                 return Context.Database.SqlQuery<NomenklMoveInfo>(sql)
                     .ToList();
-
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
                 return null;
             }
         }
-
     }
 
     public class NomenklMoveInfo
@@ -168,9 +171,8 @@ namespace KursAM2.Managers.Nomenkl
         public decimal Rashod { set; get; }
         public decimal RashodSumma { set; get; }
         public decimal RashodNaklSumma { set; get; }
-
     }
-    
+
     public class NomenklQuantityInfo
     {
         public decimal NomDC { set; get; }

@@ -85,7 +85,7 @@
                                          dx:DXSerializer.StoreLayoutMode="All"
                                          dxg:DataControlSerializationOptions.AddNewColumns="True"
                                          dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                                         CurrentItemChanged="treePeriods_CurrentItemChanged"
+                                         CurrentItem="{Binding CurrentPeriod, UpdateSourceTrigger=PropertyChanged}"
                                          ItemsSource="{Binding Periods, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
                         <dxg:TreeListControl.Bands>
                             <dxg:TreeListControlBand Name="bandt1" Header="В валюте сотрудника">

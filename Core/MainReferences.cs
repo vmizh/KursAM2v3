@@ -160,8 +160,9 @@ namespace Core
                 return Employees[dc];
             return null;
         }
-        public static Employee GetEmployee(int tabelnumber)
+        public static Employee GetEmployee(int? tabelnumber)
         {
+            if (tabelnumber == null) return null;
             return Employees.Values.FirstOrDefault(_ => _.TabelNumber == tabelnumber);
         }
 
@@ -1044,8 +1045,8 @@ namespace Core
                       " NOM_SALE_CRS_DC as NOM_SALE_CRS_DC, SD_83.Id as Id, UpdateDate as UpdateDate, NOM_0MATER_1USLUGA, MainId as MainId, " +
                       " isnull(sd_83.NOM_PRODUCT_DC,0) as NOM_PRODUCT_DC, " +
                       " ISNULL(IsCurrencyTransfer,0) as IsCurrencyTransfer " +
-                      " FROM SD_83 " +
-                      " INNER JOIN SD_175 ON SD_175.DOC_CODE = SD_83.NOM_ED_IZM_DC " +
+                      " FROM SD_83 (nolock) " +
+                      " INNER JOIN SD_175 (nolock) ON SD_175.DOC_CODE = SD_83.NOM_ED_IZM_DC " +
                       $" and SD_83.UpdateDate > '{CustomFormat.DateWithTimeToString(NomenklLastUpdate)}'";
             var data = ent.Database.SqlQuery<NomenklShort>(sql).ToList();
             if (data.Count == 0) return;

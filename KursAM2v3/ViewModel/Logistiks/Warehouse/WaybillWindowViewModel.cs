@@ -530,12 +530,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void SaveData(object data)
         {
-            Document.DD_POLUCH_NAME = Document.Client.Name.Length > 50
-                ? Document.Client.Name.Substring(0, 50)
-                : Document.Client.Name;
-            Document.DD_OTRPAV_NAME = Document.WarehouseOut.Name.Length > 50
-                ? Document.WarehouseOut.Name.Substring(0, 50)
-                : Document.WarehouseOut.Name;
+            //Document.DD_POLUCH_NAME = Document.Client.Name.Length > 50
+            //    ? Document.Client.Name.Substring(0, 50)
+            //    : Document.Client.Name;
+            //Document.DD_OTRPAV_NAME = Document.WarehouseOut.Name.Length > 50
+            //    ? Document.WarehouseOut.Name.Substring(0, 50)
+            //    : Document.WarehouseOut.Name;
             Document.Entity.DD_TYPE_DC = 2010000012;
             var dc = docManager.SaveWaybill(Document);
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.Waybill), null,

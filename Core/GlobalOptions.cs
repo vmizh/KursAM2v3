@@ -33,6 +33,7 @@ namespace Core
 
         //public static MainReferences MainReferences { set; get; }
         public static string Version { set; get; }
+        public static string VersionType { set; get; }
 
         public static KursSystemEntities KursSystem()
         {
@@ -57,6 +58,7 @@ namespace Core
                     Password = "19655691"
                 }.ToString();
             var ret = new ALFAMEDIAEntities(SqlConnectionString);
+            ret.Database.CommandTimeout = 0;
             return ret;
         }
 
@@ -71,6 +73,7 @@ namespace Core
                 Password = ",juk.,bnyfc"
             }.ConnectionString;
             ret.Database.Connection.ConnectionString = SqlConnectionString;
+            ret.Database.CommandTimeout = 0;
             if (MainReferences.IsReferenceLoadComplete)
                 return ret;
             MainReferences.Reset();

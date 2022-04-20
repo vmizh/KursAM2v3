@@ -326,6 +326,7 @@
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklTitleWIndowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\DialogSelectExistNomOnSkaldViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\NomenklRemainsOnSkladWithPrice.cs" />
+    <Compile Include="ViewModel\Logistiks\Warehouse\WaybillWindowViewModel2.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOut.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOutRow.cs" />
@@ -440,6 +441,20 @@
     <Compile Include="View\DialogUserControl\DefaultTableSelectUC.xaml.cs">
       <DependentUpon>DefaultTableSelectUC.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\DialogUserControl\Invoices\UserControls\InvoiceListSearchMultipleView.xaml.cs">
+      <DependentUpon>InvoiceListSearchMultipleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\Invoices\UserControls\InvoiceListSearchView.xaml.cs">
+      <DependentUpon>InvoiceListSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\Invoices\UserControls\InvoiceListView.xaml.cs">
+      <DependentUpon>InvoiceListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DialogUserControl\Invoices\ViewModels\InvoiceClient.cs" />
+    <Compile Include="View\DialogUserControl\Invoices\ViewModels\InvoiceClientSearchDialogViewModel.cs" />
+    <Compile Include="View\DialogUserControl\Invoices\ViewModels\InvoicePovider.cs" />
+    <Compile Include="View\DialogUserControl\Invoices\ViewModels\InvoiceProviderSearchDialogViewModel.cs" />
+    <Compile Include="View\DialogUserControl\Invoices\ViewModels\InvoiceSearchType.cs" />
     <Compile Include="View\DialogUserControl\StandartDialogSelectUC3.xaml.cs">
       <DependentUpon>StandartDialogSelectUC3.xaml</DependentUpon>
     </Compile>
@@ -454,6 +469,9 @@
     </Compile>
     <Compile Include="View\Finance\AccruedAmount\DialogSelectCashBankView.xaml.cs">
       <DependentUpon>DialogSelectCashBankView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\UC\InvoiceClientSelectRowsView.xaml.cs">
+      <DependentUpon>InvoiceClientSelectRowsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\KursReferences\UC\CurrencyReferenceUC.xaml.cs">
       <DependentUpon>CurrencyReferenceUC.xaml</DependentUpon>
@@ -561,6 +579,9 @@
       <DependentUpon>AddNomenklFromInvoiceProviderRowUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\UC\AddNomenklFromRashOrderViewModel.cs" />
+    <Compile Include="View\Logistiks\Warehouse\WayBillView2.xaml.cs">
+      <DependentUpon>WayBillView2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -1233,6 +1254,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\DialogUserControl\Invoices\UserControls\InvoiceListSearchMultipleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\Invoices\UserControls\InvoiceListSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\Invoices\UserControls\InvoiceListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\DialogUserControl\StandartDialogSelectUC3.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1250,6 +1283,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Finance\AccruedAmount\DialogSelectCashBankView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\UC\InvoiceClientSelectRowsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1384,6 +1421,10 @@
     <Page Include="View\Logistiks\UC\AddNomenklFromInvoiceProviderRowUC.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Logistiks\Warehouse\WayBillView2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\MainWindow.xaml">
       <SubType>Designer</SubType>

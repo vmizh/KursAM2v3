@@ -202,10 +202,13 @@ namespace KursAM2.ViewModel.Logistiks
                         QuantityIn = doc.DDT_KOL_PRIHOD,
                         QuantityOut = doc.DDT_KOL_RASHOD,
                         QuantityDelta = doc.DDT_KOL_PRIHOD - doc.DDT_KOL_RASHOD,
-                        From = MainReferences.GetKontragent(doc.SD_24.DD_KONTR_OTPR_DC).Name,
+                        From = doc.SD_24.DD_KONTR_OTPR_DC != null ? MainReferences.GetKontragent(doc.SD_24.DD_KONTR_OTPR_DC).Name
+                            // ReSharper disable once PossibleInvalidOperationException
+                            : MainReferences.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC.Value).Name,
                         // ReSharper disable once AssignNullToNotNullAttribute
                         // ReSharper disable once PossibleInvalidOperationException
-                        To = MainReferences.Warehouses[doc.SD_24.DD_SKLAD_POL_DC.Value].Name
+                        To = doc.SD_24.DD_SKLAD_POL_DC != null ? MainReferences.Warehouses[doc.SD_24.DD_SKLAD_POL_DC.Value].Name
+                            :  MainReferences.GetKontragent(doc.SD_24.DD_KONTR_POL_DC).Name
                     };
                     if (doc.TD_26 != null)
                     {

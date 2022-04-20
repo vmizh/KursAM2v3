@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
@@ -81,7 +80,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Display(AutoGenerateField = false)] public SD_26 Invoice { set; get; }
         [Display(AutoGenerateField = false)] public AccuredAmountOfSupplierRow AccruedAmountRow { set; get; }
 
-        [Display(AutoGenerateField = true,Name="Тип документа")]
+        [Display(AutoGenerateField = true, Name = "Тип документа")]
         public string DocumentName
         {
             get
@@ -99,11 +98,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         {
             get
             {
-                if(Invoice != null)  return $"{Invoice?.SF_IN_NUM} / {Invoice?.SF_POSTAV_NUM}";
+                if (Invoice != null) return $"{Invoice?.SF_IN_NUM} / {Invoice?.SF_POSTAV_NUM}";
                 if (AccruedAmountRow?.AccruedAmountOfSupplier != null)
-                    return string.IsNullOrWhiteSpace(AccruedAmountRow?.AccruedAmountOfSupplier.DocExtNum) ?
-                        $"{AccruedAmountRow?.AccruedAmountOfSupplier.DocInNum}" :  
-                        $"{AccruedAmountRow?.AccruedAmountOfSupplier.DocInNum} / {AccruedAmountRow?.AccruedAmountOfSupplier.DocExtNum} ";
+                    return string.IsNullOrWhiteSpace(AccruedAmountRow?.AccruedAmountOfSupplier.DocExtNum)
+                        ? $"{AccruedAmountRow?.AccruedAmountOfSupplier.DocInNum}"
+                        : $"{AccruedAmountRow?.AccruedAmountOfSupplier.DocInNum} / {AccruedAmountRow?.AccruedAmountOfSupplier.DocExtNum} ";
                 return null;
             }
         }
@@ -116,7 +115,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             get
             {
                 if (Invoice != null) return Invoice.SF_POSTAV_DATE.ToShortDateString();
-                if(AccruedAmountRow?.AccruedAmountOfSupplier != null) return AccruedAmountRow.AccruedAmountOfSupplier.DocDate.ToShortDateString();
+                if (AccruedAmountRow?.AccruedAmountOfSupplier != null)
+                    return AccruedAmountRow.AccruedAmountOfSupplier.DocDate.ToShortDateString();
                 return null;
             }
         }
@@ -143,10 +143,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         {
             get
             {
-                if(Invoice != null)
+                if (Invoice != null)
                     return Invoice.SF_KONTR_CRS_SUMMA;
                 if (AccruedAmountRow != null)
-                    return AccruedAmountRow.Summa ;
+                    return AccruedAmountRow.Summa;
                 return 0;
             }
         }
@@ -154,22 +154,21 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [DisplayName("Распределено")]
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
-        public decimal? SummaDistribute
+        public decimal SummaDistribute
         {
-            get
-            {
-                if (Invoice != null)
-                    return Invoice.NakladDistributedSumma;
-                if (AccruedAmountRow?.DistributeNakladInfo != null)
-                    return AccruedAmountRow.DistributeNakladInfo.Sum(_ => _.DistributeSumma);
-                return 0;
-            }
+            get => Entity.SummaDistribute;
+            //{
+            //    if (Invoice != null)
+            //        return Invoice.NakladDistributedSumma;
+            //    if (AccruedAmountRow?.DistributeNakladInfo != null)
+            //        return AccruedAmountRow.DistributeNakladInfo.Where(_ => _.).Sum(_ => _.DistributeSumma);
+            //    return 0;
+            //}
             set
             {
-                if (Invoice != null)
+                if (Entity.SummaDistribute == value) return;
                 {
-                    if (Invoice.NakladDistributedSumma == value) return;
-                    Invoice.NakladDistributedSumma = value;
+                    Entity.SummaDistribute = value;
                     RaisePropertiesChanged();
                     RaisePropertiesChanged(nameof(SummaRemain));
                 }
@@ -179,7 +178,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [DisplayName("Остаток")]
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
-        public decimal SummaRemain => (Summa ?? 0) - (SummaDistribute ?? 0);
+        public decimal SummaRemain => (Summa ?? 0) - SummaDistribute;
 
         [DisplayName("Валюта")]
         [Display(AutoGenerateField = true)]
@@ -210,6 +209,14 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 RaisePropertiesChanged();
             }
         }
+
+        [Display(Name = "Сумма(курс)")]
+        [ReadOnly(true)]
+        public decimal SummaRate => (Summa ?? 0) * Rate;
+
+        [Display(Name = "Остаток(курс)")]
+        [ReadOnly(true)]
+        public decimal RemainRate => SummaRemain * Rate;
 
         #endregion
     }

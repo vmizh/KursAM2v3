@@ -64,6 +64,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         public UserControl CustomDataUserControl { set; get; } = new SelectCashBankDialogView();
 
+
         public override string LayoutName => "SelectCashBankDialogViewModel";
 
         public List<CashBankItem> ObjectList { set; get; } = new List<CashBankItem>();

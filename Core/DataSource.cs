@@ -40,7 +40,9 @@ namespace Core
                     DataSource = Server,
                     InitialCatalog = DBName,
                     UserID = User,
-                    Password = Password
+                    Password = Password,
+                    MultipleActiveResultSets = true,
+                    ConnectTimeout = 0
                 };
             return strConn.ConnectionString;
         }

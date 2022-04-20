@@ -12,6 +12,12 @@ namespace Helper
                 $"{date.Year}{(date.Month < 10 ? "0" + date.Month : date.Month.ToString())}{(date.Day < 10 ? "0" + date.Day : date.Day.ToString())}";
         }
 
+        public static string DateToString(DateTime? date)
+        {
+            if (date == null) return "20000101";
+            return DateToString(date.Value);
+        }
+
         public static string DateWithTimeToString(DateTime date)
         {
             var ret =

@@ -451,13 +451,15 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Расходные накладные для клиентов":
-
-                        var ctxNaklad = new WaybillSearchViewModel();
                         form = new StandartSearchView
                         {
                             Owner = Application.Current.MainWindow,
-                            DataContext = ctxNaklad
                         };
+                        var ctxNaklad = new WaybillSearchViewModel()
+                        {
+                            Form = form
+                        };
+                        form.DataContext = ctxNaklad;
                         form.Show();
                         break;
                     case "Справочник сотрудников":
@@ -1228,7 +1230,7 @@ namespace KursAM2.View
                         tileMainGroup.Children.Add(newTileGroup);
                     }
 
-                    Title = $"Курс АМ2. {GlobalOptions.DataBaseName} Версия {GlobalOptions.Version}";
+                    Title = $"Курс АМ2. {GlobalOptions.DataBaseName} {GlobalOptions.Version} {GlobalOptions.VersionType}";
                 }
             }
             catch (Exception ex)
