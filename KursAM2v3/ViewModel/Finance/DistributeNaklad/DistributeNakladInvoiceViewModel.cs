@@ -157,21 +157,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         public decimal SummaDistribute
         {
             get => Entity.SummaDistribute;
-            //{
-            //    if (Invoice != null)
-            //        return Invoice.NakladDistributedSumma;
-            //    if (AccruedAmountRow?.DistributeNakladInfo != null)
-            //        return AccruedAmountRow.DistributeNakladInfo.Where(_ => _.).Sum(_ => _.DistributeSumma);
-            //    return 0;
-            //}
             set
             {
-                if (Entity.SummaDistribute == value) return;
-                {
-                    Entity.SummaDistribute = value;
-                    RaisePropertiesChanged();
-                    RaisePropertiesChanged(nameof(SummaRemain));
-                }
+                Entity.SummaDistribute = Math.Round(value, 2);
+                if (Invoice != null)
+                    Invoice.NakladDistributedSumma = Math.Round(Entity.SummaDistribute, 2);
+                RaisePropertiesChanged();
+                RaisePropertiesChanged(nameof(SummaRemain));
             }
         }
 

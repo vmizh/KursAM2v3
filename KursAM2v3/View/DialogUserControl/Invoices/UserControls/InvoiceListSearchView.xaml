@@ -25,7 +25,7 @@
                                                              Style="{StaticResource GridControl.Base}">
                                                 <dxg:GridControl.View>
                                                     <dxg:TableView x:Name="gridViewSearch"
-                                                                   Style="{StaticResource TableView.Standart}">
+                                                                   Style="{StaticResource TableView.Standart}" CellValueChanged="gridViewSearch_CellValueChanged">
                                                         <dxg:TableView.ContextMenu>
                                                             <ContextMenu>
                                                                 <MenuItem Header="Экспорт"

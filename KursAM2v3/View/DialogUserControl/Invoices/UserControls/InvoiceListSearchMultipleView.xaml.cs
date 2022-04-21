@@ -55,7 +55,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.UserControls
 
         private void gridViewSelected_CellValueChanged(object sender, CellValueChangedEventArgs e)
         {
-            if (DataContext is InvoiceClientSearchDialogViewModel dtx)
+            if (DataContext is IUpdatechildItems dtx)
             {
                dtx.UpdateSelectedItems();
             }
@@ -63,7 +63,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.UserControls
 
         private void gridViewPosition_CellValueChanged(object sender, CellValueChangedEventArgs e)
         {
-            if (DataContext is InvoiceClientSearchDialogViewModel dtx)
+            if (DataContext is IUpdatechildItems dtx)
             {
                 dtx.UpdatePositionItem();
             }
@@ -71,7 +71,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.UserControls
 
         private void gridViewSearch_CellValueChanged(object sender, CellValueChangedEventArgs e)
         {
-            if (DataContext is InvoiceClientSearchDialogViewModel dtx)
+            if (DataContext is IUpdatechildItems dtx)
             {
                 dtx.UpdateInvoiceItem();
             }

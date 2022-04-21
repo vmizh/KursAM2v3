@@ -29,8 +29,9 @@ using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Repositories;
+using KursAM2.View.DialogUserControl.Invoices.ViewModels;
 using KursAM2.View.Finance.DistributeNaklad;
-using KursAM2.View.Logistiks.UC;
+using InvoiceProviderRow = Core.EntityViewModel.Invoices.InvoiceProviderRow;
 
 namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {
@@ -106,6 +107,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Properties
 
+        
         [Display(AutoGenerateField = false)]
         public override bool IsCanDocNew => true;
         [Display(AutoGenerateField = false)]
@@ -125,7 +127,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             ? "Новый документ"
             : $"№ {DocNum} от {DocDate.ToShortDateString()} {Currency}";
 
-        public override string WindowName => Name;
+        public override string WindowName => $"Распределение накладных расходов №{DocNum} от {DocDate}";
 
         public override Guid Id
         {
@@ -824,7 +826,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 loadLists();
                 RecalcAllResult();
                 State = RowStatus.NotEdited;
-                RaisePropertyAllChanged();
+                //RaisePropertyAllChanged();
             }
         }
 
@@ -935,24 +937,26 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Command]
         public void AddNomenkl()
         {
-            var dialogs = new InvoiceProviderDialogs { IsNakladInvoices = false, IsLoadForDistributeNaklad = true };
-            if (dialogs.ShowDialog(Currency, DateTime.Today.AddDays(-30),
-                    DateTime.Today) == true)
-                foreach (var d in dialogs.SelectedItems)
-                foreach (var r in d.Rows)
+            InvoiceProviderSearchType loadType = InvoiceProviderSearchType.RemoveNakladRashod;
+            var dtx = new InvoiceProviderSearchDialogViewModel(true, true, loadType, unitOfWork.Context);
+            dtx.RefreshData(null);
+            var service = GetService<IDialogService>("DialogServiceUI");
+            if (service.ShowDialog(MessageButton.OKCancel, "Выбор счетов фактур", dtx) == MessageResult.OK
+                || dtx.DialogResult == MessageResult.OK)
+            {
+                foreach (var r in dtx.SelectedItems)
                 {
-                    if (r.IsUsluga) continue;
-                    if (Tovars.Any(_ => _.DocId == Id && _.TovarInvoiceRowId == r.Entity.Id)) continue;
                     var newRow = DistributeNakladRepository.CreateRowNew(Entity);
-                    if (r.Entity.TD_26_CurrencyConvert != null && r.Entity.TD_26_CurrencyConvert.Count > 0)
+                    var inv = unitOfWork.Context.TD_26.FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.CODE);
+                    if (inv.TD_26_CurrencyConvert != null && inv.TD_26_CurrencyConvert.Count > 0)
                     {
-                        foreach (var c in r.Entity.TD_26_CurrencyConvert)
+                        foreach (var c in inv.TD_26_CurrencyConvert)
                         {
                             newRow.TransferRowId = c.Id;
                             var newTovar = new DistributeNakladRowViewModel(newRow)
                             {
                                 Convert = new InvoiceProviderRowCurrencyConvertViewModel(c),
-                                InvoiceRow = r,
+                                InvoiceRow = new InvoiceProviderRow(inv),
                                 State = RowStatus.NewRow
                             };
                             ((ISupportParentViewModel)newTovar).ParentViewModel = this;
@@ -961,22 +965,59 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     }
                     else
                     {
-                        newRow.TovarInvoiceRowId = r.Entity.Id;
+                        newRow.TovarInvoiceRowId = inv.Id;
                         var newTovar = new DistributeNakladRowViewModel(newRow)
                         {
-                            InvoiceRow = r,
+                            InvoiceRow = new InvoiceProviderRow(inv),
                             State = RowStatus.NewRow
                         };
                         ((ISupportParentViewModel)newTovar).ParentViewModel = this;
                         Tovars.Add(newTovar);
                     }
-
-                    RaisePropertyChanged();
                 }
+            }
+            //var dialogs = new InvoiceProviderDialogs { IsNakladInvoices = false, IsLoadForDistributeNaklad = true };
+            //if (dialogs.ShowDialog(Currency, DateTime.Today.AddDays(-30),
+            //        DateTime.Today) == true)
+            //    foreach (var d in dialogs.SelectedItems)
+            //        foreach (var r in d.Rows)
+            //        {
+            //            if (r.IsUsluga) continue;
+            //            if (Tovars.Any(_ => _.DocId == Id && _.TovarInvoiceRowId == r.Entity.Id)) continue;
+            //            var newRow = DistributeNakladRepository.CreateRowNew(Entity);
+            //            if (r.Entity.TD_26_CurrencyConvert != null && r.Entity.TD_26_CurrencyConvert.Count > 0)
+            //            {
+            //                foreach (var c in r.Entity.TD_26_CurrencyConvert)
+            //                {
+            //                    newRow.TransferRowId = c.Id;
+            //                    var newTovar = new DistributeNakladRowViewModel(newRow)
+            //                    {
+            //                        Convert = new InvoiceProviderRowCurrencyConvertViewModel(c),
+            //                        InvoiceRow = r,
+            //                        State = RowStatus.NewRow
+            //                    };
+            //                    ((ISupportParentViewModel)newTovar).ParentViewModel = this;
+            //                    Tovars.Add(newTovar);
+            //                }
+            //            }
+            //            else
+            //            {
+            //                newRow.TovarInvoiceRowId = r.Entity.Id;
+            //                var newTovar = new DistributeNakladRowViewModel(newRow)
+            //                {
+            //                    InvoiceRow = r,
+            //                    State = RowStatus.NewRow
+            //                };
+            //                ((ISupportParentViewModel)newTovar).ParentViewModel = this;
+            //                Tovars.Add(newTovar);
+            //            }
 
-            SelectedTovars.Clear();
-            RaisePropertiesChanged(nameof(Tovars));
-            RaisePropertiesChanged(nameof(SelectedTovars));
+            //        RaisePropertyChanged();
+            //    }
+
+            //SelectedTovars.Clear();
+            //RaisePropertiesChanged(nameof(Tovars));
+            //RaisePropertiesChanged(nameof(SelectedTovars));
         }
 
         public bool CanAddNomenkl()
@@ -1038,6 +1079,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
 
         [Command]
+        // ReSharper disable once UnusedMember.Global
         public void DeleteNakladInvoice()
         {
             if (winManager.ShowWinUIMessageBox("Вы уверены, что хотите удалисть счет накладных?",
@@ -1066,39 +1108,71 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
+        // ReSharper disable once UnusedMember.Global
         public bool CanDeleteNakladInvoice()
         {
             return CurrentNakladInvoice != null;
         }
 
         [Command]
+        // ReSharper disable once UnusedMember.Global
         public void AddNakladInvoice()
         {
-            var dialogs = new InvoiceProviderDialogs { IsNakladInvoices = true };
-            if (dialogs.ShowDialog(null, DateTime.Today.AddDays(-30),
-                    DateTime.Today) == true)
-                foreach (var d in dialogs.SelectedItems)
-                    if (NakladInvoices.Where(_ => _.Invoice != null).All(_ => _.Invoice.DOC_CODE != d.DocCode))
+            InvoiceProviderSearchType loadType = InvoiceProviderSearchType.OnlyNakladDistrubuted;
+            var dtx = new InvoiceProviderSearchDialogViewModel(false, true, loadType, unitOfWork.Context);
+            dtx.RefreshData(null);
+            var service = GetService<IDialogService>("DialogServiceUI");
+            if (service.ShowDialog(MessageButton.OKCancel, "Выбор счетов фактур", dtx) == MessageResult.OK
+                || dtx.DialogResult == MessageResult.OK)
+            {
+                foreach(var item in dtx.ItemsCollection.Where(_ => _.IsSelected).ToList())
+                {
+                    if (NakladInvoices.Any(_ => _.Invoice.DOC_CODE == item.DocCode)) continue;
+                    new CurrencyRates(item.Date.AddDays(-10),item.Date).GetRate(GlobalOptions.SystemProfile.NationalCurrency.DocCode,
+                                    item.CurrencyDC, item.Date);
+                    var ent = new DistributeNakladInvoices
                     {
-                        new CurrencyRates(d.DocDate.AddDays(-10),d.DocDate).GetRate(GlobalOptions.SystemProfile.NationalCurrency.DocCode,
-                            d.Currency.DocCode, d.DocDate);
-                        var ent = new DistributeNakladInvoices
-                        {
-                            Id = Guid.NewGuid(),
-                            DocId = Entity.Id,
-                            InvoiceId = d.Id,
-                            Rate = d.Currency.DocCode == GlobalOptions.SystemProfile.NationalCurrency.DocCode ? 1 :
-                            new CurrencyRates(d.DocDate.AddDays(-10),d.DocDate).GetRate(d.Currency.DocCode,GlobalOptions.SystemProfile.NationalCurrency.DocCode, d.DocDate)
-                        };
-                        Entity.DistributeNakladInvoices.Add(ent);
-                        NakladInvoices.Add(new DistributeNakladInvoiceViewModel(ent)
-                        {
-                            Invoice = d.Entity,
-                            Currency = MainReferences.GetCurrency(d.SF_CRS_DC)
-                        });
-                    }
+                        Id = Guid.NewGuid(),
+                        DocId = Entity.Id,
+                        InvoiceId = item.Id,
+                        Rate = item.CurrencyDC == GlobalOptions.SystemProfile.NationalCurrency.DocCode ? 1 :
+                        new CurrencyRates(item.Date.AddDays(-10), item.Date).GetRate(item.CurrencyDC, GlobalOptions.SystemProfile.NationalCurrency.DocCode, item.Date)
+                    };
+                    Entity.DistributeNakladInvoices.Add(ent);
+                    var s = unitOfWork.Context.SD_26.FirstOrDefault(_ => _.DOC_CODE == item.DocCode);
+                    NakladInvoices.Add(new DistributeNakladInvoiceViewModel(ent)
+                    {
+                        Invoice = s,
+                        Currency = MainReferences.GetCurrency(item.CurrencyDC)
+                    });
+                }
+                
+            }
+            //var dialogs = new InvoiceProviderDialogs { IsNakladInvoices = true };
+            //if (dialogs.ShowDialog(null, DateTime.Today.AddDays(-30),
+            //        DateTime.Today) == true)
+            //    foreach (var d in dialogs.SelectedItems)
+            //        if (NakladInvoices.Where(_ => _.Invoice != null).All(_ => _.Invoice.DOC_CODE != d.DocCode))
+            //        {
+            //            new CurrencyRates(d.DocDate.AddDays(-10),d.DocDate).GetRate(GlobalOptions.SystemProfile.NationalCurrency.DocCode,
+            //                d.Currency.DocCode, d.DocDate);
+            //            var ent = new DistributeNakladInvoices
+            //            {
+            //                Id = Guid.NewGuid(),
+            //                DocId = Entity.Id,
+            //                InvoiceId = d.Id,
+            //                Rate = d.Currency.DocCode == GlobalOptions.SystemProfile.NationalCurrency.DocCode ? 1 :
+            //                new CurrencyRates(d.DocDate.AddDays(-10),d.DocDate).GetRate(d.Currency.DocCode,GlobalOptions.SystemProfile.NationalCurrency.DocCode, d.DocDate)
+            //            };
+            //            Entity.DistributeNakladInvoices.Add(ent);
+            //            NakladInvoices.Add(new DistributeNakladInvoiceViewModel(ent)
+            //            {
+            //                Invoice = d.Entity,
+            //                Currency = MainReferences.GetCurrency(d.SF_CRS_DC)
+            //            });
+            //        }
 
-            RaisePropertyChanged();
+            //RaisePropertyChanged();
         }
 
         public bool CanAddNakladInvoice()

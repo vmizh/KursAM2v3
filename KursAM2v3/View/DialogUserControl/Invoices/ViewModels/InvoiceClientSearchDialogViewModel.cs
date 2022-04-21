@@ -14,7 +14,7 @@ using KursAM2.View.DialogUserControl.Invoices.UserControls;
 
 namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 {
-    public sealed class InvoiceClientSearchDialogViewModel : RSWindowViewModelBase
+    public sealed class InvoiceClientSearchDialogViewModel : RSWindowViewModelBase, IUpdatechildItems
     {
         #region Fields
 

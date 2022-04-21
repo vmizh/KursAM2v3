@@ -455,6 +455,7 @@
     <Compile Include="View\DialogUserControl\Invoices\ViewModels\InvoicePovider.cs" />
     <Compile Include="View\DialogUserControl\Invoices\ViewModels\InvoiceProviderSearchDialogViewModel.cs" />
     <Compile Include="View\DialogUserControl\Invoices\ViewModels\InvoiceSearchType.cs" />
+    <Compile Include="View\DialogUserControl\Invoices\ViewModels\IUpdatechildItems.cs" />
     <Compile Include="View\DialogUserControl\StandartDialogSelectUC3.xaml.cs">
       <DependentUpon>StandartDialogSelectUC3.xaml</DependentUpon>
     </Compile>

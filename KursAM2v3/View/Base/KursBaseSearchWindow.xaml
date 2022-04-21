@@ -3,18 +3,26 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:control="clr-namespace:Core.Control;assembly=Core"
     x:Class="KursAM2.View.Base.KursBaseSearchWindow"
     Icon="{Binding Source={StaticResource imageStandartSearch},
     Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
     Title="{Binding WindowName}" Height="400" Width="1000"
     >
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}" Foreground="{Binding DatabaseColor}" 
+                   FontFamily="Seqoe UI Light" 
+                   FontSize="15" FontStyle="Italic" FontWeight="Bold" 
+                   VerticalAlignment="Center" HorizontalAlignment="Right"/>
+    </dx:ThemedWindow.HeaderItems>
     <DockPanel LastChildFill="True">
-        <DockPanel LastChildFill="False" DockPanel.Dock="Top">
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />
+        <!--<DockPanel LastChildFill="False" DockPanel.Dock="Top">
             <ItemsControl VerticalAlignment="Center" VerticalContentAlignment="Center" DockPanel.Dock="Left" Height="60"
                       ItemsSource="{Binding LeftMenuBar, Mode=TwoWay}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
+                        --><!-- ReSharper disable once Xaml.StaticResourceNotResolved --><!--
                         <Button Template="{Binding Content}"
                             ToolTip="{Binding ToolTip}"
                             Height="48"
@@ -36,7 +44,7 @@
                       ItemsSource="{Binding RightMenuBar, Mode=TwoWay}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
+                        --><!-- ReSharper disable once Xaml.StaticResourceNotResolved --><!--
                         <Button Template="{Binding Content}"
                             ToolTip="{Binding ToolTip}"
                             Height="48"
@@ -54,7 +62,7 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
-        </DockPanel>
+        </DockPanel>-->
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,10">
             <Label Content="Дата начала:"/>
             <dxe:DateEdit EditValue="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}"

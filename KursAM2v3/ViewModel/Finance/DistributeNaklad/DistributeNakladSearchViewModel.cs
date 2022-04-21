@@ -39,8 +39,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             DateStart = DateEnd.AddDays(-30);
             baseRepository = new GenericKursDBRepository<Data.DistributeNaklad>(unitOfWork);
             distributeNakladRepository = new DistributeNakladRepository(unitOfWork);
-            //ModelView = new DistributeNakladSearchView();
-            WindowName = "Поиск распределений накладных расходов";
         }
 
         public DistributeNakladSearchViewModel()
@@ -51,7 +49,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             DateStart = DateEnd.AddDays(-30);
             baseRepository = new GenericKursDBRepository<Data.DistributeNaklad>(unitOfWork);
             distributeNakladRepository = new DistributeNakladRepository(unitOfWork);
-            WindowName = "Поиск распределений накладных расходов";
         }
 
         #endregion
@@ -73,6 +70,15 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         #endregion
 
         #region Properties
+
+        public override string WindowName => "Поиск распределений накладных расходов";
+        [Display(AutoGenerateField = false)]
+        public override bool IsCanDocNew => true;
+        [Display(AutoGenerateField = false)]
+        public override bool IsDocNewCopyAllow => false;
+        [Display(AutoGenerateField = false)]
+        public override bool IsDocNewCopyRequisiteAllow => false;
+        public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
         [Display(AutoGenerateField = false)]
         public new Helper.LayoutManager LayoutManager { get; set; }
@@ -163,27 +169,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             dsForm.DataContext = dtx;
             dsForm.Show();
         }
-
-        public override bool IsDocNewCopyAllow => CurrentDocument != null;
-
-        public override void DocNewCopy(object form)
-        {
-            var dsForm = new DistributedNakladView
-            {
-                Owner = Application.Current.MainWindow
-            };
-            var dtx = new DistributeNakladViewModel(Form, new DocumentOpenType
-            {
-                Id = CurrentDocument.Id,
-                OpenType = DocumentCreateTypeEnum.Copy,
-            })
-            {
-                Form = dsForm
-            };
-            dsForm.DataContext = dtx;
-            dsForm.Show();
-        }
-
+        
         public override void DocumentOpen(object obj)
         {
             var dsForm = new DistributedNakladView
@@ -208,9 +194,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             dsForm.Show();
             dtx.myState = RowStatus.NotEdited;
         }
-
-        public override bool IsDocumentOpenAllow => CurrentDocument != null;
-        public override bool IsDocNewCopyRequisiteAllow => false;
 
         public override bool CanSave()
         {

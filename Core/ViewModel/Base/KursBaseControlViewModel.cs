@@ -69,6 +69,9 @@ namespace Core.ViewModel.Base
             }
         }
 
+        [Display(AutoGenerateField = false)] 
+        public string DatabaseName => GlobalOptions.DataBaseName;
+
         [Display(AutoGenerateField = false)]
         public UserControl ModelView
         {
@@ -105,6 +108,18 @@ namespace Core.ViewModel.Base
                     return true;
 
             return false;
+        }
+
+        [Display(AutoGenerateField = false)]
+        public ICommand DocNewCommand
+        {
+            get { return new Command(DocNew, _ => IsDocNewEmptyAllow); }
+        }
+
+        public virtual void DocNew(object obj)
+        {
+            if (!IsDocNewCopyAllow && !IsDocNewCopyAllow)
+                DocNewEmpty(obj);
         }
 
         public virtual void OnWindowClosing(object obj)

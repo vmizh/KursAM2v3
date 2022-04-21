@@ -20,7 +20,9 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         //Без позиций, по которым есть накладные расходы
         RemoveNakladRashod = 64,
         //Только услуги
-        OnlyUslugi = 128
+        OnlyUslugi = 128,
+        // Только не распределенные накладные расходы
+        OnlyNakladDistrubuted = 256,
     }
 
     [Flags]

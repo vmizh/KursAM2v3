@@ -1327,7 +1327,10 @@ namespace Core.Menu
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuDocumentAdd"] as ControlTemplate,
-                ToolTip = "Новый документ"
+                ToolTip = "Новый документ",
+                Command = vm.DocNewCommand
+
+
             };
             docNew.SubMenu.Add(new MenuButtonInfo
             {

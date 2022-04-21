@@ -112,7 +112,7 @@ namespace KursAM2.Dialogs
                     .Include(_ => _.DistributeNakladInfo).OrderByDescending(v => v.AccruedAmountOfSupplier.DocDate).ToList();
                 foreach (var d in data)
                 {
-                    if (d.Summa > d.DistributeNakladInfo.Sum(x => x.DistributeSumma))
+                    if (d.Summa - d.DistributeNakladInfo.Sum(x => x.DistributeSumma) > 1)
                     {
                         ItemsCollection.Add(new AccruedAmountSelectRow
                         {

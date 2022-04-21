@@ -38,7 +38,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             GenericProviderRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
-            WindowName = "Расходные накладные для клиентов";
             Documents = new ObservableCollection<WayBillShort>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
@@ -64,7 +63,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             GenericProviderRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
-            WindowName = "Расходные накладные для клиентов";
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
@@ -102,7 +100,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<WayBillShort> Documents { set; get; } = new ObservableCollection<WayBillShort>();
 
-        public override string WindowName => "Поиск расходных ракладных для клипентов";
+        public override string WindowName => "Поиск расходных накладных для клиентов";
         public override string LayoutName => "WaybillSearchViewModel";
 
         public Command ExportSFCommand

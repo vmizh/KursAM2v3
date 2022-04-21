@@ -53,7 +53,7 @@ namespace KursAM2.View.Finance.Invoices
                 case nameof(inv.Nomenkl):
                     var nomenklEdit = new ButtonEditSettings
                     {
-                        TextWrapping = TextWrapping.Wrap,
+                        TextWrapping = TextWrapping.NoWrap,
                         IsTextEditable = false
                     };
                     nomenklEdit.DefaultButtonClick += Nomenkl_DefaultButtonClick;

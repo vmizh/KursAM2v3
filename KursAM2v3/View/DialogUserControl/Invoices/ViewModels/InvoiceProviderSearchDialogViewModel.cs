@@ -14,7 +14,7 @@ using KursAM2.View.DialogUserControl.Invoices.UserControls;
 
 namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 {
-    public sealed class InvoiceProviderSearchDialogViewModel : RSWindowViewModelBase
+    public sealed class InvoiceProviderSearchDialogViewModel : RSWindowViewModelBase, IUpdatechildItems
     {
         #region Fields
 
@@ -44,16 +44,14 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         {
             this.loadType = loadType;
             IsAllowPositionSelected = isAllowPosition;
-            if (isAllowMultipleSchet)
+            IsAllowMultipleSchet = isAllowMultipleSchet;
+            if (isAllowPosition)
                 CustomDataUserControl = new InvoiceListSearchMultipleView();
             else CustomDataUserControl = new InvoiceListSearchView();
-            if (isAllowMultipleSchet)
-                LayoutName = "InvoiceProviderListSearchMultipleView";
-            else
-                LayoutName = isAllowPosition ? "InvoiceProviderListSearchPositionView" : "InvoiceProviderListSearchSingleSchetView";
+            LayoutName = isAllowPosition ? "InvoiceProviderListSearchMultipleView2" : "InvoiceProviderListSearchView2";
         }
 
-        #endregion
+       #endregion
 
         #region Properties
 
@@ -71,8 +69,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         public ObservableCollection<InvoiceProviderRow> SelectedItems { set; get; } =
             new ObservableCollection<InvoiceProviderRow>();
 
-        public ObservableCollection<InvoiceClientHead> SelectItems { set; get; } =
-            new ObservableCollection<InvoiceClientHead>();
+        public ObservableCollection<InvoiceProviderHead> SelectItems { set; get; } =
+            new ObservableCollection<InvoiceProviderHead>();
 
         public Visibility PositionVisibility
         {
@@ -84,7 +82,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 RaisePropertyChanged();
             }
         }
-
+        public bool IsAllowMultipleSchet { get; set; }
         public bool IsAllowPositionSelected
         {
             get => myIsAllowPositionSelected;
@@ -200,17 +198,32 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 InvoiceProviderSearchType.OneKontragent
                     ? $" PostDC = {CustomFormat.DecimalToSqlDecimal(KontragentDC)}"
                     : null;
+            var OnlyDistribute =
+                (loadType & InvoiceProviderSearchType.OnlyNakladDistrubuted) ==
+                InvoiceProviderSearchType.OnlyNakladDistrubuted
+                    ? " IsInvoiceNakladId = 1 AND round(Summa,2) - round(NakladDistributedSumma,2) != 0 "
+                    : null;
+            //ipq.RowId NOT IN (SELECT isnull(d.TovarInvoiceRowId,newid())FROM DistributeNakladRow d  )
+            var RemoveNaklad =
+                (loadType & InvoiceProviderSearchType.RemoveNakladRashod) ==
+                InvoiceProviderSearchType.RemoveNakladRashod
+                    ? " IsUsluga != 1 AND IsAccepted = 1 and RowId NOT IN (SELECT isnull(d.TovarInvoiceRowId,newid()) FROM DistributeNakladRow d) "
+                    : null;
+
             try
             {
+                var andString = " AND ";
                 if (!isExistContext)
                     context = new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString);
-                if (DataRange != null || NotPay != null || NotShipped != null || OneKontragent != null)
+                if (DataRange != null || NotPay != null || NotShipped != null || OneKontragent != null || OnlyDistribute != null || RemoveNaklad != null)
                 {
-                    sqlBase += " WHERE " + (DataRange != null ? DataRange + " AND " : null) +
-                               (NotPay != null ? NotPay + " AND " : null) +
-                               (NotShipped != null ? NotShipped + " AND " : null) +
-                               (OneKontragent != null ? OneKontragent + " AND " : null);
-                    sqlBase = sqlBase.Remove(sqlBase.Length - 4, 4);
+                    sqlBase += " WHERE " + (DataRange != null ? DataRange + andString : null)
+                               + (NotPay != null ? NotPay + andString : null)
+                               + (NotShipped != null ? NotShipped + andString : null)
+                               + (OneKontragent != null ? OneKontragent + andString: null)
+                               + (OnlyDistribute != null ? OnlyDistribute + andString : null)
+                               + (RemoveNaklad != null ? RemoveNaklad + andString : null);
+                    sqlBase = sqlBase.Remove(sqlBase.Length - andString.Length, andString.Length);
                 }
 
                 Data.Clear();
@@ -264,7 +277,22 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         {
             if (CurrentItem == null) return;
             if (CurrentItem.IsSelected)
+            {
+                if (!IsAllowMultipleSchet)
+                {
+                    foreach (var d in ItemsCollection.Where(_ => _.IsSelected && _.PostDC != CurrentItem.PostDC))
+                    {
+                        d.IsSelected = false;
+                        var dcs = SelectedItems.Where(_ => _.DocCode == d.DocCode).ToList();
+                        foreach (var r in dcs)
+                        {
+                            SelectedItems.Remove(r);
+                        }
+                    }
+                }
+
                 foreach (var pos in ItemPositionsCollection)
+                {
                     if (SelectedItems.All(_ => _.NomenklDC != pos.NomenklDC))
                     {
                         pos.IsSelected = true;
@@ -275,6 +303,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                         pos.IsSelected = false;
                         SelectedItems.Remove(pos);
                     }
+                }
+            }
             else
                 foreach (var pos in ItemPositionsCollection)
                 {
@@ -294,8 +324,10 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 ItemPositionsCollection.Add(new InvoiceProviderRow
                 {
                     IsSelected = SelectedItems.Any(_ => _.RowId == pos.RowId),
+                    PostDC = pos.PostDC,
                     DocCode = pos.DocCode,
                     CODE = pos.CODE,
+                    Id = pos.Id,
                     RowId = pos.RowId,
                     Nomenkl = pos.Nomenkl,
                     NomenklNumber = pos.NomenklNumber,
