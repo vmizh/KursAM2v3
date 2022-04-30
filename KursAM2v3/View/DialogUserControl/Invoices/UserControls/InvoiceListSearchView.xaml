@@ -8,7 +8,7 @@
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <DockPanel Style="{StaticResource DXServices}">
+    <DockPanel Style="{StaticResource DXServicesForDialog}">
         <dxlc:LayoutControl x:Name="LayoutControl">
             <dxlc:LayoutGroup Orientation="Vertical">
                             <dxlc:LayoutGroup x:Name="headListGroup" View="GroupBox"

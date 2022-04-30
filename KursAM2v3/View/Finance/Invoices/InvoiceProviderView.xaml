@@ -289,6 +289,12 @@
                                     <ContextMenu>
                                         <MenuItem Header="Добавить номенклатуру"
                                             Command="{Binding AddNomenklCommand}"/>
+                                        <MenuItem Header="Добавить номенклатуру(упрощ)" Command="{Binding AddNomenklSimpleCommand}">
+                                            <MenuItem.Icon>
+                                                <Image
+                                                    Source="{StaticResource AddSimpleDrawingImage}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
                                         <MenuItem Header="Добавить услугу"
                                             Command="{Binding AddUslugaCommand}"/>
                                         <MenuItem Header="Удалить номенклатуру"

@@ -11,6 +11,7 @@ using Core.EntityViewModel;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Employee;
 using Core.EntityViewModel.Invoices;
+using Core.EntityViewModel.NomenklManagement;
 using Core.EntityViewModel.Vzaimozachet;
 using Core.Helper;
 using Core.Menu;
@@ -18,6 +19,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using DevExpress.Mvvm;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -25,6 +27,7 @@ using KursAM2.Managers.Invoices;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.ReportManagers.SFClientAndWayBill;
 using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
@@ -556,6 +559,58 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Document.Client = kontr;
             Document.Currency = kontr.BalansCurrency;
             Document.Entity.SF_KONTR_CRS_RATE = 1;
+        }
+
+        public ICommand AddNomenklSimpleCommand
+        {
+            get { return new Command(AddNomenklSimple, _ => true); }
+        }
+
+        private IEnumerable<Nomenkl> LoadNomenkl(string srchText)
+        {
+            return MainReferences.ALLNomenkls.Values.Where(_ =>
+                (_.Name + _.NomenklNumber + _.NameFull + _.PolnoeName).ToUpper().Contains(srchText.ToUpper()));
+        }
+        
+
+        private void AddNomenklSimple(object obj)
+        {
+            var dtx = new TableSearchWindowViewMovel<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipleListView");
+            var service = GetService<IDialogService>("DialogServiceUI");
+            if (service.ShowDialog(MessageButton.OKCancel, "Выбор счетов фактур", dtx) == MessageResult.OK
+                || dtx.DialogResult)
+            {
+                var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
+                foreach (var item in dtx.SelectedItems)
+                {
+                    if (Document != null && Document.Rows.Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    decimal nds;
+                    if (item.NOM_NDS_PERCENT == null)
+                        nds = 0;
+                    else
+                        nds = (decimal)item.NOM_NDS_PERCENT;
+                    // ReSharper disable once UseObjectOrCollectionInitializer
+                    var r = new InvoiceClientRow
+                    {
+                        // ReSharper disable once PossibleNullReferenceException
+                        DocCode = Document.DocCode,
+                        Code = newCode,
+                        Parent = Document,
+                        NDSPercent = nds,
+                        Quantity = 1,
+                        Price = 0,
+                        IsNDSInPrice = Document.IsNDSIncludeInPrice,
+                        Note = "",
+                        Id = Guid.NewGuid(),
+                        DocId = Document.Id
+                    };
+                    r.Entity.SFT_NEMENKL_DC = item.DOC_CODE;
+                    Document?.Rows.Add(r);
+                    Document.Entity.TD_84.Add(r.Entity);
+                    newCode++;
+                }
+            }
+            UpdateVisualData(null);
         }
 
         public ICommand DilerSelectCommand

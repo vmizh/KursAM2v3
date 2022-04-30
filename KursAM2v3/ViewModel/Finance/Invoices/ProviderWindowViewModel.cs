@@ -30,6 +30,7 @@ using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
+using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.UC;
@@ -1119,10 +1120,90 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 CurrentRow.State = RowStatus.Edited;
             }
         }
+        public ICommand AddNomenklSimpleCommand
+        {
+            get { return new Command(AddNomenklSimple, _ => true); }
+        }
+
+        private IEnumerable<Nomenkl> LoadNomenkl(string srchText)
+        {
+            return MainReferences.ALLNomenkls.Values.Where(_ =>
+                (_.Name + _.NomenklNumber + _.NameFull + _.PolnoeName).ToUpper().Contains(srchText.ToUpper()));
+        }
+
+
+        private void AddNomenklSimple(object obj)
+        {
+            decimal defaultNDS;
+            var dtx = new TableSearchWindowViewMovel<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipleListView");
+            var service = GetService<IDialogService>("DialogServiceUI");
+            if (service.ShowDialog(MessageButton.OKCancel, "Выбор счетов фактур", dtx) == MessageResult.OK
+                || dtx.DialogResult)
+            {
+                using (var entctx = GlobalOptions.GetEntities())
+                {
+                    defaultNDS = Convert.ToDecimal(entctx.PROFILE
+                        .FirstOrDefault(_ => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")?.ITEM_VALUE);
+                }
+
+                var cr = new CurrencyRates(Document.DocDate, Document.DocDate);
+                var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
+                foreach (var n in dtx.SelectedItems)
+                {
+                    if (Document.Rows.Any(_ => _.Nomenkl.DocCode == n.DocCode)) continue;
+                    AddUsedNomenkl(n.DocCode);
+                    var newRow = new InvoiceProviderRow
+                    {
+                        DocCode = Document.DocCode,
+                        Code = newCode,
+                        Id = Guid.NewGuid(),
+                        DocId = Document.Id,
+                        Nomenkl = n,
+                        Quantity = 1,
+                        Price = 0,
+                        SFT_NDS_PERCENT = n.NDSPercent ?? defaultNDS,
+                        PostUnit = n.Unit,
+                        UchUnit = n.Unit,
+                        Note = " ",
+                        State = RowStatus.NewRow,
+                        IsIncludeInPrice = Document.IsNDSInPrice,
+                        Parent = Document
+                    };
+                    newRow.Entity.SFT_POST_ED_IZM_DC = n.Unit.DocCode;
+                    switch (Document.Currency.DocCode)
+                    {
+                        case CurrencyCode.EUR:
+                            newRow.EURRate = cr.GetRate(Document.Currency.DocCode, CurrencyCode.EUR,
+                                Document.DocDate);
+                            newRow.EURSumma = newRow.EURRate;
+                            break;
+                        case CurrencyCode.USD:
+                            newRow.EURRate = cr.GetRate(Document.Currency.DocCode, CurrencyCode.USD,
+                                Document.DocDate);
+                            newRow.EURSumma = newRow.USDRate;
+                            break;
+                        case CurrencyCode.RUB:
+                            newRow.RUBRate = cr.GetRate(Document.Currency.DocCode, CurrencyCode.RUB,
+                                Document.DocDate);
+                            newRow.RUBSumma = newRow.RUBRate;
+                            break;
+                        case CurrencyCode.GBP:
+                            newRow.GBPRate = cr.GetRate(Document.Currency.DocCode, CurrencyCode.GBP,
+                                Document.DocDate);
+                            newRow.GBPSumma = newRow.GBPRate;
+                            break;
+                    }
+
+                    Document.Entity.TD_26.Add(newRow.Entity);
+                    Document.Rows.Add(newRow);
+                    newCode++;
+                }
+            }
+        }
 
         public ICommand AddNomenklCommand
         {
-            get { return new Command(AddNomenkl, _ => Document.Kontragent != null); }
+            get { return new Command(AddNomenkl, _ => true); }
         }
 
         private void AddNomenkl(object obj)

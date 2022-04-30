@@ -23,7 +23,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         private InvoiceProviderHead myCurrent;
         private ICurrentWindowService winCurrentService;
         private Visibility myPositionVisibility;
-        private string sqlBase = "SELECT * FROM InvoicePostQuery ";
+        private string sqlBase = @"SELECT  *
+                                                FROM InvoicePostQuery p  ";
         private bool myIsAllowPositionSelected;
         private InvoiceProviderRow myCurrentSelectedItem;
         private InvoiceProviderRow myCurrentPosition;
@@ -203,12 +204,13 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 InvoiceProviderSearchType.OnlyNakladDistrubuted
                     ? " IsInvoiceNakladId = 1 AND round(Summa,2) - round(NakladDistributedSumma,2) != 0 "
                     : null;
-            //ipq.RowId NOT IN (SELECT isnull(d.TovarInvoiceRowId,newid())FROM DistributeNakladRow d  )
             var RemoveNaklad =
                 (loadType & InvoiceProviderSearchType.RemoveNakladRashod) ==
                 InvoiceProviderSearchType.RemoveNakladRashod
-                    ? " IsUsluga != 1 AND IsAccepted = 1 and RowId NOT IN (SELECT isnull(d.TovarInvoiceRowId,newid()) FROM DistributeNakladRow d) "
-                    : null;
+                    ? " IsUsluga != 1 AND IsAccepted = 1 and RowId NOT IN (SELECT isnull(d.TovarInvoiceRowId,newid()) FROM DistributeNakladRow d)  " +
+                      @" AND RowId NOT IN (SELECT ISNULL(dd.TransferRowId, NEWID()) 
+                            FROM DistributeNakladRow dd
+                                INNER JOIN TD_26 t ON dd.TransferRowId = t.Id) " : null;
 
             try
             {

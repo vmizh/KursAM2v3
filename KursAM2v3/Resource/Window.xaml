@@ -53,7 +53,7 @@
     <DataTemplate x:Key="dialogServiceTemplateUI">
         <ContentControl Content="{Binding CustomDataUserControl}"/>
     </DataTemplate>
-    <Style x:Key="DXServices" TargetType="FrameworkElement">
+    <Style x:Key="DXServices">
         <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -64,10 +64,12 @@
                         <dxmvvm:EventToCommand EventName="Initialized" Command="{Binding OnWindowLoadedCommand }"/>
                         <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding OnWindowLoadedCommand}"/>
                         <dx:DXMessageBoxService />
-                        <dx:DialogService x:Name="DialogService" ViewTemplate="{StaticResource dialogServiceTemplate}">
+                        <dx:DialogService x:Name="DialogService" ViewTemplate="{StaticResource dialogServiceTemplate}" 
+                                          DialogWindowStartupLocation="CenterScreen" 
+                                          SetWindowOwner="False">
                             <dx:DialogService.DialogStyle>
-                                <Style TargetType="Window">
-                                    <Setter Property="WindowStyle" Value="ToolWindow" />
+                                <Style TargetType="dx:DXDialogWindow">
+                                    <Setter Property="WindowStyle" Value="SingleBorderWindow" />
                                     <!--<Setter Property="SizeToContent" Value="WidthAndHeight" />-->  
                                 </Style>
                             </dx:DialogService.DialogStyle>
@@ -112,6 +114,20 @@
                             </dx:DialogService.DialogStyle>
                         </dx:DialogService>
                         <dxwui:WinUIDialogService x:Name="WinUIDialogServiceUI" ViewTemplate="{StaticResource dialogServiceTemplateUI}"/>
+                    </ItemsControl>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="DXServicesForDialog" TargetType="FrameworkElement">
+        <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <ItemsControl>
+                        <dxmvvm:LayoutSerializationService/>
+                        <dxmvvm:CurrentWindowService ClosingCommand="{Binding OnWindowClosingCommand}"/>
+                        <dxmvvm:EventToCommand EventName="Initialized" Command="{Binding OnWindowLoadedCommand }"/>
+                        <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding OnWindowLoadedCommand}"/>
                     </ItemsControl>
                 </DataTemplate>
             </Setter.Value>

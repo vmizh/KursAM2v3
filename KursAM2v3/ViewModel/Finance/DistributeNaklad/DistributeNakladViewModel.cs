@@ -76,7 +76,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             DistributeNakladRepository = new DistributeNakladRepository(unitOfWork);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
-            WindowName = "Распределение накладных расходов";
         }
 
         public DistributeNakladViewModel(Data.DistributeNaklad entity) : this()
