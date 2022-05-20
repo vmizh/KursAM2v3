@@ -43,8 +43,9 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         //Без позиций, по которым есть накладные расходы
         OnlyNakladRashod = 64,
         //Не распределенные накладные расходы
-        OnlyNakladRashodNotDistributed = 128
-
+        OnlyNakladRashodNotDistributed = 128,
+        //Только акцептованные
+        OnlyAccepted = 256
 
     }
 }

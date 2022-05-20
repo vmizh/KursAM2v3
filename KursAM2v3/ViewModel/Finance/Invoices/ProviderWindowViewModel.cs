@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -44,6 +45,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
     /// <summary>
     ///     Сфчет-фактура поставщика
     /// </summary>
+    [SuppressMessage("ReSharper", "PossibleUnintendedReferenceComparison")]
     public sealed class ProviderWindowViewModel : RSWindowViewModelBase, IDataErrorInfo
     {
         #region Methods
@@ -1634,6 +1636,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             UnitOfWork.Context.ProviderInvoicePay.Remove(CurrentPaymentDoc.Entity);
             Document.PaymentDocs.Remove(CurrentPaymentDoc);
             SaveData(null);
+            // ReSharper disable once StringLiteralTypo
+            // ReSharper disable once NotResolvedInText
             Document.RaisePropertyChanged("PaySumma");
         }
 
@@ -1685,6 +1689,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     ctx.SaveChanges();
                 }
 
+                // ReSharper disable once NotResolvedInText
                 Document.RaisePropertyChanged("PaySumma");
                 if (Document.State != RowStatus.NewRow)
                     Document.State = RowStatus.Edited;
@@ -1750,6 +1755,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
                     if (Document.State != RowStatus.NewRow)
                         Document.State = RowStatus.Edited;
+                    // ReSharper disable once NotResolvedInText
                     Document.RaisePropertyChanged("PaySumma");
                 }
                 catch (Exception ex)
@@ -1801,6 +1807,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.PaymentDocs.Add(newItem);
                 if (Document.State != RowStatus.NewRow)
                     Document.State = RowStatus.Edited;
+                // ReSharper disable once NotResolvedInText
                 Document.RaisePropertyChanged("PaySumma");
             }
         }

@@ -124,6 +124,7 @@
             <Setter.Value>
                 <DataTemplate>
                     <ItemsControl>
+                        <dxmvvm:CurrentWindowSerializationBehavior/>
                         <dxmvvm:LayoutSerializationService/>
                         <dxmvvm:CurrentWindowService ClosingCommand="{Binding OnWindowClosingCommand}"/>
                         <dxmvvm:EventToCommand EventName="Initialized" Command="{Binding OnWindowLoadedCommand }"/>

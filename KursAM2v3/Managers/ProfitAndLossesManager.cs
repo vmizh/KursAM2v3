@@ -2403,9 +2403,13 @@ namespace KursAM2.Managers
                 var outBalansClient = ctx.AccruedAmountForClient
                     .Include(_ => _.AccuredAmountForClientRow)
                     .Where(_ => _.DocDate >= DateStart && _.DocDate <= DateEnd);
-                var outBalansSupplier = ctx.AccruedAmountOfSupplier
-                    .Include(_ => _.AccuredAmountOfSupplierRow)
-                    .Where(_ => _.DocDate >= DateStart && _.DocDate <= DateEnd);
+                //var outBalansSupplier = ctx.AccruedAmountOfSupplier
+                //    .Include(_ => _.AccuredAmountOfSupplierRow)
+                //    .Where(_ => _.DocDate >= DateStart && _.DocDate <= DateEnd);
+                var outBalansSupplier = ctx.AccuredAmountOfSupplierRow
+                    .Include(_ => _.AccruedAmountOfSupplier)
+                    .Where(_ => _.AccruedAmountOfSupplier.DocDate >= DateStart && _.AccruedAmountOfSupplier.DocDate <= DateEnd);
+
                 foreach (var d in outBalansClient)
                 {
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
@@ -2442,23 +2446,25 @@ namespace KursAM2.Managers
                         GroupId = ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier,
                         Name = "Прямые затраты",
                         Note =
-                            string.Format($"Дата {d.DocDate.ToShortDateString()} №{d.DocInNum}/{d.DocExtNum} {d.Note}"),
+                            string.Format($"Дата {d.AccruedAmountOfSupplier.DocDate.ToShortDateString()} №{d.AccruedAmountOfSupplier.DocInNum}/{d.AccruedAmountOfSupplier.DocExtNum} {d.Note}"),
                         DocCode = 0,
                         Quantity = 1,
-                        Price = d.AccuredAmountOfSupplierRow?.Sum(_ => _.Summa) ?? 0,
-                        Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                        Price = d.Summa,
+                        Kontragent = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC).Name,
                         KontragentBase = null,
-                        Date = d.DocDate,
+                        Date = d.AccruedAmountOfSupplier.DocDate,
                         DocTypeCode = DocumentType.AccruedAmountOfSupplier,
-                        SDRSchet = null,
-                        AktZachet = null,
+                        SDRSchet = d.SHPZ_DC != null && MainReferences.SDRSchets.ContainsKey(d.SHPZ_DC.Value) ?  MainReferences.SDRSchets[d.SHPZ_DC.Value] : null,
+                        SDRState = d.SHPZ_DC != null && MainReferences.SDRSchets.ContainsKey(d.SHPZ_DC.Value) && MainReferences.SDRSchets[d.SHPZ_DC.Value].SHPZ_STATIA_DC != null ? 
+                            MainReferences.SDRStates[MainReferences.SDRSchets[d.SHPZ_DC.Value].SHPZ_STATIA_DC.Value] : null,
+                        AktZachet = null, 
                         AktZachetResult = 0,
-                        CurrencyName = MainReferences.GetKontragent(d.KontrDC).BalansCurrency.Name,
-                        DocNum = $"{d.DocInNum}/{d.DocExtNum}",
+                        CurrencyName = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC).BalansCurrency.Name,
+                        DocNum = $"{d.AccruedAmountOfSupplier.DocInNum}/{d.AccruedAmountOfSupplier.DocExtNum}",
                         StringId = d.Id.ToString()
                         //CalcType = TypeProfitAndLossCalc.IsProfit
                     };
-                    SetCurrenciesValue(newOp1, MainReferences.GetKontragent(d.KontrDC).BalansCurrency.DocCode, 0m,
+                    SetCurrenciesValue(newOp1, MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC).BalansCurrency.DocCode, 0m,
                         newOp1.Price);
                     Extend.Add(newOp1);
                     ExtendNach.Add(newOp1);

@@ -391,47 +391,11 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                 !d.IsSaleTax ? d.NomSumm /* * crsNomenklRate */: d.Quantity * (d.SaleTaxPrice ?? 0),
                             NomenklOperSumWOReval =
                                 !d.IsSaleTax
-                                    ? Convert.ToDecimal(d.NomenklSumWOReval) //19655691* crsNomenklRate
+                                    ? Convert.ToDecimal(d.NomenklSumWOReval) //crsNomenklRate
                                     : (d.NomSumm - (d.SaleTaxPrice ?? 0)) * d.Quantity,
                             DocType = DocumentsOpenManager.GetMaterialDocTypeFromDC(d.TypeDC)
                         });
                     }
-
-                    //var dirctCost = ent.AccuredAmountOfSupplierRow.Include(_ => _.AccruedAmountOfSupplier).Where(_ =>
-                    //    _.AccruedAmountOfSupplier.DocDate >= StartDate
-                    //    && _.AccruedAmountOfSupplier.DocDate <= EndDate).ToList();
-                    //foreach (var d in dirctCost)
-                    //{
-                    //    var kontr = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC);
-                    //    DataAll.Add(new BreakEvenRow
-                    //    {
-                    //        Kontragent = kontr.Name,
-                    //        Kontr = kontr,
-                    //        Nomenkl = MainReferences.GetNomenkl((d.NomenklDC)),
-                    //        CentrOfResponsibility = new CentrOfResponsibility {Entity = new SD_40 {DOC_CODE = 0, CENT_NAME = "Не указан"}},
-                    //        Date = d.AccruedAmountOfSupplier.DocDate,
-                    //        Diler = null,
-                    //        DilerSumma = 0,
-                    //        IsUsluga =  true,
-                    //        KontrSumma = d.Summa, //Convert.ToDecimal(d.KontrSumma),
-                    //        KontrSummaCrs = d.Summa ,
-                    //        Manager =  "Менеджер не указан",
-                    //        Naklad =null,
-                    //        NomenklSumWOReval = d.Summa,
-                    //        OperCrsName = kontr.BalansCurrency.Name, // crsInfo.Name,
-                    //        OperCurrency = kontr.BalansCurrency,
-                    //        Schet = null,
-                    //        Quantity = 1,
-                    //        SummaNomenkl = d.Summa,
-                    //        SummaNomenklCrs = d.Summa,
-                    //        Price = d.Summa,
-                    //        KontrOperSummaCrs = d.Summa, //* crsKontrRate,
-                    //        SummaOperNomenkl =d.Summa,
-                    //        SummaOperNomenklCrs =d.Summa,
-                    //        NomenklOperSumWOReval =d.Summa,
-                    //        DocType =DocumentType.None
-                    //    });
-                    //}
                 }
                 catch (Exception ex)
                 {
@@ -457,7 +421,9 @@ namespace KursAM2.ViewModel.Management.BreakEven
                     n.Cost += Math.Round(row.SummaNomenklCrs, 2);
                     n.CostWOReval += Math.Round(row.NomenklSumWOReval, 2);
                     n.DilerSumma += Math.Round(row.DilerSumma, 2);
-                    n.Naklad += Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval);
+                    n.Naklad += Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval) < 0
+                        ? 0
+                        : Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval);
                 }
                 else
                 {
@@ -470,7 +436,9 @@ namespace KursAM2.ViewModel.Management.BreakEven
                         DilerSumma = Math.Round(row.DilerSumma, 2),
                         Cost = Math.Round(row.SummaNomenklCrs, 2),
                         CostWOReval = Math.Round(row.NomenklSumWOReval, 2),
-                        Naklad = Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval)
+                        Naklad = Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval) < 0
+                            ? 0
+                            : Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval)
                     });
                 }
                 var k = myTempKontrGroups.FirstOrDefault(t => t.Name == row.Kontragent);

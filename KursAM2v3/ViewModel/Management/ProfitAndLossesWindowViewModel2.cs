@@ -299,6 +299,8 @@ namespace KursAM2.ViewModel.Management
         private void NomenklCalc(object obj)
         {
             if (CurrentExtend?.Nomenkl?.DocCode == null) return;
+            // ReSharper disable once PossibleInvalidOperationException
+            // ReSharper disable once PossibleNullReferenceException
             var ctx = new NomPriceWindowViewModel((decimal) CurrentExtend?.Nomenkl?.DocCode);
             var dlg = new SelectDialogView {DataContext = ctx};
             dlg.ShowDialog();

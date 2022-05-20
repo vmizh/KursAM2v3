@@ -25,6 +25,7 @@ namespace Core.EntityViewModel.NomenklManagement
         private Nomenkl myNomenkl;
         private SDRSchet mySDRSchet;
         private Unit myUnit;
+        private InvoiceClient myInvoiceClient;
 
         public TD_24ViewModel()
         {
@@ -274,6 +275,19 @@ namespace Core.EntityViewModel.NomenklManagement
             {
                 if (Entity.DDT_SFACT_DC == value) return;
                 Entity.DDT_SFACT_DC = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public InvoiceClient InvoiceClient
+        {
+            get => myInvoiceClient;
+            set
+            {
+                if (myInvoiceClient != null && myInvoiceClient.Equals(value)) return;
+                myInvoiceClient = value;
+                if (myInvoiceProvider != null)
+                    DDT_SFACT_DC = myInvoiceClient.DocCode;
                 RaisePropertyChanged();
             }
         }

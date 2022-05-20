@@ -73,6 +73,17 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         public ObservableCollection<InvoiceProviderHead> SelectItems { set; get; } =
             new ObservableCollection<InvoiceProviderHead>();
 
+        public InvoiceProviderHead SelectItem
+        {
+            get => mySelectItem;
+            set
+            {
+                if (mySelectItem == value) return;
+                mySelectItem = value;
+                RaisePropertyChanged();
+            }
+        } 
+
         public Visibility PositionVisibility
         {
             get => myPositionVisibility;
@@ -136,6 +147,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         public decimal? KontragentDC { get; set; }
 
         public new MessageResult DialogResult = MessageResult.No;
+        private InvoiceProviderHead mySelectItem;
 
         public UserControl CustomDataUserControl { get; }
 
@@ -234,7 +246,10 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 foreach (var d in Data)
                 {
                     if (ItemsCollection.Any(_ => _.DocCode == d.DocCode)) continue;
-                    ItemsCollection.Add(new InvoiceProviderHead(d));
+                    ItemsCollection.Add(new InvoiceProviderHead(d)
+                    {
+                        IsSelected = false
+                    });
                 }
             }
             catch (Exception ex)
@@ -273,16 +288,23 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             {
                 SelectedItems.Remove(CurrentPosition);
             }
+
+            CurrentItem.IsSelected = null;
+            if( ItemPositionsCollection.All(_ => _.IsSelected))
+                CurrentItem.IsSelected = true;
+            if( ItemPositionsCollection.All(_ => !_.IsSelected))
+                CurrentItem.IsSelected = false;
+            RaisePropertyChanged(nameof(ItemsCollection));
         }
 
         public void UpdateInvoiceItem()
         {
             if (CurrentItem == null) return;
-            if (CurrentItem.IsSelected)
+            if (CurrentItem.IsSelected == true)
             {
                 if (!IsAllowMultipleSchet)
                 {
-                    foreach (var d in ItemsCollection.Where(_ => _.IsSelected && _.PostDC != CurrentItem.PostDC))
+                    foreach (var d in ItemsCollection.Where(_ => (_.IsSelected ?? false) && _.PostDC != CurrentItem.PostDC))
                     {
                         d.IsSelected = false;
                         var dcs = SelectedItems.Where(_ => _.DocCode == d.DocCode).ToList();
@@ -308,12 +330,15 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 }
             }
             else
+            {
                 foreach (var pos in ItemPositionsCollection)
                 {
                     pos.IsSelected = false;
                     SelectedItems.Remove(pos);
                 }
 
+                CurrentItem.IsSelected = false;
+            }
             RaisePropertyChanged(nameof(ItemPositionsCollection));
             RaisePropertyChanged(nameof(SelectedItems));
         }

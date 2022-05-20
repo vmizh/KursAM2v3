@@ -459,6 +459,9 @@
     <Compile Include="View\DialogUserControl\StandartDialogSelectUC3.xaml.cs">
       <DependentUpon>StandartDialogSelectUC3.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\DialogUserControl\Standart\RSDialogView.xaml.cs">
+      <DependentUpon>RSDialogView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\DialogUserControl\Standart\TableSearchWindowViewMovel.cs" />
     <Compile Include="View\DialogUserControl\Standart\TableWithSearch.xaml.cs">
       <DependentUpon>TableWithSearch.xaml</DependentUpon>
@@ -1274,6 +1277,10 @@
     <Page Include="View\DialogUserControl\StandartDialogSelectUC3.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\DialogUserControl\Standart\RSDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\DialogUserControl\Standart\TableWithSearch.xaml">
       <SubType>Designer</SubType>

@@ -138,8 +138,7 @@ namespace Core.Invoices.EntityViewModel
             new ObservableCollection<WarehouseOrderInRow>();
 
         public override string Name =>
-            $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {DocDate.ToShortDateString()} " +
-            $"{Note}";
+            $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {DocDate.ToShortDateString()} на {Summa:n2} {Currency}";
 
         public override string Description =>
             $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {DocDate.ToShortDateString()} " +

@@ -12,9 +12,9 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
     [MetadataType(typeof(DataAnnotationsInvoiceProviderHead))]
     public class InvoiceProviderHead : InvoicePostQuery, INotifyPropertyChanged
     {
-        private bool myIsSelected;
+        private bool? myIsSelected;
 
-        public bool IsSelected
+        public bool? IsSelected
         {
             get => myIsSelected;
             set
@@ -68,7 +68,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

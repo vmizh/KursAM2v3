@@ -109,7 +109,7 @@ namespace Core.EntityViewModel.Invoices
             DeletedRows = new List<InvoiceClientRow>();
             Rows = new ObservableCollection<InvoiceClientRow>();
             ShipmentRows = new ObservableCollection<ShipmentRowViewModel>();
-            Rows.CollectionChanged += (x, y) => State = RowStatus.Edited;
+            Rows.CollectionChanged += (_, _) => State = RowStatus.Edited;
         }
 
         public InvoiceClient(SD_84 entity)
@@ -320,14 +320,13 @@ namespace Core.EntityViewModel.Invoices
 
         public override string Description => Entity != null
             ? $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +
-              $"от {Entity.SF_DATE.ToShortDateString()} {Client} {Summa} {Currency} {Note} "
+              $"от {Entity.SF_DATE.ToShortDateString()} {Client} {Summa:n2} {Currency}"
             : null;
 
         public override string Name
             => Entity.DOC_CODE > 0
                 ? $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +
-                  $"от {Entity.SF_DATE.ToShortDateString()} {Summa} {Currency} {Note}"
-                : null;
+                  $"от {Entity.SF_DATE.ToShortDateString()} {Summa:n2} {Currency}" : null;
 
         public int InnerNumber
         {

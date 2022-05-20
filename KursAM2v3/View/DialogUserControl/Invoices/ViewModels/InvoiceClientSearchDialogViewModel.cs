@@ -200,6 +200,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 InvoiceClientSearchType.OneKontragent
                     ? $" ClientDC = {CustomFormat.DecimalToSqlDecimal(KontragentDC)}"
                     : null;
+            var OnlyAccepted = (loadType & InvoiceClientSearchType.OnlyAccepted) ==InvoiceClientSearchType.OnlyAccepted ?
+                    $"IsAccepted = 1" : null;
             try
             {
                 if (!isExistContext)
@@ -209,7 +211,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                     sqlBase += " WHERE " + (DataRange != null ? DataRange + " AND " : null) +
                                (NotPay != null ? NotPay + " AND " : null) +
                                (NotShipped != null ? NotShipped + " AND " : null) +
-                               (OneKontragent != null ? OneKontragent + " AND " : null);
+                               (OneKontragent != null ? OneKontragent + " AND " : null) + 
+                               (OnlyAccepted != null ? OnlyAccepted + " AND " : null);
                     sqlBase = sqlBase.Remove(sqlBase.Length - 4, 4);
                 }
 

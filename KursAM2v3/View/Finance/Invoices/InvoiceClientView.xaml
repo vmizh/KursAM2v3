@@ -12,7 +12,7 @@
                  xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=Core"
                  mc:Ignorable="d"
                  Icon="{Binding Source={StaticResource InvoiceClientDrawingImage},
-             Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
+                 Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
                  Title="{Binding WindowName}" MinHeight="400" Width="800">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"

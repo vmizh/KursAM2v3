@@ -36,7 +36,8 @@
             CurrentItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
             SelectedItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
             SelectedItems="{Binding SelectedDocuments, UpdateSourceTrigger=PropertyChanged}"
-            CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
+            CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
+            AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn">
             <dxg:GridControl.View>
                 <dxg:TableView
                     Name="gridDocumentsTableView"

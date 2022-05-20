@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -10,6 +11,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -23,6 +25,7 @@ using KursAM2.Managers.Invoices;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.ReportManagers.SFClientAndWayBill;
 using KursAM2.View.DialogUserControl.Invoices.ViewModels;
+using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management.Calculations;
@@ -30,6 +33,8 @@ using Reports.Base;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
     public class WaybillWindowViewModel2 : RSWindowViewModelBase
     {
         #region Constructors
@@ -70,9 +75,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     {
                         State = RowStatus.NewRow
                     };
+                var sf = LoadSFInfo();
                 if (Document.State == RowStatus.NotEdited)
                     foreach (var r in Document.Rows)
+                    {
+                        r.InvoiceClient = sf.FirstOrDefault(_ => r.DDT_SFACT_DC == _.DocCode);
                         r.myState = RowStatus.NotEdited;
+                    }
             }
             else
             {
@@ -115,6 +124,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 ? "Расходная накладная(новая)"
                 : $"Расходная накладня №{Document?.DD_IN_NUM} от {Document?.Date.ToShortDateString()} для {Document?.Client}";
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public ObservableCollection<string> ByWhomLicoList { set; get; } = new ObservableCollection<string>();
 
         public List<Core.EntityViewModel.NomenklManagement.Warehouse> Sklads =>
@@ -252,7 +262,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         Document.DeletedRows.Clear();
                         foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
                         Document.myState = RowStatus.NotEdited;
-                        foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
+                        var sf = LoadSFInfo();
+                        if (Document.State == RowStatus.NotEdited)
+                            foreach (var r in Document.Rows)
+                            {
+                                r.InvoiceClient = sf.FirstOrDefault(_ => r.DDT_SFACT_DC == _.DocCode);
+                                r.myState = RowStatus.NotEdited;
+                            }
                         Document.RaisePropertyAllChanged();
                         break;
                 }
@@ -605,15 +621,21 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public void SelectSchet(object obj)
         {
             InvoiceClientSearchType loadType = InvoiceClientSearchType.NotShipped;
+            loadType |= InvoiceClientSearchType.OnlyAccepted;
             if (Document.Client != null) loadType |= InvoiceClientSearchType.OneKontragent;
             var dtx = new InvoiceClientSearchDialogViewModel(true, true, loadType, UnitOfWork.Context)
-            {
+            { 
+                WindowName = "Выбор счетов фактур",
                 KontragentDC = Document.Client?.DocCode
             };
             dtx.RefreshData(null);
-            var service = GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(MessageButton.OKCancel, "Выбор счетов фактур", dtx) == MessageResult.OK
-                || dtx.DialogResult == MessageResult.OK)
+            var dialog = new RSDialogView
+            {
+                DataContext = dtx,
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+            if (dtx.DialogResult == MessageResult.OK)
             {
                 if (Document.Client == null && dtx.SelectedItems.Count > 0)
                 {
@@ -624,6 +646,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
                 if (Document.Client != null && dtx.SelectedItems.Count > 0)
                 {
+                    Document.InvoiceClient = InvoicesManager.GetInvoiceClient(dtx.SelectedItems.First().DocCode);
+                    Document.Client = Document.InvoiceClient.Client;
                     var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                     foreach (var item in dtx.SelectedItems)
                     {
@@ -645,108 +669,28 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         {
                             var newItem = new WaybillRow
                             {
-                                DocCode = -1,
+                                DocCode = Document.DocCode,
                                 Code = newCode,
                                 Id = Guid.NewGuid(),
                                 DocId = Document.Id,
                                 DDT_SFACT_DC = item.DocCode,
                                 DDT_SFACT_ROW_CODE = item.RowCode,
                                 Nomenkl = n,
-                                DDT_KOL_PRIHOD = 1,
+                                DDT_KOL_RASHOD = (item.Quantity ?? 0) <= m ? item.Quantity ?? 0 : m,
                                 Unit = n.Unit,
                                 Currency = n.Currency,
-                                State = RowStatus.NewRow
+                                InvoiceClient = Document.InvoiceClient,
+                                State = RowStatus.NewRow,
                             };
                             Document.Rows.Add(newItem);
                             Document.Entity.TD_24.Add(newItem.Entity);
                         }
+
+                        newCode++;
                     }
                 }
             }
         }
-
-        //public void SelectSchet(object obj)
-        //{
-        //var inv = StandartDialogs.SelectInvoiceClient(Document);
-
-        //    if (inv != null)
-        //    {
-        //        Document.InvoiceClient = inv;
-        //        Document.Client = inv.Client;
-        //        using (var ctx = GlobalOptions.GetEntities())
-        //        {
-        //            var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
-        //            foreach (var r in inv.Rows)
-        //            {
-        //                var oldf = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Entity.SFT_NEMENKL_DC);
-        //                if (oldf != null)
-        //                {
-        //                    if (oldf.DDT_SFACT_DC == r.DocCode && oldf.DDT_SFACT_ROW_CODE == r.Code)
-        //                        oldf.DDT_KOL_RASHOD = r.Quantity;
-        //                    continue;
-        //                }
-
-        //                var otgr = ctx.TD_24.Where(_ => _.DDT_SFACT_DC == r.DocCode
-        //                                                && _.DDT_SFACT_ROW_CODE == r.Code);
-        //                if (otgr.Any())
-        //                {
-        //                    var kol = otgr.Sum(_ => _.DDT_KOL_RASHOD);
-        //                    if (kol < r.Quantity)
-        //                    {
-        //                        var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-        //                        var newItem = new WaybillRow
-        //                        {
-        //                            DocCode = Document.DocCode,
-        //                            Code = newCode,
-        //                            Nomenkl = n,
-        //                            DDT_KOL_RASHOD = r.Quantity - kol,
-        //                            Unit = n.Unit,
-        //                            Currency = n.Currency,
-        //                            SchetLinkedRow = r,
-        //                            State = RowStatus.NewRow,
-        //                            DDT_SFACT_DC = r.DocCode,
-        //                            DDT_SFACT_ROW_CODE = r.Code
-        //                        };
-        //                        Document.Rows.Add(newItem);
-        //                        Document.Entity.TD_24.Add(newItem.Entity);
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-        //                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DOC_CODE,
-        //                        Document.Date, Document.Date);
-        //                    var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
-        //                    if (m <= 0)
-        //                    {
-        //                        winManager.ShowWinUIMessageBox(
-        //                            $"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
-        //                            $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
-        //                            $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
-        //                            "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-        //                        continue;
-        //                    }
-
-        //                    var newItem = new WaybillRow
-        //                    {
-        //                        DocCode = Document.DocCode,
-        //                        Code = newCode,
-        //                        Nomenkl = n,
-        //                        DDT_KOL_RASHOD = r.Quantity,
-        //                        Unit = n.Unit,
-        //                        Currency = n.Currency,
-        //                        SchetLinkedRow = r,
-        //                        State = RowStatus.NewRow,
-        //                        DDT_SFACT_DC = r.DocCode,
-        //                        DDT_SFACT_ROW_CODE = r.Code
-        //                    };
-        //                    Document.Rows.Add(newItem);
-        //                    Document.Entity.TD_24.Add(newItem.Entity);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
 
         public Command ExportCommand
         {
@@ -799,6 +743,20 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                                     "WHERE DD_KOMU_PEREDANO IS NOT null")
                          .ToList())
                 ByWhomLicoList.Add(item);
+        }
+
+        private List<InvoiceClient> LoadSFInfo()
+        {
+            var sfDCs = Document.Rows.Select(_ => _.DDT_SFACT_DC).Distinct();
+            var res = new List<InvoiceClient>();
+            foreach (var dc in sfDCs)
+            {
+                var d = UnitOfWork.Context.SD_84.SingleOrDefault(_ => _.DOC_CODE == dc);
+                if(d != null)
+                    res.Add(new InvoiceClient(d, UnitOfWork));
+            }
+
+            return res;
         }
 
         #endregion
