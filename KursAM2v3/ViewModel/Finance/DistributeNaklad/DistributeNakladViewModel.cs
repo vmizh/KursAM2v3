@@ -44,7 +44,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         public DistributeNakladViewModel(Window parentForm, IDocumentOpenType docOpenType) : this()
         {
-            ParentFormViewModel = parentForm.DataContext as RSWindowViewModelBase;
+            ParentFormViewModel = parentForm?.DataContext as RSWindowViewModelBase;
             if (docOpenType.Id == null)
             {
                 Entity = DistributeNakladRepository.CreateNew();
@@ -55,7 +55,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             switch (docOpenType.OpenType)
             {
                 case DocumentCreateTypeEnum.Open:
-                    //Entity = DistributeNakladRepository.GetById((Guid)docOpenType.Id);
                     // ReSharper disable once VirtualMemberCallInConstructor
                     Load(docOpenType.Id);
                     myState = RowStatus.NotEdited;
@@ -71,7 +70,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
-        private DistributeNakladViewModel()
+        public DistributeNakladViewModel()
         {
             BaseRepository = new GenericKursDBRepository<Data.DistributeNaklad>(unitOfWork);
             DistributeNakladRepository = new DistributeNakladRepository(unitOfWork);

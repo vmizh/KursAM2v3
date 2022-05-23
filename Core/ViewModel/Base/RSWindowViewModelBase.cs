@@ -400,7 +400,7 @@ namespace Core.ViewModel.Base
         }
 
 #pragma warning disable 1998
-        public virtual async void RefreshData(object obj)
+        public virtual void RefreshData(object obj)
 #pragma warning restore 1998
         {
             MainReferences.Refresh();

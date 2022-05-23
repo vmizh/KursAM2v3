@@ -31,7 +31,7 @@ namespace KursAM2.ViewModel.Logistiks
         {
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            IsShowAll = false;
+            IsShowAll = true;
         }
 
         public NomenklMoveOnSkladWindowViewModel(Window form) : base(form)
@@ -39,6 +39,7 @@ namespace KursAM2.ViewModel.Logistiks
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             StartDate = DateTime.Today;
+            IsShowAll = true;
             LoadReferences();
         }
 
@@ -111,6 +112,7 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 if (myCurrentSklad != null && myCurrentSklad.Equals(value)) return;
                 myCurrentSklad = value;
+                IsShowAll = myCurrentSklad == null;
                 NomenklMoveList.Clear();
                 RaisePropertyChanged(nameof(NomenklMoveList));
                 //RefreshData(null);

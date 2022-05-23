@@ -19,7 +19,7 @@
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
-    <DockPanel Style="{StaticResource DXServices}">
+    <DockPanel Style="{DynamicResource DXServices}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />
         <dxlc:DataLayoutControl DockPanel.Dock="Top"
                                 Name="dataLayoutControlHeader"

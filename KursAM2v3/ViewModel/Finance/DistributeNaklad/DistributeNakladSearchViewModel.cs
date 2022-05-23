@@ -159,7 +159,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 Owner = Application.Current.MainWindow
 
             };
-            var dtx = new DistributeNakladViewModel(Form, new DocumentOpenType
+            var dtx = new DistributeNakladViewModel(null, new DocumentOpenType
             {
                 OpenType = DocumentCreateTypeEnum.New,
                 })
