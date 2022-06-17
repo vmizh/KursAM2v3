@@ -19,11 +19,11 @@ namespace KursAM2.View.Management
         public KontragentBalansForm()
         {
             InitializeComponent();
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            //LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             myKontragentLookUpLayoutName =
                 $"{Environment.CurrentDirectory}\\Layout\\KontragentLookUpEdit.{Guid.NewGuid()}.xml";
-            Loaded += KontragentBalansForm_Loaded;
-            Closing += KontragentBalansForm_Closing;
+            //Loaded += KontragentBalansForm_Loaded;
+            //Closing += KontragentBalansForm_Closing;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
@@ -36,6 +36,8 @@ namespace KursAM2.View.Management
         private void KontragentBalansForm_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
+            treePeriods.SelectionMode = MultiSelectMode.None;
+            KontrOperGrid.SelectionMode = MultiSelectMode.None;
             var ctx = DataContext as KontragentBalansWindowViewModel;
             if (ctx?.StartKontragent != null)
                 ctx.Kontragent = ctx.Kontragents.Single(_ => _.DOC_CODE == ctx.StartKontragent.DOC_CODE);

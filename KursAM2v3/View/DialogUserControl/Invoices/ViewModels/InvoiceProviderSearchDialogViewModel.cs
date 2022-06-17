@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Core;
+using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -23,11 +24,11 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         private InvoiceProviderHead myCurrent;
         private ICurrentWindowService winCurrentService;
         private Visibility myPositionVisibility;
-        private string sqlBase = @"SELECT  *
-                                                FROM InvoicePostQuery p  ";
+        private string sqlBase = @"SELECT * FROM InvoicePostQuery p (NOLOCK) ";
         private bool myIsAllowPositionSelected;
         private InvoiceProviderRow myCurrentSelectedItem;
         private InvoiceProviderRow myCurrentPosition;
+        public Currency myCurrency;
 
         #endregion
 
@@ -46,10 +47,10 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             this.loadType = loadType;
             IsAllowPositionSelected = isAllowPosition;
             IsAllowMultipleSchet = isAllowMultipleSchet;
-            if (isAllowPosition)
-                CustomDataUserControl = new InvoiceListSearchMultipleView();
-            else CustomDataUserControl = new InvoiceListSearchView();
-            LayoutName = isAllowPosition ? "InvoiceProviderListSearchMultipleView2" : "InvoiceProviderListSearchView2";
+            //if (isAllowPosition)
+            //    CustomDataUserControl = new InvoiceListSearchMultipleView();
+            //else CustomDataUserControl = new InvoiceListSearchView();
+            //LayoutName = isAllowPosition ? "InvoiceProviderListSearchMultipleView3" : "InvoiceProviderListSearchView3";
         }
 
        #endregion
@@ -216,6 +217,11 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 InvoiceProviderSearchType.OnlyNakladDistrubuted
                     ? " IsInvoiceNakladId = 1 AND round(Summa,2) - round(NakladDistributedSumma,2) != 0 "
                     : null;
+            var currency = ((loadType & InvoiceProviderSearchType.IsCurrencyUsed) ==
+                            InvoiceProviderSearchType.IsCurrencyUsed
+                            && myCurrency != null)
+                ? $" CurrencyDC = {CustomFormat.DecimalToSqlDecimal(myCurrency.DocCode)} "
+                : null;
             var RemoveNaklad =
                 (loadType & InvoiceProviderSearchType.RemoveNakladRashod) ==
                 InvoiceProviderSearchType.RemoveNakladRashod
@@ -236,13 +242,18 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                                + (NotShipped != null ? NotShipped + andString : null)
                                + (OneKontragent != null ? OneKontragent + andString: null)
                                + (OnlyDistribute != null ? OnlyDistribute + andString : null)
-                               + (RemoveNaklad != null ? RemoveNaklad + andString : null);
+                               + (RemoveNaklad != null ? RemoveNaklad + andString : null)
+                               + (currency != null ? currency + andString : null);
                     sqlBase = sqlBase.Remove(sqlBase.Length - andString.Length, andString.Length);
                 }
 
                 Data.Clear();
-                // ReSharper disable once PossibleNullReferenceException
-                Data = context.Database.SqlQuery<InvoicePostQuery>(sqlBase).ToList();
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    // ReSharper disable once PossibleNullReferenceException
+                    Data = ctx.Database.SqlQuery<InvoicePostQuery>(sqlBase).ToList();
+                }
+
                 foreach (var d in Data)
                 {
                     if (ItemsCollection.Any(_ => _.DocCode == d.DocCode)) continue;

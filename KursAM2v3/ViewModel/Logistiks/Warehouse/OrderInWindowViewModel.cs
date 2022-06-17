@@ -23,6 +23,7 @@ using KursAM2.ReportManagers;
 using KursAM2.Repositories;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl.Invoices.ViewModels;
+using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.View.Logistiks.Warehouse;
@@ -173,107 +174,67 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     MessageBoxImage.Error);
                 return;
             }
+
             InvoiceProviderSearchType loadType = InvoiceProviderSearchType.NotShipped;
-            if (Document.KontragentSender != null) loadType |= InvoiceProviderSearchType.OneKontragent;
-            var dtx = new InvoiceProviderSearchDialogViewModel(true, true, loadType, UnitOfWork.Context)
+            var dtx = new InvoiceProviderSearchDialogViewModel(false, true, loadType, UnitOfWork.Context)
             {
-                KontragentDC = Document.KontragentSender?.DocCode
+                WindowName = "Выбор счетов фактур",
+                LayoutName = "InvoiceProviderSearchMulti"
             };
             dtx.RefreshData(null);
-            var service = GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(MessageButton.OKCancel, "Выбор счетов фактур", dtx) == MessageResult.OK
-                || dtx.DialogResult == MessageResult.OK)
+            var dialog = new SelectInvoiceMultipleDialogViw
             {
-                if (dtx.SelectedItems.Count > 0)
-                {
-                    using (var dbctx = GlobalOptions.GetEntities())
-                    {
-                        if(Document.KontragentSender == null)
-                            Document.KontragentSender = MainReferences.GetKontragent(dtx.SelectedItems.First().PostDC);
-                        foreach (var row in dtx.SelectedItems)
-                        {
-                            var old = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == row.NomenklDC);
-                            if (old != null) continue;
-                            var invRow = dbctx.TD_26
-                                .Include(_ => _.SD_26).FirstOrDefault(_ => _.DOC_CODE == row.DocCode && _.CODE == row.CODE);
-                            var schetRow = invRow != null ? new InvoiceProviderRow(invRow) : null;
-                            var nom = MainReferences.GetNomenkl(row.NomenklDC);
-                            Document.Rows.Add(new WarehouseOrderInRow
-                            {
-                                DocCode = -1,
-                                Nomenkl = nom,
-                                DDT_KOL_PRIHOD = row.Quantity,
-                                Unit = nom.Unit,
-                                DDT_SPOST_DC = row.DocCode,
-                                LinkInvoice = schetRow,
-                                DDT_SPOST_ROW_CODE = row.CODE,
-                                DDT_CRS_DC =nom.Currency.DocCode,
-                                State = RowStatus.NewRow
-                            });
-                        }
-                    }
+                DataContext = dtx,
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
 
-                    if (Document.Entity.DD_SPOST_DC == null)
+            if (dtx.SelectedItems.Count > 0)
+            {
+                using (var dbctx = GlobalOptions.GetEntities())
+                {
+                    if (Document.KontragentSender == null)
+                        Document.KontragentSender = MainReferences.GetKontragent(dtx.SelectedItems.First().PostDC);
+                    foreach (var row in dtx.SelectedItems)
                     {
-                        var dc = dtx.SelectedItems.First().DocCode;
-                        using (var context = GlobalOptions.GetEntities())
+                        var old = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == row.NomenklDC);
+                        if (old != null) continue;
+                        var invRow = dbctx.TD_26
+                            .Include(_ => _.SD_26).FirstOrDefault(_ => _.DOC_CODE == row.DocCode && _.CODE == row.CODE);
+                        var schetRow = invRow != null ? new InvoiceProviderRow(invRow) : null;
+                        var nom = MainReferences.GetNomenkl(row.NomenklDC);
+                        Document.Rows.Add(new WarehouseOrderInRow
                         {
-                            var s26 = context.SD_26.FirstOrDefault(_ => _.DOC_CODE == dc);
-                            if (s26 != null)
-                            {
-                                Document.DD_SCHET =
-                                    $"№{s26.SF_POSTAV_NUM}/{s26.SF_IN_NUM} " +
-                                    $"от {s26.SF_POSTAV_DATE.ToShortDateString()} ";
-                                Document.Entity.DD_SPOST_DC = dtx.SelectedItems.First().DocCode;
-                            }
+                            DocCode = -1,
+                            Nomenkl = nom,
+                            DDT_KOL_PRIHOD = row.Quantity,
+                            Unit = nom.Unit,
+                            DDT_SPOST_DC = row.DocCode,
+                            LinkInvoice = schetRow,
+                            DDT_SPOST_ROW_CODE = row.CODE,
+                            DDT_CRS_DC = nom.Currency.DocCode,
+                            State = RowStatus.NewRow
+                        });
+                    }
+                }
+
+                if (Document.Entity.DD_SPOST_DC == null)
+                {
+                    var dc = dtx.SelectedItems.First().DocCode;
+                    using (var context = GlobalOptions.GetEntities())
+                    {
+                        var s26 = context.SD_26.FirstOrDefault(_ => _.DOC_CODE == dc);
+                        if (s26 != null)
+                        {
+                            Document.DD_SCHET =
+                                $"№{s26.SF_POSTAV_NUM}/{s26.SF_IN_NUM} " +
+                                $"от {s26.SF_POSTAV_DATE.ToShortDateString()} ";
+                            Document.Entity.DD_SPOST_DC = dtx.SelectedItems.First().DocCode;
                         }
                     }
                 }
             }
 
-            //var ctx = new AddNomenklFromInvoiceProviderViewModel(Document.WarehouseIn,
-            //    Document.KontragentSender);
-            //var dlg = new SelectDialogView {DataContext = ctx};
-            //ctx.Form = dlg;
-            //if (dlg.ShowDialog() == false) return;
-            //if (Document.KontragentSender == null) Document.KontragentSender = ctx.CurrentInvoice.Kontragent;
-
-            //using (var dbctx = GlobalOptions.GetEntities())
-            //{
-            //    foreach (var r in ctx.Nomenkls.Where(_ => _.IsChecked && _.Quantity > 0).ToList())
-            //    {
-            //        var old = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Nomenkl.DocCode);
-            //        if (old != null) continue;
-            //        var invRow = dbctx.TD_26
-            //            .Include(_ => _.SD_26).FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.Code);
-            //        var schetRow = invRow != null ? new InvoiceProviderRow(invRow) : null;
-            //        Document.Rows.Add(new WarehouseOrderInRow
-            //        {
-            //            DocCode = -1,
-            //            Nomenkl = r.Nomenkl,
-            //            DDT_KOL_PRIHOD = r.Quantity,
-            //            Unit = r.Nomenkl.Unit,
-            //            DDT_SPOST_DC = r.DocCode,
-            //            LinkInvoice = schetRow,
-            //            DDT_SPOST_ROW_CODE = r.Code,
-            //            DDT_CRS_DC = r.Nomenkl.Currency.DocCode,
-            //            State = RowStatus.NewRow
-            //        });
-            //    }
-            //}
-
-            //if (Document.Entity.DD_SPOST_DC == null)
-            //    using (var context = GlobalOptions.GetEntities())
-            //    {
-            //        var s26 = context.SD_26.FirstOrDefault(_ => _.DOC_CODE == ctx.CurrentInvoice.DocCode);
-            //        if (s26 != null)
-            //        {
-            //            Document.DD_SCHET =
-            //                $"№{s26.SF_POSTAV_NUM}/{s26.SF_IN_NUM} " +
-            //                $"от {s26.SF_POSTAV_DATE.ToShortDateString()} ";
-            //            Document.Entity.DD_SPOST_DC = ctx.CurrentInvoice.DocCode;
-            //        }
-            //    }
         }
 
         public ICommand DeleteLinkSchetCommand

@@ -113,7 +113,10 @@ namespace Core.EntityViewModel.CommonReferences
 
         //Ведомости начислений акционерам
         [Display(Name = "Ведомости начислений акционерам")]
-        StockHolderAccrual = 79
+        StockHolderAccrual = 79,
+
+        [Display(Name = "Распределение накладных расходов")]
+        Naklad = 1005
 
 
     }

@@ -42,6 +42,8 @@ namespace KursAM2.ViewModel.Management
             }
         }
 
+        public override string LayoutName => "KontragentBalansFormNew";
+
         public KontragentBalansWindowViewModel(decimal doccode) : this()
         {
             StartKontragent = Kontragents.Single(_ => _.DOC_CODE == doccode);
@@ -192,6 +194,13 @@ namespace KursAM2.ViewModel.Management
             RaisePropertyChanged(nameof(Periods));
         }
 
+        protected override void OnWindowLoaded(object obj)
+        {
+            if (IsLayoutLoaded) return;
+            if (LayoutManager == null) OnLayoutInitial(null);
+            LayoutManager.Load();
+        }
+
         public void LoadOperations(decimal doccode)
         {
             Load(doccode);
@@ -208,11 +217,6 @@ namespace KursAM2.ViewModel.Management
                         throw new Exception($"Контрагент {dc} не найден. RecalcKontragentBalans.CalcBalans");
                     RecalcKontragentBalans.CalcBalans(dc,
                         MainReferences.GetKontragent(dc).START_BALANS ?? new DateTime(2000, 1, 1));
-                    //var data =
-                    //    ent.KONTR_BALANS_OPER_ARC.AsNoTracking()
-                    //        .Where(_ => _.KONTR_DC == dc)
-                    //        .OrderBy(_ => _.DOC_DATE)
-                    //        .ToList();
                     var sql = "SELECT DOC_NAME as DocName, " +
                               "ISNULL(CONVERT(VARCHAR, td_101.CODE), DOC_NUM) AS DocNum, " +
                               "DOC_DATE as DocDate, " +

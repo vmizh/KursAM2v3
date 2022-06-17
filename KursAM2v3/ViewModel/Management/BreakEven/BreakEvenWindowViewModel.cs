@@ -424,6 +424,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                     n.Naklad += Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval) < 0
                         ? 0
                         : Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval);
+
                 }
                 else
                 {
@@ -438,7 +439,8 @@ namespace KursAM2.ViewModel.Management.BreakEven
                         CostWOReval = Math.Round(row.NomenklSumWOReval, 2),
                         Naklad = Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval) < 0
                             ? 0
-                            : Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval)
+                            : Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval),
+                        CurrencyName = row.OperCrsName
                     });
                 }
                 var k = myTempKontrGroups.FirstOrDefault(t => t.Name == row.Kontragent);
@@ -462,7 +464,8 @@ namespace KursAM2.ViewModel.Management.BreakEven
                         Summa = Math.Round(row.KontrSummaCrs, 2),
                         Cost = Math.Round(row.SummaNomenklCrs, 2),
                         CostWOReval = Math.Round(row.NomenklSumWOReval, 2),
-                        Naklad = Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval)
+                        Naklad = Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval),
+                        CurrencyName = row.OperCrsName
                     });
                 }
                 var c = myTempCoGroups.FirstOrDefault(t => t.Name == row.CentrOfResponsibility.Name);
@@ -485,7 +488,8 @@ namespace KursAM2.ViewModel.Management.BreakEven
                         DilerSumma = Math.Round(row.DilerSumma, 2),
                         Cost = Math.Round(row.SummaNomenklCrs, 2),
                         CostWOReval = Math.Round(row.NomenklSumWOReval, 2),
-                        Naklad = Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval)
+                        Naklad = Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval),
+                        CurrencyName = row.OperCrsName
                     });
                 }
                 var m = myTempManagerGroups.FirstOrDefault(t => t.Name == row.Manager);
@@ -508,7 +512,8 @@ namespace KursAM2.ViewModel.Management.BreakEven
                         DilerSumma = Math.Round(row.DilerSumma, 2),
                         Cost = Math.Round(row.SummaNomenklCrs, 2),
                         CostWOReval = Math.Round(row.NomenklSumWOReval, 2),
-                        Naklad = Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval)
+                        Naklad = Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval),
+                        CurrencyName = row.OperCrsName
                     });
                 }
             }
@@ -545,6 +550,9 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 item.Result = Math.Round(item.Summa - item.Cost - item.DilerSumma, 2);
                 item.ResultWOReval = Math.Round(item.Summa - item.CostWOReval - item.DilerSumma, 2);
                 item.Price = Math.Round(item.Summa / item.Quantity, 2);
+                item.CostOne = item.Cost / item.Quantity;
+                item.CostWORevalOne = item.CostWOReval / item.Quantity;
+                item.NakladOne = item.Naklad / item.Quantity;
             }
             NomenklGroups.Clear();
             foreach (var d in myTempNomenklGroups)

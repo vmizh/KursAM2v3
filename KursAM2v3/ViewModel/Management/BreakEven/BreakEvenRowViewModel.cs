@@ -38,6 +38,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
         [OptionalField] private string mySchetField;
         [OptionalField] private decimal mySummaNomenklCrsField;
         [OptionalField] private decimal mySummaNomenklField;
+        [OptionalField] private string myCurrency;
 
         [DataMember]
         public decimal DocDC
@@ -123,6 +124,18 @@ namespace KursAM2.ViewModel.Management.BreakEven
             {
                 if (myIsUslugaField.Equals(value)) return;
                 myIsUslugaField = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        [DataMember]
+        public string Currency
+        {
+            get => myCurrency;
+            set
+            {
+                if (myCurrency == value) return;
+                myCurrency = value;
                 RaisePropertyChanged();
             }
         }
@@ -362,6 +375,14 @@ namespace KursAM2.ViewModel.Management.BreakEven
         public decimal Naklad { set; get; }
 
         [GridColumnSummary(SummaryItemType.Sum, "n2")]
+        [GridColumnView("Себестоимость(ед)", SettingsType.Decimal, ReadOnly = true)]
+        public decimal CostOne { set; get; }
+
+        [GridColumnSummary(SummaryItemType.Sum, "n2")]
+        [GridColumnView("Себестоимость с накладными(ед)", SettingsType.Decimal, ReadOnly = true)]
+        public decimal NakladOne { set; get; }
+
+        [GridColumnSummary(SummaryItemType.Sum, "n2")]
         [GridColumnView("Дилерские", SettingsType.Decimal, ReadOnly = true)]
         public decimal DilerSumma { set; get; }
 
@@ -384,9 +405,16 @@ namespace KursAM2.ViewModel.Management.BreakEven
         public decimal CostWOReval { set; get; }
 
         [GridColumnSummary(SummaryItemType.Sum, "n2")]
+        [GridColumnView("Себестоимость(факт)", SettingsType.Decimal, ReadOnly = true)]
+        // ReSharper disable once InconsistentNaming
+        public decimal CostWORevalOne { set; get; }
+
+        [GridColumnSummary(SummaryItemType.Sum, "n2")]
         [GridColumnView("Результат (факт)", SettingsType.Decimal, ReadOnly = true)]
         // ReSharper disable once InconsistentNaming
         public decimal ResultWOReval { set; get; }
+        public decimal Currency { set; get; }
+        public string CurrencyName { set; get; }
     }
 
     #endregion
@@ -398,6 +426,10 @@ namespace KursAM2.ViewModel.Management.BreakEven
     {
         public DocumentType DocType { set; get; }
         public decimal DocCode { set; get; }
+
+        [GridColumnView("Валюта", SettingsType.Default, ReadOnly = true)]
+        [DataMember]
+        public string Currency { set; get; }
 
         [GridColumnView("Услуга", SettingsType.Default, ReadOnly = true)]
         [DataMember]

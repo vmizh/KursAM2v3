@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using Core;
+using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
@@ -11,6 +12,7 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.POCO;
 using Helper;
+using KursAM2.Managers;
 using KursAM2.Repositories;
 using KursAM2.View.Finance.DistributeNaklad;
 
@@ -172,27 +174,29 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         
         public override void DocumentOpen(object obj)
         {
-            var dsForm = new DistributedNakladView
-            {
-                Owner = Application.Current.MainWindow
-            };
-            var dtx = new DistributeNakladViewModel(Form, new DocumentOpenType
-            {
-                Id = CurrentDocument.Id,
-                OpenType = DocumentCreateTypeEnum.Open,
-            })
-            {
-                Form = dsForm
-            };
-            dsForm.DataContext = dtx; 
+            DocumentsOpenManager.Open(DocumentType.Naklad, 0, CurrentDocument.Id);
+
+            //var dsForm = new DistributedNakladView
+            //{
+            //    Owner = Application.Current.MainWindow
+            //};
+            //var dtx = new DistributeNakladViewModel(Form, new DocumentOpenType
+            //{
+            //    Id = CurrentDocument.Id,
+            //    OpenType = DocumentCreateTypeEnum.Open,
+            //})
+            //{
+            //    Form = dsForm
+            //};
+            //dsForm.DataContext = dtx; 
             
-            foreach (var t in dtx.Tovars)
-            {
-                t.State = RowStatus.NotEdited;
-            }
+            //foreach (var t in dtx.Tovars)
+            //{
+            //    t.State = RowStatus.NotEdited;
+            //}
             
-            dsForm.Show();
-            dtx.myState = RowStatus.NotEdited;
+            //dsForm.Show();
+            //dtx.myState = RowStatus.NotEdited;
         }
 
         public override bool CanSave()

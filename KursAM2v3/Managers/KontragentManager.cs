@@ -93,7 +93,7 @@ namespace KursAM2.Managers
                                              && _.UserId == GlobalOptions.UserInfo.KursId);
                     if (k != null)
                     {
-                        k.Count = k.Count + 1;
+                        k.Count += 1;
                         k.LastUpdate = DateTime.Now;
                     }
                     else

@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using Core;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
@@ -22,6 +23,7 @@ using KursAM2.View.Dogovors;
 using KursAM2.View.Finance;
 using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Finance.Cash;
+using KursAM2.View.Finance.DistributeNaklad;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.KursReferences;
 using KursAM2.View.Logistiks;
@@ -33,6 +35,7 @@ using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.AccruedAmount;
 using KursAM2.ViewModel.Finance.Cash;
+using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Logistiks.AktSpisaniya;
@@ -40,6 +43,7 @@ using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.StockHolder;
+using Application = System.Windows.Application;
 
 namespace KursAM2.Managers
 {
@@ -74,6 +78,7 @@ namespace KursAM2.Managers
                 case DocumentType.AccruedAmountOfSupplier:
                 case DocumentType.DogovorOfSupplier:
                 case DocumentType.StockHolderAccrual:
+                case DocumentType.Naklad:
                     return true;
                 default:
                     return false;
@@ -179,6 +184,12 @@ namespace KursAM2.Managers
             if (!IsDocumentOpen(docType)) return;
             switch (docType)
             {
+                case DocumentType.Naklad:
+                    var nakl = OpenNakladDistribute(id);
+                    SaveLastOpenInfo(docType, nakl.Id, null, nakl.Creator,
+                        "", nakl.Description);
+                    break;
+
                 case DocumentType.StockHolderAccrual:
                     var accr = OpenStockHolderAccrual(id);
                     SaveLastOpenInfo(docType, accr.Document.Id, null, accr.Document.Creator,
@@ -275,6 +286,31 @@ namespace KursAM2.Managers
                     WindowManager.ShowFunctionNotReleased();
                     return;
             }
+        }
+
+        private static DistributeNakladViewModel OpenNakladDistribute(Guid? id)
+        {
+            var dsForm = new DistributedNakladView
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var dtx = new DistributeNakladViewModel(null, new DocumentOpenType
+            {
+                Id = id,
+                OpenType = DocumentCreateTypeEnum.Open,
+            })
+            {
+                Form = dsForm
+            };
+            dsForm.DataContext = dtx; 
+            
+            foreach (var t in dtx.Tovars)
+            {
+                t.State = RowStatus.NotEdited;
+            }
+            dsForm.Show();
+            dtx.myState = RowStatus.NotEdited;
+            return dtx;
         }
 
         private static DogovorOfSupplierWindowViewModel OpenDogovorOfSupplier(Guid? id, object parent)

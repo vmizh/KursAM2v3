@@ -363,9 +363,15 @@ namespace KursAM2.View
                         ctxdog.Form.Show();
                         break;
                     case "Лицевые счета контрагентов":
-                        var ctxk = new KontragentBalansWindowViewModel();
-                        form = new KontragentBalansForm { Owner = Application.Current.MainWindow, DataContext = ctxk };
-                        ctxk.Form = form;
+                        form = new KontragentBalansForm
+                        {
+                            Owner = Application.Current.MainWindow, 
+                        };
+                        var ctxk = new KontragentBalansWindowViewModel
+                        {
+                            Form = form,
+                        };
+                        form.DataContext = ctxk;
                         form.Show();
                         break;
                     case "  Рентабельность":

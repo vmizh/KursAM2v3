@@ -60,11 +60,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     myState = RowStatus.NotEdited;
                     break;
                 case DocumentCreateTypeEnum.Copy:
-                    Entity = DistributeNakladRepository.CreateCopy((Guid)docOpenType.Id);
+                    Entity = DistributeNakladRepository.CreateCopy((Guid) docOpenType.Id);
                     State = RowStatus.NewRow;
                     break;
                 case DocumentCreateTypeEnum.RequisiteCopy:
-                    Entity = DistributeNakladRepository.CreateRequisiteCopy((Guid)docOpenType.Id);
+                    Entity = DistributeNakladRepository.CreateRequisiteCopy((Guid) docOpenType.Id);
                     State = RowStatus.NewRow;
                     break;
             }
@@ -91,6 +91,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         private readonly WindowManager winManager = new WindowManager();
 
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork
+            // ReSharper disable once ArrangeObjectCreationWhenTypeEvident
             = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         // ReSharper disable once NotAccessedField.Local
@@ -124,6 +125,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             : $"№ {DocNum} от {DocDate.ToShortDateString()} {Currency}";
 
         public override string WindowName => $"Распределение накладных расходов №{DocNum} от {DocDate}";
+        public override string Description => $"№ {DocNum} от {DocDate.ToShortDateString()} {Currency} {Note} Создатель: {Creator}";
 
         public override Guid Id
         {
@@ -163,6 +165,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         }
 
         [Display(AutoGenerateField = false)]
+        // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<DistributeNakladInfoViewModel> DistributeNaklads { set; get; }
             = new ObservableCollection<DistributeNakladInfoViewModel>();
 
@@ -324,7 +327,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 else
                 {
                     // ReSharper disable once PossibleInvalidOperationException
-                    var crsDC = (decimal)(inv.Invoice != null
+                    var crsDC = (decimal) (inv.Invoice != null
                         ? inv.Invoice.SF_CRS_DC
                         // ReSharper disable once PossibleNullReferenceException
                         : MainReferences.GetKontragent(inv.AccruedAmountRow.AccruedAmountOfSupplier.KontrDC)
@@ -693,7 +696,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 {
                     winManager.ShowWinUIMessageBox($"Сумма распредления {sum} больше, чем сумма счета {invnakl.Summa}",
                         "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    CurrentDistributeNaklad.NakladSumma -= (decimal)(sum - invnakl.Summa);
+                    CurrentDistributeNaklad.NakladSumma -= (decimal) (sum - invnakl.Summa);
                 }
 
             var directZatrat =
@@ -703,7 +706,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 {
                     winManager.ShowWinUIMessageBox($"Сумма распредления {sum} больше, чем сумма счета {invnakl?.Summa}",
                         "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    CurrentDistributeNaklad.NakladSumma -= (decimal)(sum - directZatrat.Summa);
+                    CurrentDistributeNaklad.NakladSumma -= (decimal) (sum - directZatrat.Summa);
                 }
 
             CurrentDistributeNaklad.DistributeSumma =
@@ -777,6 +780,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 RaisePropertiesChanged(nameof(Tovars));
                 RaisePropertiesChanged(nameof(SelectedTovars));
                 Load(Id);
+                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.Naklad, Id, null, Creator,
+                    GlobalOptions.UserInfo.Name, Description);
             }
 
             catch (Exception ex)
@@ -853,7 +858,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
                 if (invrow != null)
                     // ReSharper disable once PossibleInvalidOperationException
-                    inv = DistributeNakladRepository.GetInvoiceHead((Guid)invrow.DocId);
+                    inv = DistributeNakladRepository.GetInvoiceHead((Guid) invrow.DocId);
                 Tovars.Add(new DistributeNakladRowViewModel(r)
                 {
                     InvoiceRow = invrow,
@@ -908,19 +913,39 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             }
         }
 
+        //public void saveLog(string str)
+        //{
+        //    using (var context = GlobalOptions.KursSystem())
+        //    {
+        //        context.Errors.Add(new Data.Errors
+        //        {
+        //            Id = Guid.NewGuid(),
+        //            DbId = GlobalOptions.DataBaseId,
+        //            Host = Environment.MachineName,
+        //            UserId = GlobalOptions.UserInfo.KursId,
+        //            ErrorText = "Log накладные расходы -> " + str,
+        //            Moment = DateTime.Now
+        //        });
+        //        context.SaveChanges();
+        //    }
+        //}
+
         [Command]
         public void AddNomenkl()
         {
-            var loadType = InvoiceProviderSearchType.RemoveNakladRashod;
+            var loadType = InvoiceProviderSearchType.RemoveNakladRashod | InvoiceProviderSearchType.IsCurrencyUsed;
             var dtx = new InvoiceProviderSearchDialogViewModel(true, true, loadType, unitOfWork.Context)
             {
-                WindowName = "Выбор номенклатуры"
+                WindowName = "Выбор номенклатуры",
+                LayoutName = "InvoiceProviderSearchMulti",
+                myCurrency = Currency
+                
             };
             dtx.RefreshData(null);
-            var dialog = new RSDialogView
+            var dialog = new SelectInvoiceMultipleDialogViw
             {
                 DataContext = dtx,
-                Owner = Application.Current.MainWindow
+                Owner = Form
             };
             dialog.ShowDialog();
             if (dtx.DialogResult == MessageResult.OK)
@@ -928,7 +953,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 {
                     if (Tovars.Any(_ => _.InvoiceRow.DocCode == r.DocCode && _.InvoiceRow.Code == r.CODE)) continue;
                     var newRow = DistributeNakladRepository.CreateRowNew(Entity);
-                    var inv = unitOfWork.Context.TD_26.FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.CODE);
+                    var inv = unitOfWork.Context.TD_26.FirstOrDefault(_ =>
+                        _.DOC_CODE == r.DocCode && _.CODE == r.CODE);
                     if (inv != null)
                     {
                         if (inv.TD_26_CurrencyConvert != null && inv.TD_26_CurrencyConvert.Count > 0)
@@ -942,7 +968,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                                     InvoiceRow = new InvoiceProviderRow(inv),
                                     State = RowStatus.NewRow
                                 };
-                                ((ISupportParentViewModel)newTovar).ParentViewModel = this;
+                                ((ISupportParentViewModel) newTovar).ParentViewModel = this;
                                 Tovars.Add(newTovar);
                             }
                         }
@@ -954,7 +980,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                                 InvoiceRow = new InvoiceProviderRow(inv),
                                 State = RowStatus.NewRow
                             };
-                            ((ISupportParentViewModel)newTovar).ParentViewModel = this;
+                            ((ISupportParentViewModel) newTovar).ParentViewModel = this;
                             Tovars.Add(newTovar);
                         }
                     }
@@ -1062,10 +1088,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             var loadType = InvoiceProviderSearchType.OnlyNakladDistrubuted;
             var dtx = new InvoiceProviderSearchDialogViewModel(false, true, loadType, unitOfWork.Context)
             {
-                WindowName = "Выбор счетов фактур"
+                WindowName = "Выбор счетов фактур",
+                LayoutName = "InvoiceProviderSearchMulti"
             };
             dtx.RefreshData(null);
-            var dialog = new RSDialogView
+            var dialog = new SelectInvoiceMultipleDialogViw
             {
                 DataContext = dtx,
                 Owner = Application.Current.MainWindow

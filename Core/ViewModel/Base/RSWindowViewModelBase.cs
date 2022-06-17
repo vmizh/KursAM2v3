@@ -190,7 +190,7 @@ namespace Core.ViewModel.Base
             LayoutManager?.Save();
         }
 
-        private void OnLayoutInitial(object obj)
+        protected void OnLayoutInitial(object obj)
         {
             if (Form != null)
                 LayoutManager ??= new global::Helper.LayoutManager(Form, LayoutSerializationService,

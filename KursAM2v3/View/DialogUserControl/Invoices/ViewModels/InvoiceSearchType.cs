@@ -23,6 +23,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         OnlyUslugi = 128,
         // Только не распределенные накладные расходы
         OnlyNakladDistrubuted = 256,
+        //Используется валюта
+        IsCurrencyUsed = 512
     }
 
     [Flags]

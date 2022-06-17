@@ -18,7 +18,7 @@
         <Setter Property="dx:DXSerializer.StoreLayoutMode" Value="All" />
         <Setter Property="dxg:DataControlSerializationOptions.AddNewColumns" Value="True" />
         <Setter Property="dxg:DataControlSerializationOptions.RemoveOldColumns" Value="True" />
-        <Setter Property="SelectionMode" Value="Row" />
+        <Setter Property="SelectionMode" Value="None" />
     </Style>
 
     <Style TargetType="dxlc:LayoutControl">
@@ -43,7 +43,7 @@
         <Setter Property="dx:DXSerializer.StoreLayoutMode" Value="All" />
         <Setter Property="dxg:DataControlSerializationOptions.AddNewColumns" Value="True" />
         <Setter Property="dxg:DataControlSerializationOptions.RemoveOldColumns" Value="True" />
-        <Setter Property="SelectionMode" Value="Row" />
+        <Setter Property="SelectionMode" Value="None" />
         <Setter Property="ShowLoadingPanel" Value="{Binding IsLoading, UpdateSourceTrigger=PropertyChanged}" />
     </Style>
 

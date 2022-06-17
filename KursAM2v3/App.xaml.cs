@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,11 +34,18 @@ namespace KursAM2
 
         private static void Start(Action baseStart)
         {
-            ApplicationThemeHelper.ApplicationThemeName = "MetropolisLight";
-            ToolTipService.ShowOnDisabledProperty.OverrideMetadata(
-                typeof(Control),
-                new FrameworkPropertyMetadata(true));
-            baseStart();
+            try
+            {
+                ApplicationThemeHelper.ApplicationThemeName = "MetropolisLight";
+                ToolTipService.ShowOnDisabledProperty.OverrideMetadata(
+                    typeof(Control),
+                    new FrameworkPropertyMetadata(true));
+                baseStart();
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText(ex.Message, "Error.txt");
+            }
         }
     }
 }

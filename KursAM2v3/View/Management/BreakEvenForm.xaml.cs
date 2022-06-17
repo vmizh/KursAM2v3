@@ -109,6 +109,12 @@ namespace KursAM2.View.Management
                 gridManager.TotalSummary.Add(summary);
             }
 
+            gridCO.SelectionMode = MultiSelectMode.None;
+            gridCurrencyDocument.SelectionMode = MultiSelectMode.None;
+            gridDocument.SelectionMode = MultiSelectMode.None;
+            gridKontr.SelectionMode = MultiSelectMode.None;
+            gridManager.SelectionMode = MultiSelectMode.None;
+            gridNomenkl.SelectionMode = MultiSelectMode.None;
         }
 
         private void BreakEvenForm_Closing(object sender, CancelEventArgs e)

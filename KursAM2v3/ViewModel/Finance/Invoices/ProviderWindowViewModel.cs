@@ -742,7 +742,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand OpenPayDocumentCommand
         {
-            get { return new Command(OpenPayDocument, _ => CurrentPaymentDoc == null); }
+            get { return new Command(OpenPayDocument, _ => CurrentPaymentDoc != null); }
         }
 
         private void OpenPayDocument(object obj)
