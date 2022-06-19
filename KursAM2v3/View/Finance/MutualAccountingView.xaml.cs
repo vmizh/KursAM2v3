@@ -2,6 +2,7 @@
 using System.Windows;
 using Core;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -18,7 +19,8 @@ namespace KursAM2.View.Finance
         public ButtonEditSettings KontrButtonEditSettings; 
         public MutualAccountingView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += MutualAccountingView_Loaded;
             Unloaded += MutualAccountingView_Unloaded;

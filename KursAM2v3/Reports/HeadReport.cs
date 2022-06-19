@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
+using DevExpress.Xpf.Core;
 
 namespace KursAM2.Reports
 {
@@ -10,7 +11,8 @@ namespace KursAM2.Reports
     {
         public HeadReport()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
     }

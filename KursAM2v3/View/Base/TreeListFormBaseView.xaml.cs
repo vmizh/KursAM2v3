@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Reference;
@@ -15,7 +16,8 @@ namespace KursAM2.View.Base
     {
         public TreeListFormBaseView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += TreeListFormBaseView_Loaded;
             Closing += TreeListFormBaseView_Closing;
         }

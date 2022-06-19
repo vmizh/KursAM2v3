@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using DevExpress.Xpf.Bars;
+using DevExpress.Xpf.Core;
 using KursAM2.ViewModel.Personal;
 
 namespace KursAM2.View.Management
@@ -19,7 +20,8 @@ namespace KursAM2.View.Management
 
         public KontragentRightsControl()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             gridUsers.DataContext = myUser;
             Loaded += KontragentRightsControl_Loaded;
             Closing += KontragentRightsControl_Closing;

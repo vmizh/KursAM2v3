@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.View.DialogUserControl.Invoices.ViewModels;
 
@@ -12,7 +13,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.UserControls
     {
         public InvoiceListSearchView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridControlSearch_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

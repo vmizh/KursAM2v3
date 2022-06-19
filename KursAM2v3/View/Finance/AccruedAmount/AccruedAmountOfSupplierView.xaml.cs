@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Data;
 using Core;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -18,7 +19,7 @@ namespace KursAM2.View.Finance.AccruedAmount
     {
         public AccruedAmountOfSupplierView()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridCashRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

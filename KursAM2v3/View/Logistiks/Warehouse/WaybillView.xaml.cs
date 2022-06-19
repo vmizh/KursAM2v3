@@ -10,6 +10,7 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -32,7 +33,8 @@ namespace KursAM2.View.Logistiks.Warehouse
 
         public WaybillView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             gridRowsLayout = new LayoutManagerGridAutoGenerationColumns(GetType().Name, gridRows);
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, null);
             Loaded += WaybillClientView_Loaded;

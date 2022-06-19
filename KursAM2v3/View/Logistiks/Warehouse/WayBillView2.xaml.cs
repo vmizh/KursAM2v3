@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 
 namespace KursAM2.View.Logistiks.Warehouse
@@ -10,7 +11,8 @@ namespace KursAM2.View.Logistiks.Warehouse
     {
         public WayBillView2()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

@@ -11,6 +11,7 @@ using Core.EntityViewModel.Invoices;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -27,7 +28,8 @@ namespace KursAM2.View.Finance.UC
 
         public BankOperationsComareRowView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             DataContextChanged += BankOperationsView_DataContextChanged;
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 
 namespace KursAM2.View.Shop
@@ -10,7 +11,8 @@ namespace KursAM2.View.Shop
     {
         public ShopParserExtFiles()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void DataControlBase_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

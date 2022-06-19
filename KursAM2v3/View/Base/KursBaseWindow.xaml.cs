@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using Core.Menu;
+using DevExpress.Xpf.Core;
 
 namespace KursAM2.View.Base
 {
@@ -11,7 +12,8 @@ namespace KursAM2.View.Base
     {
         public KursBaseWindow()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void MenuButton_OnClick(object sender, RoutedEventArgs e)

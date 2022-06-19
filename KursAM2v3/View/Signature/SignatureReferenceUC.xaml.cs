@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Signatures;
@@ -12,7 +13,8 @@ namespace KursAM2.View.Signature
     {
         public SignatureReferenceUC()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void gridSignatures_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

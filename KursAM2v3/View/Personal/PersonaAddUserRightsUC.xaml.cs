@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Core;
 using LayoutManager;
 
 namespace KursAM2.View.Personal
@@ -10,7 +11,8 @@ namespace KursAM2.View.Personal
     {
         public PersonaAddUserRightsUC()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, gridControl);
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -14,7 +15,8 @@ namespace KursAM2.View.Finance.DistributeNaklad
     {
         public DistributeNakladSearchView(Window parentForm)
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             DataContext = new DistributeNakladSearchViewModel(parentForm);
         }
 

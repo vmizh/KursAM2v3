@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Core.EntityViewModel.CommonReferences.Kontragent;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Logistiks;
 
@@ -12,7 +13,8 @@ namespace KursAM2.View.Logistiks
     {
         public KontragentGruzoInfoView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void BtnClose_OnClick(object sender, RoutedEventArgs e)

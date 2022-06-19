@@ -11,6 +11,7 @@ using Core.WindowsManager;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using Helper;
 using LayoutManager;
@@ -193,8 +194,11 @@ namespace Core.ViewModel.Base
         protected void OnLayoutInitial(object obj)
         {
             if (Form != null)
+            {
                 LayoutManager ??= new global::Helper.LayoutManager(Form, LayoutSerializationService,
                     LayoutName, null);
+                ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            }
             else
                 LayoutManager = new global::Helper.LayoutManager(LayoutSerializationService,
                     LayoutName, null);
@@ -267,7 +271,7 @@ namespace Core.ViewModel.Base
                         col.Name = col.FieldName;
                 }
             }
-
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             UpdateVisualObjects();
             IsLayoutLoaded = true;
         }

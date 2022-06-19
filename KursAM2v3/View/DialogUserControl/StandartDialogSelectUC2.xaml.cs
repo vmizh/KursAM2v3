@@ -4,6 +4,7 @@ using System.Windows;
 using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Reference.Dialogs;
@@ -19,7 +20,8 @@ namespace KursAM2.View.DialogUserControl
         public StandartDialogSelectUC2(string layoutName)
         {
             LayoutName = layoutName;
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(LayoutName + "." + GetType().Name, gridControlSearch);
             LayoutControl = gridControlSearch;
             Loaded += CashSelectDialogUC_Loaded;

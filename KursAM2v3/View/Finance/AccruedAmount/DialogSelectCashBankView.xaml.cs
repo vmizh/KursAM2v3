@@ -9,7 +9,7 @@ namespace KursAM2.View.Finance.AccruedAmount
     {
         public DialogSelectCashBankView()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

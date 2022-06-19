@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 
 namespace KursAM2.View.Logistiks.AktSpisaniya
@@ -10,7 +11,8 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
     {
         public SelectExistNomenklOnSkladView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void gridNomenklRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

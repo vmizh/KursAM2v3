@@ -1,4 +1,6 @@
-﻿namespace KursAM2.View.Logistiks
+﻿using DevExpress.Xpf.Core;
+
+namespace KursAM2.View.Logistiks
 {
     /// <summary>
     ///     Interaction logic for NomTransferAddForSkladUC.xaml
@@ -7,7 +9,7 @@
     {
         public NomenklGridControlListUC()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

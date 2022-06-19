@@ -1,5 +1,6 @@
 ﻿using System;
 using DevExpress.Xpf.Bars;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 
 namespace KursAM2.View
@@ -11,7 +12,8 @@ namespace KursAM2.View
     {
         public KontragentGruzoInfoReferenceView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridKontr_OnCurrentItemChanged(object sender, CurrentItemChangedEventArgs e)

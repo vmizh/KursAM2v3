@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Core;
 using LayoutManager;
 
 namespace KursAM2.View.Base
@@ -11,7 +12,8 @@ namespace KursAM2.View.Base
 
         public GridAutoWithLayoutContyWithLayoutConrol()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Unloaded += GridAutoWithLayoutConrol_Unloaded;
             Loaded += GridAutoWithLayoutConrol_Loaded;
         }

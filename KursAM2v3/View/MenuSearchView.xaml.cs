@@ -1,4 +1,6 @@
-﻿namespace KursAM2.View
+﻿using DevExpress.Xpf.Core;
+
+namespace KursAM2.View
 {
     /// <summary>
     ///     Interaction logic for MenuSearchView.xaml
@@ -7,7 +9,8 @@
     {
         public MenuSearchView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

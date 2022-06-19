@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Core;
 using LayoutManager;
 
 
@@ -11,7 +12,8 @@ namespace KursAM2.View.Repozit
     {
         public RoleCreationWindow()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, LayoutControl);
             Loaded += RoleCreationWindow_Loaded;
             Closing += RoleCreationWindow_Closing;

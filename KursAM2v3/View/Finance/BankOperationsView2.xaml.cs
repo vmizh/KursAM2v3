@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using Core.EntityViewModel.Bank;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -22,7 +23,7 @@ namespace KursAM2.View.Finance
 
         public BankOperationsView2()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, null);
             groupLayout = new LayoutManagerGridAutoGenerationColumns(GetType().Name, Group);
             Loaded += Bank_Loaded;

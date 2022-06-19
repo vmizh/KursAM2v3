@@ -7,6 +7,7 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Systems;
 using Core.WindowsManager;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
@@ -22,7 +23,8 @@ namespace KursAM2.View.Helper
     {
         public DocumentHistory()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

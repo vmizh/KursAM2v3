@@ -22,7 +22,7 @@ namespace KursAM2.View.Base
     {
         public KursStandartFormView()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

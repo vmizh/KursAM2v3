@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
@@ -17,7 +18,8 @@ namespace KursAM2.View.DialogUserControl
         public AddNomenklFromInvoiceClientUC(string layoutName)
         {
             LayoutName = layoutName;
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, mainControl);
             LayoutControl = mainControl;
             Loaded += UserControl_Loaded;

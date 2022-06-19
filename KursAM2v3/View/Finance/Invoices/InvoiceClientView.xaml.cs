@@ -4,6 +4,7 @@ using Core;
 using Core.EntityViewModel.Invoices;
 using Core.WindowsManager;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -22,7 +23,8 @@ namespace KursAM2.View.Finance.Invoices
 
         public InvoiceClientView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             
         }
 

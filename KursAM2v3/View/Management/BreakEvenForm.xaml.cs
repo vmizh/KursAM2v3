@@ -24,7 +24,7 @@ namespace KursAM2.View.Management
     {
         public BreakEvenForm()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             NomGroup = new BreakEvenNomGroupViewModel();
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Closing += BreakEvenForm_Closing;

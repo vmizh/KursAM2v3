@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Windows;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -15,7 +16,8 @@ namespace KursAM2.View.Dogovors
     {
         public DogovorClientView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             EventManager.RegisterClassHandler(typeof(TextEdit), GotFocusEvent,
                 new RoutedEventHandler((s, e) =>
                 {

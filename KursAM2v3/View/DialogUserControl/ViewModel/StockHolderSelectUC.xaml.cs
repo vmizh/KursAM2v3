@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Core.ViewModel.Base;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using LayoutManager;
 
@@ -12,7 +13,8 @@ namespace KursAM2.View.DialogUserControl.ViewModel
     {
         public StockHolderSelectUC()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, gridControlSearch);
             LayoutControl = gridControlSearch;
             Loaded += StockHolderSelectUC_Loaded;

@@ -8,6 +8,7 @@ using Core.EntityViewModel.Invoices;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -38,7 +39,8 @@ namespace KursAM2.View.Finance.Invoices
             listSummaryFields.Add("SFT_SUMMA_NAKLAD", SummaryItemType.Sum);
             listSummaryFields.Add("SFT_SUMMA_NDS", SummaryItemType.Sum);
             listSummaryFields.Add("DDT_KOL_PRIHOD", SummaryItemType.Sum);
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

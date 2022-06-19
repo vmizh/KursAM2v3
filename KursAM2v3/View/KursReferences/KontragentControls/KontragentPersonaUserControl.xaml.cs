@@ -1,4 +1,6 @@
-﻿namespace KursAM2.View.KursReferences.KontragentControls
+﻿using DevExpress.Xpf.Core;
+
+namespace KursAM2.View.KursReferences.KontragentControls
 {
     /// <summary>
     ///     Interaction logic for KontragentPersonaUserControl.xaml
@@ -7,7 +9,8 @@
     {
         public KontragentPersonaUserControl()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

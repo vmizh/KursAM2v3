@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management.ManagementBalans;
@@ -19,7 +20,8 @@ namespace KursAM2.View.Management.Controls
 
         public BalansCompareKontragentUI()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += BalansCompareKontragentUI_Loaded;
             Unloaded += BalansCompareKontragentUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(

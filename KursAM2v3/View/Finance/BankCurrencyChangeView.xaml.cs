@@ -8,6 +8,7 @@ using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
@@ -23,7 +24,7 @@ namespace KursAM2.View.Finance
     {
         public BankCurrencyChangeView()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, layoutItems);
             Loaded += BankCurrencyChangeView_Loaded;
             Unloaded += BankCurrencyChangeView_Unloaded;

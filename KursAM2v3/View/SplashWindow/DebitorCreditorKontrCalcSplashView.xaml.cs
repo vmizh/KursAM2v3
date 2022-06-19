@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using DevExpress.Xpf.Core;
 using Microsoft.Expression.Shapes;
 
 namespace KursAM2.View.SplashWindow
@@ -32,7 +33,8 @@ namespace KursAM2.View.SplashWindow
 
         public DebitorCreditorKontrCalcSplashView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += AnimationSecondIndicatorOne;
             ProgressLabelRepit.Opacity = 0;
         }

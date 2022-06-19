@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using DevExpress.Xpf.Core;
 using KursAM2.ViewModel.Logistiks;
 using LayoutManager;
 
@@ -12,7 +13,8 @@ namespace KursAM2.View.Logistiks.UC
     {
         public SelectNomenkls()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, mainControl);
         }
 

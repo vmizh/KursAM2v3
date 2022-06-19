@@ -21,7 +21,7 @@ namespace KursAM2.View.Management
 
         public ProfitAndLosses()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Closing += OnClosing;
             Loaded += ProfitAndLosses_Loaded;

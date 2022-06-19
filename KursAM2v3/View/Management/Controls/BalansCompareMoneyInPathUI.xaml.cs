@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -14,7 +15,8 @@ namespace KursAM2.View.Management.Controls
     {
         public BalansCompareMoneyInPathUI()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += BalansCompareMoneyInPathUI_Loaded;
             Unloaded += BalansCompareMoneyInPathUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(

@@ -42,7 +42,7 @@ namespace KursAM2.View.DialogUserControl.Standart
 
         public RSDialogView()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Activated += ThemedWindow_Activated;
             Initialized += RSDialogView_Initialized;
             LayoutUpdated += RSDialogView_LayoutUpdated;

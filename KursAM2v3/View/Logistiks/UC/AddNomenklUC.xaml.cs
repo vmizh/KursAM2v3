@@ -1,4 +1,5 @@
-﻿using DevExpress.Xpf.Editors;
+﻿using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
 
 namespace KursAM2.View.Logistiks.UC
@@ -10,7 +11,8 @@ namespace KursAM2.View.Logistiks.UC
     {
         public AddNomenklUC()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void TreeListPermissionStruct_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

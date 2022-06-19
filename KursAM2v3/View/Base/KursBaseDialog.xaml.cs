@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Core;
 using LayoutManager;
 
 namespace KursAM2.View.Base
@@ -10,7 +11,8 @@ namespace KursAM2.View.Base
     {
         public KursBaseDialog()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             DataContextChanged += KursBaseDialog_DataContextChanged;
             Closing += KursBaseDialog_Closing;
         }

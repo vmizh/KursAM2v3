@@ -1,4 +1,6 @@
-﻿namespace KursAM2.View.Logistiks
+﻿using DevExpress.Xpf.Core;
+
+namespace KursAM2.View.Logistiks
 {
     /// <summary>
     ///     Форма окна для остатков товаров на складах
@@ -7,7 +9,8 @@
     {
         public RemainsOfGoodsInWarehouse()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

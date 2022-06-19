@@ -2,6 +2,7 @@
 using System.Windows;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.View.Management;
@@ -16,7 +17,8 @@ namespace KursAM2.Tests
     {
         public TreeControlFluentTests()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

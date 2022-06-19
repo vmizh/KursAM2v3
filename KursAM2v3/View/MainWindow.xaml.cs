@@ -82,7 +82,8 @@ namespace KursAM2.View
         {
             try
             {
-                InitializeComponent();
+                InitializeComponent(); 
+                ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
 #if (!DEBUG)
                 myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, 1000 * 360 * 3, Timeout.Infinite);
 

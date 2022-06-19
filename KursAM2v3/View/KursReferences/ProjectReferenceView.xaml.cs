@@ -4,6 +4,7 @@ using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.WindowsManager;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.DragDrop;
@@ -21,7 +22,8 @@ namespace KursAM2.View.KursReferences
 
         public ProjectReferenceView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             myBnEditor = new ButtonEditSettings
             {
                 IsTextEditable = false

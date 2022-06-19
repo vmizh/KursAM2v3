@@ -1,4 +1,6 @@
-﻿namespace KursAM2.View.Base
+﻿using DevExpress.Xpf.Core;
+
+namespace KursAM2.View.Base
 {
     /// <summary>
     ///     Interaction logic for EmptyUI.xaml
@@ -7,7 +9,8 @@
     {
         public EmptyUI()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

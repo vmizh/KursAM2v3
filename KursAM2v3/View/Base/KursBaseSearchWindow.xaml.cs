@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using Core.Menu;
+using DevExpress.Xpf.Core;
 
 namespace KursAM2.View.Base
 {
@@ -11,7 +12,8 @@ namespace KursAM2.View.Base
     {
         public KursBaseSearchWindow()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         //public ILayoutSerializationService LayoutSerializationService

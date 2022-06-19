@@ -10,7 +10,7 @@ namespace KursAM2.View.KursReferences
     {
         public AccruedAmountTypeView()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void gridAccruedAmountType_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using LayoutManager;
@@ -14,7 +15,8 @@ namespace KursAM2.View.Base
     {
         public GridFormBaseView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += GridFormBaseView_Loaded;
             Closing += GridFormBaseView_Closing;
         }

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.XtraGrid;
@@ -20,7 +21,8 @@ namespace KursAM2.View.Management.Controls
 
         public BalansCompareFinanseUI()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += BalansCompareFinanseUI_Loaded;
             Unloaded += BalansCompareFinanseUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager("KursAM2.View.Management.Controls.BalansCompareFinanseUI",

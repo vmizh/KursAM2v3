@@ -1,4 +1,6 @@
-﻿namespace KursAM2.View.DialogUserControl
+﻿using DevExpress.Xpf.Core;
+
+namespace KursAM2.View.DialogUserControl
 {
     /// <summary>
     ///     Interaction logic for NameUC.xaml
@@ -7,7 +9,8 @@
     {
         public NameUC()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

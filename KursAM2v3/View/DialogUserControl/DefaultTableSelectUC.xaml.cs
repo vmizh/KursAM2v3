@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Core.ViewModel.Base;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 
@@ -12,7 +13,8 @@ namespace KursAM2.View.DialogUserControl
     {
         public DefaultTableSelectUC()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridControlSearch_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

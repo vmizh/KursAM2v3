@@ -26,7 +26,7 @@ namespace KursAM2.View
 
         public StartLogin()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             DataContext = new StartLoginViewModel(this);
             pwdText.Focus();
             dtx = (StartLoginViewModel) DataContext;
@@ -70,30 +70,30 @@ namespace KursAM2.View
                 dtx.SelectedDataSource = e.NewValue as DataSource;
         }
 
-        private void BarSplitItemThemeSelectorBehavior_Changed(object sender, EventArgs e)
-        {
-            try
-            {
-                using (var ctx = GlobalOptions.KursSystem())
-                {
-                    var user = ctx.Users.FirstOrDefault(_ => _.Name == userNameText.Text);
-                    if (user == null) return;
-                    user.ThemeName = ApplicationThemeHelper.ApplicationThemeName;
-                    ctx.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                var errText = new StringBuilder(ex.Message);
-                var ex1 = ex;
-                while (ex1.InnerException != null)
-                {
-                    errText.Append($"\n {ex1.InnerException.Message}");
-                    ex1 = ex1.InnerException;
-                }
+        //private void BarSplitItemThemeSelectorBehavior_Changed(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        using (var ctx = GlobalOptions.KursSystem())
+        //        {
+        //            var user = ctx.Users.FirstOrDefault(_ => _.Name == userNameText.Text);
+        //            if (user == null) return;
+        //            user.ThemeName = ApplicationThemeHelper.ApplicationThemeName;
+        //            ctx.SaveChanges();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var errText = new StringBuilder(ex.Message);
+        //        var ex1 = ex;
+        //        while (ex1.InnerException != null)
+        //        {
+        //            errText.Append($"\n {ex1.InnerException.Message}");
+        //            ex1 = ex1.InnerException;
+        //        }
 
-                MessageBox.Show("KursSystem error.\n" + errText);
-            }
-        }
+        //        MessageBox.Show("KursSystem error.\n" + errText);
+        //    }
+        //}
     }
 }

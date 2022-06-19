@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Core;
 
 namespace KursAM2.View
 {
@@ -9,7 +10,8 @@ namespace KursAM2.View
     {
         public WindowStart()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += WindowStart_Loaded;
         }
 

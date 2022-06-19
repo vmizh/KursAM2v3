@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using LayoutManager;
@@ -13,7 +14,8 @@ namespace KursAM2.View.Finance.Cash
     {
         public CashInSearchView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += CashInSearchView_Loaded;
             Closing += CashInSearchView_Closing;

@@ -8,6 +8,7 @@ using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.Invoices.EntityViewModel;
 using Core.WindowsManager;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
@@ -24,7 +25,8 @@ namespace KursAM2.View.Finance.Cash
     {
         public CashCurrencyExchangeView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, layoutItems);
             Loaded += CashCurrencyExchangeView_Loaded;
             Unloaded += CashCurrencyExchangeView_Unloaded;

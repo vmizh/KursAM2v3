@@ -7,6 +7,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.WindowsManager;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management.Projects;
@@ -18,7 +19,8 @@ namespace KursAM2.View.Management
     {
         public ProjectsView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += ProjectsView_Loaded;
             Closing += ProjectsView_Closing;

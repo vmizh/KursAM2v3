@@ -1,4 +1,5 @@
-﻿using DevExpress.Xpf.Grid;
+﻿using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Grid;
 
 namespace KursAM2.View.Signature
 {
@@ -9,7 +10,8 @@ namespace KursAM2.View.Signature
     {
         public Signature()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void DataControlBase_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

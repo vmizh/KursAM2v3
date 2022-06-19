@@ -5,6 +5,7 @@ using Core;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.TreeList;
 using LayoutManager;
@@ -18,7 +19,8 @@ namespace KursAM2.View.KursReferences
     {
         public KontragentReferenceView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += MutualAccountingSearchView_Loaded;
             Unloaded += MutualAccountingSearchView_Unloaded;

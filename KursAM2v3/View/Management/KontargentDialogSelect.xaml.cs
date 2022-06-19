@@ -1,4 +1,6 @@
-﻿namespace KursAM2.View.Management
+﻿using DevExpress.Xpf.Core;
+
+namespace KursAM2.View.Management
 {
     /// <summary>
     ///     Interaction logic for KontargentDialogSelect.xaml
@@ -7,7 +9,8 @@
     {
         public KontargentDialogSelect()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Windows;
 using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Xpf.Core;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.controls;
 using LayoutManager;
@@ -17,7 +18,8 @@ namespace KursAM2.View.Base
     {
         public SelectDialogView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             DataContextChanged += SelectDialogView_DataContextChanged;
             Loaded += SelectDialogView_Loaded;
             Closing += SelectDialogView_Closing;

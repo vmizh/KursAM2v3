@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Logistiks.AktSpisaniya;
@@ -13,7 +14,8 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
     {
         public AktSpisaniyaView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += AktSpisaniyaView_Loaded;
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using DevExpress.Xpf.Core;
 
 namespace KursAM2.View.Finance
 {
@@ -14,7 +15,8 @@ namespace KursAM2.View.Finance
 
         public KontragentRefOutView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += SearchBaseView_Loaded;
             Closing += SearchBaseView_Closing;
         }

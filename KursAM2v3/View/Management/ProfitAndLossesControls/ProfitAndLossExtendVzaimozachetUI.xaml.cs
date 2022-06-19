@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Core;
 using LayoutManager;
 
 namespace KursAM2.View.Management.ProfitAndLossesControls
@@ -10,7 +11,8 @@ namespace KursAM2.View.Management.ProfitAndLossesControls
     {
         public ProfitAndLossExtendVzaimozchetUI()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += BalansCompareFinanseUI_Loaded;
             Unloaded += BalansCompareFinanseUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(

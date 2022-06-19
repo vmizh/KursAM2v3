@@ -5,6 +5,7 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.XtraGrid;
@@ -22,7 +23,8 @@ namespace KursAM2.View.Management.Controls
         private readonly LayoutManagerGridAutoGenerationColumns gridDocuments;
         public ProjectSelectDialogUI()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, gridDocument);
             LayoutControl = LayoutControl;
             gridDocuments = new LayoutManagerGridAutoGenerationColumns(GetType().Name, gridDocument);

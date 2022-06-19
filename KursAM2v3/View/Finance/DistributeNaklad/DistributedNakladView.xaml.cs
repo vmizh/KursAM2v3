@@ -4,6 +4,7 @@ using System.Windows;
 using Core;
 using Core.ViewModel.Base;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -20,7 +21,8 @@ namespace KursAM2.View.Finance.DistributeNaklad
     {
         public DistributedNakladView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         public GridColumn NakladSummaColumn { set; get; }

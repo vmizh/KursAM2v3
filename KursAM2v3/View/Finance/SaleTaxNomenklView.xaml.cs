@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 using Core.WindowsManager;
+using DevExpress.Xpf.Core;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Management;
@@ -20,7 +21,8 @@ namespace KursAM2.View.Finance
     {
         public SaleTaxNomenklView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += SaleTaxNomenklView_Loaded;
             Closing += SaleTaxNomenklView_Closing;

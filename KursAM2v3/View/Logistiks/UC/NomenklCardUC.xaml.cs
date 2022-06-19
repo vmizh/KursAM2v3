@@ -1,4 +1,6 @@
-﻿namespace KursAM2.View.Logistiks.UC
+﻿using DevExpress.Xpf.Core;
+
+namespace KursAM2.View.Logistiks.UC
 {
     /// <summary>
     ///     Interaction logic for NomenklCardUC.xaml
@@ -7,7 +9,8 @@
     {
         public NomenklCardUC()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

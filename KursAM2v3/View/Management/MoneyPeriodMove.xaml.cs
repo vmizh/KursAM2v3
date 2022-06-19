@@ -18,7 +18,7 @@ namespace KursAM2.View.Management
 
         public MoneyPeriodMove()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += MoneyPeriodMove_Loaded;
             Closing += MoneyPeriodMove_Closing;

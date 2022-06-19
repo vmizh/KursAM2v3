@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management.Projects;
@@ -18,7 +19,8 @@ namespace KursAM2.View.Management
     {
         public ProjectProviderPrihodView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += ProjectProviderPrihodView_Loaded;
             Closing += ProjectProviderPrihodView_Closing;

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using Core.EntityViewModel.CommonReferences.Kontragent;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.LookUp;
 using KursAM2.ViewModel.Reference.Kontragent;
@@ -16,7 +17,8 @@ namespace KursAM2.View.KursReferences.KontragentControls
     {
         public KontragentBankUserControl()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, LayoutControl);
             Loaded += MutualAccountingSearchView_Loaded;
             Unloaded += MutualAccountingSearchView_Unloaded;

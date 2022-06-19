@@ -3,6 +3,7 @@ using System.Windows;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -19,7 +20,8 @@ namespace KursAM2.View.Logistiks.Warehouse
         //private readonly LayoutManagerGridAutoGenerationColumns gridRowsLayout;
         public OrderInView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

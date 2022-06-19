@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using Core.EntityViewModel.CommonReferences;
+using DevExpress.Xpf.Core;
 
 namespace KursAM2.View.KursReferences
 {
@@ -21,7 +22,8 @@ namespace KursAM2.View.KursReferences
 
         public ReferenceOfResponsibilityCentersView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
 
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, treeListControl);
             Loaded += ReferenceOfResponsibilityCentersView_Loaded;

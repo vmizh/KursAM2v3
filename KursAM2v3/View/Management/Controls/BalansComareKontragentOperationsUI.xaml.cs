@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.XtraGrid;
@@ -21,7 +22,8 @@ namespace KursAM2.View.Management.Controls
 
         public BalansComareKontragentOperationsUI()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += BalansComareKontragentOperationsUI_Loaded;
             Unloaded += BalansComareKontragentOperationsUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(

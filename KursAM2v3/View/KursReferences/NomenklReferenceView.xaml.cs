@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Core.EntityViewModel.NomenklManagement;
 using DevExpress.Utils;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Reference.Nomenkl;
 using LayoutManager;
@@ -17,7 +18,8 @@ namespace KursAM2.View.KursReferences
     {
         public NomenklReferenceView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += NomenklReferenceView_Loaded;
             Closing += NomenklReferenceView_Closing;

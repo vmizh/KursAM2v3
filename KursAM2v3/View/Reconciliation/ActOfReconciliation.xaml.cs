@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using DevExpress.Xpf.Core;
 using KursAM2.View.Personal;
 using KursAM2.ViewModel.Reconcilation;
 using LayoutManager;
@@ -13,7 +14,8 @@ namespace KursAM2.View.Reconciliation
     {
         public ActOfReconciliation()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             //DataContext = new AOFViewModel();
             Closing += ActOfReconciliation_Closing;

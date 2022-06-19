@@ -1,4 +1,5 @@
-﻿using LayoutManager;
+﻿using DevExpress.Xpf.Core;
+using LayoutManager;
 
 namespace KursAM2.View.Logistiks
 {
@@ -9,7 +10,7 @@ namespace KursAM2.View.Logistiks
     {
         public NomenklCostReset()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Closing += (o, e) => { LayoutManager.Save(); };
             Loaded += (operGridControl, e) => { LayoutManager.Load(); };

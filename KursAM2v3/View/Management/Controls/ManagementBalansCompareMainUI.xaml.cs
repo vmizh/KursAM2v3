@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Windows;
+using DevExpress.Xpf.Core;
 using LayoutManager;
 
 namespace KursAM2.View.Management.Controls
@@ -11,7 +12,8 @@ namespace KursAM2.View.Management.Controls
     {
         public ManagementBalansCompareMainUI()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += ManagementBalansCompareMainUI_Loaded;
             Unloaded += ManagementBalansCompareMainUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using Core.WindowsManager;
 using DevExpress.Xpf.Bars;
+using DevExpress.Xpf.Core;
 using KursAM2.ViewModel.Personal;
 
 namespace KursAM2.View.Personal
@@ -18,7 +19,8 @@ namespace KursAM2.View.Personal
 
         public UsersRightToPayRoll()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             gridUsers.DataContext = _user;
             gridEmployee.DataContext = _employe;
             Loaded += UsersRightToPayRollLoaded;

@@ -1,4 +1,6 @@
-﻿namespace KursAM2.View.Repozit
+﻿using DevExpress.Xpf.Core;
+
+namespace KursAM2.View.Repozit
 {
     /// <summary>
     ///     Interaction logic for UsersHorizontalRight.xaml
@@ -7,7 +9,8 @@
     {
         public UsersHorizontalRight()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Core.ViewModel.Base;
+using DevExpress.Xpf.Core;
 
 namespace KursAM2.View.Base
 {
@@ -10,7 +11,8 @@ namespace KursAM2.View.Base
     {
         public SelectDialogView2()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             //DataContextChanged += SelectDialogView_DataContextChanged;
             //Closing += SelectDialogView_Closing;
         }

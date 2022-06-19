@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using DevExpress.Xpf.Bars;
+using DevExpress.Xpf.Core;
 using KursAM2.ViewModel.Personal;
 
 namespace KursAM2.View.Personal
@@ -10,7 +11,8 @@ namespace KursAM2.View.Personal
     {
         public DialogSelectPersona()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += DialogSelectPersona_Loaded;
             Closing += DialogSelectPersona_Closing;
         }

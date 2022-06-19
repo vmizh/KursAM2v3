@@ -5,6 +5,7 @@ using System.Windows;
 using Core;
 using Core.WindowsManager;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -22,7 +23,8 @@ namespace KursAM2.View.Logistiks.Warehouse
     {
         public OrderOutView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Closing += OrderIn_Closing;
             Loaded += OrderIn_Loaded;
         }

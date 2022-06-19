@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using DevExpress.Xpf.Core;
 
 namespace KursAM2.View.Base
 {
@@ -9,7 +10,8 @@ namespace KursAM2.View.Base
     {
         public GridControlUC()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

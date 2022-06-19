@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media;
+using DevExpress.Xpf.Core;
 using static System.Math;
 
 namespace KursAM2.View.Management.Controls
@@ -37,7 +38,8 @@ namespace KursAM2.View.Management.Controls
 
         public LoadCircleBar()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         public new int FontSize

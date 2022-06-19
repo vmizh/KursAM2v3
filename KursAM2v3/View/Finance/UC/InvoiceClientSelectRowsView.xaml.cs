@@ -1,4 +1,6 @@
-﻿namespace KursAM2.View.Finance.UC
+﻿using DevExpress.Xpf.Core;
+
+namespace KursAM2.View.Finance.UC
 {
     /// <summary>
     ///     Interaction logic for InvoiceClientSelectRowsView.xaml
@@ -7,7 +9,8 @@
     {
         public InvoiceClientSelectRowsView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

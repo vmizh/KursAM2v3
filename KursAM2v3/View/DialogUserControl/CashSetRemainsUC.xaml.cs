@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Core.ViewModel.Base;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using LayoutManager;
@@ -13,7 +14,8 @@ namespace KursAM2.View.DialogUserControl
     {
         public CashSetRemainsUC()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, gridControlSearch);
             LayoutControl = gridControlSearch;
             Loaded += CashSetRemainsDialogUC_Loaded;

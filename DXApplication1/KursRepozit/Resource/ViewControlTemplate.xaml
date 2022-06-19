@@ -120,9 +120,9 @@
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
-            <!--<DataTrigger Binding="{Binding Path=(dxg:DataControlBase.ActiveView).Grid.ItemsSource, RelativeSource={RelativeSource Self}}" Value="{x:Null}">
+            <DataTrigger Binding="{Binding Path=(dxg:DataControlBase.ActiveView).Grid.ItemsSource, RelativeSource={RelativeSource Self}}" Value="{x:Null}">
                     <Setter TargetName="PART_NoData" Property="Visibility" Value="Visible" />
-                </DataTrigger>-->
+                </DataTrigger>
             <DataTrigger Binding="{Binding Path=(dxg:DataControlBase.ActiveView).Grid.ItemsSource.Count, RelativeSource={RelativeSource Self}}" Value="0">
                 <Setter TargetName="PART_NoData" Property="Visibility" Value="Visible"/>
             </DataTrigger>

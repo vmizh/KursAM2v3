@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using DevExpress.Xpf.Core;
 using KursAM2.ViewModel.Personal;
 using LayoutManager;
 
@@ -9,7 +10,8 @@ namespace KursAM2.View.Personal
     {
         public PayRollVedomost()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += PayRollVedomost_Loaded;
             Closing += PayRollVedomost_Closing;

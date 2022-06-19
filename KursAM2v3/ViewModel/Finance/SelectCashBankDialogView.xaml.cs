@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Finance.AccruedAmount;
 
@@ -12,7 +13,8 @@ namespace KursAM2.ViewModel.Finance
     {
         public SelectCashBankDialogView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void DataControlBase_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

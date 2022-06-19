@@ -1,4 +1,5 @@
-﻿using DevExpress.Xpf.Grid;
+﻿using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Grid;
 
 namespace KursAM2.View.Helper
 {
@@ -9,7 +10,8 @@ namespace KursAM2.View.Helper
     {
         public DocHistoryList()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

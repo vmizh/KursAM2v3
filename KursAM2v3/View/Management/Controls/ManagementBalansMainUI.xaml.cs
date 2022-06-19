@@ -1,4 +1,6 @@
-﻿namespace KursAM2.View.Management.Controls
+﻿using DevExpress.Xpf.Core;
+
+namespace KursAM2.View.Management.Controls
 {
     /// <summary>
     ///     Interaction logic for ManagementBalansMainUI.xaml
@@ -7,7 +9,8 @@
     {
         public ManagementBalansMainUI()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
     }
 }

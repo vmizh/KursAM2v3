@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using DevExpress.Xpf.Core;
 using KursAM2.ViewModel.Personal;
 
 namespace KursAM2.View.Personal
@@ -11,7 +12,8 @@ namespace KursAM2.View.Personal
     {
         public EmploeeSelectUC()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void tableViewEmployee_MouseDoubleClick(object sender, MouseButtonEventArgs e)

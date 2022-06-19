@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 
 namespace KursAM2.View.KursReferences.UC
@@ -10,7 +11,7 @@ namespace KursAM2.View.KursReferences.UC
     {
         public SelectKursMainMenuItem()
         {
-            InitializeComponent();
+            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void gridKursMenuItem_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

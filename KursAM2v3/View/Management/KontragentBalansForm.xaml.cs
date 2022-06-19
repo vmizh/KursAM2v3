@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management;
 using LayoutManager; //using WindowsInput;
@@ -18,7 +19,8 @@ namespace KursAM2.View.Management
 
         public KontragentBalansForm()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             //LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             myKontragentLookUpLayoutName =
                 $"{Environment.CurrentDirectory}\\Layout\\KontragentLookUpEdit.{Guid.NewGuid()}.xml";
