@@ -1101,7 +1101,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             if (dtx.DialogResult == MessageResult.OK)
                 foreach (var item in dtx.ItemsCollection.Where(_ => _.IsSelected == true).ToList())
                 {
-                    if (NakladInvoices.Any(_ => _.Invoice.DOC_CODE == item.DocCode)) continue;
+                    if (NakladInvoices.Where(_ => _.Invoice != null).Any(_ => _.Invoice.DOC_CODE == item.DocCode)) continue;
+                    if (NakladInvoices.Where(_ => _.AccruedAmountRow != null)
+                        .Any(_ => _.AccruedAmountRow.Id == item.Id)) continue;
                     new CurrencyRates(item.Date.AddDays(-10), item.Date).GetRate(
                         GlobalOptions.SystemProfile.NationalCurrency.DocCode,
                         item.CurrencyDC, item.Date);

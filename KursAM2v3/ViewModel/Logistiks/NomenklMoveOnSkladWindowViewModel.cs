@@ -260,15 +260,15 @@ namespace KursAM2.ViewModel.Logistiks
                     }
                     else
                     {
-                        newItem.DocumentName = newItem.DocumentName +
-                                               (doc.SD_24.DD_VOZVRAT == 1
-                                                   ? " (Возврат товара)"
-                                                   : " (Внутреннее перемещение)");
-                        newItem.SummaIn = Nomenkl.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE) *
-                                          doc.DDT_KOL_PRIHOD;
+                        if (doc.SD_24.DD_SKLAD_OTPR_DC == null && doc.TD_26 == null)
+                            newItem.DocumentName += "(неоттаксированный приход)";
+                        else
+                            newItem.DocumentName += doc.SD_24.DD_VOZVRAT == 1
+                                ? " (Возврат товара)"
+                                : " (Внутреннее перемещение)";
+                        newItem.SummaIn = 0;
                         newItem.SummaOut = 0;
-                        newItem.SummaDelta = Nomenkl.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE) *
-                                             doc.DDT_KOL_PRIHOD;
+                        newItem.SummaDelta = 0;
                         newItem.Note = doc.SD_24.DD_NOTES;
                     }
 
@@ -623,16 +623,16 @@ namespace KursAM2.ViewModel.Logistiks
                     }
                     else
                     {
-                        if (doc.SD_24.DD_SKLAD_OTPR_DC == null)
-                            newItem.DocumentName = newItem.DocumentName + (doc.SD_24.DD_VOZVRAT == 1
+                        if (doc.SD_24.DD_SKLAD_OTPR_DC == null && doc.TD_26 == null)
+                            newItem.DocumentName += "(неоттаксированный приход)";
+                        else
+                            newItem.DocumentName += doc.SD_24.DD_VOZVRAT == 1
                                 ? " (Возврат товара)"
-                                : " (Внутреннее перемещение)");
+                                : " (Внутреннее перемещение)";
 
-                        newItem.SummaIn = Nomenkl.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE) *
-                                          doc.DDT_KOL_PRIHOD;
+                        newItem.SummaIn = 0;
                         newItem.SummaOut = 0;
-                        newItem.SummaDelta = Nomenkl.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE) *
-                                             doc.DDT_KOL_PRIHOD;
+                        newItem.SummaDelta = 0;
                         newItem.Note = doc.SD_24.DD_NOTES;
                     }
 

@@ -29,6 +29,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         private InvoiceProviderRow myCurrentSelectedItem;
         private InvoiceProviderRow myCurrentPosition;
         public Currency myCurrency;
+        public bool IsLoadNotDistributeCurrencyConvert = false;
 
         #endregion
 
@@ -252,6 +253,11 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 {
                     // ReSharper disable once PossibleNullReferenceException
                     Data = ctx.Database.SqlQuery<InvoicePostQuery>(sqlBase).ToList();
+                    if (IsLoadNotDistributeCurrencyConvert)
+                    {
+                        var convData = ctx.TD_26_CurrencyConvert.Where(_ => _.DistributeNakladRow == null).ToList();
+
+                    }
                 }
 
                 foreach (var d in Data)
