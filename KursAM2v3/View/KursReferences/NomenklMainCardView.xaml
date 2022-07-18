@@ -1,4 +1,4 @@
-﻿<dx:DXWindow
+﻿<dx:ThemedWindow
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
@@ -7,12 +7,15 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     x:Class="KursAM2.View.KursReferences.NomenklMainCardView"
-    Title="Карточка основной номенклатуры" Height="431.568" Width="974.839">
+    Title="Карточка основной номенклатуры" Height="430" Width="975">
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
-        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
-               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
-
         <dxlc:LayoutControl x:Name="mainLayoutControl" Visibility="Hidden" Orientation="Vertical" Margin="0,0,5,0" />
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
@@ -51,18 +54,18 @@
                                Margin="5,0,0,0" VerticalAlignment="Center" />
                 <Label DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center">Накл. расход</Label>
                 <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsNakladExpense, Mode=TwoWay}" DockPanel.Dock="Left"
-                               Margin="5,0,0,0" VerticalAlignment="Center" 
-                               IsEnabled="{Binding NomenklMain.IsUsluga, UpdateSourceTrigger=PropertyChanged}"/>
+                               Margin="5,0,0,0" VerticalAlignment="Center"
+                               IsEnabled="{Binding NomenklMain.IsUsluga, UpdateSourceTrigger=PropertyChanged}" />
                 <Label DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center">Учет в рентабельности</Label>
                 <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsRentabelnost, Mode=TwoWay}" DockPanel.Dock="Left"
-                               Margin="5,0,0,0" VerticalAlignment="Center" 
-                               IsEnabled="{Binding NomenklMain.IsUsluga, UpdateSourceTrigger=PropertyChanged}"/>
+                               Margin="5,0,0,0" VerticalAlignment="Center"
+                               IsEnabled="{Binding NomenklMain.IsUsluga, UpdateSourceTrigger=PropertyChanged}" />
                 <Label DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center">Валютный учет</Label>
                 <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsCurrencyTransfer, Mode=TwoWay}" DockPanel.Dock="Left"
-                               Margin="5,0,0,0" VerticalAlignment="Center"/>
+                               Margin="5,0,0,0" VerticalAlignment="Center" />
                 <Label DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center">Только гос.валюта</Label>
                 <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsOnlyState, Mode=TwoWay}" DockPanel.Dock="Left"
-                               Margin="5,0,0,0" VerticalAlignment="Center"/>
+                               Margin="5,0,0,0" VerticalAlignment="Center" />
             </StackPanel>
             <DockPanel Height="40" Margin="0,5,0,5" LastChildFill="False">
                 <StackPanel Orientation="Horizontal">
@@ -80,7 +83,8 @@
                                     EditValue="{Binding NomenklMain.CategoryDC, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
                                     SelectedItem="{Binding NomenklMain.NomenklCategory, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}">
                         <dxg:LookUpEdit.Buttons>
-                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Edit" Command="{Binding CategoryEditCommand}" />
+                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Edit"
+                                            Command="{Binding CategoryEditCommand}" />
                         </dxg:LookUpEdit.Buttons>
                         <dxg:LookUpEdit.StyleSettings>
                             <dxg:SearchLookUpEditStyleSettings />
@@ -116,22 +120,22 @@
                                       InvalidValueBehavior="AllowLeaveEditor"
                                       Width="300">
                         <dxe:ComboBoxEdit.Buttons>
-                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Edit" Command="{Binding TypeProductEditCommand}" />
+                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Edit"
+                                            Command="{Binding TypeProductEditCommand}" />
                         </dxe:ComboBoxEdit.Buttons>
                     </dxe:ComboBoxEdit>
                     <Label Margin="10,0,5,0" VerticalAlignment="Center">Вид продукции</Label>
                     <dxe:ComboBoxEdit Name="prodeuctLookUpEdit"
-                                    VerticalAlignment="Center"
-                                    DisplayMember="Name"
-                                    ValueMember="DocCode"
-                                    Width="250"
-                                    PopupMinWidth="400"
-                                    ItemsSource="{Binding NomenklProductCollection}"
-                                    EditValue="{Binding NomenklMain.ProductTypeDC,
+                                      VerticalAlignment="Center"
+                                      DisplayMember="Name"
+                                      ValueMember="DocCode"
+                                      Width="250"
+                                      PopupMinWidth="400"
+                                      ItemsSource="{Binding NomenklProductCollection}"
+                                      EditValue="{Binding NomenklMain.ProductTypeDC,
                                         UpdateSourceTrigger=PropertyChanged, 
                         ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
-                                    SelectedItem="{Binding NomenklMain.ProductType, UpdateSourceTrigger=PropertyChanged}">
-                    </dxe:ComboBoxEdit>
+                                      SelectedItem="{Binding NomenklMain.ProductType, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
             </DockPanel>
             <DockPanel Height="30">
@@ -153,21 +157,22 @@
                 </dxe:ComboBoxEdit>
                 <Label DockPanel.Dock="Left">Страна происхождения</Label>
                 <dxe:ComboBoxEdit Name="EditCountry"
-                                Margin="20,0,0,0"
-                                AutoComplete="True"
-                                DisplayMember="Name"
-                                ValueMember="Id"
-                                Width="250"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Left"
-                                ItemsSource="{Binding CountryCollection}"
-                                EditValue="{Binding NomenklMain.Country.Id,UpdateSourceTrigger=PropertyChanged}"
-                                SelectedItem="{Binding NomenklMain.Country, UpdateSourceTrigger=PropertyChanged}"
-                                AllowDefaultButton="False">
-                    <dxe:ComboBoxEdit.Buttons>  
-                        <dxe:ButtonInfo GlyphKind="DropDown" Command="{Binding (dxe:ButtonEdit.OwnerEdit).OpenPopupCommand, RelativeSource={RelativeSource Self}}"/>  
-                        <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding ClearCountryCommand}"/>
-                    </dxe:ComboBoxEdit.Buttons>  
+                                  Margin="20,0,0,0"
+                                  AutoComplete="True"
+                                  DisplayMember="Name"
+                                  ValueMember="Id"
+                                  Width="250"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Left"
+                                  ItemsSource="{Binding CountryCollection}"
+                                  EditValue="{Binding NomenklMain.Country.Id,UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedItem="{Binding NomenklMain.Country, UpdateSourceTrigger=PropertyChanged}"
+                                  AllowDefaultButton="False">
+                    <dxe:ComboBoxEdit.Buttons>
+                        <dxe:ButtonInfo GlyphKind="DropDown"
+                                        Command="{Binding (dxe:ButtonEdit.OwnerEdit).OpenPopupCommand, RelativeSource={RelativeSource Self}}" />
+                        <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding ClearCountryCommand}" />
+                    </dxe:ComboBoxEdit.Buttons>
                 </dxe:ComboBoxEdit>
             </DockPanel>
             <DockPanel Height="90">
@@ -181,4 +186,4 @@
             </DockPanel>
         </StackPanel>
     </DockPanel>
-</dx:DXWindow>
+</dx:ThemedWindow>

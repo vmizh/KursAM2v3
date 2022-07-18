@@ -1,4 +1,4 @@
-﻿<dx:DXWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<dx:ThemedWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
@@ -9,14 +9,18 @@
              xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
              x:Class="KursAM2.View.Personal.PayRollVedomost" Title="Ведомость" Height="600" Width="800"
              Icon="pack://siteoforigin:,,,/Images/form_blue_big.png">
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
     <dxmvvm:Interaction.Behaviors>
         <dxwui:WinUIDialogService />
         <dxwui:WinUIMessageBoxService />
     </dxmvvm:Interaction.Behaviors>
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
-        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
-               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
         <dxlc:LayoutControl x:Name="mainLayoutControl" Margin="0" Padding="0">
             <dxlc:LayoutGroup Orientation="Vertical">
                 <dxlc:LayoutGroup Header="LayoutGroup" x:Name="LayoutGroup1" View="Group" HorizontalAlignment="Left"
@@ -252,4 +256,4 @@
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>
     </DockPanel>
-</dx:DXWindow>
+</dx:ThemedWindow>

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
@@ -15,7 +14,7 @@ namespace KursAM2.View.KursReferences
     {
         public NomenklMainCardView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += NomenklMainCardView_Loaded;
@@ -25,6 +24,7 @@ namespace KursAM2.View.KursReferences
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();

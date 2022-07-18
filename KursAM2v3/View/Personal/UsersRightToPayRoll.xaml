@@ -1,4 +1,4 @@
-﻿<dx:DXWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<dx:ThemedWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
@@ -7,8 +7,12 @@
              x:Class="KursAM2.View.Personal.UsersRightToPayRoll" Title="Доступ к лицевым счетам сотрудников"
              Height="300"
              Width="300" Icon="pack://siteoforigin:,,,/Images/id_card_big.png">
-
-
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
     <dxb:BarManager>
         <dxb:BarManager.Items>
             <dxb:BarButtonItem x:Name="barButtonItem2" Content="Exit"
@@ -45,6 +49,4 @@
             </dxdo:DockLayoutManager>
         </Grid>
     </dxb:BarManager>
-
-
-</dx:DXWindow>
+</dx:ThemedWindow>

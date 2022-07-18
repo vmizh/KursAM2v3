@@ -11,6 +11,7 @@
     xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     Title="{Binding WindowName}" MinHeight="450" MinWidth="800">
+
     <dx:ThemedWindow.Resources>
         <native:RenderTemplate
             x:Key="{themes:InplaceBaseEditThemeKey ResourceKey=CriticalErrorTemplate, IsThemeIndependent=True}">

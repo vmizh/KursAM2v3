@@ -1,4 +1,4 @@
-﻿<dx:DXWindow
+﻿<dx:ThemedWindow
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
@@ -6,8 +6,13 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     x:Class="KursAM2.View.Management.KontargentDialogSelect"
-    Title="KontargentDialogSelect" Height="663.355" Width="1029.474">
-
+    Title="KontargentDialogSelect" Height="660" Width="1030">
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
     <dxb:BarManager>
         <dxb:BarManager.Items>
             <dxb:BarButtonItem x:Name="barButtonItemOK" Content="OK" Alignment="Far" GlyphSize="Large"
@@ -61,4 +66,4 @@
         </Grid>
 
     </dxb:BarManager>
-</dx:DXWindow>
+</dx:ThemedWindow>

@@ -1,22 +1,26 @@
-﻿<dx:DXWindow x:Class="KursAM2.View.KursReferences.SDRReferenceView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-        xmlns:control="clr-namespace:Core.Control;assembly=Core"
-        xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-        mc:Ignorable="d"
-        Title="Справочник статей и счетов доходов/расходов" Height="450" Width="800">
+﻿<dx:ThemedWindow x:Class="KursAM2.View.KursReferences.SDRReferenceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:control="clr-namespace:Core.Control;assembly=Core"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             mc:Ignorable="d"
+             Title="Справочник статей и счетов доходов/расходов" Height="450" Width="800">
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
-        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
-               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
         <dxlc:LayoutControl x:Name="MainLayoutControl" Orientation="Vertical">
-            <dxlc:LayoutGroup Name="LayoutGroup1" 
-                              Header="Статьи" 
-                              dxlc:LayoutControl.AllowVerticalSizing="True" 
+            <dxlc:LayoutGroup Name="LayoutGroup1"
+                              Header="Статьи"
+                              dxlc:LayoutControl.AllowVerticalSizing="True"
                               View="GroupBox">
                 <dxg:TreeListControl Name="treeListSDRState"
                                      AutoGenerateColumns="AddNew"
@@ -44,9 +48,11 @@
                                 <ContextMenu>
                                     <MenuItem Header="Добавить статью"
                                               Command="{Binding AddNewSDRStateCommand}" />
-                                    <MenuItem Header="Добавить подстатью" Command="{Binding AddNewChildSDRStateCommand}" />
+                                    <MenuItem Header="Добавить подстатью"
+                                              Command="{Binding AddNewChildSDRStateCommand}" />
                                     <MenuItem Header="Удалить статью" Command="{Binding DeleteSDRStateCommand}" />
-                                    <MenuItem Header="Перевести на верхний уровень" Command="{Binding MoveToTopDRStateCommand}" />
+                                    <MenuItem Header="Перевести на верхний уровень"
+                                              Command="{Binding MoveToTopDRStateCommand}" />
                                     <Separator />
                                     <MenuItem Header="Экспорт"
                                               Command="{Binding VisualControlExportCommand}"
@@ -63,40 +69,39 @@
                     </dxg:TreeListControl.View>
                 </dxg:TreeListControl>
             </dxlc:LayoutGroup>
-            <dxlc:LayoutGroup Name="LayoutGroup2" 
+            <dxlc:LayoutGroup Name="LayoutGroup2"
                               dxlc:LayoutControl.AllowVerticalSizing="True"
                               Header="Счета"
                               View="GroupBox">
                 <dxg:GridControl x:Name="gridControlSDRSchet"
-                         AutoGenerateColumns="AddNew"
-                         EnableSmartColumnsGeneration="True"
-                         dx:DXSerializer.SerializationID="gridControlSDRSchet"
-                         dx:DXSerializer.StoreLayoutMode="All"
-                         dxg:DataControlSerializationOptions.AddNewColumns="True"
-                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                         ItemsSource="{Binding SDRSchetCollection}"
-                         CurrentItem="{Binding CurrentSDRSchet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         SelectedItems="{Binding SelectedSDRSchets, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         AutoGeneratedColumns="GridControlSDRSchet_OnAutoGeneratedColumns"
-                         AutoGeneratingColumn="GridControlSDRSchet_OnAutoGeneratingColumn">
+                                 AutoGenerateColumns="AddNew"
+                                 EnableSmartColumnsGeneration="True"
+                                 dx:DXSerializer.SerializationID="gridControlSDRSchet"
+                                 dx:DXSerializer.StoreLayoutMode="All"
+                                 dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                 dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                 ItemsSource="{Binding SDRSchetCollection}"
+                                 CurrentItem="{Binding CurrentSDRSchet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 SelectedItems="{Binding SelectedSDRSchets, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AutoGeneratedColumns="GridControlSDRSchet_OnAutoGeneratedColumns"
+                                 AutoGeneratingColumn="GridControlSDRSchet_OnAutoGeneratingColumn">
                     <dxg:GridControl.View>
                         <dxg:TableView x:Name="tableView"
-                               EnableImmediatePosting="True"
-                               AllowPerPixelScrolling="True"
-                               ShowTotalSummary="False"
-                               >
+                                       EnableImmediatePosting="True"
+                                       AllowPerPixelScrolling="True"
+                                       ShowTotalSummary="False">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Добавить" Command="{Binding AddNewItemCommand}" />
                                     <MenuItem Header="Удалить" Command="{Binding RemoveItemCommand}" />
                                     <Separator />
                                     <MenuItem Header="Экспорт"
-                                      Command="{Binding VisualControlExportCommand}"
-                                      CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              Command="{Binding VisualControlExportCommand}"
+                                              CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
                                               AncestorType={x:Type ContextMenu}}}">
                                         <MenuItem.Icon>
                                             <Image
-                                        Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                                Source="pack://siteoforigin:,,,/Images/export1.png" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                 </ContextMenu>
@@ -108,4 +113,4 @@
 
         </dxlc:LayoutControl>
     </DockPanel>
-</dx:DXWindow>
+</dx:ThemedWindow>

@@ -13,11 +13,19 @@ namespace KursAM2.View.KursReferences
     {
         public KontragentReference2View()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += KontragentReferenceView_Loaded;
             Closing += KontragentReferenceView_Closing;
+        }
+
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
+        public string LayoutManagerName { get; set; }
+
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
         }
 
         private void KontragentReferenceView_Closing(object sender, CancelEventArgs e)
@@ -28,13 +36,6 @@ namespace KursAM2.View.KursReferences
         private void KontragentReferenceView_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
-        }
-
-        public LayoutManager.LayoutManager LayoutManager { get; set; }
-        public string LayoutManagerName { get; set; }
-        public void SaveLayout()
-        {
-            LayoutManager.Save();
         }
 
         private void GridControlKontragent_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

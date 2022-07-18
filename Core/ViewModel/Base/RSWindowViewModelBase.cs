@@ -37,6 +37,8 @@ namespace Core.ViewModel.Base
         private string myMenuInfoString;
         private Visibility myIsMenuInfoVisibility;
 
+        protected ThemedWindowLayoutManager WindowLayoutManager;
+
         public RSWindowViewModelBase()
         {
             myWindowName = "Без имени";
@@ -44,6 +46,13 @@ namespace Core.ViewModel.Base
         }
 
         public RSWindowViewModelBase(Window form)
+        {
+            // ReSharper disable once VirtualMemberCallInConstructor
+            Form = form;
+            myIsCanRefresh = true;
+        }
+
+        public RSWindowViewModelBase(ThemedWindow form)
         {
             // ReSharper disable once VirtualMemberCallInConstructor
             Form = form;

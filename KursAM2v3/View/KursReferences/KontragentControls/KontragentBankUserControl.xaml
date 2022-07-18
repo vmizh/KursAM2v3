@@ -40,7 +40,7 @@
                                    ShowGroupPanel="False"
                                    ShowTotalSummary="True"
                                    CellValueChanged="GridViewBase_OnCellValueChanged"
-                                   ShowAutoFilterRow="True"/>
+                                   ShowAutoFilterRow="True" />
                 </dxg:GridControl.View>
             </dxg:GridControl>
         </dxlc:LayoutGroup>

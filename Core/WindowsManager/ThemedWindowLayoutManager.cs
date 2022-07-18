@@ -1,0 +1,42 @@
+﻿using System;
+using System.ComponentModel;
+using System.Data.SqlClient;
+using System.Windows;
+using Data;
+using DevExpress.Xpf.Core;
+
+namespace Core.WindowsManager
+{
+    public class ThemedWindowLayoutManager : WindowLayoutManager
+    {
+        public ThemedWindowLayoutManager(ThemedWindow window, string layoutName, Guid userId)
+        {
+            if (window == null || string.IsNullOrWhiteSpace(layoutName) || userId == Guid.Empty)
+                throw new Exception("Параметры не могут быть нулевыми");
+            Window = window;
+            Name = layoutName;
+            UserId = userId;
+            var connString = new SqlConnectionStringBuilder
+            {
+                DataSource = "172.16.0.1",
+                InitialCatalog = "KursSystem",
+                UserID = "sa",
+                Password = "CbvrfFhntvrf65"
+            }.ToString();
+            DBContext = new KursSystemEntities(connString);
+            if (Window != null) window.SaveLayoutToStream(StartLayout);
+            Window.Closing += Window_Closing;
+            Window.Loaded += Window_Loaded;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Load();
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            Save();
+        }
+    }
+}

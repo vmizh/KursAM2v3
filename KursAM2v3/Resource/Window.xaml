@@ -162,4 +162,43 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="headerItemsControlStyle" TargetType="{x:Type dx:ThemedWindowHeaderItemsControlBase}">
+    <Setter Property="ItemsPanel">
+        <Setter.Value>
+            <ItemsPanelTemplate>
+                <WrapPanel x:Name="PART_ToolbarPanel"
+                      VerticalAlignment="Stretch"/>
+            </ItemsPanelTemplate>
+        </Setter.Value>
+    </Setter>
+</Style>
+
+<Style TargetType="{x:Type dx:ThemedWindowHeader}">
+    <Setter Property="Height" Value="Auto"/>
+    <Setter Property="Template">
+        <Setter.Value>
+            <ControlTemplate TargetType="{x:Type dx:ThemedWindowHeader}">
+                <Border x:Name="PART_HeaderRoot"
+                        Background="{TemplateBinding Background}"
+                        Opacity="{TemplateBinding Opacity}"
+                        Padding="{TemplateBinding Padding}">
+                    <DockPanel x:Name="PART_HeaderDock" LastChildFill="True">
+                        <dx:ThemedWindowIcon x:Name="PART_WindowIcon" DockPanel.Dock="Left"/>
+                        <dx:ThemedWindowBackButton x:Name="PART_WindowBackButton"
+                                   DockPanel.Dock="Left"
+                                   Style="{DynamicResource {themes:ThemedWindowThemeKey ResourceKey=BackButtonStyle}}"
+                                   UseLayoutRounding="True"/>
+                        <dx:ThemedWindowControlBoxBorder x:Name="PART_HeaderItemsAndButtons"
+                                         DockPanel.Dock="Right"
+                                         UseLayoutRounding="True"/>
+                        <dx:ThemedWindowToolbarItemsControl x:Name="PART_ToolbarItems"
+                                            DockPanel.Dock="Left"
+                                            Style="{StaticResource headerItemsControlStyle}"/>
+                        <dx:ThemedWindowTitle x:Name="PART_WindowTitle"/>
+                    </DockPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter.Value>
+    </Setter>
+</Style>
 </ResourceDictionary>

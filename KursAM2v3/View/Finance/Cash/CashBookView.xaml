@@ -1,22 +1,28 @@
-﻿<dx:DXWindow x:Class="KursAM2.View.Finance.Cash.CashBookView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:control="clr-namespace:Core.Control;assembly=Core"
-             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-             mc:Ignorable="d"
-             Title="{Binding WindowName}" MinHeight="450" MinWidth="1000"
-             Icon="{Binding Source={StaticResource CashDrawingImage},
-             Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}">
+﻿<dx:ThemedWindow x:Class="KursAM2.View.Finance.Cash.CashBookView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:control="clr-namespace:Core.Control;assembly=Core"
+                 xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 mc:Ignorable="d"
+                 Title="{Binding WindowName}" MinHeight="450" MinWidth="1000"
+                 Icon="{Binding Source={StaticResource CashDrawingImage},
+                    Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
+                 >
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" 
+                   />
+    </dx:ThemedWindow.HeaderItems>
     <DockPanel Style="{StaticResource DXServices}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
-        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
-               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
         <DockPanel DockPanel.Dock="Top">
             <dxlc:LayoutItem Label="Поиск"
                              ToolTip="Строка поиска по полям документов"
@@ -130,9 +136,7 @@
                         <dxg:GridControl.View>
                             <dxg:TableView ShowTotalSummary="True"
                                            Name="tableViewDocuments"
-                                           ShowAutoFilterRow="True"
-                                           
-                                           >
+                                           ShowAutoFilterRow="True">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}" />
@@ -146,7 +150,8 @@
                                                       CommandParameter="2" />
                                         </MenuItem>
                                         <MenuItem Header="Копия документа" Command="{Binding DocNewCopyCommand}" />
-                                        <MenuItem Header="Копия реквизитов" Command="{Binding DocNewCopyRequisiteCommand}" />
+                                        <MenuItem Header="Копия реквизитов"
+                                                  Command="{Binding DocNewCopyRequisiteCommand}" />
                                         <Separator />
                                         <MenuItem Header="Ввод остатков"
                                                   Command="{Binding CashSetRemainsCommand}" />
@@ -192,9 +197,7 @@
                         <dxg:GridControl.View>
                             <dxg:TableView ShowTotalSummary="False"
                                            Name="tableViewRemains"
-                                           ShowAutoFilterRow="True"
-                                           
-                                           >
+                                           ShowAutoFilterRow="True">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
@@ -221,4 +224,4 @@
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>
     </DockPanel>
-</dx:DXWindow>
+</dx:ThemedWindow>

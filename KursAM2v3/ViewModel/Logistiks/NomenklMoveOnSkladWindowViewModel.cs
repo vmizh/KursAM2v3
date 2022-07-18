@@ -1182,6 +1182,7 @@ namespace KursAM2.ViewModel.Logistiks
             switch (CurrentDocument.DocumentName)
             {
                 case "Приходный складской ордер":
+                case "Приходный складской ордер(неоттаксированный приход)":
                     DocumentsOpenManager.Open(DocumentType.StoreOrderIn, CurrentDocument.DocCode);
                     break;
                 case "Расходный складской ордер":

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 
@@ -24,6 +25,14 @@ namespace Core.ViewModel.Base
         {
             StartDate = DateTime.Today.AddDays(-14);
             EndDate = DateTime.Today;
+        }
+
+        public RSWindowSearchViewModelBase(ThemedWindow form) : base(form)
+        {
+            StartDate = DateTime.Today.AddDays(-14);
+            EndDate = DateTime.Today;
+            Form = form;
+
         }
 
 

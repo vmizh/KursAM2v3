@@ -5,6 +5,12 @@
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     Title="{Binding WindowName}" Height="400" Width="1000"
     >
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
     <Grid Name="grid" Style="{StaticResource DXServices}">
         <Grid.RowDefinitions>
             <RowDefinition Height="239*" />

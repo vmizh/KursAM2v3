@@ -17,7 +17,7 @@ namespace KursAM2.View.KursReferences.KontragentControls
     {
         public KontragentBankUserControl()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, LayoutControl);
             Loaded += MutualAccountingSearchView_Loaded;
@@ -55,9 +55,9 @@ namespace KursAM2.View.KursReferences.KontragentControls
         private void GridViewBase_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
         {
             if (e.Column.FieldName == "IsForPrint")
-                if ((bool)e.Value && DataContext is KontragentCardWindowViewModel ctx)
+                if ((bool) e.Value && DataContext is KontragentCardWindowViewModel ctx)
                     foreach (var b in ctx.BankAndAccounts)
-                        if (((KontragentBank)e.Row).Code != b.Code)
+                        if (((KontragentBank) e.Row).Code != b.Code)
                             b.IsForPrint = false;
         }
 

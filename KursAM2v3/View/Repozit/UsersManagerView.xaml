@@ -12,10 +12,14 @@
                  mc:Ignorable="d"
                  Title="{Binding WindowName}" MinHeight="450" MinWidth="800"
                  >
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
-        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0" DockPanel.Dock="Top"
-               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}"/>
         <dxlc:LayoutControl HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Name="LayoutControlMain"

@@ -5,7 +5,6 @@ using System.Windows;
 using Core;
 using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.Cash;
-using Core.Invoices.EntityViewModel;
 using Core.WindowsManager;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
@@ -28,7 +27,8 @@ namespace KursAM2.View.KursReferences
 
         public CashAndBanksReferenceView()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent();
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             gridCashLayout = new LayoutManagerGridAutoGenerationColumns(GetType().Name, gridCash);
             gridBankLayout = new LayoutManagerGridAutoGenerationColumns(GetType().Name, gridBank);
@@ -38,6 +38,7 @@ namespace KursAM2.View.KursReferences
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -88,6 +89,7 @@ namespace KursAM2.View.KursReferences
                     };
                     break;
             }
+
             ViewFluentHelper.SetModeUpdateProperties(row, e.Column, e.Column.FieldName);
         }
 

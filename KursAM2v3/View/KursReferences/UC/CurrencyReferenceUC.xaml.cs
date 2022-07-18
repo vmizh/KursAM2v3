@@ -13,7 +13,7 @@ namespace KursAM2.View.KursReferences.UC
     {
         public CurrencyReferenceUC()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
@@ -31,7 +31,7 @@ namespace KursAM2.View.KursReferences.UC
             if (e.Column.FieldName == "IsMain")
                 if (DataContext is CurrencyReferenceWindowViewModel dtx)
                     foreach (var c in dtx.CurrencyCollection)
-                        if (((CurrencyRef)e.Row).Id != c.Id)
+                        if (((CurrencyRef) e.Row).Id != c.Id)
                             c.IsMain = false;
         }
     }

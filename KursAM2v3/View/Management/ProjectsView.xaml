@@ -1,4 +1,4 @@
-﻿<dx:DXWindow x:Class="KursAM2.View.Management.ProjectsView"
+﻿<dx:ThemedWindow x:Class="KursAM2.View.Management.ProjectsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -10,12 +10,14 @@
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              mc:Ignorable="d"
              Title="Проекты" Height="300" Width="300">
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
-        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
-               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
-
-        
         <dxlc:LayoutControl
             x:Name="mainLayoutControl"
             Margin="0,10,0,0"
@@ -227,4 +229,4 @@
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>
     </DockPanel>
-</dx:DXWindow>
+</dx:ThemedWindow>

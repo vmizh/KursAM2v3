@@ -5,8 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-             mc:Ignorable="d"
-             >
+             mc:Ignorable="d">
     <dxlc:LayoutControl Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" Padding="0"
                         Margin="0,0,0,0">
         <dxlc:LayoutItem>

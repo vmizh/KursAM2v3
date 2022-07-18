@@ -225,6 +225,7 @@
     <Compile Include="Menu\KursButton.cs" />
     <Compile Include="EntityViewModel\ICheckViewModel.cs" />
     <Compile Include="WindowsManager\ErrorMessageBase.cs" />
+    <Compile Include="WindowsManager\ThemedWindowLayoutManager.cs" />
     <Compile Include="WindowsManager\StandartErrorManager.cs" />
     <Compile Include="RemainderCurrenciesDatePeriod.cs" />
     <Compile Include="DatePeriod.cs" />
@@ -347,6 +348,7 @@
     <Compile Include="EntityViewModel\Vzaimozachet\SD_110ViewModel.cs" />
     <Compile Include="EntityViewModel\Vzaimozachet\UD_110ViewModel.cs" />
     <Compile Include="WindowsManager\IWindowManager.cs" />
+    <Compile Include="WindowsManager\WindowLayoutManager.cs" />
     <Compile Include="WindowsManager\WindowManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -388,7 +390,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ViewModel\Base\DXWindowViewModel\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

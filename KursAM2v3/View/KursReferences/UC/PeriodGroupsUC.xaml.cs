@@ -11,7 +11,7 @@ namespace KursAM2.View.KursReferences.UC
     {
         public PeriodGroupsUC()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, mainControl);
             Loaded += UserControl_Loaded;
@@ -20,6 +20,7 @@ namespace KursAM2.View.KursReferences.UC
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();

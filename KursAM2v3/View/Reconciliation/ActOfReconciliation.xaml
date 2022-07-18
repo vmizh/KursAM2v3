@@ -1,4 +1,4 @@
-﻿<dx:DXWindow
+﻿<dx:ThemedWindow
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
@@ -9,10 +9,14 @@
     xmlns:control="clr-namespace:Core.Control;assembly=Core"
     x:Class="KursAM2.View.Reconciliation.ActOfReconciliation"
     Title="Отчет по актам сверки">
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
-        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
-               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
             <dxe:ComboBoxEdit x:Name="periodCB" HorizontalAlignment="Left" Margin="4,10,0,7"
                               VerticalAlignment="Center" Width="150" Height="22"
@@ -199,4 +203,4 @@
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>
     </DockPanel>
-</dx:DXWindow>
+</dx:ThemedWindow>

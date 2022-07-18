@@ -26,9 +26,7 @@
                         <dxg:TableView x:Name="TableView2NomenklItemGrid2"
                                        EnableImmediatePosting="True"
                                        AllowPerPixelScrolling="True"
-                                       ShowTotalSummary="False" 
-                                       
-                                       />
+                                       ShowTotalSummary="False" />
                     </dxg:GridControl.View>
                 </dxg:GridControl>
             </dxlc:LayoutGroup>

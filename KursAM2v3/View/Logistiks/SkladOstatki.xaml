@@ -1,4 +1,4 @@
-﻿<dx:DXWindow
+﻿<dx:ThemedWindow
     x:Class="KursAM2.View.Logistiks.SkladOstatki"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,7 +7,13 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:control1="clr-namespace:Core.Control;assembly=Core"
-    Title="Остатки товаров по складам" Height="350" Width="578.165">
+    Title="Остатки товаров по складам" Height="350" Width="578">
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
     <DockPanel>
         <control1:WindowMenu DockPanel.Dock="Top" />
             <StackPanel Margin="0,0,0,5"
@@ -289,4 +295,4 @@
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>
     </DockPanel>
-</dx:DXWindow>
+</dx:ThemedWindow>

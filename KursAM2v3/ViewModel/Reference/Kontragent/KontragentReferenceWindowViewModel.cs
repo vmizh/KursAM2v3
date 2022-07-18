@@ -254,16 +254,20 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         public override void RefreshData(object data)
         {
             Groups.Clear();
-            Groups.Add(new KontragentGroup
-            {
-                Entity = new UD_43
-                {
-                    EG_ID = 0,
-                    EG_NAME = "Вне групп"
-                }
-            });
+            
             foreach (var item in GlobalOptions.GetEntities().UD_43.Where(_ => (_.EG_DELETED ?? 0) != 1))
                 Groups.Add(new KontragentGroup(item));
+            if (Groups.All(_ => _.EG_ID != 0))
+            {
+                Groups.Add(new KontragentGroup
+                {
+                    Entity = new UD_43
+                    {
+                        EG_ID = 0,
+                        EG_NAME = "Вне групп"
+                    }
+                });
+            }
             RaisePropertyChanged(nameof(Groups));
         }
 

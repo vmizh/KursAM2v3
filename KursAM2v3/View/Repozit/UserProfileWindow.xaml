@@ -7,6 +7,12 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     Title="{Binding WindowName}" 
     Height="400" Width="700">
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
     <dxlc:LayoutControl dxe:ValidationService.IsValidationContainer="True" x:Name="validationContainer">
         <dxlc:LayoutGroup Orientation="Vertical">
             <dxlc:LayoutGroup Orientation ="Horizontal">

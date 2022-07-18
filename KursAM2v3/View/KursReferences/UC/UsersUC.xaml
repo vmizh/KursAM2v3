@@ -28,9 +28,7 @@
                         <dxg:TableView x:Name="tableView2NomenklItemGrid2"
                                        EnableImmediatePosting="True"
                                        AllowPerPixelScrolling="True"
-                                       ShowTotalSummary="False"
-                                       
-                                       >
+                                       ShowTotalSummary="False">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Добавить"
@@ -61,9 +59,7 @@
                         <dxg:TableView x:Name="tableView2NomenklItemGrid"
                                        EnableImmediatePosting="True"
                                        AllowPerPixelScrolling="True"
-                                       ShowTotalSummary="False"
-                                       
-                                       >
+                                       ShowTotalSummary="False">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Удалить"

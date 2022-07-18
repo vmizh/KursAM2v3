@@ -18,7 +18,7 @@ namespace KursAM2.View.KursReferences
     {
         public NomenklReferenceView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += NomenklReferenceView_Loaded;
@@ -65,10 +65,10 @@ namespace KursAM2.View.KursReferences
         private void treeListViewCategory_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (!(Keyboard.FocusedElement is TextBox)) return;
-            if ((e.Key == Key.Right &&
-                 ((TextBox) Keyboard.FocusedElement).CaretIndex == ((TextBox) Keyboard.FocusedElement).Text.Length ||
-                 e.Key == Key.Left &&
-                 ((TextBox) Keyboard.FocusedElement).CaretIndex == 0) &&
+            if (((e.Key == Key.Right &&
+                  ((TextBox) Keyboard.FocusedElement).CaretIndex == ((TextBox) Keyboard.FocusedElement).Text.Length) ||
+                 (e.Key == Key.Left &&
+                  ((TextBox) Keyboard.FocusedElement).CaretIndex == 0)) &&
                 Equals(treeListCategory.CurrentColumn, treeListCategory.Columns[treeListCategory.Columns.Count - 1]))
                 e.Handled = true;
         }

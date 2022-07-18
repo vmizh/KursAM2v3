@@ -15,6 +15,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
+using DevExpress.Xpf.Core;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.Repositories.InvoicesRepositories;
@@ -41,6 +42,59 @@ namespace KursAM2.ViewModel.Finance.Invoices
         }
 
         public InvoiceClientSearchViewModel(Window form) : base(form)
+        {
+            GenericProviderRepository = new GenericKursDBRepository<SD_84>(UnitOfWork);
+            InvoiceClientRepository = new InvoiceClientRepository(UnitOfWork);
+            WindowName = "Счета фактуры для клиентов";
+            Documents = new ObservableCollection<InvoiceClient>();
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
+            EndDate = DateTime.Today;
+            StartDate = EndDate.AddDays(-30);
+            var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
+            if (prn != null)
+            {
+                prn.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Заказ",
+                    Command = PrintZakazCommand
+                });
+                var schet = new MenuButtonInfo
+                {
+                    Caption = "Счет"
+                    //Command = PrintSFSchetCommand
+                };
+                schet.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Печать",
+                    Command = PrintSFSchetCommand
+                });
+                schet.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Экспорт",
+                    Command = ExportSFCommand
+                });
+                prn.SubMenu.Add(schet);
+                var sf = new MenuButtonInfo
+                {
+                    Caption = "Счет фактура"
+                    //Command = PrintSFCommand
+                };
+                sf.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Печать",
+                    Command = PrintSFCommand
+                });
+                sf.SubMenu.Add(new MenuButtonInfo
+                {
+                    Caption = "Экспорт",
+                    Command = ExportSFCommand
+                });
+                prn.SubMenu.Add(sf);
+            }
+        }
+
+        public InvoiceClientSearchViewModel(ThemedWindow form) : base(form)
         {
             GenericProviderRepository = new GenericKursDBRepository<SD_84>(UnitOfWork);
             InvoiceClientRepository = new InvoiceClientRepository(UnitOfWork);

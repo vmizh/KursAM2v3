@@ -1,4 +1,4 @@
-﻿<dx:DXWindow x:Class="KursAM2.View.Finance.Cash.CashOutSearchView"
+﻿<dx:ThemedWindow x:Class="KursAM2.View.Finance.Cash.CashOutSearchView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,10 +11,14 @@
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              mc:Ignorable="d"
              Title="Поиск расходных кассовых документов" Height="300" Width="300">
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}"
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
-        <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
-               Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
         <dxlc:LayoutControl Orientation="Vertical" Name="mainLayoutControl" Padding="2">
             <dxlc:LayoutGroup Name="layoutGroupHeader" Margin="10,0" Orientation="Vertical">
                 <StackPanel Orientation="Horizontal" Height="30">
@@ -101,4 +105,4 @@
         </dxlc:LayoutControl>
 
     </DockPanel>
-</dx:DXWindow>
+</dx:ThemedWindow>

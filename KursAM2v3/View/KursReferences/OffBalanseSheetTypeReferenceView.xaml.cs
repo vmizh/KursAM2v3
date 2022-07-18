@@ -12,12 +12,21 @@ namespace KursAM2.View.KursReferences
     {
         public OffBalanseSheetTypeReferenceView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, null);
             Loaded += myLoaded;
             Closing += myClosing;
         }
+
+        public LayoutManager.LayoutManager LayoutManager { get; set; }
+        public string LayoutManagerName { get; set; }
+
+        public void SaveLayout()
+        {
+            LayoutManager.Save();
+        }
+
         private void myClosing(object sender, CancelEventArgs e)
         {
             LayoutManager.Save();
@@ -26,13 +35,6 @@ namespace KursAM2.View.KursReferences
         private void myLoaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
-        }
-
-        public LayoutManager.LayoutManager LayoutManager { get; set; }
-        public string LayoutManagerName { get; set; }
-        public void SaveLayout()
-        {
-            LayoutManager.Save();
         }
     }
 }

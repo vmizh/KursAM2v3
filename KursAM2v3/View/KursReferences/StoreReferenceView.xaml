@@ -21,7 +21,7 @@
         <Label x:Name="PART6_Text" Visibility="Hidden" Width="0" Height="0"
                Content="{Binding DatabaseName, NotifyOnSourceUpdated=True}" Foreground="{Binding DatabaseColor}" />
         <dxlc:LayoutControl Orientation="Vertical">
-            <dxlc:LayoutGroup  dxlc:LayoutControl.AllowVerticalSizing="True" >
+            <dxlc:LayoutGroup dxlc:LayoutControl.AllowVerticalSizing="True">
                 <dxg:GridControl x:Name="gridControl"
                                  AutoGenerateColumns="None"
                                  EnableSmartColumnsGeneration="True"
@@ -58,7 +58,7 @@
                     </dxg:GridControl.View>
                 </dxg:GridControl>
             </dxlc:LayoutGroup>
-            <dxlc:LayoutGroup  dxlc:LayoutControl.AllowVerticalSizing="True" >
+            <dxlc:LayoutGroup dxlc:LayoutControl.AllowVerticalSizing="True">
                 <dxg:GridControl x:Name="gridControlUsers"
                                  AutoGenerateColumns="AddNew"
                                  EnableSmartColumnsGeneration="True"

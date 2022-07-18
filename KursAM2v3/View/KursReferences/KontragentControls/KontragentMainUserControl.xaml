@@ -6,10 +6,9 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     x:Class="KursAM2.View.KursReferences.KontragentControls.KontragentMainUserControl"
-    mc:Ignorable="d" d:DesignWidth="676"
-    >
-    <dxlc:LayoutControl Name="KontragentMainLayoutControl" 
-                        Orientation="Vertical" 
+    mc:Ignorable="d" d:DesignWidth="676">
+    <dxlc:LayoutControl Name="KontragentMainLayoutControl"
+                        Orientation="Vertical"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Top" Padding="0">
         <dxlc:LayoutGroup Orientation="Vertical" Margin="0">
@@ -31,20 +30,18 @@
                         DisplayMember="Name"
                         AutoComplete="True"
                         EditValue="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        ItemsSource="{Binding Categories, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-                        >
+                        ItemsSource="{Binding Categories, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                         <dxe:ComboBoxEdit.Buttons>
                             <dxe:ButtonInfo GlyphKind="Regular" Command="{Binding CategoryReferenceCommand}" />
                         </dxe:ComboBoxEdit.Buttons>
-                        </dxe:ComboBoxEdit>
+                    </dxe:ComboBoxEdit>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Margin="0,0,0,5" Label="Ответственное лицо">
                     <dxe:ComboBoxEdit
                         DisplayMember="Name"
                         AutoComplete="True"
                         EditValue="{Binding OtvetstLico, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        ItemsSource="{Binding Employees, Mode=OneWay}" 
-                        />
+                        ItemsSource="{Binding Employees, Mode=OneWay}" />
                 </dxlc:LayoutItem>
             </dxlc:LayoutGroup>
             <dxlc:LayoutGroup Orientation="Vertical">

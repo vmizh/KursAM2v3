@@ -22,7 +22,7 @@ namespace KursAM2.View.KursReferences
 
         public ProjectReferenceView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             myBnEditor = new ButtonEditSettings
             {
@@ -34,8 +34,11 @@ namespace KursAM2.View.KursReferences
             Unloaded += ProjectReferenceView_Unloaded;
         }
 
+        public Project dropProject { set; get; }
+
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -61,6 +64,7 @@ namespace KursAM2.View.KursReferences
                 band.Name = "band" + i;
                 ++i;
             }
+
             LayoutManager.Load();
             foreach (var band in treeListControl.Bands)
                 switch (band.Header)
@@ -88,8 +92,6 @@ namespace KursAM2.View.KursReferences
                     col.EditSettings = myBnEditor;
         }
 
-        public Project dropProject { set; get; } 
-
         private void TreeListDragDropManager_Drop(object sender, TreeListDropEventArgs e)
         {
             if (!(e.TargetNode.Content is Project t) || dropProject == null) return;
@@ -101,10 +103,7 @@ namespace KursAM2.View.KursReferences
                 {
                     var prj = ctx.Projects.FirstOrDefault(_ => _.Id == dropProject.Id);
                     {
-                        if (prj != null)
-                        {
-                            prj.ParentId = t.Id;
-                        }
+                        if (prj != null) prj.ParentId = t.Id;
                     }
                     ctx.SaveChanges();
                     tx.Commit();
@@ -116,7 +115,6 @@ namespace KursAM2.View.KursReferences
                     WindowManager.ShowError(ex);
                 }
             }
-
         }
 
         private void TreeListDragDropManager_DragOver(object sender, TreeListDragOverEventArgs e)

@@ -14,7 +14,7 @@ namespace KursAM2.View.KursReferences.KontragentControls
     {
         public KontragentCardView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             SizeChanged += delegate { SetSizeOfFrame(); };
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
@@ -24,10 +24,10 @@ namespace KursAM2.View.KursReferences.KontragentControls
         }
 
         public LayoutManagerBase LayoutManager { get; set; }
+        public Rect ClipBounds { get; }
         public bool Visible { get; }
         public Rect Bounds { get; }
         public Rect[] ClipRects { get; }
-        public Rect ClipBounds { get; }
         public Size Size { get; }
         public Point Location { get; }
         public double Angle { get; }
@@ -45,7 +45,7 @@ namespace KursAM2.View.KursReferences.KontragentControls
         private void SetSizeOfFrame()
         {
             var n = tileBarMenu.ActualWidth + 120;
-            if(ActualWidth - n > 0) 
+            if (ActualWidth - n > 0)
                 frame.Width = ActualWidth - n;
         }
 

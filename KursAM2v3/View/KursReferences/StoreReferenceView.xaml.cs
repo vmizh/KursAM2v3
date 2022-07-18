@@ -12,7 +12,7 @@ namespace KursAM2.View.KursReferences
     {
         public StoreReferenceView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, gridControl);
             //Loaded += StoreReferenceView_Loaded;
