@@ -11,12 +11,14 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="600">
     <DockPanel Style="{StaticResource DXServices}">
-        <dxe:ButtonEdit EditValue="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+        <dxe:ButtonEdit Margin="15 10 0 0" Name="searchButtonEdit"
+            EditValue="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                         DockPanel.Dock="Top"
                         HorizontalAlignment="Left"
                         Width="200"
                         AllowDefaultButton="False"
-                        EditValueChanging="BaseEdit_OnEditValueChanging">
+                        EditValueChanging="BaseEdit_OnEditValueChanging" NullText="Строка поиска" NullTextForeground="Black"
+                        >
             <dxe:ButtonEdit.Buttons>
                 <dxe:ButtonInfo GlyphKind="Search" Command="{Binding SearchCommand}"/>
                 <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding ClearSearchCommand}"/>

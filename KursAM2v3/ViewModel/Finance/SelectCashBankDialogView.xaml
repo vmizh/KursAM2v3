@@ -32,15 +32,18 @@
         </dxmvvm:Interaction.Behaviors>
         <dxg:GridControl.View>
             <finance:MyTableView
-                ShowColumnHeaders="False"
+                ShowColumnHeaders="True"
                 ShowGroupPanel="False"
-                ShowIndicator="False"
+                ShowIndicator="True"
                 x:Name="tableView"
                 FocusedRowChanging="TableView_OnFocusedRowChanging"
                 >
                 <finance:MyTableView.FormatConditions>
                     <dxg:FormatCondition ApplyToRow="True" ValueRule="Equal" Value1="0" FieldName="Summa">
                         <dx:Format Background="LightGray" />
+                    </dxg:FormatCondition>
+                    <dxg:FormatCondition ApplyToRow="True" ValueRule="Greater" Value1="0" FieldName="Summa">
+                        <dx:Format FontWeight="Bold" />
                     </dxg:FormatCondition>
                 </finance:MyTableView.FormatConditions>
             </finance:MyTableView>
