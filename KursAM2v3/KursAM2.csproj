@@ -462,8 +462,8 @@
     <Compile Include="View\DialogUserControl\Standart\RSDialogView.xaml.cs">
       <DependentUpon>RSDialogView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\DialogUserControl\Standart\SelectInvoiceMultipleDialogViw.xaml.cs">
-      <DependentUpon>SelectInvoiceMultipleDialogViw.xaml</DependentUpon>
+    <Compile Include="View\DialogUserControl\Standart\SelectInvoiceMultipleDialogView.xaml.cs">
+      <DependentUpon>SelectInvoiceMultipleDialogView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\DialogUserControl\Standart\TableSearchWindowViewMovel.cs" />
     <Compile Include="View\DialogUserControl\Standart\TableWithSearch.xaml.cs">
@@ -1285,7 +1285,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\DialogUserControl\Standart\SelectInvoiceMultipleDialogViw.xaml">
+    <Page Include="View\DialogUserControl\Standart\SelectInvoiceMultipleDialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

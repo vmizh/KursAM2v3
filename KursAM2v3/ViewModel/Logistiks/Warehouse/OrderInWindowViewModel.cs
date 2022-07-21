@@ -182,7 +182,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 LayoutName = "InvoiceProviderSearchMulti"
             };
             dtx.RefreshData(null);
-            var dialog = new SelectInvoiceMultipleDialogViw
+            var dialog = new SelectInvoiceMultipleDialogView
             {
                 DataContext = dtx,
                 Owner = Application.Current.MainWindow

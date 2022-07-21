@@ -938,11 +938,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 WindowName = "Выбор номенклатуры",
                 LayoutName = "InvoiceProviderSearchMulti",
-                myCurrency = Currency
+                myCurrency = Currency,
+                IsLoadNotDistributeCurrencyConvert = true
+
                 
             };
             dtx.RefreshData(null);
-            var dialog = new SelectInvoiceMultipleDialogViw
+            var dialog = new SelectInvoiceMultipleDialogView
             {
                 DataContext = dtx,
                 Owner = Form
@@ -953,7 +955,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 {
                     if (Tovars.Any(_ => _.InvoiceRow.DocCode == r.DocCode && _.InvoiceRow.Code == r.CODE)) continue;
                     var newRow = DistributeNakladRepository.CreateRowNew(Entity);
-                    var inv = unitOfWork.Context.TD_26.FirstOrDefault(_ =>
+                    var inv = unitOfWork.Context.TD_26.Include(_ => _.TD_26_CurrencyConvert).FirstOrDefault(_ =>
                         _.DOC_CODE == r.DocCode && _.CODE == r.CODE);
                     if (inv != null)
                     {
@@ -1092,7 +1094,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 LayoutName = "InvoiceProviderSearchMulti"
             };
             dtx.RefreshData(null);
-            var dialog = new SelectInvoiceMultipleDialogViw
+            var dialog = new SelectInvoiceMultipleDialogView
             {
                 DataContext = dtx,
                 Owner = Application.Current.MainWindow

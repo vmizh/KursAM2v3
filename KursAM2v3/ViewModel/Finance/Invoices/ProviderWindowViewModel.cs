@@ -315,7 +315,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (Document != null)
                     WindowName = Document.ToString();
                 Document.myState = RowStatus.NotEdited;
-                var crsrates = new CurrencyRates( DateTime.Today, DateTime.Today);
+                var crsrates = new CurrencyRates( DateTime.Today.AddDays(-100), DateTime.Today);
                 decimal rate = Math.Round(crsrates.GetRate(Document.Currency.DocCode,
                     GlobalOptions.SystemProfile.NationalCurrency.DocCode, DateTime.Today), 4);
                 if (Document.PaymentDocs.Count > 0)

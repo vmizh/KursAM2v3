@@ -1,5 +1,5 @@
 ﻿<dx:ThemedWindow
-    x:Class="KursAM2.View.DialogUserControl.Standart.SelectInvoiceMultipleDialogViw"
+    x:Class="KursAM2.View.DialogUserControl.Standart.SelectInvoiceMultipleDialogView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"

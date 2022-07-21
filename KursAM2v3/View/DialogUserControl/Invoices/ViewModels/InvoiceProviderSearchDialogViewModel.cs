@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +16,10 @@ using KursAM2.View.DialogUserControl.Invoices.UserControls;
 
 namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 {
+    public class InvoicePostQueryConvertCurrency : InvoicePostQuery
+    {
+        public Guid? CurrencyConvertId { set; get; }
+    }
     public sealed class InvoiceProviderSearchDialogViewModel : RSWindowViewModelBase, IUpdatechildItems
     {
         #region Fields
@@ -48,10 +53,6 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             this.loadType = loadType;
             IsAllowPositionSelected = isAllowPosition;
             IsAllowMultipleSchet = isAllowMultipleSchet;
-            //if (isAllowPosition)
-            //    CustomDataUserControl = new InvoiceListSearchMultipleView();
-            //else CustomDataUserControl = new InvoiceListSearchView();
-            //LayoutName = isAllowPosition ? "InvoiceProviderListSearchMultipleView3" : "InvoiceProviderListSearchView3";
         }
 
        #endregion
@@ -255,7 +256,59 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                     Data = ctx.Database.SqlQuery<InvoicePostQuery>(sqlBase).ToList();
                     if (IsLoadNotDistributeCurrencyConvert)
                     {
-                        var convData = ctx.TD_26_CurrencyConvert.Where(_ => _.DistributeNakladRow == null).ToList();
+                        List<TD_26_CurrencyConvert> convData = new List<TD_26_CurrencyConvert>();
+                        if (currency == null)
+                            convData = ctx.TD_26_CurrencyConvert
+                                .Include(_ => _.TD_26)
+                                .Include(_ => _.TD_26.SD_26)
+                                .Include(_ => _.DistributeNakladRow)
+                                .Where(_ => _.TD_26 != null && _.DistributeNakladRow.Count==0).ToList();
+
+                        else
+                        {
+                            var data = ctx.TD_26_CurrencyConvert
+                                .Include(_ => _.TD_26)
+                                .Include(_ => _.TD_26.SD_26)
+                                .Include(_ => _.DistributeNakladRow)
+                                .ToList().Where(_ => _.TD_26 != null && _.DistributeNakladRow.Count==0);
+                            foreach (var d in data)
+                            {
+                                var n = MainReferences.GetNomenkl(d.NomenklId);
+                                if (n.Currency.DocCode != myCurrency.DocCode) continue;
+                                convData.Add(d);
+                            }
+                        }
+
+                        foreach (var c in convData)
+                        {
+                            var nom = MainReferences.GetNomenkl(c.NomenklId);
+                            Data.Add(new InvoicePostQueryConvertCurrency
+                            {
+                                Currency = nom.Currency.Name,
+                                Quantity = c.Quantity,
+                                Summa = c.Summa,
+                                Creator = c.TD_26.SD_26.CREATOR,
+                                CurrencyDC = nom.Currency.DocCode,
+                                DocCode = c.TD_26.SD_26.DOC_CODE,
+                                CODE = (int)c.CODE,
+                                Id = c.TD_26.SD_26.Id,
+                                InNum = c.TD_26.SD_26.SF_IN_NUM,
+                                IsAccepted = c.TD_26.SD_26.SF_ACCEPTED == 1,
+                                PostSumma = c.Summa,
+                                PostavNum = c.TD_26.SD_26.SF_POSTAV_NUM,
+                                Date = c.TD_26.SD_26.SF_POSTAV_DATE,
+                                PrihodDate = c.Date,
+                                RegisterDate = c.TD_26.SD_26.SF_POSTAV_DATE,
+                                Price = c.Price,
+                                Note = c.Note,
+                                CurrencyConvertId = c.Id,
+                                NomenklNumber = nom.NomenklNumber,
+                                Nomenkl = nom.Name,
+                                NomenklDC = nom.DocCode,
+                                PostDC = c.TD_26.SD_26.SF_POST_DC,
+                                Post = MainReferences.GetKontragent(c.TD_26.SD_26.SF_POST_DC).Name,
+                            });
+                        }
 
                     }
                 }
@@ -384,6 +437,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                     SHPZ = pos.SHPZ,
                     NomenklDC = pos.NomenklDC,
                     Note = pos.RowNote,
+                    
                 });
         }
 

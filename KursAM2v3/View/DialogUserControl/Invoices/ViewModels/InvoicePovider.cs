@@ -120,6 +120,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             }
         }
 
+        public Guid? CurrencyConvertId { set; get; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

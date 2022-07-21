@@ -8,13 +8,14 @@ using KursAM2.View.DialogUserControl.Invoices.ViewModels;
 namespace KursAM2.View.DialogUserControl.Standart
 {
     /// <summary>
-    ///     Interaction logic for SelectInvoiceMultipleDialogViw.xaml
+    ///     Interaction logic for SelectInvoiceMultipleDialogView.xaml
     /// </summary>
-    public partial class SelectInvoiceMultipleDialogViw : ThemedWindow
+    public partial class SelectInvoiceMultipleDialogView : ThemedWindow
     {
-        public SelectInvoiceMultipleDialogViw()
+        public SelectInvoiceMultipleDialogView()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent(); 
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridControlSearch_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
