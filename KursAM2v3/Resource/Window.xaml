@@ -173,8 +173,9 @@
     </Setter>
 </Style>
 
-<Style TargetType="{x:Type dx:ThemedWindowHeader}">
+<!--<Style TargetType="{x:Type dx:ThemedWindowHeader}">
     <Setter Property="Height" Value="Auto"/>
+    <Setter Property="MinHeight" Value="20"/>
     <Setter Property="Template">
         <Setter.Value>
             <ControlTemplate TargetType="{x:Type dx:ThemedWindowHeader}">
@@ -200,5 +201,5 @@
             </ControlTemplate>
         </Setter.Value>
     </Setter>
-</Style>
+</Style>-->
 </ResourceDictionary>

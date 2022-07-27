@@ -10,7 +10,7 @@
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="600">
-    <DockPanel Style="{StaticResource DXServices}">
+    <DockPanel Style="{StaticResource DXServices}" Margin="0 20 0 0">
         <dxe:ButtonEdit Margin="15 10 0 0" Name="searchButtonEdit"
             EditValue="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                         DockPanel.Dock="Top"

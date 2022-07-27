@@ -575,7 +575,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void AddNomenklSimple(object obj)
         {
-            var dtx = new TableSearchWindowViewMovel<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipleListView");
+            var dtx = new TableSearchWindowViewMovel<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipmleListView");
             var service = GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Выбор счетов фактур", dtx) == MessageResult.OK
                 || dtx.DialogResult)

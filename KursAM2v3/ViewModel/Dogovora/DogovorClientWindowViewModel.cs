@@ -7,7 +7,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using AutoMapper.Internal;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Dogovora;
@@ -54,7 +53,8 @@ namespace KursAM2.ViewModel.Dogovora
                 };
                 if (Document != null)
                     WindowName = Document.ToString();
-                Document.Rows.ForAll(_ => _.State = RowStatus.NotEdited);
+                foreach (var r in Document.Rows)
+                    r.State = RowStatus.NotEdited;
                 //LoadLinkDocuments();
                 Document.myState = RowStatus.NotEdited;
             }
@@ -118,6 +118,7 @@ namespace KursAM2.ViewModel.Dogovora
         private DogovorClientRowViewModel myCurrentRow;
 
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork
+            // ReSharper disable once ArrangeObjectCreationWhenTypeEvident
             = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         // ReSharper disable once NotAccessedField.Local
@@ -461,7 +462,8 @@ namespace KursAM2.ViewModel.Dogovora
                 unitOfWork.CreateTransaction();
                 unitOfWork.Save();
                 unitOfWork.Commit();
-                Document.Rows.ForAll(_ => _.myState = RowStatus.NotEdited);
+                foreach (var r in Document.Rows)
+                    r.myState = RowStatus.NotEdited;
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
             }

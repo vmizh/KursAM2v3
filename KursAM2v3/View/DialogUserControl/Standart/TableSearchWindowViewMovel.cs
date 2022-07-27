@@ -32,7 +32,7 @@ namespace KursAM2.View.DialogUserControl.Standart
 
         #region Properties
 
-        public UserControl CustomDataUserControl { get; }
+        public TableWithSearch CustomDataUserControl { get; }
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
 
         public ObservableCollection<T> ItemsCollection { set; get; } = new ObservableCollection<T>();

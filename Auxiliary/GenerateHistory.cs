@@ -10,6 +10,7 @@ namespace Auxiliary
     public class GenerateHistory
     {
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
+            // ReSharper disable once ArrangeObjectCreationWhenTypeEvident
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         public void SaveHistory()
