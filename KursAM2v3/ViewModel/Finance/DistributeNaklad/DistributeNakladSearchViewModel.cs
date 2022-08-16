@@ -143,7 +143,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         public void OnWindowLoaded()
         {
             LayoutManager = new Helper.LayoutManager(Form, LayoutSerializationService,
-                GetType().Name, null);
+                GetType().Name, null, GlobalOptions.KursSystemDBContext);
             LayoutManager.Load();
         }
 

@@ -16,6 +16,7 @@ using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Mvvm.POCO;
 using KursAM2.Dialogs;
 using KursAM2.View.StockHolder;
 
@@ -248,7 +249,7 @@ namespace KursAM2.ViewModel.StockHolder
 
         private void AddStockHolder(object obj)
         {
-            var service = GetService<IDialogService>("DialogServiceUI");
+            var service = this.GetService<IDialogService>("DialogServiceUI");
             var sh = StandartDialogs.SelectStockHolder(service);
             if (sh != null)
                 StockHolders.Add(new StockHolderItem

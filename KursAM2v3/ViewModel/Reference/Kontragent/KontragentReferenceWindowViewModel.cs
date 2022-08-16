@@ -521,7 +521,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                             orDefault
                                 .DELETED = 1;
                         KontragentsInGroup.Remove(CurrentKontragent);
-                        RaisePropertiesChanged(nameof(KontragentsInGroup));
+                        RaisePropertyChanged(nameof(KontragentsInGroup));
                     }
 
                     CloseWindow(null);
@@ -596,7 +596,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 myIsGroupEnabled = value;
                 KontragentsInGroup.Clear();
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(KontragentsInGroup));
+                RaisePropertyChanged(nameof(KontragentsInGroup));
             }
         }
 

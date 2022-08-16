@@ -213,7 +213,7 @@ namespace Core.EntityViewModel.Bank
                 if (myKontragent != null)
                     Entity.VVT_KONTRAGENT = myKontragent.DocCode;
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(KontragentName));
+                RaisePropertyChanged(nameof(KontragentName));
             }
         }
 
@@ -537,7 +537,7 @@ namespace Core.EntityViewModel.Bank
                 if (myCashOut != null)
                     VVT_RASH_KASS_ORDER_DC = myCashOut.DocCode;
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(KontragentName));
+                RaisePropertyChanged(nameof(KontragentName));
             }
         }
 
@@ -562,7 +562,7 @@ namespace Core.EntityViewModel.Bank
                 if (myCashIn != null)
                     VVT_KASS_PRIH_ORDER_DC = myCashIn.DocCode;
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(KontragentName));
+                RaisePropertyChanged(nameof(KontragentName));
             }
         }
 

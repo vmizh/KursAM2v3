@@ -359,7 +359,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 }
 
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(PrihodDocuments));
+                RaisePropertyChanged(nameof(PrihodDocuments));
             }
         }
 
@@ -486,7 +486,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 Periods.Add(newper);
                 CurrentPeriod = Periods.FirstOrDefault(_ =>
                     _.PeriodType == curP.PeriodType && _.DateStart == curP.DateStart && _.DateEnd == curP.DateEnd);
-                RaisePropertiesChanged(nameof(Periods));
+                RaisePropertyChanged(nameof(Periods));
             }
         }
 
@@ -839,9 +839,9 @@ namespace KursAM2.ViewModel.Management.Projects
             MultyCurrencyHelper.VisibilityCurrencyWithDilerColumns(frm?.treePeriods, Periods);
             MultyCurrencyHelper.VisibilityCurrencyWithDilerColumns(frm?.gridDocuments, Documents);
             MultyCurrencyHelper.VisibilityCurrencyWithDilerColumns(frm?.gridExtend, PrihodDocuments);
-            RaisePropertiesChanged(nameof(Periods));
-            RaisePropertiesChanged(nameof(Documents));
-            RaisePropertiesChanged(nameof(PrihodDocuments));
+            RaisePropertyChanged(nameof(Periods));
+            RaisePropertyChanged(nameof(Documents));
+            RaisePropertyChanged(nameof(PrihodDocuments));
         }
 
         public override void DocumentOpen(object obj)

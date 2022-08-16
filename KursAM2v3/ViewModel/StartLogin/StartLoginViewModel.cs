@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Data.Entity;
 using System.Data.SqlClient;
@@ -20,6 +21,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
 using Helper;
 using KursAM2.Managers;
@@ -56,7 +58,7 @@ namespace KursAM2.ViewModel.StartLogin
             {
                 if (mySelectedDataSource == value) return;
                 mySelectedDataSource = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => mySelectedDataSource;
         }
@@ -67,7 +69,7 @@ namespace KursAM2.ViewModel.StartLogin
             {
                 if (myVersionValue == value) return;
                 myVersionValue = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myVersionValue;
         }
@@ -81,8 +83,8 @@ namespace KursAM2.ViewModel.StartLogin
                 if (string.IsNullOrWhiteSpace(myCurrentUser)) return;
                 LoadDataSources();
                 GetDefaultCache();
-                RaisePropertiesChanged();
-                RaisePropertiesChanged(nameof(ComboBoxItemSource));
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(ComboBoxItemSource));
             }
             get => myCurrentUser;
         }
@@ -93,7 +95,7 @@ namespace KursAM2.ViewModel.StartLogin
             {
                 if (myCurrentBoxItem == value) return;
                 myCurrentBoxItem = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myCurrentBoxItem;
         }
@@ -104,7 +106,7 @@ namespace KursAM2.ViewModel.StartLogin
             {
                 if (myCurrentPassword == value) return;
                 myCurrentPassword = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myCurrentPassword;
         }
@@ -366,6 +368,14 @@ namespace KursAM2.ViewModel.StartLogin
                     }
                 }
 
+                string hostName;
+                var section = ConfigurationManager.GetSection("appSettings") as NameValueCollection;
+#if  DEBUG
+                hostName = section.Get("KursSystemDebugHost");
+#else
+            hostName = section.Get("KursSystemHost");
+#endif
+
                 GlobalOptions.DataBaseName = SelectedDataSource.ShowName;
                 GlobalOptions.DataBaseId = SelectedDataSource.Id;
                 GlobalOptions.DatabaseColor = SelectedDataSource.Color;
@@ -375,7 +385,7 @@ namespace KursAM2.ViewModel.StartLogin
                 GlobalOptions.KursDBUnitOfWork = new UnitOfWork<ALFAMEDIAEntities>(GlobalOptions.KursDBContext);
                 GlobalOptions.KursSystemDBContext = new KursSystemEntities(new SqlConnectionStringBuilder
                 {
-                    DataSource = "172.16.0.1",
+                    DataSource = hostName,
                     InitialCatalog = "KursSystem",
                     UserID = "sa",
                     Password = "CbvrfFhntvrf65"
@@ -422,7 +432,7 @@ namespace KursAM2.ViewModel.StartLogin
                     errText.Append($"\n {exx.InnerException.Message}");
                     exx = exx.InnerException;
                 }
-                IDialogService service = GetService<IDialogService>("errorDialogService");
+                IDialogService service = this.GetService<IDialogService>("errorDialogService");
                 service?.ShowDialog(MessageButton.OK, "Ошибка", new DialogErrorViewModel
                 {
                     ErrorText = errText.ToString().Replace("The underlying provider failed on Open","Не могу открыть базу данных")
@@ -453,11 +463,19 @@ namespace KursAM2.ViewModel.StartLogin
 
         private void LoadDataSources()
         {
+            string hostName;
+            var section = ConfigurationManager.GetSection("appSettings") as NameValueCollection;
+#if  DEBUG
+            hostName = section.Get("KursSystemDebugHost");
+#else
+            hostName = section.Get("KursSystemHost");
+#endif
+
             if (CurrentUser == null) return;
             ComboBoxItemSource.Clear();
             var connection = new SqlConnectionStringBuilder
             {
-                DataSource = "172.16.0.1",
+                DataSource = hostName,
                 InitialCatalog = "KursSystem",
                 UserID = "KursUser",
                 Password = "KursUser"
@@ -473,7 +491,8 @@ namespace KursAM2.ViewModel.StartLogin
                             "SELECT d.Name AS Name, d.ShowName AS ShowName, d.[Order] AS 'Order', d.Server as 'Server', " +
                             "d.DBName AS 'DBName', d.Color AS 'Color', d.Id as 'Id'  FROM DataSources d " +
                             "INNER JOIN  UsersLinkDB link ON link.DBId = d.Id " +
-                            $"INNER JOIN  Users u ON u.Id = link.UserId AND UPPER(u.Name) = '{CurrentUser.ToUpper()}' " +
+                            $"INNER JOIN  Users u ON u.Id = link.UserId AND UPPER(u.Name) = '{CurrentUser.ToUpper()}'  " +
+                            "WHERE isnull(IsVisible,0) = 1 " +
                             "ORDER BY 3",
                         Connection = conn
                     };
@@ -596,7 +615,7 @@ namespace KursAM2.ViewModel.StartLogin
             {
                 if (myIsThemeAllow == value) return;
                 myIsThemeAllow = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
         }
 

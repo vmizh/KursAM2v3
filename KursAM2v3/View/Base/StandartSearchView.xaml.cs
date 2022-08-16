@@ -1,4 +1,6 @@
-﻿using DevExpress.Xpf.Core;
+﻿using System.Windows;
+using Core.ViewModel.Base;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 
 namespace KursAM2.View.Base
@@ -13,9 +15,8 @@ namespace KursAM2.View.Base
             InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             ThemeManager.SetThemeName(this, ThemeManager.ActualApplicationThemeName);
-            
         }
-
+        
         private void GridDocuments_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
             e.Column.Name = e.Column.FieldName;

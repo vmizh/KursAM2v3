@@ -58,6 +58,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             SelectedDocs = new ObservableCollection<InvoiceProvider>();
             EndDate = DateTime.Today;
             StartDate = EndDate.AddDays(-30);
+            //LoadLayout();
         }
 
         public override string WindowName => "Поиск счетов-фактур поставщиков";

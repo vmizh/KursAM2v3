@@ -10,6 +10,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using KursAM2.Repositories;
 using KursAM2.View.KursReferences.UC;
 
@@ -77,7 +78,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void RemoveItem(object obj)
         {
-            var service = GetService<IDialogService>("WinUIDialogService");
+            var service = this.GetService<IDialogService>("WinUIDialogService");
             dialogServiceText = "Уверены, что хотите удалить?";
             var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
             switch (res)

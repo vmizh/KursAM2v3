@@ -11,6 +11,7 @@ using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using KursAM2.Auxiliary;
 using KursAM2.View.Base;
 using KursAM2.View.Signature;
@@ -265,7 +266,7 @@ namespace KursAM2.ViewModel.Signatures
 
         private void DeleteSignature(object obj)
         {
-            var service = GetService<IDialogService>("WinUIDialogService");
+            var service = this.GetService<IDialogService>("WinUIDialogService");
             dialogServiceText = "Вы уверены, что хотите удалить подпись?";
             var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
             if (res != MessageResult.Yes) return;
@@ -300,7 +301,7 @@ namespace KursAM2.ViewModel.Signatures
 
         private void DeleteUser(object obj)
         {
-            var service = GetService<IDialogService>("WinUIDialogService");
+            var service = this.GetService<IDialogService>("WinUIDialogService");
             dialogServiceText = "Вы уверены, что хотите удалить пользователя?";
             var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
             if (res != MessageResult.Yes) return;
@@ -332,7 +333,7 @@ namespace KursAM2.ViewModel.Signatures
             {
                 SystemUnitOfWork.Rollback();
                 UnitOfWork.Rollback();
-                var service = GetService<IDialogService>("WinUIDialogService");
+                var service = this.GetService<IDialogService>("WinUIDialogService");
                 MessageManager.ErrorShow(service, ex);
             }
         }
@@ -368,7 +369,7 @@ namespace KursAM2.ViewModel.Signatures
         private void AddDocument(object obj)
         {
             var ctx = new SelectKursMainMenuItemViewModel(SystemUnitOfWork.Context);
-            var service = GetService<IDialogService>("DialogServiceUI");
+            var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
             if (ctx.CurrentMenu == null) return;
             var newEnt = new SignatureSchemes

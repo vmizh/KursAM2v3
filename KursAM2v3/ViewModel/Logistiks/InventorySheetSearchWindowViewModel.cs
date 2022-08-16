@@ -104,7 +104,7 @@ namespace KursAM2.ViewModel.Logistiks
                 Documents.Add(newItem);
             }
 
-            RaisePropertiesChanged(nameof(Documents));
+            RaisePropertyChanged(nameof(Documents));
         }
 
         public override void DocumentOpen(object obj)

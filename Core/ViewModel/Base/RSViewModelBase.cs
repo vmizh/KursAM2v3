@@ -17,7 +17,7 @@ namespace Core.ViewModel.Base
     }
 
     [DataContract]
-    public abstract class RSViewModelBase : ViewModelBase, ISimpleObject, INotifyPropertyChanged,
+    public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
         IComparable<RSViewModelBase>,
         IComparable, IEquatable<RSViewModelBase>
     {
@@ -240,6 +240,15 @@ namespace Core.ViewModel.Base
 
         public virtual void Initialize()
         {
+        }
+
+        public void RaisePropertiesChanged()
+        {
+            var props = this.GetType().GetProperties();
+            foreach (var p in props)
+            {
+                RaisePropertyChanged(p.Name);
+            }
         }
 
         /// <summary>

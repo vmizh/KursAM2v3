@@ -494,7 +494,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 }
 
                 RaisePropertyChanged();
-                RaisePropertiesChanged("BalansStructure");
+                RaisePropertyChanged("BalansStructure");
             }
             catch (Exception ex)
             {

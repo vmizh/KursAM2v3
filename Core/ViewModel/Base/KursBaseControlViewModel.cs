@@ -131,9 +131,9 @@ namespace Core.ViewModel.Base
         {
             if (Form != null)
                 LayoutManager ??= new global::Helper.LayoutManager(Form, LayoutSerializationService,
-                    LayoutName, null);
+                    LayoutName, null,GlobalOptions.KursSystemDBContext);
             else
-                LayoutManager = new global::Helper.LayoutManager(LayoutSerializationService,
+                LayoutManager = new global::Helper.LayoutManager(GlobalOptions.KursSystem(),LayoutSerializationService,
                     LayoutName, null);
         }
 

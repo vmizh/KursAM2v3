@@ -19,6 +19,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using DevExpress.Utils.Extensions;
 using Helper;
 using KursAM2.Dialogs;
@@ -302,7 +303,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 isMustCheckState = p;
             if (IsCanSaveData && isMustCheckState)
             {
-                var service = GetService<IDialogService>("WinUIDialogService");
+                var service = this.GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "В документ внесены изменения, сохранить?";
                 if (service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this) == MessageResult.Yes)
                 {
@@ -448,7 +449,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         private void AddCashDoc(object obj)
         { 
             var ctx = new SelectCashBankDialogViewModel(true, Document.Currency);
-            var service = GetService<IDialogService>("DialogServiceUI");
+            var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Выбрать кассу", ctx) == MessageResult.OK
             || ctx.DialogResult == MessageResult.OK)
             {
@@ -552,7 +553,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void DeleteLinkRashodDoc(object obj)
         {
-            var service = GetService<IDialogService>("WinUIDialogService");
+            var service = this.GetService<IDialogService>("WinUIDialogService");
             dialogServiceText = "Вы действительно хотите удалить связь с платежным документом?";
             if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.Yes)
                 using (var ctx = GlobalOptions.GetEntities())
@@ -597,7 +598,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         private void AddBankDoc(object obj)
         {
             var ctx = new SelectCashBankDialogViewModel(false, Document.Currency);
-            var service = GetService<IDialogService>("DialogServiceUI");
+            var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.OK
             || ctx.DialogResult == MessageResult.OK)
             {

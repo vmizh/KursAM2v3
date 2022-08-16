@@ -148,7 +148,7 @@ namespace KursAM2.ViewModel.Reference
                 if (myCurrentRemain != null && myCurrentRemain.Equals(value)) return;
                 myCurrentRemain = value;
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(Currencies));
+                RaisePropertyChanged(nameof(Currencies));
             }
         }
 
@@ -293,7 +293,7 @@ namespace KursAM2.ViewModel.Reference
                 frm.gridBank.SelectedItems.Add(CurrentBank);
             }
 
-            RaisePropertiesChanged(nameof(IsCanUserRight));
+            RaisePropertyChanged(nameof(IsCanUserRight));
         }
 
         public ICommand DeleteRemainCommand
@@ -509,7 +509,7 @@ namespace KursAM2.ViewModel.Reference
 
                         foreach (var b in Banks) b.myState = RowStatus.NotEdited;
                         MainReferences.Refresh();
-                        RaisePropertiesChanged(nameof(IsCanSaveData));
+                        RaisePropertyChanged(nameof(IsCanSaveData));
                     }
                     catch (Exception ex)
                     {

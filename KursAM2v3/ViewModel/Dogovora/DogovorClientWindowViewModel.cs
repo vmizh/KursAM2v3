@@ -17,6 +17,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -430,7 +431,7 @@ namespace KursAM2.ViewModel.Dogovora
             base.RefreshData(obj);
             if (IsCanSaveData)
             {
-                var service = GetService<IDialogService>("WinUIDialogService");
+                var service = this.GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "В документ внесены изменения, сохранить?";
                 if (service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this) == MessageResult.Yes)
                 {

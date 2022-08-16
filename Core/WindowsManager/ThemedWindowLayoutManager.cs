@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Windows;
 using Data;
@@ -11,6 +13,13 @@ namespace Core.WindowsManager
     {
         public ThemedWindowLayoutManager(ThemedWindow window, string layoutName, Guid userId)
         {
+            string hostName;
+            var section = ConfigurationManager.GetSection("appSettings") as NameValueCollection;
+#if  DEBUG
+            hostName = section.Get("KursSystemDebugHost");
+#else
+            hostName = section.Get("KursSystemHost");
+#endif
             if (window == null || string.IsNullOrWhiteSpace(layoutName) || userId == Guid.Empty)
                 throw new Exception("Параметры не могут быть нулевыми");
             Window = window;
@@ -18,7 +27,7 @@ namespace Core.WindowsManager
             UserId = userId;
             var connString = new SqlConnectionStringBuilder
             {
-                DataSource = "172.16.0.1",
+                DataSource = hostName,
                 InitialCatalog = "KursSystem",
                 UserID = "sa",
                 Password = "CbvrfFhntvrf65"

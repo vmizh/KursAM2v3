@@ -205,7 +205,7 @@ namespace KursAM2.ViewModel.Logistiks
             //LoadedRemains = NomenklCalculationManager.GetNomenklStoreRemains(OstatokDate, true);
             if (CurrentWarehouse != null) LoadNomForSklad();
 
-            RaisePropertiesChanged(nameof(NomenklsForSklad));
+            RaisePropertyChanged(nameof(NomenklsForSklad));
         }
 
         private void LoadNomForSklad()

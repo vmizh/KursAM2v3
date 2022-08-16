@@ -635,7 +635,7 @@ namespace Core.EntityViewModel.Cash
                 if (Entity.BANK_RASCH_SCHET_DC == value) return;
                 Entity.BANK_RASCH_SCHET_DC = value;
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(Kontragent));
+                RaisePropertyChanged(nameof(Kontragent));
             }
         }
 

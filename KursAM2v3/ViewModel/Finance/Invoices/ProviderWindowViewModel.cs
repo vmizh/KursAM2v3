@@ -23,6 +23,7 @@ using Data;
 using Data.Repository;
 using DevExpress.Data;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
@@ -446,7 +447,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void DogovorDeleteLink(object obj)
         {
-            var service = GetService<IDialogService>("WinUIDialogService");
+            var service = this.GetService<IDialogService>("WinUIDialogService");
             dialogServiceText = "Вы действительно хотите удалить связь с договором?";
             if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.Yes) Document.Contract = null;
         }
@@ -470,7 +471,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private void DogovorSelect(object obj)
         {
             var ctx = new DogovorSelectDialogViewModel(true);
-            var service = GetService<IDialogService>("DialogServiceUI");
+            var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.YesNo, "Выбор договора поставщика", ctx) == MessageResult.Yes)
             {
                 Document.Contract = new DogovorOfSupplierViewModel(ctx.CurrentDogovor.Dog);
@@ -967,7 +968,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (Form is InvoiceClientView frm)
             {
                 frm.gridRows.RefreshData();
-                RaisePropertiesChanged(nameof(Document));
+                RaisePropertyChanged(nameof(Document));
             }
         }
 
@@ -1138,7 +1139,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             decimal defaultNDS;
             var dtx = new TableSearchWindowViewMovel<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipleListView");
-            var service = GetService<IDialogService>("DialogServiceUI");
+            var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Выбор счетов фактур", dtx) == MessageResult.OK
                 || dtx.DialogResult)
             {
@@ -1211,7 +1212,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private void AddNomenkl(object obj)
         {
             decimal defaultNDS;
-            var nomenkls = StandartDialogs.SelectNomenkls(Document.Kontragent.BalansCurrency, true);
+            var nomenkls = StandartDialogs.SelectNomenkls(Document.Kontragent?.BalansCurrency, true);
             if (nomenkls == null || nomenkls.Count <= 0) return;
             using (var entctx = GlobalOptions.GetEntities())
             {

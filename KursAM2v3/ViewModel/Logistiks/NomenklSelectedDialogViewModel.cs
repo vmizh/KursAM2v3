@@ -110,7 +110,7 @@ namespace KursAM2.ViewModel.Logistiks
             set
             {
                 SelectedToRemoveNomenkls.Clear();
-                RaisePropertiesChanged(nameof(SelectedToRemoveNomenkls));
+                RaisePropertyChanged(nameof(SelectedToRemoveNomenkls));
                 if (myCurrentNomenkl != null && myCurrentNomenkl.Equals(value)) return;
                 myCurrentNomenkl = value;
                 RaisePropertyChanged();
@@ -123,7 +123,7 @@ namespace KursAM2.ViewModel.Logistiks
             set
             {
                 SelectedToAddNomenkls.Clear();
-                RaisePropertiesChanged(nameof(SelectedToAddNomenkls));
+                RaisePropertyChanged(nameof(SelectedToAddNomenkls));
                 if (myCurrentSelectedNomenkl != null && myCurrentSelectedNomenkl.Equals(value)) return;
                 myCurrentSelectedNomenkl = value;
                 RaisePropertyChanged();
@@ -133,7 +133,7 @@ namespace KursAM2.ViewModel.Logistiks
         private void LoadNomenklForGroup()
         {
             NomenklCollection.Clear();
-            RaisePropertiesChanged(nameof(NomenklCollection));
+            RaisePropertyChanged(nameof(NomenklCollection));
             if (CurrentNomenklGroup == null) return;
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -164,7 +164,7 @@ namespace KursAM2.ViewModel.Logistiks
                     });
             }
 
-            RaisePropertiesChanged(nameof(NomenklGroups));
+            RaisePropertyChanged(nameof(NomenklGroups));
         }
 
         #region Commands
@@ -177,7 +177,7 @@ namespace KursAM2.ViewModel.Logistiks
         private void ClearSelectedNomenkl(object obj)
         {
             SelectedToAddNomenkls.Clear();
-            RaisePropertiesChanged(nameof(SelectedToAddNomenkls));
+            RaisePropertyChanged(nameof(SelectedToAddNomenkls));
         }
 
         public ICommand SearchExecuteCommand
@@ -190,7 +190,7 @@ namespace KursAM2.ViewModel.Logistiks
             NomenklCollection.Clear();
             foreach (var n in NomenklManager.GetNomenklsSearch(SearchText))
                 NomenklCollection.Add(n);
-            RaisePropertiesChanged(nameof(NomenklCollection));
+            RaisePropertyChanged(nameof(NomenklCollection));
         }
 
         public override void SearchClear(object obj)
@@ -199,8 +199,8 @@ namespace KursAM2.ViewModel.Logistiks
             NomenklCollection.Clear();
             CurrentNomenkl = null;
             SelectedToAddNomenkls.Clear();
-            RaisePropertiesChanged(nameof(NomenklCollection));
-            RaisePropertiesChanged(nameof(SelectedToAddNomenkls));
+            RaisePropertyChanged(nameof(NomenklCollection));
+            RaisePropertyChanged(nameof(SelectedToAddNomenkls));
         }
 
         public ICommand AddToSelectedCommand
@@ -220,7 +220,7 @@ namespace KursAM2.ViewModel.Logistiks
                     SelectedNomenkls.Add(n);
             }
 
-            RaisePropertiesChanged(nameof(SelectedNomenkls));
+            RaisePropertyChanged(nameof(SelectedNomenkls));
         }
 
         public ICommand RemoveAllSelectedCommand
@@ -231,7 +231,7 @@ namespace KursAM2.ViewModel.Logistiks
         private void RemoveAllSelected(object obj)
         {
             SelectedNomenkls.Clear();
-            RaisePropertiesChanged(nameof(SelectedNomenkls));
+            RaisePropertyChanged(nameof(SelectedNomenkls));
         }
 
         public ICommand RemoveFromSelectedCommand
@@ -249,7 +249,7 @@ namespace KursAM2.ViewModel.Logistiks
             foreach (
                 var n in dcs.Select(dc => SelectedNomenkls.FirstOrDefault(_ => _.DocCode == dc)).Where(n => n != null))
                 SelectedNomenkls.Remove(n);
-            RaisePropertiesChanged(nameof(SelectedNomenkls));
+            RaisePropertyChanged(nameof(SelectedNomenkls));
         }
 
         public ICommand AddCurrentCommand
@@ -262,7 +262,7 @@ namespace KursAM2.ViewModel.Logistiks
             if (SelectedNomenkls.Any(n => n.DocCode == CurrentNomenkl.DocCode))
                 return;
             SelectedNomenkls.Add(CurrentNomenkl);
-            RaisePropertiesChanged(nameof(SelectedNomenkls));
+            RaisePropertyChanged(nameof(SelectedNomenkls));
         }
 
         public ICommand RemoveCurrentCommand
@@ -273,7 +273,7 @@ namespace KursAM2.ViewModel.Logistiks
         private void RemoveCurrent(object obj)
         {
             SelectedNomenkls.Remove(CurrentSelectedNomenkl);
-            RaisePropertiesChanged(nameof(SelectedNomenkls));
+            RaisePropertyChanged(nameof(SelectedNomenkls));
         }
 
         #endregion Commands

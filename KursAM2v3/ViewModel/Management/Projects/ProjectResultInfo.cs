@@ -46,7 +46,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (myDilerSEK == value) return;
                 myDilerSEK = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultSEK));
+                RaisePropertyChanged(nameof(ResultSEK));
             }
         }
 
@@ -58,7 +58,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (myDilerUSD == value) return;
                 myDilerUSD = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultUSD));
+                RaisePropertyChanged(nameof(ResultUSD));
             }
         }
 
@@ -81,7 +81,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (myDilerEUR == value) return;
                 myDilerEUR = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultEUR));
+                RaisePropertyChanged(nameof(ResultEUR));
             }
         }
 
@@ -104,7 +104,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (myDilerCHF == value) return;
                 myDilerCHF = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultCHF));
+                RaisePropertyChanged(nameof(ResultCHF));
             }
         }
 
@@ -119,7 +119,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (myLossSEK == value) return;
                 myLossSEK = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultSEK));
+                RaisePropertyChanged(nameof(ResultSEK));
             }
         }
 
@@ -134,7 +134,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (myProfitSEK == value) return;
                 myProfitSEK = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultSEK));
+                RaisePropertyChanged(nameof(ResultSEK));
             }
         }
 
@@ -149,7 +149,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (myLossCHF == value) return;
                 myLossCHF = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultCHF));
+                RaisePropertyChanged(nameof(ResultCHF));
             }
         }
 
@@ -164,7 +164,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (myProfitCHF == value) return;
                 myProfitCHF = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultCHF));
+                RaisePropertyChanged(nameof(ResultCHF));
             }
         }
 
@@ -179,7 +179,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (myLossGBP == value) return;
                 myLossGBP = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultGBP));
+                RaisePropertyChanged(nameof(ResultGBP));
             }
         }
 
@@ -191,7 +191,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (myProfitGBP == value) return;
                 myProfitGBP = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultGBP));
+                RaisePropertyChanged(nameof(ResultGBP));
             }
         }
 
@@ -202,7 +202,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (Equals(value, myProfitRUB)) return;
                 myProfitRUB = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultRUB));
+                RaisePropertyChanged(nameof(ResultRUB));
             }
             get => myProfitRUB;
         }
@@ -214,7 +214,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (Equals(value, myLossRUB)) return;
                 myLossRUB = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultRUB));
+                RaisePropertyChanged(nameof(ResultRUB));
             }
             get => myLossRUB;
         }
@@ -226,7 +226,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (Equals(value, myProfitUSD)) return;
                 myProfitUSD = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultUSD));
+                RaisePropertyChanged(nameof(ResultUSD));
             }
             get => myProfitUSD;
         }
@@ -238,7 +238,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (Equals(value, myLossUSD)) return;
                 myLossUSD = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultUSD));
+                RaisePropertyChanged(nameof(ResultUSD));
             }
             get => myLossUSD;
         }
@@ -250,7 +250,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (Equals(value, myProfitEUR)) return;
                 myProfitEUR = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultEUR));
+                RaisePropertyChanged(nameof(ResultEUR));
             }
             get => myProfitEUR;
         }
@@ -262,7 +262,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 if (Equals(value, myLossEUR)) return;
                 myLossEUR = Abs(value);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(ResultEUR));
+                RaisePropertyChanged(nameof(ResultEUR));
             }
             get => myLossEUR;
         }

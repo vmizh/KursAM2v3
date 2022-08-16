@@ -78,7 +78,7 @@ namespace KursAM2.ViewModel.Reference
                     }
                 }
 
-                RaisePropertiesChanged(nameof(ProjectCollection));
+                RaisePropertyChanged(nameof(ProjectCollection));
             }
             catch (Exception ex)
             {

@@ -35,6 +35,7 @@ namespace Data
         public string Server { get; set; }
         public string DBName { get; set; }
         public string Color { get; set; }
+        public Nullable<bool> IsVisible { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Errors> Errors { get; set; }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -15,6 +17,17 @@ namespace Core
 {
     public static class GlobalOptions
     {
+        private static string HostName;
+
+        static GlobalOptions()
+        {
+            var section = ConfigurationManager.GetSection("appSettings") as NameValueCollection;
+#if  DEBUG
+            HostName = section.Get("KursSystemDebugHost");
+#else
+            HostName = section.Get("KursSystemHost");
+#endif
+        }
         public static ALFAMEDIAEntities KursDBContext;
         public static UnitOfWork<ALFAMEDIAEntities> KursDBUnitOfWork;
 
@@ -37,9 +50,10 @@ namespace Core
 
         public static KursSystemEntities KursSystem()
         {
+           
             SqlSystemConnectionString = new SqlConnectionStringBuilder
             {
-                DataSource = "172.16.0.1",
+                DataSource = HostName,
                 InitialCatalog = "KursSystem",
                 UserID = "sa",
                 Password = "CbvrfFhntvrf65"
@@ -52,7 +66,7 @@ namespace Core
             if (string.IsNullOrEmpty(SqlConnectionString))
                 SqlConnectionString = new SqlConnectionStringBuilder
                 {
-                    DataSource = "172.16.0.1",
+                    DataSource = HostName,
                     InitialCatalog = "EcoOndol",
                     UserID = "sysadm",
                     Password = "19655691"
@@ -67,7 +81,7 @@ namespace Core
             var ret = new ALFAMEDIAEntities(SqlConnectionString);
             SqlConnectionString = new SqlConnectionStringBuilder
             {
-                DataSource = "172.16.0.1",
+                DataSource = HostName,
                 InitialCatalog = "AlfaMedia",
                 UserID = "sa",
                 Password = ",juk.,bnyfc"

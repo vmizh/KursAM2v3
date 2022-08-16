@@ -20,6 +20,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -309,7 +310,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 frm.gridRows.RefreshData();
                 frm.gridRows.UpdateTotalSummary();
                 Document.RaisePropertyChanged("Summa");
-                RaisePropertiesChanged(nameof(Document));
+                RaisePropertyChanged(nameof(Document));
             }
         }
 
@@ -576,7 +577,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private void AddNomenklSimple(object obj)
         {
             var dtx = new TableSearchWindowViewMovel<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipmleListView");
-            var service = GetService<IDialogService>("DialogServiceUI");
+            var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Выбор счетов фактур", dtx) == MessageResult.OK
                 || dtx.DialogResult)
             {

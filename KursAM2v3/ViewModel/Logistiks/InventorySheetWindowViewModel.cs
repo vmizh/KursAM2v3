@@ -16,6 +16,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers.Nomenkl;
@@ -221,7 +222,7 @@ namespace KursAM2.ViewModel.Logistiks
                     ParentDC = ng.ParentDC,
                     IsNomenklContains = false
                 });
-            RaisePropertiesChanged(nameof(NomenklGroups));
+            RaisePropertyChanged(nameof(NomenklGroups));
         }
 
         private void SetIsContainNomenkl(NomenklGroup2 grp)
@@ -243,7 +244,7 @@ namespace KursAM2.ViewModel.Logistiks
                     .Select(ngDC => NomenklGroups.FirstOrDefault(_ => _.DocCode == ngDC))
                     .Where(ng => ng != null))
                 SetIsContainNomenkl(ng);
-            RaisePropertiesChanged(nameof(NomenklGroups));
+            RaisePropertyChanged(nameof(NomenklGroups));
         }
 
         #endregion
@@ -263,7 +264,7 @@ namespace KursAM2.ViewModel.Logistiks
         {
             if (IsCanSaveData)
             {
-                var service = GetService<IDialogService>("WinUIDialogService");
+                var service = this.GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "В документ внесены изменения, сохранить?";
                 var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
                 switch (res)
@@ -299,7 +300,7 @@ namespace KursAM2.ViewModel.Logistiks
             base.RefreshData(obj);
             if (IsCanSaveData)
             {
-                var service = GetService<IDialogService>("WinUIDialogService");
+                var service = this.GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "В документ внесены изменения, сохранить?";
                 var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
                 switch (res)
@@ -541,7 +542,7 @@ namespace KursAM2.ViewModel.Logistiks
             Rows.Remove(CurrentNomenkl);
             UnitOfWork.Context.Entry(CurrentNomenkl.Entity).State = EntityState.Detached;
             Document.State = RowStatus.Edited;
-            RaisePropertiesChanged(nameof(IsRedoAllow));
+            RaisePropertyChanged(nameof(IsRedoAllow));
         }
 
         #endregion

@@ -124,7 +124,7 @@ namespace Core.EntityViewModel.Systems
                 if (Entity.USR_ABORT_CONNECT == value) return;
                 Entity.USR_ABORT_CONNECT = value;
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(UserBlock));
+                RaisePropertyChanged(nameof(UserBlock));
             }
         }
 

@@ -28,7 +28,7 @@ namespace Core.EntityViewModel.Bank
             {
                 if (myCODE == value) return;
                 myCODE = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myCODE;
         }
@@ -39,7 +39,7 @@ namespace Core.EntityViewModel.Bank
             {
                 if (myRASCH_ACC == value) return;
                 myRASCH_ACC = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myRASCH_ACC;
         }
@@ -50,8 +50,8 @@ namespace Core.EntityViewModel.Bank
             {
                 if (DISABLED == 1 == value) return;
                 DISABLED = (short?) (value ? 1 : 0);
-                RaisePropertiesChanged();
-                RaisePropertiesChanged(nameof(DISABLED));
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(DISABLED));
             }
             get => DISABLED == 1;
         }
@@ -62,7 +62,7 @@ namespace Core.EntityViewModel.Bank
             {
                 if (myDISABLED == value) return;
                 myDISABLED = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myDISABLED;
         }
@@ -73,8 +73,8 @@ namespace Core.EntityViewModel.Bank
             {
                 if (DELETED == 1 == value) return;
                 DELETED = (short?) (value ? 1 : 0);
-                RaisePropertiesChanged();
-                RaisePropertiesChanged(nameof(DELETED));
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(DELETED));
             }
             get => DISABLED == 1;
         }
@@ -85,7 +85,7 @@ namespace Core.EntityViewModel.Bank
             {
                 if (myDELETED == value) return;
                 myDELETED = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myDELETED;
         }
@@ -96,7 +96,7 @@ namespace Core.EntityViewModel.Bank
             {
                 if (myBankDC == value) return;
                 myBankDC = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myBankDC;
         }

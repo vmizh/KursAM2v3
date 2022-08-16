@@ -9,6 +9,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.View.DialogUserControl.Invoices.UserControls;
 
@@ -164,7 +165,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 
         public override void Ok(object obj)
         {
-            winCurrentService = GetService<ICurrentWindowService>();
+            winCurrentService = this.GetService<ICurrentWindowService>();
             if (winCurrentService != null)
             {
                 DialogResult = MessageResult.OK;
@@ -174,7 +175,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 
         public override void Cancel(object obj)
         {
-            winCurrentService = GetService<ICurrentWindowService>();
+            winCurrentService = this.GetService<ICurrentWindowService>();
             if (winCurrentService != null)
             {
                 CurrentItem = null;

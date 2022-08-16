@@ -100,6 +100,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         // ReSharper disable once NotAccessedField.Local
         public readonly IDistributeNakladRepository DistributeNakladRepository;
         private DistributeNakladInvoiceViewModel myCurrentNakladInvoice;
+        private DistributeNakladRowViewModel myCurrentTovar;
+        private DistributeNakladInfoViewModel myCurrentDistributeNaklad;
+        private Currency myCurrency;
 
         //public readonly IInvoiceProviderRepository InvoiceProviderRepository;
 
@@ -153,15 +156,17 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Display(AutoGenerateField = false)]
         public DistributeNakladRowViewModel CurrentTovar
         {
-            get => GetValue<DistributeNakladRowViewModel>();
-            set => SetValue(value, () =>
+            get => myCurrentTovar;
+            set
             {
+                if (myCurrentTovar == value) return;
                 DistributeNaklads.Clear();
-                if (CurrentTovar != null)
+                if (myCurrentTovar != null)
                     foreach (var n in DistributeAllNaklads
                                  .Where(_ => _.RowId == CurrentTovar.Id))
                         DistributeNaklads.Add(n);
-            });
+                RaisePropertyChanged();
+            }
         }
 
         [Display(AutoGenerateField = false)]
@@ -180,8 +185,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Display(AutoGenerateField = false)]
         public DistributeNakladInfoViewModel CurrentDistributeNaklad
         {
-            get => GetValue<DistributeNakladInfoViewModel>();
-            set => SetValue(value);
+            get => myCurrentDistributeNaklad;
+            set
+            {
+                if (myCurrentDistributeNaklad == value) return;
+                myCurrentDistributeNaklad = value;
+                RaisePropertyChanged();
+            }
         }
 
         [Display(AutoGenerateField = false)]
@@ -276,8 +286,15 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         // ReSharper disable once PossibleInvalidOperationException
         public Currency Currency
         {
-            get => MainReferences.GetCurrency(Entity.CurrencyDC);
-            set => SetValue(value, () => CurrencyDC = value?.DocCode);
+            get => myCurrency;
+            
+            set
+            {
+                if (myCurrency == value) return;
+                myCurrency = value;
+                CurrencyDC = myCurrency?.DocCode;
+                RaisePropertyChanged();
+            }
         }
 
         [DisplayName("Примечания")]
@@ -776,9 +793,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 unitOfWork.Commit();
                 CalcNomenkls(null);
                 myState = RowStatus.NotEdited;
-                RaisePropertiesChanged(nameof(State));
-                RaisePropertiesChanged(nameof(Tovars));
-                RaisePropertiesChanged(nameof(SelectedTovars));
+                RaisePropertyChanged(nameof(State));
+                RaisePropertyChanged(nameof(Tovars));
+                RaisePropertyChanged(nameof(SelectedTovars));
                 Load(Id);
                 DocumentsOpenManager.SaveLastOpenInfo(DocumentType.Naklad, Id, null, Creator,
                     GlobalOptions.UserInfo.Name, Description);
@@ -1037,8 +1054,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             SelectedTovars.Clear();
             RecalcAllResult();
             RaisePropertyChanged();
-            RaisePropertiesChanged(nameof(Tovars));
-            RaisePropertiesChanged(nameof(SelectedTovars));
+            RaisePropertyChanged(nameof(Tovars));
+            RaisePropertyChanged(nameof(SelectedTovars));
         }
 
         public bool CanDeleteNomenkl()

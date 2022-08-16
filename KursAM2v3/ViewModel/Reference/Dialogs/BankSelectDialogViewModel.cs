@@ -11,6 +11,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using KursAM2.View.Base;
 
 namespace KursAM2.ViewModel.Reference.Dialogs
@@ -74,7 +75,7 @@ namespace KursAM2.ViewModel.Reference.Dialogs
 
         public override void Ok(object obj)
         {
-            winCurrentService = GetService<ICurrentWindowService>();
+            winCurrentService = this.GetService<ICurrentWindowService>();
             if (winCurrentService != null)
             {
                 DialogResult = true;
@@ -84,7 +85,7 @@ namespace KursAM2.ViewModel.Reference.Dialogs
 
         public override void Cancel(object obj)
         {
-            winCurrentService = GetService<ICurrentWindowService>();
+            winCurrentService = this.GetService<ICurrentWindowService>();
             if (winCurrentService != null)
             {
                 CurrentItem = null;

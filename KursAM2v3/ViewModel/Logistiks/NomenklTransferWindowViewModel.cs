@@ -55,7 +55,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
 
             RaisePropertyChanged(nameof(Document));
-            RaisePropertiesChanged(nameof(IsCannotChangeStore));
+            RaisePropertyChanged(nameof(IsCannotChangeStore));
         }
 
         // ReSharper disable once CollectionNeverQueried.Global
@@ -347,7 +347,7 @@ namespace KursAM2.ViewModel.Logistiks
 
             if (Document.SchetFacturaBase != null)
                 IsCannotChangeStore = true;
-            RaisePropertiesChanged(nameof(IsCannotChangeStore));
+            RaisePropertyChanged(nameof(IsCannotChangeStore));
         }
 
         private void SelectStore(object obj)

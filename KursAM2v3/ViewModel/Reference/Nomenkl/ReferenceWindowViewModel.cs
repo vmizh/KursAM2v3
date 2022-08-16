@@ -14,6 +14,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm.Xpf;
 using Helper;
 using KursAM2.Managers.Nomenkl;
@@ -39,7 +40,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             IsCategoryEnabled = true;
         }
 
-        private IMessageBoxService MessageBoxService => GetService<IMessageBoxService>();
+        private IMessageBoxService MessageBoxService => this.GetService<IMessageBoxService>();
 
         public ObservableCollection<NomenklGroup> CategoryCollection { set; get; } =
             new ObservableCollection<NomenklGroup>();
@@ -136,7 +137,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 if (myCurrentCategory == null)
                 {
                     NomenklMainCollection.Clear();
-                    RaisePropertiesChanged(nameof(NomenklMainCollection));
+                    RaisePropertyChanged(nameof(NomenklMainCollection));
                 }
                 else
                 {

@@ -934,8 +934,8 @@ namespace KursAM2.ViewModel.Management
                     var m in from m in MainNach let n = Main.SingleOrDefault(_ => _.Id == m.Id) where n == null select m
                 )
                     m.IsDiv = true;
-                RaisePropertiesChanged(nameof(Main));
-                RaisePropertiesChanged(nameof(MainNach));
+                RaisePropertyChanged(nameof(Main));
+                RaisePropertyChanged(nameof(MainNach));
                 ResetCurrencyColumns();
             }
             catch (Exception ex)

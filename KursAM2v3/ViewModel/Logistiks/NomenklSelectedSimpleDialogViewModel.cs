@@ -65,7 +65,7 @@ namespace KursAM2.ViewModel.Logistiks
             NomenklCollection.Clear();
             foreach (var n in NomenklManager.GetNomenklsSearch(SearchText))
                 NomenklCollection.Add(n);
-            RaisePropertiesChanged(nameof(NomenklCollection));
+            RaisePropertyChanged(nameof(NomenklCollection));
         }
 
         #endregion

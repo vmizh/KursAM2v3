@@ -1164,8 +1164,8 @@ namespace Core.EntityViewModel.Invoices
 
         public void UpdateActualValues()
         {
-            RaisePropertiesChanged(nameof(Rows));
-            RaisePropertiesChanged(nameof(Summa));
+            RaisePropertyChanged(nameof(Rows));
+            RaisePropertyChanged(nameof(Summa));
         }
 
         private void LoadReferences()

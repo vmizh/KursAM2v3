@@ -18,6 +18,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.Auxiliary;
 using KursAM2.Dialogs;
@@ -571,7 +572,7 @@ namespace KursAM2.ViewModel.Dogovora
             base.RefreshData(obj);
             if (IsCanSaveData)
             {
-                var service = GetService<IDialogService>("WinUIDialogService");
+                var service = this.GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "В документ внесены изменения, сохранить?";
                 if (service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this) == MessageResult.Yes)
                 {
@@ -594,7 +595,7 @@ namespace KursAM2.ViewModel.Dogovora
         {
             if (Document.State != RowStatus.NewRow)
             {
-                var service = GetService<IDialogService>("WinUIDialogService");
+                var service = this.GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "Вы уверены, что хотите удалить данный документ?";
                 var res = service.ShowDialog(MessageButton.YesNo, "Запрос", this);
                 if (res != MessageResult.Yes) return;
@@ -658,7 +659,7 @@ namespace KursAM2.ViewModel.Dogovora
             }
             catch (Exception ex)
             {
-                var service = GetService<IDialogService>("WinUIDialogService");
+                var service = this.GetService<IDialogService>("WinUIDialogService");
                 MessageManager.ErrorShow(service, ex);
             }
         }

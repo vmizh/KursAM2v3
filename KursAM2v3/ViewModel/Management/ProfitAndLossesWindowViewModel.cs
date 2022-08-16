@@ -1035,8 +1035,8 @@ namespace KursAM2.ViewModel.Management
                 )
                     m.IsDiv = true;
                 BalansCrossRateRecalc(RecalcCurrency);
-                RaisePropertiesChanged(nameof(Main));
-                RaisePropertiesChanged(nameof(MainNach));
+                RaisePropertyChanged(nameof(Main));
+                RaisePropertyChanged(nameof(MainNach));
                 if (TabSelected == 0)
                 {
                     BalansFact = currentBlsFact;
@@ -1049,7 +1049,7 @@ namespace KursAM2.ViewModel.Management
                     UpdateExtend();
                 }
 
-                RaisePropertiesChanged(nameof(ExtendActual));
+                RaisePropertyChanged(nameof(ExtendActual));
                 ResetCurrencyColumns();
             }
             catch (Exception ex)

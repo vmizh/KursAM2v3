@@ -190,7 +190,7 @@ namespace Core.EntityViewModel.Vzaimozachet
                 }
 
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(DebitorCurrency));
+                RaisePropertyChanged(nameof(DebitorCurrency));
             }
         }
 

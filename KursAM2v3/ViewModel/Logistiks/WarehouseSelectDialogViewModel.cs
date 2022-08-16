@@ -58,7 +58,7 @@ namespace KursAM2.ViewModel.Logistiks
             WarehouseCollection.Clear();
             foreach (var n in WarehouseManager.GetWarehouses(null, SearchText))
                 WarehouseCollection.Add(n);
-            RaisePropertiesChanged(nameof(WarehouseCollection));
+            RaisePropertyChanged(nameof(WarehouseCollection));
         }
 
         public override void SearchClear(object obj)
@@ -66,7 +66,7 @@ namespace KursAM2.ViewModel.Logistiks
             SearchText = null;
             WarehouseCollection.Clear();
             CurrentWarehouse = null;
-            RaisePropertiesChanged(nameof(WarehouseCollection));
+            RaisePropertyChanged(nameof(WarehouseCollection));
         }
     }
 }

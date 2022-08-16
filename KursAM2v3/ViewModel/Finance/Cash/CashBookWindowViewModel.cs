@@ -98,7 +98,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                 WindowName = "Кассовая книга - " + CurrentCash?.Name;
                 RefreshData(null);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(WindowName));
+                RaisePropertyChanged(nameof(WindowName));
                 RaisePropertyChanged(nameof(IsSearchEnabled));
             }
         }

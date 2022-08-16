@@ -1164,7 +1164,7 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var s in skls) Sklads.Add(MainReferences.Warehouses[s]);
             }
 
-            RaisePropertiesChanged(nameof(Sklads));
+            RaisePropertyChanged(nameof(Sklads));
         }
 
         public override void RefreshData(object obj)

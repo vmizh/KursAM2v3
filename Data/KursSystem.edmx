@@ -16,6 +16,7 @@
           <Property Name="Server" Type="varchar" MaxLength="50" />
           <Property Name="DBName" Type="varchar" MaxLength="50" />
           <Property Name="Color" Type="varchar" MaxLength="50" />
+          <Property Name="IsVisible" Type="bit" />
         </EntityType>
         <EntityType Name="Errors">
           <Key>
@@ -41,6 +42,7 @@
           <Property Name="FormId" Type="int" />
           <Property Name="UpdateDate" Type="datetime" Nullable="false" />
           <Property Name="WindowState" Type="varchar(max)" />
+          <Property Name="Version" Type="int" />
         </EntityType>
         <EntityType Name="KontragentCashes">
           <Key>
@@ -886,6 +888,7 @@
           <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DbId" FromRole="DataSources" ToRole="SignatureSchemes" />
           <NavigationProperty Name="UserMenuFavorites" Relationship="KursSystemModel.FK_UserMenuFavorites_DbId" FromRole="DataSources" ToRole="UserMenuFavorites" />
           <NavigationProperty Name="LastMenuUserSearch" Relationship="KursSystemModel.FK_LastMenuUserSearch_DbId" FromRole="DataSources" ToRole="LastMenuUserSearch" />
+          <Property Name="IsVisible" Type="Boolean" />
         </EntityType>
         <EntityType Name="Errors">
           <Key>
@@ -915,6 +918,7 @@
           <Property Name="WindowState" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_FormLayout_FormId" FromRole="FormLayout" ToRole="KursMenuItem" />
           <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_FormLayout_UserId" FromRole="FormLayout" ToRole="Users" />
+          <Property Name="Version" Type="Int32" />
         </EntityType>
         <EntityType Name="KontragentCashes">
           <Key>
@@ -1431,6 +1435,7 @@
           <EntitySetMapping Name="DataSources">
             <EntityTypeMapping TypeName="KursSystemModel.DataSources">
               <MappingFragment StoreEntitySet="DataSources">
+                <ScalarProperty Name="IsVisible" ColumnName="IsVisible" />
                 <ScalarProperty Name="Color" ColumnName="Color" />
                 <ScalarProperty Name="DBName" ColumnName="DBName" />
                 <ScalarProperty Name="Server" ColumnName="Server" />
@@ -1457,6 +1462,7 @@
           <EntitySetMapping Name="FormLayout">
             <EntityTypeMapping TypeName="KursSystemModel.FormLayout">
               <MappingFragment StoreEntitySet="FormLayout">
+                <ScalarProperty Name="Version" ColumnName="Version" />
                 <ScalarProperty Name="WindowState" ColumnName="WindowState" />
                 <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
                 <ScalarProperty Name="FormId" ColumnName="FormId" />

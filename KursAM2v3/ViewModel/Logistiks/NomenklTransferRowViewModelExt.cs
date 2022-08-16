@@ -207,7 +207,7 @@ namespace KursAM2.ViewModel.Logistiks
                 if (myNakladRate == value) return;
                 myNakladRate = value;
                 myNakladNewEdSumma = Round(NakladEdSumma * NakladRate, 2);
-                RaisePropertiesChanged(nameof(NakladNewEdSumma));
+                RaisePropertyChanged(nameof(NakladNewEdSumma));
                 RaisePropertyChanged();
             }
         }
@@ -221,7 +221,7 @@ namespace KursAM2.ViewModel.Logistiks
                 myNakladEdSumma = value;
                 myNakladNewEdSumma = Round(NakladEdSumma * NakladRate, 2);
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(NakladNewEdSumma));
+                RaisePropertyChanged(nameof(NakladNewEdSumma));
             }
         }
 

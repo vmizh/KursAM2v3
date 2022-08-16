@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Xpf.CodeView;
 
 namespace KursAM2.View.Logistiks.UC
 {
@@ -56,7 +58,6 @@ namespace KursAM2.View.Logistiks.UC
                 if (myCurrentGroup != null && myCurrentGroup.Equals(value)) return;
                 myCurrentGroup = value;
                 GetNomenklItem();
-                RaisePropertiesChanged();
             }
             get => myCurrentGroup;
         }
@@ -67,7 +68,6 @@ namespace KursAM2.View.Logistiks.UC
             {
                 if (myIsNotUsluga == value) return;
                 myIsNotUsluga = value;
-                RaisePropertiesChanged();
             }
             get => myIsNotUsluga;
         }
@@ -78,7 +78,6 @@ namespace KursAM2.View.Logistiks.UC
             {
                 if (Equals(myDataUserControl, value)) return;
                 myDataUserControl = value;
-                RaisePropertiesChanged();
             }
             get => myDataUserControl;
         }
@@ -89,7 +88,6 @@ namespace KursAM2.View.Logistiks.UC
             {
                 if (myCurrentNomenkl != null && myCurrentNomenkl.Equals(value)) return;
                 myCurrentNomenkl = value;
-                RaisePropertiesChanged();
             }
             get => myCurrentNomenkl;
         }
@@ -100,7 +98,6 @@ namespace KursAM2.View.Logistiks.UC
             {
                 if (myCurrentSelectNomenkl != null && myCurrentSelectNomenkl.Equals(value)) return;
                 myCurrentSelectNomenkl = value;
-                RaisePropertiesChanged();
             }
             get => myCurrentSelectNomenkl;
         }
@@ -123,32 +120,49 @@ namespace KursAM2.View.Logistiks.UC
             NomenklGroup.Clear();
             try
             {
-                using (var ctx = GlobalOptions.GetEntities())
-                {
-                    foreach (var item in ctx.SD_82.ToList())
-                        NomenklGroup.Add(new NomenklGroup(item));
-                    foreach (var item in ctx.SD_83.ToList())
-                        if (IsNotUsluga)
-                        {
-                            if (currentCrs == null)
-                                NomenklItemCollection.Add(new Nomenkl(item));
-                            else if (item.NOM_SALE_CRS_DC == currentCrs.DocCode)
-                                NomenklItemCollection.Add(new Nomenkl(item));
-                        }
-                        else
-                        {
-                            if (item.NOM_0MATER_1USLUGA == 1)
-                                NomenklItem.Add(new Nomenkl(item));
-                            RaisePropertiesChanged(nameof(NomenklItem));
-                        }
-                }
+                //using (var ctx = GlobalOptions.GetEntities())
+                //{
+                    NomenklGroup = new ObservableCollection<NomenklGroup>(MainReferences.NomenklGroups.Values);
 
-                CalcCommonSum();
+                    //foreach (var item in ctx.SD_82.ToList())
+                    //    NomenklGroup.Add(new NomenklGroup(item));
+                    if (IsNotUsluga)
+                    {
+                        NomenklItemCollection.AddRange(currentCrs == null
+                            ? MainReferences.ALLNomenkls.Values
+                            : MainReferences.ALLNomenkls.Values.Where(_ => _.Currency.DocCode == currentCrs.DocCode));
+                    }
+                    else
+                    {
+                        NomenklItemCollection.AddRange(MainReferences.ALLNomenkls.Values.Where(_ => _.IsUsluga));
+                    }
+
+                    //foreach (var item in MainReferences.ALLNomenkls.Values)
+                    //    if (IsNotUsluga)
+                    //    {
+                    //        if (currentCrs == null)
+                    //            NomenklItemCollection.Add(item);
+                    //        else if (item.NOM_SALE_CRS_DC == currentCrs.DocCode)
+                    //            NomenklItemCollection.Add(item);
+                    //    }
+                    //    else
+                    //    {
+                    //        if (item.NOM_0MATER_1USLUGA == 1)
+                    //            NomenklItem.Add(item);
+                    //    }
+                //}
+
+                CalcCommonSumAsync();
             }
             catch (Exception e)
             {
                 WindowManager.ShowError(e);
             }
+        }
+
+        private async Task CalcCommonSumAsync()
+        {
+            await Task.Run(() => CalcCommonSum());
         }
 
         private void CalcCommonSum()

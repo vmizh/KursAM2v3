@@ -6,6 +6,7 @@ using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using KursAM2.View.KursReferences.UC;
 
 namespace KursAM2.ViewModel.Reference.Dialogs
@@ -49,13 +50,13 @@ namespace KursAM2.ViewModel.Reference.Dialogs
 
         public override void Ok(object obj)
         {
-            winCurrentService = GetService<ICurrentWindowService>();
+            winCurrentService = this.GetService<ICurrentWindowService>();
             if (winCurrentService != null) winCurrentService.Close();
         }
 
         public override void Cancel(object obj)
         {
-            winCurrentService = GetService<ICurrentWindowService>();
+            winCurrentService = this.GetService<ICurrentWindowService>();
             if (winCurrentService != null)
             {
                 CurrentMenu = null;

@@ -84,7 +84,7 @@ namespace KursAM2.ViewModel.Finance
                 }
             }
 
-            RaisePropertiesChanged(nameof(Docs));
+            RaisePropertyChanged(nameof(Docs));
         }
 
         #region Fields

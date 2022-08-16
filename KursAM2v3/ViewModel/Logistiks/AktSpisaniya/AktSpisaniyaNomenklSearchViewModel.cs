@@ -167,7 +167,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             foreach (var d in AktSpisaniyaNomenklRepository.GetAllByDates(StartDate, EndDate).ToList())
                 Documents.Add(new AktSpisaniyaNomenklTitleViewModel(d));
 
-            RaisePropertiesChanged(nameof(Documents));
+            RaisePropertyChanged(nameof(Documents));
         }
 
         #endregion

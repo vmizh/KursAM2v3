@@ -99,7 +99,7 @@ namespace KursAM2.ViewModel.Logistiks
                 if ((decimal)(Entity.DDT_OSTAT_STAR ?? 0) == value) return;
                 Entity.DDT_OSTAT_STAR = (double?)value;
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(Summa));
+                RaisePropertyChanged(nameof(Summa));
             }
         }
 
@@ -119,8 +119,8 @@ namespace KursAM2.ViewModel.Logistiks
                     Entity.DDT_KOL_RASHOD = Difference;
                 }
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(Difference));
-                RaisePropertiesChanged(nameof(Summa));
+                RaisePropertyChanged(nameof(Difference));
+                RaisePropertyChanged(nameof(Summa));
             }
         }
 
@@ -149,7 +149,7 @@ namespace KursAM2.ViewModel.Logistiks
                 if ((Entity.DDT_TAX_CRS_CENA ?? 0) == value) return;
                 Entity.DDT_TAX_CRS_CENA = value;
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(Summa));
+                RaisePropertyChanged(nameof(Summa));
             }
         }
 

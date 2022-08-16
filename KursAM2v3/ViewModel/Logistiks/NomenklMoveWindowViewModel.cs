@@ -91,7 +91,7 @@ namespace KursAM2.ViewModel.Logistiks
                 {
                     Operations = new List<NomenklCalcCostOperation>();
                     SkladOstatki.Clear();
-                    RaisePropertiesChanged(nameof(SkladOstatki));
+                    RaisePropertyChanged(nameof(SkladOstatki));
                     RaisePropertyChanged(nameof(Operations));
                     return;
                 }

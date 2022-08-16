@@ -180,7 +180,7 @@ namespace KursAM2.ViewModel.Finance
                 }
             }
 
-            RaisePropertiesChanged(nameof(BankAccountCollection));
+            RaisePropertyChanged(nameof(BankAccountCollection));
             CurrentBankAccount = BankAccountCollection.FirstOrDefault(_ => _.DocCode == bs);
             if (CurrentBankAccount != null)
                 GetPeriods();

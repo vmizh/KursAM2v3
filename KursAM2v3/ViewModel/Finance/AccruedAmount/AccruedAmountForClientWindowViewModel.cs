@@ -17,6 +17,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using DevExpress.Utils.Extensions;
 using Helper;
 using KursAM2.Dialogs;
@@ -184,7 +185,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         private void AddCashDoc(object obj)
         {
             var ctx = new SelectCashBankDialogViewModel(true,Document.Currency);
-            var service = GetService<IDialogService>("DialogServiceUI");
+            var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
             if (ctx.CurrentObject == null) return;
             var cash = ctx.CurrentObject;
@@ -255,7 +256,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void DeleteLinkPrihodDoc(object obj)
         {
-            var service = GetService<IDialogService>("WinUIDialogService");
+            var service = this.GetService<IDialogService>("WinUIDialogService");
             dialogServiceText = "Вы действительно хотите удалить связь с платежным документом?";
             if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.Yes)
             {
@@ -285,7 +286,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         private void AddBankDoc(object obj)
         {
             var ctx = new SelectCashBankDialogViewModel(false,Document.Currency);
-            var service = GetService<IDialogService>("DialogServiceUI");
+            var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
             if (ctx.CurrentObject == null) return;
             var CurrentBankAccount = ctx.CurrentObject;
@@ -379,7 +380,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void DeleteAccrual(object obj)
         {
-            var service = GetService<IDialogService>("WinUIDialogService");
+            var service = this.GetService<IDialogService>("WinUIDialogService");
             dialogServiceText = "Хотите удалить выделенные строки?";
             if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.No)
                 return;
@@ -394,7 +395,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             base.RefreshData(obj);
             if (IsCanSaveData)
             {
-                var service = GetService<IDialogService>("WinUIDialogService");
+                var service = this.GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "В документ внесены изменения, сохранить?";
                 if (service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this) == MessageResult.Yes)
                 {
@@ -417,7 +418,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         {
             if (Document.State != RowStatus.NewRow)
             {
-                var service = GetService<IDialogService>("WinUIDialogService");
+                var service = this.GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "Вы уверены, что хотите удалить данный документ?";
                 var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
                 if (res != MessageResult.Yes) return;

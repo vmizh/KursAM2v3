@@ -8,41 +8,45 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    dx:DXSerializer.Enabled="True"
+    dx:WindowRestoreLayoutOptions.AllowRestoreStateForDisplayedWindow="True"
+    dx:DXSerializer.StoreLayoutMode="All"
     mc:Ignorable="d"
     Title="{Binding WindowName}" MinHeight="450" Height="600" MinWidth="800"
     Icon="{Binding Source={StaticResource imageStandartSearch},
     Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
     Style="{StaticResource DXSplashServices}">
     <dx:ThemedWindow.HeaderItems>
-       <TextBlock Text="{Binding DatabaseName}" Foreground="{Binding DatabaseColor}"
+        <TextBlock Text="{Binding DatabaseName}" Foreground="{Binding DatabaseColor}"
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel Style="{StaticResource DXServices}">
-        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-            <dxe:DateEdit Width="120" EditValue="{Binding StartDate}"
-                          IsEnabled="{Binding IsDateEnabled}" />
-            <Label Content="по" />
-            <dxe:DateEdit Width="120" EditValue="{Binding EndDate}"
-                          IsEnabled="{Binding IsDateEnabled}" />
-        </StackPanel>
-        <dxg:GridControl
-            Style="{StaticResource GridControl.Search}"
-            Name="gridDocuments"
-            Margin="0,10,0,0"
-            dx:DXSerializer.SerializationID="gridDocuments"
-            ItemsSource="{Binding Documents, UpdateSourceTrigger=PropertyChanged}"
-            CurrentItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
-            SelectedItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
-            SelectedItems="{Binding SelectedDocuments, UpdateSourceTrigger=PropertyChanged}"
-            CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
-            AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn">
-            <dxg:GridControl.View>
-                <dxg:TableView
-                    Name="gridDocumentsTableView"
-                    Style="{StaticResource TableView.Search}" />
-            </dxg:GridControl.View>
-        </dxg:GridControl>
-    </DockPanel>
+            <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <dxe:DateEdit Width="120" EditValue="{Binding StartDate}"
+                              IsEnabled="{Binding IsDateEnabled}" />
+                <Label Content="по" />
+                <dxe:DateEdit Width="120" EditValue="{Binding EndDate}"
+                              IsEnabled="{Binding IsDateEnabled}" />
+            </StackPanel>
+            <dxg:GridControl
+                Style="{StaticResource GridControl.Search}"
+                Name="gridDocuments"
+                Margin="0,10,0,0"
+                dx:DXSerializer.SerializationID="gridDocuments"
+                ItemsSource="{Binding Documents, UpdateSourceTrigger=PropertyChanged}"
+                CurrentItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItems="{Binding SelectedDocuments, UpdateSourceTrigger=PropertyChanged}"
+                CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
+                AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn">
+                <dxg:GridControl.View>
+                    <dxg:TableView
+                        Name="gridDocumentsTableView"
+                        Style="{StaticResource TableView.Search}" />
+                </dxg:GridControl.View>
+            </dxg:GridControl>
+        </DockPanel>
 </dx:ThemedWindow>

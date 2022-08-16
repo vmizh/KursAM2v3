@@ -283,7 +283,7 @@ namespace KursAM2.ViewModel.Reference
             else
                 foreach (var n in UserCollection.Where(_ => !_.UserBlock))
                     ActualUsers.Add(n);
-            RaisePropertiesChanged(nameof(ActualUsers));
+            RaisePropertyChanged(nameof(ActualUsers));
         }
 
         public override void ResetLayout(object form)

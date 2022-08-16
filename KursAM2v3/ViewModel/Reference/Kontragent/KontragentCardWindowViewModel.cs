@@ -15,6 +15,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Navigation;
 using KursAM2.View.Base;
 using KursAM2.View.KursReferences;
@@ -115,7 +116,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 if (myCategory == value) return;
                 myCategory = value;
                 Kontragent.Category = myCategory;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myCategory;
         }
@@ -129,7 +130,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 if (myOtvetstLico != null && myOtvetstLico.Equals(value)) return;
                 myOtvetstLico = value;
                 Kontragent.OtvetstLico = myOtvetstLico;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myOtvetstLico;
         }
@@ -142,7 +143,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             {
                 if (Equals(myCurrentCurrencies, value)) return;
                 myCurrentCurrencies = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myCurrentCurrencies;
         }
@@ -158,7 +159,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 myCurrentRegions = value;
                 if (myCurrentRegions != null)
                     Kontragent.REGION_DC = myCurrentRegions.DocCode;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myCurrentRegions;
         }
@@ -171,7 +172,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             {
                 if (myCurrentBankAndAccounts != null && myCurrentBankAndAccounts.Equals(value)) return;
                 myCurrentBankAndAccounts = value;
-                RaisePropertiesChanged();
+                RaisePropertyChanged();
             }
             get => myCurrentBankAndAccounts;
         }
@@ -274,8 +275,8 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             Regions.Clear();
             foreach (var item in GlobalOptions.GetEntities().SD_23.ToList())
                 Regions.Add(new Region(item));
-            RaisePropertiesChanged(nameof(Categories));
-            RaisePropertiesChanged(nameof(Regions));
+            RaisePropertyChanged(nameof(Categories));
+            RaisePropertyChanged(nameof(Regions));
         }
 
         public ICommand DeleteBankCommand
@@ -305,7 +306,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         private void AddNewBank(object obj)
         {
             var ctx = new BankSelectDialogViewModel();
-            var service = GetService<IDialogService>("DialogServiceUI");
+            var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
             if (ctx.CurrentItem == null) return;
             BankAndAccounts.Add(new KontragentBank
@@ -338,7 +339,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                     case MessageBoxResult.No:
                         LoadKontragent();
                         f?.ChangedTab("mainTab");
-                        RaisePropertiesChanged(nameof(Kontragent));
+                        RaisePropertyChanged(nameof(Kontragent));
                         return;
                     case MessageBoxResult.Cancel:
                         return;
@@ -367,9 +368,9 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 .Include(_ => _.SD_148)
                 .SingleOrDefault(_ => _.DOC_CODE == GetDocCode);
             Kontragent = new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent(kontr);
-            RaisePropertiesChanged(nameof(Kontragent));
-            RaisePropertiesChanged(nameof(Categories));
-            RaisePropertiesChanged(nameof(Regions));
+            RaisePropertyChanged(nameof(Kontragent));
+            RaisePropertyChanged(nameof(Categories));
+            RaisePropertyChanged(nameof(Regions));
             BankAndAccounts.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {

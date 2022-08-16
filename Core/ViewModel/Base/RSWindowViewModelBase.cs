@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Core.WindowsManager;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -19,7 +21,7 @@ using LayoutManager;
 namespace Core.ViewModel.Base
 {
     [POCOViewModel]
-    public abstract class RSWindowViewModelBase : RSViewModelBase
+    public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLayout, ISupportServices
     {
         // ReSharper disable once ArrangeObjectCreationWhenTypeEvident
         public readonly WindowManager WinManager = new WindowManager();
@@ -36,8 +38,6 @@ namespace Core.ViewModel.Base
         private string myWindowName;
         private string myMenuInfoString;
         private Visibility myIsMenuInfoVisibility;
-
-        protected ThemedWindowLayoutManager WindowLayoutManager;
 
         public RSWindowViewModelBase()
         {
@@ -60,16 +60,16 @@ namespace Core.ViewModel.Base
         }
 
         [Display(AutoGenerateField = false)]
-        protected IDispatcherService DispatcherService => GetService<IDispatcherService>();
+        protected IDispatcherService DispatcherService => this.GetService<IDispatcherService>();
 
         [Display(AutoGenerateField = false)]
-        protected ISplashScreenService SplashScreenService => GetService<ISplashScreenService>();
+        protected ISplashScreenService SplashScreenService => this.GetService<ISplashScreenService>();
 
-        [Display(AutoGenerateField = false)] protected IDialogService DialogService => GetService<IDialogService>();
+        [Display(AutoGenerateField = false)] protected IDialogService DialogService => this.GetService<IDialogService>();
 
         [Display(AutoGenerateField = false)]
-        protected ILayoutSerializationService LayoutSerializationService
-            => GetService<ILayoutSerializationService>();
+        protected ILayoutSerializationService LayoutSerializationService => this.GetService<ILayoutSerializationService>();
+        
 
         [Display(AutoGenerateField = false)]
         public bool IsLoading
@@ -172,7 +172,7 @@ namespace Core.ViewModel.Base
 
 
         [Display(AutoGenerateField = false)] 
-        protected bool IsLayoutLoaded = false;
+        protected bool IsLayoutLoaded;
         
         [Display(AutoGenerateField = false)]
         public ICommand OnWindowLoadedCommand
@@ -195,6 +195,21 @@ namespace Core.ViewModel.Base
             return false;
         }
 
+        //public virtual void LoadLayout()
+        //{
+        //    if (Form is ThemedWindow frm)
+        //    {
+        //        LayoutManager ??= new global::Helper.LayoutManager(GlobalOptions.KursSystemDBContext,
+        //            frm, LayoutName);
+        //        LayoutManager.LoadLayout();
+        //    }
+        //}
+
+        //public virtual void SaveLayout()
+        //{
+        //    LayoutManager.SaveLayout();
+        //}
+
         public virtual void OnWindowClosing(object obj)
         {
             LayoutManager?.Save();
@@ -205,11 +220,11 @@ namespace Core.ViewModel.Base
             if (Form != null)
             {
                 LayoutManager ??= new global::Helper.LayoutManager(Form, LayoutSerializationService,
-                    LayoutName, null);
+                    LayoutName, null,GlobalOptions.KursSystemDBContext);
                 ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             }
             else
-                LayoutManager = new global::Helper.LayoutManager(LayoutSerializationService,
+                LayoutManager = new global::Helper.LayoutManager(GlobalOptions.KursSystemDBContext,LayoutSerializationService,
                     LayoutName, null);
         }
 
@@ -782,7 +797,6 @@ namespace Core.ViewModel.Base
                 if (mySearchText == value) return;
                 mySearchText = value;
                 RaisePropertyChanged();
-                RaisePropertiesChanged(nameof(IsSearchTextNull));
             }
         }
 
@@ -834,5 +848,20 @@ namespace Core.ViewModel.Base
         }
 
         #endregion Command
+
+        public bool CanSerialize => true;
+        public IDocumentManagerService DocumentManagerService => null;
+        public IEnumerable<object> LookupViewModels => null;
+        //public IServiceContainer ServiceContainer => null;
+        //public IServiceContainer ISupportServices.ServiceContainer { get { return ServiceContainer; } }
+        IServiceContainer serviceContainer = null;
+        protected IServiceContainer ServiceContainer {
+            get {
+                if(serviceContainer == null)
+                    serviceContainer = new ServiceContainer(this);
+                return serviceContainer;
+            }
+        }
+        IServiceContainer ISupportServices.ServiceContainer { get { return ServiceContainer; } }
     }
 }

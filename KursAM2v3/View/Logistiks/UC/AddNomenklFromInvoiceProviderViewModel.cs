@@ -151,7 +151,6 @@ namespace KursAM2.View.Logistiks.UC
                 if (myCurrentInvoice == value) return;
                 myCurrentInvoice = value;
                 Nomenkls = new ObservableCollection<InvoiceShortRow>(myCurrentInvoice.Rows);
-                RaisePropertiesChanged();
                 RaisePropertyChanged(nameof(Nomenkls));
             }
             get => myCurrentInvoice;
@@ -163,7 +162,6 @@ namespace KursAM2.View.Logistiks.UC
             {
                 if (myCurrentNomenkl == null || myCurrentNomenkl == value) return;
                 myCurrentNomenkl = value;
-                RaisePropertiesChanged();
             }
             get => myCurrentNomenkl;
         }

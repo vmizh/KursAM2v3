@@ -8,6 +8,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using KursAM2.Managers;
 
 namespace KursAM2.ViewModel.Finance.AccruedAmount
@@ -95,7 +96,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         public override void Ok(object obj)
         {
-            winCurrentService = GetService<ICurrentWindowService>();
+            winCurrentService = this.GetService<ICurrentWindowService>();
             if (winCurrentService != null)
             {
                 DialogResult = MessageResult.OK;
@@ -106,7 +107,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         public override void Cancel(object obj)
         {
-            winCurrentService = GetService<ICurrentWindowService>();
+            winCurrentService = this.GetService<ICurrentWindowService>();
             if (winCurrentService != null)
             {
                 CurrentObject = null;

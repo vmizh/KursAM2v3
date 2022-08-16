@@ -22,6 +22,7 @@ namespace Data
         public Nullable<int> FormId { get; set; }
         public System.DateTime UpdateDate { get; set; }
         public string WindowState { get; set; }
+        public Nullable<int> Version { get; set; }
     
         public virtual KursMenuItem KursMenuItem { get; set; }
         public virtual Users Users { get; set; }

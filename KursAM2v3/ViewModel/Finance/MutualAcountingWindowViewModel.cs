@@ -422,7 +422,7 @@ namespace KursAM2.ViewModel.Finance
                 UpdateDebitorCreditorCollections(null);
                 UpdateCalcSumma(null);
                 Document.myState = RowStatus.NotEdited;
-                RaisePropertiesChanged(nameof(IsCanSaveData));
+                RaisePropertyChanged(nameof(IsCanSaveData));
             }
             catch (Exception ex)
             {

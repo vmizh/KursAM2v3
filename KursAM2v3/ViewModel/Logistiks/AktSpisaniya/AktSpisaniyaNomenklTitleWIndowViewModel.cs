@@ -16,6 +16,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
@@ -281,7 +282,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         {
             if (Document.State != RowStatus.NewRow)
             {
-                var service = GetService<IDialogService>("WinUIDialogService");
+                var service = this.GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "Вы уверены, что хотите удалить документ?";
                 var res = service.ShowDialog(MessageButton.YesNo, "Запрос", this);
                 switch (res)
@@ -308,7 +309,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             base.RefreshData(obj);
             if (IsCanSaveData)
             {
-                var service = GetService<IDialogService>("WinUIDialogService");
+                var service = this.GetService<IDialogService>("WinUIDialogService");
                 dialogServiceText = "В документ внесены изменения, сохранить?";
                 var res = service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this);
                 switch (res)
@@ -462,7 +463,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         {
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             var ctx = new DialogSelectExistNomOnSkaldViewModel(Document.Warehouse, Document.DocDate);
-            var service = GetService<IDialogService>("DialogServiceUI");
+            var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, $"Запрос для склада: {Document.Warehouse}", ctx) == MessageResult.Cancel) return;
             if (ctx.NomenklSelectedList.Count == 0) return;
             foreach (var n in ctx.NomenklSelectedList)
@@ -502,7 +503,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         private void DeleteRow(object obj)
         {
-            var service = GetService<IDialogService>("WinUIDialogService");
+            var service = this.GetService<IDialogService>("WinUIDialogService");
             dialogServiceText = "Хотите удалить выделенные строки?";
             if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.No)
                 return;

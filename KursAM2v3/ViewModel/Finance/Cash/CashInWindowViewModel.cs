@@ -7,6 +7,7 @@ using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -28,7 +29,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         public void SelectStockHolder()
         {
-            var service = GetService<IDialogService>("DialogServiceUI");
+            var service = this.GetService<IDialogService>("DialogServiceUI");
             var sh = StandartDialogs.SelectStockHolder(service);
             if (sh != null)
             {

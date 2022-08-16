@@ -14,6 +14,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
 using KursAM2.Managers;
 using KursAM2.View.Personal;
@@ -79,7 +80,7 @@ namespace KursAM2.ViewModel.Personal
         public ICommand ShowMessageBoxCommand => new DelegateCommand(ShowMessageBox);
 
         // ReSharper disable once UnusedMember.Local
-        private IMessageBoxService MessageBoxService => GetService<IMessageBoxService>();
+        private IMessageBoxService MessageBoxService => this.GetService<IMessageBoxService>();
         public ObservableCollection<PayRollVedomostEmployeeViewModel> Employees { set; get; }
         public ObservableCollection<PayRollVedomostEmployeeViewModel> RemoveEmployees { set; get; }
         public ObservableCollection<EMP_PAYROLL_TYPEViewModel> PayrollTypeCollection { set; get; }
@@ -696,7 +697,7 @@ namespace KursAM2.ViewModel.Personal
                     }
 
                     ent.SaveChanges();
-                    RaisePropertiesChanged(nameof(Employees));
+                    RaisePropertyChanged(nameof(Employees));
                     isChange = false;
                     myState = RowStatus.NotEdited;
                     foreach (var emp in Employees)
