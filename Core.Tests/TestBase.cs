@@ -13,7 +13,7 @@ namespace Core.Tests
         {
             var sqlConnectionString = new SqlConnectionStringBuilder
             {
-                DataSource = "172.16.0.1",
+                DataSource = "172.16.1.1",
                 InitialCatalog = "KomSpecProject",
                 UserID = "sysadm",
                 Password = "19655691"

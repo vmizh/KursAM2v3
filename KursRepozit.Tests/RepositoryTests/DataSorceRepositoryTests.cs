@@ -37,7 +37,7 @@ namespace KursRepozit.Tests.RepositoryTests
                         Color = "Black",
                         DBName = "DBB",
                         Order = 12,
-                        Server = "Main8",
+                        Server = "Main9",
                         ShowName = "Новая база"
                     };
                     kursSystemRepository.Insert(ds);

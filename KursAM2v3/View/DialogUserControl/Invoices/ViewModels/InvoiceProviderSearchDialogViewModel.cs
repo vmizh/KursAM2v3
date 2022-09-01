@@ -285,7 +285,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                             var nom = MainReferences.GetNomenkl(c.NomenklId);
                             Data.Add(new InvoicePostQueryConvertCurrency
                             {
-                                Currency = nom.Currency.Name,
+                                Currency = nom.Currency?.Name,
                                 Quantity = c.Quantity,
                                 Summa = c.Summa,
                                 Creator = c.TD_26.SD_26.CREATOR,
@@ -307,7 +307,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                                 Nomenkl = nom.Name,
                                 NomenklDC = nom.DocCode,
                                 PostDC = c.TD_26.SD_26.SF_POST_DC,
-                                Post = MainReferences.GetKontragent(c.TD_26.SD_26.SF_POST_DC).Name,
+                                Post = MainReferences.GetKontragent(c.TD_26.SD_26.SF_POST_DC)?.Name,
                             });
                         }
 

@@ -6,7 +6,7 @@ namespace KursRepozit.Auxiliary
     {
         public static string KursSystemDBConnectionString = new SqlConnectionStringBuilder
         {
-            DataSource = "172.16.0.1",
+            DataSource = "172.16.1.1",
             InitialCatalog = "KursSystem",
             UserID = "sa",
             Password = "CbvrfFhntvrf65"

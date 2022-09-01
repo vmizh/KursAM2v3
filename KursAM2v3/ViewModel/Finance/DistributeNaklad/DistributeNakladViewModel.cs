@@ -947,8 +947,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         //    }
         //}
 
-        [Command]
-        public void AddNomenkl()
+        public ICommand AddNomenklCommand
+        {
+            get { return new Command(AddNomenkl, _ => true); }
+        }
+        public void AddNomenkl(object o)
         {
             var loadType = InvoiceProviderSearchType.RemoveNakladRashod | InvoiceProviderSearchType.IsCurrencyUsed;
             var dtx = new InvoiceProviderSearchDialogViewModel(true, true, loadType, unitOfWork.Context)
@@ -1100,9 +1103,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             return CurrentNakladInvoice != null;
         }
 
-        [Command]
+        [Display(AutoGenerateField = false)]
+        public ICommand AddNakladInvoiceCommand
+        {
+            get { return new Command(AddNakladInvoice, _ => true); }
+        }
         // ReSharper disable once UnusedMember.Global
-        public void AddNakladInvoice()
+        public void AddNakladInvoice(object o)
         {
             var loadType = InvoiceProviderSearchType.OnlyNakladDistrubuted;
             var dtx = new InvoiceProviderSearchDialogViewModel(false, true, loadType, unitOfWork.Context)
