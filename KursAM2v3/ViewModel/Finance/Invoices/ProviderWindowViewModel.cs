@@ -993,6 +993,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             if (CurrentRow != null)
             {
+                var distrLink = UnitOfWork.Context.DistributeNakladRow.Where(_ => _.TovarInvoiceRowId == CurrentRow.Id).ToList();
+                foreach (var r in distrLink)
+                {
+                    UnitOfWork.Context.DistributeNakladRow.Remove(r);
+                }
                 Document.Entity.TD_26.Remove(CurrentRow.Entity);
                 Document.Rows.Remove(CurrentRow);
             }

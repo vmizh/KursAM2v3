@@ -34,6 +34,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private InvoiceClient myCurrentDocument;
+        
 
         public InvoiceClientSearchViewModel()
         {
@@ -146,6 +147,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 prn.SubMenu.Add(sf);
             }
         }
+
+        
 
         public override string LayoutName => "InvoiceClientSearchViewModel";
 

@@ -110,7 +110,7 @@ namespace Core.EntityViewModel.NomenklManagement
             {
                 if (Entity.DD_SKLAD_OTPR_DC == value?.DocCode) return;
                 Entity.DD_SKLAD_OTPR_DC = value?.DocCode;
-                Entity.DD_OTRPAV_NAME = MainReferences.GetWarehouse(Entity.DD_SKLAD_OTPR_DC).Name;
+                Entity.DD_OTRPAV_NAME = MainReferences.GetWarehouse(Entity.DD_SKLAD_OTPR_DC)?.Name;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Sender));
             }
@@ -142,7 +142,7 @@ namespace Core.EntityViewModel.NomenklManagement
             {
                 if(Entity.DD_KONTR_OTPR_DC == value?.DocCode) return;
                 Entity.DD_KONTR_OTPR_DC = value?.DocCode;
-                Entity.DD_OTRPAV_NAME = MainReferences.GetKontragent(Entity.DD_KONTR_OTPR_DC).Name;
+                Entity.DD_OTRPAV_NAME = MainReferences.GetKontragent(Entity.DD_KONTR_OTPR_DC)?.Name;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Sender));
             }

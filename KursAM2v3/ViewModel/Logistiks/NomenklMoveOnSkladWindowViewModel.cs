@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Core;
@@ -20,12 +22,17 @@ namespace KursAM2.ViewModel.Logistiks
     public class NomenklMoveOnSkladWindowViewModel : RSWindowViewModelBase
     {
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+
         private NomPriceDocumentViewModel myCurrentDocument;
         private NomenklMoveOnSkladViewModel myCurrentNomenklMoveItem;
         private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentSklad;
         private DateTime myEndDate;
         private bool myIsShowAll;
-        private DateTime myStartDate;
+        private DateTime myStartDate; 
+        private Visibility myIsDataLoaded;
+        private int myProgressLoaded;
+
+        private BackgroundWorker backgroundWork = new BackgroundWorker();
 
         public NomenklMoveOnSkladWindowViewModel()
         {
@@ -40,9 +47,63 @@ namespace KursAM2.ViewModel.Logistiks
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             StartDate = DateTime.Today;
             IsShowAll = true;
+            IsDataLoaded = Visibility.Visible;
             LoadReferences();
         }
 
+        private void InitializeBackgroundWorker()
+        {
+            backgroundWork.DoWork += 
+                new DoWorkEventHandler(backgroundWorker1_DoWork);
+            backgroundWork.RunWorkerCompleted += 
+                new RunWorkerCompletedEventHandler(
+                    backgroundWorker1_RunWorkerCompleted);
+            backgroundWork.ProgressChanged += 
+                new ProgressChangedEventHandler(
+                    backgroundWorker1_ProgressChanged);
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Visibility IsDataLoaded
+        {
+            get => myIsDataLoaded;
+            set
+            {
+                if (myIsDataLoaded == value) return;
+                myIsDataLoaded = value;
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(IsDataNotLoaded));
+            }
+        }
+
+        public Visibility IsDataNotLoaded => IsDataLoaded == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+
+        public int ProgressLoaded
+        {
+            get => myProgressLoaded;
+            set
+            {
+                if (myProgressLoaded == value) return;
+                myProgressLoaded = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        
         public NomPriceDocumentViewModel CurrentDocument
         {
             get => myCurrentDocument;
@@ -1022,6 +1083,25 @@ namespace KursAM2.ViewModel.Logistiks
                 nl.QuantityStart != 0
                 || nl.QuantityIn != 0 || nl.QuantityOut != 0 || nl.QuantityEnd != 0));
             RaisePropertyChanged(nameof(NomenklMoveList));
+            IsDataLoaded = Visibility.Visible;
+        }
+
+
+        private async void RunPrgressBar()
+        {
+            while (IsDataLoaded != Visibility.Visible)
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    if (IsDataLoaded != Visibility.Visible)
+                    {
+                        ProgressLoaded = 0;
+                        return;
+                    }
+                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    ProgressLoaded = i;
+                }
+            }
         }
 
         private void LoadForAllSklads4()
@@ -1149,6 +1229,7 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var nl in delList) listTemp.Remove(nl);
                 NomenklMoveList = new ObservableCollection<NomenklMoveOnSkladViewModel>(listTemp);
                 RaisePropertyChanged(nameof(NomenklMoveList));
+                IsDataLoaded = Visibility.Visible;
             }
         }
 
@@ -1167,14 +1248,33 @@ namespace KursAM2.ViewModel.Logistiks
             RaisePropertyChanged(nameof(Sklads));
         }
 
-        public override void RefreshData(object obj)
+        private async Task RefreshDataAsync()
         {
             DocumentList.Clear();
-            NomenklMoveList.Clear();
+            NomenklMoveList.Clear(); 
+            Task.Run(() =>  RunPrgressBar());
+            IsDataLoaded = Visibility.Collapsed;
             if (CurrentSklad == null)
-                LoadForAllSklads4();
+                await Task.Run(() => LoadForAllSklads4());
             else
-                LoadForCurrentSklad4();
+                await Task.Run(() => LoadForCurrentSklad4());
+           
+        }
+
+        public override void RefreshData(object obj)
+        {
+            while (!MainReferences.IsReferenceLoadComplete)
+            {
+
+            }
+            RefreshDataAsync();
+            
+            //DocumentList.Clear();
+            //NomenklMoveList.Clear();
+            //if (CurrentSklad == null)
+            //    LoadForAllSklads4();
+            //else
+            //    LoadForCurrentSklad4();
         }
 
         public override void DocumentOpen(object obj)

@@ -56,6 +56,8 @@ namespace KursAM2.ViewModel.StockHolder
             Document.Creator = GlobalOptions.UserInfo.Name;
             Document.myState = RowStatus.NewRow;
             Document.Rows.Clear();
+            Document.Note = string.Empty;
+            Document.Num = -1;
             unitOfWork.Context.StockHolderAccrual.Add(Document.Entity);
             if (isCopy)
             {
@@ -424,7 +426,7 @@ namespace KursAM2.ViewModel.StockHolder
                         SaveData(null);
                         break;
                     case MessageBoxResult.No:
-                        foreach (var entity in unitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
+                        foreach (var entity in unitOfWork.Context.ChangeTracker.Entries().Where(_ => _.State == EntityState.Modified )) entity.Reload();
                         StockHolders.Clear();
                         foreach (var r in Document.Rows.Select(_ => _.StockHolder).Distinct())
                         {

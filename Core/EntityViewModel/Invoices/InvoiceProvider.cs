@@ -1158,7 +1158,7 @@ namespace Core.Invoices.EntityViewModel
                     };
                     Rows.Add(newRow);
                     if (t.TD_24 != null)
-                        SummaFact += (decimal) t.SFT_SUMMA_K_OPLATE / t.SFT_KOL *
+                        SummaFact +=  (t.SFT_SUMMA_K_OPLATE ?? 0) / t.SFT_KOL *
                                      t.TD_24.Sum(_ => _.DDT_KOL_PRIHOD);
                 }
             }

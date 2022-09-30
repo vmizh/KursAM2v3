@@ -72,7 +72,7 @@
                              MinWidth="120" DockPanel.Dock="Right"
                                            IsEnabled="{Binding IsSenderTypeEnabled, Mode=OneWay}" 
                                            EditValue="{Binding Document.WarehouseSenderType, ValidatesOnDataErrors=True,
-                             UpdateSourceTrigger=PropertyChanged}">
+                             UpdateSourceTrigger=PropertyChanged}" EditValueChanged="ComboBoxEdit_EditValueChanged">
                              <dxmvvm:Interaction.Behaviors>
                                  <dxmvvm:EnumItemsSourceBehavior
                                      EnumType="{x:Type nomenklManagement:WarehouseSenderType}"/>

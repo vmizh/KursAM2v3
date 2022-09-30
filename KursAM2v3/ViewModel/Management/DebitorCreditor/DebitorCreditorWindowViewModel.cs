@@ -196,7 +196,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                 var data = ctx.Database.SqlQuery<KonragentBalansRowViewModel>(sql);
                 foreach (var op in data)
                 {
-                    start += Convert.ToDecimal(op.CrsKontrIn) - Convert.ToDecimal(op.CrsKontrIn);
+                    start += Convert.ToDecimal(op.CrsKontrOut) - Convert.ToDecimal(op.CrsKontrIn);
                     op.Nakopit = start;
                     Operations.Add(op);
                 }

@@ -47,7 +47,12 @@ namespace KursAM2.ViewModel.StockHolder
         public override void DocNewCopy(object form)
         {
             if (CurrentDocument == null) return;
-            var ctx = new StockHolderAccrualWindowViewModel();
+            var ctx = new StockHolderAccrualWindowViewModel
+            {
+                State = RowStatus.NotEdited,
+                
+            };
+            ctx.RefreshData(CurrentDocument.Id);
             ctx.SetAsNewCopy(true);
             var frm = new StockHolderAccrualsView
             {
@@ -55,7 +60,7 @@ namespace KursAM2.ViewModel.StockHolder
                 DataContext = ctx
             };
             ctx.Form = frm;
-            ctx.RefreshData(null);
+           //ctx.RefreshData(null);
             frm.Show();
         }
 
@@ -79,6 +84,7 @@ namespace KursAM2.ViewModel.StockHolder
         {
             if (CurrentDocument == null) return;
             var ctx = new StockHolderAccrualWindowViewModel();
+            ctx.RefreshData(CurrentDocument.Id);
             ctx.SetAsNewCopy(false);
             var frm = new StockHolderAccrualsView
             {
@@ -86,7 +92,7 @@ namespace KursAM2.ViewModel.StockHolder
                 DataContext = ctx
             };
             ctx.Form = frm;
-            ctx.RefreshData(null);
+            
             frm.Show();
         }
 

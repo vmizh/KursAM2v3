@@ -3,6 +3,7 @@ using System.Windows;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
 using DevExpress.Data;
+using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -119,6 +120,15 @@ namespace KursAM2.View.Logistiks.Warehouse
             var nomenkls = StandartDialogs.SelectNomenkls();
             if (nomenkls == null || nomenkls.Count <= 0) return;
             ctx.CurrentRow.Nomenkl = nomenkls.First();
+        }
+
+        private void ComboBoxEdit_EditValueChanged(object sender, DevExpress.Xpf.Editors.EditValueChangedEventArgs e)
+        {
+            if (DataContext is OrderInWindowViewModel dtx)
+            {
+                dtx.Document.KontragentSender = null;
+                dtx.Document.WarehouseOut = null;
+            }
         }
     }
 }

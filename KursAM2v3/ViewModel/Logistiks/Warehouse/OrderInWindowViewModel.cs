@@ -177,10 +177,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
 
             InvoiceProviderSearchType loadType = InvoiceProviderSearchType.NotShipped;
+            if (Document.KontragentSender != null)
+                loadType = loadType | InvoiceProviderSearchType.OneKontragent;
             var dtx = new InvoiceProviderSearchDialogViewModel(false, true, loadType, UnitOfWork.Context)
             {
                 WindowName = "Выбор счетов фактур",
-                LayoutName = "InvoiceProviderSearchMulti"
+                LayoutName = "InvoiceProviderSearchMulti",
+                KontragentDC = Document.KontragentSender?.DocCode
             };
             dtx.RefreshData(null);
             var dialog = new SelectInvoiceMultipleDialogView
