@@ -2,7 +2,6 @@
 using System.Linq;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 
 namespace KursAM2.Managers.Nomenkl
@@ -31,6 +30,7 @@ namespace KursAM2.Managers.Nomenkl
                     ProductType = g.SD_50 != null ? new NomenklProductKind(g.SD_50) : null
                 }));
             }
+
             return ret;
         }
     }

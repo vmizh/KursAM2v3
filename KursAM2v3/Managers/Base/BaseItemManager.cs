@@ -7,7 +7,7 @@ namespace KursAM2.Managers.Base
     {
         public virtual bool Delete(IEnumerable<T> items)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public virtual List<T> LoadList()
@@ -30,19 +30,19 @@ namespace KursAM2.Managers.Base
             throw new NotImplementedException();
         }
 
-        public virtual T New(T parentItem = default(T))
+        public virtual T NewCopy(T item)
         {
             throw new NotImplementedException();
         }
 
-        public virtual T NewCopy(T item)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public virtual bool Save(IEnumerable<T> items)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
+        }
+
+        public virtual T New(T parentItem = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

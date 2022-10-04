@@ -19,6 +19,7 @@ namespace KursAM2.Auxiliary
                     if (ex1.InnerException != null)
                         errText.Append(ex1.InnerException.Message);
                 }
+
                 var vm = new ErrorServiceViewModel
                 {
                     dialogServiceText = errText.ToString()

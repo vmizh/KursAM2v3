@@ -25,13 +25,14 @@ namespace KursAM2.Managers.Invoices
 {
     public class InvoicesManager
     {
+        private static readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
         private readonly GenericKursDBRepository<SD_26> genericProviderRepository;
-        // ReSharper disable once NotAccessedField.Local
-        private IInvoiceProviderRepository invoiceProviderRepository;
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
-        private static readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+
+        // ReSharper disable once NotAccessedField.Local
+        private IInvoiceProviderRepository invoiceProviderRepository;
 
 
         public InvoicesManager()
@@ -95,14 +96,14 @@ namespace KursAM2.Managers.Invoices
                             DocumentType = DocumentType.CashOut,
                             // ReSharper disable once PossibleInvalidOperationException
                             DocumentName =
-                                $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                                $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal) c.SUMM_ORD,
-                            Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                            Summa = (decimal)c.SUMM_ORD,
+                            Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
                             Note = c.NOTES_ORD
                         });
                     foreach (var c in ctx.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_POSTAV_DC == dc)
-                        .ToList())
+                                 .ToList())
                         pDocs.Add(new InvoicePaymentDocument
                         {
                             DocCode = c.DOC_CODE,
@@ -110,9 +111,9 @@ namespace KursAM2.Managers.Invoices
                             DocumentType = DocumentType.Bank,
                             DocumentName =
                                 // ReSharper disable once PossibleInvalidOperationException
-                                $"{c.SD_101.VV_START_DATE} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                                $"{c.SD_101.VV_START_DATE} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal) c.VVT_VAL_RASHOD,
+                            Summa = (decimal)c.VVT_VAL_RASHOD,
                             Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                             Note = c.VVT_DOC_NUM
                         });
@@ -126,7 +127,7 @@ namespace KursAM2.Managers.Invoices
                                 // ReSharper disable once PossibleInvalidOperationException
                                 $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE} на {c.VZT_CRS_SUMMA}",
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal) c.VZT_CRS_SUMMA,
+                            Summa = (decimal)c.VZT_CRS_SUMMA,
                             Currency = MainReferences.Currencies[c.SD_110.CurrencyToDC],
                             Note = c.VZT_DOC_NOTES
                         });
@@ -134,7 +135,7 @@ namespace KursAM2.Managers.Invoices
                     if (i?.SD_24 != null)
                         sum += (from q in i.TD_26 from d in q.TD_24 select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
                     // ReSharper disable once AssignNullToNotNullAttribute
-                    doc = new InvoiceProvider(i,new UnitOfWork<ALFAMEDIAEntities>())
+                    doc = new InvoiceProvider(i, new UnitOfWork<ALFAMEDIAEntities>())
                     {
                         SummaFact = sum,
                         myState = RowStatus.NotEdited
@@ -151,15 +152,9 @@ namespace KursAM2.Managers.Invoices
                     // }
                     doc.Facts = new ObservableCollection<WarehouseOrderInRow>();
                     if (doc.Entity?.TD_26 != null)
-                    {
                         foreach (var r in doc.Entity.TD_26)
-                        {
-                            foreach (var r2 in r.TD_24)
-                            {
-                                doc.Facts.Add(new WarehouseOrderInRow(r2));
-                            }
-                        }
-                    }
+                        foreach (var r2 in r.TD_24)
+                            doc.Facts.Add(new WarehouseOrderInRow(r2));
                     doc.myState = RowStatus.NotEdited;
                 }
             }
@@ -167,6 +162,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(e);
             }
+
             return doc;
         }
 
@@ -184,14 +180,14 @@ namespace KursAM2.Managers.Invoices
                     DocumentType = DocumentType.CashOut,
                     // ReSharper disable once PossibleInvalidOperationException
                     DocumentName =
-                        $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                        $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
                     // ReSharper disable once PossibleInvalidOperationException
-                    Summa = (decimal) c.SUMM_ORD,
-                    Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                    Summa = (decimal)c.SUMM_ORD,
+                    Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
                     Note = c.NOTES_ORD
                 });
             foreach (var c in UnitOfWork.Context.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_POSTAV_DC == dc)
-                .ToList())
+                         .ToList())
                 pDocs.Add(new InvoicePaymentDocument
                 {
                     DocCode = c.DOC_CODE,
@@ -199,13 +195,14 @@ namespace KursAM2.Managers.Invoices
                     DocumentType = DocumentType.Bank,
                     DocumentName =
                         // ReSharper disable once PossibleInvalidOperationException
-                        $"{c.SD_101.VV_START_DATE} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                        $"{c.SD_101.VV_START_DATE} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
                     // ReSharper disable once PossibleInvalidOperationException
-                    Summa = (decimal) c.VVT_VAL_RASHOD,
+                    Summa = (decimal)c.VVT_VAL_RASHOD,
                     Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                     Note = c.VVT_DOC_NUM
                 });
-            foreach (var c in UnitOfWork.Context.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SPOST_DC == dc).ToList())
+            foreach (var c in UnitOfWork.Context.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SPOST_DC == dc)
+                         .ToList())
                 pDocs.Add(new InvoicePaymentDocument
                 {
                     DocCode = c.DOC_CODE,
@@ -215,7 +212,7 @@ namespace KursAM2.Managers.Invoices
                         // ReSharper disable once PossibleInvalidOperationException
                         $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE} на {c.VZT_CRS_SUMMA}",
                     // ReSharper disable once PossibleInvalidOperationException
-                    Summa = (decimal) c.VZT_CRS_SUMMA,
+                    Summa = (decimal)c.VZT_CRS_SUMMA,
                     Currency = MainReferences.Currencies[c.SD_110.CurrencyToDC],
                     Note = c.VZT_DOC_NOTES
                 });
@@ -223,7 +220,7 @@ namespace KursAM2.Managers.Invoices
             if (i?.SD_24 != null)
                 sum += (from q in i.TD_26 from d in q.TD_24 select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
             // ReSharper disable once AssignNullToNotNullAttribute
-            doc = new InvoiceProvider(i,new UnitOfWork<ALFAMEDIAEntities>())
+            doc = new InvoiceProvider(i, new UnitOfWork<ALFAMEDIAEntities>())
             {
                 SummaFact = sum,
                 myState = RowStatus.NotEdited
@@ -233,23 +230,14 @@ namespace KursAM2.Managers.Invoices
             {
                 row.Parent = doc;
                 row.myState = RowStatus.NotEdited;
-                foreach (var c in row.CurrencyConvertRows)
-                {
-                    c.myState = RowStatus.NotEdited;
-                }
+                foreach (var c in row.CurrencyConvertRows) c.myState = RowStatus.NotEdited;
             }
 
             doc.Facts = new ObservableCollection<WarehouseOrderInRow>();
             if (doc.Entity?.TD_26 != null)
-            {
                 foreach (var r in doc.Entity.TD_26)
-                {
-                    foreach (var r2 in r.TD_24)
-                    {
-                        doc.Facts.Add(new WarehouseOrderInRow(r2));
-                    }
-                }
-            }
+                foreach (var r2 in r.TD_24)
+                    doc.Facts.Add(new WarehouseOrderInRow(r2));
 
             doc.myState = RowStatus.NotEdited;
             return doc;
@@ -273,7 +261,7 @@ namespace KursAM2.Managers.Invoices
 
         public static InvoiceProvider NewProviderCopy(InvoiceProvider doc)
         {
-            var ret = new InvoiceProvider(doc?.Entity,new UnitOfWork<ALFAMEDIAEntities>())
+            var ret = new InvoiceProvider(doc?.Entity, new UnitOfWork<ALFAMEDIAEntities>())
             {
                 DocCode = -1,
                 SF_POSTAV_NUM = null,
@@ -290,6 +278,7 @@ namespace KursAM2.Managers.Invoices
                 row.myState = RowStatus.NewRow;
                 code++;
             }
+
             ret.DeletedRows.Clear();
             ret.PaymentDocs.Clear();
             ret.Facts.Clear();
@@ -317,6 +306,7 @@ namespace KursAM2.Managers.Invoices
                 row.myState = RowStatus.NewRow;
                 code++;
             }
+
             newCopy.DeletedRows.Clear();
             newCopy.PaymentDocs.Clear();
             newCopy.Facts.Clear();
@@ -346,10 +336,7 @@ namespace KursAM2.Managers.Invoices
                         {
                             var oldcrs = ctx.TD_26_CurrencyConvert.Where(_ => _.DOC_CODE == d.DocCode
                                                                               && _.CODE == d.Code).ToList();
-                            foreach (var o in oldcrs)
-                            {
-                                ctx.TD_26_CurrencyConvert.Remove(o);
-                            }
+                            foreach (var o in oldcrs) ctx.TD_26_CurrencyConvert.Remove(o);
                         }
 
                         foreach (var d in doc.DeletedRows)
@@ -359,21 +346,17 @@ namespace KursAM2.Managers.Invoices
                             var oldCrs = ctx.TD_26_CurrencyConvert.Where(_ => _.DOC_CODE == d.DocCode
                                                                               && _.CODE == d.Code).ToList();
                             if (oldCrs.Count > 0)
-                            {
                                 foreach (var crs in oldCrs)
                                     ctx.TD_26_CurrencyConvert.Remove(crs);
-                            }
 
                             var oldOrdRows = ctx.TD_24.Where(_ => _.DDT_SPOST_DC == d.DocCode
                                                                   && _.DDT_SPOST_ROW_CODE == d.Code);
                             if (oldOrdRows.Any())
-                            {
                                 foreach (var r in oldOrdRows)
                                 {
                                     r.DDT_SPOST_DC = null;
                                     r.DDT_SPOST_ROW_CODE = null;
                                 }
-                            }
 
                             ctx.TD_26.Remove(oldrow);
                         }
@@ -692,15 +675,14 @@ namespace KursAM2.Managers.Invoices
                                       $" VALUES({CustomFormat.DecimalToSqlDecimal(r.Entity.SFT_NEMENKL_DC)},'20000101')";
                             ctx.Database.ExecuteSqlCommand(sql);
                             if (r.CurrencyConvertRows.Count > 0)
-                            {
                                 foreach (var rc in r.CurrencyConvertRows)
                                 {
                                     var sql1 = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
                                                $" VALUES({CustomFormat.DecimalToSqlDecimal(rc.Nomenkl.DocCode)},'20000101')";
                                     ctx.Database.ExecuteSqlCommand(sql1);
                                 }
-                            }
                         }
+
                         ctx.SaveChanges();
                     }
                     catch (Exception ex)
@@ -710,9 +692,11 @@ namespace KursAM2.Managers.Invoices
                         WindowManager.ShowError(ex);
                         return -1;
                     }
+
                     nomenklManager.RecalcPrice();
                 }
             }
+
             return newDC;
         }
 
@@ -722,17 +706,16 @@ namespace KursAM2.Managers.Invoices
             if (doc.DocCode == -1)
             {
                 var guidId = Guid.NewGuid();
-                var inNum = (UnitOfWork.Context.SD_26.Any() 
-                    ? (UnitOfWork.Context.SD_26.Max(_ => _.SF_IN_NUM) ?? 0) + 1 : 1);
-                newDC = UnitOfWork.Context.SD_26.Any() 
-                    ? UnitOfWork.Context.SD_26.Max(_ => _.DOC_CODE) + 1 : 10260000001;
+                var inNum = UnitOfWork.Context.SD_26.Any()
+                    ? (UnitOfWork.Context.SD_26.Max(_ => _.SF_IN_NUM) ?? 0) + 1
+                    : 1;
+                newDC = UnitOfWork.Context.SD_26.Any()
+                    ? UnitOfWork.Context.SD_26.Max(_ => _.DOC_CODE) + 1
+                    : 10260000001;
                 doc.DocCode = newDC;
                 doc.Id = guidId;
                 doc.SF_IN_NUM = inNum;
-                foreach (var r in doc.Rows)
-                {
-                    r.DocCode = newDC;
-                }
+                foreach (var r in doc.Rows) r.DocCode = newDC;
             }
             else
             {
@@ -760,15 +743,14 @@ namespace KursAM2.Managers.Invoices
                               $" VALUES({CustomFormat.DecimalToSqlDecimal(r.Entity.SFT_NEMENKL_DC)},'20000101')";
                     UnitOfWork.Context.Database.ExecuteSqlCommand(sql);
                     if (r.CurrencyConvertRows.Count > 0)
-                    {
                         foreach (var rc in r.CurrencyConvertRows)
                         {
                             var sql1 = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
                                        $" VALUES({CustomFormat.DecimalToSqlDecimal(rc.Nomenkl.DocCode)},'20000101')";
                             UnitOfWork.Context.Database.ExecuteSqlCommand(sql1);
                         }
-                    }
                 }
+
                 UnitOfWork.CreateTransaction();
                 var sqlcalc = "DECLARE @NomDC NUMERIC(15, 0); " +
                               "DECLARE NomenklList CURSOR FOR " +
@@ -806,13 +788,13 @@ namespace KursAM2.Managers.Invoices
             }
 
             return newDC;
-
         }
 
         public void RefreshProvider(InvoiceProvider doc)
         {
             genericProviderRepository.Refresh(doc.Entity);
         }
+
         public static void DeleteProvider(decimal dc, StandartSearchView searchWindow = null)
         {
             using (var ctx = GlobalOptions.GetEntities())
@@ -901,7 +883,6 @@ namespace KursAM2.Managers.Invoices
                                     .Include(_ => _.SD_77)
                                     .Include(_ => _.SD_189)
                                     .Include(_ => _.SD_40)
-                                    
                                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
                                                                               && _.SF_ACCEPTED == 1)
                                 join td26 in ctx.TD_26
@@ -946,7 +927,6 @@ namespace KursAM2.Managers.Invoices
                                     .Include(_ => _.SD_77)
                                     .Include(_ => _.SD_189)
                                     .Include(_ => _.SD_40)
-                                    
                                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd)
                                 join td26 in ctx.TD_26
                                         .Include(_ => _.SD_83)
@@ -982,6 +962,7 @@ namespace KursAM2.Managers.Invoices
                                       || td26.SD_43.NAME.Contains(searchText)
                                 select sd26).ToList();
                     }
+
                     var sql =
                         "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                         "FROM sd_26 s26 " +
@@ -992,7 +973,6 @@ namespace KursAM2.Managers.Invoices
                         "GROUP BY s26.doc_code, s26.SF_CRS_SUMMA ";
                     var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
-                    {
                         if (isUsePayment)
                         {
                             var psums = pays.Where(_ => _.DocCode == d.DOC_CODE).Sum(_ => _.Summa);
@@ -1007,18 +987,18 @@ namespace KursAM2.Managers.Invoices
                             var newDoc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>());
                             ret.Add(newDoc);
                         }
-                    }
                 }
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
             }
+
             return ret;
         }
 
         public List<InvoiceProvider> GetInvoicesProvider2(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
-           string searchText = null, bool isAccepted = false)
+            string searchText = null, bool isAccepted = false)
         {
             var ret = new List<InvoiceProvider>();
             try
@@ -1051,42 +1031,41 @@ namespace KursAM2.Managers.Invoices
                                     .Include(_ => _.SD_77)
                                     .Include(_ => _.SD_189)
                                     .Include(_ => _.SD_40)
-                                    
                                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
                                                                               && _.SF_ACCEPTED == 1)
-                                    join td26 in ctx.TD_26
-                                            .Include(_ => _.SD_83)
-                                            .Include(_ => _.SD_175)
-                                            .Include(_ => _.SD_43)
-                                        on sd26.DOC_CODE equals td26.DOC_CODE
-                                    // ReSharper disable once SpecifyACultureInStringConversionExplicitly
-                                    where sd26.SF_CRS_SUMMA.ToString().Contains(searchText)
-                                          || sd26.SF_CRS_RATE.ToString()
-                                              .Contains(searchText)
-                                          || sd26.SF_NOTES.Contains(searchText)
-                                          || sd26.SF_IN_NUM.ToString().Contains(searchText)
-                                          || sd26.SF_POSTAV_NUM.Contains(searchText)
-                                          // ReSharper disable once SpecifyACultureInStringConversionExplicitly
-                                          || sd26.SF_POSTAV_DATE.ToString()
-                                              .Contains(searchText)
-                                          || sd26.SF_OPRIHOD_DATE.ToString()
-                                              .Contains(searchText)
-                                          || sd26.CREATOR.Contains(searchText)
-                                          || sd26.SD_43.NAME.Contains(searchText)
-                                          || sd26.SD_179.PT_NAME.Contains(searchText)
-                                          || sd26.SD_77.TV_NAME.Contains(searchText)
-                                          || sd26.SD_189.OOT_NAME.Contains(searchText)
-                                          || td26.SFT_TEXT.Contains(searchText)
-                                          || td26.SFT_ED_CENA.ToString().Contains(searchText)
-                                          || td26.SFT_KOL.ToString().Contains(searchText)
-                                          || td26.SFT_STRANA_PROIS.Contains(searchText)
-                                          || td26.SFT_N_GRUZ_DECLAR.Contains(searchText)
-                                          || td26.SD_83.NOM_NOMENKL.Contains(searchText)
-                                          || td26.SD_83.NOM_NAME.Contains(searchText)
-                                          || td26.SD_83.NOM_NOTES.Contains(searchText)
-                                          || td26.SD_175.ED_IZM_NAME.Contains(searchText)
-                                          || td26.SD_43.NAME.Contains(searchText)
-                                    select sd26).ToList();
+                                join td26 in ctx.TD_26
+                                        .Include(_ => _.SD_83)
+                                        .Include(_ => _.SD_175)
+                                        .Include(_ => _.SD_43)
+                                    on sd26.DOC_CODE equals td26.DOC_CODE
+                                // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+                                where sd26.SF_CRS_SUMMA.ToString().Contains(searchText)
+                                      || sd26.SF_CRS_RATE.ToString()
+                                          .Contains(searchText)
+                                      || sd26.SF_NOTES.Contains(searchText)
+                                      || sd26.SF_IN_NUM.ToString().Contains(searchText)
+                                      || sd26.SF_POSTAV_NUM.Contains(searchText)
+                                      // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+                                      || sd26.SF_POSTAV_DATE.ToString()
+                                          .Contains(searchText)
+                                      || sd26.SF_OPRIHOD_DATE.ToString()
+                                          .Contains(searchText)
+                                      || sd26.CREATOR.Contains(searchText)
+                                      || sd26.SD_43.NAME.Contains(searchText)
+                                      || sd26.SD_179.PT_NAME.Contains(searchText)
+                                      || sd26.SD_77.TV_NAME.Contains(searchText)
+                                      || sd26.SD_189.OOT_NAME.Contains(searchText)
+                                      || td26.SFT_TEXT.Contains(searchText)
+                                      || td26.SFT_ED_CENA.ToString().Contains(searchText)
+                                      || td26.SFT_KOL.ToString().Contains(searchText)
+                                      || td26.SFT_STRANA_PROIS.Contains(searchText)
+                                      || td26.SFT_N_GRUZ_DECLAR.Contains(searchText)
+                                      || td26.SD_83.NOM_NOMENKL.Contains(searchText)
+                                      || td26.SD_83.NOM_NAME.Contains(searchText)
+                                      || td26.SD_83.NOM_NOTES.Contains(searchText)
+                                      || td26.SD_175.ED_IZM_NAME.Contains(searchText)
+                                      || td26.SD_43.NAME.Contains(searchText)
+                                select sd26).ToList();
                         else
                             data = (from sd26 in ctx.SD_26
                                     .Include(_ => _.TD_26)
@@ -1096,42 +1075,42 @@ namespace KursAM2.Managers.Invoices
                                     .Include(_ => _.SD_77)
                                     .Include(_ => _.SD_189)
                                     .Include(_ => _.SD_40)
-                                    
                                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd)
-                                    join td26 in ctx.TD_26
-                                            .Include(_ => _.SD_83)
-                                            .Include(_ => _.SD_175)
-                                            .Include(_ => _.SD_43)
-                                        on sd26.DOC_CODE equals td26.DOC_CODE
-                                    // ReSharper disable once SpecifyACultureInStringConversionExplicitly
-                                    where sd26.SF_CRS_SUMMA.ToString().Contains(searchText)
-                                          || sd26.SF_CRS_RATE.ToString()
-                                              .Contains(searchText)
-                                          || sd26.SF_NOTES.Contains(searchText)
-                                          || sd26.SF_IN_NUM.ToString().Contains(searchText)
-                                          || sd26.SF_POSTAV_NUM.Contains(searchText)
-                                          // ReSharper disable once SpecifyACultureInStringConversionExplicitly
-                                          || sd26.SF_POSTAV_DATE.ToString()
-                                              .Contains(searchText)
-                                          || sd26.SF_OPRIHOD_DATE.ToString()
-                                              .Contains(searchText)
-                                          || sd26.CREATOR.Contains(searchText)
-                                          || sd26.SD_43.NAME.Contains(searchText)
-                                          || sd26.SD_179.PT_NAME.Contains(searchText)
-                                          || sd26.SD_77.TV_NAME.Contains(searchText)
-                                          || sd26.SD_189.OOT_NAME.Contains(searchText)
-                                          || td26.SFT_TEXT.Contains(searchText)
-                                          || td26.SFT_ED_CENA.ToString().Contains(searchText)
-                                          || td26.SFT_KOL.ToString().Contains(searchText)
-                                          || td26.SFT_STRANA_PROIS.Contains(searchText)
-                                          || td26.SFT_N_GRUZ_DECLAR.Contains(searchText)
-                                          || td26.SD_83.NOM_NOMENKL.Contains(searchText)
-                                          || td26.SD_83.NOM_NAME.Contains(searchText)
-                                          || td26.SD_83.NOM_NOTES.Contains(searchText)
-                                          || td26.SD_175.ED_IZM_NAME.Contains(searchText)
-                                          || td26.SD_43.NAME.Contains(searchText)
-                                    select sd26).ToList();
+                                join td26 in ctx.TD_26
+                                        .Include(_ => _.SD_83)
+                                        .Include(_ => _.SD_175)
+                                        .Include(_ => _.SD_43)
+                                    on sd26.DOC_CODE equals td26.DOC_CODE
+                                // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+                                where sd26.SF_CRS_SUMMA.ToString().Contains(searchText)
+                                      || sd26.SF_CRS_RATE.ToString()
+                                          .Contains(searchText)
+                                      || sd26.SF_NOTES.Contains(searchText)
+                                      || sd26.SF_IN_NUM.ToString().Contains(searchText)
+                                      || sd26.SF_POSTAV_NUM.Contains(searchText)
+                                      // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+                                      || sd26.SF_POSTAV_DATE.ToString()
+                                          .Contains(searchText)
+                                      || sd26.SF_OPRIHOD_DATE.ToString()
+                                          .Contains(searchText)
+                                      || sd26.CREATOR.Contains(searchText)
+                                      || sd26.SD_43.NAME.Contains(searchText)
+                                      || sd26.SD_179.PT_NAME.Contains(searchText)
+                                      || sd26.SD_77.TV_NAME.Contains(searchText)
+                                      || sd26.SD_189.OOT_NAME.Contains(searchText)
+                                      || td26.SFT_TEXT.Contains(searchText)
+                                      || td26.SFT_ED_CENA.ToString().Contains(searchText)
+                                      || td26.SFT_KOL.ToString().Contains(searchText)
+                                      || td26.SFT_STRANA_PROIS.Contains(searchText)
+                                      || td26.SFT_N_GRUZ_DECLAR.Contains(searchText)
+                                      || td26.SD_83.NOM_NOMENKL.Contains(searchText)
+                                      || td26.SD_83.NOM_NAME.Contains(searchText)
+                                      || td26.SD_83.NOM_NOTES.Contains(searchText)
+                                      || td26.SD_175.ED_IZM_NAME.Contains(searchText)
+                                      || td26.SD_43.NAME.Contains(searchText)
+                                select sd26).ToList();
                     }
+
                     var sql =
                         "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                         "FROM sd_26 s26 " +
@@ -1143,14 +1122,11 @@ namespace KursAM2.Managers.Invoices
                     var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
-                        var newDoc = new InvoiceProvider(d,new UnitOfWork<ALFAMEDIAEntities>());
+                        var newDoc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>());
                         if (isUsePayment)
                         {
                             var pd = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode);
-                            if (pd == null)
-                            {
-                                ret.Add(newDoc);
-                            }
+                            if (pd == null) ret.Add(newDoc);
                         }
                     }
                 }
@@ -1159,6 +1135,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
+
             return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
@@ -1219,15 +1196,15 @@ namespace KursAM2.Managers.Invoices
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
-                        var newDoc = new InvoiceProvider(d,new UnitOfWork<ALFAMEDIAEntities>());
+                        var newDoc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>());
                         if (isUsePayment)
                         {
-                            if(newDoc.PaySumma < newDoc.Summa)
+                            if (newDoc.PaySumma < newDoc.Summa)
                                 ret.Add(newDoc);
                         }
                         else
                         {
-                           ret.Add(newDoc);
+                            ret.Add(newDoc);
                         }
                     }
                 }
@@ -1236,6 +1213,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
+
             return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
@@ -1285,14 +1263,14 @@ namespace KursAM2.Managers.Invoices
                             DocumentName =
                                 $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
                                 // ReSharper disable once PossibleInvalidOperationException
-                                $"{MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                                $"{MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal) c.SUMM_ORD,
-                            Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                            Summa = (decimal)c.SUMM_ORD,
+                            Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
                             Note = c.NOTES_ORD
                         });
                     foreach (var c in ctx.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_CLIENT_DC == dc)
-                        .ToList())
+                                 .ToList())
                         pDocs.Add(new InvoicePaymentDocument
                         {
                             DocCode = c.DOC_CODE,
@@ -1300,8 +1278,8 @@ namespace KursAM2.Managers.Invoices
                             DocumentType = DocumentType.Bank,
                             DocumentName =
                                 // ReSharper disable once PossibleInvalidOperationException
-                                $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
-                            Summa = (decimal) c.VVT_VAL_PRIHOD,
+                                $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                            Summa = (decimal)c.VVT_VAL_PRIHOD,
                             Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                             Note = c.VVT_DOC_NUM
                         });
@@ -1315,11 +1293,12 @@ namespace KursAM2.Managers.Invoices
                                 // ReSharper disable once PossibleInvalidOperationException
                                 $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal) c.VZT_CRS_SUMMA,
+                            Summa = (decimal)c.VZT_CRS_SUMMA,
                             Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
                             Note = c.VZT_DOC_NOTES
                         });
                 }
+
                 document = new InvoiceClient(data);
                 foreach (var item in document.Rows)
                 {
@@ -1331,11 +1310,9 @@ namespace KursAM2.Managers.Invoices
                     item.State = RowStatus.NotEdited;
                     //var bilingItems = GlobalOptions.GetEntities()
                     //    .TD_24.Where(_ => _.DDT_SFACT_DC == item.DOC_CODE && _.DDT_SFACT_ROW_CODE == item.Code);
-                    foreach (var i in r)
-                    {
-                        document.ShipmentRows.Add(new ShipmentRowViewModel(i));
-                    }
+                    foreach (var i in r) document.ShipmentRows.Add(new ShipmentRowViewModel(i));
                 }
+
                 //document.REGISTER_DATE = DateTime.Today;
                 document.DeletedRows = new List<InvoiceClientRow>();
                 foreach (var p in pDocs) document.PaymentDocs.Add(p);
@@ -1346,6 +1323,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
+
             return document;
         }
 
@@ -1385,7 +1363,6 @@ namespace KursAM2.Managers.Invoices
                     .Include(_ => _.SD_189)
                     .Include("TD_84.TD_24")
                     .Include("TD_84.SD_303")
-                    
                     .SingleOrDefault(_ => _.DOC_CODE == doc.DocCode);
                 document = new InvoiceClient(data)
                 {
@@ -1419,14 +1396,17 @@ namespace KursAM2.Managers.Invoices
                             firstOrDefault.NAKOPIT;
                         item.CurrentRemains = quan;
                     }
+
                     item.State = RowStatus.NewRow;
                     newCode++;
                 }
+
                 document.DeletedRows = new List<InvoiceClientRow>();
                 foreach (var r in document.Rows) r.myState = RowStatus.NewRow;
                 document.PaymentDocs.Clear();
                 document.ShipmentRows.Clear();
             }
+
             return document;
         }
 
@@ -1508,7 +1488,6 @@ namespace KursAM2.Managers.Invoices
                     .Include(_ => _.SD_189)
                     .Include("TD_84.TD_24")
                     .Include("TD_84.SD_303")
-                    
                     .SingleOrDefault(_ => _.DOC_CODE == dc);
                 if (d == null) return null;
                 var ret = new InvoiceClient(d)
@@ -1542,8 +1521,10 @@ namespace KursAM2.Managers.Invoices
                             firstOrDefault.NAKOPIT;
                         row.CurrentRemains = quan;
                     }
+
                     code++;
                 }
+
                 ret.PaymentDocs.Clear();
                 ret.ShipmentRows.Clear();
                 ret.RaisePropertyChanged("PaySumma");
@@ -1579,11 +1560,12 @@ namespace KursAM2.Managers.Invoices
         /// <param name="isUsePayment"></param>
         /// <param name="isAccepted"></param>
         /// <returns></returns>
-        public static List<InvoiceClient> GetInvoicesClient(UnitOfWork<ALFAMEDIAEntities> context = null,string searchText = null, bool isUsePayment = false,
+        public static List<InvoiceClient> GetInvoicesClient(UnitOfWork<ALFAMEDIAEntities> context = null,
+            string searchText = null, bool isUsePayment = false,
             bool isAccepted = false)
         {
-            return GetInvoicesClient(new DateTime(1900, 1, 1), new DateTime(2100, 1, 1), 
-                isUsePayment,context, searchText, isAccepted);
+            return GetInvoicesClient(new DateTime(1900, 1, 1), new DateTime(2100, 1, 1),
+                isUsePayment, context, searchText, isAccepted);
         }
 
         /// <summary>
@@ -1716,7 +1698,7 @@ namespace KursAM2.Managers.Invoices
                     foreach (var d in data.OrderByDescending(_ => _.SF_DATE))
                     {
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
-                        var newDoc = new InvoiceClient(d,context)
+                        var newDoc = new InvoiceClient(d, context)
                         {
                             State = RowStatus.NotEdited
                         };
@@ -1728,6 +1710,7 @@ namespace KursAM2.Managers.Invoices
                                 ret.Add(newDoc);
                                 continue;
                             }
+
                             if (newDoc.Summa > pd.PaySumma)
                             {
                                 newDoc.PaymentDocs.Add(new InvoicePaymentDocument
@@ -1754,6 +1737,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
+
             return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
@@ -1812,6 +1796,7 @@ namespace KursAM2.Managers.Invoices
                 WindowManager.ShowError(ex);
                 return null;
             }
+
             return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
@@ -1836,8 +1821,8 @@ namespace KursAM2.Managers.Invoices
                             .Include(_ => _.SD_40)
                             .Include("TD_84.SD_83")
                             .Include("TD_84.SD_175")
-                                .Where(_ =>_.SF_CLIENT_DC == kontragentDC &&  _.SF_DATE >= dateStart && _.SF_DATE <= dateEnd
-                                           && _.SF_ACCEPTED == 1)
+                            .Where(_ => _.SF_CLIENT_DC == kontragentDC && _.SF_DATE >= dateStart && _.SF_DATE <= dateEnd
+                                        && _.SF_ACCEPTED == 1)
                             .ToList();
                     else
                         data = ctx.SD_84
@@ -1852,7 +1837,7 @@ namespace KursAM2.Managers.Invoices
                             .Include("TD_84.SD_175")
                             .Where(_ => _.SF_CLIENT_DC == kontragentDC && _.SF_DATE >= dateStart &&
                                         _.SF_DATE <= dateEnd).ToList();
-                            
+
                     var sql =
                         "SELECT s84.doc_code as DocCode, s84.SF_CRS_SUMMA_K_OPLATE as Summa, SUM(ISNULL(s33.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_PRIHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                         "FROM sd_84 s84 " +
@@ -1877,6 +1862,7 @@ namespace KursAM2.Managers.Invoices
                                 ret.Add(newDoc);
                                 continue;
                             }
+
                             if (newDoc.Summa > pd.PaySumma)
                             {
                                 newDoc.PaymentDocs.Add(new InvoicePaymentDocument
@@ -1901,6 +1887,7 @@ namespace KursAM2.Managers.Invoices
             {
                 WindowManager.ShowError(ex);
             }
+
             return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
@@ -1927,6 +1914,7 @@ namespace KursAM2.Managers.Invoices
                     }
                 }
             }
+
             nomenklManager.RecalcPrice();
         }
 
@@ -1988,8 +1976,8 @@ namespace KursAM2.Managers.Invoices
                                         Id = Guid.NewGuid(),
                                         SFT_TEXT = items.Note ?? " ",
                                         SFT_NEMENKL_DC = items.Entity.SFT_NEMENKL_DC,
-                                        SFT_KOL = (double) items.Quantity,
-                                        SFT_NDS_PERCENT = (double) items.NDSPercent,
+                                        SFT_KOL = (double)items.Quantity,
+                                        SFT_NDS_PERCENT = (double)items.NDSPercent,
                                         OLD_NOM_NAME = items.OLD_NOM_NAME,
                                         OLD_NOM_NOMENKL = items.OLD_NOM_NOMENKL,
                                         OLD_OVERHEAD_CRS_NAME = items.OLD_OVERHEAD_CRS_NAME,
@@ -2019,12 +2007,13 @@ namespace KursAM2.Managers.Invoices
                                     code += 1;
                                 }
                             }
+
                             if (doc.DeletedRows.Count > 0)
                                 foreach (var item in doc.DeletedRows)
                                 {
                                     var deletedItem = ctx.TD_84.FirstOrDefault(_ => _.Id == item.Id);
-                                    if(deletedItem != null)
-                                    // ReSharper disable once AssignNullToNotNullAttribute
+                                    if (deletedItem != null)
+                                        // ReSharper disable once AssignNullToNotNullAttribute
                                         ctx.TD_84.Remove(deletedItem);
                                 }
                         }
@@ -2077,8 +2066,8 @@ namespace KursAM2.Managers.Invoices
                                             DocId = docGuid,
                                             SFT_TEXT = items.Note ?? " ",
                                             SFT_NEMENKL_DC = items.Entity.SFT_NEMENKL_DC,
-                                            SFT_KOL = (double) items.Quantity,
-                                            SFT_NDS_PERCENT = (double) items.NDSPercent,
+                                            SFT_KOL = (double)items.Quantity,
+                                            SFT_NDS_PERCENT = (double)items.NDSPercent,
                                             Id = Guid.NewGuid(),
                                             OLD_NOM_NAME = items.OLD_NOM_NAME,
                                             OLD_NOM_NOMENKL = items.OLD_NOM_NOMENKL,
@@ -2113,8 +2102,8 @@ namespace KursAM2.Managers.Invoices
                                         // ReSharper disable once PossibleNullReferenceException
                                         data.SFT_TEXT = items.Note ?? " ";
                                         data.SFT_NEMENKL_DC = items.Entity.SFT_NEMENKL_DC;
-                                        data.SFT_KOL = (double) items.Quantity;
-                                        data.SFT_NDS_PERCENT = (double) items.NDSPercent;
+                                        data.SFT_KOL = (double)items.Quantity;
+                                        data.SFT_NDS_PERCENT = (double)items.NDSPercent;
                                         data.OLD_NOM_NAME = items.OLD_NOM_NAME;
                                         data.OLD_NOM_NOMENKL = items.OLD_NOM_NOMENKL;
                                         data.OLD_OVERHEAD_CRS_NAME = items.OLD_OVERHEAD_CRS_NAME;
@@ -2143,6 +2132,7 @@ namespace KursAM2.Managers.Invoices
                                     }
                                 }
                             }
+
                             if (doc.DeletedRows.Count > 0)
                                 foreach (var i in doc.DeletedRows)
                                 {
@@ -2152,6 +2142,7 @@ namespace KursAM2.Managers.Invoices
                                         ctx.TD_84.Remove(deletedItem);
                                 }
                         }
+
                         ctx.SaveChanges();
                         dtx.Commit();
                         foreach (var r in doc.Rows) r.myState = RowStatus.NotEdited;
@@ -2162,6 +2153,7 @@ namespace KursAM2.Managers.Invoices
                                       $" VALUES({CustomFormat.DecimalToSqlDecimal(r.Entity.SFT_NEMENKL_DC)},'20000101')";
                             ctx.Database.ExecuteSqlCommand(sql);
                         }
+
                         ctx.SaveChanges();
                         nomenklManager.RecalcPrice();
                     }
@@ -2173,6 +2165,7 @@ namespace KursAM2.Managers.Invoices
                     }
                 }
             }
+
             return dc;
         }
 

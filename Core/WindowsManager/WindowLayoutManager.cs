@@ -53,7 +53,9 @@ namespace Core.WindowsManager
                         DBContext.SaveChanges();
                         transaction.Commit();
                     }
+#pragma warning disable CS0168
                     catch (Exception ex)
+#pragma warning restore CS0168
                     {
                         transaction.Rollback();
                     }

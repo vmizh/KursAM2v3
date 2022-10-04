@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using Core.EntityViewModel;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -33,6 +31,7 @@ namespace KursAM2.Managers.Nomenkl
             {
                 WindowManager.ShowError(ex);
             }
+
             return ret;
         }
 
@@ -47,7 +46,7 @@ namespace KursAM2.Managers.Nomenkl
             };
         }
 
-        public override Unit New(Unit u = default(Unit))
+        public override Unit New(Unit u = default)
         {
             return new Unit
             {
@@ -109,6 +108,7 @@ namespace KursAM2.Managers.Nomenkl
                                         old1.ED_IZM_INT = u.ED_IZM_INT;
                                         old1.ED_IZM_MONEY = u.ED_IZM_MONEY;
                                     }
+
                                     break;
                                 case RowStatus.Deleted:
                                     var old = ctx.SD_175.FirstOrDefault(_ => _.DOC_CODE == u.DocCode);
@@ -116,6 +116,7 @@ namespace KursAM2.Managers.Nomenkl
                                         ctx.SD_175.Remove(old);
                                     break;
                             }
+
                         ctx.SaveChanges();
                         tn.Commit();
                         MainReferences.Units.Clear();
@@ -149,6 +150,7 @@ namespace KursAM2.Managers.Nomenkl
                                 ctx.SD_175.Remove(old);
                             break;
                         }
+
                         ctx.SaveChanges();
                         tn.Commit();
                         return true;
@@ -163,5 +165,4 @@ namespace KursAM2.Managers.Nomenkl
             }
         }
     }
-
 }

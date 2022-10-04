@@ -16,7 +16,6 @@ using Data;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
-using KursAM2.View.Management;
 using KursAM2.ViewModel.Management.Calculations;
 
 namespace KursAM2.ViewModel.Management
@@ -42,12 +41,12 @@ namespace KursAM2.ViewModel.Management
             }
         }
 
-        public override string LayoutName => "KontragentBalansFormNew";
-
         public KontragentBalansWindowViewModel(decimal doccode) : this()
         {
             StartKontragent = Kontragents.Single(_ => _.DOC_CODE == doccode);
         }
+
+        public override string LayoutName => "KontragentBalansFormNew";
 
         public ObservableCollection<KonragentBalansRowViewModel> SelectedDocs { set; get; } =
             new ObservableCollection<KonragentBalansRowViewModel>();
@@ -99,8 +98,6 @@ namespace KursAM2.ViewModel.Management
                     KontragentManager.UpdateSelectCount(myKontragent.DOC_CODE);
                     LoadOperations(myKontragent.DOC_CODE);
                     RaisePropertyChanged(nameof(Kontragents));
-                    if (Form is KontragentBalansForm form)
-                        form.treePeriods.View.ExpandAllNodes();
                 }
 
                 RaisePropertyChanged();

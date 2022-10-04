@@ -28,10 +28,8 @@ namespace KursAM2.Managers.Base
 
         public override SD_110ViewModel Load(decimal dc)
         {
-           
             using (var ctx = GlobalOptions.GetEntities())
             {
-                
                 var ent = ctx.SD_110
                     .Include(_ => _.TD_110)
                     .Include(_ => _.SD_111)
@@ -44,8 +42,8 @@ namespace KursAM2.Managers.Base
                     .Include("TD_110.SD_84")
                     .AsNoTracking()
                     .FirstOrDefault(_ => _.DOC_CODE == dc);
-                if(ent == null) return new SD_110ViewModel();
-                return new SD_110ViewModel(ent) {State = RowStatus.NotEdited};
+                if (ent == null) return new SD_110ViewModel();
+                return new SD_110ViewModel(ent) { State = RowStatus.NotEdited };
             }
         }
 
@@ -119,6 +117,7 @@ namespace KursAM2.Managers.Base
                                     VZT_SHPZ_DC = r.Entity.VZT_SHPZ_DC
                                 });
                             }
+
                             break;
                         case RowStatus.Edited:
                         case RowStatus.NotEdited:
@@ -132,6 +131,7 @@ namespace KursAM2.Managers.Base
                                 if (delRow != null)
                                     ctx.TD_110.Remove(delRow);
                             }
+
                             foreach (var r in doc.Rows)
                             {
                                 r.VZT_DOC_DATE = isConvert ? doc.Entity.VZ_DATE : r.Entity.VZT_DOC_DATE;
@@ -171,8 +171,10 @@ namespace KursAM2.Managers.Base
                                         break;
                                 }
                             }
+
                             break;
                     }
+
                     ctx.SaveChanges();
                     doc.myState = RowStatus.NotEdited;
                     foreach (var r in doc.Rows)
@@ -180,6 +182,7 @@ namespace KursAM2.Managers.Base
                         r.myState = RowStatus.NotEdited;
                         r.RaisePropertyChanged("State");
                     }
+
                     doc.RaisePropertyChanged("State");
                 }
             }
@@ -188,6 +191,7 @@ namespace KursAM2.Managers.Base
                 WindowManager.ShowError(ex);
                 return null;
             }
+
             return doc;
         }
 
@@ -199,6 +203,7 @@ namespace KursAM2.Managers.Base
                 CheckedInfo = "Пустой документ";
                 return false;
             }
+
             var info = new StringBuilder();
             var ret = true;
             if (doc.VZ_DATE == DateTime.MinValue)
@@ -206,26 +211,31 @@ namespace KursAM2.Managers.Base
                 info.Append("Не установлена дата документа.\n");
                 ret = false;
             }
+
             if (doc.CreditorCurrency == null)
             {
                 info.Append("Не установлена валюта документа.\n");
                 ret = false;
             }
+
             if (doc.DebitorCurrency == null)
             {
                 info.Append("Не установлена валюта документа.\n");
                 ret = false;
             }
+
             if (doc.VZ_TYPE_DC < 1111000001)
             {
                 info.Append("Не выбран тип взаимозачета.\n");
                 ret = false;
             }
+
             if (string.IsNullOrWhiteSpace(doc.CREATOR))
             {
                 info.Append("Не установлен создатель документа.\n");
                 ret = false;
             }
+
             if (doc.Rows != null && doc.Rows.Count > 0)
                 foreach (var r in doc.Rows)
                 {
@@ -234,11 +244,13 @@ namespace KursAM2.Managers.Base
                         info.Append("Doc-Code строки не равен коду документа.\n");
                         ret = false;
                     }
+
                     var res = IsRowChecked(r);
                     if (res.Item1) continue;
                     info.Append(res.Item2);
                     ret = false;
                 }
+
             CheckedInfo = info.ToString();
             return ret;
         }
@@ -272,6 +284,7 @@ namespace KursAM2.Managers.Base
                 };
                 newDoc.Rows.Add(newRow);
             }
+
             newDoc.State = RowStatus.NewRow;
             return newDoc;
         }
@@ -383,11 +396,13 @@ namespace KursAM2.Managers.Base
                     rows.Remove(row);
                     return row;
                 }
+
                 deletedrows.Add(row);
                 rows.Remove(row);
                 if (row.Parent is RSViewModelBase prnt)
                     prnt.State = prnt.State == RowStatus.NewRow ? RowStatus.NewRow : RowStatus.Edited;
             }
+
             return row;
         }
 
@@ -400,26 +415,31 @@ namespace KursAM2.Managers.Base
                 info.Append("Не установлен код строки.\n");
                 ret = false;
             }
+
             if (r.VZT_CRS_DC < 3010000001)
             {
                 info.Append("Не выбрана валюта строки.\n");
                 ret = false;
             }
+
             if (r.VZT_DOC_DATE == DateTime.MinValue)
             {
                 info.Append("Не установлена дата строки.\n");
                 ret = false;
             }
+
             if (r.VZT_VZAIMOR_TYPE_DC < 10770000001)
             {
                 info.Append("Не выбран тип взаиморасчета строки.\n");
                 ret = false;
             }
+
             if (r.VZT_1MYDOLZH_0NAMDOLZH < 0 || r.VZT_1MYDOLZH_0NAMDOLZH > 1)
             {
                 info.Append("Неправильно вставлен флаг для проводки в строке.\n");
                 ret = false;
             }
+
             CheckedInfo = "\n" + info;
             return Tuple.Create(ret, info.ToString());
         }

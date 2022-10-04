@@ -192,7 +192,7 @@ namespace Core.ViewModel.Base
         /// <summary>
         ///     Событие изменения значения свойства представления
         /// </summary>
-        public new virtual event PropertyChangedEventHandler PropertyChanged;
+        public virtual event PropertyChangedEventHandler PropertyChanged;
 
         [DataMember]
         [Display(AutoGenerateField = false)]
@@ -256,7 +256,7 @@ namespace Core.ViewModel.Base
         /// </summary>
         /// <param name="propertyName">Идентификатор свойства</param>
         [NotifyPropertyChangedInvocator("propertyName")]
-        public new virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        public virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             var handler = PropertyChanged;
             if (propertyName != "State")

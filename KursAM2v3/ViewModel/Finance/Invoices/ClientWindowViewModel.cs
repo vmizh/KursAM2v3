@@ -680,13 +680,23 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     case MessageBoxResult.Yes:
                         SaveData(null);
+                        Document.DeletedRows.Clear();
                         return;
                     case MessageBoxResult.No:
                         foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
+                        Document.LoadReferences();
+                        LoadFromExternal();
+
+                        foreach (var r in Document.Rows)
+                        {
+                            r.myState = RowStatus.NotEdited;
+                            AddUsedNomenkl(r.Nomenkl.DocCode);
+                        }
                         RaiseAll();
                         Document.myState = RowStatus.NotEdited;
                         Document.RaisePropertyChanged("State");
                         foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
+                        Document.DeletedRows.Clear();
                         return;
                 }
             }
@@ -694,6 +704,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (Document.DocCode > 0 && Document.State != RowStatus.NewRow)
             {
                 foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
+                Document.LoadReferences();
                 LoadFromExternal();
 
                 foreach (var r in Document.Rows)
@@ -701,8 +712,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     r.myState = RowStatus.NotEdited;
                     AddUsedNomenkl(r.Nomenkl.DocCode);
                 }
-
                 RaiseAll();
+                Document.DeletedRows.Clear();
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
             }

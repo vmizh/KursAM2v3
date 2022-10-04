@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -32,6 +31,7 @@ namespace KursAM2.Managers.Nomenkl
             {
                 WindowManager.ShowError(ex);
             }
+
             return ret;
         }
 
@@ -71,18 +71,13 @@ namespace KursAM2.Managers.Nomenkl
                                 case RowStatus.NewRow:
                                     newDC++;
                                     if (listProds.Any(_ => _.ParentDC == u.DocCode))
-                                    {
                                         foreach (var prd in listProds.Where(_ => _.ParentDC == u.DocCode))
-                                        {
                                             prd.ParentDC = newDC;
-                                        }
-                                    }
                                     var sd82 = new SD_82
                                     {
                                         DOC_CODE = newDC,
                                         CAT_NAME = u.Name,
                                         CAT_PARENT_DC = u.ParentDC
-                                        
                                     };
                                     ctx.SD_82.Add(sd82);
                                     break;
@@ -93,6 +88,7 @@ namespace KursAM2.Managers.Nomenkl
                                         old1.CAT_NAME = u.Name;
                                         old1.CAT_PARENT_DC = u.ParentDC;
                                     }
+
                                     break;
                                 case RowStatus.Deleted:
                                     var old = ctx.SD_82.FirstOrDefault(_ => _.DOC_CODE == u.DocCode);
@@ -100,6 +96,7 @@ namespace KursAM2.Managers.Nomenkl
                                         ctx.SD_82.Remove(old);
                                     break;
                             }
+
                         ctx.SaveChanges();
                         tn.Commit();
                         return true;
@@ -130,6 +127,7 @@ namespace KursAM2.Managers.Nomenkl
                                 ctx.SD_82.Remove(old);
                             break;
                         }
+
                         ctx.SaveChanges();
                         tn.Commit();
                         return true;

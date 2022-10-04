@@ -24,7 +24,7 @@ namespace KursAM2.View.Management
             //LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             myKontragentLookUpLayoutName =
                 $"{Environment.CurrentDirectory}\\Layout\\KontragentLookUpEdit.{Guid.NewGuid()}.xml";
-            //Loaded += KontragentBalansForm_Loaded;
+            Loaded += KontragentBalansForm_Loaded;
             //Closing += KontragentBalansForm_Closing;
         }
 
@@ -37,13 +37,14 @@ namespace KursAM2.View.Management
 
         private void KontragentBalansForm_Loaded(object sender, RoutedEventArgs e)
         {
-            LayoutManager.Load();
+           // LayoutManager.Load();
             treePeriods.SelectionMode = MultiSelectMode.None;
             KontrOperGrid.SelectionMode = MultiSelectMode.None;
             var ctx = DataContext as KontragentBalansWindowViewModel;
             if (ctx?.StartKontragent != null)
                 ctx.Kontragent = ctx.Kontragents.Single(_ => _.DOC_CODE == ctx.StartKontragent.DOC_CODE);
-            searchLookUpEditKontragent.IsPopupOpen = true;
+            searchLookUpEditKontragent.EditValue = ctx.Kontragent;
+            searchLookUpEditKontragent.IsPopupOpen = false;
         }
 
         private void KontragentBalansForm_Closing(object sender, CancelEventArgs e)

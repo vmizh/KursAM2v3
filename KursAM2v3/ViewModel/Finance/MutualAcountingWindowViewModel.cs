@@ -62,15 +62,11 @@ namespace KursAM2.ViewModel.Finance
                 var sumCreditor = Document.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA) ??
                                   0;
                 var sumDebitor = Document.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA) ?? 0;
-                if (Equals(Document.DebitorCurrency, GlobalOptions.SystemProfile.MainCurrency))
-                {
-                    if (sumDebitor == 0) return 0;
-                    return sumCreditor / sumDebitor;
-                }
-
-                if (!Equals(Document.CreditorCurrency, GlobalOptions.SystemProfile.MainCurrency)) return 0;
-                if (sumCreditor == 0) return 0;
-                return sumDebitor / sumCreditor;
+                if (Equals(Document.CreditorCurrency, GlobalOptions.SystemProfile.NationalCurrency))
+                    return sumDebitor == 0 ? 0 : sumCreditor / sumDebitor;
+                if (Equals(Document.DebitorCurrency, GlobalOptions.SystemProfile.NationalCurrency))
+                    return sumCreditor == 0 ? 0 : sumDebitor / sumCreditor;
+                return sumDebitor == 0 ? 0 : sumCreditor / sumDebitor;
             }
         }
 

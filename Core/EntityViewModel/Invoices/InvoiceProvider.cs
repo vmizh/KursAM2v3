@@ -1118,7 +1118,7 @@ namespace Core.Invoices.EntityViewModel
 
         #region Methods
 
-        private void LoadReferences()
+        public void LoadReferences()
         {
             if (Entity.SF_POST_DC > 0)
                 Kontragent = MainReferences.GetKontragent(Entity.SF_POST_DC);

@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using Core;
 using Core.EntityViewModel.CommonReferences;
 
 namespace KursAM2.Managers.Base
@@ -13,7 +12,7 @@ namespace KursAM2.Managers.Base
         {
             var fieldInfo = value.GetType().GetField(value.ToString());
             if (fieldInfo == null) return null;
-            var attribute = (DisplayAttribute) fieldInfo.GetCustomAttribute(typeof(DisplayAttribute));
+            var attribute = (DisplayAttribute)fieldInfo.GetCustomAttribute(typeof(DisplayAttribute));
             return attribute.Name;
         }
 

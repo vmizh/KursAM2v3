@@ -15,6 +15,7 @@ using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Xpf.Core.ConditionalFormattingManager;
 using Helper;
 using Newtonsoft.Json;
 
@@ -1168,7 +1169,7 @@ namespace Core.EntityViewModel.Invoices
             RaisePropertyChanged(nameof(Summa));
         }
 
-        private void LoadReferences()
+        public void LoadReferences()
         {
             if (MainReferences.Currencies.ContainsKey(Entity.SF_CRS_DC))
                 Currency = MainReferences.Currencies[Entity.SF_CRS_DC];
@@ -1184,6 +1185,10 @@ namespace Core.EntityViewModel.Invoices
                 VzaimoraschetType = MainReferences.VzaimoraschetTypes[Entity.SD_77.DOC_CODE];
             if (Entity.PersonalResponsibleDC != null)
                 PersonaResponsible = MainReferences.Employees[Entity.PersonalResponsibleDC.Value];
+            if (Rows == null)
+                Rows = new ObservableCollection<InvoiceClientRow>();
+            else
+                Rows.Clear();
             Rows = new ObservableCollection<InvoiceClientRow>();
             if (Entity.TD_84 != null && Entity.TD_84.Count > 0)
                 foreach (var t in Entity.TD_84)

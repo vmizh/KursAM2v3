@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows;
+using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
@@ -74,6 +75,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         #region Properties
 
         public override string WindowName => "Поиск распределений накладных расходов";
+        public override string LayoutName => "DistributeNakladSearchViewModel";
+
         [Display(AutoGenerateField = false)]
         public override bool IsCanDocNew => true;
         [Display(AutoGenerateField = false)]
@@ -133,13 +136,23 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Commands
 
-        [Command]
+        [Display(AutoGenerateField = false)]
+        public ICommand OnWindowClosingCommand
+        {
+            get { return new Command(OnWindowClosing, _ => true); }
+        }
+
         public void OnWindowClosing()
         {
             LayoutManager.Save();
         }
 
-        [Command]
+        [Display(AutoGenerateField = false)]
+        public ICommand OnWindowLoadedCommand
+        {
+            get { return new Command(OnWindowLoaded, _ => true); }
+        }
+
         public void OnWindowLoaded()
         {
             LayoutManager = new Helper.LayoutManager(Form, LayoutSerializationService,
@@ -175,28 +188,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         public override void DocumentOpen(object obj)
         {
             DocumentsOpenManager.Open(DocumentType.Naklad, 0, CurrentDocument.Id);
-
-            //var dsForm = new DistributedNakladView
-            //{
-            //    Owner = Application.Current.MainWindow
-            //};
-            //var dtx = new DistributeNakladViewModel(Form, new DocumentOpenType
-            //{
-            //    Id = CurrentDocument.Id,
-            //    OpenType = DocumentCreateTypeEnum.Open,
-            //})
-            //{
-            //    Form = dsForm
-            //};
-            //dsForm.DataContext = dtx; 
-            
-            //foreach (var t in dtx.Tovars)
-            //{
-            //    t.State = RowStatus.NotEdited;
-            //}
-            
-            //dsForm.Show();
-            //dtx.myState = RowStatus.NotEdited;
         }
 
         public override bool CanSave()

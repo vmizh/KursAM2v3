@@ -4,7 +4,5 @@
     {
         // ReSharper disable once UnusedMember.Global
         public string dialogServiceText { set; get; }
-
-        
     }
 }

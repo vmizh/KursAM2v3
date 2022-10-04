@@ -111,7 +111,7 @@
                 </Label>
                 <dxe:PopupCalcEdit
                     Margin="5,0"
-                    DisplayFormatString="n2"
+                    DisplayFormatString="n4"
                     AllowDefaultButton="False"
                     IsReadOnly="True"
                     Width="120"

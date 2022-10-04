@@ -1252,7 +1252,7 @@ namespace KursAM2.ViewModel.Logistiks
         {
             DocumentList.Clear();
             NomenklMoveList.Clear(); 
-            Task.Run(() =>  RunPrgressBar());
+            await Task.Run(() =>  RunPrgressBar());
             IsDataLoaded = Visibility.Collapsed;
             if (CurrentSklad == null)
                 await Task.Run(() => LoadForAllSklads4());

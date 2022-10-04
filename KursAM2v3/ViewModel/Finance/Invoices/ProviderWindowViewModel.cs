@@ -778,10 +778,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     case MessageBoxResult.Yes:
                         SaveData(null);
+                        Document.DeletedRows.Clear();
                         return;
                     case MessageBoxResult.No:
                         foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
-
+                        Document.LoadReferences();
                         RaiseAll();
                         
                         foreach (var r in Document.Rows)
@@ -790,6 +791,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             AddUsedNomenkl(r.Nomenkl.DocCode);
                         }  
                         Document.myState = RowStatus.NotEdited;
+                        Document.DeletedRows.Clear();
                         return;
                 }
             }
@@ -813,7 +815,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 AddUsedNomenkl(r.Nomenkl.DocCode);
                 RaiseAll();
             }
-
+            Document.DeletedRows.Clear();
             Document.myState = RowStatus.NotEdited;
         }
 

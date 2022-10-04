@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -32,6 +31,7 @@ namespace KursAM2.Managers.Nomenkl
             {
                 WindowManager.ShowError(ex);
             }
+
             return ret;
         }
 
@@ -72,12 +72,8 @@ namespace KursAM2.Managers.Nomenkl
                                 case RowStatus.NewRow:
                                     newDC++;
                                     if (listProds.Any(_ => _.ParentDC == u.DocCode))
-                                    {
                                         foreach (var prd in listProds.Where(_ => _.ParentDC == u.DocCode))
-                                        {
                                             prd.ParentDC = newDC;
-                                        }
-                                    }
                                     var sd50 = new SD_50
                                     {
                                         DOC_CODE = newDC,
@@ -95,6 +91,7 @@ namespace KursAM2.Managers.Nomenkl
                                         old1.PROD_FULL_NAME = u.PROD_FULL_NAME;
                                         old1.PROD_PARENT_DC = u.PROD_PARENT_DC;
                                     }
+
                                     break;
                                 case RowStatus.Deleted:
                                     var old = ctx.SD_50.FirstOrDefault(_ => _.DOC_CODE == u.DocCode);
@@ -102,6 +99,7 @@ namespace KursAM2.Managers.Nomenkl
                                         ctx.SD_50.Remove(old);
                                     break;
                             }
+
                         ctx.SaveChanges();
                         tn.Commit();
                         return true;
@@ -132,6 +130,7 @@ namespace KursAM2.Managers.Nomenkl
                                 ctx.SD_50.Remove(old);
                             break;
                         }
+
                         ctx.SaveChanges();
                         tn.Commit();
                         return true;

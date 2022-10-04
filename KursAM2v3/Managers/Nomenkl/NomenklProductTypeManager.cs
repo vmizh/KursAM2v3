@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -32,6 +31,7 @@ namespace KursAM2.Managers.Nomenkl
             {
                 WindowManager.ShowError(ex);
             }
+
             return ret;
         }
 
@@ -46,7 +46,6 @@ namespace KursAM2.Managers.Nomenkl
                 MC_TARA = 0,
                 MC_TRANSPORT = 0,
                 MC_PREDOPLATA = 0
-
             };
         }
 
@@ -104,6 +103,7 @@ namespace KursAM2.Managers.Nomenkl
                                         old1.MC_TRANSPORT = u.MC_TRANSPORT;
                                         old1.MC_PREDOPLATA = u.MC_PREDOPLATA;
                                     }
+
                                     break;
                                 case RowStatus.Deleted:
                                     var old = ctx.SD_119.FirstOrDefault(_ => _.DOC_CODE == u.DocCode);
@@ -111,6 +111,7 @@ namespace KursAM2.Managers.Nomenkl
                                         ctx.SD_119.Remove(old);
                                     break;
                             }
+
                         ctx.SaveChanges();
                         tn.Commit();
                         return true;
@@ -141,6 +142,7 @@ namespace KursAM2.Managers.Nomenkl
                                 ctx.SD_175.Remove(old);
                             break;
                         }
+
                         ctx.SaveChanges();
                         tn.Commit();
                         return true;
