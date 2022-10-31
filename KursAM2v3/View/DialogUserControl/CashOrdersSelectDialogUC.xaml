@@ -6,7 +6,7 @@
         xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
         xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
         xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-        xmlns:control="clr-namespace:Core.Control;assembly=Core"
+        xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
         mc:Ignorable="d"
         d:DesignHeight="250" d:DesignWidth="500">
     <DockPanel>

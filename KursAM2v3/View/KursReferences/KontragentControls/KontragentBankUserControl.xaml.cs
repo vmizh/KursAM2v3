@@ -5,6 +5,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.LookUp;
 using KursAM2.ViewModel.Reference.Kontragent;
+using KursDomain.Documents.CommonReferences.Kontragent;
 using LayoutManager;
 
 namespace KursAM2.View.KursReferences.KontragentControls

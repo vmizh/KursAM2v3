@@ -21,6 +21,7 @@ using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
+using DevExpress.Xpf.CodeView;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -56,6 +57,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public readonly GenericKursDBRepository<SD_84> GenericClientRepository;
         public IInvoiceClientRepository InvoiceClientRepository;
         private readonly List<decimal> myUsedNomenklsDC = new List<decimal>();
+        private bool IsLoadPay = true;
 
         #endregion
 
@@ -78,8 +80,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
             CreateReportsMenu();
         }
 
-        public ClientWindowViewModel(decimal? dc) : this()
+        public ClientWindowViewModel(decimal? dc, bool isLoadPay = true) : this()
         {
+            IsLoadPay = isLoadPay;
             var doc = dc != null ? GenericClientRepository.GetById(dc.Value) : null;
             if (doc == null)
             {
@@ -96,21 +99,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     SF_FACT_SUMMA = 0
                 };
                 UnitOfWork.Context.SD_84.Add(doc);
-                Document = new InvoiceClient(doc, UnitOfWork)
+                Document = new InvoiceClient(doc, UnitOfWork, isLoadPay)
                 {
                     State = RowStatus.NewRow
                 };
             }
             else
             {
-                Document = new InvoiceClient(doc, UnitOfWork)
+                Document = new InvoiceClient(doc, UnitOfWork, true)
                 {
                     State = RowStatus.NotEdited
                 };
                 if (Document != null)
                     WindowName = Document.ToString();
                 Document.myState = RowStatus.NotEdited;
-                foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
+                foreach (var r in Document.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NotEdited;
                 SetVisualOnStart();
             }
         }
@@ -250,7 +253,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (isCopy)
             {
                 var newCode = 1;
-                foreach (var item in Document.Rows)
+                foreach (var item in Document.Rows.Cast<InvoiceClientRow>())
                 {
                     UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
                     item.DocCode = -1;
@@ -262,7 +265,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     newCode++;
                 }
 
-                foreach (var r in Document.Rows)
+                foreach (var r in Document.Rows.Cast<InvoiceClientRow>())
                 {
                     UnitOfWork.Context.TD_84.Add(r.Entity);
                     r.State = RowStatus.NewRow;
@@ -270,7 +273,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
             else
             {
-                foreach (var item in Document.Rows)
+                foreach (var item in Document.Rows.Cast<InvoiceClientRow>())
                 {
                     UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
                     Document.Entity.TD_84.Clear();
@@ -584,7 +587,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                 foreach (var item in dtx.SelectedItems)
                 {
-                    if (Document != null && Document.Rows.Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    if (Document != null && Document.Rows.Cast<InvoiceClientRow>().Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
@@ -673,7 +676,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             myUsedNomenklsDC.Clear();
             if (IsCanSaveData)
             {
-                var res = WinManager.ShowWinUIMessageBox("В документ внесены изменения, сохранить?", "Запрос",
+                var winManager = new WindowManager();
+                var res = winManager.ShowWinUIMessageBox("В документ внесены изменения, сохранить?", "Запрос",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
                 switch (res)
@@ -687,7 +691,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Document.LoadReferences();
                         LoadFromExternal();
 
-                        foreach (var r in Document.Rows)
+                        foreach (var r in Document.Rows.Cast<InvoiceClientRow>())
                         {
                             r.myState = RowStatus.NotEdited;
                             AddUsedNomenkl(r.Nomenkl.DocCode);
@@ -695,7 +699,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         RaiseAll();
                         Document.myState = RowStatus.NotEdited;
                         Document.RaisePropertyChanged("State");
-                        foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
+                        foreach (var r in Document.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NotEdited;
                         Document.DeletedRows.Clear();
                         return;
                 }
@@ -707,7 +711,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.LoadReferences();
                 LoadFromExternal();
 
-                foreach (var r in Document.Rows)
+                foreach (var r in Document.Rows.Cast<InvoiceClientRow>())
                 {
                     r.myState = RowStatus.NotEdited;
                     AddUsedNomenkl(r.Nomenkl.DocCode);
@@ -726,7 +730,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 Document.PaymentDocs.Clear();
                 foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
-                    .Where(_ => _.VVT_SFACT_CLIENT_DC == Document.DocCode))
+                             .Where(_ => _.VVT_SFACT_CLIENT_DC == Document.DocCode))
                     Document.PaymentDocs.Add(new InvoicePaymentDocument
                     {
                         DocCode = c.DOC_CODE,
@@ -734,17 +738,27 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         DocumentType = DocumentType.Bank,
                         DocumentName =
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
-                        Summa = (decimal)c.VVT_VAL_PRIHOD,
+                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                        Summa = (decimal) c.VVT_VAL_PRIHOD,
                         Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                         Note = c.VVT_DOC_NUM
                     });
+                Document.ShipmentRows.Clear();
+                var facts = ctx.TD_24.Include(_ => _.TD_26).Where(_ => _.DDT_SFACT_DC == Document.DocCode)
+                    .AsNoTracking().ToList();
+                foreach (var fact in facts)
+                {
+                    Document.ShipmentRows.Add(new ShipmentRowViewModel(fact)
+                    {
+                        State = RowStatus.NotEdited
+                    });
+                }
             }
         }
 
         private void RaiseAll()
         {
-            foreach (var r in Document.Rows) r.RaisePropertyAllChanged();
+            foreach (var r in Document.Rows.Cast<InvoiceClientRow>()) r.RaisePropertyAllChanged();
             foreach (var s in Document.ShipmentRows) s.RaisePropertyAllChanged();
             foreach (var pay in Document.PaymentDocs) pay.RaisePropertyAllChanged();
             Document.RaisePropertyAllChanged();
@@ -752,6 +766,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void SaveData(object data)
         {
+            var WinManager = new WindowManager();
             var closePeriod = UnitOfWork.Context.PERIOD_CLOSED
                 .SingleOrDefault(_ => _.CLOSED_DOC_TYPE.ID.ToString() == "b57d269e-e17f-4dc2-86da-821db51bcc9e");
             if (closePeriod != null && Document.DocDate < closePeriod.DateClosed)
@@ -796,11 +811,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Document.SF_KONTR_CRS_DC = Document.Client.BalansCurrency.DocCode;
 
                 if (Document.Entity.SF_KONTR_CRS_SUMMA == null) Document.Entity.SF_KONTR_CRS_SUMMA = Document.Summa;
-                foreach (var row in Document.Rows)
+                foreach (var row in Document.Rows.Cast<InvoiceClientRow>())
                     if (row.Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS == null)
                         row.Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = row.Summa;
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
+                DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
+                    Document.DocCode, null, (string)Document.ToJson());
                 RecalcKontragentBalans.CalcBalans(Document.Client.DocCode, Document.DocDate);
                 nomenklManager.RecalcPrice(myUsedNomenklsDC);
                 foreach (var ndc in Document.Rows.Select(_ => _.Nomenkl.DocCode)) AddUsedNomenkl(ndc);
@@ -809,13 +826,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 //foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
                 //RaiseAll();
                 Document.myState = RowStatus.NotEdited;
-                foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
+                foreach (var r in Document.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NotEdited;
 
                 foreach (var f in Document.ShipmentRows) f.myState = RowStatus.NotEdited;
 
                 foreach (var p in Document.PaymentDocs) p.myState = RowStatus.NotEdited;
-                DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
-                    Document.DocCode, null, (string)Document.ToJson());
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
                 DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceClient, Document.Id, Document.DocCode,
@@ -906,6 +921,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocDelete(object obj)
         {
+            var WinManager = new WindowManager();
             if (Document == null) return;
             var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?", "Запрос",
                 MessageBoxButton.YesNo,
@@ -997,14 +1013,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void AddUsluga(object obj)
         {
-            var k = StandartDialogs.SelectNomenkls();
+            var k = StandartDialogs.SelectNomenkls(null,false);
             if (k != null)
             {
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                 foreach (var item in k)
                 {
                     // ReSharper disable once PossibleNullReferenceException
-                    if (Document.Rows.Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    if (Document.Rows.Cast<InvoiceClientRow>().Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
@@ -1068,7 +1084,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                 foreach (var item in k)
                 {
-                    if (Document != null && Document.Rows.Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    if (Document != null && Document.Rows.Cast<InvoiceClientRow>().Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;

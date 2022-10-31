@@ -2,6 +2,7 @@ using System;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace Calculates.Materials
 {
@@ -35,6 +36,7 @@ namespace Calculates.Materials
         private string myTovarDocument;
         private int myTovarRowCode;
         public int RowNumber { set; get; }
+
         public int OperCode
         {
             get => myOperCode;
@@ -45,6 +47,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal NomenklDC
         {
             get => myNomenklDC;
@@ -55,6 +58,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal? TovarDocDC
         {
             get => myTovarDocDC;
@@ -76,6 +80,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal? FinDocumentDC
         {
             get => myFinDocumentDC;
@@ -86,6 +91,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public DateTime DocDate
         {
             get => myDocDate;
@@ -96,6 +102,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public string TovarDocument
         {
             get => myTovarDocument;
@@ -106,6 +113,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public string FinDocument
         {
             get => myFinDocument;
@@ -116,6 +124,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public string OperationName
         {
             get => myOperationName;
@@ -126,6 +135,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public Warehouse SkladOut
         {
             get => mySkladOut;
@@ -137,7 +147,9 @@ namespace Calculates.Materials
                 RaisePropertyChanged(nameof(SkladOutName));
             }
         }
+
         public string SkladOutName => SkladOut?.Name;
+
         public Warehouse SkladIn
         {
             get => mySkladIn;
@@ -149,7 +161,9 @@ namespace Calculates.Materials
                 RaisePropertyChanged(nameof(SkladInName));
             }
         }
+
         public string SkladInName => SkladIn?.Name;
+
         public Kontragent KontragentIn
         {
             get => myKontragentIn;
@@ -161,7 +175,9 @@ namespace Calculates.Materials
                 RaisePropertyChanged(nameof(KontrInName));
             }
         }
+
         public string KontrInName => KontragentIn?.Name;
+
         public Kontragent KontragentOut
         {
             get => myKontragentOut;
@@ -173,7 +189,9 @@ namespace Calculates.Materials
                 RaisePropertyChanged(nameof(KontrOutName));
             }
         }
+
         public string KontrOutName => KontragentOut?.Name;
+
         public decimal DocPrice
         {
             get => myDocPrice;
@@ -184,6 +202,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal Naklad
         {
             get => myNaklad;
@@ -194,6 +213,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal QuantityIn
         {
             get => myQuantityIn;
@@ -204,6 +224,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal QuantityOut
         {
             get => myQuantityOut;
@@ -214,6 +235,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaIn
         {
             get => mySummaIn;
@@ -224,6 +246,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaOut
         {
             get => mySummaOut;
@@ -234,6 +257,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaInWithNaklad
         {
             get => mySummaInWithNaklad;
@@ -244,6 +268,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal SummaOutWithNaklad
         {
             get => mySummaOutWithNaklad;
@@ -254,6 +279,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal QuantityNakopit
         {
             get => myQuantityNakopit;
@@ -264,6 +290,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal CalcPrice
         {
             get => myCalcPrice;
@@ -274,6 +301,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
+
         public decimal CalcPriceNaklad
         {
             get => myCalcPriceNaklad;

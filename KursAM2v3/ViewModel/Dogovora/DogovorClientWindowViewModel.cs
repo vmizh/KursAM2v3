@@ -403,7 +403,8 @@ namespace KursAM2.ViewModel.Dogovora
 
         private void DeleteRow(object obj)
         {
-            if (WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить строки", "Запрос",
+            var winManager = new WindowManager();
+            if (winManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить строки", "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question) == MessageBoxResult.Yes)
             {

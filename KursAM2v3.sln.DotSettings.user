@@ -18,52 +18,14 @@
   &lt;Assembly Path="C:\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Data.v21.1.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:Boolean x:Key="/Default/Environment/Hierarchy/EntityFrameworkOptions/IsAlreadyNotifiedAboutEntityFramework/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1ba85c6e_002D6022_002D4df6_002D8894_002D817814924325/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetByDC #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.Invoices.ProviderTests.GetByDC&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.Invoices.ProviderTests.NewInvoice&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d6335c8c_002D66da_002D4824_002Da1ac_002Dbf29da2a8281/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;KursDomain.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="C:\Users\user\WorkProject\DX19\KursAM2v3\KursDomain.Tests" Presentation="&amp;lt;KursDomain.Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=22a4017e_002D30e0_002D4ec5_002D9192_002D77997e371794/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DataSourceGetTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::0ADE9C9B-B276-4FDC-B21C-F35B86817D77::.NETFramework,Version=v4.7.2::KursRepozit.Tests.RepositoryTests.DataSorceRepositoryTests.DataSourceGetTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=47852883_002D8a05_002D4aaf_002Db24a_002Def8a3245ede3/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetByDC #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.Invoices.ProviderTests.GetByDC&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4fbb0124_002D635d_002D4593_002D9965_002Dfbb0931d5cb4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="NewInvoice" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.Invoices.ProviderTests.NewInvoice&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6bb8e8b2_002D0144_002D4519_002Db41f_002D15c2ae118380/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="LogFirstTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::0ADE9C9B-B276-4FDC-B21C-F35B86817D77::.NETFramework,Version=v4.7.2::KursRepozit.Tests.LogTests.LogStartTest.LogFirstTest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::0ADE9C9B-B276-4FDC-B21C-F35B86817D77::.NETFramework,Version=v4.7.2::KursRepozit.Tests.RepositoryTests.DataSorceRepositoryTests.DataSourceCRUDTest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::0ADE9C9B-B276-4FDC-B21C-F35B86817D77::.NETFramework,Version=v4.7.2::KursRepozit.Tests.RepositoryTests.DataSorceRepositoryTests.DataSourceGetTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=9759e29f_002D9ea9_002D4c55_002D94c5_002Df8eca7623bf7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetByDC" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.Invoices.ProviderTests&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a7625467_002Dc0a8_002D4b35_002D9fc4_002D076f286ad9b0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="DataSourceCRUDTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::0ADE9C9B-B276-4FDC-B21C-F35B86817D77::.NETFramework,Version=v4.7.2::KursRepozit.Tests.RepositoryTests.DataSorceRepositoryTests.DataSourceCRUDTest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.NomenklManager.NomenklManagerMoveAndRest.CountTests&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bd301a60_002Dcc57_002D4bfe_002Da05f_002D58e668b2e241/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetByDC #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.Invoices.ProviderTests.GetByDC&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.Invoices.ProviderTests.NewInvoice&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.Invoices.ProviderTests.TestCopy&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.RepositoriesTests.NomenklManager.NomenklManagerMoveAndRest.CountTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.JSONSetializeTests.WarehouseOrderInToJSONTest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::A9C7B766-3094-4D70-BC32-33CD3CD43F25::.NETFramework,Version=v4.7.2::KursAM2.Tests.JSONSetializeTests&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+	
+	
+	
+	
+	
+	
+	
+	</wpf:ResourceDictionary>

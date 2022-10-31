@@ -1,0 +1,224 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using Core.EntityViewModel.CommonReferences;
+using Core.Helper;
+using Core.ViewModel.Base;
+using DevExpress.Mvvm.DataAnnotations;
+
+namespace KursDomain.Documents.Bank
+{
+    [MetadataType(typeof(DataAnnotationsBankStatements))]
+    public class BankStatements : RSViewModelBase
+    {
+        private string myAccount;
+        private KursDomain.Documents.Bank.Bank myBank;
+        private Currency myCurrency;
+        private DateTime myDate;
+        private decimal myDC114;
+
+        public BankStatements()
+        {
+            DefailtValue();
+        }
+
+        //SD_114 DOC_CODE
+        public decimal BankDC
+        {
+            set
+            {
+                if (myDC114 == value) return;
+                myDC114 = value;
+                RaisePropertyChanged();
+            }
+            get => myDC114;
+        }
+
+        public KursDomain.Documents.Bank.Bank Bank
+        {
+            get => myBank;
+            set
+            {
+                if (myBank == value) return;
+                myBank = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string Account
+        {
+            get => myAccount;
+            set
+            {
+                if (myAccount == value) return;
+                myAccount = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public DateTime Date
+        {
+            set
+            {
+                if (myDate == value) return;
+                myDate = value;
+                RaisePropertyChanged();
+            }
+            get => myDate;
+        }
+
+        public Currency Currency
+        {
+            get => myCurrency;
+            set
+            {
+                if (myCurrency == value) return;
+                myCurrency = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public override string Name => $"{Bank?.Name} {Account} {Currency}";
+
+        private void DefailtValue()
+        {
+            RemainderCHF = 0;
+            RemainderEUR = 0;
+            RemainderGBP = 0;
+            RemainderRUB = 0;
+            RemainderUSD = 0;
+            RemainderSEK = 0;
+        }
+
+        public override string ToString()
+        {
+            return $"{Bank.Name} {Account} {Currency}";
+        }
+
+        #region Currency
+
+        private decimal? myRemainderCHF;
+
+        public decimal? RemainderCHF
+        {
+            set
+            {
+                if (myRemainderCHF == value) return;
+                myRemainderCHF = value;
+                RaisePropertyChanged();
+            }
+            get => myRemainderCHF;
+        }
+
+        private decimal? myRemainderCNY;
+
+        public decimal? RemainderCNY
+        {
+            set
+            {
+                if (myRemainderCNY == value) return;
+                myRemainderCNY = value;
+                RaisePropertyChanged();
+            }
+            get => myRemainderCNY;
+        }
+
+        private decimal? myRemainderEUR;
+
+        public decimal? RemainderEUR
+        {
+            set
+            {
+                if (myRemainderEUR == value) return;
+                myRemainderEUR = value;
+                RaisePropertyChanged();
+            }
+            get => myRemainderEUR;
+        }
+
+        private decimal? myRemainderRUB;
+
+        public decimal? RemainderRUB
+        {
+            set
+            {
+                if (myRemainderRUB == value) return;
+                myRemainderRUB = value;
+                RaisePropertyChanged();
+            }
+            get => myRemainderRUB;
+        }
+
+        private decimal? myRemainderGBP;
+
+        public decimal? RemainderGBP
+        {
+            set
+            {
+                if (myRemainderGBP == value) return;
+                myRemainderGBP = value;
+                RaisePropertyChanged();
+            }
+            get => myRemainderGBP;
+        }
+
+        private decimal? myRemainderSEK;
+
+        public decimal? RemainderSEK
+        {
+            set
+            {
+                if (myRemainderSEK == value) return;
+                myRemainderSEK = value;
+                RaisePropertyChanged();
+            }
+            get => myRemainderSEK;
+        }
+
+        private decimal? myRemainderUSD;
+
+        public decimal? RemainderUSD
+        {
+            set
+            {
+                if (myRemainderUSD == value) return;
+                myRemainderUSD = value;
+                RaisePropertyChanged();
+            }
+            get => myRemainderUSD;
+        }
+
+        #endregion
+    }
+
+    public class DataAnnotationsBankStatements : DataAnnotationForFluentApiBase, IMetadataProvider<BankStatements>
+    {
+        void IMetadataProvider<BankStatements>.BuildMetadata(MetadataBuilder<BankStatements> builder)
+        {
+            SetNotAutoGenerated(builder);
+            builder.Property(_ => _.Name).AutoGenerated().DisplayName("Счет");
+            builder.Property(_ => _.RemainderCHF).AutoGenerated().DisplayName("Остаток");
+            builder.Property(_ => _.RemainderEUR).AutoGenerated().DisplayName("Остаток");
+            builder.Property(_ => _.RemainderGBP).AutoGenerated().DisplayName("Остаток");
+            builder.Property(_ => _.RemainderRUB).AutoGenerated().DisplayName("Остаток");
+            builder.Property(_ => _.RemainderUSD).AutoGenerated().DisplayName("Остаток");
+            builder.Property(_ => _.RemainderSEK).AutoGenerated().DisplayName("Остаток");
+            builder.Property(_ => _.Note).AutoGenerated().DisplayName("примечание");
+            builder.Group("Счет")
+                .ContainsProperty(_ => _.Date)
+                .ContainsProperty(_ => _.Name)
+                .ContainsProperty(_ => _.Note);
+            builder.Group("CHF")
+                .ContainsProperty(_ => _.RemainderCHF);
+            builder.Group("EUR")
+                .ContainsProperty(_ => _.RemainderEUR);
+            builder.Group("GBP")
+                .ContainsProperty(_ => _.RemainderGBP);
+            builder.Group("RUB")
+                .ContainsProperty(_ => _.RemainderRUB);
+            builder.Group("USD")
+                .ContainsProperty(_ => _.RemainderUSD);
+            builder.Group("SEK")
+                .ContainsProperty(_ => _.RemainderSEK);
+        }
+    }
+}

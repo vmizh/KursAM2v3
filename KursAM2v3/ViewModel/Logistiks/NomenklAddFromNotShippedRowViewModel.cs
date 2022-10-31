@@ -5,6 +5,7 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using KursAM2.View.Logistiks.UC;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Logistiks
 {

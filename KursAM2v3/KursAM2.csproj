@@ -319,6 +319,8 @@
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountOfSupplierSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountForClientSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\SelectCashBankDialogViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Invoices\Base\InvoiceClientBase.cs" />
+    <Compile Include="ViewModel\Finance\Invoices\Base\InvoiceProviderBase.cs" />
     <Compile Include="ViewModel\Finance\SelectCashBankDialogView.xaml.cs">
       <DependentUpon>SelectCashBankDialogView.xaml</DependentUpon>
     </Compile>
@@ -426,6 +428,7 @@
     <Compile Include="ViewModel\StockHolder\StockHolderBalanseItem.cs" />
     <Compile Include="ViewModel\StockHolder\StockHolderReestrWindowViewModel.cs" />
     <Compile Include="ViewModel\StockHolder\StockHoldersBalancesWindowViewModel.cs" />
+    <Compile Include="ViewModel\UserMenuFavorites.cs" />
     <Compile Include="View\Base\GridControlUC.xaml.cs">
       <DependentUpon>GridControlUC.xaml</DependentUpon>
     </Compile>
@@ -2564,6 +2567,10 @@
     <ProjectReference Include="..\Helper\Helper.csproj">
       <Project>{45442b20-578b-4519-a31c-6ba5102b240f}</Project>
       <Name>Helper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KursDomain\KursDomain.csproj">
+      <Project>{2892b43c-a8f8-4939-9f88-eab3b8f7108b}</Project>
+      <Name>KursDomain</Name>
     </ProjectReference>
     <ProjectReference Include="..\KursRepositories\KursRepositories.csproj">
       <Project>{b61cb1c4-0c5d-4897-b7d4-250d3db76d0c}</Project>

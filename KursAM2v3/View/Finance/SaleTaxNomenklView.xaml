@@ -4,7 +4,7 @@
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-             xmlns:control="clr-namespace:Core.Control;assembly=Core"
+             xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
              x:Class="KursAM2.View.Finance.SaleTaxNomenklView"
              Title="Таксировка валютных продаж" Height="350" Width="525">
 

@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:menu="clr-namespace:Core.Menu;assembly=Core">
+                    xmlns:menu="clr-namespace:Core.Menu;assembly=KursDomain">
     <ControlTemplate x:Key="buttonRefreshCircle" TargetType="{x:Type Button}">
         <ContentControl ToolTip="Обновить данные">
             <Grid>

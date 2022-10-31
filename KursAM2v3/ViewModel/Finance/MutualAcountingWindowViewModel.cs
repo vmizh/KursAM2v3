@@ -23,6 +23,7 @@ using KursAM2.Managers.Invoices;
 using KursAM2.View.Finance;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain.Documents.CommonReferences.Kontragent;
 using static KursAM2.ViewModel.Finance.MutualAccountingDebitorCreditors;
 
 namespace KursAM2.ViewModel.Finance
@@ -364,6 +365,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override void RefreshData(object obj)
         {
+            var WinManager = new WindowManager();
             try
             {
                 base.RefreshData(obj);
@@ -557,6 +559,7 @@ namespace KursAM2.ViewModel.Finance
                     prnt.State = RowStatus.Edited;
                 CreditorCollection.Remove(CurrentCreditor);
                 UpdateCalcSumma(null);
+                RaisePropertyChanged(nameof(CurrencyConvertRate));
             }
         }
 
@@ -583,6 +586,7 @@ namespace KursAM2.ViewModel.Finance
                     prnt.State = RowStatus.Edited;
                 DebitorCollection.Remove(CurrentDebitor);
                 UpdateCalcSumma(null);
+                RaisePropertyChanged(nameof(CurrencyConvertRate));
             }
 
             //DebitorCollection.Remove(CurrentDebitor);
@@ -622,6 +626,7 @@ namespace KursAM2.ViewModel.Finance
                 DebitorCollection.Add(newdeb);
                 CurrentDebitor = newdeb;
                 KontragentManager.UpdateSelectCount(k.DocCode);
+                RaisePropertyChanged(nameof(CurrencyConvertRate));
             }
             catch (Exception ex)
             {
@@ -661,6 +666,7 @@ namespace KursAM2.ViewModel.Finance
             CreditorCollection.Add(newcred);
             CurrentCreditor = newcred;
             KontragentManager.UpdateSelectCount(k.DocCode);
+            RaisePropertyChanged(nameof(CurrencyConvertRate));
         }
 
         public override string SaveInfo => Manager.CheckedInfo;

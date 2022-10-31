@@ -243,7 +243,7 @@ namespace KursAM2.View.Finance.Invoices
 
             if (dtx.CurrentRow == null)
             {
-                var row = dtx.Document.Rows.FirstOrDefault(_ => _.Code == dtx.CurrentCrsConvertItem.Code);
+                var row = dtx.Document.Rows.Cast<InvoiceProviderRow>().FirstOrDefault(_ => _.Code == dtx.CurrentCrsConvertItem.Code);
                 if (row != null)
                     row.State = RowStatus.Edited;
             }

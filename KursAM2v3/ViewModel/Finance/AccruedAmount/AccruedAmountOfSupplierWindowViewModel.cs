@@ -8,9 +8,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.AccruedAmount;
-using Core.EntityViewModel.Bank;
-using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.Menu;
@@ -28,6 +25,9 @@ using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain.Documents.AccruedAmount;
+using KursDomain.Documents.Bank;
+using KursDomain.Documents.Cash;
 
 namespace KursAM2.ViewModel.Finance.AccruedAmount
 {
@@ -366,7 +366,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         {
             if (Document.State != RowStatus.NewRow)
             {
-                var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?",
+                var winManager = new WindowManager();
+                var res = winManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?",
                     "Запрос",
                     MessageBoxButton.YesNoCancel,
                     MessageBoxImage.Question);

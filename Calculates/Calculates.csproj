@@ -72,10 +72,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj">
-      <Project>{3541be94-a5b6-4e4e-8a63-dbb103acde29}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Data\Data.csproj">
       <Project>{ae6bdc42-9b1e-4f09-8923-2295b1c87212}</Project>
       <Name>Data</Name>
@@ -83,6 +79,10 @@
     <ProjectReference Include="..\Helper\Helper.csproj">
       <Project>{45442b20-578b-4519-a31c-6ba5102b240f}</Project>
       <Name>Helper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KursDomain\KursDomain.csproj">
+      <Project>{2892B43C-A8F8-4939-9F88-EAB3B8F7108B}</Project>
+      <Name>KursDomain</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

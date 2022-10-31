@@ -192,6 +192,7 @@ namespace KursAM2.ViewModel.Personal
 
         private void AddNewEmployee()
         {
+            var WinManager = new WindowManager();
             if (PayrollTypeCollection.Count == 0)
             {
                 WinManager.ShowWinUIMessageBox(

@@ -41,7 +41,6 @@ namespace Core
                     InitialCatalog = DBName,
                     UserID = User,
                     Password = Password,
-                    MultipleActiveResultSets = true,
                     ConnectTimeout = 0
                 };
             return strConn.ConnectionString;

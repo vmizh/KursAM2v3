@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel.AktSpisaniya;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.Menu;
@@ -24,6 +23,7 @@ using KursAM2.Repositories;
 using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursAM2.ViewModel.Signatures;
+using KursDomain.Documents.AktSpisaniya;
 using Newtonsoft.Json;
 
 // ReSharper disable IdentifierTypo

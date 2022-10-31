@@ -78,6 +78,10 @@
       <Project>{45442B20-578B-4519-A31C-6BA5102B240F}</Project>
       <Name>Helper</Name>
     </ProjectReference>
+    <ProjectReference Include="..\KursDomain\KursDomain.csproj">
+      <Project>{2892B43C-A8F8-4939-9F88-EAB3B8F7108B}</Project>
+      <Name>KursDomain</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

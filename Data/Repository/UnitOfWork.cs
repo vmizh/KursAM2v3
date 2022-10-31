@@ -6,7 +6,7 @@ using System.Data.Entity.Validation;
 namespace Data.Repository
 {
     public interface IUnitOfWork<out TContext>
-        where TContext : DbContext, new()
+        where TContext : DbContext
     {
         TContext Context { get; }
         void CreateTransaction();

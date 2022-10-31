@@ -3,14 +3,14 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 xmlns:control="clr-namespace:Core.Control;assembly=Core"
+                 xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
                  xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
                  xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                  xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-                 xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=Core"
-                 xmlns:nomenklManagement="clr-namespace:Core.EntityViewModel.NomenklManagement;assembly=Core"
+                 xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=KursDomain"
+                 xmlns:nomenklManagement="clr-namespace:Core.EntityViewModel.NomenklManagement;assembly=KursDomain"
                  mc:Ignorable="d"
                  Title="{Binding WindowName}" MinHeight="450" MinWidth="800">
     <dx:ThemedWindow.HeaderItems>
@@ -72,8 +72,11 @@
                              MinWidth="120" DockPanel.Dock="Right"
                                            IsEnabled="{Binding IsSenderTypeEnabled, Mode=OneWay}" 
                                            EditValue="{Binding Document.WarehouseSenderType, ValidatesOnDataErrors=True,
-                             UpdateSourceTrigger=PropertyChanged}" EditValueChanged="ComboBoxEdit_EditValueChanged">
+                             UpdateSourceTrigger=PropertyChanged}" 
+                             >
                              <dxmvvm:Interaction.Behaviors>
+                                 <dxmvvm:EventToCommand EventName="ComboBoxEdit_EditValueChanged"
+                                                        Command="{Binding KontragentTypeChangedCommand}"/>
                                  <dxmvvm:EnumItemsSourceBehavior
                                      EnumType="{x:Type nomenklManagement:WarehouseSenderType}"/>
                              </dxmvvm:Interaction.Behaviors>
@@ -83,6 +86,7 @@
                              Style="{StaticResource ButtonEditWithError}"
                              MinWidth="200"
                                          IsTextEditable="False"
+                                         Text="{Binding Document.Sender, ValidatesOnDataErrors=True, Mode=OneWay}"
                                          EditValue="{Binding Document.Sender, ValidatesOnDataErrors=True, Mode=OneWay}">
                              <dxmvvm:Interaction.Behaviors>
                                  <dxmvvm:EventToCommand EventName="DefaultButtonClick"
@@ -93,7 +97,7 @@
                          <dxe:ButtonEdit MinWidth="200"
                                          IsTextEditable="False"
                                          AllowDefaultButton="False"
-                                         EditValue="{Binding Document.Sender, ValidatesOnDataErrors=True, Mode=OneWay}">
+                                         EditValue="{Binding Schet, ValidatesOnDataErrors=True, Mode=OneWay}">
                          <dxe:ButtonEdit.Buttons>
                              <dxe:ButtonInfo GlyphKind="Regular"
                                              ToolTip = "Установить связь со счетом"

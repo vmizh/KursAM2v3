@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Invoices;
 using Core.ViewModel.Base;
@@ -14,6 +13,7 @@ using Data;
 using Helper;
 using KursAM2.Managers.Invoices;
 using KursAM2.ViewModel.Finance.Cash;
+using KursDomain.Documents.Cash;
 
 namespace KursAM2.Managers
 {

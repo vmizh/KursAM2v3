@@ -14,6 +14,7 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.View.Dogovors;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Dogovora
 {

@@ -9,9 +9,7 @@ using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;
-using DevExpress.Mvvm;
-using DevExpress.Mvvm.DataAnnotations;
+using Data.Repository;using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Finance.Invoices;
@@ -31,7 +29,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
-        private InvoiceProvider myCurrentDocument;
+        private IInvoiceProvider myCurrentDocument;
 
         public SearchInvoiceProviderViewModel()
         {
@@ -40,8 +38,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            Documents = new ObservableCollection<InvoiceProvider>();
-            SelectedDocs = new ObservableCollection<InvoiceProvider>();
+            Documents = new ObservableCollection<IInvoiceProvider>();
+            SelectedDocs = new ObservableCollection<IInvoiceProvider>();
             EndDate = DateTime.Today;
             StartDate = EndDate.AddDays(-30);
         }
@@ -54,8 +52,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Form = form;
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            Documents = new ObservableCollection<InvoiceProvider>();
-            SelectedDocs = new ObservableCollection<InvoiceProvider>();
+            Documents = new ObservableCollection<IInvoiceProvider>();
+            SelectedDocs = new ObservableCollection<IInvoiceProvider>();
             EndDate = DateTime.Today;
             StartDate = EndDate.AddDays(-30);
             //LoadLayout();
@@ -64,21 +62,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override string WindowName => "Поиск счетов-фактур поставщиков";
 
         // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<InvoiceProvider> Documents { set; get; }
+        public ObservableCollection<IInvoiceProvider> Documents { set; get; }
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public ObservableCollection<InvoiceProvider> SelectedDocs { set; get; }
+        public ObservableCollection<IInvoiceProvider> SelectedDocs { set; get; }
 
         public override string LayoutName => "SearchInvoiceProviderViewModel";
 
-        public InvoiceProvider CurrentDocument
+        public IInvoiceProvider CurrentDocument
         {
             get => myCurrentDocument;
             set
             {
                 // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (myCurrentDocument == value) return;
-                myCurrentDocument = value;
+                myCurrentDocument = (IInvoiceProvider)value;
                 if (myCurrentDocument != null)
                 {
                     IsDocumentOpenAllow = true;
@@ -94,7 +92,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private Task Load()
         {
             var res = Task.Factory.StartNew(() =>
-                new List<InvoiceProvider>(InvoiceProviderRepository.GetAllByDates(StartDate, EndDate)));
+                new List<IInvoiceProvider>(InvoiceProviderRepository.GetAllByDates(StartDate, EndDate)));
             Documents.Clear();
             foreach (var d in res.Result) Documents.Add(d);
             RaisePropertyChanged(nameof(Documents));
@@ -104,13 +102,18 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override async void RefreshData(object data)
         {
-            SplashScreenService.ShowSplashScreen();
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
+            //SplashScreenService.ShowSplashScreen();
+            //while (!MainReferences.IsReferenceLoadComplete)
+            //{
+            //}
 
-            base.RefreshData(null);
-            await Load();
+            //base.RefreshData(null);
+            //await Load();
+            Documents.Clear();
+            foreach (var d in InvoiceProviderRepository.GetAllByDates(StartDate, EndDate))
+                //foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
+                //    false, null, SearchText))
+                Documents.Add(d);
         }
 
         public override void DocumentOpen(object obj)

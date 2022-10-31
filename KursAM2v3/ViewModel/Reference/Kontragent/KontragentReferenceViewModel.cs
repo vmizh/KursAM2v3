@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
-using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Data;
+using KursDomain.Documents.Bank;
 
 namespace KursAM2.ViewModel.Reference.Kontragent
 {
-    public sealed class KontragentReferenceViewModel : Core.EntityViewModel.CommonReferences.Kontragent.Kontragent
+    public sealed class KontragentReferenceViewModel : KursDomain.Documents.CommonReferences.Kontragent.Kontragent
     {
         private ObservableCollection<BankAccount> myBankCollection;
         private ObservableCollection<KontragentGruzoRequisite> myGruzoRequisities;

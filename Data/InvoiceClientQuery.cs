@@ -42,7 +42,7 @@ namespace Data
         public Nullable<decimal> Summa { get; set; }
         public string CREATOR { get; set; }
         public Nullable<bool> IsNDSIncludeInPrice { get; set; }
-        public decimal PaySumma { get; set; }
+        public Nullable<decimal> PaySumma { get; set; }
         public int RowCode { get; set; }
         public System.Guid Row2d { get; set; }
         public System.Guid DocId { get; set; }

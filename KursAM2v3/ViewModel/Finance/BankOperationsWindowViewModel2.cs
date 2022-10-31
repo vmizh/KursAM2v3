@@ -7,7 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
@@ -19,6 +18,7 @@ using KursAM2.View.Finance;
 using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Finance.AccruedAmount;
+using KursDomain.Documents.Bank;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -264,7 +264,8 @@ namespace KursAM2.ViewModel.Finance
 
         public override void DocDelete(object obj)
         {
-            var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить транзакцию?", "Запрос",
+            var winManager = new WindowManager();
+            var res = winManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить транзакцию?", "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             if (res != MessageBoxResult.Yes) return;

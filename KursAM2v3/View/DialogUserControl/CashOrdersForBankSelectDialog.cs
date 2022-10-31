@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
-using Core.EntityViewModel.Bank;
-using Core.EntityViewModel.Cash;
 using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
+using KursDomain.Documents.Bank;
+using KursDomain.Documents.Cash;
 
 namespace KursAM2.View.DialogUserControl
 {

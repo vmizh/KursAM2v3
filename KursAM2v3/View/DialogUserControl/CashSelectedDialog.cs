@@ -2,9 +2,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Cash;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
+using KursDomain.Documents.Cash;
 
 namespace KursAM2.View.DialogUserControl
 {

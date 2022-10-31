@@ -16,6 +16,7 @@ using Core.WindowsManager;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
 using KursAM2.Managers.Nomenkl;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.View.Logistiks.UC
 {

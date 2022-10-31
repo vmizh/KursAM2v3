@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using Core.EntityViewModel.Invoices;
 using Data;
 using Data.Repository;
+using KursAM2.ViewModel.Finance.Invoices.Base;
 
 namespace KursAM2.Repositories.InvoicesRepositories
 {
@@ -16,7 +18,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
         InvoiceClient GetFullCopy(decimal dc);
         InvoiceClient GetRequisiteCopy(decimal dc);
         void Delete(SD_84 entity);
-        List<InvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd);
+        List<IInvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd);
     }
 
     public class InvoiceClientRepository : GenericKursDBRepository<InvoiceClient>, IInvoiceClientRepository
@@ -38,7 +40,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
         {
             DetachObjects();
             return new InvoiceClient(Context.SD_84
-                .FirstOrDefault(_ => _.DOC_CODE == dc), new UnitOfWork<ALFAMEDIAEntities>());
+                .FirstOrDefault(_ => _.DOC_CODE == dc), new UnitOfWork<ALFAMEDIAEntities>(),true);
         }
 
         public InvoiceClient GetFullCopy(InvoiceClient doc)
@@ -66,16 +68,15 @@ namespace KursAM2.Repositories.InvoicesRepositories
             throw new NotImplementedException();
         }
 
-        public List<InvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd)
+        public List<IInvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd)
         {
-            DetachObjects();
-            var ret = new List<InvoiceClient>();
-            var data = Context.SD_84
-                .Where(_ => _.SF_DATE >= dateStart && _.SF_DATE <= dateEnd)
-                .OrderByDescending(_ => _.SF_DATE).ToList();
-            foreach (var d in data)
-                ret.Add(new InvoiceClient(d, new UnitOfWork<ALFAMEDIAEntities>()));
-            return ret;
+            //var data = Context.SD_84
+            //    .Where(_ => _.SF_DATE >= dateStart && _.SF_DATE <= dateEnd)
+            //    .OrderByDescending(_ => _.SF_DATE).ToList();
+            var data = Context.InvoiceClientQuery.Where(_ => _.DocDate >= dateStart && _.DocDate <= dateEnd)
+                .OrderByDescending(_ => _.DocDate).ToList();
+            return data.Select(_ => _.DocCode).Distinct()
+                .Select(dc => new InvoiceClientBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceClient>().ToList();
         }
     }
 }

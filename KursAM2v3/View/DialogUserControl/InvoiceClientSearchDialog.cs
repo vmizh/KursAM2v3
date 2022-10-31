@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
+using Core;
 using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.NomenklManagement;
 using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using Data;
 using Data.Repository;
 using JetBrains.Annotations;
 using KursAM2.Managers.Invoices;
@@ -55,8 +56,9 @@ namespace KursAM2.View.DialogUserControl
             RefreshData(waybill);
         }
 
-        public ObservableCollection<InvoiceClient> ItemsCollection { set; get; } =
-            new ObservableCollection<InvoiceClient>();
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<IInvoiceClient> ItemsCollection { set; get; } =
+            new ObservableCollection<IInvoiceClient>();
 
         public InvoiceClient CurrentItem
         {
@@ -138,8 +140,9 @@ namespace KursAM2.View.DialogUserControl
 
     public sealed class InvoiceProviderSearchDialog : RSWindowViewModelBase, IDataUserControl
     {
-        public ObservableCollection<InvoiceProvider> ItemsCollection { set; get; } =
-            new ObservableCollection<InvoiceProvider>();
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<IInvoiceProvider> ItemsCollection { set; get; } =
+            new ObservableCollection<IInvoiceProvider>();
 
         public InvoiceProvider CurrentItem
         {
@@ -188,8 +191,7 @@ namespace KursAM2.View.DialogUserControl
         private InvoiceProvider myCurrentItem;
         private StandartDialogSelectUC myDataUserControl;
 
-        private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork = new UnitOfWork<ALFAMEDIAEntities>();
-        // ReSharper disable once NotAccessedField.Local
+        
 #pragma warning disable 169
         private readonly GenericKursDBRepository<InvoiceProvider> baseRepository;
 #pragma warning restore 169
@@ -287,8 +289,8 @@ namespace KursAM2.View.DialogUserControl
         private readonly bool isAccepted;
         private readonly bool isUsePayment;
         private readonly decimal kontragentDC;
-        private InvoiceClient myCurrentClientItem;
-        private InvoiceProvider myCurrentProviderItem;
+        private IInvoiceClient myCurrentClientItem;
+        private IInvoiceProvider myCurrentProviderItem;
         private AllInvocesDialogSelectUC myDataUserControl;
 
         public InvoiceAllSearchDialog(bool isUsePayment, bool isUseAcepted)
@@ -323,10 +325,11 @@ namespace KursAM2.View.DialogUserControl
             }
         }
 
-        public ObservableCollection<InvoiceClient> ClientItemsCollection { set; get; } =
-            new ObservableCollection<InvoiceClient>();
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<IInvoiceClient> ClientItemsCollection { set; get; } =
+            new ObservableCollection<IInvoiceClient>();
 
-        public InvoiceClient CurrentClientItem
+        public IInvoiceClient CurrentClientItem
         {
             get => myCurrentClientItem;
             set
@@ -339,10 +342,11 @@ namespace KursAM2.View.DialogUserControl
             }
         }
 
-        public ObservableCollection<InvoiceProvider> ProviderItemsCollection { set; get; } =
-            new ObservableCollection<InvoiceProvider>();
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<IInvoiceProvider> ProviderItemsCollection { set; get; } =
+            new ObservableCollection<IInvoiceProvider>();
 
-        public InvoiceProvider CurrentProviderItem
+        public IInvoiceProvider CurrentProviderItem
         {
             get => myCurrentProviderItem;
             set
@@ -392,19 +396,33 @@ namespace KursAM2.View.DialogUserControl
                         kontragentDC, isAccepted))
                         ProviderItemsCollection.Add(d);
                 else
-                    foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
-                        true,
-                        SearchText, isAccepted))
-                        ProviderItemsCollection.Add(d);
+                {
+                    var providerRepository = new InvoiceProviderRepository(GlobalOptions.GetEntities());
+                    foreach (var inv in providerRepository.GetAllByDates(new DateTime(2000, 1, 1), DateTime.Today)
+                                 .Where(inv => !isUsePayment || inv.Summa != inv.PaySumma)
+                                 .Where(inv => !isAccepted || inv.IsAccepted))
+                    {
+                        ProviderItemsCollection.Add(inv);
+                    }
+                }
+                   
+
+               
                 ClientItemsCollection.Clear();
                 if (kontragentDC > 0)
                     foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000, 1, 1), DateTime.Today,
                         isUsePayment, kontragentDC, isAccepted))
                         ClientItemsCollection.Add(d);
                 else
-                    foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000, 1, 1), DateTime.Today,
-                        isUsePayment,null, SearchText, isAccepted))
-                        ClientItemsCollection.Add(d);
+                {
+                    var clientRepository = new InvoiceClientRepository(GlobalOptions.GetEntities());
+                    foreach (var inv in clientRepository.GetAllByDates(new DateTime(2000, 1, 1), DateTime.Today)
+                                 .Where(inv => !isUsePayment || inv.Summa != inv.PaySumma)
+                                 .Where(inv => !isAccepted || inv.IsAccepted))
+                    {
+                        ClientItemsCollection.Add(inv);
+                    }
+                }
             }
             catch (Exception ex)
             {

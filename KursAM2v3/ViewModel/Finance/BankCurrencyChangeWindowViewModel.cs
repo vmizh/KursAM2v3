@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Bank;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
 using KursAM2.View.Finance;
+using KursDomain.Documents.Bank;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -113,7 +113,8 @@ namespace KursAM2.ViewModel.Finance
                 Document = manager.LoadBankCurrencyChange(Id);
                 if (Document == null)
                 {
-                    WinManager.ShowWinUIMessageBox($"Не найден документ с кодом {Id}!",
+                    var winManager = new WindowManager();
+                    winManager.ShowWinUIMessageBox($"Не найден документ с кодом {Id}!",
                         "Ошибка обращения к базе данных", MessageBoxButton.OK, MessageBoxImage.Error,
                         MessageBoxResult.None, MessageBoxOptions.None);
                     return;

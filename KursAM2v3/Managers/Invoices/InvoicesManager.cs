@@ -226,7 +226,7 @@ namespace KursAM2.Managers.Invoices
                 myState = RowStatus.NotEdited
             };
             // foreach (var p in pDocs) doc.PaymentDocs.Add(p);
-            foreach (var row in doc.Rows)
+            foreach (var row in doc.Rows.Cast<InvoiceProviderRow>())
             {
                 row.Parent = doc;
                 row.myState = RowStatus.NotEdited;
@@ -254,7 +254,7 @@ namespace KursAM2.Managers.Invoices
                 Currency = GlobalOptions.SystemProfile.MainCurrency,
                 SF_POSTAV_NUM = null,
                 myState = RowStatus.NewRow,
-                Rows = new ObservableCollection<InvoiceProviderRow>()
+                Rows = new ObservableCollection<IInvoiceProviderRow>()
             };
             return ret;
         }
@@ -271,7 +271,7 @@ namespace KursAM2.Managers.Invoices
                 myState = RowStatus.NewRow
             };
             var code = 1;
-            foreach (var row in ret.Rows)
+            foreach (var row in ret.Rows.Cast<InvoiceProviderRow>())
             {
                 row.DocCode = -1;
                 row.Code = code;
@@ -299,7 +299,7 @@ namespace KursAM2.Managers.Invoices
             newCopy.Facts.Clear();
             newCopy.IsAccepted = false;
             var code = 1;
-            foreach (var row in newCopy.Rows)
+            foreach (var row in newCopy.Rows.Cast<InvoiceProviderRow>())
             {
                 row.DocCode = -1;
                 row.Code = code;
@@ -420,7 +420,7 @@ namespace KursAM2.Managers.Invoices
                             if (doc.Rows.Count > 0)
                             {
                                 var code = 1;
-                                foreach (var items in doc.Rows)
+                                foreach (var items in doc.Rows.Cast<InvoiceProviderRow>())
                                 {
                                     ctx.TD_26.Add(new TD_26
                                     {
@@ -519,7 +519,7 @@ namespace KursAM2.Managers.Invoices
                             old.SF_AUTO_CREATE = doc.SF_AUTO_CREATE;
                             old.PersonalResponsibleDC = doc.PersonaResponsible?.DocCode;
                             old.IsInvoiceNakald = doc.IsInvoiceNakald;
-                            foreach (var r in doc.Rows)
+                            foreach (var r in doc.Rows.Cast<InvoiceProviderRow>())
                             {
                                 var oldRow = ctx.TD_26.FirstOrDefault(_ =>
                                     _.DOC_CODE == r.DocCode && _.CODE == r.Code);
@@ -660,7 +660,7 @@ namespace KursAM2.Managers.Invoices
                         ctx.SaveChanges();
                         transaction.Commit();
                         RecalcKontragentBalans.CalcBalans(doc.Entity.SF_POST_DC, doc.DocDate);
-                        foreach (var r in doc.Rows)
+                        foreach (var r in doc.Rows.Cast<InvoiceProviderRow>())
                         {
                             r.myState = RowStatus.NotEdited;
                             r.RaisePropertyChanged("State");
@@ -669,7 +669,7 @@ namespace KursAM2.Managers.Invoices
                         doc.myState = RowStatus.NotEdited;
                         doc.RaisePropertyChanged("State");
                         doc.DeletedRows.Clear();
-                        foreach (var r in doc.Rows)
+                        foreach (var r in doc.Rows.Cast<InvoiceProviderRow>())
                         {
                             var sql = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
                                       $" VALUES({CustomFormat.DecimalToSqlDecimal(r.Entity.SFT_NEMENKL_DC)},'20000101')";
@@ -728,7 +728,7 @@ namespace KursAM2.Managers.Invoices
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
                 RecalcKontragentBalans.CalcBalans(doc.Entity.SF_POST_DC, doc.DocDate);
-                foreach (var r in doc.Rows)
+                foreach (var r in doc.Rows.Cast<InvoiceProviderRow>())
                 {
                     r.myState = RowStatus.NotEdited;
                     r.RaisePropertyChanged("State");
@@ -737,7 +737,7 @@ namespace KursAM2.Managers.Invoices
                 doc.myState = RowStatus.NotEdited;
                 doc.RaisePropertyChanged("State");
                 doc.DeletedRows.Clear();
-                foreach (var r in doc.Rows)
+                foreach (var r in doc.Rows.Cast<InvoiceProviderRow>())
                 {
                     var sql = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
                               $" VALUES({CustomFormat.DecimalToSqlDecimal(r.Entity.SFT_NEMENKL_DC)},'20000101')";
@@ -1139,10 +1139,10 @@ namespace KursAM2.Managers.Invoices
             return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
-        public static List<InvoiceProvider> GetInvoicesProvider(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
+        public static List<IInvoiceProvider> GetInvoicesProvider(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
             decimal kontragentDC, bool isAccepted = false)
         {
-            var ret = new List<InvoiceProvider>();
+            var ret = new List<IInvoiceProvider>();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -1184,15 +1184,6 @@ namespace KursAM2.Managers.Invoices
                                 on sd26.DOC_CODE equals td26.DOC_CODE
                             //where 
                             select sd26).ToList();
-                    //var sql =
-                    //    "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_PRIHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
-                    //    "FROM sd_26 s26 " +
-                    //    "LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DOC_CODE " +
-                    //    "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_POSTAV_DC = s26.DOC_CODE " +
-                    //    "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SPOST_DC = s26.DOC_CODE " +
-                    //    $"WHERE s26.SF_POSTAV_DATE >= '{CustomFormat.DateToString(dateStart)}' AND s26.SF_POSTAV_DATE <= '{CustomFormat.DateToString(dateEnd)}'" +
-                    //    "GROUP BY s26.doc_code, s26.SF_CRS_SUMMA ";
-                    //var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
@@ -1300,7 +1291,7 @@ namespace KursAM2.Managers.Invoices
                 }
 
                 document = new InvoiceClient(data);
-                foreach (var item in document.Rows)
+                foreach (var item in document.Rows.Cast<InvoiceClientRow>())
                 {
                     var r = GlobalOptions.GetEntities()
                         .TD_24.Where(_ => _.DDT_SFACT_DC == item.DocCode &&
@@ -1316,7 +1307,7 @@ namespace KursAM2.Managers.Invoices
                 //document.REGISTER_DATE = DateTime.Today;
                 document.DeletedRows = new List<InvoiceClientRow>();
                 foreach (var p in pDocs) document.PaymentDocs.Add(p);
-                foreach (var r in document.Rows) r.myState = RowStatus.NotEdited;
+                foreach (var r in document.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NotEdited;
                 document.myState = RowStatus.NotEdited;
             }
             catch (Exception ex)
@@ -1340,7 +1331,7 @@ namespace KursAM2.Managers.Invoices
                 OuterNumber = null,
                 myState = RowStatus.NewRow,
                 IsAccepted = false,
-                Rows = new ObservableCollection<InvoiceClientRow>()
+                Rows = new ObservableCollection<IInvoiceClientRow>()
             };
             return ret;
         }
@@ -1377,7 +1368,7 @@ namespace KursAM2.Managers.Invoices
                 };
                 //Currency = GlobalOptions.SystemProfile.NationalCurrency,
                 var newCode = 1;
-                foreach (var item in document.Rows)
+                foreach (var item in document.Rows.Cast<InvoiceClientRow>())
                 {
                     item.DocCode = -1;
                     item.DocCode = newCode;
@@ -1402,7 +1393,7 @@ namespace KursAM2.Managers.Invoices
                 }
 
                 document.DeletedRows = new List<InvoiceClientRow>();
-                foreach (var r in document.Rows) r.myState = RowStatus.NewRow;
+                foreach (var r in document.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NewRow;
                 document.PaymentDocs.Clear();
                 document.ShipmentRows.Clear();
             }
@@ -1440,7 +1431,7 @@ namespace KursAM2.Managers.Invoices
             };
             //Currency = GlobalOptions.SystemProfile.NationalCurrency,
             var newCode = 1;
-            foreach (var item in document.Rows)
+            foreach (var item in document.Rows.Cast<InvoiceClientRow>())
             {
                 item.DocCode = -1;
                 item.DocCode = newCode;
@@ -1465,7 +1456,7 @@ namespace KursAM2.Managers.Invoices
             }
 
             document.DeletedRows = new List<InvoiceClientRow>();
-            foreach (var r in document.Rows) r.myState = RowStatus.NewRow;
+            foreach (var r in document.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NewRow;
             document.PaymentDocs.Clear();
             document.ShipmentRows.Clear();
             return document;
@@ -1501,7 +1492,7 @@ namespace KursAM2.Managers.Invoices
                     myState = RowStatus.NewRow
                 };
                 var code = 1;
-                foreach (var row in ret.Rows)
+                foreach (var row in ret.Rows.Cast<InvoiceClientRow>())
                 {
                     row.DocCode = -1;
                     row.Code = code;
@@ -1698,7 +1689,7 @@ namespace KursAM2.Managers.Invoices
                     foreach (var d in data.OrderByDescending(_ => _.SF_DATE))
                     {
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
-                        var newDoc = new InvoiceClient(d, context)
+                        var newDoc = new InvoiceClient(d, context,true)
                         {
                             State = RowStatus.NotEdited
                         };
@@ -1966,7 +1957,7 @@ namespace KursAM2.Managers.Invoices
                             if (doc.Rows.Count > 0)
                             {
                                 var code = 1;
-                                foreach (var items in doc.Rows)
+                                foreach (var items in doc.Rows.Cast<InvoiceClientRow>())
                                 {
                                     ctx.TD_84.Add(new TD_84
                                     {
@@ -2051,7 +2042,7 @@ namespace KursAM2.Managers.Invoices
                             if (doc.Rows.Count > 0)
                             {
                                 var code = doc.Rows.Count > 0 ? doc.Rows.Max(_ => _.Code) : 0;
-                                foreach (var items in doc.Rows)
+                                foreach (var items in doc.Rows.Cast<InvoiceClientRow>())
                                 {
                                     // ReSharper disable once PossibleNullReferenceException
                                     var docGuid = ctx.SD_84.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode).Id;
@@ -2145,9 +2136,9 @@ namespace KursAM2.Managers.Invoices
 
                         ctx.SaveChanges();
                         dtx.Commit();
-                        foreach (var r in doc.Rows) r.myState = RowStatus.NotEdited;
+                        foreach (var r in doc.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NotEdited;
                         doc.myState = RowStatus.NotEdited;
-                        foreach (var r in doc.Rows)
+                        foreach (var r in doc.Rows.Cast<InvoiceClientRow>())
                         {
                             var sql = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
                                       $" VALUES({CustomFormat.DecimalToSqlDecimal(r.Entity.SFT_NEMENKL_DC)},'20000101')";

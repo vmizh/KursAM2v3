@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using Core.EntityViewModel.Bank;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
+using KursDomain.Documents.Bank;
 using LayoutManager;
 
 namespace KursAM2.View.Finance

@@ -107,7 +107,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
             var saveDoc = new InvoiceProvider(saveEntity,UnitOfWork, false);
             Assert.AreNotEqual(saveEntity, null, "Не загружается новый счет-фктура поставщика");
             Assert.AreEqual(saveDoc.Rows.Count, 1, "Строка не сохранилась");
-            var row = saveDoc.Rows.First();
+            var row = saveDoc.Rows.Cast<InvoiceProviderRow>().First();
             var newCrsItem = new InvoiceProviderRowCurrencyConvertViewModel
             {
                 Id = Guid.NewGuid(),
@@ -259,7 +259,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
             doc.SF_POSTAV_NUM = "copy";
             doc.Id = newId;
             var i = 1;
-            foreach (var r in doc.Rows)
+            foreach (var r in doc.Rows.Cast<InvoiceProviderRow>())
             {
                 genericProviderRepository.Context.Entry(r.Entity).State = EntityState.Added;
                 r.DocCode = -1;

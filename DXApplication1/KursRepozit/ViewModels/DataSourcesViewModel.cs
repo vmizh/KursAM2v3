@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Core.Logger;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
@@ -14,6 +12,7 @@ using KursRepozit.Views;
 
 namespace KursRepozit.ViewModels
 {
+
     public class DataSourcesViewModel : KursBaseControlViewModel, IDocumentOperation
     {
         #region Constructors
@@ -103,8 +102,8 @@ namespace KursRepozit.ViewModels
 
             catch (Exception ex)
             {
-                WindowManager.ShowError(ex);
-                LoggerHelper.WriteError(ex);
+               // WindowManager.ShowError(ex);
+               // LoggerHelper.WriteError(ex);
                 unitOfWork.Rollback();
             }
         }

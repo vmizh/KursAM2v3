@@ -5,7 +5,7 @@
                  xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
                  xmlns:internal="http://schemas.devexpress.com/winfx/2008/xaml/windowsui/internal"
                  xmlns:dxnav="http://schemas.devexpress.com/winfx/2008/xaml/navigation"
-                 xmlns:control="clr-namespace:Core.Control;assembly=Core"
+                 xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
                  xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
                  MinWidth="1000"
                  MinHeight="600"

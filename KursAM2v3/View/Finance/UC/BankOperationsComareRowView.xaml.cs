@@ -4,8 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Bank;
-using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Invoices;
 using Core.Invoices.EntityViewModel;
@@ -16,6 +14,8 @@ using DevExpress.Xpf.Editors;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.controls;
+using KursDomain.Documents.Bank;
+using KursDomain.Documents.Cash;
 
 namespace KursAM2.View.Finance.UC
 {

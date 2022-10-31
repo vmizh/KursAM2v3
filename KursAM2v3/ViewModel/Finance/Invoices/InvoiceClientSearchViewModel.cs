@@ -33,13 +33,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
-        private InvoiceClient myCurrentDocument;
+        private IInvoiceClient myCurrentDocument;
         
 
         public InvoiceClientSearchViewModel()
         {
             WindowName = "Счета фактуры для клиентов";
-            Documents = new ObservableCollection<InvoiceClient>();
+            Documents = new ObservableCollection<IInvoiceClient>();
         }
 
         public InvoiceClientSearchViewModel(Window form) : base(form)
@@ -47,7 +47,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             GenericProviderRepository = new GenericKursDBRepository<SD_84>(UnitOfWork);
             InvoiceClientRepository = new InvoiceClientRepository(UnitOfWork);
             WindowName = "Счета фактуры для клиентов";
-            Documents = new ObservableCollection<InvoiceClient>();
+            Documents = new ObservableCollection<IInvoiceClient>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             EndDate = DateTime.Today;
@@ -100,7 +100,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             GenericProviderRepository = new GenericKursDBRepository<SD_84>(UnitOfWork);
             InvoiceClientRepository = new InvoiceClientRepository(UnitOfWork);
             WindowName = "Счета фактуры для клиентов";
-            Documents = new ObservableCollection<InvoiceClient>();
+            Documents = new ObservableCollection<IInvoiceClient>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             EndDate = DateTime.Today;
@@ -152,7 +152,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override string LayoutName => "InvoiceClientSearchViewModel";
 
-        public InvoiceClient CurrentDocument
+        public IInvoiceClient CurrentDocument
         {
             get => myCurrentDocument;
             set
@@ -172,7 +172,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         }
 
         // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<InvoiceClient> Documents { set; get; }
+        public ObservableCollection<IInvoiceClient> Documents { set; get; }
 
         public Command ExportSFCommand
         {
@@ -268,6 +268,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             newItem.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
                             newItem.SF_DILER_SUMMA.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
                             newItem.CO.Name.ToUpper().Contains(SearchText.ToUpper()) ||
+                            // ReSharper disable once SpecifyACultureInStringConversionExplicitly
                             newItem.Summa.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
                             d.ToUpper().Contains(SearchText.ToUpper()))
                             Documents.Add(newItem);
@@ -293,9 +294,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override async void RefreshData(object data)
         {
-            SplashScreenService.ShowSplashScreen();
-            await Load();
+            Documents.Clear();
+            foreach (var d in InvoiceClientRepository.GetAllByDates(StartDate, EndDate))
+                //foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
+                //    false, null, SearchText))
+                Documents.Add(d);
         }
+        //SplashScreenService.ShowSplashScreen();
+            //await Load();
+        
 
         private Task Load()
         {
@@ -303,16 +310,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Documents.Clear();
             foreach (var d in res.Result)
             {
-                d.RaisePropertyAllChanged();
                 Documents.Add(d);
             }
 
             return res;
         }
 
-        private List<InvoiceClient> LoadCore()
+        private List<IInvoiceClient> LoadCore()
         {
-            var ret = new List<InvoiceClient>();
+            var ret = new List<IInvoiceClient>();
             //base.RefreshData(null);
             IsDocumentOpenAllow = false;
             IsDocNewCopyAllow = false;

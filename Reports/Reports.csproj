@@ -76,6 +76,10 @@
       <Project>{3541be94-a5b6-4e4e-8a63-dbb103acde29}</Project>
       <Name>Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\KursDomain\KursDomain.csproj">
+      <Project>{2892B43C-A8F8-4939-9F88-EAB3B8F7108B}</Project>
+      <Name>KursDomain</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Base\ExportView.xaml">

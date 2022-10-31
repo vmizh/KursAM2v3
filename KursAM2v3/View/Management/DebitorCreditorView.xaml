@@ -7,7 +7,7 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:splashWindow="clr-namespace:KursAM2.View.SplashWindow"
-    xmlns:control="clr-namespace:Core.Control;assembly=Core"
+    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
     x:Class="KursAM2.View.Management.DebitorCreditorView"
     Title="Дебиторы / кредиторы" Height="650" Width="925"
     >

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Employee;
@@ -21,6 +20,8 @@ using KursAM2.View.Base;
 using KursAM2.View.KursReferences;
 using KursAM2.View.KursReferences.KontragentControls;
 using KursAM2.ViewModel.Reference.Dialogs;
+using KursDomain.Documents.Bank;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Reference.Kontragent
 {
@@ -81,7 +82,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         public ObservableCollection<KontragentCategory> Categories { set; get; }
             = new ObservableCollection<KontragentCategory>();
 
-        public Core.EntityViewModel.CommonReferences.Kontragent.Kontragent Kontragent { set; get; }
+        public KursDomain.Documents.CommonReferences.Kontragent.Kontragent Kontragent { set; get; }
         public List<Employee> Employees => MainReferences.Employees.Values.ToList();
 
         public ObservableCollection<KontragentBank> BankAndAccounts { set; get; } =
@@ -367,7 +368,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 .Include(_ => _.SD_301)
                 .Include(_ => _.SD_148)
                 .SingleOrDefault(_ => _.DOC_CODE == GetDocCode);
-            Kontragent = new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent(kontr);
+            Kontragent = new KursDomain.Documents.CommonReferences.Kontragent.Kontragent(kontr);
             RaisePropertyChanged(nameof(Kontragent));
             RaisePropertyChanged(nameof(Categories));
             RaisePropertyChanged(nameof(Regions));
@@ -421,7 +422,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 .Include(_ => _.SD_301)
                 .Include(_ => _.SD_148)
                 .SingleOrDefault(_ => _.DOC_CODE == (decimal)data);
-            var copy = new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent(kontr);
+            var copy = new KursDomain.Documents.CommonReferences.Kontragent.Kontragent(kontr);
             using (var ctx = GlobalOptions.GetEntities())
             {
                 try
@@ -442,7 +443,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         private void NewData(int? groupId)
         {
-            Kontragent = new Core.EntityViewModel.CommonReferences.Kontragent.Kontragent
+            Kontragent = new KursDomain.Documents.CommonReferences.Kontragent.Kontragent
             {
                 Id = Guid.NewGuid(),
                 Group = groupId != null ? new KontragentGroup { EG_ID = groupId.Value } : null
@@ -475,6 +476,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         public override void SaveData(object data)
         {
+            var WinManager = new WindowManager();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 try

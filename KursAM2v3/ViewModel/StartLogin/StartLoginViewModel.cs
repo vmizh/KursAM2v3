@@ -27,6 +27,7 @@ using Helper;
 using KursAM2.Managers;
 using KursAM2.Properties;
 using KursAM2.ViewModel.Splash;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.StartLogin
 {
@@ -335,6 +336,7 @@ namespace KursAM2.ViewModel.StartLogin
 
         private bool CheckAndSetUser(out User newUser)
         {
+            var WinManager = new WindowManager();
             try
             {
                 using (var kursSystemCtx = GlobalOptions.KursSystem())

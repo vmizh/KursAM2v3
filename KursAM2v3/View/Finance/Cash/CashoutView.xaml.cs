@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using Core;
-using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -17,6 +16,7 @@ using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.Cash;
+using KursDomain.Documents.Cash;
 using LayoutManager;
 
 namespace KursAM2.View.Finance.Cash
@@ -435,7 +435,7 @@ namespace KursAM2.View.Finance.Cash
                     CurrencyItem.IsEnabled = false;
                     break;
                 case CashKontragentType.Cash:
-                    var ch = StandartDialogs.SelectCash(new List<Core.EntityViewModel.Cash.Cash> { ctx.Document.Cash });
+                    var ch = StandartDialogs.SelectCash(new List<KursDomain.Documents.Cash.Cash> { ctx.Document.Cash });
                     if (ch != null) ctx.Document.CashTo = ch;
                     ctx.Document.KONTRAGENT_DC = null;
                     ctx.Document.BankAccount = null;

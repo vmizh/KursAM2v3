@@ -2,8 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.Bank;
-using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.EntityViewModel.Employee;
@@ -14,6 +12,8 @@ using Core.EntityViewModel.StockHolder;
 using Core.EntityViewModel.Systems;
 using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
+using Data;
+using Data.Repository;
 using DevExpress.Mvvm;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
@@ -27,6 +27,9 @@ using KursAM2.ViewModel.Management.Projects;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.Reference.Dialogs;
 using KursAM2.ViewModel.StockHolder;
+using KursDomain.Documents.Bank;
+using KursDomain.Documents.Cash;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.Dialogs
 {
@@ -435,7 +438,27 @@ namespace KursAM2.Dialogs
             var dlg = new SelectDialogView { DataContext = ctx };
             ctx.Form = dlg;
             dlg.ShowDialog();
-            return !ctx.DialogResult ? null : (RSViewModelBase)ctx.CurrentClientItem ?? ctx.CurrentProviderItem;
+            if (ctx.DialogResult)
+            {
+                using (var dbctx = GlobalOptions.GetEntities())
+                {
+                    if (ctx.CurrentClientItem != null)
+                    {
+
+                        var doc = new InvoiceClient(dbctx.SD_84.First(_ =>
+                            _.DOC_CODE == ctx.CurrentClientItem.DocCode));
+                        return doc;
+                    }
+                    if (ctx.CurrentProviderItem != null)
+                    {
+                       var d = dbctx.SD_26.First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode);
+                        var doc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>(dbctx));
+                        return doc;
+                    }
+                    return null;
+                }
+            }
+            return null;
         }
 
         public static RSViewModelBase SelectAllInvoiceClient(bool isUsePayment, bool isUseAccepted)
@@ -444,7 +467,27 @@ namespace KursAM2.Dialogs
             var dlg = new SelectDialogView { DataContext = ctx };
             ctx.Form = dlg;
             dlg.ShowDialog();
-            return !ctx.DialogResult ? null : (RSViewModelBase)ctx.CurrentClientItem ?? ctx.CurrentProviderItem;
+            if (ctx.DialogResult)
+            {
+                using (var dbctx = GlobalOptions.GetEntities())
+                {
+                    if (ctx.CurrentClientItem != null)
+                    {
+
+                        var doc = new InvoiceClient(dbctx.SD_84.First(_ =>
+                            _.DOC_CODE == ctx.CurrentClientItem.DocCode));
+                        return doc;
+                    }
+                    if (ctx.CurrentProviderItem != null)
+                    {
+                        var d = dbctx.SD_26.First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode);
+                        var doc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>(dbctx));
+                        return doc;
+                    }
+                    return null;
+                }
+            }
+            return null;
         }
 
         public static List<Nomenkl> SelectNomenklsDialog()

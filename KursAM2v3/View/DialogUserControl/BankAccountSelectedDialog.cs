@@ -5,13 +5,13 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Dialogs;
+using KursDomain.Documents.Bank;
 
 namespace KursAM2.View.DialogUserControl
 {

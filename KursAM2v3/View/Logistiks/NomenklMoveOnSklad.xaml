@@ -3,7 +3,7 @@
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-                 xmlns:control="clr-namespace:Core.Control;assembly=Core"
+                 xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                  Title="Движение товаров на складах" Height="350" Width="600"

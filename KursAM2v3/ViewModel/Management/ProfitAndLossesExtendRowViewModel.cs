@@ -8,6 +8,7 @@ using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
 using FinanceAnalitic;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Management
 {

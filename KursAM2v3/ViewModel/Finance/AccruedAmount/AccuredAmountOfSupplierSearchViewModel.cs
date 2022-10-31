@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.AccruedAmount;
 using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
@@ -12,6 +11,7 @@ using Data.Repository;
 using KursAM2.Managers;
 using KursAM2.Repositories.AccruedAmount;
 using KursAM2.View.Finance.AccruedAmount;
+using KursDomain.Documents.AccruedAmount;
 
 namespace KursAM2.ViewModel.Finance.AccruedAmount
 {

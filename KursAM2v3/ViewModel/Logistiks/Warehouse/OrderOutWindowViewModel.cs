@@ -16,6 +16,7 @@ using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.ReportManagers;
 using KursAM2.View.Logistiks.Warehouse;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {

@@ -5,7 +5,7 @@
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-    xmlns:control1="clr-namespace:Core.Control;assembly=Core"
+    xmlns:control1="clr-namespace:Core.Control;assembly=KursDomain"
     Title="Права доступа для пользователей" Height="350" Width="525">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"

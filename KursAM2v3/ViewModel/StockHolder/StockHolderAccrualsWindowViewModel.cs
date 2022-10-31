@@ -188,6 +188,7 @@ namespace KursAM2.ViewModel.StockHolder
 
         public override void DocDelete(object form)
         {
+            var WinManager = new WindowManager();
             var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?", "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
@@ -415,6 +416,7 @@ namespace KursAM2.ViewModel.StockHolder
 
         public override void RefreshData(object obj)
         {
+            var WinManager = new WindowManager();
             if (IsCanSaveData)
             {
                 var res = WinManager.ShowWinUIMessageBox("В документ внесены изменения, сохранить?", "Запрос",

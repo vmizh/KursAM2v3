@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using Core;
-using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.StockHolder;
 using Core.ViewModel.Base;
@@ -12,6 +11,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using DevExpress.Data;
+using DevExpress.Utils.DirectXPaint.Svg;
 using DevExpress.Xpf.Bars.Helpers;
 using DevExpress.Xpf.Bars.Themes;
 using DevExpress.Xpf.Core.Native;
@@ -43,6 +43,7 @@ using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.StockHolder;
+using KursDomain.Documents.Bank;
 using Application = System.Windows.Application;
 
 namespace KursAM2.Managers
@@ -508,7 +509,7 @@ namespace KursAM2.Managers
             return ctx;
         }
 
-        private static ClientWindowViewModel OpenSFClient(decimal docCode)
+        public static ClientWindowViewModel OpenSFClient(decimal docCode, bool isLoadPay = true)
         {
             var ctx = new ClientWindowViewModel(docCode);
             var view = new InvoiceClientView
@@ -740,13 +741,13 @@ namespace KursAM2.Managers
         /// <param name="dc"></param>
         private static OrderInWindowViewModel OpenStoreIn(decimal dc)
         {
+            var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),null), dc);
             var form = new OrderInView
             {
-                Owner = Application.Current.MainWindow
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
             };
-            var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(), form.Name), dc)
-                {Form = form};
-            form.DataContext = ctx;
+            ctx.Form = form;
             form.Show();
             return ctx;
         }

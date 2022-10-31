@@ -789,8 +789,10 @@ namespace Data
         public virtual DbSet<VH_SD_77> VH_SD_77 { get; set; }
         public virtual DbSet<VH_SD_82> VH_SD_82 { get; set; }
         public virtual DbSet<VVD_24> VVD_24 { get; set; }
-        public virtual DbSet<InvoicePostQuery> InvoicePostQuery { get; set; }
+        public virtual DbSet<CashSFClient> CashSFClient { get; set; }
+        public virtual DbSet<CashSFProvider> CashSFProvider { get; set; }
         public virtual DbSet<InvoiceClientQuery> InvoiceClientQuery { get; set; }
+        public virtual DbSet<InvoicePostQuery> InvoicePostQuery { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()
@@ -906,6 +908,24 @@ namespace Data
                 new ObjectParameter("dtStop", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<LIC_SCHET_KONTR_TABLE_Result>("[Entities].[LIC_SCHET_KONTR_TABLE](@nKontrDC, @dtStart, @dtStop)", nKontrDCParameter, dtStartParameter, dtStopParameter);
+        }
+    
+        public virtual int GenerateSFClientCash(Nullable<decimal> sFDocDC)
+        {
+            var sFDocDCParameter = sFDocDC.HasValue ?
+                new ObjectParameter("SFDocDC", sFDocDC) :
+                new ObjectParameter("SFDocDC", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GenerateSFClientCash", sFDocDCParameter);
+        }
+    
+        public virtual int GenerateSFProviderCash(Nullable<decimal> sFDocDC)
+        {
+            var sFDocDCParameter = sFDocDC.HasValue ?
+                new ObjectParameter("SFDocDC", sFDocDC) :
+                new ObjectParameter("SFDocDC", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GenerateSFProviderCash", sFDocDCParameter);
         }
     }
 }

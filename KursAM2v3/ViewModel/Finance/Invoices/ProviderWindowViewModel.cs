@@ -59,10 +59,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (cols.Count > 0)
                 {
                     view.gridPays.TotalSummary.BeginUpdate();
-                    foreach (var c in cols)
-                    {
-                        view.gridPays.TotalSummary.Remove(c);
-                    }
+                    foreach (var c in cols) view.gridPays.TotalSummary.Remove(c);
 
                     view.gridPays.TotalSummary.Add(new GridSummaryItem
                     {
@@ -213,7 +210,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (isCopy)
             {
                 var newCode = 1;
-                foreach (var row in Document.Rows)
+                foreach (var row in Document.Rows.Cast<InvoiceProviderRow>())
                 {
                     UnitOfWork.Context.Entry(row.Entity).State = EntityState.Detached;
                     row.DocCode = -1;
@@ -224,7 +221,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     newCode++;
                 }
 
-                foreach (var r in Document.Rows)
+                foreach (var r in Document.Rows.Cast<InvoiceProviderRow>())
                 {
                     UnitOfWork.Context.TD_26.Add(r.Entity);
                     r.CalcRow();
@@ -233,7 +230,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
             else
             {
-                foreach (var item in Document.Rows)
+                foreach (var item in Document.Rows.Cast<InvoiceProviderRow>())
                 {
                     UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
                     Document.Entity.TD_26.Clear();
@@ -316,23 +313,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (Document != null)
                     WindowName = Document.ToString();
                 Document.myState = RowStatus.NotEdited;
-                var crsrates = new CurrencyRates( DateTime.Today.AddDays(-100), DateTime.Today);
-                decimal rate = Math.Round(crsrates.GetRate(Document.Currency.DocCode,
+                var crsrates = new CurrencyRates(DateTime.Today.AddDays(-100), DateTime.Today);
+                var rate = Math.Round(crsrates.GetRate(Document.Currency.DocCode,
                     GlobalOptions.SystemProfile.NationalCurrency.DocCode, DateTime.Today), 4);
                 if (Document.PaymentDocs.Count > 0)
-                {
                     rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
-                }
-                foreach (var r in Document.Rows)
+                foreach (var r in Document.Rows.Cast<InvoiceProviderRow>())
                 {
-                   
                     AddUsedNomenkl(r.Nomenkl.DocCode);
                     foreach (var rr in r.CurrencyConvertRows)
                     {
                         rr.Rate = rate;
                         rr.myState = RowStatus.NotEdited;
                         AddUsedNomenkl(rr.Nomenkl.DocCode);
-                    } 
+                    }
+
                     r.myState = RowStatus.NotEdited;
                 }
 
@@ -679,6 +674,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void DeleteStoreLink(object obj)
         {
+            var WinManager = new WindowManager();
             var rowForRemove = new List<Tuple<decimal, int>>();
             var res = WinManager.ShowWinUIMessageBox("Действительно хотите удалить связь с приходными ордерами?",
                 "Запрос",
@@ -767,6 +763,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void RefreshData(object obj)
         {
+            var WinManager = new WindowManager();
             base.RefreshData(obj);
             myUsedNomenklsDC.Clear();
             if (IsCanSaveData)
@@ -784,12 +781,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
                         Document.LoadReferences();
                         RaiseAll();
-                        
-                        foreach (var r in Document.Rows)
+
+                        foreach (var r in Document.Rows.Cast<InvoiceProviderRow>())
                         {
                             r.myState = RowStatus.NotEdited;
                             AddUsedNomenkl(r.Nomenkl.DocCode);
-                        }  
+                        }
+
                         Document.myState = RowStatus.NotEdited;
                         Document.DeletedRows.Clear();
                         return;
@@ -797,24 +795,37 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
-            var crsrates = new CurrencyRates( DateTime.Today, DateTime.Today);
-                decimal rate = Math.Round(crsrates.GetRate(Document.Currency.DocCode,
-                    GlobalOptions.SystemProfile.NationalCurrency.DocCode, DateTime.Today), 4);
-                if (Document.PaymentDocs.Count > 0)
-                {
-                    rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
-                }
-            foreach (var r in Document.Rows)
+            var crsrates = new CurrencyRates(DateTime.Today, DateTime.Today);
+            var rate = Math.Round(crsrates.GetRate(Document.Currency.DocCode,
+                GlobalOptions.SystemProfile.NationalCurrency.DocCode, DateTime.Today), 4);
+            if (Document.PaymentDocs.Count > 0)
+                rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
+
+            Document.Facts.Clear();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var facts = ctx.TD_24.Include(_ => _.TD_26).Where(_ => _.DDT_SPOST_DC == Document.DocCode)
+                    .AsNoTracking().ToList();
+                foreach (var fact in facts)
+                    Document.Facts.Add(new WarehouseOrderInRow(fact)
+                    {
+                        State = RowStatus.NotEdited
+                    });
+            }
+
+            foreach (var r in Document.Rows.Cast<InvoiceProviderRow>())
             {
                 foreach (var cr in r.CurrencyConvertRows)
                 {
                     cr.Rate = rate;
                     cr.myState = RowStatus.NotEdited;
                 }
+
                 r.myState = RowStatus.NotEdited;
                 AddUsedNomenkl(r.Nomenkl.DocCode);
                 RaiseAll();
             }
+
             Document.DeletedRows.Clear();
             Document.myState = RowStatus.NotEdited;
         }
@@ -930,7 +941,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (k != null)
                 foreach (var item in k)
                 {
-                    if (Document.Rows.Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    if (Document.Rows.Cast<InvoiceProviderRow>()
+                        .Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
@@ -995,11 +1007,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             if (CurrentRow != null)
             {
-                var distrLink = UnitOfWork.Context.DistributeNakladRow.Where(_ => _.TovarInvoiceRowId == CurrentRow.Id).ToList();
-                foreach (var r in distrLink)
-                {
-                    UnitOfWork.Context.DistributeNakladRow.Remove(r);
-                }
+                var distrLink = UnitOfWork.Context.DistributeNakladRow.Where(_ => _.TovarInvoiceRowId == CurrentRow.Id)
+                    .ToList();
+                foreach (var r in distrLink) UnitOfWork.Context.DistributeNakladRow.Remove(r);
                 Document.Entity.TD_26.Remove(CurrentRow.Entity);
                 Document.Rows.Remove(CurrentRow);
             }
@@ -1065,12 +1075,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 : CurrentRow.CurrencyConvertRows.Sum(_ => _.Quantity);
             dt = UnitOfWork.Context.SD_24.Where(_ => _.DOC_CODE == factnom.DOC_CODE).OrderBy(_ => _.DD_DATE).First()
                 .DD_DATE;
-            decimal rate = Math.Round(crsrates.GetRate(CurrentRow.Nomenkl.Currency.DocCode,
+            var rate = Math.Round(crsrates.GetRate(CurrentRow.Nomenkl.Currency.DocCode,
                 n.Currency.DocCode, dt), 4);
             if (Document.PaymentDocs.Count > 0)
-            {
                 rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
-            }
             var newItem = new InvoiceProviderRowCurrencyConvertViewModel
             {
                 Id = Guid.NewGuid(),
@@ -1113,8 +1121,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void DeleteNomenklCrsConvert(object obj)
         {
-            var row = Document.Rows.FirstOrDefault(_ => _.DocCode == CurrentCrsConvertItem.DocCode
-                                                        && _.Code == CurrentCrsConvertItem.Code);
+            var row = Document.Rows.Cast<InvoiceProviderRow>().FirstOrDefault(_ =>
+                _.DocCode == CurrentCrsConvertItem.DocCode
+                && _.Code == CurrentCrsConvertItem.Code);
             if (CurrentCrsConvertItem == null || row == null) return;
             DeletedCrsConvertItems.Add(CurrentCrsConvertItem);
             if (CurrentRow == null)
@@ -1130,6 +1139,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 CurrentRow.State = RowStatus.Edited;
             }
         }
+
         public ICommand AddNomenklSimpleCommand
         {
             get { return new Command(AddNomenklSimple, _ => true); }
@@ -1296,7 +1306,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                 foreach (var item in k)
                 {
-                    if (Document.Rows.Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    if (Document.Rows.Cast<InvoiceProviderRow>()
+                        .Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.NOM_NDS_PERCENT == null)
                         nds = 0;
@@ -1351,6 +1362,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void SaveData(object data)
         {
+            var WinManager = new WindowManager();
             var closePeriod = UnitOfWork.Context.PERIOD_CLOSED
                 .SingleOrDefault(_ => _.CLOSED_DOC_TYPE.ID.ToString() == "b57d269e-e17f-4dc2-86da-821db51bcc9e");
             if (closePeriod != null && Document.DocDate < closePeriod.DateClosed)
@@ -1397,7 +1409,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
                 if (Document.SF_KONTR_CRS_SUMMA == null) Document.SF_KONTR_CRS_SUMMA = Document.Summa;
 
-                foreach (var row in Document.Rows)
+                foreach (var row in Document.Rows.Cast<InvoiceProviderRow>())
                 {
                     if (row.SFT_SUMMA_V_UCHET_VALUTE == null) row.SFT_SUMMA_V_UCHET_VALUTE = row.SFT_SUMMA_K_OPLATE;
 
@@ -1422,7 +1434,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     }
                 }
 
-                foreach (var row in Document.Rows)
+                foreach (var row in Document.Rows.Cast<InvoiceProviderRow>())
                 foreach (var crs in row.CurrencyConvertRows)
                 {
                     var distr = UnitOfWork.Context.DistributeNakladRow
@@ -1452,7 +1464,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 RecalcKontragentBalans.CalcBalans(Document.Entity.SF_POST_DC, Document.DocDate);
                 nomenklManager.RecalcPrice(myUsedNomenklsDC);
                 myUsedNomenklsDC.Clear();
-                foreach (var r in Document.Rows)
+                foreach (var r in Document.Rows.Cast<InvoiceProviderRow>())
                 {
                     r.myState = RowStatus.NotEdited;
                     foreach (var rr in r.CurrencyConvertRows) rr.myState = RowStatus.NotEdited;
@@ -1479,7 +1491,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private void RaiseAll()
         {
             Document.RaisePropertyAllChanged();
-            foreach (var r in Document.Rows) r.RaisePropertyAllChanged();
+            foreach (var r in Document.Rows.Cast<InvoiceProviderRow>()) r.RaisePropertyAllChanged();
 
             foreach (var s in Document.Facts) s.RaisePropertyAllChanged();
         }
@@ -1514,6 +1526,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocDelete(object form)
         {
+            var WinManager = new WindowManager();
 
             if (Document.State == RowStatus.NewRow)
             {
@@ -1529,7 +1542,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         return;
                 }
             }
-            else 
+            else
             {
                 var isDistr = UnitOfWork.Context.DistributeNakladInfo.Any(_ => _.InvoiceNakladId == Document.Id);
                 var str = !isDistr
@@ -1551,22 +1564,18 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             if (isDistr)
                             {
                                 foreach (var d in UnitOfWork.Context.DistributeNakladInfo
-                                    .Where(_ => _.InvoiceNakladId == Document.Id).ToList())
-                                {
+                                             .Where(_ => _.InvoiceNakladId == Document.Id).ToList())
                                     UnitOfWork.Context.DistributeNakladInfo.Remove(d);
-                                }
 
                                 foreach (var din in UnitOfWork.Context.DistributeNakladInvoices
-                                    .Where(_ => _.InvoiceId == Document.Id))
-                                {
+                                             .Where(_ => _.InvoiceId == Document.Id))
                                     UnitOfWork.Context.DistributeNakladInvoices.Remove(din);
-                                }
                             }
 
                             GenericProviderRepository.Delete(Document.Entity);
                             UnitOfWork.Save();
                             UnitOfWork.Commit();
-                            DocumentsOpenManager.DeleteFromLastDocument(null,Document.DocCode);
+                            DocumentsOpenManager.DeleteFromLastDocument(null, Document.DocCode);
                         }
                         catch (Exception ex)
                         {
@@ -1611,6 +1620,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public void DeletePayDocument(object obj)
         {
+            var WinManager = new WindowManager();
             var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить связь с оплатой?", "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
@@ -1654,7 +1664,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get
             {
                 return new Command(AddPaymentFromBank,
-                    _ => Document?.Kontragent != null && Document.PaySumma < Document.Summa 
+                    _ => Document?.Kontragent != null && Document.PaySumma < Document.Summa
                                                       && Document.State != RowStatus.NewRow);
             }
         }
@@ -1689,8 +1699,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Rate = old.CurrencyRateForReference ?? 1,
                         DocName = "Банковский платеж",
                         DocExtName = $"{old.SD_101.SD_114.BA_BANK_NAME} " +
-                                     $"р/с {old.SD_101.SD_114.BA_RASH_ACC}",
-
+                                     $"р/с {old.SD_101.SD_114.BA_RASH_ACC}"
                     };
                     Document.PaymentDocs.Add(newItem);
                     Document.Entity.ProviderInvoicePay.Add(newItem.Entity);

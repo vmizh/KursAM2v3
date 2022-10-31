@@ -3,8 +3,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Bank;
-using Core.EntityViewModel.Cash;
 using Core.WindowsManager;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
@@ -13,6 +11,8 @@ using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.ViewModel.Reference;
+using KursDomain.Documents.Bank;
+using KursDomain.Documents.Cash;
 using LayoutManager;
 
 namespace KursAM2.View.KursReferences

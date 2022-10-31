@@ -7,6 +7,7 @@ using Core.Invoices.EntityViewModel;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Logistiks.Warehouse;
+using KursDomain.Documents.CommonReferences.Kontragent;
 using Reports.Base;
 
 namespace KursAM2.ReportManagers.SFClientAndWayBill

@@ -4,12 +4,13 @@ using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core;
-using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.ViewModel.Base;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.UC;
+using KursDomain.Documents.Bank;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Finance.controls
 {

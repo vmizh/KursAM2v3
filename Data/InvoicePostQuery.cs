@@ -21,9 +21,10 @@ namespace Data
         public decimal PostDC { get; set; }
         public string Post { get; set; }
         public Nullable<decimal> Summa { get; set; }
+        public decimal PaySumma { get; set; }
         public Nullable<decimal> CurrencyDC { get; set; }
         public string Currency { get; set; }
-        public Nullable<decimal> ShippedSumma { get; set; }
+        public decimal ShippedSumma { get; set; }
         public decimal SF_PAY_COND_DC { get; set; }
         public string PayCondition { get; set; }
         public int EmployeeTabelNumber { get; set; }
@@ -55,8 +56,10 @@ namespace Data
         public decimal NomenklDC { get; set; }
         public string Nomenkl { get; set; }
         public string NomenklNumber { get; set; }
+        public Nullable<bool> IsUsluga { get; set; }
         public Nullable<decimal> Price { get; set; }
         public decimal Quantity { get; set; }
+        public decimal Shipped { get; set; }
         public decimal NDSPercent { get; set; }
         public decimal NakladSumma { get; set; }
         public decimal NDSSumma { get; set; }
@@ -72,8 +75,5 @@ namespace Data
         public Nullable<System.Guid> SchetRowNakladRashodId { get; set; }
         public decimal SchetRowNakladSumma { get; set; }
         public decimal SchetRowNakladRate { get; set; }
-        public decimal PaySumma { get; set; }
-        public decimal Shipped { get; set; }
-        public Nullable<bool> IsUsluga { get; set; }
     }
 }

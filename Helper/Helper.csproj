@@ -81,10 +81,13 @@
     <Compile Include="BindingHelper.cs" />
     <Compile Include="DevExpressHelper.cs" />
     <Compile Include="EntityManager.cs" />
+    <Compile Include="EnumExtensions.cs" />
     <Compile Include="IniFileManager.cs" />
+    <Compile Include="KursConvert.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="StringHelper.cs" />
     <Compile Include="ThemeHelper.cs" />
+    <Compile Include="ValidationError.cs" />
     <Compile Include="ViewFluentHelper.cs" />
     <Compile Include="CopyFiles.cs" />
     <Compile Include="KursGridControlHelper.cs" />

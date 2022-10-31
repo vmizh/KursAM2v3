@@ -213,6 +213,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void DeleteProject(object obj)
         {
+            var WinManager = new WindowManager();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var docs = ctx.ProjectsDocs.Where(_ => _.ProjectId == CurrentProject.Id);

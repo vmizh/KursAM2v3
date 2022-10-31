@@ -109,6 +109,7 @@ namespace KursAM2.ViewModel.Personal
 
         public override void SaveData(object data)
         {
+            var WinManager = new WindowManager();
             if (PersonaCollection.All(_ => _.State == RowStatus.NotEdited)) return;
             using (var ctxsave = GlobalOptions.GetEntities())
             {

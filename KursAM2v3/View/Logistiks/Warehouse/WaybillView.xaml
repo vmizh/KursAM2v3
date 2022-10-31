@@ -4,7 +4,8 @@
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-             xmlns:control1="clr-namespace:Core.Control;assembly=Core" Title="{Binding WindowName}"
+             xmlns:control1="clr-namespace:Core.Control;assembly=KursDomain" 
+             Title="{Binding WindowName}"
              Height="529.375" Width="850">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"

@@ -3,11 +3,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Core.WindowsManager;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using Helper;
@@ -18,6 +18,7 @@ using KursAM2.View.Finance.Cash;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Finance.AccruedAmount;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain.Documents.Cash;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {
@@ -279,7 +280,8 @@ namespace KursAM2.ViewModel.Finance.Cash
                 Document = CashManager.LoadCashOut(dc);
                 if (Document == null)
                 {
-                    WinManager.ShowWinUIMessageBox($"Не найден документ с кодом {dc}!",
+                    var winManager = new WindowManager();
+                    winManager.ShowWinUIMessageBox($"Не найден документ с кодом {dc}!",
                         "Ошибка обращения к базе данных", MessageBoxButton.OK, MessageBoxImage.Error,
                         MessageBoxResult.None, MessageBoxOptions.None);
                     return;

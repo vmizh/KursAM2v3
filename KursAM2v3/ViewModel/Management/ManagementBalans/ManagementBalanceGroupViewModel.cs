@@ -9,6 +9,7 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Management.ManagementBalans
 {

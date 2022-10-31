@@ -1,9 +1,9 @@
 ﻿using System;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Helper;
+using KursDomain.References;
+using Currency = Core.EntityViewModel.CommonReferences.Currency;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
+using Nomenkl = Core.EntityViewModel.NomenklManagement.Nomenkl;
 
 namespace FinanceAnalitic
 {

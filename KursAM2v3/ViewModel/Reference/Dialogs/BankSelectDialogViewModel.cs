@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.Bank;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -13,6 +12,7 @@ using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.View.Base;
+using KursDomain.Documents.Bank;
 
 namespace KursAM2.ViewModel.Reference.Dialogs
 {

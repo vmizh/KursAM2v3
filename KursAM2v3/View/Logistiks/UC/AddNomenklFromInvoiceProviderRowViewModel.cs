@@ -10,6 +10,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Helper;
 using KursAM2.Managers.Nomenkl;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.View.Logistiks.UC
 {

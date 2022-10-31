@@ -6,11 +6,11 @@
     xmlns:native="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
     xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    xmlns:control="clr-namespace:Core.Control;assembly=Core"
+    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-    xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=Core"
+    xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=KursDomain"
     Title="{Binding WindowName}" MinHeight="450" MinWidth="1200">
     <dx:ThemedWindow.Resources>
         <native:RenderTemplate

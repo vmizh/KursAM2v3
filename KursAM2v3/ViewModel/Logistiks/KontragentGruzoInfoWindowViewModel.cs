@@ -4,6 +4,7 @@ using System.Linq;
 using Core;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.ViewModel.Base;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Logistiks
 {

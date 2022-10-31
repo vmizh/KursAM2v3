@@ -3,8 +3,8 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Cash;
 using Core.ViewModel.Base;
+using KursDomain.Documents.Cash;
 
 namespace KursAM2.View.DialogUserControl
 {

@@ -1203,6 +1203,11 @@ namespace KursAM2.Managers
                     item.LossSEK = loss;
                     item.ResultSEK = profit - loss;
                     break;
+                case CurrencyCode.CNY:
+                    item.ProfitCNY = 0;
+                    item.LossCNY = loss;
+                    item.ResultCNY = profit - loss;
+                    break;
             }
         }
 

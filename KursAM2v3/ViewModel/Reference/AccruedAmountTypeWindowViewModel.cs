@@ -6,12 +6,12 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.AccruedAmount;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using KursDomain.Documents.AccruedAmount;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -133,6 +133,7 @@ namespace KursAM2.ViewModel.Reference
 
         public override void RefreshData(object obj)
         {
+            var WinManager = new WindowManager();
             if (IsCanSaveData)
             {
                 var res = WinManager.ShowWinUIMessageBox("В справочник внесены изменения, сохранить?", "Запрос",

@@ -47,6 +47,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.Entity.Design" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -143,6 +144,12 @@
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="BRONIROVANIE.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CashSFClient.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CashSFProvider.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="CASH_CORR.cs">

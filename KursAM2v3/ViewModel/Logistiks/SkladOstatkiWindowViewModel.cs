@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
@@ -37,6 +38,7 @@ namespace KursAM2.ViewModel.Logistiks
             RefreshReferences();
         }
 
+        // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse> Sklads { set; get; } =
             new ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse>();
 
@@ -52,6 +54,7 @@ namespace KursAM2.ViewModel.Logistiks
         public ObservableCollection<NomenklCalcCostOperation> NomenklOperations { set; get; } =
             new ObservableCollection<NomenklCalcCostOperation>();
 
+        // ReSharper disable once CollectionNeverUpdated.Global
         public List<NomenklStoreRemainItem> LoadedRemains { set; get; } = new List<NomenklStoreRemainItem>();
 
         public NomenklCalcCostOperation CurrentOperation
@@ -213,7 +216,7 @@ namespace KursAM2.ViewModel.Logistiks
             var data = nomenklManager.GetNomenklStoreQuantity(CurrentWarehouse.DocCode, new DateTime(2000,1,1),
                 DateTime.Today);
             if(data != null)  {
-                foreach (var d in data)
+                foreach (var d in data.Where(_ => _.OstatokQuantity > 0))
                 {
                     NomenklsForSklad.Add(new NomenklOstatkiWithPrice
                     {
@@ -286,8 +289,9 @@ namespace KursAM2.ViewModel.Logistiks
                 var clc = new NomenklCostMediumSliding(ctx);
                 NomenklOperations.Clear();
                 var data = clc.GetOperations(CurrentNomenklStore.Nomenkl.DocCode, false);
-                foreach (var op in data)
-                    NomenklOperations.Add(op);
+                if(data != null && data.Count > 0)
+                    foreach (var op in data)
+                        NomenklOperations.Add(op);
             }
         }
 

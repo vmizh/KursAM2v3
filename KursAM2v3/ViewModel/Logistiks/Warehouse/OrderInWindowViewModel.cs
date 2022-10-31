@@ -9,6 +9,7 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
+using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -88,15 +89,21 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
             else
             {
-                Document = new WarehouseOrderIn(GenericOrderInRepository
-                            .GetById(dc));
+                var doc = SD_24Repository.GetByDC(dc);
+                Document = new WarehouseOrderIn(doc);
                 {
                     State = RowStatus.NotEdited;
                 }
                 if (Document != null)
                     WindowName = Document.ToString();
+                if (Document.Entity.DD_SPOST_DC != null)
+                {
+                    var sf = UnitOfWork.Context.SD_26.First(_ => _.DOC_CODE == Document.Entity.DD_SPOST_DC);
+                    Schet = $"№{sf.SF_IN_NUM}/{sf.SF_POSTAV_NUM} от {sf.SF_POSTAV_DATE.ToShortDateString()}";
+                }
+
                 Document.Rows.ForEach(_ => _.State = RowStatus.NotEdited);
-                Document.myState = RowStatus.NotEdited;
+                Document.State = RowStatus.NotEdited;
             }
         }
 
@@ -122,6 +129,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         }
 
         private WarehouseOrderInRow myCurrentRow;
+        private string mySchet;
 
         public WarehouseOrderInRow CurrentRow
         {
@@ -143,7 +151,33 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         #region Command
 
-  
+        public string Sender => Document.KontragentSender?.Name ?? Document.WarehouseOut?.Name;
+
+        public string Schet
+        {
+            get => mySchet;
+            set
+            {
+                if (mySchet == value) return;
+                mySchet = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ICommand KontragentTypeChangedCommand
+        {
+            get
+            {
+                return new Command(KontragentTypeChanged, _ => Document != null && Document.State == RowStatus.NewRow);
+            }
+        }
+
+        private void KontragentTypeChanged(object obj)
+        {
+           Document.KontragentSender = null;
+           Document.WarehouseIn = null;
+        }
+
         public ICommand LinkToSchetCommand
         {
             get { return new Command(LinkToSchet, _ => true); }
@@ -169,6 +203,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void SelectSchet()
         {
+            var WinManager = new WindowManager();
             if (Document.WarehouseIn == null)
             {
                 WinManager.ShowWinUIMessageBox("Не выбран склад.", "Ошибка", MessageBoxButton.OK,
@@ -199,6 +234,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 {
                     if (Document.KontragentSender == null)
                         Document.KontragentSender = MainReferences.GetKontragent(dtx.SelectedItems.First().PostDC);
+                    var dc = dtx.SelectedItems.First().DocCode;
+                    var sf = UnitOfWork.Context.SD_26.First(_ => _.DOC_CODE == dc);
+                    Schet = $"№{sf.SF_IN_NUM}/{sf.SF_POSTAV_NUM} от {sf.SF_POSTAV_DATE.ToShortDateString()}";
+                    Document.Entity.DD_SPOST_DC = sf.DOC_CODE;
                     foreach (var row in dtx.SelectedItems)
                     {
                         var old = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == row.NomenklDC);
@@ -248,6 +287,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void DeleteLinkSchet(object obj)
         {
+            var WinManager = new WindowManager();
             if (WinManager.ShowWinUIMessageBox("Вы хотите удалить счет и связанные с ним строки?",
                 "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
             var delList =
@@ -400,6 +440,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     var kontr = StandartDialogs.SelectKontragent();
                     if (kontr == null) return;
                     Document.KontragentSender = kontr;
+                    Document.Entity.DD_KONTR_OTPR_DC = kontr.DocCode;
                     break;
                 case WarehouseSenderType.Store:
                     var warehouse = StandartDialogs.SelectWarehouseDialog();
@@ -497,6 +538,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void AddNomenkl(object obj)
         {
+            var WinManager = new WindowManager();
             if (Document.WarehouseIn == null)
             {
                 WinManager.ShowWinUIMessageBox("Не выбран склад получатель","Предупреждение",MessageBoxButton.OK, MessageBoxImage.Warning);

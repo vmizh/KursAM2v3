@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
+using Core.EntityViewModel.Invoices;
 using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
 using Core.Menu;
@@ -18,6 +19,7 @@ using KursAM2.Managers.Invoices;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.ReportManagers.SFClientAndWayBill;
 using KursAM2.View.Helper;
+using KursDomain.Documents.CommonReferences.Kontragent;
 using Reports.Base;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
@@ -184,6 +186,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void DocDelete(object form)
         {
+            var WinManager = new WindowManager();
             if (Document.State != RowStatus.Edited)
             {
                 var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?", "Запрос",
@@ -237,7 +240,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             using (var ctx = GlobalOptions.GetEntities())
             {
-                foreach (var r in Document.InvoiceClient.Rows)
+                foreach (var r in Document.InvoiceClient.Rows.Cast<InvoiceClientRow>())
                 {
                     var oldf = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Entity.SFT_NEMENKL_DC);
                     if (oldf != null)
@@ -446,7 +449,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
-                    foreach (var r in inv.Rows)
+                    foreach (var r in inv.Rows.Cast<InvoiceClientRow>())
                     {
                         var oldf = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Entity.SFT_NEMENKL_DC);
                         if (oldf != null)

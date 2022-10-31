@@ -17,6 +17,7 @@ using JetBrains.Annotations;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.Dialogs
 {

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.ViewModel.Base;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Management.DebitorCreditor
 {

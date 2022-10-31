@@ -4,7 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Bank;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -13,6 +12,7 @@ using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.ViewModel.Finance;
+using KursDomain.Documents.Bank;
 using LayoutManager;
 
 namespace KursAM2.View.Finance

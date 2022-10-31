@@ -91,6 +91,10 @@
       <Project>{45442b20-578b-4519-a31c-6ba5102b240f}</Project>
       <Name>Helper</Name>
     </ProjectReference>
+    <ProjectReference Include="..\KursDomain\KursDomain.csproj">
+      <Project>{2892B43C-A8F8-4939-9F88-EAB3B8F7108B}</Project>
+      <Name>KursDomain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LayoutManager\LayoutManager.csproj">
       <Project>{0ac84fa1-a12e-414a-8d3e-ede48e795908}</Project>
       <Name>LayoutManager</Name>

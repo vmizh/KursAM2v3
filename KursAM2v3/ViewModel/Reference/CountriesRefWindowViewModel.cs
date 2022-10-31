@@ -68,6 +68,7 @@ namespace KursAM2.ViewModel.Reference
 
         public override void RefreshData(object obj)
         {
+            var WinManager = new WindowManager();
             if (IsCanSaveData)
             {
                 var res = MessageBox.Show("Были внесены изменения, сохранить?", "Запрос",
@@ -192,6 +193,7 @@ namespace KursAM2.ViewModel.Reference
 
         public override void CloseWindow(object form)
         {
+            var WinManager = new WindowManager();
             var vin = form as Window;
             if (IsCanSaveData)
             {

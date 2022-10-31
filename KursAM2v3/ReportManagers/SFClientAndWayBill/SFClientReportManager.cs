@@ -9,6 +9,7 @@ using Data;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Finance.Invoices;
+using KursDomain.Documents.CommonReferences.Kontragent;
 using Reports.Base;
 
 namespace KursAM2.ReportManagers.SFClientAndWayBill
@@ -60,7 +61,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"F{startTableRow}"].Value = "Страна";
             sheet.Cells[$"G{startTableRow}"].Value = "Примечания";
             var row = 1;
-            foreach (var item in document.Rows)
+            foreach (var item in document.Rows.Cast<InvoiceClientRow>())
             {
                 sheet.Cells[$"A{startTableRow + row}"].Value = item.Nomenkl.NomenklNumber;
                 sheet.Cells[$"B{startTableRow + row}"].Value = item.Nomenkl.Name;
@@ -385,7 +386,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             }
 
             var row = 1;
-            foreach (var item in document.Rows)
+            foreach (var item in document.Rows.Cast<InvoiceClientRow>())
             {
                 sheet[startTableRow + row - 1, 0].Value =
                     !string.IsNullOrEmpty(item.Nomenkl.NOM_FULL_NAME) && item.Nomenkl.NOM_FULL_NAME != ""
@@ -523,7 +524,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     ?.ITEM_VALUE);
 
                 var row = 0;
-                foreach (var item in document.Rows)
+                foreach (var item in document.Rows.Cast<InvoiceClientRow>())
                 {
                     sheet.Cells[$"A{startTableRow + row}"].Value = row+1;
                     sheet.Cells[$"I{startTableRow + row}"].Value =
@@ -643,7 +644,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
 
             if (document.Rows.Count > 3 && document.Rows.Count <= 20)
                 sheet.HorizontalPageBreaks.Add(startTableRow + document.Rows.Count - 2);
-            foreach (var item in document.Rows)
+            foreach (var item in document.Rows.Cast<InvoiceClientRow>())
             {
                 WaibillSetRow(sheet, row, startTableRow + row - 1, item);
                 row++;

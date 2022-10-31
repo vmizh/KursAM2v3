@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core;
-using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.Menu;
@@ -20,6 +19,7 @@ using DevExpress.Xpf.Grid;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.View.Finance.Cash;
+using KursDomain.Documents.Cash;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {
@@ -27,7 +27,7 @@ namespace KursAM2.ViewModel.Finance.Cash
     {
         #region Fields
 
-        private Core.EntityViewModel.Cash.Cash myCurrentCash;
+        private KursDomain.Documents.Cash.Cash myCurrentCash;
         private CashBookDocument myCurrentDocument;
         private DatePeriod myCurrentPeriod;
         private bool myIsPeriodEnabled;
@@ -57,8 +57,8 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         #region Properties
 
-        public ObservableCollection<Core.EntityViewModel.Cash.Cash> CashList { set; get; }
-            = new ObservableCollection<Core.EntityViewModel.Cash.Cash>(
+        public ObservableCollection<KursDomain.Documents.Cash.Cash> CashList { set; get; }
+            = new ObservableCollection<KursDomain.Documents.Cash.Cash>(
                 MainReferences.Cashs.Values.Where(_ => _.IsAccessRight));
 
         public ObservableCollection<CashBookDocument> Documents { set; get; }
@@ -88,7 +88,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             }
         }
 
-        public Core.EntityViewModel.Cash.Cash CurrentCash
+        public KursDomain.Documents.Cash.Cash CurrentCash
         {
             get => myCurrentCash;
             set

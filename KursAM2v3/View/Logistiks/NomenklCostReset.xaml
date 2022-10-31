@@ -5,7 +5,7 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    xmlns:control1="clr-namespace:Core.Control;assembly=Core"
+    xmlns:control1="clr-namespace:Core.Control;assembly=KursDomain"
     x:Class="KursAM2.View.Logistiks.NomenklCostReset"
     ShowIcon="False"
     Title="Переоценка стоимости товаров" Height="350" Width="525">

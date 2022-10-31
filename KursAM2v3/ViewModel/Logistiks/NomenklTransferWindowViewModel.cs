@@ -394,6 +394,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         public override void CloseWindow(object form)
         {
+            var WinManager = new WindowManager();
             var vin = form as Window;
             if (IsCanSaveData)
             {
@@ -471,7 +472,7 @@ namespace KursAM2.ViewModel.Logistiks
         }
 
         private void SetNomenklIn(object obj)
-        {
+        {var WinManager = new WindowManager();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())

@@ -3,12 +3,12 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
+using KursDomain.Documents.Cash;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {

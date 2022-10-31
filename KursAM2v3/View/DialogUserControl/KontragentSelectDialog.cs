@@ -9,6 +9,7 @@ using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.View.DialogUserControl
 {

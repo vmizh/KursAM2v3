@@ -6,7 +6,7 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-    xmlns:control1="clr-namespace:Core.Control;assembly=Core"
+    xmlns:control1="clr-namespace:Core.Control;assembly=KursDomain"
     Title="Остатки товаров по складам" Height="350" Width="578">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"

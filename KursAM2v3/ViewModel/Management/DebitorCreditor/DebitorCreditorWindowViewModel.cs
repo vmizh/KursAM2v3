@@ -17,6 +17,7 @@ using Helper;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Management.Calculations;
 using KursAM2.ViewModel.Splash;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 // ReSharper disable CollectionNeverQueried.Global
 namespace KursAM2.ViewModel.Management.DebitorCreditor
@@ -441,6 +442,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
 
         public override void DocumentOpen(object obj)
         {
+            var WinManager = new WindowManager();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 switch (CurrentOperation.DocTypeCode)

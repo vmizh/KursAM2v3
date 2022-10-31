@@ -6,7 +6,7 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-    xmlns:control="clr-namespace:Core.Control;assembly=Core"
+    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
     Title="Внутреннее перемещение товара между складами" 
     Height="350" Width="525">
     <dx:ThemedWindow.HeaderItems>

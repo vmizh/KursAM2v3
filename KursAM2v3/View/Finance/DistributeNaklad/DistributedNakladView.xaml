@@ -8,7 +8,7 @@
 	xmlns:distributeNaklad="clr-namespace:KursAM2.ViewModel.Finance.DistributeNaklad"
 	xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
 	xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-	xmlns:control="clr-namespace:Core.Control;assembly=Core"
+	xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
 	x:Class="KursAM2.View.Finance.DistributeNaklad.DistributedNakladView"
 	mc:Ignorable="d"
     Title="{Binding WindowName}"

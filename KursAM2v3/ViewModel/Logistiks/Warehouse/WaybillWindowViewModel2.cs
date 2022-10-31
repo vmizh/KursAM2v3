@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml.Linq;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Invoices;
@@ -30,6 +31,7 @@ using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management.Calculations;
 using Reports.Base;
+using InvoiceClientRow = Core.EntityViewModel.Invoices.InvoiceClientRow;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -330,6 +332,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 r.myState = RowStatus.NewRow;
             }
 
+            ctx.Document.DocCode = -1;
+            ctx.Document.Date = DateTime.Today;
+            ctx.Document.DD_EXT_NUM = null;
+            ctx.Document.DD_IN_NUM = -1;
+            ctx.Document.CREATOR = GlobalOptions.UserInfo.NickName;
             ctx.Document.myState = RowStatus.NewRow;
             frm.DataContext = ctx;
             frm.Show();
@@ -347,8 +354,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var doc = ctx.GenericRepository.GetById(Document.DocCode);
             ctx.UnitOfWork.Context.Entry(doc).State = EntityState.Added;
             doc.TD_24.Clear();
-            ctx.Document = new Waybill(doc);
-            ctx.Document.myState = RowStatus.NewRow;
+            ctx.Document = new Waybill(doc)
+            {
+                DocCode = -1,
+                Date = DateTime.Today,
+                DD_EXT_NUM = null,
+                DD_IN_NUM = -1,
+                CREATOR = GlobalOptions.UserInfo.NickName,
+                myState = RowStatus.NewRow
+            };
             frm.DataContext = ctx;
             frm.Show();
         }
@@ -363,7 +377,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             using (var ctx = GlobalOptions.GetEntities())
             {
-                foreach (var r in Document.InvoiceClient.Rows)
+                foreach (var r in Document.InvoiceClient.Rows.Cast<InvoiceClientRow>())
                 {
                     var oldf = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Entity.SFT_NEMENKL_DC);
                     if (oldf != null)
@@ -548,7 +562,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private void addFromOneSchet(InvoiceClient inv)
         {
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
-            foreach (var r in inv.Rows)
+            foreach (var r in inv.Rows.Cast<InvoiceClientRow>())
             {
                 var oldf = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Entity.SFT_NEMENKL_DC);
                 if (oldf != null)
@@ -753,7 +767,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 var d = UnitOfWork.Context.SD_84.SingleOrDefault(_ => _.DOC_CODE == dc);
                 if(d != null)
-                    res.Add(new InvoiceClient(d, UnitOfWork));
+                    res.Add(new InvoiceClient(d, UnitOfWork, true));
             }
 
             return res;

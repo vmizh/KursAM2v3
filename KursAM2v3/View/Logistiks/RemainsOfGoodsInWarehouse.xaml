@@ -5,7 +5,7 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-    xmlns:control="clr-namespace:Core.Control;assembly=Core"
+    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
     x:Class="KursAM2.View.Logistiks.RemainsOfGoodsInWarehouse"
     Title="Остатки товаров на складах" Height="402" Width="619">
     <dx:ThemedWindow.HeaderItems>

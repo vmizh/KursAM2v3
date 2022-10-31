@@ -7,6 +7,7 @@ using Core.EntityViewModel.Vzaimozachet;
 using Core.Invoices.EntityViewModel;
 using Core.Menu;
 using Core.ViewModel.Base;
+using Core.WindowsManager;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -44,6 +45,7 @@ namespace KursAM2.ViewModel.Reference
 
         public override void CloseWindow(object form)
         {
+            var WinManager = new WindowManager();
             var vin = form as Window;
             if (IsCanSaveData)
             {

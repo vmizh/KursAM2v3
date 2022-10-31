@@ -190,6 +190,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 Form = frm, Document = DocManager.NewWaybillCopy(CurrentDocument.DocCode)
             };
+
             frm.DataContext = ctx;
             frm.Show();
             

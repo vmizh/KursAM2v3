@@ -1,5 +1,5 @@
-﻿using Core.EntityViewModel.Bank;
-using Core.ViewModel.Base;
+﻿using Core.ViewModel.Base;
+using KursDomain.Documents.Bank;
 
 namespace KursAM2.ViewModel.Logistiks
 {

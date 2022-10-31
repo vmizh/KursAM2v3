@@ -10,8 +10,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.Bank;
-using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.Menu;
 using Core.ViewModel.Base;
@@ -20,6 +18,8 @@ using Data;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.View.KursReferences;
+using KursDomain.Documents.Bank;
+using KursDomain.Documents.Cash;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -213,6 +213,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void DeleteBank(object obj)
         {
+            var WinManager = new WindowManager();
             if (CurrentBank == null) return;
             var res = MessageBox.Show($"Вы уверены, что хотите удалить данный банк {CurrentBank}?", "Запрос",
                 MessageBoxButton.YesNo,
@@ -303,6 +304,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void DeleteRemain(object obj)
         {
+            var WinManager = new WindowManager();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 using (var transaction = ctx.Database.BeginTransaction())
@@ -417,6 +419,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void deleteCash()
         {
+            var WinManager = new WindowManager();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 using (var transaction = ctx.Database.BeginTransaction())
@@ -628,6 +631,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void updateCash(ALFAMEDIAEntities ctx, CashReference cash)
         {
+            var WinManager = new WindowManager();
             var old = ctx.SD_22.FirstOrDefault(_ => _.DOC_CODE == cash.DocCode);
             if (old == null) return;
             old.CA_NAME = cash.Name;

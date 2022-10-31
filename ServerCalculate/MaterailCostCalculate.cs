@@ -8,6 +8,7 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.Invoices.EntityViewModel;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace ServerCalculate
 {

@@ -17,6 +17,7 @@ using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Management
 {
@@ -502,6 +503,7 @@ namespace KursAM2.ViewModel.Management
 
         public override void DocumentOpen(object obj)
         {
+            var WinManager = new WindowManager();
             if (CurrentDocument.DocTypeCode == DocumentType.Bank)
             {
                 DocumentsOpenManager.Open(CurrentDocument.DocTypeCode, CurrentDocument.DocRowCode);

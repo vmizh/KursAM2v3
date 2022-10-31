@@ -24,6 +24,7 @@ using KursAM2.View.Management;
 using KursAM2.View.Management.Controls;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Logistiks;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 // ReSharper disable All
 namespace KursAM2.ViewModel.Management.ManagementBalans

@@ -1,7 +1,5 @@
 ﻿using System.Linq;
 using Core;
-using Core.EntityViewModel.Bank;
-using Core.EntityViewModel.Cash;
 using Core.EntityViewModel.CommonReferences;
 using Core.EntityViewModel.Dogovora;
 using Core.EntityViewModel.Invoices;
@@ -12,6 +10,8 @@ using Core.Invoices.EntityViewModel;
 using Data;
 using Data.Repository;
 using Helper;
+using KursDomain.Documents.Bank;
+using KursDomain.Documents.Cash;
 
 namespace KursAM2.Auxiliary
 {
@@ -50,7 +50,7 @@ namespace KursAM2.Auxiliary
 
             var invoiceClient = ctx.SD_84.ToList();
             foreach (var doc in invoiceClient.Select(ent =>
-                         new InvoiceClient(ent, new UnitOfWork<ALFAMEDIAEntities>(ctx))))
+                         new InvoiceClient(ent, new UnitOfWork<ALFAMEDIAEntities>(ctx), true)))
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
                     doc.DocCode, null, (string)doc.ToJson());
 

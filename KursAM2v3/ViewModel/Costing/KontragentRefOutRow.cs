@@ -1,6 +1,7 @@
 ﻿using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.Invoices.EntityViewModel;
 using Data;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Costing
 {

@@ -8,6 +8,7 @@ using Core.EntityViewModel.Invoices;
 using Core.Invoices.EntityViewModel;
 using Data;
 using Data.Repository;
+using KursAM2.ViewModel.Finance.Invoices.Base;
 
 namespace KursAM2.Repositories.InvoicesRepositories
 {
@@ -20,7 +21,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         void DeleteTD26CurrencyConvert();
         InvoiceProvider GetByDocCode(decimal dc);
-        List<InvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd);
+        List<IInvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd);
 
         List<InvoiceProviderShort> GetAllForNakladDistribute(Currency crs, DateTime? dateStart,
             DateTime? dateEnd);
@@ -81,7 +82,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
             doc.DocDate = DateTime.Today;
             doc.Id = newId;
             var i = 1;
-            foreach (var r in doc.Rows)
+            foreach (var r in doc.Rows.Cast<InvoiceProviderRow>())
             {
                 Context.Entry(r.Entity).State = EntityState.Added;
                 r.DocCode = -1;
@@ -129,16 +130,20 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 .FirstOrDefault(_ => _.DOC_CODE == dc), new UnitOfWork<ALFAMEDIAEntities>());
         }
 
-        public List<InvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd)
+        public List<IInvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd)
         {
-            DetachObjects();
-            var ret = new List<InvoiceProvider>();
-            var data = Context.SD_26
-                .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd)
-                .OrderByDescending(_ => _.SF_POSTAV_DATE).ToList();
-            foreach (var d in data)
-                ret.Add(new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>()));
-            return ret;
+            //DetachObjects();
+            //var ret = new List<InvoiceProvider>();
+            //var data = Context.SD_26
+            //    .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd)
+            //    .OrderByDescending(_ => _.SF_POSTAV_DATE).ToList();
+            //foreach (var d in data)
+            //    ret.Add(new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>()));
+            //return ret;
+            var data = Context.InvoicePostQuery.Where(_ => _.Date >= dateStart && _.Date <= dateEnd)
+                .OrderByDescending(_ => _.Date).ToList();
+            return data.Select(_ => _.DocCode).Distinct()
+                .Select(dc => new InvoiceProviderBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceProvider>().ToList();
         }
 
         public List<InvoiceProviderShort> GetAllForNakladDistribute(Currency crs, DateTime? dateStart,

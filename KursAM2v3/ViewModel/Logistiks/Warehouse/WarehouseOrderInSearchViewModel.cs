@@ -137,7 +137,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 {
                     var d = ctx.SD_24.Where(_ =>
                         _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
-                        _.DD_TYPE_DC == 2010000001).ToList(); /*приходный складской ордер*/
+                        _.DD_TYPE_DC == 2010000001).OrderByDescending(_ => _.DD_DATE).ToList(); /*приходный складской ордер*/
                     foreach (var item in d)
                         rows.Add(new WarehouseOrderIn(item) { State = RowStatus.NotEdited });
                     Documents = new ObservableCollection<WarehouseOrderIn>(rows);

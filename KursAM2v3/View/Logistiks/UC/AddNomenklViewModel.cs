@@ -118,6 +118,7 @@ namespace KursAM2.View.Logistiks.UC
             NomenklItemCollection.Clear();
             SelectedNomenkl.Clear();
             NomenklGroup.Clear();
+            RaisePropertyChanged(nameof(IsNotUsluga));
             try
             {
                 //using (var ctx = GlobalOptions.GetEntities())
@@ -134,7 +135,9 @@ namespace KursAM2.View.Logistiks.UC
                     }
                     else
                     {
+                        myDataUserControl.treeListPermissionStruct.IsEnabled = false;
                         NomenklItemCollection.AddRange(MainReferences.ALLNomenkls.Values.Where(_ => _.IsUsluga));
+                        NomenklItem.AddRange(NomenklItemCollection);
                     }
 
                     //foreach (var item in MainReferences.ALLNomenkls.Values)

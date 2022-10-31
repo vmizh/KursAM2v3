@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-             xmlns:control="clr-namespace:Core.Control;assembly=Core"
+             xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              mc:Ignorable="d"
              Title="Типы актов взаимозачета" Height="300" Width="300">

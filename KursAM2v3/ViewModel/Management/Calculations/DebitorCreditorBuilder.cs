@@ -10,6 +10,7 @@ using DevExpress.Mvvm;
 using Helper;
 using KursAM2.ViewModel.Management.DebitorCreditor;
 using KursAM2.ViewModel.Splash;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Management.Calculations
 {
