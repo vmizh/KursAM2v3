@@ -76,6 +76,7 @@
       <DependentUpon>WindowMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="DatePeriod.cs" />
+    <Compile Include="DBContext\KursDBContext.cs" />
     <Compile Include="Documents\AccruedAmount\AccruedAmountForClientRowViewModel.cs" />
     <Compile Include="Documents\AccruedAmount\AccruedAmountForClientViewModel.cs" />
     <Compile Include="Documents\AccruedAmount\AccruedAmountOfSupplierCashDocViewModel.cs" />

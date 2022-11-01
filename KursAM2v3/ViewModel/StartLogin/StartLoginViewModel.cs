@@ -25,6 +25,7 @@ using Helper;
 using KursAM2.Managers;
 using KursAM2.Properties;
 using KursAM2.ViewModel.Splash;
+using KursDomain.DBContext;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Employee;
 using KursDomain.References;
@@ -236,7 +237,7 @@ namespace KursAM2.ViewModel.StartLogin
                 Helper.CurrentUser.UserInfo = newUser;
                 GlobalOptions.SystemProfile = new SystemProfile();
             }
-            var refer = new ReferencesKursCache(GlobalOptions.GetEntities());
+            var refer = new ReferencesKursCache(new KursDBContext(GlobalOptions.SqlConnectionString).Context );
             refer.StartLoad();
             GlobalOptions.ReferencesCache = refer;
             MainReferences.Reset();
