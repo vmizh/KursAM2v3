@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
 using Data;
+using KursDomain.Documents.Systems;
 
 namespace Core.EntityViewModel
 {

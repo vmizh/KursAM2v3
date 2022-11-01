@@ -3,210 +3,209 @@ using System.Collections.Generic;
 using Core.ViewModel.Base;
 using Data;
 
-namespace Core.EntityViewModel.NomenklManagement
+namespace KursDomain.Documents.NomenklManagement;
+
+public class NomenklCostResetRowsViewModel : RSViewModelBase, IEntity<NomenklCostResetRows>
 {
-    public class NomenklCostResetRowsViewModel : RSViewModelBase, IEntity<NomenklCostResetRows>
+    private NomenklCostResetRows myEntity;
+
+    public NomenklCostResetRowsViewModel()
     {
-        private NomenklCostResetRows myEntity;
+        Entity = DefaultValue();
+    }
 
-        public NomenklCostResetRowsViewModel()
+    public NomenklCostResetRowsViewModel(NomenklCostResetRows entity)
+    {
+        Entity = entity ?? DefaultValue();
+    }
+
+    public Guid DocId
+    {
+        get => Entity.DocId;
+        set
         {
-            Entity = DefaultValue();
+            if (Entity.DocId == value) return;
+            Entity.DocId = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public NomenklCostResetRowsViewModel(NomenklCostResetRows entity)
+    public Guid NomenklId
+    {
+        get => Entity.NomenklId;
+        set
         {
-            Entity = entity ?? DefaultValue();
+            if (Entity.NomenklId == value) return;
+            Entity.NomenklId = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public Guid DocId
+    public Guid CurrencyId
+    {
+        get => Entity.CurrencyId;
+        set
         {
-            get => Entity.DocId;
-            set
-            {
-                if (Entity.DocId == value) return;
-                Entity.DocId = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.CurrencyId == value) return;
+            Entity.CurrencyId = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public Guid NomenklId
+    public decimal Quantity
+    {
+        get => Entity.Quantity;
+        set
         {
-            get => Entity.NomenklId;
-            set
-            {
-                if (Entity.NomenklId == value) return;
-                Entity.NomenklId = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.Quantity == value) return;
+            Entity.Quantity = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public Guid CurrencyId
+    public Guid CurrencyNewId
+    {
+        get => Entity.CurrencyNewId;
+        set
         {
-            get => Entity.CurrencyId;
-            set
-            {
-                if (Entity.CurrencyId == value) return;
-                Entity.CurrencyId = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.CurrencyNewId == value) return;
+            Entity.CurrencyNewId = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal Quantity
+    public decimal QuantityReset
+    {
+        get => Entity.QuantityReset;
+        set
         {
-            get => Entity.Quantity;
-            set
-            {
-                if (Entity.Quantity == value) return;
-                Entity.Quantity = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.QuantityReset == value) return;
+            Entity.QuantityReset = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public Guid CurrencyNewId
+    public decimal Rate
+    {
+        get => Entity.Rate;
+        set
         {
-            get => Entity.CurrencyNewId;
-            set
-            {
-                if (Entity.CurrencyNewId == value) return;
-                Entity.CurrencyNewId = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.Rate == value) return;
+            Entity.Rate = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal QuantityReset
+    public NomenklCostReset NomenklCostReset
+    {
+        get => Entity.NomenklCostReset;
+        set
         {
-            get => Entity.QuantityReset;
-            set
-            {
-                if (Entity.QuantityReset == value) return;
-                Entity.QuantityReset = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.NomenklCostReset == value) return;
+            Entity.NomenklCostReset = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal Rate
+    public EntityLoadCodition LoadCondition { get; set; }
+
+    public bool IsAccessRight { get; set; }
+
+    public NomenklCostResetRows Entity
+    {
+        get => myEntity;
+        set
         {
-            get => Entity.Rate;
-            set
-            {
-                if (Entity.Rate == value) return;
-                Entity.Rate = value;
-                RaisePropertyChanged();
-            }
+            if (myEntity == value) return;
+            myEntity = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public NomenklCostReset NomenklCostReset
+    public NomenklCostResetRows DefaultValue()
+    {
+        return new NomenklCostResetRows
         {
-            get => Entity.NomenklCostReset;
-            set
-            {
-                if (Entity.NomenklCostReset == value) return;
-                Entity.NomenklCostReset = value;
-                RaisePropertyChanged();
-            }
-        }
+            Id = Guid.NewGuid(),
+            Rate = 0
+        };
+    }
 
-        public NomenklCostResetRows Entity
-        {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
-        }
+    public List<NomenklCostResetRows> LoadList()
+    {
+        throw new NotImplementedException();
+    }
 
-        public EntityLoadCodition LoadCondition { get; set; }
+    public NomenklCostResetRows Load(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
-        public List<NomenklCostResetRows> LoadList()
-        {
-            throw new NotImplementedException();
-        }
+    public virtual void Save(NomenklCostResetRows doc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public bool IsAccessRight { get; set; }
+    public void Save()
+    {
+        throw new NotImplementedException();
+    }
 
-        public NomenklCostResetRows Load(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete()
+    {
+        throw new NotImplementedException();
+    }
 
-        public virtual void Save(NomenklCostResetRows doc)
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete(decimal dc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void Delete()
-        {
-            throw new NotImplementedException();
-        }
+    public void UpdateFrom(NomenklCostResetRows ent)
+    {
+        Id = ent.Id;
+        DocId = ent.DocId;
+        NomenklId = ent.NomenklId;
+        CurrencyId = ent.CurrencyId;
+        Quantity = ent.Quantity;
+        CurrencyNewId = ent.CurrencyNewId;
+        QuantityReset = ent.QuantityReset;
+        Rate = ent.Rate;
+        Note = ent.Note;
+        NomenklCostReset = ent.NomenklCostReset;
+    }
 
-        public void Delete(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+    public void UpdateTo(NomenklCostResetRows ent)
+    {
+        ent.Id = Id;
+        ent.DocId = DocId;
+        ent.NomenklId = NomenklId;
+        ent.CurrencyId = CurrencyId;
+        ent.Quantity = Quantity;
+        ent.CurrencyNewId = CurrencyNewId;
+        ent.QuantityReset = QuantityReset;
+        ent.Rate = Rate;
+        ent.Note = Note;
+        ent.NomenklCostReset = NomenklCostReset;
+    }
 
-        public void Delete(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
+    public virtual NomenklCostResetRows Load(decimal dc, bool isShort = true)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void UpdateFrom(NomenklCostResetRows ent)
-        {
-            Id = ent.Id;
-            DocId = ent.DocId;
-            NomenklId = ent.NomenklId;
-            CurrencyId = ent.CurrencyId;
-            Quantity = ent.Quantity;
-            CurrencyNewId = ent.CurrencyNewId;
-            QuantityReset = ent.QuantityReset;
-            Rate = ent.Rate;
-            Note = ent.Note;
-            NomenklCostReset = ent.NomenklCostReset;
-        }
+    public virtual NomenklCostResetRows Load(Guid id, bool isShort = true)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void UpdateTo(NomenklCostResetRows ent)
-        {
-            ent.Id = Id;
-            ent.DocId = DocId;
-            ent.NomenklId = NomenklId;
-            ent.CurrencyId = CurrencyId;
-            ent.Quantity = Quantity;
-            ent.CurrencyNewId = CurrencyNewId;
-            ent.QuantityReset = QuantityReset;
-            ent.Rate = Rate;
-            ent.Note = Note;
-            ent.NomenklCostReset = NomenklCostReset;
-        }
-
-        public NomenklCostResetRows DefaultValue()
-        {
-            return new()
-            {
-                Id = Guid.NewGuid(),
-                Rate = 0
-            };
-        }
-
-        public virtual NomenklCostResetRows Load(decimal dc, bool isShort = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual NomenklCostResetRows Load(Guid id, bool isShort = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public NomenklCostResetRows Load(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
+    public NomenklCostResetRows Load(decimal dc)
+    {
+        throw new NotImplementedException();
     }
 }

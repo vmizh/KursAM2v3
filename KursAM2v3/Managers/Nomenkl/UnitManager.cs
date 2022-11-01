@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
+using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.Managers.Nomenkl
 {
-    public class UnitManager : BaseItemManager<Unit>
+    public class UnitManager : BaseItemManager<UnitViewModel>
     {
-        public override List<Unit> LoadList()
+        public override List<UnitViewModel> LoadList()
         {
-            var ret = new List<Unit>();
+            var ret = new List<UnitViewModel>();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -22,7 +23,7 @@ namespace KursAM2.Managers.Nomenkl
                     // ReSharper disable once LoopCanBeConvertedToQuery
                     foreach (var u in ctx.SD_175)
                     {
-                        var n = new Unit(u) { State = RowStatus.NotEdited };
+                        var n = new UnitViewModel(u);
                         ret.Add(n);
                     }
                 }
@@ -35,9 +36,9 @@ namespace KursAM2.Managers.Nomenkl
             return ret;
         }
 
-        public override Unit New()
+        public override UnitViewModel New()
         {
-            return new Unit
+            return new UnitViewModel
             {
                 DOC_CODE = -1,
                 State = RowStatus.NewRow,
@@ -46,9 +47,9 @@ namespace KursAM2.Managers.Nomenkl
             };
         }
 
-        public override Unit New(Unit u = default)
+        public override UnitViewModel New(UnitViewModel u = default)
         {
-            return new Unit
+            return new UnitViewModel
             {
                 DOC_CODE = -1,
                 State = RowStatus.NewRow,
@@ -57,9 +58,9 @@ namespace KursAM2.Managers.Nomenkl
             };
         }
 
-        public override Unit NewCopy(Unit u)
+        public override UnitViewModel NewCopy(UnitViewModel u)
         {
-            return new Unit
+            return new UnitViewModel
             {
                 DOC_CODE = -1,
                 State = RowStatus.NewRow,
@@ -72,7 +73,7 @@ namespace KursAM2.Managers.Nomenkl
             };
         }
 
-        public override bool Save(IEnumerable<Unit> listUnits)
+        public override bool Save(IEnumerable<UnitViewModel> listUnits)
         {
             if (listUnits == null || !listUnits.Any()) return true;
             using (var ctx = GlobalOptions.GetEntities())
@@ -121,7 +122,12 @@ namespace KursAM2.Managers.Nomenkl
                         tn.Commit();
                         MainReferences.Units.Clear();
                         foreach (var item in ctx.SD_175.AsNoTracking().ToList())
-                            MainReferences.Units.Add(item.DOC_CODE, new Unit(item));
+                        {
+                            var newUnit = new Unit();
+                            newUnit.LoadFromEntity(item);
+                            MainReferences.Units.Add(item.DOC_CODE, newUnit);
+                        }
+
                         return true;
                     }
                     catch (Exception ex)
@@ -134,7 +140,7 @@ namespace KursAM2.Managers.Nomenkl
             }
         }
 
-        public override bool Delete(IEnumerable<Unit> listUnits)
+        public override bool Delete(IEnumerable<UnitViewModel> listUnits)
         {
             if (listUnits == null || !listUnits.Any()) return true;
             using (var ctx = GlobalOptions.GetEntities())

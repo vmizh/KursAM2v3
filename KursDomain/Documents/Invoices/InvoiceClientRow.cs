@@ -3,881 +3,887 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Windows;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
+using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.References;
+using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 // ReSharper disable InconsistentNaming
-namespace Core.EntityViewModel.Invoices
+namespace KursDomain.Documents.Invoices;
+
+public interface IInvoiceClientRow
 {
-    public interface IInvoiceClientRow
+    [Display(AutoGenerateField = false)] public decimal DocCode { set; get; }
+    [Display(AutoGenerateField = false)] public int Code { set; get; }
+    [Display(AutoGenerateField = false)] public Guid Id { set; get; }
+    [Display(AutoGenerateField = false)] public Guid DocId { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Номенклатура")]
+    public Nomenkl Nomenkl { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Ном.№")]
+    public string NomNomenkl { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Услуга")]
+    public bool IsUsluga { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Кол-во")]
+    [DisplayFormat(DataFormatString = "n4")]
+    public decimal Quantity { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Цена")]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal Price { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Сумма")]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal Summa { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Наценка дилера на единицу")]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal? SFT_NACENKA_DILERA { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Отгружено")]
+    [DisplayFormat(DataFormatString = "n4")]
+    public decimal Shipped { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Остаток")]
+    [DisplayFormat(DataFormatString = "n4")]
+    public decimal Rest { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Текущий остаток")]
+    [DisplayFormat(DataFormatString = "n4")]
+    public decimal CurrentRemains { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Примечание")]
+    public string Note { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "НДС %")]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal NDSPercent { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Сумма НДС")]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal? SFT_SUMMA_NDS { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Счет дох./расх.")]
+    public SDRSchet SDRSchet { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Груз. декларация")]
+    public string GruzoDeclaration { set; get; }
+}
+
+public class InvoiceClientRowShort : IInvoiceClientRow
+{
+    [Display(AutoGenerateField = true, Name = "Выбран")]
+    public bool IsSelected { set; get; }
+
+    [Display(AutoGenerateField = false)] public decimal DocCode { set; get; }
+
+    [Display(AutoGenerateField = false)] public int Code { set; get; }
+
+    [Display(AutoGenerateField = false)] public Guid Id { set; get; }
+
+    [Display(AutoGenerateField = false)] public Guid DocId { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Номенклатура")]
+    [ReadOnly(true)]
+    public Nomenkl Nomenkl { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Ном.№")]
+    [ReadOnly(true)]
+    public string NomNomenkl { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Услуга")]
+    [ReadOnly(true)]
+    public bool IsUsluga { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Кол-во")]
+    [DisplayFormat(DataFormatString = "n4")]
+    [ReadOnly(true)]
+    public decimal Quantity { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Цена")]
+    [DisplayFormat(DataFormatString = "n2")]
+    [ReadOnly(true)]
+    public decimal Price { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Сумма")]
+    [DisplayFormat(DataFormatString = "n2")]
+    [ReadOnly(true)]
+    public decimal Summa { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Наценка дилера на единицу")]
+    [DisplayFormat(DataFormatString = "n2")]
+    [ReadOnly(true)]
+    public decimal? SFT_NACENKA_DILERA { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Отгружено")]
+    [DisplayFormat(DataFormatString = "n4")]
+    [ReadOnly(true)]
+    public decimal Shipped { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Остаток")]
+    [DisplayFormat(DataFormatString = "n4")]
+    [ReadOnly(true)]
+    public decimal Rest { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Текущий остаток")]
+    [DisplayFormat(DataFormatString = "n4")]
+    [ReadOnly(true)]
+    public decimal CurrentRemains { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Примечание")]
+    [ReadOnly(true)]
+    public string Note { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "НДС %")]
+    [DisplayFormat(DataFormatString = "n2")]
+    [ReadOnly(true)]
+    public decimal NDSPercent { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Сумма НДС")]
+    [DisplayFormat(DataFormatString = "n2")]
+    [ReadOnly(true)]
+    public decimal? SFT_SUMMA_NDS { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Счет дох./расх.")]
+    [ReadOnly(true)]
+    public SDRSchet SDRSchet { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Груз. декларация")]
+    [ReadOnly(true)]
+    public string GruzoDeclaration { set; get; }
+}
+
+[MetadataType(typeof(DataAnnotationsSFClientRowViewModel))]
+public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientRow
+{
+    private decimal myCurrentRemains;
+    private TD_84 myEntity;
+
+    // ReSharper disable once RedundantDefaultMemberInitializer
+    public bool myIsNDSInPrice = false;
+    private Nomenkl myNomenkl;
+    private decimal myRest;
+    private SDRSchet mySDRSchet;
+    private decimal myShipped;
+
+    public InvoiceClientRow(bool isNDSInPrice = false)
     {
-        [Display(AutoGenerateField = false)] public decimal DocCode { set; get; }
-        [Display(AutoGenerateField = false)] public int Code { set; get; }
-        [Display(AutoGenerateField = false)] public Guid Id { set; get; }
-        [Display(AutoGenerateField = false)] public Guid DocId { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Номенклатура")]
-        public Nomenkl Nomenkl { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Ном.№")]
-        public string NomNomenkl { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Услуга")]
-        public bool IsUsluga { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Кол-во")]
-        [DisplayFormat(DataFormatString = "n4")]
-        public decimal Quantity { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Цена")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal Price { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Сумма")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal Summa { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Наценка дилера на единицу")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal? SFT_NACENKA_DILERA { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Отгружено")]
-        [DisplayFormat(DataFormatString = "n4")]
-        public decimal Shipped { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Остаток")]
-        [DisplayFormat(DataFormatString = "n4")]
-        public decimal Rest { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Текущий остаток")]
-        [DisplayFormat(DataFormatString = "n4")]
-        public decimal CurrentRemains { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Примечание")]
-        public string Note { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "НДС %")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal NDSPercent { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Сумма НДС")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal? SFT_SUMMA_NDS { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Счет дох./расх.")]
-        public SDRSchet SDRSchet { set; get; }
-
-        [Display(AutoGenerateField = true, Name = "Груз. декларация")]
-        public string GruzoDeclaration { set; get; }
+        Entity = DefaultValue();
+        IsNDSInPrice = isNDSInPrice;
     }
 
-    public class InvoiceClientRowShort : IInvoiceClientRow
+    public InvoiceClientRow(TD_84 entity, bool isNDSInPrice = false)
     {
-        [Display(AutoGenerateField = false)]
-        public decimal DocCode { set; get; }
-        [Display(AutoGenerateField = false)]
-        public int Code { set; get; }
-        [Display(AutoGenerateField = false)]
-        public Guid Id { set; get; }
-        [Display(AutoGenerateField = false)]
-        public Guid DocId { set; get; }
-        [Display(AutoGenerateField = true, Name = "Номенклатура")]
-        [ReadOnly(true)]
-        public Nomenkl Nomenkl { set; get; }
-        [Display(AutoGenerateField = true, Name = "Ном.№")]
-        [ReadOnly(true)]
-        public string NomNomenkl { set; get; }
-        [Display(AutoGenerateField = true, Name = "Услуга")]
-        [ReadOnly(true)]
-        public bool IsUsluga { set; get; }
-        [Display(AutoGenerateField = true, Name = "Кол-во")]
-        [DisplayFormat(DataFormatString = "n4")]
-        [ReadOnly(true)]
-        public decimal Quantity { set; get; }
-        [Display(AutoGenerateField = true, Name = "Цена")]
-        [DisplayFormat(DataFormatString = "n2")]
-        [ReadOnly(true)]
-        public decimal Price { set; get; }
-        [Display(AutoGenerateField = true, Name = "Сумма")]
-        [DisplayFormat(DataFormatString = "n2")]
-        [ReadOnly(true)]
-        public decimal Summa { set; get; }
-        [Display(AutoGenerateField = true, Name = "Наценка дилера на единицу")]
-        [DisplayFormat(DataFormatString = "n2")]
-        [ReadOnly(true)]
-        public decimal? SFT_NACENKA_DILERA { set; get; }
-        [Display(AutoGenerateField = true, Name = "Отгружено")]
-        [DisplayFormat(DataFormatString = "n4")]
-        [ReadOnly(true)]
-        public decimal Shipped { set; get; }
-        [Display(AutoGenerateField = true, Name = "Остаток")]
-        [DisplayFormat(DataFormatString = "n4")]
-        [ReadOnly(true)]
-        public decimal Rest { set; get; }
-        [Display(AutoGenerateField = true, Name = "Текущий остаток")]
-        [DisplayFormat(DataFormatString = "n4")]
-        [ReadOnly(true)]
-        public decimal CurrentRemains { set; get; }
-        [Display(AutoGenerateField = true, Name = "Примечание")]
-        [ReadOnly(true)]
-        public string Note { set; get; }
-        [Display(AutoGenerateField = true, Name = "НДС %")]
-        [DisplayFormat(DataFormatString = "n2")]
-        [ReadOnly(true)]
-        public decimal NDSPercent { set; get; }
-        [Display(AutoGenerateField = true, Name = "Сумма НДС")]
-        [DisplayFormat(DataFormatString = "n2")]
-        [ReadOnly(true)]
-        public decimal? SFT_SUMMA_NDS { set; get; }
-        [Display(AutoGenerateField = true, Name = "Счет дох./расх.")]
-        [ReadOnly(true)]
-        public SDRSchet SDRSchet { set; get; }
-        [Display(AutoGenerateField = true, Name = "Груз. декларация")]
-        [ReadOnly(true)]
-        public string GruzoDeclaration { set; get; }
-        [Display(AutoGenerateField = true, Name = "Выбран")]
-        public bool IsSelected { set; get; }
-    }
-
-
-    [MetadataType(typeof(DataAnnotationsSFClientRowViewModel))]
-    public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientRow
-    {
-        private decimal myCurrentRemains;
-        private TD_84 myEntity;
-
-        // ReSharper disable once RedundantDefaultMemberInitializer
-        public bool myIsNDSInPrice = false;
-        private Nomenkl myNomenkl;
-        private decimal myRest;
-        private SDRSchet mySDRSchet;
-        private decimal myShipped;
-
-        public InvoiceClientRow(bool isNDSInPrice = false)
+        if (entity == null)
         {
             Entity = DefaultValue();
-            IsNDSInPrice = isNDSInPrice;
+        }
+        else
+        {
+            Entity = entity;
+            LoadReference();
         }
 
-        public InvoiceClientRow(TD_84 entity, bool isNDSInPrice = false)
+        IsNDSInPrice = isNDSInPrice;
+    }
+
+    public bool IsNDSInPrice
+    {
+        get => ((InvoiceClient)Parent)?.IsNDSIncludeInPrice ?? myIsNDSInPrice;
+        set
         {
-            if (entity == null)
-            {
-                Entity = DefaultValue();
-            }
-            else
-            {
-                Entity = entity;
-                LoadReference();
-            }
-
-            IsNDSInPrice = isNDSInPrice;
-        }
-
-        public string NomNomenkl
-        {
-            set {}
-            get { return Nomenkl?.NOM_NOMENKL; }
-        }
-
-        public Guid DocId
-        {
-            get => Entity.DocId;
-            set
-            {
-                if (Entity.DocId == value) return;
-                Entity.DocId = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public override Guid Id
-        {
-            set
-            {
-                if (Entity.Id == value) return;
-                Entity.Id = value;
-                RaisePropertyChanged();
-            }
-            get => Entity.Id;
-        }
-
-        public override decimal DocCode
-        {
-            get => Entity.DOC_CODE;
-            set
-            {
-                if (Entity.DOC_CODE == value) return;
-                Entity.DOC_CODE = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public override int Code
-        {
-            get => Entity.CODE;
-            set
-            {
-                if (Entity.CODE == value) return;
-                Entity.CODE = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool IsNDSInPrice
-        {
-            get => ((InvoiceClient)Parent)?.IsNDSIncludeInPrice ?? myIsNDSInPrice;
-            set
-            {
-                if (myIsNDSInPrice == value) return;
-                myIsNDSInPrice = value;
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Entity.SFT_ED_CENA));
-            }
-        }
-
-        public override string Note
-        {
-            get => Entity.SFT_TEXT;
-            set
-            {
-                if (Entity.SFT_TEXT == value) return;
-                Entity.SFT_TEXT = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public Nomenkl Nomenkl
-        {
-            get => MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
-            set
-            {
-                if (MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC) == value) return;
-                myNomenkl = value;
-                if (myNomenkl != null)
-                    Entity.SFT_NEMENKL_DC = myNomenkl.DocCode;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal Quantity
-        {
-            get => (decimal) Entity.SFT_KOL;
-            set
-            {
-                if (value <= 0)
-                {
-                    //WindowManager.ShowMessage("Кол-во должно быть больше нуля", "Ошибка",
-                    //    MessageBoxImage.Error);
-                    return;
-                }
-
-                if (Math.Abs(Entity.SFT_KOL - (double) value) < 0.00001) return;
-                if (value < Shipped)
-                {
-                    //WindowManager.ShowMessage($"Отгружено {Shipped}. Уменьшить кол-во в счете нельзя", "Ошибка",
-                    //    MessageBoxImage.Error);
-                    return;
-                }
-
-                Entity.SFT_KOL = (double) value;
-                CalcRow();
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal Price
-        {
-            get => Entity.SFT_ED_CENA ?? 0;
-            set
-            {
-                if (value < 0)
-                {
-                    //WindowManager.ShowMessage("Цена должна быть больше нуля", "Ошибка",
-                    //    MessageBoxImage.Error);
-                    return;
-                }
-
-                if (Entity.SFT_ED_CENA == value) return;
-                Entity.SFT_ED_CENA = value;
-                CalcRow();
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? SFT_ACCIZ
-        {
-            get => Entity.SFT_ACCIZ;
-            set
-            {
-                if (Entity.SFT_ACCIZ == value) return;
-                Entity.SFT_ACCIZ = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal NDSPercent
-        {
-            get => (decimal) Entity.SFT_NDS_PERCENT;
-            set
-            {
-                if (value < 0)
-                {
-                    //WindowManager.ShowMessage("НДС должен быть больше нуля", "Ошибка",
-                    //    MessageBoxImage.Error);
-                    return;
-                }
-
-                // ReSharper disable once CompareOfFloatsByEqualityOperator
-                if (Entity.SFT_NDS_PERCENT == (double) value) return;
-                Entity.SFT_NDS_PERCENT = (double) value;
-                CalcRow();
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? SFT_SUMMA_NDS
-        {
-            set {}
-            get { return Entity.SFT_SUMMA_NDS; }
-        }
-
-        public decimal Summa
-        {
-            set { }
-            get { return Entity.SFT_SUMMA_K_OPLATE ?? 0; }
-        }
-
-        public decimal? SFT_STDP_DC
-        {
-            get => Entity.SFT_STDP_DC;
-            set
-            {
-                if (Entity.SFT_STDP_DC == value) return;
-                Entity.SFT_STDP_DC = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? SFT_UCHET_ED_IZM_DC
-        {
-            get => Entity.SFT_UCHET_ED_IZM_DC;
-            set
-            {
-                if (Entity.SFT_UCHET_ED_IZM_DC == value) return;
-                Entity.SFT_UCHET_ED_IZM_DC = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public short? SFT_KOMPLEKT
-        {
-            get => Entity.SFT_KOMPLEKT;
-            set
-            {
-                if (Entity.SFT_KOMPLEKT == value) return;
-                Entity.SFT_KOMPLEKT = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? SFT_NALOG_NA_PROD
-        {
-            get => Entity.SFT_NALOG_NA_PROD;
-            set
-            {
-                if (Entity.SFT_NALOG_NA_PROD == value) return;
-                Entity.SFT_NALOG_NA_PROD = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? SFT_DOG_OTGR_DC
-        {
-            get => Entity.SFT_DOG_OTGR_DC;
-            set
-            {
-                if (Entity.SFT_DOG_OTGR_DC == value) return;
-                Entity.SFT_DOG_OTGR_DC = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public int? SFT_DOG_OTGR_PLAN_CODE
-        {
-            get => Entity.SFT_DOG_OTGR_PLAN_CODE;
-            set
-            {
-                if (Entity.SFT_DOG_OTGR_PLAN_CODE == value) return;
-                Entity.SFT_DOG_OTGR_PLAN_CODE = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? SFT_NACENKA_DILERA
-        {
-            get => Entity.SFT_NACENKA_DILERA;
-            set
-            {
-                if (Entity.SFT_NACENKA_DILERA == value) return;
-                Entity.SFT_NACENKA_DILERA = value;
-                if (Parent is InvoiceClient doc)
-                    // ReSharper disable once PossibleInvalidOperationException
-                    doc.SF_DILER_SUMMA = (decimal?)doc.Rows.Cast<InvoiceClientRow>()
-                        .Sum(_ => _.Entity.SFT_KOL * (double)(_.SFT_NACENKA_DILERA ?? 0));
-                RaisePropertyChanged();
-            }
-        }
-
-        public double? SFT_PROCENT_ZS_RASHODOV
-        {
-            get => Entity.SFT_PROCENT_ZS_RASHODOV;
-            set
-            {
-                // ReSharper disable once CompareOfFloatsByEqualityOperator
-                if (Entity.SFT_PROCENT_ZS_RASHODOV == value) return;
-                Entity.SFT_PROCENT_ZS_RASHODOV = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SDRSchet SDRSchet
-        {
-            get => mySDRSchet;
-            set
-            {
-                if (mySDRSchet != null && mySDRSchet.Equals(value)) return;
-                mySDRSchet = value;
-                Entity.SFT_SHPZ_DC = mySDRSchet?.DocCode;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string SFT_STRANA_PROIS
-        {
-            get => Entity.SFT_STRANA_PROIS;
-            set
-            {
-                if (Entity.SFT_STRANA_PROIS == value) return;
-                Entity.SFT_STRANA_PROIS = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string GruzoDeclaration
-        {
-            get => Entity.SFT_N_GRUZ_DECLAR;
-            set
-            {
-                if (Entity.SFT_N_GRUZ_DECLAR == value) return;
-                Entity.SFT_N_GRUZ_DECLAR = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public double? SFT_TARA_MEST
-        {
-            get => Entity.SFT_TARA_MEST;
-            set
-            {
-                // ReSharper disable once CompareOfFloatsByEqualityOperator
-                if (Entity.SFT_TARA_MEST == value) return;
-                Entity.SFT_TARA_MEST = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? SFT_TARA_DC
-        {
-            get => Entity.SFT_TARA_DC;
-            set
-            {
-                if (Entity.SFT_TARA_DC == value) return;
-                Entity.SFT_TARA_DC = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public short? SFT_TARA_FLAG
-        {
-            get => Entity.SFT_TARA_FLAG;
-            set
-            {
-                if (Entity.SFT_TARA_FLAG == value) return;
-                Entity.SFT_TARA_FLAG = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public byte[] TSTAMP
-        {
-            get => Entity.TSTAMP;
-            set
-            {
-                if (Entity.TSTAMP == value) return;
-                Entity.TSTAMP = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string SFT_COUNTRY_CODE
-        {
-            get => Entity.SFT_COUNTRY_CODE;
-            set
-            {
-                if (Entity.SFT_COUNTRY_CODE == value) return;
-                Entity.SFT_COUNTRY_CODE = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string OLD_NOM_NOMENKL
-        {
-            get => Entity.OLD_NOM_NOMENKL;
-            set
-            {
-                if (Entity.OLD_NOM_NOMENKL == value) return;
-                Entity.OLD_NOM_NOMENKL = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string OLD_NOM_NAME
-        {
-            get => Entity.OLD_NOM_NAME;
-            set
-            {
-                if (Entity.OLD_NOM_NAME == value) return;
-                Entity.OLD_NOM_NAME = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string OLD_OVERHEAD_NAME
-        {
-            get => Entity.OLD_OVERHEAD_NAME;
-            set
-            {
-                if (Entity.OLD_OVERHEAD_NAME == value) return;
-                Entity.OLD_OVERHEAD_NAME = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string OLD_OVERHEAD_CRS_NAME
-        {
-            get => Entity.OLD_OVERHEAD_CRS_NAME;
-            set
-            {
-                if (Entity.OLD_OVERHEAD_CRS_NAME == value) return;
-                Entity.OLD_OVERHEAD_CRS_NAME = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string OLD_UNIT_NAME
-        {
-            get => Entity.OLD_UNIT_NAME;
-            set
-            {
-                if (Entity.OLD_UNIT_NAME == value) return;
-                Entity.OLD_UNIT_NAME = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_165 SD_165
-        {
-            get => Entity.SD_165;
-            set
-            {
-                if (Entity.SD_165 == value) return;
-                Entity.SD_165 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_175 SD_175
-        {
-            get => Entity.SD_175;
-            set
-            {
-                if (Entity.SD_175 == value) return;
-                Entity.SD_175 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_303 SD_303
-        {
-            get => Entity.SD_303;
-            set
-            {
-                if (Entity.SD_303 == value) return;
-                Entity.SD_303 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_83 SD_83
-        {
-            get => Entity.SD_83;
-            set
-            {
-                if (Entity.SD_83 == value) return;
-                Entity.SD_83 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_83 SD_831
-        {
-            get => Entity.SD_831;
-            set
-            {
-                if (Entity.SD_831 == value) return;
-                Entity.SD_831 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_84 SD_84
-        {
-            get => Entity.SD_84;
-            set
-            {
-                if (Entity.SD_84 == value) return;
-                Entity.SD_84 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public VD_9 VD_9
-        {
-            get => Entity.VD_9;
-            set
-            {
-                if (Entity.VD_9 == value) return;
-                Entity.VD_9 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public COUNTRY COUNTRY
-        {
-            get => Entity.COUNTRY;
-            set
-            {
-                if (Entity.COUNTRY == value) return;
-                Entity.COUNTRY = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string NomenklNumber => Nomenkl?.NomenklNumber;
-
-        public bool IsUsluga
-        {
-            set { }
-            get { return Nomenkl?.NOM_0MATER_1USLUGA == 1; }
-        }
-
-        /// <summary>
-        ///     Отгружено
-        /// </summary>
-        public decimal Shipped
-        {
-            get => myShipped;
-            set
-            {
-                if (myShipped == value) return;
-                myShipped = value;
-                myRest = (decimal) (Entity.SFT_KOL - (double) myShipped);
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Rest));
-            }
-        }
-
-        /// <summary>
-        ///     остаток для отгрузки по счету
-        /// </summary>
-        public decimal Rest
-        {
-            get => myRest;
-            set
-            {
-                if (myRest == value) return;
-                myRest = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal CurrentRemains
-        {
-            get => myCurrentRemains;
-            set
-            {
-                if (myCurrentRemains == value) return;
-                myCurrentRemains = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public EntityLoadCodition LoadCondition { get; set; }
-
-        public bool IsAccessRight { get; set; }
-
-        public TD_84 Entity
-        {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public List<TD_84> LoadList()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CalcRow()
-        {
-            if (IsNDSInPrice)
-            {
-                var s = (decimal) Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0;
-                Entity.SFT_SUMMA_NDS = Math.Round(s - s * 100 / (100 + (decimal) Entity.SFT_NDS_PERCENT), 2);
-                Entity.SFT_SUMMA_K_OPLATE = s;
-                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = s;
-            }
-            else
-            {
-                Entity.SFT_SUMMA_NDS =
-                    (decimal) Math.Round(
-                        Entity.SFT_KOL * (double) (Entity.SFT_ED_CENA ?? 0) * Entity.SFT_NDS_PERCENT / 100, 2);
-                Entity.SFT_SUMMA_K_OPLATE =
-                    Math.Round((decimal) (Entity.SFT_KOL * (double) (Entity.SFT_ED_CENA ?? 0)), 2)
-                    + Entity.SFT_SUMMA_NDS;
-                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
-            }
-
-            RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
-            RaisePropertyChanged(nameof(Summa));
-            if (Parent is InvoiceClient p) p.RaisePropertyChanged("Summa");
-        }
-
-        private void LoadReference()
-        {
-            Nomenkl = MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
-            if (Entity.SFT_SHPZ_DC != null)
-                SDRSchet = MainReferences.SDRSchets[Entity.SFT_SHPZ_DC.Value];
-        }
-
-        public virtual void Save(TD_84 doc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateFrom(TD_84 ent)
-        {
-        }
-
-        public void UpdateTo(TD_84 ent)
-        {
-        }
-
-        public TD_84 DefaultValue()
-        {
-            return new()
-            {
-                Id = Guid.NewGuid(),
-                DOC_CODE = -1,
-                CODE = -1
-            };
-        }
-
-        public virtual TD_84 Load(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual TD_84 Load(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override object ToJson()
-        {
-            return new
-            {
-                DocCode,
-                Code,
-                Номенклатурный_Номер = NomNomenkl,
-                Номенклатура = Nomenkl.Name,
-                Услуга = IsUsluga ? "Да" : "Нет",
-                Количество = Quantity.ToString("n3"),
-                Цена = Price.ToString("n2"),
-                Сумма = Summa.ToString("n2"),
-                Наценка_Дилера = SFT_NACENKA_DILERA?.ToString("n2"),
-                Отгружено = Shipped.ToString("n3"),
-                Процент_НДС = NDSPercent.ToString("n2"),
-                Сумма_НДС = SFT_SUMMA_NDS?.ToString("n2"),
-                Примечание = Note
-            };
+            if (myIsNDSInPrice == value) return;
+            myIsNDSInPrice = value;
+            RaisePropertyChanged();
+            RaisePropertyChanged(nameof(Entity.SFT_ED_CENA));
         }
     }
 
-    public class DataAnnotationsSFClientRowViewModel : DataAnnotationForFluentApiBase,
-        IMetadataProvider<InvoiceClientRow>
+    public decimal? SFT_ACCIZ
     {
-        void IMetadataProvider<InvoiceClientRow>.BuildMetadata(MetadataBuilder<InvoiceClientRow> builder)
+        get => Entity.SFT_ACCIZ;
+        set
         {
-            SetNotAutoGenerated(builder);
-            builder.Property(_ => _.Nomenkl).AutoGenerated().DisplayName("Наименование");
-            builder.Property(_ => _.NomNomenkl).AutoGenerated().DisplayName("Ном.№");
-            builder.Property(_ => _.IsUsluga).AutoGenerated().DisplayName("Услуга");
-            builder.Property(_ => _.Quantity).AutoGenerated().DisplayName("Кол-во").DisplayFormatString("n4");
-            builder.Property(_ => _.Price).AutoGenerated().DisplayName("Цена").DisplayFormatString("n2");
-            builder.Property(_ => _.Summa).AutoGenerated().DisplayName("Сумма").DisplayFormatString("n2");
-            builder.Property(_ => _.SFT_NACENKA_DILERA).AutoGenerated().DisplayName("Наценка дилера на единицу")
-                .DisplayFormatString("n2");
-            builder.Property(_ => _.Shipped).AutoGenerated().DisplayName("Отгружено").DisplayFormatString("n4");
-            builder.Property(_ => _.Rest).AutoGenerated().DisplayName("Остаток").DisplayFormatString("n4");
-            builder.Property(_ => _.CurrentRemains).AutoGenerated().DisplayName("Текущие остатки")
-                .DisplayFormatString("n4");
-            builder.Property(_ => _.Note).AutoGenerated().DisplayName("Примечание");
-            builder.Property(_ => _.NDSPercent).AutoGenerated().DisplayName("НДС %").DisplayFormatString("n2");
-            builder.Property(_ => _.SFT_SUMMA_NDS).AutoGenerated().DisplayName("Сумма НДС").ReadOnly()
-                .DisplayFormatString("n2");
-            builder.Property(_ => _.SDRSchet).AutoGenerated().DisplayName("Счет дох./расх.");
-            builder.Property(_ => _.GruzoDeclaration).AutoGenerated().DisplayName("Декларация(груз)");
+            if (Entity.SFT_ACCIZ == value) return;
+            Entity.SFT_ACCIZ = value;
+            RaisePropertyChanged();
         }
+    }
+
+    public decimal? SFT_STDP_DC
+    {
+        get => Entity.SFT_STDP_DC;
+        set
+        {
+            if (Entity.SFT_STDP_DC == value) return;
+            Entity.SFT_STDP_DC = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public decimal? SFT_UCHET_ED_IZM_DC
+    {
+        get => Entity.SFT_UCHET_ED_IZM_DC;
+        set
+        {
+            if (Entity.SFT_UCHET_ED_IZM_DC == value) return;
+            Entity.SFT_UCHET_ED_IZM_DC = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public short? SFT_KOMPLEKT
+    {
+        get => Entity.SFT_KOMPLEKT;
+        set
+        {
+            if (Entity.SFT_KOMPLEKT == value) return;
+            Entity.SFT_KOMPLEKT = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public decimal? SFT_NALOG_NA_PROD
+    {
+        get => Entity.SFT_NALOG_NA_PROD;
+        set
+        {
+            if (Entity.SFT_NALOG_NA_PROD == value) return;
+            Entity.SFT_NALOG_NA_PROD = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public decimal? SFT_DOG_OTGR_DC
+    {
+        get => Entity.SFT_DOG_OTGR_DC;
+        set
+        {
+            if (Entity.SFT_DOG_OTGR_DC == value) return;
+            Entity.SFT_DOG_OTGR_DC = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public int? SFT_DOG_OTGR_PLAN_CODE
+    {
+        get => Entity.SFT_DOG_OTGR_PLAN_CODE;
+        set
+        {
+            if (Entity.SFT_DOG_OTGR_PLAN_CODE == value) return;
+            Entity.SFT_DOG_OTGR_PLAN_CODE = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public double? SFT_PROCENT_ZS_RASHODOV
+    {
+        get => Entity.SFT_PROCENT_ZS_RASHODOV;
+        set
+        {
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            if (Entity.SFT_PROCENT_ZS_RASHODOV == value) return;
+            Entity.SFT_PROCENT_ZS_RASHODOV = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public string SFT_STRANA_PROIS
+    {
+        get => Entity.SFT_STRANA_PROIS;
+        set
+        {
+            if (Entity.SFT_STRANA_PROIS == value) return;
+            Entity.SFT_STRANA_PROIS = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public double? SFT_TARA_MEST
+    {
+        get => Entity.SFT_TARA_MEST;
+        set
+        {
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            if (Entity.SFT_TARA_MEST == value) return;
+            Entity.SFT_TARA_MEST = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public decimal? SFT_TARA_DC
+    {
+        get => Entity.SFT_TARA_DC;
+        set
+        {
+            if (Entity.SFT_TARA_DC == value) return;
+            Entity.SFT_TARA_DC = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public short? SFT_TARA_FLAG
+    {
+        get => Entity.SFT_TARA_FLAG;
+        set
+        {
+            if (Entity.SFT_TARA_FLAG == value) return;
+            Entity.SFT_TARA_FLAG = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public byte[] TSTAMP
+    {
+        get => Entity.TSTAMP;
+        set
+        {
+            if (Entity.TSTAMP == value) return;
+            Entity.TSTAMP = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public string SFT_COUNTRY_CODE
+    {
+        get => Entity.SFT_COUNTRY_CODE;
+        set
+        {
+            if (Entity.SFT_COUNTRY_CODE == value) return;
+            Entity.SFT_COUNTRY_CODE = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public string OLD_NOM_NOMENKL
+    {
+        get => Entity.OLD_NOM_NOMENKL;
+        set
+        {
+            if (Entity.OLD_NOM_NOMENKL == value) return;
+            Entity.OLD_NOM_NOMENKL = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public string OLD_NOM_NAME
+    {
+        get => Entity.OLD_NOM_NAME;
+        set
+        {
+            if (Entity.OLD_NOM_NAME == value) return;
+            Entity.OLD_NOM_NAME = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public string OLD_OVERHEAD_NAME
+    {
+        get => Entity.OLD_OVERHEAD_NAME;
+        set
+        {
+            if (Entity.OLD_OVERHEAD_NAME == value) return;
+            Entity.OLD_OVERHEAD_NAME = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public string OLD_OVERHEAD_CRS_NAME
+    {
+        get => Entity.OLD_OVERHEAD_CRS_NAME;
+        set
+        {
+            if (Entity.OLD_OVERHEAD_CRS_NAME == value) return;
+            Entity.OLD_OVERHEAD_CRS_NAME = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public string OLD_UNIT_NAME
+    {
+        get => Entity.OLD_UNIT_NAME;
+        set
+        {
+            if (Entity.OLD_UNIT_NAME == value) return;
+            Entity.OLD_UNIT_NAME = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public SD_165 SD_165
+    {
+        get => Entity.SD_165;
+        set
+        {
+            if (Entity.SD_165 == value) return;
+            Entity.SD_165 = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public SD_175 SD_175
+    {
+        get => Entity.SD_175;
+        set
+        {
+            if (Entity.SD_175 == value) return;
+            Entity.SD_175 = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public SD_303 SD_303
+    {
+        get => Entity.SD_303;
+        set
+        {
+            if (Entity.SD_303 == value) return;
+            Entity.SD_303 = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public SD_83 SD_83
+    {
+        get => Entity.SD_83;
+        set
+        {
+            if (Entity.SD_83 == value) return;
+            Entity.SD_83 = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public SD_83 SD_831
+    {
+        get => Entity.SD_831;
+        set
+        {
+            if (Entity.SD_831 == value) return;
+            Entity.SD_831 = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public SD_84 SD_84
+    {
+        get => Entity.SD_84;
+        set
+        {
+            if (Entity.SD_84 == value) return;
+            Entity.SD_84 = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public VD_9 VD_9
+    {
+        get => Entity.VD_9;
+        set
+        {
+            if (Entity.VD_9 == value) return;
+            Entity.VD_9 = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public COUNTRY COUNTRY
+    {
+        get => Entity.COUNTRY;
+        set
+        {
+            if (Entity.COUNTRY == value) return;
+            Entity.COUNTRY = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public string NomenklNumber => Nomenkl?.NomenklNumber;
+
+    public EntityLoadCodition LoadCondition { get; set; }
+
+    public bool IsAccessRight { get; set; }
+
+    public TD_84 Entity
+    {
+        get => myEntity;
+        set
+        {
+            if (myEntity == value) return;
+            myEntity = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public TD_84 DefaultValue()
+    {
+        return new TD_84
+        {
+            Id = Guid.NewGuid(),
+            DOC_CODE = -1,
+            CODE = -1
+        };
+    }
+
+    public string NomNomenkl
+    {
+        set { }
+        get => Nomenkl?.NomenklNumber;
+    }
+
+    public Guid DocId
+    {
+        get => Entity.DocId;
+        set
+        {
+            if (Entity.DocId == value) return;
+            Entity.DocId = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public override Guid Id
+    {
+        set
+        {
+            if (Entity.Id == value) return;
+            Entity.Id = value;
+            RaisePropertyChanged();
+        }
+        get => Entity.Id;
+    }
+
+    public override decimal DocCode
+    {
+        get => Entity.DOC_CODE;
+        set
+        {
+            if (Entity.DOC_CODE == value) return;
+            Entity.DOC_CODE = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public override int Code
+    {
+        get => Entity.CODE;
+        set
+        {
+            if (Entity.CODE == value) return;
+            Entity.CODE = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public override string Note
+    {
+        get => Entity.SFT_TEXT;
+        set
+        {
+            if (Entity.SFT_TEXT == value) return;
+            Entity.SFT_TEXT = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public Nomenkl Nomenkl
+    {
+        get => MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
+        set
+        {
+            if (MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC) == value) return;
+            myNomenkl = value;
+            if (myNomenkl != null)
+                Entity.SFT_NEMENKL_DC = myNomenkl.DocCode;
+            RaisePropertyChanged();
+        }
+    }
+
+    public decimal Quantity
+    {
+        get => (decimal)Entity.SFT_KOL;
+        set
+        {
+            if (value <= 0)
+                //WindowManager.ShowMessage("Кол-во должно быть больше нуля", "Ошибка",
+                //    MessageBoxImage.Error);
+                return;
+
+            if (Math.Abs(Entity.SFT_KOL - (double)value) < 0.00001) return;
+            if (value < Shipped)
+                //WindowManager.ShowMessage($"Отгружено {Shipped}. Уменьшить кол-во в счете нельзя", "Ошибка",
+                //    MessageBoxImage.Error);
+                return;
+
+            Entity.SFT_KOL = (double)value;
+            CalcRow();
+            RaisePropertyChanged();
+        }
+    }
+
+    public decimal Price
+    {
+        get => Entity.SFT_ED_CENA ?? 0;
+        set
+        {
+            if (value < 0)
+                //WindowManager.ShowMessage("Цена должна быть больше нуля", "Ошибка",
+                //    MessageBoxImage.Error);
+                return;
+
+            if (Entity.SFT_ED_CENA == value) return;
+            Entity.SFT_ED_CENA = value;
+            CalcRow();
+            RaisePropertyChanged();
+        }
+    }
+
+    public decimal NDSPercent
+    {
+        get => (decimal)Entity.SFT_NDS_PERCENT;
+        set
+        {
+            if (value < 0)
+                //WindowManager.ShowMessage("НДС должен быть больше нуля", "Ошибка",
+                //    MessageBoxImage.Error);
+                return;
+
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            if (Entity.SFT_NDS_PERCENT == (double)value) return;
+            Entity.SFT_NDS_PERCENT = (double)value;
+            CalcRow();
+            RaisePropertyChanged();
+        }
+    }
+
+    public decimal? SFT_SUMMA_NDS
+    {
+        set { }
+        get => Entity.SFT_SUMMA_NDS;
+    }
+
+    public decimal Summa
+    {
+        set { }
+        get => Entity.SFT_SUMMA_K_OPLATE ?? 0;
+    }
+
+    public decimal? SFT_NACENKA_DILERA
+    {
+        get => Entity.SFT_NACENKA_DILERA;
+        set
+        {
+            if (Entity.SFT_NACENKA_DILERA == value) return;
+            Entity.SFT_NACENKA_DILERA = value;
+            if (Parent is InvoiceClient doc)
+                // ReSharper disable once PossibleInvalidOperationException
+                doc.SF_DILER_SUMMA = (decimal?)doc.Rows.Cast<InvoiceClientRow>()
+                    .Sum(_ => _.Entity.SFT_KOL * (double)(_.SFT_NACENKA_DILERA ?? 0));
+            RaisePropertyChanged();
+        }
+    }
+
+    public SDRSchet SDRSchet
+    {
+        get => mySDRSchet;
+        set
+        {
+            if (mySDRSchet != null && mySDRSchet.Equals(value)) return;
+            mySDRSchet = value;
+            Entity.SFT_SHPZ_DC = mySDRSchet?.DocCode;
+            RaisePropertyChanged();
+        }
+    }
+
+    public string GruzoDeclaration
+    {
+        get => Entity.SFT_N_GRUZ_DECLAR;
+        set
+        {
+            if (Entity.SFT_N_GRUZ_DECLAR == value) return;
+            Entity.SFT_N_GRUZ_DECLAR = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public bool IsUsluga
+    {
+        set { }
+        get => Nomenkl?.IsUsluga ?? false;
+    }
+
+    /// <summary>
+    ///     Отгружено
+    /// </summary>
+    public decimal Shipped
+    {
+        get => myShipped;
+        set
+        {
+            if (myShipped == value) return;
+            myShipped = value;
+            myRest = (decimal)(Entity.SFT_KOL - (double)myShipped);
+            RaisePropertyChanged();
+            RaisePropertyChanged(nameof(Rest));
+        }
+    }
+
+    /// <summary>
+    ///     остаток для отгрузки по счету
+    /// </summary>
+    public decimal Rest
+    {
+        get => myRest;
+        set
+        {
+            if (myRest == value) return;
+            myRest = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public decimal CurrentRemains
+    {
+        get => myCurrentRemains;
+        set
+        {
+            if (myCurrentRemains == value) return;
+            myCurrentRemains = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public List<TD_84> LoadList()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void CalcRow()
+    {
+        if (IsNDSInPrice)
+        {
+            var s = (decimal)Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0;
+            Entity.SFT_SUMMA_NDS = Math.Round(s - s * 100 / (100 + (decimal)Entity.SFT_NDS_PERCENT), 2);
+            Entity.SFT_SUMMA_K_OPLATE = s;
+            Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = s;
+        }
+        else
+        {
+            Entity.SFT_SUMMA_NDS =
+                (decimal)Math.Round(
+                    Entity.SFT_KOL * (double)(Entity.SFT_ED_CENA ?? 0) * Entity.SFT_NDS_PERCENT / 100, 2);
+            Entity.SFT_SUMMA_K_OPLATE =
+                Math.Round((decimal)(Entity.SFT_KOL * (double)(Entity.SFT_ED_CENA ?? 0)), 2)
+                + Entity.SFT_SUMMA_NDS;
+            Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
+        }
+
+        RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
+        RaisePropertyChanged(nameof(Summa));
+        if (Parent is InvoiceClient p) p.RaisePropertyChanged("Summa");
+    }
+
+    private void LoadReference()
+    {
+        Nomenkl = MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
+        if (Entity.SFT_SHPZ_DC != null)
+            SDRSchet = MainReferences.SDRSchets[Entity.SFT_SHPZ_DC.Value];
+    }
+
+    public virtual void Save(TD_84 doc)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Save()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Delete()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Delete(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Delete(decimal dc)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateFrom(TD_84 ent)
+    {
+    }
+
+    public void UpdateTo(TD_84 ent)
+    {
+    }
+
+    public virtual TD_84 Load(decimal dc)
+    {
+        throw new NotImplementedException();
+    }
+
+    public virtual TD_84 Load(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override object ToJson()
+    {
+        return new
+        {
+            DocCode,
+            Code,
+            Номенклатурный_Номер = NomNomenkl,
+            Номенклатура = Nomenkl.Name,
+            Услуга = IsUsluga ? "Да" : "Нет",
+            Количество = Quantity.ToString("n3"),
+            Цена = Price.ToString("n2"),
+            Сумма = Summa.ToString("n2"),
+            Наценка_Дилера = SFT_NACENKA_DILERA?.ToString("n2"),
+            Отгружено = Shipped.ToString("n3"),
+            Процент_НДС = NDSPercent.ToString("n2"),
+            Сумма_НДС = SFT_SUMMA_NDS?.ToString("n2"),
+            Примечание = Note
+        };
+    }
+}
+
+public class DataAnnotationsSFClientRowViewModel : DataAnnotationForFluentApiBase,
+    IMetadataProvider<InvoiceClientRow>
+{
+    void IMetadataProvider<InvoiceClientRow>.BuildMetadata(MetadataBuilder<InvoiceClientRow> builder)
+    {
+        SetNotAutoGenerated(builder);
+        builder.Property(_ => _.Nomenkl).AutoGenerated().DisplayName("Наименование");
+        builder.Property(_ => _.NomNomenkl).AutoGenerated().DisplayName("Ном.№");
+        builder.Property(_ => _.IsUsluga).AutoGenerated().DisplayName("Услуга");
+        builder.Property(_ => _.Quantity).AutoGenerated().DisplayName("Кол-во").DisplayFormatString("n4");
+        builder.Property(_ => _.Price).AutoGenerated().DisplayName("Цена").DisplayFormatString("n2");
+        builder.Property(_ => _.Summa).AutoGenerated().DisplayName("Сумма").DisplayFormatString("n2");
+        builder.Property(_ => _.SFT_NACENKA_DILERA).AutoGenerated().DisplayName("Наценка дилера на единицу")
+            .DisplayFormatString("n2");
+        builder.Property(_ => _.Shipped).AutoGenerated().DisplayName("Отгружено").DisplayFormatString("n4");
+        builder.Property(_ => _.Rest).AutoGenerated().DisplayName("Остаток").DisplayFormatString("n4");
+        builder.Property(_ => _.CurrentRemains).AutoGenerated().DisplayName("Текущие остатки")
+            .DisplayFormatString("n4");
+        builder.Property(_ => _.Note).AutoGenerated().DisplayName("Примечание");
+        builder.Property(_ => _.NDSPercent).AutoGenerated().DisplayName("НДС %").DisplayFormatString("n2");
+        builder.Property(_ => _.SFT_SUMMA_NDS).AutoGenerated().DisplayName("Сумма НДС").ReadOnly()
+            .DisplayFormatString("n2");
+        builder.Property(_ => _.SDRSchet).AutoGenerated().DisplayName("Счет дох./расх.");
+        builder.Property(_ => _.GruzoDeclaration).AutoGenerated().DisplayName("Декларация(груз)");
     }
 }

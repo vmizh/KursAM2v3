@@ -15,6 +15,8 @@ using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.Cash;
 using KursDomain.Documents.Cash;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
 using LayoutManager;
 
 namespace KursAM2.View.Finance.Cash

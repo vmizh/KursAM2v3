@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
+using KursDomain.Documents.Systems;
 
 namespace PeriodManager.ViewModel
 {

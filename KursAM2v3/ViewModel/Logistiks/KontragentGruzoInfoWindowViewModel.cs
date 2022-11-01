@@ -2,7 +2,6 @@
 using System.Data.Entity;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.ViewModel.Base;
 using KursDomain.Documents.CommonReferences.Kontragent;
 

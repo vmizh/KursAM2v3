@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.ICommon;
 
 namespace Core.Helper
 {

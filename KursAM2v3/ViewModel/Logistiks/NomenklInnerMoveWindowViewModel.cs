@@ -1,5 +1,5 @@
-using Core.Menu;
 using Core.ViewModel.Base;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Logistiks
 {

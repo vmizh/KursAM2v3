@@ -2,8 +2,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Core.Menu;
 using Core.ViewModel.Base;
+using KursDomain.Menu;
 
 namespace KursRepozit.Auxiliary
 {

@@ -11,6 +11,7 @@ using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
+using KursDomain.ICommon;
 
 namespace KursAM2.View.Finance.DistributeNaklad
 {

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -13,6 +12,10 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.Repositories;
 using KursAM2.View.KursReferences.UC;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -30,7 +33,7 @@ namespace KursAM2.ViewModel.Reference
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
-        private CurrencyRef myCurrentCurrency;
+        private CurrencyViewModel myCurrentCurrency;
 
         #endregion
 
@@ -52,7 +55,7 @@ namespace KursAM2.ViewModel.Reference
         public override string WindowName => "Справочник валют";
         public override string LayoutName => "CurrencyReferenceWindowViewModel";
 
-        public CurrencyRef CurrentCurrency
+        public CurrencyViewModel CurrentCurrency
         {
             get => myCurrentCurrency;
             set
@@ -63,7 +66,7 @@ namespace KursAM2.ViewModel.Reference
             }
         }
 
-        public ObservableCollection<CurrencyRef> CurrencyCollection { set; get; } = new ObservableCollection<CurrencyRef>();
+        public ObservableCollection<CurrencyViewModel> CurrencyCollection { set; get; } = new ObservableCollection<CurrencyViewModel>();
 
         public CurrencyReferenceUC DocumentUserControl { set; get; } = new CurrencyReferenceUC();
 
@@ -98,14 +101,11 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewItem(object obj)
         {
-            var newItem = new CurrencyRef(new SD_301()
+            var newItem = new CurrencyViewModel(new SD_301()
             {
                 DOC_CODE = -1,
                 Id = Guid.NewGuid()
-            })
-            {
-                myState = RowStatus.NewRow
-            };
+            });
             unitOfWork.Context.SD_301.Add(newItem.Entity);
             CurrencyCollection.Add(newItem);
         }
@@ -129,10 +129,6 @@ namespace KursAM2.ViewModel.Reference
             {
                 unitOfWork.Save();
                 unitOfWork.Commit();
-                foreach (var c in CurrencyCollection)
-                {
-                    c.myState = RowStatus.NotEdited;
-                }
                 isCurrencyDeleted = false;
             }
             catch (Exception ex)

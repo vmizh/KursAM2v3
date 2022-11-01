@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using KursDomain.ICommon;
-using KursDomain.IDocuments;
 using KursDomain.IDocuments.Finance;
 using KursDomain.IDocuments.WarehouseOrder;
 using KursDomain.IReferences;
@@ -18,6 +17,22 @@ namespace KursDomain.Documents.Warehouse;
     " от {OrderDate.ToShortDateString(),nq}")]
 public class IncomingWarehouseOrder : IDocCode, IDescription, IIncomingWarehouseOrder, IEqualityComparer<IDocCode>
 {
+    public string Name { get; set; }
+    public string Notes { get; set; }
+
+    public string Description
+    {
+        get
+        {
+            var num = "№:" + (string.IsNullOrWhiteSpace(OuterNumber)
+                ? OrderNumber.ToString()
+                : $"{OrderNumber}/{OuterNumber}");
+            var sender = SenderWarehouse == null ? SenderKontragent.ToString() : SenderWarehouse.ToString();
+            return
+                $"Приходный складской ордер {num} от {OrderDate.ToShortDateString()} Получатель {sender} Создал {Creator}";
+        }
+    }
+
     public decimal DocCode { get; set; }
 
     public bool Equals(IDocCode x, IDocCode y)
@@ -44,19 +59,4 @@ public class IncomingWarehouseOrder : IDocCode, IDescription, IIncomingWarehouse
     public IInvoiceProvider InvoiceProvider { get; set; }
     public IWarehouse Warehouse { get; set; }
     public IEnumerable<IIncomingWarehouseOrderRow> Rows { get; set; } = new List<IIncomingWarehouseOrderRow>();
-    public string Name { get; set; }
-    public string Notes { get; set; }
-
-    public string Description
-    {
-        get
-        {
-            var num = "№:" + (string.IsNullOrWhiteSpace(OuterNumber)
-                ? OrderNumber.ToString()
-                : $"{OrderNumber}/{OuterNumber}");
-            var sender = SenderWarehouse == null ? SenderKontragent.ToString() : SenderWarehouse.ToString();
-            return
-                $"Приходный складской ордер {num} от {OrderDate.ToShortDateString()} Получатель {sender} Создал {Creator}";
-        }
-    }
 }

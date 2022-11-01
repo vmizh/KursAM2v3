@@ -4,9 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Invoices;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Core;
@@ -16,6 +13,8 @@ using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.controls;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Invoices;
 
 namespace KursAM2.View.Finance.UC
 {
@@ -28,14 +27,14 @@ namespace KursAM2.View.Finance.UC
 
         public BankOperationsComareRowView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             DataContextChanged += BankOperationsView_DataContextChanged;
         }
 
         private void BankOperationsView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if(DataContext is AddBankOperionUC dtx)
+            if (DataContext is AddBankOperionUC dtx)
                 dtx.SetBrushForPrihodRashod();
         }
 
@@ -51,6 +50,7 @@ namespace KursAM2.View.Finance.UC
                         MessageBoxImage.Warning);
                     return;
                 }
+
                 if (dtx.Currency == null)
                 {
                     winMan.ShowWinUIMessageBox(
@@ -59,6 +59,7 @@ namespace KursAM2.View.Finance.UC
                         MessageBoxImage.Warning);
                     return;
                 }
+
                 var k = StandartDialogs.SelectKontragent(dtx.Currency);
                 if (k == null) return;
                 dtx.Payment = k;
@@ -81,6 +82,7 @@ namespace KursAM2.View.Finance.UC
                         MessageBoxImage.Warning);
                     return;
                 }
+
                 if (dtc.Currency == null)
                 {
                     winMan.ShowWinUIMessageBox("Предупреждение",
@@ -88,6 +90,7 @@ namespace KursAM2.View.Finance.UC
                         MessageBoxImage.Warning);
                     return;
                 }
+
                 var k = StandartDialogs.SelectKontragent(dtc.Currency);
                 if (k == null) return;
                 dtc.Payment = k;
@@ -123,6 +126,7 @@ namespace KursAM2.View.Finance.UC
             {
                 WindowManager.ShowError(ex);
             }
+
             return ret;
         }
 
@@ -147,6 +151,7 @@ namespace KursAM2.View.Finance.UC
             {
                 WindowManager.ShowError(ex);
             }
+
             return ret;
         }
 
@@ -162,6 +167,7 @@ namespace KursAM2.View.Finance.UC
                         MessageBoxImage.Warning);
                     return;
                 }
+
                 if (dtx.Currency == null)
                 {
                     winMan.ShowWinUIMessageBox(
@@ -170,6 +176,7 @@ namespace KursAM2.View.Finance.UC
                         MessageBoxImage.Warning);
                     return;
                 }
+
                 switch (dtx.BankOperationType)
                 {
                     case BankOperationType.Kontragent:
@@ -180,11 +187,13 @@ namespace KursAM2.View.Finance.UC
                             dtx.Payment = k;
                             Payment.Text = k.Name;
                         }
+
                         if (dtx.BankOperationType == BankOperationType.Kontragent)
                         {
                             dtx.Kontragent = k;
                             Kontragent.Text = dtx.Kontragent.Name;
                         }
+
                         break;
                     case BankOperationType.CashOut:
                         var c = StandartDialogs.SelectCashOrders(dtx.BankAccount, SelectCashOut);
@@ -217,6 +226,7 @@ namespace KursAM2.View.Finance.UC
                         dtx.BankFromTransactionCode = bb2.Code;
                         break;
                 }
+
                 Kontragent.Text = dtx.KontragentName;
                 // ReSharper disable once NotResolvedInText
                 dtx.RaisePropertyChanged("KontragentName");
@@ -232,6 +242,7 @@ namespace KursAM2.View.Finance.UC
                         MessageBoxImage.Warning);
                     return;
                 }
+
                 if (dtc.Currency == null)
                 {
                     winMan.ShowWinUIMessageBox("Предупреждение",
@@ -239,6 +250,7 @@ namespace KursAM2.View.Finance.UC
                         MessageBoxImage.Warning);
                     return;
                 }
+
                 switch (dtc.BankOperationType)
                 {
                     case BankOperationType.Kontragent:
@@ -257,6 +269,7 @@ namespace KursAM2.View.Finance.UC
                             dtc.Payment = k;
                             Payment.Text = k.Name;
                         }
+
                         break;
                     case BankOperationType.CashOut:
                         var c = StandartDialogs.SelectCashOrders(dtc.BankAccount, SelectCashOut);
@@ -292,6 +305,7 @@ namespace KursAM2.View.Finance.UC
                         dtc.CurrentBankOperations.BankFromTransactionCode = bb2.Code;
                         break;
                 }
+
                 Kontragent.Text = dtc.KontragentName;
                 // ReSharper disable once NotResolvedInText
                 dtc.RaisePropertyChanged("KontragentName");
@@ -313,7 +327,7 @@ namespace KursAM2.View.Finance.UC
             Kontragent.Text = null;
             var dtx = DataContext as AddBankOperionUC;
             if (dtx == null) return;
-            var t = (BankOperationType) TypeKontragent.EditValue;
+            var t = (BankOperationType)TypeKontragent.EditValue;
             switch (t)
             {
                 case BankOperationType.CashOut:
@@ -346,12 +360,10 @@ namespace KursAM2.View.Finance.UC
             var dtx2 = DataContext as BankOperationsViewModel;
             if (dtx == null && dtx2 == null) return;
             RSViewModelBase item1;
-            if(dtx != null && dtx.Kontragent != null)
-                item1 =  StandartDialogs.SelectAllInvoiceClient(dtx.Kontragent.DocCode,true, true);
+            if (dtx != null && dtx.Kontragent != null)
+                item1 = StandartDialogs.SelectAllInvoiceClient(dtx.Kontragent.DocCode, true, true);
             else
-            {
-                item1 = StandartDialogs.SelectAllInvoiceClient(true,true);
-            }
+                item1 = StandartDialogs.SelectAllInvoiceClient(true, true);
             if (item1 == null) return;
             var d2 = item1 as InvoiceClient;
             var d1 = item1 as InvoiceProvider;
@@ -361,17 +373,13 @@ namespace KursAM2.View.Finance.UC
                 if (dtx != null)
                 {
                     if (d2.DocDate != dtx.Date)
-                    {
                         if (winMan.ShowWinUIMessageBox(
-                            "Даты операции и счета не совпадают. Переустановить дату, как в счете?",
-                            "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                        {
+                                "Даты операции и счета не совпадают. Переустановить дату, как в счете?",
+                                "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                             dtx.Date = d2.DocDate;
-                        }
-                    }
 
                     // ReSharper disable once PossibleInvalidOperationException
-                    dtx.VVT_VAL_PRIHOD = (decimal) d2.Summa - d2.PaySumma;
+                    dtx.VVT_VAL_PRIHOD = d2.Summa - d2.PaySumma;
                     dtx.VVT_DOC_NUM = d2.ToString();
                     dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC = d2.DocCode;
                     dtx.Payment = d2.Client;
@@ -383,17 +391,13 @@ namespace KursAM2.View.Finance.UC
                     Kontragent.Text = dtx.Kontragent.Name;
                     dtx.CurrentBankOperations.SFName =
                         $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa} {MainReferences.Currencies[d2.Entity.SF_CRS_DC]}";
-
                 }
 
                 if (dtx2 != null)
                 {
-                    if (d2.DocDate != dtx2.Date)
-                    {
-                        dtx2.Date = d2.DocDate;
-                    }
+                    if (d2.DocDate != dtx2.Date) dtx2.Date = d2.DocDate;
                     // ReSharper disable once PossibleInvalidOperationException
-                    dtx2.VVT_VAL_PRIHOD =  (decimal)d2.Summa - d2.PaySumma;
+                    dtx2.VVT_VAL_PRIHOD = d2.Summa - d2.PaySumma;
                     dtx2.VVT_DOC_NUM = d2.ToString();
                     dtx2.VVT_SFACT_CLIENT_DC = d2.DocCode;
                     dtx2.Payment = d2.Client;
@@ -402,23 +406,21 @@ namespace KursAM2.View.Finance.UC
                     dtx2.Currency = MainReferences.Currencies[d2.Entity.SF_CRS_DC];
                     dtx2.Kontragent = d2.Client;
                     Kontragent.Text = dtx2.Kontragent.Name;
-                    dtx2.SFName = $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa} " +
-                                  $"{MainReferences.Currencies[d2.Entity.SF_CRS_DC]}";
+                    dtx2.SFName =
+                        $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa} " +
+                        $"{MainReferences.Currencies[d2.Entity.SF_CRS_DC]}";
                 }
             }
+
             if (d1 != null)
             {
                 if (dtx != null)
                 {
                     if (d1.DocDate != dtx.Date)
-                    {
                         if (winMan.ShowWinUIMessageBox(
-                            "Даты операции и счета не совпадают. Переустановить дату, как в счете?",
-                            "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                        {
+                                "Даты операции и счета не совпадают. Переустановить дату, как в счете?",
+                                "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                             dtx.Date = d1.DocDate;
-                        }
-                    }
                     dtx.VVT_VAL_RASHOD = d1.Summa - d1.PaySumma;
                     dtx.VVT_DOC_NUM = d1.ToString();
                     dtx.CurrentBankOperations.VVT_SFACT_POSTAV_DC = d1.DocCode;
@@ -430,12 +432,10 @@ namespace KursAM2.View.Finance.UC
                     dtx.Payment = d1.Kontragent;
                     Payment.Text = dtx.Payment.Name;
                 }
+
                 if (dtx2 != null)
                 {
-                    if (d1.DocDate != dtx2.Date)
-                    {
-                        dtx2.Date = d1.DocDate;
-                    }
+                    if (d1.DocDate != dtx2.Date) dtx2.Date = d1.DocDate;
                     dtx2.VVT_VAL_RASHOD = d1.Summa - d1.PaySumma;
                     dtx2.VVT_DOC_NUM = d1.ToString();
                     dtx2.VVT_SFACT_POSTAV_DC = d1.DocCode;
@@ -461,6 +461,7 @@ namespace KursAM2.View.Finance.UC
                 dtx.SFName = null;
                 dtx.Payment = null;
             }
+
             if (dtx2 != null)
             {
                 dtx2.VVT_SFACT_CLIENT_DC = null;

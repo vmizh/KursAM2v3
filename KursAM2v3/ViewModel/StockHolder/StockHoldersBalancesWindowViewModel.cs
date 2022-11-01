@@ -7,11 +7,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.StockHolder;
-using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
 using KursAM2.View.StockHolder;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.StockHolder;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.StockHolder
 {

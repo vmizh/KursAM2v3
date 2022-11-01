@@ -10,6 +10,7 @@
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm" 
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=KursDomain"
+    xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
     x:Class="KursAM2.View.Finance.Invoices.InvoiceProviderView" 
     mc:Ignorable="d"
     Title="{Binding WindowName}" 
@@ -51,7 +52,7 @@
                                           IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }"
                                           >
                             <dxmvvm:Interaction.Behaviors>
-                                <dxmvvm:EnumItemsSourceBehavior EnumType="{x:Type base:RowStatus}"/>
+                                <dxmvvm:EnumItemsSourceBehavior EnumType="{x:Type iCommon:RowStatus}"/>
                             </dxmvvm:Interaction.Behaviors>
                         </dxe:ComboBoxEdit>
                         <Label Content="Статус: " DockPanel.Dock="Right"/>

@@ -4,7 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.CommonReferences.Kontragent;
 using Data;
 using DevExpress.Mvvm;
 using Helper;

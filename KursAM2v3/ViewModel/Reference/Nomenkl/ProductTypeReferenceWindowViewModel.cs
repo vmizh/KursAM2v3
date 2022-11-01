@@ -2,11 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers.Nomenkl;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
@@ -106,7 +106,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         }
 
         public override bool IsCanSaveData =>
-            Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited) || DeletedRows.Count > 0;
+            (Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited)) || DeletedRows.Count > 0;
 
         //    ItemNewCopyCommand
         //}" />

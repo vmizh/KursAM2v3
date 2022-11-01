@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 using Core.ViewModel.Base;
 using Data;
+using KursDomain.ICommon;
 
 namespace KursRepozit.ViewModels
 {

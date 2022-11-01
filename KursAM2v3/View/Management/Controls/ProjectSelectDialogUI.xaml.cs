@@ -11,6 +11,7 @@ using DevExpress.Xpf.Grid;
 using DevExpress.XtraGrid;
 using KursAM2.View.DialogUserControl;
 using KursAM2.ViewModel.Management.Projects;
+using KursDomain.Documents.CommonReferences;
 using LayoutManager;
 
 namespace KursAM2.View.Management.Controls

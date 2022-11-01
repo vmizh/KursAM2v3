@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.WindowsManager;
 using Data;
 using KursDomain.Documents.CommonReferences.Kontragent;

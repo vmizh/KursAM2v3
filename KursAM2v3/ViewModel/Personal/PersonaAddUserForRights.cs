@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
 using KursAM2.View.Personal;
+using KursDomain.Documents.Systems;
 
 namespace KursAM2.ViewModel.Personal
 {

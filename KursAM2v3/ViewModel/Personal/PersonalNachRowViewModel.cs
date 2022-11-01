@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using Core.WindowsManager;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -47,7 +47,7 @@ namespace KursAM2.ViewModel.Personal
                     // ReSharper disable once UnusedVariable
                     var crsList =
                         ent.SD_301.Select(
-                                s => new Currency {DocCode = s.DOC_CODE, Name = s.CRS_SHORTNAME})
+                                s => new Currency { DocCode = s.DOC_CODE, Name = s.CRS_SHORTNAME })
                             .ToList();
                     var persRight =
                         ent.EMP_USER_RIGHTS.Where(
@@ -56,21 +56,21 @@ namespace KursAM2.ViewModel.Personal
                             .ToList();
                     var pers = MainReferences.Employees.Values.Where(p => persRight.Any(t => t == p.DocCode)).ToList();
                     foreach (var nach in ent.EMP_PR_ROWS.Include("EMP_PR_DOC")
-                        .Include("SD_301")
-                        .Where(d => d.EMP_PR_DOC.IS_TEMPLATE == 0)
-                        .Select(s => new NachForEmployeeRowModelOld
-                        {
-                            Employee = MainReferences.Employees[s.EMP_DC],
-                            Crs = new Currency {DocCode = s.SD_301.DOC_CODE, Name = s.SD_301.CRS_SHORTNAME},
-                            DocDate = s.EMP_PR_DOC.Date,
-                            Notes = s.NOTES,
-                            Summa = s.SUMMA,
-                            PlatDocNotes = s.NOTES,
-                            PlatDocName = "Платежная ведомость",
-                            PayType =
-                                new PayrollType {DocCode = s.PR_TYPE_DC, Name = s.EMP_PAYROLL_TYPE.Name}
-                        })
-                        .Where(nach => persRight.Any(t => t == nach.Employee.DocCode)))
+                                 .Include("SD_301")
+                                 .Where(d => d.EMP_PR_DOC.IS_TEMPLATE == 0)
+                                 .Select(s => new NachForEmployeeRowModelOld
+                                 {
+                                     Employee = MainReferences.Employees[s.EMP_DC],
+                                     Crs = new Currency { DocCode = s.SD_301.DOC_CODE, Name = s.SD_301.CRS_SHORTNAME },
+                                     DocDate = s.EMP_PR_DOC.Date,
+                                     Notes = s.NOTES,
+                                     Summa = s.SUMMA,
+                                     PlatDocNotes = s.NOTES,
+                                     PlatDocName = "Платежная ведомость",
+                                     PayType =
+                                         new PayrollType { DocCode = s.PR_TYPE_DC, Name = s.EMP_PAYROLL_TYPE.Name }
+                                 })
+                                 .Where(nach => persRight.Any(t => t == nach.Employee.DocCode)))
                     {
                         nach.Employee = pers.FirstOrDefault(t => t.DocCode == nach.Employee.DocCode);
                         SourceAll.Add(nach);

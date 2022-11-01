@@ -3,13 +3,13 @@ using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Invoices;
 using Data;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.Invoices;
+using KursDomain.ICommon;
 using Reports.Base;
 
 namespace KursAM2.ReportManagers.SFClientAndWayBill
@@ -96,7 +96,6 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
 
         public override void GenerateReport(Worksheet sheet)
         {
-            
             var vm = ViewModel as ClientWindowViewModel;
             if (vm == null) return;
             var document = vm.Document;
@@ -108,6 +107,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 var r = ctx.SD_43.Find(document.Receiver.DOC_CODE);
                 receiver = new Kontragent(r);
             }
+
             var receiverName = string.IsNullOrEmpty(receiver.FullName)
                 ? receiver.Name
                 : receiver.FullName;
@@ -154,10 +154,10 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             {
                 sheet[startTableRow + row - 1, 1].Value = row;
                 sheet[startTableRow + row - 1, 3].Value =
-                    !string.IsNullOrEmpty(item.Nomenkl.NOM_FULL_NAME)
-                        ? item.Nomenkl.NOM_FULL_NAME
+                    !string.IsNullOrEmpty(item.Nomenkl.FullName)
+                        ? item.Nomenkl.FullName
                         : item.Nomenkl.Name;
-                sheet.Cells[$"AB{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_NAME;
+                sheet.Cells[$"AB{startTableRow + row}"].Value = ((IName)item.Nomenkl.Unit)?.Name;
                 sheet.Cells[$"Y{startTableRow + row}"].Value = item.Quantity;
                 sheet.Cells[$"Y{startTableRow + row}"].NumberFormat = "#,##0.00";
                 sheet.Cells[$"AD{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
@@ -177,7 +177,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"B{document.Rows.Count + startTableRow + 5}"].Value =
                 $"Всего наименований {document.Rows.Count()}, на сумму {document.Summa:n2} {document.Currency.FullName}";
             sheet.Cells[$"B{document.Rows.Count + startTableRow + 6}"].Value =
-                $"{RuDateAndMoneyConverter.CurrencyToTxt(Convert.ToDouble(document.Summa), document.Currency.Name, true)} , в т.ч. НДС {Math.Round((double) (document.Rows.Sum(_ => _.SFT_SUMMA_NDS) ?? 0), 2)}";
+                $"{RuDateAndMoneyConverter.CurrencyToTxt(Convert.ToDouble(document.Summa), document.Currency.Name, true)} , в т.ч. НДС {Math.Round((double)(document.Rows.Sum(_ => _.SFT_SUMMA_NDS) ?? 0), 2)}";
         }
     }
 
@@ -200,9 +200,9 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     : document.OuterNumber;
                 Kontragent client, receiver;
                 var cl = ctx.SD_43.Find(document.Client.DOC_CODE);
-                    client = new Kontragent(cl);
-                    var r = ctx.SD_43.Find(document.Receiver.DOC_CODE);
-                    receiver = new Kontragent(r);
+                client = new Kontragent(cl);
+                var r = ctx.SD_43.Find(document.Receiver.DOC_CODE);
+                receiver = new Kontragent(r);
                 var receiverName = string.IsNullOrEmpty(receiver.FullName)
                     ? receiver.Name
                     : receiver.FullName;
@@ -251,7 +251,6 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 var grlist = ctx.SD_43_GRUZO.Where(_ => _.doc_code == receiver.DocCode);
 
                 if (grlist.Any())
-                {
                     switch (grlist.Count())
                     {
                         case 1:
@@ -264,12 +263,10 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                             break;
                         }
                     }
-                }
 
                 var pgrlist = ctx.SD_43_GRUZO.Where(_ => _.doc_code == client.DocCode);
 
                 if (pgrlist.Any())
-                {
                     switch (pgrlist.Count())
                     {
                         case 1:
@@ -282,9 +279,8 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                             break;
                         }
                     }
-                }
 
-                
+
                 var startTableRow = 21;
                 for (var i = 2; i <= document.Rows.Count; i++)
                 {
@@ -298,10 +294,10 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 {
                     sheet[startTableRow + row - 1, 1].Value = row;
                     sheet[startTableRow + row - 1, 3].Value =
-                        !string.IsNullOrEmpty(item.Nomenkl.NOM_FULL_NAME)
-                            ? item.Nomenkl.NOM_FULL_NAME
+                        !string.IsNullOrEmpty(item.Nomenkl.FullName)
+                            ? item.Nomenkl.FullName
                             : item.Nomenkl.Name;
-                    sheet.Cells[$"AB{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_NAME;
+                    sheet.Cells[$"AB{startTableRow + row}"].Value = ((IName)item.Nomenkl.Unit)?.Name;
                     sheet.Cells[$"Y{startTableRow + row}"].Value = item.Quantity;
                     sheet.Cells[$"Y{startTableRow + row}"].NumberFormat = "#,##0.00";
                     sheet.Cells[$"AD{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
@@ -322,7 +318,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     $"Всего наименований {document.Rows.Count()}, на сумму {document.Summa:n2} {document.Currency.FullName}";
                 sheet.Cells[$"B{document.Rows.Count + startTableRow + 6}"].Value =
                     $"{RuDateAndMoneyConverter.CurrencyToTxt(Convert.ToDouble(document.Summa), document.Currency.Name, true)} , в т.ч. НДС {Math.Round((double)(document.Rows.Sum(_ => _.SFT_SUMMA_NDS) ?? 0), 2)}";
-                
+
                 sheet.Cells[$"AC{document.Rows.Count + startTableRow + 11}"].Value = receiver.Header;
                 sheet.Cells[$"AC{document.Rows.Count + startTableRow + 14}"].Value = receiver.GlavBuh;
                 sheet.Cells[$"AC{document.Rows.Count + startTableRow + 17}"].Value =
@@ -337,7 +333,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
         {
             ViewModel = viewmodel;
         }
-        
+
         public override void GenerateReport(Worksheet sheet)
         {
             var vm = ViewModel as ClientWindowViewModel;
@@ -351,7 +347,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 ? document.Receiver.FullName
                 : "";
             sheet.Cells["E12"].Value = document.Currency != null
-                ? $"{document.Currency.CRS_NAME}, {document.Currency.CRS_CODE}"
+                ? $"{document.Currency.Name}, {document.Currency.Code}"
                 : null;
             if (document.Receiver != null)
             {
@@ -389,11 +385,11 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             foreach (var item in document.Rows.Cast<InvoiceClientRow>())
             {
                 sheet[startTableRow + row - 1, 0].Value =
-                    !string.IsNullOrEmpty(item.Nomenkl.NOM_FULL_NAME) && item.Nomenkl.NOM_FULL_NAME != ""
-                        ? item.Nomenkl.NOM_FULL_NAME
+                    !string.IsNullOrEmpty(item.Nomenkl.FullName) && item.Nomenkl.FullName != ""
+                        ? item.Nomenkl.FullName
                         : item.Nomenkl.Name;
-                sheet[startTableRow + row - 1, 6].Value = item.Nomenkl.Unit?.ED_IZM_OKEI_CODE;
-                sheet.Cells[$"H{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_NAME;
+                sheet[startTableRow + row - 1, 6].Value = item.Nomenkl.Unit?.OKEI_Code;
+                sheet.Cells[$"H{startTableRow + row}"].Value = ((IName)item.Nomenkl.Unit)?.Name;
                 sheet.Cells[$"K{startTableRow + row}"].Value = item.Quantity;
                 sheet.Cells[$"K{startTableRow + row}"].NumberFormat = "#,##0.00";
                 sheet.Cells[$"M{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
@@ -445,8 +441,9 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     : document.OuterNumber;
                 sheet.Cells["AD2"].Value = $"{document.DocDate.ToLongDateString()}";
                 sheet.Cells["AB5"].Value = document.Receiver != null
-                    ? string.IsNullOrWhiteSpace(document.Receiver.FullName) ? document.Receiver.Name :
-                    document.Receiver.FullName
+                    ? string.IsNullOrWhiteSpace(document.Receiver.FullName)
+                        ? document.Receiver.Name
+                        : document.Receiver.FullName
                     : "";
                 sheet.Cells["AB15"].Value = document.Currency != null
                     ? $"{document.Currency.NalogName}, {document.Currency.NalogCode}"
@@ -458,7 +455,6 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     var grlist = ctx.SD_43_GRUZO.Where(_ => _.doc_code == document.Receiver.DocCode);
 
                     if (grlist.Any())
-                    {
                         switch (grlist.Count())
                         {
                             case 1:
@@ -471,11 +467,8 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                                 break;
                             }
                         }
-                    }
                     else
-                    {
                         sheet.Cells["AB8"].Value = "он же";
-                    }
                 }
 
                 if (document.Client != null)
@@ -484,7 +477,6 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     var pgrlist = ctx.SD_43_GRUZO.Where(_ => _.doc_code == document.Client.DocCode);
 
                     if (pgrlist.Any())
-                    {
                         switch (pgrlist.Count())
                         {
                             case 1:
@@ -497,11 +489,8 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                                 break;
                             }
                         }
-                    }
                     else
-                    {
                         sheet.Cells["AB9"].Value = "он же";
-                    }
 
                     // ReSharper disable once PossibleNullReferenceException
                     sheet.Cells["AB13"].Value = document.Client.ADDRESS;
@@ -514,29 +503,29 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 var startTableRow = 21;
                 for (var i = 2; i <= document.Rows.Count; i++)
                 {
-                    sheet.Rows.Insert(startTableRow + i-1);
+                    sheet.Rows.Insert(startTableRow + i - 1);
                     //sheet.InsertCells(copy);
-                    sheet.Rows[$"{startTableRow + i-1}"].CopyFrom(sheet.Rows["21"]);
+                    sheet.Rows[$"{startTableRow + i - 1}"].CopyFrom(sheet.Rows["21"]);
                 }
 
                 var defaultNDS = Convert.ToDecimal(GlobalOptions.SystemProfile.Profile.FirstOrDefault(_
-                    => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")
+                        => _.SECTION == "НОМЕНКЛАТУРА" && _.ITEM == "НДС")
                     ?.ITEM_VALUE);
 
                 var row = 0;
                 foreach (var item in document.Rows.Cast<InvoiceClientRow>())
                 {
-                    sheet.Cells[$"A{startTableRow + row}"].Value = row+1;
+                    sheet.Cells[$"A{startTableRow + row}"].Value = row + 1;
                     sheet.Cells[$"I{startTableRow + row}"].Value =
-                        !string.IsNullOrEmpty(item.Nomenkl.NOM_FULL_NAME) && item.Nomenkl.NOM_FULL_NAME != ""
-                            ? item.Nomenkl.NOM_FULL_NAME
+                        !string.IsNullOrEmpty(item.Nomenkl.FullName) && item.Nomenkl.FullName != ""
+                            ? item.Nomenkl.FullName
                             : item.Nomenkl.Name;
                     var w = sheet.Cells[$"I{startTableRow + row}"].DisplayText.Length / 40;
                     sheet.Cells[$"I{startTableRow + row}"].RowHeight = (w < 1 ? 1 : w) * 80;
-                    
+
                     sheet.Cells[$"C{startTableRow + row}"].Value = item.NomNomenkl;
-                    sheet.Cells[$"Z{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_OKEI_CODE;
-                    sheet.Cells[$"AB{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_NAME;
+                    sheet.Cells[$"Z{startTableRow + row}"].Value = item.Nomenkl.Unit?.OKEI_Code;
+                    sheet.Cells[$"AB{startTableRow + row}"].Value = ((IName)item.Nomenkl.Unit)?.Name;
                     sheet.Cells[$"AI{startTableRow + row}"].Value = item.Quantity;
                     sheet.Cells[$"AI{startTableRow + row}"].NumberFormat = "#,##0.00";
                     sheet.Cells[$"AM{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
@@ -569,10 +558,11 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells[$"AJ{document.Rows.Count + startTableRow + 3}"].Value = document.Receiver?.Header;
                 sheet.Cells[$"BV{document.Rows.Count + startTableRow + 3}"].Value = document.Receiver?.GlavBuh;
                 sheet.Cells[$"P{document.Rows.Count + startTableRow + 15}"].Value = document.DocDate.ToLongDateString();
-                sheet.Cells[$"AU{document.Rows.Count + startTableRow + 23}"].Value = $"{document.Client?.FullName ?? document.Client.Name} " +
+                sheet.Cells[$"AU{document.Rows.Count + startTableRow + 23}"].Value =
+                    $"{document.Client?.FullName ?? document.Client.Name} " +
                     $"ИНН/КПП {document.Client.INN}/{document.Client.KPP}";
 
-                WorksheetHeaderFooterOptions options = sheet.HeaderFooterOptions;
+                var options = sheet.HeaderFooterOptions;
                 options.EvenFooter.Center = $"Стр. {"&P"} из {"&N"}";
                 options.OddFooter.Center = $"Стр. {"&P"} из {"&N"}";
             }
@@ -589,11 +579,11 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
         private void WaibillSetRow(Worksheet sheet, int row, int rowId, InvoiceClientRow item)
         {
             sheet.Cells[$"A{rowId}"].Value = row;
-            sheet.Cells[$"F{rowId}"].Value = string.IsNullOrEmpty(item.Nomenkl.NameFull)
+            sheet.Cells[$"F{rowId}"].Value = string.IsNullOrEmpty(item.Nomenkl.FullName)
                 ? item.Nomenkl.Name
-                : item.Nomenkl.NameFull;
-            sheet.Cells[$"V{rowId}"].Value = item.Nomenkl.Unit.Name;
-            sheet.Cells[$"X{rowId}"].Value = item.Nomenkl.Unit.ED_IZM_OKEI_CODE;
+                : item.Nomenkl.FullName;
+            sheet.Cells[$"V{rowId}"].Value = ((IName)item.Nomenkl.Unit).Name;
+            sheet.Cells[$"X{rowId}"].Value = item.Nomenkl.Unit.OKEI_Code;
             sheet.Cells[$"AD{rowId}"].Value = Convert.ToDouble(item.Quantity);
             sheet.Cells[$"AH{rowId}"].Value = Convert.ToDouble(item.Quantity);
             sheet.Cells[$"AQ{rowId}"].Value = Convert.ToDouble(item.Quantity);

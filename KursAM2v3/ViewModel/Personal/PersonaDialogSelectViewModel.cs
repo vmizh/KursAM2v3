@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using Core.WindowsManager;
 using DevExpress.Xpf.Grid;
+using KursDomain.Documents.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -40,14 +38,14 @@ namespace KursAM2.ViewModel.Personal
             {
                 var crs = GlobalOptions.GetEntities().SD_301.ToList();
                 foreach (var item in GlobalOptions.GetEntities()
-                    .SD_2.Select(s => new Employee(s)
-                    ))
+                             .SD_2.Select(s => new Employee(s)
+                             ))
                 {
                     item.Currency.Name =
                         crs.Where(t => t.DOC_CODE == item.Currency.DocCode)
                             .Select(s => s.CRS_SHORTNAME)
                             .FirstOrDefault();
-                    Source.Add(new PersonaDialogSelect {Persona = item});
+                    Source.Add(new PersonaDialogSelect { Persona = item });
                 }
             }
             catch (Exception ex)

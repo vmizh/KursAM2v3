@@ -1,62 +1,61 @@
 ﻿using Data;
 
-namespace Core.EntityViewModel.Systems
+namespace KursDomain.Documents.Systems;
+
+public class User : EXT_USERSViewModel
 {
-    public class User : EXT_USERSViewModel
+    public User(EXT_USERS entity) : base(entity)
     {
-        public User(EXT_USERS entity) : base(entity)
+    }
+
+    public User()
+    {
+        Entity = DefaultValue();
+    }
+
+    public override decimal DocCode => USR_ID;
+
+    public string NickName
+    {
+        get => Entity.USR_NICKNAME;
+        set
         {
+            if (Entity.USR_NICKNAME == value) return;
+            Entity.USR_NICKNAME = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public User()
+    public string FullName
+    {
+        get => Entity.USR_FULLNAME;
+        set
         {
-            Entity = DefaultValue();
+            if (Entity.USR_FULLNAME == value) return;
+            Entity.USR_FULLNAME = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public override decimal DocCode => USR_ID;
-
-        public string NickName
+    public override string Note
+    {
+        get => Entity.USR_NOTES;
+        set
         {
-            get => Entity.USR_NICKNAME;
-            set
-            {
-                if (Entity.USR_NICKNAME == value) return;
-                Entity.USR_NICKNAME = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.USR_NOTES == value) return;
+            Entity.USR_NOTES = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public string FullName
+    public int? TabelNumber
+    {
+        get => Entity.TABELNUMBER;
+        set
         {
-            get => Entity.USR_FULLNAME;
-            set
-            {
-                if (Entity.USR_FULLNAME == value) return;
-                Entity.USR_FULLNAME = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public override string Note
-        {
-            get => Entity.USR_NOTES;
-            set
-            {
-                if (Entity.USR_NOTES == value) return;
-                Entity.USR_NOTES = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public int? TabelNumber
-        {
-            get => Entity.TABELNUMBER;
-            set
-            {
-                if (Entity.TABELNUMBER == value) return;
-                Entity.TABELNUMBER = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.TABELNUMBER == value) return;
+            Entity.TABELNUMBER = value;
+            RaisePropertyChanged();
         }
     }
 }

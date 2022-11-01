@@ -5,11 +5,12 @@ using System.Linq;
 using System.Transactions;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference
 {

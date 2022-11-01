@@ -4,11 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.Periods;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.View.KursReferences.UC;
+using KursDomain.Documents.Periods;
 
 namespace KursAM2.ViewModel.Reference
 {

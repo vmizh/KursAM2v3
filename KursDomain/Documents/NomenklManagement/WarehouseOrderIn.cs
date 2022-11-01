@@ -4,143 +4,143 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Controls;
-using Core.EntityViewModel.Invoices;
 using Core.Helper;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.Documents.Invoices;
 using Newtonsoft.Json;
 
-namespace Core.EntityViewModel.NomenklManagement
+namespace KursDomain.Documents.NomenklManagement;
+
+/// <summary>
+///     Приходный складской ордер - заголовок
+/// </summary>
+[MetadataType(typeof(DataAnnotationsWarehouseStorageOrder))]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+public class WarehouseOrderIn : SD_24ViewModel
 {
-    /// <summary>
-    ///     Приходный складской ордер - заголовок
-    /// </summary>
-    [MetadataType(typeof(DataAnnotationsWarehouseStorageOrder))]
-    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-    public class WarehouseOrderIn : SD_24ViewModel
+    private WarehouseSenderType myWarehouseSenderType;
+
+    public WarehouseOrderIn()
     {
-        private WarehouseSenderType myWarehouseSenderType;
+    }
 
-        public WarehouseOrderIn()
+    public WarehouseOrderIn(SD_24 entity) : base(entity)
+    {
+        biling = new ObservableCollection<InvoiceProviderRow>();
+        //if (Entity.DD_SKLAD_POL_DC != null)
+        //    WarehouseIn = MainReferences.Warehouses[Entity.DD_SKLAD_POL_DC.Value];
+        //if (Entity.DD_KONTR_OTPR_DC != null)
+        //    KontragentSender = MainReferences.GetKontragent(Entity.DD_KONTR_OTPR_DC);
+        //if (Entity.DD_SKLAD_OTPR_DC != null)
+        //    WarehouseOut = MainReferences.Warehouses[Entity.DD_SKLAD_OTPR_DC.Value];
+        //if (WarehouseOut != null)
+        //    WarehouseSenderType = WarehouseSenderType.Store;
+        //if (KontragentSender != null)
+        //    WarehouseSenderType = WarehouseSenderType.Kontragent;
+        var rtemp = new List<WarehouseOrderInRow>();
+        if (Entity.TD_24 != null && Entity.TD_24.Count != 0)
+            foreach (var item in Entity.TD_24)
+                rtemp.Add(new WarehouseOrderInRow(item) { Parent = this });
+        Rows = new ObservableCollection<WarehouseOrderInRow>(rtemp);
+    }
+
+    public ObservableCollection<WarehouseOrderInRow> Rows { set; get; } =
+        new ObservableCollection<WarehouseOrderInRow>();
+
+    public ObservableCollection<InvoiceProviderRow> biling { set; get; } =
+        new ObservableCollection<InvoiceProviderRow>();
+
+    // ReSharper disable once CollectionNeverUpdated.Global
+    public ObservableCollection<WarehouseOrderInRow> SelectedRows { set; get; } =
+        new ObservableCollection<WarehouseOrderInRow>();
+
+    public ObservableCollection<WarehouseOrderInRow> DeletedRows { set; get; } =
+        new ObservableCollection<WarehouseOrderInRow>();
+
+
+    public override string Note
+    {
+        get => Entity.DD_NOTES;
+        set
         {
-        }
-
-        public WarehouseOrderIn(SD_24 entity) : base(entity)
-        {
-            biling = new ObservableCollection<InvoiceProviderRow>();
-            //if (Entity.DD_SKLAD_POL_DC != null)
-            //    WarehouseIn = MainReferences.Warehouses[Entity.DD_SKLAD_POL_DC.Value];
-            //if (Entity.DD_KONTR_OTPR_DC != null)
-            //    KontragentSender = MainReferences.GetKontragent(Entity.DD_KONTR_OTPR_DC);
-            //if (Entity.DD_SKLAD_OTPR_DC != null)
-            //    WarehouseOut = MainReferences.Warehouses[Entity.DD_SKLAD_OTPR_DC.Value];
-            //if (WarehouseOut != null)
-            //    WarehouseSenderType = WarehouseSenderType.Store;
-            //if (KontragentSender != null)
-            //    WarehouseSenderType = WarehouseSenderType.Kontragent;
-            var rtemp = new List<WarehouseOrderInRow>();
-            if (Entity.TD_24 != null && Entity.TD_24.Count != 0)
-                foreach (var item in Entity.TD_24)
-                    rtemp.Add(new WarehouseOrderInRow(item) {Parent = this});
-            Rows = new ObservableCollection<WarehouseOrderInRow>(rtemp);
-        }
-
-        public ObservableCollection<WarehouseOrderInRow> Rows { set; get; } =
-            new();
-
-        public ObservableCollection<InvoiceProviderRow> biling { set; get; } =
-            new();
-
-        // ReSharper disable once CollectionNeverUpdated.Global
-        public ObservableCollection<WarehouseOrderInRow> SelectedRows { set; get; } =
-            new();
-
-        public ObservableCollection<WarehouseOrderInRow> DeletedRows { set; get; } =
-            new();
-
-
-        public override string Note
-        {
-            get => Entity.DD_NOTES;
-            set
-            {
-                if (Entity.DD_NOTES == value) return;
-                Entity.DD_NOTES = value;
-                RaisePropertyChanged();
-            }
-        }
-        
-        public override string Description =>
-            $"Приходный складской ордер №{DD_IN_NUM}/{DD_EXT_NUM} от {Date.ToShortDateString()} " +
-            $"на склад {WarehouseOut} от {KontragentSender} {Note}";
-
-        public WarehouseSenderType WarehouseSenderType
-        {
-            get => myWarehouseSenderType;
-            set
-            {
-                if (myWarehouseSenderType == value) return;
-                myWarehouseSenderType = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public override object ToJson()
-        {
-            var res = new
-            {
-                DocCode,
-                Номер = DD_IN_NUM + "/" + DD_EXT_NUM,
-                Дата = Date.ToShortDateString(),
-                Возврат = IsVozvrat ? "Да" : "Нет",
-                Склад = WarehouseIn.Name,
-                Отправитель = Sender,
-                Счет = InvoiceProvider?.ToString(), 
-                Позиции = Rows.Select(_ => _.ToJson())
-            };
-            return JsonConvert.SerializeObject(res);
-        }
-
-        public override string ToString()
-        {
-            return
-                $"Приходный складcкой ордер №{DD_IN_NUM}/{DD_EXT_NUM} от {Date} отправит.:{Sender} склад:{WarehouseIn}";
+            if (Entity.DD_NOTES == value) return;
+            Entity.DD_NOTES = value;
+            RaisePropertyChanged();
         }
     }
 
-    public class DataAnnotationsWarehouseStorageOrder : DataAnnotationForFluentApiBase,
-        IMetadataProvider<WarehouseOrderIn>
-    {
-        void IMetadataProvider<WarehouseOrderIn>.BuildMetadata(
-            MetadataBuilder<WarehouseOrderIn> builder)
-        {
-            SetNotAutoGenerated(builder);
-            builder.Property(_ => _.DocumentType).NotAutoGenerated();
-            builder.Property(_ => _.WarehouseOut).NotAutoGenerated();
-            builder.Property(_ => _.KontragentSender).NotAutoGenerated();
-            builder.Property(_ => _.KontragentReceiver).NotAutoGenerated();
-            builder.Property(_ => _.DocumentType).NotAutoGenerated();
-            builder.Property(_ => _.Kladovshik).NotAutoGenerated();
-            //builder.Property(_ => _.OutOnWarehouse).NotAutoGenerated();
-            //builder.Property(_ => _.InFromWarehouse).NotAutoGenerated();
-            builder.Property(_ => _.Period).NotAutoGenerated();
-            builder.Property(_ => _.InvoiceProvider).NotAutoGenerated();
-            builder.Property(_ => _.InvoiceClient).NotAutoGenerated();
-            builder.Property(_ => _.DD_IN_NUM).AutoGenerated().DisplayName("Номер");
-            builder.Property(_ => _.DD_EXT_NUM).AutoGenerated().DisplayName("Внешний номер");
-            builder.Property(_ => _.Date).AutoGenerated().DisplayName("Дата");
-            builder.Property(_ => _.IsVozvrat).AutoGenerated().DisplayName("Возврат");
-            builder.Property(_ => _.WarehouseSenderType).AutoGenerated().DisplayName("Тип отправителя");
-            builder.Property(_ => _.Sender).AutoGenerated().DisplayName("Отправитель");
-            builder.Property(_ => _.WarehouseIn).AutoGenerated().DisplayName("Склад");
-            builder.Property(_ => _.DD_SCHET).AutoGenerated().DisplayName("Счет").MaxLength(50);
-            builder.Property(_ => _.DD_OT_KOGO_POLUCHENO).AutoGenerated().DisplayName("Через кого");
-            builder.Property(x => x.State).AutoGenerated()
-                .DisplayName("Статус");
-            builder.Property(x => x.CREATOR).AutoGenerated()
-                .DisplayName("Создатель");
+    public override string Description =>
+        $"Приходный складской ордер №{DD_IN_NUM}/{DD_EXT_NUM} от {Date.ToShortDateString()} " +
+        $"на склад {WarehouseOut} от {KontragentSender} {Note}";
 
-            #region Form Layout
+    public WarehouseSenderType WarehouseSenderType
+    {
+        get => myWarehouseSenderType;
+        set
+        {
+            if (myWarehouseSenderType == value) return;
+            myWarehouseSenderType = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public override object ToJson()
+    {
+        var res = new
+        {
+            DocCode,
+            Номер = DD_IN_NUM + "/" + DD_EXT_NUM,
+            Дата = Date.ToShortDateString(),
+            Возврат = IsVozvrat ? "Да" : "Нет",
+            Склад = WarehouseIn.Name,
+            Отправитель = Sender,
+            Счет = InvoiceProvider?.ToString(),
+            Позиции = Rows.Select(_ => _.ToJson())
+        };
+        return JsonConvert.SerializeObject(res);
+    }
+
+    public override string ToString()
+    {
+        return
+            $"Приходный складcкой ордер №{DD_IN_NUM}/{DD_EXT_NUM} от {Date} отправит.:{Sender} склад:{WarehouseIn}";
+    }
+}
+
+public class DataAnnotationsWarehouseStorageOrder : DataAnnotationForFluentApiBase,
+    IMetadataProvider<WarehouseOrderIn>
+{
+    void IMetadataProvider<WarehouseOrderIn>.BuildMetadata(
+        MetadataBuilder<WarehouseOrderIn> builder)
+    {
+        SetNotAutoGenerated(builder);
+        builder.Property(_ => _.DocumentType).NotAutoGenerated();
+        builder.Property(_ => _.WarehouseOut).NotAutoGenerated();
+        builder.Property(_ => _.KontragentSender).NotAutoGenerated();
+        builder.Property(_ => _.KontragentReceiver).NotAutoGenerated();
+        builder.Property(_ => _.DocumentType).NotAutoGenerated();
+        builder.Property(_ => _.Kladovshik).NotAutoGenerated();
+        //builder.Property(_ => _.OutOnWarehouse).NotAutoGenerated();
+        //builder.Property(_ => _.InFromWarehouse).NotAutoGenerated();
+        builder.Property(_ => _.Period).NotAutoGenerated();
+        builder.Property(_ => _.InvoiceProvider).NotAutoGenerated();
+        builder.Property(_ => _.InvoiceClient).NotAutoGenerated();
+        builder.Property(_ => _.DD_IN_NUM).AutoGenerated().DisplayName("Номер");
+        builder.Property(_ => _.DD_EXT_NUM).AutoGenerated().DisplayName("Внешний номер");
+        builder.Property(_ => _.Date).AutoGenerated().DisplayName("Дата");
+        builder.Property(_ => _.IsVozvrat).AutoGenerated().DisplayName("Возврат");
+        builder.Property(_ => _.WarehouseSenderType).AutoGenerated().DisplayName("Тип отправителя");
+        builder.Property(_ => _.Sender).AutoGenerated().DisplayName("Отправитель");
+        builder.Property(_ => _.WarehouseIn).AutoGenerated().DisplayName("Склад");
+        builder.Property(_ => _.DD_SCHET).AutoGenerated().DisplayName("Счет").MaxLength(50);
+        builder.Property(_ => _.DD_OT_KOGO_POLUCHENO).AutoGenerated().DisplayName("Через кого");
+        builder.Property(x => x.State).AutoGenerated()
+            .DisplayName("Статус");
+        builder.Property(x => x.CREATOR).AutoGenerated()
+            .DisplayName("Создатель");
+
+        #region Form Layout
 
             // @formatter:off
             builder.DataFormLayout()
@@ -162,11 +162,11 @@ namespace Core.EntityViewModel.NomenklManagement
                 .ContainsProperty(_ => _.DD_SCHET)
                 .ContainsProperty(_ => _.DD_OT_KOGO_POLUCHENO)
                 .ContainsProperty(_ => _.Note);
-            // @formatter:on
+        // @formatter:on
 
-            #endregion
+        #endregion
 
-            #region Table Layout
+        #region Table Layout
 
             // @formatter:off
             //builder..TableLayout().Group("Основные данные")
@@ -181,9 +181,8 @@ namespace Core.EntityViewModel.NomenklManagement
             //    .ContainsProperty(_ => _.DD_OT_KOGO_POLUCHENO)
             //    .ContainsProperty(x => x.State)
             //    .ContainsProperty(x => x.CREATOR);
-            // @formatter:on
+        // @formatter:on
 
-            #endregion
-        }
+        #endregion
     }
 }

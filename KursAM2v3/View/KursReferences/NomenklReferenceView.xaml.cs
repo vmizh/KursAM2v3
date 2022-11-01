@@ -2,11 +2,13 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Core.EntityViewModel.NomenklManagement;
 using DevExpress.Utils;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Reference.Nomenkl;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.References;
 using LayoutManager;
 
 namespace KursAM2.View.KursReferences
@@ -84,8 +86,8 @@ namespace KursAM2.View.KursReferences
             if (e.Column.FieldName != "Currency") return;
             if (!(e.Row is Nomenkl r)) return;
             if (r.NomenklNumber.Length <= 5 ||
-                r.NomenklNumber.Substring(r.NomenklNumber.Length - 4, 3) != r.Currency.Name)
-                r.NomenklNumber += " " + r.Currency.Name;
+                r.NomenklNumber.Substring(r.NomenklNumber.Length - 4, 3) != ((IName)r.Currency).Name)
+                r.NomenklNumber += " " + ((IName)r.Currency).Name;
         }
     }
 }

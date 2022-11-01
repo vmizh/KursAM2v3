@@ -2,12 +2,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using Core;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
 using KursAM2.Repositories;
 using KursAM2.View.Logistiks;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Logistiks
 {

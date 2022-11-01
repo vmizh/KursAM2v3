@@ -8,10 +8,12 @@ using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Grid;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -209,8 +211,8 @@ namespace KursAM2.ViewModel.Finance
                 // ReSharper disable PossibleInvalidOperationException                                                              && _.SD_111.IsCurrencyConvert).ToList();
                 foreach (var d in data)
                 {
-                    var row = Rates.FirstOrDefault(_ => _.CreditCurrency?.DOC_CODE == d.CurrencyToDC
-                                                        && _.DebetCurrency?.DOC_CODE == d.CurrencyFromDC);
+                    var row = Rates.FirstOrDefault(_ => _.CreditCurrency?.DocCode == d.CurrencyToDC
+                                                        && _.DebetCurrency?.DocCode == d.CurrencyFromDC);
                     if (row != null)
                     {
                         row.CreditSumma += (decimal) d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1)

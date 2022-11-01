@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using DevExpress.Mvvm;
+using KursDomain.ICommon;
 
 namespace Core.ViewModel.Base
 {

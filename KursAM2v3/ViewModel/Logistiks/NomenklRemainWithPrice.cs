@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -49,7 +48,7 @@ namespace KursAM2.ViewModel.Logistiks
         }
 
         public string NomenklNumber => Nomenkl?.NomenklNumber;
-        public Currency Currency => Nomenkl?.Currency;
+        public Currency Currency => (Currency)Nomenkl?.Currency;
 
         public decimal Quantity
         {

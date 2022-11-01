@@ -2,15 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Employee;
-using Core.EntityViewModel.Invoices;
-using Core.EntityViewModel.NomenklManagement;
-using Core.EntityViewModel.Periods;
-using Core.EntityViewModel.StockHolder;
-using Core.EntityViewModel.Systems;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
@@ -29,7 +20,19 @@ using KursAM2.ViewModel.Reference.Dialogs;
 using KursAM2.ViewModel.StockHolder;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.Invoices;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.Documents.Periods;
+using KursDomain.Documents.StockHolder;
+using KursDomain.Documents.Systems;
+using KursDomain.References;
+using Bank = KursDomain.Documents.Bank.Bank;
+using BankAccount = KursDomain.Documents.Bank.BankAccount;
+using Employee = KursDomain.Documents.Employee.Employee;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
+using Project = KursDomain.Documents.CommonReferences.Project;
+using Region = KursDomain.Documents.CommonReferences.Region;
+using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace KursAM2.Dialogs
 {
@@ -439,25 +442,25 @@ namespace KursAM2.Dialogs
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (ctx.DialogResult)
-            {
                 using (var dbctx = GlobalOptions.GetEntities())
                 {
                     if (ctx.CurrentClientItem != null)
                     {
-
                         var doc = new InvoiceClient(dbctx.SD_84.First(_ =>
                             _.DOC_CODE == ctx.CurrentClientItem.DocCode));
                         return doc;
                     }
+
                     if (ctx.CurrentProviderItem != null)
                     {
-                       var d = dbctx.SD_26.First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode);
+                        var d = dbctx.SD_26.First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode);
                         var doc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>(dbctx));
                         return doc;
                     }
+
                     return null;
                 }
-            }
+
             return null;
         }
 
@@ -468,25 +471,25 @@ namespace KursAM2.Dialogs
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (ctx.DialogResult)
-            {
                 using (var dbctx = GlobalOptions.GetEntities())
                 {
                     if (ctx.CurrentClientItem != null)
                     {
-
                         var doc = new InvoiceClient(dbctx.SD_84.First(_ =>
                             _.DOC_CODE == ctx.CurrentClientItem.DocCode));
                         return doc;
                     }
+
                     if (ctx.CurrentProviderItem != null)
                     {
                         var d = dbctx.SD_26.First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode);
                         var doc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>(dbctx));
                         return doc;
                     }
+
                     return null;
                 }
-            }
+
             return null;
         }
 

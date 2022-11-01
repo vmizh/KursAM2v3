@@ -8,9 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using Core.WindowsManager;
@@ -24,6 +21,10 @@ using KursAM2.View.Management;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Management.Calculations;
 using KursAM2.ViewModel.Personal;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -184,7 +185,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     RaisePropertyChanged(nameof(RecalcCrsName));
                 }
 
-                var frm = (ManagementBalansView) Form;
+                var frm = (ManagementBalansView)Form;
                 foreach (var col in frm.gridExtend.Columns)
                 {
                     GridControlBand b;
@@ -280,15 +281,15 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private void KontragentAccountOpen(object obj)
         {
             var ctxk = new KontragentBalansWindowViewModel(CurrentExtendItem.Kontragent.DOC_CODE);
-            var frm = new KontragentBalansForm {Owner = Application.Current.MainWindow, DataContext = ctxk};
+            var frm = new KontragentBalansForm { Owner = Application.Current.MainWindow, DataContext = ctxk };
             frm.Show();
         }
 
         private void NomenklCalcOpen(object obj)
         {
             if (CurrentExtendItem?.Nom.DocCode == null) return;
-            var ctx = new NomPriceWindowViewModel((decimal) CurrentExtendItem?.Nom.DocCode);
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var ctx = new NomPriceWindowViewModel((decimal)CurrentExtendItem?.Nom.DocCode);
+            var dlg = new SelectDialogView { DataContext = ctx };
             dlg.ShowDialog();
         }
 
@@ -296,7 +297,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         {
             SummaryList.Clear();
             SummaryList.Add(
-                new ColumnSummary {Type = SummaryItemType.Count, FieldName = "Name", DisplayFormat = "{n0}"});
+                new ColumnSummary { Type = SummaryItemType.Count, FieldName = "Name", DisplayFormat = "{n0}" });
             if (ExtendRowsActual == null || ExtendRowsActual.Count == 0) return;
             foreach (var crs in ExtendRowsActual.Select(_ => _.CurrencyName).Distinct())
                 SummaryList.Add(new ColumnSummary
@@ -315,7 +316,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 DisplayFormat = "{0,20:n2}",
                 Summa = 0
             });
-            var frm = (ManagementBalansView) Form;
+            var frm = (ManagementBalansView)Form;
             foreach (var b in frm.gridExtend.Bands)
                 switch (b.Name)
                 {
@@ -354,20 +355,20 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     return;
                 }
 
-                if (((GridSummaryItem) e.Item).FieldName == "Summa")
+                if (((GridSummaryItem)e.Item).FieldName == "Summa")
                     if (e.IsTotalSummary)
                     {
                         if (e.SummaryProcess == CustomSummaryProcess.Start)
-                            SummaryList.Single(_ => _.Key == (string) ((GridSummaryItem) e.Item).Tag).Summa = 0;
+                            SummaryList.Single(_ => _.Key == (string)((GridSummaryItem)e.Item).Tag).Summa = 0;
                         if (e.SummaryProcess == CustomSummaryProcess.Calculate)
                         {
-                            var val = (decimal) e.FieldValue;
+                            var val = (decimal)e.FieldValue;
                             if (!(e.Row is ManagementBalanceExtendRowViewModel row)) return;
-                            if (row.CurrencyName == (string) ((GridSummaryItem) e.Item).Tag)
+                            if (row.CurrencyName == (string)((GridSummaryItem)e.Item).Tag)
                             {
-                                SummaryList.Single(_ => _.Key == (string) ((GridSummaryItem) e.Item).Tag).Summa += val;
+                                SummaryList.Single(_ => _.Key == (string)((GridSummaryItem)e.Item).Tag).Summa += val;
                                 e.TotalValue =
-                                    SummaryList.Single(_ => _.Key == (string) ((GridSummaryItem) e.Item).Tag).Summa;
+                                    SummaryList.Single(_ => _.Key == (string)((GridSummaryItem)e.Item).Tag).Summa;
                             }
                         }
                     }
@@ -458,7 +459,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 ch.SummaCNY =
                     BalansStructure.Where(_ => _.ParentId == ch.Id)
                         .Sum(_ => _.SummaCNY);
-                var frm = (ManagementBalansView) Form;
+                var frm = (ManagementBalansView)Form;
                 if (frm != null)
                 {
                     var frm1 = frm.ManagementBalansMainUI;
@@ -578,25 +579,24 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         PriceGBP = (dataOut.Where(_ => _.StockHolderId == sh.Id && _.CRS_DC == CurrencyCode.GBP)
                                        .Sum(x => x.SUMM_ORD) ?? 0) -
                                    (dataNach.Where(_ => _.StockHolderId == sh.Id && _.CurrencyDC == CurrencyCode.GBP)
-                                       .Sum(x => x.Summa) ?? 0),
+                                       .Sum(x => x.Summa) ?? 0)
                     };
                     ExtendRows.Add(newItem);
                 }
-
             }
 
-            ch.Summa =0;
-            ch.SummaEUR =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaEUR);
-            ch.SummaUSD =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaUSD);
-            ch.SummaRUB =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaRUB);
-            ch.SummaGBP =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaGBP);
-            ch.SummaCHF =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaCHF);
-            ch.SummaSEK =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaSEK);
-            ch.SummaCNY =ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaCNY);
+            ch.Summa = 0;
+            ch.SummaEUR = ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaEUR);
+            ch.SummaUSD = ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaUSD);
+            ch.SummaRUB = ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaRUB);
+            ch.SummaGBP = ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaGBP);
+            ch.SummaCHF = ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaCHF);
+            ch.SummaSEK = ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaSEK);
+            ch.SummaCNY = ExtendRows.Where(_ => _.GroupId == ch.Id).Sum(x => x.SummaCNY);
         }
 
         /// <summary>
-        /// товар в пути
+        ///     товар в пути
         /// </summary>
         public void GetTovarInPath()
         {
@@ -614,7 +614,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 var prihData = ctx.TD_24.Include(_ => _.SD_24).Where(_ => _.SD_24.DD_TYPE_DC == 2010000001
                                                                           && _.DDT_RASH_ORD_DC != null
                                                                           && _.SD_24.DD_DATE <= CurrentDate).ToList();
-                List<TD_24> inPanth = new List<TD_24>();
+                var inPanth = new List<TD_24>();
                 foreach (var d in data)
                 {
                     if (prihData.Any(_ => _.DDT_RASH_ORD_DC == d.DOC_CODE && _.DDT_RASH_ORD_CODE == d.CODE)) continue;
@@ -626,7 +626,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     var newId = Guid.NewGuid();
                     foreach (var p in inPanth)
                     {
-                        var prc = Nomenkl.Price(p.DDT_NOMENKL_DC, p.SD_24.DD_DATE);
+                        var prc = NomenklViewModel.Price(p.DDT_NOMENKL_DC, p.SD_24.DD_DATE);
                         var nom = MainReferences.GetNomenkl(p.DDT_NOMENKL_DC);
                         var newItem = new ManagementBalanceExtendRowViewModel
                         {
@@ -638,19 +638,25 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                             Nom = nom,
                             Nomenkl = nom.NomenklNumber,
                             // ReSharper disable once PossibleInvalidOperationException
-                            CurrencyName = nom.Currency.Name,
-                            SummaEUR = nom.Currency.DocCode == CurrencyCode.EUR ? prc * p.DDT_KOL_RASHOD : 0,
-                            PriceEUR = nom.Currency.DocCode == CurrencyCode.EUR ? prc : 0,
-                            SummaUSD = nom.Currency.DocCode == CurrencyCode.USD ? prc * p.DDT_KOL_RASHOD : 0,
-                            PriceUSD = nom.Currency.DocCode == CurrencyCode.USD ? prc : 0,
-                            SummaRUB = nom.Currency.DocCode == CurrencyCode.RUB ? prc * p.DDT_KOL_RASHOD : 0,
-                            PriceRUB = nom.Currency.DocCode == CurrencyCode.RUB ? prc : 0,
-                            SummaCNY = nom.Currency.DocCode == CurrencyCode.CNY ? prc * p.DDT_KOL_RASHOD : 0,
-                            PriceCNY = nom.Currency.DocCode == CurrencyCode.CNY ? prc : 0,
-                            SummaCHF = nom.Currency.DocCode == CurrencyCode.CHF ? prc * p.DDT_KOL_RASHOD : 0,
-                            PriceCHF = nom.Currency.DocCode == CurrencyCode.CHF ? prc : 0,
-                            SummaGBP = nom.Currency.DocCode == CurrencyCode.GBP ? prc * p.DDT_KOL_RASHOD : 0,
-                            PriceGBP = nom.Currency.DocCode == CurrencyCode.GBP ? prc : 0,
+                            CurrencyName = ((IName)nom.Currency).Name,
+                            SummaEUR =
+                                ((IDocCode)nom.Currency).DocCode == CurrencyCode.EUR ? prc * p.DDT_KOL_RASHOD : 0,
+                            PriceEUR = ((IDocCode)nom.Currency).DocCode == CurrencyCode.EUR ? prc : 0,
+                            SummaUSD =
+                                ((IDocCode)nom.Currency).DocCode == CurrencyCode.USD ? prc * p.DDT_KOL_RASHOD : 0,
+                            PriceUSD = ((IDocCode)nom.Currency).DocCode == CurrencyCode.USD ? prc : 0,
+                            SummaRUB =
+                                ((IDocCode)nom.Currency).DocCode == CurrencyCode.RUB ? prc * p.DDT_KOL_RASHOD : 0,
+                            PriceRUB = ((IDocCode)nom.Currency).DocCode == CurrencyCode.RUB ? prc : 0,
+                            SummaCNY =
+                                ((IDocCode)nom.Currency).DocCode == CurrencyCode.CNY ? prc * p.DDT_KOL_RASHOD : 0,
+                            PriceCNY = ((IDocCode)nom.Currency).DocCode == CurrencyCode.CNY ? prc : 0,
+                            SummaCHF =
+                                ((IDocCode)nom.Currency).DocCode == CurrencyCode.CHF ? prc * p.DDT_KOL_RASHOD : 0,
+                            PriceCHF = ((IDocCode)nom.Currency).DocCode == CurrencyCode.CHF ? prc : 0,
+                            SummaGBP =
+                                ((IDocCode)nom.Currency).DocCode == CurrencyCode.GBP ? prc * p.DDT_KOL_RASHOD : 0,
+                            PriceGBP = ((IDocCode)nom.Currency).DocCode == CurrencyCode.GBP ? prc : 0
                         };
                         ExtendRows.Add(newItem);
                     }
@@ -672,6 +678,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     BalansStructure.Add(newGrp);
                 }
             }
+
             ch.Summa =
                 BalansStructure.Where(_ => _.ParentId == ch.Id)
                     .Sum(_ => _.Summa);
@@ -727,9 +734,11 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 //                                                           _.VVT_RASH_KASS_ORDER_DC == null)).ToList();
                 foreach (var d in CashOut)
                 {
-                    var pay = ent.SD_33.FirstOrDefault(_ => _.RASH_ORDER_FROM_DC == d.DOC_CODE && _.DATE_ORD <= CurrentDate);
+                    var pay = ent.SD_33.FirstOrDefault(_ =>
+                        _.RASH_ORDER_FROM_DC == d.DOC_CODE && _.DATE_ORD <= CurrentDate);
                     var bankpay = ent.TD_101.Include(_ => _.SD_101)
-                        .FirstOrDefault(_ => _.VVT_RASH_KASS_ORDER_DC == d.DOC_CODE && _.SD_101.VV_STOP_DATE <= CurrentDate);
+                        .FirstOrDefault(_ =>
+                            _.VVT_RASH_KASS_ORDER_DC == d.DOC_CODE && _.SD_101.VV_STOP_DATE <= CurrentDate);
                     var name = d.CASH_TO_DC != null
                         ? MainReferences.CashsAll[d.CASH_TO_DC.Value].Name
                         // ReSharper disable once PossibleInvalidOperationException
@@ -748,18 +757,18 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                             $"Расходный кассовый ордер №{d.NUM_ORD} от {d.DATE_ORD.Value.ToShortDateString()} в {name}",
                         Quantity = 1,
                         // ReSharper disable once PossibleInvalidOperationException
-                        Price = (decimal) d.SUMM_ORD,
-                        Summa = (decimal) d.SUMM_ORD,
+                        Price = (decimal)d.SUMM_ORD,
+                        Summa = (decimal)d.SUMM_ORD,
                         Nom = null,
                         Nomenkl = null,
                         CurrencyName = MainReferences.GetCurrency(d.CRS_DC)?.Name,
                         Currency = MainReferences.GetCurrency(d.CRS_DC),
                         // ReSharper disable PossibleInvalidOperationException
-                        SummaEUR = d.CRS_DC.Value == CurrencyCode.EUR ? (decimal) d.SUMM_ORD : 0,
+                        SummaEUR = d.CRS_DC.Value == CurrencyCode.EUR ? (decimal)d.SUMM_ORD : 0,
                         // ReSharper restore PossibleInvalidOperationException
-                        SummaUSD = d.CRS_DC.Value == CurrencyCode.USD ? (decimal) d.SUMM_ORD : 0,
-                        SummaRUB = d.CRS_DC.Value == CurrencyCode.RUB ? (decimal) d.SUMM_ORD : 0,
-                        SummaCNY = d.CRS_DC.Value == CurrencyCode.CNY ? (decimal) d.SUMM_ORD : 0
+                        SummaUSD = d.CRS_DC.Value == CurrencyCode.USD ? (decimal)d.SUMM_ORD : 0,
+                        SummaRUB = d.CRS_DC.Value == CurrencyCode.RUB ? (decimal)d.SUMM_ORD : 0,
+                        SummaCNY = d.CRS_DC.Value == CurrencyCode.CNY ? (decimal)d.SUMM_ORD : 0
                     });
                 }
 
@@ -767,7 +776,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 {
                     if (d.RASH_ORDER_FROM_DC != null) continue;
                     if (ent.TD_101.Any(_ =>
-                        _.VVT_KASS_PRIH_ORDER_DC == d.DOC_CODE && _.SD_101.VV_START_DATE <= CurrentDate)) continue;
+                            _.VVT_KASS_PRIH_ORDER_DC == d.DOC_CODE && _.SD_101.VV_START_DATE <= CurrentDate)) continue;
                     // ReSharper disable once PossibleInvalidOperationException
                     var kontrName = MainReferences.BankAccounts[d.BANK_RASCH_SCHET_DC.Value].Name;
                     ExtendRows.Add(new ManagementBalanceExtendRowViewModel
@@ -783,17 +792,17 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                             $"Приходный кассовый ордер №{d.NUM_ORD} от {d.DATE_ORD.Value.ToShortDateString()} из {kontrName}",
                         Quantity = 1,
                         // ReSharper disable once PossibleInvalidOperationException
-                        Price = (decimal) d.SUMM_ORD,
-                        Summa = (decimal) d.SUMM_ORD,
+                        Price = (decimal)d.SUMM_ORD,
+                        Summa = (decimal)d.SUMM_ORD,
                         Nom = null,
                         Nomenkl = null,
                         // ReSharper disable once PossibleInvalidOperationException
                         CurrencyName = MainReferences.Currencies[d.CRS_DC.Value].Name,
                         Currency = MainReferences.Currencies[d.CRS_DC.Value],
-                        SummaEUR = d.CRS_DC.Value == CurrencyCode.EUR ? (decimal) d.SUMM_ORD : 0,
-                        SummaUSD = d.CRS_DC.Value == CurrencyCode.USD ? (decimal) d.SUMM_ORD : 0,
-                        SummaRUB = d.CRS_DC.Value == CurrencyCode.RUB ? (decimal) d.SUMM_ORD : 0,
-                        SummaCNY = d.CRS_DC.Value == CurrencyCode.CNY ? (decimal) d.SUMM_ORD : 0
+                        SummaEUR = d.CRS_DC.Value == CurrencyCode.EUR ? (decimal)d.SUMM_ORD : 0,
+                        SummaUSD = d.CRS_DC.Value == CurrencyCode.USD ? (decimal)d.SUMM_ORD : 0,
+                        SummaRUB = d.CRS_DC.Value == CurrencyCode.RUB ? (decimal)d.SUMM_ORD : 0,
+                        SummaCNY = d.CRS_DC.Value == CurrencyCode.CNY ? (decimal)d.SUMM_ORD : 0
                     });
                 }
 
@@ -815,16 +824,16 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Name = $"Банковская транзакция от {d.SD_101.VV_START_DATE.ToShortDateString()} в {name}",
                         Quantity = 1,
                         // ReSharper disable once PossibleInvalidOperationException
-                        Price = (decimal) d.VVT_VAL_RASHOD,
-                        Summa = (decimal) d.VVT_VAL_RASHOD,
+                        Price = (decimal)d.VVT_VAL_RASHOD,
+                        Summa = (decimal)d.VVT_VAL_RASHOD,
                         Nom = null,
                         Nomenkl = null,
                         CurrencyName = MainReferences.Currencies[d.VVT_CRS_DC].Name,
                         Currency = MainReferences.Currencies[d.VVT_CRS_DC],
-                        SummaEUR = d.VVT_CRS_DC == CurrencyCode.EUR ? (decimal) d.VVT_VAL_RASHOD : 0,
-                        SummaUSD = d.VVT_CRS_DC == CurrencyCode.USD ? (decimal) d.VVT_VAL_RASHOD : 0,
-                        SummaRUB = d.VVT_CRS_DC == CurrencyCode.RUB ? (decimal) d.VVT_VAL_RASHOD : 0,
-                        SummaCNY = d.VVT_CRS_DC == CurrencyCode.CNY ? (decimal) d.VVT_VAL_RASHOD : 0
+                        SummaEUR = d.VVT_CRS_DC == CurrencyCode.EUR ? (decimal)d.VVT_VAL_RASHOD : 0,
+                        SummaUSD = d.VVT_CRS_DC == CurrencyCode.USD ? (decimal)d.VVT_VAL_RASHOD : 0,
+                        SummaRUB = d.VVT_CRS_DC == CurrencyCode.RUB ? (decimal)d.VVT_VAL_RASHOD : 0,
+                        SummaCNY = d.VVT_CRS_DC == CurrencyCode.CNY ? (decimal)d.VVT_VAL_RASHOD : 0
                     });
                 }
             }
@@ -1022,13 +1031,13 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Order = 1,
                         // ReSharper disable PossibleMultipleEnumeration
                         // ReSharper disable PossibleInvalidOperationException
-                        SummaEUR = bank.Currency.DocCode == CurrencyCode.EUR ? (decimal) rem.SummaEnd : 0,
-                        SummaUSD = bank.Currency.DocCode == CurrencyCode.USD ? (decimal) rem.SummaEnd : 0,
-                        SummaRUB = bank.Currency.DocCode == CurrencyCode.RUB ? (decimal) rem.SummaEnd : 0,
-                        SummaGBP = bank.Currency.DocCode == CurrencyCode.GBP ? (decimal) rem.SummaEnd : 0,
-                        SummaCHF = bank.Currency.DocCode == CurrencyCode.CHF ? (decimal) rem.SummaEnd : 0,
-                        SummaSEK = bank.Currency.DocCode == CurrencyCode.SEK ? (decimal) rem.SummaEnd : 0,
-                        SummaCNY = bank.Currency.DocCode == CurrencyCode.CNY ? (decimal) rem.SummaEnd : 0,
+                        SummaEUR = bank.Currency.DocCode == CurrencyCode.EUR ? (decimal)rem.SummaEnd : 0,
+                        SummaUSD = bank.Currency.DocCode == CurrencyCode.USD ? (decimal)rem.SummaEnd : 0,
+                        SummaRUB = bank.Currency.DocCode == CurrencyCode.RUB ? (decimal)rem.SummaEnd : 0,
+                        SummaGBP = bank.Currency.DocCode == CurrencyCode.GBP ? (decimal)rem.SummaEnd : 0,
+                        SummaCHF = bank.Currency.DocCode == CurrencyCode.CHF ? (decimal)rem.SummaEnd : 0,
+                        SummaSEK = bank.Currency.DocCode == CurrencyCode.SEK ? (decimal)rem.SummaEnd : 0,
+                        SummaCNY = bank.Currency.DocCode == CurrencyCode.CNY ? (decimal)rem.SummaEnd : 0,
                         ObjectDC = d
                         // ReSharper restore PossibleMultipleEnumeration
                         // ReSharper restore PossibleInvalidOperationException
@@ -1172,7 +1181,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             ch.Summa = 0;
             var chNach = BalansStructure.Single(_ => _.Id == ch.Id);
             chNach.Summa = 0;
-            var data = NomenklCalculationManager.GetNomenklStoreRemains(CurrentDate,true);
+            var data = NomenklCalculationManager.GetNomenklStoreRemains(CurrentDate, true);
             if (data.Count == 0) return;
             if (data.Select(_ => _.StoreDC).ToList().Count == 0) return;
             var skl = data.Select(_ => _.StoreDC).Distinct().ToList();
@@ -1213,13 +1222,12 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 var s1 = s;
                 var nomsDC = data.Where(_ => _.StoreDC == s1).Select(_ => _.NomenklDC).Distinct();
                 foreach (var dd in (from nDC in nomsDC
-                    let s2 = s
-                    let dc = nDC
-                    select data.FirstOrDefault(_ => _.StoreDC == s2 && _.NomenklDC == dc)
-                    into dd
-                    where dd != null
-                    select dd).Where(dd => dd.Prihod != dd.Rashod))
-                {
+                             let s2 = s
+                             let dc = nDC
+                             select data.FirstOrDefault(_ => _.StoreDC == s2 && _.NomenklDC == dc)
+                             into dd
+                             where dd != null
+                             select dd).Where(dd => dd.Prihod != dd.Rashod))
                     ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                     {
                         GroupId = newId,
@@ -1235,7 +1243,6 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         SummaRUB = dd.NomCurrencyDC == CurrencyCode.RUB ? dd.Summa : 0,
                         SummaCNY = dd.NomCurrencyDC == CurrencyCode.CNY ? dd.Summa : 0
                     });
-                }
             }
 
             ch.Summa =

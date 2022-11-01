@@ -1,7 +1,8 @@
 ﻿using System;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
 using Data;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -34,7 +35,7 @@ namespace KursAM2.ViewModel.Finance
         public string KontragentName => MainReferences.GetKontragent(SD_24.DD_KONTR_POL_DC).Name;
         public string NomenklName => MainReferences.GetNomenkl(DDT_NOMENKL_DC).Name;
         public string NomenklNomNumber => MainReferences.GetNomenkl(DDT_NOMENKL_DC).NomenklNumber;
-        public string NomenklCurrencyName => MainReferences.GetNomenkl(DDT_NOMENKL_DC).Currency.Name;
+        public string NomenklCurrencyName => ((IName)MainReferences.GetNomenkl(DDT_NOMENKL_DC).Currency).Name;
         public decimal Quantity => DDT_KOL_RASHOD;
         public string SaleCurrency => MainReferences.Currencies[TD_84.SD_84.SF_CRS_DC].Name;
         public decimal CostPrice { set; get; }

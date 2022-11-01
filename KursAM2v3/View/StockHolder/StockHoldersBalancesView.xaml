@@ -27,6 +27,7 @@
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel Style="{StaticResource DXServices}">
+        <!--<control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />-->
         <control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />
         <dxlc:LayoutControl Name="LayoutControlMain">
             <dxlc:LayoutGroup Orientation="Vertical">

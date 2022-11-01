@@ -7,6 +7,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Core;
 using KursAM2.ViewModel.Personal;
+using KursDomain.ICommon;
 using LayoutManager;
 
 namespace KursAM2.View.Personal

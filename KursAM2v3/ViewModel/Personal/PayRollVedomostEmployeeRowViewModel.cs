@@ -1,10 +1,9 @@
 ﻿using System;
-using Core.EntityViewModel;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
+using KursDomain.Documents.Employee;
+using KursDomain.References;
+using Employee = KursDomain.Documents.Employee.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -16,13 +15,13 @@ namespace KursAM2.ViewModel.Personal
         private Currency myCrs;
         private Employee myEmployee;
         private EMP_PR_ROWS myEntity;
+        private DateTime myNachDate;
         private decimal myNachEmpRate;
         private decimal myOplataEmpRate;
         private EMP_PAYROLL_TYPEViewModel myPrType;
         private decimal myRate;
         private Guid myRowId;
         private decimal mySumma;
-        private DateTime myNachDate;
 
         public PayRollVedomostEmployeeRowViewModel()
         {

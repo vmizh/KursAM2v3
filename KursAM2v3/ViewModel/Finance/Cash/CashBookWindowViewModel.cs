@@ -10,7 +10,6 @@ using System.Windows.Media;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -20,6 +19,8 @@ using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.View.Finance.Cash;
 using KursDomain.Documents.Cash;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {

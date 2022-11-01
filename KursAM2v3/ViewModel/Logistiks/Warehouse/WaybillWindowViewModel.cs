@@ -5,11 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Invoices;
-using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Helper;
@@ -19,8 +15,14 @@ using KursAM2.Managers.Invoices;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.ReportManagers.SFClientAndWayBill;
 using KursAM2.View.Helper;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Invoices;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
 using Reports.Base;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -93,7 +95,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<string> ByWhomLicoList { set; get; } = new ObservableCollection<string>();
 
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse> Sklads =>
+        public List<KursDomain.Documents.NomenklManagement.Warehouse> Sklads =>
             MainReferences.Warehouses.Values.ToList();
 
         public Waybill Document
@@ -264,8 +266,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 Code = newCode,
                                 Nomenkl = n,
                                 DDT_KOL_RASHOD = r.Quantity - kol,
-                                Unit = n.Unit,
-                                Currency = n.Currency,
+                                Unit = n.Unit as Unit,
+                                Currency = n.Currency as Currency,
                                 SchetLinkedRow = r,
                                 State = RowStatus.NewRow,
                                 DDT_SFACT_DC = r.DocCode,
@@ -277,7 +279,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     else
                     {
                         var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-                        var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DOC_CODE,
+                        var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
                             Document.Date, Document.Date);
                         decimal m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                         if (m <= 0)
@@ -296,8 +298,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             Code = newCode,
                             Nomenkl = n,
                             DDT_KOL_RASHOD = r.Quantity,
-                            Unit = n.Unit,
-                            Currency = n.Currency,
+                            Unit = n.Unit as Unit,
+                            Currency = n.Currency as Currency,
                             SchetLinkedRow = r,
                             State = RowStatus.NewRow,
                             DDT_SFACT_DC = r.DocCode,
@@ -321,7 +323,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (nomenkls == null || nomenkls.Count <= 0) return;
             foreach (var n in nomenkls)
             {
-                var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DOC_CODE,
+                var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
                     Document.Date, Document.Date);
                 decimal m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                 if (m <= 0)
@@ -340,8 +342,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         Code = newCode,
                         Nomenkl = n,
                         DDT_KOL_PRIHOD = 1,
-                        Unit = n.Unit,
-                        Currency = n.Currency,
+                        Unit = n.Unit as Unit,
+                        Currency = n.Currency as Currency,
                         State = RowStatus.NewRow
                     });
             }
@@ -473,8 +475,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                     Code = newCode,
                                     Nomenkl = n,
                                     DDT_KOL_RASHOD = r.Quantity - kol,
-                                    Unit = n.Unit,
-                                    Currency = n.Currency,
+                                    Unit = n.Unit as Unit,
+                                    Currency = n.Currency as Currency,
                                     SchetLinkedRow = r,
                                     State = RowStatus.NewRow,
                                     DDT_SFACT_DC = r.DocCode,
@@ -486,7 +488,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         else
                         {
                             var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-                            var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DOC_CODE,
+                            var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
                                 Document.Date, Document.Date);
                             decimal m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                            if (m <= 0)
@@ -505,8 +507,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 Code = newCode,
                                 Nomenkl = n,
                                 DDT_KOL_RASHOD = r.Quantity,
-                                Unit = n.Unit,
-                                Currency = n.Currency,
+                                Unit = n.Unit as Unit,
+                                Currency = n.Currency as Currency,
                                 SchetLinkedRow = r,
                                 State = RowStatus.NewRow,
                                 DDT_SFACT_DC = r.DocCode,

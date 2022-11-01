@@ -6,202 +6,201 @@ using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 
-namespace Core.EntityViewModel.NomenklManagement
+namespace KursDomain.Documents.NomenklManagement;
+
+/// <summary>
+///     Вид продукции для товаров SD_50
+/// </summary>
+[MetadataType(typeof(NomenklProductKind_FluentAPI))]
+public class NomenklProductKind : RSViewModelBase, IEntity<SD_50>
 {
-    /// <summary>
-    ///     Вид продукции для товаров SD_50
-    /// </summary>
-    [MetadataType(typeof(NomenklProductKind_FluentAPI))]
-    public class NomenklProductKind : RSViewModelBase, IEntity<SD_50>
+    private SD_50 myEntity;
+
+    public NomenklProductKind()
     {
-        private SD_50 myEntity;
+        Entity = DefaultValue();
+    }
 
-        public NomenklProductKind()
+    public NomenklProductKind(SD_50 entity)
+    {
+        Entity = entity ?? DefaultValue();
+    }
+
+    public decimal DOC_CODE
+    {
+        get => Entity.DOC_CODE;
+        set
         {
-            Entity = DefaultValue();
-        }
-
-        public SD_50 DefaultValue()
-        {
-            return new SD_50 {DOC_CODE = -1};
-        }
-
-        public NomenklProductKind(SD_50 entity)
-        {
-            Entity = entity ?? DefaultValue();
-        }
-
-        public SD_50 Entity
-        {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal DOC_CODE
-        {
-            get => Entity.DOC_CODE;
-            set
-            {
-                if (Entity.DOC_CODE == value) return;
-                Entity.DOC_CODE = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public override decimal DocCode
-        {
-            get => DOC_CODE;
-            set
-            {
-                if (DOC_CODE == value) return;
-                DOC_CODE = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string PROD_NAME
-        {
-            get => Entity.PROD_NAME;
-            set
-            {
-                if (Entity.PROD_NAME == value) return;
-                Entity.PROD_NAME = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public override string Name
-        {
-            get => PROD_NAME;
-            set
-            {
-                if (PROD_NAME == value) return;
-                PROD_NAME = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public short PROD_TYPE
-        {
-            get => Entity.PROD_TYPE;
-            set
-            {
-                if (Entity.PROD_TYPE == value) return;
-                Entity.PROD_TYPE = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string PROD_ED_IZM
-        {
-            get => Entity.PROD_ED_IZM;
-            set
-            {
-                if (Entity.PROD_ED_IZM == value) return;
-                Entity.PROD_ED_IZM = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal? PROD_PARENT_DC
-        {
-            get => Entity.PROD_PARENT_DC;
-            set
-            {
-                if (Entity.PROD_PARENT_DC == value) return;
-                Entity.PROD_PARENT_DC = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public override decimal? ParentDC
-        {
-            get => PROD_PARENT_DC;
-            set
-            {
-                if (PROD_PARENT_DC == value) return;
-                PROD_PARENT_DC = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string PROD_FULL_NAME
-        {
-            get => Entity.PROD_FULL_NAME;
-            set
-            {
-                if (Entity.PROD_FULL_NAME == value) return;
-                Entity.PROD_FULL_NAME = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public SD_50 SD_502
-        {
-            get => Entity.SD_502;
-            set
-            {
-                if (Entity.SD_502 == value) return;
-                Entity.SD_502 = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool IsAccessRight { get; set; }
-
-        public List<SD_50> LoadList()
-        {
-            throw new NotImplementedException();
-        }
-
-        public SD_50 Load(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public SD_50 Load(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Save(SD_50 doc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateFrom(SD_50 ent)
-        {
-            PROD_NAME = ent.PROD_NAME;
-            PROD_TYPE = ent.PROD_TYPE;
-            PROD_ED_IZM = ent.PROD_ED_IZM;
-            PROD_PARENT_DC = ent.PROD_PARENT_DC;
-            PROD_FULL_NAME = ent.PROD_FULL_NAME;
-            SD_502 = ent.SD_502;
-        }
-
-        public void UpdateTo(SD_50 ent)
-        {
-            ent.PROD_NAME = PROD_NAME;
-            ent.PROD_TYPE = PROD_TYPE;
-            ent.PROD_ED_IZM = PROD_ED_IZM;
-            ent.PROD_PARENT_DC = PROD_PARENT_DC;
-            ent.PROD_FULL_NAME = PROD_FULL_NAME;
-            ent.SD_502 = SD_502;
+            if (Entity.DOC_CODE == value) return;
+            Entity.DOC_CODE = value;
+            RaisePropertyChanged();
         }
     }
 
-    public class NomenklProductKind_FluentAPI : DataAnnotationForFluentApiBase, IMetadataProvider<NomenklProductKind>
+    public override decimal DocCode
     {
-        void IMetadataProvider<NomenklProductKind>.BuildMetadata(MetadataBuilder<NomenklProductKind> builder)
+        get => DOC_CODE;
+        set
         {
-            SetNotAutoGenerated(builder);
-            builder.Property(x => x.Name).AutoGenerated().DisplayName("Наименование");
-            builder.Property(x => x.PROD_FULL_NAME).AutoGenerated().DisplayName("Полное наименование");
+            if (DOC_CODE == value) return;
+            DOC_CODE = value;
+            RaisePropertyChanged();
         }
+    }
+
+    public string PROD_NAME
+    {
+        get => Entity.PROD_NAME;
+        set
+        {
+            if (Entity.PROD_NAME == value) return;
+            Entity.PROD_NAME = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public override string Name
+    {
+        get => PROD_NAME;
+        set
+        {
+            if (PROD_NAME == value) return;
+            PROD_NAME = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public short PROD_TYPE
+    {
+        get => Entity.PROD_TYPE;
+        set
+        {
+            if (Entity.PROD_TYPE == value) return;
+            Entity.PROD_TYPE = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public string PROD_ED_IZM
+    {
+        get => Entity.PROD_ED_IZM;
+        set
+        {
+            if (Entity.PROD_ED_IZM == value) return;
+            Entity.PROD_ED_IZM = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public decimal? PROD_PARENT_DC
+    {
+        get => Entity.PROD_PARENT_DC;
+        set
+        {
+            if (Entity.PROD_PARENT_DC == value) return;
+            Entity.PROD_PARENT_DC = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public override decimal? ParentDC
+    {
+        get => PROD_PARENT_DC;
+        set
+        {
+            if (PROD_PARENT_DC == value) return;
+            PROD_PARENT_DC = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public string PROD_FULL_NAME
+    {
+        get => Entity.PROD_FULL_NAME;
+        set
+        {
+            if (Entity.PROD_FULL_NAME == value) return;
+            Entity.PROD_FULL_NAME = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public SD_50 SD_502
+    {
+        get => Entity.SD_502;
+        set
+        {
+            if (Entity.SD_502 == value) return;
+            Entity.SD_502 = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public bool IsAccessRight { get; set; }
+
+    public SD_50 DefaultValue()
+    {
+        return new SD_50 { DOC_CODE = -1 };
+    }
+
+    public SD_50 Entity
+    {
+        get => myEntity;
+        set
+        {
+            if (myEntity == value) return;
+            myEntity = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public List<SD_50> LoadList()
+    {
+        throw new NotImplementedException();
+    }
+
+    public SD_50 Load(decimal dc)
+    {
+        throw new NotImplementedException();
+    }
+
+    public SD_50 Load(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Save(SD_50 doc)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateFrom(SD_50 ent)
+    {
+        PROD_NAME = ent.PROD_NAME;
+        PROD_TYPE = ent.PROD_TYPE;
+        PROD_ED_IZM = ent.PROD_ED_IZM;
+        PROD_PARENT_DC = ent.PROD_PARENT_DC;
+        PROD_FULL_NAME = ent.PROD_FULL_NAME;
+        SD_502 = ent.SD_502;
+    }
+
+    public void UpdateTo(SD_50 ent)
+    {
+        ent.PROD_NAME = PROD_NAME;
+        ent.PROD_TYPE = PROD_TYPE;
+        ent.PROD_ED_IZM = PROD_ED_IZM;
+        ent.PROD_PARENT_DC = PROD_PARENT_DC;
+        ent.PROD_FULL_NAME = PROD_FULL_NAME;
+        ent.SD_502 = SD_502;
+    }
+}
+
+public class NomenklProductKind_FluentAPI : DataAnnotationForFluentApiBase, IMetadataProvider<NomenklProductKind>
+{
+    void IMetadataProvider<NomenklProductKind>.BuildMetadata(MetadataBuilder<NomenklProductKind> builder)
+    {
+        SetNotAutoGenerated(builder);
+        builder.Property(x => x.Name).AutoGenerated().DisplayName("Наименование");
+        builder.Property(x => x.PROD_FULL_NAME).AutoGenerated().DisplayName("Полное наименование");
     }
 }

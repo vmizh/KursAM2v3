@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using DevExpress.Data;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.References;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.Management.BreakEven
 {
     public class BreakEvenRow : RSViewModelBase
     {
         private readonly decimal myKontrOperSummaCrs = 0;
-        private readonly decimal myNOMENKLOperSumWoRevalField = 0;
-        private readonly decimal mySummaOperNomenklField = 0;
+        private readonly decimal myNOMENKLOperSumWoRevalField;
+        private readonly decimal mySummaOperNomenklField;
         [OptionalField] private CentrOfResponsibility myCentrOfResponsibilityField;
+        [OptionalField] private string myCurrency;
         [OptionalField] private DateTime myDateField;
         [OptionalField] private string myDilerField;
         [OptionalField] private decimal myDilerSummaField;
@@ -39,7 +37,6 @@ namespace KursAM2.ViewModel.Management.BreakEven
         [OptionalField] private string mySchetField;
         [OptionalField] private decimal mySummaNomenklCrsField;
         [OptionalField] private decimal mySummaNomenklField;
-        [OptionalField] private string myCurrency;
 
         [DataMember]
         public decimal DocDC
@@ -414,6 +411,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
         [GridColumnView("Результат (факт)", SettingsType.Decimal, ReadOnly = true)]
         // ReSharper disable once InconsistentNaming
         public decimal ResultWOReval { set; get; }
+
         public decimal Currency { set; get; }
         public string CurrencyName { set; get; }
     }

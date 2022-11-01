@@ -4,11 +4,12 @@ using System.Data.Entity;
 using System.Linq;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Dogovora;
-using Core.EntityViewModel.Invoices;
 using Data;
 using Data.Repository;
 using KursAM2.ViewModel.Dogovora;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Dogovora;
+using KursDomain.Documents.Invoices;
 
 namespace KursAM2.Repositories.DogovorsRepositories
 {

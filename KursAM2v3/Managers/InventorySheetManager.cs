@@ -5,12 +5,13 @@ using System.Linq;
 using System.Transactions;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
 using KursAM2.ViewModel.Logistiks;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+
 
 namespace KursAM2.Managers
 {
@@ -105,17 +106,17 @@ namespace KursAM2.Managers
                                 dh.DD_POLUCH_NAME = doc.Warehouse.Name;
                                 dh.DD_OTRPAV_NAME = doc.Warehouse.Name;
                                 dh.DD_NOTES = doc.Note;
-                                foreach (
-                                    var delrow in
-                                    doc.DeletedRows.Select(
-                                            d =>
-                                                // ReSharper disable once AccessToDisposedClosure
-                                                    ctx.TD_24.FirstOrDefault(
-                                                        _ =>
-                                                            _.DOC_CODE == d.DocCode &&
-                                                            _.DDT_NOMENKL_DC == d.Nomenkl.DocCode))
-                                        .Where(delrow => delrow != null))
-                                    ctx.TD_24.Remove(delrow);
+                                //TODO Обязательно исправить!!!
+                                //foreach (
+                                //    var delrow in
+                                //    doc.DeletedRows.Select(
+                                //            d =>
+                                //                    ctx.TD_24.FirstOrDefault(
+                                //                        _ =>
+                                //                            _.DOC_CODE == d.DocCode &&
+                                //                            _.DDT_NOMENKL_DC == d.Nomenkl.DocCode))
+                                //        .Where(delrow => delrow != null))
+                                //    ctx.TD_24.Remove(delrow);
                                 var code = 0;
                                 var rs =
                                     ctx.TD_24.Where(_ => _.DOC_CODE == doc.DocCode).ToList();
@@ -134,8 +135,8 @@ namespace KursAM2.Managers
                                                     DDT_OSTAT_STAR = (double?) dr.QuantityCalc,
                                                     DDT_KOL_PRIHOD = dr.Difference >= 0 ? dr.Difference : 0,
                                                     DDT_KOL_RASHOD = dr.Difference < 0 ? -dr.Difference : 0,
-                                                    DDT_ED_IZM_DC = dr.Nomenkl.Unit.DocCode,
-                                                    DDT_CRS_DC = dr.Nomenkl.Currency.DocCode,
+                                                    DDT_ED_IZM_DC = ((IDocCode)dr.Nomenkl.Unit).DocCode,
+                                                    DDT_CRS_DC = ((IDocCode)dr.Nomenkl.Currency).DocCode,
                                                     DDT_TAX_CENA = dr.Price,
                                                     DDT_TAX_CRS_CENA = dr.Price,
                                                     DDT_FACT_CENA = dr.Price,
@@ -158,8 +159,8 @@ namespace KursAM2.Managers
                                             row.DDT_KOL_RASHOD = dr.Difference < 0 ? -dr.Difference : 0;
                                             row.DDT_OSTAT_NOV = (double?) dr.QuantityFact;
                                             row.DDT_OSTAT_STAR = (double?) dr.QuantityCalc;
-                                            row.DDT_ED_IZM_DC = dr.Nomenkl.Unit.DocCode;
-                                            row.DDT_CRS_DC = dr.Nomenkl.Currency.DocCode;
+                                            row.DDT_ED_IZM_DC = ((IDocCode)dr.Nomenkl.Unit).DocCode;
+                                            row.DDT_CRS_DC =  ((IDocCode)dr.Nomenkl.Currency).DocCode;
                                             row.DDT_TAX_CENA = dr.Price;
                                             row.DDT_TAX_CRS_CENA = dr.Price;
                                             row.DDT_FACT_CENA = dr.Price;
@@ -202,8 +203,8 @@ namespace KursAM2.Managers
                                         DDT_OSTAT_STAR = (double?) dr.QuantityCalc,
                                         DDT_KOL_PRIHOD = dr.Difference >= 0 ? dr.Difference : 0,
                                         DDT_KOL_RASHOD = dr.Difference < 0 ? -dr.Difference : 0,
-                                        DDT_ED_IZM_DC = dr.Nomenkl.Unit.DocCode,
-                                        DDT_CRS_DC = dr.Nomenkl.Currency.DocCode,
+                                        DDT_ED_IZM_DC =  ((IDocCode)dr.Nomenkl.Unit).DocCode,
+                                        DDT_CRS_DC =  ((IDocCode)dr.Nomenkl.Currency).DocCode,
                                         DDT_TAX_CENA = dr.Price,
                                         DDT_TAX_CRS_CENA = dr.Price,
                                         DDT_FACT_CENA = dr.Price,

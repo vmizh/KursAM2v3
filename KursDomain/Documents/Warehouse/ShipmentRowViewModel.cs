@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.References;
 
 namespace Core.EntityViewModel;
 
@@ -30,8 +31,8 @@ public class ShipmentRowViewModel : TD_24ViewModel
         get => MainReferences.GetNomenkl(Entity.DDT_NOMENKL_DC);
         set
         {
-            if (Entity.DDT_NOMENKL_DC == value.DOC_CODE) return;
-            Entity.DDT_NOMENKL_DC = value.DOC_CODE;
+            if (Entity.DDT_NOMENKL_DC == value.DocCode) return;
+            Entity.DDT_NOMENKL_DC = value.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -47,7 +48,7 @@ public class ShipmentRowViewModel : TD_24ViewModel
     }
 
     public string NomenklNom => Nomenkl?.NomenklNumber;
-    public override Unit Unit => Nomenkl?.Unit;
+    public override Unit Unit => (Unit)Nomenkl?.Unit;
 }
 
 public class DataAnnotationsShipmentRowViewModel : DataAnnotationForFluentApiBase,

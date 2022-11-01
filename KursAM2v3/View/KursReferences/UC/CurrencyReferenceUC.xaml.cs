@@ -3,6 +3,8 @@ using Core.EntityViewModel.CommonReferences;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Reference;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.References;
 
 namespace KursAM2.View.KursReferences.UC
 {
@@ -31,7 +33,7 @@ namespace KursAM2.View.KursReferences.UC
             if (e.Column.FieldName == "IsMain")
                 if (DataContext is CurrencyReferenceWindowViewModel dtx)
                     foreach (var c in dtx.CurrencyCollection)
-                        if (((CurrencyRef) e.Row).Id != c.Id)
+                        if (((Currency) e.Row).Id != c.Id)
                             c.IsMain = false;
         }
     }

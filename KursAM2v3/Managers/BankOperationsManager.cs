@@ -14,6 +14,9 @@ using Helper;
 using KursAM2.Managers.Invoices;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain.Documents.Bank;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Currency;
+using KursDomain.ICommon;
 
 namespace KursAM2.Managers
 {
@@ -30,7 +33,7 @@ namespace KursAM2.Managers
                 {
                     var data = ctx.SD_114.Where(_ => (_.IsDeleted ?? false) == false).ToList();
                     var bankAcc = ctx.Database.SqlQuery<MainReferences.AccessRight>(
-                            $"SELECT DOC_CODE AS DocCode, USR_ID as UserId FROM HD_114 WHERE USR_ID = {GlobalOptions.UserInfo.Id}")
+                            $"SELECT DocCode AS DocCode, USR_ID as UserId FROM HD_114 WHERE USR_ID = {GlobalOptions.UserInfo.Id}")
                         .ToList();
                     foreach (var item in data.Where(_ => bankAcc.Any(a => a.DocCode == _.DOC_CODE)))
                     {
@@ -124,7 +127,7 @@ namespace KursAM2.Managers
                             ?.VVU_VAL_SUMMA ?? 0;
                         var endRemainder = thisDate.First(_ => _.VVU_REST_TYPE == 1).VVU_VAL_SUMMA;
                         AddItemInLocalRemaindedCol(item.VVT_CRS_DC, startRemainder,
-                            Convert.ToDecimal(endRemainder + delta), item.DOC_CODE);
+                            Convert.ToDecimal(endRemainder + delta), item.DocCode);
                         RecalcLocalRemaindersCol();
                     }
                     else
@@ -146,10 +149,10 @@ namespace KursAM2.Managers
                             var previosEndRemainder =
                                 Convert.ToDecimal(previosRemainders.First(_ => _.VVU_CRS_DC == crs).VVU_VAL_SUMMA);
                             var endRemainder = previosEndRemainder + delta;
-                            AddItemInLocalRemaindedCol(crs, previosEndRemainder, endRemainder, item.DOC_CODE);
+                            AddItemInLocalRemaindedCol(crs, previosEndRemainder, endRemainder, item.DocCode);
                         }
                     else
-                        AddItemInLocalRemaindedCol(item.VVT_CRS_DC, 0, delta, item.DOC_CODE);
+                        AddItemInLocalRemaindedCol(item.VVT_CRS_DC, 0, delta, item.DocCode);
                 }
 
                 void RecalcLocalRemaindersCol()
@@ -317,16 +320,16 @@ namespace KursAM2.Managers
                             if (item.VVT_SFACT_POSTAV_DC != null)
                             {
                                 var sql =
-                                    "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, " +
+                                    "SELECT s26.DocCode as DocCode, s26.SF_CRS_SUMMA as Summa, " +
                                     "SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) " +
                                     "+ ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                     "FROM sd_26 s26 " +
-                                    "LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DOC_CODE " +
+                                    "LEFT OUTER JOIN sd_34 s34 ON s34.SPOST_DC = s26.DocCode " +
                                     "LEFT OUTER JOIN td_101 t101 " +
-                                    $"ON t101.VVT_SFACT_POSTAV_DC = s26.DOC_CODE AND t101.CODE != {item.Code} " +
-                                    "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SPOST_DC = s26.DOC_CODE " +
-                                    $"WHERE s26.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(item.VVT_SFACT_POSTAV_DC)} " +
-                                    "GROUP BY s26.doc_code, s26.SF_CRS_SUMMA ";
+                                    $"ON t101.VVT_SFACT_POSTAV_DC = s26.DocCode AND t101.CODE != {item.Code} " +
+                                    "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SPOST_DC = s26.DocCode " +
+                                    $"WHERE s26.DocCode = {CustomFormat.DecimalToSqlDecimal(item.VVT_SFACT_POSTAV_DC)} " +
+                                    "GROUP BY s26.DocCode, s26.SF_CRS_SUMMA ";
                                 var pays = ctx.Database.SqlQuery<InvoicesManager.InvoicePayment>(sql)
                                     .FirstOrDefault();
                                 if (pays != null)
@@ -351,16 +354,16 @@ namespace KursAM2.Managers
                             else
                             {
                                 var sql =
-                                    "SELECT s84.doc_code as DocCode, s84.SF_CRS_SUMMA_K_OPLATE as Summa, " +
+                                    "SELECT s84.DocCode as DocCode, s84.SF_CRS_SUMMA_K_OPLATE as Summa, " +
                                     "SUM(ISNULL(s33.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_PRIHOD,0) " +
                                     "+ ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                     "FROM sd_84 s84 " +
-                                    "LEFT OUTER JOIN sd_33 s33 ON s33.SFACT_DC = s84.DOC_CODE " +
-                                    "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_CLIENT_DC = s84.DOC_CODE  " +
+                                    "LEFT OUTER JOIN sd_33 s33 ON s33.SFACT_DC = s84.DocCode " +
+                                    "LEFT OUTER JOIN td_101 t101 ON t101.VVT_SFACT_CLIENT_DC = s84.DocCode  " +
                                     "AND t101.CODE != {item.Code} " +
-                                    "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SFACT_DC = s84.DOC_CODE " +
-                                    $"WHERE s84.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(item.VVT_SFACT_CLIENT_DC)} " +
-                                    "GROUP BY s84.doc_code, s84.SF_CRS_SUMMA_K_OPLATE ";
+                                    "LEFT OUTER JOIN td_110 t110 ON t110.VZT_SFACT_DC = s84.DocCode " +
+                                    $"WHERE s84.DocCode = {CustomFormat.DecimalToSqlDecimal(item.VVT_SFACT_CLIENT_DC)} " +
+                                    "GROUP BY s84.DocCode, s84.SF_CRS_SUMMA_K_OPLATE ";
                                 var pays = ctx.Database.SqlQuery<InvoicesManager.InvoicePayment>(sql)
                                     .FirstOrDefault();
                                 if (pays != null)
@@ -381,7 +384,7 @@ namespace KursAM2.Managers
                                     }
                             }
 
-                        var oldItem = ctx.TD_101.FirstOrDefault(_ => _.DOC_CODE == item.DOC_CODE
+                        var oldItem = ctx.TD_101.FirstOrDefault(_ => _.DOC_CODE == item.DocCode
                                                                      && _.CODE == item.Code);
                         if (oldItem == null) return;
                         var oldDC = ctx.SD_101.FirstOrDefault(_ => _.VV_START_DATE == item.Date);
@@ -391,7 +394,7 @@ namespace KursAM2.Managers
                             oldDC = new SD_101
                             {
                                 DOC_CODE = dc,
-                                VV_ACC_DC = item.BankAccount.DOC_CODE,
+                                VV_ACC_DC = item.BankAccount.DocCode,
                                 VV_START_DATE = item.Date,
                                 VV_STOP_DATE = item.Date
                             };
@@ -402,15 +405,15 @@ namespace KursAM2.Managers
                         oldItem.VVT_DOC_NUM = item.VVT_DOC_NUM;
                         oldItem.VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD;
                         oldItem.VVT_VAL_RASHOD = item.VVT_VAL_RASHOD;
-                        oldItem.VVT_KONTRAGENT = item.Kontragent?.DOC_CODE;
+                        oldItem.VVT_KONTRAGENT = item.Kontragent?.DocCode;
                         oldItem.BankAccountDC = item.BankAccountIn?.DocCode;
                         oldItem.BankFromTransactionCode = item.BankFromTransactionCode;
-                        oldItem.VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE;
-                        oldItem.VVT_CRS_DC = item.Currency.DOC_CODE;
-                        oldItem.VVT_KONTR_CRS_DC = item.Currency.DOC_CODE;
+                        oldItem.VVT_PLATEL_POLUCH_DC = item.Payment?.DocCode;
+                        oldItem.VVT_CRS_DC = item.Currency.DocCode;
+                        oldItem.VVT_KONTR_CRS_DC = item.Currency.DocCode;
                         oldItem.VVT_KONTR_CRS_RATE = 1;
                         oldItem.VVT_KONTR_CRS_SUMMA = item.VVT_VAL_PRIHOD + item.VVT_VAL_RASHOD;
-                        oldItem.VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DOC_CODE;
+                        oldItem.VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DocCode;
                         oldItem.VVT_UCHET_VALUTA_RATE = 1;
                         oldItem.VVT_SUMMA_V_UCHET_VALUTE = item.VVT_VAL_PRIHOD - item.VVT_VAL_RASHOD;
                         oldItem.VVT_SF_OPLACHENO = 0;
@@ -491,15 +494,15 @@ namespace KursAM2.Managers
                             VVT_DOC_NUM = item.VVT_DOC_NUM,
                             VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
                             VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
-                            VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
+                            VVT_KONTRAGENT = item.Kontragent?.DocCode,
                             BankAccountDC = item.BankAccountIn?.DocCode,
                             BankFromTransactionCode = item.BankFromTransactionCode,
-                            VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
-                            VVT_CRS_DC = item.Currency.DOC_CODE,
-                            VVT_KONTR_CRS_DC = item.Currency.DOC_CODE,
+                            VVT_PLATEL_POLUCH_DC = item.Payment?.DocCode,
+                            VVT_CRS_DC = item.Currency.DocCode,
+                            VVT_KONTR_CRS_DC = item.Currency.DocCode,
                             VVT_KONTR_CRS_RATE = 1,
                             VVT_KONTR_CRS_SUMMA = item.VVT_VAL_PRIHOD + item.VVT_VAL_RASHOD,
-                            VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DOC_CODE,
+                            VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DocCode,
                             VVT_UCHET_VALUTA_RATE = 1,
                             VVT_SUMMA_V_UCHET_VALUTE =
                                 Convert.ToDecimal(item.VVT_VAL_PRIHOD) - Convert.ToDecimal(item.VVT_VAL_RASHOD),
@@ -512,17 +515,17 @@ namespace KursAM2.Managers
                             AccuredId = item.AccuredId,
                             CurrencyRateForReference = item.CurrencyRateForReference
                         });
-                        item.DOC_CODE = thisDate.DOC_CODE;
+                        item.DocCode = thisDate.DOC_CODE;
                         item.Code = code;
                         item.myState = RowStatus.NotEdited;
                     }
 
                     if (thisDate == null && item.State == RowStatus.NewRow)
                     {
-                        item.DOC_CODE = ctx.SD_101.ToList().Any() ? ctx.SD_101.Max(_ => _.DOC_CODE) + 1 : 11010000001;
+                        item.DocCode = ctx.SD_101.ToList().Any() ? ctx.SD_101.Max(_ => _.DOC_CODE) + 1 : 11010000001;
                         ctx.SD_101.Add(new SD_101
                         {
-                            DOC_CODE = item.DOC_CODE,
+                            DOC_CODE = item.DocCode,
                             VV_START_DATE = item.Date,
                             VV_STOP_DATE = item.Date,
                             VV_ACC_DC = bankDc,
@@ -531,20 +534,20 @@ namespace KursAM2.Managers
                         });
                         ctx.TD_101.Add(new TD_101
                         {
-                            DOC_CODE = item.DOC_CODE,
+                            DOC_CODE = item.DocCode,
                             CODE = code,
                             VVT_DOC_NUM = item.VVT_DOC_NUM,
                             VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
                             VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
-                            VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
+                            VVT_KONTRAGENT = item.Kontragent?.DocCode,
                             BankAccountDC = item.BankAccountIn?.DocCode,
                             BankFromTransactionCode = item.BankFromTransactionCode,
-                            VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
-                            VVT_CRS_DC = item.Currency.DOC_CODE,
-                            VVT_KONTR_CRS_DC = item.Currency.DOC_CODE,
+                            VVT_PLATEL_POLUCH_DC = item.Payment?.DocCode,
+                            VVT_CRS_DC = item.Currency.DocCode,
+                            VVT_KONTR_CRS_DC = item.Currency.DocCode,
                             VVT_KONTR_CRS_RATE = 1,
                             VVT_KONTR_CRS_SUMMA = item.VVT_VAL_PRIHOD + item.VVT_VAL_RASHOD,
-                            VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DOC_CODE,
+                            VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DocCode,
                             VVT_UCHET_VALUTA_RATE = 1,
                             VVT_SUMMA_V_UCHET_VALUTE = item.VVT_VAL_PRIHOD - item.VVT_VAL_RASHOD,
                             VVT_SF_OPLACHENO = 0,
@@ -610,15 +613,15 @@ namespace KursAM2.Managers
                     VVT_DOC_NUM = item.VVT_DOC_NUM,
                     VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
                     VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
-                    VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
+                    VVT_KONTRAGENT = item.Kontragent?.DocCode,
                     BankAccountDC = item.BankAccountIn?.DocCode,
                     BankFromTransactionCode = item.BankFromTransactionCode,
-                    VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
-                    VVT_CRS_DC = item.Currency.DOC_CODE,
-                    VVT_KONTR_CRS_DC = item.Currency.DOC_CODE,
+                    VVT_PLATEL_POLUCH_DC = item.Payment?.DocCode,
+                    VVT_CRS_DC = item.Currency.DocCode,
+                    VVT_KONTR_CRS_DC = item.Currency.DocCode,
                     VVT_KONTR_CRS_RATE = 1,
                     VVT_KONTR_CRS_SUMMA = item.VVT_VAL_PRIHOD + item.VVT_VAL_RASHOD,
-                    VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DOC_CODE,
+                    VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DocCode,
                     VVT_UCHET_VALUTA_RATE = 1,
                     VVT_SUMMA_V_UCHET_VALUTE =
                         Convert.ToDecimal(item.VVT_VAL_PRIHOD) - Convert.ToDecimal(item.VVT_VAL_RASHOD),
@@ -632,17 +635,17 @@ namespace KursAM2.Managers
                     AccuredId = item.AccuredId,
                     CurrencyRateForReference = item.CurrencyRateForReference
                 });
-                item.DOC_CODE = thisDate.DOC_CODE;
+                item.DocCode = thisDate.DOC_CODE;
                 ctx.SaveChanges();
                 item.myState = RowStatus.NotEdited;
             }
 
             if (thisDate == null && item.State == RowStatus.NewRow)
             {
-                item.DOC_CODE = ctx.SD_101.ToList().Any() ? ctx.SD_101.Max(_ => _.DOC_CODE) + 1 : 11010000001;
+                item.DocCode = ctx.SD_101.ToList().Any() ? ctx.SD_101.Max(_ => _.DOC_CODE) + 1 : 11010000001;
                 ctx.SD_101.Add(new SD_101
                 {
-                    DOC_CODE = item.DOC_CODE,
+                    DOC_CODE = item.DocCode,
                     VV_START_DATE = item.Date,
                     VV_STOP_DATE = item.Date,
                     VV_ACC_DC = bankDc,
@@ -651,20 +654,20 @@ namespace KursAM2.Managers
                 });
                 ctx.TD_101.Add(new TD_101
                 {
-                    DOC_CODE = item.DOC_CODE,
+                    DOC_CODE = item.DocCode,
                     CODE = code,
                     VVT_DOC_NUM = item.VVT_DOC_NUM,
                     VVT_VAL_PRIHOD = item.VVT_VAL_PRIHOD,
                     VVT_VAL_RASHOD = item.VVT_VAL_RASHOD,
-                    VVT_KONTRAGENT = item.Kontragent?.DOC_CODE,
+                    VVT_KONTRAGENT = item.Kontragent?.DocCode,
                     BankAccountDC = item.BankAccountIn?.DocCode,
                     BankFromTransactionCode = item.BankFromTransactionCode,
-                    VVT_PLATEL_POLUCH_DC = item.Payment?.DOC_CODE,
-                    VVT_CRS_DC = item.Currency.DOC_CODE,
-                    VVT_KONTR_CRS_DC = item.Currency.DOC_CODE,
+                    VVT_PLATEL_POLUCH_DC = item.Payment?.DocCode,
+                    VVT_CRS_DC = item.Currency.DocCode,
+                    VVT_KONTR_CRS_DC = item.Currency.DocCode,
                     VVT_KONTR_CRS_RATE = 1,
                     VVT_KONTR_CRS_SUMMA = item.VVT_VAL_PRIHOD + item.VVT_VAL_RASHOD,
-                    VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DOC_CODE,
+                    VVT_UCHET_VALUTA_DC = GlobalOptions.SystemProfile.MainCurrency.DocCode,
                     VVT_UCHET_VALUTA_RATE = 1,
                     VVT_SUMMA_V_UCHET_VALUTE = item.VVT_VAL_PRIHOD - item.VVT_VAL_RASHOD,
                     VVT_SF_OPLACHENO = 0,
@@ -681,7 +684,7 @@ namespace KursAM2.Managers
                 item.myState = RowStatus.NotEdited;
             }
 
-            return new Tuple<decimal, int>(item.DOC_CODE, code);
+            return new Tuple<decimal, int>(item.DocCode, code);
         }
 
         public void DeleteBankOperations(BankOperationsViewModel item, decimal bankDc)
@@ -703,7 +706,7 @@ namespace KursAM2.Managers
                 var tran = ctx.Database.BeginTransaction();
                 try
                 {
-                    var delItem = ctx.TD_101.FirstOrDefault(_ => _.CODE == item.Code && _.DOC_CODE == item.DOC_CODE);
+                    var delItem = ctx.TD_101.FirstOrDefault(_ => _.CODE == item.Code && _.DOC_CODE == item.DocCode);
                     if (delItem != null)
                         ctx.TD_101.Remove(delItem);
                     var remainderCol = ctx.UD_101
@@ -717,7 +720,7 @@ namespace KursAM2.Managers
                         r.VVU_VAL_SUMMA -= delta;
                     foreach (var i in remainderCol.Where(_ => _.SD_101.VV_START_DATE > item.Date))
                         i.VVU_VAL_SUMMA -= delta;
-                    var sd = ctx.SD_101.First(_ => _.DOC_CODE == item.DOC_CODE);
+                    var sd = ctx.SD_101.First(_ => _.DOC_CODE == item.DocCode);
                     if (sd.TD_101.Count == 0)
                     {
                         ctx.SD_101.Remove(sd);

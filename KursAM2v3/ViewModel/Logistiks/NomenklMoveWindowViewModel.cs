@@ -5,19 +5,17 @@ using System.Linq;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using KursAM2.View.Logistiks;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
     public class NomenklMoveWindowViewModel : RSWindowViewModelBase
     {
         private NomenklCalcCostOperation myCurrentOperation;
-        private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentWarehouse;
+        private KursDomain.Documents.NomenklManagement.Warehouse myCurrentWarehouse;
         private DateTime myDateForSklad;
         private Nomenkl mySelectedNomenkl;
 
@@ -31,15 +29,15 @@ namespace KursAM2.ViewModel.Logistiks
         }
 
         // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse> StoreCollection { set; get; } =
-            new ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse>();
+        public ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse> StoreCollection { set; get; } =
+            new ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse>();
 
         public List<Nomenkl> Nomenkls =>
             MainReferences.ALLNomenkls.Values.Where(_ => _.IsUsluga == false).ToList();
 
         public List<NomenklCalcCostOperation> Operations { set; get; }
 
-        public Core.EntityViewModel.NomenklManagement.Warehouse CurrentWarehouse
+        public KursDomain.Documents.NomenklManagement.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set
@@ -169,7 +167,7 @@ namespace KursAM2.ViewModel.Logistiks
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     foreach (var c in ctx.SD_27)
-                        StoreCollection.Add(new Core.EntityViewModel.NomenklManagement.Warehouse(c));
+                        StoreCollection.Add(new KursDomain.Documents.NomenklManagement.Warehouse(c));
                 }
             }
             catch (Exception ex)
@@ -190,7 +188,7 @@ namespace KursAM2.ViewModel.Logistiks
             NomenklRemains.Clear();
             if (CurrentWarehouse == null) return;
             foreach (var nom in NomenklCalculationManager.GetNomenklStoreRemains(DateForSklad, CurrentWarehouse.DocCode)
-                )
+                    )
                 //LoadRemains(DateForSklad,CurrentWarehouse))
                 NomenklRemains.Add(
                     new NomenklRemainWithPrice
@@ -251,6 +249,7 @@ namespace KursAM2.ViewModel.Logistiks
                 if (Operations.Count > 0)
                     CurrentOperation = Operations.First();
             }
+
             RaisePropertyChanged(nameof(Operations));
         }
 

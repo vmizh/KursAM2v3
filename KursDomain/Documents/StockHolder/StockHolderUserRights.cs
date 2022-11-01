@@ -3,71 +3,67 @@ using System.ComponentModel;
 using Core.ViewModel.Base;
 using Data;
 
-namespace Core.EntityViewModel.StockHolder
+namespace KursDomain.Documents.StockHolder;
+
+public class StockHolderUserRightsViewModel : RSViewModelBase, IDataErrorInfo, IEntity<StockHolderUserRights>
 {
+    #region Constructors
 
-    public class StockHolderUserRightsViewModel : RSViewModelBase, IDataErrorInfo, IEntity<StockHolderUserRights>
+    public StockHolderUserRightsViewModel(StockHolderUserRights entity)
     {
-        #region Methods
-        
-        #endregion
+        Entity = entity ?? DefaultValue();
+    }
 
-        #region Constructors
+    #endregion
 
-        public StockHolderUserRightsViewModel(StockHolderUserRights entity)
+    #region Methods
+
+    public StockHolderUserRights DefaultValue()
+    {
+        return new StockHolderUserRights { Id = Guid.NewGuid() };
+    }
+
+    #endregion
+
+    #region Methods
+
+    #endregion
+
+    #region Properties
+
+    public StockHolderUserRights Entity { get; set; }
+
+    public override Guid Id
+    {
+        get => Entity.Id;
+        set
         {
-            Entity = entity ?? DefaultValue();
+            if (Entity.Id == value) return;
+            Entity.Id = value;
+            RaisePropertyChanged();
         }
+    }
 
-        #endregion
+    #endregion
 
-        #region Properties
 
-         public StockHolderUserRights Entity { get; set; }
+    #region IDataErrorInfo
 
-         public override Guid Id
-         {
-             get => Entity.Id;
-             set
-             {
-                 if (Entity.Id == value) return;
-                 Entity.Id = value;
-                 RaisePropertyChanged();
-             }
-         }
-
-         #endregion
-
-        #region Methods
-
-        public StockHolderUserRights DefaultValue()
+    public string this[string columnName]
+    {
+        get
         {
-            return new StockHolderUserRights { Id = Guid.NewGuid()};
-
-        }
-
-        #endregion
-
-
-
-        #region IDataErrorInfo
-
-        public string this[string columnName]
-        {
-            get
+            switch (columnName)
             {
-                switch (columnName)
-                {
-                    case nameof(Name):
-                        return Name == null ? "Наименование не может быть пустым" : null;
-                    default:
-                        return null;
-                }
+                case nameof(Name):
+                    return Name == null ? "Наименование не может быть пустым" : null;
+                default:
+                    return null;
             }
         }
-
-        public string Error => null;
-
-        #endregion
     }
+
+    public string Error => null;
+
+    #endregion
 }

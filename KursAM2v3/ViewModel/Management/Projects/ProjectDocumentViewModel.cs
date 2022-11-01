@@ -2,15 +2,15 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Employee;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
-using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Currency;
+using KursDomain.Documents.Management;
+using KursDomain.References;
+using Employee = KursDomain.Documents.Employee.Employee;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
+using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace KursAM2.ViewModel.Management.Projects

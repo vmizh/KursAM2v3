@@ -9,7 +9,6 @@ using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -24,6 +23,9 @@ using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursAM2.ViewModel.Signatures;
 using KursDomain.Documents.AktSpisaniya;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 using Newtonsoft.Json;
 
 // ReSharper disable IdentifierTypo
@@ -229,7 +231,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             }
         }
 
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse> WarehouseList { set; get; }
+        public List<KursDomain.Documents.NomenklManagement.Warehouse> WarehouseList { set; get; }
             = MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList();
 
         public AktSpisaniyaNomenklTitleViewModel Document
@@ -377,7 +379,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             NomenklCalculationManager.InsertNomenklForCalc(unitOfWork.Context,
                 Document.Rows.Select(_ => _.Nomenkl.DocCode).ToList());
             NomenklCalculationManager.CalcAllNomenklRemains(unitOfWork.Context);
-            foreach (var n in Document.Rows.Select(_ => _.Nomenkl.DocCode))
+            foreach (var n in Document.Rows.Select(_ => ((IDocCode)_.Nomenkl).DocCode))
             {
                 var c = NomenklCalculationManager.GetNomenklStoreRemain(unitOfWork.Context, Document.DocDate,
                     n, Document.Warehouse.DocCode);

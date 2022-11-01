@@ -1,17 +1,16 @@
 ﻿using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Dogovora;
-using Core.EntityViewModel.Invoices;
-using Core.EntityViewModel.NomenklManagement;
-using Core.EntityViewModel.Vzaimozachet;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
 using Data;
 using Data.Repository;
 using Helper;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Dogovora;
+using KursDomain.Documents.Invoices;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.Documents.Vzaimozachet;
 
 namespace KursAM2.Auxiliary
 {

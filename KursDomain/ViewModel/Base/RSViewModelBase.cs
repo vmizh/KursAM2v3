@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using KursDomain.Annotations;
+using KursDomain.ICommon;
 
 namespace Core.ViewModel.Base;
 

@@ -2,12 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Core.EntityViewModel;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers.Nomenkl;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -34,12 +33,17 @@ namespace KursAM2.ViewModel.Reference
 
         #region Properties
 
-        public ObservableCollection<Unit> Rows { set; get; } = new ObservableCollection<Unit>();
-        public ObservableCollection<Unit> DeletedRows { set; get; } = new ObservableCollection<Unit>();
-        public ObservableCollection<Unit> SelectedRows { set; get; } = new ObservableCollection<Unit>();
-        private Unit myCurrentRow;
+        public ObservableCollection<UnitViewModel> Rows { set; get; } = new ObservableCollection<UnitViewModel>();
 
-        public Unit CurrentRow
+        public ObservableCollection<UnitViewModel> DeletedRows { set; get; } =
+            new ObservableCollection<UnitViewModel>();
+
+        public ObservableCollection<UnitViewModel> SelectedRows { set; get; } =
+            new ObservableCollection<UnitViewModel>();
+
+        private UnitViewModel myCurrentRow;
+
+        public UnitViewModel CurrentRow
         {
             get => myCurrentRow;
             set
@@ -56,7 +60,7 @@ namespace KursAM2.ViewModel.Reference
 
         public override void SaveData(object data)
         {
-            var lst = new List<Unit>();
+            var lst = new List<UnitViewModel>();
             foreach (var row in Rows)
                 if (row.State != RowStatus.NotEdited)
                     lst.Add(row);
@@ -89,7 +93,7 @@ namespace KursAM2.ViewModel.Reference
         }
 
         public override bool IsCanSaveData =>
-            Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited) || DeletedRows.Count > 0;
+            (Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited)) || DeletedRows.Count > 0;
 
         //    ItemNewCopyCommand
         //}" />
@@ -113,7 +117,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void ItemsDelete(object obj)
         {
-            var dList = new List<Unit>();
+            var dList = new List<UnitViewModel>();
             foreach (var row in SelectedRows)
                 if (row.State == RowStatus.NewRow)
                     dList.Add(row);

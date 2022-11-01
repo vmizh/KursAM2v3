@@ -1,8 +1,7 @@
 using System;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.NomenklManagement;
 
 namespace Calculates.Materials
 {

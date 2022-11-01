@@ -6,9 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
@@ -16,7 +13,11 @@ using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.ReportManagers;
 using KursAM2.View.Logistiks.Warehouse;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -99,7 +100,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public List<Kontragent> Kontragents => MainReferences.ActiveKontragents.Values.ToList();
 
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse> StoreDictionary =>
+        public List<KursDomain.Documents.NomenklManagement.Warehouse> StoreDictionary =>
             MainReferences.Warehouses.Values.ToList();
 
         #endregion
@@ -229,8 +230,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         DocCode = -1,
                         Nomenkl = n,
                         DDT_KOL_RASHOD = Math.Min(1, m),
-                        Unit = n.Unit,
-                        Currency = n.Currency,
+                        Unit = n.Unit as Unit,
+                        Currency = n.Currency as Currency,
                         MaxQuantity = m,
                         State = RowStatus.NewRow
                     });

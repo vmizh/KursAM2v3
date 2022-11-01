@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -23,16 +23,16 @@ namespace KursAM2.ViewModel.Logistiks
     {
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
+        private readonly BackgroundWorker backgroundWork = new BackgroundWorker();
+
         private NomPriceDocumentViewModel myCurrentDocument;
         private NomenklMoveOnSkladViewModel myCurrentNomenklMoveItem;
-        private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentSklad;
+        private KursDomain.Documents.NomenklManagement.Warehouse myCurrentSklad;
         private DateTime myEndDate;
-        private bool myIsShowAll;
-        private DateTime myStartDate; 
         private Visibility myIsDataLoaded;
+        private bool myIsShowAll;
         private int myProgressLoaded;
-
-        private BackgroundWorker backgroundWork = new BackgroundWorker();
+        private DateTime myStartDate;
 
         public NomenklMoveOnSkladWindowViewModel()
         {
@@ -51,33 +51,6 @@ namespace KursAM2.ViewModel.Logistiks
             LoadReferences();
         }
 
-        private void InitializeBackgroundWorker()
-        {
-            backgroundWork.DoWork += 
-                new DoWorkEventHandler(backgroundWorker1_DoWork);
-            backgroundWork.RunWorkerCompleted += 
-                new RunWorkerCompletedEventHandler(
-                    backgroundWorker1_RunWorkerCompleted);
-            backgroundWork.ProgressChanged += 
-                new ProgressChangedEventHandler(
-                    backgroundWorker1_ProgressChanged);
-        }
-
-        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         public Visibility IsDataLoaded
         {
             get => myIsDataLoaded;
@@ -90,7 +63,8 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public Visibility IsDataNotLoaded => IsDataLoaded == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility IsDataNotLoaded =>
+            IsDataLoaded == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
 
         public int ProgressLoaded
         {
@@ -103,7 +77,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        
+
         public NomPriceDocumentViewModel CurrentDocument
         {
             get => myCurrentDocument;
@@ -124,8 +98,8 @@ namespace KursAM2.ViewModel.Logistiks
         public ObservableCollection<NomPriceDocumentViewModel> DocumentList { get; set; } =
             new ObservableCollection<NomPriceDocumentViewModel>();
 
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse> Sklads { set; get; } =
-            new List<Core.EntityViewModel.NomenklManagement.Warehouse>();
+        public List<KursDomain.Documents.NomenklManagement.Warehouse> Sklads { set; get; } =
+            new List<KursDomain.Documents.NomenklManagement.Warehouse>();
 
         public NomenklMoveOnSkladViewModel CurrentNomenklMoveItem
         {
@@ -166,7 +140,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public Core.EntityViewModel.NomenklManagement.Warehouse CurrentSklad
+        public KursDomain.Documents.NomenklManagement.Warehouse CurrentSklad
         {
             get => myCurrentSklad;
             set
@@ -228,6 +202,31 @@ namespace KursAM2.ViewModel.Logistiks
         }
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
+
+        private void InitializeBackgroundWorker()
+        {
+            backgroundWork.DoWork +=
+                backgroundWorker1_DoWork;
+            backgroundWork.RunWorkerCompleted +=
+                backgroundWorker1_RunWorkerCompleted;
+            backgroundWork.ProgressChanged +=
+                backgroundWorker1_ProgressChanged;
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
         private bool MustExclude(List<NOMENKL_PRIH_EXCLUDE> list, TD_24 doc)
         {
@@ -492,14 +491,14 @@ namespace KursAM2.ViewModel.Logistiks
                     from sd26 in ctx.SD_26
                     where cc.DOC_CODE == td26.DOC_CODE && cc.CODE == td26.CODE
                                                        && sd26.DOC_CODE == td26.DOC_CODE &&
-                                                       td26.SFT_NEMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DOC_CODE
+                                                       td26.SFT_NEMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DocCode
                                                        && cc.Date >= StartDate && cc.Date <= EndDate
                     select cc;
 
                 foreach (var doc in docs4.ToList())
                 {
                     decimal prc = 0;
-                    var last = ctx.NOM_PRICE.Where(_ => _.NOM_DC == CurrentNomenklMoveItem.Nomenkl.DOC_CODE &&
+                    var last = ctx.NOM_PRICE.Where(_ => _.NOM_DC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
                                                         _.DATE <= doc.Date).OrderBy(_ => _.DATE).ToList();
                     if (last.Any())
                         prc = last.Last().PRICE_WO_NAKLAD;
@@ -857,7 +856,7 @@ namespace KursAM2.ViewModel.Logistiks
                     from sd26 in ctx.SD_26
                     where cc.DOC_CODE == td26.DOC_CODE && cc.CODE == td26.CODE
                                                        && sd26.DOC_CODE == td26.DOC_CODE &&
-                                                       td26.SFT_NEMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DOC_CODE
+                                                       td26.SFT_NEMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DocCode
                                                        && cc.Date >= StartDate && cc.Date <= EndDate
                                                        && cc.StoreDC == storeDC
                     select cc;
@@ -865,7 +864,7 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var doc in docs4.ToList())
                 {
                     decimal prc = 0;
-                    var last = ctx.NOM_PRICE.Where(_ => _.NOM_DC == CurrentNomenklMoveItem.Nomenkl.DOC_CODE &&
+                    var last = ctx.NOM_PRICE.Where(_ => _.NOM_DC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
                                                         _.DATE <= doc.Date).OrderBy(_ => _.DATE).ToList();
                     if (last.Any())
                         prc = last.Last().PRICE_WO_NAKLAD;
@@ -1090,18 +1089,17 @@ namespace KursAM2.ViewModel.Logistiks
         private async void RunPrgressBar()
         {
             while (IsDataLoaded != Visibility.Visible)
-            {
-                for (int i = 0; i < 100; i++)
+                for (var i = 0; i < 100; i++)
                 {
                     if (IsDataLoaded != Visibility.Visible)
                     {
                         ProgressLoaded = 0;
                         return;
                     }
+
                     await Task.Delay(TimeSpan.FromSeconds(1));
                     ProgressLoaded = i;
                 }
-            }
         }
 
         private void LoadForAllSklads4()
@@ -1251,24 +1249,23 @@ namespace KursAM2.ViewModel.Logistiks
         private async Task RefreshDataAsync()
         {
             DocumentList.Clear();
-            NomenklMoveList.Clear(); 
-            await Task.Run(() =>  RunPrgressBar());
+            NomenklMoveList.Clear();
+            await Task.Run(() => RunPrgressBar());
             IsDataLoaded = Visibility.Collapsed;
             if (CurrentSklad == null)
                 await Task.Run(() => LoadForAllSklads4());
             else
                 await Task.Run(() => LoadForCurrentSklad4());
-           
         }
 
         public override void RefreshData(object obj)
         {
             while (!MainReferences.IsReferenceLoadComplete)
             {
-
             }
+
             RefreshDataAsync();
-            
+
             //DocumentList.Clear();
             //NomenklMoveList.Clear();
             //if (CurrentSklad == null)

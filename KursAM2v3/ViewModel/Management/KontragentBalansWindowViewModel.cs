@@ -8,8 +8,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -17,7 +15,9 @@ using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Management
 {

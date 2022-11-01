@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.References;
 
 namespace Calculates.Materials
 {

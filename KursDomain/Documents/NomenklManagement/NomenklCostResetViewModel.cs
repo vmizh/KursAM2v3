@@ -1,182 +1,182 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core;
 using Core.ViewModel.Base;
 using Data;
 
-namespace Core.EntityViewModel.NomenklManagement
+namespace KursDomain.Documents.NomenklManagement;
+
+public class NomenklCostResetViewModel : RSViewModelBase, IEntity<NomenklCostReset>
 {
-    public class NomenklCostResetViewModel : RSViewModelBase, IEntity<NomenklCostReset>
+    private NomenklCostReset myEntity;
+
+    public NomenklCostResetViewModel()
     {
-        private NomenklCostReset myEntity;
+        Entity = DefaultValue();
+    }
 
-        public NomenklCostResetViewModel()
+    public NomenklCostResetViewModel(NomenklCostReset entity)
+    {
+        Entity = entity ?? DefaultValue();
+    }
+
+    public override Guid Id
+    {
+        get => Entity.Id;
+        set
         {
-            Entity = DefaultValue();
+            if (Entity.Id == value) return;
+            Entity.Id = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public NomenklCostResetViewModel(NomenklCostReset entity)
+    public int DocNumber
+    {
+        get => Entity.DocNumber;
+        set
         {
-            Entity = entity ?? DefaultValue();
+            if (Entity.DocNumber == value) return;
+            Entity.DocNumber = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public override Guid Id
+    public DateTime DocDate
+    {
+        get => Entity.DocDate;
+        set
         {
-            get => Entity.Id;
-            set
-            {
-                if (Entity.Id == value) return;
-                Entity.Id = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.DocDate == value) return;
+            Entity.DocDate = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public int DocNumber
+    public Guid SkladId
+    {
+        get => Entity.SkladId;
+        set
         {
-            get => Entity.DocNumber;
-            set
-            {
-                if (Entity.DocNumber == value) return;
-                Entity.DocNumber = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.SkladId == value) return;
+            Entity.SkladId = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public DateTime DocDate
+    public override string Note
+    {
+        get => Entity.Note;
+        set
         {
-            get => Entity.DocDate;
-            set
-            {
-                if (Entity.DocDate == value) return;
-                Entity.DocDate = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.Note == value) return;
+            Entity.Note = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public Guid SkladId
+    public string Creator
+    {
+        get => Entity.Creator;
+        set
         {
-            get => Entity.SkladId;
-            set
-            {
-                if (Entity.SkladId == value) return;
-                Entity.SkladId = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.Creator == value) return;
+            Entity.Creator = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public override string Note
+    public EntityLoadCodition LoadCondition { get; set; }
+
+    public bool IsAccessRight { get; set; }
+
+    public NomenklCostReset Entity
+    {
+        get => myEntity;
+        set
         {
-            get => Entity.Note;
-            set
-            {
-                if (Entity.Note == value) return;
-                Entity.Note = value;
-                RaisePropertyChanged();
-            }
+            if (myEntity == value) return;
+            myEntity = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public string Creator
+    public NomenklCostReset DefaultValue()
+    {
+        return new NomenklCostReset
         {
-            get => Entity.Creator;
-            set
-            {
-                if (Entity.Creator == value) return;
-                Entity.Creator = value;
-                RaisePropertyChanged();
-            }
-        }
+            Id = Guid.NewGuid(),
+            Creator = GlobalOptions.UserInfo.NickName
+        };
+    }
 
-        public NomenklCostReset Entity
-        {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
-        }
+    public List<NomenklCostReset> LoadList()
+    {
+        throw new NotImplementedException();
+    }
 
-        public EntityLoadCodition LoadCondition { get; set; }
+    public NomenklCostReset Load(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
-        public List<NomenklCostReset> LoadList()
-        {
-            throw new NotImplementedException();
-        }
+    public virtual void Save(NomenklCostReset doc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public bool IsAccessRight { get; set; }
+    public void Save()
+    {
+        throw new NotImplementedException();
+    }
 
-        public NomenklCostReset Load(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete()
+    {
+        throw new NotImplementedException();
+    }
 
-        public virtual void Save(NomenklCostReset doc)
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete(decimal dc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void Delete()
-        {
-            throw new NotImplementedException();
-        }
+    public void UpdateFrom(NomenklCostReset ent)
+    {
+        Id = ent.Id;
+        DocNumber = ent.DocNumber;
+        DocDate = ent.DocDate;
+        SkladId = ent.SkladId;
+        Note = ent.Note;
+        Creator = ent.Creator;
+    }
 
-        public void Delete(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+    public void UpdateTo(NomenklCostReset ent)
+    {
+        ent.Id = Id;
+        ent.DocNumber = DocNumber;
+        ent.DocDate = DocDate;
+        ent.SkladId = SkladId;
+        ent.Note = Note;
+        ent.Creator = Creator;
+    }
 
-        public void Delete(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
+    public virtual NomenklCostReset Load(decimal dc, bool isShort = true)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void UpdateFrom(NomenklCostReset ent)
-        {
-            Id = ent.Id;
-            DocNumber = ent.DocNumber;
-            DocDate = ent.DocDate;
-            SkladId = ent.SkladId;
-            Note = ent.Note;
-            Creator = ent.Creator;
-        }
+    public virtual NomenklCostReset Load(Guid id, bool isShort = true)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void UpdateTo(NomenklCostReset ent)
-        {
-            ent.Id = Id;
-            ent.DocNumber = DocNumber;
-            ent.DocDate = DocDate;
-            ent.SkladId = SkladId;
-            ent.Note = Note;
-            ent.Creator = Creator;
-        }
-
-        public NomenklCostReset DefaultValue()
-        {
-            return new()
-            {
-                Id = Guid.NewGuid(),
-                Creator = GlobalOptions.UserInfo.NickName
-            };
-        }
-
-        public virtual NomenklCostReset Load(decimal dc, bool isShort = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual NomenklCostReset Load(Guid id, bool isShort = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public NomenklCostReset Load(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
+    public NomenklCostReset Load(decimal dc)
+    {
+        throw new NotImplementedException();
     }
 }

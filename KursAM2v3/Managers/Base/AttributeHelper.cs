@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using Core.EntityViewModel.CommonReferences;
+using KursDomain.Documents.CommonReferences;
 
 namespace KursAM2.Managers.Base
 {

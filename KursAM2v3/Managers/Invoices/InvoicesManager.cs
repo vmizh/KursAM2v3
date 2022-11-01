@@ -6,11 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core;
 using Core.EntityViewModel;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Invoices;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
@@ -20,6 +15,10 @@ using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Invoices;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
 
 namespace KursAM2.Managers.Invoices
 {
@@ -678,7 +677,7 @@ namespace KursAM2.Managers.Invoices
                                 foreach (var rc in r.CurrencyConvertRows)
                                 {
                                     var sql1 = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
-                                               $" VALUES({CustomFormat.DecimalToSqlDecimal(rc.Nomenkl.DocCode)},'20000101')";
+                                               $" VALUES({CustomFormat.DecimalToSqlDecimal( ((IDocCode)rc.Nomenkl).DocCode)},'20000101')";
                                     ctx.Database.ExecuteSqlCommand(sql1);
                                 }
                         }
@@ -1139,7 +1138,8 @@ namespace KursAM2.Managers.Invoices
             return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
-        public static List<IInvoiceProvider> GetInvoicesProvider(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
+        public static List<IInvoiceProvider> GetInvoicesProvider(DateTime dateStart, DateTime dateEnd,
+            bool isUsePayment,
             decimal kontragentDC, bool isAccepted = false)
         {
             var ret = new List<IInvoiceProvider>();
@@ -1689,7 +1689,7 @@ namespace KursAM2.Managers.Invoices
                     foreach (var d in data.OrderByDescending(_ => _.SF_DATE))
                     {
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
-                        var newDoc = new InvoiceClient(d, context,true)
+                        var newDoc = new InvoiceClient(d, context, true)
                         {
                             State = RowStatus.NotEdited
                         };

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -14,6 +13,8 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.View.DialogUserControl.Invoices.UserControls;
+using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 {
@@ -21,6 +22,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
     {
         public Guid? CurrencyConvertId { set; get; }
     }
+
     public sealed class InvoiceProviderSearchDialogViewModel : RSWindowViewModelBase, IUpdatechildItems
     {
         #region Fields
@@ -56,7 +58,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             IsAllowMultipleSchet = isAllowMultipleSchet;
         }
 
-       #endregion
+        #endregion
 
         #region Properties
 
@@ -86,7 +88,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 mySelectItem = value;
                 RaisePropertyChanged();
             }
-        } 
+        }
 
         public Visibility PositionVisibility
         {
@@ -98,7 +100,9 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 RaisePropertyChanged();
             }
         }
+
         public bool IsAllowMultipleSchet { get; set; }
+
         public bool IsAllowPositionSelected
         {
             get => myIsAllowPositionSelected;
@@ -220,9 +224,9 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 InvoiceProviderSearchType.OnlyNakladDistrubuted
                     ? " IsInvoiceNakladId = 1 AND round(Summa,2) - round(NakladDistributedSumma,2) != 0 "
                     : null;
-            var currency = ((loadType & InvoiceProviderSearchType.IsCurrencyUsed) ==
-                            InvoiceProviderSearchType.IsCurrencyUsed
-                            && myCurrency != null)
+            var currency = (loadType & InvoiceProviderSearchType.IsCurrencyUsed) ==
+                           InvoiceProviderSearchType.IsCurrencyUsed
+                           && myCurrency != null
                 ? $" CurrencyDC = {CustomFormat.DecimalToSqlDecimal(myCurrency.DocCode)} "
                 : null;
             var RemoveNaklad =
@@ -231,22 +235,24 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                     ? " IsUsluga != 1 AND IsAccepted = 1 and RowId NOT IN (SELECT isnull(d.TovarInvoiceRowId,newid()) FROM DistributeNakladRow d)  " +
                       @" AND RowId NOT IN (SELECT ISNULL(dd.TransferRowId, NEWID()) 
                             FROM DistributeNakladRow dd
-                                INNER JOIN TD_26 t ON dd.TransferRowId = t.Id) " : null;
+                                INNER JOIN TD_26 t ON dd.TransferRowId = t.Id) "
+                    : null;
 
             try
             {
                 var andString = " AND ";
                 if (!isExistContext)
                     context = new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString);
-                if (DataRange != null || NotPay != null || NotShipped != null || OneKontragent != null || OnlyDistribute != null || RemoveNaklad != null)
+                if (DataRange != null || NotPay != null || NotShipped != null || OneKontragent != null ||
+                    OnlyDistribute != null || RemoveNaklad != null)
                 {
                     sqlBase += " WHERE " + (DataRange != null ? DataRange + andString : null)
-                               + (NotPay != null ? NotPay + andString : null)
-                               + (NotShipped != null ? NotShipped + andString : null)
-                               + (OneKontragent != null ? OneKontragent + andString: null)
-                               + (OnlyDistribute != null ? OnlyDistribute + andString : null)
-                               + (RemoveNaklad != null ? RemoveNaklad + andString : null)
-                               + (currency != null ? currency + andString : null);
+                                         + (NotPay != null ? NotPay + andString : null)
+                                         + (NotShipped != null ? NotShipped + andString : null)
+                                         + (OneKontragent != null ? OneKontragent + andString : null)
+                                         + (OnlyDistribute != null ? OnlyDistribute + andString : null)
+                                         + (RemoveNaklad != null ? RemoveNaklad + andString : null)
+                                         + (currency != null ? currency + andString : null);
                     sqlBase = sqlBase.Remove(sqlBase.Length - andString.Length, andString.Length);
                 }
 
@@ -257,13 +263,15 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                     Data = ctx.Database.SqlQuery<InvoicePostQuery>(sqlBase).ToList();
                     if (IsLoadNotDistributeCurrencyConvert)
                     {
-                        List<TD_26_CurrencyConvert> convData = new List<TD_26_CurrencyConvert>();
+                        var convData = new List<TD_26_CurrencyConvert>();
                         if (currency == null)
+                        {
                             convData = ctx.TD_26_CurrencyConvert
                                 .Include(_ => _.TD_26)
                                 .Include(_ => _.TD_26.SD_26)
                                 .Include(_ => _.DistributeNakladRow)
-                                .Where(_ => _.TD_26 != null && _.DistributeNakladRow.Count==0).ToList();
+                                .Where(_ => _.TD_26 != null && _.DistributeNakladRow.Count == 0).ToList();
+                        }
 
                         else
                         {
@@ -271,11 +279,11 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                                 .Include(_ => _.TD_26)
                                 .Include(_ => _.TD_26.SD_26)
                                 .Include(_ => _.DistributeNakladRow)
-                                .ToList().Where(_ => _.TD_26 != null && _.DistributeNakladRow.Count==0);
+                                .ToList().Where(_ => _.TD_26 != null && _.DistributeNakladRow.Count == 0);
                             foreach (var d in data)
                             {
                                 var n = MainReferences.GetNomenkl(d.NomenklId);
-                                if (n.Currency.DocCode != myCurrency.DocCode) continue;
+                                if (((IDocCode)n.Currency).DocCode != myCurrency.DocCode) continue;
                                 convData.Add(d);
                             }
                         }
@@ -285,11 +293,11 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                             var nom = MainReferences.GetNomenkl(c.NomenklId);
                             Data.Add(new InvoicePostQueryConvertCurrency
                             {
-                                Currency = nom.Currency?.Name,
+                                Currency = ((IName)nom.Currency)?.Name,
                                 Quantity = c.Quantity,
                                 Summa = c.Summa,
                                 Creator = c.TD_26.SD_26.CREATOR,
-                                CurrencyDC = nom.Currency.DocCode,
+                                CurrencyDC = ((IDocCode)nom.Currency).DocCode,
                                 DocCode = c.TD_26.SD_26.DOC_CODE,
                                 CODE = (int)c.CODE,
                                 Id = c.TD_26.SD_26.Id,
@@ -307,10 +315,9 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                                 Nomenkl = nom.Name,
                                 NomenklDC = nom.DocCode,
                                 PostDC = c.TD_26.SD_26.SF_POST_DC,
-                                Post = MainReferences.GetKontragent(c.TD_26.SD_26.SF_POST_DC)?.Name,
+                                Post = MainReferences.GetKontragent(c.TD_26.SD_26.SF_POST_DC)?.Name
                             });
                         }
-
                     }
                 }
 
@@ -361,9 +368,9 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             }
 
             CurrentItem.IsSelected = null;
-            if( ItemPositionsCollection.All(_ => _.IsSelected))
+            if (ItemPositionsCollection.All(_ => _.IsSelected))
                 CurrentItem.IsSelected = true;
-            if( ItemPositionsCollection.All(_ => !_.IsSelected))
+            if (ItemPositionsCollection.All(_ => !_.IsSelected))
                 CurrentItem.IsSelected = false;
             RaisePropertyChanged(nameof(ItemsCollection));
         }
@@ -374,20 +381,15 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             if (CurrentItem.IsSelected == true)
             {
                 if (!IsAllowMultipleSchet)
-                {
-                    foreach (var d in ItemsCollection.Where(_ => (_.IsSelected ?? false) && _.PostDC != CurrentItem.PostDC))
+                    foreach (var d in ItemsCollection.Where(_ =>
+                                 (_.IsSelected ?? false) && _.PostDC != CurrentItem.PostDC))
                     {
                         d.IsSelected = false;
                         var dcs = SelectedItems.Where(_ => _.DocCode == d.DocCode).ToList();
-                        foreach (var r in dcs)
-                        {
-                            SelectedItems.Remove(r);
-                        }
+                        foreach (var r in dcs) SelectedItems.Remove(r);
                     }
-                }
 
                 foreach (var pos in ItemPositionsCollection)
-                {
                     if (SelectedItems.All(_ => _.NomenklDC != pos.NomenklDC))
                     {
                         pos.IsSelected = true;
@@ -398,7 +400,6 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                         pos.IsSelected = false;
                         SelectedItems.Remove(pos);
                     }
-                }
             }
             else
             {
@@ -410,6 +411,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 
                 CurrentItem.IsSelected = false;
             }
+
             RaisePropertyChanged(nameof(ItemPositionsCollection));
             RaisePropertyChanged(nameof(SelectedItems));
         }
@@ -437,8 +439,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                     NDSSumma = pos.NDSSumma,
                     SHPZ = pos.SHPZ,
                     NomenklDC = pos.NomenklDC,
-                    Note = pos.RowNote,
-                    
+                    Note = pos.RowNote
                 });
         }
 

@@ -5,7 +5,6 @@ using System.Data.Entity;
 using System.Linq;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -13,6 +12,8 @@ using Helper;
 using KursAM2.Managers;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Menu;
 
 // ReSharper disable CollectionNeverQueried.Global
 namespace KursAM2.ViewModel.Management.BreakEven
@@ -374,7 +375,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                             NomenklSumWOReval =
                                 Convert.ToDecimal(d.NomenklSumWOReval)+ //* nrate +
                                 Convert.ToDecimal(d.DilerSumma), //* drate,
-                            OperCrsName = crs.CRS_SHORTNAME, // crsInfo.Name,
+                            OperCrsName = crs.Name, // crsInfo.Name,
                             OperCurrency = crs,
                             Schet =
                                 $"Счет №'{d.SF_NUM} от {d.SF_DATE.ToShortDateString()} {d.SF_NOTES}",

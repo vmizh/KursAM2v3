@@ -3,11 +3,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Vzaimozachet;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using KursDomain.Documents.Vzaimozachet;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -32,7 +32,7 @@ namespace KursAM2.ViewModel.Reference
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var item in ctx.SD_111.ToList())
-                    ReferenceCollection.Add(new SD_111ViewModel(item) {State = RowStatus.NotEdited});
+                    ReferenceCollection.Add(new SD_111ViewModel(item) { State = RowStatus.NotEdited });
             }
         }
 

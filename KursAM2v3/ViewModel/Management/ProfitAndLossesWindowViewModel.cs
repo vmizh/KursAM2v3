@@ -7,10 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
-using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -21,7 +17,12 @@ using KursAM2.View.Finance;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Logistiks;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Management;
+using KursDomain.Menu;
+using KursDomain.References;
 using static System.Math;
+using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 // ReSharper disable All
 namespace KursAM2.ViewModel.Management
@@ -177,7 +178,7 @@ namespace KursAM2.ViewModel.Management
                                     {
                                         Kontragent = MainReferences.GetKontragent(r.VZT_KONTR_DC).Name,
                                         CurrencyName = MainReferences.Currencies[r.VZT_CRS_DC].Name,
-                                        Summa = (decimal) r.VZT_CRS_SUMMA,
+                                        Summa = (decimal)r.VZT_CRS_SUMMA,
                                         Note = r.VZT_DOC_NOTES,
                                         SDRSchet = r.VZT_SHPZ_DC != null
                                             ? MainReferences.SDRSchets[r.VZT_SHPZ_DC.Value]
@@ -192,7 +193,7 @@ namespace KursAM2.ViewModel.Management
                                     {
                                         Kontragent = MainReferences.GetKontragent(r.VZT_KONTR_DC).Name,
                                         CurrencyName = MainReferences.Currencies[r.VZT_CRS_DC].Name,
-                                        Summa = (decimal) r.VZT_CRS_SUMMA,
+                                        Summa = (decimal)r.VZT_CRS_SUMMA,
                                         Note = r.VZT_DOC_NOTES,
                                         SDRSchet = r.VZT_SHPZ_DC != null
                                             ? MainReferences.SDRSchets[r.VZT_SHPZ_DC.Value]
@@ -210,7 +211,7 @@ namespace KursAM2.ViewModel.Management
                                     {
                                         Kontragent = MainReferences.GetKontragent(r.VZT_KONTR_DC).Name,
                                         CurrencyName = MainReferences.Currencies[r.VZT_CRS_DC].Name,
-                                        Summa = (decimal) r.VZT_CRS_SUMMA,
+                                        Summa = (decimal)r.VZT_CRS_SUMMA,
                                         Note = r.VZT_DOC_NOTES,
                                         SDRSchet = r.VZT_SHPZ_DC != null
                                             ? MainReferences.SDRSchets[r.VZT_SHPZ_DC.Value]
@@ -225,7 +226,7 @@ namespace KursAM2.ViewModel.Management
                                     {
                                         Kontragent = MainReferences.GetKontragent(r.VZT_KONTR_DC).Name,
                                         CurrencyName = MainReferences.Currencies[r.VZT_CRS_DC].Name,
-                                        Summa = (decimal) r.VZT_CRS_SUMMA,
+                                        Summa = (decimal)r.VZT_CRS_SUMMA,
                                         Note = r.VZT_DOC_NOTES,
                                         SDRSchet = r.VZT_SHPZ_DC != null
                                             ? MainReferences.SDRSchets[r.VZT_SHPZ_DC.Value]
@@ -357,8 +358,8 @@ namespace KursAM2.ViewModel.Management
         {
             //NomenklCalc(CurrentExtend);
             if (CurrentExtend?.Nomenkl?.DocCode == null) return;
-            var ctx = new NomPriceWindowViewModel((decimal) CurrentExtend?.Nomenkl?.DocCode);
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var ctx = new NomPriceWindowViewModel((decimal)CurrentExtend?.Nomenkl?.DocCode);
+            var dlg = new SelectDialogView { DataContext = ctx };
             dlg.ShowDialog();
         }
 
@@ -502,7 +503,7 @@ namespace KursAM2.ViewModel.Management
                 id == Guid.Parse("{D89B1E18-074E-4A7D-A0EE-9537DC1585D8}") ||
                 id == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
                 id == Guid.Parse("{E47EF726-3BEA-4B18-9773-E564D624FDF6}")
-            )
+               )
             {
                 foreach (var id2 in Main.Where(_ => _.ParentId == id).Select(_ => _.Id))
                 {
@@ -1060,7 +1061,7 @@ namespace KursAM2.ViewModel.Management
 
         private void ResetCurrencyColumns()
         {
-            var frm = (ProfitAndLosses) Form;
+            var frm = (ProfitAndLosses)Form;
             foreach (var col in frm.treeListMain.Columns)
             {
                 TreeListControlBand b, b1;

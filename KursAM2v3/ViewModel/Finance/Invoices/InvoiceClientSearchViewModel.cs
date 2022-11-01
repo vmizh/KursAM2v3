@@ -8,8 +8,6 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Invoices;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -20,6 +18,9 @@ using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Finance.Invoices;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Invoices;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {

@@ -2,8 +2,8 @@ using System;
 using Core;
 using DevExpress.Spreadsheet;
 using Helper;
-using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Finance.Invoices;
+using KursDomain.ICommon;
 using Reports.Base;
 
 namespace KursAM2.ReportManagers.SFClientAndWayBill
@@ -36,7 +36,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells["I7"].Value = $"{DateTime.Now.ToShortTimeString()}";
             if (IsManagerPrint)
                 sheet.Cells["H8"].Value = GlobalOptions.UserInfo.FullName;
-            sheet.Cells["D9"].Value = document.Currency?.CRS_SHORTNAME;
+            sheet.Cells["D9"].Value = document.Currency?.Name;
             var startTableRow = 13;
             var row = 1;
             for (var i = 1; i <= document.Rows.Count; i++)
@@ -45,12 +45,13 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     InsertCellsMode.ShiftCellsDown);
                 sheet.Rows[$"{startTableRow + i}"].CopyFrom(sheet.Rows[startTableRow.ToString()]);
             }
+
             foreach (var item in document.Rows)
             {
                 sheet.Cells[$"A{startTableRow + row}"].Value = row;
                 sheet.Cells[$"B{startTableRow + row}"].Value = item.Nomenkl.NomenklNumber;
                 sheet.Cells[$"C{startTableRow + row}"].Value = item.Nomenkl.Name;
-                sheet.Cells[$"E{startTableRow + row}"].Value = item.Nomenkl.Unit?.ED_IZM_NAME;
+                sheet.Cells[$"E{startTableRow + row}"].Value = ((IName)item.Nomenkl.Unit)?.Name;
                 sheet.Cells[$"F{startTableRow + row}"].Value = item.Quantity;
                 sheet.Cells[$"F{startTableRow + row}"].NumberFormat = "#,##0.00";
                 sheet.Cells[$"G{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
@@ -60,6 +61,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells[$"I{startTableRow + row}"].Value = item.Note;
                 row++;
             }
+
             sheet.Cells[$"H{document.Rows.Count + startTableRow + 1}"].Formula =
                 $"SUM(H{startTableRow}:H{document.Rows.Count + startTableRow})";
             sheet.Cells[$"H{document.Rows.Count + startTableRow + 1}"].NumberFormat = "#,##0.00";

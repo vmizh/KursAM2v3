@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using Data;
 using KursDomain.Annotations;
 using KursDomain.ICommon;
-using KursDomain.IDocuments;
 using KursDomain.IDocuments.Finance;
 using KursDomain.IDocuments.WarehouseOrder;
 using KursDomain.IReferences;
@@ -74,7 +73,7 @@ public class IncomingWarehouseOrderRowViewModel : IDescription, IRowDC, IIncomin
         set
         {
             if (myReferenceCache.GetNomenkl(Entity.DDT_NOMENKL_DC).Equals(value)) return;
-            Entity.DDT_NOMENKL_DC = ((IDocCode) value).DocCode;
+            Entity.DDT_NOMENKL_DC = ((IDocCode)value).DocCode;
             OnPropertyChanged();
         }
     }
@@ -108,7 +107,7 @@ public class IncomingWarehouseOrderRowViewModel : IDescription, IRowDC, IIncomin
         set
         {
             if (myReferenceCache.GetSDRSchet(Entity.DDT_SHPZ_DC).Equals(value)) return;
-            Entity.DDT_NOMENKL_DC = ((IDocCode) value).DocCode;
+            Entity.DDT_NOMENKL_DC = ((IDocCode)value).DocCode;
             OnPropertyChanged();
         }
     }

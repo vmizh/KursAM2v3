@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Core.ViewModel.Base;
 
-namespace Core.Menu
+namespace KursDomain.Menu
 {
     public static class MenuGenerator
     {

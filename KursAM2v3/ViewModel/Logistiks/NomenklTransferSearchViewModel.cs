@@ -6,15 +6,15 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers;
 using KursAM2.View.Logistiks;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.Menu;
+using KursDomain.References;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace KursAM2.ViewModel.Logistiks
@@ -221,7 +221,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         private decimal GetMaxQuantity(decimal? skladDC, decimal nomDC, DateTime date)
         {
-            var q = Nomenkl.Quantity(skladDC, nomDC, date);
+            var q = NomenklViewModel.Quantity(skladDC, nomDC, date);
             return q < 0 ? 0 : q;
         }
 

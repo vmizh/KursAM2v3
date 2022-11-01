@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
 using KursAM2.View.Base;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -151,7 +151,7 @@ namespace KursAM2.ViewModel.Reference
             new List<Region>();
 
         public override bool IsCanSaveData =>
-            Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited) || DeletedRows.Count > 0;
+            (Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited)) || DeletedRows.Count > 0;
 
         public override bool IsCanDelete()
         {

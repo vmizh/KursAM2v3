@@ -3,12 +3,12 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.Periods;
-using Core.EntityViewModel.Systems;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using KursDomain.Documents.Periods;
+using KursDomain.Documents.Systems;
+using KursDomain.ICommon;
 
 namespace KursAM2.Managers
 {
@@ -36,6 +36,7 @@ namespace KursAM2.Managers
             {
                 WindowManager.ShowError(e);
             }
+
             return result;
         }
 
@@ -61,6 +62,7 @@ namespace KursAM2.Managers
             {
                 WindowManager.ShowError(e);
             }
+
             return result;
         }
 
@@ -85,6 +87,7 @@ namespace KursAM2.Managers
             {
                 WindowManager.ShowError(e);
             }
+
             return result;
         }
 
@@ -108,6 +111,7 @@ namespace KursAM2.Managers
             {
                 WindowManager.ShowError(e);
             }
+
             return result;
         }
 
@@ -132,6 +136,7 @@ namespace KursAM2.Managers
             {
                 WindowManager.ShowError(e);
             }
+
             return result;
         }
 
@@ -157,6 +162,7 @@ namespace KursAM2.Managers
                             if (deletedItem != null)
                                 ctx.PERIOD_GROUPS_USERS.Remove(deletedItem);
                         }
+
                     ctx.SaveChanges();
                 }
             }
@@ -192,6 +198,7 @@ namespace KursAM2.Managers
                             });
                         }
                     }
+
                     ctx.SaveChanges();
                 }
             }
@@ -242,6 +249,7 @@ namespace KursAM2.Managers
                             ID = Guid.NewGuid()
                         });
                     }
+
                     ctx.SaveChanges();
                 }
             }
@@ -272,6 +280,7 @@ namespace KursAM2.Managers
                                 i.NAME = item.Name;
                         }
                     }
+
                     ctx.SaveChanges();
                 }
             }
@@ -297,6 +306,7 @@ namespace KursAM2.Managers
                             foreach (var i in delUser)
                                 ctx.PERIOD_GROUPS_USERS.Remove(i);
                     }
+
                     ctx.SaveChanges();
                 }
             }
@@ -319,6 +329,7 @@ namespace KursAM2.Managers
                         if (del != null)
                             ctx.PERIOD_CLOSED_EXCLUDE.Remove(del);
                     }
+
                     ctx.SaveChanges();
                 }
             }

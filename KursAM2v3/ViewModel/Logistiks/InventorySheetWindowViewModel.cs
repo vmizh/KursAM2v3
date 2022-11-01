@@ -8,9 +8,7 @@ using System.Windows.Input;
 using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -22,6 +20,10 @@ using KursAM2.Dialogs;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories;
 using KursAM2.View.Logistiks;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -101,8 +103,8 @@ namespace KursAM2.ViewModel.Logistiks
 
         public override string LayoutName => "InventorySheetWindowViewModel";
 
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse> StoreCollection { set; get; } =
-            new List<Core.EntityViewModel.NomenklManagement.Warehouse>(MainReferences.Warehouses.Values);
+        public List<KursDomain.Documents.NomenklManagement.Warehouse> StoreCollection { set; get; } =
+            new List<KursDomain.Documents.NomenklManagement.Warehouse>(MainReferences.Warehouses.Values);
 
         public bool IsCannotChangeStore => Document.State == RowStatus.NewRow;
    
@@ -153,7 +155,10 @@ namespace KursAM2.ViewModel.Logistiks
                 if (CurrentNomenklGroup == null) return null;
                 var listDC = GetNomenklGroupChilds(CurrentNomenklGroup).Distinct().ToList();
                 var ret = new ObservableCollection<InventorySheetRowViewModel>();
-                foreach (var n in from dc in listDC from n in Document.Rows where n.Nomenkl.Group.DocCode == dc select n
+                foreach (var n in from dc in listDC
+                         from n in Document.Rows
+                         where ((IDocCode)n.Nomenkl.Category).DocCode == dc
+                         select n
                         )
                     ret.Add(n);
                 return ret;
@@ -199,7 +204,8 @@ namespace KursAM2.ViewModel.Logistiks
         {
             var ret = new List<decimal>();
             ret.AddRange(
-                Document.Rows.Where(_ => _.Nomenkl.Group.DocCode == grp.DocCode).Select(_ => _.Nomenkl.Group.DocCode));
+                Document.Rows.Where(_ => ((IDocCode)_.Nomenkl.Category).DocCode == grp.DocCode)
+                    .Select(_ => ((IDocCode)_.Nomenkl.Category).DocCode));
             if (NomenklGroups.Count(_ => _.ParentDC == grp.DocCode) == 0) return ret;
             foreach (var g in NomenklGroups.Where(_ => _.ParentDC == grp.DocCode))
             {
@@ -238,7 +244,7 @@ namespace KursAM2.ViewModel.Logistiks
                 ng.IsNomenklContains = false;
             foreach (
                 var ng in
-                Document.Rows.Select(_ => _.Nomenkl.NOM_CATEG_DC)
+                Document.Rows.Select(_ => ((IDocCode)_.Nomenkl.Category).DocCode)
                     .Distinct()
                     .ToList()
                     .Select(ngDC => NomenklGroups.FirstOrDefault(_ => _.DocCode == ngDC))
@@ -506,7 +512,7 @@ namespace KursAM2.ViewModel.Logistiks
             var code = Document.Rows.Any() ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             foreach (var nom in noms.Where(nom => Document.Rows.All(_ => _.Nomenkl.DocCode != nom.DocCode)))
             {
-                var q = nomenklManager.GetNomenklQuantity(Document.Warehouse.DocCode, nom.DOC_CODE,
+                var q = nomenklManager.GetNomenklQuantity(Document.Warehouse.DocCode, nom.DocCode,
                     DateTime.Today, DateTime.Today);
                 decimal quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                 var newItem = new InventorySheetRowViewModel(new TD_24())

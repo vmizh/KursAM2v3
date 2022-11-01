@@ -9,6 +9,7 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=KursDomain"
+    xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
     Title="{Binding WindowName}" Height="350" Width="525">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
@@ -93,7 +94,7 @@
                         <dxg:GridColumn Name="col_21" Header="Статус" FieldName="State" ReadOnly="True">
                             <dxg:GridColumn.EditSettings>
                                 <dxe:ComboBoxEditSettings IsEnabled="False"
-                                                          ItemsSource="{dxe:EnumItemsSource EnumType={x:Type base:RowStatus}}" 
+                                                          ItemsSource="{dxe:EnumItemsSource EnumType={x:Type iCommon:RowStatus}}" 
                                                           ImmediatePopup="True" 
                                                           ValidateOnTextInput="False" 
                                                           ValidateOnEnterKeyPressed="False" 

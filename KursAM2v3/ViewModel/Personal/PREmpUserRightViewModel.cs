@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Grid;
+using KursDomain.Documents.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {

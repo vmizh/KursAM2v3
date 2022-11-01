@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Core.EntityViewModel.NomenklManagement
+namespace KursDomain.Documents.NomenklManagement;
+
+public enum WarehouseSenderType
 {
-    public enum WarehouseSenderType
-    {
-        [Display(Name = "Контрагент")] Kontragent = 0,
-        [Display(Name = "Склад")] Store = 1
-    }
+    [Display(Name = "Контрагент")] Kontragent = 0,
+    [Display(Name = "Склад")] Store = 1
 }

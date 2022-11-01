@@ -5,10 +5,12 @@ using System.Linq;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference
 {

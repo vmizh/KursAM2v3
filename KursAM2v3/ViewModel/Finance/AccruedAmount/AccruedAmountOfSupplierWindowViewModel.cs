@@ -10,7 +10,6 @@ using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -28,6 +27,9 @@ using KursAM2.ViewModel.Management.Calculations;
 using KursDomain.Documents.AccruedAmount;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Finance.AccruedAmount
 {

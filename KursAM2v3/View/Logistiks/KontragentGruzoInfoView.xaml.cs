@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using Core.EntityViewModel.CommonReferences.Kontragent;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Logistiks;

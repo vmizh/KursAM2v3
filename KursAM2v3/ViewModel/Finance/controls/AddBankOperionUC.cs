@@ -5,12 +5,15 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.ViewModel.Base;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.UC;
 using KursDomain.Documents.Bank;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.ICommon;
+using KursDomain.References;
+using BankAccount = KursDomain.Documents.Bank.BankAccount;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
+using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursAM2.ViewModel.Finance.controls
 {

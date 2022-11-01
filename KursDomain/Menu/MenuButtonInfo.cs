@@ -7,7 +7,7 @@ using Helper;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable MemberCanBePrivate.Global
-namespace Core.Menu
+namespace KursDomain.Menu
 {
     public class MenuButtonInfo
     {

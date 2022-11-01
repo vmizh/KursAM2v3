@@ -9,12 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Invoices;
-using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -32,7 +27,13 @@ using KursAM2.Repositories;
 using KursAM2.View.DialogUserControl.Invoices.ViewModels;
 using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Finance.DistributeNaklad;
-using InvoiceProviderRow = Core.EntityViewModel.Invoices.InvoiceProviderRow;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Currency;
+using KursDomain.Documents.Invoices;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
+using InvoiceProviderRow = KursDomain.Documents.Invoices.InvoiceProviderRow;
 
 namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {
@@ -875,7 +876,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
                 if (invrow != null)
                     // ReSharper disable once PossibleInvalidOperationException
-                    inv = DistributeNakladRepository.GetInvoiceHead((Guid)invrow.DocId);
+                    inv = DistributeNakladRepository.GetInvoiceHead(invrow.DocId);
                 Tovars.Add(new DistributeNakladRowViewModel(r)
                 {
                     InvoiceRow = invrow,

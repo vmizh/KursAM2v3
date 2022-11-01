@@ -6,8 +6,6 @@ using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -17,7 +15,9 @@ using Helper;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Management.Calculations;
 using KursAM2.ViewModel.Splash;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Menu;
 
 // ReSharper disable CollectionNeverQueried.Global
 namespace KursAM2.ViewModel.Management.DebitorCreditor

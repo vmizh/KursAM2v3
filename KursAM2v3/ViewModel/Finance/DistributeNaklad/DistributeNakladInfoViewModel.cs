@@ -5,6 +5,9 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {

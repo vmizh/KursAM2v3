@@ -5,11 +5,12 @@ using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.References;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.View.DialogUserControl
 {

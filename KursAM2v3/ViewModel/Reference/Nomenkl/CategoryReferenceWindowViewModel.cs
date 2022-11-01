@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
@@ -45,7 +45,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 if (row.State != RowStatus.NotEdited)
                     lst.Add(row);
             foreach (var row in DeletedRows)
-                lst.Add((NomenklGroup) row);
+                lst.Add((NomenklGroup)row);
             if (lst.Count <= 0) return;
             if (!Manager.Save(lst)) return;
             foreach (var r in Rows)
@@ -63,13 +63,13 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public override void ItemNewChildEmpty(object obj)
         {
-            var newItem = Manager.New((NomenklGroup) CurrentRow);
+            var newItem = Manager.New((NomenklGroup)CurrentRow);
             SetNewItemInControl(newItem);
         }
 
         public override void ItemNewCopy(object obj)
         {
-            var newItem = Manager.NewCopy((NomenklGroup) CurrentRow);
+            var newItem = Manager.NewCopy((NomenklGroup)CurrentRow);
             SetNewItemInControl(newItem);
         }
 
@@ -83,7 +83,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         }
 
         public override bool IsCanSaveData =>
-            Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited) || DeletedRows.Count > 0;
+            (Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited)) || DeletedRows.Count > 0;
 
         #endregion
     }

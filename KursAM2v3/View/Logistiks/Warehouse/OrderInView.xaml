@@ -10,7 +10,8 @@
                  xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                  xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=KursDomain"
-                 xmlns:nomenklManagement="clr-namespace:Core.EntityViewModel.NomenklManagement;assembly=KursDomain"
+                 xmlns:nomenklManagement1="clr-namespace:KursDomain.Documents.NomenklManagement;assembly=KursDomain"
+                 xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
                  mc:Ignorable="d"
                  Title="{Binding WindowName}" MinHeight="450" MinWidth="800">
     <dx:ThemedWindow.HeaderItems>
@@ -54,7 +55,7 @@
                                     IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
                                     <dxmvvm:Interaction.Behaviors>
                                         <dxmvvm:EnumItemsSourceBehavior
-                                            EnumType="{x:Type base:RowStatus}"/>
+                                            EnumType="{x:Type iCommon:RowStatus}"/>
                                     </dxmvvm:Interaction.Behaviors>
                                 </dxe:ComboBoxEdit>
                                 <Label Content="  Статус:" DockPanel.Dock="Right"/>
@@ -78,7 +79,7 @@
                                  <dxmvvm:EventToCommand EventName="ComboBoxEdit_EditValueChanged"
                                                         Command="{Binding KontragentTypeChangedCommand}"/>
                                  <dxmvvm:EnumItemsSourceBehavior
-                                     EnumType="{x:Type nomenklManagement:WarehouseSenderType}"/>
+                                     EnumType="{x:Type nomenklManagement1:WarehouseSenderType}"/>
                              </dxmvvm:Interaction.Behaviors>
                          </dxe:ComboBoxEdit>
                          <Label Content="Отправитель: "/>

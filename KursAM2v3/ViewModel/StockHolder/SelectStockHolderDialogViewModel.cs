@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Windows.Controls;
 using Core;
-using Core.EntityViewModel.StockHolder;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.View.DialogUserControl;
+using KursDomain.Documents.StockHolder;
 
 namespace KursAM2.ViewModel.StockHolder
 {

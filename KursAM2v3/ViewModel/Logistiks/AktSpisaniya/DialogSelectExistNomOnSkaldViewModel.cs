@@ -6,11 +6,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks.AktSpisaniya;
+using KursDomain.Documents.NomenklManagement;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
@@ -19,7 +19,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
         #region Constructors
 
-        public DialogSelectExistNomOnSkaldViewModel(Core.EntityViewModel.NomenklManagement.Warehouse sklad,
+        public DialogSelectExistNomOnSkaldViewModel(KursDomain.Documents.NomenklManagement.Warehouse sklad,
             DateTime date)
         {
             warehouse = sklad;
@@ -33,7 +33,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         private NomenklRemainsOnSkladWithPrice myCurrentNomenkl;
         private NomenklRemainsOnSkladWithPrice myCurrentSelectedNomenkl;
-        private readonly Core.EntityViewModel.NomenklManagement.Warehouse warehouse;
+        private readonly KursDomain.Documents.NomenklManagement.Warehouse warehouse;
         private readonly DateTime Date;
 
         #endregion

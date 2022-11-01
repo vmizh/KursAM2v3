@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using Core.WindowsManager;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -21,6 +20,8 @@ namespace KursAM2.ViewModel.Personal
             DeletedItems = new List<PayRollVedomostSearch>();
         }
 
+        public GridTableViewInfo TableViewInfo { get; set; }
+
         public void Load(bool isTemplate)
         {
             Source.Clear();
@@ -31,22 +32,23 @@ namespace KursAM2.ViewModel.Personal
                     if (isTemplate)
                     {
                         foreach (var item in from e in ent.EMP_PR_DOC.OrderByDescending(_ => _.Date).ToList()
-                            where e.IS_TEMPLATE == 1
-                            select
-                                new PayRollVedomostSearch
-                                {
-                                    Id = e.ID,
-                                    Name = e.Notes,
-                                    Date = e.Date,
-                                    Istemplate = e.IS_TEMPLATE == 1,
-                                    Creator = e.Creator
-                                })
+                                 where e.IS_TEMPLATE == 1
+                                 select
+                                     new PayRollVedomostSearch
+                                     {
+                                         Id = e.ID,
+                                         Name = e.Notes,
+                                         Date = e.Date,
+                                         Istemplate = e.IS_TEMPLATE == 1,
+                                         Creator = e.Creator
+                                     })
                         {
                             Source.Add(item);
                             // ReSharper disable once UnusedVariable
                             foreach (var row in (from r in ent.EMP_PR_ROWS
-                                where r.ID == item.Id
-                                select new PayRollVedomostEmployeeRowViewModel {Crs = new Currency()}).ToList())
+                                         where r.ID == item.Id
+                                         select new PayRollVedomostEmployeeRowViewModel { Crs = new Currency() })
+                                     .ToList())
                             {
                             }
                         }
@@ -55,22 +57,23 @@ namespace KursAM2.ViewModel.Personal
                     {
                         var docs = ent.EMP_PR_DOC.OrderByDescending(_ => _.Date).ToList();
                         foreach (var item in from e in docs
-                            where e.IS_TEMPLATE == 0
-                            select
-                                new PayRollVedomostSearch
-                                {
-                                    Id = e.ID,
-                                    Name = e.Notes,
-                                    Date = e.Date,
-                                    Istemplate = e.IS_TEMPLATE == 1,
-                                    Creator = e.Creator
-                                })
+                                 where e.IS_TEMPLATE == 0
+                                 select
+                                     new PayRollVedomostSearch
+                                     {
+                                         Id = e.ID,
+                                         Name = e.Notes,
+                                         Date = e.Date,
+                                         Istemplate = e.IS_TEMPLATE == 1,
+                                         Creator = e.Creator
+                                     })
                         {
                             Source.Add(item);
                             // ReSharper disable once UnusedVariable
                             foreach (var row in (from r in ent.EMP_PR_ROWS
-                                where r.ID == item.Id
-                                select new PayRollVedomostEmployeeRowViewModel {Crs = new Currency()}).ToList())
+                                         where r.ID == item.Id
+                                         select new PayRollVedomostEmployeeRowViewModel { Crs = new Currency() })
+                                     .ToList())
                             {
                             }
                         }
@@ -101,8 +104,6 @@ namespace KursAM2.ViewModel.Personal
                 }
             }
         }
-
-        public GridTableViewInfo TableViewInfo { get; set; }
 
         #region IViewModel<PayRollVedomostSearch> Members
 

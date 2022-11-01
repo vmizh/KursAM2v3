@@ -1,11 +1,9 @@
 using System;
 using System.Runtime.Serialization;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using DevExpress.Data;
+using KursDomain.Documents.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {

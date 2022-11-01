@@ -3,118 +3,117 @@ using System.Collections.Generic;
 using Core.ViewModel.Base;
 using Data;
 
-namespace Core.EntityViewModel
+namespace KursDomain.Documents;
+
+public class ProjectProviderPrihodViewModel : RSViewModelBase, IEntity<ProjectProviderPrihod>
 {
-    public class ProjectProviderPrihodViewModel : RSViewModelBase, IEntity<ProjectProviderPrihod>
+    private ProjectProviderPrihod myEntity;
+
+    public ProjectProviderPrihodViewModel()
     {
-        private ProjectProviderPrihod myEntity;
+        Entity = DefaultValue();
+    }
 
-        public ProjectProviderPrihodViewModel()
+    public ProjectProviderPrihodViewModel(ProjectProviderPrihod entity)
+    {
+        Entity = entity ?? DefaultValue();
+    }
+
+    public override Guid Id
+    {
+        get => Entity.Id;
+        set
         {
-            Entity = DefaultValue();
+            if (Entity.Id == value) return;
+            Entity.Id = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public ProjectProviderPrihod DefaultValue()
+    public override Guid RowId
+    {
+        get => Entity.RowId;
+        set
         {
-            return new ProjectProviderPrihod {Id = Guid.NewGuid()};
+            if (Entity.RowId == value) return;
+            Entity.RowId = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public ProjectProviderPrihodViewModel(ProjectProviderPrihod entity)
+    public decimal Quantity
+    {
+        get => Entity.Quantity;
+        set
         {
-            Entity = entity ?? DefaultValue();
+            if (Entity.Quantity == value) return;
+            Entity.Quantity = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public ProjectProviderPrihod Entity
+    public override string Note
+    {
+        get => Entity.Note;
+        set
         {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.Note == value) return;
+            Entity.Note = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public override Guid Id
+    public bool IsAccessRight { get; set; }
+
+    public ProjectProviderPrihod DefaultValue()
+    {
+        return new ProjectProviderPrihod { Id = Guid.NewGuid() };
+    }
+
+    public ProjectProviderPrihod Entity
+    {
+        get => myEntity;
+        set
         {
-            get => Entity.Id;
-            set
-            {
-                if (Entity.Id == value) return;
-                Entity.Id = value;
-                RaisePropertyChanged();
-            }
+            if (myEntity == value) return;
+            myEntity = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public override Guid RowId
-        {
-            get => Entity.RowId;
-            set
-            {
-                if (Entity.RowId == value) return;
-                Entity.RowId = value;
-                RaisePropertyChanged();
-            }
-        }
+    public List<ProjectProviderPrihod> LoadList()
+    {
+        return null;
+    }
 
-        public decimal Quantity
-        {
-            get => Entity.Quantity;
-            set
-            {
-                if (Entity.Quantity == value) return;
-                Entity.Quantity = value;
-                RaisePropertyChanged();
-            }
-        }
+    public virtual ProjectProviderPrihod Load(decimal dc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public override string Note
-        {
-            get => Entity.Note;
-            set
-            {
-                if (Entity.Note == value) return;
-                Entity.Note = value;
-                RaisePropertyChanged();
-            }
-        }
+    public virtual ProjectProviderPrihod Load(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
-        public List<ProjectProviderPrihod> LoadList()
-        {
-            return null;
-        }
+    public virtual void Save(ProjectProviderPrihod doc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public bool IsAccessRight { get; set; }
+    public void UpdateFrom(ProjectProviderPrihod ent)
+    {
+        Id = ent.Id;
+        RowId = ent.RowId;
+        Quantity = ent.Quantity;
+        Note = ent.Note;
+    }
 
-        public virtual ProjectProviderPrihod Load(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual ProjectProviderPrihod Load(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void Save(ProjectProviderPrihod doc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateFrom(ProjectProviderPrihod ent)
-        {
-            Id = ent.Id;
-            RowId = ent.RowId;
-            Quantity = ent.Quantity;
-            Note = ent.Note;
-        }
-
-        public void UpdateTo(ProjectProviderPrihod ent)
-        {
-            ent.Id = Id;
-            ent.RowId = RowId;
-            ent.Quantity = Quantity;
-            ent.Note = Note;
-        }
+    public void UpdateTo(ProjectProviderPrihod ent)
+    {
+        ent.Id = Id;
+        ent.RowId = RowId;
+        ent.Quantity = Quantity;
+        ent.Note = Note;
     }
 }

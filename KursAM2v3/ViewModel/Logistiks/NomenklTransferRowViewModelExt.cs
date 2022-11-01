@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using JetBrains.Annotations;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.IReferences;
+using KursDomain.References;
 using static System.Math;
 
 namespace KursAM2.ViewModel.Logistiks
@@ -35,12 +37,15 @@ namespace KursAM2.ViewModel.Logistiks
         private string mySchetInfo;
         private decimal mySummaIn;
         private decimal mySummaOut;
-        private Core.EntityViewModel.NomenklManagement.Warehouse myWarehouse;
+        private KursDomain.Documents.NomenklManagement.Warehouse myWarehouse;
 
         public NomenklTransferRowViewModelExt(NomenklTransferRow entity) : base(entity)
         {
-            myNomenklIn = MainReferences.GetNomenkl(Entity.NomenklInDC);
-            myNomenklOut = MainReferences.GetNomenkl(Entity.NomenklOutDC);
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                myNomenklIn = MainReferences.GetNomenkl(Entity.NomenklInDC);
+                myNomenklOut = MainReferences.GetNomenkl(Entity.NomenklOutDC);
+            }
         }
 
         public NomenklTransferRowViewModelExt()
@@ -58,7 +63,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse
+        public KursDomain.Documents.NomenklManagement.Warehouse Warehouse
         {
             get => myWarehouse;
             set
@@ -317,8 +322,8 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public Currency CurrencyOut => NomenklOut?.Currency;
-        public Currency CurrencyIn => NomenklIn?.Currency;
+        public ICurrency CurrencyOut => NomenklOut?.Currency;
+        public ICurrency CurrencyIn => NomenklIn?.Currency;
         public string NomenklNumberOut => NomenklOut?.NomenklNumber;
         public string NomenklNumberIn => NomenklIn?.NomenklNumber;
 

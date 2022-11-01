@@ -4,10 +4,8 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
+using KursDomain.Documents.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {

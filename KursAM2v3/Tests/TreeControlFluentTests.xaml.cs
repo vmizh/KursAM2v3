@@ -6,6 +6,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.View.Management;
+using KursDomain.Documents.CommonReferences;
 using LayoutManager;
 
 namespace KursAM2.Tests

@@ -13,8 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Employee;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Dialogs;
 using Core.WindowsManager;
@@ -27,7 +25,10 @@ using Helper;
 using KursAM2.Managers;
 using KursAM2.Properties;
 using KursAM2.ViewModel.Splash;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Employee;
+using KursDomain.References;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.StartLogin
 {
@@ -235,6 +236,9 @@ namespace KursAM2.ViewModel.StartLogin
                 Helper.CurrentUser.UserInfo = newUser;
                 GlobalOptions.SystemProfile = new SystemProfile();
             }
+            var refer = new ReferencesKursCache(GlobalOptions.GetEntities());
+            refer.StartLoad();
+            GlobalOptions.ReferencesCache = refer;
             MainReferences.Reset();
             SetUserProfile(newUser.NickName.ToUpper());
             SetGlobalProfile();
@@ -274,7 +278,9 @@ namespace KursAM2.ViewModel.StartLogin
                     var dc = Convert.ToDecimal(mainCrsDC.ITEM_VALUE);
                     var mainCrs =
                         GlobalOptions.GetEntities().SD_301.Single(_ => _.DOC_CODE == dc);
-                    GlobalOptions.SystemProfile.MainCurrency = new Currency(mainCrs);
+                    var crs = new Currency();
+                    crs.LoadFromEntity(mainCrs);
+                    GlobalOptions.SystemProfile.MainCurrency = crs;
                 }
 
                 var nationalCrsDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
@@ -284,8 +290,9 @@ namespace KursAM2.ViewModel.StartLogin
                     var dc = Convert.ToDecimal(nationalCrsDC.ITEM_VALUE);
                     var nationalCrs =
                         GlobalOptions.GetEntities().SD_301.Single(_ => _.DOC_CODE == dc);
-                    GlobalOptions.SystemProfile.NationalCurrency =
-                        new Currency(nationalCrs);
+                    var crs = new Currency();
+                    crs.LoadFromEntity(nationalCrs);
+                    GlobalOptions.SystemProfile.NationalCurrency = crs;
                 }
 
                 var employeeDefaultCurrencyDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
@@ -295,7 +302,9 @@ namespace KursAM2.ViewModel.StartLogin
                     var dc = Convert.ToDecimal(employeeDefaultCurrencyDC);
                     var crs =
                         GlobalOptions.GetEntities().SD_301.Single(_ => _.DOC_CODE == dc);
-                    GlobalOptions.SystemProfile.EmployeeDefaultCurrency = new Currency(crs);
+                    var c = new Currency();
+                    c.LoadFromEntity(crs);
+                    GlobalOptions.SystemProfile.EmployeeDefaultCurrency = c;
                 }
                 else
                 {

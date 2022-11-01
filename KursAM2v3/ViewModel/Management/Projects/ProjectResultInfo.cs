@@ -3,6 +3,7 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.Documents.CommonReferences;
 using static System.Math;
 
 namespace KursAM2.ViewModel.Management.Projects

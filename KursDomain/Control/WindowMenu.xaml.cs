@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using Core.Menu;
+using KursDomain.Menu;
 
 namespace Core.Control
 {

@@ -4,157 +4,156 @@ using Core.ViewModel.Base;
 using Data;
 
 // ReSharper disable InconsistentNaming
-namespace Core.EntityViewModel.Systems
+namespace KursDomain.Documents.Systems;
+
+public class UserProfileViewModel : RSViewModelBase, IEntity<UserProfile>
 {
-    public class UserProfileViewModel : RSViewModelBase, IEntity<UserProfile>
+    private UserProfile myEntity;
+
+    public UserProfileViewModel()
     {
-        private UserProfile myEntity;
+        Entity = new UserProfile { Id = Guid.NewGuid() };
+    }
 
-        public UserProfileViewModel()
+    public UserProfileViewModel(UserProfile entity)
+    {
+        Entity = entity ?? new UserProfile { Id = Guid.NewGuid() };
+    }
+
+    public int UserId
+    {
+        get => Entity.UserId;
+        set
         {
-            Entity = new UserProfile {Id = Guid.NewGuid()};
+            if (Entity.UserId == value) return;
+            Entity.UserId = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public UserProfileViewModel(UserProfile entity)
+    public string OptionName
+    {
+        get => Entity.OptionName;
+        set
         {
-            Entity = entity ?? new UserProfile {Id = Guid.NewGuid()};
+            if (Entity.OptionName == value) return;
+            Entity.OptionName = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public int UserId
+    public string OptionValue
+    {
+        get => Entity.OptionValue;
+        set
         {
-            get => Entity.UserId;
-            set
-            {
-                if (Entity.UserId == value) return;
-                Entity.UserId = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.OptionValue == value) return;
+            Entity.OptionValue = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public string OptionName
+    public EXT_USERS EXT_USERS
+    {
+        get => Entity.EXT_USERS;
+        set
         {
-            get => Entity.OptionName;
-            set
-            {
-                if (Entity.OptionName == value) return;
-                Entity.OptionName = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.EXT_USERS == value) return;
+            Entity.EXT_USERS = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public string OptionValue
+    public EntityLoadCodition LoadCondition { get; set; }
+
+    public bool IsAccessRight { get; set; }
+
+    public UserProfile Entity
+    {
+        get => myEntity;
+        set
         {
-            get => Entity.OptionValue;
-            set
-            {
-                if (Entity.OptionValue == value) return;
-                Entity.OptionValue = value;
-                RaisePropertyChanged();
-            }
+            if (myEntity == value) return;
+            myEntity = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public EXT_USERS EXT_USERS
+    public UserProfile DefaultValue()
+    {
+        return new UserProfile
         {
-            get => Entity.EXT_USERS;
-            set
-            {
-                if (Entity.EXT_USERS == value) return;
-                Entity.EXT_USERS = value;
-                RaisePropertyChanged();
-            }
-        }
+            Id = Guid.NewGuid()
+        };
+    }
 
-        public UserProfile Entity
-        {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
-        }
+    public List<UserProfile> LoadList()
+    {
+        throw new NotImplementedException();
+    }
 
-        public EntityLoadCodition LoadCondition { get; set; }
+    public virtual UserProfile Load(decimal dc, bool isShort = true)
+    {
+        throw new NotImplementedException();
+    }
 
-        public List<UserProfile> LoadList()
-        {
-            throw new NotImplementedException();
-        }
+    public virtual UserProfile Load(Guid id, bool isShort = true)
+    {
+        throw new NotImplementedException();
+    }
 
-        public bool IsAccessRight { get; set; }
+    public UserProfile Load(decimal dc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public virtual UserProfile Load(decimal dc, bool isShort = true)
-        {
-            throw new NotImplementedException();
-        }
+    public UserProfile Load(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
-        public virtual UserProfile Load(Guid id, bool isShort = true)
-        {
-            throw new NotImplementedException();
-        }
+    public virtual void Save(UserProfile doc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public UserProfile Load(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
+    public void Save()
+    {
+        throw new NotImplementedException();
+    }
 
-        public UserProfile Load(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete()
+    {
+        throw new NotImplementedException();
+    }
 
-        public virtual void Save(UserProfile doc)
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete(decimal dc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void Delete()
-        {
-            throw new NotImplementedException();
-        }
+    public void UpdateFrom(UserProfile ent)
+    {
+        Id = ent.Id;
+        UserId = ent.UserId;
+        OptionName = ent.OptionName;
+        OptionValue = ent.OptionValue;
+        Note = ent.Note;
+        EXT_USERS = ent.EXT_USERS;
+    }
 
-        public void Delete(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateFrom(UserProfile ent)
-        {
-            Id = ent.Id;
-            UserId = ent.UserId;
-            OptionName = ent.OptionName;
-            OptionValue = ent.OptionValue;
-            Note = ent.Note;
-            EXT_USERS = ent.EXT_USERS;
-        }
-
-        public void UpdateTo(UserProfile ent)
-        {
-            ent.Id = Id;
-            ent.UserId = UserId;
-            ent.OptionName = OptionName;
-            ent.OptionValue = OptionValue;
-            ent.Note = Note;
-            ent.EXT_USERS = EXT_USERS;
-        }
-
-        public UserProfile DefaultValue()
-        {
-            return new UserProfile
-            {
-                Id = Guid.NewGuid()
-            };
-        }
+    public void UpdateTo(UserProfile ent)
+    {
+        ent.Id = Id;
+        ent.UserId = UserId;
+        ent.OptionName = OptionName;
+        ent.OptionValue = OptionValue;
+        ent.Note = Note;
+        ent.EXT_USERS = EXT_USERS;
     }
 }

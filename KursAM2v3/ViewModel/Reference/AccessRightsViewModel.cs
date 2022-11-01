@@ -4,12 +4,13 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.Systems;
 using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
 using KursAM2.View.KursReferences;
+using KursDomain.Documents.Systems;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -117,7 +118,7 @@ namespace KursAM2.ViewModel.Reference
                         manager.SavePermission(p, CurrentUser.USR_NICKNAME);
                     }
 
-                var currentTreeListNode = ((AccessRightsView) Form).treeListPermissionStructView.FocusedNode;
+                var currentTreeListNode = ((AccessRightsView)Form).treeListPermissionStructView.FocusedNode;
                 if (currentTreeListNode != null)
                 {
                     currentTreeListNode.IsExpanded = false;
@@ -166,7 +167,7 @@ namespace KursAM2.ViewModel.Reference
             {
                 Permissions.Clear();
                 foreach (var item in ctx.USER_FORMS_RIGHT.Where(_ => _.USER_NAME.ToUpper() == userName.ToUpper())
-                    .ToList())
+                             .ToList())
                     Permissions.Add(new USER_FORMS_RIGHTViewModel(item));
                 if (!resetData)
                     DocumentStruct = new ObservableCollection<TreeDocument>();
@@ -262,10 +263,10 @@ namespace KursAM2.ViewModel.Reference
         private void IsCHekedPermissionUser()
         {
             if (CurrentUser == null) return;
-            var treelststruct = ((AccessRightsView) Form).treeListPermissionStruct;
+            var treelststruct = ((AccessRightsView)Form).treeListPermissionStruct;
             if (treelststruct != null)
                 LoadStruct(CurrentUser.USR_NICKNAME.Trim().ToUpper(),
-                    treelststruct.Columns.Any(_ => (string) _.HeaderCaption == _.FieldName));
+                    treelststruct.Columns.Any(_ => (string)_.HeaderCaption == _.FieldName));
         }
 
         public override void CloseWindow(object form)

@@ -7,9 +7,6 @@ using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -20,13 +17,17 @@ using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.DialogUserControl.ViewModel;
 using KursAM2.View.KursReferences;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
     public sealed class ReferenceWindowViewModel : RSWindowViewModelBase
     {
         private NomenklGroup myCurrentCategory;
-        private Core.EntityViewModel.NomenklManagement.Nomenkl myCurrentNomenkl;
+        private NomenklViewModel myCurrentNomenkl;
         private NomenklMainViewModel myCurrentNomenklMain;
         private bool myIsCanChangeCurrency;
         private bool myIsCategoryEnabled;
@@ -49,7 +50,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         public ObservableCollection<NomenklMainViewModel> NomenklMainCollection { set; get; } =
             new ObservableCollection<NomenklMainViewModel>();
 
-        public ObservableCollection<Currency> CurrencyCollection { set; get; }
+        public ObservableCollection<CurrencyViewModel> CurrencyCollection { set; get; }
 
         //public bool IsSearchTextNull => 
         public bool IsCanChangeCurrency
@@ -68,7 +69,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get { return new Command(FocusedRowChanged, _ => true); }
         }
 
-        public Core.EntityViewModel.NomenklManagement.Nomenkl CurrentNomenkl
+        public NomenklViewModel CurrentNomenkl
         {
             get => myCurrentNomenkl;
             set
@@ -151,14 +152,14 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         public override bool IsCanSaveData => CategoryCollection.Any(_ => _.State != RowStatus.NotEdited) ||
                                               NomenklMainCollection.Any(_ => _.State != RowStatus.NotEdited)
                                               ||
-                                              CurrentNomenklMain != null &&
-                                              CurrentNomenklMain.NomenklCollection.Any(_ =>
-                                                  _.State != RowStatus.NotEdited) &&
-                                              CurrentNomenklMain.NomenklCollection.All(_ => _.Check());
+                                              (CurrentNomenklMain != null &&
+                                               CurrentNomenklMain.NomenklCollection.Any(_ =>
+                                                   _.State != RowStatus.NotEdited) &&
+                                               CurrentNomenklMain.NomenklCollection.All(_ => _.Check()));
 
         private void FocusedRowChanged(object obj)
         {
-            var d = obj as Core.EntityViewModel.NomenklManagement.Nomenkl;
+            var d = obj as NomenklViewModel;
             if (d == null) return;
             if (d.State != RowStatus.NotEdited)
                 SaveNomenkl(d);
@@ -167,12 +168,12 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         private void LoadReferences()
         {
             if (CurrencyCollection == null)
-                CurrencyCollection = new ObservableCollection<Currency>();
+                CurrencyCollection = new ObservableCollection<CurrencyViewModel>();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 CurrencyCollection.Clear();
                 foreach (var c in ctx.SD_301.ToList())
-                    CurrencyCollection.Add(new Currency(c));
+                    CurrencyCollection.Add(new CurrencyViewModel(c));
             }
         }
 
@@ -186,19 +187,19 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                     var noms = (from n in ctx.SD_83
                         join sd301 in ctx.SD_301 on n.NOM_SALE_CRS_DC equals sd301.DOC_CODE
                         where n.MainId == main.Id
-                        select new Core.EntityViewModel.NomenklManagement.Nomenkl
+                        select new NomenklViewModel
                         {
                             DocCode = n.DOC_CODE,
                             Name = n.NOM_NAME,
                             NomenklNumber = n.NOM_NOMENKL,
                             NameFull = n.NOM_FULL_NAME,
-                            Currency = new Currency { DocCode = sd301.DOC_CODE, CRS_SHORTNAME = sd301.CRS_SHORTNAME },
+                            Currency = new Currency { DocCode = sd301.DOC_CODE, Name = sd301.CRS_SHORTNAME },
                             Note = n.NOM_NOTES,
                             IsRentabelnost = n.IsUslugaInRent ?? false
                         }).ToList();
                     foreach (var nom in noms)
                     {
-                        nom.Currency = CurrencyCollection.SingleOrDefault(_ => _.DocCode == nom.Currency.DocCode);
+                        nom.Currency = MainReferences.GetCurrency(((IDocCode)nom.Currency).DocCode);
                         nom.Parent = CurrentNomenklMain;
                         main.NomenklCollection.Add(nom);
                         nom.State = RowStatus.NotEdited;
@@ -284,13 +285,14 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                     lasts.Add(n);
             foreach (var node in lasts)
             {
-                node.NomenklCount = MainReferences.ALLNomenkls.Values.Count(_ => _.NOM_CATEG_DC == node.DocCode);
+                node.NomenklCount =
+                    MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Category).DocCode == node.DocCode);
                 var prevn = node;
                 var n = CategoryCollection.FirstOrDefault(_ => _.DocCode == node.ParentDC);
                 if (n == null) continue;
                 while (n != null)
                 {
-                    var c = MainReferences.ALLNomenkls.Values.Count(_ => _.NOM_CATEG_DC == n.DocCode);
+                    var c = MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Category).DocCode == n.DocCode);
                     n.NomenklCount = n.NomenklCount + prevn.NomenklCount + c;
                     prevn = n;
                     n = CategoryCollection.FirstOrDefault(_ => _.DocCode == n.ParentDC);
@@ -298,7 +300,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             }
         }
 
-        private void SaveNomenkl(Core.EntityViewModel.NomenklManagement.Nomenkl nom)
+        private void SaveNomenkl(NomenklViewModel nom)
         {
             decimal newDC = 0;
             var state = nom.State;
@@ -318,7 +320,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     NOM_NAME = nom.Name,
                                     NOM_NOMENKL = nom.NomenklNumber,
                                     NOM_NOTES = nom.Note,
-                                    NOM_SALE_CRS_DC = nom.Currency.DocCode,
+                                    NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode,
                                     NOM_FULL_NAME = nom.NameFull,
                                     NOM_ED_IZM_DC = CurrentNomenklMain.Unit.DocCode,
                                     NOM_CATEG_DC = CurrentNomenklMain.NomenklCategory.DocCode,
@@ -338,7 +340,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 d.NOM_NAME = nom.Name;
                                 d.NOM_NOMENKL = nom.NomenklNumber;
                                 d.NOM_NOTES = nom.Note;
-                                d.NOM_SALE_CRS_DC = nom.Currency.DocCode;
+                                d.NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode;
                                 d.NOM_FULL_NAME = nom.NameFull ?? nom.Name;
                                 break;
                         }
@@ -379,7 +381,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                         NOM_NAME = nom.Name,
                                         NOM_NOMENKL = nom.NomenklNumber,
                                         NOM_NOTES = nom.Note,
-                                        NOM_SALE_CRS_DC = nom.Currency.DocCode,
+                                        NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode,
                                         NOM_FULL_NAME = nom.NameFull,
                                         NOM_ED_IZM_DC = CurrentNomenklMain.Unit.DocCode,
                                         NOM_CATEG_DC = CurrentNomenklMain.NomenklCategory.DocCode,
@@ -399,7 +401,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     d.NOM_NAME = nom.Name;
                                     d.NOM_NOMENKL = nom.NomenklNumber;
                                     d.NOM_NOTES = nom.Note;
-                                    d.NOM_SALE_CRS_DC = nom.Currency.DocCode;
+                                    d.NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode;
                                     d.NOM_FULL_NAME = nom.NameFull ?? nom.Name;
                                     break;
                             }
@@ -444,16 +446,11 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 "Предупреждение.", MessageBoxImage.Warning);
                             return;
                         }
+
                         var prices = ctx.NOM_PRICE.Where(_ => _.NOM_DC == CurrentNomenkl.DocCode);
-                        foreach (var np in prices)
-                        {
-                            ctx.NOM_PRICE.Remove(np);
-                        }
+                        foreach (var np in prices) ctx.NOM_PRICE.Remove(np);
                         var wd27 = ctx.WD_27.Where(_ => _.SKLW_NOMENKL_DC == CurrentNomenkl.DocCode);
-                        foreach (var w in wd27)
-                        {
-                            ctx.WD_27.Remove(w);
-                        }
+                        foreach (var w in wd27) ctx.WD_27.Remove(w);
                         var oldItem = ctx.SD_83.FirstOrDefault(_ => _.DOC_CODE == CurrentNomenkl.DocCode);
                         if (oldItem != null)
                             ctx.SD_83.Remove(oldItem);
@@ -481,7 +478,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         private void NomenklAdd(object obj)
         {
-            var newItem = new Core.EntityViewModel.NomenklManagement.Nomenkl
+            var newItem = new NomenklViewModel
             {
                 DOC_CODE = -1,
                 Name = CurrentNomenklMain.Name,
@@ -510,8 +507,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         {
             var ctx = new MainCardWindowViewModel(Guid.Empty, CurrentCategory)
             {
-                ParentReference = this,
-                
+                ParentReference = this
             };
             // ReSharper disable once UseObjectOrCollectionInitializer
             var form = new NomenklMainCardView { Owner = Application.Current.MainWindow, DataContext = ctx };
@@ -559,7 +555,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             {
                 ParentReference = this,
                 NomenklMain = CurrentNomenklMain,
-                State =CurrentNomenklMain.State
+                State = CurrentNomenklMain.State
             };
             // ReSharper disable once UseObjectOrCollectionInitializer
             var form = new NomenklMainCardView { Owner = Application.Current.MainWindow, DataContext = ctx };
@@ -630,15 +626,9 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                             }
 
                             var prices = ctx.NOM_PRICE.Where(_ => _.NOM_DC == nom.DocCode);
-                            foreach (var np in prices)
-                            {
-                                ctx.NOM_PRICE.Remove(np);
-                            }
+                            foreach (var np in prices) ctx.NOM_PRICE.Remove(np);
                             var wd27 = ctx.WD_27.Where(_ => _.SKLW_NOMENKL_DC == nom.DocCode);
-                            foreach (var w in wd27)
-                            {
-                                ctx.WD_27.Remove(w);
-                            }
+                            foreach (var w in wd27) ctx.WD_27.Remove(w);
                             var oldItem = ctx.SD_83.FirstOrDefault(_ => _.DOC_CODE == nom.DocCode);
                             if (oldItem != null)
                                 ctx.SD_83.Remove(oldItem);
@@ -834,13 +824,13 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         .Where(_ => _.FullName.ToUpper().Contains(SearchText.ToUpper()) ||
                                     _.Name.ToUpper().Contains(SearchText.ToUpper()) ||
                                     _.NomenklNumber.ToUpper().Contains(SearchText.ToUpper()) ||
-                                    _.SD_119 != null && _.SD_119.MC_NAME
+                                    (_.SD_119 != null && _.SD_119.MC_NAME
                                         .ToUpper()
                                         .Contains(
                                             SearchText
-                                                .ToUpper())
+                                                .ToUpper()))
                                     || _.SD_175.ED_IZM_NAME.ToUpper().Contains(SearchText.ToUpper())
-                                    || _.SD_82 != null && _.SD_82.CAT_NAME.ToUpper().Contains(SearchText.ToUpper())
+                                    || (_.SD_82 != null && _.SD_82.CAT_NAME.ToUpper().Contains(SearchText.ToUpper()))
                         )
                         .ToList();
                     foreach (var nom in data)

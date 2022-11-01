@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:viewModel="clr-namespace:Core.ViewModel;assembly=KursDomain"
-                    xmlns:menu="clr-namespace:Core.Menu;assembly=KursDomain">
+                    xmlns:menu1="clr-namespace:KursDomain.Menu;assembly=KursDomain">
     <ControlTemplate x:Key="buttonRefreshCircle" TargetType="{x:Type Button}">
         <ContentControl ToolTip="Обновить данные">
             <Grid>
@@ -155,7 +155,7 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    <ControlTemplate x:Key="buttonSave" TargetType="{x:Type menu:KursButton}">
+    <ControlTemplate x:Key="buttonSave" TargetType="{x:Type menu1:KursButton}">
         <ContentControl ToolTip="Сохранить данные" ToolTipService.ShowOnDisabled="True">
             <Grid Name="gridbuttonAdd" Width="48" Height="48" Margin="0">
                 <Rectangle Name="Rect" Fill="White" Visibility="Hidden" Stretch="Fill" />

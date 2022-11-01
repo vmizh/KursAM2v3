@@ -1,17 +1,17 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Core;
-using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.View.Logistiks.UC;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Logistiks
 {
     public class WarehouseSelectDialogViewModel : RSWindowViewModelBase
     {
-        private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentWarehouse;
+        private KursDomain.Documents.NomenklManagement.Warehouse myCurrentWarehouse;
         private SelectWarehouse myDataUserControl;
 
         public WarehouseSelectDialogViewModel()
@@ -19,7 +19,7 @@ namespace KursAM2.ViewModel.Logistiks
             myDataUserControl = new SelectWarehouse();
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
             WarehouseCollection =
-                new ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse>(MainReferences.Warehouses.Values);
+                new ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse>(MainReferences.Warehouses.Values);
             WindowName = "Выбор склада";
         }
 
@@ -34,15 +34,15 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse> WarehouseCollection { set; get; } =
-            new ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse>();
+        public ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse> WarehouseCollection { set; get; } =
+            new ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse>();
 
         public ICommand SearchExecuteCommand
         {
             get { return new Command(SearchExecute, _ => !string.IsNullOrWhiteSpace(SearchText)); }
         }
 
-        public Core.EntityViewModel.NomenklManagement.Warehouse CurrentWarehouse
+        public KursDomain.Documents.NomenklManagement.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set

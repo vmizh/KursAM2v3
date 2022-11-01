@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
+using KursDomain.IReferences;
+using KursDomain.References;
+using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace Calculates.Materials
 {
@@ -16,7 +16,7 @@ namespace Calculates.Materials
         public DateTime Date { set; get; }
         public Nomenkl Nomenkl { set; get; }
         public decimal Quantity { set; get; }
-        public Currency Currency { set; get; }
+        public ICurrency Currency { set; get; }
         public Warehouse Warehouse { set; get; }
         public decimal? Price { set; get; }
 
@@ -169,6 +169,7 @@ namespace Calculates.Materials
             {
                 Console.WriteLine(ex.Message);
             }
+
             return ret;
         }
     }

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.Systems;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Xpf.Grid;
+using KursDomain.Documents.Systems;
+using KursDomain.Menu;
 using KursRepositories.View;
 
 namespace KursRepositories.ViewModels

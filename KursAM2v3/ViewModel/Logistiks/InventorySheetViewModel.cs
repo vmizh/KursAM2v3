@@ -5,6 +5,7 @@ using Core;
 using Core.ViewModel.Base;
 using Data;
 using Helper;
+using KursDomain.ICommon;
 using Newtonsoft.Json;
 
 namespace KursAM2.ViewModel.Logistiks
@@ -58,7 +59,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse
+        public KursDomain.Documents.NomenklManagement.Warehouse Warehouse
         {
             get => MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC);
             set
@@ -73,7 +74,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public Core.EntityViewModel.NomenklManagement.Warehouse WarehouseIn
+        public KursDomain.Documents.NomenklManagement.Warehouse WarehouseIn
         {
             get => MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC);
             set
@@ -85,7 +86,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public Core.EntityViewModel.NomenklManagement.Warehouse WarehouseOut
+        public KursDomain.Documents.NomenklManagement.Warehouse WarehouseOut
         {
             get => MainReferences.GetWarehouse(Entity.DD_SKLAD_OTPR_DC);
             set

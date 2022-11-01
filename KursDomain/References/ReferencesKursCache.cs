@@ -155,6 +155,22 @@ public class ReferencesKursCache : IReferencesCache
                 NomenklCategories.Add(newItem.DocCode, newItem);
         }
 
+        foreach (var item in Context.SD_119.AsNoTracking().ToList())
+        {
+            var newItem = new NomenklType();
+            newItem.LoadFromEntity(item);
+            if (!NomenklTypes.ContainsKey(newItem.DocCode))
+                NomenklTypes.Add(newItem.DocCode, newItem);
+        }
+
+        foreach (var item in Context.SD_50.AsNoTracking().ToList())
+        {
+            var newItem = new ProductType();
+            newItem.LoadFromEntity(item);
+            if (!ProductTypes.ContainsKey(newItem.DocCode))
+                ProductTypes.Add(newItem.DocCode, newItem);
+        }
+
         foreach (var item in Context.SD_2.AsNoTracking().ToList())
         {
             var newItem = new Employee();
@@ -658,7 +674,7 @@ public class ReferencesKursCache : IReferencesCache
         return CashBoxes.Values.ToList();
     }
 
-    public IBank GetBank(decimal? dc)
+   public IBank GetBank(decimal? dc)
     {
         if (dc == null) return null;
         if (Banks.ContainsKey(dc.Value))
@@ -692,6 +708,50 @@ public class ReferencesKursCache : IReferencesCache
     public IEnumerable<IBankAccount> GetBankAccountAll()
     {
         return BankAccounts.Values.ToList();
+    }
+
+    #endregion
+
+    #region Тип продукции
+
+    public IProductType GetProductType(decimal? dc)
+    {
+        if (dc == null) return null;
+        if (ProductTypes.ContainsKey(dc.Value))
+            return ProductTypes[dc.Value];
+        var data = Context.SD_50.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+        if (data == null) return null;
+        var newItem = new ProductType();
+        newItem.LoadFromEntity(data);
+        ProductTypes.Add(data.DOC_CODE, newItem);
+        return ProductTypes[data.DOC_CODE];
+    }
+
+    public IEnumerable<IProductType> GetProductTypeAll()
+    {
+        return ProductTypes.Values.ToList();
+    }
+
+    #endregion
+
+    #region Тип товара
+
+    public INomenklType GetNomenklType(decimal? dc)
+    {
+        if (dc == null) return null;
+        if (NomenklTypes.ContainsKey(dc.Value))
+            return NomenklTypes[dc.Value];
+        var data = Context.SD_119.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+        if (data == null) return null;
+        var newItem = new NomenklType();
+        newItem.LoadFromEntity(data);
+        NomenklTypes.Add(data.DOC_CODE, newItem);
+        return NomenklTypes[data.DOC_CODE];
+    }
+
+    public IEnumerable<INomenklType> GetNomenklTypeAll()
+    {
+        return NomenklTypes.Values.ToList();
     }
 
     #endregion
@@ -751,6 +811,8 @@ public class ReferencesKursCache : IReferencesCache
     private readonly Dictionary<Guid, ICountry> Countries = new Dictionary<Guid, ICountry>();
     private readonly Dictionary<Guid, IProject> Projects = new Dictionary<Guid, IProject>();
     private readonly Dictionary<decimal, IContractType> ContractTypes = new Dictionary<decimal, IContractType>();
+    private readonly Dictionary<decimal,INomenklType> NomenklTypes = new Dictionary<decimal, INomenklType>();
+    private readonly Dictionary<decimal,IProductType> ProductTypes = new Dictionary<decimal, IProductType>();
 
     #endregion
 }

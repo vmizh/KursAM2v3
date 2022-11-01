@@ -122,12 +122,14 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEqualityComparer<
     }
 
     public Guid Id { get; set; }
+    public string NalogName { get; set; }
+    public string NalogCode { get; set; }
 }
 
 public class CurrencyViewModel : ICurrency, IDocCode, IName, INotifyPropertyChanged,
     IEqualityComparer<CurrencyViewModel>
 {
-    private readonly SD_301 Entity;
+    public readonly SD_301 Entity;
 
     public CurrencyViewModel(SD_301 entity)
     {
@@ -141,6 +143,28 @@ public class CurrencyViewModel : ICurrency, IDocCode, IName, INotifyPropertyChan
         {
             if (Entity.CRS_CODE == value) return;
             Entity.CRS_CODE = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public Guid Id
+    {
+        get => Entity.Id;
+        set
+        {
+            if (Entity.Id == value) return;
+            Entity.Id = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool IsMain
+    {
+        get => Entity.CRS_MAIN_CURRENCY == 1;
+        set
+        {
+            if ((Entity.CRS_MAIN_CURRENCY == 1) == value) return;
+            Entity.CRS_MAIN_CURRENCY = (short)(value ? 1 : 0);
             OnPropertyChanged();
         }
     }
@@ -209,13 +233,16 @@ public class CurrencyViewModel : ICurrency, IDocCode, IName, INotifyPropertyChan
         set { }
     }
 
-    public string Description => $"{FullName}";
-    
+    public string Description => $"Валюта: {Name}({FullName})";
+    public RowStatus State { get; set; } =  RowStatus.NotEdited;
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
+        if (State != RowStatus.NewRow)
+            State = RowStatus.Edited;
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

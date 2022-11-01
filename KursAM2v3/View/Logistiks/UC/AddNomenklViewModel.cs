@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.CodeView;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.View.Logistiks.UC
 {
@@ -106,7 +109,7 @@ namespace KursAM2.View.Logistiks.UC
         {
             NomenklItem.Clear();
             foreach (var item in NomenklItemCollection)
-                if (item.NOM_CATEG_DC == CurrentGroup.DocCode)
+                if (((IDocCode) item.Category).DocCode == CurrentGroup.DocCode)
                     NomenklItem.Add(item);
         }
 
@@ -131,7 +134,7 @@ namespace KursAM2.View.Logistiks.UC
                     {
                         NomenklItemCollection.AddRange(currentCrs == null
                             ? MainReferences.ALLNomenkls.Values
-                            : MainReferences.ALLNomenkls.Values.Where(_ => _.Currency.DocCode == currentCrs.DocCode));
+                            : MainReferences.ALLNomenkls.Values.Where(_ => ((IDocCode)_.Currency).DocCode == currentCrs.DocCode));
                     }
                     else
                     {
@@ -177,13 +180,13 @@ namespace KursAM2.View.Logistiks.UC
                     lasts.Add(n);
             foreach (var node in lasts)
             {
-                node.NomenklCount = MainReferences.ALLNomenkls.Values.Count(_ => _.NOM_CATEG_DC == node.DocCode);
+                node.NomenklCount = MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Category).DocCode == node.DocCode);
                 var prevn = node;
                 var n = NomenklGroup.FirstOrDefault(_ => _.DocCode == node.ParentDC);
                 if (n == null) continue;
                 while (n != null)
                 {
-                    var c = MainReferences.ALLNomenkls.Values.Count(_ => _.NOM_CATEG_DC == n.DocCode);
+                    var c = MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Category).DocCode  == n.DocCode);
                     n.NomenklCount = n.NomenklCount + prevn.NomenklCount + c;
                     prevn = n;
                     n = NomenklGroup.FirstOrDefault(_ => _.DocCode == n.ParentDC);
@@ -229,14 +232,13 @@ namespace KursAM2.View.Logistiks.UC
             foreach (var n in MainReferences.ALLNomenkls.Values)
             {
                 var srch = SearchText.ToUpper();
-                if (n.NOM_NAME.ToUpper().Contains(srch) || (n.NOM_FULL_NAME?.ToUpper().Contains(srch) ?? false)
-                                                        || (n.NOM_POLNOE_IMIA?.ToUpper().Contains(srch) ?? false)
-                                                        || n.NOM_NOMENKL.ToUpper().Contains(srch)
-                                                        || (n.NOM_NOTES?.ToUpper().Contains(srch) ?? false))
+                if (n.Name.ToUpper().Contains(srch) || (n.FullName?.ToUpper().Contains(srch) ?? false)
+                                                        || n.NomenklNumber.ToUpper().Contains(srch)
+                                                        || (n.Notes?.ToUpper().Contains(srch) ?? false))
                 {
                     if (currentCrs != null)
                     {
-                        if (n.Currency.DocCode == currentCrs.DocCode)
+                        if (((IDocCode)n.Currency).DocCode == currentCrs.DocCode)
                             NomenklItem.Add(n);
                     }
                     else

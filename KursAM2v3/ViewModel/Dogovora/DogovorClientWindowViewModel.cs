@@ -9,9 +9,6 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Dogovora;
-using Core.EntityViewModel.Invoices;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -24,6 +21,11 @@ using KursAM2.Managers;
 using KursAM2.Repositories.DogovorsRepositories;
 using KursAM2.View.Dogovors;
 using KursAM2.View.Helper;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Dogovora;
+using KursDomain.Documents.Invoices;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Dogovora
 {
@@ -339,7 +341,7 @@ namespace KursAM2.ViewModel.Dogovora
                     Quantity = 1,
                     Price = 0,
                     IsCalcBack = Document.IsCalcBack,
-                    NDSPercent = n.NDSPercent ?? defaultNDS,
+                    NDSPercent = n.DefaultNDSPercent ?? defaultNDS,
                     Parent = Document,
                     State = RowStatus.NewRow,
                     Facts = new ObservableCollection<DogovorClientFactViewModel>()
@@ -381,7 +383,7 @@ namespace KursAM2.ViewModel.Dogovora
                         Quantity = 1,
                         Price = 0,
                         IsCalcBack = Document.IsCalcBack,
-                        NDSPercent = n.NDSPercent ?? defaultNDS,
+                        NDSPercent = n.DefaultNDSPercent ?? defaultNDS,
                         Parent = Document,
                         State = RowStatus.NewRow,
                         Facts = new ObservableCollection<DogovorClientFactViewModel>()

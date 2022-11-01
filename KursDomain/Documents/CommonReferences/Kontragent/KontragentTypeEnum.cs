@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Core.EntityViewModel.CommonReferences.Kontragent
+namespace KursDomain.Documents.CommonReferences.Kontragent;
+
+public enum KontragentTypeEnum
 {
-    public enum KontragentTypeEnum
-    {
-        [Display(Name = "Неизвестно")] Unknown,
-        [Display(Name = "Контрагент")] Kontragent,
-        [Display(Name = "Банк")] Bank,
-        [Display(Name = "Касса")] Cash,
-        [Display(Name = "Склад")] Store,
-        [Display(Name = "Сотрудник")] Employee
-    }
+    [Display(Name = "Неизвестно")] Unknown,
+    [Display(Name = "Контрагент")] Kontragent,
+    [Display(Name = "Банк")] Bank,
+    [Display(Name = "Касса")] Cash,
+    [Display(Name = "Склад")] Store,
+    [Display(Name = "Сотрудник")] Employee
 }

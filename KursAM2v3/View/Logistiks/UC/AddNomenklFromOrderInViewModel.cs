@@ -4,16 +4,15 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.Menu;
+using KursDomain.References;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.View.Logistiks.UC
 {

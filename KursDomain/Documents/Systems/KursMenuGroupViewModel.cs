@@ -1,87 +1,81 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Core.ViewModel.Base;
+﻿using Core.ViewModel.Base;
 using Data;
 
-namespace KursRepositories.ViewModels
+namespace KursDomain.Documents.Systems;
+
+internal class KursMenuGroupViewModel : RSViewModelBase
 {
-    class KursMenuGroupViewModel : RSViewModelBase
+    public KursMenuGroup Entity { get; set; }
+
+    public new int Id
     {
-        public KursMenuGroup Entity { get; set; }
-
-        public new int Id
+        get => Entity.Id;
+        set
         {
-            get => Entity.Id;
-            set
-            {
-                if(Entity.Id == value) 
-                    return;
-                Entity.Id = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.Id == value)
+                return;
+            Entity.Id = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public override string Name
+    public override string Name
+    {
+        get => Entity.Name;
+        set
         {
-            get => Entity.Name;
-            set
-            {
-                if(Entity.Name == value)
-                    return;
-                Entity.Name = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.Name == value)
+                return;
+            Entity.Name = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public override string Note
+    public override string Note
+    {
+        get => Entity.Note;
+        set
         {
-            get => Entity.Note;
-            set
-            {
-                if(Entity.Note == value)
-                    return;
-                Entity.Note = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.Note == value)
+                return;
+            Entity.Note = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public int OrderBy
+    public int OrderBy
+    {
+        get => Entity.OrderBy;
+        set
         {
-            get => Entity.OrderBy;
-            set
-            {
-                if(Entity.OrderBy == value)
-                    return;
-                Entity.OrderBy = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.OrderBy == value)
+                return;
+            Entity.OrderBy = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public byte[] Picture
+    public byte[] Picture
+    {
+        get => Entity.Picture;
+        set
         {
-            get => Entity.Picture;
-            set
-            {
-                if (Entity.Picture == value)
-                    return;
-                Entity.Picture = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.Picture == value)
+                return;
+            Entity.Picture = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public new int? ParentId
+    public new int? ParentId
+    {
+        get => Entity.ParentId;
+        set
         {
-            get => Entity.ParentId;
-            set
-            {
-                if(Entity.ParentId == value)
-                    return;
-                Entity.ParentId = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.ParentId == value)
+                return;
+            Entity.ParentId = value;
+            RaisePropertyChanged();
         }
     }
 }

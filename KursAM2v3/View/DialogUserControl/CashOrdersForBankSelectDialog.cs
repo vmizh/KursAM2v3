@@ -2,19 +2,25 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
+using KursDomain.Menu;
 
 namespace KursAM2.View.DialogUserControl
 {
     public sealed class CashOrdersForBankSelectDialog : RSWindowViewModelBase, IDataUserControl
     {
-        private CashOrdersForBankSelectDialogUC myDataUserControl;
-        private readonly SelectCashOrdersDelegate selectCashOrders;
         private readonly BankAccount bankAcc;
+        private readonly SelectCashOrdersDelegate selectCashOrders;
+
+
+        private CashOrder myCurrentDocument;
+        private CashOrdersForBankSelectDialogUC myDataUserControl;
+
+        private DateTime myDateEnd;
+
+        private DateTime myDateStart;
 
         public CashOrdersForBankSelectDialog(BankAccount bankAcc, SelectCashOrdersDelegate selectMethod)
         {
@@ -27,8 +33,7 @@ namespace KursAM2.View.DialogUserControl
             WindowName = "Выбор кассовых ордеров для банка";
             RightMenuBar = MenuGenerator.RefreshOnlyRightBar(this);
         }
-        
-        private DateTime myDateStart;
+
         public DateTime DateStart
         {
             get => myDateStart;
@@ -39,8 +44,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
-        
-        private DateTime myDateEnd;
+
         public DateTime DateEnd
         {
             get => myDateEnd;
@@ -57,8 +61,6 @@ namespace KursAM2.View.DialogUserControl
 
         public ObservableCollection<CashOrder> SelectedDocuments { set; get; } = new ObservableCollection<CashOrder>();
 
-
-        private CashOrder myCurrentDocument;
         public CashOrder CurrentDocument
         {
             get => myCurrentDocument;
@@ -81,6 +83,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public DependencyObject LayoutControl { get; }
 
         public override void RefreshData(object obj)

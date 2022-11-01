@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.Invoices;
 using Data;
 using Data.Repository;
 using KursAM2.ViewModel.Finance.Invoices.Base;
+using KursDomain.Documents.Invoices;
 
 namespace KursAM2.Repositories.InvoicesRepositories
 {

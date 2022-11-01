@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers.Invoices;
+using KursDomain.Documents.Invoices;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Logistiks
 {

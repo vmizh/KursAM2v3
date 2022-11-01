@@ -9,7 +9,6 @@ using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -21,6 +20,10 @@ using KursAM2.View.Management;
 using KursAM2.View.Management.ProfitAndLossesControls;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Logistiks;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Management;
+using KursDomain.Menu;
+using KursDomain.References;
 using static System.Math;
 
 namespace KursAM2.ViewModel.Management

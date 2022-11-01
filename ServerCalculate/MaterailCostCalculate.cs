@@ -5,10 +5,8 @@ using System.Linq;
 using System.Text;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.Invoices.EntityViewModel;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.References;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace ServerCalculate
 {
@@ -24,7 +22,6 @@ namespace ServerCalculate
                     InitialCatalog = dbase, //"AlfaMedia",
                     UserID = usr, //"sa",
                     Password = pwd //",juk.,bnyfc"
-
                 }.ConnectionString;
                 GlobalOptions.SqlConnectionString = sqlConnectionString;
                 //if (MainReferences != null && MainReferences.IsReferenceLoadComplete)
@@ -46,6 +43,7 @@ namespace ServerCalculate
                     GlobalOptions.SystemProfile.OwnerKontragent =
                         new Kontragent(ownKontr);
                 }
+
                 var mainCrsDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
                     _ => _.SECTION == "CURRENCY" && _.ITEM == "MAIN");
                 if (mainCrsDC != null)
@@ -53,8 +51,11 @@ namespace ServerCalculate
                     var DC = Convert.ToDecimal(mainCrsDC.ITEM_VALUE);
                     var mainCrs =
                         GlobalOptions.GetEntities().SD_301.Single(_ => _.DOC_CODE == DC);
-                    GlobalOptions.SystemProfile.MainCurrency = new Currency(mainCrs);
+                    var crs = new Currency();
+                    crs.LoadFromEntity(mainCrs);
+                    GlobalOptions.SystemProfile.MainCurrency =crs;
                 }
+
                 var nationalCrsDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
                     _ => _.SECTION == "CURRENCY" && _.ITEM == "ОСНОВНАЯ_В_ГОСУДАРСТВЕ");
                 if (nationalCrsDC != null)
@@ -62,9 +63,11 @@ namespace ServerCalculate
                     var DC = Convert.ToDecimal(nationalCrsDC.ITEM_VALUE);
                     var nationalCrs =
                         GlobalOptions.GetEntities().SD_301.Single(_ => _.DOC_CODE == DC);
-                    GlobalOptions.SystemProfile.NationalCurrency =
-                        new Currency(nationalCrs);
+                    var crs = new Currency();
+                    crs.LoadFromEntity(nationalCrs);
+                    GlobalOptions.SystemProfile.NationalCurrency = crs;
                 }
+
                 // ReSharper disable once PossibleNullReferenceException
                 var nomCalcType = GlobalOptions.SystemProfile.Profile.FirstOrDefault(
                         _ => _.SECTION == "NOMENKL_CALC" && _.ITEM == "TYPE")
@@ -78,12 +81,11 @@ namespace ServerCalculate
                         GlobalOptions.SystemProfile.NomenklCalcType = NomenklCalcType.NakladSeparately;
                         break;
                 }
+
                 MainReferences.Reset();
                 while (!MainReferences.IsReferenceLoadComplete)
                 {
                 }
-               
-
             }
             catch (Exception ex)
             {
@@ -106,7 +108,7 @@ namespace ServerCalculate
                 //nomDCs.Clear();
                 //nomDCs.Add(10830000041);
                 var noms = nomDCs.Select(MainReferences.GetNomenkl).Where(newNom => !newNom.IsUsluga).ToList();
-                Console.WriteLine("Кол-во = {0}",noms.Count);
+                Console.WriteLine("Кол-во = {0}", noms.Count);
                 if (!noms.Any()) return;
                 foreach (var op in noms.Select(_ => _.DocCode))
                 {

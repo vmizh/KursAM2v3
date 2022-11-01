@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using Data;
 using KursDomain.Annotations;
 using KursDomain.ICommon;
-using KursDomain.IDocuments;
 using KursDomain.IDocuments.Finance;
 using KursDomain.IDocuments.WarehouseOrder;
 using KursDomain.IReferences;
@@ -20,23 +19,23 @@ namespace KursDomain.Documents.Warehouse;
 /// </summary>
 [DebuggerDisplay(
     "{DocCode,nq} {OrderNumber,nq} Отправитель: {SenderKontragent,nq} {SenderWarehouse,nq} от {OrderDate.ToShortDateString(),nq}")]
-public class IncomingWarehouseOrderViewModel : IDocCode, IDescription, IIncomingWarehouseOrder, IEqualityComparer<IDocCode>,
+public class IncomingWarehouseOrderViewModel : IDocCode, IDescription, IIncomingWarehouseOrder,
+    IEqualityComparer<IDocCode>,
     INotifyPropertyChanged, IDocumentState
 {
+    private readonly SD_24 Entity;
     private readonly IReferencesCache myReferenceCache;
     private IInvoiceProvider _InvoiceProvider;
     private SenderType _SenderType;
-    private readonly SD_24 Entity;
 
     public IncomingWarehouseOrderViewModel(SD_24 entity, IReferencesCache refCache)
     {
-        
         Entity = entity;
         myReferenceCache = refCache;
         if (Entity.TD_24 == null || Entity.TD_24.Count == 0) return;
         foreach (var row in Entity.TD_24)
         {
-            var newRow = new IncomingWarehouseOrderRowViewModel(row,myReferenceCache);
+            var newRow = new IncomingWarehouseOrderRowViewModel(row, myReferenceCache);
             newRow.SetHeader(Entity);
             ((ObservableCollection<IIncomingWarehouseOrderRow>)Rows).Add(newRow);
         }

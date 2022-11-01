@@ -5,11 +5,13 @@ using System.Linq;
 using System.Windows.Controls;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.Menu;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.Managers;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance.AccruedAmount
 {

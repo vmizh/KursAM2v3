@@ -1,11 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using KursAM2.View.DialogUserControl;
+using KursDomain.Documents.Employee;
 
 namespace KursAM2.ViewModel.Reference
 {

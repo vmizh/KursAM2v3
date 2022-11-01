@@ -3,11 +3,12 @@ using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Core.ViewModel.Base;
+using KursDomain.ICommon;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace KursAM2.View.DialogUserControl.Standart
 {
-    public sealed class TableSearchWindowViewMovel<T> : RSWindowViewModelBase where T : RSViewModelBase
+    public sealed class TableSearchWindowViewMovel<T> : RSWindowViewModelBase
     {
         public delegate IEnumerable<T> GetData(string searchText);
 
@@ -45,7 +46,7 @@ namespace KursAM2.View.DialogUserControl.Standart
         {
             set
             {
-                if (myCurrentItem == value) return;
+                if (((IDocCode)myCurrentItem)?.DocCode == ((IDocCode)value)?.DocCode) return;
                 myCurrentItem = value;
                 RaisePropertyChanged();
             }

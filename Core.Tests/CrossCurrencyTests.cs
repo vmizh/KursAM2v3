@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.EntityViewModel.CommonReferences;
+using KursDomain.Documents.CommonReferences;
 using NUnit.Framework;
 
 namespace Core.Tests

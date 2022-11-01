@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.IReferences.Nomenkl;
 
 namespace KursDomain.References;
 

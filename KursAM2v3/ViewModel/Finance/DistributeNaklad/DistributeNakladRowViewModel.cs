@@ -2,12 +2,13 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Core;
-using Core.EntityViewModel.Invoices;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Data;
 using JetBrains.Annotations;
+using KursDomain.Documents.Invoices;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {

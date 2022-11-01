@@ -8,13 +8,13 @@ using System.Linq;
 using System.Windows.Controls;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Dogovora;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.View.Dogovors;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.References;
+using ContractType = KursDomain.Documents.Dogovora.ContractType;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.Dogovora
 {
@@ -204,7 +204,7 @@ namespace KursAM2.ViewModel.Dogovora
 
             [Display(AutoGenerateField = true, Name = "Ед.изм.")]
             [ReadOnly(true)]
-            public Unit Unit => Nomenkl?.Unit;
+            public Unit Unit => (Unit)Nomenkl?.Unit;
 
             [Display(AutoGenerateField = true, Name = "Кол-во")]
             [ReadOnly(true)]

@@ -7,10 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Vzaimozachet;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -23,7 +20,11 @@ using KursAM2.Managers.Invoices;
 using KursAM2.View.Finance;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.Vzaimozachet;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 using static KursAM2.ViewModel.Finance.MutualAccountingDebitorCreditors;
 
 namespace KursAM2.ViewModel.Finance

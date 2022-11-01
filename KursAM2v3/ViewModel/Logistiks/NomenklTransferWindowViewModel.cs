@@ -8,8 +8,6 @@ using System.Windows.Input;
 using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -18,6 +16,11 @@ using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Reference;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -26,7 +29,7 @@ namespace KursAM2.ViewModel.Logistiks
         public readonly List<NomenklTransferRowViewModelExt> DeletedRows = new List<NomenklTransferRowViewModelExt>();
         private readonly DbContext myDBContext = GlobalOptions.GetEntities();
         private NomenklTransferRowViewModelExt myCurrentRow;
-        private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentWarehouse;
+        private KursDomain.Documents.NomenklManagement.Warehouse myCurrentWarehouse;
 
         // public bool IsCannotChangeStore => Document.State == RowStatus.NewRow || Document.SchetFacturaBase == null;
         private bool myIsCanChangeStore;
@@ -76,8 +79,8 @@ namespace KursAM2.ViewModel.Logistiks
         public override bool IsDocDeleteAllow => true;
         public NomenklTransferViewModelExt Document { set; get; }
 
-        public ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse> StoreCollection { set; get; } =
-            new ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse>();
+        public ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse> StoreCollection { set; get; } =
+            new ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse>();
 
         //private IDialogService DialogService => GetService<IDialogService>();
         //private IMessageBoxService MessageBoxService => GetService<IMessageBoxService>();
@@ -149,7 +152,7 @@ namespace KursAM2.ViewModel.Logistiks
         public bool IsRowReadOnly => CurrentRow != null && CurrentRow.IsAccepted;
 
         //public bool IsCannotChangeStore => Document.;
-        public Core.EntityViewModel.NomenklManagement.Warehouse CurrentWarehouse
+        public KursDomain.Documents.NomenklManagement.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set
@@ -207,7 +210,7 @@ namespace KursAM2.ViewModel.Logistiks
         private void LoadInvoiceInfo(decimal nomDC, DateTime date)
         {
             ProviderRows.Clear();
-            var d = Nomenkl.GetLastDateNomenklZero(nomDC, date);
+            var d = NomenklViewModel.GetLastDateNomenklZero(nomDC, date);
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var data =
@@ -268,7 +271,7 @@ namespace KursAM2.ViewModel.Logistiks
                             Price = (decimal)dd.DDT_TAX_CRS_CENA,
                             PriceWithNaklad = Math.Round((decimal)dd.DDT_TAX_CRS_CENA, 2),
                             Currency =
-                                MainReferences.GetNomenkl(nomDC).Currency.Name,
+                                ((IName)MainReferences.GetNomenkl(nomDC).Currency).Name,
                             UnitNaklad = 0,
                             SummaIn = Math.Round((decimal)dd.DDT_TAX_CRS_CENA * dd.DDT_KOL_PRIHOD, 2),
                             SummaNaklad = 0,
@@ -293,7 +296,7 @@ namespace KursAM2.ViewModel.Logistiks
                         Price = Math.Round(dd.PriceIn, 2),
                         PriceWithNaklad = Math.Round(dd.PriceIn + (dd.NakladEdSumma ?? 0), 2),
                         Currency =
-                            MainReferences.Currencies[MainReferences.GetNomenkl(dd.NomenklOutDC).Currency.DocCode].Name,
+                            MainReferences.Currencies[((IDocCode)MainReferences.GetNomenkl(dd.NomenklOutDC).Currency).DocCode].Name,
                         UnitNaklad = Math.Round(dd.NakladNewEdSumma ?? 0, 2),
                         SummaIn = Math.Round(dd.PriceIn * dd.Quantity, 2),
                         SummaNaklad = Math.Round((dd.NakladNewEdSumma ?? 0) * dd.Quantity, 2),
@@ -356,7 +359,7 @@ namespace KursAM2.ViewModel.Logistiks
             var dlg = new SelectDialogView { DataContext = ctxTransf };
             dlg.ShowDialog();
             if (!ctxTransf.DialogResult) return;
-            if (ctxTransf.CurrentObject is Core.EntityViewModel.NomenklManagement.Warehouse skl)
+            if (ctxTransf.CurrentObject is KursDomain.Documents.NomenklManagement.Warehouse skl)
                 Document.Warehouse = skl;
         }
 
@@ -366,7 +369,7 @@ namespace KursAM2.ViewModel.Logistiks
             var dlg = new SelectDialogView { DataContext = ctxTransf };
             dlg.ShowDialog();
             if (!ctxTransf.DialogResult) return;
-            if (ctxTransf.CurrentObject is Core.EntityViewModel.NomenklManagement.Warehouse skl)
+            if (ctxTransf.CurrentObject is KursDomain.Documents.NomenklManagement.Warehouse skl)
                 CurrentRow.Warehouse = skl;
         }
 
@@ -487,7 +490,7 @@ namespace KursAM2.ViewModel.Logistiks
                     var dlg = new SelectDialogView { DataContext = ctxNom };
                     dlg.ShowDialog();
                     if (!ctxNom.DialogResult) return;
-                    CurrentRow.NomenklIn = ctxNom.CurrentNomenkl;
+                    CurrentRow.NomenklIn = MainReferences.GetNomenkl(ctxNom.CurrentNomenkl.DocCode);
                     var firstDate = Document.Date.AddDays(-10);
                     var rates =
                         ctx.CURRENCY_RATES_CB.Where(
@@ -503,12 +506,12 @@ namespace KursAM2.ViewModel.Logistiks
                     }));
                     var crsRateOut =
                         rates.SingleOrDefault(
-                                _ => _.CRS_DC == CurrentRow.CurrencyOut?.DocCode && _.RATE_DATE == Document.Date)
+                                _ => _.CRS_DC == ((IDocCode)CurrentRow.CurrencyOut)?.DocCode && _.RATE_DATE == Document.Date)
                             ?.RATE ??
                         -1;
                     var crsRateIn =
                         rates.SingleOrDefault(
-                                _ => _.CRS_DC == CurrentRow.CurrencyIn?.DocCode && _.RATE_DATE == Document.Date)
+                                _ => _.CRS_DC == ((IDocCode)CurrentRow.CurrencyIn)?.DocCode && _.RATE_DATE == Document.Date)
                             ?.RATE ??
                         -1;
                     if (crsRateIn != 0)
@@ -532,7 +535,7 @@ namespace KursAM2.ViewModel.Logistiks
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     foreach (var c in ctx.SD_27)
-                        StoreCollection.Add(new Core.EntityViewModel.NomenklManagement.Warehouse(c));
+                        StoreCollection.Add(new KursDomain.Documents.NomenklManagement.Warehouse(c));
                 }
             }
             catch (Exception ex)
@@ -638,12 +641,12 @@ namespace KursAM2.ViewModel.Logistiks
                         nr.NomenklIn = MainReferences.GetNomenkl(d.First().DOC_CODE);
                         var crsRateOut =
                             rates.SingleOrDefault(
-                                    _ => _.CRS_DC == nr.CurrencyOut?.DocCode && _.RATE_DATE == Document.Date)
+                                    _ => _.CRS_DC == ((IDocCode)nr.CurrencyOut)?.DocCode && _.RATE_DATE == Document.Date)
                                 ?.RATE ??
                             -1;
                         var crsRateIn =
                             rates.SingleOrDefault(
-                                    _ => _.CRS_DC == nr.CurrencyIn?.DocCode && _.RATE_DATE == Document.Date)
+                                    _ => _.CRS_DC == ((IDocCode)nr.CurrencyIn)?.DocCode && _.RATE_DATE == Document.Date)
                                 ?.RATE ??
                             -1;
                         if (crsRateIn != 0)

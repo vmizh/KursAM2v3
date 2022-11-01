@@ -6,14 +6,18 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.XtraEditors.DXErrorProvider;
 using KursAM2.View.Base;
 using KursAM2.View.KursReferences;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
+using NomenklMain = Data.NomenklMain;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
@@ -139,7 +143,12 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 foreach (var c in ctx.SD_82.ToList())
                     NomenklCategoryCollection.Add(new NomenklGroup(c));
                 foreach (var c in ctx.SD_175.ToList())
-                    UnitCollection.Add(new Unit(c));
+                {
+                    var newUnit = new Unit();
+                    newUnit.LoadFromEntity(c);
+                    UnitCollection.Add(newUnit);
+                }
+
                 foreach (var c in ctx.SD_50.ToList())
                     NomenklProductCollection.Add(new NomenklProductKind(c));
             }
@@ -292,7 +301,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         RaisePropertyChanged(nameof(IsCanSaveData));
                         ParentReference?.LoadNomMainForCategory(null);
                         var dcs = new List<decimal>(MainReferences.ALLNomenkls.Values
-                            .Where(_ => _.MainId == NomenklMain.Id).Select(_ => _.DOC_CODE));
+                            .Where(_ => _.MainId == NomenklMain.Id).Select(_ => _.DocCode));
                         foreach (var n in dcs) MainReferences.LoadNomenkl(n);
                     }
                     catch (Exception ex)

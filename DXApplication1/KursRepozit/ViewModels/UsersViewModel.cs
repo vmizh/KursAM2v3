@@ -10,6 +10,7 @@ using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.Native;
 using KursAM2.View.Base;
+using KursDomain.ICommon;
 using KursRepozit.Auxiliary;
 using KursRepozit.Repositories;
 using KursRepozit.Views;

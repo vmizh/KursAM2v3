@@ -4,11 +4,13 @@ using System.Data.Entity;
 using System.Linq;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
 using KursDomain.Documents.Cash;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {

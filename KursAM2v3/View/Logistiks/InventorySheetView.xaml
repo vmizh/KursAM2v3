@@ -9,6 +9,7 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=KursDomain"
+    xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
     Title="Инвентаризационная ведомость" Height="350" Width="525">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
@@ -41,7 +42,7 @@
                                           EditValue="{Binding Document.State, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <dxmvvm:Interaction.Behaviors>
                                 <dxmvvm:EnumItemsSourceBehavior
-                                    EnumType="{x:Type base:RowStatus}" />
+                                    EnumType="{x:Type iCommon:RowStatus}" />
                             </dxmvvm:Interaction.Behaviors>
                         </dxe:ComboBoxEdit>
                     </StackPanel>

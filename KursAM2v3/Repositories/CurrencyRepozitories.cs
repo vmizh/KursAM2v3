@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Core.EntityViewModel.CommonReferences;
-using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
+using KursDomain.References;
 
 namespace KursAM2.Repositories
 {
     public interface ICurrencyRepozitories
     {
-        List<CurrencyRef> GetAllCurrencies();
+        List<CurrencyViewModel> GetAllCurrencies();
     }
 
-    public class CurrencyRepozitories : GenericKursDBRepository<SD_301>, ICurrencyRepozitories 
+    public class CurrencyRepozitories : GenericKursDBRepository<SD_301>, ICurrencyRepozitories
     {
         public UnitOfWork<ALFAMEDIAEntities> UnitOfWork;
+
         public CurrencyRepozitories(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {
             UnitOfWork = (UnitOfWork<ALFAMEDIAEntities>)unitOfWork;
@@ -24,12 +24,9 @@ namespace KursAM2.Repositories
         {
         }
 
-        public List<CurrencyRef> GetAllCurrencies()
+        public List<CurrencyViewModel> GetAllCurrencies()
         {
-            return Context.SD_301.ToList().Select(c => new CurrencyRef(c)
-            {
-                myState = RowStatus.NotEdited
-            }).ToList();
+            return Context.SD_301.ToList().Select(c => new CurrencyViewModel(c)).ToList();
         }
     }
 }

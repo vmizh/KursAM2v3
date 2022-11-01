@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Invoices;
-using Core.Invoices.EntityViewModel;
 using Data;
 using Data.Repository;
 using KursAM2.ViewModel.Finance.Invoices.Base;
+using KursDomain.Documents.Invoices;
+using KursDomain.References;
 
 namespace KursAM2.Repositories.InvoicesRepositories
 {
@@ -29,7 +28,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
         List<InvoiceProviderShort> GetNakladInvoices(DateTime? dateStart,
             DateTime? dateEnd);
 
-      
+
         InvoiceProviderRowShort GetInvoiceRow(Guid id);
 
         InvoiceProviderRowCurrencyConvertViewModel GetTransferRow(Guid id);
@@ -143,7 +142,8 @@ namespace KursAM2.Repositories.InvoicesRepositories
             var data = Context.InvoicePostQuery.Where(_ => _.Date >= dateStart && _.Date <= dateEnd)
                 .OrderByDescending(_ => _.Date).ToList();
             return data.Select(_ => _.DocCode).Distinct()
-                .Select(dc => new InvoiceProviderBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceProvider>().ToList();
+                .Select(dc => new InvoiceProviderBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceProvider>()
+                .ToList();
         }
 
         public List<InvoiceProviderShort> GetAllForNakladDistribute(Currency crs, DateTime? dateStart,
@@ -270,7 +270,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 data = Context.SD_26
                     .Where(_ => _.SF_ACCEPTED == 1 && _.IsInvoiceNakald == true
                                                    && (_.NakladDistributedSumma ?? 0) < _.SF_KONTR_CRS_SUMMA
-                                                   )
+                    )
                     .ToList();
 
             if (dateStart == null && dateEnd != null)

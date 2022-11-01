@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
+using KursDomain.Documents.Systems;
 
 namespace KursAM2.View.Helper
 {

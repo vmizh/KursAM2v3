@@ -3,11 +3,11 @@ using System.Linq;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel;
-using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
 using DevExpress.Xpf.LayoutControl;
 using KursAM2.View;
 using KursAM2.ViewModel.StartLogin;
+using KursDomain.Documents.Systems;
 
 namespace KursAM2.ViewModel
 {

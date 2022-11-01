@@ -1,14 +1,13 @@
 using System;
 using System.Collections.ObjectModel;
-using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
-using Core.Helper;
 using Core.ViewModel.Base;
 using FinanceAnalitic;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Management;
+using KursDomain.References;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
+using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
+using SDRState = KursDomain.Documents.CommonReferences.SDRState;
 
 namespace KursAM2.ViewModel.Management
 {
@@ -17,6 +16,15 @@ namespace KursAM2.ViewModel.Management
         public DocumentType DocTypeCode { set; get; }
         public string KontragentName { get; set; }
         public decimal? AktZachetResult { set; get; }
+
+        public SDRSchet SDRSchet { set; get; }
+        public SDRState SDRState { set; get; }
+        public string AktZachet { set; get; }
+
+        public ObservableCollection<VzaimozachetRow> VzaimozachetInfo { set; get; } =
+            new ObservableCollection<VzaimozachetRow>();
+
+        public decimal? DocumentDC { set; get; }
         public decimal ProfitGBP { get; set; }
         public decimal LossGBP { get; set; }
         public decimal ResultGBP { get; set; }
@@ -26,13 +34,6 @@ namespace KursAM2.ViewModel.Management
         public decimal ProfitSEK { get; set; }
         public decimal LossSEK { get; set; }
         public decimal ResultSEK { get; set; }
-       
-        public SDRSchet SDRSchet { set; get; }
-        public SDRState SDRState { set; get; }
-        public string AktZachet { set; get; }
-
-        public ObservableCollection<VzaimozachetRow> VzaimozachetInfo { set; get; } =
-            new ObservableCollection<VzaimozachetRow>();
 
         public TypeProfitAndLossCalc CalcType { get; set; }
         public Guid GroupId { set; get; }
@@ -62,7 +63,6 @@ namespace KursAM2.ViewModel.Management
         public DateTime Date { set; get; }
         public DateTime RowDate { set; get; }
         public string DocNum { set; get; }
-        public decimal? DocumentDC { set; get; }
 
         public static ProfitAndLossesExtendRowViewModel GetCopy(ProfitAndLossesExtendRowViewModel d)
         {

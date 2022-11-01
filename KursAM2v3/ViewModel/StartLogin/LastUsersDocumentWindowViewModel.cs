@@ -4,10 +4,11 @@ using System.Data.Entity;
 using System.Linq;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Systems;
-using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Systems;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.StartLogin
 {

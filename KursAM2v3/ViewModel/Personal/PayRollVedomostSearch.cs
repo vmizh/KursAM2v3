@@ -6,6 +6,8 @@ using Core;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using DevExpress.Data;
+using KursDomain.Documents.Currency;
+using KursDomain.ICommon;
 
 namespace KursAM2.ViewModel.Personal
 {

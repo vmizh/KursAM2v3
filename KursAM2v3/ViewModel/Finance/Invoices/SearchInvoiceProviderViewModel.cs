@@ -4,15 +4,16 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;using DevExpress.Mvvm.DataAnnotations;
+using Data.Repository;
+using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Finance.Invoices;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Invoices;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -76,7 +77,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (myCurrentDocument == value) return;
-                myCurrentDocument = (IInvoiceProvider)value;
+                myCurrentDocument = value;
                 if (myCurrentDocument != null)
                 {
                     IsDocumentOpenAllow = true;

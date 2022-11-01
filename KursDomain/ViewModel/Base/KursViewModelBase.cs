@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Core.ViewModel.Base.Column;
 using DevExpress.Xpf.Grid;
 using KursDomain.Annotations;
+using KursDomain.ICommon;
 
 namespace Core.ViewModel.Base
 {

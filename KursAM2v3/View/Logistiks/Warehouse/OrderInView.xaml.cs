@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
 using DevExpress.Data;
 using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Core;
@@ -10,6 +9,7 @@ using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.ViewModel.Logistiks.Warehouse;
+using KursDomain.Documents.NomenklManagement;
 
 namespace KursAM2.View.Logistiks.Warehouse
 {

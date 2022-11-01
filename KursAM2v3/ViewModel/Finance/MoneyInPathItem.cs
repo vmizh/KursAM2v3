@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Core.EntityViewModel.CommonReferences;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.ViewModel.Management.ManagementBalans;
+using KursDomain.Documents.CommonReferences;
 
 namespace KursAM2.ViewModel.Finance
 {

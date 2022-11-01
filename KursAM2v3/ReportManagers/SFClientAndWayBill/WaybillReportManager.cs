@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
 using Reports.Base;
 
 namespace KursAM2.ReportManagers.SFClientAndWayBill
@@ -42,31 +41,31 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
         private void WaibillSetRow(Worksheet sheet, int row, int rowId, WaybillRow item)
         {
             sheet.Cells[$"A{rowId}"].Value = row;
-            sheet.Cells[$"F{rowId}"].Value = string.IsNullOrEmpty(item.Nomenkl.NameFull)
+            sheet.Cells[$"F{rowId}"].Value = string.IsNullOrEmpty(item.Nomenkl.FullName)
                 ? item.Nomenkl.Name
-                : item.Nomenkl.NameFull;
-            sheet.Cells[$"V{rowId}"].Value = item.Nomenkl.Unit.Name;
-            sheet.Cells[$"X{rowId}"].Value = item.Nomenkl.Unit.ED_IZM_OKEI_CODE;
+                : item.Nomenkl.FullName;
+            sheet.Cells[$"V{rowId}"].Value = ((IName)item.Nomenkl.Unit).Name;
+            sheet.Cells[$"X{rowId}"].Value = item.Nomenkl.Unit.OKEI_Code;
             sheet.Cells[$"AD{rowId}"].Value = Convert.ToDouble(item.DDT_KOL_RASHOD);
             sheet.Cells[$"AH{rowId}"].Value = Convert.ToDouble(item.DDT_KOL_RASHOD);
             sheet.Cells[$"AQ{rowId}"].Value = Convert.ToDouble(item.DDT_KOL_RASHOD);
             sheet.Cells[$"AV{rowId}"].Value =
                 Math.Round(
-                    Convert.ToDouble(item.SchetLinkedRow.Summa / (decimal) item.SchetLinkedRow.Quantity),
+                    Convert.ToDouble(item.SchetLinkedRow.Summa / item.SchetLinkedRow.Quantity),
                     2);
             sheet.Cells[$"BB{rowId}"].Value =
                 Math.Round(
                     Convert.ToDouble((item.SchetLinkedRow.Summa - item.SchetLinkedRow.SFT_SUMMA_NDS) /
-                                     (decimal) item.SchetLinkedRow.Quantity * item.DDT_KOL_RASHOD), 2);
+                        item.SchetLinkedRow.Quantity * item.DDT_KOL_RASHOD), 2);
             sheet.Cells[$"BG{rowId}"].Value = item.SchetLinkedRow.NDSPercent;
             sheet.Cells[$"BQ{rowId}"].Value =
                 Math.Round(
                     Convert.ToDouble(item.SchetLinkedRow.SFT_SUMMA_NDS *
-                                     (item.DDT_KOL_RASHOD / (decimal) item.SchetLinkedRow.Quantity)), 2);
+                                     (item.DDT_KOL_RASHOD / item.SchetLinkedRow.Quantity)), 2);
             sheet.Cells[$"BV{rowId}"].Value =
                 Math.Round(
                     Convert.ToDouble(item.SchetLinkedRow.Summa *
-                                     (item.DDT_KOL_RASHOD / (decimal) item.SchetLinkedRow.Quantity)), 2);
+                                     (item.DDT_KOL_RASHOD / item.SchetLinkedRow.Quantity)), 2);
         }
 
         public override void GenerateReport(Worksheet sheet)
@@ -98,6 +97,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     InsertCellsMode.EntireRow);
                 sheet.Rows[$"{startTableRow + i}"].CopyFrom(sheet.Rows[startTableRow.ToString()]);
             }
+
             if (document.Rows.Count > 3 && document.Rows.Count <= 20)
                 sheet.HorizontalPageBreaks.Add(startTableRow + document.Rows.Count - 2);
             foreach (var item in document.Rows)
@@ -105,6 +105,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 WaibillSetRow(sheet, row, startTableRow + row - 1, item);
                 row++;
             }
+
             sheet.Cells[$"AH{document.Rows.Count + startTableRow}"].Formula =
                 $"SUM(AH{startTableRow}:AH{document.Rows.Count + startTableRow - 1})";
             sheet.Cells[$"BB{document.Rows.Count + startTableRow}"].Formula =
@@ -117,15 +118,15 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"BB{document.Rows.Count + startTableRow + 1}"].Value =
                 Math.Round(Convert.ToDouble(
                     document.Rows.Sum(_ => (_.SchetLinkedRow.Summa - _.SchetLinkedRow.SFT_SUMMA_NDS) *
-                                           (_.DDT_KOL_RASHOD / (decimal) _.SchetLinkedRow.Quantity))), 2);
+                                           (_.DDT_KOL_RASHOD / _.SchetLinkedRow.Quantity))), 2);
             sheet.Cells[$"BQ{document.Rows.Count + startTableRow + 1}"].Value =
                 Math.Round(Convert.ToDouble(
                     document.Rows.Sum(_ => _.SchetLinkedRow.SFT_SUMMA_NDS *
-                                           (_.DDT_KOL_RASHOD / (decimal) _.SchetLinkedRow.Quantity))), 2);
+                                           (_.DDT_KOL_RASHOD / _.SchetLinkedRow.Quantity))), 2);
             sheet.Cells[$"BV{document.Rows.Count + startTableRow + 1}"].Value =
                 Math.Round(Convert.ToDouble(
                     document.Rows.Sum(_ => _.SchetLinkedRow.Summa *
-                                           (_.DDT_KOL_RASHOD / (decimal) _.SchetLinkedRow.Quantity))), 2);
+                                           (_.DDT_KOL_RASHOD / _.SchetLinkedRow.Quantity))), 2);
             sheet.Cells[$"AB{document.Rows.Count + startTableRow + 4}"].Value = vm.Document.Rows.Count;
             sheet.Cells[$"O{document.Rows.Count + startTableRow + 30}"].Value = receiver.GlavBuh;
             sheet.Cells[$"J{document.Rows.Count + startTableRow + 9}"].Value =

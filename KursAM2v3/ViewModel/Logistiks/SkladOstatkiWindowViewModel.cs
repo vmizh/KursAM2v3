@@ -8,12 +8,15 @@ using System.Windows.Input;
 using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace KursAM2.ViewModel.Logistiks
@@ -23,7 +26,7 @@ namespace KursAM2.ViewModel.Logistiks
         private NomenklOstatkiForSklad myCurrentNomenklForSklad;
         private NomenklOstatkiWithPrice myCurrentNomenklStore;
         private NomenklCalcCostOperation myCurrentOperation;
-        private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentWarehouse;
+        private KursDomain.Documents.NomenklManagement.Warehouse myCurrentWarehouse;
         private bool myIsPeriodSet;
         private DateTime myOstatokDate;
         private NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
@@ -39,8 +42,8 @@ namespace KursAM2.ViewModel.Logistiks
         }
 
         // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse> Sklads { set; get; } =
-            new ObservableCollection<Core.EntityViewModel.NomenklManagement.Warehouse>();
+        public ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse> Sklads { set; get; } =
+            new ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse>();
 
         // ReSharper disable once CollectionNeverUpdated.Global
         public List<NomPrice> Prices { set; get; } = new List<NomPrice>();
@@ -92,7 +95,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public Core.EntityViewModel.NomenklManagement.Warehouse CurrentWarehouse
+        public KursDomain.Documents.NomenklManagement.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set
@@ -223,8 +226,7 @@ namespace KursAM2.ViewModel.Logistiks
                         Nomenkl = MainReferences.GetNomenkl(d.NomDC),
                         Warehouse = MainReferences.GetWarehouse(CurrentWarehouse.DocCode),
                         Quantity = d.OstatokQuantity,
-                        CurrencyName = MainReferences
-                            .Currencies[MainReferences.GetNomenkl(d.NomDC).Currency.DocCode].Name,
+                        CurrencyName = MainReferences.GetCurrency(((IDocCode)MainReferences.GetNomenkl(d.NomDC).Currency).DocCode).Name,
                         Price = d.OstatokQuantity != 0 ? Math.Round(d.OstatokNaklSumma / d.OstatokQuantity, 2) : 0,
                         PriceWONaklad =  d.OstatokQuantity != 0 ? Math.Round(d.OstatokSumma / d.OstatokQuantity, 2) : 0,
                         Summa = d.OstatokNaklSumma,
@@ -349,7 +351,7 @@ namespace KursAM2.ViewModel.Logistiks
 
     public class SkladQuantity
     {
-        public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse { set; get; }
+        public KursDomain.Documents.NomenklManagement.Warehouse Warehouse { set; get; }
         public string Name => Warehouse?.Name;
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
@@ -360,7 +362,7 @@ namespace KursAM2.ViewModel.Logistiks
     {
         public Nomenkl Nomenkl { set; get; }
         public string NomenklName => Nomenkl?.Name;
-        public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse { set; get; }
+        public KursDomain.Documents.NomenklManagement.Warehouse Warehouse { set; get; }
         public string StoreName => Warehouse?.Name;
         public string NomenklNumber => Nomenkl?.NomenklNumber;
         public string Name => Nomenkl?.Name;

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core;
-using Core.EntityViewModel.StockHolder;
+using KursDomain.Documents.StockHolder;
 
 namespace KursAM2.ViewModel.StockHolder
 {

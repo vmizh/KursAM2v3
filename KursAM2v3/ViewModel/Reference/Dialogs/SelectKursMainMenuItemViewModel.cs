@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
-using Core.EntityViewModel.Systems;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.View.KursReferences.UC;
+using KursDomain.Documents.Systems;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference.Dialogs
 {

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using Core;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using KursAM2.View.Finance.UC;
+using KursDomain.Documents.Invoices;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {

@@ -3,16 +3,15 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Invoices;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data.Repository;
 using JetBrains.Annotations;
 using KursAM2.Managers.Invoices;
 using KursAM2.Repositories.InvoicesRepositories;
+using KursDomain.Documents.Invoices;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.Menu;
 
 namespace KursAM2.View.DialogUserControl
 {
@@ -108,12 +107,14 @@ namespace KursAM2.View.DialogUserControl
                 if (waybill == null)
                 {
                     if (kontragentDC > 0)
-                        foreach (var d in InvoicesManager.GetInvoicesClient(DateTime.Today.AddDays(-300), DateTime.Today,
-                            isPaymentUse, kontragentDC, isAccepted))
+                        foreach (var d in InvoicesManager.GetInvoicesClient(DateTime.Today.AddDays(-300),
+                                     DateTime.Today,
+                                     isPaymentUse, kontragentDC, isAccepted))
                             ItemsCollection.Add(d);
                     else
-                        foreach (var d in InvoicesManager.GetInvoicesClient(DateTime.Today.AddDays(-300), DateTime.Today,
-                            isPaymentUse,null, SearchText, isAccepted))
+                        foreach (var d in InvoicesManager.GetInvoicesClient(DateTime.Today.AddDays(-300),
+                                     DateTime.Today,
+                                     isPaymentUse, null, SearchText, isAccepted))
                             ItemsCollection.Add(d);
                 }
                 else
@@ -191,7 +192,7 @@ namespace KursAM2.View.DialogUserControl
         private InvoiceProvider myCurrentItem;
         private StandartDialogSelectUC myDataUserControl;
 
-        
+
 #pragma warning disable 169
         private readonly GenericKursDBRepository<InvoiceProvider> baseRepository;
 #pragma warning restore 169
@@ -205,7 +206,7 @@ namespace KursAM2.View.DialogUserControl
 
         #region Constructors
 
-        public InvoiceProviderSearchDialog(bool isUsePayment, bool isUseAccepted,bool isOnlyLastYear = false)
+        public InvoiceProviderSearchDialog(bool isUsePayment, bool isUseAccepted, bool isOnlyLastYear = false)
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
@@ -216,7 +217,8 @@ namespace KursAM2.View.DialogUserControl
             RefreshData(null);
         }
 
-        public InvoiceProviderSearchDialog(decimal kontrDC, bool isUsePayment, bool isUseAccepted, bool isOnlyLastYear = false)
+        public InvoiceProviderSearchDialog(decimal kontrDC, bool isUsePayment, bool isUseAccepted,
+            bool isOnlyLastYear = false)
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
@@ -240,33 +242,33 @@ namespace KursAM2.View.DialogUserControl
             {
                 ItemsCollection.Clear();
                 if (kontragentDC > 0)
-                    if(!isOnlyLastYear)
+                {
+                    if (!isOnlyLastYear)
                         foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
-                            true,
-                            kontragentDC, isAccepted))
+                                     true,
+                                     kontragentDC, isAccepted))
                             ItemsCollection.Add(d);
                     else
-                    {
-                        foreach (var d in InvoicesManager.GetInvoicesProvider(DateTime.Today.AddDays(-365), DateTime.Today,
-                            true,
-                            kontragentDC, isAccepted))
+                        foreach (var d in InvoicesManager.GetInvoicesProvider(DateTime.Today.AddDays(-365),
+                                     DateTime.Today,
+                                     true,
+                                     kontragentDC, isAccepted))
                             ItemsCollection.Add(d);
-                    }
+                }
 
                 else
                 {
                     if (!isOnlyLastYear)
                         foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
-                            true,
-                            SearchText, isAccepted))
+                                     true,
+                                     SearchText, isAccepted))
                             ItemsCollection.Add(d);
                     else
-                    {
-                        foreach (var d in InvoicesManager.GetInvoicesProvider(DateTime.Today.AddDays(-365), DateTime.Today,
-                            true,
-                            SearchText, isAccepted))
+                        foreach (var d in InvoicesManager.GetInvoicesProvider(DateTime.Today.AddDays(-365),
+                                     DateTime.Today,
+                                     true,
+                                     SearchText, isAccepted))
                             ItemsCollection.Add(d);
-                    }
                 }
             }
             catch (Exception ex)
@@ -391,37 +393,36 @@ namespace KursAM2.View.DialogUserControl
             {
                 ProviderItemsCollection.Clear();
                 if (kontragentDC > 0)
+                {
                     foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
-                        true,
-                        kontragentDC, isAccepted))
+                                 true,
+                                 kontragentDC, isAccepted))
                         ProviderItemsCollection.Add(d);
+                }
                 else
                 {
                     var providerRepository = new InvoiceProviderRepository(GlobalOptions.GetEntities());
                     foreach (var inv in providerRepository.GetAllByDates(new DateTime(2000, 1, 1), DateTime.Today)
                                  .Where(inv => !isUsePayment || inv.Summa != inv.PaySumma)
                                  .Where(inv => !isAccepted || inv.IsAccepted))
-                    {
                         ProviderItemsCollection.Add(inv);
-                    }
                 }
-                   
 
-               
+
                 ClientItemsCollection.Clear();
                 if (kontragentDC > 0)
+                {
                     foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000, 1, 1), DateTime.Today,
-                        isUsePayment, kontragentDC, isAccepted))
+                                 isUsePayment, kontragentDC, isAccepted))
                         ClientItemsCollection.Add(d);
+                }
                 else
                 {
                     var clientRepository = new InvoiceClientRepository(GlobalOptions.GetEntities());
                     foreach (var inv in clientRepository.GetAllByDates(new DateTime(2000, 1, 1), DateTime.Today)
                                  .Where(inv => !isUsePayment || inv.Summa != inv.PaySumma)
                                  .Where(inv => !isAccepted || inv.IsAccepted))
-                    {
                         ClientItemsCollection.Add(inv);
-                    }
                 }
             }
             catch (Exception ex)

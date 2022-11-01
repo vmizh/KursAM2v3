@@ -1,7 +1,7 @@
 using System;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
 using Data;
+using KursDomain.Documents.NomenklManagement;
 
 namespace KursAM2.ViewModel.Finance
 {

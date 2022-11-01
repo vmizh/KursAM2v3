@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Forms;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.StockHolder;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -44,6 +43,8 @@ using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.StockHolder;
 using KursDomain.Documents.Bank;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
 using Application = System.Windows.Application;
 
 namespace KursAM2.Managers

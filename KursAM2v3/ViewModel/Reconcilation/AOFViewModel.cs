@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Core;
-using Core.Menu;
 using Core.ViewModel.Base;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reconcilation
 {

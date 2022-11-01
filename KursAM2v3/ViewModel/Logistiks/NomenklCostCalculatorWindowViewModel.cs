@@ -3,17 +3,15 @@ using System.Linq;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using DevExpress.Xpf.Scheduler.Drawing;
-using DevExpress.XtraExport.Helpers;
 using Helper;
 using KursAM2.Managers;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -41,6 +39,7 @@ namespace KursAM2.ViewModel.Logistiks
         }
 
         public ObservableCollection<Nomenkl> Nomenkls { set; get; } = new ObservableCollection<Nomenkl>();
+
         public Nomenkl SelectedNomenkl
         {
             get => mySelectedNomenkl;
@@ -60,10 +59,12 @@ namespace KursAM2.ViewModel.Logistiks
                             Operations = clc.GetOperations(mySelectedNomenkl.DocCode, false)
                         };
                     }
+
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Operations));
             }
         }
+
         public NomenklCost NomenklCost
         {
             get => myNomenklCost;
@@ -74,41 +75,17 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<NomenklCalcCostOperation> Operations => NomenklCost?.Operations;
+
         public ICommand FinanceDocumentOpenCommand
         {
             get { return new Command(FinanceDocumentOpen, param => CurrentOperation.FinDocumentDC != null); }
         }
+
         public ICommand TovarDocumentOpenCommand
         {
             get { return new Command(TovarDocumentOpen, param => CurrentOperation.FinDocumentDC != null); }
-        }
-
-        private void TovarDocumentOpen(object obj)
-        {
-            switch (CurrentOperation.OperCode)
-            {
-                case 1:
-                    DocumentsOpenManager.Open(DocumentType.StoreOrderIn,(decimal) CurrentOperation.TovarDocDC);
-                    //return $"Открыть счет/фактура поставщика";
-                    break;
-                case 2:
-                    DocumentsOpenManager.Open(DocumentType.Waybill, (decimal) CurrentOperation.TovarDocDC);
-                    //return $"Открыть счет/фактура клиенту";
-                    break;
-                case 5:
-                    DocumentsOpenManager.Open(DocumentType.InventoryList,(decimal) CurrentOperation.TovarDocDC);
-                    //return $"Открыть инвентаризационную ведомость";
-                    break;
-                case 12:
-                    DocumentsOpenManager.Open(DocumentType.Waybill,(decimal) CurrentOperation.TovarDocDC);
-                    //return $"Открыть счет/фактура клиенту";
-                    break;
-                case 18:
-                    WindowManager.ShowFunctionNotReleased();
-                    //return $"Открыть Продажа за наличный расчет";
-                    break;
-            }
         }
 
         public string FinanceDocumentName
@@ -129,9 +106,11 @@ namespace KursAM2.ViewModel.Logistiks
                     case 18:
                         return "Открыть Продажа за наличный расчет";
                 }
+
                 return "Финансовый документ отсутствует";
             }
         }
+
         public string TovarDocumentName
         {
             get
@@ -150,9 +129,11 @@ namespace KursAM2.ViewModel.Logistiks
                     case 18:
                         return "Открыть Продажа за наличный расчет";
                 }
+
                 return "Товарный документ отсутствует";
             }
         }
+
         public NomenklCalcCostOperation CurrentOperation
         {
             get => myCurrentOperation;
@@ -168,8 +149,36 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged(nameof(TovarDocumentName));
             }
         }
+
         public ObservableCollection<NomenklOstatkiWithPrice> SkladOstatki { set; get; } =
             new ObservableCollection<NomenklOstatkiWithPrice>();
+
+        private void TovarDocumentOpen(object obj)
+        {
+            switch (CurrentOperation.OperCode)
+            {
+                case 1:
+                    DocumentsOpenManager.Open(DocumentType.StoreOrderIn, (decimal)CurrentOperation.TovarDocDC);
+                    //return $"Открыть счет/фактура поставщика";
+                    break;
+                case 2:
+                    DocumentsOpenManager.Open(DocumentType.Waybill, (decimal)CurrentOperation.TovarDocDC);
+                    //return $"Открыть счет/фактура клиенту";
+                    break;
+                case 5:
+                    DocumentsOpenManager.Open(DocumentType.InventoryList, (decimal)CurrentOperation.TovarDocDC);
+                    //return $"Открыть инвентаризационную ведомость";
+                    break;
+                case 12:
+                    DocumentsOpenManager.Open(DocumentType.Waybill, (decimal)CurrentOperation.TovarDocDC);
+                    //return $"Открыть счет/фактура клиенту";
+                    break;
+                case 18:
+                    WindowManager.ShowFunctionNotReleased();
+                    //return $"Открыть Продажа за наличный расчет";
+                    break;
+            }
+        }
 
         private void RefreshReferences()
         {
@@ -203,14 +212,14 @@ namespace KursAM2.ViewModel.Logistiks
                     if (d.Count == 0) continue;
                     var dt = d.Max(_ => _.Date);
                     var s = data.Single(_ => _.StoreDC == sdc && _.Date == dt);
-                    if(s.Nakopit == 0) continue;
+                    if (s.Nakopit == 0) continue;
                     var newSklad = new NomenklOstatkiWithPrice
                     {
-                        Quantity = (decimal) s.Nakopit,
+                        Quantity = (decimal)s.Nakopit,
                         PriceWONaklad = s.Price,
                         Price = s.PriceWithNaklad,
-                        SummaWONaklad = (decimal) (s.Price * s.Nakopit),
-                        Summa = (decimal) (s.Price * s.Nakopit),
+                        SummaWONaklad = (decimal)(s.Price * s.Nakopit),
+                        Summa = (decimal)(s.Price * s.Nakopit)
                     };
                     SkladOstatki.Add(newSklad);
                 }
@@ -256,19 +265,19 @@ namespace KursAM2.ViewModel.Logistiks
             switch (CurrentOperation.OperCode)
             {
                 case 1:
-                    DocumentsOpenManager.Open(DocumentType.InvoiceProvider,(decimal) CurrentOperation.FinDocumentDC);
+                    DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)CurrentOperation.FinDocumentDC);
                     //return $"Открыть счет/фактура поставщика";
                     break;
                 case 2:
-                    DocumentsOpenManager.Open(DocumentType.InvoiceClient,(decimal) CurrentOperation.FinDocumentDC);
+                    DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal)CurrentOperation.FinDocumentDC);
                     //return $"Открыть счет/фактура клиенту";
                     break;
                 case 5:
-                    DocumentsOpenManager.Open(DocumentType.InventoryList,(decimal) CurrentOperation.TovarDocDC);
+                    DocumentsOpenManager.Open(DocumentType.InventoryList, (decimal)CurrentOperation.TovarDocDC);
                     //return $"Открыть инвентаризационную ведомость";
                     break;
                 case 12:
-                    DocumentsOpenManager.Open(DocumentType.InvoiceClient,(decimal) CurrentOperation.FinDocumentDC);
+                    DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal)CurrentOperation.FinDocumentDC);
                     //return $"Открыть счет/фактура клиенту";
                     break;
                 case 18:

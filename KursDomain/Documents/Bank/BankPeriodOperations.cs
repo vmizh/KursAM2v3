@@ -3,157 +3,156 @@ using System.Collections.Generic;
 using Core.ViewModel.Base;
 using Data;
 
-namespace KursDomain.Documents.Bank
+namespace KursDomain.Documents.Bank;
+
+public class BankPeriodsOperationsViewModel : RSViewModelBase, IEntity<BankPeriodsOperations>
 {
-    public class BankPeriodsOperationsViewModel : RSViewModelBase, IEntity<BankPeriodsOperations>
+    private BankPeriodsOperations myEntity;
+
+    public BankPeriodsOperationsViewModel()
     {
-        private BankPeriodsOperations myEntity;
+        Entity = new BankPeriodsOperations();
+    }
 
-        public BankPeriodsOperationsViewModel()
+    public BankPeriodsOperationsViewModel(BankPeriodsOperations entity)
+    {
+        Entity = entity ?? DefaultValue();
+    }
+
+    public decimal BankDC
+    {
+        get => Entity.BankDC;
+        set
         {
-            Entity = new BankPeriodsOperations();
+            if (Entity.BankDC == value) return;
+            Entity.BankDC = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public BankPeriodsOperationsViewModel(BankPeriodsOperations entity)
+    public DateTime Date
+    {
+        get => Entity.Date;
+        set
         {
-            Entity = entity ?? DefaultValue();
+            if (Entity.Date == value) return;
+            Entity.Date = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public BankPeriodsOperations Entity
+    public decimal CrsDC
+    {
+        get => Entity.CrsDC;
+        set
         {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.CrsDC == value) return;
+            Entity.CrsDC = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public BankPeriodsOperations DefaultValue()
+    public decimal? SummaStart
+    {
+        get => Entity.SummaStart;
+        set
         {
-            return new BankPeriodsOperations();
+            if (Entity.SummaStart == value) return;
+            Entity.SummaStart = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal BankDC
+    public decimal? SummaIn
+    {
+        get => Entity.SummaIn;
+        set
         {
-            get => Entity.BankDC;
-            set
-            {
-                if (Entity.BankDC == value) return;
-                Entity.BankDC = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.SummaIn == value) return;
+            Entity.SummaIn = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public DateTime Date
+    public decimal? SummaOut
+    {
+        get => Entity.SummaOut;
+        set
         {
-            get => Entity.Date;
-            set
-            {
-                if (Entity.Date == value) return;
-                Entity.Date = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.SummaOut == value) return;
+            Entity.SummaOut = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal CrsDC
+    public decimal? SummaEnd
+    {
+        get => Entity.SummaEnd;
+        set
         {
-            get => Entity.CrsDC;
-            set
-            {
-                if (Entity.CrsDC == value) return;
-                Entity.CrsDC = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.SummaEnd == value) return;
+            Entity.SummaEnd = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal? SummaStart
+    public bool IsAccessRight { get; set; }
+
+    public BankPeriodsOperations Entity
+    {
+        get => myEntity;
+        set
         {
-            get => Entity.SummaStart;
-            set
-            {
-                if (Entity.SummaStart == value) return;
-                Entity.SummaStart = value;
-                RaisePropertyChanged();
-            }
+            if (myEntity == value) return;
+            myEntity = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal? SummaIn
-        {
-            get => Entity.SummaIn;
-            set
-            {
-                if (Entity.SummaIn == value) return;
-                Entity.SummaIn = value;
-                RaisePropertyChanged();
-            }
-        }
+    public BankPeriodsOperations DefaultValue()
+    {
+        return new BankPeriodsOperations();
+    }
 
-        public decimal? SummaOut
-        {
-            get => Entity.SummaOut;
-            set
-            {
-                if (Entity.SummaOut == value) return;
-                Entity.SummaOut = value;
-                RaisePropertyChanged();
-            }
-        }
+    public List<BankPeriodsOperations> LoadList()
+    {
+        throw new NotImplementedException();
+    }
 
-        public decimal? SummaEnd
-        {
-            get => Entity.SummaEnd;
-            set
-            {
-                if (Entity.SummaEnd == value) return;
-                Entity.SummaEnd = value;
-                RaisePropertyChanged();
-            }
-        }
+    public virtual BankPeriodsOperations Load(decimal dc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public List<BankPeriodsOperations> LoadList()
-        {
-            throw new NotImplementedException();
-        }
+    public virtual BankPeriodsOperations Load(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
-        public bool IsAccessRight { get; set; }
+    public virtual void Save(BankPeriodsOperations doc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public virtual BankPeriodsOperations Load(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
+    public void UpdateFrom(BankPeriodsOperations ent)
+    {
+        BankDC = ent.BankDC;
+        Date = ent.Date;
+        CrsDC = ent.CrsDC;
+        SummaStart = ent.SummaStart;
+        SummaIn = ent.SummaIn;
+        SummaOut = ent.SummaOut;
+        SummaEnd = ent.SummaEnd;
+    }
 
-        public virtual BankPeriodsOperations Load(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void Save(BankPeriodsOperations doc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateFrom(BankPeriodsOperations ent)
-        {
-            BankDC = ent.BankDC;
-            Date = ent.Date;
-            CrsDC = ent.CrsDC;
-            SummaStart = ent.SummaStart;
-            SummaIn = ent.SummaIn;
-            SummaOut = ent.SummaOut;
-            SummaEnd = ent.SummaEnd;
-        }
-
-        public void UpdateTo(BankPeriodsOperations ent)
-        {
-            ent.BankDC = BankDC;
-            ent.Date = Date;
-            ent.CrsDC = CrsDC;
-            ent.SummaStart = SummaStart;
-            ent.SummaIn = SummaIn;
-            ent.SummaOut = SummaOut;
-            ent.SummaEnd = SummaEnd;
-        }
+    public void UpdateTo(BankPeriodsOperations ent)
+    {
+        ent.BankDC = BankDC;
+        ent.Date = Date;
+        ent.CrsDC = CrsDC;
+        ent.SummaStart = SummaStart;
+        ent.SummaIn = SummaIn;
+        ent.SummaOut = SummaOut;
+        ent.SummaEnd = SummaEnd;
     }
 }

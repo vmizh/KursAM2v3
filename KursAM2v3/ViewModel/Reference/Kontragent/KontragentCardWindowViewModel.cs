@@ -7,9 +7,6 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Employee;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -20,8 +17,14 @@ using KursAM2.View.Base;
 using KursAM2.View.KursReferences;
 using KursAM2.View.KursReferences.KontragentControls;
 using KursAM2.ViewModel.Reference.Dialogs;
-using KursDomain.Documents.Bank;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
+using Bank = KursDomain.Documents.Bank.Bank;
+using Employee = KursDomain.Documents.Employee.Employee;
+using KontragentCategory = KursDomain.Documents.CommonReferences.Kontragent.KontragentCategory;
+using Region = KursDomain.Documents.CommonReferences.Region;
 
 namespace KursAM2.ViewModel.Reference.Kontragent
 {
@@ -92,7 +95,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         public List<Region> Regions { set; get; } = new List<Region>();
 
         public List<Currency> Currencies
-            => MainReferences.Currencies.Values.Where(_ => (_.CRS_ACTIVE ?? 0) == 1).ToList();
+            => MainReferences.Currencies.Values.Where(_ => _.IsActive).ToList();
 
         #region Property
 

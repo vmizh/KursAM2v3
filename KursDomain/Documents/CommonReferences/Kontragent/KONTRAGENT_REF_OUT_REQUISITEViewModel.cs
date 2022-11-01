@@ -4,183 +4,182 @@ using Core.ViewModel.Base;
 using Data;
 
 // ReSharper disable InconsistentNaming
-namespace KursDomain.Documents.CommonReferences.Kontragent
+namespace KursDomain.Documents.CommonReferences.Kontragent;
+
+public class KONTRAGENT_REF_OUT_REQUISITEViewModel : RSViewModelBase, IEntity<KONTRAGENT_REF_OUT_REQUISITE>
 {
-    public class KONTRAGENT_REF_OUT_REQUISITEViewModel : RSViewModelBase, IEntity<KONTRAGENT_REF_OUT_REQUISITE>
+    private KONTRAGENT_REF_OUT_REQUISITE myEntity;
+
+    public KONTRAGENT_REF_OUT_REQUISITEViewModel()
     {
-        private KONTRAGENT_REF_OUT_REQUISITE myEntity;
+    }
 
-        public KONTRAGENT_REF_OUT_REQUISITEViewModel()
+    public KONTRAGENT_REF_OUT_REQUISITEViewModel(KONTRAGENT_REF_OUT_REQUISITE entity)
+    {
+        Entity = entity;
+    }
+
+    public Guid KontrId
+    {
+        get => Entity.KontrId;
+        set
         {
+            if (Entity.KontrId == value) return;
+            Entity.KontrId = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public KONTRAGENT_REF_OUT_REQUISITEViewModel(KONTRAGENT_REF_OUT_REQUISITE entity)
+    public string OKPO
+    {
+        get => Entity.OKPO;
+        set
         {
-            Entity = entity;
+            if (Entity.OKPO == value) return;
+            Entity.OKPO = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public Guid KontrId
+    public string SFText
+    {
+        get => Entity.SFText;
+        set
         {
-            get => Entity.KontrId;
-            set
-            {
-                if (Entity.KontrId == value) return;
-                Entity.KontrId = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.SFText == value) return;
+            Entity.SFText = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public string OKPO
+    public string NaklText
+    {
+        get => Entity.NaklText;
+        set
         {
-            get => Entity.OKPO;
-            set
-            {
-                if (Entity.OKPO == value) return;
-                Entity.OKPO = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.NaklText == value) return;
+            Entity.NaklText = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public string SFText
+    public new string Note
+    {
+        get => Entity.Note;
+        set
         {
-            get => Entity.SFText;
-            set
-            {
-                if (Entity.SFText == value) return;
-                Entity.SFText = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.Note == value) return;
+            Entity.Note = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public string NaklText
+    public KONTRAGENT_REF_OUT KontragentRefOut
+    {
+        get => Entity.KONTRAGENT_REF_OUT;
+        set
         {
-            get => Entity.NaklText;
-            set
-            {
-                if (Entity.NaklText == value) return;
-                Entity.NaklText = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.KONTRAGENT_REF_OUT == value) return;
+            Entity.KONTRAGENT_REF_OUT = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public new string Note
+    public EntityLoadCodition LoadCondition { get; set; }
+
+    public bool IsAccessRight { get; set; }
+
+    public KONTRAGENT_REF_OUT_REQUISITE Entity
+    {
+        get => myEntity;
+        set
         {
-            get => Entity.Note;
-            set
-            {
-                if (Entity.Note == value) return;
-                Entity.Note = value;
-                RaisePropertyChanged();
-            }
+            if (myEntity == value) return;
+            myEntity = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public KONTRAGENT_REF_OUT KontragentRefOut
+    public KONTRAGENT_REF_OUT_REQUISITE DefaultValue()
+    {
+        return new KONTRAGENT_REF_OUT_REQUISITE
         {
-            get => Entity.KONTRAGENT_REF_OUT;
-            set
-            {
-                if (Entity.KONTRAGENT_REF_OUT == value) return;
-                Entity.KONTRAGENT_REF_OUT = value;
-                RaisePropertyChanged();
-            }
-        }
+            Id = Guid.NewGuid(),
+            KontrId = Guid.Empty
+        };
+    }
 
-        public KONTRAGENT_REF_OUT_REQUISITE Entity
-        {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
-        }
+    public List<KONTRAGENT_REF_OUT_REQUISITE> LoadList()
+    {
+        throw new NotImplementedException();
+    }
 
-        public EntityLoadCodition LoadCondition { get; set; }
+    public KONTRAGENT_REF_OUT_REQUISITE Load(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
-        public List<KONTRAGENT_REF_OUT_REQUISITE> LoadList()
-        {
-            throw new NotImplementedException();
-        }
+    public virtual void Save(KONTRAGENT_REF_OUT_REQUISITE doc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public bool IsAccessRight { get; set; }
+    public void Save()
+    {
+        throw new NotImplementedException();
+    }
 
-        public KONTRAGENT_REF_OUT_REQUISITE Load(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete()
+    {
+        throw new NotImplementedException();
+    }
 
-        public virtual void Save(KONTRAGENT_REF_OUT_REQUISITE doc)
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete(decimal dc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void Delete()
-        {
-            throw new NotImplementedException();
-        }
+    public void UpdateFrom(KONTRAGENT_REF_OUT_REQUISITE ent)
+    {
+        Id = ent.Id;
+        KontrId = ent.KontrId;
+        Name = ent.Name;
+        OKPO = ent.OKPO;
+        SFText = ent.SFText;
+        NaklText = ent.NaklText;
+        Note = ent.Note;
+        KontragentRefOut = ent.KONTRAGENT_REF_OUT;
+    }
 
-        public void Delete(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+    public void UpdateTo(KONTRAGENT_REF_OUT_REQUISITE ent)
+    {
+        ent.Id = Id;
+        ent.KontrId = KontrId;
+        ent.Name = Name;
+        ent.OKPO = OKPO;
+        ent.SFText = SFText;
+        ent.NaklText = NaklText;
+        ent.Note = Note;
+        ent.KONTRAGENT_REF_OUT = KontragentRefOut;
+    }
 
-        public void Delete(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
+    public virtual KONTRAGENT_REF_OUT_REQUISITE Load(decimal dc, bool isShort = true)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void UpdateFrom(KONTRAGENT_REF_OUT_REQUISITE ent)
-        {
-            Id = ent.Id;
-            KontrId = ent.KontrId;
-            Name = ent.Name;
-            OKPO = ent.OKPO;
-            SFText = ent.SFText;
-            NaklText = ent.NaklText;
-            Note = ent.Note;
-            KontragentRefOut = ent.KONTRAGENT_REF_OUT;
-        }
+    public virtual KONTRAGENT_REF_OUT_REQUISITE Load(Guid id, bool isShort = true)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void UpdateTo(KONTRAGENT_REF_OUT_REQUISITE ent)
-        {
-            ent.Id = Id;
-            ent.KontrId = KontrId;
-            ent.Name = Name;
-            ent.OKPO = OKPO;
-            ent.SFText = SFText;
-            ent.NaklText = NaklText;
-            ent.Note = Note;
-            ent.KONTRAGENT_REF_OUT = KontragentRefOut;
-        }
-
-        public KONTRAGENT_REF_OUT_REQUISITE DefaultValue()
-        {
-            return new KONTRAGENT_REF_OUT_REQUISITE
-            {
-                Id = Guid.NewGuid(),
-                KontrId = Guid.Empty
-            };
-        }
-
-        public virtual KONTRAGENT_REF_OUT_REQUISITE Load(decimal dc, bool isShort = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual KONTRAGENT_REF_OUT_REQUISITE Load(Guid id, bool isShort = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public KONTRAGENT_REF_OUT_REQUISITE Load(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
+    public KONTRAGENT_REF_OUT_REQUISITE Load(decimal dc)
+    {
+        throw new NotImplementedException();
     }
 }

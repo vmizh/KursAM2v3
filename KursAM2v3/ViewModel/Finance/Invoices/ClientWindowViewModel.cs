@@ -9,12 +9,7 @@ using System.Windows.Input;
 using Core;
 using Core.EntityViewModel;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Employee;
-using Core.EntityViewModel.Invoices;
-using Core.EntityViewModel.NomenklManagement;
-using Core.EntityViewModel.Vzaimozachet;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -33,7 +28,15 @@ using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Invoices;
+using KursDomain.Documents.Vzaimozachet;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
 using Reports.Base;
+using Employee = KursDomain.Documents.Employee.Employee;
+using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -552,7 +555,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             var kontr = StandartDialogs.SelectKontragent(Document.Currency);
             if (kontr == null) return;
-            if (Document.Rows.Any(_ => !_.IsUsluga && _.Nomenkl.Currency.DocCode != kontr.BalansCurrency.DocCode))
+            if (Document.Rows.Any(_ => !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != kontr.BalansCurrency.DocCode))
             {
                 WindowManager.ShowMessage(
                     "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
@@ -573,7 +576,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private IEnumerable<Nomenkl> LoadNomenkl(string srchText)
         {
             return MainReferences.ALLNomenkls.Values.Where(_ =>
-                (_.Name + _.NomenklNumber + _.NameFull + _.PolnoeName).ToUpper().Contains(srchText.ToUpper()));
+                (_.Name + _.NomenklNumber + _.FullName).ToUpper().Contains(srchText.ToUpper()));
         }
         
 
@@ -589,10 +592,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     if (Document != null && Document.Rows.Cast<InvoiceClientRow>().Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
-                    if (item.NOM_NDS_PERCENT == null)
+                    if (item.DefaultNDSPercent == null)
                         nds = 0;
                     else
-                        nds = (decimal)item.NOM_NDS_PERCENT;
+                        nds = (decimal)item.DefaultNDSPercent;
                     // ReSharper disable once UseObjectOrCollectionInitializer
                     var r = new InvoiceClientRow
                     {
@@ -608,7 +611,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Id = Guid.NewGuid(),
                         DocId = Document.Id
                     };
-                    r.Entity.SFT_NEMENKL_DC = item.DOC_CODE;
+                    r.Entity.SFT_NEMENKL_DC = item.DocCode;
                     Document?.Rows.Add(r);
                     Document.Entity.TD_84.Add(r.Entity);
                     newCode++;
@@ -628,7 +631,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 return;
             var kontr = StandartDialogs.SelectKontragent(Document.Currency);
             if (kontr == null) return;
-            if (Document.Rows.Any(_ => !_.IsUsluga && _.Nomenkl.Currency.DocCode != kontr.BalansCurrency.DocCode))
+            if (Document.Rows.Any(_ => !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != kontr.BalansCurrency.DocCode))
             {
                 WindowManager.ShowMessage(
                     "По счету есть товары с валютой, отличной от валюты дилера. Изменить контрагента нельзя.",
@@ -659,7 +662,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 return;
             var kontr = StandartDialogs.SelectKontragent(Document.Currency);
             if (kontr == null) return;
-            if (Document.Rows.Any(_ => !_.IsUsluga && _.Nomenkl.Currency.DocCode != kontr.BalansCurrency.DocCode))
+            if (Document.Rows.Any(_ => !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != kontr.BalansCurrency.DocCode))
             {
                 WindowManager.ShowMessage(
                     "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
@@ -1022,10 +1025,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     // ReSharper disable once PossibleNullReferenceException
                     if (Document.Rows.Cast<InvoiceClientRow>().Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
-                    if (item.NOM_NDS_PERCENT == null)
+                    if (item.DefaultNDSPercent == null)
                         nds = 0;
                     else
-                        nds = (decimal)item.NOM_NDS_PERCENT;
+                        nds = (decimal)item.DefaultNDSPercent;
                     // ReSharper disable once UseObjectOrCollectionInitializer
                     var r = new InvoiceClientRow
                     {
@@ -1086,10 +1089,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     if (Document != null && Document.Rows.Cast<InvoiceClientRow>().Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
-                    if (item.NOM_NDS_PERCENT == null)
+                    if (item.DefaultNDSPercent == null)
                         nds = 0;
                     else
-                        nds = (decimal)item.NOM_NDS_PERCENT;
+                        nds = (decimal)item.DefaultNDSPercent;
                     // ReSharper disable once UseObjectOrCollectionInitializer
                     var r = new InvoiceClientRow
                     {
@@ -1105,7 +1108,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Id = Guid.NewGuid(),
                         DocId = Document.Id
                     };
-                    r.Entity.SFT_NEMENKL_DC = item.DOC_CODE;
+                    r.Entity.SFT_NEMENKL_DC = item.DocCode;
                     Document?.Rows.Add(r);
                     Document.Entity.TD_84.Add(r.Entity);
                     newCode++;

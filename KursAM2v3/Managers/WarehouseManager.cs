@@ -5,13 +5,14 @@ using System.Linq;
 using System.Windows;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.ViewModel.Logistiks.Warehouse;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
 
 namespace KursAM2.Managers
 {

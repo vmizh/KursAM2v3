@@ -6,11 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -30,7 +26,12 @@ using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management.Calculations;
-using InvoiceProviderRow = Core.EntityViewModel.Invoices.InvoiceProviderRow;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
+using InvoiceProviderRow = KursDomain.Documents.Invoices.InvoiceProviderRow;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -65,7 +66,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Command = PrintOrderCommand
             });
         }
-       
+
         public OrderInWindowViewModel(StandartErrorManager errManager, decimal dc)
         {
             GenericOrderInRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
@@ -84,7 +85,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             });
             if (dc == 0)
             {
-                Document = new WarehouseOrderIn {State = RowStatus.NewRow};
+                Document = new WarehouseOrderIn { State = RowStatus.NewRow };
                 UnitOfWork.Context.SD_24.Add(Document.Entity);
             }
             else
@@ -112,9 +113,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             Document.RaisePropertyAllChanged();
             foreach (var r in Document.Rows) r.RaisePropertyAllChanged();
         }
+
         #region Properties
 
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse>
+        public List<KursDomain.Documents.NomenklManagement.Warehouse>
             WarehouseList { set; get; } = MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList();
 
         public WarehouseOrderIn Document
@@ -174,8 +176,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void KontragentTypeChanged(object obj)
         {
-           Document.KontragentSender = null;
-           Document.WarehouseIn = null;
+            Document.KontragentSender = null;
+            Document.WarehouseIn = null;
         }
 
         public ICommand LinkToSchetCommand
@@ -211,7 +213,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 return;
             }
 
-            InvoiceProviderSearchType loadType = InvoiceProviderSearchType.NotShipped;
+            var loadType = InvoiceProviderSearchType.NotShipped;
             if (Document.KontragentSender != null)
                 loadType = loadType | InvoiceProviderSearchType.OneKontragent;
             var dtx = new InvoiceProviderSearchDialogViewModel(false, true, loadType, UnitOfWork.Context)
@@ -251,11 +253,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             DocCode = -1,
                             Nomenkl = nom,
                             DDT_KOL_PRIHOD = row.Quantity,
-                            Unit = nom.Unit,
+                            Unit = (Unit)nom.Unit,
                             DDT_SPOST_DC = row.DocCode,
                             LinkInvoice = schetRow,
                             DDT_SPOST_ROW_CODE = row.CODE,
-                            DDT_CRS_DC = nom.Currency.DocCode,
+                            DDT_CRS_DC = ((IDocCode)nom.Currency).DocCode,
                             State = RowStatus.NewRow
                         });
                     }
@@ -277,7 +279,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     }
                 }
             }
-
         }
 
         public ICommand DeleteLinkSchetCommand
@@ -289,7 +290,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             var WinManager = new WindowManager();
             if (WinManager.ShowWinUIMessageBox("Вы хотите удалить счет и связанные с ним строки?",
-                "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+                    "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
             var delList =
                 new List<WarehouseOrderInRow>(Document.Rows.Where(_ =>
                     _.DDT_SPOST_DC == Document.Entity.DD_SPOST_DC));
@@ -311,7 +312,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private void OpenLinkSchet(object obj)
         {
             // ReSharper disable once PossibleInvalidOperationException
-            DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal) Document.Entity.DD_SPOST_DC);
+            DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)Document.Entity.DD_SPOST_DC);
         }
 
         public ICommand PrintOrderCommand
@@ -337,10 +338,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new OrderInView {Owner = Application.Current.MainWindow};
+            var frm = new OrderInView { Owner = Application.Current.MainWindow };
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderIn", true))
-                {Form = frm};
+                { Form = frm };
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -348,10 +349,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocNewCopy(object form)
         {
             if (Document == null) return;
-            var frm = new OrderInView {Owner = Application.Current.MainWindow};
+            var frm = new OrderInView { Owner = Application.Current.MainWindow };
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderIn", true))
-                {Form = frm};
+                { Form = frm };
             ctx.Document = orderManager.NewOrderInCopy(Document.DocCode);
             frm.Show();
             frm.DataContext = ctx;
@@ -360,9 +361,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocNewCopyRequisite(object form)
         {
             if (Document == null) return;
-            var frm = new OrderInView {Owner = Application.Current.MainWindow};
+            var frm = new OrderInView { Owner = Application.Current.MainWindow };
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                "WarehouseOrderIn", true)) {Form = frm, Document = orderManager.NewOrderInRecuisite(Document)};
+                "WarehouseOrderIn", true)) { Form = frm, Document = orderManager.NewOrderInRecuisite(Document) };
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -380,6 +381,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     return;
                 }
             }
+
             EntityManager.EntityReload(UnitOfWork.Context);
             foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
             RaiseAll();
@@ -466,7 +468,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private void OpenLinkDocument(object obj)
         {
             // ReSharper disable once PossibleInvalidOperationException
-            DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal) CurrentRow.DDT_SPOST_DC);
+            DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)CurrentRow.DDT_SPOST_DC);
         }
 
         public ICommand AddFromDocumentCommand
@@ -477,6 +479,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                                          Document?.KontragentSender != null);
             }
         }
+
         public override void ShowHistory(object data)
         {
             // ReSharper disable once RedundantArgumentDefaultValue
@@ -488,7 +491,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             var ctx = new AddNomenklFromInvoiceProviderRowViewModel(Document.WarehouseIn,
                 Document.KontragentSender);
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var dlg = new SelectDialogView { DataContext = ctx };
             ctx.Form = dlg;
             if (dlg.ShowDialog() == false) return;
             using (var dbctx = GlobalOptions.GetEntities())
@@ -517,11 +520,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             Code = newCode,
                             Nomenkl = r.Nomenkl,
                             DDT_KOL_PRIHOD = r.Quantity,
-                            Unit = r.Nomenkl.Unit,
+                            Unit = (Unit)r.Nomenkl.Unit,
                             DDT_SPOST_DC = r.DocCode,
                             LinkInvoice = schetRow,
                             DDT_SPOST_ROW_CODE = r.Code,
-                            DDT_CRS_DC = r.Nomenkl.Currency.DocCode,
+                            DDT_CRS_DC = ((IDocCode)r.Nomenkl.Currency).DocCode,
                             IsTaxExecuted = true,
                             IsFactExecuted = true,
                             State = RowStatus.NewRow
@@ -541,9 +544,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var WinManager = new WindowManager();
             if (Document.WarehouseIn == null)
             {
-                WinManager.ShowWinUIMessageBox("Не выбран склад получатель","Предупреждение",MessageBoxButton.OK, MessageBoxImage.Warning);
+                WinManager.ShowWinUIMessageBox("Не выбран склад получатель", "Предупреждение", MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
+
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             if (Document.WarehouseSenderType == WarehouseSenderType.Kontragent)
             {
@@ -557,8 +562,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             Code = newCode,
                             Nomenkl = n,
                             DDT_KOL_PRIHOD = 1,
-                            Unit = n.Unit,
-                            Currency = n.Currency,
+                            Unit = (Unit)n.Unit,
+                            Currency = (Currency)n.Currency,
                             State = RowStatus.NewRow
                         });
             }
@@ -576,8 +581,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             Code = newCode,
                             Nomenkl = nom,
                             DDT_KOL_PRIHOD = n.DDT_KOL_RASHOD,
-                            Unit = nom.Unit,
-                            Currency = nom.Currency,
+                            Unit = (Unit)nom.Unit,
+                            Currency = (Currency)nom.Currency,
                             DDT_SKLAD_OTPR_DC = n.SD_24.DD_SKLAD_OTPR_DC,
                             DDT_RASH_ORD_DC = n.DOC_CODE,
                             DDT_RASH_ORD_CODE = n.Code,
@@ -591,8 +596,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand DeleteNomenklCommand
         {
-            get { return new Command(DeleteNomenkl, _ => CurrentRow != null && (CurrentRow.State == RowStatus.NewRow 
-                                                                    || CurrentRow.LinkInvoice == null)); }
+            get
+            {
+                return new Command(DeleteNomenkl, _ => CurrentRow != null && (CurrentRow.State == RowStatus.NewRow
+                                                                              || CurrentRow.LinkInvoice == null));
+            }
         }
 
         private void DeleteNomenkl(object obj)
@@ -612,7 +620,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocDelete(object form)
         {
             if (Document.State != RowStatus.NewRow)
-            {
                 foreach (var r in Document.Rows)
                 {
                     if (r.LinkInvoice == null) continue;
@@ -621,7 +628,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         MessageBoxImage.Stop);
                     return;
                 }
-            }
 
             var res = MessageBox.Show("Вы уверены, что хотите удалить данный документ?", "Запрос",
                 MessageBoxButton.YesNo,
@@ -641,7 +647,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     {
                         UnitOfWork.CreateTransaction();
                         var doc = UnitOfWork.Context.SD_24.FirstOrDefault(_ => _.DOC_CODE == Document.DocCode);
-                        if(doc != null)
+                        if (doc != null)
                             UnitOfWork.Context.SD_24.Remove(doc);
                         UnitOfWork.Save();
                         UnitOfWork.Commit();

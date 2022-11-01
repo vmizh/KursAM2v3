@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
@@ -12,6 +11,9 @@ using KursAM2.Managers;
 using KursAM2.Repositories;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursDomain.Documents.AktSpisaniya;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {

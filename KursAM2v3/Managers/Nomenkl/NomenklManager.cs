@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl.ViewModel;
 using KursAM2.ViewModel.Logistiks;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
 
 namespace KursAM2.Managers.Nomenkl
 {
@@ -57,10 +58,10 @@ namespace KursAM2.Managers.Nomenkl
             return ret;
         }
 
-        public static List<Core.EntityViewModel.NomenklManagement.Nomenkl> GetNomenklsSearch(string searchText,
+        public static List<KursDomain.References.Nomenkl> GetNomenklsSearch(string searchText,
             bool isDeleted = false)
         {
-            var ret = new List<Core.EntityViewModel.NomenklManagement.Nomenkl>();
+            var ret = new List<KursDomain.References.Nomenkl>();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var n in ctx.SD_83.Where(_ => (_.NOM_NAME.ToUpper().Contains(searchText.ToUpper())
@@ -68,14 +69,14 @@ namespace KursAM2.Managers.Nomenkl
                                                         || _.NOM_FULL_NAME.ToUpper().Contains(searchText.ToUpper())
                                                         || _.NOM_NOTES.ToUpper().Contains(searchText.ToUpper())) &&
                                                        _.NOM_DELETED == (isDeleted ? 1 : 0)))
-                    ret.Add(new Core.EntityViewModel.NomenklManagement.Nomenkl
+                    ret.Add(new KursDomain.References.Nomenkl
                     {
                         DocCode = n.DOC_CODE,
                         Name = n.NOM_NAME,
-                        NameFull = n.NOM_FULL_NAME,
-                        Note = n.NOM_NOTES,
+                        FullName = n.NOM_FULL_NAME,
+                        Notes = n.NOM_NOTES,
                         NomenklNumber = n.NOM_NOMENKL,
-                        Group = MainReferences.NomenklGroups[n.NOM_CATEG_DC],
+                        Category = GlobalOptions.ReferencesCache.GetNomenklCategory(n.NOM_CATEG_DC),
                         // ReSharper disable once PossibleInvalidOperationException
                         Currency = MainReferences.Currencies[n.NOM_SALE_CRS_DC.Value]
                     });

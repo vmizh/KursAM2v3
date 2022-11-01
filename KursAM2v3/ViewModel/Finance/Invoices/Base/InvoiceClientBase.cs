@@ -1,18 +1,19 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Employee;
-using Core.EntityViewModel.Invoices;
-using Core.EntityViewModel.NomenklManagement;
-using Core.EntityViewModel.Vzaimozachet;
 using Data;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Invoices;
+using KursDomain.Documents.Vzaimozachet;
+using KursDomain.IReferences.Nomenkl;
+using KursDomain.References;
+using Employee = KursDomain.Documents.Employee.Employee;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
+using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
+using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursAM2.ViewModel.Finance.Invoices.Base
 {
@@ -23,12 +24,11 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
-
         }
 
         public InvoiceClientBase(IEnumerable<InvoiceClientQuery> invList, bool isLoadDetails = false)
         {
-            if(invList == null || !invList.Any())
+            if (invList == null || !invList.Any())
                 throw new ArgumentNullException();
             var doc = invList.First();
             DocCode = doc.DocCode;
@@ -42,22 +42,20 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             OuterNumber = doc.OuterNumber;
             Client = MainReferences.GetKontragent(doc.ClientDC);
             Currency = MainReferences.GetCurrency(doc.CurrencyDC);
-            SummaOtgruz = Math.Round(doc.SummaOtgruz ?? 0,2);
-            DilerSumma = Math.Round(doc.DilerSumma,2);
+            SummaOtgruz = Math.Round(doc.SummaOtgruz ?? 0, 2);
+            DilerSumma = Math.Round(doc.DilerSumma, 2);
             Note = doc.Note;
             Diler = MainReferences.GetKontragent(doc.DilerDC);
             IsAccepted = doc.IsAccepted ?? false;
-            Summa =Math.Round(doc.Summa ?? 0,2);
+            Summa = Math.Round(doc.Summa ?? 0, 2);
             CREATOR = doc.CREATOR;
             IsNDSIncludeInPrice = doc.IsNDSIncludeInPrice ?? false;
-            PaySumma = Math.Round(doc.PaySumma ?? 0,2);
-            if (!isLoadDetails) return; 
+            PaySumma = Math.Round(doc.PaySumma ?? 0, 2);
+            if (!isLoadDetails) return;
             Rows = new ObservableCollection<IInvoiceClientRow>();
-            foreach (var r in invList)
-            {
-                Rows.Add(new InvoiceClientRowBase(r));
-            }
+            foreach (var r in invList) Rows.Add(new InvoiceClientRowBase(r));
         }
+
         public decimal DocCode { get; set; }
         public Guid Id { get; set; }
         public Kontragent Receiver { get; set; }
@@ -99,18 +97,20 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             Summa = Quantity * Price;
             SFT_NACENKA_DILERA = row.SFT_NACENKA_DILERA;
             Shipped = row.Shipped;
-            Rest =Quantity - Shipped;
+            Rest = Quantity - Shipped;
             CurrentRemains = 0;
             NDSPercent = row.NDSPercent ?? 0;
             SFT_SUMMA_NDS = row.SFT_SUMMA_NDS;
         }
+
         public InvoiceClientRowBase()
         {
-
         }
-        public InvoiceClientRowBase(decimal docCode, int code, Guid id, Guid docId, Nomenkl nomenkl, string nomNomenkl, bool isUsluga, 
-            decimal quantity, decimal price, decimal summa, decimal? sFT_NACENKA_DILERA, decimal shipped, 
-            decimal rest, decimal currentRemains, string note, decimal nDSPercent, decimal? sFT_SUMMA_NDS, 
+
+        public InvoiceClientRowBase(decimal docCode, int code, Guid id, Guid docId, Nomenkl nomenkl, string nomNomenkl,
+            bool isUsluga,
+            decimal quantity, decimal price, decimal summa, decimal? sFT_NACENKA_DILERA, decimal shipped,
+            decimal rest, decimal currentRemains, string note, decimal nDSPercent, decimal? sFT_SUMMA_NDS,
             SDRSchet sDRSchet, string gruzoDeclaration)
         {
             DocCode = docCode;
@@ -134,11 +134,12 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             GruzoDeclaration = gruzoDeclaration;
         }
 
+        public Nomenkl Nomenkl { get; set; }
+
         public decimal DocCode { get; set; }
         public int Code { get; set; }
         public Guid Id { get; set; }
         public Guid DocId { get; set; }
-        public Nomenkl Nomenkl { get; set; }
         public string NomNomenkl { get; set; }
         public bool IsUsluga { get; set; }
         public decimal Quantity { get; set; }

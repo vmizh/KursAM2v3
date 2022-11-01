@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
 
 namespace KursAM2.Managers.Nomenkl
 {

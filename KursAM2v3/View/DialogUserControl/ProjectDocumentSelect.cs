@@ -11,6 +11,9 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.View.Management.Controls;
 using KursAM2.ViewModel.Management.Projects;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Currency;
+using KursDomain.Documents.Management;
 
 namespace KursAM2.View.DialogUserControl
 {

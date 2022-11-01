@@ -3,14 +3,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core.EntityViewModel.Periods;
-using Core.EntityViewModel.Systems;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursDomain.Documents.Periods;
+using KursDomain.Documents.Systems;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Period
 {

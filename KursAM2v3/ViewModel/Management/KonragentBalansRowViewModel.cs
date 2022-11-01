@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
+using KursDomain.Documents.CommonReferences;
 
 namespace KursAM2.ViewModel.Management
 {

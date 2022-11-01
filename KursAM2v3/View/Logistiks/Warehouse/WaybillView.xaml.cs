@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Data;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Data;
@@ -18,6 +17,9 @@ using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Logistiks.Warehouse;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
 using LayoutManager;
 
 namespace KursAM2.View.Logistiks.Warehouse

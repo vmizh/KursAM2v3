@@ -144,8 +144,6 @@
     <Compile Include="Documents\Dogovora\Old\TD_9ViewModel.cs" />
     <Compile Include="Documents\Employee\Employee.cs" />
     <Compile Include="Documents\Employee\EMP_PAYROLL_TYPEViewModel.cs" />
-    <Compile Include="Documents\FieldChangeType.cs" />
-    <Compile Include="Documents\ICheckViewModel.cs" />
     <Compile Include="Documents\Invoices\InvoiceClient.cs" />
     <Compile Include="Documents\Invoices\InvoiceClientRow.cs" />
     <Compile Include="Documents\Invoices\InvoicePaymentDocument.cs" />
@@ -182,7 +180,7 @@
     <Compile Include="Documents\NomenklManagement\WarehouseSenderType.cs" />
     <Compile Include="Documents\NomenklManagement\Waybill.cs" />
     <Compile Include="Documents\NomenklManagement\WaybillRow.cs" />
-    <Compile Include="Documents\NOM_SKLAD_CURRENCY_PRICEViewModel.cs" />
+    <Compile Include="Documents\NomenklManagement\NOM_SKLAD_CURRENCY_PRICEViewModel.cs" />
     <Compile Include="Documents\Periods\CLOSED_DOC_TYPEViewModel.cs" />
     <Compile Include="Documents\Periods\Period.cs" />
     <Compile Include="Documents\Periods\PeriodGroupsExludeViewModel.cs" />
@@ -192,9 +190,8 @@
     <Compile Include="Documents\Periods\PERIOD_GROUPS_USERSViewModel.cs" />
     <Compile Include="Documents\ProjectProviderPrihodViewModel.cs" />
     <Compile Include="Documents\ProjectsInfoViewModel.cs" />
-    <Compile Include="Documents\SCHET_FACT_KONTR_OUTViewModel.cs" />
-    <Compile Include="Documents\SCHET_FACT_KONTR_OUT_ROWSViewModel.cs" />
-    <Compile Include="Documents\SD_375ViewModel.cs" />
+    <Compile Include="Documents\Invoices\SCHET_FACT_KONTR_OUTViewModel.cs" />
+    <Compile Include="Documents\Invoices\SCHET_FACT_KONTR_OUT_ROWSViewModel.cs" />
     <Compile Include="Documents\Signatures\SignatureSchemesInfoViewModel.cs" />
     <Compile Include="Documents\Signatures\SignatureSchemesViewModel.cs" />
     <Compile Include="Documents\Signatures\SignatureTypeViewModel.cs" />
@@ -216,7 +213,6 @@
     <Compile Include="Documents\Systems\UserProfileViewModel.cs" />
     <Compile Include="Documents\Systems\UserRolesViewModel.cs" />
     <Compile Include="Documents\Systems\UsersViewModel.cs" />
-    <Compile Include="Documents\TaxUpdateHistoryViewModel.cs" />
     <Compile Include="Documents\USER_FORMS_RIGHTViewModel.cs" />
     <Compile Include="Documents\Vzaimozachet\SD_110ViewModel.cs" />
     <Compile Include="Documents\Vzaimozachet\SD_111ViewModel.cs" />
@@ -258,7 +254,6 @@
     <Compile Include="IReferences\ICentrResponsibility.cs" />
     <Compile Include="IReferences\IContractType.cs" />
     <Compile Include="IReferences\IDeliveryCondition.cs" />
-    <Compile Include="IReferences\IProductType.cs" />
     <Compile Include="IReferences\ICountry.cs" />
     <Compile Include="IReferences\IMutualSettlementType.cs" />
     <Compile Include="IReferences\IProject.cs" />
@@ -298,6 +293,8 @@
     <Compile Include="References\Country.cs" />
     <Compile Include="References\DeliveryCondition.cs" />
     <Compile Include="References\MainReferences.cs" />
+    <Compile Include="References\NomenklMain.cs" />
+    <Compile Include="References\NomenklType.cs" />
     <Compile Include="References\ProductType.cs" />
     <Compile Include="References\Employee.cs" />
     <Compile Include="References\KontragentCategory.cs" />
@@ -345,7 +342,6 @@
     <Compile Include="ViewModel\Base\KursBaseViewModel.cs" />
     <Compile Include="ViewModel\Base\KursViewModelBase.cs" />
     <Compile Include="ViewModel\Base\KursWindowSearchBaseViewModel.cs" />
-    <Compile Include="ViewModel\Base\RowStatus.cs" />
     <Compile Include="ViewModel\Base\RSDataErrorWindowInfoViewModelBase.cs" />
     <Compile Include="ViewModel\Base\RSViewModelBase.cs" />
     <Compile Include="ViewModel\Base\RSViewModelData.cs" />
@@ -369,7 +365,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Base\" />
-    <Folder Include="KursRepository\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj">

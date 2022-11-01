@@ -13,6 +13,12 @@ public interface IReferencesCache
     ICashBox GetCashBox(decimal? dc);
     IEnumerable<ICashBox> GetCashBoxAll();
 
+    INomenklType GetNomenklType(decimal? dc);
+    IEnumerable<INomenklType> GetNomenklTypeAll();
+
+    IProductType GetProductType(decimal? dc);
+    IEnumerable<IProductType> GetProductTypeAll();
+
     ICentrResponsibility GetCentrResponsibility(decimal? dc);
     IEnumerable<ICentrResponsibility> GetCentrResponsibilitiesAll();
 

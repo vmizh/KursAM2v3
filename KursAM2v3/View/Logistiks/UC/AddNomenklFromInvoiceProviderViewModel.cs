@@ -6,17 +6,15 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
 using KursAM2.Managers.Nomenkl;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Menu;
+using KursDomain.References;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.View.Logistiks.UC
 {
@@ -24,9 +22,11 @@ namespace KursAM2.View.Logistiks.UC
     public sealed class AddNomenklFromInvoiceProviderViewModel : RSWindowViewModelBase, IDataUserControl
     {
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+
         #region Constructors
 
-        public AddNomenklFromInvoiceProviderViewModel(Core.EntityViewModel.NomenklManagement.Warehouse warehouse, Kontragent kontr = null)
+        public AddNomenklFromInvoiceProviderViewModel(KursDomain.Documents.NomenklManagement.Warehouse warehouse,
+            Kontragent kontr = null)
         {
             Kontragent = kontr;
             Warehouse = warehouse;
@@ -72,7 +72,7 @@ namespace KursAM2.View.Logistiks.UC
                             Date = d.SF_POSTAV_DATE,
                             DocCode = d.DOC_CODE,
                             Num = d.SF_POSTAV_NUM,
-                            Currency = MainReferences.Currencies[(decimal) d.SF_CRS_DC],
+                            Currency = MainReferences.Currencies[(decimal)d.SF_CRS_DC],
                             Rows = new List<InvoiceShortRow>()
                         };
                         var rows = ctx.TD_26.Where(_ => _.DOC_CODE == dc).ToList();
@@ -82,23 +82,23 @@ namespace KursAM2.View.Logistiks.UC
                             if (s == null) continue;
                             var q = nomenklManager.GetNomenklQuantity(Warehouse.DocCode, r.SFT_NEMENKL_DC,
                                 DateTime.Today, DateTime.Today);
-                            decimal quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
+                            var quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                             var newRow = new InvoiceShortRow
                             {
                                 Id = r.Id,
                                 DocCode = r.DOC_CODE,
-                                DocId = (Guid) r.DocId,
+                                DocId = (Guid)r.DocId,
                                 InvoiceQuantity = r.SFT_KOL,
                                 Nomenkl = MainReferences.GetNomenkl(r.SFT_NEMENKL_DC),
-                                AlreadyShippedQuantity = (decimal) s.Shipped,
+                                AlreadyShippedQuantity = (decimal)s.Shipped,
                                 Code = r.CODE,
                                 Note = r.SFT_TEXT,
-                                Price = (decimal) (r.SFT_SUMMA_K_OPLATE / r.SFT_KOL),
+                                Price = (decimal)(r.SFT_SUMMA_K_OPLATE / r.SFT_KOL),
                                 AlreadyShippedSumma =
-                                    (decimal) (r.SFT_SUMMA_K_OPLATE / r.SFT_KOL) * (decimal) s.Shipped,
+                                    (decimal)(r.SFT_SUMMA_K_OPLATE / r.SFT_KOL) * (decimal)s.Shipped,
                                 IsChecked = true,
-                                QuantityOnSklad =  quan,
-                                Quantity = r.SFT_KOL - (decimal) s.Shipped
+                                QuantityOnSklad = quan,
+                                Quantity = r.SFT_KOL - (decimal)s.Shipped
                             };
                             doc.Rows.Add(newRow);
                         }
@@ -122,7 +122,7 @@ namespace KursAM2.View.Logistiks.UC
         private readonly Kontragent Kontragent;
         private InvoiceShort myCurrentInvoice;
         private InvoiceShortRow myCurrentNomenkl;
-        private readonly Core.EntityViewModel.NomenklManagement.Warehouse Warehouse;
+        private readonly KursDomain.Documents.NomenklManagement.Warehouse Warehouse;
         private AddNomenklFromInvoiceProviderUC myDataUserControl;
 
         #endregion

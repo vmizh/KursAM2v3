@@ -4,9 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.Signatures;
-using Core.EntityViewModel.Systems;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
@@ -17,6 +14,9 @@ using KursAM2.View.Base;
 using KursAM2.View.Signature;
 using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reference.Dialogs;
+using KursDomain.Documents.Signatures;
+using KursDomain.Documents.Systems;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Signatures
 {

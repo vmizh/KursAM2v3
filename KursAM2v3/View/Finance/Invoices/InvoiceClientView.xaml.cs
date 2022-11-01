@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.Invoices;
 using Core.WindowsManager;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
@@ -11,6 +10,7 @@ using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.ViewModel.Finance.Invoices;
+using KursDomain.Documents.Invoices;
 
 namespace KursAM2.View.Finance.Invoices
 {

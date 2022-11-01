@@ -7,13 +7,15 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Employee;
 using Data;
 using Data.Repository;
 using Helper;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Employee;
+using KursDomain.IReferences;
+using KursDomain.References;
 using Brush = System.Windows.Media.Brush;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace Core;
 
@@ -25,6 +27,8 @@ public static class GlobalOptions
 
     public static KursSystemEntities KursSystemDBContext;
     public static UnitOfWork<KursSystemEntities> KursSystemDBUnitOfWork;
+
+    public static IReferencesCache ReferencesCache;
 
     public static string SqlConnectionString;
     public static string SqlSystemConnectionString;

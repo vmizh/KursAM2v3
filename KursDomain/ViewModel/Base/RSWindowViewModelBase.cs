@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Core.EntityViewModel.Invoices;
-using Core.Menu;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
@@ -15,6 +13,8 @@ using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using Helper;
+using KursDomain.Documents.Invoices;
+using KursDomain.Menu;
 using LayoutManager;
 
 namespace Core.ViewModel.Base

@@ -9,6 +9,7 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=KursDomain"
+    xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
     Title="{Binding WindowName}" MinHeight="450" MinWidth="800"
     >
     <dx:ThemedWindow.HeaderItems>
@@ -48,7 +49,7 @@
                                           IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
                             <dxmvvm:Interaction.Behaviors>
                                 <dxmvvm:EnumItemsSourceBehavior
-                                    EnumType="{x:Type base:RowStatus}"/>
+                                    EnumType="{x:Type iCommon:RowStatus}"/>
                             </dxmvvm:Interaction.Behaviors>
                         </dxe:ComboBoxEdit>
                         <Label Content="  Статус:" DockPanel.Dock="Right"/>

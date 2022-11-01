@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
     public class NomenklCostResetSearchWindowViewModel : RSWindowSearchViewModelBase
     {
-        private Core.EntityViewModel.NomenklManagement.Warehouse myCurrentWarehouse;
+        private KursDomain.Documents.NomenklManagement.Warehouse myCurrentWarehouse;
         private Nomenkl mySelectedNomenkl;
 
-        public Core.EntityViewModel.NomenklManagement.Warehouse CurrentWarehouse
+        public KursDomain.Documents.NomenklManagement.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set
@@ -34,7 +33,9 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse> Sklads { set; get; } = new List<Core.EntityViewModel.NomenklManagement.Warehouse>();
+        public List<KursDomain.Documents.NomenklManagement.Warehouse> Sklads { set; get; } =
+            new List<KursDomain.Documents.NomenklManagement.Warehouse>();
+
         public List<Nomenkl> Nomenkls => MainReferences.ALLNomenkls.Values.ToList();
     }
 }

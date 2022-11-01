@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using Core.EntityViewModel.CommonReferences.Kontragent;
 using Data;
 using KursDomain.Documents.Bank;
+using KursDomain.Documents.CommonReferences.Kontragent;
 
 namespace KursAM2.ViewModel.Reference.Kontragent
 {

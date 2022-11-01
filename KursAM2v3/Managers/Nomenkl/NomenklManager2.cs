@@ -6,6 +6,7 @@ using Core.WindowsManager;
 using Data;
 using Helper;
 using JetBrains.Annotations;
+using KursDomain.Documents.Currency;
 
 namespace KursAM2.Managers.Nomenkl
 {

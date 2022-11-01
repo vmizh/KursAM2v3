@@ -1,99 +1,98 @@
 using System;
 using Core.ViewModel.Base;
 
-namespace Core.EntityViewModel.NomenklManagement
+namespace KursDomain.Documents.NomenklManagement;
+
+/// <summary>
+///     Класс остатка товара на складе
+/// </summary>
+public class NomenklSkladRemain : RSViewModelData
 {
-    /// <summary>
-    ///     Класс остатка товара на складе
-    /// </summary>
-    public class NomenklSkladRemain : RSViewModelData
+    private decimal myPrice;
+    private decimal myPriceNaklad;
+    private decimal myQuantity;
+    private DateTime myRemainDate;
+    private Warehouse mySklad;
+    private decimal mySumma;
+    private decimal mySummaWithNaklad;
+
+    public DateTime RemainDate
     {
-        private decimal myPrice;
-        private decimal myPriceNaklad;
-        private decimal myQuantity;
-        private DateTime myRemainDate;
-        private Warehouse mySklad;
-        private decimal mySumma;
-        private decimal mySummaWithNaklad;
-
-        public DateTime RemainDate
+        get => myRemainDate;
+        set
         {
-            get => myRemainDate;
-            set
-            {
-                if (myRemainDate == value) return;
-                myRemainDate = value;
-                RaisePropertyChanged();
-            }
+            if (myRemainDate == value) return;
+            myRemainDate = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public Warehouse Sklad
+    public Warehouse Sklad
+    {
+        get => mySklad;
+        set
         {
-            get => mySklad;
-            set
-            {
-                // ReSharper disable once PossibleUnintendedReferenceComparison
-                if (mySklad == value) return;
-                mySklad = value;
-                RaisePropertyChanged();
-            }
+            // ReSharper disable once PossibleUnintendedReferenceComparison
+            if (mySklad == value) return;
+            mySklad = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public string SkladName => mySklad?.Name;
+    public string SkladName => mySklad?.Name;
 
-        public decimal Quantity
+    public decimal Quantity
+    {
+        get => myQuantity;
+        set
         {
-            get => myQuantity;
-            set
-            {
-                if (myQuantity == value) return;
-                myQuantity = value;
-                RaisePropertyChanged();
-            }
+            if (myQuantity == value) return;
+            myQuantity = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal Price
+    public decimal Price
+    {
+        get => myPrice;
+        set
         {
-            get => myPrice;
-            set
-            {
-                if (myPrice == value) return;
-                myPrice = value;
-                RaisePropertyChanged();
-            }
+            if (myPrice == value) return;
+            myPrice = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal PriceNaklad
+    public decimal PriceNaklad
+    {
+        get => myPriceNaklad;
+        set
         {
-            get => myPriceNaklad;
-            set
-            {
-                if (myPriceNaklad == value) return;
-                myPriceNaklad = value;
-                RaisePropertyChanged();
-            }
+            if (myPriceNaklad == value) return;
+            myPriceNaklad = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal Summa
+    public decimal Summa
+    {
+        get => mySumma;
+        set
         {
-            get => mySumma;
-            set
-            {
-                if (mySumma == value) return;
-                mySumma = value;
-                RaisePropertyChanged();
-            }
+            if (mySumma == value) return;
+            mySumma = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaWithNaklad
+    public decimal SummaWithNaklad
+    {
+        get => mySummaWithNaklad;
+        set
         {
-            get => mySummaWithNaklad;
-            set
-            {
-                if (mySummaWithNaklad == value) return;
-                mySummaWithNaklad = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaWithNaklad == value) return;
+            mySummaWithNaklad = value;
+            RaisePropertyChanged();
         }
     }
 }

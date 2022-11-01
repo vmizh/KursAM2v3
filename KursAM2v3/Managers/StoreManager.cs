@@ -2,23 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
 
 namespace KursAM2.Managers
 {
     public class StoreManager : BaseItemManager<Warehouse>
     {
-        private StandartErrorManager errorManager;
+        private readonly StandartErrorManager errorManager;
 
         public StoreManager(StandartErrorManager errManager)
         {
             errorManager = errManager;
         }
+
         public List<Warehouse> Load()
         {
             var ret = new List<Warehouse>();
@@ -29,15 +30,16 @@ namespace KursAM2.Managers
                     // ReSharper disable once LoopCanBeConvertedToQuery
                     foreach (var u in ctx.SD_27)
                     {
-                        var n = new Warehouse(u) {State = RowStatus.NotEdited};
+                        var n = new Warehouse(u) { State = RowStatus.NotEdited };
                         ret.Add(n);
                     }
                 }
             }
             catch (Exception ex)
             {
-                errorManager.WriteErrorMessage(ex, "Ошибка","StoreManager.Load");
+                errorManager.WriteErrorMessage(ex, "Ошибка", "StoreManager.Load");
             }
+
             return ret;
         }
 
@@ -58,8 +60,7 @@ namespace KursAM2.Managers
             {
                 DocCode = -1,
                 Id = Guid.NewGuid(),
-                State = RowStatus.NewRow,
-
+                State = RowStatus.NewRow
             };
         }
 
@@ -84,7 +85,7 @@ namespace KursAM2.Managers
                 {
                     try
                     {
-                        var newDC = ctx.SD_27.Any() ? ctx.SD_27.Max(_ => _.DOC_CODE)+1 : 10270000001;
+                        var newDC = ctx.SD_27.Any() ? ctx.SD_27.Max(_ => _.DOC_CODE) + 1 : 10270000001;
                         foreach (var u in listProds)
                             switch (u.State)
                             {
@@ -100,7 +101,6 @@ namespace KursAM2.Managers
                                         Id = u.Id,
                                         TABELNUMBER = u.TABELNUMBER,
                                         SKL_REGION_DC = u.SKL_REGION_DC
-
                                     };
                                     ctx.SD_27.Add(sd27);
                                     newDC++;
@@ -114,6 +114,7 @@ namespace KursAM2.Managers
                                         old1.TABELNUMBER = u.TABELNUMBER;
                                         old1.SKL_REGION_DC = u.SKL_REGION_DC;
                                     }
+
                                     break;
                                 case RowStatus.Deleted:
                                     var old = ctx.SD_27.FirstOrDefault(_ => _.DOC_CODE == u.DocCode);
@@ -121,6 +122,7 @@ namespace KursAM2.Managers
                                         ctx.SD_27.Remove(old);
                                     break;
                             }
+
                         ctx.SaveChanges();
                         tn.Commit();
                         return true;
@@ -128,7 +130,7 @@ namespace KursAM2.Managers
                     catch (Exception ex)
                     {
                         tn.Rollback();
-                        errorManager.WriteErrorMessage(ex, "Ошибка",null);
+                        errorManager.WriteErrorMessage(ex, "Ошибка", null);
                         return false;
                     }
                 }
@@ -151,6 +153,7 @@ namespace KursAM2.Managers
                                 ctx.SD_27.Remove(old);
                             break;
                         }
+
                         ctx.SaveChanges();
                         tn.Commit();
                         return true;

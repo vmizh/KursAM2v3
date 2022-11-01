@@ -5,12 +5,14 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Employee;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.View.KursReferences;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Employee;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference
 {

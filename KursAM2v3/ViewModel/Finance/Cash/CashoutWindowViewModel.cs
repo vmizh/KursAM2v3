@@ -5,7 +5,6 @@ using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Mvvm;
@@ -19,6 +18,10 @@ using KursAM2.View.Helper;
 using KursAM2.ViewModel.Finance.AccruedAmount;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain.Documents.Cash;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {

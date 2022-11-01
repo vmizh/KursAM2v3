@@ -4,21 +4,21 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
     public class NomenklAddNomenklForInViewModel : RSWindowViewModelBase
     {
-        private Nomenkl myCurrentNomenkl;
+        private NomenklViewModel myCurrentNomenkl;
         private NomAddNomenklToMoveUC myDataUserControl;
 
         public NomenklAddNomenklForInViewModel(Guid nomMainId)
@@ -33,7 +33,7 @@ namespace KursAM2.ViewModel.Logistiks
         public bool IsNomenklMainNull { set; get; }
         public ObservableCollection<Currency> CurrencyCollection { set; get; }
 
-        public Nomenkl CurrentNomenkl
+        public NomenklViewModel CurrentNomenkl
         {
             get => myCurrentNomenkl;
             set
@@ -88,7 +88,7 @@ namespace KursAM2.ViewModel.Logistiks
         }
 
         public override bool IsCanSaveData => NomenklCollection.Any(_ => _.State != RowStatus.NotEdited);
-        public ObservableCollection<Nomenkl> NomenklCollection { set; get; } = new ObservableCollection<Nomenkl>();
+        public ObservableCollection<NomenklViewModel> NomenklCollection { set; get; } = new ObservableCollection<NomenklViewModel>();
 
         private void LoadReferences()
         {
@@ -98,7 +98,11 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 CurrencyCollection.Clear();
                 foreach (var c in ctx.SD_301.ToList())
-                    CurrencyCollection.Add(new Currency(c));
+                {
+                    var newCrs = new Currency();
+                    newCrs.LoadFromEntity(c);
+                    CurrencyCollection.Add(newCrs);
+                }
             }
         }
 
@@ -120,19 +124,19 @@ namespace KursAM2.ViewModel.Logistiks
                         join sd301 in ctx.SD_301 on n.NOM_SALE_CRS_DC equals sd301.DOC_CODE
                         join sd50 in ctx.SD_50 on n.NOM_PRODUCT_DC equals sd50.DOC_CODE
                         where n.MainId == id
-                        select new Nomenkl
+                        select new NomenklViewModel
                         {
                             DocCode = n.DOC_CODE,
                             Name = n.NOM_NAME,
                             NomenklNumber = n.NOM_NOMENKL,
                             NameFull = n.NOM_FULL_NAME,
-                            Currency = new Currency {DocCode = sd301.DOC_CODE, CRS_SHORTNAME = sd301.CRS_SHORTNAME},
+                            Currency = new Currency { DocCode = sd301.DOC_CODE, Name = sd301.CRS_SHORTNAME },
                             Note = n.NOM_NOTES
                         }).ToList();
                     NomenklCollection.Clear();
                     foreach (var nom in noms)
                     {
-                        nom.Currency = CurrencyCollection.SingleOrDefault(_ => _.DocCode == nom.Currency.DocCode);
+                        nom.Currency = CurrencyCollection.SingleOrDefault(_ => _.DocCode == ((IDocCode)nom.Currency).DocCode);
                         nom.Parent = MainNomenkl;
                         nom.State = RowStatus.NotEdited;
                         NomenklCollection.Add(nom);
@@ -217,13 +221,13 @@ namespace KursAM2.ViewModel.Logistiks
                                         NOM_NAME = nom.Name,
                                         NOM_NOMENKL =
                                             nom.NomenklNumber +
-                                            (nom.NomenklNumber.EndsWith(nom.Currency.Name) == false
-                                                ? " " + nom.Currency.Name
+                                            (nom.NomenklNumber.EndsWith(((IName)nom.Currency).Name) == false
+                                                ? " " + ((IName)nom.Currency).Name
                                                 : null),
                                         NOM_NOTES = nom.Note,
-                                        NOM_SALE_CRS_DC = nom.Currency.DocCode,
+                                        NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode,
                                         NOM_FULL_NAME = nom.NameFull ?? nom.Name,
-                                        NOM_ED_IZM_DC = MainNomenkl.Unit.DocCode,
+                                        NOM_ED_IZM_DC = ((IDocCode)MainNomenkl.Unit).DocCode,
                                         NOM_CATEG_DC = MainNomenkl.NomenklCategory.DocCode,
                                         NOM_0MATER_1USLUGA = MainNomenkl.IsUsluga ? 1 : 0,
                                         NOM_1PROD_0MATER = 0,
@@ -242,7 +246,7 @@ namespace KursAM2.ViewModel.Logistiks
                                     d.NOM_NAME = nom.Name;
                                     d.NOM_NOMENKL = nom.NomenklNumber;
                                     d.NOM_NOTES = nom.Note;
-                                    d.NOM_SALE_CRS_DC = nom.Currency.DocCode;
+                                    d.NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode;
                                     d.NOM_FULL_NAME = nom.NameFull ?? nom.Name;
                                     d.UpdateDate = DateTime.Now;
                                     d.MainId = nom.MainId;
@@ -266,11 +270,11 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        #region Command 
+        #region Command
 
         private void NomenklAdd(object obj)
         {
-            var newItem = new Nomenkl
+            var newItem = new NomenklViewModel
             {
                 DOC_CODE = -1,
                 Name = MainNomenkl.Name,
@@ -301,7 +305,7 @@ namespace KursAM2.ViewModel.Logistiks
         private void NomenklLinkExist(object obj)
         {
             var ctx = new NomenklSelectedSimpleDialogViewModel();
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var dlg = new SelectDialogView { DataContext = ctx };
             dlg.ShowDialog();
             if (!ctx.DialogResult) return;
             ctx.CurrentNomenkl.MainId = MainNomenkl.Id;

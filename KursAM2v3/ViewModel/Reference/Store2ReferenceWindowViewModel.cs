@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors.Settings;
@@ -13,6 +11,10 @@ using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+
 namespace KursAM2.ViewModel.Reference
 {
     public sealed class Store2ReferenceWindowViewModel : TreeReferenceBaseWindowViewModel, ILayoutFluentSetEditors

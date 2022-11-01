@@ -11,6 +11,7 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:native="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
     xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
+    xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
     Title="{Binding WindowName}"
     MinHeight="450" MinWidth="800">
     <dx:ThemedWindow.Resources>
@@ -62,7 +63,7 @@
                                           IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
                             <dxmvvm:Interaction.Behaviors>
                                 <dxmvvm:EnumItemsSourceBehavior
-                                    EnumType="{x:Type base:RowStatus}" />
+                                    EnumType="{x:Type iCommon:RowStatus}" />
                             </dxmvvm:Interaction.Behaviors>
                         </dxe:ComboBoxEdit>
                         <Label Content="  Статус:" DockPanel.Dock="Right" />

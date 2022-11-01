@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using JetBrains.Annotations;
+using KursDomain.References;
+using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace Calculates.Materials
 {
@@ -17,7 +17,10 @@ namespace Calculates.Materials
 
         protected List<Nomenkl> NomenklsForCalc = new List<Nomenkl>();
         public bool IsSave { set; get; } = false;
-        public abstract ObservableCollection<NomenklCalcCostOperation> GetOperations(decimal nomDC, bool isCalcOnly = true);
+
+        public abstract ObservableCollection<NomenklCalcCostOperation> GetOperations(decimal nomDC,
+            bool isCalcOnly = true);
+
         public abstract List<NomenklCalcCostOperation> Calc(ObservableCollection<NomenklCalcCostOperation> operList);
         public abstract void Save(IEnumerable<NomenklCalcCostOperation> operList);
 
@@ -46,8 +49,8 @@ namespace Calculates.Materials
                             .Include(_ => _.TD_84.SD_84).Where(_ => _.DDT_NOMENKL_DC == nomDC)
                         join prc in ctx.NOM_PRICE on td24.DDT_NOMENKL_DC equals prc.NOM_DC
                         where prc.DATE == (from tprc in ctx.NOM_PRICE
-                                  where tprc.NOM_DC == nomDC && tprc.DATE <= td24.SD_24.DD_DATE
-                                  select tprc.DATE).Max()
+                            where tprc.NOM_DC == nomDC && tprc.DATE <= td24.SD_24.DD_DATE
+                            select tprc.DATE).Max()
                         select
                             new
                             {
@@ -67,18 +70,18 @@ namespace Calculates.Materials
                                 KontrOtprDC = td24.SD_24.DD_KONTR_OTPR_DC,
                                 OperName = td24.SD_24.SD_201.D_NAME,
                                 OperCode = (td24.SD_24.DD_VOZVRAT ?? 0) == 1 ? 25 : td24.SD_24.SD_201.D_OP_CODE,
-                                DocPrice = (decimal) (td24.SD_24.DD_TYPE_DC == 2010000005 ? td24.DDT_TAX_CENA : 0),
+                                DocPrice = (decimal)(td24.SD_24.DD_TYPE_DC == 2010000005 ? td24.DDT_TAX_CENA : 0),
                                 SkladIn = td24.SD_24.DD_SKLAD_POL_DC,
                                 SkladOut = td24.SD_24.DD_SKLAD_OTPR_DC,
                                 SummaIn = (decimal)
                                     (td24.SD_24.DD_TYPE_DC == 2010000005
                                         ? td24.DDT_TAX_CENA * td24.DDT_KOL_PRIHOD
                                         : (td24.TD_26 != null ? td24.TD_26.SFT_ED_CENA ?? 0 : 0) * td24.DDT_KOL_PRIHOD),
-                                SummaInWithNaklad = (decimal) (td24.SD_24.DD_TYPE_DC == 2010000005
+                                SummaInWithNaklad = (decimal)(td24.SD_24.DD_TYPE_DC == 2010000005
                                     ? td24.DDT_TAX_CENA * td24.DDT_KOL_PRIHOD
                                     : (td24.TD_26 != null
-                                          ? td24.TD_26.SFT_ED_CENA + td24.TD_26.SFT_SUMMA_NAKLAD / td24.TD_26.SFT_KOL
-                                          : 0) * td24.DDT_KOL_PRIHOD),
+                                        ? td24.TD_26.SFT_ED_CENA + td24.TD_26.SFT_SUMMA_NAKLAD / td24.TD_26.SFT_KOL
+                                        : 0) * td24.DDT_KOL_PRIHOD),
                                 TovarDocDC = td24.DOC_CODE,
                                 SFRashodRow = td24.TD_84,
                                 //ReSharper disable once MergeConditionalExpression
@@ -127,14 +130,16 @@ namespace Calculates.Materials
                                     $"С/ф поставщика №{d.SFPrihodRow.SD_26.SF_IN_NUM}/{d.SFPrihodRow.SD_26.SF_POSTAV_NUM} от {d.SFPrihodRow.SD_26.SF_POSTAV_DATE.ToShortDateString()}";
                                 oper.Naklad = (d.SFPrihodRow.SFT_SUMMA_NAKLAD ?? 0) / d.SFPrihodRow.SFT_KOL;
                                 // ReSharper disable once PossibleInvalidOperationException
-                                oper.DocPrice = (decimal) d.SFPrihodRow.SFT_ED_CENA;
+                                oper.DocPrice = (decimal)d.SFPrihodRow.SFT_ED_CENA;
                             }
+
                             if (d.SFRashodRow != null)
                             {
                                 oper.FinDocumentDC = d.SFRashodRow.SD_84.DOC_CODE;
                                 oper.FinDocument =
                                     $"С/ф клиенту №{d.SFRashodRow.SD_84.SF_IN_NUM}/{d.SFRashodRow.SD_84.SF_OUT_NUM} от {d.SFRashodRow.SD_84.SF_DATE.ToShortDateString()}";
                             }
+
                             switch (oper.OperCode)
                             {
                                 case 1:
@@ -168,11 +173,13 @@ namespace Calculates.Materials
                                     oper.TovarDocument = "Возврат товара ";
                                     break;
                             }
+
                             oper.TovarDocument +=
                                 $"№{d.TovarDocHead.DD_IN_NUM}/{d.TovarDocHead.DD_EXT_NUM} от {d.TovarDocHead.DD_DATE.ToShortDateString()}";
                             ret.Operations.Add(oper);
                         }
                     }
+
                     var dataTransfer = ctx.NomenklTransferRow.Include(_ => _.NomenklTransfer)
                         .Where(_ => (_.NomenklInDC == nomDC || _.NomenklOutDC == nomDC) && _.IsAccepted).ToList();
                     foreach (var d in dataTransfer)
@@ -240,6 +247,7 @@ namespace Calculates.Materials
                                 };
                                 ret.Operations.Add(newTransOper);
                             }
+
                             if (d.NomenklOutDC == nomDC)
                             {
                                 var newTransOper = new NomenklCalcCostOperation
@@ -272,6 +280,7 @@ namespace Calculates.Materials
                         }
                     }
                 }
+
                 foreach (var d in ret.Operations) d.QuantityNakopit += d.QuantityIn - d.QuantityOut;
             }
             catch (Exception ex)
@@ -280,6 +289,7 @@ namespace Calculates.Materials
                 if (ex.InnerException != null)
                     Console.WriteLine(ex.InnerException.Message);
             }
+
             return ret.Operations;
         }
 
@@ -343,6 +353,7 @@ namespace Calculates.Materials
                     if (q > 0) ret.Add(new NomenklStoreRemainItem());
                 }
             }
+
             return ret;
         }
 

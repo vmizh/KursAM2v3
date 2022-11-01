@@ -1,9 +1,11 @@
 using System;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Data;
 using Helper;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.References;
 using Newtonsoft.Json;
 
 namespace KursAM2.ViewModel.Logistiks
@@ -75,12 +77,12 @@ namespace KursAM2.ViewModel.Logistiks
             set
             {
                 if (MainReferences.GetNomenkl(Entity.DDT_NOMENKL_DC) == value) return;
-                Entity.DDT_NOMENKL_DC = value?.DOC_CODE ?? 0;
+                Entity.DDT_NOMENKL_DC = value?.DocCode ?? 0;
                 if (value != null)
                 {
-                    Entity.DDT_ED_IZM_DC = value.Unit.DocCode;
-                    Entity.DDT_POST_ED_IZM_DC = value.Unit.DocCode;
-                    Entity.DDT_CRS_DC = value.Currency.DocCode;
+                    Entity.DDT_ED_IZM_DC = ((IDocCode)value.Unit).DocCode;
+                    Entity.DDT_POST_ED_IZM_DC = ((IDocCode)value.Unit).DocCode;
+                    Entity.DDT_CRS_DC =  ((IDocCode)value.Currency).DocCode;
                 }
                 RaisePropertyChanged();
             }
@@ -88,8 +90,8 @@ namespace KursAM2.ViewModel.Logistiks
 
         public string NomenklNumber => Nomenkl?.NomenklNumber;
         public string NomenklName => Nomenkl?.Name;
-        public string NomenklUnit => Nomenkl?.Unit?.Name;
-        public string NomenklCrsName => Nomenkl?.Currency?.Name;
+        public string NomenklUnit => (Nomenkl?.Unit as IName)?.Name;
+        public string NomenklCrsName => (Nomenkl?.Currency as IName)?.Name;
 
         public decimal QuantityCalc
         {

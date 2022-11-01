@@ -1,16 +1,16 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks.UC;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
     public class NomenklSelectedSimpleDialogViewModel : RSWindowViewModelBase
     {
-        private Nomenkl myCurrentNomenkl;
+        private NomenklViewModel myCurrentNomenkl;
         private SelectNomenklSimpleUC myDataUserControl;
 
         public NomenklSelectedSimpleDialogViewModel()
@@ -42,7 +42,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public Nomenkl CurrentNomenkl
+        public NomenklViewModel CurrentNomenkl
         {
             get => myCurrentNomenkl;
             set

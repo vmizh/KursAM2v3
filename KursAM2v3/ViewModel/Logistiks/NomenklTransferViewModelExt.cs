@@ -5,11 +5,12 @@ using System.Data.Entity;
 using System.Linq;
 using System.Transactions;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -17,7 +18,7 @@ namespace KursAM2.ViewModel.Logistiks
     {
         private string mySchetFactura;
         private SD_26 mySchetFacturaBase;
-        private Core.EntityViewModel.NomenklManagement.Warehouse myWarehouse;
+        private KursDomain.Documents.NomenklManagement.Warehouse myWarehouse;
 
         public NomenklTransferViewModelExt(NomenklTransfer entity) : base(entity)
         {
@@ -34,7 +35,7 @@ namespace KursAM2.ViewModel.Logistiks
                         Quantity = r.Quantity,
                         SummaOut = r.PriceOut * r.Quantity,
                         SummaIn = r.PriceIn * r.Quantity,
-                        OldPrice = Math.Round(Nomenkl.Price(r.NomenklOutDC, Entity.Date.AddDays(-1)), 2),
+                        OldPrice = Math.Round(NomenklViewModel.Price(r.NomenklOutDC, Entity.Date.AddDays(-1)), 2),
                         IsPriceAccepted = r.IsPriceAcepted ?? false,
                         NakladEdSumma = r.NakladEdSumma ?? 0,
                         NakladRate = r.NakladRate ?? 0,
@@ -49,7 +50,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
 
             if (entity.SD_27 != null)
-                myWarehouse = new Core.EntityViewModel.NomenklManagement.Warehouse(entity.SD_27);
+                myWarehouse = new KursDomain.Documents.NomenklManagement.Warehouse(entity.SD_27);
         }
 
         private NomenklTransferViewModelExt()
@@ -62,7 +63,7 @@ namespace KursAM2.ViewModel.Logistiks
         public override string Description => $"Акт валютной таксировки номенклатур {Entity.DucNum} от {Entity.Date} " +
                                               $"{Warehouse} {Entity.Note}";
 
-        public Core.EntityViewModel.NomenklManagement.Warehouse Warehouse
+        public KursDomain.Documents.NomenklManagement.Warehouse Warehouse
         {
             get => myWarehouse;
             set
@@ -98,13 +99,13 @@ namespace KursAM2.ViewModel.Logistiks
 
         private decimal GetMaxQuantity(decimal skladDC, decimal nomDC, DateTime date)
         {
-            var q = Nomenkl.Quantity(skladDC, nomDC, date);
+            var q = NomenklViewModel.Quantity(skladDC, nomDC, date);
             return q < 0 ? 0 : q;
         }
 
         private decimal GetMaxQuantity(decimal? skladDC, decimal nomDC, DateTime date)
         {
-            var q = Nomenkl.Quantity(skladDC, nomDC, date);
+            var q = NomenklViewModel.Quantity(skladDC, nomDC, date);
             return q < 0 ? 0 : q;
         }
 

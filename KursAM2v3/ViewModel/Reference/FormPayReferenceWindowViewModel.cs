@@ -4,14 +4,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel;
-using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Nomenkl;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -109,7 +108,7 @@ namespace KursAM2.ViewModel.Reference
                         MainReferences.FormRaschets.Clear();
                         foreach (var item in ctx.SD_189.AsNoTracking().ToList())
                             MainReferences.FormRaschets.Add(item.DOC_CODE,
-                                new FormPay(item) {State = RowStatus.NotEdited});
+                                new FormPay(item) { State = RowStatus.NotEdited });
                         foreach (var r in Rows)
                             r.myState = RowStatus.NotEdited;
                         DeletedRows.Clear();
@@ -156,7 +155,7 @@ namespace KursAM2.ViewModel.Reference
         }
 
         public override bool IsCanSaveData =>
-            Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited) || DeletedRows.Count > 0;
+            (Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited)) || DeletedRows.Count > 0;
 
         //    ItemNewCopyCommand
         //}" />

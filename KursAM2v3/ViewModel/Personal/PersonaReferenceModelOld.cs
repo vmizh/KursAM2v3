@@ -1,7 +1,7 @@
-﻿using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
-using Core.ViewModel.Base;
+﻿using Core.ViewModel.Base;
+using KursDomain.ICommon;
+using KursDomain.References;
+using Employee = KursDomain.Documents.Employee.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {

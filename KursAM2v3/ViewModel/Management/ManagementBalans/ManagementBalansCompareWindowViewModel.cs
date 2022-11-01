@@ -10,10 +10,7 @@ using System.Windows.Input;
 using Calculates.Materials;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Employee;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -24,7 +21,12 @@ using KursAM2.View.Management;
 using KursAM2.View.Management.Controls;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Logistiks;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Menu;
+using KursDomain.References;
+using Employee = KursDomain.Documents.Employee.Employee;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 // ReSharper disable All
 namespace KursAM2.ViewModel.Management.ManagementBalans
@@ -381,7 +383,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             {
                 var newNom = new NomenklCompareBalansDeltaItem
                 {
-                    Currency = d.Nom.Currency,
+                    Currency = d.Nom.Currency as Currency,
                     NomenklDC = d.Nom.DocCode,
                     NomenklName = d.Nom.Name,
                     NomenklNumber = d.Nom.NomenklNumber,
@@ -411,7 +413,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 {
                     var newNom = new NomenklCompareBalansDeltaItem
                     {
-                        Currency = d.Nom.Currency,
+                        Currency = d.Nom.Currency as Currency,
                         NomenklDC = d.Nom.DocCode,
                         NomenklName = d.Nom.Name,
                         NomenklNumber = d.Nom.NomenklNumber,
@@ -452,7 +454,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     {
                         var newNom = new NomenklCompareBalansDeltaItem
                         {
-                            Currency = d.Nom.Currency,
+                            Currency = d.Nom.Currency as Currency,
                             NomenklDC = d.Nom.DocCode,
                             NomenklName = d.Nom.Name,
                             NomenklNumber = d.Nom.NomenklNumber,
@@ -480,7 +482,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     {
                         var newNom = new NomenklCompareBalansDeltaItem
                         {
-                            Currency = d.Nom.Currency,
+                            Currency = d.Nom.Currency as Currency,
                             NomenklDC = d.Nom.DocCode,
                             NomenklName = d.Nom.Name,
                             NomenklNumber = d.Nom.NomenklNumber,

@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Shop
 {

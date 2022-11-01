@@ -5,8 +5,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.StockHolder;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -14,6 +12,9 @@ using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.View.StockHolder;
+using KursDomain.Documents.StockHolder;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.StockHolder
 {

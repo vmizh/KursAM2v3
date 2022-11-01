@@ -5,191 +5,190 @@ using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
 
-namespace Core.EntityViewModel.Systems
+namespace KursDomain.Documents.Systems;
+
+public class DocHistoryViewModel : RSViewModelBase, IEntity<DocHistory>
 {
-    public class DocHistoryViewModel : RSViewModelBase, IEntity<DocHistory>
+    private DocHistory myEntity;
+
+    public DocHistoryViewModel()
     {
-        private DocHistory myEntity;
+        Entity = new DocHistory { Id = Guid.NewGuid() };
+    }
 
-        public DocHistoryViewModel()
+    public DocHistoryViewModel(DocHistory entity)
+    {
+        Entity = entity ?? DefaultValue();
+    }
+
+    [DisplayName("Id")]
+    [Display(AutoGenerateField = false)]
+    public override Guid Id
+    {
+        get => Entity.Id;
+        set
         {
-            Entity = new DocHistory {Id = Guid.NewGuid()};
+            if (Entity.Id == value) return;
+            Entity.Id = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public DocHistoryViewModel(DocHistory entity)
+    [DisplayName("Дата")]
+    [Display(AutoGenerateField = true)]
+    [DisplayFormat(DataFormatString = "G")]
+    public DateTime Date
+    {
+        get => Entity.Date;
+        set
         {
-            Entity = entity ?? DefaultValue();
+            if (Entity.Date == value) return;
+            Entity.Date = value;
+            RaisePropertyChanged();
         }
+    }
 
-        [DisplayName("Id")]
-        [Display(AutoGenerateField = false)]
-        public override Guid Id
+    [DisplayName("Пользователь")]
+    [Display(AutoGenerateField = true)]
+    public string UserName
+    {
+        get => Entity.UserName;
+        set
         {
-            get => Entity.Id;
-            set
-            {
-                if (Entity.Id == value) return;
-                Entity.Id = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.UserName == value) return;
+            Entity.UserName = value;
+            RaisePropertyChanged();
         }
+    }
 
-        [DisplayName("Дата")]
-        [Display(AutoGenerateField = true)]
-        [DisplayFormat(DataFormatString = "G")]
-        public DateTime Date
+    [DisplayName("Type")]
+    [Display(AutoGenerateField = true)]
+    public string DocType
+    {
+        get => Entity.DocType;
+        set
         {
-            get => Entity.Date;
-            set
-            {
-                if (Entity.Date == value) return;
-                Entity.Date = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.DocType == value) return;
+            Entity.DocType = value;
+            RaisePropertyChanged();
         }
+    }
 
-        [DisplayName("Пользователь")]
-        [Display(AutoGenerateField = true)]
-        public string UserName
+    [DisplayName("DocId")]
+    [Display(AutoGenerateField = false)]
+    public Guid? DocId
+    {
+        get => Entity.DocId;
+        set
         {
-            get => Entity.UserName;
-            set
-            {
-                if (Entity.UserName == value) return;
-                Entity.UserName = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.DocId == value) return;
+            Entity.DocId = value;
+            RaisePropertyChanged();
         }
+    }
 
-        [DisplayName("Type")]
-        [Display(AutoGenerateField = true)]
-        public string DocType
+    [DisplayName("DocDC")]
+    [Display(AutoGenerateField = false)]
+    public decimal? DocDC
+    {
+        get => Entity.DocDC;
+        set
         {
-            get => Entity.DocType;
-            set
-            {
-                if (Entity.DocType == value) return;
-                Entity.DocType = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.DocDC == value) return;
+            Entity.DocDC = value;
+            RaisePropertyChanged();
         }
+    }
 
-        [DisplayName("DocId")]
-        [Display(AutoGenerateField = false)]
-        public Guid? DocId
+    [DisplayName("Code")]
+    [Display(AutoGenerateField = false)]
+    public override int Code
+    {
+        get => (int)(Entity.Code ?? 0);
+        set
         {
-            get => Entity.DocId;
-            set
-            {
-                if (Entity.DocId == value) return;
-                Entity.DocId = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.Code == value) return;
+            Entity.Code = value;
+            RaisePropertyChanged();
         }
+    }
 
-        [DisplayName("DocDC")]
-        [Display(AutoGenerateField = false)]
-        public decimal? DocDC
+    [DisplayName("DocData")]
+    [Display(AutoGenerateField = false)]
+    public string DocData
+    {
+        get => Entity.DocData;
+        set
         {
-            get => Entity.DocDC;
-            set
-            {
-                if (Entity.DocDC == value) return;
-                Entity.DocDC = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.DocData == value) return;
+            Entity.DocData = value;
+            RaisePropertyChanged();
         }
+    }
 
-        [DisplayName("Code")]
-        [Display(AutoGenerateField = false)]
-        public override int Code
+    [DisplayName("IsAccessRight")]
+    [Display(AutoGenerateField = false)]
+    public bool IsAccessRight { get; set; }
+
+    [DisplayName("Entity")]
+    [Display(AutoGenerateField = false)]
+    public DocHistory Entity
+    {
+        get => myEntity;
+        set
         {
-            get => (int) (Entity.Code ?? 0);
-            set
-            {
-                if (Entity.Code == value) return;
-                Entity.Code = value;
-                RaisePropertyChanged();
-            }
+            if (myEntity == value) return;
+            myEntity = value;
+            RaisePropertyChanged();
         }
+    }
 
-        [DisplayName("DocData")]
-        [Display(AutoGenerateField = false)]
-        public string DocData
-        {
-            get => Entity.DocData;
-            set
-            {
-                if (Entity.DocData == value) return;
-                Entity.DocData = value;
-                RaisePropertyChanged();
-            }
-        }
+    public DocHistory DefaultValue()
+    {
+        return new DocHistory { Id = Guid.NewGuid() };
+    }
 
-        [DisplayName("IsAccessRight")]
-        [Display(AutoGenerateField = false)]
-        public bool IsAccessRight { get; set; }
+    public List<DocHistory> LoadList()
+    {
+        throw new NotImplementedException();
+    }
 
-        [DisplayName("Entity")]
-        [Display(AutoGenerateField = false)]
-        public DocHistory Entity
-        {
-            get => myEntity;
-            set
-            {
-                if (myEntity == value) return;
-                myEntity = value;
-                RaisePropertyChanged();
-            }
-        }
+    public virtual DocHistory Load(decimal dc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public DocHistory DefaultValue()
-        {
-            return new DocHistory {Id = Guid.NewGuid()};
-        }
+    public virtual DocHistory Load(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
-        public List<DocHistory> LoadList()
-        {
-            throw new NotImplementedException();
-        }
+    public virtual void Save(DocHistory doc)
+    {
+        throw new NotImplementedException();
+    }
 
-        public virtual DocHistory Load(decimal dc)
-        {
-            throw new NotImplementedException();
-        }
+    public void UpdateFrom(DocHistory ent)
+    {
+        Id = ent.Id;
+        Date = ent.Date;
+        UserName = ent.UserName;
+        DocType = ent.DocType;
+        DocId = ent.DocId;
+        DocDC = ent.DocDC;
+        Code = (int)(ent.Code ?? 0);
+        DocData = ent.DocData;
+    }
 
-        public virtual DocHistory Load(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void Save(DocHistory doc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateFrom(DocHistory ent)
-        {
-            Id = ent.Id;
-            Date = ent.Date;
-            UserName = ent.UserName;
-            DocType = ent.DocType;
-            DocId = ent.DocId;
-            DocDC = ent.DocDC;
-            Code = (int) (ent.Code ?? 0);
-            DocData = ent.DocData;
-        }
-
-        public void UpdateTo(DocHistory ent)
-        {
-            ent.Id = Id;
-            ent.Date = Date;
-            ent.UserName = UserName;
-            ent.DocType = DocType;
-            ent.DocId = DocId;
-            ent.DocDC = DocDC;
-            ent.Code = Code;
-            ent.DocData = DocData;
-        }
+    public void UpdateTo(DocHistory ent)
+    {
+        ent.Id = Id;
+        ent.Date = Date;
+        ent.UserName = UserName;
+        ent.DocType = DocType;
+        ent.DocId = DocId;
+        ent.DocDC = DocDC;
+        ent.Code = Code;
+        ent.DocData = DocData;
     }
 }

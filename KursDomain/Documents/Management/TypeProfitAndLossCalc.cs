@@ -1,10 +1,9 @@
-﻿namespace Core.Helper
+﻿namespace KursDomain.Documents.Management;
+
+public enum TypeProfitAndLossCalc
 {
-    public enum TypeProfitAndLossCalc
-    {
-        None,
-        IsProfit,
-        IsLoss,
-        IsAll
-    }
+    None,
+    IsProfit,
+    IsLoss,
+    IsAll
 }

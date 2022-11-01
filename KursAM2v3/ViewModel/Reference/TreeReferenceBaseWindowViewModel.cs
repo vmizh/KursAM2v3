@@ -2,9 +2,10 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.View.Base;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference
 {

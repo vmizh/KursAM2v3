@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks.UC;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -142,8 +142,8 @@ namespace KursAM2.ViewModel.Logistiks
                     {
                         DocCode = n.DOC_CODE,
                         Name = n.NOM_NAME,
-                        NameFull = n.NOM_FULL_NAME,
-                        Note = n.NOM_NOTES,
+                        FullName = n.NOM_FULL_NAME,
+                        Notes = n.NOM_NOTES,
                         NomenklNumber = n.NOM_NOMENKL,
                         Currency = MainReferences.Currencies[n.NOM_SALE_CRS_DC.Value]
                     });

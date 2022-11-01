@@ -9,11 +9,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Core.Native;
 using KursAM2.View.Personal;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Personal
 {

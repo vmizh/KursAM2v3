@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.Invoices;
-using Core.Invoices.EntityViewModel;
 using Data;
 using Data.Repository;
 using KursAM2.Repositories.InvoicesRepositories;
+using KursDomain.Documents.Invoices;
+using KursDomain.ICommon;
 using NUnit.Framework;
 
 // ReSharper disable All
@@ -32,7 +32,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
             setRepository();
 
             var d = genericProviderRepository.GetById(10260011751);
-            var doc = new InvoiceProvider(d, UnitOfWork,false);
+            var doc = new InvoiceProvider(d, UnitOfWork, false);
             Assert.AreNotEqual(d, null);
         }
 
@@ -60,14 +60,14 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 TD_26 = new List<TD_26>()
             };
             genericProviderRepository.Insert(newEntity);
-            var newDoc = new InvoiceProvider(newEntity,UnitOfWork);
+            var newDoc = new InvoiceProvider(newEntity, UnitOfWork);
             var newRow = new InvoiceProviderRow
             {
                 DocCode = newDoc.DocCode,
                 Code = 1,
                 Id = Guid.NewGuid(),
                 DocId = newDoc.Id,
-                
+
                 Price = 1000,
                 Quantity = 1,
                 SFT_NDS_PERCENT = 18,
@@ -76,9 +76,10 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 SFT_AUTO_FLAG = 0,
                 Note = "test"
             };
+
             newRow.Entity.SFT_UCHET_ED_IZM_DC = MainReferences.Units.First().Key;
             newRow.Entity.SFT_NEMENKL_DC = MainReferences.ALLNomenkls.Values
-                .FirstOrDefault(_ => _.Currency.DocCode == newDoc.Currency.DocCode).DocCode;
+                .FirstOrDefault(_ => (((IDocCode)_.Currency).DocCode == newDoc.Currency.DocCode)).DocCode;
             newRow.Entity.SFT_POST_ED_IZM_DC = MainReferences.Units.First().Key;
             newDoc.Rows.Add(newRow);
             newDoc.Entity.TD_26.Add(newRow.Entity);
@@ -104,7 +105,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
             }
 
             var saveEntity = genericProviderRepository.GetById(newDC);
-            var saveDoc = new InvoiceProvider(saveEntity,UnitOfWork, false);
+            var saveDoc = new InvoiceProvider(saveEntity, UnitOfWork, false);
             Assert.AreNotEqual(saveEntity, null, "Не загружается новый счет-фктура поставщика");
             Assert.AreEqual(saveDoc.Rows.Count, 1, "Строка не сохранилась");
             var row = saveDoc.Rows.Cast<InvoiceProviderRow>().First();
@@ -116,12 +117,12 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 NomenklId = row.Nomenkl.Id,
                 Date = DateTime.Today,
                 // ReSharper disable once PossibleInvalidOperationException
-                OLdPrice = (decimal) row.Price,
+                OLdPrice = (decimal)row.Price,
                 OLdNakladPrice = (row.SFT_SUMMA_NAKLAD ?? 0) != 0
-                    ? Math.Round((decimal) row.Price +
+                    ? Math.Round((decimal)row.Price +
                                  // ReSharper disable once PossibleInvalidOperationException
-                                 (decimal) row.Price / (row.SFT_SUMMA_NAKLAD ?? 0), 2)
-                    : Math.Round((decimal) row.Price, 2),
+                                 (decimal)row.Price / (row.SFT_SUMMA_NAKLAD ?? 0), 2)
+                    : Math.Round((decimal)row.Price, 2),
                 Quantity = row.Quantity,
                 Rate = 1
             };
@@ -141,7 +142,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
             }
 
             var saveCrsEntity = genericProviderRepository.GetById(newDC);
-            var saveCrsDoc = new InvoiceProvider(saveCrsEntity,UnitOfWork, false);
+            var saveCrsDoc = new InvoiceProvider(saveCrsEntity, UnitOfWork, false);
             Assert.AreNotEqual(saveCrsEntity, null, "Не загружается новый счет-фктура поставщика " +
                                                     "c валютными таксировками");
             Assert.AreEqual(saveCrsDoc.Rows.Count, 1, "Строка не сохранилась");
@@ -165,7 +166,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
             }
 
             saveCrsEntity = genericProviderRepository.GetById(newDC);
-            
+
             Assert.AreNotEqual(saveCrsEntity.TD_26.First().TD_26_CurrencyConvert.Count, 1,
                 "Не удалилась строка валютной таксировки");
 
@@ -181,6 +182,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 {
                     r.DocCode = newDC;
                 }
+
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
             }
@@ -192,7 +194,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
 
             saveCrsEntity = genericProviderRepository.GetById(newDC);
             Assert.AreNotEqual(saveCrsEntity, null, "Не загружается copy счет-фктура поставщика");
-            saveCrsDoc = new InvoiceProvider(saveCrsEntity, UnitOfWork,false);
+            saveCrsDoc = new InvoiceProvider(saveCrsEntity, UnitOfWork, false);
             saveCrsDoc = invoiceProviderRepository.GetRequisiteCopy(saveCrsDoc);
 
             UnitOfWork.CreateTransaction();
@@ -206,6 +208,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 {
                     r.DocCode = newDC;
                 }
+
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
             }
@@ -247,12 +250,12 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
             setRepository();
 
             var d = genericProviderRepository.GetById(10260011751);
-            Assert.AreNotEqual(d, null); 
-            
+            Assert.AreNotEqual(d, null);
+
             genericProviderRepository.Context.Entry(d).State = EntityState.Added;
             var newDC = genericProviderRepository.Context.SD_26.Max(_ => _.DOC_CODE) + 1;
-            var newId = Guid.NewGuid(); 
-            var doc = new InvoiceProvider(d, UnitOfWork,false);
+            var newId = Guid.NewGuid();
+            var doc = new InvoiceProvider(d, UnitOfWork, false);
             doc.DocCode = -1;
             doc.CREATOR = GlobalOptions.UserInfo.NickName;
             doc.DocDate = DateTime.Today;
@@ -270,6 +273,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 r.Entity.TD_26_CurrencyConvert.Clear();
                 i++;
             }
+
             UnitOfWork.CreateTransaction();
             try
             {
@@ -278,6 +282,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 {
                     r.DocCode = newDC;
                 }
+
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
             }

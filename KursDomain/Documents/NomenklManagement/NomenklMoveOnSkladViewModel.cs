@@ -1,291 +1,292 @@
 ﻿using Core.ViewModel.Base;
+using KursDomain.ICommon;
+using KursDomain.References;
 
-namespace Core.EntityViewModel.NomenklManagement
+namespace KursDomain.Documents.NomenklManagement;
+
+public class NomenklMoveOnSkladViewModel : RSViewModelBase
 {
-    public class NomenklMoveOnSkladViewModel : RSViewModelBase
+    private Nomenkl myNomenkl;
+    private decimal myPriceEnd;
+    private decimal myPriceStart;
+    private decimal myQuantityEnd;
+    private decimal myQuantityIn;
+    private decimal myQuantityOut;
+    private decimal myQuantityStart;
+    private decimal mySummaAllEnd;
+    private decimal mySummaAllIn;
+    private decimal mySummaAllOut;
+    private decimal mySummaAllStart;
+    private decimal mySummaEUREnd;
+    private decimal mySummaEURIn;
+    private decimal mySummaEUROut;
+    private decimal mySummaEURStart;
+    private decimal mySummaRUBEnd;
+    private decimal mySummaRUBIn;
+    private decimal mySummaRUBOut;
+    private decimal mySummaRUBStart;
+    private decimal mySummaUSDEnd;
+    private decimal mySummaUSDIn;
+    private decimal mySummaUSDOut;
+    private decimal mySummaUSDStart;
+
+    public override decimal DocCode => myNomenkl?.DocCode ?? 0;
+
+    public Nomenkl Nomenkl
     {
-        private Nomenkl myNomenkl;
-        private decimal myPriceEnd;
-        private decimal myPriceStart;
-        private decimal myQuantityEnd;
-        private decimal myQuantityIn;
-        private decimal myQuantityOut;
-        private decimal myQuantityStart;
-        private decimal mySummaAllEnd;
-        private decimal mySummaAllIn;
-        private decimal mySummaAllOut;
-        private decimal mySummaAllStart;
-        private decimal mySummaEUREnd;
-        private decimal mySummaEURIn;
-        private decimal mySummaEUROut;
-        private decimal mySummaEURStart;
-        private decimal mySummaRUBEnd;
-        private decimal mySummaRUBIn;
-        private decimal mySummaRUBOut;
-        private decimal mySummaRUBStart;
-        private decimal mySummaUSDEnd;
-        private decimal mySummaUSDIn;
-        private decimal mySummaUSDOut;
-        private decimal mySummaUSDStart;
-
-        public override decimal DocCode => myNomenkl?.DocCode ?? 0;
-
-        public Nomenkl Nomenkl
+        get => myNomenkl;
+        set
         {
-            get => myNomenkl;
-            set
-            {
-                if (myNomenkl != null && myNomenkl.Equals(value)) return;
-                myNomenkl = value;
-                RaisePropertyChanged();
-            }
+            if (myNomenkl != null && myNomenkl.Equals(value)) return;
+            myNomenkl = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public new string Name => Nomenkl?.Name;
-        public string NomenklNumber => Nomenkl?.NomenklNumber;
-        public string CurrencyName => Nomenkl?.Currency.Name;
-        public new string Note => Nomenkl?.Note;
+    public new string Name => Nomenkl?.Name;
+    public string NomenklNumber => Nomenkl?.NomenklNumber;
+    public string CurrencyName => ((IName)Nomenkl?.Currency)?.Name;
+    public new string Note => ((IName)Nomenkl)?.Notes;
 
-        public decimal QuantityStart
+    public decimal QuantityStart
+    {
+        get => myQuantityStart;
+        set
         {
-            get => myQuantityStart;
-            set
-            {
-                if (myQuantityStart == value) return;
-                myQuantityStart = value;
-                RaisePropertyChanged();
-            }
+            if (myQuantityStart == value) return;
+            myQuantityStart = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal QuantityEnd
+    public decimal QuantityEnd
+    {
+        get => myQuantityEnd;
+        set
         {
-            get => myQuantityEnd;
-            set
-            {
-                if (myQuantityEnd == value) return;
-                myQuantityEnd = value;
-                RaisePropertyChanged();
-            }
+            if (myQuantityEnd == value) return;
+            myQuantityEnd = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal QuantityIn
+    public decimal QuantityIn
+    {
+        get => myQuantityIn;
+        set
         {
-            get => myQuantityIn;
-            set
-            {
-                if (myQuantityIn == value) return;
-                myQuantityIn = value;
-                RaisePropertyChanged();
-            }
+            if (myQuantityIn == value) return;
+            myQuantityIn = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal QuantityOut
+    public decimal QuantityOut
+    {
+        get => myQuantityOut;
+        set
         {
-            get => myQuantityOut;
-            set
-            {
-                if (myQuantityOut == value) return;
-                myQuantityOut = value;
-                RaisePropertyChanged();
-            }
+            if (myQuantityOut == value) return;
+            myQuantityOut = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal PriceStart
+    public decimal PriceStart
+    {
+        get => myPriceStart;
+        set
         {
-            get => myPriceStart;
-            set
-            {
-                if (myPriceStart == value) return;
-                myPriceStart = value;
-                RaisePropertyChanged();
-            }
+            if (myPriceStart == value) return;
+            myPriceStart = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal PriceEnd
+    public decimal PriceEnd
+    {
+        get => myPriceEnd;
+        set
         {
-            get => myPriceEnd;
-            set
-            {
-                if (myPriceEnd == value) return;
-                myPriceEnd = value;
-                RaisePropertyChanged();
-            }
+            if (myPriceEnd == value) return;
+            myPriceEnd = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaRUBStart
+    public decimal SummaRUBStart
+    {
+        get => mySummaRUBStart;
+        set
         {
-            get => mySummaRUBStart;
-            set
-            {
-                if (mySummaRUBStart == value) return;
-                mySummaRUBStart = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaRUBStart == value) return;
+            mySummaRUBStart = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaRUBEnd
+    public decimal SummaRUBEnd
+    {
+        get => mySummaRUBEnd;
+        set
         {
-            get => mySummaRUBEnd;
-            set
-            {
-                if (mySummaRUBEnd == value) return;
-                mySummaRUBEnd = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaRUBEnd == value) return;
+            mySummaRUBEnd = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaRUBIn
+    public decimal SummaRUBIn
+    {
+        get => mySummaRUBIn;
+        set
         {
-            get => mySummaRUBIn;
-            set
-            {
-                if (mySummaRUBIn == value) return;
-                mySummaRUBIn = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaRUBIn == value) return;
+            mySummaRUBIn = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaRUBOut
+    public decimal SummaRUBOut
+    {
+        get => mySummaRUBOut;
+        set
         {
-            get => mySummaRUBOut;
-            set
-            {
-                if (mySummaRUBOut == value) return;
-                mySummaRUBOut = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaRUBOut == value) return;
+            mySummaRUBOut = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaUSDStart
+    public decimal SummaUSDStart
+    {
+        get => mySummaUSDStart;
+        set
         {
-            get => mySummaUSDStart;
-            set
-            {
-                if (mySummaUSDStart == value) return;
-                mySummaUSDStart = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaUSDStart == value) return;
+            mySummaUSDStart = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaUSDEnd
+    public decimal SummaUSDEnd
+    {
+        get => mySummaUSDEnd;
+        set
         {
-            get => mySummaUSDEnd;
-            set
-            {
-                if (mySummaUSDEnd == value) return;
-                mySummaUSDEnd = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaUSDEnd == value) return;
+            mySummaUSDEnd = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaUSDIn
+    public decimal SummaUSDIn
+    {
+        get => mySummaUSDIn;
+        set
         {
-            get => mySummaUSDIn;
-            set
-            {
-                if (mySummaUSDIn == value) return;
-                mySummaUSDIn = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaUSDIn == value) return;
+            mySummaUSDIn = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaUSDOut
+    public decimal SummaUSDOut
+    {
+        get => mySummaUSDOut;
+        set
         {
-            get => mySummaUSDOut;
-            set
-            {
-                if (mySummaUSDOut == value) return;
-                mySummaUSDOut = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaUSDOut == value) return;
+            mySummaUSDOut = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaEURStart
+    public decimal SummaEURStart
+    {
+        get => mySummaEURStart;
+        set
         {
-            get => mySummaEURStart;
-            set
-            {
-                if (mySummaEURStart == value) return;
-                mySummaEURStart = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaEURStart == value) return;
+            mySummaEURStart = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaEUREnd
+    public decimal SummaEUREnd
+    {
+        get => mySummaEUREnd;
+        set
         {
-            get => mySummaEUREnd;
-            set
-            {
-                if (mySummaEUREnd == value) return;
-                mySummaEUREnd = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaEUREnd == value) return;
+            mySummaEUREnd = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaEURIn
+    public decimal SummaEURIn
+    {
+        get => mySummaEURIn;
+        set
         {
-            get => mySummaEURIn;
-            set
-            {
-                if (mySummaEURIn == value) return;
-                mySummaEURIn = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaEURIn == value) return;
+            mySummaEURIn = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaEUROut
+    public decimal SummaEUROut
+    {
+        get => mySummaEUROut;
+        set
         {
-            get => mySummaEUROut;
-            set
-            {
-                if (mySummaEUROut == value) return;
-                mySummaEUROut = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaEUROut == value) return;
+            mySummaEUROut = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaAllStart
+    public decimal SummaAllStart
+    {
+        get => mySummaAllStart;
+        set
         {
-            get => mySummaAllStart;
-            set
-            {
-                if (mySummaAllStart == value) return;
-                mySummaAllStart = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaAllStart == value) return;
+            mySummaAllStart = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaAllEnd
+    public decimal SummaAllEnd
+    {
+        get => mySummaAllEnd;
+        set
         {
-            get => mySummaAllEnd;
-            set
-            {
-                if (mySummaAllEnd == value) return;
-                mySummaAllEnd = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaAllEnd == value) return;
+            mySummaAllEnd = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaAllIn
+    public decimal SummaAllIn
+    {
+        get => mySummaAllIn;
+        set
         {
-            get => mySummaAllIn;
-            set
-            {
-                if (mySummaAllIn == value) return;
-                mySummaAllIn = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaAllIn == value) return;
+            mySummaAllIn = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public decimal SummaAllOut
+    public decimal SummaAllOut
+    {
+        get => mySummaAllOut;
+        set
         {
-            get => mySummaAllOut;
-            set
-            {
-                if (mySummaAllOut == value) return;
-                mySummaAllOut = value;
-                RaisePropertyChanged();
-            }
+            if (mySummaAllOut == value) return;
+            mySummaAllOut = value;
+            RaisePropertyChanged();
         }
     }
 }

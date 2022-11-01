@@ -5,10 +5,11 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.View.Logistiks.UC;
+using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -34,7 +35,7 @@ namespace KursAM2.ViewModel.Logistiks
             if (nom == null) return;
             NomenklNumber = nom.NomenklNumber;
             NomenklName = nom.Name;
-            NomenklCurrency = nom.Currency.Name;
+            NomenklCurrency = ((IName)nom.Currency).Name;
         }
 
         public ObservableCollection<NomPriceViewModel> CalcList { get; set; } =
@@ -175,7 +176,7 @@ namespace KursAM2.ViewModel.Logistiks
                     };
                     newItem.SummaIn = (decimal)(doc.DDT_KOL_PRIHOD * doc.DDT_TAX_CRS_CENA);
                     newItem.SummaOut = doc.DDT_KOL_PRIHOD *
-                                       Nomenkl.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE);
+                                       NomenklViewModel.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE);
                     newItem.SummaDelta = newItem.SummaIn - newItem.SummaOut;
                     newItem.Note = doc.SD_24.DD_NOTES;
                     DocumentList.Add(newItem);
@@ -202,13 +203,15 @@ namespace KursAM2.ViewModel.Logistiks
                         QuantityIn = doc.DDT_KOL_PRIHOD,
                         QuantityOut = doc.DDT_KOL_RASHOD,
                         QuantityDelta = doc.DDT_KOL_PRIHOD - doc.DDT_KOL_RASHOD,
-                        From = doc.SD_24.DD_KONTR_OTPR_DC != null ? MainReferences.GetKontragent(doc.SD_24.DD_KONTR_OTPR_DC).Name
+                        From = doc.SD_24.DD_KONTR_OTPR_DC != null
+                            ? MainReferences.GetKontragent(doc.SD_24.DD_KONTR_OTPR_DC).Name
                             // ReSharper disable once PossibleInvalidOperationException
                             : MainReferences.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC.Value).Name,
                         // ReSharper disable once AssignNullToNotNullAttribute
                         // ReSharper disable once PossibleInvalidOperationException
-                        To = doc.SD_24.DD_SKLAD_POL_DC != null ? MainReferences.Warehouses[doc.SD_24.DD_SKLAD_POL_DC.Value].Name
-                            :  MainReferences.GetKontragent(doc.SD_24.DD_KONTR_POL_DC).Name
+                        To = doc.SD_24.DD_SKLAD_POL_DC != null
+                            ? MainReferences.Warehouses[doc.SD_24.DD_SKLAD_POL_DC.Value].Name
+                            : MainReferences.GetKontragent(doc.SD_24.DD_KONTR_POL_DC).Name
                     };
                     if (doc.TD_26 != null)
                     {
@@ -222,11 +225,12 @@ namespace KursAM2.ViewModel.Logistiks
                     else
                     {
                         newItem.DocumentName = newItem.DocumentName + " (Возврат товара)";
-                        newItem.SummaIn = Nomenkl.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE) *
+                        newItem.SummaIn = NomenklViewModel.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE) *
                                           doc.DDT_KOL_PRIHOD;
                         newItem.SummaOut = 0;
-                        newItem.SummaDelta = Nomenkl.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE) *
-                                             doc.DDT_KOL_PRIHOD;
+                        newItem.SummaDelta =
+                            NomenklViewModel.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE) *
+                            doc.DDT_KOL_PRIHOD;
                         newItem.Note = doc.SD_24.DD_NOTES;
                     }
 
@@ -310,8 +314,10 @@ namespace KursAM2.ViewModel.Logistiks
                         From = MainReferences.Warehouses[t.NomenklTransfer.SkladDC.Value].Name,
                         To = MainReferences.Warehouses[t.NomenklTransfer.SkladDC.Value].Name,
                         SummaIn = 0,
-                        SummaOut = Nomenkl.PriceWithOutNaklad(t.NomenklOutDC, t.NomenklTransfer.Date) * t.Quantity,
-                        SummaDelta = -Nomenkl.PriceWithOutNaklad(t.NomenklOutDC, t.NomenklTransfer.Date) * t.Quantity,
+                        SummaOut = NomenklViewModel.PriceWithOutNaklad(t.NomenklOutDC, t.NomenklTransfer.Date) *
+                                   t.Quantity,
+                        SummaDelta = -NomenklViewModel.PriceWithOutNaklad(t.NomenklOutDC, t.NomenklTransfer.Date) *
+                                     t.Quantity,
                         Note = t.Note
                     });
             }

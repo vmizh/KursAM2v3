@@ -6,18 +6,29 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Dogovora;
-using Core.EntityViewModel.Employee;
-using Core.EntityViewModel.NomenklManagement;
-using Core.EntityViewModel.Vzaimozachet;
 using Core.ViewModel.Base;
 using Data;
 using Helper;
 using KursDomain.Documents.AccruedAmount;
-using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.Documents.Vzaimozachet;
+using KursDomain.ICommon;
+using KursDomain.IReferences;
+using KursDomain.References;
+using Bank = KursDomain.Documents.Bank.Bank;
+using BankAccount = KursDomain.Documents.Bank.BankAccount;
+using ContractType = KursDomain.Documents.Dogovora.ContractType;
+using DeliveryCondition = KursDomain.Documents.NomenklManagement.DeliveryCondition;
+using Employee = KursDomain.Documents.Employee.Employee;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
+using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
+using Project = KursDomain.Documents.CommonReferences.Project;
+using Region = KursDomain.Documents.CommonReferences.Region;
+using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
+using SDRState = KursDomain.Documents.CommonReferences.SDRState;
+using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace Core;
 
@@ -226,6 +237,8 @@ public static class MainReferences
         return null;
     }
 
+
+
     public static NomenklGroup GetNomenklGroup(decimal? dc)
     {
         if (dc == null) return null;
@@ -365,28 +378,9 @@ public static class MainReferences
             foreach (var n in noms)
             {
                 if (ALLNomenkls.ContainsKey(n.DOC_CODE)) ALLNomenkls.Remove(n.DOC_CODE);
-                ALLNomenkls.Add(n.DOC_CODE, new Nomenkl
-                {
-                    Entity = new SD_83
-                    {
-                        DOC_CODE = n.DOC_CODE,
-                        NOM_NAME = n.NOM_NAME,
-                        NOM_NOMENKL = n.NOM_NOMENKL,
-                        NOM_SALE_CRS_DC = n.NOM_SALE_CRS_DC,
-                        Id = n.Id,
-                        MainId = n.MainId,
-                        UpdateDate = n.UpdateDate,
-                        NOM_0MATER_1USLUGA = n.NOM_0MATER_1USLUGA,
-                        NOM_CATEG_DC = n.NOM_CATEG_DC,
-                        NOM_PRODUCT_DC = n.NOM_PRODUCT_DC,
-                        IsUslugaInRent = false,
-                        IsCurrencyTransfer = n.IsCurrencyTransfer
-                    },
-                    Unit = Units[n.NOM_ED_IZM_DC],
-                    // ReSharper disable once PossibleInvalidOperationException
-                    Currency = Currencies[(decimal)n.NOM_SALE_CRS_DC],
-                    Group = NomenklGroups[n.NOM_CATEG_DC]
-                });
+                var newNom = new Nomenkl();
+                newNom.LoadFromEntity(n,null);
+                ALLNomenkls.Add(n.DOC_CODE, newNom);
             }
         }
     }
@@ -743,20 +737,19 @@ public static class MainReferences
                 if (Currencies.ContainsKey(item.DOC_CODE))
                 {
                     var d = Currencies[item.DOC_CODE];
-                    d.UpdateFrom(item);
-                    d.myState = RowStatus.NotEdited;
+                    d.LoadFromEntity(item);
                 }
                 else
                 {
-                    Currencies.Add(item.DOC_CODE, new Currency(item) { myState = RowStatus.NotEdited });
+                    var newItem = new Currency();
+                    newItem.LoadFromEntity(item);
+                    Currencies.Add(item.DOC_CODE, newItem );
                 }
 
             Currencies.Add(0m, new Currency
             {
                 DocCode = 0m,
-                CRS_NAME = "Валюта не указана",
-                CRS_SHORTNAME = "Валюта не указана",
-                myState = RowStatus.NotEdited
+                Name = "Валюта не указана",
             });
             keys = Currencies.Keys.ToList();
             foreach (var k in keys)
@@ -774,12 +767,13 @@ public static class MainReferences
                 if (Units.ContainsKey(item.DOC_CODE))
                 {
                     var d = Units[item.DOC_CODE];
-                    d.UpdateFrom(item);
-                    d.myState = RowStatus.NotEdited;
+                    d.LoadFromEntity(item);
                 }
                 else
                 {
-                    Units.Add(item.DOC_CODE, new Unit(item) { myState = RowStatus.NotEdited });
+                    var newUnit = new Unit();
+                    newUnit.LoadFromEntity(item);
+                    Units.Add(item.DOC_CODE, newUnit);
                 }
 
             keys = Units.Keys.ToList();
@@ -1051,24 +1045,23 @@ public static class MainReferences
             if (ALLNomenkls.ContainsKey(d.DOC_CODE))
             {
                 var n = ALLNomenkls[d.DOC_CODE];
-                n.DOC_CODE = d.DOC_CODE;
-                n.NOM_NAME = d.NOM_NAME;
-                n.NOM_NOMENKL = d.NOM_NOMENKL;
-                n.NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC;
+                n.DocCode = d.DOC_CODE;
+                n.Name = d.NOM_NAME;
+                n.NomenklNumber = d.NOM_NOMENKL;
+                n.Currency = GetCurrency(d.NOM_SALE_CRS_DC);
                 n.Id = d.Id;
                 // ReSharper disable once PossibleInvalidOperationException
                 n.MainId = (Guid)d.MainId;
                 n.UpdateDate = d.UpdateDate;
-                n.NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA;
-                n.NOM_CATEG_DC = d.NOM_CATEG_DC;
-                n.NOM_PRODUCT_DC = d.NOM_PRODUCT_DC;
+                n.IsUsluga = d.NOM_0MATER_1USLUGA == 1;
+                n.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
+                n.ProductType = GlobalOptions.ReferencesCache.GetProductType(d.NOM_PRODUCT_DC);
                 n.IsCurrencyTransfer = d.IsCurrencyTransfer;
             }
             else
             {
-                ALLNomenkls.Add(d.DOC_CODE, new Nomenkl
-                {
-                    Entity = new SD_83
+                var newNom = new Nomenkl();
+                newNom.LoadFromEntity( new SD_83
                     {
                         DOC_CODE = d.DOC_CODE,
                         NOM_NAME = d.NOM_NAME,
@@ -1081,11 +1074,11 @@ public static class MainReferences
                         NOM_CATEG_DC = d.NOM_CATEG_DC,
                         NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
                         IsCurrencyTransfer = d.IsCurrencyTransfer
-                    },
-                    Unit = Units[d.UNIT_DC],
-                    Currency = Currencies[d.NOM_SALE_CRS_DC],
-                    Group = NomenklGroups[d.NOM_CATEG_DC]
-                });
+                    },null);
+                newNom.Unit = Units[d.UNIT_DC];
+                newNom.Currency = Currencies[d.NOM_SALE_CRS_DC];
+                newNom.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
+                ALLNomenkls.Add(d.DOC_CODE, newNom);
             }
 
         NomenklLastUpdate = data.Max(_ => _.UpdateDate);
@@ -1106,28 +1099,27 @@ public static class MainReferences
         if (data.Count == 0) return;
         var d = data[0];
         if (ALLNomenkls.ContainsKey(d.DOC_CODE)) ALLNomenkls.Remove(d.DOC_CODE);
-        ALLNomenkls.Add(d.DOC_CODE, new Nomenkl
+        var newNom = new Nomenkl();
+        newNom.LoadFromEntity(new SD_83
         {
-            Entity = new SD_83
-            {
-                DOC_CODE = d.DOC_CODE,
-                NOM_NAME = d.NOM_NAME,
-                NOM_NOMENKL = d.NOM_NOMENKL,
-                NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
-                Id = d.Id,
-                MainId = d.MainId,
-                UpdateDate = d.UpdateDate,
-                NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
-                NOM_CATEG_DC = d.NOM_CATEG_DC,
-                NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
-                IsUslugaInRent = d.IsRentabelnost,
-                IsCurrencyTransfer = d.IsCurrencyTransfer
-            },
-            Unit = Units[d.UNIT_DC],
-            Currency = Currencies[d.NOM_SALE_CRS_DC],
-            Group = NomenklGroups[d.NOM_CATEG_DC]
-        });
+            DOC_CODE = d.DOC_CODE,
+            NOM_NAME = d.NOM_NAME,
+            NOM_NOMENKL = d.NOM_NOMENKL,
+            NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
+            Id = d.Id,
+            MainId = d.MainId,
+            UpdateDate = d.UpdateDate,
+            NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
+            NOM_CATEG_DC = d.NOM_CATEG_DC,
+            NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
+            IsCurrencyTransfer = d.IsCurrencyTransfer
+        }, null);
+        newNom.Unit = Units[d.UNIT_DC];
+        newNom.Currency = Currencies[d.NOM_SALE_CRS_DC];
+        newNom.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
+        ALLNomenkls.Add(d.DOC_CODE, newNom);
     }
+
 
     public static void LoadNomenkl(Guid id)
     {
@@ -1144,27 +1136,25 @@ public static class MainReferences
         if (data.Count == 0) return;
         var d = data[0];
         if (ALLNomenkls.ContainsKey(d.DOC_CODE)) ALLNomenkls.Remove(d.DOC_CODE);
-        ALLNomenkls.Add(d.DOC_CODE, new Nomenkl
+        var newNom = new Nomenkl();
+        newNom.LoadFromEntity( new SD_83
         {
-            Entity = new SD_83
-            {
-                DOC_CODE = d.DOC_CODE,
-                NOM_NAME = d.NOM_NAME,
-                NOM_NOMENKL = d.NOM_NOMENKL,
-                NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
-                Id = d.Id,
-                MainId = d.MainId,
-                UpdateDate = d.UpdateDate,
-                NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
-                NOM_CATEG_DC = d.NOM_CATEG_DC,
-                NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
-                IsUslugaInRent = d.IsRentabelnost,
-                IsCurrencyTransfer = d.IsCurrencyTransfer
-            },
-            Unit = Units[d.UNIT_DC],
-            Currency = Currencies[d.NOM_SALE_CRS_DC],
-            Group = NomenklGroups[d.NOM_CATEG_DC]
-        });
+            DOC_CODE = d.DOC_CODE,
+            NOM_NAME = d.NOM_NAME,
+            NOM_NOMENKL = d.NOM_NOMENKL,
+            NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
+            Id = d.Id,
+            MainId = d.MainId,
+            UpdateDate = d.UpdateDate,
+            NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
+            NOM_CATEG_DC = d.NOM_CATEG_DC,
+            NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
+            IsCurrencyTransfer = d.IsCurrencyTransfer
+        },null);
+        newNom.Unit = Units[d.UNIT_DC];
+        newNom.Currency = Currencies[d.NOM_SALE_CRS_DC];
+        newNom.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
+        ALLNomenkls.Add(d.DOC_CODE, newNom);
     }
 
     public static void LoadNomenkl()
@@ -1185,26 +1175,27 @@ public static class MainReferences
                     "'")
                 .ToList();
             foreach (var d in data)
-                ALLNomenkls.Add(d.DOC_CODE, new Nomenkl
+            {
+                var newNom = new Nomenkl();
+                newNom.LoadFromEntity( new SD_83
                 {
-                    Entity = new SD_83
-                    {
-                        DOC_CODE = d.DOC_CODE,
-                        NOM_NAME = d.NOM_NAME,
-                        NOM_NOMENKL = d.NOM_NOMENKL,
-                        NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
-                        Id = d.Id,
-                        MainId = d.MainId,
-                        UpdateDate = d.UpdateDate,
-                        NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
-                        NOM_CATEG_DC = d.NOM_CATEG_DC,
-                        NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
-                        IsCurrencyTransfer = d.IsCurrencyTransfer
-                    },
-                    Unit = Units[d.UNIT_DC],
-                    Currency = Currencies[d.NOM_SALE_CRS_DC],
-                    Group = NomenklGroups[d.NOM_CATEG_DC]
-                });
+                    DOC_CODE = d.DOC_CODE,
+                    NOM_NAME = d.NOM_NAME,
+                    NOM_NOMENKL = d.NOM_NOMENKL,
+                    NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
+                    Id = d.Id,
+                    MainId = d.MainId,
+                    UpdateDate = d.UpdateDate,
+                    NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
+                    NOM_CATEG_DC = d.NOM_CATEG_DC,
+                    NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
+                    IsCurrencyTransfer = d.IsCurrencyTransfer
+                },null);
+                newNom.Unit = Units[d.UNIT_DC];
+                newNom.Currency = Currencies[d.NOM_SALE_CRS_DC];
+                newNom.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
+                ALLNomenkls.Add(d.DOC_CODE, newNom);
+            }
             // ReSharper disable once PossibleInvalidOperationException
         }
         catch (Exception ex)
@@ -1212,12 +1203,12 @@ public static class MainReferences
             //WindowManager.ShowError(null, ex);
         }
 
-        var dm = ALLNomenkls.Values.Select(_ => _.UpdateDate);
-        var dateTimes = dm as IList<DateTime?> ?? dm.ToList();
-        if (dateTimes.Any())
+        var dm = ALLNomenkls.Values.Select(_ => _.UpdateDate).ToList();
+       // var dateTimes = dm as IList<DateTime?> ?? dm.ToList();
+        if (dm.Any())
         {
-            var dateTime = dateTimes.Max();
-            if (dateTime != null) NomenklLastUpdate = (DateTime)dateTime;
+            var dateTime = dm.Max();
+            if (dateTime != null) NomenklLastUpdate = dateTime;
         }
         else
         {
@@ -1388,7 +1379,8 @@ public static class MainReferences
                 {
                     foreach (var item in ent.SD_83.AsNoTracking().Include(_ => _.SD_175).ToList())
                     {
-                        var newItem = new Nomenkl(item);
+                        var newItem = new Nomenkl();
+                        newItem.LoadFromEntity(item,GlobalOptions.ReferencesCache);
                         ALLNomenkls.Add(item.DOC_CODE, newItem);
                         if ((item.NOM_DELETED ?? 0) == 0)
                             ActiveNomenkls.Add(item.DOC_CODE, newItem);
@@ -1402,7 +1394,7 @@ public static class MainReferences
         }
         else
         {
-            var dateTime = ALLNomenkls.Values.Max(_ => _.Entity.UpdateDate);
+            var dateTime = ALLNomenkls.Values.Max(_ => _.UpdateDate);
             if (dateTime == null) return ALLNomenkls;
             var date = (DateTime)dateTime;
             try
@@ -1421,7 +1413,8 @@ public static class MainReferences
                         .ToList())
                     if (ALLNomenkls.Keys.Contains(item.DOC_CODE))
                     {
-                        var newItem = new Nomenkl(item);
+                        var newItem = new Nomenkl();
+                        newItem.LoadFromEntity(item,GlobalOptions.ReferencesCache);
                         ALLNomenkls.Add(item.DOC_CODE, newItem);
                         if ((item.NOM_DELETED ?? 0) == 0)
                             ActiveNomenkls.Add(item.DOC_CODE, newItem);
@@ -1430,7 +1423,8 @@ public static class MainReferences
                     {
                         ALLNomenkls.Remove(item.DOC_CODE);
                         ActiveNomenkls.Remove(item.DOC_CODE);
-                        var newItem = new Nomenkl(item);
+                        var newItem = new Nomenkl();
+                        newItem.LoadFromEntity(item, GlobalOptions.ReferencesCache);
                         ALLNomenkls.Add(item.DOC_CODE, newItem);
                         if ((item.NOM_DELETED ?? 0) == 0)
                             ActiveNomenkls.Add(item.DOC_CODE, newItem);

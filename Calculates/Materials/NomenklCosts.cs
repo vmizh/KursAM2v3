@@ -1,7 +1,6 @@
 ﻿using System;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
+using KursDomain.References;
+using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace Calculates.Materials
 {

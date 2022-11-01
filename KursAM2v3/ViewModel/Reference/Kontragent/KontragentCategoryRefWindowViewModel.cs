@@ -6,11 +6,12 @@ using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference.Kontragent
 {

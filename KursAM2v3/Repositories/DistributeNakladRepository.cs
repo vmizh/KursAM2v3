@@ -5,12 +5,11 @@ using System.Data.Entity;
 using System.Linq;
 using Core;
 using Core.EntityViewModel.Base;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Invoices;
-using Core.Invoices.EntityViewModel;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using KursDomain.Documents.Invoices;
+using KursDomain.References;
 
 namespace KursAM2.Repositories
 {
@@ -66,7 +65,7 @@ namespace KursAM2.Repositories
 
         public DistributeNakladRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {
-            UnitOfWork = (UnitOfWork<ALFAMEDIAEntities>) unitOfWork;
+            UnitOfWork = (UnitOfWork<ALFAMEDIAEntities>)unitOfWork;
         }
 
         public DistributeNakladRepository(ALFAMEDIAEntities context) : base(context)
@@ -107,11 +106,11 @@ namespace KursAM2.Repositories
 
         public List<DistributeNaklad> GetAllByDates(DateTime dateStart, DateTime dateEnd)
         {
-           return Context.DistributeNaklad.Include(_ => _.DistributeNakladRow)
-                    .Include(y => y.DistributeNakladRow.Select(x => x.DistributeNakladInfo))
-                    .Where(z => z.DocDate >= dateStart && z.DocDate <= dateEnd)
-                    .AsNoTracking()
-                    .ToList();
+            return Context.DistributeNaklad.Include(_ => _.DistributeNakladRow)
+                .Include(y => y.DistributeNakladRow.Select(x => x.DistributeNakladInfo))
+                .Where(z => z.DocDate >= dateStart && z.DocDate <= dateEnd)
+                .AsNoTracking()
+                .ToList();
         }
 
         public List<DistributeNakladRow> GetTovarFromInvoiceProviders(DistributeNaklad ent)
@@ -229,9 +228,7 @@ namespace KursAM2.Repositories
                     if (old != null)
                     {
                         if (old.SummaWithNaklad - r.DistributeSumma >= old.Summa)
-                        {
                             old.SummaWithNaklad = old.SummaWithNaklad - r.DistributeSumma;
-                        }
                         else old.SummaWithNaklad = old.Summa;
 
                         old.PriceWithNaklad = old.SummaWithNaklad / old.Quantity;
@@ -244,13 +241,12 @@ namespace KursAM2.Repositories
                     if (old != null)
                     {
                         if (old.SFT_SUMMA_NAKLAD - r.DistributeSumma >= 0)
-                        {
                             old.SFT_SUMMA_NAKLAD = old.SFT_SUMMA_NAKLAD - r.DistributeSumma;
-                        }
                         else old.SFT_SUMMA_NAKLAD = 0;
                     }
                 }
             }
+
             Context.DistributeNakladRow.RemoveRange(doc.DistributeNakladRow);
             Context.DistributeNakladInvoices.RemoveRange(doc.DistributeNakladInvoices);
             Context.DistributeNaklad.Remove(doc);
@@ -325,7 +321,7 @@ namespace KursAM2.Repositories
             foreach (var invoice in invoices)
             {
                 decimal allSumma = 0;
-                switch ((DistributeNakladTypeEnum) invoice.DistributeType)
+                switch ((DistributeNakladTypeEnum)invoice.DistributeType)
                 {
                     case DistributeNakladTypeEnum.ManualValue:
                         break;
@@ -353,7 +349,7 @@ namespace KursAM2.Repositories
                     var nprow = r.DistributeNakladInfo.FirstOrDefault(_ => _.InvoiceNakladId == invoice.Id);
                     if (nprow == null) continue;
 
-                    switch ((DistributeNakladTypeEnum) invoice.DistributeType)
+                    switch ((DistributeNakladTypeEnum)invoice.DistributeType)
                     {
                         case DistributeNakladTypeEnum.ManualValue:
                             break;
@@ -377,7 +373,7 @@ namespace KursAM2.Repositories
                     }
 
                     // ReSharper disable once PossibleInvalidOperationException
-                    nprow.DistributeSumma = (decimal) nprow.NakladSumma * invoice.Rate;
+                    nprow.DistributeSumma = (decimal)nprow.NakladSumma * invoice.Rate;
                 }
             }
         }

@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.Systems;
-using Core.Invoices.EntityViewModel;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
 using KursAM2.ViewModel.Reference;
+using KursDomain.Documents.Systems;
+using KursDomain.ICommon;
 
 namespace KursAM2.Managers
 {
@@ -20,8 +19,9 @@ namespace KursAM2.Managers
             using (var ctx = GlobalOptions.GetEntities())
             {
                 ret.AddRange(ctx.EXT_USERS.ToList()
-                    .Select(item => new EXT_USERSViewModel(item) {State = RowStatus.NotEdited}));
+                    .Select(item => new EXT_USERSViewModel(item) { State = RowStatus.NotEdited }));
             }
+
             return ret;
         }
 
@@ -31,8 +31,9 @@ namespace KursAM2.Managers
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var item in ctx.MAIN_DOCUMENT_GROUP.ToList())
-                    ret.Add(new MAIN_DOCUMENT_GROUPViewModel(item) {State = RowStatus.NotEdited});
+                    ret.Add(new MAIN_DOCUMENT_GROUPViewModel(item) { State = RowStatus.NotEdited });
             }
+
             return ret;
         }
 
@@ -42,8 +43,9 @@ namespace KursAM2.Managers
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var item in ctx.EXT_USERS.ToList())
-                    ret.Add(new EXT_USERSViewModel(item) {State = RowStatus.NotEdited});
+                    ret.Add(new EXT_USERSViewModel(item) { State = RowStatus.NotEdited });
             }
+
             return ret;
         }
 
@@ -118,6 +120,7 @@ namespace KursAM2.Managers
                                 ctx.Entry(entity).CurrentValues.SetValues(doc.Entity);
                                 break;
                         }
+
                     ctx.SaveChanges();
                 }
             }
@@ -185,6 +188,7 @@ namespace KursAM2.Managers
                         FORM_ID = curPermission.BaseId
                     });
                 }
+
                 ctx.SaveChanges();
             }
         }

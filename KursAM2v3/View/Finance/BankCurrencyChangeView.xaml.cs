@@ -13,6 +13,7 @@ using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.ViewModel.Finance;
 using KursDomain.Documents.Bank;
+using KursDomain.ICommon;
 using LayoutManager;
 
 namespace KursAM2.View.Finance

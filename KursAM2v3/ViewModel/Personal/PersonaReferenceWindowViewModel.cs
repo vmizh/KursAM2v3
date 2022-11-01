@@ -7,13 +7,16 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Employee;
-using Core.EntityViewModel.Systems;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.View.Base;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Systems;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
+using Employee = KursDomain.Documents.Employee.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {

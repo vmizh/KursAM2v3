@@ -1,133 +1,131 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Core.EntityViewModel.Systems;
 using Core.ViewModel.Base;
 using Data;
+using KursDomain.Documents.Systems;
 
-namespace Core.EntityViewModel
+namespace KursDomain.Documents;
+
+public class LastMenuUserSearchViewModel : RSViewModelBase, IEntity<LastMenuUserSearch>
 {
-    public class LastMenuUserSearchViewModel : RSViewModelBase, IEntity<LastMenuUserSearch>
+    #region Methods
+
+    public LastMenuUserSearch DefaultValue()
     {
-        #region Fields
-
-        private DataSourcesViewModel myDataBase;
-        private UsersViewModel myUser;
-        private KursMenuItemViewModel myMenu;
-
-        #endregion
-
-        #region Properties
-
-        [Display(AutoGenerateField = false)] public LastMenuUserSearch Entity { get; set; }
-
-        public override Guid Id
+        return new LastMenuUserSearch
         {
-            get => Entity.Id;
-            set
-            {
-                if (Entity.Id == value) return;
-                Entity.Id = value;
-                RaisePropertyChanged();
-            }
-        }
+            Id = Guid.NewGuid()
+        };
+    }
 
-        public DataSourcesViewModel DataBase
+    #endregion
+
+    #region Fields
+
+    private DataSourcesViewModel myDataBase;
+    private UsersViewModel myUser;
+    private KursMenuItemViewModel myMenu;
+
+    #endregion
+
+    #region Properties
+
+    [Display(AutoGenerateField = false)] public LastMenuUserSearch Entity { get; set; }
+
+    public override Guid Id
+    {
+        get => Entity.Id;
+        set
         {
-            get => myDataBase;
-            set
-            {
-                if (myDataBase == value) return;
-                myDataBase = value;
-                if (myDataBase != null)
-                    Entity.DbId = myDataBase.Id;
-                RaisePropertyChanged();
-            }
+            if (Entity.Id == value) return;
+            Entity.Id = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public UsersViewModel User
+    public DataSourcesViewModel DataBase
+    {
+        get => myDataBase;
+        set
         {
-            get => myUser;
-            set
-            {
-                if (myUser == value) return;
-                myUser = value;
-                if (myUser != null)
-                    Entity.DbId = myUser.Id;
-                RaisePropertyChanged();
-            }
+            if (myDataBase == value) return;
+            myDataBase = value;
+            if (myDataBase != null)
+                Entity.DbId = myDataBase.Id;
+            RaisePropertyChanged();
         }
+    }
 
-        public KursMenuItemViewModel Menu
+    public UsersViewModel User
+    {
+        get => myUser;
+        set
         {
-            get => myMenu;
-            set
-            {
-                if (myMenu == value) return;
-                myMenu = value;
-                if (myMenu != null)
-                    Entity.MenuId = myMenu.Id;
-                RaisePropertyChanged();
-            }
+            if (myUser == value) return;
+            myUser = value;
+            if (myUser != null)
+                Entity.DbId = myUser.Id;
+            RaisePropertyChanged();
         }
+    }
 
-        public DateTime LastOpen
+    public KursMenuItemViewModel Menu
+    {
+        get => myMenu;
+        set
         {
-            get => Entity.LastOpen;
-            set
-            {
-                if (Entity.LastOpen == value) return;
-                Entity.LastOpen = value;
-                RaisePropertyChanged();
-            }
+            if (myMenu == value) return;
+            myMenu = value;
+            if (myMenu != null)
+                Entity.MenuId = myMenu.Id;
+            RaisePropertyChanged();
         }
+    }
 
-        public int OpenCount
+    public DateTime LastOpen
+    {
+        get => Entity.LastOpen;
+        set
         {
-            get => Entity.OpenCount;
-            set
-            {
-                if (Entity.OpenCount == value) return;
-                Entity.OpenCount = value;
-                RaisePropertyChanged();
-            }
+            if (Entity.LastOpen == value) return;
+            Entity.LastOpen = value;
+            RaisePropertyChanged();
         }
+    }
 
-        #endregion
+    public int OpenCount
+    {
+        get => Entity.OpenCount;
+        set
+        {
+            if (Entity.OpenCount == value) return;
+            Entity.OpenCount = value;
+            RaisePropertyChanged();
+        }
+    }
 
-        #region Constructors
+    #endregion
 
-        public LastMenuUserSearchViewModel()
+    #region Constructors
+
+    public LastMenuUserSearchViewModel()
+    {
+        Entity = DefaultValue();
+    }
+
+    public LastMenuUserSearchViewModel(LastMenuUserSearch entity)
+    {
+        if (entity == null)
         {
             Entity = DefaultValue();
+            return;
         }
 
-        public LastMenuUserSearchViewModel(LastMenuUserSearch entity)
-        {
-            if (entity == null)
-            {
-                Entity = DefaultValue();
-                return;
-            }
-            Entity = entity;
-            DataBase = new DataSourcesViewModel(Entity.DataSources);
-            User = new UsersViewModel(Entity.Users);
-            Menu = new KursMenuItemViewModel(Entity.KursMenuItem);
-        }
-
-        #endregion
-
-        #region Methods
-
-        public LastMenuUserSearch DefaultValue()
-        {
-            return new LastMenuUserSearch()
-            {
-                Id = Guid.NewGuid()
-            };
-        }
-
-        #endregion
-
-
+        Entity = entity;
+        DataBase = new DataSourcesViewModel(Entity.DataSources);
+        User = new UsersViewModel(Entity.Users);
+        Menu = new KursMenuItemViewModel(Entity.KursMenuItem);
     }
+
+    #endregion
 }

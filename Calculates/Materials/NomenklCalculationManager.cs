@@ -7,10 +7,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
 using Data;
 using Helper;
 using JetBrains.Annotations;
+using KursDomain.Documents.NomenklManagement;
 
 namespace Calculates.Materials
 {

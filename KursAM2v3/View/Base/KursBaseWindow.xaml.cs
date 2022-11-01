@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using Core.Menu;
 using DevExpress.Xpf.Core;
+using KursDomain.Menu;
 
 namespace KursAM2.View.Base
 {

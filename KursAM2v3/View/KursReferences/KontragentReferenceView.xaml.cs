@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.TreeList;
+using KursDomain.Documents.CommonReferences.Kontragent;
 using LayoutManager;
 
 namespace KursAM2.View.KursReferences

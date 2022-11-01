@@ -1,8 +1,6 @@
-﻿using Core.EntityViewModel;
-using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
-using Core.ViewModel.Base.Column;
+﻿using Core.ViewModel.Base.Column;
 using Data;
+using KursDomain.Documents.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {

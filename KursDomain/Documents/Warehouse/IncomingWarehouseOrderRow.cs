@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using KursDomain.ICommon;
-using KursDomain.IDocuments;
 using KursDomain.IDocuments.Finance;
 using KursDomain.IDocuments.WarehouseOrder;
 using KursDomain.IReferences;
@@ -13,6 +12,7 @@ namespace KursDomain.Documents.Warehouse;
     "{DocCode,nq} {Code,nq} Номенклатура: {Nomenkl,nq} {Quantity,nq} ")]
 public class IncomingWarehouseOrderRow : IDescription, IRowDC, IIncomingWarehouseOrderRow, IEqualityComparer<IRowDC>
 {
+    public string NomenklNumber => Nomenkl?.NomenklNumber;
     public string Notes { get; set; }
     public string Description => $"{NomenklNumber} {Nomenkl} {Quantity:n2}";
 
@@ -34,7 +34,6 @@ public class IncomingWarehouseOrderRow : IDescription, IRowDC, IIncomingWarehous
     }
 
     public INomenkl Nomenkl { get; set; }
-    public string NomenklNumber => Nomenkl?.NomenklNumber;
     public decimal Quantity { get; set; }
     public bool IsTaxExecuted { get; set; }
     public ISDRSchet SDRSchet { get; set; }

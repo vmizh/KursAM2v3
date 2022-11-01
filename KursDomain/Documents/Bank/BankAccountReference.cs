@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.Documents.CommonReferences;
 
 namespace KursDomain.Documents.Bank;
 
@@ -229,7 +229,7 @@ public class BankAccountReference : RSViewModelBase, IEntity<SD_114>
         }
     }
 
-    public Currency Currency
+    public References.Currency Currency
     {
         get => Entity.CurrencyDC != null ? MainReferences.Currencies[(decimal)Entity.CurrencyDC] : null;
         set

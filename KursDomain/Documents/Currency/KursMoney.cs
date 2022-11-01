@@ -1,10 +1,7 @@
-﻿using Core.EntityViewModel.CommonReferences;
+﻿namespace KursDomain.Documents.Currency;
 
-namespace Core
+public class KursMoney
 {
-    public class KursMoney
-    {
-        public Currency Crs { set; get; }
-        public decimal Summa { set; get; }
-    }
+    public References.Currency Crs { set; get; }
+    public decimal Summa { set; get; }
 }

@@ -7,10 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
-using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Helper;
@@ -19,6 +15,11 @@ using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Period;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Currency;
+using KursDomain.Documents.Management;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Management.Projects
 {
@@ -123,8 +124,8 @@ namespace KursAM2.ViewModel.Management.Projects
                     {
                         var doc = new ProjectDocumentViewModel
                         {
-                            CurrencyDC = (decimal) d.CurrencyDC,
-                            Currency = MainReferences.Currencies[(decimal) d.CurrencyDC],
+                            CurrencyDC = (decimal)d.CurrencyDC,
+                            Currency = MainReferences.Currencies[(decimal)d.CurrencyDC],
                             DocCode = d.DocDC,
                             DocRowId = d.DocRowId,
                             DocInNum = d.DocInNum,
@@ -139,9 +140,9 @@ namespace KursAM2.ViewModel.Management.Projects
                                 d.KontragentDC != null ? MainReferences.GetKontragent(d.KontragentDC) : null,
                             NomenklDC = d.NomenklDC,
                             Nomenkl = d.NomenklDC != null ? MainReferences.GetNomenkl(d.NomenklDC) : null,
-                            DocType = (DocumentType) d.DocType,
+                            DocType = (DocumentType)d.DocType,
                             ProjectId = d.ProjectId,
-                            DocDate = (DateTime) d.DocDate,
+                            DocDate = (DateTime)d.DocDate,
                             Sum = d.Sum,
                             ConfirmedSum = d.ConfirmedSum ?? 0
                         };
@@ -562,7 +563,7 @@ namespace KursAM2.ViewModel.Management.Projects
                                     .Where(_ => _.ProjectId != CurrentProject.Id && _.DocDC == d.DocDC &&
                                                 _.DocRowId == d.DocRowId).AsNoTracking();
                                 if (ss.Any())
-                                    anotherConfirmedSum = (decimal) ss.Sum(s => s.FactCRSSumma);
+                                    anotherConfirmedSum = (decimal)ss.Sum(s => s.FactCRSSumma);
                                 else
                                     anotherConfirmedSum = 0;
                                 break;
@@ -706,7 +707,7 @@ namespace KursAM2.ViewModel.Management.Projects
                             case DocumentType.Bank:
                             case DocumentType.CashIn:
                             case DocumentType.CashOut:
-                                anotherConfirmedSum = (decimal) ctx.ProjectsDocs
+                                anotherConfirmedSum = (decimal)ctx.ProjectsDocs
                                     .Where(_ => _.DocDC == d.DocDC &&
                                                 _.DocRowId == d.DocRowId)
                                     .Sum(s => s.FactCRSSumma);
@@ -752,32 +753,32 @@ namespace KursAM2.ViewModel.Management.Projects
                             case CurrencyCode.SEK:
                                 doc.ProfitSEK = d.TypeProfitAndLossCalc == 0 ? d.ConfirmedSum ?? 0 : 0;
                                 doc.LossSEK = d.TypeProfitAndLossCalc == 1 ? d.ConfirmedSum ?? 0 : 0;
-                                doc.DilerSEK = (decimal) d.DilerSum;
+                                doc.DilerSEK = (decimal)d.DilerSum;
                                 break;
                             case CurrencyCode.USD:
                                 doc.ProfitUSD = d.TypeProfitAndLossCalc == 0 ? d.ConfirmedSum ?? 0 : 0;
                                 doc.LossUSD = d.TypeProfitAndLossCalc == 1 ? d.ConfirmedSum ?? 0 : 0;
-                                doc.DilerUSD = (decimal) d.DilerSum;
+                                doc.DilerUSD = (decimal)d.DilerSum;
                                 break;
                             case CurrencyCode.EUR:
                                 doc.ProfitEUR = d.TypeProfitAndLossCalc == 0 ? d.ConfirmedSum ?? 0 : 0;
                                 doc.LossEUR = d.TypeProfitAndLossCalc == 1 ? d.ConfirmedSum ?? 0 : 0;
-                                doc.DilerEUR = (decimal) d.DilerSum;
+                                doc.DilerEUR = (decimal)d.DilerSum;
                                 break;
                             case CurrencyCode.RUB:
                                 doc.ProfitRUB = d.TypeProfitAndLossCalc == 0 ? d.ConfirmedSum ?? 0 : 0;
                                 doc.LossRUB = d.TypeProfitAndLossCalc == 1 ? d.ConfirmedSum ?? 0 : 0;
-                                doc.DilerRUB = (decimal) d.DilerSum;
+                                doc.DilerRUB = (decimal)d.DilerSum;
                                 break;
                             case CurrencyCode.CHF:
                                 doc.ProfitCHF = d.TypeProfitAndLossCalc == 0 ? d.ConfirmedSum ?? 0 : 0;
                                 doc.LossCHF = d.TypeProfitAndLossCalc == 1 ? d.ConfirmedSum ?? 0 : 0;
-                                doc.DilerCHF = (decimal) d.DilerSum;
+                                doc.DilerCHF = (decimal)d.DilerSum;
                                 break;
                             case CurrencyCode.GBP:
                                 doc.ProfitGBP = d.TypeProfitAndLossCalc == 0 ? d.ConfirmedSum ?? 0 : 0;
                                 doc.LossGBP = d.TypeProfitAndLossCalc == 1 ? d.ConfirmedSum ?? 0 : 0;
-                                doc.DilerGBP = (decimal) d.DilerSum;
+                                doc.DilerGBP = (decimal)d.DilerSum;
                                 break;
                         }
 
@@ -879,7 +880,7 @@ namespace KursAM2.ViewModel.Management.Projects
                 CurrentProject = CurrentProject,
                 ProjectName = CurrentProject.Name
             };
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var dlg = new SelectDialogView { DataContext = ctx };
             ctx.Form = dlg;
             dlg.ShowDialog();
             // ReSharper disable once RedundantJumpStatement
@@ -911,9 +912,9 @@ namespace KursAM2.ViewModel.Management.Projects
             {
                 if (CurrentPeriod == null) return;
                 foreach (var d in AllProjectDocuments.Where(_ =>
-                    _.ProjectId == CurrentProject.Id && _.DocDate >= CurrentPeriod.DateStart
-                                                     && _.DocDate <= CurrentPeriod.DateEnd)
-                )
+                             _.ProjectId == CurrentProject.Id && _.DocDate >= CurrentPeriod.DateStart
+                                                              && _.DocDate <= CurrentPeriod.DateEnd)
+                        )
                 {
                     var doc = Documents.FirstOrDefault(_ => _.DocCode == d.DocCode && _.DocRowId == d.DocRowId);
                     if (doc == null)

@@ -6,14 +6,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.Xml.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Invoices;
-using Core.EntityViewModel.NomenklManagement;
 using Core.Helper;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -30,8 +24,14 @@ using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Invoices;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
 using Reports.Base;
-using InvoiceClientRow = Core.EntityViewModel.Invoices.InvoiceClientRow;
+using InvoiceClientRow = KursDomain.Documents.Invoices.InvoiceClientRow;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -105,7 +105,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private readonly WindowManager winManager = new WindowManager();
         public readonly GenericKursDBRepository<SD_24> GenericRepository;
-        
+
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
@@ -129,7 +129,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         // ReSharper disable once MemberCanBePrivate.Global
         public ObservableCollection<string> ByWhomLicoList { set; get; } = new ObservableCollection<string>();
 
-        public List<Core.EntityViewModel.NomenklManagement.Warehouse> Sklads =>
+        public List<KursDomain.Documents.NomenklManagement.Warehouse> Sklads =>
             MainReferences.Warehouses.Values.Where(_ => _.IsOutBalans != true && _.IsDeleted == false)
                 .OrderBy(_ => _.Name).ToList();
 
@@ -271,6 +271,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 r.InvoiceClient = sf.FirstOrDefault(_ => r.DDT_SFACT_DC == _.DocCode);
                                 r.myState = RowStatus.NotEdited;
                             }
+
                         Document.RaisePropertyAllChanged();
                         break;
                 }
@@ -403,8 +404,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 DocId = Document.Id,
                                 Nomenkl = n,
                                 DDT_KOL_RASHOD = r.Quantity - kol,
-                                Unit = n.Unit,
-                                Currency = n.Currency,
+                                Unit = n.Unit as Unit,
+                                Currency = n.Currency as Currency,
                                 SchetLinkedRow = r,
                                 State = RowStatus.NewRow,
                                 DDT_SFACT_DC = r.DocCode,
@@ -417,7 +418,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     else
                     {
                         var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-                        var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DOC_CODE,
+                        var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
                             Document.Date, Document.Date);
                         var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                         if (m <= 0)
@@ -438,8 +439,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             DocId = Document.Id,
                             Nomenkl = n,
                             DDT_KOL_RASHOD = r.Quantity,
-                            Unit = n.Unit,
-                            Currency = n.Currency,
+                            Unit = n.Unit as Unit,
+                            Currency = n.Currency as Currency,
                             SchetLinkedRow = r,
                             State = RowStatus.NewRow,
                             DDT_SFACT_DC = r.DocCode,
@@ -464,7 +465,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (nomenkls == null || nomenkls.Count <= 0) return;
             foreach (var n in nomenkls)
             {
-                var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DOC_CODE,
+                var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
                     Document.Date, Document.Date);
                 var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                 if (m <= 0)
@@ -486,8 +487,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         DocId = Document.Id,
                         Nomenkl = n,
                         DDT_KOL_PRIHOD = 1,
-                        Unit = n.Unit,
-                        Currency = n.Currency,
+                        Unit = n.Unit as Unit,
+                        Currency = n.Currency as Currency,
                         State = RowStatus.NewRow
                     };
                     Document.Rows.Add(newItem);
@@ -586,8 +587,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             Code = newCode,
                             Nomenkl = n,
                             DDT_KOL_RASHOD = r.Quantity - kol,
-                            Unit = n.Unit,
-                            Currency = n.Currency,
+                            Unit = n.Unit as Unit,
+                            Currency = n.Currency as Currency,
                             SchetLinkedRow = r,
                             State = RowStatus.NewRow,
                             DDT_SFACT_DC = r.DocCode,
@@ -600,7 +601,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 else
                 {
                     var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DOC_CODE,
+                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
                         Document.Date, Document.Date);
                     var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                     if (m <= 0)
@@ -619,8 +620,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         Code = newCode,
                         Nomenkl = n,
                         DDT_KOL_RASHOD = r.Quantity,
-                        Unit = n.Unit,
-                        Currency = n.Currency,
+                        Unit = n.Unit as Unit,
+                        Currency = n.Currency as Currency,
                         SchetLinkedRow = r,
                         State = RowStatus.NewRow,
                         DDT_SFACT_DC = r.DocCode,
@@ -634,11 +635,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public void SelectSchet(object obj)
         {
-            InvoiceClientSearchType loadType = InvoiceClientSearchType.NotShipped;
+            var loadType = InvoiceClientSearchType.NotShipped;
             loadType |= InvoiceClientSearchType.OnlyAccepted;
             if (Document.Client != null) loadType |= InvoiceClientSearchType.OneKontragent;
             var dtx = new InvoiceClientSearchDialogViewModel(true, true, loadType, UnitOfWork.Context)
-            { 
+            {
                 WindowName = "Выбор счетов фактур",
                 KontragentDC = Document.Client?.DocCode
             };
@@ -691,10 +692,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 DDT_SFACT_ROW_CODE = item.RowCode,
                                 Nomenkl = n,
                                 DDT_KOL_RASHOD = (item.Quantity ?? 0) <= m ? item.Quantity ?? 0 : m,
-                                Unit = n.Unit,
-                                Currency = n.Currency,
+                                Unit = n.Unit as Unit,
+                                Currency = n.Currency as Currency,
                                 InvoiceClient = Document.InvoiceClient,
-                                State = RowStatus.NewRow,
+                                State = RowStatus.NewRow
                             };
                             Document.Rows.Add(newItem);
                             Document.Entity.TD_24.Add(newItem.Entity);
@@ -766,7 +767,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             foreach (var dc in sfDCs)
             {
                 var d = UnitOfWork.Context.SD_84.SingleOrDefault(_ => _.DOC_CODE == dc);
-                if(d != null)
+                if (d != null)
                     res.Add(new InvoiceClient(d, UnitOfWork, true));
             }
 

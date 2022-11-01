@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Management;
 
 namespace KursAM2.ViewModel.Management
 {

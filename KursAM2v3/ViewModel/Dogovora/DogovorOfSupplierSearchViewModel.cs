@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Dogovora;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
@@ -15,6 +13,9 @@ using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.Repositories.DogovorsRepositories;
 using KursAM2.View.Dogovors;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Dogovora;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Dogovora
 {

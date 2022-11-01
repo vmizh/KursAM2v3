@@ -1,5 +1,4 @@
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
+using KursDomain.Documents.NomenklManagement;
 
 namespace KursAM2.ViewModel.Logistiks
 {

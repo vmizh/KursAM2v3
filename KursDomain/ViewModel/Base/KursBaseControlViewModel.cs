@@ -4,13 +4,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Core.Menu;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Utils.CommonDialogs.Internal;
 using DevExpress.Xpf.Grid;
 using Helper;
+using KursDomain.Menu;
 using LayoutManager;
 
 namespace Core.ViewModel.Base;

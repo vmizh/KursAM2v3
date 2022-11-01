@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Core.EntityViewModel.Vzaimozachet;
 using Core.Helper;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.Documents.Vzaimozachet;
 
 namespace KursAM2.ViewModel.Finance
 {

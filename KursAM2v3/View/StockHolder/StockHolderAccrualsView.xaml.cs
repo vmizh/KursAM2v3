@@ -5,6 +5,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.StockHolder;
+using KursDomain.ICommon;
 
 namespace KursAM2.View.StockHolder
 {

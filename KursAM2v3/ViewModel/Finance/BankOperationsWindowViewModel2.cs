@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Helper;
@@ -19,6 +18,10 @@ using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Finance.AccruedAmount;
 using KursDomain.Documents.Bank;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Currency;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -413,9 +416,9 @@ namespace KursAM2.ViewModel.Finance
             get => myCurrentBankOperations;
         }
 
-        private Currency myCurrency;
+        private KursDomain.References.Currency myCurrency;
 
-        public Currency Currency
+        public KursDomain.References.Currency Currency
         {
             get => myCurrency;
             set

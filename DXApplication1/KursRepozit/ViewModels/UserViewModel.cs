@@ -17,6 +17,7 @@ using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Utils.CommonDialogs.Internal;
 using DevExpress.Xpf.Editors;
+using KursDomain.ICommon;
 using KursRepozit.Repositories;
 using KursRepozit.Views;
 

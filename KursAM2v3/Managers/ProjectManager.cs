@@ -4,13 +4,14 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
-using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.ViewModel.Management.Projects;
+using KursDomain.Documents;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Management;
+using KursDomain.References;
 
 namespace KursAM2.Managers
 {
@@ -20,7 +21,7 @@ namespace KursAM2.Managers
         {
             var ret = new List<ProjectResultInfo>();
             foreach (var p in MainReferences.Projects.Values)
-                    ret.Add(new ProjectResultInfo(p));
+                ret.Add(new ProjectResultInfo(p));
             return ret;
         }
 
@@ -29,7 +30,7 @@ namespace KursAM2.Managers
         /// </summary>
         private List<Guid> getProjectTreeIds(Guid id)
         {
-            var ret = new List<Guid> {id};
+            var ret = new List<Guid> { id };
             var d = MainReferences.Projects.Values.Where(_ => _.ParentId == id).Select(v => v.Id).ToList();
             if (d.Count == 0) return ret;
             foreach (var pid in d) ret.AddRange(getProjectTreeIds(pid));
@@ -44,16 +45,14 @@ namespace KursAM2.Managers
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var documents = ctx.ProjectsInfo.AsNoTracking().ToList();
-                    foreach (var p in documents)
-                    {
-                       ret.Add(new ProjectsInfoViewModel(p));
-                    }
+                    foreach (var p in documents) ret.Add(new ProjectsInfoViewModel(p));
                 }
             }
             catch (Exception e)
             {
                 WindowManager.ShowError(e);
             }
+
             return ret;
         }
 
@@ -63,7 +62,7 @@ namespace KursAM2.Managers
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    switch (doc.DocType )
+                    switch (doc.DocType)
                     {
                         case DocumentType.Bank:
                             ctx.ProjectsDocs.Add(new ProjectsDocs
@@ -94,6 +93,7 @@ namespace KursAM2.Managers
                             });
                             break;
                     }
+
                     ctx.SaveChanges();
                 }
             }
@@ -117,6 +117,7 @@ namespace KursAM2.Managers
                 result.AddRange(LoadProviderUslugi(prId, dateStart, dateEnd));
                 result.AddRange(LoadProviderStore(prId, dateStart, dateEnd));
             }
+
             return result;
         }
 
@@ -142,6 +143,7 @@ namespace KursAM2.Managers
                             break;
                         }
                     }
+
                     ctx.SaveChanges();
                 }
             }
@@ -174,7 +176,8 @@ namespace KursAM2.Managers
                             ProjectsDocs del;
                             if (doc.DocRowId != null)
                                 del = ctx.ProjectsDocs.FirstOrDefault(_ =>
-                                    _.ProjectId == doc.ProjectId && _.DocDC == doc.DocCode && _.DocRowId == doc.DocRowId);
+                                    _.ProjectId == doc.ProjectId && _.DocDC == doc.DocCode &&
+                                    _.DocRowId == doc.DocRowId);
                             else
                                 del = ctx.ProjectsDocs.FirstOrDefault(_ =>
                                     _.ProjectId == doc.ProjectId && _.DocDC == doc.DocCode);
@@ -183,6 +186,7 @@ namespace KursAM2.Managers
                             break;
                         }
                     }
+
                     ctx.SaveChanges();
                 }
             }
@@ -219,7 +223,7 @@ namespace KursAM2.Managers
         #region logicsForGetDocument
 
         private void setCurrencyValue(decimal? summa, Currency crs, ProjectDocumentViewModel row,
-            TypeProfitAndLossCalc calcType, decimal dilerSumma=0)
+            TypeProfitAndLossCalc calcType, decimal dilerSumma = 0)
         {
             setCurrencyValue(summa ?? 0, crs, row, calcType, dilerSumma);
         }
@@ -232,7 +236,7 @@ namespace KursAM2.Managers
         }
 
         private void setCurrencyValue(decimal summa, Currency crs, ProjectPrihodRowViewModel row,
-            TypeProfitAndLossCalc calcType,  decimal dilerSumma = 0)
+            TypeProfitAndLossCalc calcType, decimal dilerSumma = 0)
         {
             switch (crs.Name)
             {
@@ -253,6 +257,7 @@ namespace KursAM2.Managers
                             row.DilerRUB = dilerSumma;
                             break;
                     }
+
                     break;
                 case CurrencyCode.USDName:
                     switch (calcType)
@@ -270,6 +275,7 @@ namespace KursAM2.Managers
                             row.DilerUSD = dilerSumma;
                             break;
                     }
+
                     break;
                 case CurrencyCode.EURName:
                     switch (calcType)
@@ -287,6 +293,7 @@ namespace KursAM2.Managers
                             row.DilerEUR = dilerSumma;
                             break;
                     }
+
                     break;
                 case CurrencyCode.GBPName:
                     switch (calcType)
@@ -304,6 +311,7 @@ namespace KursAM2.Managers
                             row.DilerGBP = dilerSumma;
                             break;
                     }
+
                     break;
                 case CurrencyCode.CHFName:
                     switch (calcType)
@@ -321,6 +329,7 @@ namespace KursAM2.Managers
                             row.DilerCHF = dilerSumma;
                             break;
                     }
+
                     break;
                 case CurrencyCode.SEKName:
                     switch (calcType)
@@ -338,12 +347,13 @@ namespace KursAM2.Managers
                             row.DilerSEK = dilerSumma;
                             break;
                     }
+
                     break;
             }
         }
 
         private void setCurrencyValue(decimal summa, Currency crs, ProjectDocumentViewModel row,
-            TypeProfitAndLossCalc calcType, decimal dilerSumma=0)
+            TypeProfitAndLossCalc calcType, decimal dilerSumma = 0)
         {
             switch (crs.Name)
             {
@@ -357,7 +367,7 @@ namespace KursAM2.Managers
                             break;
                         case TypeProfitAndLossCalc.IsLoss:
                             row.LossRUB = summa;
-                            
+
                             break;
                         case TypeProfitAndLossCalc.IsAll:
                             row.ProfitRUB = summa;
@@ -365,6 +375,7 @@ namespace KursAM2.Managers
                             row.DilerRUB = dilerSumma;
                             break;
                     }
+
                     break;
                 case CurrencyCode.USDName:
                     switch (calcType)
@@ -382,6 +393,7 @@ namespace KursAM2.Managers
                             row.DilerUSD = dilerSumma;
                             break;
                     }
+
                     break;
                 case CurrencyCode.EURName:
                     switch (calcType)
@@ -399,6 +411,7 @@ namespace KursAM2.Managers
                             row.DilerEUR = dilerSumma;
                             break;
                     }
+
                     break;
                 case CurrencyCode.GBPName:
                     switch (calcType)
@@ -416,6 +429,7 @@ namespace KursAM2.Managers
                             row.DilerGBP = dilerSumma;
                             break;
                     }
+
                     break;
                 case CurrencyCode.CHFName:
                     switch (calcType)
@@ -426,7 +440,7 @@ namespace KursAM2.Managers
                             break;
                         case TypeProfitAndLossCalc.IsLoss:
                             row.LossCHF = summa;
-                            
+
                             break;
                         case TypeProfitAndLossCalc.IsAll:
                             row.ProfitCHF = summa;
@@ -434,6 +448,7 @@ namespace KursAM2.Managers
                             row.DilerCHF = dilerSumma;
                             break;
                     }
+
                     break;
                 case CurrencyCode.SEKName:
                     switch (calcType)
@@ -451,6 +466,7 @@ namespace KursAM2.Managers
                             row.DilerSEK = dilerSumma;
                             break;
                     }
+
                     break;
             }
         }
@@ -488,7 +504,7 @@ namespace KursAM2.Managers
                             Employee = null,
                             DocRowId = d.CODE,
                             Note = null,
-                            Sum = d.VZT_CRS_SUMMA,
+                            Sum = d.VZT_CRS_SUMMA
                         };
                         if (d.VZT_1MYDOLZH_0NAMDOLZH == 1)
                         {
@@ -504,12 +520,14 @@ namespace KursAM2.Managers
                         }
                     }
                 }
+
                 return result;
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex, "Ошибка в методе LoadAktVzaimozachet");
             }
+
             return null;
         }
 
@@ -547,7 +565,7 @@ namespace KursAM2.Managers
                             DocType = DocumentType.MutualAccounting,
                             Employee = null,
                             Note = null,
-                            Sum = d.VZT_CRS_SUMMA,
+                            Sum = d.VZT_CRS_SUMMA
                         };
                         if (d.VZT_1MYDOLZH_0NAMDOLZH == 1)
                         {
@@ -563,12 +581,14 @@ namespace KursAM2.Managers
                         }
                     }
                 }
+
                 return result;
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex, "Ошибка в методе LoadAktVzaimozachet");
             }
+
             return null;
         }
 
@@ -602,7 +622,7 @@ namespace KursAM2.Managers
                             DocNum = d.VVT_DOC_NUM,
                             DocType = DocumentType.Bank,
                             Employee = null,
-                            Note = null,
+                            Note = null
                         };
                         if (d.VVT_VAL_RASHOD == 0)
                             setCurrencyValue(d.VVT_VAL_PRIHOD,
@@ -613,12 +633,14 @@ namespace KursAM2.Managers
                         result.Add(newdoc);
                     }
                 }
+
                 return result;
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex, "Ошибка в методе LoadProviderUslugi");
             }
+
             return null;
         }
 
@@ -655,7 +677,7 @@ namespace KursAM2.Managers
                             DocType = DocumentType.InvoiceClient,
                             Employee = null,
                             Note = d.SD_84.SF_NOTE,
-                            Sum = d.SFT_ED_CENA * (decimal) d.SFT_KOL,
+                            Sum = d.SFT_ED_CENA * (decimal)d.SFT_KOL
                         };
                         if (result.Any(_ => _.DocCode == d.DOC_CODE && _.DocName == "Услуги клиентам"))
                         {
@@ -663,22 +685,26 @@ namespace KursAM2.Managers
                             // ReSharper disable once PossibleNullReferenceException
                             doc.Sum += newdoc.Sum;
                             setCurrencyValue(doc.Sum,
-                                MainReferences.Currencies[d.SD_84.SF_CRS_DC], doc, TypeProfitAndLossCalc.IsProfit, d.SFT_NACENKA_DILERA ?? 0);
+                                MainReferences.Currencies[d.SD_84.SF_CRS_DC], doc, TypeProfitAndLossCalc.IsProfit,
+                                d.SFT_NACENKA_DILERA ?? 0);
                         }
                         else
                         {
                             setCurrencyValue(newdoc.Sum,
-                                MainReferences.Currencies[d.SD_84.SF_CRS_DC], newdoc, TypeProfitAndLossCalc.IsProfit, d.SFT_NACENKA_DILERA ?? 0);
+                                MainReferences.Currencies[d.SD_84.SF_CRS_DC], newdoc, TypeProfitAndLossCalc.IsProfit,
+                                d.SFT_NACENKA_DILERA ?? 0);
                             result.Add(newdoc);
                         }
                     }
                 }
+
                 return result;
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex, "Ошибка в методе LoadClientUslugi");
             }
+
             return null;
         }
 
@@ -716,7 +742,7 @@ namespace KursAM2.Managers
                             DocType = DocumentType.InvoiceProvider,
                             Sum = d.SFT_ED_CENA * d.SFT_KOL,
                             Employee = null,
-                            Note = d.SD_26.SF_NOTES,
+                            Note = d.SD_26.SF_NOTES
                         };
                         if (result.Any(_ => _.DocCode == d.DOC_CODE && _.DocName == "Услуги поставщиков"))
                         {
@@ -735,12 +761,14 @@ namespace KursAM2.Managers
                         }
                     }
                 }
+
                 return result;
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex, "Ошибка в методе LoadProviderUslugi");
             }
+
             return null;
         }
 
@@ -780,7 +808,7 @@ namespace KursAM2.Managers
                             DocType = DocumentType.InvoiceClient,
                             Employee = null,
                             Note = item.TD_84.SD_84.SF_NOTE,
-                            Sum = item.TD_84.SFT_ED_CENA * item.DDT_KOL_RASHOD,
+                            Sum = item.TD_84.SFT_ED_CENA * item.DDT_KOL_RASHOD
                         };
                         if (result.Any(_ => _.DocCode == item.DDT_SFACT_DC && _.DocName == "С/Ф Клиенту"))
                         {
@@ -800,12 +828,14 @@ namespace KursAM2.Managers
                         }
                     }
                 }
+
                 return result;
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex, "Ошибка в методе LoadClientStore");
             }
+
             return null;
         }
 
@@ -841,12 +871,13 @@ namespace KursAM2.Managers
                             Employee = d.TABELNUMBER != null
                                 ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)
                                 : null,
-                            Note = d.NOTES_ORD,
+                            Note = d.NOTES_ORD
                         };
                         setCurrencyValue(d.SUMM_ORD, MainReferences.Currencies[d.CRS_DC.Value], newdoc,
                             TypeProfitAndLossCalc.IsProfit);
                         result.Add(newdoc);
                     }
+
                     foreach (var d in cashOut)
                     {
                         var newdoc = new ProjectDocumentViewModel
@@ -870,12 +901,14 @@ namespace KursAM2.Managers
                         result.Add(newdoc);
                     }
                 }
+
                 return result;
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex, "Ошибка в методе LoadCash");
             }
+
             return null;
         }
 
@@ -927,7 +960,7 @@ namespace KursAM2.Managers
                             {
                                 Id = d.Id,
                                 Quantity = d.Quantity,
-                                Summa = (decimal) d.Sum,
+                                Summa = (decimal)d.Sum,
                                 NomenklNumber = doc.Nomenkl.NomenklNumber,
                                 NomenklName = doc.Nomenkl.Name
                             };
@@ -946,7 +979,7 @@ namespace KursAM2.Managers
                                 Name = "Приход товара",
                                 DocCode = d.DocDC,
                                 Kontragent = d.KontragentDC != null
-                                    ? MainReferences.GetKontragent((decimal) d.KontragentOtpravDC)
+                                    ? MainReferences.GetKontragent((decimal)d.KontragentOtpravDC)
                                     : null,
                                 DocDate = d.Date,
                                 DocName = "Приход товара",
@@ -966,7 +999,7 @@ namespace KursAM2.Managers
                             {
                                 Id = d.Id,
                                 Quantity = d.Quantity,
-                                Summa = (decimal) d.Sum,
+                                Summa = (decimal)d.Sum,
                                 NomenklNumber = newdoc.Nomenkl.NomenklNumber,
                                 NomenklName = newdoc.Nomenkl.Name
                             };
@@ -976,12 +1009,14 @@ namespace KursAM2.Managers
                             newdoc.DocList.Add(r);
                         }
                 }
+
                 return result;
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex, "Ошибка в методе LoadProviderStore");
             }
+
             return null;
         }
 

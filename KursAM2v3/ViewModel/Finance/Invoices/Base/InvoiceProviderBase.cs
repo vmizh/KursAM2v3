@@ -4,15 +4,14 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.CommonReferences.Kontragent;
-using Core.EntityViewModel.Employee;
-using Core.EntityViewModel.Invoices;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Data;
-using DevExpress.Mvvm.Native;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Invoices;
+using KursDomain.References;
+using Employee = KursDomain.Documents.Employee.Employee;
+using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
+using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
+using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursAM2.ViewModel.Finance.Invoices.Base
 {
@@ -21,13 +20,11 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
     {
         public InvoiceProviderBase()
         {
-
         }
 
         public InvoiceProviderBase(SD_26 entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
-
         }
 
         public InvoiceProviderBase(IEnumerable<InvoicePostQuery> invList, bool isLoadDetails = false)
@@ -56,11 +53,10 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             CO = MainReferences.GetCO(doc.CO_DC);
             if (!isLoadDetails) return;
             Rows = new ObservableCollection<IInvoiceProviderRow>();
-            foreach (var r in invList)
-            {
-                Rows.Add(new InvoiceProviderRowBase(r));
-            }
+            foreach (var r in invList) Rows.Add(new InvoiceProviderRowBase(r));
         }
+
+        public Currency Currency { get; set; }
 
 
         public decimal DocCode { get; set; }
@@ -73,7 +69,6 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public Kontragent Kontragent { get; set; }
         public decimal Summa { get; set; }
         public decimal SummaFact { get; set; }
-        public Currency Currency { get; set; }
         public bool IsPay { get; set; }
         public decimal PaySumma { get; set; }
         public PayCondition PayCondition { get; set; }
@@ -95,8 +90,8 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             Code = row.CODE;
             Id = row.RowId;
             DocId = row.Id;
-            Nomenkl Nomenkl = MainReferences.GetNomenkl(row.NomenklDC);
-            Unit Unit = Nomenkl?.Unit;
+            var Nomenkl = MainReferences.GetNomenkl(row.NomenklDC);
+            var Unit = Nomenkl?.Unit;
             Price = row.Price ?? 0;
             Quantity = row.Quantity;
             SFT_NDS_PERCENT = row.NDSPercent;
@@ -105,17 +100,16 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             SFT_SUMMA_K_OPLATE = row.Summa;
             Summa = row.Summa ?? 0;
             IsUsluga = Nomenkl.IsUsluga;
-            IsNaklad = Nomenkl.IsNaklRashod;
+            IsNaklad = Nomenkl.IsNakladExpense;
             IsIncludeInPrice = row.IsNDSInPrice ?? false;
             SFT_SUMMA_K_OPLATE_KONTR_CRS = row.Summa;
         }
 
         public InvoiceProviderRowBase()
         {
-
         }
 
-       
+
         public decimal DocCode { get; set; }
         public int Code { get; set; }
         public Guid Id { get; set; }

@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Helper;
@@ -11,6 +10,10 @@ using KursAM2.Managers;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Helper;
 using KursDomain.Documents.Cash;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {

@@ -1,6 +1,5 @@
-﻿using Core.EntityViewModel.Invoices;
-using Core.Invoices.EntityViewModel;
-using Data;
+﻿using Data;
+using KursDomain.Documents.Invoices;
 
 namespace KursAM2.ViewModel.Logistiks
 {

@@ -5,22 +5,24 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.Invoices.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Dialogs;
-using KursDomain.Documents.Bank;
+using KursDomain.ICommon;
+using KursDomain.References;
+using Bank = KursDomain.Documents.Bank.Bank;
+using BankAccount = KursDomain.Documents.Bank.BankAccount;
+using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursAM2.View.DialogUserControl
 {
     public sealed class BankAccountSelectedDialog : RSWindowViewModelBase, IDataUserControl
     {
-        private Bank myCurrentItem;
-        private StandartDialogSelectTwoTableUC myDataUserControl;
         private readonly decimal? excludeAccountDC;
         private BankAccount myCurrentChildItem;
+        private Bank myCurrentItem;
+        private StandartDialogSelectTwoTableUC myDataUserControl;
 
         public BankAccountSelectedDialog()
         {
@@ -28,38 +30,31 @@ namespace KursAM2.View.DialogUserControl
             WindowName = "Выбор банковского счета";
             ItemsCollection = new ObservableCollection<Bank>();
             foreach (var b in MainReferences.BankAccounts.Values)
-            {
                 if (ItemsCollection.All(_ => _.DocCode != b.BankDC))
-                {
                     ItemsCollection.Add(b.Bank);
-                }
-            }
-            
         }
 
         public BankAccountSelectedDialog(decimal dcOut)
         {
             excludeAccountDC = dcOut;
             LayoutControl = myDataUserControl = new StandartDialogSelectTwoTableUC(GetType().Name);
-            WindowName = "Выбор банковского счета"; 
+            WindowName = "Выбор банковского счета";
             ItemsCollection = new ObservableCollection<Bank>();
             foreach (var b in MainReferences.BankAccounts.Values.Where(_ => _.DocCode != dcOut))
-            {
                 if (ItemsCollection.All(_ => _.DocCode != b.BankDC))
-                {
                     ItemsCollection.Add(b.Bank);
-                }
-            }
 
             CurrentItem = null;
         }
 
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public ObservableCollection<BankAccount> ChildItemsCollection { set; get; } 
+        public ObservableCollection<BankAccount> ChildItemsCollection { set; get; }
             = new ObservableCollection<BankAccount>();
+
         // ReSharper disable once MemberInitializerValueIgnored
-        public  ObservableCollection<Bank> ItemsCollection { set; get; } = new ObservableCollection<Bank>();
+        public ObservableCollection<Bank> ItemsCollection { set; get; } = new ObservableCollection<Bank>();
+
         public Bank CurrentItem
         {
             get => myCurrentItem;
@@ -70,20 +65,13 @@ namespace KursAM2.View.DialogUserControl
                 ChildItemsCollection.Clear();
                 if (myCurrentItem == null) return;
                 if (excludeAccountDC != null)
-                {
-                    foreach (var acc in MainReferences.BankAccounts.Values.Where(_ => _.BankDC == myCurrentItem?.DocCode 
-                    && _.DocCode != excludeAccountDC))
-                    {
+                    foreach (var acc in MainReferences.BankAccounts.Values.Where(_ => _.BankDC == myCurrentItem?.DocCode
+                                 && _.DocCode != excludeAccountDC))
                         ChildItemsCollection.Add(acc);
-                    }
-                }
                 else
-                {
-                    foreach (var acc in MainReferences.BankAccounts.Values.Where(_ => _.BankDC == myCurrentItem.DocCode))
-                    {
+                    foreach (var acc in MainReferences.BankAccounts.Values.Where(_ =>
+                                 _.BankDC == myCurrentItem.DocCode))
                         ChildItemsCollection.Add(acc);
-                    }
-                }
                 RaisePropertyChanged();
             }
         }
@@ -98,6 +86,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public StandartDialogSelectTwoTableUC DataUserControl
         {
             get => myDataUserControl;
@@ -108,6 +97,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public DependencyObject LayoutControl { get; }
     }
 
@@ -127,6 +117,7 @@ namespace KursAM2.View.DialogUserControl
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public ObservableCollection<StandartDialogs.BankSelect> ItemsCollection { set; get; }
         public ObservableCollection<StandartDialogs.BankAccountSelect> ChildItemsCollection => CurrentItem?.AccountList;
+
         public StandartDialogs.BankSelect CurrentItem
         {
             get => myCurrentItem;
@@ -137,6 +128,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public StandartDialogs.BankAccountSelect CurrentChildItem
         {
             get => myCurrentChildItem;
@@ -147,6 +139,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public StandartDialogSelectUC DataUserControl
         {
             get => myDataUserControl;
@@ -157,6 +150,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public DependencyObject LayoutControl { get; }
     }
 
@@ -181,6 +175,7 @@ namespace KursAM2.View.DialogUserControl
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public ObservableCollection<BankOperationForSelectDialog> ItemsCollection { set; get; } =
             new ObservableCollection<BankOperationForSelectDialog>();
+
         public BankOperationForSelectDialog CurrentItem
         {
             get => myCurrentItem;
@@ -191,6 +186,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public StandartDialogSelectUC DataUserControl
         {
             get => myDataUserControl;
@@ -201,13 +197,14 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public DependencyObject LayoutControl { get; }
 
         public override void RefreshData(object obj)
         {
             if (obj == null) return;
             base.RefreshData(obj);
-            var dc = (decimal) obj;
+            var dc = (decimal)obj;
             using (var dtx = GlobalOptions.GetEntities())
             {
                 var data = dtx.TD_101.Include(_ => _.SD_101).Where(_ => _.BankAccountDC == dc).ToList();
@@ -219,7 +216,7 @@ namespace KursAM2.View.DialogUserControl
                         {
                             DocCode = r.DOC_CODE,
                             Code = r.CODE,
-                            Summa = (decimal) r.VVT_VAL_RASHOD,
+                            Summa = (decimal)r.VVT_VAL_RASHOD,
                             Note = r.VVT_DOC_NUM,
                             Bank = MainReferences.BankAccounts[r.SD_101.VV_ACC_DC],
                             Date = r.SD_101.VV_STOP_DATE,
@@ -276,7 +273,7 @@ namespace KursAM2.View.DialogUserControl
             {
                 var data = ctx.SD_44.ToList();
                 foreach (var d in data)
-                    ItemsCollection.Add(new Bank(d) {State = RowStatus.NotEdited});
+                    ItemsCollection.Add(new Bank(d) { State = RowStatus.NotEdited });
             }
         }
 
@@ -290,6 +287,7 @@ namespace KursAM2.View.DialogUserControl
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public ObservableCollection<Bank> ItemsCollection { set; get; }
+
         public Bank CurrentItem
         {
             get => myCurrentItem;
@@ -300,6 +298,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public StandartDialogSelectUC DataUserControl
         {
             get => myDataUserControl;
@@ -310,6 +309,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public DependencyObject LayoutControl { get; }
     }
 }

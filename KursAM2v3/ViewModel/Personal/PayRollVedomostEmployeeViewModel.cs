@@ -1,10 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using Core.EntityViewModel.CommonReferences;
-using Core.EntityViewModel.Employee;
-using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
+using KursDomain.ICommon;
+using KursDomain.References;
+using Employee = KursDomain.Documents.Employee.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -94,6 +94,8 @@ namespace KursAM2.ViewModel.Personal
             get => myEurSumma;
         }
 
+        public override decimal DocCode => Employee?.DocCode ?? 0;
+
         public void CalcSumma()
         {
             EURSumma = Rows.Where(_ => _.Crs.Name == "EUR").Sum(_ => _.Summa);
@@ -117,7 +119,5 @@ namespace KursAM2.ViewModel.Personal
             Rows.RemoveAt(id);
             RaisePropertyChanged(nameof(Rows));
         }
-
-        public override decimal DocCode => Employee?.DocCode ?? 0;
     }
 }

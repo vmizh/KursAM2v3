@@ -6,13 +6,13 @@ using Data;
 using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.Native;
+using KursDomain.ICommon;
 using KursRepozit.Auxiliary;
 using KursRepozit.Repositories;
 using KursRepozit.Views;
 
 namespace KursRepozit.ViewModels
 {
-
     public class DataSourcesViewModel : KursBaseControlViewModel, IDocumentOperation
     {
         #region Constructors
@@ -102,8 +102,8 @@ namespace KursRepozit.ViewModels
 
             catch (Exception ex)
             {
-               // WindowManager.ShowError(ex);
-               // LoggerHelper.WriteError(ex);
+                // WindowManager.ShowError(ex);
+                // LoggerHelper.WriteError(ex);
                 unitOfWork.Rollback();
             }
         }

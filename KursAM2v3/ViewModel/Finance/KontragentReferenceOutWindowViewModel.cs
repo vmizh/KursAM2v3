@@ -6,11 +6,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences.Kontragent;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.ViewModel.Costing;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.ICommon;
 using Reports.Base;
 
 namespace KursAM2.ViewModel.Finance

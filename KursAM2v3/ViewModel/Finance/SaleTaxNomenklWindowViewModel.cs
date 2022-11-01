@@ -5,11 +5,13 @@ using System.Linq;
 using System.Transactions;
 using System.Windows;
 using Core;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Mvvm.Native;
 using KursAM2.View.Finance;
+using KursDomain.Documents.Currency;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Finance
 {

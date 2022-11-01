@@ -1,8 +1,7 @@
-﻿namespace Core
+﻿namespace KursDomain.Documents.Currency;
+
+public class Prices
 {
-    public class Prices
-    {
-        public decimal Price { set; get; }
-        public decimal PriceWithNaklad { set; get; }
-    }
+    public decimal Price { set; get; }
+    public decimal PriceWithNaklad { set; get; }
 }

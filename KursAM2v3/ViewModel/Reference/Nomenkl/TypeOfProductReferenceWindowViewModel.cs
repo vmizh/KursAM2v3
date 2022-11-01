@@ -4,9 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.Vzaimozachet;
-using Core.Invoices.EntityViewModel;
-using Core.Menu;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -15,6 +12,9 @@ using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
+using KursDomain.Documents.Vzaimozachet;
+using KursDomain.ICommon;
+using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
@@ -168,14 +168,14 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             {
                 foreach (var u in ctx.SD_77.Include(_ => _.SD_303))
                 {
-                    var newDoc = new VzaimoraschetType(u) {myState = RowStatus.NotEdited};
+                    var newDoc = new VzaimoraschetType(u) { myState = RowStatus.NotEdited };
                     Rows.Add(newDoc);
                 }
             }
         }
 
         public override bool IsCanSaveData =>
-            Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited) || DeletedRows.Count > 0;
+            (Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited)) || DeletedRows.Count > 0;
 
         //    ItemNewCopyCommand
         //}" />

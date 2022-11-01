@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.WindowsManager;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
@@ -13,6 +12,7 @@ using Helper;
 using KursAM2.Dialogs;
 using KursAM2.ViewModel.Finance.Cash;
 using KursDomain.Documents.Cash;
+using KursDomain.References;
 using LayoutManager;
 
 namespace KursAM2.View.Finance.Cash

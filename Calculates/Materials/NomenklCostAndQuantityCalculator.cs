@@ -4,9 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
 using Core;
-using Core.EntityViewModel.NomenklManagement;
-using Core.Invoices.EntityViewModel;
 using Data;
+using KursDomain.Documents.Currency;
+using KursDomain.Documents.NomenklManagement;
+using KursDomain.References;
+
 //using Core.ViewModel.Common;
 
 namespace Calculates.Materials
