@@ -1,21 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Core.ViewModel.Base;
 using Data;
+using KursDomain.ICommon;
+using KursDomain.IReferences.Kontragent;
 
-namespace KursDomain.Documents.CommonReferences.Kontragent;
+namespace KursDomain.References;
 
-// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public class KontragentGroup : RSViewModelBase, IEntity<UD_43>
+[DebuggerDisplay("{Id,nq} {Name,nq} {ParentId,nq}")]
+public class KontragentGroup : IName, IKontragentGroup, IEqualityComparer<KontragentGroup>
+{
+    public bool Equals(KontragentGroup cat1, KontragentGroup cat2)
+    {
+        if (cat2 == null && cat1 == null)
+            return true;
+        if (cat1 == null || cat2 == null)
+            return false;
+        return cat1.Id == cat2.Id;
+    }
+
+    public int GetHashCode(KontragentGroup obj)
+    {
+        return (Id + Name).GetHashCode();
+    }
+
+    public int Id { get; set; }
+    public bool IsDeleted { get; set; }
+    public int? ParentId { get; set; }
+    public string Name { get; set; }
+    public string Notes { get; set; }
+    public string Description { get; set; }
+
+    public void LoadFromEntity(UD_43 entity)
+    {
+        Id = entity.EG_ID;
+        Name = entity.EG_NAME;
+        IsDeleted = entity.EG_DELETED == 1;
+        ParentId = entity.EG_PARENT_ID;
+    }
+
+    public override string ToString()
+    {
+        return Name;
+    }
+}
+
+public class KontragentGroupViewModel : RSViewModelBase, IEntity<UD_43>
 {
     private UD_43 myEntity;
 
-    public KontragentGroup()
+    public KontragentGroupViewModel()
     {
         Entity = DefaultValue();
     }
 
-    public KontragentGroup(UD_43 entity)
+    public KontragentGroupViewModel(UD_43 entity)
     {
         Entity = entity ?? DefaultValue();
     }
@@ -203,6 +243,7 @@ public class KontragentGroup : RSViewModelBase, IEntity<UD_43>
         ent.EG_BALANS_GROUP = EG_BALANS_GROUP;
         ent.UD_432 = UD_432;
     }
+
 
     public UD_43 Load(decimal dc, bool isShort = true)
     {

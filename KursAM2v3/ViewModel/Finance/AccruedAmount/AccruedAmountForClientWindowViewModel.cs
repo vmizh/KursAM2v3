@@ -7,7 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -27,6 +26,7 @@ using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance.AccruedAmount
 {
@@ -45,7 +45,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             var doc = id != null ? GenericRepository.GetById(id.Value) : null;
             if (doc == null)
             {
-                Document = new AccruedAmountForClientViewModel { State = RowStatus.NewRow };
+                Document = new AccruedAmountForClientViewModel {State = RowStatus.NewRow};
                 UnitOfWork.Context.AccruedAmountForClient.Add(Document.Entity);
             }
             else
@@ -111,7 +111,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         public readonly GenericKursDBRepository<AccruedAmountForClient> GenericRepository;
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
-            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+            new(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private AccruedAmountForClientViewModel myDocument;
         private AccruedAmountForClientRowViewModel myCurrentAccrual;
@@ -123,11 +123,9 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         public override string LayoutName => "AccruedAmountForClientWindowViewModel";
         public override string WindowName => Document.ToString();
 
-        public ObservableCollection<AccruedAmountForClientRowViewModel> SelectedRows { set; get; } =
-            new ObservableCollection<AccruedAmountForClientRowViewModel>();
+        public ObservableCollection<AccruedAmountForClientRowViewModel> SelectedRows { set; get; } = new();
 
-        public ObservableCollection<AccruedAmountForClientRowViewModel> DeletedRows { set; get; } =
-            new ObservableCollection<AccruedAmountForClientRowViewModel>();
+        public ObservableCollection<AccruedAmountForClientRowViewModel> DeletedRows { set; get; } = new();
 
         public AccruedAmountForClientRowViewModel CurrentAccrual
         {
@@ -186,7 +184,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void AddCashDoc(object obj)
         {
-            var ctx = new SelectCashBankDialogViewModel(true,Document.Currency);
+            var ctx = new SelectCashBankDialogViewModel(true, Document.Currency);
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
             if (ctx.CurrentObject == null) return;
@@ -202,7 +200,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             vm.Document.Cash = MainReferences.Cashs[cash.DocCode];
             vm.Document.KontragentType = CashKontragentType.Kontragent;
             vm.Document.KONTRAGENT_DC = Document.Kontragent.DocCode;
-            vm.Document.Currency = Document.Kontragent.BalansCurrency;
+            vm.Document.Currency = Document.Kontragent.Currency as Currency;
             vm.Document.SUMM_ORD = CurrentAccrual.Summa;
             vm.Document.AcrruedAmountRow = CurrentAccrual.Entity;
             vm.Document.SDRSchet = CurrentAccrual.SDRSchet;
@@ -211,7 +209,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             if (ord != null)
                 CurrentAccrual.CashDoc = new CashIn(ord);
             DocumentsOpenManager.Open(DocumentType.CashIn, vm, Form);
-            if(Form is AccruedAmountForClientView frm)
+            if (Form is AccruedAmountForClientView frm)
                 frm.gridRows.UpdateTotalSummary();
         }
 
@@ -267,7 +265,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 if (CurrentAccrual.CashDoc != null)
                     CurrentAccrual.CashDoc = null;
             }
-            if(Form is AccruedAmountForClientView frm)
+
+            if (Form is AccruedAmountForClientView frm)
                 frm.gridRows.UpdateTotalSummary();
         }
 
@@ -287,7 +286,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void AddBankDoc(object obj)
         {
-            var ctx = new SelectCashBankDialogViewModel(false,Document.Currency);
+            var ctx = new SelectCashBankDialogViewModel(false, Document.Currency);
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
             if (ctx.CurrentObject == null) return;
@@ -323,7 +322,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                     manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
                     CurrentAccrual.BankDoc = k;
                 }
-                if(Form is AccruedAmountForClientView frm)
+
+                if (Form is AccruedAmountForClientView frm)
                     frm.gridRows.UpdateTotalSummary();
             }
         }
@@ -407,7 +407,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             }
 
             foreach (var id in Document.Rows.Where(_ => _.State == RowStatus.NewRow).Select(_ => _.Id)
-                .ToList())
+                         .ToList())
                 Document.Rows.Remove(Document.Rows.Single(_ => _.Id == id));
             EntityManager.EntityReload(UnitOfWork.Context);
             foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
@@ -473,7 +473,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             UnitOfWork.CreateTransaction();
             UnitOfWork.Save();
             UnitOfWork.Commit();
-            RecalcKontragentBalans.CalcBalans(Document.Kontragent.DOC_CODE, Document.DocDate);
+            RecalcKontragentBalans.CalcBalans(Document.Kontragent.DocCode, Document.DocDate);
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
 
             Document.myState = RowStatus.NotEdited;

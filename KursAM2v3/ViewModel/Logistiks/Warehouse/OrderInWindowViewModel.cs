@@ -235,7 +235,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 using (var dbctx = GlobalOptions.GetEntities())
                 {
                     if (Document.KontragentSender == null)
-                        Document.KontragentSender = MainReferences.GetKontragent(dtx.SelectedItems.First().PostDC);
+                        Document.KontragentSender = GlobalOptions.ReferencesCache.GetKontragent(dtx.SelectedItems.First().PostDC) as Kontragent;
                     var dc = dtx.SelectedItems.First().DocCode;
                     var sf = UnitOfWork.Context.SD_26.First(_ => _.DOC_CODE == dc);
                     Schet = $"№{sf.SF_IN_NUM}/{sf.SF_POSTAV_NUM} от {sf.SF_POSTAV_DATE.ToShortDateString()}";

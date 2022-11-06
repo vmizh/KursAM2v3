@@ -7,7 +7,6 @@ using System.Runtime.Serialization;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -16,8 +15,9 @@ using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Management
 {
@@ -44,13 +44,12 @@ namespace KursAM2.ViewModel.Management
 
         public KontragentBalansWindowViewModel(decimal doccode) : this()
         {
-            StartKontragent = Kontragents.Single(_ => _.DOC_CODE == doccode);
+            StartKontragent = Kontragents.Single(_ => _.DocCode == doccode);
         }
 
         public override string LayoutName => "KontragentBalansFormNew";
 
-        public ObservableCollection<KonragentBalansRowViewModel> SelectedDocs { set; get; } =
-            new ObservableCollection<KonragentBalansRowViewModel>();
+        public ObservableCollection<KonragentBalansRowViewModel> SelectedDocs { set; get; } = new();
 
         public Kontragent StartKontragent { get; set; }
 
@@ -89,15 +88,17 @@ namespace KursAM2.ViewModel.Management
         [DataMember]
         public Kontragent Kontragent
         {
-            get => myKontragent != null ? MainReferences.GetKontragent(myKontragent.DOC_CODE) : null;
+            get => myKontragent != null
+                ? GlobalOptions.ReferencesCache.GetKontragent(myKontragent.DocCode) as Kontragent
+                : null;
             set
             {
                 if (myKontragent != null && myKontragent.Equals(value)) return;
                 myKontragent = value;
                 if (myKontragent != null)
                 {
-                    KontragentManager.UpdateSelectCount(myKontragent.DOC_CODE);
-                    LoadOperations(myKontragent.DOC_CODE);
+                    KontragentManager.UpdateSelectCount(myKontragent.DocCode);
+                    LoadOperations(myKontragent.DocCode);
                     RaisePropertyChanged(nameof(Kontragents));
                 }
 
@@ -109,8 +110,8 @@ namespace KursAM2.ViewModel.Management
             }
         }
 
-        public string CrsName => Kontragent != null && Kontragent.BalansCurrency != null
-            ? Kontragent.BalansCurrency.Name
+        public string CrsName => Kontragent != null && Kontragent.Currency != null
+            ? ((IName) Kontragent.Currency).Name
             : null;
 
         [DataMember]
@@ -142,7 +143,7 @@ namespace KursAM2.ViewModel.Management
         [DataMember]
         public ObservableCollection<KontragentPeriod> Periods { set; get; } =
             // ReSharper disable once MemberInitializerValueIgnored
-            new ObservableCollection<KontragentPeriod>();
+            new();
 
         public Brush BalansBrush
             => LastBalansSumma < 0 ? new SolidColorBrush(Colors.Red) : new SolidColorBrush(Colors.Black);
@@ -300,7 +301,7 @@ namespace KursAM2.ViewModel.Management
             base.RefreshData(obj);
             if (myKontragent == null) return;
             CurrentPeriod = null;
-            LoadOperations(myKontragent.DOC_CODE);
+            LoadOperations(myKontragent.DocCode);
         }
 
         #region Command

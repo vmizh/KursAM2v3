@@ -112,10 +112,9 @@
     <Compile Include="Documents\CommonReferences\CurrencyRate.cs" />
     <Compile Include="Documents\CommonReferences\DocumentType.cs" />
     <Compile Include="Documents\CommonReferences\FormPay.cs" />
-    <Compile Include="Documents\CommonReferences\Kontragent\Kontragent.cs" />
+    <Compile Include="Documents\CommonReferences\Kontragent\KontragentViewModel.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KontragentBank.cs" />
-    <Compile Include="Documents\CommonReferences\Kontragent\KontragentCategory.cs" />
-    <Compile Include="Documents\CommonReferences\Kontragent\KontragentGroup.cs" />
+    <Compile Include="Documents\CommonReferences\Kontragent\KontragentClientCategory.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KontragentGruzoRequisite.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KontragentTypeEnum.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KONTRAGENT_REF_OUTViewModel.cs" />
@@ -282,7 +281,7 @@
     <Compile Include="IReferences\ICurrency.cs" />
     <Compile Include="IReferences\IEmployee.cs" />
     <Compile Include="IReferences\Kontragent\IKontragent.cs" />
-    <Compile Include="IReferences\Kontragent\IKontragentCategory.cs" />
+    <Compile Include="IReferences\Kontragent\IKontragentGroup.cs" />
     <Compile Include="IReferences\Kontragent\IKontragentMain.cs" />
     <Compile Include="IReferences\IRegion.cs" />
     <Compile Include="References\Bank.cs" />
@@ -298,7 +297,7 @@
     <Compile Include="References\NomenklType.cs" />
     <Compile Include="References\ProductType.cs" />
     <Compile Include="References\Employee.cs" />
-    <Compile Include="References\KontragentCategory.cs" />
+    <Compile Include="References\KontragentGroup.cs" />
     <Compile Include="References\MutualSettlementType.cs" />
     <Compile Include="References\Project.cs" />
     <Compile Include="References\SDRSchet.cs" />

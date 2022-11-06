@@ -2,7 +2,7 @@
 using Core;
 using Core.Helper;
 using Data;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.References;
 
 namespace KursDomain.Documents.NomenklManagement;
 
@@ -12,7 +12,7 @@ public class Waibill2 : SD_24ViewModel, IDataErrorInfo
 
     public Kontragent Client
     {
-        get => MainReferences.GetKontragent(Entity.DD_KONTR_POL_DC);
+        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.DD_KONTR_POL_DC) as Kontragent;
         set
         {
             if (Entity.DD_KONTR_POL_DC == value?.DocCode) return;

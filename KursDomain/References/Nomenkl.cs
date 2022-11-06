@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -22,8 +23,11 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {NomenklNumber,nq} {Name,nq} {Currency,nq}")]
 public class Nomenkl : IDocCode, IDocGuid, IName, IEqualityComparer<IDocCode>, INomenkl
 {
+    [Display(AutoGenerateField=false)]
     public DateTime UpdateDate { get; set; }
+    [Display(AutoGenerateField=false)]
     public decimal DocCode { get; set; }
+    [Display(AutoGenerateField=false)]
     public Guid Id { get; set; }
 
     public bool Equals(IDocCode x, IDocCode y)
@@ -40,25 +44,66 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEqualityComparer<IDocCode>, I
         return obj.DocCode.GetHashCode();
     }
 
+
+    [Display(AutoGenerateField=true,Name = "Наименование")]
+    [ReadOnly(true)]
     public string Name { get; set; }
+    [Display(AutoGenerateField=true,Name = "Примечания")]
+    [ReadOnly(true)]
     public string Notes { get; set; }
+    [Display(AutoGenerateField=false,Name = "Описание")]
+    [ReadOnly(true)]
     public string Description => $"{NomenklNumber} {Name} {Currency}";
+    [Display(AutoGenerateField=true,Name = "Ном.№")]
+    [ReadOnly(true)]
     public string NomenklNumber { get; set; }
+    [Display(AutoGenerateField=true,Name = "Ед.изм.")]
+    [ReadOnly(true)]
     public IUnit Unit { get; set; }
+    [Display(AutoGenerateField=false,Name = "Категория")]
+    [ReadOnly(true)]
     public INomenklCategory Category { get; set; }
+    [Display(AutoGenerateField=true,Name = "Полное имя")]
+    [ReadOnly(true)]
     public string FullName { get; set; }
+    [Display(AutoGenerateField=true,Name = "Услуга")]
+    [ReadOnly(true)]
     public bool IsUsluga { get; set; }
+    [Display(AutoGenerateField=true,Name = "Продукт")]
+    [ReadOnly(true)]
     public bool IsProguct { get; set; }
+    [Display(AutoGenerateField=true,Name = "Накл.расх.")]
+    [ReadOnly(true)]
     public bool IsNakladExpense { get; set; }
+    [Display(AutoGenerateField=true,Name = "Валюта")]
+    [ReadOnly(true)]
     public ICurrency Currency { get; set; }
+    [Display(AutoGenerateField=true,Name = "НДС,%")]
+    [ReadOnly(true)]
     public decimal? DefaultNDSPercent { get; set; }
+    [Display(AutoGenerateField=true,Name = "Тип товара")]
+    [ReadOnly(true)]
     public INomenklType NomenklType { get; set; }
+    [Display(AutoGenerateField=true,Name = "Счет. дох/расх")]
+    [ReadOnly(true)]
     public ISDRSchet SDRSchet { get; set; }
+    [Display(AutoGenerateField=true,Name = "Тип продукции")]
+    [ReadOnly(true)]
     public IProductType ProductType { get; set; }
+    [Display(AutoGenerateField=true,Name = "Удален")]
+    [ReadOnly(true)]
     public bool IsDeleted { get; set; }
+    [Display(AutoGenerateField=true,Name = "Вал.трансфер")]
+    [ReadOnly(true)]
     public bool IsCurrencyTransfer { get; set; }
+    [Display(AutoGenerateField=true,Name = "Усл. в рентабельности")]
+    [ReadOnly(true)]
     public bool IsUslugaInRentabelnost { get; set; }
+    [Display(AutoGenerateField=false,Name = "Основная ном.")]
+    [ReadOnly(true)]
     public INomenklMain NomenklMain { get; set; }
+    [Display(AutoGenerateField=false,Name = "Наименование")]
+    [ReadOnly(true)]
     public Guid MainId { get; set; }
 
     public override string ToString()

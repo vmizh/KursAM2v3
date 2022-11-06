@@ -5,7 +5,6 @@ using FinanceAnalitic;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Management;
 using KursDomain.References;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 using SDRState = KursDomain.Documents.CommonReferences.SDRState;
 
@@ -57,7 +56,7 @@ namespace KursAM2.ViewModel.Management
         public decimal LossCNY { get; set; }
         public decimal ResultCNY { get; set; }
         public Nomenkl Nomenkl { set; get; }
-        public Kontragent KontragentBase { set; get; }
+        public Kontragent KontragentBase { get; set; }
         public string Kontragent { set; get; }
         public DateTime Docdate { set; get; }
         public DateTime Date { set; get; }

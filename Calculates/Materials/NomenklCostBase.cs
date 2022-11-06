@@ -70,14 +70,14 @@ namespace Calculates.Materials
                                 KontrOtprDC = td24.SD_24.DD_KONTR_OTPR_DC,
                                 OperName = td24.SD_24.SD_201.D_NAME,
                                 OperCode = (td24.SD_24.DD_VOZVRAT ?? 0) == 1 ? 25 : td24.SD_24.SD_201.D_OP_CODE,
-                                DocPrice = (decimal)(td24.SD_24.DD_TYPE_DC == 2010000005 ? td24.DDT_TAX_CENA : 0),
+                                DocPrice = (decimal) (td24.SD_24.DD_TYPE_DC == 2010000005 ? td24.DDT_TAX_CENA : 0),
                                 SkladIn = td24.SD_24.DD_SKLAD_POL_DC,
                                 SkladOut = td24.SD_24.DD_SKLAD_OTPR_DC,
                                 SummaIn = (decimal)
                                     (td24.SD_24.DD_TYPE_DC == 2010000005
                                         ? td24.DDT_TAX_CENA * td24.DDT_KOL_PRIHOD
                                         : (td24.TD_26 != null ? td24.TD_26.SFT_ED_CENA ?? 0 : 0) * td24.DDT_KOL_PRIHOD),
-                                SummaInWithNaklad = (decimal)(td24.SD_24.DD_TYPE_DC == 2010000005
+                                SummaInWithNaklad = (decimal) (td24.SD_24.DD_TYPE_DC == 2010000005
                                     ? td24.DDT_TAX_CENA * td24.DDT_KOL_PRIHOD
                                     : (td24.TD_26 != null
                                         ? td24.TD_26.SFT_ED_CENA + td24.TD_26.SFT_SUMMA_NAKLAD / td24.TD_26.SFT_KOL
@@ -105,8 +105,8 @@ namespace Calculates.Materials
                                 CalcPrice = d.Price,
                                 CalcPriceNaklad = d.PriceWONaklad,
                                 DocDate = d.Date,
-                                KontragentIn = MainReferences.GetKontragent(d.KontrPolDC),
-                                KontragentOut = MainReferences.GetKontragent(d.KontrOtprDC),
+                                KontragentIn = (Kontragent) GlobalOptions.ReferencesCache.GetKontragent(d.KontrPolDC),
+                                KontragentOut = (Kontragent) GlobalOptions.ReferencesCache.GetKontragent(d.KontrOtprDC),
                                 OperationName = d.OperName,
                                 OperCode = d.OperCode,
                                 QuantityIn = d.QuantityIn,
@@ -130,7 +130,7 @@ namespace Calculates.Materials
                                     $"С/ф поставщика №{d.SFPrihodRow.SD_26.SF_IN_NUM}/{d.SFPrihodRow.SD_26.SF_POSTAV_NUM} от {d.SFPrihodRow.SD_26.SF_POSTAV_DATE.ToShortDateString()}";
                                 oper.Naklad = (d.SFPrihodRow.SFT_SUMMA_NAKLAD ?? 0) / d.SFPrihodRow.SFT_KOL;
                                 // ReSharper disable once PossibleInvalidOperationException
-                                oper.DocPrice = (decimal)d.SFPrihodRow.SFT_ED_CENA;
+                                oper.DocPrice = (decimal) d.SFPrihodRow.SFT_ED_CENA;
                             }
 
                             if (d.SFRashodRow != null)

@@ -619,7 +619,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                         NakladInvoices.Add(new DistributeNakladInvoiceViewModel(ent)
                         {
                             AccruedAmountRow = d.Entity,
-                            Currency = d.Kongtragent.BalansCurrency,
+                            Currency = d.Kongtragent.Currency as Currency,
                             SummaDistribute = 0
                         });
                     }

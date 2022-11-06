@@ -8,6 +8,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.TreeList;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.References;
 using LayoutManager;
 
 namespace KursAM2.View.KursReferences
@@ -52,12 +53,12 @@ namespace KursAM2.View.KursReferences
             {
                 try
                 {
-                    if (row.EG_ID != -1)
+                    if (row.Id != -1)
                     {
-                        var item = ctx.UD_43.FirstOrDefault(_ => _.EG_ID == row.EG_ID);
+                        var item = ctx.UD_43.FirstOrDefault(_ => _.EG_ID == row.Id);
                         // ReSharper disable once PossibleNullReferenceException
-                        item.EG_PARENT_ID = row.EG_PARENT_ID;
-                        item.EG_NAME = row.EG_NAME;
+                        item.EG_PARENT_ID = row.ParentId;
+                        item.EG_NAME = row.Name;
                     }
                     else
                     {
@@ -65,10 +66,10 @@ namespace KursAM2.View.KursReferences
                         var item = new UD_43
                         {
                             EG_ID = egId,
-                            EG_PARENT_ID = row.EG_PARENT_ID,
-                            EG_NAME = row.EG_NAME
+                            EG_PARENT_ID = row.ParentId,
+                            EG_NAME = row.Name
                         };
-                        row.EG_ID = egId;
+                        row.Id = egId;
                         ctx.UD_43.Add(item);
                     }
 

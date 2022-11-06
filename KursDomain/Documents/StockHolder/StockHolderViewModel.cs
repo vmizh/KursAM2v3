@@ -7,9 +7,9 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Documents.Systems;
 using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursDomain.Documents.StockHolder;
 
@@ -92,10 +92,10 @@ public class StockHolderViewModel : RSViewModelBase, IDataErrorInfo, IEntity<Sto
 
     public Kontragent Kontragent
     {
-        get => MainReferences.GetKontragent(Entity.KontrDC);
+        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.KontrDC) as Kontragent;
         set
         {
-            if (MainReferences.GetKontragent(Entity.KontrDC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetKontragent(Entity.KontrDC) == value) return;
             Entity.KontrDC = value?.DocCode;
             RaisePropertyChanged();
         }

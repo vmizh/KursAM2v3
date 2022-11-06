@@ -16,6 +16,8 @@ using KursAM2.ViewModel.Finance.Invoices;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
+using NomenklMain = Data.NomenklMain;
 
 namespace KursAM2.ViewModel.Shop
 {
@@ -80,8 +82,8 @@ namespace KursAM2.ViewModel.Shop
                 {
                     Document =
                     {
-                        Kontragent = MainReferences.GetKontragent(10430001717),
-                        KontrReceiver = MainReferences.GetKontragent(10430000001),
+                        Kontragent = GlobalOptions.ReferencesCache.GetKontragent(10430001717) as Kontragent,
+                        KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(10430000001) as Kontragent,
                         CO = MainReferences.GetCO(10400000012),
                         PayCondition = MainReferences.GetPayCondition(11790000001),
                         VzaimoraschetType = MainReferences.GetVzaimoraschetType(10770000005),

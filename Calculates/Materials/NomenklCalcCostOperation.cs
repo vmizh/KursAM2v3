@@ -1,7 +1,7 @@
 using System;
 using Core.ViewModel.Base;
-using KursDomain.Documents.CommonReferences.Kontragent;
-using KursDomain.Documents.NomenklManagement;
+using KursDomain.References;
+using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace Calculates.Materials
 {
@@ -168,7 +168,7 @@ namespace Calculates.Materials
             get => myKontragentIn;
             set
             {
-                if (myKontragentIn != null && myKontragentIn.Equals(value)) return;
+                if (myKontragentIn.Equals(value)) return;
                 myKontragentIn = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(KontrInName));
@@ -182,14 +182,14 @@ namespace Calculates.Materials
             get => myKontragentOut;
             set
             {
-                if (myKontragentOut != null && myKontragentOut.Equals(value)) return;
+                if (myKontragentOut.Equals(value)) return;
                 myKontragentOut = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(KontrOutName));
             }
         }
 
-        public string KontrOutName => KontragentOut?.Name;
+        public string KontrOutName => myKontragentOut?.Name;
 
         public decimal DocPrice
         {

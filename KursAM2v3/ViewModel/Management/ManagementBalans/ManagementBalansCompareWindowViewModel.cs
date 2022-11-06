@@ -9,7 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -26,7 +25,6 @@ using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Menu;
 using KursDomain.References;
 using Employee = KursDomain.Documents.Employee.Employee;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 // ReSharper disable All
 namespace KursAM2.ViewModel.Management.ManagementBalans
@@ -361,7 +359,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             var kontrBalans = new KontragentBalansWindowViewModel();
             CurrentKontragent.KontragentOperations.Clear();
             foreach (var op in kontrBalans.Load(CurrentKontragent.KontragentDC)
-                .Where(_ => _.DocDate > FirstDate && _.DocDate <= SecondDate))
+                         .Where(_ => _.DocDate > FirstDate && _.DocDate <= SecondDate))
             {
                 var newDoc = new KontragentBalansOperation
                 {
@@ -514,9 +512,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             {
                 var newKontr = new KontragentCompareBalansDeltaItem
                 {
-                    Currency = d.Kontragent.BalansCurrency,
+                    Currency = d.Kontragent.Currency as Currency,
                     KontragentName = d.Kontragent.Name,
-                    Note = d.Kontragent.Note,
+                    Note = d.Kontragent.Notes,
                     KontragentDC = d.Kontragent.DocCode
                 };
                 newKontr.SetSumma(newKontr.Currency, d.Summa, 0);
@@ -530,9 +528,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 {
                     var newKontr = new KontragentCompareBalansDeltaItem
                     {
-                        Currency = d.Kontragent.BalansCurrency,
+                        Currency = (Currency)d.Kontragent.Currency,
                         KontragentName = d.Kontragent.Name,
-                        Note = d.Kontragent.Note,
+                        Note = d.Kontragent.Notes,
                         KontragentDC = d.Kontragent.DocCode
                     };
                     newKontr.SetSumma(newKontr.Currency, 0, d.Summa);
@@ -557,9 +555,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             {
                 var newKontr = new KontragentCompareBalansDeltaItem
                 {
-                    Currency = d.Kontragent.BalansCurrency,
+                    Currency = (Currency)d.Kontragent.Currency,
                     KontragentName = d.Kontragent.Name,
-                    Note = d.Kontragent.Note,
+                    Note = d.Kontragent.Notes,
                     KontragentDC = d.Kontragent.DocCode
                 };
                 newKontr.SetSumma(newKontr.Currency, d.Summa, 0);
@@ -573,9 +571,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 {
                     var newKontr = new KontragentCompareBalansDeltaItem
                     {
-                        Currency = d.Kontragent.BalansCurrency,
+                        Currency = (Currency)d.Kontragent.Currency,
                         KontragentName = d.Kontragent.Name,
-                        Note = d.Kontragent.Note,
+                        Note = d.Kontragent.Notes,
                         KontragentDC = d.Kontragent.DocCode
                     };
                     newKontr.SetSumma(newKontr.Currency, 0, d.Summa);
@@ -625,7 +623,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     {
                         case KontragentTypeEnum.Kontragent:
                             newDoc.KontragentName = MainReferences.GetKontragent(op.VVT_KONTRAGENT).Name;
-                            newDoc.KontragentDC = (decimal) op.VVT_KONTRAGENT;
+                            newDoc.KontragentDC = (decimal)op.VVT_KONTRAGENT;
                             break;
                         case KontragentTypeEnum.Cash:
                             SD_22 ch;
@@ -657,7 +655,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     }
 
                     if (op.VVT_VAL_PRIHOD > 0)
-                        newDoc.SetSumma(MainReferences.Currencies[op.VVT_CRS_DC], (decimal) op.VVT_VAL_PRIHOD, 0);
+                        newDoc.SetSumma(MainReferences.Currencies[op.VVT_CRS_DC], (decimal)op.VVT_VAL_PRIHOD, 0);
                     else
                         newDoc.SetSumma(MainReferences.Currencies[op.VVT_CRS_DC], 0, op.VVT_VAL_RASHOD ?? 0);
                     FinanseOperations.Add(newDoc);
@@ -683,7 +681,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     var newDoc = new FinanseOperation
                     {
                         DocDC = op.DOC_CODE,
-                        Date = (DateTime) op.DATE_ORD,
+                        Date = (DateTime)op.DATE_ORD,
                         DocNum = op.NUM_ORD.ToString(),
                         DocumentType = DocumentType.CashIn,
                         KontragentType = op.KONTRAGENT_DC != null
@@ -701,7 +699,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     {
                         case KontragentTypeEnum.Kontragent:
                             newDoc.KontragentName = MainReferences.GetKontragent(op.KONTRAGENT_DC).Name;
-                            newDoc.KontragentDC = (decimal) op.KONTRAGENT_DC;
+                            newDoc.KontragentDC = (decimal)op.KONTRAGENT_DC;
                             break;
                         case KontragentTypeEnum.Employee:
                             var emp =
@@ -728,13 +726,13 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                             if (ch != null)
                             {
                                 newDoc.KontragentName = ch.SD_22.CA_NAME;
-                                newDoc.KontragentDC = (decimal) ch.CA_DC;
+                                newDoc.KontragentDC = (decimal)ch.CA_DC;
                             }
 
                             break;
                     }
 
-                    newDoc.SetSumma(MainReferences.Currencies[(decimal) op.CRS_DC], (decimal) op.SUMM_ORD, 0);
+                    newDoc.SetSumma(MainReferences.Currencies[(decimal)op.CRS_DC], (decimal)op.SUMM_ORD, 0);
                     FinanseOperations.Add(newDoc);
                 }
 
@@ -743,7 +741,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     var newDoc = new FinanseOperation
                     {
                         DocDC = op.DOC_CODE,
-                        Date = (DateTime) op.DATE_ORD,
+                        Date = (DateTime)op.DATE_ORD,
                         DocNum = op.NUM_ORD.ToString(),
                         DocumentType = DocumentType.CashOut,
                         KontragentType = op.KONTRAGENT_DC != null
@@ -759,7 +757,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     {
                         case KontragentTypeEnum.Kontragent:
                             newDoc.KontragentName = MainReferences.GetKontragent(op.KONTRAGENT_DC).Name;
-                            newDoc.KontragentDC = (decimal) op.KONTRAGENT_DC;
+                            newDoc.KontragentDC = (decimal)op.KONTRAGENT_DC;
                             break;
                         case KontragentTypeEnum.Employee:
                             var emp =
@@ -787,13 +785,13 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                             {
                                 newDoc.KontragentType = KontragentTypeEnum.Cash;
                                 newDoc.KontragentName = ch.SD_22.CA_NAME;
-                                newDoc.KontragentDC = (decimal) ch.CA_DC;
+                                newDoc.KontragentDC = (decimal)ch.CA_DC;
                             }
 
                             break;
                     }
 
-                    newDoc.SetSumma(MainReferences.Currencies[(decimal) op.CRS_DC], 0, (decimal) op.SUMM_ORD);
+                    newDoc.SetSumma(MainReferences.Currencies[(decimal)op.CRS_DC], 0, (decimal)op.SUMM_ORD);
                     FinanseOperations.Add(newDoc);
                 }
 
@@ -815,10 +813,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         DocumentType = DocumentType.CurrencyChange,
                         Note = op.CH_NOTE
                     };
-                    newDocIn.SetSumma(MainReferences.Currencies[(decimal) op.CH_CRS_IN_DC], (decimal) op.CH_CRS_IN_SUM,
+                    newDocIn.SetSumma(MainReferences.Currencies[(decimal)op.CH_CRS_IN_DC], (decimal)op.CH_CRS_IN_SUM,
                         0);
                     FinanseOperations.Add(newDocIn);
-                    newDocOut.SetSumma(MainReferences.Currencies[(decimal) op.CH_CRS_OUT_DC], 0, op.CH_CRS_OUT_SUM);
+                    newDocOut.SetSumma(MainReferences.Currencies[(decimal)op.CH_CRS_OUT_DC], 0, op.CH_CRS_OUT_SUM);
                     FinanseOperations.Add(newDocOut);
                 }
             }
@@ -914,42 +912,44 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         public override void RefreshData(object obj)
         {
             var myBalansBuilder = new ManagementBalansBuilder();
-            
+
             var frm = Form as ManagementBalansCompareView;
             frm?.NavigateTo(typeof(EmptyUI));
-            myFirstBalans = new ManagementBalansWindowViewModel {CurrentDate = FirstDate};
+            myFirstBalans = new ManagementBalansWindowViewModel { CurrentDate = FirstDate };
             myFirstBalans.RefreshData(null);
-            mySecondBalans = new ManagementBalansWindowViewModel {CurrentDate = SecondDate};
+            mySecondBalans = new ManagementBalansWindowViewModel { CurrentDate = SecondDate };
             mySecondBalans.RefreshData(null);
             var storeSection = myFirstBalans.BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
                 .Single(t => t.Tag == BalansSection.Store)
                 .Id);
             var newId = Guid.NewGuid();
-                var newGrp = new ManagementBalanceGroupViewModel
-                {
-                    Id = newId,
-                    ParentId = storeSection.Id,
-                    Name = "Товары в пути",
-                    Order = 1,
-                    Summa = 0,
-                    SummaEUR = 0,
-                    SummaUSD = 0,
-                    SummaRUB = 0,
-                    SummaCNY = 0,
-                    SummaCHF = 0,
-                    SummaGBP = 0,
-                    ObjectDC = 10270000000
-                };
+            var newGrp = new ManagementBalanceGroupViewModel
+            {
+                Id = newId,
+                ParentId = storeSection.Id,
+                Name = "Товары в пути",
+                Order = 1,
+                Summa = 0,
+                SummaEUR = 0,
+                SummaUSD = 0,
+                SummaRUB = 0,
+                SummaCNY = 0,
+                SummaCHF = 0,
+                SummaGBP = 0,
+                ObjectDC = 10270000000
+            };
             if (myFirstBalans.BalansStructure.Any(_ => _.Name == "Товары в пути") &&
                 !mySecondBalans.BalansStructure.Any(_ => _.Name == "Товары в пути"))
             {
                 mySecondBalans.BalansStructure.Add(newGrp);
             }
+
             if (!myFirstBalans.BalansStructure.Any(_ => _.Name == "Товары в пути") &&
                 mySecondBalans.BalansStructure.Any(_ => _.Name == "Товары в пути"))
             {
                 myFirstBalans.BalansStructure.Add(newGrp);
             }
+
             Data.Clear();
             var head = myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Head);
             Data.Add(new ManagementBalansCompareGroupViewModel
@@ -961,7 +961,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 ObjectDC = head.ObjectDC
             });
             foreach (var d in myFirstBalans.BalansStructure.Where(
-                _ => _.ParentId == myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Head).Id))
+                         _ => _.ParentId == myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Head).Id))
                 Data.Add(new ManagementBalansCompareGroupViewModel
                 {
                     Id = d.Id,
@@ -1163,7 +1163,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 }
 
             var ch = myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Head);
-            var form = (ManagementBalansCompareView) Form;
+            var form = (ManagementBalansCompareView)Form;
             if (form != null)
             {
                 TreeListControlBand b;
@@ -1227,7 +1227,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             try
             {
                 var ctxk = new KontragentBalansWindowViewModel(CurrentKontragent.KontragentDC);
-                var frm = new KontragentBalansForm {Owner = Application.Current.MainWindow, DataContext = ctxk};
+                var frm = new KontragentBalansForm { Owner = Application.Current.MainWindow, DataContext = ctxk };
                 frm.Show();
             }
             catch (Exception ex)
@@ -1239,8 +1239,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         [MetadataType(typeof(DataAnnotationsKontragentBalansOperations))]
         public class KontragentBalansOperation : KonragentBalansRowViewModel, IMultyCurrency
         {
-            public Kontragent Kontragent { set; get; }
-            public Currency Currency => Kontragent?.BalansCurrency;
+            public KontragentViewModel KontragentViewModel { set; get; }
+            public Currency Currency => KontragentViewModel?.BalansCurrency;
 
             public bool IsDifferent => ResultUSD != 0 || ResultRUB != 0 || ResultEUR != 0 || ResultGBP != 0 ||
                                        ResultCHF != 0 ||
@@ -1335,7 +1335,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 builder.Property(_ => _.DocDC).NotAutoGenerated();
                 builder.Property(_ => _.IsDifferent).NotAutoGenerated();
                 builder.Property(_ => _.Name).NotAutoGenerated();
-                builder.Property(_ => _.Kontragent).NotAutoGenerated();
+                builder.Property(_ => _.KontragentViewModel).NotAutoGenerated();
                 builder.Property(_ => _.Currency).NotAutoGenerated();
                 builder.Property(_ => _.Note).NotAutoGenerated();
                 builder.Property(_ => _.DocRowCode).NotAutoGenerated();
@@ -1726,16 +1726,16 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
         private void KontragentAccountOpen(object obj)
         {
-            var ctxk = new KontragentBalansWindowViewModel((decimal) CurrentExtendItem?.DocCode);
-            var frm = new KontragentBalansForm {Owner = Application.Current.MainWindow, DataContext = ctxk};
+            var ctxk = new KontragentBalansWindowViewModel((decimal)CurrentExtendItem?.DocCode);
+            var frm = new KontragentBalansForm { Owner = Application.Current.MainWindow, DataContext = ctxk };
             frm.Show();
         }
 
         private void NomenklCalcOpen(object obj)
         {
             if (NomenklCurrent?.DocCode == null) return;
-            var ctx = new NomPriceWindowViewModel((decimal) NomenklCurrent?.NomenklDC);
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var ctx = new NomPriceWindowViewModel((decimal)NomenklCurrent?.NomenklDC);
+            var dlg = new SelectDialogView { DataContext = ctx };
             dlg.ShowDialog();
         }
 

@@ -13,12 +13,13 @@ using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Documents.Dogovora;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
+using KursDomain.References;
 using Newtonsoft.Json;
+using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
 using ValidationError = Core.Helper.ValidationError;
 
 namespace KursDomain.Documents.Invoices;
@@ -81,7 +82,7 @@ public interface IInvoiceProvider
     bool IsNDSInPrice { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Центр ответст.")]
-    CentrOfResponsibility CO { set; get; }
+    CentrResponsibility CO { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Получатель")]
     Kontragent KontrReceiver { set; get; }
@@ -169,7 +170,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     #region Fields
 
-    private CentrOfResponsibility myCO;
+    private CentrResponsibility myCO;
     private Employee.Employee myEmployee;
     private SD_26 myEntity;
     private FormPay myFormRaschet;
@@ -355,10 +356,10 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         get => myKontragent;
         set
         {
-            if (myKontragent != null && myKontragent.Equals(value)) return;
+            if (myKontragent.Equals(value)) return;
             myKontragent = value;
             if (myKontragent != null)
-                Entity.SF_POST_DC = myKontragent.DOC_CODE;
+                Entity.SF_POST_DC = myKontragent.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -970,7 +971,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         }
     }
 
-    public CentrOfResponsibility CO
+    public CentrResponsibility CO
     {
         get => myCO;
         set
@@ -989,7 +990,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         {
             if (Entity.SF_POLUCH_KONTR_DC == value) return;
             Entity.SF_POLUCH_KONTR_DC = value;
-            KontrReceiver = MainReferences.GetKontragent(Entity.SF_POLUCH_KONTR_DC);
+            KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POLUCH_KONTR_DC) as Kontragent;
             RaisePropertyChanged(nameof(KontrReceiver));
             RaisePropertyChanged();
         }
@@ -1215,9 +1216,9 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     public void LoadReferences()
     {
         if (Entity.SF_POST_DC > 0)
-            Kontragent = MainReferences.GetKontragent(Entity.SF_POST_DC);
+            Kontragent = (Kontragent)GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POST_DC);
         if (SF_POLUCH_KONTR_DC != null)
-            KontrReceiver = MainReferences.GetKontragent(SF_POLUCH_KONTR_DC);
+            KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(SF_POLUCH_KONTR_DC) as Kontragent;
         if (SF_CRS_DC != null)
             Currency = MainReferences.Currencies.ContainsKey(SF_CRS_DC.Value)
                 ? MainReferences.Currencies[SF_CRS_DC.Value]
@@ -1369,7 +1370,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 /// </summary>
 public class Overhead
 {
-    public Kontragent Kontragent { set; get; }
+    public KontragentViewModel KontragentViewModel { set; get; }
     //public Money Summa { set; get; }
 }
 

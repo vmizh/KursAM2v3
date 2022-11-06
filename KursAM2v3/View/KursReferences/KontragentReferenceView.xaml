@@ -51,8 +51,8 @@
                         </dxg:TreeListControl.ContextMenu>
                         <dxg:TreeListControl.View>
                             <dxg:TreeListView CellValueChanged="TreeListView_OnCellValueChanged"
-                                              ParentFieldName="EG_PARENT_ID"
-                                              KeyFieldName="EG_ID"
+                                              ParentFieldName="ParentId"
+                                              KeyFieldName="Id"
                                               ShowTotalSummary="False" />
                         </dxg:TreeListControl.View>
                     </dxg:TreeListControl>

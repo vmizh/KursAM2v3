@@ -7,7 +7,7 @@ using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.References;
 
 namespace KursDomain.Documents.Dogovora.Old;
 
@@ -87,10 +87,10 @@ public class SD_9ViewModel : RSViewModelBase, IEntity<SD_9>
 
     public Kontragent Client
     {
-        get => MainReferences.GetKontragent(Entity.ZAK_CLIENT_DC);
+        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.ZAK_CLIENT_DC) as Kontragent;
         set
         {
-            if (MainReferences.GetKontragent(Entity.ZAK_CLIENT_DC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetKontragent(Entity.ZAK_CLIENT_DC) == value) return;
             if (value != null)
                 Entity.ZAK_CLIENT_DC = value.DocCode;
             else Entity.ZAK_CLIENT_DC = null;
@@ -98,7 +98,7 @@ public class SD_9ViewModel : RSViewModelBase, IEntity<SD_9>
         }
     }
 
-    public References.Currency Currency => Client?.BalansCurrency;
+    public References.Currency Currency => Client?.Currency as References.Currency;
 
     //public int? ZAK_CLIENT_TABELNUMBER
     //{
@@ -446,7 +446,7 @@ public class SD_9ViewModel : RSViewModelBase, IEntity<SD_9>
         }
     }
 
-    public Kontragent Diler
+    public KontragentViewModel Diler
     {
         get => MainReferences.GetKontragent(Entity.ZAK_DILER_DC);
         set
@@ -558,7 +558,7 @@ public class SD_9ViewModel : RSViewModelBase, IEntity<SD_9>
     //    }
     //}
 
-    public Kontragent Provider
+    public KontragentViewModel Provider
     {
         get => Entity.ZAK_POSTAV_DC != null ? MainReferences.GetKontragent(Entity.ZAK_POSTAV_DC) : null;
         set

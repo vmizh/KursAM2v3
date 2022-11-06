@@ -6,16 +6,15 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.Native;
 using Helper;
 using KursAM2.View.KursReferences;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -23,7 +22,7 @@ namespace KursAM2.ViewModel.Reference
     {
         #region Fields
 
-        private CentrOfResponsibility myCurrentCenter;
+        private CentrResponsibilityViewModel myCurrentCenter;
 
         #endregion
 
@@ -66,7 +65,7 @@ namespace KursAM2.ViewModel.Reference
                     DocCodeToParentDC.Clear();
                     CenterCollection.Clear();
                     foreach (var cent in ctx.SD_40.ToList())
-                        CenterCollection.Add(new CentrOfResponsibility(cent)
+                        CenterCollection.Add(new CentrResponsibilityViewModel(cent)
                         {
                             State = RowStatus.NotEdited
                         });
@@ -89,7 +88,7 @@ namespace KursAM2.ViewModel.Reference
                     {
                         var newNumDocCode = ctx.SD_40.Any() ? ctx.SD_40.Max(_ => _.DOC_CODE) + 1 : 10400000001;
                         foreach (var c in CenterCollection.Where(_ => _.State != RowStatus.NotEdited)
-                            .OrderByDescending(_ => _.DocCode).ThenBy(_ => _.CentParentDC))
+                                     .OrderByDescending(_ => _.DocCode).ThenBy(_ => _.CentParentDC))
                             if (c.CentParentDC == null || c.CentParentDC > 0)
                             {
                                 switch (c.State)
@@ -153,11 +152,11 @@ namespace KursAM2.ViewModel.Reference
 
         #region Properties
 
-        public ObservableCollection<CentrOfResponsibility> CenterCollection { set; get; } =
-            new ObservableCollection<CentrOfResponsibility>();
+        public ObservableCollection<CentrResponsibilityViewModel> CenterCollection { set; get; } =
+            new ObservableCollection<CentrResponsibilityViewModel>();
 
 
-        public CentrOfResponsibility CurrentCenter
+        public CentrResponsibilityViewModel CurrentCenter
         {
             get => myCurrentCenter;
             set
@@ -186,7 +185,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewCenter(object obj)
         {
-            var newRow = new CentrOfResponsibility
+            var newRow = new CentrResponsibilityViewModel
             {
                 State = RowStatus.NewRow,
                 DocCode = --DocCodeCounter,
@@ -224,7 +223,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewSectionCenter(object obj)
         {
-            var newRow = new CentrOfResponsibility
+            var newRow = new CentrResponsibilityViewModel
             {
                 State = RowStatus.NewRow,
                 Name = "Новый центр",
@@ -278,6 +277,7 @@ namespace KursAM2.ViewModel.Reference
             var delCenter = CenterCollection.Any(_ => _.CentParentDC == CurrentCenter.DocCode);
             return !delCenter;
         }
+
         public ICommand DeleteCenterCommand
         {
             get { return new Command(DeleteCenter, _ => IsCanDeleteCenter() && CurrentCenter != null); }
@@ -374,8 +374,8 @@ namespace KursAM2.ViewModel.Reference
             {
                 var propertyAttributes =
                     MetadataHelper.GetFluentAPIAttributes(typeof(DataAnnotationCentrOfResponsibility),
-                        typeof(CentrOfResponsibility), c.FieldName).ToList();
-                var attr = (DisplayAttribute) propertyAttributes[0];
+                        typeof(CentrResponsibilityViewModel), c.FieldName).ToList();
+                var attr = (DisplayAttribute)propertyAttributes[0];
                 c.Header = attr.Name;
             }
         }

@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using Core;
 using Data;
+using KursDomain.References;
 
 namespace Calculates.Materials
 {
@@ -57,14 +58,16 @@ namespace Calculates.Materials
                             CalcPrice = 0,
                             CalcPriceNaklad = 0,
                             DocDate = d.SD_24.DD_DATE,
-                            KontragentIn = MainReferences.GetKontragent(d.SD_24.DD_KONTR_POL_DC),
-                            KontragentOut = MainReferences.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC),
+                            KontragentIn =
+                                (Kontragent) GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_POL_DC),
+                            KontragentOut =
+                                (Kontragent) GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC),
                             OperationName = d.SD_24.SD_201.D_NAME,
                             OperCode = (d.SD_24.DD_VOZVRAT ?? 0) == 1 ? 25 : d.SD_24.SD_201.D_OP_CODE,
                             QuantityIn = d.DDT_KOL_PRIHOD,
                             QuantityOut = d.DDT_KOL_RASHOD,
                             // ReSharper disable once PossibleInvalidOperationException
-                            DocPrice = (decimal)(d.SD_24.DD_TYPE_DC == 2010000005 ? d.DDT_TAX_CENA : 0),
+                            DocPrice = (decimal) (d.SD_24.DD_TYPE_DC == 2010000005 ? d.DDT_TAX_CENA : 0),
                             Naklad = 0,
                             SkladIn =
                                 d.SD_24.DD_SKLAD_POL_DC != null
@@ -75,7 +78,7 @@ namespace Calculates.Materials
                                     ? MainReferences.Warehouses[d.SD_24.DD_SKLAD_OTPR_DC.Value]
                                     : null,
                             SummaIn =
-                                (decimal)((d.SD_24.DD_VOZVRAT ?? 0) == 1
+                                (decimal) ((d.SD_24.DD_VOZVRAT ?? 0) == 1
                                     ? d.DDT_TAX_CRS_CENA ?? 0
                                     : d.TD_26 != null
                                         ? d.SD_24.DD_TYPE_DC == 2010000005
@@ -84,7 +87,7 @@ namespace Calculates.Materials
                                             (d.TD_26.SFT_KOL == 0 ? 1 : d.TD_26.SFT_KOL) * d.DDT_KOL_PRIHOD
                                         : 0),
                             SummaInWithNaklad =
-                                (decimal)((d.SD_24.DD_VOZVRAT ?? 0) == 1
+                                (decimal) ((d.SD_24.DD_VOZVRAT ?? 0) == 1
                                     ? d.DDT_TAX_CRS_CENA ?? 0
                                     : d.TD_26 != null
                                         ? d.SD_24.DD_TYPE_DC == 2010000005
@@ -103,7 +106,7 @@ namespace Calculates.Materials
                             oper.FinDocument =
                                 $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}";
                             oper.Naklad = (d.TD_26.SFT_SUMMA_NAKLAD ?? 0) / d.TD_26.SFT_KOL;
-                            oper.DocPrice = (decimal)d.TD_26.SFT_ED_CENA;
+                            oper.DocPrice = (decimal) d.TD_26.SFT_ED_CENA;
                         }
 
                         if (d.TD_84 != null)
@@ -325,9 +328,10 @@ namespace Calculates.Materials
 
                 var spisanieData = from spisRow in context.AktSpisaniya_row
                     join spisHead in context.AktSpisaniyaNomenkl_Title on spisRow.Doc_Id equals spisHead.Id
-                    join sign in context.DocumentSignatures.Where(_ => _.IsSign == true) on spisHead.Id equals sign.DocId 
+                    join sign in context.DocumentSignatures.Where(_ => _.IsSign == true) on spisHead.Id equals sign
+                        .DocId
                     where spisRow.Nomenkl_DC == nomDC
-                    select new 
+                    select new
                     {
                         Note = spisRow.Note + " " + spisHead.Note + " " + spisHead.Reason_Creation,
                         CalcPrice = 0,
@@ -378,6 +382,7 @@ namespace Calculates.Materials
                     };
                     ret.Operations.Add(newspis);
                 }
+
                 if (isCalOnly)
                 {
                     var calc = Calc(ret.Operations);

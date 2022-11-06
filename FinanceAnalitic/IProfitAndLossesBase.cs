@@ -1,7 +1,6 @@
 ﻿using System;
 using KursDomain.Documents.Management;
 using KursDomain.References;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace FinanceAnalitic
 {

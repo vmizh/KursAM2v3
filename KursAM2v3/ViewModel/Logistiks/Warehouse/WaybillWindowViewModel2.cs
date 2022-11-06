@@ -230,7 +230,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     }
                 }
 
-                RecalcKontragentBalans.CalcBalans(Document.Client.DOC_CODE, Document.Date, UnitOfWork.Context);
+                RecalcKontragentBalans.CalcBalans(Document.Client.DocCode, Document.Date, UnitOfWork.Context);
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.AccruedAmountOfSupplier),
                     Document.Id,
                     0, null, (string)Document.ToJson());

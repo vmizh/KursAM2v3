@@ -1,27 +1,28 @@
 ﻿using System.Collections.ObjectModel;
 using Data;
-using KursDomain.Documents.Bank;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.References;
+using BankAccount = KursDomain.Documents.Bank.BankAccount;
 
 namespace KursAM2.ViewModel.Reference.Kontragent
 {
-    public sealed class KontragentReferenceViewModel : KursDomain.Documents.CommonReferences.Kontragent.Kontragent
+    public sealed class KontragentViewModelReferenceViewModel : KontragentViewModel
     {
         private ObservableCollection<BankAccount> myBankCollection;
         private ObservableCollection<KontragentGruzoRequisite> myGruzoRequisities;
 
-        public KontragentReferenceViewModel()
+        public KontragentViewModelReferenceViewModel()
         {
             GruzoRequisities = new ObservableCollection<KontragentGruzoRequisite>();
             BankCollection = new ObservableCollection<BankAccount>();
         }
 
         // ReSharper disable once UnusedParameter.Local
-        public KontragentReferenceViewModel(decimal docCode) : this()
+        public KontragentViewModelReferenceViewModel(decimal docCode) : this()
         {
         }
 
-        public KontragentReferenceViewModel(SD_43 entity) : base(entity)
+        public KontragentViewModelReferenceViewModel(SD_43 entity) : base(entity)
         {
             GruzoRequisities = new ObservableCollection<KontragentGruzoRequisite>();
             BankCollection = new ObservableCollection<BankAccount>();

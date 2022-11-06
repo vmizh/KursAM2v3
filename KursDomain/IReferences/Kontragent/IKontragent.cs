@@ -9,7 +9,7 @@ public interface IKontragent
 {
     string ShortName { get; set; }
     string FullName { get; set; }
-    IKontragentCategory Category { set; get; }
+    IKontragentGroup Group { set; get; }
     string INN { get; set; }
     string KPP { get; set; }
     string Director { get; set; }
@@ -31,6 +31,7 @@ public interface IKontragent
     decimal StartSumma { get; set; }
     string EMail { get; set; }
 
-    IEmployee ResponsibleTabelNumber { get; set; }
+    IEmployee ResponsibleEmployee { get; set; }
     IRegion Region { get; set; }
+    int OrderCount { get; set; }
 }

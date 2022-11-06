@@ -151,7 +151,7 @@ namespace KursAM2.ViewModel.Logistiks
                                         NAKL_GRUZOPOL_OKPO = SelectDocument.GruzoInfo.NaklGruzopolOKPO,
                                         BANK_DC =
                                             SelectDocument.GruzoInfo.BankAccount == null
-                                                ? (int?) null
+                                                ? null
                                                 : SelectDocument.GruzoInfo.BankAccount.KontrBankCode,
                                         PALATEL_TEXT = SelectDocument.GruzoInfo.PlatelText,
                                         PLATEL_OKPO = SelectDocument.GruzoInfo.PlatelOKPO,
@@ -170,7 +170,7 @@ namespace KursAM2.ViewModel.Logistiks
                                     g.NAKL_GRUZOPOL_OKPO = SelectDocument.GruzoInfo.NaklGruzopolOKPO;
                                     g.BANK_DC =
                                         SelectDocument.GruzoInfo.BankAccount == null
-                                            ? (int?) null
+                                            ? null
                                             : SelectDocument.GruzoInfo.BankAccount.KontrBankCode;
                                     g.PALATEL_TEXT = SelectDocument.GruzoInfo.PlatelText;
                                     g.PLATEL_OKPO = SelectDocument.GruzoInfo.PlatelOKPO;
@@ -250,7 +250,7 @@ namespace KursAM2.ViewModel.Logistiks
                                     ? null
                                     : new BankAccount
                                     {
-                                        DocCode = (decimal) sd84.GROZO_REQUISITE.BANK_DC
+                                        DocCode = (decimal)sd84.GROZO_REQUISITE.BANK_DC
                                     },
                                 NaklGruzoOtprav = sd84.GROZO_REQUISITE.NAKL_GRUZOOTPRAV,
                                 NaklGruzoOtpravOKPO = sd84.GROZO_REQUISITE.NAKL_GRUOOTPRAV_OKPO,
@@ -281,7 +281,7 @@ namespace KursAM2.ViewModel.Logistiks
                 //        sd26.SF_IN_NUM + (string.IsNullOrEmpty(sd26.SF_POSTAV_NUM) ? "" : "/" + sd26.SF_POSTAV_NUM),
                 //        DocDate = sd26.SF_POSTAV_DATE,
                 //        KontragentOuter = post.NAME,
-                //        KontragentInner = GlobalOptions.SystemProfile.OwnerKontragent.Name,
+                //        KontragentInner = GlobalOptions.SystemProfile.OwnerKontragentViewModel.Name,
                 //        Currency = sd301.CRS_SHORTNAME,
                 //        DocCode = sd26.DOC_CODE,
                 //        Summa = sd26.SF_CRS_SUMMA,
@@ -335,7 +335,7 @@ namespace KursAM2.ViewModel.Logistiks
                         KontragentOuterDC = d.KontragentOuterDC,
                         Currency = d.Currency,
                         DocCode = d.DocCode,
-                        Summa = (decimal) d.Summa,
+                        Summa = (decimal)d.Summa,
                         Note = d.Note,
                         GruzoInfo =
                             d.GruzoInfo ?? myTempDirRequisite.FirstOrDefault(_ => _.Key == d.DocCode).Value,
@@ -349,10 +349,10 @@ namespace KursAM2.ViewModel.Logistiks
                             IsUsluga = ddd.SD_83.NOM_0MATER_1USLUGA == 1,
                             DocCode = ddd.SD_83.DOC_CODE,
                             Note = ddd.SFT_TEXT,
-                            Quantity = (decimal) ddd.SFT_KOL,
+                            Quantity = (decimal)ddd.SFT_KOL,
                             // ReSharper disable once PossibleInvalidOperationException
-                            Price = (decimal) ddd.SFT_ED_CENA,
-                            Summa = (decimal) (ddd.SFT_KOL * (double) ddd.SFT_ED_CENA)
+                            Price = (decimal)ddd.SFT_ED_CENA,
+                            Summa = (decimal)(ddd.SFT_KOL * (double)ddd.SFT_ED_CENA)
                         });
                     Documents.Add(newDoc);
                 }
@@ -370,7 +370,7 @@ namespace KursAM2.ViewModel.Logistiks
                         KontragentOuterDC = d.KontragentOuterDC,
                         Currency = d.Currency,
                         DocCode = d.DocCode,
-                        Summa = (decimal) d.Summa,
+                        Summa = (decimal)d.Summa,
                         Note = d.Note
                     });
             }
@@ -433,7 +433,7 @@ namespace KursAM2.ViewModel.Logistiks
                         {
                             Id = newId,
                             PLAT_DOC_TEXT = schet.SF_PAYDOC_TEXT,
-                            BANK_DC = bank != null ? bank.CODE : (int?) null,
+                            BANK_DC = bank != null ? bank.CODE : null,
                             POSTAV_OKPO = schet.SD_432.OKPO,
                             ACCOUNT_GRUZOOTPRAV = schet.SD_432.NAME_FULL + " " + schet.SD_432.ADDRESS,
                             ACCOUNT_GRUZOPOL = schet.SD_43.NAME_FULL + " " + schet.SD_43.ADDRESS,
@@ -476,7 +476,7 @@ namespace KursAM2.ViewModel.Logistiks
                                 ? null
                                 : new BankAccount
                                 {
-                                    BankDC = (decimal) newReq.BANK_DC
+                                    BankDC = (decimal)newReq.BANK_DC
                                 },
                             NaklGruzoOtprav = newReq.NAKL_GRUZOOTPRAV,
                             NaklGruzoOtpravOKPO = newReq.NAKL_GRUOOTPRAV_OKPO,

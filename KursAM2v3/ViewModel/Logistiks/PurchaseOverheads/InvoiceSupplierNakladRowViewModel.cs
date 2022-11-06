@@ -3,7 +3,6 @@ using Core.ViewModel.Base;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.References;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.Logistiks.PurchaseOverheads
 {
@@ -35,7 +34,7 @@ namespace KursAM2.ViewModel.Logistiks.PurchaseOverheads
 
     public class InvoiceSupplierNakladRowViewModel : RSViewModelBase
     {
-        private Kontragent myKontragent;
+        private KontragentViewModel myKontragentViewModel;
         private Nomenkl myNomenkl;
         private decimal myRate;
         private Guid? mySchetRowId;
@@ -48,13 +47,13 @@ namespace KursAM2.ViewModel.Logistiks.PurchaseOverheads
         {
         }
 
-        public Kontragent Kontragent
+        public KontragentViewModel KontragentViewModel
         {
-            get => myKontragent;
+            get => myKontragentViewModel;
             set
             {
-                if (myKontragent != null && myKontragent.Equals(value)) return;
-                myKontragent = value;
+                if (myKontragentViewModel != null && myKontragentViewModel.Equals(value)) return;
+                myKontragentViewModel = value;
                 RaisePropertyChanged();
             }
         }

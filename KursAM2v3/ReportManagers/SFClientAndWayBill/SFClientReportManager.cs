@@ -7,9 +7,9 @@ using Data;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Finance.Invoices;
-using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
+using KursDomain.References;
 using Reports.Base;
 
 namespace KursAM2.ReportManagers.SFClientAndWayBill
@@ -102,10 +102,12 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             Kontragent client, receiver;
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var cl = ctx.SD_43.Find(document.Client.DOC_CODE);
-                client = new Kontragent(cl);
-                var r = ctx.SD_43.Find(document.Receiver.DOC_CODE);
-                receiver = new Kontragent(r);
+                var cl = ctx.SD_43.Find(document.Client.DocCode);
+                client = new Kontragent();
+                client.LoadFromEntity(cl, GlobalOptions.ReferencesCache);
+                var r = ctx.SD_43.Find(document.Receiver.DocCode);
+                receiver = new Kontragent();
+                receiver.LoadFromEntity(r, GlobalOptions.ReferencesCache);
             }
 
             var receiverName = string.IsNullOrEmpty(receiver.FullName)
@@ -120,14 +122,15 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells["M6"].Value = receiver.KPP;
             sheet.Cells["B7"].Value = receiver.FullName;
             sheet.Cells["H13"].Value =
-                $"{receiverName}, ИНН {receiver.INN}, КПП {receiver.KPP}, {receiver.ADDRESS}, тел.{receiver.TEL}";
+                $"{receiverName}, ИНН {receiver.INN}, КПП {receiver.KPP}, {receiver.Address}, тел.{receiver.Phone}";
             sheet.Cells["H15"].Value =
-                $"{receiverName}, ИНН {receiver.INN}, КПП {receiver.KPP}, {receiver.ADDRESS}, тел.{receiver.TEL}";
+                $"{receiverName}, ИНН {receiver.INN}, КПП {receiver.KPP}, {receiver.Address}, тел.{receiver.Phone}";
             sheet.Cells["H17"].Value =
-                $"{clientName}, ИНН {client.INN}, КПП {client.KPP}, {client.ADDRESS}, тел.{client.TEL}";
+                $"{clientName}, ИНН {client.INN}, КПП {client.KPP}, {client.Address}, тел.{client.Phone}";
             sheet.Cells["H19"].Value =
-                $"{clientName}, ИНН {client.INN}, КПП {client.KPP}, {client.ADDRESS}, тел.{client.TEL}";
-            var k = receiver.KontragentBanks != null && receiver.KontragentBanks.Count > 0
+                $"{clientName}, ИНН {client.INN}, КПП {client.KPP}, {client.Address}, тел.{client.Phone}";
+            //TODO Добавить банки в справочник контрагента
+            /*var k = receiver.KontragentBanks != null && receiver.KontragentBanks.Count > 0
                 ? receiver.KontragentBanks[0]
                 : null;
             if (k != null)
@@ -136,11 +139,11 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells["W3"].Value = k.Bank.POST_CODE;
                 sheet.Cells["W4"].Value = k.Bank.CORRESP_ACC;
                 sheet.Cells["W6"].Value = k.Entity.RASCH_ACC;
-            }
+            }*/
 
-            sheet.Cells["AC29"].Value = receiver.Header;
+            sheet.Cells["AC29"].Value = receiver.Director;
             sheet.Cells["AC32"].Value = receiver.GlavBuh;
-            sheet.Cells["AC35"].Value = receiver.Header;
+            sheet.Cells["AC35"].Value = receiver.Director;
             var startTableRow = 21;
             for (var i = 2; i <= document.Rows.Count; i++)
             {
@@ -157,7 +160,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     !string.IsNullOrEmpty(item.Nomenkl.FullName)
                         ? item.Nomenkl.FullName
                         : item.Nomenkl.Name;
-                sheet.Cells[$"AB{startTableRow + row}"].Value = ((IName)item.Nomenkl.Unit)?.Name;
+                sheet.Cells[$"AB{startTableRow + row}"].Value = ((IName) item.Nomenkl.Unit)?.Name;
                 sheet.Cells[$"Y{startTableRow + row}"].Value = item.Quantity;
                 sheet.Cells[$"Y{startTableRow + row}"].NumberFormat = "#,##0.00";
                 sheet.Cells[$"AD{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
@@ -177,7 +180,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"B{document.Rows.Count + startTableRow + 5}"].Value =
                 $"Всего наименований {document.Rows.Count()}, на сумму {document.Summa:n2} {document.Currency.FullName}";
             sheet.Cells[$"B{document.Rows.Count + startTableRow + 6}"].Value =
-                $"{RuDateAndMoneyConverter.CurrencyToTxt(Convert.ToDouble(document.Summa), document.Currency.Name, true)} , в т.ч. НДС {Math.Round((double)(document.Rows.Sum(_ => _.SFT_SUMMA_NDS) ?? 0), 2)}";
+                $"{RuDateAndMoneyConverter.CurrencyToTxt(Convert.ToDouble(document.Summa), document.Currency.Name, true)} , в т.ч. НДС {Math.Round((double) (document.Rows.Sum(_ => _.SFT_SUMMA_NDS) ?? 0), 2)}";
         }
     }
 
@@ -198,11 +201,11 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 var number = string.IsNullOrWhiteSpace(document.OuterNumber)
                     ? Convert.ToString(document.InnerNumber)
                     : document.OuterNumber;
-                Kontragent client, receiver;
-                var cl = ctx.SD_43.Find(document.Client.DOC_CODE);
-                client = new Kontragent(cl);
-                var r = ctx.SD_43.Find(document.Receiver.DOC_CODE);
-                receiver = new Kontragent(r);
+                KontragentViewModel client, receiver;
+                var cl = ctx.SD_43.Find(document.Client.DocCode);
+                client = new KontragentViewModel(cl);
+                var r = ctx.SD_43.Find(document.Receiver.DocCode);
+                receiver = new KontragentViewModel(r);
                 var receiverName = string.IsNullOrEmpty(receiver.FullName)
                     ? receiver.Name
                     : receiver.FullName;
@@ -297,7 +300,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                         !string.IsNullOrEmpty(item.Nomenkl.FullName)
                             ? item.Nomenkl.FullName
                             : item.Nomenkl.Name;
-                    sheet.Cells[$"AB{startTableRow + row}"].Value = ((IName)item.Nomenkl.Unit)?.Name;
+                    sheet.Cells[$"AB{startTableRow + row}"].Value = ((IName) item.Nomenkl.Unit)?.Name;
                     sheet.Cells[$"Y{startTableRow + row}"].Value = item.Quantity;
                     sheet.Cells[$"Y{startTableRow + row}"].NumberFormat = "#,##0.00";
                     sheet.Cells[$"AD{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
@@ -317,12 +320,12 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells[$"B{document.Rows.Count + startTableRow + 5}"].Value =
                     $"Всего наименований {document.Rows.Count()}, на сумму {document.Summa:n2} {document.Currency.FullName}";
                 sheet.Cells[$"B{document.Rows.Count + startTableRow + 6}"].Value =
-                    $"{RuDateAndMoneyConverter.CurrencyToTxt(Convert.ToDouble(document.Summa), document.Currency.Name, true)} , в т.ч. НДС {Math.Round((double)(document.Rows.Sum(_ => _.SFT_SUMMA_NDS) ?? 0), 2)}";
+                    $"{RuDateAndMoneyConverter.CurrencyToTxt(Convert.ToDouble(document.Summa), document.Currency.Name, true)} , в т.ч. НДС {Math.Round((double) (document.Rows.Sum(_ => _.SFT_SUMMA_NDS) ?? 0), 2)}";
 
                 sheet.Cells[$"AC{document.Rows.Count + startTableRow + 11}"].Value = receiver.Header;
                 sheet.Cells[$"AC{document.Rows.Count + startTableRow + 14}"].Value = receiver.GlavBuh;
                 sheet.Cells[$"AC{document.Rows.Count + startTableRow + 17}"].Value =
-                    ((ClientWindowViewModel)ViewModel).Document.PersonaResponsible?.Name;
+                    ((ClientWindowViewModel) ViewModel).Document.PersonaResponsible?.Name;
             }
         }
     }
@@ -351,27 +354,29 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 : null;
             if (document.Receiver != null)
             {
-                sheet.Cells["B4"].Value = document.Receiver.ADDRESS;
+                sheet.Cells["B4"].Value = document.Receiver.Address;
                 sheet.Cells["B5"].Value = $"ИНН {document.Receiver.INN} / КПП {document.Receiver.KPP}";
-                sheet.Cells["E6"].Value = !string.IsNullOrEmpty(document.SF_GROZOOTPRAVITEL) ||
+                //TODO Добавить грузовые реквизиты в справочник контрагента
+                /*sheet.Cells["E6"].Value = !string.IsNullOrEmpty(document.SF_GROZOOTPRAVITEL) ||
                                           document.SF_GROZOOTPRAVITEL != ""
                     ? document.SF_GROZOOTPRAVITEL
-                    : document.Receiver.GruzoRequisiteForSchet;
+                    : document.Receiver.GruzoRequisiteForSchet;*/
             }
 
             if (document.Client != null)
             {
                 sheet.Cells["B9"].Value = document.Client?.FullName;
-                sheet.Cells["E7"].Value = string.IsNullOrEmpty(document.SF_GRUZOPOLUCHATEL) ||
+                //TODO Добавить грузовые реквизиты в справочник контрагента
+                /*sheet.Cells["E7"].Value = string.IsNullOrEmpty(document.SF_GRUZOPOLUCHATEL) ||
                                           document.SF_GRUZOPOLUCHATEL != ""
                     ? document.SF_GRUZOPOLUCHATEL
-                    : vm.Document.Client.GruzoRequisiteForSchet;
+                    : vm.Document.Client.GruzoRequisiteForSchet;*/
                 // ReSharper disable once PossibleNullReferenceException
-                sheet.Cells["B10"].Value = document.Client.ADDRESS;
+                sheet.Cells["B10"].Value = document.Client.Address;
                 sheet.Cells["B11"].Value = $"ИНН {document.Client.INN} / КПП {document.Client.KPP}";
             }
 
-            sheet.Cells["J20"].Value = document.Receiver?.Header;
+            sheet.Cells["J20"].Value = document.Receiver?.Director;
             sheet.Cells["AB20"].Value = document.Receiver?.GlavBuh;
             var startTableRow = 15;
             for (var i = 2; i <= document.Rows.Count; i++)
@@ -389,7 +394,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                         ? item.Nomenkl.FullName
                         : item.Nomenkl.Name;
                 sheet[startTableRow + row - 1, 6].Value = item.Nomenkl.Unit?.OKEI_Code;
-                sheet.Cells[$"H{startTableRow + row}"].Value = ((IName)item.Nomenkl.Unit)?.Name;
+                sheet.Cells[$"H{startTableRow + row}"].Value = ((IName) item.Nomenkl.Unit)?.Name;
                 sheet.Cells[$"K{startTableRow + row}"].Value = item.Quantity;
                 sheet.Cells[$"K{startTableRow + row}"].NumberFormat = "#,##0.00";
                 sheet.Cells[$"M{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
@@ -450,7 +455,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     : null;
                 if (document.Receiver != null)
                 {
-                    sheet.Cells["AB6"].Value = document.Receiver.ADDRESS;
+                    sheet.Cells["AB6"].Value = document.Receiver.Address;
                     sheet.Cells["AB7"].Value = $"{document.Receiver.INN}/{document.Receiver.KPP}";
                     var grlist = ctx.SD_43_GRUZO.Where(_ => _.doc_code == document.Receiver.DocCode);
 
@@ -493,12 +498,12 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                         sheet.Cells["AB9"].Value = "он же";
 
                     // ReSharper disable once PossibleNullReferenceException
-                    sheet.Cells["AB13"].Value = document.Client.ADDRESS;
+                    sheet.Cells["AB13"].Value = document.Client.Address;
                     sheet.Cells["AB14"].Value = $"{document.Client.INN}/{document.Client.KPP}";
                 }
 
                 sheet.Cells["V13"].Value = $"{document.Currency?.NalogName},{document.Currency?.NalogCode}";
-                sheet.Cells["AD22"].Value = document.Receiver?.Header;
+                sheet.Cells["AD22"].Value = document.Receiver?.Director;
                 //var copy = sheet.Rows["21"];
                 var startTableRow = 21;
                 for (var i = 2; i <= document.Rows.Count; i++)
@@ -525,7 +530,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
 
                     sheet.Cells[$"C{startTableRow + row}"].Value = item.NomNomenkl;
                     sheet.Cells[$"Z{startTableRow + row}"].Value = item.Nomenkl.Unit?.OKEI_Code;
-                    sheet.Cells[$"AB{startTableRow + row}"].Value = ((IName)item.Nomenkl.Unit)?.Name;
+                    sheet.Cells[$"AB{startTableRow + row}"].Value = ((IName) item.Nomenkl.Unit)?.Name;
                     sheet.Cells[$"AI{startTableRow + row}"].Value = item.Quantity;
                     sheet.Cells[$"AI{startTableRow + row}"].NumberFormat = "#,##0.00";
                     sheet.Cells[$"AM{startTableRow + row}"].Value = Convert.ToDouble(item.Price);
@@ -555,7 +560,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells[$"BM{document.Rows.Count + startTableRow + 1}"].Formula =
                     $"SUM(BM{startTableRow}:BM{document.Rows.Count + startTableRow})";
                 sheet.Cells[$"BM{document.Rows.Count + startTableRow + 1}"].NumberFormat = "#,##0.00";
-                sheet.Cells[$"AJ{document.Rows.Count + startTableRow + 3}"].Value = document.Receiver?.Header;
+                sheet.Cells[$"AJ{document.Rows.Count + startTableRow + 3}"].Value = document.Receiver?.Director;
                 sheet.Cells[$"BV{document.Rows.Count + startTableRow + 3}"].Value = document.Receiver?.GlavBuh;
                 sheet.Cells[$"P{document.Rows.Count + startTableRow + 15}"].Value = document.DocDate.ToLongDateString();
                 sheet.Cells[$"AU{document.Rows.Count + startTableRow + 23}"].Value =
@@ -582,7 +587,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"F{rowId}"].Value = string.IsNullOrEmpty(item.Nomenkl.FullName)
                 ? item.Nomenkl.Name
                 : item.Nomenkl.FullName;
-            sheet.Cells[$"V{rowId}"].Value = ((IName)item.Nomenkl.Unit).Name;
+            sheet.Cells[$"V{rowId}"].Value = ((IName) item.Nomenkl.Unit).Name;
             sheet.Cells[$"X{rowId}"].Value = item.Nomenkl.Unit.OKEI_Code;
             sheet.Cells[$"AD{rowId}"].Value = Convert.ToDouble(item.Quantity);
             sheet.Cells[$"AH{rowId}"].Value = Convert.ToDouble(item.Quantity);
@@ -610,10 +615,11 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             var vm = ViewModel as ClientWindowViewModel;
             if (vm == null) return;
             var document = vm.Document;
-            sheet.Cells["A4"].Value = vm.Document.Receiver.GruzoRequisiteForWaybill;
-            sheet.Cells["K12"].Value = vm.Document.Client.GruzoRequisiteForWaybill;
-            sheet.Cells["K19"].Value = vm.Document.Receiver.GruzoRequisiteForWaybill;
-            sheet.Cells["K24"].Value = vm.Document.Client.GruzoRequisiteForWaybill;
+            //TODO Добавить грузовые реквизиты в справочник контрагента
+            //sheet.Cells["A4"].Value = vm.Document.Receiver.GruzoRequisiteForWaybill;
+            //sheet.Cells["K12"].Value = vm.Document.Client.GruzoRequisiteForWaybill;
+            //sheet.Cells["K19"].Value = vm.Document.Receiver.GruzoRequisiteForWaybill;
+            //sheet.Cells["K24"].Value = vm.Document.Client.GruzoRequisiteForWaybill;
             sheet["AE33"].Value = vm.Document.OuterNumber;
             sheet["AR33"].Value = vm.Document.DocDate.ToShortDateString();
             sheet["BX5"].Value = vm.Document.Receiver.OKPO;

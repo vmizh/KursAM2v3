@@ -9,7 +9,7 @@ using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.References;
 using Newtonsoft.Json;
 
 namespace KursDomain.Documents.AccruedAmount;
@@ -72,8 +72,7 @@ public class AccruedAmountOfSupplierViewModel : RSViewModelBase, IDataErrorInfo
 
     #region Properties
 
-    public ObservableCollection<AccruedAmountOfSupplierRowViewModel> Rows { set; get; } =
-        new ObservableCollection<AccruedAmountOfSupplierRowViewModel>();
+    public ObservableCollection<AccruedAmountOfSupplierRowViewModel> Rows { set; get; } = new();
 
 
     [Display(AutoGenerateField = false)]
@@ -122,7 +121,7 @@ public class AccruedAmountOfSupplierViewModel : RSViewModelBase, IDataErrorInfo
     }
 
     public decimal Summa => Rows.Sum(_ => _.Summa);
-    public References.Currency Currency => Kontragent?.BalansCurrency;
+    public References.Currency Currency => Kontragent?.Currency as References.Currency;
     public decimal PaySumma => Rows.Sum(_ => _.PaySumma);
 
     public int DocInNum
@@ -149,10 +148,10 @@ public class AccruedAmountOfSupplierViewModel : RSViewModelBase, IDataErrorInfo
 
     public Kontragent Kontragent
     {
-        get => MainReferences.GetKontragent(Entity.KontrDC);
+        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.KontrDC) as Kontragent;
         set
         {
-            if (MainReferences.GetKontragent(Entity.KontrDC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetKontragent(Entity.KontrDC) == value) return;
             if (value != null)
             {
                 Entity.KontrDC = value.DocCode;
@@ -208,11 +207,11 @@ public class AccruedAmountOfSupplierViewModel : RSViewModelBase, IDataErrorInfo
                             Creator = d.CREATOR,
                             DocCode = d.DOC_CODE,
                             // ReSharper disable once PossibleInvalidOperationException
-                            DocDate = (DateTime)d.DATE_ORD,
+                            DocDate = (DateTime) d.DATE_ORD,
                             DocNumber = d.NUM_ORD.ToString(),
                             DocumentType = "Расходный кассовый ордер",
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal)d.CRS_SUMMA,
+                            Summa = (decimal) d.CRS_SUMMA,
                             Note = d.NAME_ORD + " " + d.NOTES_ORD
                         });
                 if (r.Entity.TD_101 != null && r.Entity.TD_101.Count > 0)
@@ -226,7 +225,7 @@ public class AccruedAmountOfSupplierViewModel : RSViewModelBase, IDataErrorInfo
                             DocNumber = d.VVT_DOC_NUM,
                             DocumentType = "Банковская транзакция",
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal)d.VVT_VAL_RASHOD,
+                            Summa = (decimal) d.VVT_VAL_RASHOD,
                             Note = null
                         });
             }

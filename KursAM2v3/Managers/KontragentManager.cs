@@ -7,7 +7,8 @@ using System.Windows;
 using Core;
 using Core.WindowsManager;
 using Data;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.Managers
 {
@@ -24,13 +25,14 @@ namespace KursAM2.Managers
                     if (dd.Count > 0)
                         foreach (var d in dd)
                         {
-                            var k = MainReferences.GetKontragent(d.KontragentDC);
+                            var k = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC);
                             if (k != null)
                                 k.OrderCount = d.Count;
                         }
                 }
-                var ret = MainReferences.AllKontragents.Values.OrderByDescending(x => x.OrderCount)
-                    .ThenBy(x => x.Name)
+
+                var ret = GlobalOptions.ReferencesCache.GetKontragentsAll().OrderByDescending(x => x.OrderCount)
+                    .ThenBy(x => ((IName) x).Name).Cast<Kontragent>()
                     .ToList();
                 return ret;
             }
@@ -44,6 +46,7 @@ namespace KursAM2.Managers
                     fs.Write(content, 0, content.Length);
                 }
             }
+
             return null;
         }
 
@@ -59,13 +62,14 @@ namespace KursAM2.Managers
                     if (dd.Count > 0)
                         foreach (var d in dd)
                         {
-                            var k = MainReferences.GetKontragent(d.KontragentDC);
+                            var k = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC);
                             if (k != null)
                                 k.OrderCount = d.Count;
                         }
                 }
-                var ret = MainReferences.AllKontragents.Values.OrderByDescending(x => x.OrderCount)
-                    .ThenBy(x => x.Name)
+
+                var ret = GlobalOptions.ReferencesCache.GetKontragentsAll().OrderByDescending(x => x.OrderCount)
+                    .ThenBy(x => ((IName) x).Name).Cast<Kontragent>()
                     .ToList();
                 return ret;
             }
@@ -79,6 +83,7 @@ namespace KursAM2.Managers
                     fs.Write(content, 0, content.Length);
                 }
             }
+
             return null;
         }
 
@@ -100,7 +105,7 @@ namespace KursAM2.Managers
                     {
                         ctx.KontragentCashes.Add(new KontragentCashes
                         {
-                            Id =  Guid.NewGuid(),
+                            Id = Guid.NewGuid(),
                             Count = 1,
                             DBId = GlobalOptions.DataBaseId,
                             KontragentDC = dc,
@@ -108,6 +113,7 @@ namespace KursAM2.Managers
                             LastUpdate = DateTime.Now
                         });
                     }
+
                     ctx.SaveChanges();
                 }
             }

@@ -15,7 +15,6 @@ using KursAM2.View.DialogUserControl;
 using KursDomain.Documents.Invoices;
 using KursDomain.Menu;
 using KursDomain.References;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursAM2.Dialogs
@@ -86,8 +85,7 @@ namespace KursAM2.Dialogs
 
         public override string WindowName => "Распределние накладных расходов > Выбор прямых расходов";
 
-        public ObservableCollection<AccruedAmountSelectRow> ItemsCollection { set; get; }
-            = new ObservableCollection<AccruedAmountSelectRow>();
+        public ObservableCollection<AccruedAmountSelectRow> ItemsCollection { set; get; } = new();
 
         public bool? ShowDialog()
         {
@@ -98,7 +96,7 @@ namespace KursAM2.Dialogs
             };
             Form = dsForm;
             dsForm.DataContext = this;
-            ((AccrualAmountDialogs)dsForm.DataContext).RefreshData(null);
+            ((AccrualAmountDialogs) dsForm.DataContext).RefreshData(null);
             return dsForm.ShowDialog();
         }
 
@@ -124,17 +122,20 @@ namespace KursAM2.Dialogs
                                          ? string.Empty
                                          : $"/{d.AccruedAmountOfSupplier.DocExtNum}"),
                             DocDate = d.AccruedAmountOfSupplier.DocDate,
-                            Kongtragent = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC),
+                            Kongtragent =
+                                GlobalOptions.ReferencesCache.GetKontragent(d.AccruedAmountOfSupplier.KontrDC) as
+                                    Kontragent,
                             Nomenkl = MainReferences.GetNomenkl(d.NomenklDC),
                             Summa = d.Summa,
-                            Currency = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC).BalansCurrency,
+                            Currency = GlobalOptions.ReferencesCache.GetKontragent(d.AccruedAmountOfSupplier.KontrDC)
+                                .Currency as Currency,
                             DistributeSumm = d.DistributeNakladInfo.Sum(x => x.DistributeSumma),
                             // ReSharper disable once MergeConditionalExpression
                             // ReSharper disable once PossibleInvalidOperationException
-                            PaySumma = (decimal)((d.SD_34 != null ? d.SD_34.Sum(x => x.SUMM_ORD ?? 0m) : 0)
-                                                 + (d.TD_101 != null ? d.TD_101.Sum(x => x.VVT_VAL_RASHOD) : 0)),
+                            PaySumma = (decimal) ((d.SD_34 != null ? d.SD_34.Sum(x => x.SUMM_ORD ?? 0m) : 0)
+                                                  + (d.TD_101 != null ? d.TD_101.Sum(x => x.VVT_VAL_RASHOD) : 0)),
                             IsSelected = false,
-                            SDRSchet = d.SHPZ_DC != null ? MainReferences.SDRSchets[(decimal)d.SHPZ_DC] : null,
+                            SDRSchet = d.SHPZ_DC != null ? MainReferences.SDRSchets[(decimal) d.SHPZ_DC] : null,
                             Creator = d.AccruedAmountOfSupplier.Creator,
                             Note = d.AccruedAmountOfSupplier.Note + " " + d.Note,
                             Entity = d
@@ -167,8 +168,7 @@ namespace KursAM2.Dialogs
 
         public bool IsLoadForDistributeNaklad = false;
 
-        public ObservableCollection<InvoiceProvider> ItemsCollection { set; get; }
-            = new ObservableCollection<InvoiceProvider>();
+        public ObservableCollection<InvoiceProvider> ItemsCollection { set; get; } = new();
 
         public InvoiceProviderDialogs(IInvoiceProviderRepository repos, [NotNull] Currency crs,
             DateTime? dateStart = null, DateTime? dateEnd = null) : this(repos)
@@ -196,8 +196,7 @@ namespace KursAM2.Dialogs
         }
 
         // ReSharper disable once CollectionNeverUpdated.Global
-        public ObservableCollection<InvoiceProvider> SelectedItems { set; get; }
-            = new ObservableCollection<InvoiceProvider>();
+        public ObservableCollection<InvoiceProvider> SelectedItems { set; get; } = new();
 
 
         public Currency Currency

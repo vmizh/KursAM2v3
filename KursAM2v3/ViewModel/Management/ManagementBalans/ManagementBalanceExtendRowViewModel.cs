@@ -1,11 +1,9 @@
 using System;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.References;
 using Employee = KursDomain.Documents.Employee.Employee;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.Management.ManagementBalans
 {

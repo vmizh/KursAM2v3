@@ -15,7 +15,6 @@ using KursDomain.Documents.Employee;
 using KursDomain.IReferences;
 using KursDomain.References;
 using Brush = System.Windows.Media.Brush;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace Core;
 

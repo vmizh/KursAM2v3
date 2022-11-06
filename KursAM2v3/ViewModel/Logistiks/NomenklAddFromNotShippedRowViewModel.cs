@@ -2,7 +2,6 @@
 using Core.ViewModel.Base;
 using KursAM2.View.Logistiks.UC;
 using KursDomain.References;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -27,9 +26,9 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        private Kontragent myKontagent;
+        private KontragentViewModel myKontagent;
 
-        public Kontragent Kontagent
+        public KontragentViewModel Kontagent
         {
             get => myKontagent;
             set

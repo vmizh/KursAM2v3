@@ -8,10 +8,8 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.References;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 // ReSharper disable InconsistentNaming
@@ -314,7 +312,8 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
             if (Entity.SFT_NAKLAD_KONTR_DC == value) return;
             Entity.SFT_NAKLAD_KONTR_DC = value;
             if (Entity.SFT_NAKLAD_KONTR_DC != null)
-                myKontragentForNaklad = MainReferences.GetKontragent(Entity.SFT_NAKLAD_KONTR_DC);
+                myKontragentForNaklad =
+                    GlobalOptions.ReferencesCache.GetKontragent(Entity.SFT_NAKLAD_KONTR_DC) as Kontragent;
             RaisePropertyChanged(nameof(KontragentForNaklad));
             RaisePropertyChanged();
         }
@@ -705,7 +704,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
             {
                 Entity.SFT_NEMENKL_DC = myNomenkl.DocCode;
                 Entity.SFT_POST_ED_IZM_DC = ((IDocCode)myNomenkl.Unit).DocCode;
-                Entity.SFT_UCHET_ED_IZM_DC =  ((IDocCode)myNomenkl.Unit).DocCode;
+                Entity.SFT_UCHET_ED_IZM_DC = ((IDocCode)myNomenkl.Unit).DocCode;
             }
 
             RaisePropertyChanged();
@@ -950,7 +949,8 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
 
         if (Entity.SFT_NAKLAD_KONTR_DC != null)
         {
-            myKontragentForNaklad = MainReferences.GetKontragent(Entity.SFT_NAKLAD_KONTR_DC);
+            myKontragentForNaklad =
+                GlobalOptions.ReferencesCache.GetKontragent(Entity.SFT_NAKLAD_KONTR_DC) as Kontragent;
             RaisePropertyChanged(nameof(KontragentForNaklad));
         }
 

@@ -1873,7 +1873,7 @@ namespace KursAM2.Managers
                           && sd83.DOC_CODE == td24.DDT_NOMENKL_DC
                           && td26.DOC_CODE == td24.DDT_SPOST_DC && td26.CODE == td24.DDT_SPOST_ROW_CODE
                           && sd26.DOC_CODE == td26.DOC_CODE
-                          && sd24.DD_KONTR_OTPR_DC != GlobalOptions.SystemProfile.OwnerKontragent.DOC_CODE
+                          && sd24.DD_KONTR_OTPR_DC != GlobalOptions.SystemProfile.OwnerKontragent.DocCode
                     select new
                     {
                         DocDC = sd26.DOC_CODE,
@@ -1907,7 +1907,7 @@ namespace KursAM2.Managers
                           && sd83.DOC_CODE == td24.DDT_NOMENKL_DC
                           && td84.DOC_CODE == td24.DDT_SFACT_DC && td84.CODE == td24.DDT_SFACT_ROW_CODE
                           && sd84.DOC_CODE == td84.DOC_CODE
-                          && sd24.DD_KONTR_OTPR_DC != GlobalOptions.SystemProfile.OwnerKontragent.DOC_CODE
+                          && sd24.DD_KONTR_OTPR_DC != GlobalOptions.SystemProfile.OwnerKontragent.DocCode
                           && nomPrice.NOM_DC == td24.DDT_NOMENKL_DC && nomPrice.DATE == ent.NOM_PRICE.Where(
                                   _ =>
                                       _.NOM_DC ==
@@ -1940,7 +1940,7 @@ namespace KursAM2.Managers
                           sd43.DOC_CODE == (td101.VVT_KONTRAGENT ?? 0) && (sd43.FLAG_BALANS ?? 0) == 0 &&
                           sd101.VV_STOP_DATE >= DateStart && sd101.VV_STOP_DATE <= DateEnd &&
                           td101.VVT_VAL_PRIHOD > 0
-                          && td101.VVT_KONTRAGENT != GlobalOptions.SystemProfile.OwnerKontragent.DOC_CODE
+                          && td101.VVT_KONTRAGENT != GlobalOptions.SystemProfile.OwnerKontragent.DocCode
                           && td101.AccuredAmountForClientRow.Count == 0
                     select new
                     {
@@ -1965,7 +1965,7 @@ namespace KursAM2.Managers
                     where sd101.DOC_CODE == td101.DOC_CODE && sd43.DOC_CODE == (td101.VVT_KONTRAGENT ?? 0) &&
                           (sd43.FLAG_BALANS ?? 0) == 0 && sd101.VV_STOP_DATE >= DateStart &&
                           sd101.VV_STOP_DATE <= DateEnd && td101.VVT_VAL_RASHOD > 0
-                          && td101.VVT_KONTRAGENT != GlobalOptions.SystemProfile.OwnerKontragent.DOC_CODE
+                          && td101.VVT_KONTRAGENT != GlobalOptions.SystemProfile.OwnerKontragent.DocCode
                           && td101.AccuredAmountOfSupplierRow == null
                     select new
                     {
@@ -1991,7 +1991,7 @@ namespace KursAM2.Managers
                                                      && sd43.DOC_CODE == sd33.KONTRAGENT_DC
                                                      && sd43.FLAG_BALANS == 0
                                                      && sd33.KONTRAGENT_DC != GlobalOptions.SystemProfile
-                                                         .OwnerKontragent.DOC_CODE
+                                                         .OwnerKontragent.DocCode
                                                      && sd33.AccuredAmountForClientRow.Count == 0
                     select new
                     {
@@ -2017,7 +2017,7 @@ namespace KursAM2.Managers
                                                      && sd43.DOC_CODE == sd34.KONTRAGENT_DC
                                                      && sd43.FLAG_BALANS == 0
                                                      && sd34.KONTRAGENT_DC != GlobalOptions.SystemProfile
-                                                         .OwnerKontragent.DOC_CODE
+                                                         .OwnerKontragent.DocCode
                                                      && sd34.AccuredAmountOfSupplierRow == null
                     select new
                     {
@@ -2072,7 +2072,7 @@ namespace KursAM2.Managers
                     {
                         //var nomRate = GetRate(myRates, (decimal) d.NomenklCrsDC,
                         //    GlobalOptions.SystemProfile.MainCurrency.DocCode, d.Date);
-                        var nom = MainReferences.GetNomenkl(d.NomenklDC);
+                        var nom = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC);
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = Guid.Parse("{E47B2338-C42F-4B2A-8865-1024FC84F020}"),
@@ -2552,7 +2552,7 @@ namespace KursAM2.Managers
                         foreach (var l in data.Where(_ => _.DocCode == d.DocCode && _.IsProfit))
                             if (MainReferences.GetKontragent(l.KontrDC).IsBalans)
                                 sumRight += (decimal)l.Summa;
-                        var kontr = MainReferences.GetKontragent(d.KontrDC);
+                        var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC);
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = GetGuidForActVzaimozachet(d.IsProfit, d.IsCurrencyConvert),
@@ -2564,8 +2564,8 @@ namespace KursAM2.Managers
                             DocCode = d.DocCode,
                             Quantity = 1,
                             Price = d.Price,
-                            Kontragent = kontr.Name,
-                            KontragentBase = kontr,
+                            Kontragent = ((IName)kontr).Name,
+                            KontragentBase = kontr as Kontragent,
                             Date = d.DateRow,
                             DocTypeCode =
                                 d.IsCurrencyConvert
@@ -2590,7 +2590,7 @@ namespace KursAM2.Managers
                             DocNum = d.DocNum.ToString(),
                             CalcType = d.IsProfit ? TypeProfitAndLossCalc.IsProfit : TypeProfitAndLossCalc.IsLoss
                         };
-                        SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode, d.IsProfit ? (decimal)d.Summa : 0,
+                        SetCurrenciesValue(newOp, ((IDocCode)kontr.Currency).DocCode, d.IsProfit ? (decimal)d.Summa : 0,
                             d.IsProfit ? 0 : (decimal)-d.Summa);
 
                         if (d.IsBalans)
@@ -2678,7 +2678,7 @@ namespace KursAM2.Managers
                         if (!d.IsBalans) continue;
                         var kontrRate = GetRate(MyRates, (decimal)d.KontrCrsDC,
                             GlobalOptions.SystemProfile.MainCurrency.DocCode, d.Date);
-                        var kontr = MainReferences.GetKontragent(d.KontrDC);
+                        var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC);
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = GetGuidForActVzaimozachet(d.IsProfit, d.IsCurrencyConvert),
@@ -2690,8 +2690,8 @@ namespace KursAM2.Managers
                             DocCode = d.DocCode,
                             Quantity = 1,
                             Price = (decimal)(d.IsProfit ? d.Summa * kontrRate : -d.Summa * kontrRate),
-                            Kontragent = kontr.Name,
-                            KontragentBase = kontr,
+                            Kontragent = ((IName)kontr).Name,
+                            KontragentBase = kontr as Kontragent,
                             Date = d.DateRow,
                             DocTypeCode =
                                 d.IsCurrencyConvert

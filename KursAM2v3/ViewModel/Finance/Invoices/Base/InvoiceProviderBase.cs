@@ -9,7 +9,6 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
 using KursDomain.References;
 using Employee = KursDomain.Documents.Employee.Employee;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
 using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
@@ -38,7 +37,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             SF_IN_NUM = doc.InNum;
             SF_POSTAV_NUM = doc.PostavNum;
             DocDate = doc.Date;
-            Kontragent = MainReferences.GetKontragent(doc.PostDC);
+            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.PostDC) as Kontragent;
             Summa = doc.Summa ?? 0;
             SummaFact = doc.ShippedSumma;
             Currency = MainReferences.GetCurrency(doc.CurrencyDC);
@@ -77,7 +76,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public string CREATOR { get; set; }
         public FormPay FormRasche { get; set; }
         public bool IsNDSInPrice { get; set; }
-        public CentrOfResponsibility CO { get; set; }
+        public CentrResponsibility CO { get; set; }
         public Kontragent KontrReceiver { get; set; }
         public ObservableCollection<IInvoiceProviderRow> Rows { get; set; }
     }

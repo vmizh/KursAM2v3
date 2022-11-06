@@ -3,7 +3,7 @@
 /// <summary>
 ///     Категория контрагента (для справочника и выбора)
 /// </summary>
-public interface IKontragentCategory
+public interface IKontragentGroup
 {
     int Id { get; set; }
     bool IsDeleted { get; set; }

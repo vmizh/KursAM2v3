@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.EntityViewModel;
-using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -16,7 +15,6 @@ using Data;
 using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
-using DevExpress.Xpf.CodeView;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -126,7 +124,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         #region Properties
 
         public List<Currency> CurrencyList => MainReferences.Currencies.Values.ToList();
-        public List<CentrOfResponsibility> COList => MainReferences.COList.Values.Where(_ => _.DocCode > 1).ToList();
+        public List<CentrResponsibility> COList => MainReferences.COList.Values.Where(_ => _.DocCode > 1).ToList();
         public List<Employee> EmployeeList => MainReferences.Employees.Values.ToList();
         public List<FormPay> FormRaschets => MainReferences.FormRaschets.Values.ToList();
         public List<VzaimoraschetType> VzaimoraschetTypes => MainReferences.VzaimoraschetTypes.Values.ToList();
@@ -555,7 +553,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             var kontr = StandartDialogs.SelectKontragent(Document.Currency);
             if (kontr == null) return;
-            if (Document.Rows.Any(_ => !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != kontr.BalansCurrency.DocCode))
+            if (Document.Rows.Any(_ =>
+                    !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != ((IDocCode)kontr.Currency).DocCode))
             {
                 WindowManager.ShowMessage(
                     "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
@@ -564,7 +563,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             Document.Client = kontr;
-            Document.Currency = kontr.BalansCurrency;
+            Document.Currency = kontr.Currency as Currency;
             Document.Entity.SF_KONTR_CRS_RATE = 1;
         }
 
@@ -578,11 +577,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
             return MainReferences.ALLNomenkls.Values.Where(_ =>
                 (_.Name + _.NomenklNumber + _.FullName).ToUpper().Contains(srchText.ToUpper()));
         }
-        
+
 
         private void AddNomenklSimple(object obj)
         {
-            var dtx = new TableSearchWindowViewMovel<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipmleListView");
+            var dtx = new TableSearchWindowViewMovel<Nomenkl>(LoadNomenkl, "Выбор номенклатур",
+                "NomenklSipmleListView");
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Выбор счетов фактур", dtx) == MessageResult.OK
                 || dtx.DialogResult)
@@ -590,7 +590,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                 foreach (var item in dtx.SelectedItems)
                 {
-                    if (Document != null && Document.Rows.Cast<InvoiceClientRow>().Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    if (Document != null && Document.Rows.Cast<InvoiceClientRow>()
+                            .Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.DefaultNDSPercent == null)
                         nds = 0;
@@ -617,6 +618,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     newCode++;
                 }
             }
+
             UpdateVisualData(null);
         }
 
@@ -631,7 +633,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 return;
             var kontr = StandartDialogs.SelectKontragent(Document.Currency);
             if (kontr == null) return;
-            if (Document.Rows.Any(_ => !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != kontr.BalansCurrency.DocCode))
+            if (Document.Rows.Any(_ =>
+                    !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != ((IDocCode)kontr.Currency).DocCode))
             {
                 WindowManager.ShowMessage(
                     "По счету есть товары с валютой, отличной от валюты дилера. Изменить контрагента нельзя.",
@@ -640,7 +643,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             Document.Diler = kontr;
-            Document.SF_DILER_CRS_DC = kontr.BalansCurrency.DocCode;
+            Document.SF_DILER_CRS_DC = ((IDocCode)kontr.Currency).DocCode;
             Document.SF_DILER_SUMMA = 0;
             Document.SF_DILER_RATE = 1;
             if (Form is InvoiceClientView frm)
@@ -662,7 +665,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 return;
             var kontr = StandartDialogs.SelectKontragent(Document.Currency);
             if (kontr == null) return;
-            if (Document.Rows.Any(_ => !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != kontr.BalansCurrency.DocCode))
+            if (Document.Rows.Any(_ =>
+                    !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != ((IDocCode)kontr.Currency).DocCode))
             {
                 WindowManager.ShowMessage(
                     "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
@@ -699,6 +703,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             r.myState = RowStatus.NotEdited;
                             AddUsedNomenkl(r.Nomenkl.DocCode);
                         }
+
                         RaiseAll();
                         Document.myState = RowStatus.NotEdited;
                         Document.RaisePropertyChanged("State");
@@ -719,6 +724,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     r.myState = RowStatus.NotEdited;
                     AddUsedNomenkl(r.Nomenkl.DocCode);
                 }
+
                 RaiseAll();
                 Document.DeletedRows.Clear();
                 Document.myState = RowStatus.NotEdited;
@@ -741,8 +747,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         DocumentType = DocumentType.Bank,
                         DocumentName =
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
-                        Summa = (decimal) c.VVT_VAL_PRIHOD,
+                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                        Summa = (decimal)c.VVT_VAL_PRIHOD,
                         Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                         Note = c.VVT_DOC_NUM
                     });
@@ -750,12 +756,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var facts = ctx.TD_24.Include(_ => _.TD_26).Where(_ => _.DDT_SFACT_DC == Document.DocCode)
                     .AsNoTracking().ToList();
                 foreach (var fact in facts)
-                {
                     Document.ShipmentRows.Add(new ShipmentRowViewModel(fact)
                     {
                         State = RowStatus.NotEdited
                     });
-                }
             }
         }
 
@@ -811,7 +815,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (Document.SF_UCHET_VALUTA_RATE == null) Document.SF_UCHET_VALUTA_RATE = 1;
 
                 if (Document.SF_KONTR_CRS_DC == null)
-                    Document.SF_KONTR_CRS_DC = Document.Client.BalansCurrency.DocCode;
+                    Document.SF_KONTR_CRS_DC = ((IDocCode)Document.Client.Currency).DocCode;
 
                 if (Document.Entity.SF_KONTR_CRS_SUMMA == null) Document.Entity.SF_KONTR_CRS_SUMMA = Document.Summa;
                 foreach (var row in Document.Rows.Cast<InvoiceClientRow>())
@@ -947,7 +951,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         GenericClientRepository.Delete(Document.Entity);
                         UnitOfWork.Save();
                         UnitOfWork.Commit();
-                        DocumentsOpenManager.DeleteFromLastDocument(null,Document.DocCode);
+                        DocumentsOpenManager.DeleteFromLastDocument(null, Document.DocCode);
                     }
                     catch (Exception ex)
                     {
@@ -1016,14 +1020,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void AddUsluga(object obj)
         {
-            var k = StandartDialogs.SelectNomenkls(null,false);
+            var k = StandartDialogs.SelectNomenkls();
             if (k != null)
             {
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                 foreach (var item in k)
                 {
                     // ReSharper disable once PossibleNullReferenceException
-                    if (Document.Rows.Cast<InvoiceClientRow>().Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    if (Document.Rows.Cast<InvoiceClientRow>()
+                        .Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.DefaultNDSPercent == null)
                         nds = 0;
@@ -1087,7 +1092,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                 foreach (var item in k)
                 {
-                    if (Document != null && Document.Rows.Cast<InvoiceClientRow>().Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
+                    if (Document != null && Document.Rows.Cast<InvoiceClientRow>()
+                            .Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.DefaultNDSPercent == null)
                         nds = 0;
@@ -1253,8 +1259,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Note = c.NOTES_ORD
                 });
             foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
-                .Where(_ => _.VVT_SFACT_CLIENT_DC == Document.DocCode)
-                .ToList())
+                         .Where(_ => _.VVT_SFACT_CLIENT_DC == Document.DocCode)
+                         .ToList())
                 Document.PaymentDocs.Add(new InvoicePaymentDocument
                 {
                     DocCode = c.DOC_CODE,
@@ -1268,7 +1274,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Note = c.VVT_DOC_NUM
                 });
             foreach (var c in ctx.TD_110.Include(_ => _.SD_110)
-                .Where(_ => _.VZT_SFACT_DC == Document.DocCode).ToList())
+                         .Where(_ => _.VZT_SFACT_DC == Document.DocCode).ToList())
                 Document.PaymentDocs.Add(new InvoicePaymentDocument
                 {
                     DocCode = c.DOC_CODE,

@@ -9,7 +9,8 @@ using DevExpress.Mvvm;
 using Helper;
 using KursAM2.ViewModel.Management.DebitorCreditor;
 using KursAM2.ViewModel.Splash;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Management.Calculations
 {
@@ -138,7 +139,7 @@ namespace KursAM2.ViewModel.Management.Calculations
                         GetRate(rates, d.rdr6, GlobalOptions.SystemProfile.MainCurrency.DocCode, start)
                     let rate2 = GetRate(rates, d.rdr6, GlobalOptions.SystemProfile.MainCurrency.DocCode, end)
                     let kontrInfo =
-                        new Kontragent(kontrs.SingleOrDefault(_ => _.DOC_CODE == d.rdr0))
+                        new KontragentViewModel(kontrs.SingleOrDefault(_ => _.DOC_CODE == d.rdr0))
                     select new DebitorCreditorRow
                     {
                         Delta = Math.Round(d.rdr4 * rate2 - (d.rdr1 * rate1 + (d.rdr2 * rate2 - d.rdr3 * rate2)), 2),
@@ -152,7 +153,7 @@ namespace KursAM2.ViewModel.Management.Calculations
                         UchetOut = Math.Round(d.rdr3 * rate2, 2),
                         UchetStart = -Math.Round(d.rdr1 * rate1, 2),
                         Kontragent = kontrInfo.Name,
-                        CurrencyName = kontrInfo.BalansCurrency.Name,
+                        CurrencyName = ((IName)kontrInfo.BalansCurrency).Name,
                         IsBalans = d.rdr5 == 0
                     }).ToList();
             }

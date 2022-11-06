@@ -23,7 +23,7 @@ namespace KursAM2.View.Finance.UC
     /// </summary>
     public partial class BankOperationsComareRowView
     {
-        private readonly WindowManager winMan = new WindowManager();
+        private readonly WindowManager winMan = new();
 
         public BankOperationsComareRowView()
         {
@@ -95,11 +95,11 @@ namespace KursAM2.View.Finance.UC
                 if (k == null) return;
                 dtc.Payment = k;
                 Payment.Text = k.Name;
-                if (dtc.Kontragent != null) return;
+                if (dtc.KontragentViewModel != null) return;
                 if (dtc.BankOperationType == BankOperationType.Kontragent)
                 {
-                    dtc.Kontragent = k;
-                    Kontragent.Text = dtc.Kontragent.Name;
+                    dtc.KontragentViewModel = k;
+                    Kontragent.Text = dtc.KontragentViewModel.Name;
                 }
             }
         }
@@ -264,8 +264,8 @@ namespace KursAM2.View.Finance.UC
                         //if (dtc.Kontragent != null) return;
                         if (dtc.BankOperationType == BankOperationType.Kontragent)
                         {
-                            dtc.Kontragent = k;
-                            Kontragent.Text = dtc.Kontragent.Name;
+                            dtc.KontragentViewModel = k;
+                            Kontragent.Text = dtc.KontragentViewModel.Name;
                             dtc.Payment = k;
                             Payment.Text = k.Name;
                         }
@@ -327,7 +327,7 @@ namespace KursAM2.View.Finance.UC
             Kontragent.Text = null;
             var dtx = DataContext as AddBankOperionUC;
             if (dtx == null) return;
-            var t = (BankOperationType)TypeKontragent.EditValue;
+            var t = (BankOperationType) TypeKontragent.EditValue;
             switch (t)
             {
                 case BankOperationType.CashOut:
@@ -360,8 +360,8 @@ namespace KursAM2.View.Finance.UC
             var dtx2 = DataContext as BankOperationsViewModel;
             if (dtx == null && dtx2 == null) return;
             RSViewModelBase item1;
-            if (dtx != null && dtx.Kontragent != null)
-                item1 = StandartDialogs.SelectAllInvoiceClient(dtx.Kontragent.DocCode, true, true);
+            if (dtx != null && dtx.KontragentViewModel != null)
+                item1 = StandartDialogs.SelectAllInvoiceClient(dtx.KontragentViewModel.DocCode, true, true);
             else
                 item1 = StandartDialogs.SelectAllInvoiceClient(true, true);
             if (item1 == null) return;
@@ -387,8 +387,8 @@ namespace KursAM2.View.Finance.UC
                     Payment.Text = dtx.Payment.Name;
                     dtx.Currency = MainReferences.Currencies[d2.Entity.SF_CRS_DC];
                     dtx.BankOperationType = BankOperationType.Kontragent;
-                    dtx.Kontragent = d2.Client;
-                    Kontragent.Text = dtx.Kontragent.Name;
+                    dtx.KontragentViewModel = d2.Client;
+                    Kontragent.Text = dtx.KontragentViewModel.Name;
                     dtx.CurrentBankOperations.SFName =
                         $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa} {MainReferences.Currencies[d2.Entity.SF_CRS_DC]}";
                 }
@@ -427,8 +427,8 @@ namespace KursAM2.View.Finance.UC
                     dtx.SFName = d1.ToString();
                     dtx.CurrentBankOperations.VVT_DOC_NUM = d1.ToString();
                     dtx.BankOperationType = BankOperationType.Kontragent;
-                    dtx.Kontragent = d1.Kontragent;
-                    Kontragent.Text = dtx.Kontragent.Name;
+                    dtx.KontragentViewModel = d1.Kontragent;
+                    Kontragent.Text = dtx.KontragentViewModel.Name;
                     dtx.Payment = d1.Kontragent;
                     Payment.Text = dtx.Payment.Name;
                 }

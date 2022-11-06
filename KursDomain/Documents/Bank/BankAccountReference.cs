@@ -6,7 +6,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using KursDomain.Documents.CommonReferences;
+using KursDomain.References;
 
 namespace KursDomain.Documents.Bank;
 
@@ -17,7 +17,7 @@ namespace KursDomain.Documents.Bank;
 public class BankAccountReference : RSViewModelBase, IEntity<SD_114>
 {
     private Bank myBank;
-    private CentrOfResponsibility myCO;
+    private CentrResponsibility myCO;
     private SD_114 myEntity;
     private bool myIsNegative;
 
@@ -272,7 +272,7 @@ public class BankAccountReference : RSViewModelBase, IEntity<SD_114>
         }
     }
 
-    public CentrOfResponsibility CO
+    public CentrResponsibility CO
     {
         get => myCO;
         set

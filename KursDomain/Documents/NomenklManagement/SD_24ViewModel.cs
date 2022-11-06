@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using Core;
 using Core.ViewModel.Base;
 using Data;
-using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.Periods;
+using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursDomain.Documents.NomenklManagement;
 
@@ -22,8 +23,8 @@ public interface ISD_24
     string DD_EXT_NUM { set; get; }
     Warehouse WarehouseOut { set; get; }
     Warehouse WarehouseIn { set; get; }
-    Kontragent KontragentSender { set; get; }
-    Kontragent KontragentReceiver { set; get; }
+    KontragentViewModel KontragentViewModelSender { set; get; }
+    KontragentViewModel KontragentViewModelReceiver { set; get; }
     Employee.Employee Kladovshik { set; get; }
     bool IsExecuted { set; get; }
     string DD_KOMU_PEREDANO { set; get; }
@@ -43,7 +44,7 @@ public interface ISD_24
 public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
 {
     public string Sender => KontragentSender?.Name ?? WarehouseOut?.Name;
-    public string Receiver => KontragentReceiver?.Name ?? WarehouseIn?.Name;
+    public string Receiver => KontragentViewModelReceiver?.Name ?? WarehouseIn?.Name;
 
     public override decimal DocCode
     {
@@ -141,12 +142,12 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
     /// </summary>
     public Kontragent KontragentSender
     {
-        get => MainReferences.GetKontragent(DD_KONTR_OTPR_DC);
+        get => GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_OTPR_DC) as Kontragent;
         set
         {
             if (DD_KONTR_OTPR_DC == value?.DocCode) return;
             DD_KONTR_OTPR_DC = value?.DocCode;
-            Entity.DD_OTRPAV_NAME = MainReferences.GetKontragent(DD_KONTR_OTPR_DC)?.Name;
+            Entity.DD_OTRPAV_NAME = ((IName) GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_OTPR_DC))?.Name;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Sender));
         }
@@ -155,14 +156,14 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
     /// <summary>
     ///     Контрагент получатель
     /// </summary>
-    public Kontragent KontragentReceiver
+    public Kontragent KontragentViewModelReceiver
     {
-        get => MainReferences.GetKontragent(DD_KONTR_POL_DC);
+        get => GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_POL_DC) as Kontragent;
         set
         {
             if (DD_KONTR_POL_DC == value?.DocCode) return;
             DD_KONTR_POL_DC = value?.DocCode;
-            Entity.DD_POLUCH_NAME = MainReferences.GetKontragent(DD_KONTR_POL_DC).Name;
+            Entity.DD_POLUCH_NAME = ((IName) GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_POL_DC)).Name;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Sender));
         }
@@ -186,7 +187,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         set
         {
             if (Entity.DD_EXECUTED == 1 == value) return;
-            Entity.DD_EXECUTED = (short)(value ? 1 : 0);
+            Entity.DD_EXECUTED = (short) (value ? 1 : 0);
             RaisePropertyChanged();
         }
     }
@@ -598,8 +599,8 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         get => Entity.DD_VOZVRAT == 1;
         set
         {
-            if (Entity.DD_VOZVRAT == (short?)(value ? 1 : 0)) return;
-            Entity.DD_VOZVRAT = (short?)(value ? 1 : 0);
+            if (Entity.DD_VOZVRAT == (short?) (value ? 1 : 0)) return;
+            Entity.DD_VOZVRAT = (short?) (value ? 1 : 0);
             RaisePropertyChanged();
         }
     }

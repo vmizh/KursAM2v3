@@ -6,7 +6,6 @@ using System.Text;
 using Calculates.Materials;
 using Core;
 using KursDomain.References;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace ServerCalculate
 {
@@ -40,8 +39,10 @@ namespace ServerCalculate
                     var DC = Convert.ToDecimal(ownKontrDC.ITEM_VALUE);
                     var ownKontr =
                         GlobalOptions.GetEntities().SD_43.Single(_ => _.DOC_CODE == DC);
-                    GlobalOptions.SystemProfile.OwnerKontragent =
-                        new Kontragent(ownKontr);
+                    var kontr = new Kontragent();
+                    kontr.LoadFromEntity(ownKontr, GlobalOptions.ReferencesCache);
+                    GlobalOptions.SystemProfile.OwnerKontragent = kontr;
+
                 }
 
                 var mainCrsDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(

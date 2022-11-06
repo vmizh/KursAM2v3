@@ -21,10 +21,10 @@ using KursAM2.View.Finance;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 using static KursAM2.ViewModel.Finance.MutualAccountingDebitorCreditors;
 
 namespace KursAM2.ViewModel.Finance
@@ -51,8 +51,9 @@ namespace KursAM2.ViewModel.Finance
             RefreshData(dc);
         }
 
-        public new string WindowName => Document != null && Document.State != RowStatus.NewRow ?  Document.Description :
+        public new string WindowName => Document != null && Document.State != RowStatus.NewRow ? Document.Description :
             IsCurrencyConvert ? "Новый акт конвертации" : "Новый акт взаимозачета";
+
         public bool IsTypeVzaimEnabled => !IsCurrencyConvert;
 
         public decimal CurrencyConvertRate
@@ -172,7 +173,8 @@ namespace KursAM2.ViewModel.Finance
                 CurrentCreditor.VZT_KONTR_CRS_SUMMA = item.Summa - item.PaySumma;
                 CurrentCreditor.VZT_UCH_CRS_RATE = 1;
                 CurrentCreditor.VZT_SPOST_DC = item.DocCode;
-                CurrentCreditor.Kontragent = MainReferences.GetKontragent(item.Entity.SF_POST_DC);
+                CurrentCreditor.Kontragent =
+                    GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_POST_DC) as Kontragent;
                 CurrentCreditor.SFProvider = item;
                 if (CurrentCreditor.State == RowStatus.NotEdited) CurrentCreditor.myState = RowStatus.Edited;
                 KontragentManager.UpdateSelectCount(CurrentCreditor.Kontragent.DocCode);
@@ -203,7 +205,7 @@ namespace KursAM2.ViewModel.Finance
                     State = RowStatus.NewRow,
                     VzaimoraschType = vzdefault,
                     Parent = Document,
-                    Kontragent = MainReferences.GetKontragent(item.Entity.SF_POST_DC),
+                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_POST_DC) as Kontragent,
                     SFProvider = item
                 };
                 Document.Rows.Add(newcred);
@@ -224,15 +226,15 @@ namespace KursAM2.ViewModel.Finance
                             Id = Guid.NewGuid(),
                             Rate = 1,
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal) CurrentCreditor.VZT_CRS_SUMMA,
+                            Summa = (decimal)CurrentCreditor.VZT_CRS_SUMMA,
                             VZDC = CurrentCreditor.DocCode,
                             VZCode = CurrentCreditor.Code,
                             // ReSharper disable once PossibleInvalidOperationException
-                            DocDC = (decimal) CurrentCreditor.VZT_SPOST_DC
+                            DocDC = (decimal)CurrentCreditor.VZT_SPOST_DC
                         });
                     else
                         // ReSharper disable once PossibleInvalidOperationException
-                        old.Summa = (decimal) CurrentCreditor.VZT_CRS_SUMMA;
+                        old.Summa = (decimal)CurrentCreditor.VZT_CRS_SUMMA;
 
                     ctx.SaveChanges();
                 }
@@ -265,7 +267,8 @@ namespace KursAM2.ViewModel.Finance
                 CurrentDebitor.VZT_KONTR_CRS_SUMMA = -(item.Summa - item.PaySumma);
                 CurrentDebitor.VZT_UCH_CRS_RATE = 1;
                 CurrentDebitor.VZT_SFACT_DC = item.DocCode;
-                CurrentDebitor.Kontragent = MainReferences.GetKontragent(item.Entity.SF_CLIENT_DC);
+                CurrentDebitor.Kontragent =
+                    GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_CLIENT_DC) as Kontragent;
                 CurrentDebitor.SFClient = item;
                 if (CurrentDebitor.State == RowStatus.NotEdited) CurrentDebitor.myState = RowStatus.Edited;
                 KontragentManager.UpdateSelectCount(CurrentDebitor.Kontragent.DocCode);
@@ -295,7 +298,7 @@ namespace KursAM2.ViewModel.Finance
                     State = RowStatus.NewRow,
                     VzaimoraschType = vzdefault,
                     Parent = Document,
-                    Kontragent = MainReferences.GetKontragent(item.Entity.SF_CLIENT_DC),
+                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_CLIENT_DC) as Kontragent,
                     SFClient = item
                 };
                 Document.Rows.Add(newdeb);
@@ -318,15 +321,17 @@ namespace KursAM2.ViewModel.Finance
             foreach (var l in Document.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0))
                 if (l.Kontragent?.IsBalans == true)
                     // ReSharper disable once PossibleInvalidOperationException
-                    sumLeft += Math.Abs((decimal) l.VZT_KONTR_CRS_SUMMA);
+                    sumLeft += Math.Abs((decimal)l.VZT_KONTR_CRS_SUMMA);
             foreach (var l in Document.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1))
                 if (l.Kontragent?.IsBalans == true)
                     // ReSharper disable once PossibleInvalidOperationException
-                    sumRight += (decimal) l.VZT_KONTR_CRS_SUMMA;
+                    sumRight += (decimal)l.VZT_KONTR_CRS_SUMMA;
             if (!IsCurrencyConvert)
                 return sumRight - sumLeft;
-            var d = CurrencyConvertRate != 0 ? (Document.CreditorCurrency.DocCode == CurrencyCode.RUB ? sumRight / CurrencyConvertRate : sumRight) -
-                (Document.DebitorCurrency.DocCode == CurrencyCode.RUB ? sumLeft / CurrencyConvertRate : sumLeft) : 0;
+            var d = CurrencyConvertRate != 0
+                ? (Document.CreditorCurrency.DocCode == CurrencyCode.RUB ? sumRight / CurrencyConvertRate : sumRight) -
+                  (Document.DebitorCurrency.DocCode == CurrencyCode.RUB ? sumLeft / CurrencyConvertRate : sumLeft)
+                : 0;
             return d;
         }
 
@@ -361,7 +366,7 @@ namespace KursAM2.ViewModel.Finance
         public override void ShowHistory(object data)
         {
             // ReSharper disable once RedundantArgumentDefaultValue
-            DocumentHistoryManager.LoadHistory(DocumentType.MutualAccounting,null, Document.DocCode);
+            DocumentHistoryManager.LoadHistory(DocumentType.MutualAccounting, null, Document.DocCode);
         }
 
         public override void RefreshData(object obj)
@@ -394,7 +399,7 @@ namespace KursAM2.ViewModel.Finance
                 else
                 {
                     if (obj == null) return;
-                    var dc = (decimal) obj;
+                    var dc = (decimal)obj;
                     Document = Manager.Load(dc);
                     IsCurrencyConvert = Document.Entity.SD_111.IsCurrencyConvert;
                     if (Document == null)
@@ -412,9 +417,9 @@ namespace KursAM2.ViewModel.Finance
                 foreach (var r in Document.Rows)
                 {
                     if (r.VZT_SFACT_DC != null)
-                        r.SFClient = InvoicesManager.GetInvoiceClient((decimal) r.VZT_SFACT_DC);
+                        r.SFClient = InvoicesManager.GetInvoiceClient((decimal)r.VZT_SFACT_DC);
                     if (r.VZT_SPOST_DC != null)
-                        r.SFProvider = InvoicesManager.GetInvoiceProvider((decimal) r.VZT_SPOST_DC);
+                        r.SFProvider = InvoicesManager.GetInvoiceProvider((decimal)r.VZT_SPOST_DC);
                     r.myState = RowStatus.NotEdited;
                 }
 
@@ -529,7 +534,7 @@ namespace KursAM2.ViewModel.Finance
             {
                 return new Command(AddNewCreditor,
                     appDomain => Document?.CreditorCurrency != null ||
-                                 !IsCurrencyConvert && Document?.DebitorCurrency != null);
+                                 (!IsCurrencyConvert && Document?.DebitorCurrency != null));
             }
         }
 
@@ -621,7 +626,7 @@ namespace KursAM2.ViewModel.Finance
                     State = RowStatus.NewRow,
                     VzaimoraschType = vzdefault,
                     Parent = Document,
-                    Kontragent = MainReferences.GetKontragent(k.DocCode)
+                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(k.DocCode) as Kontragent
                 };
                 Document.Rows.Add(newdeb);
                 DebitorCollection.Add(newdeb);
@@ -661,7 +666,7 @@ namespace KursAM2.ViewModel.Finance
                 VzaimoraschType = vzdefault,
                 State = RowStatus.NewRow,
                 Parent = Document,
-                Kontragent = MainReferences.GetKontragent(k.DocCode)
+                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(k.DocCode) as Kontragent
             };
             Document.Rows.Add(newcred);
             CreditorCollection.Add(newcred);
@@ -674,7 +679,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new MutualAccountingView {Owner = Application.Current.MainWindow};
+            var frm = new MutualAccountingView { Owner = Application.Current.MainWindow };
             var ctx = new MutualAcountingWindowViewModel
             {
                 IsCurrencyConvert = IsCurrencyConvert,
@@ -690,7 +695,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override void DocNewCopy(object form)
         {
-            var frm = new MutualAccountingView {Owner = Application.Current.MainWindow};
+            var frm = new MutualAccountingView { Owner = Application.Current.MainWindow };
             var ctx = new MutualAcountingWindowViewModel
             {
                 IsCurrencyConvert = IsCurrencyConvert,
@@ -705,7 +710,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override void DocNewCopyRequisite(object form)
         {
-            var frm = new MutualAccountingView {Owner = Application.Current.MainWindow};
+            var frm = new MutualAccountingView { Owner = Application.Current.MainWindow };
             var ctx = new MutualAcountingWindowViewModel
             {
                 IsCurrencyConvert = IsCurrencyConvert,
@@ -729,15 +734,15 @@ namespace KursAM2.ViewModel.Finance
             var k = obj as Kontragent ??
                     StandartDialogs.SelectKontragent(Document.IsOld ? null : Document.DebitorCurrency);
             if (k == null) return;
-            CurrentDebitor.Kontragent = MainReferences.GetKontragent(k.DocCode);
+            CurrentDebitor.Kontragent = GlobalOptions.ReferencesCache.GetKontragent(k.DocCode) as Kontragent;
             CurrentDebitor.VZT_KONTR_CRS_RATE = 1;
             CurrentDebitor.VZT_UCH_CRS_RATE = CurrencyRate.GetCBRate(CurrentDebitor.Currency,
                 GlobalOptions.SystemProfile.MainCurrency, Document.VZ_DATE);
             var r = Document.Rows.FirstOrDefault(_ => _.Code == CurrentDebitor.Code);
             if (r != null)
             {
-                r.VZT_CRS_DC = k.BalansCurrency.DocCode;
-                r.VZT_KONTR_CRS_DC = k.BalansCurrency.DocCode;
+                r.VZT_CRS_DC = ((IDocCode)k.Currency).DocCode;
+                r.VZT_KONTR_CRS_DC = ((IDocCode)k.Currency).DocCode;
                 r.VZT_KONTR_DC = k.DocCode;
             }
 
@@ -783,8 +788,8 @@ namespace KursAM2.ViewModel.Finance
             if (r != null)
             {
                 r.VZT_KONTR_DC = k.DocCode;
-                r.VZT_CRS_DC = k.BalansCurrency.DocCode;
-                r.VZT_KONTR_CRS_DC = k.BalansCurrency.DocCode;
+                r.VZT_CRS_DC = ((IDocCode)k.Currency).DocCode;
+                r.VZT_KONTR_CRS_DC = ((IDocCode)k.Currency).DocCode;
             }
 
             if (!(Form is MutualAccountingView f)) return;

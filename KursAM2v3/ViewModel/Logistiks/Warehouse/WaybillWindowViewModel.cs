@@ -22,7 +22,6 @@ using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using Reports.Base;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -111,7 +110,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override string WindowName => Document?.Name;
         public List<Nomenkl> Nomenkls => MainReferences.ALLNomenkls.Values.ToList();
-        public List<Kontragent> Kontragents => MainReferences.AllKontragents.Values.ToList();
+        public List<KontragentViewModel> Kontragents => MainReferences.AllKontragents.Values.ToList();
 
         public WaybillRow CurrentNomenklRow
         {

@@ -15,7 +15,9 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
+using KursDomain.References;
 using Newtonsoft.Json;
+using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
 
 namespace KursDomain.Documents.Dogovora;
 
@@ -179,17 +181,17 @@ public sealed class DogovorClientViewModel : RSWindowViewModelBase, IDataErrorIn
 
     public Kontragent Client
     {
-        get => MainReferences.GetKontragent(Entity.KontrDC);
+        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.KontrDC) as Kontragent;
         set
         {
-            if (MainReferences.GetKontragent(Entity.KontrDC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetKontragent(Entity.KontrDC)== value) return;
             Entity.KontrDC = value?.DocCode ?? 0;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Currency));
         }
     }
 
-    public References.Currency Currency => Client?.BalansCurrency;
+    public References.Currency Currency => Client?.Currency as References.Currency;
 
     public decimal Summa => Rows.Sum(_ => _.Summa);
 

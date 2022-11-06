@@ -345,7 +345,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public List<VzaimoraschetType> VzaimoraschetTypeList => MainReferences.VzaimoraschetTypes.Values.ToList();
         public List<Currency> CurrencyList => MainReferences.Currencies.Values.ToList();
-        public List<CentrOfResponsibility> COList => MainReferences.COList.Values.Where(_ => _.DocCode > 0).ToList();
+        public List<CentrResponsibility> COList => MainReferences.COList.Values.Where(_ => _.DocCode > 0).ToList();
         public List<PayCondition> PayConditionList => MainReferences.PayConditions.Values.ToList();
         public List<FormPay> FormRaschetList => MainReferences.FormRaschets.Values.ToList();
         public List<Employee> EmployeeList => MainReferences.Employees.Values.ToList();
@@ -476,7 +476,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (Document.Kontragent == null)
                 {
                     Document.Kontragent = ctx.CurrentDogovor.Kontragent;
-                    Document.Currency = Document.Kontragent.BalansCurrency;
+                    Document.Currency = Document.Kontragent.Currency as Currency;
                 }
 
                 var cr = new CurrencyRates(Document.DocDate, Document.DocDate);
@@ -556,7 +556,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var kontr = StandartDialogs.SelectKontragent(Document.Currency);
             if (kontr == null) return;
             Document.Kontragent = kontr;
-            Document.Currency = kontr.BalansCurrency;
+            Document.Currency = kontr.Currency as Currency;
             RaisePropertyChanged(nameof(IsCurrencyEnabled));
         }
 
@@ -1233,7 +1233,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private void AddNomenkl(object obj)
         {
             decimal defaultNDS;
-            var nomenkls = StandartDialogs.SelectNomenkls(Document.Kontragent?.BalansCurrency, true);
+            var nomenkls = StandartDialogs.SelectNomenkls(Document.Kontragent?.Currency as Currency, true);
             if (nomenkls == null || nomenkls.Count <= 0) return;
             using (var entctx = GlobalOptions.GetEntities())
             {
@@ -1409,7 +1409,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (Document.SF_SUMMA_S_NDS == null) Document.SF_SUMMA_S_NDS = (short)(Document.IsNDSInPrice ? 1 : 0);
                 if (Document.SF_SCHET_FACT_FLAG == null) Document.SF_SCHET_FACT_FLAG = 1;
                 if (Document.SF_KONTR_CRS_DC == null)
-                    Document.SF_KONTR_CRS_DC = Document.Kontragent.BalansCurrency.DocCode;
+                    Document.SF_KONTR_CRS_DC = ((IDocCode)Document.Kontragent.Currency).DocCode;
 
                 if (Document.SF_KONTR_CRS_SUMMA == null) Document.SF_KONTR_CRS_SUMMA = Document.Summa;
 

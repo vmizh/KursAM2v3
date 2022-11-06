@@ -280,7 +280,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
         private void KontragentAccountOpen(object obj)
         {
-            var ctxk = new KontragentBalansWindowViewModel(CurrentExtendItem.Kontragent.DOC_CODE);
+            var ctxk = new KontragentBalansWindowViewModel(CurrentExtendItem.Kontragent.DocCode);
             var frm = new KontragentBalansForm { Owner = Application.Current.MainWindow, DataContext = ctxk };
             frm.Show();
         }
@@ -1109,7 +1109,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             var data = GlobalOptions.GetEntities().Database.SqlQuery<Kontr>(sql).ToList();
             foreach (var d in data.Where(_ => _.Summa < 0))
             {
-                var k = MainReferences.GetKontragent(d.KontrDC);
+                var k = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC);
                 cc.SummaRUB += d.KontrCrsDC == CurrencyCode.RUB ? d.Summa : 0;
                 cc.SummaUSD += d.KontrCrsDC == CurrencyCode.USD ? d.Summa : 0;
                 cc.SummaEUR += d.KontrCrsDC == CurrencyCode.EUR ? d.Summa : 0;
@@ -1120,12 +1120,12 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                 {
                     GroupId = cc.Id,
-                    Name = k.Name,
+                    Name = ((IName)k).Name,
                     Summa =
                         d.Summa
                     //* GetRate(myRates, k.SD_301.DOC_CODE,GlobalOptions.SystemProfile.MainCurrency.DocCode,CurrentDate)
                     ,
-                    CurrencyName = k.BalansCurrency.Name,
+                    CurrencyName = ((IName)k.Currency).Name,
                     SummaEUR = d.KontrCrsDC == CurrencyCode.EUR ? d.Summa : 0,
                     SummaUSD = d.KontrCrsDC == CurrencyCode.USD ? d.Summa : 0,
                     SummaRUB = d.KontrCrsDC == CurrencyCode.RUB ? d.Summa : 0,
@@ -1133,13 +1133,13 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaCHF = d.KontrCrsDC == CurrencyCode.CHF ? d.Summa : 0,
                     SummaSEK = d.KontrCrsDC == CurrencyCode.SEK ? d.Summa : 0,
                     SummaCNY = d.KontrCrsDC == CurrencyCode.CNY ? d.Summa : 0,
-                    Kontragent = k
+                    Kontragent = k as Kontragent
                 });
             }
 
             foreach (var d in data.Where(_ => _.Summa > 0))
             {
-                var k = MainReferences.GetKontragent(d.KontrDC);
+                var k = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC) as Kontragent;
                 dd.SummaRUB += d.KontrCrsDC == CurrencyCode.RUB ? d.Summa : 0;
                 dd.SummaUSD += d.KontrCrsDC == CurrencyCode.USD ? d.Summa : 0;
                 dd.SummaEUR += d.KontrCrsDC == CurrencyCode.EUR ? d.Summa : 0;
@@ -1155,7 +1155,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         d.Summa
                     //*GetRate(myRates, k.SD_301.DOC_CODE,GlobalOptions.SystemProfile.MainCurrency.DocCode,CurrentDate)
                     ,
-                    CurrencyName = k.BalansCurrency.Name,
+                    CurrencyName = ((IName)k.Currency).Name,
                     SummaEUR = d.KontrCrsDC == CurrencyCode.EUR ? d.Summa : 0,
                     SummaUSD = d.KontrCrsDC == CurrencyCode.USD ? d.Summa : 0,
                     SummaRUB = d.KontrCrsDC == CurrencyCode.RUB ? d.Summa : 0,

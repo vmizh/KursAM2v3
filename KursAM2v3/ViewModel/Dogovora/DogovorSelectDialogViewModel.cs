@@ -7,14 +7,11 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows.Controls;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.View.Dogovors;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.References;
 using ContractType = KursDomain.Documents.Dogovora.ContractType;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.Dogovora
 {
@@ -61,7 +58,7 @@ namespace KursAM2.ViewModel.Dogovora
                                 : $"{d.InNum} / {d.OutNum}",
                             Date = d.DocDate,
                             DogType = MainReferences.ContractTypes[d.DogType],
-                            Kontragent = MainReferences.GetKontragent(d.KontrDC),
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC) as Kontragent,
                             Creator = d.Creator,
                             Note = d.Note,
                             Summa = Math.Round(
@@ -112,11 +109,10 @@ namespace KursAM2.ViewModel.Dogovora
         public override string LayoutName => "DogovorSelectDialogViewModel";
         public UserControl CustomDataUserControl => new DialogSelectDogovorAndPosition();
 
-        public ObservableCollection<Dogovor> DogovorList { set; get; } = new ObservableCollection<Dogovor>();
+        public ObservableCollection<Dogovor> DogovorList { set; get; } = new();
 
         // ReSharper disable once CollectionNeverUpdated.Global
-        public ObservableCollection<DogovorPosition> DogovorPositionList { set; get; } =
-            new ObservableCollection<DogovorPosition>();
+        public ObservableCollection<DogovorPosition> DogovorPositionList { set; get; } = new();
 
         public Dogovor CurrentDogovor
         {
@@ -175,7 +171,7 @@ namespace KursAM2.ViewModel.Dogovora
 
             [Display(AutoGenerateField = true, Name = "Валюта")]
             [ReadOnly(true)]
-            public Currency Currency => Kontragent?.BalansCurrency;
+            public Currency Currency => Kontragent?.Currency as Currency;
 
             [Display(AutoGenerateField = true, Name = "Создатель")]
             [ReadOnly(true)]
@@ -204,7 +200,7 @@ namespace KursAM2.ViewModel.Dogovora
 
             [Display(AutoGenerateField = true, Name = "Ед.изм.")]
             [ReadOnly(true)]
-            public Unit Unit => (Unit)Nomenkl?.Unit;
+            public Unit Unit => (Unit) Nomenkl?.Unit;
 
             [Display(AutoGenerateField = true, Name = "Кол-во")]
             [ReadOnly(true)]

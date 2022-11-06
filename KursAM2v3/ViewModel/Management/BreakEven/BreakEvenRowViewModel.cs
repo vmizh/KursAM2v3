@@ -5,7 +5,6 @@ using Core.ViewModel.Base.Column;
 using DevExpress.Data;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.References;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.Management.BreakEven
 {
@@ -14,7 +13,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
         private readonly decimal myKontrOperSummaCrs = 0;
         private readonly decimal myNOMENKLOperSumWoRevalField;
         private readonly decimal mySummaOperNomenklField;
-        [OptionalField] private CentrOfResponsibility myCentrOfResponsibilityField;
+        [OptionalField] private CentrResponsibility myCentrOfResponsibilityField;
         [OptionalField] private string myCurrency;
         [OptionalField] private DateTime myDateField;
         [OptionalField] private string myDilerField;
@@ -63,7 +62,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
         }
 
         [DataMember]
-        public CentrOfResponsibility CentrOfResponsibility
+        public CentrResponsibility CentrOfResponsibility
         {
             get => myCentrOfResponsibilityField;
             set

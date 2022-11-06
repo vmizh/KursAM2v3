@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -13,7 +12,9 @@ using KursAM2.Managers;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 // ReSharper disable CollectionNeverQueried.Global
 namespace KursAM2.ViewModel.Management.BreakEven
@@ -54,12 +55,15 @@ namespace KursAM2.ViewModel.Management.BreakEven
 
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<DocumentRow> DocumentGroup { set; get; }
+
         public ObservableCollection<DocumentRow> DocumentCurrencyGroup { set; get; } =
             new ObservableCollection<DocumentRow>();
+
         public ObservableCollection<BreakEvenNomGroupViewModel> NomenklGroups { set; get; }
         public ObservableCollection<BreakEvenCOrGroupViewModel> CoGroups { set; get; }
         public ObservableCollection<BreakEvenKontrGroupViewModel> KontrGroups { set; get; }
         public ObservableCollection<BreakEvenManagerGroupViewModel> ManagerGroups { set; get; }
+
         public DocumentRow CurrentDocument
         {
             get => myCurrentDocument;
@@ -70,6 +74,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 RaisePropertyChanged();
             }
         }
+
         public DateTime StartDate
         {
             set
@@ -80,6 +85,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             }
             get => myStartDate;
         }
+
         public DateTime EndDate
         {
             set
@@ -90,6 +96,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             }
             get => myEndDate;
         }
+
         public override bool IsDocumentOpenAllow => CurrentDocument != null
                                                     && DocumentsOpenManager.IsDocumentOpen(CurrentDocument.DocType);
 
@@ -169,6 +176,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             while (!MainReferences.IsReferenceLoadComplete)
             {
             }
+
             using (var ent = GlobalOptions.GetEntities())
             {
                 var empls = ent.SD_2.ToList();
@@ -270,32 +278,32 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                 .Include(_ => _.SD_84).Where(_ =>
                                     _.SFT_NEMENKL_DC == dc && _.SD_84.SF_DATE < start);
                             if (td84.Any())
-                                sumQuanOutStart = (decimal) td84.Sum(_ => _.SFT_KOL);
+                                sumQuanOutStart = (decimal)td84.Sum(_ => _.SFT_KOL);
                             sumQuanStart = sumQuanInStart - sumQuanOutStart;
                             td26 = ent.TD_26
                                 .Include(_ => _.SD_26).Where(_ =>
                                     _.SFT_NEMENKL_DC == dc && _.SD_26.SF_POSTAV_DATE < start);
                             if (td26.Any())
-                                summaAllInStart = (decimal) td26.Sum(_ => _.SFT_SUMMA_K_OPLATE);
+                                summaAllInStart = (decimal)td26.Sum(_ => _.SFT_SUMMA_K_OPLATE);
                             if (sumQuanInStart > 0)
                             {
                                 var priceEd = summaAllInStart / sumQuanInStart;
                                 summaInStart = sumQuanStart * priceEd;
                             }
+
                             td26 = ent.TD_26
                                 .Include(_ => _.SD_26).Where(_ =>
                                     _.SFT_NEMENKL_DC == dc && _.SD_26.SF_POSTAV_DATE >= start &&
                                     _.SD_26.SF_POSTAV_DATE <= end);
                             if (td26.Any())
                             {
-                                sumInPeriod = (decimal) td26.Sum(_ => _.SFT_SUMMA_K_OPLATE);
+                                sumInPeriod = (decimal)td26.Sum(_ => _.SFT_SUMMA_K_OPLATE);
                                 sumQuanInPeriod = td26.Sum(_ => _.SFT_KOL);
                             }
+
                             decimal price = 0;
                             if (sumQuanStart + sumQuanInPeriod > 0)
-                            {
                                 price = (summaInStart + sumInPeriod) / (sumQuanStart + sumQuanInPeriod);
-                            }
                             var operList = ent.TD_84
                                 .Include(_ => _.SD_84).Where(_ =>
                                     _.SFT_NEMENKL_DC == dc && _.SD_84.SF_DATE >= start &&
@@ -303,27 +311,26 @@ namespace KursAM2.ViewModel.Management.BreakEven
                             if (operList.Any())
                                 foreach (var d in operList)
                                 {
-                                    var kontr = MainReferences.GetKontragent(d.SD_84.SF_CLIENT_DC);
+                                    var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.SD_84.SF_CLIENT_DC);
                                     var otvlico = d.SD_84.PersonalResponsibleDC != null
                                         ? MainReferences.Employees[d.SD_84.PersonalResponsibleDC.Value].Name
                                         : null;
-                                    if (otvlico == null && kontr.OTVETSTV_LICO != null)
-                                    {
+                                    if (otvlico == null && kontr.ResponsibleEmployee != null)
                                         otvlico = MainReferences.Employees.Values
-                                            .FirstOrDefault(_ => _.TabelNumber == kontr.OTVETSTV_LICO)?.Name;
-                                    }
+                                            .FirstOrDefault(_ => _.TabelNumber == kontr.ResponsibleEmployee.TabelNumber)
+                                            ?.Name;
                                     DataAll.Add(new BreakEvenRow
                                     {
-                                        Kontragent = kontr.Name,
-                                        Kontr = kontr,
+                                        Kontragent = ((IName)kontr).Name,
+                                        Kontr = kontr as Kontragent,
                                         Nomenkl = MainReferences.GetNomenkl(d.SFT_NEMENKL_DC),
                                         CentrOfResponsibility = MainReferences.GetCO(d.SD_84.SF_CENTR_OTV_DC),
                                         Date = d.SD_84.SF_DATE,
                                         Diler = null, //diler != null ? diler.Name : "",
                                         //DilerSumma = 0, //Convert.ToDecimal(d.DilerSumma) * drate,
                                         IsUsluga = true,
-                                        KontrSumma = (decimal) d.SFT_SUMMA_K_OPLATE, //Convert.ToDecimal(d.KontrSumma),
-                                        KontrSummaCrs = (decimal) d.SFT_SUMMA_K_OPLATE,
+                                        KontrSumma = (decimal)d.SFT_SUMMA_K_OPLATE, //Convert.ToDecimal(d.KontrSumma),
+                                        KontrSummaCrs = (decimal)d.SFT_SUMMA_K_OPLATE,
                                         Manager = otvlico != null ? otvlico : "Менеджер не указан",
                                         Naklad = null,
                                         NomenklSumWOReval = 0,
@@ -335,7 +342,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                         SummaNomenkl = Convert.ToDecimal(d.SFT_KOL) * price,
                                         SummaNomenklCrs = Convert.ToDecimal(d.SFT_KOL) * price,
                                         Price = price,
-                                        KontrOperSummaCrs = (decimal) d.SFT_SUMMA_K_OPLATE,
+                                        KontrOperSummaCrs = (decimal)d.SFT_SUMMA_K_OPLATE,
                                         SummaOperNomenkl = Convert.ToDecimal(d.SFT_KOL) * price,
                                         SummaOperNomenklCrs = Convert.ToDecimal(d.SFT_KOL) * price,
                                         NomenklOperSumWOReval = Convert.ToDecimal(d.SFT_KOL) * price,
@@ -343,6 +350,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                     });
                                 }
                         }
+
                     foreach (var d in ent.Database.SqlQuery<BreakEvenTemp>(sql))
                     {
                         var nom = MainReferences.GetNomenkl(d.NomenklDC);
@@ -351,18 +359,18 @@ namespace KursAM2.ViewModel.Management.BreakEven
                             : null;
                         var co = MainReferences.COList.ContainsKey(d.CO)
                             ? MainReferences.COList[d.CO]
-                            : new CentrOfResponsibility {Entity = new SD_40 {DOC_CODE = 0, CENT_NAME = "Не указан"}};
+                            : new CentrResponsibility { DocCode = 0, Name = "Не указан" };
                         var emp = empls.FirstOrDefault(_ => _.DOC_CODE == d.Manager);
                         var crs = MainReferences.Currencies[d.Currency];
                         DataAll.Add(new BreakEvenRow
                         {
                             Kontragent = MainReferences.AllKontragents[d.KontragentDC].Name,
-                            Kontr = MainReferences.AllKontragents[d.KontragentDC],
+                            Kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent,
                             Nomenkl = nom,
                             CentrOfResponsibility = co,
                             Date = d.DATE,
                             Diler = diler != null ? diler.Name : "",
-                            DilerSumma = Convert.ToDecimal(d.DilerSumma),// * drate,
+                            DilerSumma = Convert.ToDecimal(d.DilerSumma), // * drate,
                             IsUsluga = d.IsUsluga == 1,
                             KontrSumma = d.SummaKontrCrs, //Convert.ToDecimal(d.KontrSumma),
                             KontrSummaCrs = d.SummaKontrCrs /* *krate*/ - Convert.ToDecimal(d.DilerSumma), //* drate,
@@ -373,7 +381,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                 $"Накладная №'{d.NAKL_NUM} от {d.DATE.ToShortDateString()} {d.NAKL_NOTES}rdr[15]",
                             //d.Naklad,
                             NomenklSumWOReval =
-                                Convert.ToDecimal(d.NomenklSumWOReval)+ //* nrate +
+                                Convert.ToDecimal(d.NomenklSumWOReval) + //* nrate +
                                 Convert.ToDecimal(d.DilerSumma), //* drate,
                             OperCrsName = crs.Name, // crsInfo.Name,
                             OperCurrency = crs,
@@ -382,14 +390,15 @@ namespace KursAM2.ViewModel.Management.BreakEven
                             //d.Schet,
                             Quantity = Convert.ToDecimal(d.Quantity),
                             SummaNomenkl = d.NomSumm, //Convert.ToDecimal(d.SummaNomenkl),
-                            SummaNomenklCrs = !d.IsSaleTax ? d.NomSumm /* * nrate */ : d.Quantity * (d.SaleTaxPrice ?? 0),
+                            SummaNomenklCrs =
+                                !d.IsSaleTax ? d.NomSumm /* * nrate */ : d.Quantity * (d.SaleTaxPrice ?? 0),
                             //Convert.ToDecimal(d.SummaNomenklCrs),
                             Price = Convert.ToDecimal(d.Price),
                             KontrOperSummaCrs = d.SummaKontrCrs, //* crsKontrRate,
                             SummaOperNomenkl =
-                                !d.IsSaleTax ? d.NomSumm /* * crsNomenklRate */: d.Quantity * (d.SaleTaxPrice ?? 0),
+                                !d.IsSaleTax ? d.NomSumm /* * crsNomenklRate */ : d.Quantity * (d.SaleTaxPrice ?? 0),
                             SummaOperNomenklCrs =
-                                !d.IsSaleTax ? d.NomSumm /* * crsNomenklRate */: d.Quantity * (d.SaleTaxPrice ?? 0),
+                                !d.IsSaleTax ? d.NomSumm /* * crsNomenklRate */ : d.Quantity * (d.SaleTaxPrice ?? 0),
                             NomenklOperSumWOReval =
                                 !d.IsSaleTax
                                     ? Convert.ToDecimal(d.NomenklSumWOReval) //crsNomenklRate
@@ -402,6 +411,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 {
                     WindowManager.ShowError(ex);
                 }
+
                 SetMain();
             }
         }
@@ -425,7 +435,6 @@ namespace KursAM2.ViewModel.Management.BreakEven
                     n.Naklad += Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval) < 0
                         ? 0
                         : Math.Round(row.SummaNomenklCrs, 2) - Math.Round(row.NomenklSumWOReval);
-
                 }
                 else
                 {
@@ -444,6 +453,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                         CurrencyName = row.OperCrsName
                     });
                 }
+
                 var k = myTempKontrGroups.FirstOrDefault(t => t.Name == row.Kontragent);
                 if (k != null)
                 {
@@ -469,6 +479,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                         CurrencyName = row.OperCrsName
                     });
                 }
+
                 var c = myTempCoGroups.FirstOrDefault(t => t.Name == row.CentrOfResponsibility.Name);
                 if (c != null)
                 {
@@ -493,6 +504,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                         CurrencyName = row.OperCrsName
                     });
                 }
+
                 var m = myTempManagerGroups.FirstOrDefault(t => t.Name == row.Manager);
                 if (m != null)
                 {
@@ -518,6 +530,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                     });
                 }
             }
+
             using (var ent = GlobalOptions.GetEntities())
             {
                 var kontrChanged = ent.KONTR_BLS_RECALC.Where(_ => _.UserInsert != "dbo").ToList();
@@ -534,9 +547,9 @@ namespace KursAM2.ViewModel.Management.BreakEven
                     {
                         var d = ent.Database.SqlQuery<double?>(sqlBalans).FirstOrDefault();
                         var d2 = ent.Database.SqlQuery<double?>(sqlCurrentBalans).FirstOrDefault();
-                        k.KontrBalans = Math.Round((decimal) (d ?? 0), 2);
-                        k.KontrCrs = k.Kontragent.BalansCurrency.Name;
-                        k.KontrCurrentBalans = Math.Round((decimal) (d2 ?? 0), 2);
+                        k.KontrBalans = Math.Round((decimal)(d ?? 0), 2);
+                        k.KontrCrs = ((IName)k.Kontragent.Currency).Name;
+                        k.KontrCurrentBalans = Math.Round((decimal)(d2 ?? 0), 2);
                     }
                     catch (Exception ex)
                     {
@@ -555,6 +568,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 item.CostWORevalOne = item.CostWOReval / item.Quantity;
                 item.NakladOne = item.Naklad / item.Quantity;
             }
+
             NomenklGroups.Clear();
             foreach (var d in myTempNomenklGroups)
                 NomenklGroups.Add(d);
@@ -564,6 +578,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 item.ResultWOReval = Math.Round(item.Summa - item.CostWOReval - item.DilerSumma, 2);
                 item.Price = Math.Round(item.Summa / item.Quantity, 2);
             }
+
             KontrGroups.Clear();
             foreach (var d in myTempKontrGroups)
                 KontrGroups.Add(d);
@@ -573,6 +588,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 item.ResultWOReval = Math.Round(item.Summa - item.CostWOReval - item.DilerSumma, 2);
                 item.Price = Math.Round(item.Summa / item.Quantity, 2);
             }
+
             CoGroups.Clear();
             foreach (var d in myTempCoGroups)
                 CoGroups.Add(d);
@@ -582,6 +598,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 item.ResultWOReval = Math.Round(item.Summa - item.CostWOReval - item.DilerSumma, 2);
                 item.Price = Math.Round(item.Summa / item.Quantity, 2);
             }
+
             ManagerGroups.Clear();
             foreach (var d in myTempManagerGroups)
                 ManagerGroups.Add(d);

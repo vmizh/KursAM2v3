@@ -7,8 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -304,8 +302,8 @@ namespace KursAM2.ViewModel.Management
             if (CurrentExtend?.Nomenkl?.DocCode == null) return;
             // ReSharper disable once PossibleInvalidOperationException
             // ReSharper disable once PossibleNullReferenceException
-            var ctx = new NomPriceWindowViewModel((decimal) CurrentExtend?.Nomenkl?.DocCode);
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var ctx = new NomPriceWindowViewModel((decimal)CurrentExtend?.Nomenkl?.DocCode);
+            var dlg = new SelectDialogView { DataContext = ctx };
             dlg.ShowDialog();
         }
 
@@ -649,7 +647,7 @@ namespace KursAM2.ViewModel.Management
                     id == Guid.Parse("{D89B1E18-074E-4A7D-A0EE-9537DC1585D8}") ||
                     id == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
                     id == Guid.Parse("{E47EF726-3BEA-4B18-9773-E564D624FDF6}")
-                )
+                   )
                     foreach (var id2 in Main.Where(_ => _.ParentId == id).Select(_ => _.Id))
                     foreach (var d in Manager.Extend.Where(d => d.GroupId == id2))
                         ExtendActual.Add(d);
@@ -690,7 +688,7 @@ namespace KursAM2.ViewModel.Management
                     DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, 0, Guid.Parse(CurrentExtend.StringId));
                     return;
                 case DocumentType.Waybill:
-                    if(CurrentExtend.DocumentDC != null)
+                    if (CurrentExtend.DocumentDC != null)
                         DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, CurrentExtend.DocumentDC.Value);
                     break;
                 case DocumentType.StockHolderAccrual:
@@ -1297,7 +1295,7 @@ namespace KursAM2.ViewModel.Management
 
         private void ResetCurrencyColumns()
         {
-            var frm = (ProfitAndLosses2) Form;
+            var frm = (ProfitAndLosses2)Form;
             foreach (var col in frm.treeListMain.Columns)
             {
                 TreeListControlBand b, b1;

@@ -861,7 +861,7 @@
     </Compile>
     <Compile Include="ViewModel\Reference\Kontragent\KontragentCardWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\Kontragent\KontragentReferenceWindowViewModel.cs" />
-    <Compile Include="ViewModel\Reference\Kontragent\KontragentReferenceViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Kontragent\KontragentViewModelReferenceViewModel.cs" />
     <Compile Include="ViewModel\Splash\DebitorCreditorCalcKontrSplashViewModel.cs" />
     <Compile Include="ViewModel\Splash\SplashBaseViewModel.cs" />
     <Compile Include="View\Finance\KontragentRefOutView.xaml.cs">

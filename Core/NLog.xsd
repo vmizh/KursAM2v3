@@ -1261,7 +1261,7 @@
         </xs:attribute>
         <xs:attribute name="category" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Layout that renders event Category.</xs:documentation>
+            <xs:documentation>Layout that renders event Group.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="entryType" type="SimpleLayoutAttribute">

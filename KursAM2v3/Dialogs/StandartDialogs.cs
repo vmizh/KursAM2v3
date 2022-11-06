@@ -29,7 +29,6 @@ using KursDomain.References;
 using Bank = KursDomain.Documents.Bank.Bank;
 using BankAccount = KursDomain.Documents.Bank.BankAccount;
 using Employee = KursDomain.Documents.Employee.Employee;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 using Project = KursDomain.Documents.CommonReferences.Project;
 using Region = KursDomain.Documents.CommonReferences.Region;
 using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;

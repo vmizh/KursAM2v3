@@ -23,7 +23,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             if (vm == null) return;
             var document = vm.Document;
             sheet.Cells["G1"].Value = GlobalOptions.SystemProfile.OwnerKontragent.Name;
-            sheet.Cells["G2"].Value = GlobalOptions.SystemProfile.OwnerKontragent.ADDRESS;
+            sheet.Cells["G2"].Value = GlobalOptions.SystemProfile.OwnerKontragent.Address;
             sheet.Cells["C5"].Value = string.IsNullOrWhiteSpace(document.OuterNumber)
                 ? document.InnerNumber.ToString()
                 : document.OuterNumber;

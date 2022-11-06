@@ -5,8 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Core;
@@ -29,17 +27,17 @@ namespace KursAM2.View.Finance.Cash
     /// </summary>
     public partial class CashOutView : ILayout
     {
-        public ButtonEdit KontrSelectButton = new ButtonEdit();
         public ButtonEdit AccuredInfoButton;
+        public ButtonEdit KontrSelectButton = new();
 
-        public DataLayoutItem NCODEItem = new DataLayoutItem();
-        public DataLayoutItem SFactNameItem = new DataLayoutItem();
-        public PopupCalcEdit SumKontrcont = new PopupCalcEdit();
-        public PopupCalcEdit Sumordcont = new PopupCalcEdit();
+        public DataLayoutItem NCODEItem = new();
+        public DataLayoutItem SFactNameItem = new();
+        public PopupCalcEdit SumKontrcont = new();
+        public PopupCalcEdit Sumordcont = new();
 
         public CashOutView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, layoutItems);
             //Loaded += CashoutView_Loaded;
@@ -47,7 +45,7 @@ namespace KursAM2.View.Finance.Cash
             MinWidth = 1000;
         }
 
-        public ObservableCollection<Currency> CurrencyList { set; get; } = new ObservableCollection<Currency>();
+        public ObservableCollection<Currency> CurrencyList { set; get; } = new();
 
         public ComboBoxEdit CurrencyItem { get; set; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
@@ -150,7 +148,7 @@ namespace KursAM2.View.Finance.Cash
                         IsTextEditable = false
                     };
                     AccuredInfoButton.SetBinding(IsEnabledProperty,
-                        new Binding { Path = new PropertyPath("IsAccuredOpenEnable") });
+                        new Binding {Path = new PropertyPath("IsAccuredOpenEnable")});
                     AccuredInfoButton.DefaultButtonClick += AccuredOpen_DefaultButtonClick;
                     BindingHelper.CopyBinding(oldContent, AccuredInfoButton, BaseEdit.EditValueProperty);
                     e.Item.Content = AccuredInfoButton;
@@ -167,7 +165,7 @@ namespace KursAM2.View.Finance.Cash
                         IsTextEditable = false
                     };
                     KontrSelectButton.SetBinding(IsEnabledProperty,
-                        new Binding { Path = new PropertyPath("IsKontrSelectEnable") });
+                        new Binding {Path = new PropertyPath("IsKontrSelectEnable")});
                     KontrSelectButton.DefaultButtonClick += KontrEdit_DefaultButtonClick;
                     BindingHelper.CopyBinding(oldContent, KontrSelectButton, BaseEdit.EditValueProperty);
                     e.Item.Content = KontrSelectButton;
@@ -222,7 +220,7 @@ namespace KursAM2.View.Finance.Cash
                         MaskUseAsDisplayFormat = true
                     };
                     SumKontrcont.SetBinding(IsEnabledProperty,
-                        new Binding { Path = new PropertyPath("IsKontrSummaEnabled") });
+                        new Binding {Path = new PropertyPath("IsKontrSummaEnabled")});
                     BindingHelper.CopyBinding(oldContent, SumKontrcont, BaseEdit.EditValueProperty);
                     e.Item.Content = SumKontrcont;
                     e.Item.Width = 250;
@@ -252,7 +250,7 @@ namespace KursAM2.View.Finance.Cash
         {
             if (!(DataContext is CashOutWindowViewModel ctx)) return;
             var doc = ctx.Document;
-            if ((decimal)e.NewValue < 0)
+            if ((decimal) e.NewValue < 0)
             {
                 WindowManager.ShowMessage(this, "Сумма ордера не может быть меньше 0!", "Ошибка",
                     MessageBoxImage.Stop);
@@ -260,7 +258,7 @@ namespace KursAM2.View.Finance.Cash
                 return;
             }
 
-            if ((decimal)e.NewValue > doc.CRS_SUMMA + doc.MaxSumma && doc.SPOST_DC != null)
+            if ((decimal) e.NewValue > doc.CRS_SUMMA + doc.MaxSumma && doc.SPOST_DC != null)
             {
                 WindowManager.ShowMessage(this, "Сумма ордера не может быть больше сумму оплаты по счету!", "Ошибка",
                     MessageBoxImage.Stop);
@@ -284,10 +282,8 @@ namespace KursAM2.View.Finance.Cash
             if (doc == null)
                 return;
             if (doc.AccuredAmountOfSupplier != null)
-            {
                 DocumentsOpenManager.Open(
                     DocumentType.AccruedAmountOfSupplier, 0, doc.AccuredAmountOfSupplier.DocId, this);
-            }
         }
 
         private void SFPostEdit_DefaultButtonClick(object sender, RoutedEventArgs e)
@@ -360,14 +356,14 @@ namespace KursAM2.View.Finance.Cash
                                 Id = Guid.NewGuid(),
                                 Rate = 1,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                Summa = (decimal)dtx.Document.SUMM_ORD,
+                                Summa = (decimal) dtx.Document.SUMM_ORD,
                                 CashDC = dtx.Document.DocCode,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                DocDC = (decimal)dtx.Document.SPOST_DC
+                                DocDC = (decimal) dtx.Document.SPOST_DC
                             });
                         else
                             // ReSharper disable once PossibleInvalidOperationException
-                            old.Summa = (decimal)dtx.Document.SUMM_ORD;
+                            old.Summa = (decimal) dtx.Document.SUMM_ORD;
 
                         ctx.SaveChanges();
                     }
@@ -402,10 +398,10 @@ namespace KursAM2.View.Finance.Cash
                     ctx.Document.StockHolder = null;
                     ctx.Document.KONTRAGENT_DC = kontr.DocCode;
                     ctx.Document.NAME_ORD = kontr?.Name;
-                    ctx.Document.KONTR_CRS_DC = kontr?.BalansCurrency.DocCode;
+                    ctx.Document.KONTR_CRS_DC = ((IDocCode) kontr?.Currency).DocCode;
                     ctx.Document.SPostName = null;
                     ctx.Document.SPOST_DC = null;
-                    ctx.Document.Currency = kontr.BalansCurrency;
+                    ctx.Document.Currency = kontr.Currency as Currency;
                     CurrencyItem.IsEnabled = false;
                     break;
                 case CashKontragentType.Employee:
@@ -438,7 +434,7 @@ namespace KursAM2.View.Finance.Cash
                     CurrencyItem.IsEnabled = false;
                     break;
                 case CashKontragentType.Cash:
-                    var ch = StandartDialogs.SelectCash(new List<KursDomain.Documents.Cash.Cash> { ctx.Document.Cash });
+                    var ch = StandartDialogs.SelectCash(new List<KursDomain.Documents.Cash.Cash> {ctx.Document.Cash});
                     if (ch != null) ctx.Document.CashTo = ch;
                     ctx.Document.KONTRAGENT_DC = null;
                     ctx.Document.BankAccount = null;
@@ -457,7 +453,7 @@ namespace KursAM2.View.Finance.Cash
         private void LayoutItems_OnAutoGeneratedUI(object sender, EventArgs e)
         {
             foreach (var item in WindowHelper.GetLogicalChildCollection<MemoEdit>(layoutItems))
-                if (item.EditValue != null && !string.IsNullOrWhiteSpace((string)item.EditValue))
+                if (item.EditValue != null && !string.IsNullOrWhiteSpace((string) item.EditValue))
                     item.Height = 80;
         }
 

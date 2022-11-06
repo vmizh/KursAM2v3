@@ -5,9 +5,10 @@ using System.Linq;
 using Core;
 using Core.ViewModel.Base;
 using Data;
-using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Documents.Invoices;
+using KursDomain.ICommon;
+using KursDomain.References;
+using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 // ReSharper disable InconsistentNaming
 namespace KursDomain.Documents.Vzaimozachet;
@@ -213,9 +214,9 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
             myKontragent = value;
             if (myKontragent != null)
             {
-                Entity.VZT_CRS_DC = myKontragent.BalansCurrency.DocCode;
+                Entity.VZT_CRS_DC = ((IDocCode)myKontragent.Currency).DocCode;
                 Entity.VZT_KONTR_DC = myKontragent.DocCode;
-                Entity.VZT_KONTR_CRS_DC = myKontragent.BalansCurrency.DocCode;
+                Entity.VZT_KONTR_CRS_DC = ((IDocCode)myKontragent.Currency).DocCode;
                 Entity.VZT_KONTR_CRS_RATE = 1;
             }
 
@@ -313,7 +314,7 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
         }
     }
 
-    public References.Currency KontragentCurrency => Kontragent?.BalansCurrency;
+    public References.Currency KontragentCurrency => Kontragent?.Currency as References.Currency;
 
     public decimal VZT_KONTR_CRS_RATE
     {
@@ -557,7 +558,7 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
         VZT_DOC_NUM = ent.VZT_DOC_NUM;
         VZT_DOC_NOTES = ent.VZT_DOC_NOTES;
         VZT_KONTR_DC = ent.VZT_KONTR_DC;
-        Kontragent = SD_43 == null ? null : MainReferences.GetKontragent(SD_43.DOC_CODE);
+        Kontragent = SD_43 == null ? null : GlobalOptions.ReferencesCache.GetKontragent(SD_43.DOC_CODE) as Kontragent;
         VZT_CRS_POGASHENO = ent.VZT_CRS_POGASHENO;
         VZT_UCH_CRS_POGASHENO = ent.VZT_UCH_CRS_POGASHENO;
         VZT_UCH_CRS_RATE = ent.VZT_UCH_CRS_RATE;

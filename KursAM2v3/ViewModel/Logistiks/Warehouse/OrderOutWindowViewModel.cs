@@ -17,7 +17,6 @@ using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -98,7 +97,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         #region Справочники
 
-        public List<Kontragent> Kontragents => MainReferences.ActiveKontragents.Values.ToList();
+        public List<KontragentViewModel> Kontragents => MainReferences.ActiveKontragents.Values.ToList();
 
         public List<KursDomain.Documents.NomenklManagement.Warehouse> StoreDictionary =>
             MainReferences.Warehouses.Values.ToList();

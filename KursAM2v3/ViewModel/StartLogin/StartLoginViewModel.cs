@@ -26,10 +26,8 @@ using KursAM2.Managers;
 using KursAM2.Properties;
 using KursAM2.ViewModel.Splash;
 using KursDomain.DBContext;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Employee;
 using KursDomain.References;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.ViewModel.StartLogin
 {
@@ -268,8 +266,9 @@ namespace KursAM2.ViewModel.StartLogin
                         GlobalOptions.GetEntities().SD_43.Include(_ => _.TD_43).
                             Include(_ => _.TD_43.Select(x => x.SD_44))
                             .SingleOrDefault(_ => _.DOC_CODE == DC);
-                    if(ownKontr != null)
-                        GlobalOptions.SystemProfile.OwnerKontragent = new Kontragent(ownKontr);
+                    if (ownKontr != null)
+                        GlobalOptions.SystemProfile.OwnerKontragent = new Kontragent();
+                    GlobalOptions.SystemProfile.OwnerKontragent.LoadFromEntity(ownKontr, GlobalOptions.ReferencesCache);
                 }
 
                 var mainCrsDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(

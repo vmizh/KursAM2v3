@@ -6,7 +6,9 @@ using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management;
-using LayoutManager; //using WindowsInput;
+using LayoutManager;
+
+//using WindowsInput;
 
 namespace KursAM2.View.Management
 {
@@ -19,7 +21,7 @@ namespace KursAM2.View.Management
 
         public KontragentBalansForm()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             //LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             myKontragentLookUpLayoutName =
@@ -30,6 +32,7 @@ namespace KursAM2.View.Management
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -37,12 +40,12 @@ namespace KursAM2.View.Management
 
         private void KontragentBalansForm_Loaded(object sender, RoutedEventArgs e)
         {
-           // LayoutManager.Load();
+            // LayoutManager.Load();
             treePeriods.SelectionMode = MultiSelectMode.None;
             KontrOperGrid.SelectionMode = MultiSelectMode.None;
             var ctx = DataContext as KontragentBalansWindowViewModel;
             if (ctx?.StartKontragent != null)
-                ctx.Kontragent = ctx.Kontragents.Single(_ => _.DOC_CODE == ctx.StartKontragent.DOC_CODE);
+                ctx.Kontragent = ctx.Kontragents.Single(_ => _.DocCode == ctx.StartKontragent.DocCode);
             searchLookUpEditKontragent.EditValue = ctx.Kontragent;
             searchLookUpEditKontragent.IsPopupOpen = false;
         }

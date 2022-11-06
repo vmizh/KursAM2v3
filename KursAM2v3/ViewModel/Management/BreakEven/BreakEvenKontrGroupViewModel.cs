@@ -1,4 +1,5 @@
 ﻿using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Management.BreakEven
 {

@@ -11,16 +11,17 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
 using KursDomain.Documents.Cash;
-using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.ICommon;
+using KursDomain.References;
 using Newtonsoft.Json;
+using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursDomain.Documents.Bank;
 
 [MetadataType(typeof(DataAnnotationsTD_101ViewModel))]
 public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
 {
+    private Kontragent _myKontragent;
     public decimal? DeltaPrihod = 0;
     public decimal? DeltaRashod = 0;
 
@@ -34,7 +35,6 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
     private CashOrder myCashOut;
     private References.Currency myCurrency;
     private TD_101 myEntity;
-    private Kontragent myKontragent;
     private Kontragent myPayment;
     private string mySFName;
     private SDRSchet mySHPZ;
@@ -208,13 +208,13 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
 
     public Kontragent Kontragent
     {
-        get => myKontragent;
+        get => _myKontragent;
         set
         {
-            if (myKontragent != null && myKontragent.Equals(value)) return;
-            myKontragent = value;
-            if (myKontragent != null)
-                Entity.VVT_KONTRAGENT = myKontragent.DocCode;
+            if (_myKontragent != null && _myKontragent.Equals(value)) return;
+            _myKontragent = value;
+            if (_myKontragent != null)
+                Entity.VVT_KONTRAGENT = _myKontragent.DocCode;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(KontragentName));
         }
@@ -228,7 +228,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
             if (myPayment != null && myPayment.Equals(value)) return;
             myPayment = value;
             if (myPayment != null)
-                Entity.VVT_PLATEL_POLUCH_DC = myPayment.DOC_CODE;
+                Entity.VVT_PLATEL_POLUCH_DC = myPayment.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -822,11 +822,11 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
         if (Entity.SD_101 != null)
             myBankAccount = MainReferences.BankAccounts[Entity.SD_101.VV_ACC_DC];
         if (Entity.VVT_KONTRAGENT != null)
-            myKontragent = MainReferences.GetKontragent(Entity.VVT_KONTRAGENT);
+            _myKontragent = GlobalOptions.ReferencesCache.GetKontragent(Entity.VVT_KONTRAGENT) as Kontragent;
         if (Entity.VVT_SHPZ_DC != null)
             mySHPZ = MainReferences.SDRSchets[Entity.VVT_SHPZ_DC.Value];
         if (Entity.VVT_PLATEL_POLUCH_DC != null)
-            myPayment = MainReferences.GetKontragent(Entity.VVT_PLATEL_POLUCH_DC);
+            myPayment = GlobalOptions.ReferencesCache.GetKontragent(Entity.VVT_PLATEL_POLUCH_DC) as Kontragent;
         if (MainReferences.Currencies.ContainsKey(Entity.VVT_CRS_DC))
             myCurrency = MainReferences.Currencies[Entity.VVT_CRS_DC];
         if (Entity.VVT_SFACT_CLIENT_DC != null)
@@ -840,7 +840,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
                 $"С/ф №{Entity.SD_26.SF_IN_NUM}/{Entity.SD_26.SF_POSTAV_NUM} от " +
                 $"{Entity.SD_26.SF_POSTAV_DATE} на {Entity.SD_26.SF_CRS_SUMMA} " +
                 // ReSharper disable once PossibleInvalidOperationException
-                $"{MainReferences.Currencies[(decimal)Entity.SD_26.SF_CRS_DC]}";
+                $"{MainReferences.Currencies[(decimal) Entity.SD_26.SF_CRS_DC]}";
         if (Entity.AccuredAmountOfSupplierRow != null)
         {
             var acc = Entity.AccuredAmountOfSupplierRow;
@@ -1020,7 +1020,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
     #region compendiums
 
     public List<References.Currency> CurrencysCompendium => MainReferences.Currencies.Values.ToList();
-    public List<SDRSchet> SHPZList { set; get; } = new List<SDRSchet>(MainReferences.SDRSchets.Values.ToList());
+    public List<SDRSchet> SHPZList { set; get; } = new(MainReferences.SDRSchets.Values.ToList());
 
     #endregion
 }

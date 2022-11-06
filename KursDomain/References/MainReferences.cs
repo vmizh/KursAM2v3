@@ -5,8 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.EntityViewModel.CommonReferences;
-using Core.ViewModel.Base;
 using Data;
 using Helper;
 using KursDomain.Documents.AccruedAmount;
@@ -15,14 +13,12 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
-using KursDomain.IReferences;
 using KursDomain.References;
 using Bank = KursDomain.Documents.Bank.Bank;
 using BankAccount = KursDomain.Documents.Bank.BankAccount;
 using ContractType = KursDomain.Documents.Dogovora.ContractType;
 using DeliveryCondition = KursDomain.Documents.NomenklManagement.DeliveryCondition;
 using Employee = KursDomain.Documents.Employee.Employee;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
 using Project = KursDomain.Documents.CommonReferences.Project;
 using Region = KursDomain.Documents.CommonReferences.Region;
@@ -43,11 +39,11 @@ public static class MainReferences
     static MainReferences()
     {
         ThemeNames = getThemeNames();
-        AllKontragents = new Dictionary<decimal, Kontragent>();
+        AllKontragents = new Dictionary<decimal, KontragentViewModel>();
         ALLNomenkls = new Dictionary<decimal, Nomenkl>();
-        ActiveKontragents = new Dictionary<decimal, Kontragent>();
+        ActiveKontragents = new Dictionary<decimal, KontragentViewModel>();
         ActiveNomenkls = new Dictionary<decimal, Nomenkl>();
-        COList = new Dictionary<decimal, CentrOfResponsibility>();
+        COList = new Dictionary<decimal, CentrResponsibility>();
         PayConditions = new Dictionary<decimal, PayCondition>();
         VzaimoraschetTypes = new Dictionary<decimal, VzaimoraschetType>();
         FormRaschets = new Dictionary<decimal, FormPay>();
@@ -91,7 +87,7 @@ public static class MainReferences
     public static Dictionary<decimal, SD_111ViewModel> MutualTypes { get; }
     public static Dictionary<decimal, SDRSchet> SDRSchets { get; }
     public static Dictionary<decimal, SDRState> SDRStates { get; }
-    public static Dictionary<decimal, CentrOfResponsibility> COList { get; }
+    public static Dictionary<decimal, CentrResponsibility> COList { get; }
     public static Dictionary<decimal, PayCondition> PayConditions { get; }
     public static Dictionary<decimal, VzaimoraschetType> VzaimoraschetTypes { get; }
     public static Dictionary<decimal, FormPay> FormRaschets { get; }
@@ -101,12 +97,12 @@ public static class MainReferences
     public static Dictionary<decimal, NomenklGroup> NomenklGroups { get; }
     public static Dictionary<decimal, NomenklProductType> NomenklTypes { get; }
     public static Dictionary<decimal, Employee> Employees { get; }
-    public static Dictionary<decimal, Kontragent> AllKontragents { set; get; }
+    public static Dictionary<decimal, KontragentViewModel> AllKontragents { set; get; }
     public static Dictionary<Guid, AccruedAmountTypeViewModel> AccruedAmountTypes { set; get; }
 
     // ReSharper disable once InconsistentNaming
     public static Dictionary<decimal, Nomenkl> ALLNomenkls { set; get; }
-    public static Dictionary<decimal, Kontragent> ActiveKontragents { set; get; }
+    public static Dictionary<decimal, KontragentViewModel> ActiveKontragents { set; get; }
     public static Dictionary<decimal, Nomenkl> ActiveNomenkls { set; get; }
     public static Dictionary<decimal, Warehouse> Warehouses { set; get; }
 
@@ -236,7 +232,6 @@ public static class MainReferences
             return NomenklGroups[dc];
         return null;
     }
-
 
 
     public static NomenklGroup GetNomenklGroup(decimal? dc)
@@ -379,7 +374,7 @@ public static class MainReferences
             {
                 if (ALLNomenkls.ContainsKey(n.DOC_CODE)) ALLNomenkls.Remove(n.DOC_CODE);
                 var newNom = new Nomenkl();
-                newNom.LoadFromEntity(n,null);
+                newNom.LoadFromEntity(n, null);
                 ALLNomenkls.Add(n.DOC_CODE, newNom);
             }
         }
@@ -450,7 +445,7 @@ public static class MainReferences
                     .AsNoTracking()
                     .Include(_ => _.SD_301)
                     .ToList()
-                    .Select(item => new Kontragent(item)))
+                    .Select(item => new KontragentViewModel(item)))
             {
                 if (AllKontragents.ContainsKey(newItem.DOC_CODE))
                     AllKontragents[newItem.DOC_CODE] = newItem;
@@ -473,22 +468,22 @@ public static class MainReferences
     }
 
     //TODO Вставить проверку на обновление контрагента по дате обновления
-    public static Kontragent GetKontragent(decimal dc)
+    public static KontragentViewModel GetKontragent(decimal dc)
     {
         return AllKontragents.ContainsKey(dc) ? AllKontragents[dc] : null;
     }
 
-    public static Kontragent GetKontragent(decimal? dc)
+    public static KontragentViewModel GetKontragent(decimal? dc)
     {
         return dc == null ? null : GetKontragent(dc.Value);
     }
 
-    public static CentrOfResponsibility GetCO(decimal dc)
+    public static CentrResponsibility GetCO(decimal dc)
     {
         return COList.ContainsKey(dc) ? COList[dc] : null;
     }
 
-    public static CentrOfResponsibility GetCO(decimal? dc)
+    public static CentrResponsibility GetCO(decimal? dc)
     {
         return dc == null ? null : GetCO(dc.Value);
     }
@@ -538,21 +533,23 @@ public static class MainReferences
 
             var s40 = ent.Set<SD_40>().AsNoTracking().ToList();
             if (!COList.ContainsKey(0))
-                COList.Add(0, new CentrOfResponsibility
+                COList.Add(0, new CentrResponsibility
                 {
-                    Entity = new SD_40 { DOC_CODE = 0, CENT_NAME = "Центр ответественности не указан" }
+                    DocCode = 0,
+                    Name = "Центр ответественности не указан"
                 });
 
             foreach (var item in s40)
                 if (COList.ContainsKey(item.DOC_CODE))
                 {
                     var d = COList[item.DOC_CODE];
-                    d.UpdateFrom(item);
-                    d.myState = RowStatus.NotEdited;
+                    d.LoadFromEntity(item);
                 }
                 else
                 {
-                    COList.Add(item.DOC_CODE, new CentrOfResponsibility(item) { myState = RowStatus.NotEdited });
+                    var co = new CentrResponsibility();
+                    co.LoadFromEntity(item);
+                    COList.Add(item.DOC_CODE, co);
                 }
 
             foreach (var k in COList.Keys)
@@ -743,13 +740,13 @@ public static class MainReferences
                 {
                     var newItem = new Currency();
                     newItem.LoadFromEntity(item);
-                    Currencies.Add(item.DOC_CODE, newItem );
+                    Currencies.Add(item.DOC_CODE, newItem);
                 }
 
             Currencies.Add(0m, new Currency
             {
                 DocCode = 0m,
-                Name = "Валюта не указана",
+                Name = "Валюта не указана"
             });
             keys = Currencies.Keys.ToList();
             foreach (var k in keys)
@@ -1061,20 +1058,20 @@ public static class MainReferences
             else
             {
                 var newNom = new Nomenkl();
-                newNom.LoadFromEntity( new SD_83
-                    {
-                        DOC_CODE = d.DOC_CODE,
-                        NOM_NAME = d.NOM_NAME,
-                        NOM_NOMENKL = d.NOM_NOMENKL,
-                        NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
-                        Id = d.Id,
-                        MainId = d.MainId,
-                        UpdateDate = d.UpdateDate,
-                        NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
-                        NOM_CATEG_DC = d.NOM_CATEG_DC,
-                        NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
-                        IsCurrencyTransfer = d.IsCurrencyTransfer
-                    },null);
+                newNom.LoadFromEntity(new SD_83
+                {
+                    DOC_CODE = d.DOC_CODE,
+                    NOM_NAME = d.NOM_NAME,
+                    NOM_NOMENKL = d.NOM_NOMENKL,
+                    NOM_SALE_CRS_DC = d.NOM_SALE_CRS_DC,
+                    Id = d.Id,
+                    MainId = d.MainId,
+                    UpdateDate = d.UpdateDate,
+                    NOM_0MATER_1USLUGA = d.NOM_0MATER_1USLUGA,
+                    NOM_CATEG_DC = d.NOM_CATEG_DC,
+                    NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
+                    IsCurrencyTransfer = d.IsCurrencyTransfer
+                }, null);
                 newNom.Unit = Units[d.UNIT_DC];
                 newNom.Currency = Currencies[d.NOM_SALE_CRS_DC];
                 newNom.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
@@ -1137,7 +1134,7 @@ public static class MainReferences
         var d = data[0];
         if (ALLNomenkls.ContainsKey(d.DOC_CODE)) ALLNomenkls.Remove(d.DOC_CODE);
         var newNom = new Nomenkl();
-        newNom.LoadFromEntity( new SD_83
+        newNom.LoadFromEntity(new SD_83
         {
             DOC_CODE = d.DOC_CODE,
             NOM_NAME = d.NOM_NAME,
@@ -1150,7 +1147,7 @@ public static class MainReferences
             NOM_CATEG_DC = d.NOM_CATEG_DC,
             NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
             IsCurrencyTransfer = d.IsCurrencyTransfer
-        },null);
+        }, null);
         newNom.Unit = Units[d.UNIT_DC];
         newNom.Currency = Currencies[d.NOM_SALE_CRS_DC];
         newNom.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
@@ -1177,7 +1174,7 @@ public static class MainReferences
             foreach (var d in data)
             {
                 var newNom = new Nomenkl();
-                newNom.LoadFromEntity( new SD_83
+                newNom.LoadFromEntity(new SD_83
                 {
                     DOC_CODE = d.DOC_CODE,
                     NOM_NAME = d.NOM_NAME,
@@ -1190,7 +1187,7 @@ public static class MainReferences
                     NOM_CATEG_DC = d.NOM_CATEG_DC,
                     NOM_PRODUCT_DC = d.NOM_PRODUCT_DC,
                     IsCurrencyTransfer = d.IsCurrencyTransfer
-                },null);
+                }, null);
                 newNom.Unit = Units[d.UNIT_DC];
                 newNom.Currency = Currencies[d.NOM_SALE_CRS_DC];
                 newNom.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
@@ -1204,7 +1201,7 @@ public static class MainReferences
         }
 
         var dm = ALLNomenkls.Values.Select(_ => _.UpdateDate).ToList();
-       // var dateTimes = dm as IList<DateTime?> ?? dm.ToList();
+        // var dateTimes = dm as IList<DateTime?> ?? dm.ToList();
         if (dm.Any())
         {
             var dateTime = dm.Max();
@@ -1229,7 +1226,7 @@ public static class MainReferences
                     .Include(_ => _.SD_301)
                     .ToList())
             {
-                var newItem = new Kontragent(item);
+                var newItem = new KontragentViewModel(item);
                 if (AllKontragents.ContainsKey(newItem.DOC_CODE))
                 {
                     AllKontragents[newItem.DOC_CODE] = newItem;
@@ -1306,7 +1303,7 @@ public static class MainReferences
             }, null, 1000 * 60, Timeout.Infinite);
     }
 
-    public static Dictionary<decimal, Kontragent> GetAllKontragents()
+    public static Dictionary<decimal, KontragentViewModel> GetAllKontragents()
     {
         if (AllKontragents.Count == 0)
         {
@@ -1315,7 +1312,7 @@ public static class MainReferences
                 var ent = GlobalOptions.GetEntities();
                 foreach (var item in ent.SD_43.AsNoTracking().Include(_ => _.SD_301).ToList())
                 {
-                    var newItem = new Kontragent(item);
+                    var newItem = new KontragentViewModel(item);
                     AllKontragents.Add(newItem.DOC_CODE, newItem);
                     if ((item.DELETED ?? 0) == 0)
                         ActiveKontragents.Add(newItem.DOC_CODE, newItem);
@@ -1345,7 +1342,7 @@ public static class MainReferences
                 )
                     if (AllKontragents.Keys.Contains(item.DOC_CODE))
                     {
-                        var newItem = new Kontragent(item);
+                        var newItem = new KontragentViewModel(item);
                         AllKontragents.Add(newItem.DOC_CODE, newItem);
                         if ((item.DELETED ?? 0) == 0)
                             ActiveKontragents.Add(newItem.DOC_CODE, newItem);
@@ -1354,7 +1351,7 @@ public static class MainReferences
                     {
                         AllKontragents.Remove(item.DOC_CODE);
                         ActiveKontragents.Remove(item.DOC_CODE);
-                        var newItem = new Kontragent(item);
+                        var newItem = new KontragentViewModel(item);
                         AllKontragents.Add(item.DOC_CODE, newItem);
                         if ((item.DELETED ?? 0) == 0)
                             ActiveKontragents.Add(item.DOC_CODE, newItem);
@@ -1380,7 +1377,7 @@ public static class MainReferences
                     foreach (var item in ent.SD_83.AsNoTracking().Include(_ => _.SD_175).ToList())
                     {
                         var newItem = new Nomenkl();
-                        newItem.LoadFromEntity(item,GlobalOptions.ReferencesCache);
+                        newItem.LoadFromEntity(item, GlobalOptions.ReferencesCache);
                         ALLNomenkls.Add(item.DOC_CODE, newItem);
                         if ((item.NOM_DELETED ?? 0) == 0)
                             ActiveNomenkls.Add(item.DOC_CODE, newItem);
@@ -1396,7 +1393,7 @@ public static class MainReferences
         {
             var dateTime = ALLNomenkls.Values.Max(_ => _.UpdateDate);
             if (dateTime == null) return ALLNomenkls;
-            var date = (DateTime)dateTime;
+            var date = dateTime;
             try
             {
                 var ent = GlobalOptions.GetEntities();
@@ -1414,7 +1411,7 @@ public static class MainReferences
                     if (ALLNomenkls.Keys.Contains(item.DOC_CODE))
                     {
                         var newItem = new Nomenkl();
-                        newItem.LoadFromEntity(item,GlobalOptions.ReferencesCache);
+                        newItem.LoadFromEntity(item, GlobalOptions.ReferencesCache);
                         ALLNomenkls.Add(item.DOC_CODE, newItem);
                         if ((item.NOM_DELETED ?? 0) == 0)
                             ActiveNomenkls.Add(item.DOC_CODE, newItem);

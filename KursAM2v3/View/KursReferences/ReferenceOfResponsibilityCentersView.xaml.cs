@@ -10,6 +10,7 @@ using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.DragDrop;
 using KursAM2.ViewModel.Reference;
 using KursDomain.Documents.CommonReferences;
+using KursDomain.References;
 using LayoutManager;
 
 namespace KursAM2.View.KursReferences
@@ -29,7 +30,7 @@ namespace KursAM2.View.KursReferences
             Closing += ReferenceOfResponsibilityCentersView_Closing;
         }
 
-        public CentrOfResponsibility dropCenter { set; get; }
+        public CentrResponsibilityViewModel dropCenter { set; get; }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
 
@@ -63,8 +64,8 @@ namespace KursAM2.View.KursReferences
 
         private void TreeListDragDropManager_Drop(object sender, TreeListDropEventArgs e)
         {
-            if (!(e.TargetNode.Content is CentrOfResponsibility t) || dropCenter == null) return;
-            dropCenter.CentParentDC = t.DocCode;
+            if (!(e.TargetNode.Content is CentrResponsibility t) || dropCenter == null) return;
+            dropCenter.ParentDC = t.DocCode;
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var tx = ctx.Database.BeginTransaction();

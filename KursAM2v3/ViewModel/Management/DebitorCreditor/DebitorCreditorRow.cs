@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using Core.ViewModel.Base;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Management.DebitorCreditor
 {
@@ -9,7 +9,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
     {
         private bool myIsSelected;
 
-        [DataMember] public Kontragent KontrInfo { set; get; }
+        [DataMember] public KontragentViewModel KontrInfo { set; get; }
 
         [DataMember] public decimal UchetStart { set; get; }
 

@@ -1938,7 +1938,7 @@ namespace KursAM2.Managers.Invoices
                                 SF_KONTR_CRS_SUMMA = doc.Summa,
                                 SF_CRS_DC = doc.Entity.SF_CRS_DC,
                                 SF_CRS_RATE = doc.SF_CRS_RATE,
-                                SF_CLIENT_DC = doc.Client.DOC_CODE,
+                                SF_CLIENT_DC = doc.Client.DocCode,
                                 SF_CLIENT_NAME = doc.SF_CLIENT_NAME,
                                 SF_DILER_SUMMA = doc.SF_DILER_SUMMA,
                                 SF_DILER_DC = doc.SF_DILER_DC,

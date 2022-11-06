@@ -9,6 +9,7 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
+using KursDomain.References;
 
 // ReSharper disable UnusedMember.Global
 namespace KursDomain.Documents.Cash;
@@ -16,7 +17,7 @@ namespace KursDomain.Documents.Cash;
 [MetadataType(typeof(DataAnnotationsCash))]
 public class Cash : RSViewModelBase, IEntity<SD_22>
 {
-    private CentrOfResponsibility myCO;
+    private CentrResponsibility myCO;
     private SD_22 myEntity;
     private bool myIsCanNegative;
 
@@ -119,7 +120,7 @@ public class Cash : RSViewModelBase, IEntity<SD_22>
         }
     }
 
-    public CentrOfResponsibility CO
+    public CentrResponsibility CO
     {
         get => myCO;
         set

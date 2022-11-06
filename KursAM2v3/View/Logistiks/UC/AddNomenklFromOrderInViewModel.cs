@@ -12,7 +12,6 @@ using Helper;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.Menu;
 using KursDomain.References;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.View.Logistiks.UC
 {
@@ -22,7 +21,7 @@ namespace KursAM2.View.Logistiks.UC
 
         public AddNomenklFromOrderInViewModel(Kontragent kontr = null)
         {
-            Kontragent = kontr;
+            myKontragentViewModel = kontr;
             LayoutControl = myDataUserControl = new AddNomenklFromInvoiceProviderRowUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             WindowName = "Выбор не отфакутрованных приходов";
@@ -48,7 +47,7 @@ namespace KursAM2.View.Logistiks.UC
                               "FROM TD_24 t " +
                               "INNER JOIN sd_24 s  ON t.DOC_CODE = s.DOC_CODE  " +
                               "AND s.DD_TYPE_DC = 2010000001 " +
-                              $"AND s.DD_KONTR_OTPR_DC = {CustomFormat.DecimalToSqlDecimal(Kontragent.DocCode)} " +
+                              $"AND s.DD_KONTR_OTPR_DC = {CustomFormat.DecimalToSqlDecimal(myKontragentViewModel.DocCode)} " +
                               "INNER JOIN td_26 t26  ON t.DDT_SPOST_DC = t26.DOC_CODE  " +
                               "AND t.DDT_SPOST_ROW_CODE = t26.CODE " +
                               "GROUP BY t.doc_code, t.CODE, t.DDT_NOMENKL_DC, s.DD_IN_NUM, s.DD_EXT_NUM, s.DD_DATE " +
@@ -62,7 +61,7 @@ namespace KursAM2.View.Logistiks.UC
                               "INNER JOIN sd_24 s  ON t.DOC_CODE = s.DOC_CODE  " +
                               "AND s.DD_TYPE_DC = 2010000001 " +
                               "AND ISNULL(s.DD_VOZVRAT,0) != 1  " +
-                              $"AND s.DD_KONTR_OTPR_DC = {CustomFormat.DecimalToSqlDecimal(Kontragent.DocCode)} " +
+                              $"AND s.DD_KONTR_OTPR_DC = {CustomFormat.DecimalToSqlDecimal(myKontragentViewModel.DocCode)} " +
                               "WHERE t.DDT_SPOST_DC IS NULL";
                     var data = ctx.Database.SqlQuery<SelectOrderInRowBase>(sql).ToList();
                     foreach (var r in data)
@@ -92,7 +91,7 @@ namespace KursAM2.View.Logistiks.UC
         #region Fields
 
         private AddNomenklFromInvoiceProviderRowUC myDataUserControl;
-        private readonly Kontragent Kontragent;
+        private readonly Kontragent myKontragentViewModel;
 
         #endregion
 

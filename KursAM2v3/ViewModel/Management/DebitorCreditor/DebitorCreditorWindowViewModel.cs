@@ -18,6 +18,7 @@ using KursAM2.ViewModel.Splash;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Menu;
+using KursDomain.References;
 
 // ReSharper disable CollectionNeverQueried.Global
 namespace KursAM2.ViewModel.Management.DebitorCreditor
@@ -409,7 +410,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                             GetRate(rates, d.rdr6, GlobalOptions.SystemProfile.MainCurrency.DocCode, start)
                         let rate2 = GetRate(rates, d.rdr6, GlobalOptions.SystemProfile.MainCurrency.DocCode, end)
                         let kontrInfo =
-                            new Kontragent(kontrs.SingleOrDefault(_ => _.DOC_CODE == d.rdr0))
+                            new KontragentViewModel(kontrs.SingleOrDefault(_ => _.DOC_CODE == d.rdr0))
                         select new DebitorCreditorRow
                         {
                             Delta = Math.Round(d.rdr4 * rate2 - (d.rdr1 * rate1 + (d.rdr2 * rate2 - d.rdr3 * rate2)),

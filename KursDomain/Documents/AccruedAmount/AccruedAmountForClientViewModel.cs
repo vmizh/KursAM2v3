@@ -8,7 +8,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.References;
 
 namespace KursDomain.Documents.AccruedAmount;
 
@@ -61,8 +61,7 @@ public class AccruedAmountForClientViewModel : RSViewModelBase, IDataErrorInfo
     #region Properties
 
     // ReSharper disable once CollectionNeverUpdated.Global
-    public ObservableCollection<AccruedAmountForClientRowViewModel> Rows { set; get; } =
-        new ObservableCollection<AccruedAmountForClientRowViewModel>();
+    public ObservableCollection<AccruedAmountForClientRowViewModel> Rows { set; get; } = new();
 
     public override string ToString()
     {
@@ -109,7 +108,7 @@ public class AccruedAmountForClientViewModel : RSViewModelBase, IDataErrorInfo
 
     public decimal Summa => Rows.Sum(_ => _.Summa);
     public decimal PaySumma => Rows.Sum(_ => _.PaySumma);
-    public References.Currency Currency => Kontragent?.BalansCurrency;
+    public References.Currency Currency => Kontragent?.Currency as References.Currency;
 
     public DateTime DocDate
     {
@@ -146,10 +145,10 @@ public class AccruedAmountForClientViewModel : RSViewModelBase, IDataErrorInfo
 
     public Kontragent Kontragent
     {
-        get => MainReferences.GetKontragent(Entity.KontrDC);
+        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.KontrDC) as Kontragent;
         set
         {
-            if (MainReferences.GetKontragent(Entity.KontrDC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetKontragent(Entity.KontrDC) == value) return;
             if (value != null)
             {
                 Entity.KontrDC = value.DocCode;

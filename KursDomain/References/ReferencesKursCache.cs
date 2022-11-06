@@ -141,10 +141,10 @@ public class ReferencesKursCache : IReferencesCache
 
         foreach (var item in Context.UD_43.AsNoTracking().ToList())
         {
-            var newItem = new KontragentCategory();
+            var newItem = new KontragentGroup();
             newItem.LoadFromEntity(item);
-            if (!KontragentCategories.ContainsKey(newItem.Id))
-                KontragentCategories.Add(newItem.Id, newItem);
+            if (!KontragentGroups.ContainsKey(newItem.Id))
+                KontragentGroups.Add(newItem.Id, newItem);
         }
 
         foreach (var item in Context.SD_82.AsNoTracking().ToList())
@@ -263,7 +263,7 @@ public class ReferencesKursCache : IReferencesCache
         SDRSchets.Clear();
 
         ClientCategories.Clear();
-        KontragentCategories.Clear();
+        KontragentGroups.Clear();
         NomenklCategories.Clear();
         Employees.Clear();
 
@@ -280,7 +280,6 @@ public class ReferencesKursCache : IReferencesCache
     }
 
     #endregion
-
 
     #region Аакты взаимозачета
 
@@ -481,30 +480,35 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Kontragent
 
-    public IKontragentCategory GetKontragentCategory(int? id)
+    public IKontragentGroup GetKontragentGroup(int? id)
     {
         if (id == null) return null;
-        if (KontragentCategories.ContainsKey(id.Value))
-            return KontragentCategories[id.Value];
+        if (KontragentGroups.ContainsKey(id.Value))
+            return KontragentGroups[id.Value];
         var data = Context.UD_43.FirstOrDefault(_ => _.EG_ID == id.Value);
         if (data == null) return null;
-        var newItem = new KontragentCategory();
+        var newItem = new KontragentGroup();
         newItem.LoadFromEntity(data);
-        KontragentCategories.Add(data.EG_ID, newItem);
-        return KontragentCategories[data.EG_ID];
+        KontragentGroups.Add(data.EG_ID, newItem);
+        return KontragentGroups[data.EG_ID];
     }
 
-    public IEnumerable<IKontragentCategory> GetKontragentCategoriesAll()
+    public IEnumerable<IKontragentGroup> GetKontragentCategoriesAll()
     {
-        return KontragentCategories.Values.ToList();
+        return KontragentGroups.Values.ToList();
     }
 
     public IKontragent GetKontragent(decimal? dc)
     {
         if (dc == null) return null;
-        if (Kontragents.ContainsKey(dc.Value))
-            return Kontragents[dc.Value];
-        var data = Context.SD_43.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+        return GetKontragent(dc.Value);
+    }
+
+    public IKontragent GetKontragent(decimal dc)
+    {
+        if (Kontragents.ContainsKey(dc))
+            return Kontragents[dc];
+        var data = Context.SD_43.FirstOrDefault(_ => _.DOC_CODE == dc);
         if (data == null) return null;
         var newItem = new Kontragent();
         newItem.LoadFromEntity(data, this);
@@ -619,9 +623,14 @@ public class ReferencesKursCache : IReferencesCache
     public INomenkl GetNomenkl(decimal? dc)
     {
         if (dc == null) return null;
-        if (Kontragents.ContainsKey(dc.Value))
-            return Nomenkls[dc.Value];
-        var data = Context.SD_83.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+        return GetNomenkl(dc.Value);
+    }
+
+    public INomenkl GetNomenkl(decimal dc)
+    {
+        if (Kontragents.ContainsKey(dc))
+            return Nomenkls[dc];
+        var data = Context.SD_83.FirstOrDefault(_ => _.DOC_CODE == dc);
         if (data == null) return null;
         var newItem = new Nomenkl();
         newItem.LoadFromEntity(data, this);
@@ -780,8 +789,8 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Dictionaries
 
-    private readonly Dictionary<int, IKontragentCategory> KontragentCategories =
-        new Dictionary<int, IKontragentCategory>();
+    private readonly Dictionary<int, IKontragentGroup> KontragentGroups =
+        new Dictionary<int, IKontragentGroup>();
 
     private readonly Dictionary<decimal, IKontragent> Kontragents = new Dictionary<decimal, IKontragent>();
     private readonly Dictionary<decimal, INomenkl> Nomenkls = new Dictionary<decimal, INomenkl>();

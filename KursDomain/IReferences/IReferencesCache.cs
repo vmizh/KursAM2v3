@@ -28,15 +28,17 @@ public interface IReferencesCache
     IBankAccount GetBankAccount(decimal? dc);
     IEnumerable<IBankAccount> GetBankAccountAll();
 
-    IKontragentCategory GetKontragentCategory(int? id);
-    IEnumerable<IKontragentCategory> GetKontragentCategoriesAll();
+    IKontragentGroup GetKontragentGroup(int? id);
+    IEnumerable<IKontragentGroup> GetKontragentCategoriesAll();
 
     IKontragent GetKontragent(decimal? dc);
+    IKontragent GetKontragent(decimal dc);
     IKontragent GetKontragent(Guid? id);
     IEnumerable<IKontragent> GetKontragentsAll();
 
     INomenkl GetNomenkl(Guid? id);
     INomenkl GetNomenkl(decimal? dc);
+    INomenkl GetNomenkl(decimal dc);
     IEnumerable<INomenkl> GetNomenklsAll();
 
     INomenklCategory GetNomenklCategory(decimal? dc);

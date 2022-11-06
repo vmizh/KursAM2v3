@@ -37,26 +37,26 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         #region Properties
 
-        public ObservableCollection<KontragentCategory> CategoryCollection { set; get; } =
-            new ObservableCollection<KontragentCategory>();
+        public ObservableCollection<KontragentClientCategory> CategoryCollection { set; get; } =
+            new ObservableCollection<KontragentClientCategory>();
 
-        public ObservableCollection<KontragentCategory> CategoryDeleteCollection { set; get; } =
-            new ObservableCollection<KontragentCategory>();
+        public ObservableCollection<KontragentClientCategory> CategoryDeleteCollection { set; get; } =
+            new ObservableCollection<KontragentClientCategory>();
 
         // ReSharper disable once CollectionNeverUpdated.Global
-        public ObservableCollection<KontragentCategory> SelectedCategories { set; get; } =
-            new ObservableCollection<KontragentCategory>();
+        public ObservableCollection<KontragentClientCategory> SelectedCategories { set; get; } =
+            new ObservableCollection<KontragentClientCategory>();
 
-        private KontragentCategory myCurrentCategory;
+        private KontragentClientCategory myCurrentClientCategory;
 
-        public KontragentCategory CurrentCategory
+        public KontragentClientCategory CurrentClientCategory
         {
-            get => myCurrentCategory;
+            get => myCurrentClientCategory;
             set
             {
                 // ReSharper disable once PossibleUnintendedReferenceComparison
-                if (myCurrentCategory == value) return;
-                myCurrentCategory = value;
+                if (myCurrentClientCategory == value) return;
+                myCurrentClientCategory = value;
                 RaisePropertyChanged();
             }
         }
@@ -92,7 +92,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var item in ctx.SD_148.ToList())
-                    CategoryCollection.Add(new KontragentCategory(item) { myState = RowStatus.NotEdited });
+                    CategoryCollection.Add(new KontragentClientCategory(item) { myState = RowStatus.NotEdited });
             }
         }
 
@@ -170,13 +170,13 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         private void AddNewItem(object obj)
         {
-            var newRow = new KontragentCategory
+            var newRow = new KontragentClientCategory
             {
                 State = RowStatus.NewRow,
                 Id = Guid.NewGuid()
             };
             CategoryCollection.Add(newRow);
-            CurrentCategory = newRow;
+            CurrentClientCategory = newRow;
         }
 
         public ICommand RemoveItemCommand
@@ -186,12 +186,12 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         private void RemoveItem(object obj)
         {
-            var dList = new List<KontragentCategory>();
+            var dList = new List<KontragentClientCategory>();
             foreach (var d in SelectedCategories)
                 if (d.State == RowStatus.NewRow)
                     dList.Add(d);
             foreach (var r in dList) CategoryCollection.Remove(r);
-            var drows = new ObservableCollection<KontragentCategory>(SelectedCategories);
+            var drows = new ObservableCollection<KontragentClientCategory>(SelectedCategories);
             foreach (var d in drows)
             {
                 CategoryCollection.Remove(d);

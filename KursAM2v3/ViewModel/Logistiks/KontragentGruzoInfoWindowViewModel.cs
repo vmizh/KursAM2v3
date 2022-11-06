@@ -3,7 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using Core;
 using Core.ViewModel.Base;
-using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -13,7 +13,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         public KontragentGruzoInfoWindowViewModel()
         {
-            Kontrs = new ObservableCollection<Kontragent>();
+            Kontrs = new ObservableCollection<KontragentViewModel>();
             Data = new ObservableCollection<KontragentGruzoInfoViewModel>();
             ActualData = new ObservableCollection<KontragentGruzoInfoViewModel>();
         }
@@ -33,7 +33,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         public ObservableCollection<KontragentGruzoInfoViewModel> Data { set; get; }
         public ObservableCollection<KontragentGruzoInfoViewModel> ActualData { set; get; }
-        public ObservableCollection<Kontragent> Kontrs { set; get; }
+        public ObservableCollection<KontragentViewModel> Kontrs { set; get; }
 
         public void LoadActualGruzoInfo(decimal dc)
         {
@@ -46,7 +46,7 @@ namespace KursAM2.ViewModel.Logistiks
         {
             Kontrs.Clear();
             foreach (var d in GlobalOptions.GetEntities().SD_43.Include(_ => _.SD_301))
-                Kontrs.Add(new Kontragent(d));
+                Kontrs.Add(new KontragentViewModel(d));
             Data.Clear();
             foreach (var d in GlobalOptions.GetEntities().SD_43_GRUZO)
                 Data.Add(new KontragentGruzoInfoViewModel(d));

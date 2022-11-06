@@ -4,9 +4,9 @@ using Core;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Logistiks.Warehouse;
-using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.References;
 using Reports.Base;
 
 namespace KursAM2.ReportManagers.SFClientAndWayBill
@@ -44,7 +44,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"F{rowId}"].Value = string.IsNullOrEmpty(item.Nomenkl.FullName)
                 ? item.Nomenkl.Name
                 : item.Nomenkl.FullName;
-            sheet.Cells[$"V{rowId}"].Value = ((IName)item.Nomenkl.Unit).Name;
+            sheet.Cells[$"V{rowId}"].Value = ((IName) item.Nomenkl.Unit).Name;
             sheet.Cells[$"X{rowId}"].Value = item.Nomenkl.Unit.OKEI_Code;
             sheet.Cells[$"AD{rowId}"].Value = Convert.ToDouble(item.DDT_KOL_RASHOD);
             sheet.Cells[$"AH{rowId}"].Value = Convert.ToDouble(item.DDT_KOL_RASHOD);
@@ -75,16 +75,17 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             var document = vm.Document;
             Kontragent receiver;
             receiver = vm.Document.InvoiceClient.Receiver ?? GlobalOptions.SystemProfile.OwnerKontragent;
-            sheet.Cells["A4"].Value = receiver.GruzoRequisiteForWaybill;
-            sheet.Cells["K12"].Value = vm.Document.KontragentReceiver.GruzoRequisiteForWaybill;
-            sheet.Cells["K19"].Value = receiver.GruzoRequisiteForWaybill;
-            sheet.Cells["K24"].Value = vm.Document.KontragentReceiver.GruzoRequisiteForWaybill;
+            //TODO Добавить грузовые реквизиты в справочник контрагента
+            //sheet.Cells["A4"].Value = receiver.GruzoRequisiteForWaybill;
+            //sheet.Cells["K12"].Value = vm.Document.KontragentViewModelReceiver.GruzoRequisiteForWaybill;
+            //sheet.Cells["K19"].Value = receiver.GruzoRequisiteForWaybill;
+            //sheet.Cells["K24"].Value = vm.Document.KontragentViewModelReceiver.GruzoRequisiteForWaybill;
             sheet["AE33"].Value = vm.Document.DD_EXT_NUM ?? vm.Document.DD_IN_NUM.ToString();
             sheet["AR33"].Value = vm.Document.Date.ToShortDateString();
             sheet["BX5"].Value = receiver.OKPO;
-            sheet["BX14"].Value = vm.Document.KontragentReceiver.OKPO;
+            sheet["BX14"].Value = vm.Document.KontragentViewModelReceiver.OKPO;
             sheet["BX17"].Value = receiver.OKPO;
-            sheet["BX22"].Value = vm.Document.KontragentReceiver.OKPO;
+            sheet["BX22"].Value = vm.Document.KontragentViewModelReceiver.OKPO;
             //sheet["P79"].Value = vm.Document.DD_DATE.ToLongDateString();
             //sheet["AZ79"].Value = vm.Document.DD_DATE.ToLongDateString();
             // ReSharper disable once UnusedVariable

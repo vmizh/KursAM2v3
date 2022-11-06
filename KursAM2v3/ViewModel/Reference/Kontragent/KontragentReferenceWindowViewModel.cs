@@ -13,16 +13,16 @@ using Data;
 using DevExpress.Mvvm.Xpf;
 using KursAM2.View.DialogUserControl.ViewModel;
 using KursAM2.View.KursReferences.KontragentControls;
-using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference.Kontragent
 {
     public class KontragentReferenceWindowViewModel : RSWindowViewModelBase
     {
-        private KontragentGroup myCurrentGroup;
-        private KursDomain.Documents.CommonReferences.Kontragent.Kontragent myCurrentKontragent;
+        private KontragentGroupViewModel myCurrentGroup;
+        private KontragentViewModel myCurrentKontragentViewModel;
         private bool myIsAllKontragent;
         private bool myIsGroupEnabled;
         private bool myIsShowDeleted;
@@ -37,25 +37,28 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         }
 
         //public List<Kontragent> Kontragents => MainReferences.AllKontragents.Values.ToList();
-        public ObservableCollection<KursDomain.Documents.CommonReferences.Kontragent.Kontragent> Kontragents { set; get; } = new ObservableCollection<KursDomain.Documents.CommonReferences.Kontragent.Kontragent>();
+        public ObservableCollection<KontragentViewModel> Kontragents { set; get; } =
+            new ObservableCollection<KontragentViewModel>();
 
-        public ObservableCollection<KursDomain.Documents.CommonReferences.Kontragent.Kontragent> KontragentsInGroup { set; get; } =
-            new ObservableCollection<KursDomain.Documents.CommonReferences.Kontragent.Kontragent>();
+        public ObservableCollection<KontragentViewModel> KontragentsInGroup { set; get; } =
+            new ObservableCollection<KontragentViewModel>();
 
-        public ObservableCollection<KontragentGroup> Groups { set; get; } = new ObservableCollection<KontragentGroup>();
+        public ObservableCollection<KontragentGroupViewModel>
+            Groups { set; get; } =
+            new ObservableCollection<KontragentGroupViewModel>();
 
-        public KursDomain.Documents.CommonReferences.Kontragent.Kontragent CurrentKontragent
+        public KontragentViewModel CurrentKontragentViewModel
         {
-            get => myCurrentKontragent;
+            get => myCurrentKontragentViewModel;
             set
             {
-                if (myCurrentKontragent != null && myCurrentKontragent.Equals(value)) return;
-                myCurrentKontragent = value;
+                if (myCurrentKontragentViewModel != null && myCurrentKontragentViewModel.Equals(value)) return;
+                myCurrentKontragentViewModel = value;
                 RaisePropertyChanged();
             }
         }
 
-        public KontragentGroup CurrentGroup
+        public KontragentGroupViewModel CurrentGroup
         {
             get => myCurrentGroup;
             set
@@ -63,7 +66,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (myCurrentGroup == value) return;
                 myCurrentGroup = value;
-                CurrentKontragent = null;
+                CurrentKontragentViewModel = null;
                 if (myCurrentGroup != null)
                     SetKontragentsInGroup();
                 RaisePropertyChanged();
@@ -156,7 +159,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                     foreach (var i in data)
                     {
                         if (!IsShowDeleted && i.DELETED == 1) continue;
-                        KontragentsInGroup.Add(new KursDomain.Documents.CommonReferences.Kontragent.Kontragent(i));
+                        KontragentsInGroup.Add(new KontragentViewModel(i));
                     }
 
                     if (CurrentGroup.EG_ID == 0)
@@ -171,9 +174,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                                 .Include(_ => _.TD_43)
                                 .AsNoTracking().Where(_ => _.EG_ID == 0 || _.EG_ID == null).ToList();
                         foreach (var k in data2.Where(k => IsShowDeleted || k.DELETED != 1))
-                        {
-                            KontragentsInGroup.Add(new KursDomain.Documents.CommonReferences.Kontragent.Kontragent(k));
-                        }
+                            KontragentsInGroup.Add(new KontragentViewModel(k));
 
                         RaisePropertyChanged(nameof(KontragentsInGroup));
                     }
@@ -205,7 +206,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                             .AsNoTracking().Where(_ => _.NAME.ToUpper().Contains(SearchText.ToUpper())
                                                        || _.NAME_FULL.ToUpper().Contains(SearchText.ToUpper()))
                             .ToList();
-                    foreach (var i in data) KontragentsInGroup.Add(new KursDomain.Documents.CommonReferences.Kontragent.Kontragent(i));
+                    foreach (var i in data) KontragentsInGroup.Add(new KontragentViewModel(i));
                     RaisePropertyChanged(nameof(KontragentsInGroup));
                 }
             }
@@ -241,7 +242,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                             .Where(_ => _.DELETED != 1)
                             .ToList();
                     foreach (var i in data)
-                        KontragentsInGroup.Add(new KursDomain.Documents.CommonReferences.Kontragent.Kontragent(i));
+                        KontragentsInGroup.Add(new KontragentViewModel(i));
                 }
 
                 RaisePropertyChanged(nameof(KontragentsInGroup));
@@ -255,12 +256,11 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         public override void RefreshData(object data)
         {
             Groups.Clear();
-            
+
             foreach (var item in GlobalOptions.GetEntities().UD_43.Where(_ => (_.EG_DELETED ?? 0) != 1))
-                Groups.Add(new KontragentGroup(item));
+                Groups.Add(new KontragentGroupViewModel(item));
             if (Groups.All(_ => _.EG_ID != 0))
-            {
-                Groups.Add(new KontragentGroup
+                Groups.Add(new KontragentGroupViewModel
                 {
                     Entity = new UD_43
                     {
@@ -268,7 +268,6 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                         EG_NAME = "Вне групп"
                     }
                 });
-            }
             RaisePropertyChanged(nameof(Groups));
         }
 
@@ -284,7 +283,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             var res = DialogService.ShowDialog(MessageBoxButton.OKCancel,
                 "Новая категория", "NameNoteUC", category);
             if (res != MessageBoxResult.OK) return;
-            var newgrp = new KontragentGroup
+            var newgrp = new KontragentGroupViewModel
             {
                 Name = category.Name,
                 State = RowStatus.NewRow
@@ -306,7 +305,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             var res = DialogService.ShowDialog(MessageBoxButton.OKCancel,
                 "Новая категория", "NameNoteUC", category);
             if (res != MessageBoxResult.OK) return;
-            var newgrp = new KontragentGroup
+            var newgrp = new KontragentGroupViewModel
             {
                 Name = category.Name,
                 ParentDC = CurrentGroup.DocCode,
@@ -328,7 +327,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             };
             var res = DialogService.ShowDialog(MessageBoxButton.OKCancel, "Новая категория", "NameNoteUC", category);
             if (res != MessageBoxResult.OK) return;
-            var newgrp = new KontragentGroup
+            var newgrp = new KontragentGroupViewModel
             {
                 Name = category.Name,
                 ParentDC = CurrentGroup.ParentDC,
@@ -353,7 +352,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 group);
             if (res != MessageBoxResult.OK) return;
             if (CurrentGroup == null) return;
-            var oldCat = new KontragentGroup(CurrentGroup.Entity);
+            var oldCat = new KontragentGroupViewModel(CurrentGroup.Entity);
             CurrentGroup.Name = group.Name;
             CurrentGroup.Note = group.Note;
             if (GroupSave(CurrentGroup)) return;
@@ -362,7 +361,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             CurrentGroup.State = RowStatus.NotEdited;
         }
 
-        private bool GroupSave(KontragentGroup cat)
+        private bool GroupSave(KontragentGroupViewModel cat)
         {
             var newId = cat.EG_ID;
             using (var ctx = GlobalOptions.GetEntities())
@@ -410,19 +409,18 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             return true;
         }
 
-       
-        
+
         #region Commands
 
-        public override bool IsDocumentOpenAllow => CurrentKontragent != null;
+        public override bool IsDocumentOpenAllow => CurrentKontragentViewModel != null;
         public override bool IsCanDocNew => CurrentGroup != null;
-        public override bool IsDocNewCopyAllow => CurrentKontragent != null;
-        public override bool IsDocDeleteAllow => CurrentKontragent != null;
+        public override bool IsDocNewCopyAllow => CurrentKontragentViewModel != null;
+        public override bool IsDocDeleteAllow => CurrentKontragentViewModel != null;
 
         public override void DocumentOpen(object obj)
         {
-            var form = new KontragentCardView {Owner = Application.Current.MainWindow};
-            var ctx = new KontragentCardWindowViewModel(CurrentKontragent.DocCode) {Form = form};
+            var form = new KontragentCardView { Owner = Application.Current.MainWindow };
+            var ctx = new KontragentCardWindowViewModel(CurrentKontragentViewModel.DocCode) { Form = form };
             form.DataContext = ctx;
             form.ShowDialog();
             SetKontragentsInGroup();
@@ -431,14 +429,14 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         public override void DocNewEmpty(object obj)
         {
             var WinManager = new WindowManager();
-            var form = new KontragentCardView {Owner = Application.Current.MainWindow};
+            var form = new KontragentCardView { Owner = Application.Current.MainWindow };
             if (CurrentGroup == null)
             {
                 WinManager.ShowWinUIMessageBox("Не выбрана категория.", "Ощибка");
                 return;
             }
 
-            var ctx = new KontragentCardWindowViewModel(-1, CurrentGroup.EG_ID, false) {Form = form};
+            var ctx = new KontragentCardWindowViewModel(-1, CurrentGroup.EG_ID, false) { Form = form };
             form.DataContext = ctx;
             form.ShowDialog();
             SetKontragentsInGroup();
@@ -446,9 +444,10 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         public override void DocNewCopy(object obj)
         {
-            var form = new KontragentCardView {Owner = Application.Current.MainWindow};
+            var form = new KontragentCardView { Owner = Application.Current.MainWindow };
             var ctx =
-                new KontragentCardWindowViewModel(CurrentKontragent.DocCode, CurrentGroup.EG_ID, true) {Form = form};
+                new KontragentCardWindowViewModel(CurrentKontragentViewModel.DocCode, CurrentGroup.EG_ID, true)
+                    { Form = form };
             form.DataContext = ctx;
             form.ShowDialog();
             SetKontragentsInGroup();
@@ -456,7 +455,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         public ICommand NewCopyKontragentCommand
         {
-            get { return new Command(NewCopyKontragent, _ => CurrentKontragent != null); }
+            get { return new Command(NewCopyKontragent, _ => CurrentKontragentViewModel != null); }
         }
 
         public ICommand GroupAddCommand
@@ -476,7 +475,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         public ICommand DocumentOpenMenuCommand
         {
-            get { return new Command(DocumentOpen, param => CurrentKontragent != null); }
+            get { return new Command(DocumentOpen, param => CurrentKontragentViewModel != null); }
         }
 
         private void GroupDelete(object obj)
@@ -493,7 +492,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         private void GroupAdd(object obj)
         {
-            var item = new KontragentGroup
+            var item = new KontragentGroupViewModel
             {
                 EG_PARENT_ID = CurrentGroup.EG_ID,
                 Id = Guid.NewGuid(),
@@ -513,16 +512,17 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 case MessageBoxResult.Yes:
                     using (var ctx = GlobalOptions.GetEntities())
                     {
-                        var firstOrDefault = ctx.SD_43.FirstOrDefault(_ => _.DOC_CODE == CurrentKontragent.DOC_CODE);
+                        var firstOrDefault =
+                            ctx.SD_43.FirstOrDefault(_ => _.DOC_CODE == CurrentKontragentViewModel.DOC_CODE);
                         if (firstOrDefault != null)
                             firstOrDefault.DELETED = 1;
                         ctx.SaveChanges();
                         var orDefault = MainReferences.AllKontragents.Values
-                            .FirstOrDefault(_ => _.DOC_CODE == CurrentKontragent.DOC_CODE);
+                            .FirstOrDefault(_ => _.DOC_CODE == CurrentKontragentViewModel.DOC_CODE);
                         if (orDefault != null)
                             orDefault
                                 .DELETED = 1;
-                        KontragentsInGroup.Remove(CurrentKontragent);
+                        KontragentsInGroup.Remove(CurrentKontragentViewModel);
                         RaisePropertyChanged(nameof(KontragentsInGroup));
                     }
 
@@ -545,10 +545,10 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         private void KontragentAdd(object obj)
         {
-            var form = new KontragentCardView {Owner = Application.Current.MainWindow};
+            var form = new KontragentCardView { Owner = Application.Current.MainWindow };
             var ctx = new KontragentCardWindowViewModel
             {
-                Kontragent = new KursDomain.Documents.CommonReferences.Kontragent.Kontragent
+                KontragentViewModel = new KontragentViewModel
                 {
                     State = RowStatus.NewRow,
                     Group = CurrentGroup,
@@ -564,7 +564,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         public ICommand KontragentAddCopyCommand
         {
-            get { return new Command(KontragentAddCopy, _ => CurrentKontragent != null); }
+            get { return new Command(KontragentAddCopy, _ => CurrentKontragentViewModel != null); }
         }
 
         private void KontragentAddCopy(object obj)
@@ -574,7 +574,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         public ICommand KontragentDeleteCommand
         {
-            get { return new Command(KontragentDelete, _ => CurrentKontragent != null); }
+            get { return new Command(KontragentDelete, _ => CurrentKontragentViewModel != null); }
         }
 
         private void KontragentDelete(object obj)

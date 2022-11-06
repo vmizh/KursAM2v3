@@ -14,21 +14,20 @@ using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursDomain.Menu;
 using KursDomain.References;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 
 namespace KursAM2.View.Logistiks.UC
 {
     [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
     public sealed class AddNomenklFromInvoiceProviderViewModel : RSWindowViewModelBase, IDataUserControl
     {
-        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+        private readonly NomenklManager2 nomenklManager = new(GlobalOptions.GetEntities());
 
         #region Constructors
 
         public AddNomenklFromInvoiceProviderViewModel(KursDomain.Documents.NomenklManagement.Warehouse warehouse,
-            Kontragent kontr = null)
+            KontragentViewModel kontr = null)
         {
-            Kontragent = kontr;
+            myKontragentViewModel = kontr;
             Warehouse = warehouse;
             LayoutControl = myDataUserControl = new AddNomenklFromInvoiceProviderUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
@@ -47,7 +46,7 @@ namespace KursAM2.View.Logistiks.UC
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    var sql = Kontragent == null
+                    var sql = myKontragentViewModel == null
                         ? "SELECT t26.DOC_CODE, t26.CODE, t26.SFT_KOL, ISNULL(SUM(t24.DDT_KOL_PRIHOD),0) as Shipped FROM td_26 t26 " +
                           "LEFT OUTER JOIN td_24 t24 ON t24.DDT_SPOST_DC = t26.DOC_CODE AND t24.DDT_SPOST_ROW_CODE = t26.CODE " +
                           "INNER JOIN SD_83 s83 on s83.doc_code = t26.SFT_NEMENKL_DC AND isnull(s83.NOM_0MATER_1USLUGA,0) = 0 " +
@@ -56,7 +55,7 @@ namespace KursAM2.View.Logistiks.UC
                         : "SELECT t26.DOC_CODE, t26.CODE, t26.SFT_KOL, ISNULL(SUM(t24.DDT_KOL_PRIHOD), 0) as Shipped " +
                           "FROM td_26 t26 " +
                           "INNER JOIN SD_83 s83 on s83.doc_code = t26.SFT_NEMENKL_DC AND isnull(s83.NOM_0MATER_1USLUGA,0) = 0 " +
-                          $"INNER JOIN sd_26 s26 ON s26.DOC_CODE = t26.DOC_CODE AND s26.SF_POST_DC = {CustomFormat.DecimalToSqlDecimal(Kontragent.DocCode)}" +
+                          $"INNER JOIN sd_26 s26 ON s26.DOC_CODE = t26.DOC_CODE AND s26.SF_POST_DC = {CustomFormat.DecimalToSqlDecimal(myKontragentViewModel.DocCode)}" +
                           "LEFT OUTER JOIN td_24 t24 ON t24.DDT_SPOST_DC = t26.DOC_CODE AND t24.DDT_SPOST_ROW_CODE = t26.CODE " +
                           "GROUP BY t26.DOC_CODE,t26.CODE,t26.SFT_KOL " +
                           "HAVING t26.SFT_KOL - ISNULL(SUM(t24.DDT_KOL_PRIHOD), 0) > 0 ";
@@ -68,11 +67,11 @@ namespace KursAM2.View.Logistiks.UC
                         var doc = new InvoiceShort
                         {
                             Id = d.Id,
-                            Kontragent = MainReferences.GetKontragent(d.SF_POST_DC),
+                            KontragentViewModel = MainReferences.GetKontragent(d.SF_POST_DC),
                             Date = d.SF_POSTAV_DATE,
                             DocCode = d.DOC_CODE,
                             Num = d.SF_POSTAV_NUM,
-                            Currency = MainReferences.Currencies[(decimal)d.SF_CRS_DC],
+                            Currency = MainReferences.Currencies[(decimal) d.SF_CRS_DC],
                             Rows = new List<InvoiceShortRow>()
                         };
                         var rows = ctx.TD_26.Where(_ => _.DOC_CODE == dc).ToList();
@@ -87,18 +86,18 @@ namespace KursAM2.View.Logistiks.UC
                             {
                                 Id = r.Id,
                                 DocCode = r.DOC_CODE,
-                                DocId = (Guid)r.DocId,
+                                DocId = (Guid) r.DocId,
                                 InvoiceQuantity = r.SFT_KOL,
                                 Nomenkl = MainReferences.GetNomenkl(r.SFT_NEMENKL_DC),
-                                AlreadyShippedQuantity = (decimal)s.Shipped,
+                                AlreadyShippedQuantity = (decimal) s.Shipped,
                                 Code = r.CODE,
                                 Note = r.SFT_TEXT,
-                                Price = (decimal)(r.SFT_SUMMA_K_OPLATE / r.SFT_KOL),
+                                Price = (decimal) (r.SFT_SUMMA_K_OPLATE / r.SFT_KOL),
                                 AlreadyShippedSumma =
-                                    (decimal)(r.SFT_SUMMA_K_OPLATE / r.SFT_KOL) * (decimal)s.Shipped,
+                                    (decimal) (r.SFT_SUMMA_K_OPLATE / r.SFT_KOL) * (decimal) s.Shipped,
                                 IsChecked = true,
                                 QuantityOnSklad = quan,
-                                Quantity = r.SFT_KOL - (decimal)s.Shipped
+                                Quantity = r.SFT_KOL - (decimal) s.Shipped
                             };
                             doc.Rows.Add(newRow);
                         }
@@ -119,7 +118,7 @@ namespace KursAM2.View.Logistiks.UC
 
         #region Fields
 
-        private readonly Kontragent Kontragent;
+        private readonly KontragentViewModel myKontragentViewModel;
         private InvoiceShort myCurrentInvoice;
         private InvoiceShortRow myCurrentNomenkl;
         private readonly KursDomain.Documents.NomenklManagement.Warehouse Warehouse;
@@ -129,10 +128,9 @@ namespace KursAM2.View.Logistiks.UC
 
         #region Properties
 
-        public ObservableCollection<InvoiceShort> Invoices { set; get; } = new ObservableCollection<InvoiceShort>();
+        public ObservableCollection<InvoiceShort> Invoices { set; get; } = new();
 
-        public ObservableCollection<InvoiceShortRow> Nomenkls { set; get; } =
-            new ObservableCollection<InvoiceShortRow>();
+        public ObservableCollection<InvoiceShortRow> Nomenkls { set; get; } = new();
 
         public AddNomenklFromInvoiceProviderUC DataUserControl
         {
@@ -236,7 +234,7 @@ namespace KursAM2.View.Logistiks.UC
         public Guid Id { set; get; }
         public DateTime Date { set; get; }
         public string Num { set; get; }
-        public Kontragent Kontragent { set; get; }
+        public KontragentViewModel KontragentViewModel { set; get; }
         public string Note { set; get; }
         public decimal Summa { set; get; }
 
@@ -251,7 +249,7 @@ namespace KursAM2.View.Logistiks.UC
 
         public override string ToString()
         {
-            return $"Счет №{Num} от {Date.ToShortDateString()} Контр:{Kontragent}";
+            return $"Счет №{Num} от {Date.ToShortDateString()} Контр:{KontragentViewModel}";
         }
     }
 
@@ -264,7 +262,7 @@ namespace KursAM2.View.Logistiks.UC
             builder.Property(_ => _.Rows).NotAutoGenerated();
             builder.Property(_ => _.Date).AutoGenerated().DisplayName("Дата").ReadOnly();
             builder.Property(_ => _.Num).AutoGenerated().DisplayName("Номер").ReadOnly();
-            builder.Property(_ => _.Kontragent).AutoGenerated().DisplayName("Контрагент").ReadOnly();
+            builder.Property(_ => _.KontragentViewModel).AutoGenerated().DisplayName("Контрагент").ReadOnly();
             builder.Property(_ => _.Summa).AutoGenerated().DisplayName("Сумма").ReadOnly();
             builder.Property(_ => _.Currency).AutoGenerated().DisplayName("Валюта").ReadOnly();
             builder.Property(_ => _.AlreadyShipped).AutoGenerated().DisplayName("Отгружено").ReadOnly();

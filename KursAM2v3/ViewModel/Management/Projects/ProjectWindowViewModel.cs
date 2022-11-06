@@ -136,7 +136,7 @@ namespace KursAM2.ViewModel.Management.Projects
                                 : null,
                             EmployeeTN = d.EmployeeTN,
                             KontragentDC = d.KontragentDC,
-                            Kontragent =
+                            KontragentViewModel =
                                 d.KontragentDC != null ? MainReferences.GetKontragent(d.KontragentDC) : null,
                             NomenklDC = d.NomenklDC,
                             Nomenkl = d.NomenklDC != null ? MainReferences.GetNomenkl(d.NomenklDC) : null,
@@ -587,7 +587,7 @@ namespace KursAM2.ViewModel.Management.Projects
                                 : null,
                             EmployeeTN = d.EmployeeTN,
                             KontragentDC = d.KontragentDC,
-                            Kontragent =
+                            KontragentViewModel =
                                 d.KontragentDC != null ? MainReferences.GetKontragent(d.KontragentDC) : null,
                             NomenklDC = d.NomenklDC,
                             Nomenkl = d.NomenklDC != null ? MainReferences.GetNomenkl(d.NomenklDC) : null,
@@ -732,7 +732,7 @@ namespace KursAM2.ViewModel.Management.Projects
                                 : null,
                             EmployeeTN = d.EmployeeTN,
                             KontragentDC = d.KontragentDC,
-                            Kontragent =
+                            KontragentViewModel =
                                 d.KontragentDC != null ? MainReferences.GetKontragent(d.KontragentDC) : null,
                             NomenklDC = d.NomenklDC,
                             Nomenkl = d.NomenklDC != null ? MainReferences.GetNomenkl(d.NomenklDC) : null,
@@ -934,7 +934,7 @@ namespace KursAM2.ViewModel.Management.Projects
                                 : null,
                             EmployeeTN = d.EmployeeTN,
                             KontragentDC = d.KontragentDC,
-                            Kontragent =
+                            KontragentViewModel =
                                 d.KontragentDC != null ? MainReferences.GetKontragent(d.KontragentDC) : null,
                             NomenklDC = d.NomenklDC,
                             Nomenkl = d.NomenklDC != null ? MainReferences.GetNomenkl(d.NomenklDC) : null,

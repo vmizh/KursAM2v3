@@ -12,7 +12,6 @@ using KursDomain.Documents.Bank;
 using KursDomain.ICommon;
 using KursDomain.References;
 using BankAccount = KursDomain.Documents.Bank.BankAccount;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursAM2.ViewModel.Finance.controls
@@ -42,7 +41,7 @@ namespace KursAM2.ViewModel.Finance.controls
 
         public AddBankOperionUC(decimal docCode) : this()
         {
-            CurrentBankOperations = new BankOperationsViewModel { Date = DateTime.Today };
+            CurrentBankOperations = new BankOperationsViewModel {Date = DateTime.Today};
             BankOperationType = BankOperationType.NotChoice;
             // ReSharper disable once VirtualMemberCallInConstructor
             RefreshData(docCode);
@@ -58,11 +57,9 @@ namespace KursAM2.ViewModel.Finance.controls
             if (row.Currency.DocCode != GlobalOptions.SystemProfile.NationalCurrency.DocCode)
             {
                 var rates = CurrencyRate.GetRate(DateTime.Today);
-                if (rates.ContainsKey(row.Currency))
-                {
-                    rate = rates[row.Currency];
-                }
+                if (rates.ContainsKey(row.Currency)) rate = rates[row.Currency];
             }
+
             BankAccount = bankAcc;
             CurrentBankOperations = new BankOperationsViewModel
             {
@@ -108,13 +105,13 @@ namespace KursAM2.ViewModel.Finance.controls
         }
 
         public bool NotAllowSummaPrihodChanged => BankOperationType == BankOperationType.BankIn ||
-                                                  BankOperationType == BankOperationType.CashIn
-                                                  && CurrentBankOperations?.VVT_SFACT_POSTAV_DC != null
+                                                  (BankOperationType == BankOperationType.CashIn
+                                                   && CurrentBankOperations?.VVT_SFACT_POSTAV_DC != null)
                                                   || IsNotCurrencyChange;
 
         public bool NotAllowSummaRashodChanged => BankOperationType == BankOperationType.BankOut ||
-                                                  BankOperationType == BankOperationType.CashOut
-                                                  && CurrentBankOperations?.VVT_SFACT_CLIENT_DC != null
+                                                  (BankOperationType == BankOperationType.CashOut
+                                                   && CurrentBankOperations?.VVT_SFACT_CLIENT_DC != null)
                                                   || IsNotCurrencyChange;
 
         public string KontragentName => CurrentBankOperations?.KontragentName;
@@ -139,7 +136,7 @@ namespace KursAM2.ViewModel.Finance.controls
                 VVT_VAL_PRIHOD = 0;
                 VVT_VAL_RASHOD = 0;
                 VVT_DOC_NUM = null;
-                Kontragent = null;
+                KontragentViewModel = null;
                 Payment = null;
                 CurrentBankOperations.CashIn = null;
                 CurrentBankOperations.CashOut = null;
@@ -194,7 +191,7 @@ namespace KursAM2.ViewModel.Finance.controls
             set
             {
                 if (CurrentBankOperations.BankOperationType == value) return;
-                Kontragent = null;
+                KontragentViewModel = null;
                 Payment = null;
                 CurrentBankOperations.BankAccountIn = null;
                 CurrentBankOperations.BankAccountOut = null;
@@ -311,7 +308,7 @@ namespace KursAM2.ViewModel.Finance.controls
             get => CurrentBankOperations.Payment;
         }
 
-        public Kontragent Kontragent
+        public Kontragent KontragentViewModel
         {
             set
             {
@@ -400,8 +397,7 @@ namespace KursAM2.ViewModel.Finance.controls
                     case BankOperationType.Kontragent:
                         if (VVT_VAL_RASHOD > 0)
                             return EditModeEnum.CanEditButZero;
-                        else
-                            return EditModeEnum.CanEdit;
+                        return EditModeEnum.CanEdit;
                     case BankOperationType.BankOut:
                     case BankOperationType.CashOut:
                         return EditModeEnum.CanEdit;
@@ -423,8 +419,7 @@ namespace KursAM2.ViewModel.Finance.controls
                     case BankOperationType.Kontragent:
                         if (VVT_VAL_PRIHOD > 0)
                             return EditModeEnum.CanEditButZero;
-                        else
-                            return EditModeEnum.CanEdit;
+                        return EditModeEnum.CanEdit;
                     case BankOperationType.BankOut:
                     case BankOperationType.CashOut:
                         return EditModeEnum.NotCanEdit;
@@ -486,7 +481,7 @@ namespace KursAM2.ViewModel.Finance.controls
         {
             base.RefreshData(o);
             CurrentBankOperations.Code = -1;
-            CurrentBankOperations.DOC_CODE = (decimal)o;
+            CurrentBankOperations.DOC_CODE = (decimal) o;
         }
 
         public override bool IsOkAllow()

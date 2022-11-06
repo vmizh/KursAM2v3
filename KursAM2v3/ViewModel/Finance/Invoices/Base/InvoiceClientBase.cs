@@ -8,10 +8,8 @@ using Data;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.Vzaimozachet;
-using KursDomain.IReferences.Nomenkl;
 using KursDomain.References;
 using Employee = KursDomain.Documents.Employee.Employee;
-using Kontragent = KursDomain.Documents.CommonReferences.Kontragent.Kontragent;
 using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
 using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
@@ -34,18 +32,18 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             DocCode = doc.DocCode;
             Id = doc.Id;
             DocDate = doc.DocDate;
-            Receiver = MainReferences.GetKontragent(doc.ReceiverDC);
+            Receiver = GlobalOptions.ReferencesCache.GetKontragent(doc.ReceiverDC) as Kontragent;
             CO = MainReferences.GetCO(doc.CentOtvetstDC);
             VzaimoraschetType = MainReferences.GetVzaimoraschetType(doc.VzaimoraschetTypeDC);
             PayCondition = MainReferences.GetPayCondition(doc.PayConditionDC);
             InnerNumber = doc.InnerNumber;
             OuterNumber = doc.OuterNumber;
-            Client = MainReferences.GetKontragent(doc.ClientDC);
+            Client = GlobalOptions.ReferencesCache.GetKontragent(doc.ClientDC) as Kontragent;
             Currency = MainReferences.GetCurrency(doc.CurrencyDC);
             SummaOtgruz = Math.Round(doc.SummaOtgruz ?? 0, 2);
             DilerSumma = Math.Round(doc.DilerSumma, 2);
             Note = doc.Note;
-            Diler = MainReferences.GetKontragent(doc.DilerDC);
+            Diler = GlobalOptions.ReferencesCache.GetKontragent(doc.DilerDC) as Kontragent;
             IsAccepted = doc.IsAccepted ?? false;
             Summa = Math.Round(doc.Summa ?? 0, 2);
             CREATOR = doc.CREATOR;
@@ -56,22 +54,23 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             foreach (var r in invList) Rows.Add(new InvoiceClientRowBase(r));
         }
 
+        public Kontragent Receiver { get; set; }
+        public Kontragent Client { get; set; }
+        public Kontragent Diler { get; set; }
+
         public decimal DocCode { get; set; }
         public Guid Id { get; set; }
-        public Kontragent Receiver { get; set; }
-        public CentrOfResponsibility CO { get; set; }
+        public CentrResponsibility CO { get; set; }
         public VzaimoraschetType VzaimoraschetType { get; set; }
         public FormPay FormRaschet { get; set; }
         public PayCondition PayCondition { get; set; }
         public DateTime DocDate { get; set; }
         public int InnerNumber { get; set; }
         public string OuterNumber { get; set; }
-        public Kontragent Client { get; set; }
         public Currency Currency { get; set; }
         public decimal SummaOtgruz { get; set; }
         public decimal DilerSumma { get; set; }
         public string Note { get; set; }
-        public Kontragent Diler { get; set; }
         public bool IsAccepted { get; set; }
         public decimal Summa { get; set; }
         public string CREATOR { get; set; }

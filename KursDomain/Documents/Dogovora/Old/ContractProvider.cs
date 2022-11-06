@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Core;
 using Core.ViewModel.Base;
 using Data;
-using KursDomain.Documents.CommonReferences.Kontragent;
-using KursDomain.Documents.NomenklManagement;
+using KursDomain.References;
+using DeliveryCondition = KursDomain.Documents.NomenklManagement.DeliveryCondition;
 
 namespace KursDomain.Documents.Dogovora.Old;
 
@@ -17,7 +17,7 @@ public class ContractProvider : RSViewModelBase, IEntity<SD_112>
     private References.Currency myCurrency;
     private DeliveryCondition myDeliverCondidition;
     private SD_112 myEntity;
-    private Kontragent myKontragent;
+    private Kontragent myKontragentViewModel;
 
     public ContractProvider()
     {
@@ -152,21 +152,21 @@ public class ContractProvider : RSViewModelBase, IEntity<SD_112>
         {
             if (Entity.DO_SALER_DC == value) return;
             Entity.DO_SALER_DC = value;
-            myKontragent = MainReferences.GetKontragent(Entity.DO_SALER_DC);
-            RaisePropertyChanged(nameof(Kontragent));
+            myKontragentViewModel = GlobalOptions.ReferencesCache.GetKontragent(Entity.DO_SALER_DC) as Kontragent;
+            RaisePropertyChanged(nameof(KontragentViewModel));
             RaisePropertyChanged();
         }
     }
 
-    public Kontragent Kontragent
+    public Kontragent KontragentViewModel
     {
-        get => myKontragent;
+        get => myKontragentViewModel;
         set
         {
-            if (myKontragent != null && myKontragent.Equals(value)) return;
-            myKontragent = value;
-            if (myKontragent != null)
-                DO_SALER_DC = myKontragent.DocCode;
+            if (myKontragentViewModel != null && myKontragentViewModel.Equals(value)) return;
+            myKontragentViewModel = value;
+            if (myKontragentViewModel != null)
+                DO_SALER_DC = myKontragentViewModel.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -487,8 +487,8 @@ public class ContractProvider : RSViewModelBase, IEntity<SD_112>
     public override string ToString()
     {
         // ReSharper disable once AssignNullToNotNullAttribute
-        return Kontragent == null
+        return KontragentViewModel == null
             ? null
-            : $"Договор покупки №{DO_NUM} от {DO_PODPIS_DATE} Поставщик: {Kontragent} на сумму {Summa:n2}";
+            : $"Договор покупки №{DO_NUM} от {DO_PODPIS_DATE} Поставщик: {KontragentViewModel} на сумму {Summa:n2}";
     }
 }
