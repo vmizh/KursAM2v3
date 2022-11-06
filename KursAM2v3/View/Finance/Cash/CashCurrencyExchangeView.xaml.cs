@@ -208,7 +208,7 @@ namespace KursAM2.View.Finance.Cash
                     break;
                 case nameof(doc.SDRSchet):
                     ViewFluentHelper.SetComboBoxEdit(e.Item, doc.SDRSchet, "SDRSchet",
-                        MainReferences.SDRSchets.Values.ToList().OrderBy(_ => _.Name));
+                        GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList().OrderBy(_ => _.Name));
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
                     break;
                 case nameof(doc.CH_NUM_ORD):

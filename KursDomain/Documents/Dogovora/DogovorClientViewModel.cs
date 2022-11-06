@@ -11,13 +11,10 @@ using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
-using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using KursDomain.References;
 using Newtonsoft.Json;
-using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
 
 namespace KursDomain.Documents.Dogovora;
 
@@ -184,7 +181,7 @@ public sealed class DogovorClientViewModel : RSWindowViewModelBase, IDataErrorIn
         get => GlobalOptions.ReferencesCache.GetKontragent(Entity.KontrDC) as Kontragent;
         set
         {
-            if (GlobalOptions.ReferencesCache.GetKontragent(Entity.KontrDC)== value) return;
+            if (GlobalOptions.ReferencesCache.GetKontragent(Entity.KontrDC) == value) return;
             Entity.KontrDC = value?.DocCode ?? 0;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Currency));
@@ -228,12 +225,12 @@ public sealed class DogovorClientViewModel : RSWindowViewModelBase, IDataErrorIn
         }
     }
 
-    public FormPay FormOfPayment
+    public PayForm FormOfPayment
     {
-        get => MainReferences.GetFormPay(Entity.FormOfPayment);
+        get => MainReferences.GetPayForm(Entity.FormOfPayment);
         set
         {
-            if (MainReferences.GetFormPay(Entity.FormOfPayment) == value) return;
+            if (MainReferences.GetPayForm(Entity.FormOfPayment) == value) return;
             Entity.FormOfPayment = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }

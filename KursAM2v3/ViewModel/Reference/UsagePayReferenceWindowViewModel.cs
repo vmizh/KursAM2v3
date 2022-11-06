@@ -9,9 +9,9 @@ using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Nomenkl;
 using KursDomain;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -38,12 +38,18 @@ namespace KursAM2.ViewModel.Reference
 
         #region Properties
 
-        public ObservableCollection<PayCondition> Rows { set; get; } = new ObservableCollection<PayCondition>();
-        public ObservableCollection<PayCondition> DeletedRows { set; get; } = new ObservableCollection<PayCondition>();
-        public ObservableCollection<PayCondition> SelectedRows { set; get; } = new ObservableCollection<PayCondition>();
-        private PayCondition myCurrentRow;
+        public ObservableCollection<PayConditionViewModel> Rows { set; get; } =
+            new ObservableCollection<PayConditionViewModel>();
 
-        public PayCondition CurrentRow
+        public ObservableCollection<PayConditionViewModel> DeletedRows { set; get; } =
+            new ObservableCollection<PayConditionViewModel>();
+
+        public ObservableCollection<PayConditionViewModel> SelectedRows { set; get; } =
+            new ObservableCollection<PayConditionViewModel>();
+
+        private PayConditionViewModel myCurrentRow;
+
+        public PayConditionViewModel CurrentRow
         {
             get => myCurrentRow;
             set
@@ -106,8 +112,12 @@ namespace KursAM2.ViewModel.Reference
                         tn.Commit();
                         MainReferences.PayConditions.Clear();
                         foreach (var item in ctx.SD_179.AsNoTracking().ToList())
-                            MainReferences.PayConditions.Add(item.DOC_CODE,
-                                new PayCondition(item) { State = RowStatus.NotEdited });
+                        {
+                            var newItem = new PayCondition();
+                            newItem.LoadFromEntity(item);
+                            MainReferences.PayConditions.Add(item.DOC_CODE, newItem);
+                        }
+
                         foreach (var r in Rows)
                             r.myState = RowStatus.NotEdited;
                         DeletedRows.Clear();
@@ -128,7 +138,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void ItemNewEmpty(object obj)
         {
-            Rows.Add(new PayCondition
+            Rows.Add(new PayConditionViewModel
             {
                 DocCode = -1,
                 State = RowStatus.NewRow,
@@ -145,7 +155,7 @@ namespace KursAM2.ViewModel.Reference
             {
                 var data = ctx.SD_179.ToList();
                 foreach (var u in data)
-                    Rows.Add(new PayCondition(u)
+                    Rows.Add(new PayConditionViewModel(u)
                     {
                         State = RowStatus.NotEdited
                     });
@@ -167,7 +177,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void ItemNewCopy(object obj)
         {
-            Rows.Add(new PayCondition
+            Rows.Add(new PayConditionViewModel
             {
                 DocCode = -1,
                 State = RowStatus.NewRow,
@@ -184,7 +194,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void ItemsDelete(object obj)
         {
-            var dList = new List<PayCondition>();
+            var dList = new List<PayConditionViewModel>();
             foreach (var r in SelectedRows)
                 dList.Add(r);
             foreach (var row in dList)

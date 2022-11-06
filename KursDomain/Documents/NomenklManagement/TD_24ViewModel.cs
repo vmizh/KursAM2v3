@@ -9,7 +9,6 @@ using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using KursDomain.References;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
 
@@ -1524,7 +1523,7 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         //    InvoiceProvider = new InvoiceProvider(TD_26.SD_26);
         if (MainReferences.Currencies.ContainsKey(DDT_CRS_DC)) Currency = MainReferences.Currencies[DDT_CRS_DC];
         if (DDT_SHPZ_DC != null)
-            SDRSchet = MainReferences.SDRSchets[DDT_SHPZ_DC.Value];
+            SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(DDT_SHPZ_DC.Value) as SDRSchet;
         if (MainReferences.Currencies.ContainsKey(Entity.DDT_CRS_DC))
             Currency = MainReferences.Currencies[Entity.DDT_CRS_DC];
     }

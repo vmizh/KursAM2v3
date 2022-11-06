@@ -12,6 +12,7 @@ using KursAM2.Managers;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Menu;
+using KursDomain.References;
 
 // ReSharper disable CollectionNeverQueried.Global
 namespace KursAM2.ViewModel.Management

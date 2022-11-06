@@ -11,9 +11,7 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.References;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursDomain.Documents.AccruedAmount;
 
@@ -56,7 +54,7 @@ public sealed class AccruedAmountForClientRowViewModel : RSViewModelBase, IDataE
         if (Entity.CashDC != null)
             CashDoc = new CashIn(Entity.SD_33);
         if (Entity.SHPZ_DC != null)
-            SDRSchet = MainReferences.SDRSchets[Entity.SHPZ_DC.Value];
+            SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SHPZ_DC.Value) as SDRSchet;
         if (Entity.BankCode != null)
         {
             var td101 = GlobalOptions.GetEntities().TD_101

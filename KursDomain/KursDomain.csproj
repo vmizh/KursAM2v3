@@ -104,14 +104,11 @@
     <Compile Include="Documents\Cash\CashOut.cs" />
     <Compile Include="Documents\Cash\CashStartRemains.cs" />
     <Compile Include="Documents\CommonReferences\CategoryClientTypeViewModel.cs" />
-    <Compile Include="Documents\CommonReferences\CentrOfResponsibility.cs" />
     <Compile Include="Documents\CommonReferences\CountriesViewModel.cs" />
     <Compile Include="Documents\CommonReferences\COUNTRYViewModel.cs" />
     <Compile Include="Documents\CommonReferences\CrossCurrencyRate.cs" />
-    <Compile Include="Documents\CommonReferences\Currency.cs" />
     <Compile Include="Documents\CommonReferences\CurrencyRate.cs" />
     <Compile Include="Documents\CommonReferences\DocumentType.cs" />
-    <Compile Include="Documents\CommonReferences\FormPay.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KontragentViewModel.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KontragentBank.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KontragentClientCategory.cs" />
@@ -120,11 +117,8 @@
     <Compile Include="Documents\CommonReferences\Kontragent\KONTRAGENT_REF_OUTViewModel.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KONTRAGENT_REF_OUT_REQUISITEViewModel.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KONTR_BALANS_OPER_ARCViewModel.cs" />
-    <Compile Include="Documents\CommonReferences\PayCondition.cs" />
     <Compile Include="Documents\CommonReferences\Project.cs" />
     <Compile Include="Documents\CommonReferences\Region.cs" />
-    <Compile Include="Documents\CommonReferences\SDRSchet.cs" />
-    <Compile Include="Documents\CommonReferences\SDRState.cs" />
     <Compile Include="Documents\Currency\CurrencyRates.cs" />
     <Compile Include="Documents\Currency\KursMoney.cs" />
     <Compile Include="Documents\Currency\MultyCurrencyHelper.cs" />

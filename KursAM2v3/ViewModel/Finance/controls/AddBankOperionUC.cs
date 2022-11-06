@@ -13,7 +13,6 @@ using KursDomain.Documents.Bank;
 using KursDomain.ICommon;
 using KursDomain.References;
 using BankAccount = KursDomain.Documents.Bank.BankAccount;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursAM2.ViewModel.Finance.controls
 {
@@ -92,7 +91,6 @@ namespace KursAM2.ViewModel.Finance.controls
             CurrentBankOperations?.Currency != GlobalOptions.SystemProfile.NationalCurrency;
 
         // ReSharper disable once InconsistentNaming
-        public List<SDRSchet> SHPZList => MainReferences.SDRSchets.Values.ToList();
 
         public BankAccount BankAccount
         {

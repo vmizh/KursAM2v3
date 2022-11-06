@@ -10,7 +10,6 @@ using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using KursAM2.Managers.Invoices;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursDomain;
@@ -30,16 +29,65 @@ namespace KursAM2.ViewModel.Shop
             RightMenuBar = MenuGenerator.ExitOnlyRightBar(this);
         }
 
+        public string this[string columnName] => null;
+
+        public string Error { get; } = null;
+
+        #region methods
+
+        public static List<ShopExtFileOrderItem> ShopXMLParsingOrder(string text)
+        {
+            //string[] separatingStrings = {"<item", "/>"};
+            string[] separatingStrings = { "\r\n" };
+            string[] separatingStrings2 = { "\"" };
+            var OrderItems = new List<ShopExtFileOrderItem>();
+
+            var str = text.Split(separatingStrings, StringSplitOptions.RemoveEmptyEntries);
+            var str2 = new List<string>();
+            for (var i = 3; i < str.Length - 3; i++) str2.Add(str[i]);
+            foreach (var s in str2)
+            {
+                var sp = s.Split(separatingStrings2, StringSplitOptions.None);
+                var newItem = new ShopExtFileOrderItem
+                {
+                    OfferId = sp[1],
+                    Price = Convert.ToDecimal(sp[3], new NumberFormatInfo
+                    {
+                        CurrencyDecimalSeparator = ".,"
+                    }),
+                    Count = Convert.ToDecimal(sp[5], new NumberFormatInfo
+                    {
+                        CurrencyDecimalSeparator = ".,"
+                    })
+                };
+                var ss = "";
+                for (var i = 7; i < sp.Length; i++) ss = ss + sp[i];
+                newItem.Name = ss.Remove(ss.Length - 2);
+                var old = OrderItems.FirstOrDefault(_ => _.OfferId == newItem.OfferId);
+                if (old == null)
+                    OrderItems.Add(newItem);
+                else
+                    old.Count = old.Count + newItem.Count;
+            }
+
+            return OrderItems;
+        }
+
+        #endregion
+
         #region Properties
 
         public override string LayoutName => "ShopParserExtFilesWindowViewModel";
 
         public ObservableCollection<ShopExtFileOrderItem> GeneratedItems { set; get; } =
             new ObservableCollection<ShopExtFileOrderItem>();
-        public ObservableCollection<NomenklInfo> NomenklMainList { set; get; } = new ObservableCollection<NomenklInfo>();
 
-       
+        public ObservableCollection<NomenklInfo> NomenklMainList { set; get; } =
+            new ObservableCollection<NomenklInfo>();
+
+
         private string myTextForParse;
+
         public string TextForParse
         {
             get => myTextForParse;
@@ -49,8 +97,8 @@ namespace KursAM2.ViewModel.Shop
                 myTextForParse = value;
                 RaisePropertyChanged();
             }
-        } 
-        
+        }
+
         #endregion
 
         #region Command
@@ -88,7 +136,7 @@ namespace KursAM2.ViewModel.Shop
                         CO = MainReferences.GetCO(10400000012),
                         PayCondition = MainReferences.GetPayCondition(11790000001),
                         VzaimoraschetType = MainReferences.GetVzaimoraschetType(10770000005),
-                        FormRaschet = MainReferences.GetFormPay(11890000001),
+                        FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(11890000001) as PayForm,
                         IsNDSInPrice = true,
                         CREATOR = GlobalOptions.UserInfo.NickName,
                         PersonaResponsible = MainReferences.GetEmployee((int?)104),
@@ -96,12 +144,11 @@ namespace KursAM2.ViewModel.Shop
                         State = RowStatus.NewRow,
                         DocCode = -1,
                         DocDate = DateTime.Today
-
                     }
                 };
 
                 //var inv = InvoicesManager.NewProvider();
-                int Code = 1;
+                var Code = 1;
                 foreach (var n in NomenklMainList)
                 {
                     var nom = ctx.SD_83.FirstOrDefault(_ =>
@@ -115,7 +162,7 @@ namespace KursAM2.ViewModel.Shop
                             DocId = invoice.Document.Id,
                             Id = Guid.NewGuid(),
                             Code = Code,
-                            SFT_NDS_PERCENT = (decimal) (nom.NOM_NDS_PERCENT ?? Convert.ToDouble(GlobalOptions
+                            SFT_NDS_PERCENT = (decimal)(nom.NOM_NDS_PERCENT ?? Convert.ToDouble(GlobalOptions
                                 .SystemProfile.Profile
                                 .FirstOrDefault(_ => _.SECTION == @"НОМЕНКЛАТУРА" && _.ITEM == @"НДС")
                                 ?.ITEM_VALUE)),
@@ -143,7 +190,6 @@ namespace KursAM2.ViewModel.Shop
                 //invoice.Document.Summa = (decimal) invoice.Document.Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE);
                 frm.Show();
                 frm.DataContext = invoice;
-
             }
         }
 
@@ -154,7 +200,7 @@ namespace KursAM2.ViewModel.Shop
 
         private void GenerateNomenkl(object obj)
         {
-            List<ShopExtFileOrderItem> nomExistsInDB = new List<ShopExtFileOrderItem>();
+            var nomExistsInDB = new List<ShopExtFileOrderItem>();
             GeneratedItems = new ObservableCollection<ShopExtFileOrderItem>(ShopXMLParsingOrder(TextForParse));
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -167,12 +213,9 @@ namespace KursAM2.ViewModel.Shop
                 NomenklMainList.Clear();
                 foreach (var item in GeneratedItems)
                 {
-                    Guid id = Guid.NewGuid();
+                    var id = Guid.NewGuid();
                     var isInBase = nomExistsInDB.Exists(_ => _.OfferId == item.OfferId);
-                    if (isInBase)
-                    {
-                        id = ctx.NomenklMain.Single(_ => _.NomenklNumber == item.OfferId).Id;
-                    }
+                    if (isInBase) id = ctx.NomenklMain.Single(_ => _.NomenklNumber == item.OfferId).Id;
 
                     NomenklMainList.Add(new NomenklInfo
                     {
@@ -227,7 +270,7 @@ namespace KursAM2.ViewModel.Shop
                                 IsNakladExpense = m.IsNakladExpense,
                                 IsUsluga = m.IsUsluga,
                                 UnitDC = m.Unit.DocCode,
-                                ProductDC = 10500000008 ,
+                                ProductDC = 10500000008,
                                 IsRentabelnost = m.IsRentabelnost,
                                 IsCurrencyTransfer = m.IsCurrencyTransfer
                             };
@@ -258,7 +301,8 @@ namespace KursAM2.ViewModel.Shop
                             };
                             ctx.SD_83.Add(newNomItem);
                         }
-                        foreach(var m in NomenklMainList.Where(_ => _.IsInDataBase))
+
+                        foreach (var m in NomenklMainList.Where(_ => _.IsInDataBase))
                         {
                             var oldMain = ctx.NomenklMain.FirstOrDefault(_ => _.Id == m.Id);
                             var oldNom = ctx.SD_83.FirstOrDefault(_ =>
@@ -270,6 +314,7 @@ namespace KursAM2.ViewModel.Shop
                                 oldMain.FullName = m.FullName;
                                 oldMain.Note = m.Note;
                             }
+
                             // ReSharper disable once InvertIf
                             if (oldNom != null)
                             {
@@ -278,74 +323,21 @@ namespace KursAM2.ViewModel.Shop
                                 oldNom.NOM_NOTES = m.Note;
                             }
                         }
+
                         ctx.SaveChanges();
                         tnx.Commit();
-                        foreach (var item in NomenklMainList)
-                        {
-                            item.IsInDataBase = true;
-                        }
+                        foreach (var item in NomenklMainList) item.IsInDataBase = true;
                     }
                     catch (Exception ex)
                     {
-                        if(tnx.UnderlyingTransaction.Connection != null)
+                        if (tnx.UnderlyingTransaction.Connection != null)
                             tnx.Rollback();
                         WindowManager.ShowError(ex);
                     }
                 }
-
             }
         }
 
         #endregion
-
-        #region methods
-
-        public static List<ShopExtFileOrderItem> ShopXMLParsingOrder(string text)
-        {
-            //string[] separatingStrings = {"<item", "/>"};
-            string[] separatingStrings = {"\r\n"};
-            string[] separatingStrings2 = {"\""};
-            var OrderItems = new List<ShopExtFileOrderItem>();
-
-            var str = text.Split(separatingStrings, StringSplitOptions.RemoveEmptyEntries);
-            var str2 = new List<string>();
-            for (var i = 3; i < str.Length - 3; i++) str2.Add(str[i]);
-            foreach (var s in str2)
-            {
-                var sp = s.Split(separatingStrings2, StringSplitOptions.None);
-                var newItem = new ShopExtFileOrderItem
-                {
-                    OfferId = sp[1],
-                    Price = Convert.ToDecimal(sp[3],new NumberFormatInfo()
-                    {
-                        CurrencyDecimalSeparator = ".,"
-                    }),
-                    Count = Convert.ToDecimal(sp[5],new NumberFormatInfo()
-                    {
-                        CurrencyDecimalSeparator = ".,"
-                    })
-                };
-                var ss = "";
-                for (var i = 7; i < sp.Length; i++) ss = ss + sp[i];
-                newItem.Name = ss.Remove(ss.Length-2);
-                var old = OrderItems.FirstOrDefault(_ => _.OfferId == newItem.OfferId);
-                if (old == null)
-                {
-                    OrderItems.Add(newItem);
-                }
-                else
-                {
-                    old.Count = old.Count + newItem.Count;
-                }
-            }
-
-            return OrderItems;
-        }
-
-        #endregion
-
-        public string this[string columnName] => null;
-
-        public string Error { get; } = null;
     }
 }

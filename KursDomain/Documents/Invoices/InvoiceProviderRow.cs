@@ -10,7 +10,6 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.References;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 // ReSharper disable InconsistentNaming
 namespace KursDomain.Documents.Invoices;
@@ -73,7 +72,7 @@ public interface IInvoiceProviderRow
     [Display(AutoGenerateField = false)] decimal? SFT_SUMMA_K_OPLATE_KONTR_CRS { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Счет дох/расх")]
-    SDRSchet SDRSchet { set; get; }
+    References.SDRSchet SDRSchet { set; get; }
 }
 
 /// <summary>
@@ -943,7 +942,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
 
         if (Entity.SFT_SHPZ_DC != null && MainReferences.SDRSchets.ContainsKey(Entity.SFT_SHPZ_DC.Value))
         {
-            mySDRSchet = MainReferences.SDRSchets[Entity.SFT_SHPZ_DC.Value];
+            mySDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC.Value) as SDRSchet;
             RaisePropertyChanged(nameof(SDRSchet));
         }
 

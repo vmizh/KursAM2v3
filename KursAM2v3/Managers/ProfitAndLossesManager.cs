@@ -20,8 +20,6 @@ using KursDomain.Documents.Management;
 using KursDomain.ICommon;
 using KursDomain.References;
 using Project = KursDomain.Documents.CommonReferences.Project;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
-using SDRState = KursDomain.Documents.CommonReferences.SDRState;
 
 namespace KursAM2.Managers
 {
@@ -1147,13 +1145,10 @@ namespace KursAM2.Managers
                         Name = emps.Single(_ => _.TABELNUMBER == d.TabelNumber).NAME,
                         Date = d.Date ?? DateTime.MinValue,
                         DocTypeCode = (DocumentType)903,
-                        SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                        SDRSchet = d.SDRSchetDC != null ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet : null,
                         SDRState = d.SDRSchetDC == null
                             ? null
-                            : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                ? MainReferences.SDRStates[
-                                    MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                : null
+                            : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState,
                     };
                     SetCurrenciesValue(newOp, d.OperCrsDC, 0, d.Summa);
 
@@ -1563,7 +1558,7 @@ namespace KursAM2.Managers
                         SDRSchet sdrSchet = null;
                         if (d.SDRSchetDC != null)
                             // ReSharper disable once PossibleInvalidOperationException
-                            sdrSchet = MainReferences.SDRSchets[d.SDRSchetDC.Value];
+                            sdrSchet = GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC) as SDRSchet;
                         var e = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = dictCOIns[d.COName],
@@ -1594,7 +1589,7 @@ namespace KursAM2.Managers
                         SDRSchet sdrSchet = null;
                         if (d.SDRSchetDC != null)
                             // ReSharper disable once PossibleInvalidOperationException
-                            sdrSchet = MainReferences.SDRSchets[d.SDRSchetDC.Value];
+                            sdrSchet = GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet;
                         var e = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = dictCOOuts[d.COName],
@@ -1651,7 +1646,7 @@ namespace KursAM2.Managers
                         SDRSchet sdrSchet = null;
                         if (d.SDRSchetDC != null)
                             // ReSharper disable once PossibleInvalidOperationException
-                            sdrSchet = MainReferences.SDRSchets[d.SDRSchetDC.Value];
+                            sdrSchet = GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet;
                         var e = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = dictCOIns[d.COName],
@@ -1679,7 +1674,7 @@ namespace KursAM2.Managers
                         SDRSchet sdrSchet = null;
                         if (d.SDRSchetDC != null)
                             // ReSharper disable once PossibleInvalidOperationException
-                            sdrSchet = MainReferences.SDRSchets[d.SDRSchetDC.Value];
+                            sdrSchet = GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet;
                         var e = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = dictCOOuts[d.COName],
@@ -1784,10 +1779,7 @@ namespace KursAM2.Managers
 
         private SDRState GetSdrState(SDRSchet sdrSchet)
         {
-            if (sdrSchet?.SHPZ_STATIA_DC == null) return null;
-            if (MainReferences.SDRStates.ContainsKey(sdrSchet.SHPZ_STATIA_DC.Value))
-                return MainReferences.SDRStates[sdrSchet.SHPZ_STATIA_DC.Value];
-            return null;
+            return sdrSchet?.SDRState as SDRState;
         }
 
         public void CalcProviderSupply()
@@ -1841,13 +1833,12 @@ namespace KursAM2.Managers
                         Date = d.Date,
                         Kontragent = d.KontrName,
                         DocTypeCode = DocumentType.StoreOrderIn,
-                        SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                        SDRSchet = d.SDRSchetDC != null
+                            ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                            : null,
                         SDRState = d.SDRSchetDC == null
                             ? null
-                            : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                ? MainReferences.SDRStates[
-                                    MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                : null
+                            : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                     };
                     SetCurrenciesValue(newOp, ((IDocCode)nom.Currency).DocCode, 0m, d.Loss);
 
@@ -2055,13 +2046,12 @@ namespace KursAM2.Managers
                             Date = d.Date,
                             Kontragent = d.KontrName,
                             DocTypeCode = DocumentType.StoreOrderIn,
-                            SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                            SDRSchet = d.SDRSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.SDRSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                         };
                         SetCurrenciesValue(newOp, ((IDocCode)nom.Currency).DocCode, d.Price * d.Quantity, 0m);
 
@@ -2085,13 +2075,12 @@ namespace KursAM2.Managers
                             Date = d.Date,
                             Kontragent = d.KonrtName,
                             DocTypeCode = DocumentType.Waybill,
-                            SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                            SDRSchet = d.SDRSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.SDRSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                         };
                         SetCurrenciesValue(newOp, ((IDocCode)nom.Currency).DocCode, 0m, d.Quantity * d.NomPrice);
 
@@ -2113,13 +2102,12 @@ namespace KursAM2.Managers
                             Date = d.Date,
                             Kontragent = kontr.Name,
                             DocTypeCode = DocumentType.Bank,
-                            SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                            SDRSchet = d.SDRSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.SDRSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                         };
                         SetCurrenciesValue(newOp, d.OperCrsDC, d.Price, 0m);
 
@@ -2141,13 +2129,12 @@ namespace KursAM2.Managers
                             Date = d.Date,
                             Kontragent = kontr.Name,
                             DocTypeCode = DocumentType.Bank,
-                            SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                            SDRSchet = d.SDRSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.SDRSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                         };
                         SetCurrenciesValue(newOp, d.OperCrsDC, 0m, d.Price);
 
@@ -2168,13 +2155,12 @@ namespace KursAM2.Managers
                             Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
                             Date = (DateTime)d.Date,
                             DocTypeCode = DocumentType.CashIn,
-                            SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                            SDRSchet = d.SDRSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.SDRSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                         };
                         SetCurrenciesValue(newOp, d.CrsDC.Value, d.Profit, 0m);
                         Extend.Add(newOp);
@@ -2194,13 +2180,12 @@ namespace KursAM2.Managers
                             Date = (DateTime)d.Date,
                             Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
                             DocTypeCode = DocumentType.CashOut,
-                            SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                            SDRSchet = d.SDRSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.SDRSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                         };
                         SetCurrenciesValue(newOp, d.CrsDC.Value, 0m, d.Loss);
 
@@ -2224,13 +2209,12 @@ namespace KursAM2.Managers
                             Date = d.Date,
                             Kontragent = d.KontrName,
                             DocTypeCode = DocumentType.StoreOrderIn,
-                            SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                            SDRSchet = d.SDRSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.SDRSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                         };
                         SetCurrenciesValue(newOp, ((IDocCode)nom.Currency).DocCode, d.Profit, 0m);
 
@@ -2252,13 +2236,12 @@ namespace KursAM2.Managers
                             Date = d.Date,
                             Kontragent = d.KonrtName,
                             DocTypeCode = DocumentType.Waybill,
-                            SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                            SDRSchet = d.SDRSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.SDRSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                         };
                         SetCurrenciesValue(newOp, ((IDocCode)nom.Currency).DocCode, 0m, d.Quantity * d.NomPrice);
                         Extend.Add(newOp);
@@ -2279,13 +2262,12 @@ namespace KursAM2.Managers
                             Date = d.Date,
                             Kontragent = kontr.Name,
                             DocTypeCode = DocumentType.Bank,
-                            SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                            SDRSchet = d.SDRSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.SDRSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                         };
                         SetCurrenciesValue(newOp, d.OperCrsDC, d.Price, 0m);
                         Extend.Add(newOp);
@@ -2306,13 +2288,12 @@ namespace KursAM2.Managers
                             Date = d.Date,
                             Kontragent = kontr.Name,
                             DocTypeCode = DocumentType.Bank,
-                            SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                            SDRSchet = d.SDRSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.SDRSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                         };
                         SetCurrenciesValue(newOp, d.OperCrsDC, 0m, d.Price);
 
@@ -2333,13 +2314,12 @@ namespace KursAM2.Managers
                             Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
                             Date = (DateTime)d.Date,
                             DocTypeCode = DocumentType.CashIn,
-                            SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                            SDRSchet = d.SDRSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.SDRSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                         };
                         SetCurrenciesValue(newOp, d.CrsDC, d.Profit, 0m);
                         Extend.Add(newOp);
@@ -2359,13 +2339,12 @@ namespace KursAM2.Managers
                             Date = (DateTime)d.Date,
                             Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
                             DocTypeCode = DocumentType.CashOut,
-                            SDRSchet = d.SDRSchetDC != null ? MainReferences.SDRSchets[d.SDRSchetDC.Value] : null,
+                            SDRSchet = d.SDRSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.SDRSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.SDRSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                         };
                         SetCurrenciesValue(newOp, d.CrsDC, 0m, d.Loss);
 
@@ -2468,15 +2447,9 @@ namespace KursAM2.Managers
                         KontragentBase = null,
                         Date = d.AccruedAmountOfSupplier.DocDate,
                         DocTypeCode = DocumentType.AccruedAmountOfSupplier,
-                        SDRSchet = d.SHPZ_DC != null && MainReferences.SDRSchets.ContainsKey(d.SHPZ_DC.Value)
-                            ? MainReferences.SDRSchets[d.SHPZ_DC.Value]
-                            : null,
+                        SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(d.SHPZ_DC) as SDRSchet,
                         SDRState =
-                            d.SHPZ_DC != null && MainReferences.SDRSchets.ContainsKey(d.SHPZ_DC.Value) &&
-                            MainReferences.SDRSchets[d.SHPZ_DC.Value].SHPZ_STATIA_DC != null
-                                ? MainReferences.SDRStates[
-                                    MainReferences.SDRSchets[d.SHPZ_DC.Value].SHPZ_STATIA_DC.Value]
-                                : null,
+                            d.SHPZ_DC != null ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SHPZ_DC.Value).SDRState as SDRState  : null,
                         AktZachet = null,
                         AktZachetResult = 0,
                         CurrencyName = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC).BalansCurrency
@@ -2572,13 +2545,10 @@ namespace KursAM2.Managers
                                 d.IsCurrencyConvert
                                     ? DocumentType.CurrencyConvertAccounting
                                     : DocumentType.MutualAccounting,
-                            SDRSchet = d.sdrSchetDC != null ? MainReferences.SDRSchets[d.sdrSchetDC.Value] : null,
+                            SDRSchet = d.sdrSchetDC != null ? GlobalOptions.ReferencesCache.GetSDRSchet(d.sdrSchetDC.Value) as SDRSchet : null,
                             SDRState = d.sdrSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.sdrSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.sdrSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null,
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.sdrSchetDC.Value).SDRState as SDRState,
                             AktZachet = d.IsCurrencyConvert
                                 ? null
                                 : sumRight - sumLeft == 0
@@ -2698,13 +2668,10 @@ namespace KursAM2.Managers
                                 d.IsCurrencyConvert
                                     ? DocumentType.CurrencyConvertAccounting
                                     : DocumentType.MutualAccounting,
-                            SDRSchet = d.sdrSchetDC != null ? MainReferences.SDRSchets[d.sdrSchetDC.Value] : null,
+                            SDRSchet = d.sdrSchetDC != null ? GlobalOptions.ReferencesCache.GetSDRSchet(d.sdrSchetDC.Value) as SDRSchet : null,
                             SDRState = d.sdrSchetDC == null
                                 ? null
-                                : MainReferences.SDRSchets[d.sdrSchetDC.Value].SHPZ_STATIA_DC != null
-                                    ? MainReferences.SDRStates[
-                                        MainReferences.SDRSchets[d.sdrSchetDC.Value].SHPZ_STATIA_DC.Value]
-                                    : null,
+                                : GlobalOptions.ReferencesCache.GetSDRSchet(d.sdrSchetDC.Value).SDRState as SDRState,
                             AktZachet = d.IsCurrencyConvert
                                 ? null
                                 : d.Result == 0

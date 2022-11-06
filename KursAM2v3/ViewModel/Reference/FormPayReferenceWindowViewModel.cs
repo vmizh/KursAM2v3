@@ -9,9 +9,9 @@ using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Nomenkl;
 using KursDomain;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -38,12 +38,17 @@ namespace KursAM2.ViewModel.Reference
 
         #region Properties
 
-        public ObservableCollection<FormPay> Rows { set; get; } = new ObservableCollection<FormPay>();
-        public ObservableCollection<FormPay> DeletedRows { set; get; } = new ObservableCollection<FormPay>();
-        public ObservableCollection<FormPay> SelectedRows { set; get; } = new ObservableCollection<FormPay>();
-        private FormPay myCurrentRow;
+        public ObservableCollection<PayFormViewModel> Rows { set; get; } = new ObservableCollection<PayFormViewModel>();
 
-        public FormPay CurrentRow
+        public ObservableCollection<PayFormViewModel> DeletedRows { set; get; } =
+            new ObservableCollection<PayFormViewModel>();
+
+        public ObservableCollection<PayFormViewModel> SelectedRows { set; get; } =
+            new ObservableCollection<PayFormViewModel>();
+
+        private PayFormViewModel myCurrentRow;
+
+        public PayFormViewModel CurrentRow
         {
             get => myCurrentRow;
             set
@@ -108,8 +113,12 @@ namespace KursAM2.ViewModel.Reference
                         tn.Commit();
                         MainReferences.FormRaschets.Clear();
                         foreach (var item in ctx.SD_189.AsNoTracking().ToList())
-                            MainReferences.FormRaschets.Add(item.DOC_CODE,
-                                new FormPay(item) { State = RowStatus.NotEdited });
+                        {
+                            var newItem = new PayForm();
+                            newItem.LoadFromEntity(item);
+                            MainReferences.FormRaschets.Add(item.DOC_CODE, newItem);
+                        }
+
                         foreach (var r in Rows)
                             r.myState = RowStatus.NotEdited;
                         DeletedRows.Clear();
@@ -130,7 +139,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void ItemNewEmpty(object obj)
         {
-            Rows.Add(new FormPay
+            Rows.Add(new PayFormViewModel
             {
                 DocCode = -1,
                 State = RowStatus.NewRow,
@@ -148,7 +157,7 @@ namespace KursAM2.ViewModel.Reference
             {
                 var data = ctx.SD_189.ToList();
                 foreach (var u in data)
-                    Rows.Add(new FormPay(u)
+                    Rows.Add(new PayFormViewModel(u)
                     {
                         State = RowStatus.NotEdited
                     });
@@ -170,7 +179,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void ItemNewCopy(object obj)
         {
-            Rows.Add(new FormPay
+            Rows.Add(new PayFormViewModel
             {
                 DocCode = -1,
                 State = RowStatus.NewRow,
@@ -188,7 +197,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void ItemsDelete(object obj)
         {
-            var dList = new List<FormPay>();
+            var dList = new List<PayFormViewModel>();
             foreach (var r in SelectedRows)
                 dList.Add(r);
             foreach (var row in dList)

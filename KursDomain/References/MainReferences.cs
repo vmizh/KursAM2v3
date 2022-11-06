@@ -20,11 +20,8 @@ using BankAccount = KursDomain.Documents.Bank.BankAccount;
 using ContractType = KursDomain.Documents.Dogovora.ContractType;
 using DeliveryCondition = KursDomain.Documents.NomenklManagement.DeliveryCondition;
 using Employee = KursDomain.Documents.Employee.Employee;
-using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
 using Project = KursDomain.Documents.CommonReferences.Project;
 using Region = KursDomain.Documents.CommonReferences.Region;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
-using SDRState = KursDomain.Documents.CommonReferences.SDRState;
 using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace Core;
@@ -47,7 +44,7 @@ public static class MainReferences
         COList = new Dictionary<decimal, CentrResponsibility>();
         PayConditions = new Dictionary<decimal, PayCondition>();
         VzaimoraschetTypes = new Dictionary<decimal, VzaimoraschetType>();
-        FormRaschets = new Dictionary<decimal, FormPay>();
+        FormRaschets = new Dictionary<decimal, PayForm>();
         Countries = new Dictionary<decimal, CountriesViewModel>();
         Currencies = new Dictionary<decimal, Currency>();
         Units = new Dictionary<decimal, Unit>();
@@ -91,7 +88,7 @@ public static class MainReferences
     public static Dictionary<decimal, CentrResponsibility> COList { get; }
     public static Dictionary<decimal, PayCondition> PayConditions { get; }
     public static Dictionary<decimal, VzaimoraschetType> VzaimoraschetTypes { get; }
-    public static Dictionary<decimal, FormPay> FormRaschets { get; }
+    public static Dictionary<decimal, PayForm> FormRaschets { get; }
     public static Dictionary<decimal, CountriesViewModel> Countries { set; get; }
     public static Dictionary<decimal, Currency> Currencies { get; }
     public static Dictionary<decimal, Unit> Units { get; }
@@ -288,7 +285,7 @@ public static class MainReferences
         return null;
     }
 
-    public static FormPay GetFormPay(decimal dc)
+    public static PayForm GetPayForm(decimal dc)
     {
         if (FormRaschets.ContainsKey(dc))
             return FormRaschets[dc];
@@ -311,7 +308,7 @@ public static class MainReferences
         return null;
     }
 
-    public static FormPay GetFormPay(decimal? dc)
+    public static PayForm GetPayForm(decimal? dc)
     {
         if (dc == null) return null;
         if (FormRaschets.ContainsKey(dc.Value))
@@ -592,11 +589,12 @@ public static class MainReferences
                 if (SDRSchets.ContainsKey(l.DOC_CODE))
                 {
                     var d = SDRSchets[l.DOC_CODE];
-                    d.myState = RowStatus.NotEdited;
                 }
                 else
                 {
-                    SDRSchets.Add(l.DOC_CODE, new SDRSchet(l) { myState = RowStatus.NotEdited });
+                    var newItem = new SDRSchet();
+                    newItem.LoadFromEntity(l, GlobalOptions.ReferencesCache);
+                    SDRSchets.Add(l.DOC_CODE, newItem);
                 }
 
             keys = SDRSchets.Keys.ToList();
@@ -615,11 +613,12 @@ public static class MainReferences
                 if (SDRStates.ContainsKey(item.DOC_CODE))
                 {
                     var d = SDRStates[item.DOC_CODE];
-                    d.myState = RowStatus.NotEdited;
                 }
                 else
                 {
-                    SDRStates.Add(item.DOC_CODE, new SDRState(item) { myState = RowStatus.NotEdited });
+                    var newItem = new SDRState();
+                    newItem.LoadFromEntity(item);
+                    SDRStates.Add(item.DOC_CODE, newItem);
                 }
 
             keys = SDRStates.Keys.ToList();
@@ -638,12 +637,13 @@ public static class MainReferences
                 if (PayConditions.ContainsKey(item.DOC_CODE))
                 {
                     var d = PayConditions[item.DOC_CODE];
-                    d.UpdateFrom(item);
-                    d.myState = RowStatus.NotEdited;
+                    d.LoadFromEntity(item);
                 }
                 else
                 {
-                    PayConditions.Add(item.DOC_CODE, new PayCondition(item) { myState = RowStatus.NotEdited });
+                    var newItem = new PayCondition();
+                    newItem.LoadFromEntity(item);
+                    PayConditions.Add(item.DOC_CODE, newItem);
                 }
 
             keys = PayConditions.Keys.ToList();
@@ -687,12 +687,13 @@ public static class MainReferences
                 if (FormRaschets.ContainsKey(item.DOC_CODE))
                 {
                     var d = FormRaschets[item.DOC_CODE];
-                    d.UpdateFrom(item);
-                    d.myState = RowStatus.NotEdited;
+                    d.LoadFromEntity(item);
                 }
                 else
                 {
-                    FormRaschets.Add(item.DOC_CODE, new FormPay(item) { myState = RowStatus.NotEdited });
+                    var newItem = new PayForm();
+                    newItem.LoadFromEntity(item);
+                    FormRaschets.Add(item.DOC_CODE, newItem);
                 }
 
             keys = FormRaschets.Keys.ToList();

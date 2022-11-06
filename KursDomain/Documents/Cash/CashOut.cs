@@ -10,10 +10,10 @@ using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Editors.Settings;
-using KursDomain.Documents.Bank;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.StockHolder;
+using KursDomain.References;
 using Newtonsoft.Json;
+using BankAccount = KursDomain.Documents.Bank.BankAccount;
 
 namespace KursDomain.Documents.Cash;
 
@@ -947,7 +947,7 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
             myKontragentType = CashKontragentType.Kontragent;
         if (Entity?.CRS_DC != null) Currency = MainReferences.Currencies[(decimal)Entity?.CRS_DC];
         if (SPOST_DC != null) SPostName = SPost(SPOST_DC.Value);
-        if (SHPZ_DC != null) SDRSchet = MainReferences.SDRSchets[SHPZ_DC.Value];
+        if (SHPZ_DC != null) SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(SHPZ_DC) as SDRSchet;
         if (TABELNUMBER != null)
         {
             myKontragentType = CashKontragentType.Employee;

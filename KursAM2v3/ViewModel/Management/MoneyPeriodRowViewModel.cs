@@ -2,8 +2,6 @@
 using Core.ViewModel.Base;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.References;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
-using SDRState = KursDomain.Documents.CommonReferences.SDRState;
 
 namespace KursAM2.ViewModel.Management
 {

@@ -14,7 +14,6 @@ using KursDomain.Documents.Cash;
 using KursDomain.ICommon;
 using KursDomain.References;
 using Newtonsoft.Json;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursDomain.Documents.Bank;
 
@@ -58,7 +57,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
             DOC_CODE = -1,
             SD_101 = new SD_101()
         };
-        SHPZList = new List<SDRSchet>(MainReferences.SDRSchets.Values.ToList());
+        SHPZList = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList();
         updateReferences();
         RaisePropertyChanged(nameof(SHPZList));
     }
@@ -824,7 +823,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
         if (Entity.VVT_KONTRAGENT != null)
             _myKontragent = GlobalOptions.ReferencesCache.GetKontragent(Entity.VVT_KONTRAGENT) as Kontragent;
         if (Entity.VVT_SHPZ_DC != null)
-            mySHPZ = MainReferences.SDRSchets[Entity.VVT_SHPZ_DC.Value];
+            mySHPZ = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.VVT_SHPZ_DC) as SDRSchet;
         if (Entity.VVT_PLATEL_POLUCH_DC != null)
             myPayment = GlobalOptions.ReferencesCache.GetKontragent(Entity.VVT_PLATEL_POLUCH_DC) as Kontragent;
         if (MainReferences.Currencies.ContainsKey(Entity.VVT_CRS_DC))
@@ -840,7 +839,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
                 $"С/ф №{Entity.SD_26.SF_IN_NUM}/{Entity.SD_26.SF_POSTAV_NUM} от " +
                 $"{Entity.SD_26.SF_POSTAV_DATE} на {Entity.SD_26.SF_CRS_SUMMA} " +
                 // ReSharper disable once PossibleInvalidOperationException
-                $"{MainReferences.Currencies[(decimal) Entity.SD_26.SF_CRS_DC]}";
+                $"{MainReferences.Currencies[(decimal)Entity.SD_26.SF_CRS_DC]}";
         if (Entity.AccuredAmountOfSupplierRow != null)
         {
             var acc = Entity.AccuredAmountOfSupplierRow;
@@ -1020,7 +1019,9 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
     #region compendiums
 
     public List<References.Currency> CurrencysCompendium => MainReferences.Currencies.Values.ToList();
-    public List<SDRSchet> SHPZList { set; get; } = new(MainReferences.SDRSchets.Values.ToList());
+
+    public List<SDRSchet> SHPZList { set; get; } =
+        GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList();
 
     #endregion
 }

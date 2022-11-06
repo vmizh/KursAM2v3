@@ -10,11 +10,11 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using KursDomain.Documents.Bank;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.StockHolder;
 using KursDomain.ICommon;
+using KursDomain.References;
 using Newtonsoft.Json;
+using BankAccount = KursDomain.Documents.Bank.BankAccount;
 
 namespace KursDomain.Documents.Cash;
 
@@ -1013,7 +1013,8 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
         IsKontrSelectEnable = myKontragentType != CashKontragentType.NotChoice;
         if (Entity.CRS_DC != null) Currency = MainReferences.Currencies[(decimal)Entity.CRS_DC];
         if (SFACT_DC != null) SFactName = SFact(SFACT_DC.Value);
-        if (Entity.SHPZ_DC != null) SDRSchet = MainReferences.SDRSchets[Entity.SHPZ_DC.Value];
+        if (Entity.SHPZ_DC != null)
+            SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SHPZ_DC.Value) as SDRSchet;
         if (BANK_RASCH_SCHET_DC != null) BankAccount = MainReferences.BankAccounts[BANK_RASCH_SCHET_DC.Value];
         if (RASH_ORDER_FROM_DC != null) RashodOrderFromName = RashodOrderFrom(RASH_ORDER_FROM_DC.Value);
         if (Entity.StockHolders != null)

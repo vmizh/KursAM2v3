@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core.EntityViewModel.CommonReferences;
-using Core.Helper;
 using Core.ViewModel.Base;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Management;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Management
 {
@@ -663,7 +661,7 @@ namespace KursAM2.ViewModel.Management
                     ParentId = Rashod,
                     Name = @"Начисления акционерам ",
                     CalcType = TypeProfitAndLossCalc.IsLoss
-                },
+                }
             };
             return res;
         }

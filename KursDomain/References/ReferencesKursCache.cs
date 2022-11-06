@@ -25,6 +25,50 @@ public class ReferencesKursCache : IReferencesCache
 
     #endregion
 
+    #region Форма оплаты SD_189
+
+    public IPayForm GetPayForm(decimal? dc)
+    {
+        if (dc == null) return null;
+        if (PayForms.ContainsKey(dc.Value))
+            return PayForms[dc.Value];
+        var data = Context.SD_189.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+        if (data == null) return null;
+        var newItem = new PayForm();
+        newItem.LoadFromEntity(data);
+        PayForms.Add(data.DOC_CODE, newItem);
+        return PayForms[data.DOC_CODE];
+    }
+    public IEnumerable<IPayForm> GetPayFormAll()
+    {
+        return PayForms.Values.ToList();
+    }
+
+   
+
+    #endregion
+
+    #region Условия оплаты SD_179
+
+    public IPayCondition GetPayCondition(decimal? dc)
+    {
+        if (dc == null) return null;
+        if (PayConditions.ContainsKey(dc.Value))
+            return PayConditions[dc.Value];
+        var data = Context.SD_179.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+        if (data == null) return null;
+        var newItem = new PayCondition();
+        newItem.LoadFromEntity(data);
+        PayConditions.Add(data.DOC_CODE, newItem);
+        return PayConditions[data.DOC_CODE];
+    }
+
+    public IEnumerable<IPayCondition> GetPayConditionAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    #endregion
 
     #region Проекты
 
@@ -40,7 +84,6 @@ public class ReferencesKursCache : IReferencesCache
         Projects.Add(data.Id, newItem);
         return Projects[data.Id];
     }
-
     public IEnumerable<IProject> GetProjectsAll()
     {
         return Projects.Values.ToList();
@@ -822,6 +865,8 @@ public class ReferencesKursCache : IReferencesCache
     private readonly Dictionary<decimal, IContractType> ContractTypes = new Dictionary<decimal, IContractType>();
     private readonly Dictionary<decimal,INomenklType> NomenklTypes = new Dictionary<decimal, INomenklType>();
     private readonly Dictionary<decimal,IProductType> ProductTypes = new Dictionary<decimal, IProductType>();
+    private readonly Dictionary<decimal, IPayForm> PayForms = new Dictionary<decimal, IPayForm>();
+    private readonly Dictionary<decimal, IPayCondition> PayConditions = new Dictionary<decimal, IPayCondition>();
 
     #endregion
 }

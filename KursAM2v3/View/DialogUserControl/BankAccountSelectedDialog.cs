@@ -14,7 +14,6 @@ using KursDomain.ICommon;
 using KursDomain.References;
 using Bank = KursDomain.Documents.Bank.Bank;
 using BankAccount = KursDomain.Documents.Bank.BankAccount;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursAM2.View.DialogUserControl
 {
@@ -222,7 +221,9 @@ namespace KursAM2.View.DialogUserControl
                             Bank = MainReferences.BankAccounts[r.SD_101.VV_ACC_DC],
                             Date = r.SD_101.VV_STOP_DATE,
                             Currency = MainReferences.Currencies[r.VVT_CRS_DC],
-                            SHPZ = r.VVT_SHPZ_DC != null ? MainReferences.SDRSchets[r.VVT_SHPZ_DC.Value] : null
+                            SHPZ = r.VVT_SHPZ_DC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(r.VVT_SHPZ_DC.Value) as SDRSchet
+                                : null
                         });
                 }
             }

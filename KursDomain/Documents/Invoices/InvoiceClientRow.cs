@@ -8,9 +8,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.References;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 // ReSharper disable InconsistentNaming
 namespace KursDomain.Documents.Invoices;
@@ -794,7 +792,7 @@ public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientR
     {
         Nomenkl = MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
         if (Entity.SFT_SHPZ_DC != null)
-            SDRSchet = MainReferences.SDRSchets[Entity.SFT_SHPZ_DC.Value];
+            SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC.Value) as SDRSchet;
     }
 
     public virtual void Save(TD_84 doc)

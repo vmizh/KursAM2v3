@@ -6,12 +6,9 @@ using System.Linq;
 using Core;
 using Data;
 using KursDomain;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
 using KursDomain.References;
 using Employee = KursDomain.Documents.Employee.Employee;
-using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursAM2.ViewModel.Finance.Invoices.Base
 {
@@ -48,7 +45,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             IsAccepted = doc.IsAccepted ?? false;
             Note = doc.Note;
             CREATOR = doc.Creator;
-            FormRasche = MainReferences.GetFormPay(doc.FormRaschetDC);
+            FormRasche = GlobalOptions.ReferencesCache.GetPayForm(doc.FormRaschetDC) as PayForm;
             IsNDSInPrice = doc.IsNDSInPrice ?? false;
             CO = MainReferences.GetCO(doc.CO_DC);
             if (!isLoadDetails) return;
@@ -75,7 +72,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public bool IsAccepted { get; set; }
         public string Note { get; set; }
         public string CREATOR { get; set; }
-        public FormPay FormRasche { get; set; }
+        public PayForm FormRasche { get; set; }
         public bool IsNDSInPrice { get; set; }
         public CentrResponsibility CO { get; set; }
         public Kontragent KontrReceiver { get; set; }

@@ -6,13 +6,10 @@ using System.Linq;
 using Core;
 using Data;
 using KursDomain;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.References;
 using Employee = KursDomain.Documents.Employee.Employee;
-using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursAM2.ViewModel.Finance.Invoices.Base
 {
@@ -55,6 +52,8 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             foreach (var r in invList) Rows.Add(new InvoiceClientRowBase(r));
         }
 
+        public PayCondition PayCondition { get; set; }
+
         public Kontragent Receiver { get; set; }
         public Kontragent Client { get; set; }
         public Kontragent Diler { get; set; }
@@ -63,8 +62,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public Guid Id { get; set; }
         public CentrResponsibility CO { get; set; }
         public VzaimoraschetType VzaimoraschetType { get; set; }
-        public FormPay FormRaschet { get; set; }
-        public PayCondition PayCondition { get; set; }
+        public PayForm FormRaschet { get; set; }
         public DateTime DocDate { get; set; }
         public int InnerNumber { get; set; }
         public string OuterNumber { get; set; }

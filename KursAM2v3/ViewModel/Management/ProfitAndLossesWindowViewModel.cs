@@ -23,7 +23,6 @@ using KursDomain.Documents.Management;
 using KursDomain.Menu;
 using KursDomain.References;
 using static System.Math;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 // ReSharper disable All
 namespace KursAM2.ViewModel.Management
@@ -181,9 +180,7 @@ namespace KursAM2.ViewModel.Management
                                         CurrencyName = MainReferences.Currencies[r.VZT_CRS_DC].Name,
                                         Summa = (decimal)r.VZT_CRS_SUMMA,
                                         Note = r.VZT_DOC_NOTES,
-                                        SDRSchet = r.VZT_SHPZ_DC != null
-                                            ? MainReferences.SDRSchets[r.VZT_SHPZ_DC.Value]
-                                            : null
+                                        SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(r.VZT_SHPZ_DC) as SDRSchet
                                     });
                                 }
 
@@ -196,9 +193,7 @@ namespace KursAM2.ViewModel.Management
                                         CurrencyName = MainReferences.Currencies[r.VZT_CRS_DC].Name,
                                         Summa = (decimal)r.VZT_CRS_SUMMA,
                                         Note = r.VZT_DOC_NOTES,
-                                        SDRSchet = r.VZT_SHPZ_DC != null
-                                            ? MainReferences.SDRSchets[r.VZT_SHPZ_DC.Value]
-                                            : null
+                                        SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(r.VZT_SHPZ_DC) as SDRSchet
                                     });
                                 }
                         }
@@ -214,9 +209,7 @@ namespace KursAM2.ViewModel.Management
                                         CurrencyName = MainReferences.Currencies[r.VZT_CRS_DC].Name,
                                         Summa = (decimal)r.VZT_CRS_SUMMA,
                                         Note = r.VZT_DOC_NOTES,
-                                        SDRSchet = r.VZT_SHPZ_DC != null
-                                            ? MainReferences.SDRSchets[r.VZT_SHPZ_DC.Value]
-                                            : null
+                                        SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(r.VZT_SHPZ_DC) as SDRSchet
                                     });
                                 }
 
@@ -229,9 +222,7 @@ namespace KursAM2.ViewModel.Management
                                         CurrencyName = MainReferences.Currencies[r.VZT_CRS_DC].Name,
                                         Summa = (decimal)r.VZT_CRS_SUMMA,
                                         Note = r.VZT_DOC_NOTES,
-                                        SDRSchet = r.VZT_SHPZ_DC != null
-                                            ? MainReferences.SDRSchets[r.VZT_SHPZ_DC.Value]
-                                            : null
+                                        SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(r.VZT_SHPZ_DC) as SDRSchet
                                     });
                                 }
                         }

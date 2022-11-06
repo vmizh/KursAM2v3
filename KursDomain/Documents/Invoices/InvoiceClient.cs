@@ -20,7 +20,6 @@ using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
 using KursDomain.References;
 using Newtonsoft.Json;
-using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
 
 namespace KursDomain.Documents.Invoices;
 
@@ -44,7 +43,7 @@ public class InvoiceClientShort : IInvoiceClient
 
     [Display(AutoGenerateField = true, Name = "Форма расчетов")]
     [ReadOnly(true)]
-    public FormPay FormRaschet { set; get; }
+    public PayForm FormRaschet { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Условия оплаты")]
     [ReadOnly(true)]
@@ -129,7 +128,7 @@ public interface IInvoiceClient
     VzaimoraschetType VzaimoraschetType { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Форма расчетов")]
-    FormPay FormRaschet { set; get; }
+    PayForm FormRaschet { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Условия оплаты")]
     PayCondition PayCondition { set; get; }
@@ -219,11 +218,13 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
         LoadReferences();
     }
 
-    public List<InvoiceClientRow> DeletedRows { set; get; } = new();
+    public List<InvoiceClientRow> DeletedRows { set; get; } = new List<InvoiceClientRow>();
 
-    public ObservableCollection<ShipmentRowViewModel> ShipmentRows { set; get; } = new();
+    public ObservableCollection<ShipmentRowViewModel> ShipmentRows { set; get; } =
+        new ObservableCollection<ShipmentRowViewModel>();
 
-    public ObservableCollection<InvoicePaymentDocument> PaymentDocs { set; get; } = new();
+    public ObservableCollection<InvoicePaymentDocument> PaymentDocs { set; get; } =
+        new ObservableCollection<InvoicePaymentDocument>();
 
     public int? EmployeeTabelNumber => PersonaResponsible?.TabelNumber;
     public decimal CashPaySumma { set; get; }
@@ -998,7 +999,7 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
         set
         {
             if (Entity.SF_ACCEPTED == 1 == value) return;
-            Entity.SF_ACCEPTED = (short) (value ? 1 : 0);
+            Entity.SF_ACCEPTED = (short)(value ? 1 : 0);
             RaisePropertyChanged();
         }
     }
@@ -1037,7 +1038,7 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
         }
     }
 
-    public ObservableCollection<IInvoiceClientRow> Rows { set; get; } = new();
+    public ObservableCollection<IInvoiceClientRow> Rows { set; get; } = new ObservableCollection<IInvoiceClientRow>();
 
     public decimal DilerSumma
     {
@@ -1107,12 +1108,12 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
         }
     }
 
-    public FormPay FormRaschet
+    public PayForm FormRaschet
     {
-        get => MainReferences.GetFormPay(Entity.SF_FORM_RASCH_DC);
+        get => GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) as PayForm;
         set
         {
-            if (MainReferences.GetFormPay(Entity.SF_FORM_RASCH_DC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) == value) return;
             Entity.SF_FORM_RASCH_DC = value?.DocCode;
             RaisePropertyChanged();
         }
@@ -1136,10 +1137,10 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
         get
         {
             decimal sum = 0;
-            if (Entity.TD_84 is {Count: > 0})
+            if (Entity.TD_84 is { Count: > 0 })
                 sum += (from d in Entity.TD_84
                     from o in d.TD_24
-                    select o.DDT_KOL_RASHOD * ((d.SFT_SUMMA_K_OPLATE ?? 0) / (decimal) d.SFT_KOL)).Sum();
+                    select o.DDT_KOL_RASHOD * ((d.SFT_SUMMA_K_OPLATE ?? 0) / (decimal)d.SFT_KOL)).Sum();
             return sum;
         }
     }
@@ -1241,7 +1242,7 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
         set
         {
             if ((SF_NDS_1INCLUD_0NO ?? 0) == 1 == value) return;
-            SF_NDS_1INCLUD_0NO = (short?) ((SF_NDS_1INCLUD_0NO ?? 0) == 1 ? 0 : 1);
+            SF_NDS_1INCLUD_0NO = (short?)((SF_NDS_1INCLUD_0NO ?? 0) == 1 ? 0 : 1);
             foreach (var r in Rows.Cast<InvoiceClientRow>())
             {
                 r.IsNDSInPrice = (SF_NDS_1INCLUD_0NO ?? 0) == 1;
@@ -1284,7 +1285,7 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
         if (Entity.SF_RECEIVER_KONTR_DC != null)
             Receiver = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_RECEIVER_KONTR_DC) as Kontragent;
         if (Entity.SF_FORM_RASCH_DC != null)
-            FormRaschet = MainReferences.FormRaschets[Entity.SF_FORM_RASCH_DC.Value];
+            FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) as PayForm;
         if (Entity.SD_179 != null)
             PayCondition = MainReferences.PayConditions[Entity.SD_179.DOC_CODE];
         if (Entity.SD_77 != null)
@@ -1321,10 +1322,10 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
                         DocumentName =
                             $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                            $"{MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
                         // ReSharper disable once PossibleInvalidOperationException
-                        Summa = (decimal) c.SUMM_ORD,
-                        Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                        Summa = (decimal)c.SUMM_ORD,
+                        Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
                         Note = c.NOTES_ORD
                     });
                 foreach (var c in Entity.TD_101)
@@ -1335,8 +1336,8 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
                         DocumentType = DocumentType.Bank,
                         DocumentName =
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
-                        Summa = (decimal) c.VVT_VAL_PRIHOD,
+                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                        Summa = (decimal)c.VVT_VAL_PRIHOD,
                         Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                         Note = c.VVT_DOC_NUM
                     });
@@ -1350,7 +1351,7 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
                             // ReSharper disable once PossibleInvalidOperationException
                             $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
                         // ReSharper disable once PossibleInvalidOperationException
-                        Summa = (decimal) c.VZT_CRS_SUMMA,
+                        Summa = (decimal)c.VZT_CRS_SUMMA,
                         Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
                         Note = c.VZT_DOC_NOTES
                     });
@@ -1377,10 +1378,10 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
                             DocumentName =
                                 $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
                                 // ReSharper disable once PossibleInvalidOperationException
-                                $"{MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                                $"{MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal) c.SUMM_ORD,
-                            Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                            Summa = (decimal)c.SUMM_ORD,
+                            Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
                             Note = c.NOTES_ORD
                         });
                     foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
@@ -1393,8 +1394,8 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
                             DocumentType = DocumentType.Bank,
                             DocumentName =
                                 // ReSharper disable once PossibleInvalidOperationException
-                                $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
-                            Summa = (decimal) c.VVT_VAL_PRIHOD,
+                                $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                            Summa = (decimal)c.VVT_VAL_PRIHOD,
                             Currency = MainReferences.Currencies[c.VVT_CRS_DC],
                             Note = c.VVT_DOC_NUM
                         });
@@ -1410,7 +1411,7 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
                                 // ReSharper disable once PossibleInvalidOperationException
                                 $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal) c.VZT_CRS_SUMMA,
+                            Summa = (decimal)c.VZT_CRS_SUMMA,
                             Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
                             Note = c.VZT_DOC_NOTES
                         });
@@ -1425,9 +1426,9 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
 
         ShipmentRows = new ObservableCollection<ShipmentRowViewModel>();
 
-        if (Entity.TD_84 is {Count: > 0})
+        if (Entity.TD_84 is { Count: > 0 })
             foreach (var r in Entity.TD_84)
-                if (r.TD_24 is {Count: > 0})
+                if (r.TD_24 is { Count: > 0 })
                     foreach (var r2 in r.TD_24)
                     {
                         var newItem = new ShipmentRowViewModel(r2);

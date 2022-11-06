@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using KursDomain.Documents.CommonReferences;
+using KursDomain.References;
 
 namespace KursDomain.Documents.Vzaimozachet;
 
@@ -26,7 +25,7 @@ public sealed class VzaimoraschetType : RSViewModelBase, IEntity<SD_77>
     {
         Entity = entity ?? DefaultValue();
         if (Entity.TV_SHPZ_DC != null)
-            SHPZ = MainReferences.SDRSchets[Entity.TV_SHPZ_DC.Value];
+            SHPZ = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.TV_SHPZ_DC) as SDRSchet;
     }
 
     public override decimal DocCode
@@ -91,7 +90,7 @@ public sealed class VzaimoraschetType : RSViewModelBase, IEntity<SD_77>
         {
             if (Entity.TV_SHPZ_DC == value) return;
             Entity.TV_SHPZ_DC = value;
-            mySHPZ = Entity.TV_SHPZ_DC != null ? MainReferences.SDRSchets[Entity.TV_SHPZ_DC.Value] : null;
+            mySHPZ = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.TV_SHPZ_DC) as SDRSchet;
             RaisePropertyChanged(nameof(SHPZ));
             RaisePropertyChanged();
         }

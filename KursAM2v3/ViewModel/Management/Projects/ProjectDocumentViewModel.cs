@@ -9,7 +9,6 @@ using KursDomain.Documents.Currency;
 using KursDomain.Documents.Management;
 using KursDomain.References;
 using Employee = KursDomain.Documents.Employee.Employee;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace KursAM2.ViewModel.Management.Projects

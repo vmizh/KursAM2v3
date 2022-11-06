@@ -5,8 +5,6 @@ using FinanceAnalitic;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Management;
 using KursDomain.References;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
-using SDRState = KursDomain.Documents.CommonReferences.SDRState;
 
 namespace KursAM2.ViewModel.Management
 {

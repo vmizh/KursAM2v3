@@ -16,7 +16,6 @@ using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.Menu;
 using KursDomain.References;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 namespace KursAM2.Dialogs
 {
@@ -136,7 +135,7 @@ namespace KursAM2.Dialogs
                             PaySumma = (decimal) ((d.SD_34 != null ? d.SD_34.Sum(x => x.SUMM_ORD ?? 0m) : 0)
                                                   + (d.TD_101 != null ? d.TD_101.Sum(x => x.VVT_VAL_RASHOD) : 0)),
                             IsSelected = false,
-                            SDRSchet = d.SHPZ_DC != null ? MainReferences.SDRSchets[(decimal) d.SHPZ_DC] : null,
+                            SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(d.SHPZ_DC) as SDRSchet,
                             Creator = d.AccruedAmountOfSupplier.Creator,
                             Note = d.AccruedAmountOfSupplier.Note + " " + d.Note,
                             Entity = d

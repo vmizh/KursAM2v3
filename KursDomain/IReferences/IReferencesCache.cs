@@ -88,5 +88,11 @@ public interface IReferencesCache
     IContractType GetContractType(decimal? dc);
     IEnumerable<IContractType> GetContractsTypeAll();
 
+    IPayForm GetPayForm(decimal? вс);
+    IEnumerable<IPayForm> GetPayFormAll();
+
+    IPayCondition GetPayCondition(decimal? dc);
+    IEnumerable<IPayCondition> GetPayConditionAll();
+
     void StartLoad();
 }

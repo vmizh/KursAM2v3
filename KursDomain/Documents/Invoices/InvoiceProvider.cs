@@ -12,14 +12,12 @@ using Data;
 using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Dogovora;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
 using KursDomain.References;
 using Newtonsoft.Json;
-using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
 using ValidationError = Core.Helper.ValidationError;
 
 namespace KursDomain.Documents.Invoices;
@@ -76,7 +74,7 @@ public interface IInvoiceProvider
     string CREATOR { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Форма расчетов")]
-    FormPay FormRasche { set; get; }
+    PayForm FormRasche { set; get; }
 
     [Display(AutoGenerateField = true, Name = "НДС вкл. в цену")]
     bool IsNDSInPrice { set; get; }
@@ -173,7 +171,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     private CentrResponsibility myCO;
     private Employee.Employee myEmployee;
     private SD_26 myEntity;
-    private FormPay myFormRaschet;
+    private PayForm myFormRaschet;
     private Kontragent myKontragent;
     private Kontragent myKontrReceiver;
     private PayCondition myPayConditionCondition;
@@ -537,7 +535,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
             if (myPayConditionCondition != null && myPayConditionCondition.Equals(value)) return;
             myPayConditionCondition = value;
             if (myPayConditionCondition != null)
-                Entity.SF_PAY_COND_DC = value.DOC_CODE;
+                Entity.SF_PAY_COND_DC = value.DocCode;
             else
                 Entity.SF_PAY_COND_DC = -1;
             RaisePropertyChanged();
@@ -797,7 +795,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         }
     }
 
-    public FormPay FormRasche { get; set; }
+    public PayForm FormRasche { get; set; }
 
     public decimal? SF_FORM_RASCH_DC
     {
@@ -808,7 +806,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
             Entity.SF_FORM_RASCH_DC = value;
             if (Entity.SF_FORM_RASCH_DC != null &&
                 MainReferences.FormRaschets.ContainsKey(Entity.SF_FORM_RASCH_DC.Value))
-                myFormRaschet = MainReferences.FormRaschets[Entity.SF_FORM_RASCH_DC.Value];
+                myFormRaschet = GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC.Value) as PayForm;
             else
                 myFormRaschet = null;
             RaisePropertyChanged(nameof(FormRaschet));
@@ -816,7 +814,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         }
     }
 
-    public FormPay FormRaschet
+    public PayForm FormRaschet
     {
         get => myFormRaschet;
         set
@@ -1236,7 +1234,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
                 : null;
         if (SF_FORM_RASCH_DC != null)
             FormRaschet = MainReferences.FormRaschets.ContainsKey(SF_FORM_RASCH_DC.Value)
-                ? MainReferences.FormRaschets[SF_FORM_RASCH_DC.Value]
+                ? GlobalOptions.ReferencesCache.GetPayForm(SF_FORM_RASCH_DC.Value) as PayForm
                 : null;
         if (Entity.PersonalResponsibleDC != null)
             PersonaResponsible = MainReferences.Employees[Entity.PersonalResponsibleDC.Value];

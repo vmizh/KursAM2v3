@@ -35,7 +35,6 @@ using KursDomain.Menu;
 using KursDomain.References;
 using Reports.Base;
 using Employee = KursDomain.Documents.Employee.Employee;
-using PayCondition = KursDomain.Documents.CommonReferences.PayCondition;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -127,7 +126,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public List<Currency> CurrencyList => MainReferences.Currencies.Values.ToList();
         public List<CentrResponsibility> COList => MainReferences.COList.Values.Where(_ => _.DocCode > 1).ToList();
         public List<Employee> EmployeeList => MainReferences.Employees.Values.ToList();
-        public List<FormPay> FormRaschets => MainReferences.FormRaschets.Values.ToList();
+        public List<PayForm> FormRaschets => MainReferences.FormRaschets.Values.ToList();
         public List<VzaimoraschetType> VzaimoraschetTypes => MainReferences.VzaimoraschetTypes.Values.ToList();
         public List<PayCondition> PayConditions => MainReferences.PayConditions.Values.ToList();
         public List<CountriesViewModel> Countries => MainReferences.Countries.Values.ToList();

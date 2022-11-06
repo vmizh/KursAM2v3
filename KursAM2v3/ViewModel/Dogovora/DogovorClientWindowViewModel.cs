@@ -8,7 +8,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -27,6 +26,8 @@ using KursDomain.Documents.Dogovora;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
+using ContractType = KursDomain.Documents.Dogovora.ContractType;
 
 namespace KursAM2.ViewModel.Dogovora
 {
@@ -172,8 +173,8 @@ namespace KursAM2.ViewModel.Dogovora
             = new ObservableCollection<DogovorClientRowViewModel>();
 
         public List<ContractType> ContractTypeList => MainReferences.ContractTypes.Values.Where(_ => _.IsSale).ToList();
-        public List<PayCondition> PayConditionList => MainReferences.PayConditions.Values.ToList();
-        public List<FormPay> FormPayList => MainReferences.FormRaschets.Values.ToList();
+        public List<PayCondition> PayConditionList => GlobalOptions.ReferencesCache.GetPayConditionAll().Cast<PayCondition>().ToList();
+        public List<PayForm> FormPayList => GlobalOptions.ReferencesCache.GetPayFormAll() as List<PayForm>;
 
         public DogovorClientRowViewModel CurrentRow
         {
@@ -333,20 +334,20 @@ namespace KursAM2.ViewModel.Dogovora
             }
 
             foreach (var newRow in from n in nomenkls
-                where Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode)
-                select new DogovorClientRowViewModel
-                {
-                    Id = Guid.NewGuid(),
-                    DocId = Document.Id,
-                    Nomenkl = n,
-                    Quantity = 1,
-                    Price = 0,
-                    IsCalcBack = Document.IsCalcBack,
-                    NDSPercent = n.DefaultNDSPercent ?? defaultNDS,
-                    Parent = Document,
-                    State = RowStatus.NewRow,
-                    Facts = new ObservableCollection<DogovorClientFactViewModel>()
-                })
+                     where Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode)
+                     select new DogovorClientRowViewModel
+                     {
+                         Id = Guid.NewGuid(),
+                         DocId = Document.Id,
+                         Nomenkl = n,
+                         Quantity = 1,
+                         Price = 0,
+                         IsCalcBack = Document.IsCalcBack,
+                         NDSPercent = n.DefaultNDSPercent ?? defaultNDS,
+                         Parent = Document,
+                         State = RowStatus.NewRow,
+                         Facts = new ObservableCollection<DogovorClientFactViewModel>()
+                     })
             {
                 Document.Entity.DogovorClientRow.Add(newRow.Entity);
                 Document.Rows.Add(newRow);
@@ -375,20 +376,20 @@ namespace KursAM2.ViewModel.Dogovora
                 }
 
                 foreach (var newRow in from n in k
-                    where Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode)
-                    select new DogovorClientRowViewModel
-                    {
-                        Id = Guid.NewGuid(),
-                        DocId = Document.Id,
-                        Nomenkl = n,
-                        Quantity = 1,
-                        Price = 0,
-                        IsCalcBack = Document.IsCalcBack,
-                        NDSPercent = n.DefaultNDSPercent ?? defaultNDS,
-                        Parent = Document,
-                        State = RowStatus.NewRow,
-                        Facts = new ObservableCollection<DogovorClientFactViewModel>()
-                    })
+                         where Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode)
+                         select new DogovorClientRowViewModel
+                         {
+                             Id = Guid.NewGuid(),
+                             DocId = Document.Id,
+                             Nomenkl = n,
+                             Quantity = 1,
+                             Price = 0,
+                             IsCalcBack = Document.IsCalcBack,
+                             NDSPercent = n.DefaultNDSPercent ?? defaultNDS,
+                             Parent = Document,
+                             State = RowStatus.NewRow,
+                             Facts = new ObservableCollection<DogovorClientFactViewModel>()
+                         })
                 {
                     Document.Entity.DogovorClientRow.Add(newRow.Entity);
                     Document.Rows.Add(newRow);
@@ -408,8 +409,8 @@ namespace KursAM2.ViewModel.Dogovora
         {
             var winManager = new WindowManager();
             if (winManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить строки", "Запрос",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 var list = SelectedRows.Select(_ => _.Id).ToList();
                 foreach (var id in list)
@@ -445,7 +446,7 @@ namespace KursAM2.ViewModel.Dogovora
             }
 
             foreach (var id in Document.Rows.Where(_ => _.State == RowStatus.NewRow).Select(_ => _.Id)
-                .ToList())
+                         .ToList())
                 Document.Rows.Remove(Document.Rows.Single(_ => _.Id == id));
             EntityManager.EntityReload(unitOfWork.Context);
             foreach (var entity in unitOfWork.Context.ChangeTracker.Entries()) entity.Reload();

@@ -8,7 +8,6 @@ using Data;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using KursDomain.References;
-using SDRSchet = KursDomain.Documents.CommonReferences.SDRSchet;
 
 // ReSharper disable InconsistentNaming
 namespace KursDomain.Documents.Vzaimozachet;
@@ -346,7 +345,7 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
             if (Entity.VZT_SHPZ_DC == value) return;
             Entity.VZT_SHPZ_DC = value;
             if (Entity.VZT_SHPZ_DC != null)
-                mySHPZ = MainReferences.SDRSchets[(decimal)Entity.VZT_SHPZ_DC];
+                mySHPZ =GlobalOptions.ReferencesCache.GetSDRSchet(Entity.VZT_SHPZ_DC) as SDRSchet;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(SHPZ));
         }
@@ -573,7 +572,7 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
         VZT_KONTR_CRS_RATE = ent.VZT_KONTR_CRS_RATE;
         VZT_KONTR_CRS_SUMMA = ent.VZT_KONTR_CRS_SUMMA;
         VZT_SHPZ_DC = ent.VZT_SHPZ_DC;
-        SHPZ = ent.SD_303 == null ? null : MainReferences.SDRSchets[ent.SD_303.DOC_CODE];
+        SHPZ = ent.SD_303 == null ? null : GlobalOptions.ReferencesCache.GetSDRSchet(ent.SD_303.DOC_CODE) as SDRSchet;
         TSTAMP = ent.TSTAMP;
         SD_110 = ent.SD_110;
         SD_26 = ent.SD_26;
