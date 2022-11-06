@@ -15,6 +15,7 @@ using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Finance;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Management;
 using KursDomain.Menu;

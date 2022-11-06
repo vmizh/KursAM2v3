@@ -23,6 +23,7 @@ using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Finance.Cash;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain;
 using KursDomain.Documents.AccruedAmount;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;

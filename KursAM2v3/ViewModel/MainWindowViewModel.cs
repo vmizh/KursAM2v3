@@ -7,6 +7,7 @@ using Core.ViewModel.Base;
 using DevExpress.Xpf.LayoutControl;
 using KursAM2.View;
 using KursAM2.ViewModel.StartLogin;
+using KursDomain;
 using KursDomain.Documents.Systems;
 
 namespace KursAM2.ViewModel

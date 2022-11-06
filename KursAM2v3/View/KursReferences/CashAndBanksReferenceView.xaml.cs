@@ -11,6 +11,7 @@ using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.ViewModel.Reference;
+using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
 using LayoutManager;

@@ -1,6 +1,7 @@
 ﻿using System;
 using Core;
 using KursAM2.Repositories;
+using KursDomain;
 using NUnit.Framework;
 
 namespace KursAM2.Tests

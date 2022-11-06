@@ -9,6 +9,7 @@ using Core;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.ViewModel.Costing;
+using KursDomain;
 using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.ICommon;
 using Reports.Base;

@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI;
+using KursDomain;
 
 namespace Core.WindowsManager
 {

@@ -3,6 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using Core;
 using Core.ViewModel.Base;
+using KursDomain;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks

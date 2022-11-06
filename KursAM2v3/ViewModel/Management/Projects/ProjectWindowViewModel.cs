@@ -15,6 +15,7 @@ using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Period;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Currency;
 using KursDomain.Documents.Management;

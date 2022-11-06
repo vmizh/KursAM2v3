@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using KursDomain;
 
 namespace KursAM2.Repositories
 {

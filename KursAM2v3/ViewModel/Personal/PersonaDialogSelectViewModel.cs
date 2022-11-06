@@ -7,6 +7,7 @@ using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using Core.WindowsManager;
 using DevExpress.Xpf.Grid;
+using KursDomain;
 using KursDomain.Documents.Employee;
 
 namespace KursAM2.ViewModel.Personal

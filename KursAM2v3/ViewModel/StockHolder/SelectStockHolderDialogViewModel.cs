@@ -6,6 +6,7 @@ using Core.ViewModel.Base;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.View.DialogUserControl;
+using KursDomain;
 using KursDomain.Documents.StockHolder;
 
 namespace KursAM2.ViewModel.StockHolder

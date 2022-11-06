@@ -13,6 +13,7 @@ using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using Helper;
+using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.Menu;
 using LayoutManager;

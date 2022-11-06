@@ -11,6 +11,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management.Projects;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Currency;
 using LayoutManager;

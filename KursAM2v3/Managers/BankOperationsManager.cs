@@ -13,6 +13,7 @@ using Data;
 using Helper;
 using KursAM2.Managers.Invoices;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Currency;

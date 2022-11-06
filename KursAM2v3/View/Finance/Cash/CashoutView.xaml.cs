@@ -14,6 +14,7 @@ using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.Cash;
+using KursDomain;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;

@@ -10,6 +10,7 @@ using DevExpress.Xpf.LayoutControl;
 using KursAM2.ViewModel.Management;
 using KursAM2.ViewModel.Management.Calculations;
 using KursAM2.ViewModel.Management.DebitorCreditor;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Management

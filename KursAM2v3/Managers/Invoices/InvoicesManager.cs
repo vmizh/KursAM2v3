@@ -15,6 +15,7 @@ using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.UC;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.NomenklManagement;

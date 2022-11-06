@@ -14,6 +14,7 @@ using KursAM2.View.Base;
 using KursAM2.View.Signature;
 using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reference.Dialogs;
+using KursDomain;
 using KursDomain.Documents.Signatures;
 using KursDomain.Documents.Systems;
 using KursDomain.Menu;

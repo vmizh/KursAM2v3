@@ -13,6 +13,7 @@ using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.Repositories.DogovorsRepositories;
 using KursAM2.View.Dogovors;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Dogovora;
 using KursDomain.Menu;

@@ -11,6 +11,7 @@ using DevExpress.Xpf.Editors;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.controls;
+using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;

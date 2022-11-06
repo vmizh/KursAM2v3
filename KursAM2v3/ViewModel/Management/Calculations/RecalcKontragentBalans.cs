@@ -10,6 +10,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.WindowsManager;
 using Data;
 using Helper;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 
 namespace KursAM2.ViewModel.Management.Calculations

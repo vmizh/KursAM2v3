@@ -6,6 +6,7 @@ using Core;
 using Data;
 using Data.Repository;
 using KursAM2.Repositories.InvoicesRepositories;
+using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using NUnit.Framework;

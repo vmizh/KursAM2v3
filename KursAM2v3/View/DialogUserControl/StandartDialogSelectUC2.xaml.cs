@@ -8,6 +8,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Reference.Dialogs;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.DialogUserControl

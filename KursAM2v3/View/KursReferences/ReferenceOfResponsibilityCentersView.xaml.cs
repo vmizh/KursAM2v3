@@ -9,6 +9,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.DragDrop;
 using KursAM2.ViewModel.Reference;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.References;
 using LayoutManager;

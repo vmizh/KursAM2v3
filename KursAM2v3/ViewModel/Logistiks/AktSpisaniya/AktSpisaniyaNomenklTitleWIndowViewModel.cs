@@ -22,6 +22,7 @@ using KursAM2.Repositories;
 using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursAM2.ViewModel.Signatures;
+using KursDomain;
 using KursDomain.Documents.AktSpisaniya;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;

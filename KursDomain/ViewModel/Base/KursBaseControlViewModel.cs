@@ -10,6 +10,7 @@ using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Utils.CommonDialogs.Internal;
 using DevExpress.Xpf.Grid;
 using Helper;
+using KursDomain;
 using KursDomain.Menu;
 using LayoutManager;
 

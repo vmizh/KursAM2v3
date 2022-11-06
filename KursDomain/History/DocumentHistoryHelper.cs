@@ -1,5 +1,6 @@
 ﻿using System;
 using Data;
+using KursDomain;
 
 namespace Core.Helper
 {

@@ -6,6 +6,7 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Systems;
 using KursDomain.Menu;

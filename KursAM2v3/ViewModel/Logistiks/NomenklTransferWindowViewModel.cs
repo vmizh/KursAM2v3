@@ -16,6 +16,7 @@ using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Reference;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;

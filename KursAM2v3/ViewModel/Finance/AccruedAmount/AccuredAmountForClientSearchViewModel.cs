@@ -10,6 +10,7 @@ using Data.Repository;
 using KursAM2.Managers;
 using KursAM2.Repositories.AccruedAmount;
 using KursAM2.View.Finance.AccruedAmount;
+using KursDomain;
 using KursDomain.Documents.AccruedAmount;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Menu;

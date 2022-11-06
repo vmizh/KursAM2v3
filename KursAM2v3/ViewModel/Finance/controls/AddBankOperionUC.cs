@@ -8,6 +8,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.UC;
+using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.ICommon;
 using KursDomain.References;

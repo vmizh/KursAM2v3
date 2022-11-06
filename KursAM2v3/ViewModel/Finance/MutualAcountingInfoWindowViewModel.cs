@@ -11,6 +11,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Grid;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Menu;
 using KursDomain.References;

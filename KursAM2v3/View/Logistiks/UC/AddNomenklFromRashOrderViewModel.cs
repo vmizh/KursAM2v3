@@ -10,6 +10,7 @@ using Core.WindowsManager;
 using Data;
 using Helper;
 using KursAM2.View.DialogUserControl;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 
 namespace KursAM2.View.Logistiks.UC

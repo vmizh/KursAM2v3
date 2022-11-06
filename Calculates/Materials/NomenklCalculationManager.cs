@@ -10,6 +10,7 @@ using Core;
 using Data;
 using Helper;
 using JetBrains.Annotations;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 
 namespace Calculates.Materials

@@ -7,6 +7,7 @@ using Core;
 using Core.WindowsManager;
 using DevExpress.Xpf.Printing;
 using DevExpress.XtraReports.UI;
+using KursDomain;
 
 namespace KursAM2.ReportManagers
 {

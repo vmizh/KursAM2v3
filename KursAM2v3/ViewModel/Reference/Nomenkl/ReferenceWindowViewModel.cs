@@ -17,6 +17,7 @@ using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.DialogUserControl.ViewModel;
 using KursAM2.View.KursReferences;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;

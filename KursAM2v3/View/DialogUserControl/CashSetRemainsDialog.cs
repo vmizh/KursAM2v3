@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using KursDomain;
 using KursDomain.Documents.Cash;
 using KursDomain.ICommon;
 using KursDomain.References;

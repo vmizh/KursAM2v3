@@ -21,6 +21,7 @@ using KursAM2.View.Management;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Management.Calculations;
 using KursAM2.ViewModel.Personal;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;

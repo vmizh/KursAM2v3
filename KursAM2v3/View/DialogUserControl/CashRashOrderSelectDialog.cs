@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using Core;
 using Core.ViewModel.Base;
+using KursDomain;
 using KursDomain.Documents.Cash;
 
 namespace KursAM2.View.DialogUserControl

@@ -7,6 +7,7 @@ using Data;
 using Data.Repository;
 using KursAM2.Repositories;
 using KursAM2.View.Logistiks;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 

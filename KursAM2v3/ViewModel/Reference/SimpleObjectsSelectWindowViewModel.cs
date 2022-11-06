@@ -4,6 +4,7 @@ using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.View.KursReferences.UC;
+using KursDomain;
 
 namespace KursAM2.ViewModel.Reference
 {

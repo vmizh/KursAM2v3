@@ -9,6 +9,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.View.DialogUserControl;
+using KursDomain;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {

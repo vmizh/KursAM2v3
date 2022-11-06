@@ -12,6 +12,7 @@ using Data;
 using DevExpress.XtraEditors.DXErrorProvider;
 using KursAM2.View.Base;
 using KursAM2.View.KursReferences;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;

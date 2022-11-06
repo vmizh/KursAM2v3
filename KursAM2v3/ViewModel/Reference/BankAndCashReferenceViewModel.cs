@@ -17,6 +17,7 @@ using Data;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.View.KursReferences;
+using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;

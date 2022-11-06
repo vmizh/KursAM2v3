@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using KursAM2.View.Repozit;
+using KursDomain;
 using KursDomain.Documents.Systems;
 
 namespace KursAM2.ViewModel.Repozit

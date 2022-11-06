@@ -1,6 +1,7 @@
 ﻿using System;
 using Core;
 using Data;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 

@@ -13,6 +13,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.ViewModel.Management.BreakEven;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Management

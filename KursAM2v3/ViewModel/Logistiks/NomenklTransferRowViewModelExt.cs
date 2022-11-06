@@ -7,6 +7,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using JetBrains.Annotations;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.IReferences;

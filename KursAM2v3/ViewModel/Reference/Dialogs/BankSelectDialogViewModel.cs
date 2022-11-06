@@ -11,6 +11,7 @@ using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.View.Base;
+using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Menu;
 

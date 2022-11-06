@@ -9,6 +9,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Mvvm.Native;
 using KursAM2.View.Finance;
+using KursDomain;
 using KursDomain.Documents.Currency;
 using KursDomain.ICommon;
 using KursDomain.Menu;

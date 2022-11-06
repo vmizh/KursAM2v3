@@ -8,6 +8,7 @@ using Core.EntityViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using Data.Repository;
+using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.References;
 

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Data;
 using Helper;
+using KursDomain;
 using KursDomain.Documents.AccruedAmount;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;

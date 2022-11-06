@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using Core;
 using Data;
+using KursDomain;
 using KursDomain.References;
 
 namespace Calculates.Materials

@@ -9,6 +9,7 @@ using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using KursDomain;
 using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.ICommon;
 using KursDomain.Menu;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Transactions;
 using Core;
 using Data;
+using KursDomain;
 using KursDomain.Documents.Currency;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.References;

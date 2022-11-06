@@ -16,6 +16,7 @@ using KursAM2.View.Base;
 using KursAM2.View.KursReferences;
 using KursAM2.View.KursReferences.KontragentControls;
 using KursAM2.ViewModel.Reference.Dialogs;
+using KursDomain;
 using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.ICommon;
 using KursDomain.Menu;

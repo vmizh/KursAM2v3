@@ -15,6 +15,7 @@ using Helper;
 using KursAM2.Managers;
 using KursAM2.Repositories;
 using KursAM2.View.Finance.DistributeNaklad;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;

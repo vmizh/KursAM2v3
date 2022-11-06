@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Core;
+using KursDomain;
 
 namespace Calculates.Materials
 {

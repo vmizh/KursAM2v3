@@ -7,6 +7,7 @@ using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.View.KursReferences.UC;
+using KursDomain;
 using KursDomain.Documents.Systems;
 
 namespace KursAM2.ViewModel.Reference

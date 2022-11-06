@@ -58,6 +58,7 @@ using KursAM2.ViewModel.Shop;
 using KursAM2.ViewModel.Signatures;
 using KursAM2.ViewModel.StartLogin;
 using KursAM2.ViewModel.StockHolder;
+using KursDomain;
 using KursDomain.DBContext;
 using KursDomain.References;
 using LayoutManager;

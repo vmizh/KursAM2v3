@@ -12,6 +12,7 @@ using Data;
 using DevExpress.Mvvm.Native;
 using Helper;
 using KursAM2.View.KursReferences;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;

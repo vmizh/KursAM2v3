@@ -9,6 +9,7 @@ using Data;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl.ViewModel;
 using KursAM2.ViewModel.Logistiks;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 

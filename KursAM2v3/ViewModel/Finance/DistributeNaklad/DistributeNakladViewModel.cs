@@ -27,6 +27,7 @@ using KursAM2.Repositories;
 using KursAM2.View.DialogUserControl.Invoices.ViewModels;
 using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Finance.DistributeNaklad;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Currency;
 using KursDomain.Documents.Invoices;

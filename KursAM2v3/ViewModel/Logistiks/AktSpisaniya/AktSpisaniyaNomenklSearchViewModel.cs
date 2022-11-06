@@ -10,6 +10,7 @@ using Data.Repository;
 using KursAM2.Managers;
 using KursAM2.Repositories;
 using KursAM2.View.Logistiks.AktSpisaniya;
+using KursDomain;
 using KursDomain.Documents.AktSpisaniya;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;

@@ -7,6 +7,7 @@ using Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.TreeList;
+using KursDomain;
 using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.References;
 using LayoutManager;

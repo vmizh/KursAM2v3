@@ -42,6 +42,7 @@ using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.StockHolder;
+using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;

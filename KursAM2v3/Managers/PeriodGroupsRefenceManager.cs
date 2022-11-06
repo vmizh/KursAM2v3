@@ -6,6 +6,7 @@ using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using KursDomain;
 using KursDomain.Documents.Periods;
 using KursDomain.Documents.Systems;
 using KursDomain.ICommon;

@@ -8,6 +8,7 @@ using Core.WindowsManager;
 using Data;
 using Helper;
 using KursAM2.Managers;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.Menu;

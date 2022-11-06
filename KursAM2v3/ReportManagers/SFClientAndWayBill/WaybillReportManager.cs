@@ -4,6 +4,7 @@ using Core;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Logistiks.Warehouse;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.References;

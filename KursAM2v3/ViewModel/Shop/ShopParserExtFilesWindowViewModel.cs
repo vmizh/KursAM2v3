@@ -13,6 +13,7 @@ using Data;
 using KursAM2.Managers.Invoices;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.ViewModel.Finance.Invoices;
+using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using KursDomain.Menu;

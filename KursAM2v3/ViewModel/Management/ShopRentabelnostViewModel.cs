@@ -10,6 +10,7 @@ using Data;
 using Helper;
 using KursAM2.View.Base;
 using KursAM2.ViewModel.Logistiks;
+using KursDomain;
 using KursDomain.Menu;
 
 // ReSharper disable UnusedMember.Global

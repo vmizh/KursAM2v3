@@ -6,6 +6,7 @@ using Core.WindowsManager;
 using Data;
 using Data.Repository;
 using KursAM2.View.Finance.UC;
+using KursDomain;
 using KursDomain.Documents.Invoices;
 
 namespace KursAM2.ViewModel.Finance.Invoices

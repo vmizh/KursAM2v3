@@ -6,6 +6,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
 

@@ -20,6 +20,7 @@ using KursAM2.Dialogs;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories;
 using KursAM2.View.Logistiks;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;

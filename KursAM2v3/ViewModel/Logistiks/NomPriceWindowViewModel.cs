@@ -8,6 +8,7 @@ using Core;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.View.Logistiks.UC;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
 

@@ -9,6 +9,7 @@ using Data.Repository;
 using JetBrains.Annotations;
 using KursAM2.Managers.Invoices;
 using KursAM2.Repositories.InvoicesRepositories;
+using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.Menu;

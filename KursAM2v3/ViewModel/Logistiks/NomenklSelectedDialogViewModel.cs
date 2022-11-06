@@ -5,6 +5,7 @@ using Core;
 using Core.ViewModel.Base;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks.UC;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.Menu;
 using KursDomain.References;

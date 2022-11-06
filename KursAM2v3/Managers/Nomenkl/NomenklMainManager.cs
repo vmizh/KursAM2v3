@@ -2,6 +2,7 @@
 using System.Linq;
 using Core;
 using Core.ViewModel.Base;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 

@@ -10,6 +10,7 @@ using Core.WindowsManager;
 using KursAM2.Managers;
 using KursAM2.Managers.Base;
 using KursAM2.View.Finance;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;

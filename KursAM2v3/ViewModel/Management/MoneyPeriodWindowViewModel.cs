@@ -9,6 +9,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors;
 using KursAM2.Managers;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Menu;
 

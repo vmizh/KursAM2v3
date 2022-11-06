@@ -14,6 +14,7 @@ using KursAM2.View.Base;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Management;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Management;
 using KursDomain.ICommon;

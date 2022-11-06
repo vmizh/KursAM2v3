@@ -8,6 +8,7 @@ using Core.Invoices.EntityViewModel;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
 using KursAM2.View.KursReferences;
+using KursDomain;
 using KursDomain.Documents.Systems;
 using KursDomain.ICommon;
 using KursDomain.Menu;

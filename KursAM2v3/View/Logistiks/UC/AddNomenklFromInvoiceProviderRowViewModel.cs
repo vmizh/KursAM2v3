@@ -8,6 +8,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Helper;
 using KursAM2.Managers.Nomenkl;
+using KursDomain;
 using KursDomain.Menu;
 using KursDomain.References;
 

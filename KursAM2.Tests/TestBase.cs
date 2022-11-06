@@ -4,6 +4,7 @@ using Core;
 using Data;
 using Data.Repository;
 using Helper;
+using KursDomain;
 using NUnit.Framework;
 
 namespace KursAM2.Tests

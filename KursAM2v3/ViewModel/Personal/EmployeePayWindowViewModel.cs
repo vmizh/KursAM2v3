@@ -13,6 +13,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Core.Native;
 using KursAM2.View.Personal;
+using KursDomain;
 using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Personal

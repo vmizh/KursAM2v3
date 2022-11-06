@@ -9,6 +9,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Dialogs;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
 using Bank = KursDomain.Documents.Bank.Bank;

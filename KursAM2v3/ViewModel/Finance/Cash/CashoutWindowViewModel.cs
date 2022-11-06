@@ -17,6 +17,7 @@ using KursAM2.View.Finance.Cash;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Finance.AccruedAmount;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;

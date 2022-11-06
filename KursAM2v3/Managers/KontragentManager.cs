@@ -7,6 +7,7 @@ using System.Windows;
 using Core;
 using Core.WindowsManager;
 using Data;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
 

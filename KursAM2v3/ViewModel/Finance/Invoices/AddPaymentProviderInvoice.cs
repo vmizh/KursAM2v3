@@ -6,6 +6,7 @@ using System.Linq;
 using Core;
 using Core.ViewModel.Base;
 using KursAM2.View.DialogUserControl;
+using KursDomain;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {

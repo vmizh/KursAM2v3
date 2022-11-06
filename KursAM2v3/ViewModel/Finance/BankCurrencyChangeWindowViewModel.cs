@@ -6,6 +6,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
 using KursAM2.View.Finance;
+using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.ICommon;
 using KursDomain.Menu;

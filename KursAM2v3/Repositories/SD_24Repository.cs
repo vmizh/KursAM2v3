@@ -7,6 +7,7 @@ using Core;
 using Core.EntityViewModel.Base;
 using Data;
 using Data.Repository;
+using KursDomain;
 
 namespace KursAM2.Repositories
 {

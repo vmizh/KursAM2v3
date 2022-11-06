@@ -15,6 +15,7 @@ using Helper;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Management.Calculations;
 using KursAM2.ViewModel.Splash;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Menu;

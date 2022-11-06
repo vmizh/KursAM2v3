@@ -5,6 +5,7 @@ using System.Windows;
 using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using KursDomain;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
 using KursDomain.Menu;

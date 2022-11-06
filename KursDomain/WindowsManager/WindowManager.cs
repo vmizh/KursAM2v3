@@ -7,6 +7,7 @@ using System.Windows;
 using Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI;
+using KursDomain;
 
 namespace Core.WindowsManager;
 

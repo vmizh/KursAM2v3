@@ -20,6 +20,7 @@ using KursAM2.View.Management;
 using KursAM2.View.Management.Controls;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Logistiks;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Menu;

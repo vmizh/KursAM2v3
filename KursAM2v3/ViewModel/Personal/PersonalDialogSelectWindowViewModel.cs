@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Linq;
 using Core;
 using Core.ViewModel.Base;
+using KursDomain;
 using KursDomain.Documents.Employee;
 
 namespace KursAM2.ViewModel.Personal

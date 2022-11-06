@@ -14,6 +14,7 @@ using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.Repositories;
 using KursAM2.View.Logistiks.Warehouse;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;

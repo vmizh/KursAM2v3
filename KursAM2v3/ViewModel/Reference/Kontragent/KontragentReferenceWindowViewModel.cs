@@ -13,6 +13,7 @@ using Data;
 using DevExpress.Mvvm.Xpf;
 using KursAM2.View.DialogUserControl.ViewModel;
 using KursAM2.View.KursReferences.KontragentControls;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;

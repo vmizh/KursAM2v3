@@ -13,6 +13,7 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.View.DialogUserControl.Invoices.UserControls;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
 

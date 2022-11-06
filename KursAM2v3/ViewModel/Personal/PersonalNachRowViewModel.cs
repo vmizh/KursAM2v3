@@ -7,6 +7,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using Core.WindowsManager;
+using KursDomain;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal

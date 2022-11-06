@@ -31,6 +31,7 @@ using KursAM2.View.Logistiks.UC;
 using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Currency;
 using KursDomain.Documents.Dogovora;

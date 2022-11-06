@@ -10,6 +10,7 @@ using Data.Repository;
 using KursAM2.Managers;
 using KursAM2.View.Base;
 using KursAM2.View.StockHolder;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.StockHolder;
 using KursDomain.ICommon;

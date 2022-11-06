@@ -17,6 +17,7 @@ using KursAM2.View.Finance;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Logistiks;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Management;
 using KursDomain.Menu;

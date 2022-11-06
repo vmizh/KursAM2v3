@@ -6,6 +6,7 @@ using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
 using KursAM2.ViewModel.Reference;
+using KursDomain;
 using KursDomain.Documents.Systems;
 using KursDomain.ICommon;
 

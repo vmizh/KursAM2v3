@@ -10,6 +10,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Systems;
 using Newtonsoft.Json;

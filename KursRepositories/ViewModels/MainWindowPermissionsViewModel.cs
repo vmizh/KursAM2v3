@@ -8,6 +8,7 @@ using Core;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Xpf.Grid;
+using KursDomain;
 using KursDomain.Documents.Systems;
 using KursDomain.Menu;
 using KursRepositories.View;

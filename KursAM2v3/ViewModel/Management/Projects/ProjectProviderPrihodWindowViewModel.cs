@@ -11,6 +11,7 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Grid;
 using KursAM2.View.Management;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;

@@ -7,6 +7,7 @@ using Calculates.Materials;
 using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using KursDomain;
 using KursDomain.Menu;
 using KursDomain.References;
 

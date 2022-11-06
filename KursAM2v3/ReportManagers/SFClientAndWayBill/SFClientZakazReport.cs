@@ -3,6 +3,7 @@ using Core;
 using DevExpress.Spreadsheet;
 using Helper;
 using KursAM2.ViewModel.Finance.Invoices;
+using KursDomain;
 using KursDomain.ICommon;
 using Reports.Base;
 

@@ -25,6 +25,7 @@ using Helper;
 using KursAM2.Managers;
 using KursAM2.Properties;
 using KursAM2.ViewModel.Splash;
+using KursDomain;
 using KursDomain.DBContext;
 using KursDomain.Documents.Employee;
 using KursDomain.References;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using Core;
 using Core.ViewModel.Base;
+using KursDomain;
 using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Reconcilation

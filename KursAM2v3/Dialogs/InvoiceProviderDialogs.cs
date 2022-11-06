@@ -12,6 +12,7 @@ using JetBrains.Annotations;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
+using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.Menu;
 using KursDomain.References;

@@ -7,6 +7,7 @@ using Core.WindowsManager;
 using DevExpress.Xpf.Core;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.controls;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Base

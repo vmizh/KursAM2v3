@@ -1,6 +1,7 @@
 ﻿using System.Data.SqlClient;
 using System.Linq;
 using Helper;
+using KursDomain;
 using NUnit.Framework;
 
 namespace Core.Tests

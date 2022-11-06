@@ -10,6 +10,7 @@ using Core;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.View.Dogovors;
+using KursDomain;
 using KursDomain.References;
 using ContractType = KursDomain.Documents.Dogovora.ContractType;
 

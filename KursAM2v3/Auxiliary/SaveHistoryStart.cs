@@ -4,6 +4,7 @@ using Core.Helper;
 using Data;
 using Data.Repository;
 using Helper;
+using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;

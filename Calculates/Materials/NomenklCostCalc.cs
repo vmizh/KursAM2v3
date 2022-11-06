@@ -7,6 +7,7 @@ using System.Text;
 using System.Transactions;
 using Core;
 using Data;
+using KursDomain;
 using KursDomain.References;
 
 namespace Calculates.Materials

@@ -9,6 +9,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.View.KursReferences;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Employee;
 using KursDomain.ICommon;

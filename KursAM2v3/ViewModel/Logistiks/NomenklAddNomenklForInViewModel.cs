@@ -9,6 +9,7 @@ using Core.WindowsManager;
 using Data;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;

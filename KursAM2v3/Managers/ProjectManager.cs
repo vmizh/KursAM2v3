@@ -8,6 +8,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.ViewModel.Management.Projects;
+using KursDomain;
 using KursDomain.Documents;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Management;

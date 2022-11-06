@@ -11,6 +11,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.View.Base;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Systems;
 using KursDomain.ICommon;

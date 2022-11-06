@@ -12,6 +12,7 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.Repositories;
 using KursAM2.View.KursReferences.UC;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;

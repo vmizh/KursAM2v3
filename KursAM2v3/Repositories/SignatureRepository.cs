@@ -6,6 +6,7 @@ using Core;
 using Data;
 using Data.Repository;
 using KursAM2.ViewModel.Signatures;
+using KursDomain;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

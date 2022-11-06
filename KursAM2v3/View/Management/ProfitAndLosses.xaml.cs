@@ -8,6 +8,7 @@ using DevExpress.Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Management

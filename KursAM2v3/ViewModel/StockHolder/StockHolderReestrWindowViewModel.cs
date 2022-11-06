@@ -14,6 +14,7 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.Dialogs;
 using KursAM2.View.StockHolder;
+using KursDomain;
 using KursDomain.Documents.StockHolder;
 using KursDomain.Documents.Systems;
 using KursDomain.ICommon;

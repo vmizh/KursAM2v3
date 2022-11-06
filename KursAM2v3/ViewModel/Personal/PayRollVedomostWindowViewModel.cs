@@ -16,6 +16,7 @@ using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
 using KursAM2.Managers;
 using KursAM2.View.Personal;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Employee;
 using KursDomain.ICommon;

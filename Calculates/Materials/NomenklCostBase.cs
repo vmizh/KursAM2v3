@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Linq;
 using Core;
 using JetBrains.Annotations;
+using KursDomain;
 using KursDomain.References;
 using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 

@@ -10,6 +10,7 @@ using System.Windows.Input;
 using Core;
 using Core.ViewModel.Base;
 using Data;
+using KursDomain;
 using KursDomain.Documents.Systems;
 
 namespace KursRepositories.ViewModels

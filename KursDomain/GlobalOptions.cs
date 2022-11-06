@@ -5,18 +5,16 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Drawing;
-using Core.EntityViewModel.CommonReferences;
+using System.Windows.Media;
+using Core;
 using Data;
 using Data.Repository;
 using Helper;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Employee;
 using KursDomain.IReferences;
 using KursDomain.References;
-using Brush = System.Windows.Media.Brush;
 
-namespace Core;
+namespace KursDomain;
 
 public static class GlobalOptions
 {

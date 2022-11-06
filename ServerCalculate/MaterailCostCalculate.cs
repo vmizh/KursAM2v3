@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Calculates.Materials;
 using Core;
+using KursDomain;
 using KursDomain.References;
 
 namespace ServerCalculate

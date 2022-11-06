@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Core;
 using KursAM2.View.DialogUserControl.Invoices.ViewModels;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
+using KursDomain;
 
 
 namespace KursAM2.View.DialogUserControl.Standart

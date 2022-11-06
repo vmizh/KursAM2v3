@@ -9,6 +9,7 @@ using DevExpress.Mvvm;
 using Helper;
 using KursAM2.ViewModel.Management.DebitorCreditor;
 using KursAM2.ViewModel.Splash;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
 

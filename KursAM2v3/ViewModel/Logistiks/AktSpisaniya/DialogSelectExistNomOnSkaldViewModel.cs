@@ -10,6 +10,7 @@ using Core.ViewModel.Base;
 using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks.AktSpisaniya;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya

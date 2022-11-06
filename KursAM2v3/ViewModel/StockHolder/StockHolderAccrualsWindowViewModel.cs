@@ -17,6 +17,7 @@ using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.POCO;
 using KursAM2.Dialogs;
 using KursAM2.View.StockHolder;
+using KursDomain;
 using KursDomain.Documents.StockHolder;
 using KursDomain.ICommon;
 using KursDomain.Menu;

@@ -7,6 +7,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.CodeView;
 using KursAM2.View.Logistiks;
+using KursDomain;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks

@@ -18,6 +18,7 @@ using KursAM2.ViewModel.Management.Projects;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.Reference.Dialogs;
 using KursAM2.ViewModel.StockHolder;
+using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.Invoices;

@@ -7,6 +7,7 @@ using Core;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.View;
+using KursDomain;
 
 namespace KursAM2.ViewModel
 {
