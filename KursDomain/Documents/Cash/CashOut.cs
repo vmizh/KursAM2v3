@@ -13,7 +13,6 @@ using DevExpress.Xpf.Editors.Settings;
 using KursDomain.Documents.StockHolder;
 using KursDomain.References;
 using Newtonsoft.Json;
-using BankAccount = KursDomain.Documents.Bank.BankAccount;
 
 namespace KursDomain.Documents.Cash;
 

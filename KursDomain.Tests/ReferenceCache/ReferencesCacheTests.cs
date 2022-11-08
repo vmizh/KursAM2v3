@@ -43,7 +43,7 @@ public class ReferencesCacheTests
         Assert.Equal(36, cache.GetSDRSchetAll().Count());
         Assert.Equal(6, cache.GetClientCategoriesAll().Count());
         Assert.Equal(64, cache.GetKontragentCategoriesAll().Count());
-        Assert.Equal(953, cache.GetNomenklCategoriesAll().Count());
+        Assert.Equal(953, cache.GetNomenklGroupAll().Count());
         Assert.Equal(62, cache.GetEmployees().Count());
         Assert.Equal(34, cache.GetWarehousesAll().Count());
         Assert.Equal(4, cache.GetCashBoxAll().Count());

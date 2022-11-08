@@ -34,7 +34,7 @@ namespace KursAM2.ViewModel.Personal
             get => myCurrentType;
             set
             {
-                if (myCurrentType != null && myCurrentType.Equals(value)) return;
+                if (Equals(myCurrentType,value)) return;
                 myCurrentType = value;
                 RaisePropertyChanged();
             }

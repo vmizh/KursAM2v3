@@ -3,26 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 using Core;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl.ViewModel;
 using KursAM2.ViewModel.Logistiks;
 using KursDomain;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.References;
+using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace KursAM2.Managers.Nomenkl
 {
     public class NomenklManager
     {
-        public List<NomenklGroup> SelectNomenklGroups()
+        public List<NomenklGroupViewModel> SelectNomenklGroups()
         {
-            var ret = new List<NomenklGroup>();
+            var ret = new List<NomenklGroupViewModel>();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                ret.AddRange(ctx.SD_82.Select(g => new NomenklGroup
+                ret.AddRange(ctx.SD_82.Select(g => new NomenklGroupViewModel
                 {
                     DocCode = g.DOC_CODE,
                     Name = g.CAT_NAME,
@@ -37,7 +37,7 @@ namespace KursAM2.Managers.Nomenkl
             DateTime date)
         {
             var ctxTransf = new NomTransferAddForSklad(warehouse, date);
-            var dlg = new SelectDialogView { DataContext = ctxTransf };
+            var dlg = new SelectDialogView {DataContext = ctxTransf};
             dlg.ShowDialog();
             if (!ctxTransf.DialogResult) return null;
             var ret =
@@ -77,7 +77,7 @@ namespace KursAM2.Managers.Nomenkl
                         FullName = n.NOM_FULL_NAME,
                         Notes = n.NOM_NOTES,
                         NomenklNumber = n.NOM_NOMENKL,
-                        Category = GlobalOptions.ReferencesCache.GetNomenklCategory(n.NOM_CATEG_DC),
+                        Group = GlobalOptions.ReferencesCache.GetNomenklGroup(n.NOM_CATEG_DC),
                         // ReSharper disable once PossibleInvalidOperationException
                         Currency = MainReferences.Currencies[n.NOM_SALE_CRS_DC.Value]
                     });
@@ -86,7 +86,7 @@ namespace KursAM2.Managers.Nomenkl
             return ret;
         }
 
-        public static NomenklGroup CategoryAdd(NameNoteViewModel cat, decimal? parentDC)
+        public static NomenklGroupViewModel CategoryAdd(NameNoteViewModel cat, decimal? parentDC)
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -114,7 +114,7 @@ namespace KursAM2.Managers.Nomenkl
                             });
 
                         // ReSharper disable once InconsistentNaming
-                        var newCatVM = new NomenklGroup(newCat)
+                        var newCatVM = new NomenklGroupViewModel(newCat)
                         {
                             State = RowStatus.NotEdited
                         };

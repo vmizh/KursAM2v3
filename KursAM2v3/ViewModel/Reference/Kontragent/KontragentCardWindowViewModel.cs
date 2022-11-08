@@ -21,7 +21,6 @@ using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
-using Bank = KursDomain.Documents.Bank.Bank;
 using Region = KursDomain.Documents.CommonReferences.Region;
 
 namespace KursAM2.ViewModel.Reference.Kontragent
@@ -75,7 +74,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         public ObservableCollection<KontragentClientCategory> Categories { set; get; }
             = new ObservableCollection<KontragentClientCategory>();
 
-        public KontragentViewModel KontragentViewModel { set; get; }
+        public KontragentViewModel Kontragent { set; get; }
         public List<Employee> Employees => GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>().ToList();
 
         public ObservableCollection<KontragentBank> BankAndAccounts { set; get; } =
@@ -116,7 +115,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (myClientCategory == value) return;
                 myClientCategory = value;
-                KontragentViewModel.ClientCategory = myClientCategory;
+                Kontragent.ClientCategory = myClientCategory;
                 RaisePropertyChanged();
             }
             get => myClientCategory;
@@ -128,9 +127,9 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         {
             set
             {
-                if (myOtvetstLico != null && myOtvetstLico.Equals(value)) return;
+                if (Equals(myOtvetstLico,value)) return;
                 myOtvetstLico = value;
-                KontragentViewModel.OtvetstLico = myOtvetstLico;
+                Kontragent.OtvetstLico = myOtvetstLico;
                 RaisePropertyChanged();
             }
             get => myOtvetstLico;
@@ -159,7 +158,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 if (myCurrentRegions == value) return;
                 myCurrentRegions = value;
                 if (myCurrentRegions != null)
-                    KontragentViewModel.REGION_DC = myCurrentRegions.DocCode;
+                    Kontragent.REGION_DC = myCurrentRegions.DocCode;
                 RaisePropertyChanged();
             }
             get => myCurrentRegions;
@@ -171,14 +170,14 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         {
             set
             {
-                if (myCurrentBankAndAccounts != null && myCurrentBankAndAccounts.Equals(value)) return;
+                if (Equals(myCurrentBankAndAccounts,value)) return;
                 myCurrentBankAndAccounts = value;
                 RaisePropertyChanged();
             }
             get => myCurrentBankAndAccounts;
         }
 
-        public bool IsCurrencyChangeEnable => KontragentViewModel.State == RowStatus.NewRow;
+        public bool IsCurrencyChangeEnable => Kontragent.State == RowStatus.NewRow;
         public bool IsNewDoc { set; get; }
 
         public TileBarItem SelectedTab
@@ -200,21 +199,21 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         public ICommand AddNewRequisiteCommand
         {
-            get { return new Command(AddNewRequisite, _ => KontragentViewModel.State != RowStatus.NewRow); }
+            get { return new Command(AddNewRequisite, _ => Kontragent.State != RowStatus.NewRow); }
         }
 
         private void AddNewRequisite(object obj)
         {
             var d = new SD_43_GRUZO
             {
-                doc_code = KontragentViewModel.DocCode,
+                doc_code = Kontragent.DocCode,
                 IsDefault = false,
                 Id = Guid.NewGuid()
             };
             var newItem = new KontragentGruzoRequisite(d)
                 { myState = RowStatus.NewRow };
-            KontragentViewModel.GruzoRequisities.Add(newItem);
-            if (KontragentViewModel.myState != RowStatus.NewRow) KontragentViewModel.myState = RowStatus.Edited;
+            Kontragent.GruzoRequisities.Add(newItem);
+            if (Kontragent.myState != RowStatus.NewRow) Kontragent.myState = RowStatus.Edited;
         }
 
         public ICommand AddCopyRequisiteCommand
@@ -226,7 +225,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         {
             var d = new SD_43_GRUZO
             {
-                doc_code = KontragentViewModel.DocCode,
+                doc_code = Kontragent.DocCode,
                 IsDefault = false,
                 Id = Guid.NewGuid(),
                 GRUZO_TEXT_NAKLAD = CurrentGruzoRequisite.GRUZO_TEXT_NAKLAD,
@@ -235,8 +234,8 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             };
             var newItem = new KontragentGruzoRequisite(d)
                 { myState = RowStatus.NewRow };
-            KontragentViewModel.GruzoRequisities.Add(newItem);
-            if (KontragentViewModel.myState != RowStatus.NewRow) KontragentViewModel.myState = RowStatus.Edited;
+            Kontragent.GruzoRequisities.Add(newItem);
+            if (Kontragent.myState != RowStatus.NewRow) Kontragent.myState = RowStatus.Edited;
         }
 
         public ICommand DeleteRequisiteCommand
@@ -247,7 +246,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         private void DeleteRequisite(object obj)
         {
             DeletedKontragentGruzoRequisites.Add(CurrentGruzoRequisite);
-            KontragentViewModel.GruzoRequisities.Remove(CurrentGruzoRequisite);
+            Kontragent.GruzoRequisities.Remove(CurrentGruzoRequisite);
         }
 
         public ICommand CategoryReferenceCommand
@@ -315,16 +314,16 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 Bank = ctx.CurrentItem,
                 State = RowStatus.NewRow
             });
-            if (KontragentViewModel.myState != RowStatus.NewRow)
+            if (Kontragent.myState != RowStatus.NewRow)
             {
-                KontragentViewModel.myState = RowStatus.Edited;
-                KontragentViewModel.RaisePropertyChanged("State");
+                Kontragent.myState = RowStatus.Edited;
+                Kontragent.RaisePropertyChanged("State");
             }
         }
 
         public override void RefreshData(object data)
         {
-            if (KontragentViewModel != null && IsCanSaveData)
+            if (Kontragent != null && IsCanSaveData)
             {
                 var res = MessageBox.Show("В документ были внесены изменения, сохранить?", "Запрос",
                     MessageBoxButton.YesNoCancel,
@@ -340,7 +339,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                     case MessageBoxResult.No:
                         LoadKontragent();
                         f?.ChangedTab("mainTab");
-                        RaisePropertyChanged(nameof(KontragentViewModel));
+                        RaisePropertyChanged(nameof(Kontragent));
                         return;
                     case MessageBoxResult.Cancel:
                         return;
@@ -358,7 +357,12 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 Categories.Add(new KontragentClientCategory(item));
             AllBanks.Clear();
             foreach (var item in GlobalOptions.GetEntities().SD_44.ToList())
-                AllBanks.Add(new Bank(item));
+            {
+                var bank = new Bank();
+                bank.LoadFromEntity(item);
+                AllBanks.Add(bank);
+            }
+
             Regions.Clear();
             foreach (var item in GlobalOptions.GetEntities().SD_23.ToList())
                 Regions.Add(new Region(item));
@@ -368,37 +372,37 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 .Include(_ => _.SD_301)
                 .Include(_ => _.SD_148)
                 .SingleOrDefault(_ => _.DOC_CODE == GetDocCode);
-            KontragentViewModel = new KontragentViewModel(kontr);
-            RaisePropertyChanged(nameof(KontragentViewModel));
+            Kontragent = new KontragentViewModel(kontr);
+            RaisePropertyChanged(nameof(Kontragent));
             RaisePropertyChanged(nameof(Categories));
             RaisePropertyChanged(nameof(Regions));
             BankAndAccounts.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                foreach (var item in ctx.TD_43.Where(_ => _.DOC_CODE == KontragentViewModel.DocCode).ToList())
+                foreach (var item in ctx.TD_43.Where(_ => _.DOC_CODE == Kontragent.DocCode).ToList())
                     BankAndAccounts.Add(new KontragentBank(item)
                     {
                         myState = RowStatus.NotEdited
                     });
             }
 
-            if (KontragentViewModel.CLIENT_CATEG_DC != null)
+            if (Kontragent.CLIENT_CATEG_DC != null)
             {
                 ClientCategory =
-                    GlobalOptions.ReferencesCache.GetClientCategory(KontragentViewModel.CLIENT_CATEG_DC) as
+                    GlobalOptions.ReferencesCache.GetClientCategory(Kontragent.CLIENT_CATEG_DC) as
                         ClientCategory;
                 RaisePropertyChanged(nameof(ClientCategory));
             }
 
-            if (KontragentViewModel.OTVETSTV_LICO != null)
-                OtvetstLico = Employees.FirstOrDefault(_ => _.TabelNumber == KontragentViewModel.OTVETSTV_LICO);
-            if (KontragentViewModel.VALUTA_DC != null)
-                CurrentCurrencies = Currencies.FirstOrDefault(_ => _.DocCode == KontragentViewModel.VALUTA_DC);
-            if (KontragentViewModel.TABELNUMBER != null)
-                Employee = Employees.FirstOrDefault(_ => _.TabelNumber == KontragentViewModel.TABELNUMBER);
-            if (KontragentViewModel.REGION_DC != null)
-                CurrentRegions = Regions.FirstOrDefault(_ => _.DOC_CODE == KontragentViewModel.REGION_DC);
-            KontragentViewModel.State = RowStatus.NotEdited;
+            if (Kontragent.OTVETSTV_LICO != null)
+                OtvetstLico = Employees.FirstOrDefault(_ => _.TabelNumber == Kontragent.OTVETSTV_LICO);
+            if (Kontragent.VALUTA_DC != null)
+                CurrentCurrencies = Currencies.FirstOrDefault(_ => _.DocCode == Kontragent.VALUTA_DC);
+            if (Kontragent.TABELNUMBER != null)
+                Employee = Employees.FirstOrDefault(_ => _.TabelNumber == Kontragent.TABELNUMBER);
+            if (Kontragent.REGION_DC != null)
+                CurrentRegions = Regions.FirstOrDefault(_ => _.DOC_CODE == Kontragent.REGION_DC);
+            Kontragent.State = RowStatus.NotEdited;
         }
 
         private Employee myEmployee;
@@ -408,7 +412,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             get => myEmployee;
             set
             {
-                if (myEmployee != null && myEmployee.Equals(value)) return;
+                if (Equals(myEmployee,value)) return;
                 myEmployee = value;
                 RaisePropertyChanged();
             }
@@ -440,12 +444,12 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             copy.Name = null;
             copy.NAME_FULL = null;
             copy.Id = Guid.NewGuid();
-            KontragentViewModel = copy;
+            Kontragent = copy;
         }
 
         private void NewData(int? groupId)
         {
-            KontragentViewModel = new KontragentViewModel
+            Kontragent = new KontragentViewModel
             {
                 Id = Guid.NewGuid(),
                 Group = groupId != null ? new KontragentGroupViewModel { EG_ID = groupId.Value } : null
@@ -470,9 +474,9 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             form.Closed += Form_Closed;
         }
 
-        public override bool IsCanSaveData => KontragentViewModel?.State != RowStatus.NotEdited ||
+        public override bool IsCanSaveData => Kontragent?.State != RowStatus.NotEdited ||
                                               BankAndAccounts.Any(_ => _.State != RowStatus.NotEdited)
-                                              || KontragentViewModel.GruzoRequisities.Any(_ =>
+                                              || Kontragent.GruzoRequisities.Any(_ =>
                                                   _.State != RowStatus.NotEdited)
                                               || DeletedBankAndAccountses.Count > 0
                                               || DeletedKontragentGruzoRequisites.Count > 0;
@@ -495,63 +499,63 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                         ctx.SD_43.Add(new SD_43
                         {
                             DOC_CODE = newDC,
-                            INN = KontragentViewModel.INN,
-                            NAME = KontragentViewModel.Name,
-                            HEADER = KontragentViewModel.Header,
-                            GLAVBUH = KontragentViewModel.GlavBuh,
-                            NOTES = KontragentViewModel.Note,
-                            TYPE_PROP = KontragentViewModel.TYPE_PROP,
-                            ADDRESS = KontragentViewModel.ADDRESS,
-                            TEL = KontragentViewModel.TEL,
-                            FAX = KontragentViewModel.FAX,
-                            OKONH = KontragentViewModel.OKONH,
-                            PASSPORT = KontragentViewModel.PASSPORT,
-                            SHIPPING_AUTO_DAYS = KontragentViewModel.SHIPPING_AUTO_DAYS,
-                            PAYMENT_DAYS = KontragentViewModel.PAYMENT_DAYS,
-                            EG_ID = KontragentViewModel.EG_ID <= 0 ? null : KontragentViewModel.EG_ID,
+                            INN = Kontragent.INN,
+                            NAME = Kontragent.Name,
+                            HEADER = Kontragent.Header,
+                            GLAVBUH = Kontragent.GlavBuh,
+                            NOTES = Kontragent.Note,
+                            TYPE_PROP = Kontragent.TYPE_PROP,
+                            ADDRESS = Kontragent.ADDRESS,
+                            TEL = Kontragent.TEL,
+                            FAX = Kontragent.FAX,
+                            OKONH = Kontragent.OKONH,
+                            PASSPORT = Kontragent.PASSPORT,
+                            SHIPPING_AUTO_DAYS = Kontragent.SHIPPING_AUTO_DAYS,
+                            PAYMENT_DAYS = Kontragent.PAYMENT_DAYS,
+                            EG_ID = Kontragent.EG_ID <= 0 ? null : Kontragent.EG_ID,
                             TABELNUMBER = myTabelnumber,
-                            NAL_PAYER_DC = KontragentViewModel.NAL_PAYER_DC,
+                            NAL_PAYER_DC = Kontragent.NAL_PAYER_DC,
                             REGION_DC = GetRegion,
                             CLIENT_CATEG_DC = CurrentCategory,
-                            AUTO_CLIENT_CATEGORY = KontragentViewModel.AUTO_CLIENT_CATEGORY,
-                            AB_OTRASL_DC = KontragentViewModel.AB_OTRASL_DC,
-                            AB_BUDGET_DC = KontragentViewModel.AB_BUDGET_DC,
-                            AB_MINISTRY_DC = KontragentViewModel.AB_MINISTRY_DC,
-                            PODRAZD_CORP_GOLOVNOE = KontragentViewModel.PODRAZD_CORP_GOLOVNOE,
-                            PODRAZD_CORP_OBOSOBL = KontragentViewModel.PODRAZD_CORP_OBOSOBL,
-                            FLAG_BALANS = KontragentViewModel.FLAG_BALANS,
+                            AUTO_CLIENT_CATEGORY = Kontragent.AUTO_CLIENT_CATEGORY,
+                            AB_OTRASL_DC = Kontragent.AB_OTRASL_DC,
+                            AB_BUDGET_DC = Kontragent.AB_BUDGET_DC,
+                            AB_MINISTRY_DC = Kontragent.AB_MINISTRY_DC,
+                            PODRAZD_CORP_GOLOVNOE = Kontragent.PODRAZD_CORP_GOLOVNOE,
+                            PODRAZD_CORP_OBOSOBL = Kontragent.PODRAZD_CORP_OBOSOBL,
+                            FLAG_BALANS = Kontragent.FLAG_BALANS,
                             VALUTA_DC = myValuteDC,
-                            START_BALANS = KontragentViewModel.START_BALANS,
-                            START_SUMMA = KontragentViewModel.START_SUMMA,
-                            INNER_CODE = KontragentViewModel.INNER_CODE,
-                            NAME_FULL = KontragentViewModel.NAME_FULL,
-                            NO_NDS = KontragentViewModel.NO_NDS,
-                            PREFIX_IN_NUMBER = KontragentViewModel.PREFIX_IN_NUMBER,
-                            CONTAKT_LICO = KontragentViewModel.CONTAKT_LICO,
-                            KASSIR = KontragentViewModel.KASSIR,
-                            SPOSOB_OTPRAV_DC = KontragentViewModel.SPOSOB_OTPRAV_DC,
-                            KPP = KontragentViewModel.KPP,
-                            KONTR_DISABLE = KontragentViewModel.KONTR_DISABLE,
-                            MAX_KREDIT_SUM = KontragentViewModel.MAX_KREDIT_SUM,
-                            TRANSP_KOEF = KontragentViewModel.TRANSP_KOEF,
-                            TELEKS = KontragentViewModel.TELEKS,
-                            E_MAIL = KontragentViewModel.E_MAIL,
-                            WWW = KontragentViewModel.WWW,
+                            START_BALANS = Kontragent.START_BALANS,
+                            START_SUMMA = Kontragent.START_SUMMA,
+                            INNER_CODE = Kontragent.INNER_CODE,
+                            NAME_FULL = Kontragent.NAME_FULL,
+                            NO_NDS = Kontragent.NO_NDS,
+                            PREFIX_IN_NUMBER = Kontragent.PREFIX_IN_NUMBER,
+                            CONTAKT_LICO = Kontragent.CONTAKT_LICO,
+                            KASSIR = Kontragent.KASSIR,
+                            SPOSOB_OTPRAV_DC = Kontragent.SPOSOB_OTPRAV_DC,
+                            KPP = Kontragent.KPP,
+                            KONTR_DISABLE = Kontragent.KONTR_DISABLE,
+                            MAX_KREDIT_SUM = Kontragent.MAX_KREDIT_SUM,
+                            TRANSP_KOEF = Kontragent.TRANSP_KOEF,
+                            TELEKS = Kontragent.TELEKS,
+                            E_MAIL = Kontragent.E_MAIL,
+                            WWW = Kontragent.WWW,
                             OTVETSTV_LICO = OtvetstvennojeLico,
-                            LAST_MAX_VERSION = KontragentViewModel.LAST_MAX_VERSION,
-                            FLAG_0UR_1PHYS = KontragentViewModel.FLAG_0UR_1PHYS,
-                            OKPO = KontragentViewModel.OKPO,
+                            LAST_MAX_VERSION = Kontragent.LAST_MAX_VERSION,
+                            FLAG_0UR_1PHYS = Kontragent.FLAG_0UR_1PHYS,
+                            OKPO = Kontragent.OKPO,
                             UpdateDate = DateTime.Now
                         });
                     }
                     else
                     {
-                        var doc = ctx.SD_43.FirstOrDefault(_ => _.DOC_CODE == KontragentViewModel.DocCode);
+                        var doc = ctx.SD_43.FirstOrDefault(_ => _.DOC_CODE == Kontragent.DocCode);
                         if (doc != null)
                         {
-                            if (doc.FLAG_BALANS != KontragentViewModel.FLAG_BALANS)
-                                if (ctx.AccruedAmountForClient.Any(_ => _.KontrDC == KontragentViewModel.DocCode)
-                                    || ctx.AccruedAmountOfSupplier.Any(_ => _.KontrDC == KontragentViewModel.DocCode))
+                            if (doc.FLAG_BALANS != Kontragent.FLAG_BALANS)
+                                if (ctx.AccruedAmountForClient.Any(_ => _.KontrDC == Kontragent.DocCode)
+                                    || ctx.AccruedAmountOfSupplier.Any(_ => _.KontrDC == Kontragent.DocCode))
                                 {
                                     WinManager.ShowWinUIMessageBox(@"Для контрагента есть документы " +
                                                                    "по внебалансовым начислениям! Смена статуса учета в балансе " +
@@ -560,52 +564,52 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                                     return;
                                 }
 
-                            doc.INN = KontragentViewModel.INN;
-                            doc.NAME = KontragentViewModel.Name;
-                            doc.HEADER = KontragentViewModel.Header;
-                            doc.GLAVBUH = KontragentViewModel.GlavBuh;
-                            doc.NOTES = KontragentViewModel.Note;
-                            doc.TYPE_PROP = KontragentViewModel.TYPE_PROP;
-                            doc.ADDRESS = KontragentViewModel.ADDRESS;
-                            doc.TEL = KontragentViewModel.TEL;
-                            doc.FAX = KontragentViewModel.FAX;
-                            doc.OKONH = KontragentViewModel.OKONH;
-                            doc.PASSPORT = KontragentViewModel.PASSPORT;
-                            doc.SHIPPING_AUTO_DAYS = KontragentViewModel.SHIPPING_AUTO_DAYS;
-                            doc.PAYMENT_DAYS = KontragentViewModel.PAYMENT_DAYS;
-                            doc.EG_ID = KontragentViewModel.EG_ID <= 0 ? null : KontragentViewModel.EG_ID;
+                            doc.INN = Kontragent.INN;
+                            doc.NAME = Kontragent.Name;
+                            doc.HEADER = Kontragent.Header;
+                            doc.GLAVBUH = Kontragent.GlavBuh;
+                            doc.NOTES = Kontragent.Note;
+                            doc.TYPE_PROP = Kontragent.TYPE_PROP;
+                            doc.ADDRESS = Kontragent.ADDRESS;
+                            doc.TEL = Kontragent.TEL;
+                            doc.FAX = Kontragent.FAX;
+                            doc.OKONH = Kontragent.OKONH;
+                            doc.PASSPORT = Kontragent.PASSPORT;
+                            doc.SHIPPING_AUTO_DAYS = Kontragent.SHIPPING_AUTO_DAYS;
+                            doc.PAYMENT_DAYS = Kontragent.PAYMENT_DAYS;
+                            doc.EG_ID = Kontragent.EG_ID <= 0 ? null : Kontragent.EG_ID;
                             doc.TABELNUMBER = myTabelnumber;
-                            doc.NAL_PAYER_DC = KontragentViewModel.NAL_PAYER_DC;
+                            doc.NAL_PAYER_DC = Kontragent.NAL_PAYER_DC;
                             doc.REGION_DC = GetRegion;
                             doc.CLIENT_CATEG_DC = CurrentCategory;
-                            doc.AUTO_CLIENT_CATEGORY = KontragentViewModel.AUTO_CLIENT_CATEGORY;
-                            doc.AB_OTRASL_DC = KontragentViewModel.AB_OTRASL_DC;
-                            doc.AB_BUDGET_DC = KontragentViewModel.AB_BUDGET_DC;
-                            doc.AB_MINISTRY_DC = KontragentViewModel.AB_MINISTRY_DC;
-                            doc.PODRAZD_CORP_GOLOVNOE = KontragentViewModel.PODRAZD_CORP_GOLOVNOE;
-                            doc.PODRAZD_CORP_OBOSOBL = KontragentViewModel.PODRAZD_CORP_OBOSOBL;
-                            doc.FLAG_BALANS = KontragentViewModel.FLAG_BALANS;
+                            doc.AUTO_CLIENT_CATEGORY = Kontragent.AUTO_CLIENT_CATEGORY;
+                            doc.AB_OTRASL_DC = Kontragent.AB_OTRASL_DC;
+                            doc.AB_BUDGET_DC = Kontragent.AB_BUDGET_DC;
+                            doc.AB_MINISTRY_DC = Kontragent.AB_MINISTRY_DC;
+                            doc.PODRAZD_CORP_GOLOVNOE = Kontragent.PODRAZD_CORP_GOLOVNOE;
+                            doc.PODRAZD_CORP_OBOSOBL = Kontragent.PODRAZD_CORP_OBOSOBL;
+                            doc.FLAG_BALANS = Kontragent.FLAG_BALANS;
                             doc.VALUTA_DC = myValuteDC;
-                            doc.START_BALANS = KontragentViewModel.START_BALANS;
-                            doc.START_SUMMA = KontragentViewModel.START_SUMMA;
-                            doc.INNER_CODE = KontragentViewModel.INNER_CODE;
-                            doc.NAME_FULL = KontragentViewModel.NAME_FULL;
-                            doc.NO_NDS = KontragentViewModel.NO_NDS;
-                            doc.PREFIX_IN_NUMBER = KontragentViewModel.PREFIX_IN_NUMBER;
-                            doc.CONTAKT_LICO = KontragentViewModel.CONTAKT_LICO;
-                            doc.KASSIR = KontragentViewModel.KASSIR;
-                            doc.SPOSOB_OTPRAV_DC = KontragentViewModel.SPOSOB_OTPRAV_DC;
-                            doc.KPP = KontragentViewModel.KPP;
-                            doc.KONTR_DISABLE = KontragentViewModel.KONTR_DISABLE;
-                            doc.MAX_KREDIT_SUM = KontragentViewModel.MAX_KREDIT_SUM;
-                            doc.TRANSP_KOEF = KontragentViewModel.TRANSP_KOEF;
-                            doc.TELEKS = KontragentViewModel.TELEKS;
-                            doc.E_MAIL = KontragentViewModel.E_MAIL;
-                            doc.WWW = KontragentViewModel.WWW;
+                            doc.START_BALANS = Kontragent.START_BALANS;
+                            doc.START_SUMMA = Kontragent.START_SUMMA;
+                            doc.INNER_CODE = Kontragent.INNER_CODE;
+                            doc.NAME_FULL = Kontragent.NAME_FULL;
+                            doc.NO_NDS = Kontragent.NO_NDS;
+                            doc.PREFIX_IN_NUMBER = Kontragent.PREFIX_IN_NUMBER;
+                            doc.CONTAKT_LICO = Kontragent.CONTAKT_LICO;
+                            doc.KASSIR = Kontragent.KASSIR;
+                            doc.SPOSOB_OTPRAV_DC = Kontragent.SPOSOB_OTPRAV_DC;
+                            doc.KPP = Kontragent.KPP;
+                            doc.KONTR_DISABLE = Kontragent.KONTR_DISABLE;
+                            doc.MAX_KREDIT_SUM = Kontragent.MAX_KREDIT_SUM;
+                            doc.TRANSP_KOEF = Kontragent.TRANSP_KOEF;
+                            doc.TELEKS = Kontragent.TELEKS;
+                            doc.E_MAIL = Kontragent.E_MAIL;
+                            doc.WWW = Kontragent.WWW;
                             doc.OTVETSTV_LICO = OtvetstvennojeLico;
-                            doc.LAST_MAX_VERSION = KontragentViewModel.LAST_MAX_VERSION;
-                            doc.FLAG_0UR_1PHYS = KontragentViewModel.FLAG_0UR_1PHYS;
-                            doc.OKPO = KontragentViewModel.OKPO;
+                            doc.LAST_MAX_VERSION = Kontragent.LAST_MAX_VERSION;
+                            doc.FLAG_0UR_1PHYS = Kontragent.FLAG_0UR_1PHYS;
+                            doc.OKPO = Kontragent.OKPO;
                             doc.UpdateDate = DateTime.Now;
                         }
                     }
@@ -618,7 +622,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                                 ctx.TD_43.Add(new TD_43
                                 {
                                     RASCH_ACC = item.AccountNumber,
-                                    DOC_CODE = KontragentViewModel.DocCode,
+                                    DOC_CODE = Kontragent.DocCode,
                                     DISABLED = (short?)(item.IsDisabled ? 1 : 0),
                                     BANK_DC = item.Bank?.DocCode,
                                     USE_FOR_TLAT_TREB = (short?)(item.IsForPrint ? 1 : 0),
@@ -647,7 +651,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                         }
 
                     // ReSharper disable once PossibleNullReferenceException
-                    foreach (var g in KontragentViewModel.GruzoRequisities.Where(_ => State != RowStatus.NotEdited))
+                    foreach (var g in Kontragent.GruzoRequisities.Where(_ => State != RowStatus.NotEdited))
                         switch (g.State)
                         {
                             case RowStatus.NewRow:
@@ -675,9 +679,9 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
                     DeletedBankAndAccountses.Clear();
                     DeletedKontragentGruzoRequisites.Clear();
-                    KontragentViewModel.myState = RowStatus.NotEdited;
+                    Kontragent.myState = RowStatus.NotEdited;
                     foreach (var b in BankAndAccounts) b.myState = RowStatus.NotEdited;
-                    foreach (var g in KontragentViewModel.GruzoRequisities) g.myState = RowStatus.NotEdited;
+                    foreach (var g in Kontragent.GruzoRequisities) g.myState = RowStatus.NotEdited;
                 }
                 catch (Exception e)
                 {

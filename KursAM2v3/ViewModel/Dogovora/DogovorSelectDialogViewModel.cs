@@ -110,10 +110,11 @@ namespace KursAM2.ViewModel.Dogovora
         public override string LayoutName => "DogovorSelectDialogViewModel";
         public UserControl CustomDataUserControl => new DialogSelectDogovorAndPosition();
 
-        public ObservableCollection<Dogovor> DogovorList { set; get; } = new();
+        public ObservableCollection<Dogovor> DogovorList { set; get; } = new ObservableCollection<Dogovor>();
 
         // ReSharper disable once CollectionNeverUpdated.Global
-        public ObservableCollection<DogovorPosition> DogovorPositionList { set; get; } = new();
+        public ObservableCollection<DogovorPosition> DogovorPositionList { set; get; } =
+            new ObservableCollection<DogovorPosition>();
 
         public Dogovor CurrentDogovor
         {

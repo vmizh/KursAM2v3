@@ -99,9 +99,9 @@ namespace KursAM2.View.DialogUserControl
                     var b = ctx.SD_44.FirstOrDefault(_ => _.DOC_CODE == dtx.CurrentItem.DocCode);
                     if (b == null) return;
                     b.BANK_NAME = dtx.CurrentItem.Name;
-                    b.CORRESP_ACC = dtx.CurrentItem.CORRESP_ACC;
-                    b.ADDRESS = dtx.CurrentItem.ADDRESS;
-                    b.POST_CODE = dtx.CurrentItem.POST_CODE;
+                    b.CORRESP_ACC = dtx.CurrentItem.CorrAccount;
+                    b.ADDRESS = dtx.CurrentItem.Address;
+                    b.POST_CODE = dtx.CurrentItem.BIK;
                     ctx.SaveChanges();
                 }
                 catch(Exception ex)

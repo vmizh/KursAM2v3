@@ -351,13 +351,11 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     [Required(ErrorMessage = "Контрагент должен быть выбран обязательно.")]
     public Kontragent Kontragent
     {
-        get => myKontragent;
+        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POST_DC) as Kontragent;
         set
         {
-            if (myKontragent.Equals(value)) return;
-            myKontragent = value;
-            if (myKontragent != null)
-                Entity.SF_POST_DC = myKontragent.DocCode;
+            if (Equals(GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POST_DC) ,value)) return;
+            Entity.SF_POST_DC =  value.DocCode;
             RaisePropertyChanged();
         }
     }

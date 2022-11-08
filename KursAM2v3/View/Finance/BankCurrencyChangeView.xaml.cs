@@ -7,6 +7,7 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;
@@ -15,6 +16,7 @@ using KursAM2.ViewModel.Finance;
 using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.ICommon;
+using KursDomain.References;
 using LayoutManager;
 
 namespace KursAM2.View.Finance
@@ -110,8 +112,8 @@ namespace KursAM2.View.Finance
                     if (doc.State == RowStatus.NewRow)
                     {
                         var cb1 = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.BankTo, "BankTo",
-                        MainReferences.BankAccounts.Values.Where(_ => _.BankDC == doc.BankFrom.BankDC 
-                                                                      && _.Currency.DocCode != doc.CurrencyFrom?.DocCode).ToList());
+                        GlobalOptions.ReferencesCache.GetBankAccountAll().Where(_ => ((IDocCode)_).DocCode == doc.BankFrom.DocCode 
+                                                                      && ((IDocCode)_.Currency).DocCode != doc.CurrencyFrom?.DocCode).ToList());
                         cb1.EditValueChanged += Cb_BankToValueChanged;
                     }
                     else
@@ -169,8 +171,8 @@ namespace KursAM2.View.Finance
                     {
                         if (ctx.Document != null)
                         {
-                            var bankTo = MainReferences.BankAccounts[ctx.Document.BankToDC];
-                            ctx.Document.CurrencyTo = bankTo.Currency;
+                            var bankTo = GlobalOptions.ReferencesCache.GetBankAccount(ctx.Document.BankToDC);
+                            ctx.Document.CurrencyTo = bankTo.Currency as Currency;
                             var rates = CurrencyRate.GetRate(ctx.Document.DocDate);
                             if (ctx.Document.CurrencyFrom != null && ctx.Document.CurrencyTo != null)
                                 ctx.Document.Rate = CurrencyRate.GetCBSummaRate(ctx.Document.CurrencyFrom,
@@ -194,7 +196,7 @@ namespace KursAM2.View.Finance
                     {
                         if (ctx.Document.CurrencyTo == null)
                         {
-                            ctx.Document.CurrencyTo = ctx.Document.BankTo.Currency;
+                            ctx.Document.CurrencyTo = ctx.Document.BankTo.Currency as Currency;
                         }
                         var rates = CurrencyRate.GetRate(ctx.Document.DocDate);
                         if (ctx.Document.CurrencyFrom != null && ctx.Document.CurrencyTo != null)

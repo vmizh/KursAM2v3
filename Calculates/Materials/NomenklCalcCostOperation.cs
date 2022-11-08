@@ -168,7 +168,7 @@ namespace Calculates.Materials
             get => myKontragentIn;
             set
             {
-                if (myKontragentIn.Equals(value)) return;
+                if (Equals(myKontragentIn,value)) return;
                 myKontragentIn = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(KontrInName));
@@ -182,7 +182,7 @@ namespace Calculates.Materials
             get => myKontragentOut;
             set
             {
-                if (myKontragentOut.Equals(value)) return;
+                if (Equals(myKontragentOut,value)) return;
                 myKontragentOut = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(KontrOutName));

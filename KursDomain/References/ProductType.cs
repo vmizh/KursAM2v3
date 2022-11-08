@@ -1,36 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
-using KursDomain.IReferences;
 using KursDomain.IReferences.Nomenkl;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {ParentDC,nq}")]
-public class ProductType : IProductType, IDocCode, IName, IEqualityComparer<IDocCode>
+public class ProductType : IProductType, IDocCode, IName, IEquatable<ProductType>
 {
-    public decimal? ParentDC { get; set; }
-    public string FullName { get; set; }
     public decimal DocCode { get; set; }
 
-    public bool Equals(IDocCode x, IDocCode y)
+    public bool Equals(ProductType other)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
-    }
-
-    public int GetHashCode(IDocCode obj)
-    {
-        return obj.DocCode.GetHashCode();
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
     }
 
     public string Name { get; set; }
     public string Notes { get; set; }
     public string Description => $"Тип продукции: {Name}";
+    public decimal? ParentDC { get; set; }
+    public string FullName { get; set; }
 
     public void LoadFromEntity(SD_50 entity)
     {
@@ -43,5 +35,18 @@ public class ProductType : IProductType, IDocCode, IName, IEqualityComparer<IDoc
     public override string ToString()
     {
         return Name;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((ProductType) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return DocCode.GetHashCode();
     }
 }

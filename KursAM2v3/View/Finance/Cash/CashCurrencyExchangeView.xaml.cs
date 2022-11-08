@@ -35,7 +35,7 @@ namespace KursAM2.View.Finance.Cash
                 ctx.WindowName = $"Обмен валюты в {ctx.Document?.Cash?.Name} для {ctx.Document?.Kontragent}";
         }
 
-        public List<Currency> CurrencyList { set; get; } = new();
+        public List<Currency> CurrencyList { set; get; } = new List<Currency>();
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
 

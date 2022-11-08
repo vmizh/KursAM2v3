@@ -22,7 +22,7 @@ namespace KursAM2.View.DialogUserControl
         private readonly bool isPaymentUse;
         private readonly decimal kontragentDC;
         private readonly Waybill waybill;
-        private InvoiceClient myCurrentItem;
+        private InvoiceClientViewModel myCurrentItem;
         private StandartDialogSelectUC myDataUserControl;
 
         public InvoiceClientSearchDialog(bool isPaymentUse, bool isUseAcepted)
@@ -60,12 +60,12 @@ namespace KursAM2.View.DialogUserControl
         public ObservableCollection<IInvoiceClient> ItemsCollection { set; get; } =
             new ObservableCollection<IInvoiceClient>();
 
-        public InvoiceClient CurrentItem
+        public InvoiceClientViewModel CurrentItem
         {
             get => myCurrentItem;
             set
             {
-                if (myCurrentItem != null && myCurrentItem.Equals(value)) return;
+                if (Equals(myCurrentItem,value)) return;
                 myCurrentItem = value;
                 RaisePropertyChanged();
             }
@@ -151,7 +151,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentItem;
             set
             {
-                if (myCurrentItem != null && myCurrentItem.Equals(value)) return;
+                if (Equals(myCurrentItem,value)) return;
                 myCurrentItem = value;
                 RaisePropertyChanged();
             }
@@ -337,7 +337,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentClientItem;
             set
             {
-                if (myCurrentClientItem != null && myCurrentClientItem.Equals(value)) return;
+                if (Equals(myCurrentClientItem,value)) return;
                 myCurrentClientItem = value;
                 if (myCurrentClientItem != null)
                     myCurrentProviderItem = null;
@@ -354,7 +354,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentProviderItem;
             set
             {
-                if (myCurrentProviderItem != null && myCurrentProviderItem.Equals(value)) return;
+                if (Equals(myCurrentProviderItem,value)) return;
                 myCurrentProviderItem = value;
                 if (myCurrentProviderItem != null)
                     myCurrentClientItem = null;

@@ -19,7 +19,7 @@ using KursDomain.IReferences.Kontragent;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {Currency,nq}")]
-public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEqualityComparer<IDocCode>
+public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kontragent>
 {
     public Kontragent()
     {
@@ -29,6 +29,95 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEqualityCompa
     public decimal DocCode { get; set; }
 
     public Guid Id { get; set; }
+
+    public bool Equals(Kontragent other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
+    }
+
+    [Display(AutoGenerateField = true, Name = "Коротокие имя")]
+    public string ShortName { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Полное имя")]
+    public string FullName { get; set; }
+
+    [Display(AutoGenerateField = false, Name = "Группа")]
+    public IKontragentGroup Group { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "ИНН")]
+    public string INN { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "КПП")]
+    public string KPP { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Руководитель")]
+    public string Director { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Гл.бух.")]
+    public string GlavBuh { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Удален")]
+    public bool IsDeleted { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Адрес")]
+    public string Address { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Телефон")]
+    public string Phone { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "ОКПО")]
+    public string OKPO { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "ОКОНХ")]
+    public string OKONH { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Физ.лицо")]
+    public bool IsPersona { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Паспорт")]
+    public string Passport { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Работник")]
+    public IEmployee Employee { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Категогрия")]
+    public IClientCategory ClientCategory { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Вкл.в баланс")]
+    public bool IsBalans { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Валюта")]
+    public ICurrency Currency { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Нач.Сумма")]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal StartSumma { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Нач.учета")]
+    public DateTime StartBalans { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "EMail")]
+    public string EMail { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Ответственный")]
+    public IEmployee ResponsibleEmployee { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Регион")]
+    public IRegion Region { get; set; }
+
+    [Display(AutoGenerateField = false, Name = "")]
+    public int OrderCount { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Наименование")]
+    public string Name { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Примечание")]
+    public string Notes { get; set; }
+
+    [Display(AutoGenerateField = false, Name = "Описание")]
+    public string Description => $"Контрагент: {Name}({Currency})";
 
     public bool Equals(IDocCode x, IDocCode y)
     {
@@ -44,35 +133,12 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEqualityCompa
         return obj.DocCode.GetHashCode();
     }
 
-    public string ShortName { get; set; }
-    public string FullName { get; set; }
-    public IKontragentGroup Group { get; set; }
-    public string INN { get; set; }
-    public string KPP { get; set; }
-    public string Director { get; set; }
-    public string GlavBuh { get; set; }
-    public bool IsDeleted { get; set; }
-    public string Address { get; set; }
-    public string Phone { get; set; }
-    public string OKPO { get; set; }
-    public string OKONH { get; set; }
-    public bool IsPersona { get; set; }
-    public string Passport { get; set; }
-    public IEmployee Employee { get; set; }
-    public IClientCategory ClientCategory { get; set; }
-    public bool IsBalans { get; set; }
-    public ICurrency Currency { get; set; }
+    public override string ToString()
+    {
+        return Name;
+    }
 
-    public decimal StartSumma { get; set; }
-    public DateTime StartBalans { get; set; }
-    public string EMail { get; set; }
-    public IEmployee ResponsibleEmployee { get; set; }
-    public IRegion Region { get; set; }
-    public int OrderCount { get; set; }
-    public string Name { get; set; }
-    public string Notes { get; set; }
-    public string Description => $"Контрагент: {Name}({Currency})";
-
+    //TODO Подключить все свойства
     public void LoadFromEntity(SD_43 entity, IReferencesCache refCache)
     {
         if (entity == null) return;
@@ -84,6 +150,19 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEqualityCompa
         IsBalans = entity.FLAG_BALANS == 1;
         IsDeleted = entity.DELETED == 1;
         Id = entity.Id;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((Kontragent) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return DocCode.GetHashCode();
     }
 }
 
@@ -272,7 +351,7 @@ public class KontragentViewModel : RSViewModelBase, IEntity<SD_43>, IDataErrorIn
         get => FLAG_BALANS == 1;
         set
         {
-            FLAG_BALANS = (short?)(value ? 1 : 0);
+            FLAG_BALANS = (short?) (value ? 1 : 0);
             RaisePropertyChanged();
         }
     }
@@ -282,7 +361,7 @@ public class KontragentViewModel : RSViewModelBase, IEntity<SD_43>, IDataErrorIn
         get => FLAG_0UR_1PHYS == 1;
         set
         {
-            FLAG_0UR_1PHYS = (short?)(value ? 1 : 0);
+            FLAG_0UR_1PHYS = (short?) (value ? 1 : 0);
             RaisePropertyChanged();
         }
     }
@@ -380,7 +459,7 @@ public class KontragentViewModel : RSViewModelBase, IEntity<SD_43>, IDataErrorIn
         set
         {
             if (Entity.DELETED == 1 == value) return;
-            Entity.DELETED = (short?)(value ? 1 : 0);
+            Entity.DELETED = (short?) (value ? 1 : 0);
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(DELETED));
         }
@@ -1019,7 +1098,7 @@ public class KontragentViewModel : RSViewModelBase, IEntity<SD_43>, IDataErrorIn
         if (Entity.VALUTA_DC != null && MainReferences.Currencies != null)
             BalansCurrency = MainReferences.Currencies[Entity.VALUTA_DC.Value];
         Group = new KontragentGroupViewModel(Entity.UD_43);
-        ClientCategory = GlobalOptions.ReferencesCache.GetClientCategory(Entity.SD_148.DOC_CODE) as ClientCategory;
+        ClientCategory = GlobalOptions.ReferencesCache.GetClientCategory(Entity.SD_148?.DOC_CODE) as ClientCategory;
         var emp = GlobalOptions.ReferencesCache.GetEmployee(Entity.TABELNUMBER);
         if (emp != null)
             Employee = emp as Employee;
@@ -1028,11 +1107,11 @@ public class KontragentViewModel : RSViewModelBase, IEntity<SD_43>, IDataErrorIn
             OtvetstLico = otv;
         if (Entity.SD_43_GRUZO != null && Entity.SD_43_GRUZO.Count > 0)
             foreach (var item in Entity.SD_43_GRUZO.ToList())
-                GruzoRequisities.Add(new KontragentGruzoRequisite(item) { myState = RowStatus.NotEdited });
+                GruzoRequisities.Add(new KontragentGruzoRequisite(item) {myState = RowStatus.NotEdited});
         if (Entity.TD_43 != null && Entity.TD_43.Count > 0)
             foreach (var item in Entity.TD_43.ToList())
             {
-                var newItem = new KontragentBank(item) { myState = RowStatus.NotEdited };
+                var newItem = new KontragentBank(item) {myState = RowStatus.NotEdited};
                 KontragentBanks.Add(newItem);
             }
 

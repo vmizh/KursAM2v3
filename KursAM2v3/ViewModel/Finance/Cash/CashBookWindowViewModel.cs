@@ -84,7 +84,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             get => myCurrentDocument;
             set
             {
-                if (myCurrentDocument != null && myCurrentDocument.Equals(value)) return;
+                if (Equals(myCurrentDocument,value)) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }
@@ -95,7 +95,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             get => myCurrentCash;
             set
             {
-                if (myCurrentCash != null && myCurrentCash.Equals(value)) return;
+                if (Equals(myCurrentCash,value)) return;
                 myCurrentCash = value;
                 WindowName = "Кассовая книга - " + CurrentCash?.Name;
                 RefreshData(null);
@@ -110,7 +110,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             get => myCurrentPeriod;
             set
             {
-                if (myCurrentPeriod != null && myCurrentPeriod.Equals(value)) return;
+                if (Equals(myCurrentPeriod,value)) return;
                 myCurrentPeriod = value;
                 if (CurrentPeriod != null)
                 {

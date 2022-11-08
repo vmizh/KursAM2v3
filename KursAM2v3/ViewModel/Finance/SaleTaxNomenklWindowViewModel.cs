@@ -66,7 +66,7 @@ namespace KursAM2.ViewModel.Finance
             get => myCurrentNomenklRow;
             set
             {
-                if (myCurrentNomenklRow != null && myCurrentNomenklRow.Equals(value)) return;
+                if (Equals(myCurrentNomenklRow,value)) return;
                 myCurrentNomenklRow = value;
                 RaisePropertyChanged(nameof(PurchaseDocuments));
                 RaisePropertyChanged();
@@ -78,7 +78,7 @@ namespace KursAM2.ViewModel.Finance
             get => myCurrentPayment;
             set
             {
-                if (myCurrentPayment != null && myCurrentPayment.Equals(value)) return;
+                if (Equals(myCurrentPayment,value)) return;
                 myCurrentPayment = value;
                 RaisePropertyChanged();
             }
@@ -89,7 +89,7 @@ namespace KursAM2.ViewModel.Finance
             get => myCurrentPurchase;
             set
             {
-                if (myCurrentPurchase != null && myCurrentPurchase.Equals(value)) return;
+                if (Equals(myCurrentPurchase,value)) return;
                 myCurrentPurchase = value;
                 LoadPayments();
                 RaisePropertyChanged();

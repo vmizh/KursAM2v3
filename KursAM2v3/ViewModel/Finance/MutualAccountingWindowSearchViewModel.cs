@@ -88,7 +88,7 @@ namespace KursAM2.ViewModel.Finance
             get => myCurrentDocument;
             set
             {
-                if (myCurrentDocument != null && myCurrentDocument.Equals(value)) return;
+                if (Equals(myCurrentDocument,value)) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }

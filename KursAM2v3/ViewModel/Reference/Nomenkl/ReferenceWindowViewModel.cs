@@ -27,7 +27,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 {
     public sealed class ReferenceWindowViewModel : RSWindowViewModelBase
     {
-        private NomenklGroup myCurrentCategory;
+        private NomenklGroupViewModel myCurrentCategory;
         private NomenklViewModel myCurrentNomenkl;
         private NomenklMainViewModel myCurrentNomenklMain;
         private bool myIsCanChangeCurrency;
@@ -44,14 +44,14 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         private IMessageBoxService MessageBoxService => this.GetService<IMessageBoxService>();
 
-        public ObservableCollection<NomenklGroup> CategoryCollection { set; get; } =
-            new ObservableCollection<NomenklGroup>();
+        public ObservableCollection<NomenklGroupViewModel> CategoryCollection { set; get; } =
+            new ObservableCollection<NomenklGroupViewModel>();
 
         // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<NomenklMainViewModel> NomenklMainCollection { set; get; } =
             new ObservableCollection<NomenklMainViewModel>();
 
-        public ObservableCollection<CurrencyViewModel> CurrencyCollection { set; get; }
+        public ObservableCollection<Currency> CurrencyCollection { set; get; }
 
         //public bool IsSearchTextNull => 
         public bool IsCanChangeCurrency
@@ -76,7 +76,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             set
             {
                 //SaveData(CurrentNomenklMain.NomenklCollection);
-                if (myCurrentNomenkl != null && myCurrentNomenkl.Equals(value)) return;
+                if (myCurrentNomenkl != null && Equals(myCurrentNomenkl,value)) return;
                 myCurrentNomenkl = value;
                 if (myCurrentNomenkl != null)
                     if (myCurrentNomenkl.State == RowStatus.NewRow)
@@ -119,7 +119,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get => myCurrentNomenklMain;
             set
             {
-                if (myCurrentNomenklMain != null && myCurrentNomenklMain.Equals(value)) return;
+                if (myCurrentNomenklMain != null && Equals(myCurrentNomenklMain,value)) return;
                 myCurrentNomenklMain = value;
                 if (myCurrentNomenklMain != null)
                     LoadNomenklForMain(myCurrentNomenklMain);
@@ -127,7 +127,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             }
         }
 
-        public NomenklGroup CurrentCategory
+        public NomenklGroupViewModel CurrentCategory
         {
             get => myCurrentCategory;
             set
@@ -169,12 +169,16 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         private void LoadReferences()
         {
             if (CurrencyCollection == null)
-                CurrencyCollection = new ObservableCollection<CurrencyViewModel>();
+                CurrencyCollection = new ObservableCollection<Currency>();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 CurrencyCollection.Clear();
                 foreach (var c in ctx.SD_301.ToList())
-                    CurrencyCollection.Add(new CurrencyViewModel(c));
+                {
+                    var crs = new Currency();
+                    crs.LoadFromEntity(c);
+                    CurrencyCollection.Add(crs);
+                }
             }
         }
 
@@ -194,13 +198,12 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                             Name = n.NOM_NAME,
                             NomenklNumber = n.NOM_NOMENKL,
                             NameFull = n.NOM_FULL_NAME,
-                            Currency = new Currency { DocCode = sd301.DOC_CODE, Name = sd301.CRS_SHORTNAME },
+                            NOM_SALE_CRS_DC = sd301.DOC_CODE,
                             Note = n.NOM_NOTES,
                             IsRentabelnost = n.IsUslugaInRent ?? false
                         }).ToList();
                     foreach (var nom in noms)
                     {
-                        nom.Currency = MainReferences.GetCurrency(((IDocCode)nom.Currency).DocCode);
                         nom.Parent = CurrentNomenklMain;
                         main.NomenklCollection.Add(nom);
                         nom.State = RowStatus.NotEdited;
@@ -215,7 +218,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             }
         }
 
-        public void LoadNomMainForCategory(NomenklGroup nomenklGroup)
+        public void LoadNomMainForCategory(NomenklGroupViewModel nomenklGroup)
         {
             var nomCat = nomenklGroup ?? CurrentCategory;
             if (nomCat == null) return;
@@ -268,7 +271,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var grp in ctx.SD_82.ToList())
-                    CategoryCollection.Add(new NomenklGroup(grp)
+                    CategoryCollection.Add(new NomenklGroupViewModel(grp)
                     {
                         State = RowStatus.NotEdited
                     });
@@ -280,20 +283,20 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         private void CalcCommonSum()
         {
             var parents = CategoryCollection.Select(_ => _.ParentDC).Distinct().ToList();
-            var lasts = new List<NomenklGroup>();
+            var lasts = new List<NomenklGroupViewModel>();
             foreach (var n in CategoryCollection)
                 if (parents.All(_ => _ != n.DocCode))
                     lasts.Add(n);
             foreach (var node in lasts)
             {
                 node.NomenklCount =
-                    MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Category).DocCode == node.DocCode);
+                    MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Group).DocCode == node.DocCode);
                 var prevn = node;
                 var n = CategoryCollection.FirstOrDefault(_ => _.DocCode == node.ParentDC);
                 if (n == null) continue;
                 while (n != null)
                 {
-                    var c = MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Category).DocCode == n.DocCode);
+                    var c = MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Group).DocCode == n.DocCode);
                     n.NomenklCount = n.NomenklCount + prevn.NomenklCount + c;
                     prevn = n;
                     n = CategoryCollection.FirstOrDefault(_ => _.DocCode == n.ParentDC);
@@ -324,7 +327,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode,
                                     NOM_FULL_NAME = nom.NameFull,
                                     NOM_ED_IZM_DC = CurrentNomenklMain.Unit.DocCode,
-                                    NOM_CATEG_DC = CurrentNomenklMain.NomenklCategory.DocCode,
+                                    NOM_CATEG_DC = CurrentNomenklMain.NomenklGroup.DocCode,
                                     NOM_0MATER_1USLUGA = CurrentNomenklMain.IsUsluga ? 1 : 0,
                                     NOM_1PROD_0MATER = 0,
                                     NOM_1NAKLRASH_0NO = CurrentNomenklMain.IsNakladExpense ? 1 : 0,
@@ -385,7 +388,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                         NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode,
                                         NOM_FULL_NAME = nom.NameFull,
                                         NOM_ED_IZM_DC = CurrentNomenklMain.Unit.DocCode,
-                                        NOM_CATEG_DC = CurrentNomenklMain.NomenklCategory.DocCode,
+                                        NOM_CATEG_DC = CurrentNomenklMain.NomenklGroup.DocCode,
                                         NOM_0MATER_1USLUGA = CurrentNomenklMain.IsUsluga ? 1 : 0,
                                         NOM_1PROD_0MATER = 0,
                                         NOM_1NAKLRASH_0NO = CurrentNomenklMain.IsNakladExpense ? 1 : 0,
@@ -488,7 +491,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 MainId = CurrentNomenklMain.Id,
                 Id = Guid.NewGuid(),
                 IsDeleted = false,
-                Group = CurrentNomenklMain.NomenklCategory,
+                Group = GlobalOptions.ReferencesCache.GetNomenklGroup(CurrentNomenklMain.NomenklGroup.DocCode) as NomenklGroup,
                 IsUsluga = CurrentNomenklMain.IsUsluga,
                 IsNaklRashod = CurrentNomenklMain.IsNakladExpense,
                 IsRentabelnost = CurrentNomenklMain.IsRentabelnost,
@@ -579,7 +582,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 Id = Guid.NewGuid(),
                 Name = CurrentNomenklMain.Name,
                 FullName = CurrentNomenklMain.FullName,
-                NomenklCategory = CurrentNomenklMain.NomenklCategory,
+                NomenklGroup = CurrentNomenklMain.NomenklGroup,
                 NomenklType = CurrentNomenklMain.NomenklType,
                 Country = CurrentNomenklMain.Country,
                 Note = CurrentNomenklMain.Note,
@@ -733,7 +736,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 category);
             if (res != MessageBoxResult.OK) return;
             if (CurrentCategory == null) return;
-            var oldCat = new NomenklGroup(CurrentCategory.Entity);
+            var oldCat = new NomenklGroupViewModel(CurrentCategory.Entity);
             CurrentCategory.Name = category.Name;
             CurrentCategory.Note = category.Note;
             if (CategorySave(CurrentCategory)) return;
@@ -742,7 +745,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             CurrentCategory.State = RowStatus.NotEdited;
         }
 
-        private bool CategorySave(NomenklGroup cat)
+        private bool CategorySave(NomenklGroupViewModel cat)
         {
             using (var ctx = GlobalOptions.GetEntities())
             {

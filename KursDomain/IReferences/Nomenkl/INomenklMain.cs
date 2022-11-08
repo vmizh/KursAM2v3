@@ -4,7 +4,7 @@ public interface INomenklMain
 {
     string NomenklNumber { set; get; }
     IUnit Unit { set; get; }
-    INomenklCategory Category { set; get; }
+    INomenklGroup Category { set; get; }
     string FullName { set; get; }
     bool IsUsluga { set; get; }
     bool IsProguct { set; get; }

@@ -8,7 +8,7 @@ namespace KursDomain.Documents.CommonReferences.Kontragent;
 
 public class KontragentBank : RSViewModelBase, IEntity<TD_43>
 {
-    private Bank.Bank myBank;
+    private References.Bank myBank;
     private TD_43 myEntity;
 
     public KontragentBank()
@@ -19,7 +19,11 @@ public class KontragentBank : RSViewModelBase, IEntity<TD_43>
     public KontragentBank(TD_43 entity)
     {
         Entity = entity ?? DefaultValue();
-        if (Entity.SD_44 != null) Bank = new Bank.Bank(Entity.SD_44);
+        if (Entity.SD_44 != null)
+        {
+            Bank = new References.Bank();
+            Bank.LoadFromEntity(Entity.SD_44);
+        }
     }
 
     [Display(AutoGenerateField = false)]
@@ -47,7 +51,7 @@ public class KontragentBank : RSViewModelBase, IEntity<TD_43>
     }
 
     [Display(AutoGenerateField = false)]
-    public Bank.Bank Bank
+    public References.Bank Bank
     {
         get => myBank;
         set
@@ -75,10 +79,10 @@ public class KontragentBank : RSViewModelBase, IEntity<TD_43>
     public string BankName => Bank?.Name;
 
     [Display(AutoGenerateField = true, Name = "Корр.счет")]
-    public string BankKorrAccount => Bank?.CORRESP_ACC;
+    public string BankKorrAccount => Bank?.CorrAccount;
 
     [Display(AutoGenerateField = true, Name = "КПП")]
-    public string BankKPP => Bank?.POST_CODE;
+    public string BankKPP => Bank?.BIK;
 
 
     [Display(AutoGenerateField = true, Name = "Для печати")]

@@ -62,7 +62,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"F{startTableRow}"].Value = "Страна";
             sheet.Cells[$"G{startTableRow}"].Value = "Примечания";
             var row = 1;
-            foreach (var item in document.Rows.Cast<InvoiceClientRow>())
+            foreach (var item in document.Rows.Cast<InvoiceClientRowViewModel>())
             {
                 sheet.Cells[$"A{startTableRow + row}"].Value = item.Nomenkl.NomenklNumber;
                 sheet.Cells[$"B{startTableRow + row}"].Value = item.Nomenkl.Name;
@@ -388,7 +388,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             }
 
             var row = 1;
-            foreach (var item in document.Rows.Cast<InvoiceClientRow>())
+            foreach (var item in document.Rows.Cast<InvoiceClientRowViewModel>())
             {
                 sheet[startTableRow + row - 1, 0].Value =
                     !string.IsNullOrEmpty(item.Nomenkl.FullName) && item.Nomenkl.FullName != ""
@@ -519,7 +519,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                     ?.ITEM_VALUE);
 
                 var row = 0;
-                foreach (var item in document.Rows.Cast<InvoiceClientRow>())
+                foreach (var item in document.Rows.Cast<InvoiceClientRowViewModel>())
                 {
                     sheet.Cells[$"A{startTableRow + row}"].Value = row + 1;
                     sheet.Cells[$"I{startTableRow + row}"].Value =
@@ -582,7 +582,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             ViewModel = viewmodel;
         }
 
-        private void WaibillSetRow(Worksheet sheet, int row, int rowId, InvoiceClientRow item)
+        private void WaibillSetRow(Worksheet sheet, int row, int rowId, InvoiceClientRowViewModel item)
         {
             sheet.Cells[$"A{rowId}"].Value = row;
             sheet.Cells[$"F{rowId}"].Value = string.IsNullOrEmpty(item.Nomenkl.FullName)
@@ -641,7 +641,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
 
             if (document.Rows.Count > 3 && document.Rows.Count <= 20)
                 sheet.HorizontalPageBreaks.Add(startTableRow + document.Rows.Count - 2);
-            foreach (var item in document.Rows.Cast<InvoiceClientRow>())
+            foreach (var item in document.Rows.Cast<InvoiceClientRowViewModel>())
             {
                 WaibillSetRow(sheet, row, startTableRow + row - 1, item);
                 row++;

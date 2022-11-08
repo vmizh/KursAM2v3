@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -14,25 +14,18 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {ParentDC,nq}")]
-public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEqualityComparer<IDocCode>
+public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEquatable<CentrResponsibility>
 {
     public string FullName { get; set; }
     public decimal? ParentDC { get; set; }
     public bool IsDeleted { get; set; }
     public decimal DocCode { get; set; }
 
-    public bool Equals(IDocCode x, IDocCode y)
+    public bool Equals(CentrResponsibility other)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
-    }
-
-    public int GetHashCode(IDocCode obj)
-    {
-        return obj.DocCode.GetHashCode();
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
     }
 
     public string Name { get; set; }
@@ -51,6 +44,19 @@ public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEqual
         FullName = entity.CENT_FULLNAME;
         ParentDC = entity.CENT_PARENT_DC;
         IsDeleted = entity.IS_DELETED == 1;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((CentrResponsibility) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return DocCode.GetHashCode();
     }
 }
 

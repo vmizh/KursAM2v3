@@ -69,7 +69,7 @@ namespace KursAM2.ViewModel.Management.Projects
             get => myCurrentDistRow;
             set
             {
-                if (myCurrentDistRow != null && myCurrentDistRow.Equals(value)) return;
+                if (Equals(myCurrentDistRow,value)) return;
                 myCurrentDistRow = value;
                 IsUsluga = !myCurrentDistRow?.IsUsluga ?? false;
                 IsNotUsluga = myCurrentDistRow?.IsUsluga ?? false;
@@ -162,7 +162,7 @@ namespace KursAM2.ViewModel.Management.Projects
                     }
                 }
 
-                if (myCurrentRowDocument != null && myCurrentRowDocument.Equals(value)) return;
+                if (Equals(myCurrentRowDocument,value)) return;
                 myCurrentRowDocument = value;
                 if (myCurrentRowDocument == null) return;
                 if (!CurrentRowDocument.IsUsluga)
@@ -270,7 +270,7 @@ namespace KursAM2.ViewModel.Management.Projects
             get => myDefaultProject;
             set
             {
-                if (myDefaultProject != null && myDefaultProject.Equals(value)) return;
+                if (Equals(myDefaultProject,value)) return;
                 myDefaultProject = value;
                 RaisePropertyChanged();
             }

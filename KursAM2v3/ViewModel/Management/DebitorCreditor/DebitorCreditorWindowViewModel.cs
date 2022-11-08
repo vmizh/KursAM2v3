@@ -152,7 +152,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             get => myCurrentOperation;
             set
             {
-                if (myCurrentOperation != null && myCurrentOperation.Equals(value)) return;
+                if (Equals(myCurrentOperation,value)) return;
                 myCurrentOperation = value;
                 RaisePropertyChanged();
             }

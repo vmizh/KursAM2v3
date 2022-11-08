@@ -139,7 +139,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             get => myDocument;
             set
             {
-                if (myDocument != null && myDocument.Equals(value)) return;
+                if (Equals(myDocument ,value)) return;
                 myDocument = value;
                 RaisePropertyChanged();
             }

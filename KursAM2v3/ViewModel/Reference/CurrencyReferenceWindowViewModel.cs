@@ -2,8 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -13,7 +11,6 @@ using DevExpress.Mvvm.POCO;
 using KursAM2.Repositories;
 using KursAM2.View.KursReferences.UC;
 using KursDomain;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -22,6 +19,19 @@ namespace KursAM2.ViewModel.Reference
 {
     public sealed class CurrencyReferenceWindowViewModel : RSWindowViewModelBase
     {
+        #region Constructors
+
+        public CurrencyReferenceWindowViewModel()
+        {
+            BaseCurrencyRepository = new GenericKursDBRepository<SD_301>(unitOfWork);
+            CurrencyRepository = new CurrencyRepozitories(unitOfWork);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartReestrRightBar(this);
+            RefreshData(null);
+        }
+
+        #endregion
+
         #region Fields
 
         private bool isCurrencyDeleted;
@@ -35,19 +45,6 @@ namespace KursAM2.ViewModel.Reference
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private CurrencyViewModel myCurrentCurrency;
-
-        #endregion
-
-        #region Constructors
-
-        public CurrencyReferenceWindowViewModel()
-        {
-            BaseCurrencyRepository = new GenericKursDBRepository<SD_301>(unitOfWork);
-            CurrencyRepository = new CurrencyRepozitories(unitOfWork);
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
-            RightMenuBar = MenuGenerator.StandartReestrRightBar(this);
-            RefreshData(null);
-        }
 
         #endregion
 
@@ -67,7 +64,8 @@ namespace KursAM2.ViewModel.Reference
             }
         }
 
-        public ObservableCollection<CurrencyViewModel> CurrencyCollection { set; get; } = new ObservableCollection<CurrencyViewModel>();
+        public ObservableCollection<CurrencyViewModel> CurrencyCollection { set; get; } =
+            new ObservableCollection<CurrencyViewModel>();
 
         public CurrencyReferenceUC DocumentUserControl { set; get; } = new CurrencyReferenceUC();
 
@@ -102,7 +100,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewItem(object obj)
         {
-            var newItem = new CurrencyViewModel(new SD_301()
+            var newItem = new CurrencyViewModel(new SD_301
             {
                 DOC_CODE = -1,
                 Id = Guid.NewGuid()
@@ -114,12 +112,14 @@ namespace KursAM2.ViewModel.Reference
         public override bool IsCanSaveData =>
             CurrencyCollection.Any(_ => _.State != RowStatus.NotEdited) || isCurrencyDeleted;
 
-        public override void RefreshData(object obj) {
-        CurrencyCollection.Clear();
+        public override void RefreshData(object obj)
+        {
+            CurrencyCollection.Clear();
             foreach (var c in CurrencyRepository.GetAllCurrencies())
             {
                 CurrencyCollection.Add(c);
             }
+
             isCurrencyDeleted = false;
         }
 

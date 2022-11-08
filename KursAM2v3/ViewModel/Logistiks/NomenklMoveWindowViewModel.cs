@@ -43,7 +43,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentWarehouse;
             set
             {
-                if (myCurrentWarehouse != null && myCurrentWarehouse.Equals(value)) return;
+                if (Equals(myCurrentWarehouse,value)) return;
                 myCurrentWarehouse = value;
                 LoadOstatki();
                 RaisePropertyChanged();
@@ -67,7 +67,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentOperation;
             set
             {
-                if (myCurrentOperation != null && myCurrentOperation.Equals(value)) return;
+                if (Equals(myCurrentOperation,value)) return;
                 myCurrentOperation = value;
                 if (myCurrentOperation != null)
                     CalcOstatki(myCurrentOperation);
@@ -82,7 +82,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => mySelectedNomenkl;
             set
             {
-                if (mySelectedNomenkl != null && mySelectedNomenkl.Equals(value)) return;
+                if (Equals(mySelectedNomenkl,value)) return;
                 mySelectedNomenkl = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(NomenklNumber));

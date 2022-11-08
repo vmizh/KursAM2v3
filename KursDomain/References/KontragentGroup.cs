@@ -9,8 +9,22 @@ using KursDomain.IReferences.Kontragent;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{Id,nq} {Name,nq} {ParentId,nq}")]
-public class KontragentGroup : IName, IKontragentGroup, IEqualityComparer<KontragentGroup>
+public class KontragentGroup : IName, IKontragentGroup, IEquatable<KontragentGroup>
 {
+    public bool Equals(KontragentGroup other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Id == other.Id;
+    }
+
+    public int Id { get; set; }
+    public bool IsDeleted { get; set; }
+    public int? ParentId { get; set; }
+    public string Name { get; set; }
+    public string Notes { get; set; }
+    public string Description { get; set; }
+
     public bool Equals(KontragentGroup cat1, KontragentGroup cat2)
     {
         if (cat2 == null && cat1 == null)
@@ -25,13 +39,6 @@ public class KontragentGroup : IName, IKontragentGroup, IEqualityComparer<Kontra
         return (Id + Name).GetHashCode();
     }
 
-    public int Id { get; set; }
-    public bool IsDeleted { get; set; }
-    public int? ParentId { get; set; }
-    public string Name { get; set; }
-    public string Notes { get; set; }
-    public string Description { get; set; }
-
     public void LoadFromEntity(UD_43 entity)
     {
         Id = entity.EG_ID;
@@ -43,6 +50,19 @@ public class KontragentGroup : IName, IKontragentGroup, IEqualityComparer<Kontra
     public override string ToString()
     {
         return Name;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((KontragentGroup) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return Id;
     }
 }
 
@@ -77,7 +97,7 @@ public class KontragentGroupViewModel : RSViewModelBase, IEntity<UD_43>
         set
         {
             if (EG_ID == value) return;
-            EG_ID = (int)value;
+            EG_ID = (int) value;
             RaisePropertyChanged();
         }
     }
@@ -121,7 +141,7 @@ public class KontragentGroupViewModel : RSViewModelBase, IEntity<UD_43>
         set
         {
             if (EG_PARENT_ID == value) return;
-            EG_PARENT_ID = (int?)value;
+            EG_PARENT_ID = (int?) value;
             RaisePropertyChanged();
         }
     }
@@ -143,7 +163,7 @@ public class KontragentGroupViewModel : RSViewModelBase, IEntity<UD_43>
         set
         {
             if (EG_DELETED == 1 == value) return;
-            EG_DELETED = (short?)(value ? 1 : 0);
+            EG_DELETED = (short?) (value ? 1 : 0);
             RaisePropertyChanged();
         }
     }

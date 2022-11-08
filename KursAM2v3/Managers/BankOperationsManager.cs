@@ -18,6 +18,7 @@ using KursDomain.Documents.Bank;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Currency;
 using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.Managers
 {
@@ -40,8 +41,8 @@ namespace KursAM2.Managers
                     {
                         var newItem = new BankStatements
                         {
-                            BankDC = MainReferences.BankAccounts[item.DOC_CODE].Bank.DocCode,
-                            Bank = MainReferences.BankAccounts[item.DOC_CODE].Bank,
+                            BankDC =  ((IDocCode)GlobalOptions.ReferencesCache.GetBankAccount(item.DOC_CODE).Bank).DocCode,
+                            Bank = GlobalOptions.ReferencesCache.GetBankAccount(item.DOC_CODE).Bank as Bank,
                             // ReSharper disable once PossibleInvalidOperationException
                             Currency = MainReferences.Currencies[(decimal)item.CurrencyDC],
                             Name = item.BA_ACC_SHORTNAME?.Trim() + " " + item.BA_RASH_ACC.Trim(),
@@ -1099,7 +1100,7 @@ namespace KursAM2.Managers
                     SummaEnd = 0,
                     SummaIn = 0,
                     SummaOut = 0,
-                    Currency = MainReferences.BankAccounts[bankDC].Currency
+                    Currency = MainReferences.BankAccounts[bankDC].Currency as Currency
                 };
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -1117,7 +1118,7 @@ namespace KursAM2.Managers
                         SummaEnd = 0,
                         SummaIn = 0,
                         SummaOut = 0,
-                        Currency = MainReferences.BankAccounts[bankDC].Currency
+                        Currency = MainReferences.BankAccounts[bankDC].Currency as Currency
                     };
                 var startDate = data.Where(_ => _.Date <= DateStart).Max(_ => _.Date);
                 var endDate = data.Where(_ => _.Date <= DateEnd).Max(_ => _.Date);
@@ -1130,7 +1131,7 @@ namespace KursAM2.Managers
                         SummaEnd = 0,
                         SummaIn = 0,
                         SummaOut = 0,
-                        Currency = MainReferences.BankAccounts[bankDC].Currency
+                        Currency = MainReferences.BankAccounts[bankDC].Currency as Currency
                     };
                 return new ReminderDatePeriod
                 {
@@ -1140,7 +1141,7 @@ namespace KursAM2.Managers
                     SummaEnd = data.First(_ => _.Date == endDate).End,
                     SummaIn = data.Where(_ => _.Date >= DateStart && _.Date <= DateEnd).Sum(_ => _.SummaIn),
                     SummaOut = data.Where(_ => _.Date >= DateStart && _.Date <= DateEnd).Sum(_ => _.SummaOut),
-                    Currency = MainReferences.BankAccounts[bankDC].Currency
+                    Currency = MainReferences.BankAccounts[bankDC].Currency as Currency
                 };
             }
         }

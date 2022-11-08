@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Data;
@@ -9,7 +8,7 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq}/{Id} {Description,nq}")]
-public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEqualityComparer<Employee>
+public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employee>
 {
     public decimal DocCode { get; set; }
     public Guid Id { get; set; }
@@ -21,24 +20,16 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEqualityComparer<
     public string Position { get; set; }
     public bool IsDeleted { get; set; }
 
-    public bool Equals(Employee x, Employee y)
+    public bool Equals(Employee other)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.Id.Equals(y.Id);
-    }
-
-    public int GetHashCode(Employee obj)
-    {
-        return obj.Id.GetHashCode();
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
     }
 
     public string Name
     {
         get => $"{NameLast} {NameFirst} {NameSecond}";
-
         set { }
     }
 
@@ -63,5 +54,18 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEqualityComparer<
         NameSecond = entity.NAME_SECOND;
         TabelNumber = entity.TABELNUMBER;
         Position = entity.STATUS_NOTES;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((Employee) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return DocCode.GetHashCode();
     }
 }

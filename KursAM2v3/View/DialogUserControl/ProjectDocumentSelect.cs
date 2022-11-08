@@ -55,7 +55,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentProject;
             set
             {
-                if (myCurrentProject != null && myCurrentProject.Equals(value)) return;
+                if (Equals(myCurrentProject,value)) return;
                 myCurrentProject = value;
                 RaisePropertyChanged();
             }
@@ -231,7 +231,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentDocument;
             set
             {
-                if (myCurrentDocument != null && myCurrentDocument.Equals(value)) return;
+                if (Equals(myCurrentDocument,value)) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }

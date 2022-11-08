@@ -315,17 +315,17 @@ namespace Core.ViewModel.Base
             throw new NotImplementedException();
         }
 
-        public InvoiceClient NewDocument()
+        public InvoiceClientViewModel NewDocument()
         {
             throw new NotImplementedException();
         }
 
-        public InvoiceClient CopyDocument()
+        public InvoiceClientViewModel CopyDocument()
         {
             throw new NotImplementedException();
         }
 
-        public InvoiceClient CopyRequisite()
+        public InvoiceClientViewModel CopyRequisite()
         {
             throw new NotImplementedException();
         }

@@ -58,7 +58,7 @@ namespace KursAM2.View.Logistiks.UC
         {
             set
             {
-                if (myCurrentGroup != null && myCurrentGroup.Equals(value)) return;
+                if (Equals(myCurrentGroup,value)) return;
                 myCurrentGroup = value;
                 GetNomenklItem();
             }
@@ -89,7 +89,7 @@ namespace KursAM2.View.Logistiks.UC
         {
             set
             {
-                if (myCurrentNomenkl != null && myCurrentNomenkl.Equals(value)) return;
+                if (Equals(myCurrentNomenkl,value)) return;
                 myCurrentNomenkl = value;
             }
             get => myCurrentNomenkl;
@@ -99,7 +99,7 @@ namespace KursAM2.View.Logistiks.UC
         {
             set
             {
-                if (myCurrentSelectNomenkl != null && myCurrentSelectNomenkl.Equals(value)) return;
+                if (Equals(myCurrentSelectNomenkl,value)) return;
                 myCurrentSelectNomenkl = value;
             }
             get => myCurrentSelectNomenkl;
@@ -109,7 +109,7 @@ namespace KursAM2.View.Logistiks.UC
         {
             NomenklItem.Clear();
             foreach (var item in NomenklItemCollection)
-                if (((IDocCode) item.Category).DocCode == CurrentGroup.DocCode)
+                if (((IDocCode) item.Group).DocCode == CurrentGroup.DocCode)
                     NomenklItem.Add(item);
         }
 
@@ -180,13 +180,13 @@ namespace KursAM2.View.Logistiks.UC
                     lasts.Add(n);
             foreach (var node in lasts)
             {
-                node.NomenklCount = MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Category).DocCode == node.DocCode);
+                node.NomenklCount = MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Group).DocCode == node.DocCode);
                 var prevn = node;
                 var n = NomenklGroup.FirstOrDefault(_ => _.DocCode == node.ParentDC);
                 if (n == null) continue;
                 while (n != null)
                 {
-                    var c = MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Category).DocCode  == n.DocCode);
+                    var c = MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Group).DocCode  == n.DocCode);
                     n.NomenklCount = n.NomenklCount + prevn.NomenklCount + c;
                     prevn = n;
                     n = NomenklGroup.FirstOrDefault(_ => _.DocCode == n.ParentDC);

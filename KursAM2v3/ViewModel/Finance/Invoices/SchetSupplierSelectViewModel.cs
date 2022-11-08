@@ -46,7 +46,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => myCurrentInvoice;
             set
             {
-                if (myCurrentInvoice != null && myCurrentInvoice.Equals(value)) return;
+                if (Equals(myCurrentInvoice,value)) return;
                 myCurrentInvoice = value;
                 RaisePropertyChanged();
             }

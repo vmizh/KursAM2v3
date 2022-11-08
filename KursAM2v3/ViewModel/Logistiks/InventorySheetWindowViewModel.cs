@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Input;
 using Calculates.Materials;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -22,9 +21,9 @@ using KursAM2.Repositories;
 using KursAM2.View.Logistiks;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -39,7 +38,6 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 if (myIsNomenklContains == value) return;
                 myIsNomenklContains = value;
-                RaisePropertyChanged();
             }
         }
     }
@@ -53,6 +51,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         // ReSharper disable once NotAccessedField.Local
         public readonly ISD_24Repository SD_24Repository;
+
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
@@ -108,13 +107,13 @@ namespace KursAM2.ViewModel.Logistiks
             new List<KursDomain.Documents.NomenklManagement.Warehouse>(MainReferences.Warehouses.Values);
 
         public bool IsCannotChangeStore => Document.State == RowStatus.NewRow;
-   
+
         public InventorySheetViewModel Document
         {
             get => myDocument;
             set
             {
-                if (myDocument != null && myDocument.Equals(value)) return;
+                if (Equals(myDocument ,value)) return;
                 myDocument = value;
                 RaisePropertyChanged();
             }
@@ -158,7 +157,7 @@ namespace KursAM2.ViewModel.Logistiks
                 var ret = new ObservableCollection<InventorySheetRowViewModel>();
                 foreach (var n in from dc in listDC
                          from n in Document.Rows
-                         where ((IDocCode)n.Nomenkl.Category).DocCode == dc
+                         where ((IDocCode) n.Nomenkl.Group).DocCode == dc
                          select n
                         )
                     ret.Add(n);
@@ -171,15 +170,14 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public ObservableCollection<NomenklGroup2> NomenklGroups { set; get; } =
-            new ObservableCollection<NomenklGroup2>();
+        public ObservableCollection<NomenklGroup2> NomenklGroups { set; get; } = new ObservableCollection<NomenklGroup2>();
 
         public InventorySheetRowViewModel CurrentNomenkl
         {
             get => myCurrentNomenkl;
             set
             {
-                if (myCurrentNomenkl != null && myCurrentNomenkl.Equals(value)) return;
+                if (Equals(myCurrentNomenkl,value)) return;
                 myCurrentNomenkl = value;
                 RaisePropertyChanged();
             }
@@ -205,8 +203,8 @@ namespace KursAM2.ViewModel.Logistiks
         {
             var ret = new List<decimal>();
             ret.AddRange(
-                Document.Rows.Where(_ => ((IDocCode)_.Nomenkl.Category).DocCode == grp.DocCode)
-                    .Select(_ => ((IDocCode)_.Nomenkl.Category).DocCode));
+                Document.Rows.Where(_ => ((IDocCode) _.Nomenkl.Group).DocCode == grp.DocCode)
+                    .Select(_ => ((IDocCode) _.Nomenkl.Group).DocCode));
             if (NomenklGroups.Count(_ => _.ParentDC == grp.DocCode) == 0) return ret;
             foreach (var g in NomenklGroups.Where(_ => _.ParentDC == grp.DocCode))
             {
@@ -245,7 +243,7 @@ namespace KursAM2.ViewModel.Logistiks
                 ng.IsNomenklContains = false;
             foreach (
                 var ng in
-                Document.Rows.Select(_ => ((IDocCode)_.Nomenkl.Category).DocCode)
+                Document.Rows.Select(_ => ((IDocCode) _.Nomenkl.Group).DocCode)
                     .Distinct()
                     .ToList()
                     .Select(ngDC => NomenklGroups.FirstOrDefault(_ => _.DocCode == ngDC))
@@ -263,7 +261,10 @@ namespace KursAM2.ViewModel.Logistiks
         #region Commands
 
         public override bool IsRedoAllow => Document != null && Document.DeletedRows.Count > 0;
-        public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited && Document.Warehouse != null;
+
+        public override bool IsCanSaveData =>
+            Document != null && Document.State != RowStatus.NotEdited && Document.Warehouse != null;
+
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
         public override bool IsDocDeleteAllow => true;
 
@@ -280,7 +281,8 @@ namespace KursAM2.ViewModel.Logistiks
                         SaveData(null);
                         break;
                 }
-            } 
+            }
+
             Form?.Close();
             using (var sctx = GlobalOptions.KursSystem())
             {
@@ -292,13 +294,13 @@ namespace KursAM2.ViewModel.Logistiks
                     sctx.SaveChanges();
                 }
             }
-           
+
             var f = new InventorySheetView2
             {
                 DataContext = new InventorySheetWindowViewModel(Document.DocCode),
                 Owner = Application.Current.MainWindow
             };
-            ((InventorySheetWindowViewModel)f.DataContext).Form = f;
+            ((InventorySheetWindowViewModel) f.DataContext).Form = f;
             f.Show();
         }
 
@@ -316,10 +318,10 @@ namespace KursAM2.ViewModel.Logistiks
                         SaveData(null);
                         break;
                 }
-            } 
-           
+            }
+
             if (Document != null) Document = new InventorySheetViewModel(SD_24Repository.GetByDC(Document.DocCode));
-            
+
             LoadNomenklGroup();
             CurrentNomenklGroup = null;
             Document.myState = RowStatus.NotEdited;
@@ -341,10 +343,7 @@ namespace KursAM2.ViewModel.Logistiks
                                                               && _.DD_DATE.Year == DateTime.Today.Year)
                             .Max(_ => _.DD_IN_NUM) + 1
                         : 1;
-                    foreach (var t in Document.Rows)
-                    {
-                        t.DocCode = Document.DocCode;
-                    }
+                    foreach (var t in Document.Rows) t.DocCode = Document.DocCode;
                 }
 
                 UnitOfWork.CreateTransaction();
@@ -371,7 +370,7 @@ namespace KursAM2.ViewModel.Logistiks
 
                 UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InventoryList), Document.Id,
-                    0, null, (string)Document.ToJson());
+                    0, null, (string) Document.ToJson());
                 foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
                 Document.myState = RowStatus.NotEdited;
             }
@@ -515,14 +514,14 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 var q = nomenklManager.GetNomenklQuantity(Document.Warehouse.DocCode, nom.DocCode,
                     DateTime.Today, DateTime.Today);
-                decimal quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
+                var quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                 var newItem = new InventorySheetRowViewModel(new TD_24())
                 {
                     DocCode = Document.DocCode,
                     Code = code,
                     Nomenkl = MainReferences.GetNomenkl(nom.DocCode),
                     QuantityFact = quan,
-                    QuantityCalc =quan,
+                    QuantityCalc = quan,
                     State = RowStatus.NewRow,
                     Id = Guid.NewGuid(),
                     DocId = Document.Id,
@@ -546,6 +545,7 @@ namespace KursAM2.ViewModel.Logistiks
                 Document.DeletedRows.Add(CurrentNomenkl);
                 UnitOfWork.Context.TD_24.Remove(CurrentNomenkl.Entity);
             }
+
             Rows.Remove(CurrentNomenkl);
             UnitOfWork.Context.Entry(CurrentNomenkl.Entity).State = EntityState.Detached;
             Document.State = RowStatus.Edited;

@@ -142,7 +142,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentRow;
             set
             {
-                if (myCurrentRow != null && myCurrentRow.Equals(value)) return;
+                if (Equals(myCurrentRow,value)) return;
                 myCurrentRow = value;
                 if (myCurrentRow != null)
                     LoadInvoiceInfo(myCurrentRow.NomenklOutDC, Document.Date);
@@ -158,7 +158,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentWarehouse;
             set
             {
-                if (myCurrentWarehouse != null && myCurrentWarehouse.Equals(value)) return;
+                if (Equals(myCurrentWarehouse,value)) return;
                 myCurrentWarehouse = value;
                 Document.Warehouse = value;
                 RaisePropertyChanged();

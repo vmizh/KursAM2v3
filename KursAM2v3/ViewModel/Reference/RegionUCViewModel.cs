@@ -98,7 +98,7 @@ namespace KursAM2.ViewModel.Reference
         {
             set
             {
-                if (myCurrentItem != null && myCurrentItem.Equals(value)) return;
+                if (Equals(myCurrentItem,value)) return;
                 myCurrentItem = value;
                 RaisePropertyChanged();
             }

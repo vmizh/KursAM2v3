@@ -112,7 +112,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         public readonly GenericKursDBRepository<AccruedAmountForClient> GenericRepository;
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
-            new(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private AccruedAmountForClientViewModel myDocument;
         private AccruedAmountForClientRowViewModel myCurrentAccrual;
@@ -124,9 +124,11 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         public override string LayoutName => "AccruedAmountForClientWindowViewModel";
         public override string WindowName => Document.ToString();
 
-        public ObservableCollection<AccruedAmountForClientRowViewModel> SelectedRows { set; get; } = new();
+        public ObservableCollection<AccruedAmountForClientRowViewModel> SelectedRows { set; get; } =
+            new ObservableCollection<AccruedAmountForClientRowViewModel>();
 
-        public ObservableCollection<AccruedAmountForClientRowViewModel> DeletedRows { set; get; } = new();
+        public ObservableCollection<AccruedAmountForClientRowViewModel> DeletedRows { set; get; } =
+            new ObservableCollection<AccruedAmountForClientRowViewModel>();
 
         public AccruedAmountForClientRowViewModel CurrentAccrual
         {

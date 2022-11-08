@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Data;
@@ -9,31 +8,40 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq} {ParentDC,nq}")]
-public class Country : ICountry, IDocGuid, IName, IEqualityComparer<IDocGuid>
+public class Country : ICountry, IDocGuid, IName, IEquatable<Country>
 {
-    [MaxLength(2)]
-    public string Alpha2 { get; set; }
-    [MaxLength(3)]
-    public string Alpha3 { get; set; }
+    [MaxLength(2)] public string Alpha2 { get; set; }
+
+    [MaxLength(3)] public string Alpha3 { get; set; }
+
     public string ISO { get; set; }
-    [MaxLength(150)]
-    public string ForeignName { get; set; }
-    [MaxLength(150)]
-    public string RussianName { get; set; }
+
+    [MaxLength(150)] public string ForeignName { get; set; }
+
+    [MaxLength(150)] public string RussianName { get; set; }
+
     public string Location { get; set; }
     public string LocationPrecise { get; set; }
     public byte[] Flag { get; set; }
     public Guid Id { get; set; }
-    [MaxLength(150)]
-    public string Name { get; set; }
+
+    public bool Equals(Country other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Id.Equals(other.Id);
+    }
+
+    [MaxLength(150)] public string Name { get; set; }
+
     public string Notes { get; set; }
     public string Description => $"Страна: {Name}";
+
     public override string ToString()
     {
         return Name;
     }
 
-    
 
     public void LoadFromEntity(COUNTRY entity)
     {
@@ -72,5 +80,18 @@ public class Country : ICountry, IDocGuid, IName, IEqualityComparer<IDocGuid>
     public int GetHashCode(IDocGuid obj)
     {
         return obj.Id.GetHashCode();
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((Country) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
     }
 }

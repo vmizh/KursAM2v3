@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
@@ -7,25 +7,18 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class ContractType : IContractType, IDocCode, IName, IEqualityComparer<IDocCode>
+public class ContractType : IContractType, IDocCode, IName, IEquatable<ContractType>
 {
     public bool IsBuy { get; set; }
     public bool IsAadditionalAgreement { get; set; }
     public bool IsDiler { get; set; }
     public decimal DocCode { get; set; }
 
-    public bool Equals(IDocCode x, IDocCode y)
+    public bool Equals(ContractType other)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
-    }
-
-    public int GetHashCode(IDocCode obj)
-    {
-        return obj.DocCode.GetHashCode();
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
     }
 
     public string Name { get; set; }
@@ -58,5 +51,18 @@ public class ContractType : IContractType, IDocCode, IName, IEqualityComparer<ID
         IsAadditionalAgreement = entity.TD_DOP_SOGL == 1;
         IsBuy = entity.TD_0BUY_1SALE == 0;
         IsDiler = entity.TD_DILER == 1;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((ContractType) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return DocCode.GetHashCode();
     }
 }

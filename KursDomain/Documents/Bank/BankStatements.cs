@@ -10,7 +10,7 @@ namespace KursDomain.Documents.Bank;
 public class BankStatements : RSViewModelBase
 {
     private string myAccount;
-    private Bank myBank;
+    private References.Bank myBank;
     private References.Currency myCurrency;
     private DateTime myDate;
     private decimal myDC114;
@@ -32,7 +32,7 @@ public class BankStatements : RSViewModelBase
         get => myDC114;
     }
 
-    public Bank Bank
+    public References.Bank Bank
     {
         get => myBank;
         set

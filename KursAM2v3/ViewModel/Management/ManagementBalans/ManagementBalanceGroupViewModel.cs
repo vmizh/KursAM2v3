@@ -928,7 +928,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             get => mySkladOut;
             set
             {
-                if (mySkladOut != null && mySkladOut.Equals(value)) return;
+                if (Equals(mySkladOut,value)) return;
                 mySkladOut = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(SkladOutName));
@@ -942,7 +942,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             get => mySkladIn;
             set
             {
-                if (mySkladIn != null && mySkladIn.Equals(value)) return;
+                if (Equals(mySkladIn,value)) return;
                 mySkladIn = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(SkladInName));
@@ -956,7 +956,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             get => myKontragentIn;
             set
             {
-                if (myKontragentIn != null && myKontragentIn.Equals(value)) return;
+                if (Equals(myKontragentIn,value)) return;
                 myKontragentIn = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(KontrInName));
@@ -970,7 +970,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             get => myKontragentOut;
             set
             {
-                if (myKontragentOut != null && myKontragentOut.Equals(value)) return;
+                if (Equals(myKontragentOut,value)) return;
                 myKontragentOut = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(KontrOutName));

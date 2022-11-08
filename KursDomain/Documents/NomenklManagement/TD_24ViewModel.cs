@@ -41,7 +41,7 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
     private References.Currency myCurrency;
     private KontragentViewModel myDiler;
     private TD_24 myEntity;
-    private InvoiceClient myInvoiceClient;
+    private InvoiceClientViewModel _myInvoiceClient;
     private InvoiceProvider myInvoiceProvider;
     private InvoiceProviderRow myInvoiceProviderRow;
     private Nomenkl myNomenkl;
@@ -300,15 +300,15 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         }
     }
 
-    public InvoiceClient InvoiceClient
+    public InvoiceClientViewModel InvoiceClientViewModel
     {
-        get => myInvoiceClient;
+        get => _myInvoiceClient;
         set
         {
-            if (myInvoiceClient != null && myInvoiceClient.Equals(value)) return;
-            myInvoiceClient = value;
+            if (_myInvoiceClient != null && _myInvoiceClient.Equals(value)) return;
+            _myInvoiceClient = value;
             if (myInvoiceProvider != null)
-                DDT_SFACT_DC = myInvoiceClient.DocCode;
+                DDT_SFACT_DC = _myInvoiceClient.DocCode;
             RaisePropertyChanged();
         }
     }

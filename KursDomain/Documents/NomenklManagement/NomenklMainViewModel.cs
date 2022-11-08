@@ -18,7 +18,7 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
 {
     private CountriesViewModel myCountry;
     private NomenklMain myEntity;
-    private NomenklGroup myNomenklCategory;
+    private NomenklGroupViewModel _myNomenklGroup;
     public NomenklProductType myNomenklType;
     public NomenklProductKind myProductType;
     private Unit myUnit;
@@ -144,15 +144,15 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
         }
     }
 
-    public NomenklGroup NomenklCategory
+    public NomenklGroupViewModel NomenklGroup
     {
-        get => myNomenklCategory;
+        get => _myNomenklGroup;
         set
         {
-            if (myNomenklCategory != null && myNomenklCategory.Equals(value)) return;
-            myNomenklCategory = value;
-            if (myNomenklCategory != null)
-                CategoryDC = myNomenklCategory.DocCode;
+            if (_myNomenklGroup != null && _myNomenklGroup.Equals(value)) return;
+            _myNomenklGroup = value;
+            if (_myNomenklGroup != null)
+                CategoryDC = _myNomenklGroup.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -373,8 +373,8 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
             {
                 case nameof(Name):
                     return Name == null ? ValidationError.FieldNotNull : null;
-                case nameof(NomenklCategory):
-                    return NomenklCategory == null ? ValidationError.FieldNotNull : null;
+                case nameof(NomenklGroup):
+                    return NomenklGroup == null ? ValidationError.FieldNotNull : null;
             }
 
             return null;
@@ -426,7 +426,7 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
     {
         myCountry = new CountriesViewModel(Entity.Countries);
         myNomenklType = new NomenklProductType(Entity.SD_119);
-        myNomenklCategory = new NomenklGroup(Entity.SD_82);
+        _myNomenklGroup = new NomenklGroupViewModel(Entity.SD_82);
         myUnit = new Unit();
         myUnit.LoadFromEntity(Entity.SD_175);
         if (Entity.SD_83 != null && Entity.SD_83.Count > 0)

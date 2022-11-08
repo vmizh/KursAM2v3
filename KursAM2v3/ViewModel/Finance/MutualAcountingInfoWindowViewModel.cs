@@ -145,7 +145,7 @@ namespace KursAM2.ViewModel.Finance
             get => myCurrentRate;
             set
             {
-                if (myCurrentRate != null && myCurrentRate.Equals(value)) return;
+                if (Equals(myCurrentRate,value)) return;
                 myCurrentRate = value;
                 if (myCurrentRate != null)
                     loaddocuments();
@@ -160,7 +160,7 @@ namespace KursAM2.ViewModel.Finance
             get => myCurrentDocument;
             set
             {
-                if (myCurrentDocument != null && myCurrentDocument.Equals(value)) return;
+                if (Equals(myCurrentDocument,value)) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }
@@ -244,11 +244,11 @@ namespace KursAM2.ViewModel.Finance
 
         private decimal calcRate(Currency first, Currency second, decimal summafirst, decimal summasecond)
         {
-            if (first.Equals(second)) return 1;
+            if (Equals(first,second)) return 1;
             if (summafirst == 0 || summasecond == 0) return 0;
-            if (first.Equals(GlobalOptions.SystemProfile.NationalCurrency))
+            if (Equals(first,GlobalOptions.SystemProfile.NationalCurrency))
                 return decimal.Round(summafirst / summasecond, 4);
-            if (second.Equals(GlobalOptions.SystemProfile.NationalCurrency))
+            if (Equals(second,GlobalOptions.SystemProfile.NationalCurrency))
                 return decimal.Round(summasecond / summafirst, 4);
             if (first.DocCode == CurrencyCode.USD) return decimal.Round(summafirst / summasecond, 4);
             if (second.DocCode == CurrencyCode.USD) return decimal.Round(summasecond / summafirst, 4);

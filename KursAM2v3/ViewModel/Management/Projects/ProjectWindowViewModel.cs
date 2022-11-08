@@ -260,7 +260,7 @@ namespace KursAM2.ViewModel.Management.Projects
             get => myCurrentProject;
             set
             {
-                if (myCurrentProject != null && myCurrentProject.Equals(value)) return;
+                if (Equals(myCurrentProject,value)) return;
                 myCurrentProject = value;
                 Periods.Clear();
                 Documents.Clear();
@@ -351,7 +351,7 @@ namespace KursAM2.ViewModel.Management.Projects
             get => myCurrentDocument;
             set
             {
-                if (myCurrentDocument != null && myCurrentDocument.Equals(value)) return;
+                if (Equals(myCurrentDocument,value)) return;
                 myCurrentDocument = value;
                 if (myCurrentDocument != null)
                 {
@@ -370,7 +370,7 @@ namespace KursAM2.ViewModel.Management.Projects
             get => myCurrentPeriod;
             set
             {
-                if (myCurrentPeriod != null && myCurrentPeriod.Equals(value)) return;
+                if (Equals(myCurrentPeriod,value)) return;
                 PrihodDocuments.Clear();
                 myCurrentPeriod = value;
                 if (myCurrentPeriod == null) return;

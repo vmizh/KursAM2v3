@@ -39,7 +39,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             set
             {
-                if (myCurrentDocument != null && myCurrentDocument.Equals(value)) return;
+                if (Equals(myCurrentDocument,value)) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }
@@ -94,7 +94,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     //    .Where(_ => _.SF_DATE >= StartDate && _.SF_DATE <= EndDate);
                     //foreach (var item in query.ToList())
                     //{
-                    //    var newItem = new InvoiceClient(item);
+                    //    var newItem = new InvoiceClientViewModel(item);
                     //    if (item.TD_84 != null && item.TD_84.Count > 0)
                     //        newItem.SummaOtgruz = item.TD_84.Sum(i =>
                     //            i.TD_24.Sum(i2 => i.SFT_ED_CENA * i2.DDT_KOL_RASHOD ?? 0));

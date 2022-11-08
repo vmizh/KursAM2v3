@@ -48,7 +48,7 @@ namespace KursAM2.ViewModel.Reference
             get => myCurrentRow;
             set
             {
-                if (myCurrentRow != null && myCurrentRow.Equals(value)) return;
+                if (Equals(myCurrentRow,value)) return;
                 myCurrentRow = value;
                 RaisePropertyChanged();
             }

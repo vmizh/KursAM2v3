@@ -39,7 +39,7 @@ namespace KursAM2.ViewModel.Logistiks
         {
             set
             {
-                if (myGruzoInfo != null && myGruzoInfo.Equals(value)) return;
+                if (Equals(myGruzoInfo,value)) return;
                 myGruzoInfo = value;
                 RaisePropertyChanged();
             }

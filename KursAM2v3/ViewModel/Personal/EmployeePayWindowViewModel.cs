@@ -73,7 +73,7 @@ namespace KursAM2.ViewModel.Personal
             get => myCurrentEmploee;
             set
             {
-                if (myCurrentEmploee != null && myCurrentEmploee.Equals(value)) return;
+                if (Equals(myCurrentEmploee,value)) return;
                 myCurrentEmploee = value;
                 UpdatePeriods(myCurrentEmploee);
                 RaisePropertyChanged();
@@ -85,7 +85,7 @@ namespace KursAM2.ViewModel.Personal
             get => mySelectEmployee;
             set
             {
-                if (mySelectEmployee != null && mySelectEmployee.Equals(value)) return;
+                if (Equals(mySelectEmployee,value)) return;
                 mySelectEmployee = value;
                 RaisePropertyChanged();
             }
@@ -96,7 +96,7 @@ namespace KursAM2.ViewModel.Personal
             get => myCurrentPayDocument;
             set
             {
-                if (myCurrentPayDocument != null && myCurrentPayDocument.Equals(value)) return;
+                if (Equals(myCurrentPayDocument,value)) return;
                 myCurrentPayDocument = value;
                 RaisePropertyChanged();
             }

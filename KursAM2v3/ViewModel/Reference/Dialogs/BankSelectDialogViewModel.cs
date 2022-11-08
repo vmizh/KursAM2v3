@@ -14,6 +14,7 @@ using KursAM2.View.Base;
 using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference.Dialogs
 {
@@ -65,7 +66,12 @@ namespace KursAM2.ViewModel.Reference.Dialogs
             Items.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                foreach (var b in ctx.SD_44.ToList()) Items.Add(new Bank(b));
+                foreach (var b in ctx.SD_44.ToList())
+                {
+                    var bank = new Bank();
+                    bank.LoadFromEntity(b);
+                    Items.Add(bank);
+                }
             }
         }
 
@@ -135,8 +141,8 @@ namespace KursAM2.ViewModel.Reference.Dialogs
             {
                 DocCode = Items.Max(_ => _.DocCode) + 1,
                 Name = "Новый",
-                CORRESP_ACC = " ",
-                POST_CODE = " "
+                CorrAccount = " ",
+                BIK = " "
             };
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -146,9 +152,9 @@ namespace KursAM2.ViewModel.Reference.Dialogs
                     {
                         DOC_CODE = newBank.DocCode,
                         BANK_NAME = newBank.Name,
-                        CORRESP_ACC = newBank.CORRESP_ACC,
-                        ADDRESS = newBank.ADDRESS,
-                        POST_CODE = newBank.POST_CODE
+                        CORRESP_ACC = newBank.CorrAccount,
+                        ADDRESS = newBank.Address,
+                        POST_CODE = newBank.BIK
                     });
                     ctx.SaveChanges();
                 }
@@ -172,8 +178,12 @@ namespace KursAM2.ViewModel.Reference.Dialogs
                                                        || _.BANK_NICKNAME.ToUpper().Contains(SearchText.ToUpper())
                                                        || _.CORRESP_ACC.ToUpper().Contains(SearchText.ToUpper())
                                                        || _.POST_CODE.ToUpper().Contains(SearchText.ToUpper()))
-                    .ToList())
-                    Items.Add(new Bank(b));
+                             .ToList())
+                {
+                    var bank = new Bank();
+                    bank.LoadFromEntity(b);
+                    Items.Add(bank);
+                }
             }
         }
 

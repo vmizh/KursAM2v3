@@ -43,7 +43,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myWarehouse;
             set
             {
-                if (myWarehouse != null && myWarehouse.Equals(value)) return;
+                if (Equals(myWarehouse,value)) return;
                 myWarehouse = value;
                 if (myWarehouse != null && Currency != null)
                     LoadOstatki(myWarehouse, Currency);

@@ -15,7 +15,7 @@ namespace KursAM2.ViewModel.Personal
             get => _Persona;
             set
             {
-                if (_Persona != null && _Persona.Equals(value)) return;
+                if (Equals(_Persona,value)) return;
                 _Persona = value;
                 if (State == RowStatus.NotEdited)
                     State = RowStatus.Edited;

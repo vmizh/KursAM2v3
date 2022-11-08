@@ -50,7 +50,7 @@ namespace KursAM2.Auxiliary
 
             var invoiceClient = ctx.SD_84.ToList();
             foreach (var doc in invoiceClient.Select(ent =>
-                         new InvoiceClient(ent, new UnitOfWork<ALFAMEDIAEntities>(ctx), true)))
+                         new InvoiceClientViewModel(ent, new UnitOfWork<ALFAMEDIAEntities>(ctx), true)))
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
                     doc.DocCode, null, (string)doc.ToJson());
 

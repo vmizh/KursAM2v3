@@ -84,7 +84,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentDocument;
             set
             {
-                if (myCurrentDocument != null && myCurrentDocument.Equals(value)) return;
+                if (Equals(myCurrentDocument,value)) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }
@@ -146,7 +146,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentSklad;
             set
             {
-                if (myCurrentSklad != null && myCurrentSklad.Equals(value)) return;
+                if (Equals(myCurrentSklad,value)) return;
                 myCurrentSklad = value;
                 IsShowAll = myCurrentSklad == null;
                 NomenklMoveList.Clear();

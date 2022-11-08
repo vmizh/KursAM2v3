@@ -149,7 +149,7 @@ namespace KursAM2.ViewModel.Reference
             get => myCurrentRemain;
             set
             {
-                if (myCurrentRemain != null && myCurrentRemain.Equals(value)) return;
+                if (Equals(myCurrentRemain,value)) return;
                 myCurrentRemain = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Currencies));
@@ -163,7 +163,7 @@ namespace KursAM2.ViewModel.Reference
             get => myCurrentCash;
             set
             {
-                if (myCurrentCash != null && myCurrentCash.Equals(value)) return;
+                if (Equals(myCurrentCash,value)) return;
                 myCurrentCash = value;
                 RaisePropertyChanged();
             }
@@ -176,7 +176,7 @@ namespace KursAM2.ViewModel.Reference
             get => myCurrentBank;
             set
             {
-                if (myCurrentBank != null && myCurrentBank.Equals(value)) return;
+                if (Equals(myCurrentBank,value)) return;
                 myCurrentBank = value;
                 RaisePropertyChanged();
             }
@@ -277,7 +277,7 @@ namespace KursAM2.ViewModel.Reference
             var newBank = new BankAccountReference
             {
                 State = RowStatus.NewRow,
-                Name = bank.BANK_NICKNAME,
+                Name = bank.NickName,
                 BA_BANK_ACCOUNT = 1,
                 CO = MainReferences.COList.Count == 1 ? MainReferences.COList.Values.First() : null,
                 BA_CURRENCY = 1,

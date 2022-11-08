@@ -85,8 +85,6 @@
     <Compile Include="Documents\AccruedAmount\AccruedAmountTypeViewModel.cs" />
     <Compile Include="Documents\AktSpisaniya\AktSpisaniyaNomenklTitleViewModel.cs" />
     <Compile Include="Documents\AktSpisaniya\AktSpisaniyaRowViewModel.cs" />
-    <Compile Include="Documents\Bank\Bank.cs" />
-    <Compile Include="Documents\Bank\BankAccount.cs" />
     <Compile Include="Documents\Bank\BankAccountReference.cs" />
     <Compile Include="Documents\Bank\BankAndAccounts.cs" />
     <Compile Include="Documents\Bank\BankCurrencyChangeViewModel.cs" />
@@ -138,8 +136,10 @@
     <Compile Include="Documents\Dogovora\Old\TD_9ViewModel.cs" />
     <Compile Include="Documents\Employee\Employee.cs" />
     <Compile Include="Documents\Employee\EMP_PAYROLL_TYPEViewModel.cs" />
-    <Compile Include="Documents\Invoices\InvoiceClient.cs" />
-    <Compile Include="Documents\Invoices\InvoiceClientRow.cs" />
+    <Compile Include="Documents\Invoices\IInvoiceClient.cs" />
+    <Compile Include="Documents\Invoices\IInvoiceClientRow.cs" />
+    <Compile Include="Documents\Invoices\InvoiceClientViewModel.cs" />
+    <Compile Include="Documents\Invoices\InvoiceClientRowViewModel.cs" />
     <Compile Include="Documents\Invoices\InvoicePaymentDocument.cs" />
     <Compile Include="Documents\Invoices\InvoiceProvider.cs" />
     <Compile Include="Documents\Invoices\InvoiceProviderRow.cs" />

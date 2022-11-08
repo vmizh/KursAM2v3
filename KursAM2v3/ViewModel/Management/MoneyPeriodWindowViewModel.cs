@@ -163,7 +163,7 @@ namespace KursAM2.ViewModel.Management
                     if (rem.Currency.DocCode == CurrencyCode.CHF)
                         Remains.Add(new MoneyRemainsRow
                         {
-                            Name = b.BankName + " / " + b.Account,
+                            Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
                             StartSumma = (decimal) rem.SummaStart,
                             EndSumma = (decimal) rem.SummaEnd,
@@ -172,7 +172,7 @@ namespace KursAM2.ViewModel.Management
                     if (rem.Currency.DocCode == CurrencyCode.CNY)
                         Remains.Add(new MoneyRemainsRow
                         {
-                            Name = b.BankName + " / " + b.Account,
+                            Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
                             StartSumma = (decimal) rem.SummaStart,
                             EndSumma = (decimal) rem.SummaEnd,
@@ -181,7 +181,7 @@ namespace KursAM2.ViewModel.Management
                     if (rem.Currency.DocCode == CurrencyCode.USD)
                         Remains.Add(new MoneyRemainsRow
                         {
-                            Name = b.BankName + " / " + b.Account,
+                            Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
                             StartSumma = (decimal) rem.SummaStart,
                             EndSumma = (decimal) rem.SummaEnd,
@@ -190,7 +190,7 @@ namespace KursAM2.ViewModel.Management
                     if (rem.Currency.DocCode == CurrencyCode.EUR)
                         Remains.Add(new MoneyRemainsRow
                         {
-                            Name = b.BankName + " / " + b.Account,
+                            Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
                             StartSumma = (decimal) rem.SummaStart,
                             EndSumma = (decimal) rem.SummaEnd,
@@ -199,7 +199,7 @@ namespace KursAM2.ViewModel.Management
                     if (rem.Currency.DocCode == CurrencyCode.RUB)
                         Remains.Add(new MoneyRemainsRow
                         {
-                            Name = b.BankName + " / " + b.Account,
+                            Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
                             StartSumma = (decimal) rem.SummaStart,
                             EndSumma = (decimal) rem.SummaEnd,
@@ -208,7 +208,7 @@ namespace KursAM2.ViewModel.Management
                     if (rem.Currency.DocCode == CurrencyCode.GBP)
                         Remains.Add(new MoneyRemainsRow
                         {
-                            Name = b.BankName + " / " + b.Account,
+                            Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
                             StartSumma = (decimal) rem.SummaStart,
                             EndSumma = (decimal) rem.SummaEnd,
@@ -217,7 +217,7 @@ namespace KursAM2.ViewModel.Management
                     if (rem.Currency.DocCode == CurrencyCode.SEK)
                         Remains.Add(new MoneyRemainsRow
                         {
-                            Name = b.BankName + " / " + b.Account,
+                            Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
                             StartSumma = (decimal) rem.SummaStart,
                             EndSumma = (decimal) rem.SummaEnd,

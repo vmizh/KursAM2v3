@@ -159,7 +159,7 @@ namespace KursAM2.View.Finance
                 }
                 switch (col.FieldName)
                 {
-                    case "SFClient":
+                    case "SfClient":
                         KontrButtonEditSettings = new ButtonEditSettings
                         {
                             IsTextEditable = false,

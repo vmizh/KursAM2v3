@@ -52,21 +52,21 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"AQ{rowId}"].Value = Convert.ToDouble(item.DDT_KOL_RASHOD);
             sheet.Cells[$"AV{rowId}"].Value =
                 Math.Round(
-                    Convert.ToDouble(item.SchetLinkedRow.Summa / item.SchetLinkedRow.Quantity),
+                    Convert.ToDouble(item.SchetLinkedRowViewModel.Summa / item.SchetLinkedRowViewModel.Quantity),
                     2);
             sheet.Cells[$"BB{rowId}"].Value =
                 Math.Round(
-                    Convert.ToDouble((item.SchetLinkedRow.Summa - item.SchetLinkedRow.SFT_SUMMA_NDS) /
-                        item.SchetLinkedRow.Quantity * item.DDT_KOL_RASHOD), 2);
-            sheet.Cells[$"BG{rowId}"].Value = item.SchetLinkedRow.NDSPercent;
+                    Convert.ToDouble((item.SchetLinkedRowViewModel.Summa - item.SchetLinkedRowViewModel.SFT_SUMMA_NDS) /
+                        item.SchetLinkedRowViewModel.Quantity * item.DDT_KOL_RASHOD), 2);
+            sheet.Cells[$"BG{rowId}"].Value = item.SchetLinkedRowViewModel.NDSPercent;
             sheet.Cells[$"BQ{rowId}"].Value =
                 Math.Round(
-                    Convert.ToDouble(item.SchetLinkedRow.SFT_SUMMA_NDS *
-                                     (item.DDT_KOL_RASHOD / item.SchetLinkedRow.Quantity)), 2);
+                    Convert.ToDouble(item.SchetLinkedRowViewModel.SFT_SUMMA_NDS *
+                                     (item.DDT_KOL_RASHOD / item.SchetLinkedRowViewModel.Quantity)), 2);
             sheet.Cells[$"BV{rowId}"].Value =
                 Math.Round(
-                    Convert.ToDouble(item.SchetLinkedRow.Summa *
-                                     (item.DDT_KOL_RASHOD / item.SchetLinkedRow.Quantity)), 2);
+                    Convert.ToDouble(item.SchetLinkedRowViewModel.Summa *
+                                     (item.DDT_KOL_RASHOD / item.SchetLinkedRowViewModel.Quantity)), 2);
         }
 
         public override void GenerateReport(Worksheet sheet)
@@ -75,7 +75,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             if (vm == null) return;
             var document = vm.Document;
             Kontragent receiver;
-            receiver = vm.Document.InvoiceClient.Receiver ?? GlobalOptions.SystemProfile.OwnerKontragent;
+            receiver = vm.Document.InvoiceClientViewModel.Receiver ?? GlobalOptions.SystemProfile.OwnerKontragent;
             //TODO Добавить грузовые реквизиты в справочник контрагента
             //sheet.Cells["A4"].Value = receiver.GruzoRequisiteForWaybill;
             //sheet.Cells["K12"].Value = vm.Document.KontragentViewModelReceiver.GruzoRequisiteForWaybill;
@@ -119,16 +119,16 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"AH{document.Rows.Count + startTableRow + 1}"].Value = document.Rows.Count;
             sheet.Cells[$"BB{document.Rows.Count + startTableRow + 1}"].Value =
                 Math.Round(Convert.ToDouble(
-                    document.Rows.Sum(_ => (_.SchetLinkedRow.Summa - _.SchetLinkedRow.SFT_SUMMA_NDS) *
-                                           (_.DDT_KOL_RASHOD / _.SchetLinkedRow.Quantity))), 2);
+                    document.Rows.Sum(_ => (_.SchetLinkedRowViewModel.Summa - _.SchetLinkedRowViewModel.SFT_SUMMA_NDS) *
+                                           (_.DDT_KOL_RASHOD / _.SchetLinkedRowViewModel.Quantity))), 2);
             sheet.Cells[$"BQ{document.Rows.Count + startTableRow + 1}"].Value =
                 Math.Round(Convert.ToDouble(
-                    document.Rows.Sum(_ => _.SchetLinkedRow.SFT_SUMMA_NDS *
-                                           (_.DDT_KOL_RASHOD / _.SchetLinkedRow.Quantity))), 2);
+                    document.Rows.Sum(_ => _.SchetLinkedRowViewModel.SFT_SUMMA_NDS *
+                                           (_.DDT_KOL_RASHOD / _.SchetLinkedRowViewModel.Quantity))), 2);
             sheet.Cells[$"BV{document.Rows.Count + startTableRow + 1}"].Value =
                 Math.Round(Convert.ToDouble(
-                    document.Rows.Sum(_ => _.SchetLinkedRow.Summa *
-                                           (_.DDT_KOL_RASHOD / _.SchetLinkedRow.Quantity))), 2);
+                    document.Rows.Sum(_ => _.SchetLinkedRowViewModel.Summa *
+                                           (_.DDT_KOL_RASHOD / _.SchetLinkedRowViewModel.Quantity))), 2);
             sheet.Cells[$"AB{document.Rows.Count + startTableRow + 4}"].Value = vm.Document.Rows.Count;
             sheet.Cells[$"O{document.Rows.Count + startTableRow + 30}"].Value = receiver.GlavBuh;
             sheet.Cells[$"J{document.Rows.Count + startTableRow + 9}"].Value =
@@ -137,7 +137,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"M{document.Rows.Count + startTableRow + 9}"].Value =
                 RuDateAndMoneyConverter.CurrencyToTxt(
                     sheet.Cells[$"BV{document.Rows.Count + startTableRow + 1}"].Value.NumericValue,
-                    document.InvoiceClient.Currency?.Name,
+                    document.InvoiceClientViewModel.Currency?.Name,
                     true);
         }
     }

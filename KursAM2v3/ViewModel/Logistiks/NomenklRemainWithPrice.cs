@@ -41,7 +41,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myNomenkl;
             set
             {
-                if (myNomenkl != null && myNomenkl.Equals(value)) return;
+                if (Equals(myNomenkl,value)) return;
                 myNomenkl = value;
                 RaisePropertyChanged();
             }

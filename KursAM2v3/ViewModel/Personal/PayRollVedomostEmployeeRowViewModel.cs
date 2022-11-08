@@ -52,7 +52,7 @@ namespace KursAM2.ViewModel.Personal
             get => myEmployee;
             set
             {
-                if (myEmployee != null && myEmployee.Equals(value)) return;
+                if (Equals(myEmployee,value)) return;
                 myEmployee = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Name));

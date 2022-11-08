@@ -9,7 +9,7 @@
     xmlns:viewModel="clr-namespace:KursAM2.ViewModel"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     x:Class="KursAM2.View.MainWindow"
-    Title="Курс 2019" Height="700" Width="1100" SnapsToDevicePixels="True"
+    Title="Курс 2019 v.4" Height="700" Width="1100" SnapsToDevicePixels="True"
     UseLayoutRounding="True"
     Loaded="DXWindow_Loaded"
     Icon="pack://siteoforigin:,,,/Images/memory.png">

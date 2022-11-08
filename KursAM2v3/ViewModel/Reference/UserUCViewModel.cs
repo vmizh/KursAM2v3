@@ -45,7 +45,7 @@ namespace KursAM2.ViewModel.Reference
         {
             set
             {
-                if (myCurrentSelectedUser != null && myCurrentSelectedUser.Equals(value)) return;
+                if (Equals(myCurrentSelectedUser,value)) return;
                 myCurrentSelectedUser = value;
                 RaisePropertyChanged();
             }
@@ -58,7 +58,7 @@ namespace KursAM2.ViewModel.Reference
         {
             set
             {
-                if (myCurrentUser != null && myCurrentUser.Equals(value)) return;
+                if (Equals(myCurrentUser,value)) return;
                 myCurrentUser = value;
                 RaisePropertyChanged();
             }

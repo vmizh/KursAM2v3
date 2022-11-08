@@ -21,7 +21,7 @@ namespace KursAM2.View.Logistiks.UC
     [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
     public sealed class AddNomenklFromInvoiceProviderViewModel : RSWindowViewModelBase, IDataUserControl
     {
-        private readonly NomenklManager2 nomenklManager = new(GlobalOptions.GetEntities());
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         #region Constructors
 
@@ -129,9 +129,10 @@ namespace KursAM2.View.Logistiks.UC
 
         #region Properties
 
-        public ObservableCollection<InvoiceShort> Invoices { set; get; } = new();
+        public ObservableCollection<InvoiceShort> Invoices { set; get; } = new ObservableCollection<InvoiceShort>();
 
-        public ObservableCollection<InvoiceShortRow> Nomenkls { set; get; } = new();
+        public ObservableCollection<InvoiceShortRow> Nomenkls { set; get; } =
+            new ObservableCollection<InvoiceShortRow>();
 
         public AddNomenklFromInvoiceProviderUC DataUserControl
         {

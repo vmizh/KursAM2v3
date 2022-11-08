@@ -16,95 +16,104 @@ using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
 using KursDomain.IReferences.Nomenkl;
-using IProductType = KursDomain.IReferences.Nomenkl.IProductType;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {NomenklNumber,nq} {Name,nq} {Currency,nq}")]
-public class Nomenkl : IDocCode, IDocGuid, IName, IEqualityComparer<IDocCode>, INomenkl
+public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl
 {
-    [Display(AutoGenerateField=false)]
-    public DateTime UpdateDate { get; set; }
-    [Display(AutoGenerateField=false)]
-    public decimal DocCode { get; set; }
-    [Display(AutoGenerateField=false)]
-    public Guid Id { get; set; }
+    [Display(AutoGenerateField = false)] public DateTime UpdateDate { get; set; }
 
-    public bool Equals(IDocCode x, IDocCode y)
-    {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
-    }
-
-    public int GetHashCode(IDocCode obj)
-    {
-        return obj.DocCode.GetHashCode();
-    }
-
-
-    [Display(AutoGenerateField=true,Name = "Наименование")]
-    [ReadOnly(true)]
-    public string Name { get; set; }
-    [Display(AutoGenerateField=true,Name = "Примечания")]
-    [ReadOnly(true)]
-    public string Notes { get; set; }
-    [Display(AutoGenerateField=false,Name = "Описание")]
-    [ReadOnly(true)]
-    public string Description => $"{NomenklNumber} {Name} {Currency}";
-    [Display(AutoGenerateField=true,Name = "Ном.№")]
-    [ReadOnly(true)]
-    public string NomenklNumber { get; set; }
-    [Display(AutoGenerateField=true,Name = "Ед.изм.")]
-    [ReadOnly(true)]
-    public IUnit Unit { get; set; }
-    [Display(AutoGenerateField=false,Name = "Категория")]
-    [ReadOnly(true)]
-    public INomenklCategory Category { get; set; }
-    [Display(AutoGenerateField=true,Name = "Полное имя")]
-    [ReadOnly(true)]
-    public string FullName { get; set; }
-    [Display(AutoGenerateField=true,Name = "Услуга")]
-    [ReadOnly(true)]
-    public bool IsUsluga { get; set; }
-    [Display(AutoGenerateField=true,Name = "Продукт")]
-    [ReadOnly(true)]
-    public bool IsProguct { get; set; }
-    [Display(AutoGenerateField=true,Name = "Накл.расх.")]
-    [ReadOnly(true)]
-    public bool IsNakladExpense { get; set; }
-    [Display(AutoGenerateField=true,Name = "Валюта")]
-    [ReadOnly(true)]
-    public ICurrency Currency { get; set; }
-    [Display(AutoGenerateField=true,Name = "НДС,%")]
-    [ReadOnly(true)]
-    public decimal? DefaultNDSPercent { get; set; }
-    [Display(AutoGenerateField=true,Name = "Тип товара")]
-    [ReadOnly(true)]
-    public INomenklType NomenklType { get; set; }
-    [Display(AutoGenerateField=true,Name = "Счет. дох/расх")]
-    [ReadOnly(true)]
-    public ISDRSchet SDRSchet { get; set; }
-    [Display(AutoGenerateField=true,Name = "Тип продукции")]
-    [ReadOnly(true)]
-    public IProductType ProductType { get; set; }
-    [Display(AutoGenerateField=true,Name = "Удален")]
-    [ReadOnly(true)]
-    public bool IsDeleted { get; set; }
-    [Display(AutoGenerateField=true,Name = "Вал.трансфер")]
-    [ReadOnly(true)]
-    public bool IsCurrencyTransfer { get; set; }
-    [Display(AutoGenerateField=true,Name = "Усл. в рентабельности")]
-    [ReadOnly(true)]
-    public bool IsUslugaInRentabelnost { get; set; }
-    [Display(AutoGenerateField=false,Name = "Основная ном.")]
-    [ReadOnly(true)]
-    public INomenklMain NomenklMain { get; set; }
-    [Display(AutoGenerateField=false,Name = "Наименование")]
+    [Display(AutoGenerateField = false, Name = "Наименование")]
     [ReadOnly(true)]
     public Guid MainId { get; set; }
+
+    [Display(AutoGenerateField = false)] public decimal DocCode { get; set; }
+
+    [Display(AutoGenerateField = false)] public Guid Id { get; set; }
+
+    public bool Equals(Nomenkl other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
+    }
+
+    [Display(AutoGenerateField = true, Name = "Наименование")]
+    [ReadOnly(true)]
+    public string Name { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Примечания")]
+    [ReadOnly(true)]
+    public string Notes { get; set; }
+
+    [Display(AutoGenerateField = false, Name = "Описание")]
+    [ReadOnly(true)]
+    public string Description => $"{NomenklNumber} {Name} {Currency}";
+
+    [Display(AutoGenerateField = true, Name = "Ном.№")]
+    [ReadOnly(true)]
+    public string NomenklNumber { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Ед.изм.")]
+    [ReadOnly(true)]
+    public IUnit Unit { get; set; }
+
+    [Display(AutoGenerateField = false, Name = "Категория")]
+    [ReadOnly(true)]
+    public INomenklGroup Group { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Полное имя")]
+    [ReadOnly(true)]
+    public string FullName { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Услуга")]
+    [ReadOnly(true)]
+    public bool IsUsluga { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Продукт")]
+    [ReadOnly(true)]
+    public bool IsProguct { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Накл.расх.")]
+    [ReadOnly(true)]
+    public bool IsNakladExpense { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Валюта")]
+    [ReadOnly(true)]
+    public ICurrency Currency { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "НДС,%")]
+    [ReadOnly(true)]
+    public decimal? DefaultNDSPercent { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Тип товара")]
+    [ReadOnly(true)]
+    public INomenklType NomenklType { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Счет. дох/расх")]
+    [ReadOnly(true)]
+    public ISDRSchet SDRSchet { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Тип продукции")]
+    [ReadOnly(true)]
+    public IProductType ProductType { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Удален")]
+    [ReadOnly(true)]
+    public bool IsDeleted { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Вал.трансфер")]
+    [ReadOnly(true)]
+    public bool IsCurrencyTransfer { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Усл. в рентабельности")]
+    [ReadOnly(true)]
+    public bool IsUslugaInRentabelnost { get; set; }
+
+    [Display(AutoGenerateField = false, Name = "Основная ном.")]
+    [ReadOnly(true)]
+    public INomenklMain NomenklMain { get; set; }
 
     public override string ToString()
     {
@@ -118,6 +127,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEqualityComparer<IDocCode>, I
             DocCode = -1;
             return;
         }
+
         DocCode = entity.DOC_CODE;
         Id = entity.Id;
         Name = entity.NOM_NAME;
@@ -127,16 +137,29 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEqualityComparer<IDocCode>, I
         IsUsluga = entity.NOM_0MATER_1USLUGA == 1;
         IsProguct = entity.NOM_1PROD_0MATER == 1;
         IsNakladExpense = entity.NOM_1NAKLRASH_0NO == 1;
-        DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT;
+        DefaultNDSPercent = (decimal?) entity.NOM_NDS_PERCENT;
         IsDeleted = entity.NOM_DELETED == 1;
         IsCurrencyTransfer = entity.IsCurrencyTransfer ?? false;
         IsUslugaInRentabelnost = entity.IsUslugaInRent ?? false;
         UpdateDate = entity.UpdateDate ?? DateTime.MinValue;
         MainId = entity.MainId ?? Guid.Empty;
 
-        Unit = refCache?.GetUnit(entity.NOM_ED_IZM_DC); 
+        Unit = refCache?.GetUnit(entity.NOM_ED_IZM_DC);
         Currency = refCache?.GetCurrency(entity.NOM_SALE_CRS_DC);
-        Category = refCache?.GetNomenklCategory(entity.NOM_CATEG_DC);
+        Group = refCache?.GetNomenklGroup(entity.NOM_CATEG_DC);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((Nomenkl) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return DocCode.GetHashCode();
     }
 }
 
@@ -147,7 +170,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEqualityComparer<IDocCode>, I
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
 {
-    private ICurrency myCurrency;
+    private Currency myCurrency;
     private SD_83 myEntity;
     private NomenklGroup myGroup;
     private NomenklProductType myNomenklType;
@@ -178,11 +201,11 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
     [GridColumnView("%  НДС", SettingsType.Combo)]
     public decimal? NDSPercent
     {
-        get => Entity.NOM_NDS_PERCENT == null ? null : (decimal)Entity.NOM_NDS_PERCENT;
+        get => Entity.NOM_NDS_PERCENT == null ? null : (decimal) Entity.NOM_NDS_PERCENT;
         set
         {
-            if (Math.Abs((Entity.NOM_NDS_PERCENT ?? 0) - (double)(value ?? 0)) < 0.01) return;
-            Entity.NOM_NDS_PERCENT = (double?)value;
+            if (Math.Abs((Entity.NOM_NDS_PERCENT ?? 0) - (double) (value ?? 0)) < 0.01) return;
+            Entity.NOM_NDS_PERCENT = (double?) value;
             RaisePropertyChanged();
         }
     }
@@ -313,13 +336,13 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
         }
     }
 
-    public ICurrency Currency
+    public Currency Currency
     {
-        get => myCurrency;
+        get => GlobalOptions.ReferencesCache.GetCurrency(NOM_SALE_CRS_DC) as Currency;
         set
         {
             if (Equals(myCurrency, value)) return;
-            myCurrency = value;
+            NOM_SALE_CRS_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -544,6 +567,7 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
             if (Entity.NOM_SALE_CRS_DC == value) return;
             Entity.NOM_SALE_CRS_DC = value;
             RaisePropertyChanged();
+            RaisePropertyChanged(nameof(Currency));
         }
     }
 
@@ -1261,7 +1285,7 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
         Group = MainReferences.NomenklGroups.ContainsKey(Entity.NOM_CATEG_DC)
             ? MainReferences.NomenklGroups[Entity.NOM_CATEG_DC]
             : null;
-        Currency = MainReferences.GetNomenkl(Entity.DOC_CODE).Currency;
+        //Currency = MainReferences.GetNomenkl(Entity.DOC_CODE).Currency as Currency;
         if (Entity.NOM_TYPE_DC != null)
             NomenklType =
                 MainReferences.NomenklTypes.ContainsKey(Entity.NOM_TYPE_DC ?? 0)
@@ -1631,7 +1655,7 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
                         Rashod = d.Rashod,
                         Nakopit = nak,
                         NomDC = nomDC,
-                        NomCrsDC = ((IDocCode)nom.Currency).DocCode,
+                        NomCrsDC = ((IDocCode) nom.Currency).DocCode,
                         NomName = nom.Name,
                         NomNomenkl = nom.NomenklNumber
                     });

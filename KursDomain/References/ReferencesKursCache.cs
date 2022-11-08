@@ -39,12 +39,11 @@ public class ReferencesKursCache : IReferencesCache
         PayForms.Add(data.DOC_CODE, newItem);
         return PayForms[data.DOC_CODE];
     }
+
     public IEnumerable<IPayForm> GetPayFormAll()
     {
         return PayForms.Values.ToList();
     }
-
-   
 
     #endregion
 
@@ -84,6 +83,7 @@ public class ReferencesKursCache : IReferencesCache
         Projects.Add(data.Id, newItem);
         return Projects[data.Id];
     }
+
     public IEnumerable<IProject> GetProjectsAll()
     {
         return Projects.Values.ToList();
@@ -192,10 +192,10 @@ public class ReferencesKursCache : IReferencesCache
 
         foreach (var item in Context.SD_82.AsNoTracking().ToList())
         {
-            var newItem = new NomenklCategory();
+            var newItem = new NomenklGroup();
             newItem.LoadFromEntity(item);
-            if (!NomenklCategories.ContainsKey(newItem.DocCode))
-                NomenklCategories.Add(newItem.DocCode, newItem);
+            if (!NomenklGroups.ContainsKey(newItem.DocCode))
+                NomenklGroups.Add(newItem.DocCode, newItem);
         }
 
         foreach (var item in Context.SD_119.AsNoTracking().ToList())
@@ -307,7 +307,7 @@ public class ReferencesKursCache : IReferencesCache
 
         ClientCategories.Clear();
         KontragentGroups.Clear();
-        NomenklCategories.Clear();
+        NomenklGroups.Clear();
         Employees.Clear();
 
         Warehouses.Clear();
@@ -686,22 +686,22 @@ public class ReferencesKursCache : IReferencesCache
         return Nomenkls.Values.ToList();
     }
 
-    public INomenklCategory GetNomenklCategory(decimal? dc)
+    public INomenklGroup GetNomenklGroup(decimal? dc)
     {
         if (dc == null) return null;
-        if (NomenklCategories.ContainsKey(dc.Value))
-            return NomenklCategories[dc.Value];
+        if (NomenklGroups.ContainsKey(dc.Value))
+            return NomenklGroups[dc.Value];
         var data = Context.SD_82.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
         if (data == null) return null;
-        var newItem = new NomenklCategory();
+        var newItem = new NomenklGroup();
         newItem.LoadFromEntity(data);
-        NomenklCategories.Add(data.DOC_CODE, newItem);
-        return NomenklCategories[data.DOC_CODE];
+        NomenklGroups.Add(data.DOC_CODE, newItem);
+        return NomenklGroups[data.DOC_CODE];
     }
 
-    public IEnumerable<INomenklCategory> GetNomenklCategoriesAll()
+    public IEnumerable<INomenklGroup> GetNomenklGroupAll()
     {
-        return NomenklCategories.Values.ToList();
+        return NomenklGroups.Values.ToList();
     }
 
     #endregion
@@ -726,7 +726,7 @@ public class ReferencesKursCache : IReferencesCache
         return CashBoxes.Values.ToList();
     }
 
-   public IBank GetBank(decimal? dc)
+    public IBank GetBank(decimal? dc)
     {
         if (dc == null) return null;
         if (Banks.ContainsKey(dc.Value))
@@ -838,8 +838,8 @@ public class ReferencesKursCache : IReferencesCache
     private readonly Dictionary<decimal, IKontragent> Kontragents = new Dictionary<decimal, IKontragent>();
     private readonly Dictionary<decimal, INomenkl> Nomenkls = new Dictionary<decimal, INomenkl>();
 
-    private readonly Dictionary<decimal, INomenklCategory> NomenklCategories =
-        new Dictionary<decimal, INomenklCategory>();
+    private readonly Dictionary<decimal, INomenklGroup> NomenklGroups =
+        new Dictionary<decimal, INomenklGroup>();
 
     private readonly Dictionary<decimal, IWarehouse> Warehouses = new Dictionary<decimal, IWarehouse>();
     private readonly Dictionary<decimal, IEmployee> Employees = new Dictionary<decimal, IEmployee>();
@@ -863,8 +863,8 @@ public class ReferencesKursCache : IReferencesCache
     private readonly Dictionary<Guid, ICountry> Countries = new Dictionary<Guid, ICountry>();
     private readonly Dictionary<Guid, IProject> Projects = new Dictionary<Guid, IProject>();
     private readonly Dictionary<decimal, IContractType> ContractTypes = new Dictionary<decimal, IContractType>();
-    private readonly Dictionary<decimal,INomenklType> NomenklTypes = new Dictionary<decimal, INomenklType>();
-    private readonly Dictionary<decimal,IProductType> ProductTypes = new Dictionary<decimal, IProductType>();
+    private readonly Dictionary<decimal, INomenklType> NomenklTypes = new Dictionary<decimal, INomenklType>();
+    private readonly Dictionary<decimal, IProductType> ProductTypes = new Dictionary<decimal, IProductType>();
     private readonly Dictionary<decimal, IPayForm> PayForms = new Dictionary<decimal, IPayForm>();
     private readonly Dictionary<decimal, IPayCondition> PayConditions = new Dictionary<decimal, IPayCondition>();
 

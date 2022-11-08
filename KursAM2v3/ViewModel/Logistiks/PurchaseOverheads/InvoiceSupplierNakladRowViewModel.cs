@@ -52,7 +52,7 @@ namespace KursAM2.ViewModel.Logistiks.PurchaseOverheads
             get => myKontragentViewModel;
             set
             {
-                if (myKontragentViewModel != null && myKontragentViewModel.Equals(value)) return;
+                if (Equals(myKontragentViewModel,value)) return;
                 myKontragentViewModel = value;
                 RaisePropertyChanged();
             }
@@ -63,7 +63,7 @@ namespace KursAM2.ViewModel.Logistiks.PurchaseOverheads
             get => myNomenkl;
             set
             {
-                if (myNomenkl != null && myNomenkl.Equals(value)) return;
+                if (Equals(myNomenkl,value)) return;
                 myNomenkl = value;
                 RaisePropertyChanged();
             }

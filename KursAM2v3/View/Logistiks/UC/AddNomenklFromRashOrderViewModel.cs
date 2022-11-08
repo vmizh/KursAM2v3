@@ -76,7 +76,7 @@ namespace KursAM2.View.Logistiks.UC
         {
             set
             {
-                if (myCurrentNomenkl != null && myCurrentNomenkl.Equals(value)) return;
+                if (Equals(myCurrentNomenkl,value)) return;
                 myCurrentNomenkl = value;
                 RaisePropertiesChanged();
             }

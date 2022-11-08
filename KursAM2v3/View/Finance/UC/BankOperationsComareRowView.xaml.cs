@@ -24,7 +24,7 @@ namespace KursAM2.View.Finance.UC
     /// </summary>
     public partial class BankOperationsComareRowView
     {
-        private readonly WindowManager winMan = new();
+        private readonly WindowManager winMan = new WindowManager();
 
         public BankOperationsComareRowView()
         {
@@ -214,13 +214,13 @@ namespace KursAM2.View.Finance.UC
                         var bb = StandartDialogs.SelectBankAccount(dtx.BankAccount.DocCode);
                         if (bb == null) return;
                         dtx.VVT_VAL_RASHOD = 0;
-                        dtx.VVT_DOC_NUM = bb.BankName + " " + bb.Account;
+                        dtx.VVT_DOC_NUM = bb.Name + " " + bb.RashAccount;
                         break;
                     case BankOperationType.BankOut:
                         var bb2 = StandartDialogs.SelectBankStatement(dtx.BankAccount.DocCode);
                         if (bb2 == null) return;
                         dtx.VVT_VAL_PRIHOD = bb2.Summa;
-                        dtx.VVT_DOC_NUM = bb2.Bank.BankName + " " + bb2.Bank.Account;
+                        dtx.VVT_DOC_NUM = bb2.Bank.Name + " " + bb2.Bank.RashAccount;
                         dtx.Currency = bb2.Currency;
                         dtx.SHPZ = bb2.SHPZ;
                         dtx.BankAccountOut = bb2.Bank;
@@ -292,14 +292,14 @@ namespace KursAM2.View.Finance.UC
                         var bb = StandartDialogs.SelectBankAccount(dtc.BankAccount.DocCode);
                         if (bb == null) return;
                         dtc.VVT_VAL_RASHOD = 0;
-                        dtc.VVT_DOC_NUM = bb.BankName + " " + bb.Account;
+                        dtc.VVT_DOC_NUM = bb.Name + " " + bb.RashAccount;
                         dtc.BankAccountIn = bb;
                         break;
                     case BankOperationType.BankOut:
                         var bb2 = StandartDialogs.SelectBankStatement(dtc.BankAccount.DocCode);
                         if (bb2 == null) return;
                         dtc.VVT_VAL_PRIHOD = bb2.Summa;
-                        dtc.VVT_DOC_NUM = bb2.Bank.BankName + " " + bb2.Bank.Account;
+                        dtc.VVT_DOC_NUM = bb2.Bank.Name + " " + bb2.Bank.RashAccount;
                         dtc.Currency = bb2.Currency;
                         dtc.SHPZ = bb2.SHPZ;
                         dtc.BankAccountOut = bb2.Bank;
@@ -366,7 +366,7 @@ namespace KursAM2.View.Finance.UC
             else
                 item1 = StandartDialogs.SelectAllInvoiceClient(true, true);
             if (item1 == null) return;
-            var d2 = item1 as InvoiceClient;
+            var d2 = item1 as InvoiceClientViewModel;
             var d1 = item1 as InvoiceProvider;
             if (d1 == null && d2 == null) return;
             if (d2 != null)

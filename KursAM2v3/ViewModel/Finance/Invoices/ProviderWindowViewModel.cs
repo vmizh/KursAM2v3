@@ -377,7 +377,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => myDocument;
             set
             {
-                if (myDocument != null && myDocument.Equals(value)) return;
+                if (Equals(myDocument ,value)) return;
                 myDocument = value;
                 RaisePropertyChanged();
             }
@@ -1919,7 +1919,7 @@ public class NomenklSlectForCurrencyConvertViewModel : RSWindowViewModelBase
     {
         set
         {
-            if (myCurrentItem != null && myCurrentItem.Equals(value)) return;
+            if (Equals(myCurrentItem,value)) return;
             myCurrentItem = value;
             RaisePropertyChanged();
         }

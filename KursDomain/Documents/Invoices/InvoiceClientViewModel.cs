@@ -23,184 +23,26 @@ using Newtonsoft.Json;
 
 namespace KursDomain.Documents.Invoices;
 
-public class InvoiceClientShort : IInvoiceClient
-{
-    [Display(AutoGenerateField = false)] public decimal DocCode { set; get; }
-
-    [Display(AutoGenerateField = false)] public Guid Id { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Поставщик")]
-    [ReadOnly(true)]
-    public Kontragent Receiver { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Центр ответственности")]
-    [ReadOnly(true)]
-    public CentrResponsibility CO { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Тип продукции")]
-    [ReadOnly(true)]
-    public VzaimoraschetType VzaimoraschetType { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Форма расчетов")]
-    [ReadOnly(true)]
-    public PayForm FormRaschet { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Условия оплаты")]
-    [ReadOnly(true)]
-    public PayCondition PayCondition { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Дата")]
-    [ReadOnly(true)]
-    public DateTime DocDate { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "№")]
-    [ReadOnly(true)]
-    public int InnerNumber { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Внешний №")]
-    [ReadOnly(true)]
-    public string OuterNumber { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Клиент")]
-    [ReadOnly(true)]
-    public Kontragent Client { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Валюта")]
-    [ReadOnly(true)]
-    public References.Currency Currency { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Отгружено")]
-    [ReadOnly(true)]
-    public decimal SummaOtgruz { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма дилера")]
-    [ReadOnly(true)]
-    public decimal DilerSumma { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Примечание")]
-    [ReadOnly(true)]
-    public string Note { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Дилер")]
-    [ReadOnly(true)]
-    public Kontragent Diler { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Акцептован")]
-    [ReadOnly(true)]
-    public bool IsAccepted { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма")]
-    [ReadOnly(true)]
-    public decimal Summa { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Создатель")]
-    [ReadOnly(true)]
-    public string CREATOR { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "НДС в цене")]
-    [ReadOnly(true)]
-    public bool IsNDSIncludeInPrice { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Оплачено")]
-    [ReadOnly(true)]
-    public decimal PaySumma { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Ответственный")]
-    [ReadOnly(true)]
-    public Employee.Employee PersonaResponsible { set; get; }
-
-    [Display(AutoGenerateField = false)] public ObservableCollection<IInvoiceClientRow> Rows { set; get; }
-}
-
-public interface IInvoiceClient
-{
-    [Display(AutoGenerateField = false)] decimal DocCode { set; get; }
-
-    [Display(AutoGenerateField = false)] Guid Id { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Поставщик")]
-    Kontragent Receiver { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Центр ответственности")]
-    CentrResponsibility CO { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Тип продукции")]
-    VzaimoraschetType VzaimoraschetType { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Форма расчетов")]
-    PayForm FormRaschet { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Условия оплаты")]
-    PayCondition PayCondition { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Дата")]
-    DateTime DocDate { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "№")]
-    int InnerNumber { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Внешний №")]
-    string OuterNumber { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Клиент")]
-    Kontragent Client { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Валюта")]
-    References.Currency Currency { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Отгружено")]
-    decimal SummaOtgruz { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма дилера")]
-    decimal DilerSumma { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Примечание")]
-    string Note { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Дилер")]
-    Kontragent Diler { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Акцептован")]
-    bool IsAccepted { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма")]
-    decimal Summa { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Создатель")]
-    string CREATOR { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "НДС в цене")]
-    bool IsNDSIncludeInPrice { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Оплачено")]
-    decimal PaySumma { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Ответственный")]
-    Employee.Employee PersonaResponsible { set; get; }
-
-    [Display(AutoGenerateField = false)] ObservableCollection<IInvoiceClientRow> Rows { set; get; }
-}
-
 [MetadataType(typeof(DataAnnotationsSFClientViewModel))]
 [SuppressMessage("ReSharper", "MemberInitializerValueIgnored")]
 [SuppressMessage("ReSharper", "MethodOverloadWithOptionalParameter")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorInfo, IInvoiceClient
+public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, IDataErrorInfo, IInvoiceClient
 {
     private readonly UnitOfWork<ALFAMEDIAEntities> context;
     private readonly bool isLoadPayment;
     private SD_84 myEntity;
 
-    public InvoiceClient()
+    public InvoiceClientViewModel()
     {
         Entity = DefaultValue();
-        DeletedRows = new List<InvoiceClientRow>();
+        DeletedRows = new List<InvoiceClientRowViewModel>();
         Rows = new ObservableCollection<IInvoiceClientRow>();
         ShipmentRows = new ObservableCollection<ShipmentRowViewModel>();
         Rows.CollectionChanged += (_, _) => State = RowStatus.Edited;
     }
 
-    public InvoiceClient(SD_84 entity)
+    public InvoiceClientViewModel(SD_84 entity)
     {
         Entity = entity ?? DefaultValue();
         Rows = new ObservableCollection<IInvoiceClientRow>();
@@ -210,7 +52,7 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
         // ReSharper disable once PossibleNullReferenceException
     }
 
-    public InvoiceClient(SD_84 entity, UnitOfWork<ALFAMEDIAEntities> ctx, bool isLoadPaymentDocs)
+    public InvoiceClientViewModel(SD_84 entity, UnitOfWork<ALFAMEDIAEntities> ctx, bool isLoadPaymentDocs)
     {
         isLoadPayment = isLoadPaymentDocs;
         context = ctx;
@@ -218,7 +60,7 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
         LoadReferences();
     }
 
-    public List<InvoiceClientRow> DeletedRows { set; get; } = new List<InvoiceClientRow>();
+    public List<InvoiceClientRowViewModel> DeletedRows { set; get; } = new List<InvoiceClientRowViewModel>();
 
     public ObservableCollection<ShipmentRowViewModel> ShipmentRows { set; get; } =
         new ObservableCollection<ShipmentRowViewModel>();
@@ -1243,7 +1085,7 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
         {
             if ((SF_NDS_1INCLUD_0NO ?? 0) == 1 == value) return;
             SF_NDS_1INCLUD_0NO = (short?)((SF_NDS_1INCLUD_0NO ?? 0) == 1 ? 0 : 1);
-            foreach (var r in Rows.Cast<InvoiceClientRow>())
+            foreach (var r in Rows.Cast<InvoiceClientRowViewModel>())
             {
                 r.IsNDSInPrice = (SF_NDS_1INCLUD_0NO ?? 0) == 1;
                 r.CalcRow();
@@ -1300,7 +1142,7 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
         if (Entity.TD_84 != null && Entity.TD_84.Count > 0)
             foreach (var t in Entity.TD_84)
             {
-                var newRow = new InvoiceClientRow(t)
+                var newRow = new InvoiceClientRowViewModel(t)
                 {
                     Parent = this
                 };
@@ -1516,15 +1358,15 @@ public sealed class InvoiceClient : RSViewModelBase, IEntity<SD_84>, IDataErrorI
             Условия_Оплаты = PayCondition?.Name,
             Создатель = CREATOR,
             Примечание = Note,
-            Позиции = Rows.Cast<InvoiceClientRow>().Select(_ => _.ToJson())
+            Позиции = Rows.Cast<InvoiceClientRowViewModel>().Select(_ => _.ToJson())
         };
         return JsonConvert.SerializeObject(res);
     }
 }
 
-public class DataAnnotationsSFClientViewModel : DataAnnotationForFluentApiBase, IMetadataProvider<InvoiceClient>
+public class DataAnnotationsSFClientViewModel : DataAnnotationForFluentApiBase, IMetadataProvider<InvoiceClientViewModel>
 {
-    void IMetadataProvider<InvoiceClient>.BuildMetadata(MetadataBuilder<InvoiceClient> builder)
+    void IMetadataProvider<InvoiceClientViewModel>.BuildMetadata(MetadataBuilder<InvoiceClientViewModel> builder)
     {
         SetNotAutoGenerated(builder);
         builder.Property(_ => _.Receiver).AutoGenerated().DisplayName("Поставщик");

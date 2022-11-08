@@ -105,7 +105,7 @@ namespace KursAM2.ViewModel.Management
             get => mySDRState;
             set
             {
-                if (mySDRState != null && mySDRState.Equals(value)) return;
+                if (Equals(mySDRState,value)) return;
                 mySDRState = value;
                 RaisePropertyChanged();
             }
@@ -116,7 +116,7 @@ namespace KursAM2.ViewModel.Management
             get => mySDRSchet;
             set
             {
-                if (mySDRSchet != null && mySDRSchet.Equals(value)) return;
+                if (Equals(mySDRSchet,value)) return;
                 mySDRSchet = value;
                 RaisePropertyChanged();
             }

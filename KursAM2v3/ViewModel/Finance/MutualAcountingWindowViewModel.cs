@@ -270,7 +270,7 @@ namespace KursAM2.ViewModel.Finance
                 CurrentDebitor.VZT_SFACT_DC = item.DocCode;
                 CurrentDebitor.Kontragent =
                     GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_CLIENT_DC) as Kontragent;
-                CurrentDebitor.SFClient = item;
+                CurrentDebitor.SfClient = item;
                 if (CurrentDebitor.State == RowStatus.NotEdited) CurrentDebitor.myState = RowStatus.Edited;
                 KontragentManager.UpdateSelectCount(CurrentDebitor.Kontragent.DocCode);
             }
@@ -300,7 +300,7 @@ namespace KursAM2.ViewModel.Finance
                     VzaimoraschType = vzdefault,
                     Parent = Document,
                     Kontragent = GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_CLIENT_DC) as Kontragent,
-                    SFClient = item
+                    SfClient = item
                 };
                 Document.Rows.Add(newdeb);
                 DebitorCollection.Add(newdeb);
@@ -418,7 +418,7 @@ namespace KursAM2.ViewModel.Finance
                 foreach (var r in Document.Rows)
                 {
                     if (r.VZT_SFACT_DC != null)
-                        r.SFClient = InvoicesManager.GetInvoiceClient((decimal)r.VZT_SFACT_DC);
+                        r.SfClient = InvoicesManager.GetInvoiceClient((decimal)r.VZT_SFACT_DC);
                     if (r.VZT_SPOST_DC != null)
                         r.SFProvider = InvoicesManager.GetInvoiceProvider((decimal)r.VZT_SPOST_DC);
                     r.myState = RowStatus.NotEdited;
@@ -490,7 +490,7 @@ namespace KursAM2.ViewModel.Finance
                     var n = new MutualAccountingDebitorViewModel(r)
                     {
                         Kontragent = r.Kontragent,
-                        SFClient = r.SFClient,
+                        SfClient = r.SfClient,
                         Parent = r.Parent
                     };
                     DebitorCollection.Add(n);
@@ -762,12 +762,12 @@ namespace KursAM2.ViewModel.Finance
 
         public ICommand RemoveDebitorSFCommand
         {
-            get { return new Command(RemoveDebitorSF, _ => CurrentDebitor != null && CurrentDebitor.SFClient != null); }
+            get { return new Command(RemoveDebitorSF, _ => CurrentDebitor != null && CurrentDebitor.SfClient != null); }
         }
 
         private void RemoveDebitorSF(object obj)
         {
-            CurrentDebitor.SFClient = null;
+            CurrentDebitor.SfClient = null;
             if (!(Form is MutualAccountingView f)) return;
             if (f.gridViewDebitor.ActiveEditor != null)
             {

@@ -6,6 +6,7 @@ using Core.ViewModel.Base;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.View.DialogUserControl
 {

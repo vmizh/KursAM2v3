@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Core;
@@ -13,171 +12,24 @@ using KursDomain.References;
 // ReSharper disable InconsistentNaming
 namespace KursDomain.Documents.Invoices;
 
-public interface IInvoiceClientRow
-{
-    [Display(AutoGenerateField = false)] public decimal DocCode { set; get; }
-    [Display(AutoGenerateField = false)] public int Code { set; get; }
-    [Display(AutoGenerateField = false)] public Guid Id { set; get; }
-    [Display(AutoGenerateField = false)] public Guid DocId { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Номенклатура")]
-    public Nomenkl Nomenkl { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Ном.№")]
-    public string NomNomenkl { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Услуга")]
-    public bool IsUsluga { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Кол-во")]
-    [DisplayFormat(DataFormatString = "n4")]
-    public decimal Quantity { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Цена")]
-    [DisplayFormat(DataFormatString = "n2")]
-    public decimal Price { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма")]
-    [DisplayFormat(DataFormatString = "n2")]
-    public decimal Summa { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Наценка дилера на единицу")]
-    [DisplayFormat(DataFormatString = "n2")]
-    public decimal? SFT_NACENKA_DILERA { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Отгружено")]
-    [DisplayFormat(DataFormatString = "n4")]
-    public decimal Shipped { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Остаток")]
-    [DisplayFormat(DataFormatString = "n4")]
-    public decimal Rest { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Текущий остаток")]
-    [DisplayFormat(DataFormatString = "n4")]
-    public decimal CurrentRemains { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Примечание")]
-    public string Note { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "НДС %")]
-    [DisplayFormat(DataFormatString = "n2")]
-    public decimal NDSPercent { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма НДС")]
-    [DisplayFormat(DataFormatString = "n2")]
-    public decimal? SFT_SUMMA_NDS { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Счет дох./расх.")]
-    public SDRSchet SDRSchet { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Груз. декларация")]
-    public string GruzoDeclaration { set; get; }
-}
-
-public class InvoiceClientRowShort : IInvoiceClientRow
-{
-    [Display(AutoGenerateField = true, Name = "Выбран")]
-    public bool IsSelected { set; get; }
-
-    [Display(AutoGenerateField = false)] public decimal DocCode { set; get; }
-
-    [Display(AutoGenerateField = false)] public int Code { set; get; }
-
-    [Display(AutoGenerateField = false)] public Guid Id { set; get; }
-
-    [Display(AutoGenerateField = false)] public Guid DocId { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Номенклатура")]
-    [ReadOnly(true)]
-    public Nomenkl Nomenkl { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Ном.№")]
-    [ReadOnly(true)]
-    public string NomNomenkl { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Услуга")]
-    [ReadOnly(true)]
-    public bool IsUsluga { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Кол-во")]
-    [DisplayFormat(DataFormatString = "n4")]
-    [ReadOnly(true)]
-    public decimal Quantity { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Цена")]
-    [DisplayFormat(DataFormatString = "n2")]
-    [ReadOnly(true)]
-    public decimal Price { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма")]
-    [DisplayFormat(DataFormatString = "n2")]
-    [ReadOnly(true)]
-    public decimal Summa { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Наценка дилера на единицу")]
-    [DisplayFormat(DataFormatString = "n2")]
-    [ReadOnly(true)]
-    public decimal? SFT_NACENKA_DILERA { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Отгружено")]
-    [DisplayFormat(DataFormatString = "n4")]
-    [ReadOnly(true)]
-    public decimal Shipped { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Остаток")]
-    [DisplayFormat(DataFormatString = "n4")]
-    [ReadOnly(true)]
-    public decimal Rest { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Текущий остаток")]
-    [DisplayFormat(DataFormatString = "n4")]
-    [ReadOnly(true)]
-    public decimal CurrentRemains { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Примечание")]
-    [ReadOnly(true)]
-    public string Note { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "НДС %")]
-    [DisplayFormat(DataFormatString = "n2")]
-    [ReadOnly(true)]
-    public decimal NDSPercent { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма НДС")]
-    [DisplayFormat(DataFormatString = "n2")]
-    [ReadOnly(true)]
-    public decimal? SFT_SUMMA_NDS { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Счет дох./расх.")]
-    [ReadOnly(true)]
-    public SDRSchet SDRSchet { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Груз. декларация")]
-    [ReadOnly(true)]
-    public string GruzoDeclaration { set; get; }
-}
-
 [MetadataType(typeof(DataAnnotationsSFClientRowViewModel))]
-public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientRow
+public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoiceClientRow
 {
     private decimal myCurrentRemains;
     private TD_84 myEntity;
 
     // ReSharper disable once RedundantDefaultMemberInitializer
     public bool myIsNDSInPrice = false;
-    private Nomenkl myNomenkl;
     private decimal myRest;
-    private SDRSchet mySDRSchet;
     private decimal myShipped;
 
-    public InvoiceClientRow(bool isNDSInPrice = false)
+    public InvoiceClientRowViewModel(bool isNDSInPrice = false)
     {
         Entity = DefaultValue();
         IsNDSInPrice = isNDSInPrice;
     }
 
-    public InvoiceClientRow(TD_84 entity, bool isNDSInPrice = false)
+    public InvoiceClientRowViewModel(TD_84 entity, bool isNDSInPrice = false)
     {
         if (entity == null)
         {
@@ -194,7 +46,7 @@ public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientR
 
     public bool IsNDSInPrice
     {
-        get => ((InvoiceClient)Parent)?.IsNDSIncludeInPrice ?? myIsNDSInPrice;
+        get => ((InvoiceClientViewModel) Parent)?.IsNDSIncludeInPrice ?? myIsNDSInPrice;
         set
         {
             if (myIsNDSInPrice == value) return;
@@ -593,20 +445,18 @@ public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientR
 
     public Nomenkl Nomenkl
     {
-        get => MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
+        get => GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC) as Nomenkl;
         set
         {
-            if (MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC) == value) return;
-            myNomenkl = value;
-            if (myNomenkl != null)
-                Entity.SFT_NEMENKL_DC = myNomenkl.DocCode;
+            if (Equals(GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC),value)) return;
+            Entity.SFT_NEMENKL_DC = value.DocCode;
             RaisePropertyChanged();
         }
     }
 
     public decimal Quantity
     {
-        get => (decimal)Entity.SFT_KOL;
+        get => (decimal) Entity.SFT_KOL;
         set
         {
             if (value <= 0)
@@ -614,13 +464,13 @@ public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientR
                 //    MessageBoxImage.Error);
                 return;
 
-            if (Math.Abs(Entity.SFT_KOL - (double)value) < 0.00001) return;
+            if (Math.Abs(Entity.SFT_KOL - (double) value) < 0.00001) return;
             if (value < Shipped)
                 //WindowManager.ShowMessage($"Отгружено {Shipped}. Уменьшить кол-во в счете нельзя", "Ошибка",
                 //    MessageBoxImage.Error);
                 return;
 
-            Entity.SFT_KOL = (double)value;
+            Entity.SFT_KOL = (double) value;
             CalcRow();
             RaisePropertyChanged();
         }
@@ -645,7 +495,7 @@ public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientR
 
     public decimal NDSPercent
     {
-        get => (decimal)Entity.SFT_NDS_PERCENT;
+        get => (decimal) Entity.SFT_NDS_PERCENT;
         set
         {
             if (value < 0)
@@ -654,8 +504,8 @@ public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientR
                 return;
 
             // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if (Entity.SFT_NDS_PERCENT == (double)value) return;
-            Entity.SFT_NDS_PERCENT = (double)value;
+            if (Entity.SFT_NDS_PERCENT == (double) value) return;
+            Entity.SFT_NDS_PERCENT = (double) value;
             CalcRow();
             RaisePropertyChanged();
         }
@@ -680,22 +530,21 @@ public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientR
         {
             if (Entity.SFT_NACENKA_DILERA == value) return;
             Entity.SFT_NACENKA_DILERA = value;
-            if (Parent is InvoiceClient doc)
+            if (Parent is InvoiceClientViewModel doc)
                 // ReSharper disable once PossibleInvalidOperationException
-                doc.SF_DILER_SUMMA = (decimal?)doc.Rows.Cast<InvoiceClientRow>()
-                    .Sum(_ => _.Entity.SFT_KOL * (double)(_.SFT_NACENKA_DILERA ?? 0));
+                doc.SF_DILER_SUMMA = (decimal?) doc.Rows.Cast<InvoiceClientRowViewModel>()
+                    .Sum(_ => _.Entity.SFT_KOL * (double) (_.SFT_NACENKA_DILERA ?? 0));
             RaisePropertyChanged();
         }
     }
 
     public SDRSchet SDRSchet
     {
-        get => mySDRSchet;
+        get => GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC) as SDRSchet;
         set
         {
-            if (mySDRSchet != null && mySDRSchet.Equals(value)) return;
-            mySDRSchet = value;
-            Entity.SFT_SHPZ_DC = mySDRSchet?.DocCode;
+            if (Equals(GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC),value)) return;
+            Entity.SFT_SHPZ_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -727,7 +576,7 @@ public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientR
         {
             if (myShipped == value) return;
             myShipped = value;
-            myRest = (decimal)(Entity.SFT_KOL - (double)myShipped);
+            myRest = (decimal) (Entity.SFT_KOL - (double) myShipped);
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Rest));
         }
@@ -767,25 +616,25 @@ public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientR
     {
         if (IsNDSInPrice)
         {
-            var s = (decimal)Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0;
-            Entity.SFT_SUMMA_NDS = Math.Round(s - s * 100 / (100 + (decimal)Entity.SFT_NDS_PERCENT), 2);
+            var s = (decimal) Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0;
+            Entity.SFT_SUMMA_NDS = Math.Round(s - s * 100 / (100 + (decimal) Entity.SFT_NDS_PERCENT), 2);
             Entity.SFT_SUMMA_K_OPLATE = s;
             Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = s;
         }
         else
         {
             Entity.SFT_SUMMA_NDS =
-                (decimal)Math.Round(
-                    Entity.SFT_KOL * (double)(Entity.SFT_ED_CENA ?? 0) * Entity.SFT_NDS_PERCENT / 100, 2);
+                (decimal) Math.Round(
+                    Entity.SFT_KOL * (double) (Entity.SFT_ED_CENA ?? 0) * Entity.SFT_NDS_PERCENT / 100, 2);
             Entity.SFT_SUMMA_K_OPLATE =
-                Math.Round((decimal)(Entity.SFT_KOL * (double)(Entity.SFT_ED_CENA ?? 0)), 2)
+                Math.Round((decimal) (Entity.SFT_KOL * (double) (Entity.SFT_ED_CENA ?? 0)), 2)
                 + Entity.SFT_SUMMA_NDS;
             Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
         }
 
         RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
         RaisePropertyChanged(nameof(Summa));
-        if (Parent is InvoiceClient p) p.RaisePropertyChanged("Summa");
+        if (Parent is InvoiceClientViewModel p) p.RaisePropertyChanged("Summa");
     }
 
     private void LoadReference()
@@ -860,9 +709,9 @@ public class InvoiceClientRow : RSViewModelBase, IEntity<TD_84>, IInvoiceClientR
 }
 
 public class DataAnnotationsSFClientRowViewModel : DataAnnotationForFluentApiBase,
-    IMetadataProvider<InvoiceClientRow>
+    IMetadataProvider<InvoiceClientRowViewModel>
 {
-    void IMetadataProvider<InvoiceClientRow>.BuildMetadata(MetadataBuilder<InvoiceClientRow> builder)
+    void IMetadataProvider<InvoiceClientRowViewModel>.BuildMetadata(MetadataBuilder<InvoiceClientRowViewModel> builder)
     {
         SetNotAutoGenerated(builder);
         builder.Property(_ => _.Nomenkl).AutoGenerated().DisplayName("Наименование");

@@ -1,25 +1,33 @@
 ﻿using System;
-using KursDomain.ICommon;
-using KursDomain.IReferences;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Data;
+using KursDomain.ICommon;
+using KursDomain.IReferences;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{Id} {Name,nq} {ParentId,nq}")]
-public class Project : IProject, IDocGuid, IName,  IEqualityComparer<IDocGuid>
+public class Project : IProject, IDocGuid, IName, IEquatable<Project>
 {
+    public Guid Id { get; set; }
+
+    public bool Equals(Project other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Id.Equals(other.Id);
+    }
+
+    public string Name { get; set; }
+    public string Notes { get; set; }
+    public string Description => $"Проект: {Name}";
     public bool IsDeleted { get; set; }
     public bool IsClosed { get; set; }
     public DateTime DateStart { get; set; }
     public DateTime? DateEnd { get; set; }
     public IEmployee Employee { get; set; }
     public Guid? ParentId { get; set; }
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string Notes { get; set; }
-    public string Description => $"Проект: {Name}";
+
     public override string ToString()
     {
         return Name;
@@ -32,6 +40,7 @@ public class Project : IProject, IDocGuid, IName,  IEqualityComparer<IDocGuid>
             Id = Guid.Empty;
             return;
         }
+
         Id = entity.Id;
         IsDeleted = entity.IsDeleted;
         IsClosed = entity.IsClosed;
@@ -43,17 +52,16 @@ public class Project : IProject, IDocGuid, IName,  IEqualityComparer<IDocGuid>
         Notes = entity.Note;
     }
 
-    public bool Equals(IDocGuid x, IDocGuid y)
+    public override bool Equals(object obj)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.Id.Equals(y.Id);
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((Project) obj);
     }
 
-    public int GetHashCode(IDocGuid obj)
+    public override int GetHashCode()
     {
-        return obj.Id.GetHashCode();
+        return Id.GetHashCode();
     }
 }

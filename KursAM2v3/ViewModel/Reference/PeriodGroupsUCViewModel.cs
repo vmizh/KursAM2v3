@@ -45,7 +45,7 @@ namespace KursAM2.ViewModel.Reference
         {
             set
             {
-                if (myCurrentSelectedGroups != null && myCurrentSelectedGroups.Equals(value)) return;
+                if (myCurrentSelectedGroups != null && Equals(myCurrentSelectedGroups,value)) return;
                 myCurrentSelectedGroups = value;
                 RaisePropertyChanged();
             }
@@ -58,7 +58,7 @@ namespace KursAM2.ViewModel.Reference
         {
             set
             {
-                if (myCurrentGroup != null && myCurrentGroup.Equals(value)) return;
+                if (Equals(myCurrentGroup,value)) return;
                 myCurrentGroup = value;
                 RaisePropertyChanged();
             }

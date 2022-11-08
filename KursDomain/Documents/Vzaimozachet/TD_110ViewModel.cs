@@ -18,7 +18,7 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
     public decimal MaxSumma = decimal.MaxValue;
     private TD_110 myEntity;
     private Kontragent myKontragent;
-    private InvoiceClient mySFClient;
+    private InvoiceClientViewModel _mySfClient;
     private InvoiceProvider mySFProvider;
     private SDRSchet mySHPZ;
     private VzaimoraschetType myVzaimoraschType;
@@ -146,14 +146,14 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
         }
     }
 
-    public InvoiceClient SFClient
+    public InvoiceClientViewModel SfClient
     {
-        get => mySFClient;
+        get => _mySfClient;
         set
         {
-            if (mySFClient == value) return;
-            mySFClient = value;
-            VZT_SFACT_DC = mySFClient?.DocCode;
+            if (_mySfClient == value) return;
+            _mySfClient = value;
+            VZT_SFACT_DC = _mySfClient?.DocCode;
             RaisePropertyChanged();
         }
     }

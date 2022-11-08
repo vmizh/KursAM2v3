@@ -12,23 +12,16 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class PayCondition : IPayCondition, IDocCode, IName, IEqualityComparer<IDocCode>
+public class PayCondition : IPayCondition, IDocCode, IName, IEquatable<PayCondition>
 {
     [Display(AutoGenerateField = false, Name = "Код")]
     public decimal DocCode { get; set; }
 
-    public bool Equals(IDocCode x, IDocCode y)
+    public bool Equals(PayCondition other)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
-    }
-
-    public int GetHashCode(IDocCode obj)
-    {
-        return obj.DocCode.GetHashCode();
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
     }
 
     [Display(AutoGenerateField = true, Name = "Наименование")]
@@ -53,6 +46,19 @@ public class PayCondition : IPayCondition, IDocCode, IName, IEqualityComparer<ID
         DocCode = entity.DOC_CODE;
         Name = entity.PT_NAME;
         IsDefault = entity.DEFAULT_VALUE == 1;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((PayCondition) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return DocCode.GetHashCode();
     }
 }
 

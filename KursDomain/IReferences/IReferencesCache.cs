@@ -41,8 +41,8 @@ public interface IReferencesCache
     INomenkl GetNomenkl(decimal dc);
     IEnumerable<INomenkl> GetNomenklsAll();
 
-    INomenklCategory GetNomenklCategory(decimal? dc);
-    IEnumerable<INomenklCategory> GetNomenklCategoriesAll();
+    INomenklGroup GetNomenklGroup(decimal? dc);
+    IEnumerable<INomenklGroup> GetNomenklGroupAll();
 
     IWarehouse GetWarehouse(decimal? dc);
     IWarehouse GetWarehouse(Guid? id);

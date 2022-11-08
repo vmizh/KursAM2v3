@@ -14,7 +14,6 @@ using KursDomain.Documents.StockHolder;
 using KursDomain.ICommon;
 using KursDomain.References;
 using Newtonsoft.Json;
-using BankAccount = KursDomain.Documents.Bank.BankAccount;
 
 namespace KursDomain.Documents.Cash;
 

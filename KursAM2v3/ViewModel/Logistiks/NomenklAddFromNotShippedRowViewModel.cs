@@ -20,7 +20,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myNomenkl;
             set
             {
-                if (myNomenkl != null && myNomenkl.Equals(value)) return;
+                if (Equals(myNomenkl,value)) return;
                 myNomenkl = value;
                 RaisePropertyChanged();
             }
@@ -33,7 +33,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myKontagent;
             set
             {
-                if (myKontagent != null && myKontagent.Equals(value)) return;
+                if (Equals(myKontagent,value)) return;
                 myKontagent = value;
                 RaisePropertyChanged();
             }

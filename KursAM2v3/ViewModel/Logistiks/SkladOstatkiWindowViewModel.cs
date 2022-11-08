@@ -101,7 +101,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentWarehouse;
             set
             {
-                if (myCurrentWarehouse != null && myCurrentWarehouse.Equals(value)) return;
+                if (Equals(myCurrentWarehouse,value)) return;
                 myCurrentWarehouse = value;
                 if (myCurrentWarehouse != null)
                 {

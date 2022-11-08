@@ -24,7 +24,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => mySelectedKontr;
             set
             {
-                if (mySelectedKontr != null && mySelectedKontr.Equals(value)) return;
+                if (Equals(mySelectedKontr,value)) return;
                 mySelectedKontr = value;
                 LoadActualGruzoInfo(mySelectedKontr.DocCode);
                 RaisePropertyChanged();

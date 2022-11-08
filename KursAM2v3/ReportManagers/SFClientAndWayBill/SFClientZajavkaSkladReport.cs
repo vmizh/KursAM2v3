@@ -43,13 +43,13 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             if (IsManagerPrint)
                 sheet.Cells["G8"].Value = GlobalOptions.UserInfo.FullName;
             sheet.Cells["D9"].Value = document.Currency?.Name;
-            var notOtgruzhenoRows = new List<InvoiceClientRow>();
+            var notOtgruzhenoRows = new List<InvoiceClientRowViewModel>();
             foreach (var item in document.Rows)
             {
                 var r = GlobalOptions.GetEntities().TD_24.Where(_ => _.DDT_SFACT_DC == item.DocCode &&
                                                                      _.DDT_SFACT_ROW_CODE == item.Code).ToList();
                 if (r.Sum(_ => _.DDT_KOL_RASHOD) < item.Quantity)
-                    notOtgruzhenoRows.Add(new InvoiceClientRow
+                    notOtgruzhenoRows.Add(new InvoiceClientRowViewModel
                     {
                         Nomenkl = item.Nomenkl,
                         Quantity = item.Quantity - r.Sum(_ => _.DDT_KOL_RASHOD),

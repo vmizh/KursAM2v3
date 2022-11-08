@@ -43,7 +43,7 @@ namespace KursAM2.ViewModel.Reference
             get => myCurrentWarehouse;
             set
             {
-                if (myCurrentWarehouse != null && myCurrentWarehouse.Equals(value)) return;
+                if (Equals(myCurrentWarehouse,value)) return;
                 myCurrentWarehouse = value;
                 RaisePropertyChanged();
             }

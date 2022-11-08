@@ -69,7 +69,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myWarehouse;
             set
             {
-                if (myWarehouse != null && myWarehouse.Equals(value)) return;
+                if (Equals(myWarehouse,value)) return;
                 myWarehouse = value;
                 Entity.SkladDC = myWarehouse?.DocCode ?? decimal.MinusOne;
                 RaisePropertyChanged();

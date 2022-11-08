@@ -12,8 +12,6 @@ using KursAM2.Dialogs;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
-using Bank = KursDomain.Documents.Bank.Bank;
-using BankAccount = KursDomain.Documents.Bank.BankAccount;
 
 namespace KursAM2.View.DialogUserControl
 {
@@ -24,14 +22,35 @@ namespace KursAM2.View.DialogUserControl
         private Bank myCurrentItem;
         private StandartDialogSelectTwoTableUC myDataUserControl;
 
-        public BankAccountSelectedDialog()
+        //public BankAccountSelectedDialog()
+        //{
+        //    LayoutControl = myDataUserControl = new StandartDialogSelectTwoTableUC(GetType().Name);
+        //    WindowName = "Выбор банковского счета";
+        //    ItemsCollection = new ObservableCollection<Bank>();
+        //    foreach (var b in MainReferences.BankAccounts.Values)
+        //        if (ItemsCollection.All(_ => _.DocCode != b.BankDC))
+        //            ItemsCollection.Add(b.Bank);
+        //}
+
+        public BankAccountSelectedDialog(Currency crs)
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectTwoTableUC(GetType().Name);
             WindowName = "Выбор банковского счета";
             ItemsCollection = new ObservableCollection<Bank>();
-            foreach (var b in MainReferences.BankAccounts.Values)
-                if (ItemsCollection.All(_ => _.DocCode != b.BankDC))
-                    ItemsCollection.Add(b.Bank);
+            if (crs == null)
+            {
+                foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll())
+                    if (ItemsCollection.All(_ => _.DocCode != ((IDocCode)b).DocCode))
+                        ItemsCollection.Add(b.Bank as Bank);
+            }
+            else
+            {
+                foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll().Where(_ => Equals(_.Currency, crs)))
+                    if (ItemsCollection.All(_ => _.DocCode != ((IDocCode)b).DocCode))
+                        ItemsCollection.Add(b.Bank as Bank);
+            }
+
+            var bbb = Equals(GlobalOptions.ReferencesCache.GetBankAccountAll().First().Currency,crs);
         }
 
         public BankAccountSelectedDialog(decimal dcOut)
@@ -41,8 +60,8 @@ namespace KursAM2.View.DialogUserControl
             WindowName = "Выбор банковского счета";
             ItemsCollection = new ObservableCollection<Bank>();
             foreach (var b in MainReferences.BankAccounts.Values.Where(_ => _.DocCode != dcOut))
-                if (ItemsCollection.All(_ => _.DocCode != b.BankDC))
-                    ItemsCollection.Add(b.Bank);
+                if (ItemsCollection.All(_ => _.DocCode != b.DocCode))
+                    ItemsCollection.Add(b.Bank as Bank);
 
             CurrentItem = null;
         }
@@ -60,17 +79,18 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentItem;
             set
             {
-                if (myCurrentItem != null && myCurrentItem.Equals(value)) return;
+                if (Equals(myCurrentItem, value)) return;
                 myCurrentItem = value;
                 ChildItemsCollection.Clear();
                 if (myCurrentItem == null) return;
                 if (excludeAccountDC != null)
-                    foreach (var acc in MainReferences.BankAccounts.Values.Where(_ => _.BankDC == myCurrentItem?.DocCode
+                    foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(_ =>
+                                 _.DocCode == myCurrentItem?.DocCode
                                  && _.DocCode != excludeAccountDC))
                         ChildItemsCollection.Add(acc);
                 else
-                    foreach (var acc in MainReferences.BankAccounts.Values.Where(_ =>
-                                 _.BankDC == myCurrentItem.DocCode))
+                    foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(_ =>
+                                 _.DocCode == myCurrentItem.DocCode))
                         ChildItemsCollection.Add(acc);
                 RaisePropertyChanged();
             }
@@ -81,7 +101,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentChildItem;
             set
             {
-                if (myCurrentChildItem != null && myCurrentChildItem.Equals(value)) return;
+                if (Equals(myCurrentChildItem, value)) return;
                 myCurrentChildItem = value;
                 RaisePropertyChanged();
             }
@@ -123,7 +143,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentItem;
             set
             {
-                if (myCurrentItem != null && myCurrentItem.Equals(value)) return;
+                if (Equals(myCurrentItem, value)) return;
                 myCurrentItem = value;
                 RaisePropertyChanged();
             }
@@ -134,7 +154,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentChildItem;
             set
             {
-                if (myCurrentChildItem != null && myCurrentChildItem.Equals(value)) return;
+                if (Equals(myCurrentChildItem, value)) return;
                 myCurrentChildItem = value;
                 RaisePropertyChanged();
             }
@@ -181,7 +201,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentItem;
             set
             {
-                if (myCurrentItem != null && myCurrentItem.Equals(value)) return;
+                if (Equals(myCurrentItem, value)) return;
                 myCurrentItem = value;
                 RaisePropertyChanged();
             }
@@ -275,7 +295,11 @@ namespace KursAM2.View.DialogUserControl
             {
                 var data = ctx.SD_44.ToList();
                 foreach (var d in data)
-                    ItemsCollection.Add(new Bank(d) { State = RowStatus.NotEdited });
+                {
+                    var bank = new Bank();
+                    bank.LoadFromEntity(d);
+                    ItemsCollection.Add(bank);
+                }
             }
         }
 
@@ -295,7 +319,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentItem;
             set
             {
-                if (myCurrentItem != null && myCurrentItem.Equals(value)) return;
+                if (Equals(myCurrentItem, value)) return;
                 myCurrentItem = value;
                 RaisePropertyChanged();
             }

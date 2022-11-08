@@ -23,6 +23,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Currency;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -81,12 +82,12 @@ namespace KursAM2.ViewModel.Finance
                 if (CurrentBankOperations.CurrencyRateForReference == 0)
                 {
                     decimal rate = 1;
-                    if (CurrentBankAccount.Currency.DocCode != GlobalOptions.SystemProfile.NationalCurrency.DocCode)
+                    if (((IDocCode)CurrentBankAccount.Currency).DocCode != GlobalOptions.SystemProfile.NationalCurrency.DocCode)
                     {
                         var rates = CurrencyRate.GetRate(DateTime.Today);
-                        if (rates.ContainsKey(CurrentBankAccount.Currency))
+                        if (rates.ContainsKey(CurrentBankAccount.Currency as Currency))
                         {
-                            rate = rates[CurrentBankAccount.Currency];
+                            rate = rates[CurrentBankAccount.Currency as Currency];
                         }
                         CurrentBankOperations.CurrencyRateForReference = rate;
                     }
@@ -369,7 +370,7 @@ namespace KursAM2.ViewModel.Finance
                 myCurrentBankAccount = value;
                 if (myCurrentBankAccount != null)
                 {
-                    Currency = MainReferences.BankAccounts[myCurrentBankAccount.DocCode].Currency;
+                    Currency =GlobalOptions.ReferencesCache.GetBankAccount(myCurrentBankAccount.DocCode).Currency as Currency;
                     GetPeriods();
                 }
 
@@ -385,7 +386,7 @@ namespace KursAM2.ViewModel.Finance
         {
             set
             {
-                if (myCurrentPeriods != null && myCurrentPeriods.Equals(value)) return;
+                if (Equals(myCurrentPeriods,value)) return;
                 myCurrentPeriods = value;
                 if (myCurrentPeriods != null)
                     GetBankOperation();
@@ -400,7 +401,7 @@ namespace KursAM2.ViewModel.Finance
         {
             set
             {
-                if (myCurrentBankOperations != null && myCurrentBankOperations.Equals(value)) return;
+                if (Equals(myCurrentBankOperations,value)) return;
                 if (myCurrentBankOperations != null && myCurrentBankOperations.State == RowStatus.Edited
                                                     && CurrentBankAccount != null &&
                                                     myCurrentBankOperations.IsCurrencyChange == false)

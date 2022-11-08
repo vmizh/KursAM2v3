@@ -400,17 +400,17 @@ namespace KursAM2.View.Finance.Cash
                         if (emp != null) ctx.Document.TABELNUMBER = emp.TabelNumber;
                         ctx.Document.NAME_ORD = emp?.Name;
                         ctx.Document.SFactName = null;
-                        ctx.Document.Currency = emp.Currency;
+                        ctx.Document.Currency = emp?.Currency;
                         CurrencyItem.IsEnabled = false;
                         doc.SFACT_DC = null;
                         break;
                     case CashKontragentType.Bank:
-                        var bank = StandartDialogs.SelectBankAccount();
+                        var bank = StandartDialogs.SelectBankAccount(ctx.Document.Currency);
                         if (bank != null) ctx.Document.BankAccount = bank;
                         ctx.Document.NAME_ORD = bank?.Name;
                         ctx.Document.BankAccount = bank;
                         ctx.Document.SFactName = null;
-                        ctx.Document.Currency = bank.Currency;
+                        ctx.Document.Currency = bank?.Currency as Currency;
                         CurrencyItem.IsEnabled = false;
                         doc.SFACT_DC = null;
                         break;
@@ -460,7 +460,7 @@ namespace KursAM2.View.Finance.Cash
                             doc.SFACT_DC = null;
                             break;
                         case CashKontragentType.Bank:
-                            var bank = StandartDialogs.SelectBankAccount();
+                            var bank = StandartDialogs.SelectBankAccount(ctx.Document.Currency);
                             if (bank != null) ctx.Document.BankAccount = bank;
                             ctx.Document.NAME_ORD = bank?.Name;
                             ctx.Document.BankAccount = bank;

@@ -77,7 +77,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => mySelectedTransferNomenkl;
             set
             {
-                if (mySelectedTransferNomenkl != null && mySelectedTransferNomenkl.Equals(value)) return;
+                if (Equals(mySelectedTransferNomenkl,value)) return;
                 mySelectedTransferNomenkl = value;
                 RaisePropertyChanged();
             }

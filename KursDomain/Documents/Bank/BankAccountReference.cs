@@ -16,7 +16,7 @@ namespace KursDomain.Documents.Bank;
 [MetadataType(typeof(DataAnnotationsBankAccountReference))]
 public class BankAccountReference : RSViewModelBase, IEntity<SD_114>
 {
-    private Bank myBank;
+    private References.Bank myBank;
     private CentrResponsibility myCO;
     private SD_114 myEntity;
     private bool myIsNegative;
@@ -31,7 +31,12 @@ public class BankAccountReference : RSViewModelBase, IEntity<SD_114>
         Entity = entity ?? new SD_114 { DOC_CODE = -1 };
         myIsNegative = Entity.BA_NEGATIVE_RESTS == 1;
         myCO = MainReferences.GetCO(Entity.BA_CENTR_OTV_DC);
-        if (Entity.SD_44 != null) Bank = new Bank(Entity.SD_44);
+        if (Entity.SD_44 != null)
+        {
+
+            Bank = new References.Bank();
+            Bank.LoadFromEntity(Entity.SD_44);
+        }
     }
 
     public decimal DOC_CODE
@@ -122,7 +127,7 @@ public class BankAccountReference : RSViewModelBase, IEntity<SD_114>
         }
     }
 
-    public Bank Bank
+    public References.Bank Bank
     {
         get => myBank;
         set

@@ -16,7 +16,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentWarehouse;
             set
             {
-                if (myCurrentWarehouse != null && myCurrentWarehouse.Equals(value)) return;
+                if (Equals(myCurrentWarehouse,value)) return;
                 myCurrentWarehouse = value;
                 RaisePropertyChanged();
             }
@@ -27,7 +27,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => mySelectedNomenkl;
             set
             {
-                if (mySelectedNomenkl != null && mySelectedNomenkl.Equals(value)) return;
+                if (Equals(mySelectedNomenkl,value)) return;
                 mySelectedNomenkl = value;
                 RaisePropertyChanged();
             }

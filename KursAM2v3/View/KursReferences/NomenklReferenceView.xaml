@@ -214,7 +214,6 @@
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:ComboBoxEditSettings
                                         ItemsSource="{Binding CurrencyCollection}"
-                                        DisplayMember="Name"
                                         IsTextEditable="False" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>

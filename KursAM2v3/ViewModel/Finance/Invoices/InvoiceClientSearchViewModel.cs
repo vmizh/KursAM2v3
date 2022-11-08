@@ -159,7 +159,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => myCurrentDocument;
             set
             {
-                if (myCurrentDocument != null && myCurrentDocument.Equals(value)) return;
+                if (Equals(myCurrentDocument,value)) return;
                 myCurrentDocument = value;
                 if (myCurrentDocument != null)
                 {
@@ -261,7 +261,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         .Where(_ => _.SF_DATE >= StartDate && _.SF_DATE <= EndDate);
                     foreach (var item in query.ToList())
                     {
-                        var newItem = new InvoiceClient(item);
+                        var newItem = new InvoiceClientViewModel(item);
                         string d;
                         d = newItem.Diler != null ? newItem.Diler.Name : "";
                         if (newItem.InnerNumber.ToString().ToUpper().Contains(SearchText.ToUpper()) ||

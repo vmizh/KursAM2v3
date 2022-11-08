@@ -69,7 +69,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             set
             {
-                if (myDocument != null && myDocument.Equals(value)) return;
+                if (Equals(myDocument ,value)) return;
                 myDocument = value;
                 Rows.Clear();
                 if (myDocument != null)
@@ -86,7 +86,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             set
             {
-                if (myCurrentRow != null && myCurrentRow.Equals(value)) return;
+                if (Equals(myCurrentRow,value)) return;
                 myCurrentRow = value;
                 RaisePropertyChanged();
             }

@@ -42,7 +42,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentRemain;
             set
             {
-                if (myCurrentRemain != null && myCurrentRemain.Equals(value)) return;
+                if (Equals(myCurrentRemain,value)) return;
                 myCurrentRemain = value;
                 RaisePropertyChanged();
             }

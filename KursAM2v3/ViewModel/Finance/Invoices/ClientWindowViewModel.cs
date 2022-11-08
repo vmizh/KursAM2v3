@@ -46,9 +46,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         // ReSharper disable once InconsistentNaming
-        private InvoiceClientRow myCurrentRow;
+        private InvoiceClientRowViewModel _myCurrentRow;
         private ShipmentRowViewModel myCurrentShipmentRow;
-        private InvoiceClient myDocument;
+        private InvoiceClientViewModel myDocument;
         private decimal myOtgruzheno;
         private RSWindowViewModelBase myParentForm;
 
@@ -100,21 +100,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     SF_FACT_SUMMA = 0
                 };
                 UnitOfWork.Context.SD_84.Add(doc);
-                Document = new InvoiceClient(doc, UnitOfWork, isLoadPay)
+                Document = new InvoiceClientViewModel(doc, UnitOfWork, isLoadPay)
                 {
                     State = RowStatus.NewRow
                 };
             }
             else
             {
-                Document = new InvoiceClient(doc, UnitOfWork, true)
+                Document = new InvoiceClientViewModel(doc, UnitOfWork, true)
                 {
                     State = RowStatus.NotEdited
                 };
                 if (Document != null)
                     WindowName = Document.ToString();
                 Document.myState = RowStatus.NotEdited;
-                foreach (var r in Document.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NotEdited;
+                foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>()) r.myState = RowStatus.NotEdited;
                 SetVisualOnStart();
             }
         }
@@ -156,21 +156,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => myCurrentShipmentRow;
             set
             {
-                if (myCurrentShipmentRow != null && myCurrentShipmentRow.Equals(value)) return;
+                if (Equals(myCurrentShipmentRow,value)) return;
                 myCurrentShipmentRow = value;
                 RaisePropertyChanged();
             }
         }
 
-        public InvoiceClientRow CurrentRow
+        public InvoiceClientRowViewModel CurrentRow
         {
             set
             {
-                if (myCurrentRow != null && myCurrentRow.Equals(value)) return;
-                myCurrentRow = value;
+                if (Equals(_myCurrentRow,value)) return;
+                _myCurrentRow = value;
                 RaisePropertyChanged();
             }
-            get => myCurrentRow;
+            get => _myCurrentRow;
         }
 
         public decimal Otgruzheno
@@ -184,12 +184,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
-        public InvoiceClient Document
+        public InvoiceClientViewModel Document
         {
             get => myDocument;
             set
             {
-                if (myDocument != null && myDocument.Equals(value)) return;
+                if (Equals(myDocument ,value)) return;
                 myDocument = value;
                 RaisePropertyChanged();
             }
@@ -247,14 +247,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Document.IsAccepted = false;
             Document.myState = RowStatus.NewRow;
             Document.Id = newId;
-            Document.DeletedRows = new List<InvoiceClientRow>();
+            Document.DeletedRows = new List<InvoiceClientRowViewModel>();
             Document.PaymentDocs.Clear();
             Document.ShipmentRows.Clear();
             UnitOfWork.Context.SD_84.Add(Document.Entity);
             if (isCopy)
             {
                 var newCode = 1;
-                foreach (var item in Document.Rows.Cast<InvoiceClientRow>())
+                foreach (var item in Document.Rows.Cast<InvoiceClientRowViewModel>())
                 {
                     UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
                     item.DocCode = -1;
@@ -266,7 +266,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     newCode++;
                 }
 
-                foreach (var r in Document.Rows.Cast<InvoiceClientRow>())
+                foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>())
                 {
                     UnitOfWork.Context.TD_84.Add(r.Entity);
                     r.State = RowStatus.NewRow;
@@ -274,7 +274,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
             else
             {
-                foreach (var item in Document.Rows.Cast<InvoiceClientRow>())
+                foreach (var item in Document.Rows.Cast<InvoiceClientRowViewModel>())
                 {
                     UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
                     Document.Entity.TD_84.Clear();
@@ -590,7 +590,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                 foreach (var item in dtx.SelectedItems)
                 {
-                    if (Document != null && Document.Rows.Cast<InvoiceClientRow>()
+                    if (Document != null && Document.Rows.Cast<InvoiceClientRowViewModel>()
                             .Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.DefaultNDSPercent == null)
@@ -598,7 +598,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     else
                         nds = (decimal)item.DefaultNDSPercent;
                     // ReSharper disable once UseObjectOrCollectionInitializer
-                    var r = new InvoiceClientRow
+                    var r = new InvoiceClientRowViewModel
                     {
                         // ReSharper disable once PossibleNullReferenceException
                         DocCode = Document.DocCode,
@@ -698,7 +698,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Document.LoadReferences();
                         LoadFromExternal();
 
-                        foreach (var r in Document.Rows.Cast<InvoiceClientRow>())
+                        foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>())
                         {
                             r.myState = RowStatus.NotEdited;
                             AddUsedNomenkl(r.Nomenkl.DocCode);
@@ -707,7 +707,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         RaiseAll();
                         Document.myState = RowStatus.NotEdited;
                         Document.RaisePropertyChanged("State");
-                        foreach (var r in Document.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NotEdited;
+                        foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>()) r.myState = RowStatus.NotEdited;
                         Document.DeletedRows.Clear();
                         return;
                 }
@@ -719,7 +719,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.LoadReferences();
                 LoadFromExternal();
 
-                foreach (var r in Document.Rows.Cast<InvoiceClientRow>())
+                foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>())
                 {
                     r.myState = RowStatus.NotEdited;
                     AddUsedNomenkl(r.Nomenkl.DocCode);
@@ -765,7 +765,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void RaiseAll()
         {
-            foreach (var r in Document.Rows.Cast<InvoiceClientRow>()) r.RaisePropertyAllChanged();
+            foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>()) r.RaisePropertyAllChanged();
             foreach (var s in Document.ShipmentRows) s.RaisePropertyAllChanged();
             foreach (var pay in Document.PaymentDocs) pay.RaisePropertyAllChanged();
             Document.RaisePropertyAllChanged();
@@ -818,7 +818,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Document.SF_KONTR_CRS_DC = ((IDocCode)Document.Client.Currency).DocCode;
 
                 if (Document.Entity.SF_KONTR_CRS_SUMMA == null) Document.Entity.SF_KONTR_CRS_SUMMA = Document.Summa;
-                foreach (var row in Document.Rows.Cast<InvoiceClientRow>())
+                foreach (var row in Document.Rows.Cast<InvoiceClientRowViewModel>())
                     if (row.Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS == null)
                         row.Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = row.Summa;
                 UnitOfWork.Save();
@@ -833,7 +833,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 //foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
                 //RaiseAll();
                 Document.myState = RowStatus.NotEdited;
-                foreach (var r in Document.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NotEdited;
+                foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>()) r.myState = RowStatus.NotEdited;
 
                 foreach (var f in Document.ShipmentRows) f.myState = RowStatus.NotEdited;
 
@@ -1027,7 +1027,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var item in k)
                 {
                     // ReSharper disable once PossibleNullReferenceException
-                    if (Document.Rows.Cast<InvoiceClientRow>()
+                    if (Document.Rows.Cast<InvoiceClientRowViewModel>()
                         .Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.DefaultNDSPercent == null)
@@ -1035,7 +1035,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     else
                         nds = (decimal)item.DefaultNDSPercent;
                     // ReSharper disable once UseObjectOrCollectionInitializer
-                    var r = new InvoiceClientRow
+                    var r = new InvoiceClientRowViewModel
                     {
                         DocCode = Document.DocCode,
                         Code = newCode,
@@ -1092,7 +1092,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                 foreach (var item in k)
                 {
-                    if (Document != null && Document.Rows.Cast<InvoiceClientRow>()
+                    if (Document != null && Document.Rows.Cast<InvoiceClientRowViewModel>()
                             .Any(_ => _.Entity.SFT_NEMENKL_DC == item.DocCode)) continue;
                     decimal nds;
                     if (item.DefaultNDSPercent == null)
@@ -1100,7 +1100,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     else
                         nds = (decimal)item.DefaultNDSPercent;
                     // ReSharper disable once UseObjectOrCollectionInitializer
-                    var r = new InvoiceClientRow
+                    var r = new InvoiceClientRowViewModel
                     {
                         // ReSharper disable once PossibleNullReferenceException
                         DocCode = Document.DocCode,

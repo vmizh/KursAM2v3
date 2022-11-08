@@ -102,7 +102,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             set
             {
-                if (myDocument != null && myDocument.Equals(value)) return;
+                if (Equals(myDocument ,value)) return;
                 myDocument = value;
                 RaisePropertyChanged();
             }
@@ -118,7 +118,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get => myCurrentNomenklRow;
             set
             {
-                if (myCurrentNomenklRow != null && myCurrentNomenklRow.Equals(value)) return;
+                if (Equals(myCurrentNomenklRow,value)) return;
                 myCurrentNomenklRow = value;
                 RaisePropertyChanged();
             }
@@ -234,7 +234,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand AddFromDocumentCommand
         {
-            get { return new Command(AddFromDocument, _ => Document.InvoiceClient != null); }
+            get { return new Command(AddFromDocument, _ => Document.InvoiceClientViewModel != null); }
         }
 
         private void AddFromDocument(object obj)
@@ -242,7 +242,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             using (var ctx = GlobalOptions.GetEntities())
             {
-                foreach (var r in Document.InvoiceClient.Rows.Cast<InvoiceClientRow>())
+                foreach (var r in Document.InvoiceClientViewModel.Rows.Cast<InvoiceClientRowViewModel>())
                 {
                     var oldf = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Entity.SFT_NEMENKL_DC);
                     if (oldf != null)
@@ -268,7 +268,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 DDT_KOL_RASHOD = r.Quantity - kol,
                                 Unit = n.Unit as Unit,
                                 Currency = n.Currency as Currency,
-                                SchetLinkedRow = r,
+                                SchetLinkedRowViewModel = r,
                                 State = RowStatus.NewRow,
                                 DDT_SFACT_DC = r.DocCode,
                                 DDT_SFACT_ROW_CODE = r.Code
@@ -300,7 +300,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             DDT_KOL_RASHOD = r.Quantity,
                             Unit = n.Unit as Unit,
                             Currency = n.Currency as Currency,
-                            SchetLinkedRow = r,
+                            SchetLinkedRowViewModel = r,
                             State = RowStatus.NewRow,
                             DDT_SFACT_DC = r.DocCode,
                             DDT_SFACT_ROW_CODE = r.Code
@@ -446,12 +446,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var inv = StandartDialogs.SelectInvoiceClient(Document);
             if (inv != null)
             {
-                Document.InvoiceClient = inv;
+                Document.InvoiceClientViewModel = inv;
                 Document.Client = inv.Client;
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
-                    foreach (var r in inv.Rows.Cast<InvoiceClientRow>())
+                    foreach (var r in inv.Rows.Cast<InvoiceClientRowViewModel>())
                     {
                         var oldf = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Entity.SFT_NEMENKL_DC);
                         if (oldf != null)
@@ -477,7 +477,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                     DDT_KOL_RASHOD = r.Quantity - kol,
                                     Unit = n.Unit as Unit,
                                     Currency = n.Currency as Currency,
-                                    SchetLinkedRow = r,
+                                    SchetLinkedRowViewModel = r,
                                     State = RowStatus.NewRow,
                                     DDT_SFACT_DC = r.DocCode,
                                     DDT_SFACT_ROW_CODE = r.Code
@@ -509,7 +509,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 DDT_KOL_RASHOD = r.Quantity,
                                 Unit = n.Unit as Unit,
                                 Currency = n.Currency as Currency,
-                                SchetLinkedRow = r,
+                                SchetLinkedRowViewModel = r,
                                 State = RowStatus.NewRow,
                                 DDT_SFACT_DC = r.DocCode,
                                 DDT_SFACT_ROW_CODE = r.Code
@@ -523,7 +523,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public Command SelectKontragentCommand
         {
-            get { return new Command(SelectKontragent, _ => Document.InvoiceClient == null); }
+            get { return new Command(SelectKontragent, _ => Document.InvoiceClientViewModel == null); }
         }
 
         public void SelectKontragent(object obj)

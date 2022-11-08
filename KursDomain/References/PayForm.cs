@@ -1,44 +1,39 @@
-﻿using KursDomain.ICommon;
-using KursDomain.IReferences;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using Data;
 using Core.Helper;
 using Core.ViewModel.Base;
+using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using System.ComponentModel.DataAnnotations;
-using System;
+using KursDomain.ICommon;
+using KursDomain.IReferences;
 
 namespace KursDomain.References;
 
 /// <summary>
-/// Форма платежа
+///     Форма платежа
 /// </summary>
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class PayForm :  IPayForm, IDocCode, IName, IEqualityComparer<IDocCode>
+public class PayForm : IPayForm, IDocCode, IName, IEquatable<PayForm>
 {
-    [Display(AutoGenerateField = false)]
-    public decimal DocCode { get; set; }
-    [Display(AutoGenerateField = true, Name = "Наименование")]
-    public string Name { get; set; }
-    [Display(AutoGenerateField = true, Name = "Примечание")]
-    public string Notes { get; set; }
-    [Display(AutoGenerateField = false, Name = "Описание")]
-    public string Description => $"Форма оплаты: {Name}";
-    
-    public bool Equals(IDocCode x, IDocCode y)
+    [Display(AutoGenerateField = false)] public decimal DocCode { get; set; }
+
+    public bool Equals(PayForm other)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
     }
 
-    public int GetHashCode(IDocCode obj)
-    {
-        return obj.DocCode.GetHashCode();
-    }
+    [Display(AutoGenerateField = true, Name = "Наименование")]
+    public string Name { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Примечание")]
+    public string Notes { get; set; }
+
+    [Display(AutoGenerateField = false, Name = "Описание")]
+    public string Description => $"Форма оплаты: {Name}";
 
     public override string ToString()
     {
@@ -49,6 +44,19 @@ public class PayForm :  IPayForm, IDocCode, IName, IEqualityComparer<IDocCode>
     {
         DocCode = entity.DOC_CODE;
         Name = entity.OOT_NAME;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((PayForm) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return DocCode.GetHashCode();
     }
 }
 
@@ -153,7 +161,7 @@ public class PayFormViewModel : RSViewModelBase, IEntity<SD_189>
 
     public SD_189 DefaultValue()
     {
-        return new SD_189 { DOC_CODE = -1 };
+        return new SD_189 {DOC_CODE = -1};
     }
 
     public SD_189 Entity

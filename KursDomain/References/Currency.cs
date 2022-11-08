@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Data;
 using KursDomain.Annotations;
@@ -11,9 +11,8 @@ using KursDomain.IReferences;
 
 namespace KursDomain.References;
 
-[SuppressMessage("ReSharper", "RedundantCheckBeforeAssignment")]
 [DebuggerDisplay("{DocCode,nq}/{Id,nq} {Name,nq}")]
-public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEqualityComparer<Currency>
+public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currency>
 {
     private string _Code;
     private decimal _DocCode;
@@ -22,6 +21,13 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEqualityComparer<
     private string _Name;
     private string _Notes;
 
+    [Display(AutoGenerateField = false, Name = "Код")]
+    public string NalogName { get; set; }
+
+    [Display(AutoGenerateField = false, Name = "Код")]
+    public string NalogCode { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Код")]
     public string Code
     {
         get => _Code;
@@ -32,6 +38,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEqualityComparer<
         }
     }
 
+    [Display(AutoGenerateField = true, Name = "Полное наименование")]
     public string FullName
     {
         get => _FullName;
@@ -42,6 +49,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEqualityComparer<
         }
     }
 
+    [Display(AutoGenerateField = true, Name = "Активная")]
     public bool IsActive
     {
         get => _IsActive;
@@ -52,6 +60,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEqualityComparer<
         }
     }
 
+    [Display(AutoGenerateField = false, Name = "DocCode")]
     public decimal DocCode
     {
         get => _DocCode;
@@ -62,20 +71,17 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEqualityComparer<
         }
     }
 
-    public bool Equals(Currency crs1, Currency crs2)
+    [Display(AutoGenerateField = false, Name = "Id")]
+    public Guid Id { get; set; }
+
+    public bool Equals(Currency other)
     {
-        if (crs2 == null && crs1 == null)
-            return true;
-        if (crs1 == null || crs2 == null)
-            return false;
-        return crs1.DocCode == crs2.DocCode;
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return _DocCode == other._DocCode;
     }
 
-    public int GetHashCode(Currency obj)
-    {
-        return (DocCode + Name).GetHashCode();
-    }
-
+    [Display(AutoGenerateField = true, Name = "Наименование")]
     public string Name
     {
         get => _Name;
@@ -86,6 +92,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEqualityComparer<
         }
     }
 
+    [Display(AutoGenerateField = true, Name = "Примечание")]
     public string Notes
     {
         get => _Notes;
@@ -96,8 +103,9 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEqualityComparer<
         }
     }
 
-   public string Description => $"Валюта: {Name} {FullName}";
-   
+    [Display(AutoGenerateField = false, Name = "Описание")]
+    public string Description => $"Валюта: {Name} {FullName}";
+
 
     public override string ToString()
     {
@@ -118,12 +126,31 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEqualityComparer<
         Code = entity.CRS_CODE;
         FullName = entity.CRS_NAME;
         IsActive = entity.CRS_ACTIVE == 1;
-
+        Id = entity.Id;
     }
 
-    public Guid Id { get; set; }
-    public string NalogName { get; set; }
-    public string NalogCode { get; set; }
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((Currency) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return _DocCode.GetHashCode();
+    }
+
+    public static bool operator ==(Currency left, Currency right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(Currency left, Currency right)
+    {
+        return !Equals(left, right);
+    }
 }
 
 public class CurrencyViewModel : ICurrency, IDocCode, IName, INotifyPropertyChanged,
@@ -136,17 +163,7 @@ public class CurrencyViewModel : ICurrency, IDocCode, IName, INotifyPropertyChan
         Entity = entity;
     }
 
-    public string Code
-    {
-        get => Entity.CRS_CODE;
-        set
-        {
-            if (Entity.CRS_CODE == value) return;
-            Entity.CRS_CODE = value;
-            OnPropertyChanged();
-        }
-    }
-
+    [Display(AutoGenerateField = false, Name = "Id")]
     public Guid Id
     {
         get => Entity.Id;
@@ -158,17 +175,34 @@ public class CurrencyViewModel : ICurrency, IDocCode, IName, INotifyPropertyChan
         }
     }
 
+    [Display(AutoGenerateField = true, Name = "Основная")]
     public bool IsMain
     {
         get => Entity.CRS_MAIN_CURRENCY == 1;
         set
         {
             if ((Entity.CRS_MAIN_CURRENCY == 1) == value) return;
-            Entity.CRS_MAIN_CURRENCY = (short)(value ? 1 : 0);
+            Entity.CRS_MAIN_CURRENCY = (short) (value ? 1 : 0);
             OnPropertyChanged();
         }
     }
 
+    [Display(AutoGenerateField = false, Name = "Код")]
+    public RowStatus State { get; set; } = RowStatus.NotEdited;
+
+    [Display(AutoGenerateField = true, Name = "Код")]
+    public string Code
+    {
+        get => Entity.CRS_CODE;
+        set
+        {
+            if (Entity.CRS_CODE == value) return;
+            Entity.CRS_CODE = value;
+            OnPropertyChanged();
+        }
+    }
+
+    [Display(AutoGenerateField = true, Name = "Полное имя")]
     public string FullName
     {
         get => Entity.CRS_NAME;
@@ -180,6 +214,7 @@ public class CurrencyViewModel : ICurrency, IDocCode, IName, INotifyPropertyChan
         }
     }
 
+    [Display(AutoGenerateField = true, Name = "Активная")]
     public bool IsActive
     {
         get => Entity.CRS_ACTIVE == 1;
@@ -191,6 +226,7 @@ public class CurrencyViewModel : ICurrency, IDocCode, IName, INotifyPropertyChan
         }
     }
 
+    [Display(AutoGenerateField = false, Name = "DocCode")]
     public decimal DocCode
     {
         get => Entity.DOC_CODE;
@@ -216,6 +252,7 @@ public class CurrencyViewModel : ICurrency, IDocCode, IName, INotifyPropertyChan
         return obj.Entity != null ? obj.Entity.GetHashCode() : 0;
     }
 
+    [Display(AutoGenerateField = true, Name = "Наименование")]
     public string Name
     {
         get => Entity.CRS_SHORTNAME;
@@ -227,14 +264,15 @@ public class CurrencyViewModel : ICurrency, IDocCode, IName, INotifyPropertyChan
         }
     }
 
+    [Display(AutoGenerateField = true, Name = "Примечания")]
     public string Notes
     {
         get => string.Empty;
         set { }
     }
 
+    [Display(AutoGenerateField = false, Name = "Описание")]
     public string Description => $"Валюта: {Name}({FullName})";
-    public RowStatus State { get; set; } =  RowStatus.NotEdited;
 
     public event PropertyChangedEventHandler PropertyChanged;
 

@@ -231,7 +231,7 @@ namespace KursAM2.ViewModel.Dogovora
         public readonly GenericKursDBRepository<DogovorOfSupplier> GenericRepository;
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
-            new(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+            new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private DogovorOfSupplierViewModel myDocument;
         private DogovorOfSupplierRowViewModel myCurrentAccrual;
@@ -249,16 +249,21 @@ namespace KursAM2.ViewModel.Dogovora
             Document.State == RowStatus.NewRow ? "Новый договор от поставщика" : Document.ToString();
 
         // ReSharper disable once CollectionNeverUpdated.Global
-        public ObservableCollection<DogovorOfSupplierRowViewModel> SelectedRows { set; get; } = new();
+        public ObservableCollection<DogovorOfSupplierRowViewModel> SelectedRows { set; get; } =
+            new ObservableCollection<DogovorOfSupplierRowViewModel>();
 
         // ReSharper disable once CollectionNeverUpdated.Global
-        public ObservableCollection<DogovorOfSupplierRowViewModel> DeletedRows { set; get; } = new();
+        public ObservableCollection<DogovorOfSupplierRowViewModel> DeletedRows { set; get; } =
+            new ObservableCollection<DogovorOfSupplierRowViewModel>();
 
-        public ObservableCollection<DogovorOfSupplierFactViewModel> FactsAll { set; get; } = new();
+        public ObservableCollection<DogovorOfSupplierFactViewModel> FactsAll { set; get; } =
+            new ObservableCollection<DogovorOfSupplierFactViewModel>();
 
-        public ObservableCollection<LinkDocumentInfo> Documents { set; get; } = new();
+        public ObservableCollection<LinkDocumentInfo> Documents { set; get; } =
+            new ObservableCollection<LinkDocumentInfo>();
 
-        public ObservableCollection<ProviderInvoicePayViewModel> PaymentList { set; get; } = new();
+        public ObservableCollection<ProviderInvoicePayViewModel> PaymentList { set; get; } =
+            new ObservableCollection<ProviderInvoicePayViewModel>();
 
         public List<ContractType> ContractTypeList =>
             MainReferences.ContractTypes.Values.Where(_ => !_.IsSale).ToList();

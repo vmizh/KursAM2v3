@@ -112,7 +112,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             get => myKontragent;
             set
             {
-                if (myKontragent != null && myKontragent.Equals(value)) return;
+                if (Equals(myKontragent,value)) return;
                 myKontragent = value;
                 RaisePropertyChanged();
             }
@@ -123,7 +123,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             get => myNom;
             set
             {
-                if (myNom != null && myNom.Equals(value)) return;
+                if (Equals(myNom,value)) return;
                 myNom = value;
                 RaisePropertyChanged();
             }
@@ -134,7 +134,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             get => myPersona;
             set
             {
-                if (myPersona != null && myPersona.Equals(value)) return;
+                if (Equals(myPersona,value)) return;
                 myPersona = value;
                 RaisePropertyChanged();
             }

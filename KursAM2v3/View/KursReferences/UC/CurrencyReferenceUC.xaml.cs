@@ -33,7 +33,7 @@ namespace KursAM2.View.KursReferences.UC
             if (e.Column.FieldName == "IsMain")
                 if (DataContext is CurrencyReferenceWindowViewModel dtx)
                     foreach (var c in dtx.CurrencyCollection)
-                        if (((Currency) e.Row).Id != c.Id)
+                        if (((CurrencyViewModel) e.Row).Id != c.Id)
                             c.IsMain = false;
         }
     }

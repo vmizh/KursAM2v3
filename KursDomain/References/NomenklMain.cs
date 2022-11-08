@@ -1,17 +1,43 @@
 ﻿using System;
-using KursDomain.ICommon;
-using KursDomain.IReferences.Nomenkl;
-using System.Collections.Generic;
 using System.Diagnostics;
+using KursDomain.ICommon;
 using KursDomain.IReferences;
-using IProductType = KursDomain.IReferences.Nomenkl.IProductType;
+using KursDomain.IReferences.Nomenkl;
 
 namespace KursDomain.References;
 
-[DebuggerDisplay("{Id} {NomenklNumber,nq} {Name,nq} {Currency,nq}")]
-public class NomenklMain : IDocGuid, IName,  INomenklMain, IEqualityComparer<IDocGuid>
+[DebuggerDisplay("{Id} {NomenklNumber,nq} {Name,nq}")]
+public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain>
 {
-  
+    public decimal? DefaultNDSPercent { get; set; }
+
+    public Guid Id { get; set; }
+
+    public bool Equals(NomenklMain other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Id.Equals(other.Id);
+    }
+
+    public string Name { get; set; }
+    public string Notes { get; set; }
+    public string Description { get; }
+    public string NomenklNumber { get; set; }
+    public IUnit Unit { get; set; }
+    public INomenklGroup Category { get; set; }
+    public string FullName { get; set; }
+    public bool IsUsluga { get; set; }
+    public bool IsProguct { get; set; }
+    public bool IsNakladExpense { get; set; }
+    public INomenklType NomenklType { get; set; }
+    public IProductType ProductType { get; set; }
+    public bool IsDeleted { get; set; }
+    public bool IsCurrencyTransfer { get; set; }
+    public bool IsRentabelnost { get; set; }
+    public bool IsOnlyState { get; set; }
+    public ICountry Country { get; set; }
+
 
     public override string ToString()
     {
@@ -25,12 +51,13 @@ public class NomenklMain : IDocGuid, IName,  INomenklMain, IEqualityComparer<IDo
             Id = Guid.Empty;
             return;
         }
+
         Id = entity.Id;
         Name = entity.Name;
         Notes = entity.Note;
         NomenklNumber = entity.NomenklNumber;
         Unit = refCache?.GetUnit(entity.UnitDC);
-        Category = refCache?.GetNomenklCategory(entity.CategoryDC);
+        Category = refCache?.GetNomenklGroup(entity.CategoryDC);
         FullName = entity.FullName;
         IsUsluga = entity.IsUsluga;
         IsProguct = entity.IsComplex;
@@ -54,23 +81,16 @@ public class NomenklMain : IDocGuid, IName,  INomenklMain, IEqualityComparer<IDo
         return obj.Id.GetHashCode();
     }
 
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string Notes { get; set; }
-    public string Description { get; }
-    public string NomenklNumber { get; set; }
-    public IUnit Unit { get; set; }
-    public INomenklCategory Category { get; set; }
-    public string FullName { get; set; }
-    public bool IsUsluga { get; set; }
-    public bool IsProguct { get; set; }
-    public bool IsNakladExpense { get; set; }
-    public decimal? DefaultNDSPercent { get; set; }
-    public INomenklType NomenklType { get; set; }
-    public IProductType ProductType { get; set; }
-    public bool IsDeleted { get; set; }
-    public bool IsCurrencyTransfer { get; set; }
-    public bool IsRentabelnost { get; set; }
-    public bool IsOnlyState { get; set; }
-    public ICountry Country { get; set; }
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((NomenklMain) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
+    }
 }

@@ -107,7 +107,7 @@ namespace KursAM2.Managers
                         {
                             var procId = Process.GetCurrentProcess().Id;
                             Process.Start("Updater.exe",
-                                "KursAM2v3.exe " + Version.Serverpath + " " + "\"" + Directory.GetCurrentDirectory() + "\"" +
+                                "KursAM2v4.exe " + Version.Serverpath + " " + "\"" + Directory.GetCurrentDirectory() + "\"" +
                                 $" {copytype}" + " " + procId);
                             Process.GetCurrentProcess().Kill();
                         }

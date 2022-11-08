@@ -1,6 +1,4 @@
 ﻿using System;
-using KursDomain.ICommon;
-using KursDomain.IReferences;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
@@ -8,18 +6,29 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.ICommon;
+using KursDomain.IReferences;
 
 namespace KursDomain.References;
+
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class SDRState : ISDRState, IDocCode,  IName, IEqualityComparer<IDocCode>
+public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>
 {
-    public string Shifr { get; set; }
-    public decimal? ParentDC { get; set; }
-    public bool IsDohod { get; set; }
     public decimal DocCode { get; set; }
+
+    public bool Equals(SDRState other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
+    }
+
     public string Name { get; set; }
     public string Notes { get; set; }
     public string Description => $"Статья дох/расх: {Name}";
+    public string Shifr { get; set; }
+    public decimal? ParentDC { get; set; }
+    public bool IsDohod { get; set; }
 
     public override string ToString()
     {
@@ -39,24 +48,21 @@ public class SDRState : ISDRState, IDocCode,  IName, IEqualityComparer<IDocCode>
         ParentDC = entity.SZ_PARENT_DC;
         IsDohod = entity.SZ_1DOHOD_0_RASHOD == 1;
         Name = entity.SZ_NAME;
-
     }
 
-    public bool Equals(IDocCode x, IDocCode y)
+    public override bool Equals(object obj)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((SDRState) obj);
     }
 
-    public int GetHashCode(IDocCode obj)
+    public override int GetHashCode()
     {
-        return obj.DocCode.GetHashCode();
+        return DocCode.GetHashCode();
     }
 }
-
 
 [MetadataType(typeof(DataAnnotationsSDRState))]
 public class SDRStateViewModel : RSViewModelBase, IEntity<SD_99>
@@ -167,7 +173,7 @@ public class SDRStateViewModel : RSViewModelBase, IEntity<SD_99>
 
     public SD_99 DefaultValue()
     {
-        return new SD_99 { DOC_CODE = -1 };
+        return new SD_99 {DOC_CODE = -1};
     }
 
     public override string ToString()

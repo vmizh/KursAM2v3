@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -34,7 +33,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             LoadReferences();
         }
 
-        public MainCardWindowViewModel(Guid id, NomenklGroup grp) : this()
+        public MainCardWindowViewModel(Guid id, NomenklGroupViewModel grp) : this()
         {
             if (id != Guid.Empty)
             {
@@ -47,7 +46,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 DocNewEmpty(null);
                 if (grp != null)
                 {
-                    NomenklMain.NomenklCategory = NomenklCategoryCollection.Single(_ => _.DocCode == grp.DocCode);
+                    NomenklMain.NomenklGroup = NomenklCategoryCollection.Single(_ => _.DocCode == grp.DocCode);
                     NomenklMain.CategoryDC = grp.DocCode;
                 }
             }
@@ -73,17 +72,17 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         public ObservableCollection<NomenklProductKind> NomenklProductCollection { set; get; } =
             new ObservableCollection<NomenklProductKind>();
 
-        public ObservableCollection<NomenklGroup> NomenklCategoryCollection { set; get; } =
-            new ObservableCollection<NomenklGroup>();
+        public ObservableCollection<NomenklGroupViewModel> NomenklCategoryCollection { set; get; } =
+            new ObservableCollection<NomenklGroupViewModel>();
 
-        public ObservableCollection<CountriesViewModel> CountryCollection { set; get; }
-            = new ObservableCollection<CountriesViewModel>();
+        public ObservableCollection<CountriesViewModel> CountryCollection { set; get; } =
+            new ObservableCollection<CountriesViewModel>();
 
         public ObservableCollection<Unit> UnitCollection { set; get; } = new ObservableCollection<Unit>();
 
         public override bool IsCanSaveData => NomenklMain != null && NomenklMain.State != RowStatus.NotEdited &&
                                               NomenklMain.Unit != null && NomenklMain.ProductType != null &&
-                                              NomenklMain.NomenklCategory != null &&
+                                              NomenklMain.NomenklGroup != null &&
                                               !string.IsNullOrEmpty(NomenklMain.Name);
 
         //private NomenklProductViewModel myNomenklProduct;
@@ -92,7 +91,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get => NomenklMain?.ProductType;
             set
             {
-                if (NomenklMain?.ProductType != null && NomenklMain.ProductType.Equals(value)) return;
+                if (NomenklMain?.ProductType != null && Equals(NomenklMain.ProductType,value)) return;
                 if (NomenklMain != null) NomenklMain.ProductType = value;
                 RaisePropertyChanged();
             }
@@ -103,7 +102,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get => myNomenklMain;
             set
             {
-                if (myNomenklMain != null && myNomenklMain.Equals(value)) return;
+                if (Equals(myNomenklMain,value)) return;
                 myNomenklMain = value;
                 RaisePropertyChanged();
             }
@@ -142,7 +141,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 foreach (var t in ctx.SD_119.ToList())
                     NomenklTypeCollection.Add(new NomenklProductType(t));
                 foreach (var c in ctx.SD_82.ToList())
-                    NomenklCategoryCollection.Add(new NomenklGroup(c));
+                    NomenklCategoryCollection.Add(new NomenklGroupViewModel(c));
                 foreach (var c in ctx.SD_175.ToList())
                 {
                     var newUnit = new Unit();
@@ -168,7 +167,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                if (myId == Guid.Empty || myNomenklMain != null && myNomenklMain.State == RowStatus.NewRow)
+                if (myId == Guid.Empty || (myNomenklMain != null && myNomenklMain.State == RowStatus.NewRow))
                     return;
                 LoadReferences();
                 var d =
@@ -293,6 +292,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     nom.NOM_NAME = NomenklMain.Name;
                                     nom.IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
                                 }
+
                                 break;
                         }
 
@@ -327,7 +327,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 Id = Guid.NewGuid(),
                 Name = NomenklMain.Name,
                 FullName = NomenklMain.FullName,
-                NomenklCategory = NomenklMain.NomenklCategory,
+                NomenklGroup = NomenklMain.NomenklGroup,
                 NomenklType = NomenklMain.NomenklType,
                 Country = NomenklMain.Country,
                 Note = NomenklMain.Note,
@@ -376,7 +376,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         {
             var frm = new TreeListFormBaseView
             {
-                LayoutManagerName = "NomenklCategory",
+                LayoutManagerName = "NomenklGroup",
                 Owner = Application.Current.MainWindow
             };
             var dtx = new CategoryReferenceWindowViewModel {Form = frm};

@@ -50,7 +50,8 @@ namespace KursAM2.ViewModel.Management
 
         public override string LayoutName => "KontragentBalansFormNew";
 
-        public ObservableCollection<KonragentBalansRowViewModel> SelectedDocs { set; get; } = new();
+        public ObservableCollection<KonragentBalansRowViewModel> SelectedDocs { set; get; } =
+            new ObservableCollection<KonragentBalansRowViewModel>();
 
         public Kontragent StartKontragent { get; set; }
 
@@ -62,7 +63,7 @@ namespace KursAM2.ViewModel.Management
             get => myCurrentPeriod;
             set
             {
-                if (myCurrentPeriod != null && myCurrentPeriod.Equals(value)) return;
+                if (Equals(myCurrentPeriod,value)) return;
                 myCurrentPeriod = value;
                 if (myCurrentPeriod != null)
                     LoadDocumentsForPeriod();
@@ -94,7 +95,7 @@ namespace KursAM2.ViewModel.Management
                 : null;
             set
             {
-                if (myKontragent != null && myKontragent.Equals(value)) return;
+                if (Equals(myKontragent,value)) return;
                 myKontragent = value;
                 if (myKontragent != null)
                 {
@@ -144,7 +145,7 @@ namespace KursAM2.ViewModel.Management
         [DataMember]
         public ObservableCollection<KontragentPeriod> Periods { set; get; } =
             // ReSharper disable once MemberInitializerValueIgnored
-            new();
+            new ObservableCollection<KontragentPeriod>();
 
         public Brush BalansBrush
             => LastBalansSumma < 0 ? new SolidColorBrush(Colors.Red) : new SolidColorBrush(Colors.Black);

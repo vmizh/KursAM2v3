@@ -32,7 +32,6 @@ using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using Reports.Base;
-using InvoiceClientRow = KursDomain.Documents.Invoices.InvoiceClientRow;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -82,7 +81,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 if (Document.State == RowStatus.NotEdited)
                     foreach (var r in Document.Rows)
                     {
-                        r.InvoiceClient = sf.FirstOrDefault(_ => r.DDT_SFACT_DC == _.DocCode);
+                        r.InvoiceClientViewModel = sf.FirstOrDefault(_ => r.DDT_SFACT_DC == _.DocCode);
                         r.myState = RowStatus.NotEdited;
                     }
             }
@@ -174,7 +173,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand KontragentSelectCommand
         {
-            get { return new Command(KontragentSelect, _ => Document.InvoiceClient == null); }
+            get { return new Command(KontragentSelect, _ => Document.InvoiceClientViewModel == null); }
         }
 
         private void KontragentSelect(object obj)
@@ -269,7 +268,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         if (Document.State == RowStatus.NotEdited)
                             foreach (var r in Document.Rows)
                             {
-                                r.InvoiceClient = sf.FirstOrDefault(_ => r.DDT_SFACT_DC == _.DocCode);
+                                r.InvoiceClientViewModel = sf.FirstOrDefault(_ => r.DDT_SFACT_DC == _.DocCode);
                                 r.myState = RowStatus.NotEdited;
                             }
 
@@ -371,7 +370,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand AddFromDocumentCommand
         {
-            get { return new Command(AddFromDocument, _ => Document.InvoiceClient != null); }
+            get { return new Command(AddFromDocument, _ => Document.InvoiceClientViewModel != null); }
         }
 
         private void AddFromDocument(object obj)
@@ -379,7 +378,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             using (var ctx = GlobalOptions.GetEntities())
             {
-                foreach (var r in Document.InvoiceClient.Rows.Cast<InvoiceClientRow>())
+                foreach (var r in Document.InvoiceClientViewModel.Rows.Cast<InvoiceClientRowViewModel>())
                 {
                     var oldf = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Entity.SFT_NEMENKL_DC);
                     if (oldf != null)
@@ -407,7 +406,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 DDT_KOL_RASHOD = r.Quantity - kol,
                                 Unit = n.Unit as Unit,
                                 Currency = n.Currency as Currency,
-                                SchetLinkedRow = r,
+                                SchetLinkedRowViewModel = r,
                                 State = RowStatus.NewRow,
                                 DDT_SFACT_DC = r.DocCode,
                                 DDT_SFACT_ROW_CODE = r.Code
@@ -442,7 +441,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             DDT_KOL_RASHOD = r.Quantity,
                             Unit = n.Unit as Unit,
                             Currency = n.Currency as Currency,
-                            SchetLinkedRow = r,
+                            SchetLinkedRowViewModel = r,
                             State = RowStatus.NewRow,
                             DDT_SFACT_DC = r.DocCode,
                             DDT_SFACT_ROW_CODE = r.Code
@@ -524,18 +523,18 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand OpenSchetCommand
         {
-            get { return new Command(OpenSchet, _ => Document.InvoiceClient != null); }
+            get { return new Command(OpenSchet, _ => Document.InvoiceClientViewModel != null); }
         }
 
         private void OpenSchet(object obj)
         {
             // ReSharper disable once PossibleInvalidOperationException
-            DocumentsOpenManager.Open(DocumentType.InvoiceClient, Document.InvoiceClient.DocCode);
+            DocumentsOpenManager.Open(DocumentType.InvoiceClient, Document.InvoiceClientViewModel.DocCode);
         }
 
         public ICommand DeleteSchetCommand
         {
-            get { return new Command(DeleteSchet, _ => Document.InvoiceClient != null); }
+            get { return new Command(DeleteSchet, _ => Document.InvoiceClientViewModel != null); }
         }
 
         private void DeleteSchet(object obj)
@@ -552,7 +551,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
 
             Document.DD_SCHET = null;
-            Document.InvoiceClient = null;
+            Document.InvoiceClientViewModel = null;
             Document.RaisePropertyChanged("State");
         }
 
@@ -561,10 +560,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get { return new Command(SelectSchet, _ => Document.WarehouseOut != null); }
         }
 
-        private void addFromOneSchet(InvoiceClient inv)
+        private void addFromOneSchet(InvoiceClientViewModel inv)
         {
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
-            foreach (var r in inv.Rows.Cast<InvoiceClientRow>())
+            foreach (var r in inv.Rows.Cast<InvoiceClientRowViewModel>())
             {
                 var oldf = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == r.Entity.SFT_NEMENKL_DC);
                 if (oldf != null)
@@ -590,7 +589,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             DDT_KOL_RASHOD = r.Quantity - kol,
                             Unit = n.Unit as Unit,
                             Currency = n.Currency as Currency,
-                            SchetLinkedRow = r,
+                            SchetLinkedRowViewModel = r,
                             State = RowStatus.NewRow,
                             DDT_SFACT_DC = r.DocCode,
                             DDT_SFACT_ROW_CODE = r.Code
@@ -623,7 +622,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         DDT_KOL_RASHOD = r.Quantity,
                         Unit = n.Unit as Unit,
                         Currency = n.Currency as Currency,
-                        SchetLinkedRow = r,
+                        SchetLinkedRowViewModel = r,
                         State = RowStatus.NewRow,
                         DDT_SFACT_DC = r.DocCode,
                         DDT_SFACT_ROW_CODE = r.Code
@@ -655,15 +654,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 if (Document.Client == null && dtx.SelectedItems.Count > 0)
                 {
-                    Document.InvoiceClient = InvoicesManager.GetInvoiceClient(dtx.SelectedItems.First().DocCode);
-                    Document.Client = Document.InvoiceClient.Client;
-                    addFromOneSchet(Document.InvoiceClient);
+                    Document.InvoiceClientViewModel = InvoicesManager.GetInvoiceClient(dtx.SelectedItems.First().DocCode);
+                    Document.Client = Document.InvoiceClientViewModel.Client;
+                    addFromOneSchet(Document.InvoiceClientViewModel);
                 }
 
                 if (Document.Client != null && dtx.SelectedItems.Count > 0)
                 {
-                    Document.InvoiceClient = InvoicesManager.GetInvoiceClient(dtx.SelectedItems.First().DocCode);
-                    Document.Client = Document.InvoiceClient.Client;
+                    Document.InvoiceClientViewModel = InvoicesManager.GetInvoiceClient(dtx.SelectedItems.First().DocCode);
+                    Document.Client = Document.InvoiceClientViewModel.Client;
                     var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                     foreach (var item in dtx.SelectedItems)
                     {
@@ -695,7 +694,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 DDT_KOL_RASHOD = (item.Quantity ?? 0) <= m ? item.Quantity ?? 0 : m,
                                 Unit = n.Unit as Unit,
                                 Currency = n.Currency as Currency,
-                                InvoiceClient = Document.InvoiceClient,
+                                InvoiceClientViewModel = Document.InvoiceClientViewModel,
                                 State = RowStatus.NewRow
                             };
                             Document.Rows.Add(newItem);
@@ -761,15 +760,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 ByWhomLicoList.Add(item);
         }
 
-        private List<InvoiceClient> LoadSFInfo()
+        private List<InvoiceClientViewModel> LoadSFInfo()
         {
             var sfDCs = Document.Rows.Select(_ => _.DDT_SFACT_DC).Distinct();
-            var res = new List<InvoiceClient>();
+            var res = new List<InvoiceClientViewModel>();
             foreach (var dc in sfDCs)
             {
                 var d = UnitOfWork.Context.SD_84.SingleOrDefault(_ => _.DOC_CODE == dc);
                 if (d != null)
-                    res.Add(new InvoiceClient(d, UnitOfWork, true));
+                    res.Add(new InvoiceClientViewModel(d, UnitOfWork, true));
             }
 
             return res;

@@ -46,7 +46,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => mySelectedNomenkl;
             set
             {
-                if (mySelectedNomenkl != null && mySelectedNomenkl.Equals(value)) return;
+                if (Equals(mySelectedNomenkl,value)) return;
                 SkladOstatki.Clear();
                 RaisePropertyChanged(nameof(SkladOstatki));
                 mySelectedNomenkl = value;
@@ -71,7 +71,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myNomenklCost;
             set
             {
-                if (myNomenklCost != null && myNomenklCost.Equals(value)) return;
+                if (Equals(myNomenklCost,value)) return;
                 myNomenklCost = value;
                 RaisePropertyChanged();
             }

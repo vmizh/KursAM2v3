@@ -46,7 +46,7 @@ namespace KursAM2.ViewModel.Management.Projects
             get => myCurrentProject;
             set
             {
-                if (myCurrentProject != null && myCurrentProject.Equals(value)) return;
+                if (Equals(myCurrentProject,value)) return;
                 myCurrentProject = value;
                 RaisePropertyChanged();
             }

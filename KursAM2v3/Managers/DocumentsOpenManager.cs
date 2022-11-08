@@ -402,7 +402,7 @@ namespace KursAM2.Managers
             {
                 var d = ctx.TD_101.Include(_ => _.SD_101).FirstOrDefault(_ => _.CODE == vm.Code);
                 if (d == null) return;
-                dtx.CurrentBankAccount = dtx.BankAccountCollection.FirstOrDefault(_ => _.BankDC == d.SD_101.VV_ACC_DC);
+                dtx.CurrentBankAccount = dtx.BankAccountCollection.FirstOrDefault(_ => _.DocCode == d.SD_101.VV_ACC_DC);
                 dtx.CurrentPeriods = dtx.Periods.FirstOrDefault(_ =>
                     _.DateStart.Year == d.SD_101.VV_START_DATE.Year && _.PeriodType == PeriodType.Year);
                 dtx.CurrentBankOperations = dtx.BankOperationsCollection.FirstOrDefault(_ => _.Code == vm.Code);

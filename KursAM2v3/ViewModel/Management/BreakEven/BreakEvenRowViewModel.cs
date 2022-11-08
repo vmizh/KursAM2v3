@@ -83,7 +83,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myDateField;
             set
             {
-                if (myDateField.Equals(value)) return;
+                if (Equals(myDateField,value)) return;
                 myDateField = value;
                 RaisePropertyChanged();
             }
@@ -107,7 +107,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myDilerSummaField;
             set
             {
-                if (myDilerSummaField.Equals(value)) return;
+                if (Equals(myDilerSummaField,value)) return;
                 myDilerSummaField = value;
                 RaisePropertyChanged();
             }
@@ -119,7 +119,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myIsUslugaField;
             set
             {
-                if (myIsUslugaField.Equals(value)) return;
+                if (Equals(myIsUslugaField,value)) return;
                 myIsUslugaField = value;
                 RaisePropertyChanged();
             }
@@ -143,7 +143,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myKontrSummaField;
             set
             {
-                if (myKontrSummaField.Equals(value)) return;
+                if (Equals(myKontrSummaField,value)) return;
                 myKontrSummaField = value;
                 RaisePropertyChanged();
             }
@@ -155,7 +155,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myKontrSummaCrsField;
             set
             {
-                if (myKontrSummaCrsField.Equals(value)) return;
+                if (Equals(myKontrSummaCrsField,value)) return;
                 myKontrSummaCrsField = value;
                 RaisePropertyChanged();
             }
@@ -167,7 +167,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myKontrOperSummaCrs;
             set
             {
-                if (myKontrSummaCrsField.Equals(value)) return;
+                if (Equals(myKontrSummaCrsField,value)) return;
                 myKontrSummaCrsField = value;
                 RaisePropertyChanged();
             }
@@ -241,7 +241,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myPriceField;
             set
             {
-                if (myPriceField.Equals(value)) return;
+                if (Equals(myPriceField,value)) return;
                 myPriceField = value;
                 RaisePropertyChanged();
             }
@@ -253,7 +253,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myQuantityField;
             set
             {
-                if (myQuantityField.Equals(value)) return;
+                if (Equals(myQuantityField,value)) return;
                 myQuantityField = value;
                 RaisePropertyChanged();
             }
@@ -277,7 +277,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => mySummaNomenklField;
             set
             {
-                if (mySummaNomenklField.Equals(value)) return;
+                if (Equals(mySummaNomenklField,value)) return;
                 mySummaNomenklField = value;
                 RaisePropertyChanged();
             }
@@ -289,7 +289,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => mySummaNomenklCrsField;
             set
             {
-                if (mySummaNomenklCrsField.Equals(value)) return;
+                if (Equals(mySummaNomenklCrsField,value)) return;
                 mySummaNomenklCrsField = value;
                 RaisePropertyChanged();
             }
@@ -302,7 +302,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myNOMENKLSumWoRevalField;
             set
             {
-                if (myNOMENKLSumWoRevalField.Equals(value)) return;
+                if (Equals(myNOMENKLSumWoRevalField,value)) return;
                 myNOMENKLSumWoRevalField = value;
                 RaisePropertyChanged();
             }
@@ -314,7 +314,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => mySummaOperNomenklField;
             set
             {
-                if (mySummaOperNomenklField.Equals(value)) return;
+                if (Equals(mySummaOperNomenklField,value)) return;
                 mySummaNomenklField = value;
                 RaisePropertyChanged();
             }
@@ -326,7 +326,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => mySummaNomenklCrsField;
             set
             {
-                if (mySummaNomenklCrsField.Equals(value)) return;
+                if (Equals(mySummaNomenklCrsField,value)) return;
                 mySummaNomenklCrsField = value;
                 RaisePropertyChanged();
             }
@@ -339,7 +339,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myNOMENKLOperSumWoRevalField;
             set
             {
-                if (myNOMENKLOperSumWoRevalField.Equals(value)) return;
+                if (Equals(myNOMENKLOperSumWoRevalField,value)) return;
                 myNOMENKLSumWoRevalField = value;
                 RaisePropertyChanged();
             }

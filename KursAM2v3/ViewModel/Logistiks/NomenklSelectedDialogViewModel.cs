@@ -44,7 +44,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentNomenklGroup;
             set
             {
-                if (myCurrentNomenklGroup != null && myCurrentNomenklGroup.Equals(value)) return;
+                if (Equals(myCurrentNomenklGroup,value)) return;
                 myCurrentNomenklGroup = value;
                 LoadNomenklForGroup();
                 RaisePropertyChanged();
@@ -56,7 +56,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurretNomenklGroup;
             set
             {
-                if (myCurretNomenklGroup != null && myCurretNomenklGroup.Equals(value)) return;
+                if (Equals(myCurretNomenklGroup,value)) return;
                 myCurretNomenklGroup = value;
                 RaisePropertyChanged();
             }
@@ -112,7 +112,7 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 SelectedToRemoveNomenkls.Clear();
                 RaisePropertyChanged(nameof(SelectedToRemoveNomenkls));
-                if (myCurrentNomenkl != null && myCurrentNomenkl.Equals(value)) return;
+                if (Equals(myCurrentNomenkl,value)) return;
                 myCurrentNomenkl = value;
                 RaisePropertyChanged();
             }
@@ -125,7 +125,7 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 SelectedToAddNomenkls.Clear();
                 RaisePropertyChanged(nameof(SelectedToAddNomenkls));
-                if (myCurrentSelectedNomenkl != null && myCurrentSelectedNomenkl.Equals(value)) return;
+                if (Equals(myCurrentSelectedNomenkl,value)) return;
                 myCurrentSelectedNomenkl = value;
                 RaisePropertyChanged();
             }

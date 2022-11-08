@@ -582,13 +582,13 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         }
     }
 
-    public InvoiceClient InvoiceClient
+    public InvoiceClientViewModel InvoiceClientViewModel
     {
-        get => myInvoiceClient;
+        get => _myInvoiceClient;
         set
         {
-            if (myInvoiceClient?.DocCode == value?.DocCode) return;
-            myInvoiceClient = value;
+            if (_myInvoiceClient?.DocCode == value?.DocCode) return;
+            _myInvoiceClient = value;
             Entity.DD_SFACT_DC = value?.DocCode;
             RaisePropertyChanged();
         }
@@ -956,7 +956,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
 
     private MaterialDocumentType myDocumentType;
     private SD_24 myEntity;
-    private InvoiceClient myInvoiceClient;
+    private InvoiceClientViewModel _myInvoiceClient;
     private InvoiceProvider myInvoiceProvider;
     private Period myPeriod;
 

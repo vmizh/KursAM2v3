@@ -1,5 +1,6 @@
 ﻿using Core.ViewModel.Base;
 using KursDomain.Documents.Bank;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -26,7 +27,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myBankAccount;
             set
             {
-                if (myBankAccount != null && myBankAccount.Equals(value)) return;
+                if (Equals(myBankAccount,value)) return;
                 myBankAccount = value;
                 RaisePropertyChanged();
             }

@@ -1,34 +1,50 @@
-﻿using KursDomain.ICommon;
-using KursDomain.IReferences;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using Data;
 using Core.Helper;
 using Core.ViewModel.Base;
+using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using System.ComponentModel.DataAnnotations;
-using System;
+using KursDomain.ICommon;
+using KursDomain.IReferences;
 
 namespace KursDomain.References;
+
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq}")]
-public class SDRSchet :  ISDRSchet, IDocCode,  IName, IEqualityComparer<IDocCode>
+public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>
 {
-    [Display(AutoGenerateField = true,Name = "Удален")]
-    public bool IsDeleted { get; set; }
-    [Display(AutoGenerateField = true,Name = "Статья")]
-    public ISDRState SDRState { get; set; }
-    [Display(AutoGenerateField = true,Name = "Под отчет")]
-    public bool IsPodOtchet { get; set; }
-    [Display(AutoGenerateField = true,Name = "Зарплата")]
-    public bool IsEmployeePayment { get; set; }
-    [Display(AutoGenerateField = false,Name = "DocCode")]
+    [Display(AutoGenerateField = false, Name = "DocCode")]
     public decimal DocCode { get; set; }
-    [Display(AutoGenerateField = true,Name = "Наименование")]
+
+    public bool Equals(SDRSchet other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
+    }
+
+    [Display(AutoGenerateField = true, Name = "Наименование")]
     public string Name { get; set; }
-    [Display(AutoGenerateField = true,Name = "Примечание")]
+
+    [Display(AutoGenerateField = true, Name = "Примечание")]
     public string Notes { get; set; }
-    [Display(AutoGenerateField = false,Name = "Описание")]
+
+    [Display(AutoGenerateField = false, Name = "Описание")]
     public string Description => $"Счет дох/расх: {Name}";
+
+    [Display(AutoGenerateField = true, Name = "Удален")]
+    public bool IsDeleted { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Статья")]
+    public ISDRState SDRState { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Под отчет")]
+    public bool IsPodOtchet { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Зарплата")]
+    public bool IsEmployeePayment { get; set; }
+
     public override string ToString()
     {
         return Name;
@@ -50,18 +66,17 @@ public class SDRSchet :  ISDRSchet, IDocCode,  IName, IEqualityComparer<IDocCode
         Name = entity.SHPZ_NAME;
     }
 
-    public bool Equals(IDocCode x, IDocCode y)
+    public override bool Equals(object obj)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((SDRSchet) obj);
     }
 
-    public int GetHashCode(IDocCode obj)
+    public override int GetHashCode()
     {
-        return obj.DocCode.GetHashCode();
+        return DocCode.GetHashCode();
     }
 }
 
@@ -84,7 +99,7 @@ public class SDRSchetViewModel : RSViewModelBase, IEntity<SD_303>
 
     public SDRSchetViewModel(SD_303 entity)
     {
-        Entity = entity ?? new SD_303 { DOC_CODE = -1 };
+        Entity = entity ?? new SD_303 {DOC_CODE = -1};
     }
 
     public new string Name
@@ -135,7 +150,7 @@ public class SDRSchetViewModel : RSViewModelBase, IEntity<SD_303>
 
     public SD_303 DefaultValue()
     {
-        return new SD_303 { DOC_CODE = -1 };
+        return new SD_303 {DOC_CODE = -1};
     }
 
     public SD_303 Entity

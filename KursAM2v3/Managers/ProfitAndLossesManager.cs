@@ -58,7 +58,7 @@ namespace KursAM2.Managers
             get => myProject;
             set
             {
-                if (myProject != null && myProject.Equals(value)) return;
+                if (Equals(myProject,value)) return;
                 myProject = value;
                 if (myProject != null)
                     ProjectIds = getProjectIdsRecursively(myProject.Id);

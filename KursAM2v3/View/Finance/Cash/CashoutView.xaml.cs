@@ -29,12 +29,12 @@ namespace KursAM2.View.Finance.Cash
     public partial class CashOutView : ILayout
     {
         public ButtonEdit AccuredInfoButton;
-        public ButtonEdit KontrSelectButton = new();
+        public ButtonEdit KontrSelectButton = new ButtonEdit();
 
-        public DataLayoutItem NCODEItem = new();
-        public DataLayoutItem SFactNameItem = new();
-        public PopupCalcEdit SumKontrcont = new();
-        public PopupCalcEdit Sumordcont = new();
+        public DataLayoutItem NCODEItem = new DataLayoutItem();
+        public DataLayoutItem SFactNameItem = new DataLayoutItem();
+        public PopupCalcEdit SumKontrcont = new PopupCalcEdit();
+        public PopupCalcEdit Sumordcont = new PopupCalcEdit();
 
         public CashOutView()
         {
@@ -46,7 +46,7 @@ namespace KursAM2.View.Finance.Cash
             MinWidth = 1000;
         }
 
-        public ObservableCollection<Currency> CurrencyList { set; get; } = new();
+        public ObservableCollection<Currency> CurrencyList { set; get; } = new ObservableCollection<Currency>();
 
         public ComboBoxEdit CurrencyItem { get; set; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
@@ -420,7 +420,7 @@ namespace KursAM2.View.Finance.Cash
                     CurrencyItem.IsEnabled = false;
                     break;
                 case CashKontragentType.Bank:
-                    var bank = StandartDialogs.SelectBankAccount();
+                    var bank = StandartDialogs.SelectBankAccount(ctx.Document.Currency);
                     if (bank == null) return;
                     ctx.Document.KONTRAGENT_DC = null;
                     ctx.Document.BankAccount = null;
@@ -431,7 +431,7 @@ namespace KursAM2.View.Finance.Cash
                     ctx.Document.BankAccount = bank;
                     ctx.Document.SPostName = null;
                     ctx.Document.SPOST_DC = null;
-                    ctx.Document.Currency = bank.Currency;
+                    ctx.Document.Currency = bank.Currency as Currency;
                     CurrencyItem.IsEnabled = false;
                     break;
                 case CashKontragentType.Cash:

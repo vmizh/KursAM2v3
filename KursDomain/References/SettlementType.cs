@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
@@ -7,29 +7,22 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class SettlementType : ISettlementType, IDocCode, IName, IEqualityComparer<IDocCode>
+public class SettlementType : ISettlementType, IDocCode, IName, IEquatable<SettlementType>
 {
     public decimal DocCode { get; set; }
 
-    public bool Equals(IDocCode x, IDocCode y)
+    public bool Equals(SettlementType other)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
     }
 
-    public int GetHashCode(IDocCode obj)
-    {
-        return obj.DocCode.GetHashCode();
-    }
-
-    public int? MSType { get; set; }
-    public ISDRSchet SDRSchet { get; set; }
     public string Name { get; set; }
     public string Notes { get; set; }
     public string Description => $"Тип взаимозачета: {Name}";
+    public int? MSType { get; set; }
+    public ISDRSchet SDRSchet { get; set; }
 
     public void LoadFromEntity(SD_77 entity, IReferencesCache refCache)
     {
@@ -42,5 +35,18 @@ public class SettlementType : ISettlementType, IDocCode, IName, IEqualityCompare
     public override string ToString()
     {
         return Name;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((SettlementType) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return DocCode.GetHashCode();
     }
 }

@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Core;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
 using KursDomain;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.Managers.Nomenkl
 {
-    public class NomenklCategoryManager : BaseItemManager<NomenklGroup>
+    public class NomenklCategoryManager : BaseItemManager<NomenklGroupViewModel>
     {
-        public List<NomenklGroup> Load()
+        public List<NomenklGroupViewModel> Load()
         {
-            var ret = new List<NomenklGroup>();
+            var ret = new List<NomenklGroupViewModel>();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -24,7 +22,7 @@ namespace KursAM2.Managers.Nomenkl
                     // ReSharper disable once LoopCanBeConvertedToQuery
                     foreach (var u in ctx.SD_82)
                     {
-                        var n = new NomenklGroup(u) { State = RowStatus.NotEdited };
+                        var n = new NomenklGroupViewModel(u);
                         ret.Add(n);
                     }
                 }
@@ -37,9 +35,9 @@ namespace KursAM2.Managers.Nomenkl
             return ret;
         }
 
-        public override NomenklGroup New(NomenklGroup parent = null)
+        public override NomenklGroupViewModel New(NomenklGroupViewModel parent = null)
         {
-            return new NomenklGroup
+            return new NomenklGroupViewModel
             {
                 DocCode = -1,
                 State = RowStatus.NewRow,
@@ -47,9 +45,9 @@ namespace KursAM2.Managers.Nomenkl
             };
         }
 
-        public override NomenklGroup NewCopy(NomenklGroup u)
+        public override NomenklGroupViewModel NewCopy(NomenklGroupViewModel u)
         {
-            return new NomenklGroup
+            return new NomenklGroupViewModel
             {
                 DocCode = -1,
                 State = RowStatus.NewRow,
@@ -57,7 +55,7 @@ namespace KursAM2.Managers.Nomenkl
             };
         }
 
-        public override bool Save(IEnumerable<NomenklGroup> listProds)
+        public override bool Save(IEnumerable<NomenklGroupViewModel> listProds)
         {
             if (listProds == null || !listProds.Any()) return true;
             using (var ctx = GlobalOptions.GetEntities())
@@ -113,7 +111,7 @@ namespace KursAM2.Managers.Nomenkl
             }
         }
 
-        public override bool Delete(IEnumerable<NomenklGroup> listUnits)
+        public override bool Delete(IEnumerable<NomenklGroupViewModel> listUnits)
         {
             if (listUnits == null || !listUnits.Any()) return true;
             using (var ctx = GlobalOptions.GetEntities())

@@ -1213,16 +1213,16 @@ namespace KursAM2.Managers.Invoices
 
         #region Счет-фактура клиентам
 
-        public static InvoiceClient GetInvoiceClient(decimal docCode)
+        public static InvoiceClientViewModel GetInvoiceClient(decimal docCode)
         {
             //MainReferences.CheckUpdateKontragentAndLoad();
             // ReSharper disable once LocalVariableHidesMember
             decimal dc;
-            if (docCode <= 0) return new InvoiceClient();
+            if (docCode <= 0) return new InvoiceClientViewModel();
             dc = docCode;
             SD_84 data;
             var pDocs = new List<InvoicePaymentDocument>();
-            InvoiceClient document = null;
+            InvoiceClientViewModel document = null;
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -1291,8 +1291,8 @@ namespace KursAM2.Managers.Invoices
                         });
                 }
 
-                document = new InvoiceClient(data);
-                foreach (var item in document.Rows.Cast<InvoiceClientRow>())
+                document = new InvoiceClientViewModel(data);
+                foreach (var item in document.Rows.Cast<InvoiceClientRowViewModel>())
                 {
                     var r = GlobalOptions.GetEntities()
                         .TD_24.Where(_ => _.DDT_SFACT_DC == item.DocCode &&
@@ -1306,9 +1306,9 @@ namespace KursAM2.Managers.Invoices
                 }
 
                 //document.REGISTER_DATE = DateTime.Today;
-                document.DeletedRows = new List<InvoiceClientRow>();
+                document.DeletedRows = new List<InvoiceClientRowViewModel>();
                 foreach (var p in pDocs) document.PaymentDocs.Add(p);
-                foreach (var r in document.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NotEdited;
+                foreach (var r in document.Rows.Cast<InvoiceClientRowViewModel>()) r.myState = RowStatus.NotEdited;
                 document.myState = RowStatus.NotEdited;
             }
             catch (Exception ex)
@@ -1319,9 +1319,9 @@ namespace KursAM2.Managers.Invoices
             return document;
         }
 
-        public static InvoiceClient NewClient()
+        public static InvoiceClientViewModel NewClient()
         {
-            var ret = new InvoiceClient(null)
+            var ret = new InvoiceClientViewModel(null)
             {
                 DocCode = -1,
                 DocDate = DateTime.Today,
@@ -1337,9 +1337,9 @@ namespace KursAM2.Managers.Invoices
             return ret;
         }
 
-        public static InvoiceClient NewClientCopy(InvoiceClient doc)
+        public static InvoiceClientViewModel NewClientCopy(InvoiceClientViewModel doc)
         {
-            InvoiceClient document;
+            InvoiceClientViewModel document;
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var data = ctx
@@ -1356,7 +1356,7 @@ namespace KursAM2.Managers.Invoices
                     .Include("TD_84.TD_24")
                     .Include("TD_84.SD_303")
                     .SingleOrDefault(_ => _.DOC_CODE == doc.DocCode);
-                document = new InvoiceClient(data)
+                document = new InvoiceClientViewModel(data)
                 {
                     DocCode = -1,
                     DocDate = DateTime.Today,
@@ -1369,7 +1369,7 @@ namespace KursAM2.Managers.Invoices
                 };
                 //Currency = GlobalOptions.SystemProfile.NationalCurrency,
                 var newCode = 1;
-                foreach (var item in document.Rows.Cast<InvoiceClientRow>())
+                foreach (var item in document.Rows.Cast<InvoiceClientRowViewModel>())
                 {
                     item.DocCode = -1;
                     item.DocCode = newCode;
@@ -1393,8 +1393,8 @@ namespace KursAM2.Managers.Invoices
                     newCode++;
                 }
 
-                document.DeletedRows = new List<InvoiceClientRow>();
-                foreach (var r in document.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NewRow;
+                document.DeletedRows = new List<InvoiceClientRowViewModel>();
+                foreach (var r in document.Rows.Cast<InvoiceClientRowViewModel>()) r.myState = RowStatus.NewRow;
                 document.PaymentDocs.Clear();
                 document.ShipmentRows.Clear();
             }
@@ -1402,9 +1402,9 @@ namespace KursAM2.Managers.Invoices
             return document;
         }
 
-        public static InvoiceClient NewClientCopy(InvoiceClient doc, ALFAMEDIAEntities ctx)
+        public static InvoiceClientViewModel NewClientCopy(InvoiceClientViewModel doc, ALFAMEDIAEntities ctx)
         {
-            InvoiceClient document;
+            InvoiceClientViewModel document;
             var data = ctx
                 .SD_84
                 .Include(_ => _.SD_431)
@@ -1419,7 +1419,7 @@ namespace KursAM2.Managers.Invoices
                 .Include("TD_84.TD_24")
                 .Include("TD_84.SD_303")
                 .SingleOrDefault(_ => _.DOC_CODE == doc.DocCode);
-            document = new InvoiceClient(data)
+            document = new InvoiceClientViewModel(data)
             {
                 DocCode = -1,
                 DocDate = DateTime.Today,
@@ -1432,7 +1432,7 @@ namespace KursAM2.Managers.Invoices
             };
             //Currency = GlobalOptions.SystemProfile.NationalCurrency,
             var newCode = 1;
-            foreach (var item in document.Rows.Cast<InvoiceClientRow>())
+            foreach (var item in document.Rows.Cast<InvoiceClientRowViewModel>())
             {
                 item.DocCode = -1;
                 item.DocCode = newCode;
@@ -1456,14 +1456,14 @@ namespace KursAM2.Managers.Invoices
                 newCode++;
             }
 
-            document.DeletedRows = new List<InvoiceClientRow>();
-            foreach (var r in document.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NewRow;
+            document.DeletedRows = new List<InvoiceClientRowViewModel>();
+            foreach (var r in document.Rows.Cast<InvoiceClientRowViewModel>()) r.myState = RowStatus.NewRow;
             document.PaymentDocs.Clear();
             document.ShipmentRows.Clear();
             return document;
         }
 
-        public static InvoiceClient NewClientCopy(decimal dc)
+        public static InvoiceClientViewModel NewClientCopy(decimal dc)
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -1482,7 +1482,7 @@ namespace KursAM2.Managers.Invoices
                     .Include("TD_84.SD_303")
                     .SingleOrDefault(_ => _.DOC_CODE == dc);
                 if (d == null) return null;
-                var ret = new InvoiceClient(d)
+                var ret = new InvoiceClientViewModel(d)
                 {
                     DocCode = -1,
                     OuterNumber = null,
@@ -1493,7 +1493,7 @@ namespace KursAM2.Managers.Invoices
                     myState = RowStatus.NewRow
                 };
                 var code = 1;
-                foreach (var row in ret.Rows.Cast<InvoiceClientRow>())
+                foreach (var row in ret.Rows.Cast<InvoiceClientRowViewModel>())
                 {
                     row.DocCode = -1;
                     row.Code = code;
@@ -1524,7 +1524,7 @@ namespace KursAM2.Managers.Invoices
             }
         }
 
-        public static InvoiceClient NewClientRequisite(decimal dc)
+        public static InvoiceClientViewModel NewClientRequisite(decimal dc)
         {
             var ret = NewClientCopy(dc);
             if (ret == null) return null;
@@ -1534,7 +1534,7 @@ namespace KursAM2.Managers.Invoices
             return ret;
         }
 
-        public static InvoiceClient NewClientRequisite(InvoiceClient doc)
+        public static InvoiceClientViewModel NewClientRequisite(InvoiceClientViewModel doc)
         {
             var ret = NewClientCopy(doc.DocCode);
             if (ret == null) return null;
@@ -1552,7 +1552,7 @@ namespace KursAM2.Managers.Invoices
         /// <param name="isUsePayment"></param>
         /// <param name="isAccepted"></param>
         /// <returns></returns>
-        public static List<InvoiceClient> GetInvoicesClient(UnitOfWork<ALFAMEDIAEntities> context = null,
+        public static List<InvoiceClientViewModel> GetInvoicesClient(UnitOfWork<ALFAMEDIAEntities> context = null,
             string searchText = null, bool isUsePayment = false,
             bool isAccepted = false)
         {
@@ -1570,12 +1570,12 @@ namespace KursAM2.Managers.Invoices
         /// <param name="searchText"></param>
         /// <param name="isAccepted"></param>
         /// <returns></returns>
-        public static List<InvoiceClient> GetInvoicesClient(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
+        public static List<InvoiceClientViewModel> GetInvoicesClient(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
             UnitOfWork<ALFAMEDIAEntities> context = null,
             string searchText = null, bool isAccepted = false)
         {
             //MainReferences.CheckUpdateKontragentAndLoad();
-            var ret = new List<InvoiceClient>();
+            var ret = new List<InvoiceClientViewModel>();
             try
             {
                 using (var ctx = context != null ? context.Context : GlobalOptions.GetEntities())
@@ -1690,7 +1690,7 @@ namespace KursAM2.Managers.Invoices
                     foreach (var d in data.OrderByDescending(_ => _.SF_DATE))
                     {
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
-                        var newDoc = new InvoiceClient(d, context, true)
+                        var newDoc = new InvoiceClientViewModel(d, context, true)
                         {
                             State = RowStatus.NotEdited
                         };
@@ -1733,10 +1733,10 @@ namespace KursAM2.Managers.Invoices
             return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
-        public static List<InvoiceClient> GetInvoicesClient(Waybill waybill)
+        public static List<InvoiceClientViewModel> GetInvoicesClient(Waybill waybill)
         {
             //MainReferences.CheckUpdateKontragentAndLoad();
-            var ret = new List<InvoiceClient>();
+            var ret = new List<InvoiceClientViewModel>();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -1792,11 +1792,11 @@ namespace KursAM2.Managers.Invoices
             return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
-        public static List<InvoiceClient> GetInvoicesClient(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
+        public static List<InvoiceClientViewModel> GetInvoicesClient(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
             decimal kontragentDC, bool isAccepted = false)
         {
             //MainReferences.CheckUpdateKontragentAndLoad();
-            var ret = new List<InvoiceClient>();
+            var ret = new List<InvoiceClientViewModel>();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -1842,7 +1842,7 @@ namespace KursAM2.Managers.Invoices
                     foreach (var d in data.OrderByDescending(_ => _.SF_DATE))
                     {
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
-                        var newDoc = new InvoiceClient(d)
+                        var newDoc = new InvoiceClientViewModel(d)
                         {
                             State = RowStatus.NotEdited
                         };
@@ -1910,7 +1910,7 @@ namespace KursAM2.Managers.Invoices
             nomenklManager.RecalcPrice();
         }
 
-        public static decimal SaveClient(InvoiceClient doc, StandartSearchView searchWindow = null)
+        public static decimal SaveClient(InvoiceClientViewModel doc, StandartSearchView searchWindow = null)
         {
             decimal dc;
             using (var ctx = GlobalOptions.GetEntities())
@@ -1958,7 +1958,7 @@ namespace KursAM2.Managers.Invoices
                             if (doc.Rows.Count > 0)
                             {
                                 var code = 1;
-                                foreach (var items in doc.Rows.Cast<InvoiceClientRow>())
+                                foreach (var items in doc.Rows.Cast<InvoiceClientRowViewModel>())
                                 {
                                     ctx.TD_84.Add(new TD_84
                                     {
@@ -2043,7 +2043,7 @@ namespace KursAM2.Managers.Invoices
                             if (doc.Rows.Count > 0)
                             {
                                 var code = doc.Rows.Count > 0 ? doc.Rows.Max(_ => _.Code) : 0;
-                                foreach (var items in doc.Rows.Cast<InvoiceClientRow>())
+                                foreach (var items in doc.Rows.Cast<InvoiceClientRowViewModel>())
                                 {
                                     // ReSharper disable once PossibleNullReferenceException
                                     var docGuid = ctx.SD_84.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode).Id;
@@ -2137,9 +2137,9 @@ namespace KursAM2.Managers.Invoices
 
                         ctx.SaveChanges();
                         dtx.Commit();
-                        foreach (var r in doc.Rows.Cast<InvoiceClientRow>()) r.myState = RowStatus.NotEdited;
+                        foreach (var r in doc.Rows.Cast<InvoiceClientRowViewModel>()) r.myState = RowStatus.NotEdited;
                         doc.myState = RowStatus.NotEdited;
-                        foreach (var r in doc.Rows.Cast<InvoiceClientRow>())
+                        foreach (var r in doc.Rows.Cast<InvoiceClientRowViewModel>())
                         {
                             var sql = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
                                       $" VALUES({CustomFormat.DecimalToSqlDecimal(r.Entity.SFT_NEMENKL_DC)},'20000101')";

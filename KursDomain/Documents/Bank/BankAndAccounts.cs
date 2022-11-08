@@ -11,7 +11,7 @@ namespace KursDomain.Documents.Bank;
 [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
 public class BankAndAccounts : RSViewModelBase
 {
-    private Bank myBank;
+    private References.Bank myBank;
     private decimal? myBankDC;
     private int myCODE;
     private short? myDELETED;
@@ -102,7 +102,7 @@ public class BankAndAccounts : RSViewModelBase
         get => myBankDC;
     }
 
-    public Bank Bank
+    public References.Bank Bank
     {
         get => myBank;
         set

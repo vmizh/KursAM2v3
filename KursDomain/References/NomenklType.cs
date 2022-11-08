@@ -1,15 +1,23 @@
-﻿using KursDomain.ICommon;
-using KursDomain.IReferences.Nomenkl;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using Data;
+using KursDomain.ICommon;
+using KursDomain.IReferences.Nomenkl;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class NomenklType : IDocCode, IName, INomenklType, IEqualityComparer<IDocCode>
+public class NomenklType : IDocCode, IName, INomenklType, IEquatable<NomenklType>
 {
     public decimal DocCode { get; set; }
+
+    public bool Equals(NomenklType other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
+    }
+
     public string Name { get; set; }
     public string Notes { get; set; }
     public string Description => $"Тип продукции: {Name}";
@@ -33,17 +41,16 @@ public class NomenklType : IDocCode, IName, INomenklType, IEqualityComparer<IDoc
         IsDeleted = entity.MC_DELETED == 1;
     }
 
-    public bool Equals(IDocCode x, IDocCode y)
+    public override bool Equals(object obj)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((NomenklType) obj);
     }
 
-    public int GetHashCode(IDocCode obj)
+    public override int GetHashCode()
     {
-        return obj.DocCode.GetHashCode();
+        return DocCode.GetHashCode();
     }
 }

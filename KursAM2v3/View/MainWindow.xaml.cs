@@ -59,8 +59,6 @@ using KursAM2.ViewModel.Signatures;
 using KursAM2.ViewModel.StartLogin;
 using KursAM2.ViewModel.StockHolder;
 using KursDomain;
-using KursDomain.DBContext;
-using KursDomain.References;
 using LayoutManager;
 using NomenklCostReset = KursAM2.View.Logistiks.NomenklCostReset;
 
@@ -85,7 +83,7 @@ namespace KursAM2.View
         {
             try
             {
-                InitializeComponent(); 
+                InitializeComponent();
                 ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
 #if (!DEBUG)
                 myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, 1000 * 360 * 3, Timeout.Infinite);
@@ -194,7 +192,7 @@ namespace KursAM2.View
                     //Справочник валют
                     case "Справочник валют":
                         var crsref = new CurrencyReferenceWindowViewModel();
-                        var formcrs = new KursStandartFormView()
+                        var formcrs = new KursStandartFormView
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = crsref
@@ -221,7 +219,7 @@ namespace KursAM2.View
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = sholda
-                        }; 
+                        };
                         sholda.Form = form;
                         form.Show();
                         break;
@@ -241,7 +239,7 @@ namespace KursAM2.View
                     //Реестр акционеров
                     case "Реестр акционеров":
                         var shold = new StockHolderReestrWindowViewModel();
-                        form = new StockHolderReestrView()
+                        form = new StockHolderReestrView
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = shold
@@ -369,11 +367,11 @@ namespace KursAM2.View
                     case "Лицевые счета контрагентов":
                         form = new KontragentBalansForm
                         {
-                            Owner = Application.Current.MainWindow, 
+                            Owner = Application.Current.MainWindow
                         };
                         var ctxk = new KontragentBalansWindowViewModel
                         {
-                            Form = form,
+                            Form = form
                         };
                         form.DataContext = ctxk;
                         form.Show();
@@ -463,9 +461,9 @@ namespace KursAM2.View
                     case "Расходные накладные для клиентов":
                         form = new StandartSearchView
                         {
-                            Owner = Application.Current.MainWindow,
+                            Owner = Application.Current.MainWindow
                         };
-                        var ctxNaklad = new WaybillSearchViewModel()
+                        var ctxNaklad = new WaybillSearchViewModel
                         {
                             Form = form
                         };
@@ -945,7 +943,7 @@ namespace KursAM2.View
                         form = new TreeListFormBaseView
                         {
                             DataContext = ctxcatprod,
-                            LayoutManagerName = "NomenklCategory",
+                            LayoutManagerName = "NomenklGroup",
                             Owner = Application.Current.MainWindow
                         };
                         ctxcatprod.Form = form;
@@ -1068,13 +1066,9 @@ namespace KursAM2.View
             {
                 dtx.SearchText = null;
                 dtx.CurrentDocumentTiles.Clear();
-                foreach (var tile in tileDocumentItems.Children.Cast<Tile>())
-                {
-                    dtx.CurrentDocumentTiles.Add(tile);
-                }
+                foreach (var tile in tileDocumentItems.Children.Cast<Tile>()) dtx.CurrentDocumentTiles.Add(tile);
             }
         }
-
 
 
         private void RemoveFromFun(object sender, RoutedEventArgs e)
@@ -1240,7 +1234,8 @@ namespace KursAM2.View
                         tileMainGroup.Children.Add(newTileGroup);
                     }
 
-                    Title = $"Курс АМ2. {GlobalOptions.DataBaseName} {GlobalOptions.Version} {GlobalOptions.VersionType}";
+                    Title =
+                        $"Курс АМ2. {GlobalOptions.DataBaseName} {GlobalOptions.Version} {GlobalOptions.VersionType}";
                 }
             }
             catch (Exception ex)
@@ -1257,7 +1252,6 @@ namespace KursAM2.View
                     .FirstOrDefault(_ => _.UserId == GlobalOptions.UserInfo.KursId
                                          && _.DbId == GlobalOptions.DataBaseId && _.MenuId == (int)e.Tile.Tag);
                 if (menuItem == null)
-                {
                     ctx.LastMenuUserSearch.Add(new LastMenuUserSearch
                     {
                         Id = Guid.NewGuid(),
@@ -1267,14 +1261,12 @@ namespace KursAM2.View
                         LastOpen = DateTime.Now,
                         OpenCount = 1
                     });
-                }
                 else
-                {
                     menuItem.OpenCount++;
-                }
 
                 ctx.SaveChanges();
             }
+
             OpenWindow(e.Tile.Header as string);
         }
 
@@ -1379,7 +1371,7 @@ namespace KursAM2.View
             var context = new MenuSearchWindowViewModel();
             var frm = new MenuSearchView
             {
-               // Owner = Application.Current.MainWindow,
+                // Owner = Application.Current.MainWindow,
                 DataContext = context
             };
             frm.Show();

@@ -12,22 +12,15 @@ using KursDomain.IReferences.Nomenkl;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class Unit : IUnit, IDocCode, IName, IEqualityComparer<IDocCode>
+public class Unit : IUnit, IDocCode, IName, IEquatable<Unit>
 {
     public decimal DocCode { get; set; }
 
-    public bool Equals(IDocCode x, IDocCode y)
+    public bool Equals(Unit other)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
-    }
-
-    public int GetHashCode(IDocCode obj)
-    {
-        return obj.DocCode.GetHashCode();
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
     }
 
     public string Name { get; set; }
@@ -53,6 +46,19 @@ public class Unit : IUnit, IDocCode, IName, IEqualityComparer<IDocCode>
         Name = entity.ED_IZM_NAME;
         OKEI = entity.ED_IZM_OKEI;
         OKEI_Code = entity.ED_IZM_OKEI_CODE;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((Unit) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return DocCode.GetHashCode();
     }
 }
 

@@ -12,7 +12,7 @@ namespace KursDomain.References;
 ///     Касса
 /// </summary>
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class CashBox : ICashBox, IDocCode, IName, IEqualityComparer<IDocCode>
+public class CashBox : ICashBox, IDocCode, IName, IEquatable<CashBox>
 {
     public ICurrency DefaultCurrency { get; set; }
     public bool IsNegativeRests { get; set; }
@@ -22,18 +22,11 @@ public class CashBox : ICashBox, IDocCode, IName, IEqualityComparer<IDocCode>
     public IEnumerable<ICashBoxStartRests> StartRests { get; set; }
     public decimal DocCode { get; set; }
 
-    public bool Equals(IDocCode x, IDocCode y)
+    public bool Equals(CashBox other)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
-    }
-
-    public int GetHashCode(IDocCode obj)
-    {
-        return obj.DocCode.GetHashCode();
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return DocCode == other.DocCode;
     }
 
     public string Name { get; set; }
@@ -60,6 +53,19 @@ public class CashBox : ICashBox, IDocCode, IName, IEqualityComparer<IDocCode>
             //var rests = 
         }
     }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((CashBox) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return DocCode.GetHashCode();
+    }
 }
 
 [DebuggerDisplay("{DocCode,nq} {Currency,nq} {SummaStart,nq} {DateStart.ToShortDateString(),nq}")]
@@ -69,12 +75,13 @@ public class CashBoxStartRests : ICashBoxStartRests, IName, IEqualityComparer<Ca
     {
         CashBox = cashBox;
     }
+
     public CashBoxStartRests()
     {
     }
 
     // ReSharper disable once UnusedAutoPropertyAccessor.Local
-    private ICashBox CashBox { set; get; }
+    private ICashBox CashBox { get; }
     public decimal DocCode { get; set; }
     public decimal Code { get; set; }
     public ICurrency Currency { get; set; }
@@ -107,7 +114,7 @@ public class CashBoxStartRests : ICashBoxStartRests, IName, IEqualityComparer<Ca
     {
         return $"{SummaStart} {Currency}";
     }
-    
+
     public void LoadFromEntity(TD_22 entity)
     {
         DocCode = entity.DOC_CODE;

@@ -11,17 +11,17 @@ namespace KursAM2.Repositories.InvoicesRepositories
 {
     public interface IInvoiceClientRepository
     {
-        InvoiceClient GetById(Guid id);
-        InvoiceClient GetByDocCode(decimal dc);
-        InvoiceClient GetFullCopy(InvoiceClient doc);
-        InvoiceClient GetRequisiteCopy(InvoiceClient doc);
-        InvoiceClient GetFullCopy(decimal dc);
-        InvoiceClient GetRequisiteCopy(decimal dc);
+        InvoiceClientViewModel GetById(Guid id);
+        InvoiceClientViewModel GetByDocCode(decimal dc);
+        InvoiceClientViewModel GetFullCopy(InvoiceClientViewModel doc);
+        InvoiceClientViewModel GetRequisiteCopy(InvoiceClientViewModel doc);
+        InvoiceClientViewModel GetFullCopy(decimal dc);
+        InvoiceClientViewModel GetRequisiteCopy(decimal dc);
         void Delete(SD_84 entity);
         List<IInvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd);
     }
 
-    public class InvoiceClientRepository : GenericKursDBRepository<InvoiceClient>, IInvoiceClientRepository
+    public class InvoiceClientRepository : GenericKursDBRepository<InvoiceClientViewModel>, IInvoiceClientRepository
     {
         public InvoiceClientRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {
@@ -31,34 +31,34 @@ namespace KursAM2.Repositories.InvoicesRepositories
         {
         }
 
-        public InvoiceClient GetById(Guid id)
+        public InvoiceClientViewModel GetById(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public InvoiceClient GetByDocCode(decimal dc)
+        public InvoiceClientViewModel GetByDocCode(decimal dc)
         {
             DetachObjects();
-            return new InvoiceClient(Context.SD_84
+            return new InvoiceClientViewModel(Context.SD_84
                 .FirstOrDefault(_ => _.DOC_CODE == dc), new UnitOfWork<ALFAMEDIAEntities>(),true);
         }
 
-        public InvoiceClient GetFullCopy(InvoiceClient doc)
+        public InvoiceClientViewModel GetFullCopy(InvoiceClientViewModel doc)
         {
             throw new NotImplementedException();
         }
 
-        public InvoiceClient GetRequisiteCopy(InvoiceClient doc)
+        public InvoiceClientViewModel GetRequisiteCopy(InvoiceClientViewModel doc)
         {
             throw new NotImplementedException();
         }
 
-        public InvoiceClient GetFullCopy(decimal dc)
+        public InvoiceClientViewModel GetFullCopy(decimal dc)
         {
             throw new NotImplementedException();
         }
 
-        public InvoiceClient GetRequisiteCopy(decimal dc)
+        public InvoiceClientViewModel GetRequisiteCopy(decimal dc)
         {
             throw new NotImplementedException();
         }

@@ -10,6 +10,7 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.Managers;
 using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 
@@ -131,7 +132,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             else
             {
                 var manager = new BankOperationsManager();
-                foreach (var c in MainReferences.BankAccounts.Values.Where(_ => _.Currency.DocCode == currency.DocCode))
+                foreach (var c in MainReferences.BankAccounts.Values.Where(_ => ((IDocCode)_.Currency).DocCode == currency.DocCode))
                     ObjectList.Add(new CashBankItem
                     {
                         DocCode = c.DocCode,

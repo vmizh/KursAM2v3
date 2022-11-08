@@ -39,7 +39,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentNomenkl;
             set
             {
-                if (myCurrentNomenkl != null && myCurrentNomenkl.Equals(value)) return;
+                if (Equals(myCurrentNomenkl,value)) return;
                 myCurrentNomenkl = value;
                 if (myCurrentNomenkl != null)
                     try
@@ -171,7 +171,7 @@ namespace KursAM2.ViewModel.Logistiks
         //                            NOM_SALE_CRS_DC = nom.Currency.DocCode,
         //                            NOM_FULL_NAME = nom.NameFull,
         //                            NOM_ED_IZM_DC = MainNomenkl.Unit.DocCode,
-        //                            NOM_CATEG_DC = MainNomenkl.NomenklCategory.DocCode,
+        //                            NOM_CATEG_DC = MainNomenkl.NomenklGroup.DocCode,
         //                            NOM_0MATER_1USLUGA = MainNomenkl.IsUsluga ? 1 : 0,
         //                            NOM_1PROD_0MATER = 0,
         //                            NOM_1NAKLRASH_0NO = MainNomenkl.IsNakladExpense ? 1 : 0,
@@ -229,7 +229,7 @@ namespace KursAM2.ViewModel.Logistiks
                                         NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode,
                                         NOM_FULL_NAME = nom.NameFull ?? nom.Name,
                                         NOM_ED_IZM_DC = ((IDocCode)MainNomenkl.Unit).DocCode,
-                                        NOM_CATEG_DC = MainNomenkl.NomenklCategory.DocCode,
+                                        NOM_CATEG_DC = MainNomenkl.NomenklGroup.DocCode,
                                         NOM_0MATER_1USLUGA = MainNomenkl.IsUsluga ? 1 : 0,
                                         NOM_1PROD_0MATER = 0,
                                         NOM_1NAKLRASH_0NO = MainNomenkl.IsNakladExpense ? 1 : 0,
@@ -283,7 +283,7 @@ namespace KursAM2.ViewModel.Logistiks
                 MainId = MainNomenkl.Id,
                 Id = Guid.NewGuid(),
                 IsDeleted = false,
-                Group = MainNomenkl.NomenklCategory,
+                Group = GlobalOptions.ReferencesCache.GetNomenklGroup(MainNomenkl.NomenklGroup.DocCode) as NomenklGroup,
                 IsUsluga = MainNomenkl.IsUsluga,
                 IsNaklRashod = MainNomenkl.IsNakladExpense,
                 State = RowStatus.NewRow

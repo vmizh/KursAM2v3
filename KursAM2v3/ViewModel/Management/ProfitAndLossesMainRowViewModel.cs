@@ -366,7 +366,7 @@ namespace KursAM2.ViewModel.Management
             set
             {
                 if (myProfitAndLossesExtendRowViewModel != null &&
-                    myProfitAndLossesExtendRowViewModel.Equals(value)) return;
+                    Equals(myProfitAndLossesExtendRowViewModel,value)) return;
                 myProfitAndLossesExtendRowViewModel = value;
                 RaisePropertyChanged();
             }

@@ -27,8 +27,6 @@ using KursDomain.Documents.Periods;
 using KursDomain.Documents.StockHolder;
 using KursDomain.Documents.Systems;
 using KursDomain.References;
-using Bank = KursDomain.Documents.Bank.Bank;
-using BankAccount = KursDomain.Documents.Bank.BankAccount;
 using Employee = KursDomain.Documents.Employee.Employee;
 using Project = KursDomain.Documents.CommonReferences.Project;
 using Region = KursDomain.Documents.CommonReferences.Region;
@@ -255,9 +253,9 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentProject;
         }
 
-        public static BankAccount SelectBankAccount()
+        public static BankAccount SelectBankAccount(Currency crs)
         {
-            var ctx = new BankAccountSelectedDialog();
+            var ctx = new BankAccountSelectedDialog(crs);
             var dlg = new SelectDialogView { DataContext = ctx };
             ctx.Form = dlg;
             dlg.ShowDialog();
@@ -396,7 +394,7 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
-        public static InvoiceClient SelectInvoiceClient(CashInWindowViewModel cashIn, bool isUsePayment,
+        public static InvoiceClientViewModel SelectInvoiceClient(CashInWindowViewModel cashIn, bool isUsePayment,
             bool isUseAccepted)
         {
             if (cashIn == null) return null;
@@ -407,7 +405,7 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
-        public static InvoiceClient SelectInvoiceClient(Waybill waybill)
+        public static InvoiceClientViewModel SelectInvoiceClient(Waybill waybill)
         {
             if (waybill == null) return null;
             var ctx = new InvoiceClientSearchDialog(waybill);
@@ -417,7 +415,7 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
-        public static InvoiceClient SelectInvoiceClient(bool isUsePayment, bool isUseAccepted)
+        public static InvoiceClientViewModel SelectInvoiceClient(bool isUsePayment, bool isUseAccepted)
         {
             var ctx = new InvoiceClientSearchDialog(isUsePayment, isUseAccepted);
             var dlg = new SelectDialogView { DataContext = ctx };
@@ -426,7 +424,7 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
-        public static InvoiceClient SelectInvoiceClient(decimal kontrDC, bool isUsePayment, bool isUseAccepted)
+        public static InvoiceClientViewModel SelectInvoiceClient(decimal kontrDC, bool isUsePayment, bool isUseAccepted)
         {
             var ctx = new InvoiceClientSearchDialog(kontrDC, isUsePayment, isUseAccepted);
             var dlg = new SelectDialogView { DataContext = ctx };
@@ -446,7 +444,7 @@ namespace KursAM2.Dialogs
                 {
                     if (ctx.CurrentClientItem != null)
                     {
-                        var doc = new InvoiceClient(dbctx.SD_84.First(_ =>
+                        var doc = new InvoiceClientViewModel(dbctx.SD_84.First(_ =>
                             _.DOC_CODE == ctx.CurrentClientItem.DocCode));
                         return doc;
                     }
@@ -475,7 +473,7 @@ namespace KursAM2.Dialogs
                 {
                     if (ctx.CurrentClientItem != null)
                     {
-                        var doc = new InvoiceClient(dbctx.SD_84.First(_ =>
+                        var doc = new InvoiceClientViewModel(dbctx.SD_84.First(_ =>
                             _.DOC_CODE == ctx.CurrentClientItem.DocCode));
                         return doc;
                     }

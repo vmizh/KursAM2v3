@@ -69,7 +69,7 @@ namespace KursAM2.Tests
             get => myCurrentPeriod;
             set
             {
-                if (myCurrentPeriod != null && myCurrentPeriod.Equals(value)) return;
+                if (Equals(myCurrentPeriod,value)) return;
                 myCurrentPeriod = value;
                 if (myCurrentPeriod == null) return;
                 // ReSharper disable once UnusedVariable

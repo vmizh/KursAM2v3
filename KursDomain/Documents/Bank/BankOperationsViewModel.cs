@@ -116,8 +116,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
         }
     }
 
-    public bool IsCurrencyRateNotCanSet =>
-        BankAccount.Currency.DocCode == GlobalOptions.SystemProfile.NationalCurrency.DocCode;
+    public bool IsCurrencyRateNotCanSet => Equals(BankAccount.Currency, GlobalOptions.SystemProfile.NationalCurrency);
 
     public override decimal DocCode
     {
@@ -807,8 +806,8 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
         if (Kontragent != null) return Kontragent.Name;
         if (CashIn != null) return CashIn.Cash.Name;
         if (CashOut != null) return CashOut.ToString();
-        if (BankAccountIn != null) return BankAccountIn.BankName + " " + BankAccountIn.Account;
-        if (BankAccountOut != null) return BankAccountOut.BankName + " " + BankAccountOut.Account;
+        if (BankAccountIn != null) return BankAccountIn.Name + " " + BankAccountIn.RashAccount;
+        if (BankAccountOut != null) return BankAccountOut.Name + " " + BankAccountOut.RashAccount;
         return null;
     }
 

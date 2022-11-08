@@ -23,7 +23,7 @@ namespace Updater
                     var pr = Process.GetProcessById(Convert.ToInt32(args[4]));
                     pr.Kill();
                     Thread.Sleep(5000);
-                    var ShowMsgResult = MessageBox.Show("Есть открытые экземпляры KursAM2v3. Закройте их вручную и продолжите обновление, " +
+                    var ShowMsgResult = MessageBox.Show("Есть открытые экземпляры KursAM2v4. Закройте их вручную и продолжите обновление, " +
                         "при подтверждении они будут закрыты автоматически. Продолжить обновление?",
                         "Запрос на обновление программы",  MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                     if (ShowMsgResult == DialogResult.Cancel)

@@ -12,7 +12,6 @@ using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.ICommon;
 using KursDomain.References;
-using BankAccount = KursDomain.Documents.Bank.BankAccount;
 
 namespace KursAM2.ViewModel.Finance.controls
 {
@@ -53,7 +52,7 @@ namespace KursAM2.ViewModel.Finance.controls
             decimal rate = 1;
             // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (row.Currency == null)
-                row.Currency = bankAcc.Currency;
+                row.Currency = bankAcc.Currency as Currency;
             if (row.Currency.DocCode != GlobalOptions.SystemProfile.NationalCurrency.DocCode)
             {
                 var rates = CurrencyRate.GetRate(DateTime.Today);
@@ -67,7 +66,7 @@ namespace KursAM2.ViewModel.Finance.controls
                 Code = row.Code,
                 BankAccount = bankAcc,
                 Date = isNew ? DateTime.Today : row.Date,
-                Currency = bankAcc.Currency,
+                Currency = bankAcc.Currency as Currency,
                 Kontragent = row.Kontragent,
                 BankOperationType = row.BankOperationType,
                 BankAccountOut = row.BankAccountOut,
@@ -97,7 +96,7 @@ namespace KursAM2.ViewModel.Finance.controls
             get => myBankAccount;
             set
             {
-                if (myBankAccount != null && myBankAccount.Equals(value)) return;
+                if (Equals(myBankAccount,value)) return;
                 myBankAccount = value;
                 RaisePropertyChanged();
             }
@@ -216,7 +215,7 @@ namespace KursAM2.ViewModel.Finance.controls
         {
             set
             {
-                if (myCurrentBankOperations != null && myCurrentBankOperations.Equals(value)) return;
+                if (Equals(myCurrentBankOperations,value)) return;
                 myCurrentBankOperations = value;
                 RaisePropertyChanged();
             }
@@ -229,7 +228,7 @@ namespace KursAM2.ViewModel.Finance.controls
             set
             {
                 if (myCurrentBankOperations.myBankAccountOut != null &&
-                    myCurrentBankOperations.myBankAccountOut.Equals(value)) return;
+                    Equals(myCurrentBankOperations.myBankAccountOut, value)) return;
                 myCurrentBankOperations.myBankAccountOut = value;
                 RaisePropertyChanged();
             }
@@ -256,7 +255,7 @@ namespace KursAM2.ViewModel.Finance.controls
             set
             {
                 if (myCurrentBankOperations.myBankAccountIn != null &&
-                    myCurrentBankOperations.myBankAccountIn.Equals(value)) return;
+                    Equals(myCurrentBankOperations.myBankAccountIn,value)) return;
                 myCurrentBankOperations.myBankAccountIn = value;
                 RaisePropertyChanged();
             }

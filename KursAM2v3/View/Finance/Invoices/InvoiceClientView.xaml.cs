@@ -49,7 +49,7 @@ namespace KursAM2.View.Finance.Invoices
             // ReSharper disable once LocalNameCapturedOnly
             // ReSharper disable once RedundantAssignment
             // ReSharper disable once EntityNameCapturedOnly.Local
-            var inv = new InvoiceClientRow();
+            var inv = new InvoiceClientRowViewModel();
             switch (e.Column.Name)
             {
                 case nameof(inv.Nomenkl):

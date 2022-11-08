@@ -15,8 +15,6 @@ using KursDomain.Documents.NomenklManagement;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
 using KursDomain.References;
-using Bank = KursDomain.Documents.Bank.Bank;
-using BankAccount = KursDomain.Documents.Bank.BankAccount;
 using ContractType = KursDomain.Documents.Dogovora.ContractType;
 using DeliveryCondition = KursDomain.Documents.NomenklManagement.DeliveryCondition;
 using Employee = KursDomain.Documents.Employee.Employee;
@@ -457,7 +455,7 @@ public static class MainReferences
             }
 
             // ReSharper disable once PossibleInvalidOperationException
-            KontragentLastUpdate = (DateTime)AllKontragents.Values.Select(_ => _.UpdateDate).Max();
+            KontragentLastUpdate = (DateTime) AllKontragents.Values.Select(_ => _.UpdateDate).Max();
         }
         catch (Exception)
         {
@@ -504,7 +502,7 @@ public static class MainReferences
                 }
                 else
                 {
-                    ContractTypes.Add(item.DOC_CODE, new ContractType(item) { myState = RowStatus.NotEdited });
+                    ContractTypes.Add(item.DOC_CODE, new ContractType(item) {myState = RowStatus.NotEdited});
                 }
 
             #endregion
@@ -522,7 +520,7 @@ public static class MainReferences
                 else
                 {
                     ClientKategory.Add(item.DOC_CODE,
-                        new CategoryClientTypeViewModel(item) { myState = RowStatus.NotEdited });
+                        new CategoryClientTypeViewModel(item) {myState = RowStatus.NotEdited});
                 }
 
             #endregion
@@ -570,7 +568,7 @@ public static class MainReferences
                 }
                 else
                 {
-                    MutualTypes.Add(item.DOC_CODE, new SD_111ViewModel(item) { myState = RowStatus.NotEdited });
+                    MutualTypes.Add(item.DOC_CODE, new SD_111ViewModel(item) {myState = RowStatus.NotEdited});
                 }
 
             var keys = MutualTypes.Keys.ToList();
@@ -668,7 +666,7 @@ public static class MainReferences
                 else
                 {
                     VzaimoraschetTypes.Add(item.DOC_CODE,
-                        new VzaimoraschetType(item) { myState = RowStatus.NotEdited });
+                        new VzaimoraschetType(item) {myState = RowStatus.NotEdited});
                 }
 
             keys = VzaimoraschetTypes.Keys.ToList();
@@ -717,7 +715,7 @@ public static class MainReferences
                 }
                 else
                 {
-                    Countries.Add(item.Iso, new CountriesViewModel(item) { myState = RowStatus.NotEdited });
+                    Countries.Add(item.Iso, new CountriesViewModel(item) {myState = RowStatus.NotEdited});
                 }
 
             keys = Countries.Keys.ToList();
@@ -791,12 +789,13 @@ public static class MainReferences
                 if (NomenklGroups.ContainsKey(item.DOC_CODE))
                 {
                     var d = NomenklGroups[item.DOC_CODE];
-                    d.UpdateFrom(item);
-                    d.myState = RowStatus.NotEdited;
+                    d.LoadFromEntity(item);
                 }
                 else
                 {
-                    NomenklGroups.Add(item.DOC_CODE, new NomenklGroup(item) { myState = RowStatus.NotEdited });
+                    var newItem = new NomenklGroup();
+                    newItem.LoadFromEntity(item);
+                    NomenklGroups.Add(item.DOC_CODE, newItem);
                 }
 
             keys = NomenklGroups.Keys.ToList();
@@ -821,7 +820,7 @@ public static class MainReferences
                 else
                 {
                     NomenklTypes.Add(item.DOC_CODE,
-                        new NomenklProductType(item) { myState = RowStatus.NotEdited });
+                        new NomenklProductType(item) {myState = RowStatus.NotEdited});
                 }
 
             keys = NomenklTypes.Keys.ToList();
@@ -845,7 +844,7 @@ public static class MainReferences
                 }
                 else
                 {
-                    Employees.Add(item.DOC_CODE, new Employee(item) { myState = RowStatus.NotEdited });
+                    Employees.Add(item.DOC_CODE, new Employee(item) {myState = RowStatus.NotEdited});
                 }
 
             keys = Employees.Keys.ToList();
@@ -869,7 +868,7 @@ public static class MainReferences
                 }
                 else
                 {
-                    Warehouses.Add(item.DOC_CODE, new Warehouse(item) { myState = RowStatus.NotEdited });
+                    Warehouses.Add(item.DOC_CODE, new Warehouse(item) {myState = RowStatus.NotEdited});
                 }
 
             keys = Warehouses.Keys.ToList();
@@ -894,7 +893,7 @@ public static class MainReferences
                 }
                 else
                 {
-                    Projects.Add(item.Id, new Project(item) { myState = RowStatus.NotEdited });
+                    Projects.Add(item.Id, new Project(item) {myState = RowStatus.NotEdited});
                 }
 
             var keys1 = Projects.Keys.ToList();
@@ -912,27 +911,29 @@ public static class MainReferences
             foreach (var item in s114)
                 if (BankAccounts.ContainsKey(item.DOC_CODE))
                 {
-                    var bank = new Bank(item.SD_44);
+                    var bank = new Bank();
+                    bank.LoadFromEntity(item.SD_44);
                     var d = BankAccounts[item.DOC_CODE];
-                    d.Name = $"{bank.Name} Cч.№{item.BA_RASH_ACC} {Currencies[(decimal)item.CurrencyDC]}";
-                    d.BankDC = item.BA_BANKDC;
+                    d.Name = $"{bank.Name} Cч.№{item.BA_RASH_ACC} {Currencies[(decimal) item.CurrencyDC]}";
+                    //d.BankDC = item.BA_BANKDC;
                     d.Bank = bank;
-                    d.Account = item.BA_RASH_ACC;
-                    d.myState = RowStatus.NotEdited;
-                    d.Currency = item.CurrencyDC != null ? Currencies[(decimal)item.CurrencyDC] : null;
+                    //d.Account = item.BA_RASH_ACC;
+                    //d.myState = RowStatus.NotEdited;
+                    d.Currency = item.CurrencyDC != null ? Currencies[(decimal) item.CurrencyDC] : null;
                 }
                 else
                 {
-                    var bank = new Bank(item.SD_44);
+                    var bank = new Bank();
+                    bank.LoadFromEntity(item.SD_44);
                     BankAccounts.Add(item.DOC_CODE, new BankAccount
                     {
                         DocCode = item.DOC_CODE,
-                        BankDC = item.BA_BANKDC,
+                        //BankDC = item.BA_BANKDC,
                         Bank = bank,
-                        Name = $"{bank.Name} Cч.№{item.BA_RASH_ACC} {Currencies[(decimal)item.CurrencyDC]}",
-                        Account = item.BA_RASH_ACC,
-                        myState = RowStatus.NotEdited,
-                        Currency = item.CurrencyDC != null ? Currencies[(decimal)item.CurrencyDC] : null
+                        Name = $"{bank.Name} Cч.№{item.BA_RASH_ACC} {Currencies[(decimal) item.CurrencyDC]}",
+                        //Account = item.BA_RASH_ACC,
+                        //myState = RowStatus.NotEdited,
+                        Currency = item.CurrencyDC != null ? Currencies[(decimal) item.CurrencyDC] : null
                     });
                 }
 
@@ -990,7 +991,7 @@ public static class MainReferences
                 }
                 else
                 {
-                    Regions.Add(item.DOC_CODE, new Region(item) { myState = RowStatus.NotEdited });
+                    Regions.Add(item.DOC_CODE, new Region(item) {myState = RowStatus.NotEdited});
                 }
 
             keys = Regions.Keys.ToList();
@@ -1050,10 +1051,10 @@ public static class MainReferences
                 n.Currency = GetCurrency(d.NOM_SALE_CRS_DC);
                 n.Id = d.Id;
                 // ReSharper disable once PossibleInvalidOperationException
-                n.MainId = (Guid)d.MainId;
+                n.MainId = (Guid) d.MainId;
                 n.UpdateDate = d.UpdateDate;
                 n.IsUsluga = d.NOM_0MATER_1USLUGA == 1;
-                n.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
+                n.Group = GlobalOptions.ReferencesCache.GetNomenklGroup(d.NOM_CATEG_DC);
                 n.ProductType = GlobalOptions.ReferencesCache.GetProductType(d.NOM_PRODUCT_DC);
                 n.IsCurrencyTransfer = d.IsCurrencyTransfer;
             }
@@ -1076,7 +1077,7 @@ public static class MainReferences
                 }, null);
                 newNom.Unit = Units[d.UNIT_DC];
                 newNom.Currency = Currencies[d.NOM_SALE_CRS_DC];
-                newNom.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
+                newNom.Group = GlobalOptions.ReferencesCache.GetNomenklGroup(d.NOM_CATEG_DC);
                 ALLNomenkls.Add(d.DOC_CODE, newNom);
             }
 
@@ -1115,7 +1116,7 @@ public static class MainReferences
         }, null);
         newNom.Unit = Units[d.UNIT_DC];
         newNom.Currency = Currencies[d.NOM_SALE_CRS_DC];
-        newNom.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
+        newNom.Group = GlobalOptions.ReferencesCache.GetNomenklGroup(d.NOM_CATEG_DC);
         ALLNomenkls.Add(d.DOC_CODE, newNom);
     }
 
@@ -1152,7 +1153,7 @@ public static class MainReferences
         }, null);
         newNom.Unit = Units[d.UNIT_DC];
         newNom.Currency = Currencies[d.NOM_SALE_CRS_DC];
-        newNom.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
+        newNom.Group = GlobalOptions.ReferencesCache.GetNomenklGroup(d.NOM_CATEG_DC);
         ALLNomenkls.Add(d.DOC_CODE, newNom);
     }
 
@@ -1192,7 +1193,7 @@ public static class MainReferences
                 }, null);
                 newNom.Unit = Units[d.UNIT_DC];
                 newNom.Currency = Currencies[d.NOM_SALE_CRS_DC];
-                newNom.Category = GlobalOptions.ReferencesCache.GetNomenklCategory(d.NOM_CATEG_DC);
+                newNom.Group = GlobalOptions.ReferencesCache.GetNomenklGroup(d.NOM_CATEG_DC);
                 ALLNomenkls.Add(d.DOC_CODE, newNom);
             }
             // ReSharper disable once PossibleInvalidOperationException
@@ -1245,7 +1246,7 @@ public static class MainReferences
 
             // ReSharper disable once PossibleInvalidOperationException
             if (AllKontragents.Count > 0)
-                KontragentLastUpdate = (DateTime)AllKontragents.Values.Select(_ => _.UpdateDate).Max();
+                KontragentLastUpdate = (DateTime) AllKontragents.Values.Select(_ => _.UpdateDate).Max();
             else
                 KontragentLastUpdate = DateTime.Now;
         }
@@ -1330,7 +1331,7 @@ public static class MainReferences
         {
             var dateTime = AllKontragents.Values.Max(_ => _.Entity.UpdateDate);
             if (dateTime == null) return AllKontragents;
-            var date = (DateTime)dateTime;
+            var date = (DateTime) dateTime;
             try
             {
                 var ent = GlobalOptions.GetEntities();

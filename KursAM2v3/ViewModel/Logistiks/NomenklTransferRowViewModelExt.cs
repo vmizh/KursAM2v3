@@ -69,7 +69,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myWarehouse;
             set
             {
-                if (myWarehouse != null && myWarehouse.Equals(value)) return;
+                if (Equals(myWarehouse,value)) return;
                 myWarehouse = value;
                 if (myWarehouse != null)
                     Entity.StoreDC = myWarehouse.DocCode;
@@ -93,7 +93,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myNomenklOut;
             set
             {
-                if (myNomenklOut != null && myNomenklOut.Equals(value)) return;
+                if (Equals(myNomenklOut,value)) return;
                 myNomenklOut = value;
                 if (myNomenklOut != null)
                     Entity.NomenklOutDC = myNomenklOut.DocCode;
@@ -106,7 +106,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myNomenklIn;
             set
             {
-                if (myNomenklIn != null && myNomenklIn.Equals(value)) return;
+                if (Equals(myNomenklIn,value)) return;
                 myNomenklIn = value;
                 if (myNomenklIn != null)
                     Entity.NomenklInDC = myNomenklIn.DocCode;

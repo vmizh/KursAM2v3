@@ -85,7 +85,8 @@ namespace KursAM2.Dialogs
 
         public override string WindowName => "Распределние накладных расходов > Выбор прямых расходов";
 
-        public ObservableCollection<AccruedAmountSelectRow> ItemsCollection { set; get; } = new();
+        public ObservableCollection<AccruedAmountSelectRow> ItemsCollection { set; get; } =
+            new ObservableCollection<AccruedAmountSelectRow>();
 
         public bool? ShowDialog()
         {
@@ -168,7 +169,8 @@ namespace KursAM2.Dialogs
 
         public bool IsLoadForDistributeNaklad = false;
 
-        public ObservableCollection<InvoiceProvider> ItemsCollection { set; get; } = new();
+        public ObservableCollection<InvoiceProvider> ItemsCollection { set; get; } =
+            new ObservableCollection<InvoiceProvider>();
 
         public InvoiceProviderDialogs(IInvoiceProviderRepository repos, [NotNull] Currency crs,
             DateTime? dateStart = null, DateTime? dateEnd = null) : this(repos)
@@ -196,7 +198,8 @@ namespace KursAM2.Dialogs
         }
 
         // ReSharper disable once CollectionNeverUpdated.Global
-        public ObservableCollection<InvoiceProvider> SelectedItems { set; get; } = new();
+        public ObservableCollection<InvoiceProvider> SelectedItems { set; get; } =
+            new ObservableCollection<InvoiceProvider>();
 
 
         public Currency Currency

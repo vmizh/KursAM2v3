@@ -179,7 +179,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     if (e.Item.Content is ComboBoxEdit cbState) cbState.IsEnabled = false;
                     e.Item.HorizontalAlignment = HorizontalAlignment.Right;
                     break;
-                case nameof(doc.InvoiceClient):
+                case nameof(doc.InvoiceClientViewModel):
                     SchetEdit = new ButtonEdit
                     {
                         TextWrapping = TextWrapping.Wrap,

@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Core.ViewModel.Base;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
@@ -32,7 +31,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         #region Properties
 
-        public new List<NomenklGroup> Rows { set; get; } = new List<NomenklGroup>();
+        public new List<NomenklGroupViewModel> Rows { set; get; } = new List<NomenklGroupViewModel>();
 
         #endregion
 
@@ -40,12 +39,12 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public override void SaveData(object data)
         {
-            var lst = new List<NomenklGroup>();
+            var lst = new List<NomenklGroupViewModel>();
             foreach (var row in Rows)
                 if (row.State != RowStatus.NotEdited)
                     lst.Add(row);
             foreach (var row in DeletedRows)
-                lst.Add((NomenklGroup)row);
+                lst.Add((NomenklGroupViewModel) row);
             if (lst.Count <= 0) return;
             if (!Manager.Save(lst)) return;
             foreach (var r in Rows)
@@ -63,13 +62,13 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public override void ItemNewChildEmpty(object obj)
         {
-            var newItem = Manager.New((NomenklGroup)CurrentRow);
+            var newItem = Manager.New((NomenklGroupViewModel) CurrentRow);
             SetNewItemInControl(newItem);
         }
 
         public override void ItemNewCopy(object obj)
         {
-            var newItem = Manager.NewCopy((NomenklGroup)CurrentRow);
+            var newItem = Manager.NewCopy((NomenklGroupViewModel) CurrentRow);
             SetNewItemInControl(newItem);
         }
 
@@ -78,7 +77,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             if (!(Form is TreeListFormBaseView frm)) return;
             Rows.Clear();
             DeletedRows.Clear();
-            Rows = new List<NomenklGroup>(Manager.Load());
+            Rows = new List<NomenklGroupViewModel>(Manager.Load());
             frm.gridDocuments.RefreshData();
         }
 

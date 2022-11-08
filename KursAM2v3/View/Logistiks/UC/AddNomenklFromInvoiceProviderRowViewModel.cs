@@ -17,7 +17,7 @@ namespace KursAM2.View.Logistiks.UC
     public sealed class AddNomenklFromInvoiceProviderRowViewModel : RSWindowViewModelBase, IDataUserControl
     {
         private readonly Kontragent myKontragent;
-        private readonly NomenklManager2 nomenklManager = new(GlobalOptions.GetEntities());
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         #region Constructors
 
@@ -121,7 +121,8 @@ namespace KursAM2.View.Logistiks.UC
 
         #region Properties
 
-        public ObservableCollection<InvoiceShortRow> Nomenkls { set; get; } = new();
+        public ObservableCollection<InvoiceShortRow> Nomenkls { set; get; } =
+            new ObservableCollection<InvoiceShortRow>();
 
         public AddNomenklFromInvoiceProviderRowUC DataUserControl
         {

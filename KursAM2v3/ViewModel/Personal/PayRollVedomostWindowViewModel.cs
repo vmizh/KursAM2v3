@@ -148,7 +148,7 @@ namespace KursAM2.ViewModel.Personal
         {
             set
             {
-                if (myMyCurrentPayrollType != null && myMyCurrentPayrollType.Equals(value)) return;
+                if (Equals(myMyCurrentPayrollType,value)) return;
                 myMyCurrentPayrollType = value;
                 RaisePropertyChanged();
             }

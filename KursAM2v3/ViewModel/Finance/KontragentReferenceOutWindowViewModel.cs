@@ -33,7 +33,7 @@ namespace KursAM2.ViewModel.Finance
             get => myCurrentRequisite;
             set
             {
-                if (myCurrentRequisite != null && myCurrentRequisite.Equals(value)) return;
+                if (Equals(myCurrentRequisite,value)) return;
                 myCurrentRequisite = value;
                 RaisePropertyChanged();
             }
@@ -44,7 +44,7 @@ namespace KursAM2.ViewModel.Finance
             get => myCurrentKontr;
             set
             {
-                if (myCurrentKontr != null && myCurrentKontr.Equals(value)) return;
+                if (Equals(myCurrentKontr,value)) return;
                 myCurrentKontr = value;
                 if (myCurrentKontr != null)
                 {

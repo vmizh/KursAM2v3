@@ -82,7 +82,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             get => myCurrentCurrencyRate;
             set
             {
-                if (myCurrentCurrencyRate != null && myCurrentCurrencyRate.Equals(value)) return;
+                if (Equals(myCurrentCurrencyRate, value)) return;
                 myCurrentCurrencyRate = value;
                 RaisePropertyChanged();
             }
@@ -1032,13 +1032,13 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Order = 1,
                         // ReSharper disable PossibleMultipleEnumeration
                         // ReSharper disable PossibleInvalidOperationException
-                        SummaEUR = bank.Currency.DocCode == CurrencyCode.EUR ? (decimal)rem.SummaEnd : 0,
-                        SummaUSD = bank.Currency.DocCode == CurrencyCode.USD ? (decimal)rem.SummaEnd : 0,
-                        SummaRUB = bank.Currency.DocCode == CurrencyCode.RUB ? (decimal)rem.SummaEnd : 0,
-                        SummaGBP = bank.Currency.DocCode == CurrencyCode.GBP ? (decimal)rem.SummaEnd : 0,
-                        SummaCHF = bank.Currency.DocCode == CurrencyCode.CHF ? (decimal)rem.SummaEnd : 0,
-                        SummaSEK = bank.Currency.DocCode == CurrencyCode.SEK ? (decimal)rem.SummaEnd : 0,
-                        SummaCNY = bank.Currency.DocCode == CurrencyCode.CNY ? (decimal)rem.SummaEnd : 0,
+                        SummaEUR = ((IDocCode)bank.Currency).DocCode == CurrencyCode.EUR ? (decimal)rem.SummaEnd : 0,
+                        SummaUSD = ((IDocCode)bank.Currency).DocCode == CurrencyCode.USD ? (decimal)rem.SummaEnd : 0,
+                        SummaRUB = ((IDocCode)bank.Currency).DocCode == CurrencyCode.RUB ? (decimal)rem.SummaEnd : 0,
+                        SummaGBP = ((IDocCode)bank.Currency).DocCode == CurrencyCode.GBP ? (decimal)rem.SummaEnd : 0,
+                        SummaCHF = ((IDocCode)bank.Currency).DocCode == CurrencyCode.CHF ? (decimal)rem.SummaEnd : 0,
+                        SummaSEK = ((IDocCode)bank.Currency).DocCode == CurrencyCode.SEK ? (decimal)rem.SummaEnd : 0,
+                        SummaCNY = ((IDocCode)bank.Currency).DocCode == CurrencyCode.CNY ? (decimal)rem.SummaEnd : 0,
                         ObjectDC = d
                         // ReSharper restore PossibleMultipleEnumeration
                         // ReSharper restore PossibleInvalidOperationException

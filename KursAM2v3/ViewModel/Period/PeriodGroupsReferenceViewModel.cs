@@ -89,7 +89,7 @@ namespace KursAM2.ViewModel.Period
         {
             set
             {
-                if (myCurrentGroup != null && myCurrentGroup.Equals(value)) return;
+                if (Equals(myCurrentGroup,value)) return;
                 myCurrentGroup = value;
                 GetUsers();
                 RaisePropertyChanged();
@@ -103,7 +103,7 @@ namespace KursAM2.ViewModel.Period
         {
             set
             {
-                if (myCurrentPeriodUsers != null && myCurrentPeriodUsers.Equals(value)) return;
+                if (Equals(myCurrentPeriodUsers,value)) return;
                 myCurrentPeriodUsers = value;
                 RaisePropertyChanged();
             }
@@ -116,7 +116,7 @@ namespace KursAM2.ViewModel.Period
         {
             set
             {
-                if (myCurrentPeriodClosed != null && myCurrentPeriodClosed.Equals(value)) return;
+                if (Equals(myCurrentPeriodClosed,value)) return;
                 myCurrentPeriodClosed = value;
                 GetPeriodExclude();
                 RaisePropertyChanged();
@@ -130,7 +130,7 @@ namespace KursAM2.ViewModel.Period
         {
             set
             {
-                if (myCurrentPeriodExlude != null && myCurrentPeriodExlude.Equals(value)) return;
+                if (Equals(myCurrentPeriodExlude,value)) return;
                 myCurrentPeriodExlude = value;
                 RaisePropertyChanged();
             }

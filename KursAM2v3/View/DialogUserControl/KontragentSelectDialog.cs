@@ -98,14 +98,15 @@ namespace KursAM2.View.DialogUserControl
             }
         }
 
-        public ObservableCollection<Kontragent> KontragentCollection { set; get; } = new();
+        public ObservableCollection<Kontragent> KontragentCollection { set; get; } =
+            new ObservableCollection<Kontragent>();
 
         public Kontragent CurrentKontragent
         {
             get => myCurrentKontragent;
             set
             {
-                if (myCurrentKontragent.Equals(value)) return;
+                if (Equals(myCurrentKontragent,value)) return;
                 myCurrentKontragent = value;
                 RaisePropertyChanged();
             }

@@ -2,7 +2,6 @@
 using Data;
 using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.References;
-using BankAccount = KursDomain.Documents.Bank.BankAccount;
 
 namespace KursAM2.ViewModel.Reference.Kontragent
 {

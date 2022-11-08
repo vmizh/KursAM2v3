@@ -35,7 +35,7 @@ namespace KursAM2.View.KursReferences
             //var ctx = DataContext as MainCardWindowViewModel;
             //if (ctx?.NomenklCategoryDC != null)
             //{
-            //    ctx.NomenklCategory =
+            //    ctx.NomenklGroup =
             //        ctx.NomenklCategoryCollection.Single(_ => _.DocCode == ctx.NomenklCategoryDC);
             //}
         }
