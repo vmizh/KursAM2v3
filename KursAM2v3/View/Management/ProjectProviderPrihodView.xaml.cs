@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management.Projects;
-using KursDomain.Documents.CommonReferences;
+using KursDomain;
+using KursDomain.References;
 using LayoutManager;
 
 namespace KursAM2.View.Management
@@ -20,7 +18,7 @@ namespace KursAM2.View.Management
     {
         public ProjectProviderPrihodView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += ProjectProviderPrihodView_Loaded;
@@ -29,6 +27,7 @@ namespace KursAM2.View.Management
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -49,13 +48,13 @@ namespace KursAM2.View.Management
         private void PopupBaseEdit_OnPopupOpening(object sender, OpenPopupEventArgs e)
         {
             if (DataContext is ProjectProviderPrihodWindowViewModel ctx)
-                ctx.ProjectList = new List<Project>(MainReferences.Projects.Values.ToList());
+                ctx.ProjectList = GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>().ToList();
         }
 
         private void ButtonEditSettings_OnDefaultButtonClick(object sender, RoutedEventArgs e)
         {
             if (DataContext is ProjectProviderPrihodWindowViewModel ctx)
-                ctx.ProjectList = new List<Project>(MainReferences.Projects.Values.ToList());
+                ctx.ProjectList = GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>().ToList();
         }
     }
 }

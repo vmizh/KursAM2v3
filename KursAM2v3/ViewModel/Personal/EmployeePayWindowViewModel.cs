@@ -11,9 +11,9 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using DevExpress.Xpf.Core.Native;
 using KursAM2.View.Personal;
 using KursDomain;
+using KursDomain.ICommon;
 using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Personal
@@ -24,8 +24,8 @@ namespace KursAM2.ViewModel.Personal
         private readonly bool isPersonaItog = true;
         private EmployeePayMainViewModel myCurrentEmploee;
         private EmployeePayDocumentViewModel myCurrentPayDocument;
-        private EmployeePayMainViewModel mySelectEmployee;
         private NachEmployeeForPeriod myCurrentPeriod;
+        private EmployeePayMainViewModel mySelectEmployee;
 
         public EmployeePayWindowViewModel()
         {
@@ -73,7 +73,7 @@ namespace KursAM2.ViewModel.Personal
             get => myCurrentEmploee;
             set
             {
-                if (Equals(myCurrentEmploee,value)) return;
+                if (Equals(myCurrentEmploee, value)) return;
                 myCurrentEmploee = value;
                 UpdatePeriods(myCurrentEmploee);
                 RaisePropertyChanged();
@@ -85,7 +85,7 @@ namespace KursAM2.ViewModel.Personal
             get => mySelectEmployee;
             set
             {
-                if (Equals(mySelectEmployee,value)) return;
+                if (Equals(mySelectEmployee, value)) return;
                 mySelectEmployee = value;
                 RaisePropertyChanged();
             }
@@ -96,7 +96,7 @@ namespace KursAM2.ViewModel.Personal
             get => myCurrentPayDocument;
             set
             {
-                if (Equals(myCurrentPayDocument,value)) return;
+                if (Equals(myCurrentPayDocument, value)) return;
                 myCurrentPayDocument = value;
                 RaisePropertyChanged();
             }
@@ -119,7 +119,7 @@ namespace KursAM2.ViewModel.Personal
             {
                 case "Начисление":
                     var pr = new PayRollVedomostWindowViewModel(CurrentPayDocument.Id, CurrentEmploee?.Employee);
-                    var form = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = pr};
+                    var form = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = pr };
                     form.Show();
                     break;
             }
@@ -180,11 +180,11 @@ namespace KursAM2.ViewModel.Personal
                                 .Select(d => d.EMP_DC)
                                 .ToList();
                     foreach (var nach in ent.EMP_PR_ROWS.Include(_ => _.EMP_PR_DOC)
-                        .Where(
-                            d =>
-                                d.EMP_PR_DOC.IS_TEMPLATE == 0 && persRight.Any(t => t == d.EMP_DC) &&
-                                d.NachDate <= dt)
-                        .ToList())
+                                 .Where(
+                                     d =>
+                                         d.EMP_PR_DOC.IS_TEMPLATE == 0 && persRight.Any(t => t == d.EMP_DC) &&
+                                         d.NachDate <= dt)
+                                 .ToList())
                     {
                         var newItem = new EmployeePayDocumentViewModel
                         {
@@ -213,22 +213,23 @@ namespace KursAM2.ViewModel.Personal
                         };
                         Documents.Add(newItem);
                     }
+
                     foreach (var p in ent.SD_34.AsNoTracking()
-                        .Where(t => t.NCODE == 100 && t.DATE_ORD <= dt)
-                        .Where(p => p.TABELNUMBER != null)
-                        .ToList())
+                                 .Where(t => t.NCODE == 100 && t.DATE_ORD <= dt)
+                                 .Where(p => p.TABELNUMBER != null)
+                                 .ToList())
                         try
                         {
                             //if (p.CRS_KOEF == null) continue;
                             var per =
                                 MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == p.TABELNUMBER);
                             if (p.CRS_DC == null) continue;
-                            var crs = MainReferences.Currencies[(decimal) p.CRS_DC];
+                            var crs = MainReferences.Currencies[(decimal)p.CRS_DC];
                             if (p.DATE_ORD == null) continue;
                             if (per == null) continue;
                             if (per.TabelNumber == 25 && (p.DOC_CODE == 10340051230 || p.DOC_CODE == 10340051240
-                                                                                    || p.DOC_CODE == 10340051656
-                                                                                    || p.DOC_CODE == 10340051674
+                                                          || p.DOC_CODE == 10340051656
+                                                          || p.DOC_CODE == 10340051674
                                                           //|| p.DOC_CODE == 10340054355
                                                           //|| p.DOC_CODE == 10340054410
                                                       )
@@ -242,7 +243,7 @@ namespace KursAM2.ViewModel.Personal
                                 DocSumma = p.SUMM_ORD ?? 0,
                                 PlatSumma = p.SUMM_ORD ?? 0,
                                 PlatSummaEmp =
-                                    Math.Round(CalcSummaWithRate(per.Currency.DocCode, p.CRS_DC.Value,
+                                    Math.Round(CalcSummaWithRate(((IDocCode)per.Currency).DocCode, p.CRS_DC.Value,
                                         p.SUMM_ORD ?? 0,
                                         p.CRS_KOEF ?? 1), 2),
                                 SummaEmp = 0,
@@ -258,8 +259,8 @@ namespace KursAM2.ViewModel.Personal
                                     (crs.Name == "RUB" || crs.Name == "RUR"
                                         ? p.SUMM_ORD
                                         : 0),
-                                USD = (decimal) (crs.Name == "USD" ? p.SUMM_ORD : 0),
-                                EUR = (decimal) (crs.Name == "EUR" ? p.SUMM_ORD : 0)
+                                USD = (decimal)(crs.Name == "USD" ? p.SUMM_ORD : 0),
+                                EUR = (decimal)(crs.Name == "EUR" ? p.SUMM_ORD : 0)
                                 // ReSharper restore PossibleInvalidOperationException
                             };
                             if (persRight.Any(t => t == s.Employee.DocCode))
@@ -278,7 +279,7 @@ namespace KursAM2.ViewModel.Personal
                         minDate = Documents.Min(t => t.DocDate);
                     }
 
-                    CurrencyRate.LoadCBrates((DateTime) minDate, (DateTime) maxDate);
+                    CurrencyRate.LoadCBrates((DateTime)minDate, (DateTime)maxDate);
                 }
                 catch (Exception ex)
                 {
@@ -289,7 +290,7 @@ namespace KursAM2.ViewModel.Personal
 
         public void UpdateDocumentsForPeriod(NachEmployeeForPeriod item)
         {
-            List<EmployeePayDocumentViewModel> tempList = new List<EmployeePayDocumentViewModel>();
+            var tempList = new List<EmployeePayDocumentViewModel>();
             DocumentsForPeriod.Clear();
             if (item == null) return;
             foreach (
@@ -325,13 +326,14 @@ namespace KursAM2.ViewModel.Personal
                     };
                     tempList.Add(newItem);
                 }
-                else 
+                else
                 {
                     if (old.PayType == "Выплата")
                     {
                         var s = r.PlatDocName.Replace("Расходный кассовый ордер № ", string.Empty);
-                        old.PlatDocName += ", №"+s;
+                        old.PlatDocName += ", №" + s;
                     }
+
                     old.DocSumma += r.DocSumma;
                     old.NachEUR += r.NachEUR;
                     old.NachRUB += r.NachRUB;
@@ -345,10 +347,8 @@ namespace KursAM2.ViewModel.Personal
                     old.SummaEmp += r.SummaEmp;
                 }
             }
-            foreach (var d in tempList)
-            {
-                DocumentsForPeriod.Add(d);
-            }
+
+            foreach (var d in tempList) DocumentsForPeriod.Add(d);
             RaisePropertyChanged(nameof(DocumentsForPeriod));
         }
 
@@ -386,7 +386,8 @@ namespace KursAM2.ViewModel.Personal
                 r.Start = Math.Round(DocumentsForEmployee.Where(t => t.DocDate < r.DateStart)
                                          .Sum(
                                              s =>
-                                                 CurrencyRate.GetSummaRate(s.Crs.DocCode, s.Employee.Currency.DocCode,
+                                                 CurrencyRate.GetSummaRate(s.Crs.DocCode,
+                                                     ((IDocCode)s.Employee.Currency).DocCode,
                                                      s.DocDate,
                                                      s.Summa))
                                      - DocumentsForEmployee.Where(t => t.DocDate < r.DateStart)
@@ -396,7 +397,7 @@ namespace KursAM2.ViewModel.Personal
                     Math.Round(DocumentsForEmployee.Where(t => t.DocDate >= r.DateStart && t.DocDate <= r.DateEnd)
                         .Sum(
                             s =>
-                                CurrencyRate.GetSummaRate(s.Crs.DocCode, s.Employee.Currency.DocCode,
+                                CurrencyRate.GetSummaRate(s.Crs.DocCode, ((IDocCode)s.Employee.Currency).DocCode,
                                     s.DocDate,
                                     s.Summa)), 2);
                 r.Out =
@@ -420,6 +421,7 @@ namespace KursAM2.ViewModel.Personal
                         r.EndEUR = r.End;
                         break;
                 }
+
                 r.RUB =
                     Math.Round(
                         DocumentsForEmployee.Where(
@@ -455,15 +457,11 @@ namespace KursAM2.ViewModel.Personal
             Periods = new ObservableCollection<NachEmployeeForPeriod>(datesSource.OrderByDescending(_ => _.DateStart));
             RaisePropertyChanged(nameof(Periods));
             var form = Form as PersonalPaysView;
-            var bands = form?.treePeriods.Bands.FirstOrDefault(_ => _.Name=="bandt2");
+            var bands = form?.treePeriods.Bands.FirstOrDefault(_ => _.Name == "bandt2");
             if (bands == null) return;
             foreach (var p in bands.Bands)
-            {
-                if ((string) p.Header == "RUB" || (string) p.Header == "USD" || (string) p.Header == "EUR")
-                {
+                if ((string)p.Header == "RUB" || (string)p.Header == "USD" || (string)p.Header == "EUR")
                     p.Visible = CurrentEmploee.CrsName == (string)p.Header;
-                }
-            }
         }
 
         public void LoadForAll(DateTime date)
@@ -491,7 +489,8 @@ namespace KursAM2.ViewModel.Personal
                 {
                     if (nach.DocDate > emp.DateLastOper)
                         emp.DateLastOper = nach.DocDate;
-                    emp.SummaNach += CurrencyRate.GetSummaRate(nach.Crs.DocCode, emp.Employee.Currency.DocCode,
+                    emp.SummaNach += CurrencyRate.GetSummaRate(nach.Crs.DocCode,
+                        ((IDocCode)emp.Employee.Currency).DocCode,
                         nach.DocDate,
                         nach.Summa);
                     emp.PlatSumma += nach.PlatSummaEmp;
@@ -534,7 +533,8 @@ namespace KursAM2.ViewModel.Personal
                 {
                     if (nach.DocDate > emp.DateLastOper)
                         emp.DateLastOper = nach.DocDate;
-                    emp.SummaNach += CurrencyRate.GetSummaRate(nach.Crs.DocCode, emp.Employee.Currency.DocCode,
+                    emp.SummaNach += CurrencyRate.GetSummaRate(nach.Crs.DocCode,
+                        ((IDocCode)emp.Employee.Currency).DocCode,
                         nach.DocDate,
                         nach.Summa);
                     emp.PlatSumma += nach.PlatSummaEmp;

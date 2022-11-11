@@ -174,10 +174,6 @@ namespace KursAM2.ViewModel.Management.BreakEven
 
         public void RefreshData(DateTime start, DateTime end)
         {
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             using (var ent = GlobalOptions.GetEntities())
             {
                 var empls = ent.SD_2.ToList();

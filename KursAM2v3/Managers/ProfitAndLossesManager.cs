@@ -19,7 +19,6 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Management;
 using KursDomain.ICommon;
 using KursDomain.References;
-using Project = KursDomain.Documents.CommonReferences.Project;
 
 namespace KursAM2.Managers
 {

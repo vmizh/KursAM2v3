@@ -169,7 +169,7 @@ public class DogovorOfSupplierViewModel : RSWindowViewModelBase, IDataErrorInfo,
         }
     }
 
-    public Employee.Employee OtvetstvenLico
+    public References.Employee OtvetstvenLico
     {
         get => MainReferences.GetEmployee((int?) Entity.OtvetstvenTN);
         set

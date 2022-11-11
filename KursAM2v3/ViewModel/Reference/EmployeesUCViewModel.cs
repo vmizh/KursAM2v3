@@ -4,6 +4,7 @@ using Core;
 using Core.ViewModel.Base;
 using KursAM2.View.DialogUserControl;
 using KursDomain.Documents.Employee;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -31,9 +32,9 @@ namespace KursAM2.ViewModel.Reference
                     Name = i.Name,
                     Currency = i.Currency,
                     TabelNumber = i.TabelNumber,
-                    FirstName = i.FirstName,
-                    LastName = i.LastName,
-                    SecondName = i.SecondName
+                    NameFirst = i.NameFirst,
+                    NameLast = i.NameLast,
+                    NameSecond = i.NameSecond
                 });
             RaisePropertyChanged(nameof(ItemsCollection));
         }

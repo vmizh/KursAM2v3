@@ -172,10 +172,6 @@ namespace KursAM2.ViewModel.Dogovora
         public override async void RefreshData(object data)
         {
             SplashScreenService.ShowSplashScreen();
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             base.RefreshData(null);
             await Load();
         }

@@ -33,7 +33,8 @@
                     FontSize="10"
                     Command="{Binding CancelCommand}" Click="Cancel_OnClick" />
             <Button DockPanel.Dock="Right" Content="Ок" Margin="0" Width="70" VerticalAlignment="Center" FontSize="10"
-                    Command="{Binding OkCommand}" Click="Ok_OnClick" />
+                    Command="{Binding OkCommand}" 
+                    Click="Ok_OnClick" />
         </DockPanel>
     </Grid>
 </dx:ThemedWindow>

@@ -28,6 +28,8 @@ using KursDomain.Documents.Employee;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
+using ContractType = KursDomain.Documents.Dogovora.ContractType;
 
 namespace KursAM2.ViewModel.Dogovora
 {
@@ -268,7 +270,7 @@ namespace KursAM2.ViewModel.Dogovora
         public List<ContractType> ContractTypeList =>
             MainReferences.ContractTypes.Values.Where(_ => !_.IsSale).ToList();
 
-        public List<Employee> EmployeeList => MainReferences.Employees.Values.ToList();
+        public List<Employee> EmployeeList => GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>().ToList();
 
         public ProviderInvoicePayViewModel CurrentPayment
         {
@@ -448,10 +450,6 @@ namespace KursAM2.ViewModel.Dogovora
         private void AddNomenkl(object obj)
         {
             decimal defaultNDS;
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             var nomenkls = StandartDialogs.SelectNomenkls(Document.Currency, true);
             if (nomenkls == null || nomenkls.Count <= 0) return;
             using (var entctx = GlobalOptions.GetEntities())

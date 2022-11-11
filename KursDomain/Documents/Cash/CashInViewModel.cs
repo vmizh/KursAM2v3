@@ -18,14 +18,13 @@ using Newtonsoft.Json;
 namespace KursDomain.Documents.Cash;
 
 [MetadataType(typeof(SD_33LayoutData_FluentAPI))]
-public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
+public sealed class CashInViewModel : RSViewModelBase, IEntity<SD_33>
 {
     public decimal MaxSumma = decimal.MaxValue;
 
-
     private string myAccuredInfo;
     private BankAccount myBankAccount;
-    private Cash myCash;
+    private CashBox myCash;
     private References.Currency myCurrency;
     private SD_33 myEntity;
     private bool myIsKontrSelectEnable;
@@ -35,13 +34,13 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
     private string mySFactName;
     private StockHolderViewModel myStockHolder;
 
-    public CashIn()
+    public CashInViewModel()
     {
         Entity = DefaultValue();
         LoadReferences();
     }
 
-    public CashIn(SD_33 entity)
+    public CashInViewModel(SD_33 entity)
     {
         Entity = entity ?? DefaultValue();
         LoadReferences();
@@ -81,7 +80,6 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
         }
     }
 
-
     public override string Note
     {
         get => Entity.NOTES_ORD;
@@ -111,19 +109,19 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
         {
             if (Entity.SUMM_ORD == value) return;
             Entity.SUMM_ORD = value;
-            if ((decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
-                (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
+            if ((decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
+                (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
             {
                 if (IsBackCalc)
                 {
                     Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                 (100 + (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                 (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                     RaisePropertyChanged(nameof(SUMM_ORD));
                 }
                 else
                 {
                     Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                  (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                  (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                     RaisePropertyChanged(nameof(CRS_SUMMA));
                 }
             }
@@ -140,19 +138,19 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
         {
             if (Entity.CRS_SUMMA == value) return;
             Entity.CRS_SUMMA = value;
-            if ((decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
-                (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
+            if ((decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
+                (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
             {
                 if (IsBackCalc)
                 {
                     Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                 (100 + (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                 (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                     RaisePropertyChanged(nameof(SUMM_ORD));
                 }
                 else
                 {
                     Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                  (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                  (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                     RaisePropertyChanged(nameof(CRS_SUMMA));
                 }
             }
@@ -269,7 +267,7 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
         }
     }
 
-    public Employee.Employee Employee => TABELNUMBER != null
+    public References.Employee Employee => TABELNUMBER != null
         ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == TABELNUMBER)
         : null;
 
@@ -307,7 +305,7 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
         }
     }
 
-    public Cash Cash
+    public CashBox Cash
     {
         get => myCash;
         set
@@ -374,7 +372,6 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
     //        RaisePropertyChanged();
     //    }
     //}
-
     public SDRSchet SDRSchet
     {
         get => mySDRSchet;
@@ -544,7 +541,7 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
             CRS_DC = myCurrency?.DocCode;
             if (myCurrency != null)
                 // ReSharper disable once PossibleInvalidOperationException
-                UCH_VALUTA_RATE = (double?)CurrencyRate.GetCBRate(myCurrency, (DateTime)DATE_ORD);
+                UCH_VALUTA_RATE = (double?) CurrencyRate.GetCBRate(myCurrency, (DateTime) DATE_ORD);
             RaisePropertyChanged();
         }
     }
@@ -706,20 +703,20 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
         set
         {
             if (OBRATNY_RASCHET == (value ? 1 : 0)) return;
-            OBRATNY_RASCHET = value ? (short?)1 : (short?)0;
-            if ((decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
-                (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
+            OBRATNY_RASCHET = value ? (short?) 1 : (short?) 0;
+            if ((decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
+                (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
             {
                 if (IsBackCalc)
                 {
                     Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                 (100 + (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                 (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                     RaisePropertyChanged(nameof(SUMM_ORD));
                 }
                 else
                 {
                     Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                  (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                  (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                     RaisePropertyChanged(nameof(CRS_SUMMA));
                 }
             }
@@ -748,19 +745,19 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
             // ReSharper disable once CompareOfFloatsByEqualityOperator
             if (Entity.KONTR_CRS_SUM_CORRECT_PERCENT == Convert.ToDouble(value)) return;
             Entity.KONTR_CRS_SUM_CORRECT_PERCENT = Convert.ToDouble(value);
-            if ((decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
-                (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
+            if ((decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) >= 0 &&
+                (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) < 100)
             {
                 if (IsBackCalc)
                 {
                     Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                 (100 + (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                 (100 + (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                     RaisePropertyChanged(nameof(SUMM_ORD));
                 }
                 else
                 {
                     Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
-                                                  (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                                                  (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
                     RaisePropertyChanged(nameof(CRS_SUMMA));
                 }
             }
@@ -964,7 +961,6 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
 
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public EntityLoadCodition LoadCondition { get; set; }
-
     public bool IsAccessRight { get; set; }
 
     public SD_33 Entity
@@ -999,7 +995,7 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
 
     private void LoadReferences()
     {
-        if (Entity.CA_DC != null) Cash = MainReferences.CashsAll[(decimal)Entity.CA_DC];
+        if (Entity.CA_DC != null) Cash = GlobalOptions.ReferencesCache.GetCashBox(Entity.CA_DC) as CashBox;
         myKontragentType = CashKontragentType.NotChoice;
         if (KONTRAGENT_DC != null)
             myKontragentType = CashKontragentType.Kontragent;
@@ -1010,7 +1006,7 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
         if (RASH_ORDER_FROM_DC != null)
             myKontragentType = CashKontragentType.Cash;
         IsKontrSelectEnable = myKontragentType != CashKontragentType.NotChoice;
-        if (Entity.CRS_DC != null) Currency = MainReferences.Currencies[(decimal)Entity.CRS_DC];
+        if (Entity.CRS_DC != null) Currency = MainReferences.Currencies[(decimal) Entity.CRS_DC];
         if (SFACT_DC != null) SFactName = SFact(SFACT_DC.Value);
         if (Entity.SHPZ_DC != null)
             SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SHPZ_DC.Value) as SDRSchet;
@@ -1033,7 +1029,7 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
         {
             var doc = ctx.SD_34.Include(_ => _.SD_22).FirstOrDefault(_ => _.DOC_CODE == dc);
             // ReSharper disable once PossibleInvalidOperationException
-            return doc == null ? null : MainReferences.Cashs[(decimal)doc.CA_DC].Name;
+            return doc == null ? null : MainReferences.Cashs[(decimal) doc.CA_DC].Name;
         }
     }
 
@@ -1239,7 +1235,7 @@ public sealed class CashIn : RSViewModelBase, IEntity<SD_33>
 
 public static class SD_33LayoutData_FluentAPI
 {
-    public static void BuildMetadata(MetadataBuilder<CashIn> builder)
+    public static void BuildMetadata(MetadataBuilder<CashInViewModel> builder)
     {
         builder.Property(_ => _.DocCode).NotAutoGenerated();
         builder.Property(_ => _.Id).NotAutoGenerated();

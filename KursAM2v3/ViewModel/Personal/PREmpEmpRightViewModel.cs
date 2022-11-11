@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using DevExpress.Xpf.Grid;
-using KursDomain.Documents.Employee;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal
 {

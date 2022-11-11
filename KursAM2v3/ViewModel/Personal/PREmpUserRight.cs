@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
-using KursDomain.Documents.Employee;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal
 {

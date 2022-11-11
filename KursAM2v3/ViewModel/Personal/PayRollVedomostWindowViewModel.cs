@@ -22,7 +22,6 @@ using KursDomain.Documents.Employee;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
-using Employee = KursDomain.Documents.Employee.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -218,11 +217,11 @@ namespace KursAM2.ViewModel.Personal
             //var res = DialogService.ShowDialog(MessageBoxButton.OKCancel, "Добавить сотрудников", "EmploeeSelectUC", ctx);
             //if (res != MessageBoxResult.OK) return;
             foreach (var newEmp in ctx.SelectedCollection.Where(
-                             item => Employees.All(t => t.Employee.DocCode != item.Persona.DocCode))
+                             item => Employees.All(t => t.Employee.DocCode != item.DocCode))
                          .Select(item => new PayRollVedomostEmployeeViewModel
                          {
                              State = RowStatus.NewRow,
-                             Employee = item.Persona,
+                             Employee = item,
                              EURSumma = (decimal)0.0,
                              RUBSumma = (decimal)0.0,
                              USDSumma = (decimal)0.0,
@@ -235,7 +234,7 @@ namespace KursAM2.ViewModel.Personal
                                          RowId = Guid.NewGuid(),
                                          Name = item.Name,
                                          State = RowStatus.NewRow,
-                                         Employee = item.Persona,
+                                         Employee = item,
                                          Crs = MainReferences.Currencies[
                                              GlobalOptions.SystemProfile.EmployeeDefaultCurrency.DocCode],
                                          PRType = PayrollTypeCollection.Single(_ =>
@@ -526,9 +525,9 @@ namespace KursAM2.ViewModel.Personal
                                      Crs = crs1,
                                      Note = d.NOTES,
                                      RowId = Guid.Parse(d.ROW_ID),
-                                     Rate = CurrencyRate.GetRate(crs1.DocCode, newEmp.Employee.Currency.DocCode, Date),
+                                     Rate = CurrencyRate.GetRate(crs1.DocCode, ((IDocCode)newEmp.Employee.Currency).DocCode, Date),
                                      NachEmpRate =
-                                         CurrencyRate.GetSummaRate(crs1.DocCode, newEmp.Employee.Currency.DocCode, Date,
+                                         CurrencyRate.GetSummaRate(crs1.DocCode, ((IDocCode)newEmp.Employee.Currency).DocCode, Date,
                                              d.SUMMA),
                                      Parent = newEmp,
                                      NachDate = d.NachDate ?? DateTime.Today

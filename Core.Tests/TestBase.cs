@@ -26,9 +26,6 @@ namespace Core.Tests
                 NickName = "sysadm"
             };
             MainReferences.Reset(LoadReferenceStrategy.WithoutKontragentAndNomenkl);
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
             GlobalOptions.SystemProfile = new SystemProfile
             {
                 NationalCurrency = MainReferences.Currencies.Values.Single(_ => _.Name == "RUR")

@@ -2,6 +2,7 @@
 using Core.ViewModel.Base.Column;
 using KursDomain.Documents.Employee;
 using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -30,10 +31,10 @@ namespace KursAM2.ViewModel.Personal
         public int TabelNumber => _Persona.TabelNumber;
 
         [GridColumnView("Валюта", SettingsType.Default)]
-        public string Crs => _Persona.Currency.Name;
+        public string Crs => ((IName)_Persona.Currency).Name;
 
         [GridColumnView("Справочно", SettingsType.Default)]
-        public string ExtNotes => _Persona.StatusNotes;
+        public string ExtNotes => _Persona.Position;
 
         public override decimal DocCode { get; set; }
     }

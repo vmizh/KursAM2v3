@@ -15,6 +15,7 @@ using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Currency;
 using KursDomain.Documents.Management;
+using KursDomain.References;
 
 namespace KursAM2.View.DialogUserControl
 {
@@ -40,17 +41,17 @@ namespace KursAM2.View.DialogUserControl
         {
             LayoutControl = myDataUserControl = new ProjectSelectDialogUI();
             AllDocumentType = true;
-            CurrentProject = new Project();
+            CurrentProject = new ProjectResultInfo();
             WindowName = "Связь документов с проектом";
         }
 
-        public ProjectDocumentSelect(Project project):this()
+        public ProjectDocumentSelect(ProjectResultInfo project):this()
         {
             CurrentProject = project;
         }
         
-        private Project myCurrentProject;
-        public Project CurrentProject
+        private ProjectResultInfo myCurrentProject;
+        public ProjectResultInfo CurrentProject
         {
             get => myCurrentProject;
             set

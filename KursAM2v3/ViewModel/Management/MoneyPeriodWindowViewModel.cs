@@ -230,9 +230,6 @@ namespace KursAM2.ViewModel.Management
         public override void RefreshData(object obj)
         {
             Remains.Clear();
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())

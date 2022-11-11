@@ -671,7 +671,7 @@ public class ReferencesKursCache : IReferencesCache
 
     public INomenkl GetNomenkl(decimal dc)
     {
-        if (Kontragents.ContainsKey(dc))
+        if (Nomenkls.ContainsKey(dc))
             return Nomenkls[dc];
         var data = Context.SD_83.FirstOrDefault(_ => _.DOC_CODE == dc);
         if (data == null) return null;
@@ -711,9 +711,14 @@ public class ReferencesKursCache : IReferencesCache
     public ICashBox GetCashBox(decimal? dc)
     {
         if (dc == null) return null;
-        if (CashBoxes.ContainsKey(dc.Value))
-            return CashBoxes[dc.Value];
-        var data = Context.SD_22.Include(_ => _.TD_22).FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+        return GetCashBox(dc.Value);
+    }
+
+    public ICashBox GetCashBox(decimal dc)
+    {
+        if(CashBoxes.ContainsKey(dc))
+            return CashBoxes[dc];
+        var data = Context.SD_22.Include(_ => _.TD_22).FirstOrDefault(_ => _.DOC_CODE == dc);
         if (data == null) return null;
         var newItem = new CashBox();
         newItem.LoadFromEntity(data, this);

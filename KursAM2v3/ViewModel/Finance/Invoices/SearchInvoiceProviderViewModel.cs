@@ -104,13 +104,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override async void RefreshData(object data)
         {
-            //SplashScreenService.ShowSplashScreen();
-            //while (!MainReferences.IsReferenceLoadComplete)
-            //{
-            //}
-
-            //base.RefreshData(null);
-            //await Load();
             Documents.Clear();
             foreach (var d in InvoiceProviderRepository.GetAllByDates(StartDate, EndDate))
                 //foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 

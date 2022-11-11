@@ -7,6 +7,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.References;
 
 namespace KursDomain.Documents.Cash;
 

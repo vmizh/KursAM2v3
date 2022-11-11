@@ -42,7 +42,6 @@ using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using Reports.Base;
-using Employee = KursDomain.Documents.Employee.Employee;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {

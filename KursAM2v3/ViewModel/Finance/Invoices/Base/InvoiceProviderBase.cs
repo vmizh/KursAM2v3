@@ -8,7 +8,6 @@ using Data;
 using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.References;
-using Employee = KursDomain.Documents.Employee.Employee;
 
 namespace KursAM2.ViewModel.Finance.Invoices.Base
 {

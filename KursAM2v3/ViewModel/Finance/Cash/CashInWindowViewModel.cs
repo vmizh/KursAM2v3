@@ -51,7 +51,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         #region Fields
 
         public CashBookView BookView;
-        private CashIn myDocument;
+        private CashInViewModel myDocument;
         private readonly DateTime oldDate = DateTime.MaxValue;
         public decimal OldSumma;
 
@@ -95,7 +95,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         public ObservableCollection<Currency> CurrencyList { get; set; } = new ObservableCollection<Currency>();
 
-        public CashIn Document
+        public CashInViewModel Document
         {
             get => myDocument;
             set
@@ -259,7 +259,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                     case decimal dec:
                         dc = dec;
                         break;
-                    case CashIn model:
+                    case CashInViewModel model:
                         dc = model.DocCode;
                         break;
                 }

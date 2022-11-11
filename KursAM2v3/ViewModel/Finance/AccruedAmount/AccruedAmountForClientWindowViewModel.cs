@@ -138,12 +138,11 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 if (myCurrentAccrual == value) return;
                 myCurrentAccrual = value;
                 RaisePropertyChanged();
-                if (Form is AccruedAmountForClientView frm)
-                {
-                    var col = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Summa");
-                    if (col == null) return;
-                    col.ReadOnly = myCurrentAccrual.CashDoc != null || myCurrentAccrual.BankDoc != null;
-                }
+                var frm = Form as AccruedAmountForClientView;
+                if (frm == null || myCurrentAccrual == null) return;
+                var col = frm.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Summa");
+                if (col == null) return;
+                col.ReadOnly = myCurrentAccrual.CashDoc != null || myCurrentAccrual.BankDoc != null;
             }
         }
 
@@ -197,7 +196,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             {
                 Document = CashManager.NewCashIn()
             };
-            vm.Document.Cash = MainReferences.Cashs[cash.DocCode];
+            vm.Document.Cash = GlobalOptions.ReferencesCache.GetCashBox(cash.DocCode) as CashBox;
 
 
             vm.Document.Cash = MainReferences.Cashs[cash.DocCode];
@@ -210,7 +209,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             vm.SaveData(null);
             var ord = UnitOfWork.Context.SD_33.FirstOrDefault(_ => _.DOC_CODE == vm.Document.DocCode);
             if (ord != null)
-                CurrentAccrual.CashDoc = new CashIn(ord);
+                CurrentAccrual.CashDoc = new CashInViewModel(ord);
             DocumentsOpenManager.Open(DocumentType.CashIn, vm, Form);
             if (Form is AccruedAmountForClientView frm)
                 frm.gridRows.UpdateTotalSummary();
@@ -417,6 +416,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             RaiseAll();
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
             Document.myState = RowStatus.NotEdited;
+            Document.RaisePropertyChanged("State");
         }
 
         public override void DocDelete(object form)

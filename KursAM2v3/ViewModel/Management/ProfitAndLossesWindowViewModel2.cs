@@ -1198,10 +1198,6 @@ namespace KursAM2.ViewModel.Management
             var currentBlsFact = BalansFact;
             var currentBlsCalc = BalansCalc;
             //innerStartDate = StartDate != EndDate ? StartDate.AddDays(1) : StartDate;
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             try
             {
                 Manager.MyRates =

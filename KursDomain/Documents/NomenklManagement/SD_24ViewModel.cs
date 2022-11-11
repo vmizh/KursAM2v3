@@ -25,7 +25,7 @@ public interface ISD_24
     Warehouse WarehouseIn { set; get; }
     KontragentViewModel KontragentViewModelSender { set; get; }
     KontragentViewModel KontragentViewModelReceiver { set; get; }
-    Employee.Employee Kladovshik { set; get; }
+    References.Employee Kladovshik { set; get; }
     bool IsExecuted { set; get; }
     string DD_KOMU_PEREDANO { set; get; }
     string DD_OT_KOGO_POLUCHENO { set; get; }
@@ -169,7 +169,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         }
     }
 
-    public Employee.Employee Kladovshik
+    public References.Employee Kladovshik
     {
         // ReSharper disable once RedundantCast
         get => MainReferences.GetEmployee(Entity.DD_KLADOV_TN as int?);

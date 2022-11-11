@@ -15,13 +15,13 @@ using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Finance;
+using KursAM2.ViewModel.Management.Projects;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Management;
 using KursDomain.Menu;
 using KursDomain.References;
 using static System.Math;
-using Project = KursDomain.Documents.CommonReferences.Project;
 
 // ReSharper disable All
 namespace KursAM2.ViewModel.Management
@@ -35,7 +35,7 @@ namespace KursAM2.ViewModel.Management
         private ProfitAndLossesMainRowViewModel myBalansFact;
         private CrossCurrencyRate myCurrentCurrencyRate;
         private ProfitAndLossesExtendRowViewModel myCurrentExtend;
-        private Project myCurrentProject;
+        private ProjectResultInfo myCurrentProject;
         private DateTime myEndDate;
         private Currency myRecalcCurrency;
         private DateTime myStartDate;
@@ -75,7 +75,7 @@ namespace KursAM2.ViewModel.Management
             CurrentCurrencyRate = CurrencyRates[0];
         }
 
-        public List<Project> Projects => MainReferences.Projects.Values.ToList();
+        public List<Project> Projects => GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>().ToList();
 
         public ObservableCollection<ProfitAndLossesMainRowViewModel> Main { set; get; } =
             new ObservableCollection<ProfitAndLossesMainRowViewModel>(
@@ -146,14 +146,14 @@ namespace KursAM2.ViewModel.Management
             }
         }
 
-        public Project CurrentProject
+        public ProjectResultInfo CurrentProject
         {
             get { return myCurrentProject; }
             set
             {
                 if (myCurrentProject == value) return;
                 myCurrentProject = value;
-                manager.Project = myCurrentProject;
+                //manager.Project = myCurrentProject;
                 RaisePropertyChanged();
                 WindowName = $"Прибыли и убытки по проекту: {CurrentProject?.Name ?? string.Empty}.";
                 StartDate = myCurrentProject.DateStart;
@@ -856,10 +856,6 @@ namespace KursAM2.ViewModel.Management
         public override void RefreshData(object obj)
         {
             //innerStartDate = StartDate != EndDate ? StartDate.AddDays(1) : StartDate;
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             try
             {
                 manager.ProjectDocDC.Clear();

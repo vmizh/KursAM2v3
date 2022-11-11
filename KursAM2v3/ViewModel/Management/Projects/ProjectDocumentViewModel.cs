@@ -8,7 +8,6 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Currency;
 using KursDomain.Documents.Management;
 using KursDomain.References;
-using Employee = KursDomain.Documents.Employee.Employee;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace KursAM2.ViewModel.Management.Projects

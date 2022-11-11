@@ -204,9 +204,6 @@ namespace KursAM2.ViewModel.Logistiks
 
         public override void RefreshData(object obj)
         {
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
             NomenklsForSklad.Clear();
             LoadedRemains.Clear();
             //LoadedRemains = NomenklCalculationManager.GetNomenklStoreRemains(OstatokDate, true);

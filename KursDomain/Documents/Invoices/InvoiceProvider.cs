@@ -32,7 +32,7 @@ public interface IInvoiceProvider
     decimal? NakladDistributedSumma { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Ответственный")]
-    Employee.Employee PersonaResponsible { set; get; }
+    References.Employee PersonaResponsible { set; get; }
 
     [Display(AutoGenerateField = true, Name = "№")]
     int? SF_IN_NUM { set; get; }
@@ -169,7 +169,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     #region Fields
 
     private CentrResponsibility myCO;
-    private Employee.Employee myEmployee;
+    private References.Employee myEmployee;
     private SD_26 myEntity;
     private PayForm myFormRaschet;
     private Kontragent myKontragent;
@@ -178,7 +178,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     private VzaimoraschetType myVzaimoraschetType;
     private DogovorOfSupplierViewModel myContract;
 
-    private Employee.Employee myPersonaResponsible;
+    private References.Employee myPersonaResponsible;
 
     //private Money myNakladAll;
     private decimal mySummaFact;
@@ -302,7 +302,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     /// <summary>
     ///     Ответственный
     /// </summary>
-    public Employee.Employee PersonaResponsible
+    public References.Employee PersonaResponsible
     {
         get
         {
@@ -556,7 +556,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     public int? EmployeeTabelNumber => Employee?.TabelNumber;
 
     [Required(ErrorMessage = "Ответственный должен быть выбран обязательно.")]
-    public Employee.Employee Employee
+    public References.Employee Employee
     {
         get => myEmployee;
         set

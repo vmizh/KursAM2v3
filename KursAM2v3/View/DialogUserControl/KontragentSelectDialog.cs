@@ -37,10 +37,6 @@ namespace KursAM2.View.DialogUserControl
             Currency = crs;
             LayoutControl =
                 myDataUserControl = new KontragentSelectDialogUC();
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             // ReSharper disable once VirtualMemberCallInConstructor
             WindowName = "Выбор контрагента";
             LoadKontragentFromReference();
@@ -53,10 +49,6 @@ namespace KursAM2.View.DialogUserControl
             Currency = crs;
             LayoutControl =
                 myDataUserControl = new KontragentSelectDialogUC();
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             // ReSharper disable once VirtualMemberCallInConstructor
             WindowName = "Выбор контрагента";
             LoadKontragentFromReference();

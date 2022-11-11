@@ -23,10 +23,10 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
 {
     private string myAccuredInfo;
     private BankAccount myBankAccount;
-    private Cash myCash;
-    private Cash myCashTo;
+    private CashBox myCash;
+    private CashBox myCashTo;
     private References.Currency myCurrency;
-    private Employee.Employee myEmployee;
+    private References.Employee myEmployee;
     private SD_34 myEntity;
     private bool myIsKontrSelectEnable;
     private CashKontragentType myKontragentType;
@@ -126,10 +126,10 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
             Entity.SUMM_ORD = value;
             if (!IsBackCalc)
                 CRS_SUMMA = Math.Round(
-                    (SUMM_ORD ?? 0) * 100 / (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                    (SUMM_ORD ?? 0) * 100 / (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
             else
                 SUMM_ORD = Math.Round(
-                    (CRS_SUMMA ?? 0) + (CRS_SUMMA ?? 0) * (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) / 100, 2);
+                    (CRS_SUMMA ?? 0) + (CRS_SUMMA ?? 0) * (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) / 100, 2);
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(CRS_SUMMA));
         }
@@ -213,7 +213,7 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
         }
     }
 
-    public Employee.Employee Employee
+    public References.Employee Employee
     {
         get => myEmployee;
         set
@@ -260,7 +260,7 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
         }
     }
 
-    public Cash Cash
+    public CashBox Cash
     {
         get => myCash;
         set
@@ -315,7 +315,7 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
                 CashKontragentType.Kontragent => KONTRAGENT_DC != null
                     ? MainReferences.GetKontragent(KONTRAGENT_DC).Name
                     : null,
-                CashKontragentType.Cash => CASH_TO_DC != null ? CashTo.CA_NAME : null,
+                CashKontragentType.Cash => CASH_TO_DC != null ? CashTo.Name : null,
                 CashKontragentType.Employee => TABELNUMBER != null ? Employee?.Name : null,
                 CashKontragentType.StockHolder => StockHolder?.Name,
                 _ => null
@@ -381,7 +381,7 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
         }
     }
 
-    public Cash CashTo
+    public CashBox CashTo
     {
         get => myCashTo;
         set
@@ -448,10 +448,10 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
             Entity.CRS_SUMMA = value;
             if (!IsBackCalc)
                 CRS_SUMMA = Math.Round(
-                    (SUMM_ORD ?? 0) * 100 / (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                    (SUMM_ORD ?? 0) * 100 / (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
             else
                 SUMM_ORD = Math.Round(
-                    (CRS_SUMMA ?? 0) + (CRS_SUMMA ?? 0) * (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) / 100, 2);
+                    (CRS_SUMMA ?? 0) + (CRS_SUMMA ?? 0) * (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) / 100, 2);
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(SUMM_ORD));
             RaisePropertyChanged();
@@ -490,7 +490,7 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
             CRS_DC = myCurrency?.DocCode;
             if (myCurrency != null)
                 // ReSharper disable once PossibleInvalidOperationException
-                UCH_VALUTA_RATE = (double?)CurrencyRate.GetCBRate(myCurrency, (DateTime)DATE_ORD);
+                UCH_VALUTA_RATE = (double?) CurrencyRate.GetCBRate(myCurrency, (DateTime) DATE_ORD);
             RaisePropertyChanged();
         }
     }
@@ -644,13 +644,13 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
         set
         {
             if (OBRATNY_RASCHET == (value ? 1 : 0)) return;
-            OBRATNY_RASCHET = value ? (short?)1 : (short?)0;
+            OBRATNY_RASCHET = value ? (short?) 1 : (short?) 0;
             if (!IsBackCalc)
                 CRS_SUMMA = Math.Round(
-                    (SUMM_ORD ?? 0) * 100 / (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                    (SUMM_ORD ?? 0) * 100 / (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
             else
                 SUMM_ORD = Math.Round(
-                    (CRS_SUMMA ?? 0) + (CRS_SUMMA ?? 0) * (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) / 100, 2);
+                    (CRS_SUMMA ?? 0) + (CRS_SUMMA ?? 0) * (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) / 100, 2);
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(IsKontrSummaEnabled));
             RaisePropertyChanged(nameof(IsSummaEnabled));
@@ -667,10 +667,10 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
             Entity.KONTR_CRS_SUM_CORRECT_PERCENT = Convert.ToDouble(value);
             if (!IsBackCalc)
                 CRS_SUMMA = Math.Round(
-                    (SUMM_ORD ?? 0) * 100 / (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
+                    (SUMM_ORD ?? 0) * 100 / (100 - (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
             else
                 SUMM_ORD = Math.Round(
-                    (CRS_SUMMA ?? 0) + (CRS_SUMMA ?? 0) * (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) / 100, 2);
+                    (CRS_SUMMA ?? 0) + (CRS_SUMMA ?? 0) * (decimal) (KONTR_CRS_SUM_CORRECT_PERCENT ?? 0) / 100, 2);
             RaisePropertyChanged();
         }
     }
@@ -940,11 +940,11 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
 
     private void LoadReferences()
     {
-        if (Entity?.CA_DC != null) Cash = MainReferences.CashsAll[(decimal)Entity.CA_DC];
+        if (Entity?.CA_DC != null) Cash = GlobalOptions.ReferencesCache.GetCashBox(Entity.CA_DC) as CashBox;
         myKontragentType = CashKontragentType.NotChoice;
         if (KONTRAGENT_DC != null)
             myKontragentType = CashKontragentType.Kontragent;
-        if (Entity?.CRS_DC != null) Currency = MainReferences.Currencies[(decimal)Entity?.CRS_DC];
+        if (Entity?.CRS_DC != null) Currency = MainReferences.Currencies[(decimal) Entity?.CRS_DC];
         if (SPOST_DC != null) SPostName = SPost(SPOST_DC.Value);
         if (SHPZ_DC != null) SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(SHPZ_DC) as SDRSchet;
         if (TABELNUMBER != null)
@@ -962,7 +962,7 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
         if (CASH_TO_DC != null)
         {
             myKontragentType = CashKontragentType.Cash;
-            CashTo = MainReferences.Cashs[CASH_TO_DC.Value];
+            CashTo = (CashBox) GlobalOptions.ReferencesCache.GetCashBox(CASH_TO_DC);
         }
 
         // ReSharper disable once PossibleNullReferenceException
@@ -986,7 +986,7 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
                 : $"Счет-фактура поставщика №{doc.SF_POSTAV_NUM}/{doc.SF_IN_NUM} от {doc.SF_POSTAV_DATE} " +
                   $"Пост:{MainReferences.GetKontragent(doc.SF_POST_DC)} " +
                   // ReSharper disable once PossibleInvalidOperationException
-                  $"на сумму:{doc.SF_CRS_SUMMA} {MainReferences.Currencies[(decimal)doc.SF_CRS_DC]}";
+                  $"на сумму:{doc.SF_CRS_SUMMA} {MainReferences.Currencies[(decimal) doc.SF_CRS_DC]}";
         }
     }
 

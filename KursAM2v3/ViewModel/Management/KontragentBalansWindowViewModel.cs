@@ -38,9 +38,6 @@ namespace KursAM2.ViewModel.Management
             Documents = new ObservableCollection<KonragentBalansRowViewModel>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
         }
 
         public KontragentBalansWindowViewModel(decimal doccode) : this()
@@ -214,10 +211,10 @@ namespace KursAM2.ViewModel.Management
             {
                 using (var ent = GlobalOptions.GetEntities())
                 {
-                    if (!MainReferences.AllKontragents.Keys.Contains(dc))
+                    if (GlobalOptions.ReferencesCache.GetKontragent(dc) == null)
                         throw new Exception($"Контрагент {dc} не найден. RecalcKontragentBalans.CalcBalans");
                     RecalcKontragentBalans.CalcBalans(dc,
-                        MainReferences.GetKontragent(dc).START_BALANS ?? new DateTime(2000, 1, 1));
+                        GlobalOptions.ReferencesCache.GetKontragent(dc).StartBalans);
                     var sql = "SELECT DOC_NAME as DocName, " +
                               "ISNULL(CONVERT(VARCHAR, td_101.CODE), DOC_NUM) AS DocNum, " +
                               "DOC_DATE as DocDate, " +
@@ -279,7 +276,7 @@ namespace KursAM2.ViewModel.Management
                             case "Акт конвертации ":
                                 var prj1 = prjcts.FirstOrDefault(_ => _.DocDC == o.DocDC && _.DocRowId == o.DocRowCode);
                                 if (prj1 != null)
-                                    o.Project = MainReferences.Projects[prj1.Projects.Id];
+                                    o.Project = GlobalOptions.ReferencesCache.GetProject(prj1.Projects.Id) as Project;
                                 break;
                             default:
                                 var prj = prjcts.FirstOrDefault(_ => _.DocDC == o.DocDC);

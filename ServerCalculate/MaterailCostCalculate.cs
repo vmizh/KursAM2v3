@@ -85,9 +85,7 @@ namespace ServerCalculate
                 }
 
                 MainReferences.Reset();
-                while (!MainReferences.IsReferenceLoadComplete)
-                {
-                }
+                
             }
             catch (Exception ex)
             {

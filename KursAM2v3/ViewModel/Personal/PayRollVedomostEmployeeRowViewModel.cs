@@ -3,7 +3,6 @@ using Core.ViewModel.Base;
 using Data;
 using KursDomain.Documents.Employee;
 using KursDomain.References;
-using Employee = KursDomain.Documents.Employee.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {

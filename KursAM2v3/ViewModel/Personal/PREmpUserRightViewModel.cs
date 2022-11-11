@@ -10,6 +10,7 @@ using Data;
 using DevExpress.Xpf.Grid;
 using KursDomain;
 using KursDomain.Documents.Employee;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -48,7 +49,7 @@ namespace KursAM2.ViewModel.Personal
                         // ReSharper disable once PossibleNullReferenceException
                         usr.Employee.Add(
                             pers.Where(t => t.DOC_CODE == empDC.EMP_DC)
-                                .Select(s => new Employee(s))
+                                .Select(s => new Employee())
                                 .FirstOrDefault());
                 }
             }

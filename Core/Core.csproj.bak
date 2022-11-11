@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Core</RootNamespace>
     <AssemblyName>Core</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -37,14 +37,14 @@
     <NoWarn>0436</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.Data.Desktop.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Data.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Mvvm.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Utils.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Controls.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Core.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Grid.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Grid.v21.2.Core, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.Desktop.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Mvvm.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Utils.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Controls.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Core.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v21.2.Core, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -54,14 +54,11 @@
     <Reference Include="JetBrains.Annotations, Version=2020.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2020.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.7.5\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.7.15\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -128,228 +125,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountOfSupplierCashDocViewModel.cs" />
-    <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountOfSupplierRowViewModel.cs" />
-    <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountOfSupplierViewModel.cs" />
-    <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountTypeViewModel.cs" />
-    <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountForClientViewModel.cs" />
-    <Compile Include="EntityViewModel\AccruedAmount\AccruedAmountForClientRowViewModel.cs" />
-    <Compile Include="EntityViewModel\AktSpisaniya\AktSpisaniyaRowViewModel.cs" />
-    <Compile Include="EntityViewModel\AktSpisaniya\AktSpisaniyaNomenklTitleViewModel.cs" />
-    <Compile Include="EntityViewModel\Bank\BankOperationType.cs" />
-    <Compile Include="EntityViewModel\Cash\CashCurrencyExchangeKontragentType.cs" />
-    <Compile Include="EntityViewModel\Cash\CashOrder.cs" />
-    <Compile Include="EntityViewModel\Cash\CashStartRemains.cs" />
-    <Compile Include="EntityViewModel\Bank\BankAccountReference.cs" />
-    <Compile Include="EntityViewModel\Bank\BankCurrencyChangeViewModel.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Kontragent\Kontragent.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentBank.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentBanks.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentCategory.cs" />
-    <Compile Include="EntityViewModel\Dogovora\DogovorOfSupplierFactViewModel.cs" />
-    <Compile Include="EntityViewModel\Dogovora\DogovorClientFactViewModel.cs" />
-    <Compile Include="EntityViewModel\Dogovora\DogovorClientRowViewModel.cs" />
-    <Compile Include="EntityViewModel\Dogovora\DogovorClientViewModel.cs" />
-    <Compile Include="EntityViewModel\Dogovora\DogovorOfSupplierViewModel.cs" />
-    <Compile Include="EntityViewModel\Dogovora\DogovorOfSupplierRowViewModel.cs" />
-    <Compile Include="EntityViewModel\Dogovora\LinkDocumentInfo.cs" />
-    <Compile Include="EntityViewModel\FieldChangeType.cs" />
-    <Compile Include="EntityViewModel\LastMenuUserSearchViewModel.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\Waibill2.cs" />
-    <Compile Include="EntityViewModel\Signatures\SignatureSchemesInfoViewModel.cs" />
-    <Compile Include="EntityViewModel\Signatures\SignatureSchemesViewModel.cs" />
-    <Compile Include="EntityViewModel\Signatures\SignatureTypeViewModel.cs" />
-    <Compile Include="EntityViewModel\StockHolder\StockHolderAccrualRowViewModel.cs" />
-    <Compile Include="EntityViewModel\StockHolder\StockHolderAccrualType.cs" />
-    <Compile Include="EntityViewModel\StockHolder\StockHolderAccrualViewModel.cs" />
-    <Compile Include="EntityViewModel\StockHolder\StockHolderUserRights.cs" />
-    <Compile Include="EntityViewModel\StockHolder\StockHolderViewModel.cs" />
-    <Compile Include="EntityViewModel\Systems\DataSourcesViewModel.cs" />
-    <Compile Include="EntityViewModel\Systems\KursMenuGroupViewModel.cs" />
-    <Compile Include="EntityViewModel\Systems\KursMenuItemViewModel.cs" />
-    <Compile Include="EntityViewModel\Systems\KursUser.cs" />
-    <Compile Include="EntityViewModel\Systems\LastDocumentViewModel.cs" />
-    <Compile Include="EntityViewModel\Invoices\ProviderInvoicePayViewModel.cs" />
-    <Compile Include="EntityViewModel\Invoices\InvoiceProviderRowCurrencyConvertViewModel.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\FormPay.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\NomenklProductKind.cs" />
-    <Compile Include="EntityViewModel\Periods\Period.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\MaterialDocumentType.cs" />
-    <Compile Include="EntityViewModel\Employee\Employee.cs" />
-    <Compile Include="EntityViewModel\Bank\BankPeriodOperations.cs" />
-    <Compile Include="EntityViewModel\Dogovora\ContractType.cs" />
-    <Compile Include="EntityViewModel\Dogovora\Old\ContractProvider.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\DeliveryCondition.cs" />
-    <Compile Include="EntityViewModel\Dogovora\Old\ContractProviderRowViewModel.cs" />
-    <Compile Include="EntityViewModel\Invoices\InvoiceProvider.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\Nomenkl.cs" />
-    <Compile Include="EntityViewModel\Cash\CashCurrencyExchange.cs" />
-    <Compile Include="EntityViewModel\ProjectProviderPrihodViewModel.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\WarehouseOrderOut.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\WarehouseOrderOutRow.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\WarehouseSenderType.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\Waybill.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\WaybillRow.cs" />
-    <Compile Include="EntityViewModel\Invoices\InvoicePaymentDocument.cs" />
-    <Compile Include="EntityViewModel\Systems\UserRolesViewModel.cs" />
-    <Compile Include="EntityViewModel\Systems\UsersViewModel.cs" />
-    <Compile Include="EntityViewModel\UserMenuFavorites.cs" />
-    <Compile Include="Helper\DocumentHistoryHelper.cs" />
-    <Compile Include="Helper\EnumExtensions.cs" />
-    <Compile Include="Helper\KursConvert.cs" />
-    <Compile Include="Helper\TypeProfitAndLossCalc.cs" />
-    <Compile Include="Helper\MultyCurrencyHelper.cs" />
-    <Compile Include="Helper\ValidationError.cs" />
     <Compile Include="Logger\LoggerHelper.cs" />
     <Compile Include="Logger\LogLevelEnum.cs" />
-    <Compile Include="MainReferences2.cs" />
-    <Compile Include="Prices.cs" />
-    <Compile Include="ViewModel\Base\Dialogs\DialogErrorViewModel.cs" />
-    <Compile Include="ViewModel\Base\DocumentCreateTypeEnum.cs" />
-    <Compile Include="ViewModel\Base\IDocumentCopy.cs" />
-    <Compile Include="ViewModel\Base\IDocumentOperations.cs" />
-    <Compile Include="ViewModel\Base\IDocumentOpenType.cs" />
-    <Compile Include="ViewModel\Base\ISimpleDialogItem.cs" />
-    <Compile Include="ViewModel\Base\SplashScreenView.xaml.cs">
-      <DependentUpon>SplashScreenView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModel\Base\SplashScreenViewModel.cs" />
-    <Compile Include="ViewModel\Base\IDocumentOperation.cs" />
-    <Compile Include="ViewModel\Base\ISearchWindowViewModel.cs" />
-    <Compile Include="ViewModel\Base\IViewModelToEntity.cs" />
-    <Compile Include="ViewModel\Base\KursBaseControlViewModel.cs" />
-    <Compile Include="ViewModel\Base\KursBaseViewModel.cs" />
-    <Compile Include="ViewModel\Base\KursWindowSearchBaseViewModel.cs" />
-    <Compile Include="EntityViewModel\Bank\BankAccount.cs" />
-    <Compile Include="EntityViewModel\Systems\DocHistoryViewModel.cs" />
-    <Compile Include="Menu\KursButton.cs" />
-    <Compile Include="EntityViewModel\ICheckViewModel.cs" />
-    <Compile Include="WindowsManager\ErrorMessageBase.cs" />
-    <Compile Include="WindowsManager\ThemedWindowLayoutManager.cs" />
-    <Compile Include="WindowsManager\StandartErrorManager.cs" />
-    <Compile Include="RemainderCurrenciesDatePeriod.cs" />
-    <Compile Include="DatePeriod.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\DocumentType.cs" />
-    <Compile Include="EntityViewModel\Bank\BankAndAccounts.cs" />
-    <Compile Include="EntityViewModel\Bank\BankStatements.cs" />
-    <Compile Include="EntityViewModel\Cash\CashKontragentType.cs" />
-    <Compile Include="EntityViewModel\Periods\CLOSED_DOC_TYPEViewModel.cs" />
-    <Compile Include="EntityViewModel\Periods\PeriodGroupsExludeViewModel.cs" />
-    <Compile Include="EntityViewModel\Periods\PERIOD_GROUPS_USERSViewModel.cs" />
-    <Compile Include="EntityViewModel\Periods\PERIOD_GROUPSViewModel.cs" />
-    <Compile Include="EntityViewModel\Periods\PERIOD_CLOSED_EXCLUDEViewModel.cs" />
-    <Compile Include="EntityViewModel\Periods\PERIOD_CLOSEDViewModel.cs" />
-    <Compile Include="EntityViewModel\Systems\MAIN_DOCUMENT_ITEMViewModel.cs" />
-    <Compile Include="EntityViewModel\ProjectsInfoViewModel.cs" />
-    <Compile Include="EntityViewModel\Bank\BankHeader.cs" />
-    <Compile Include="EntityViewModel\Bank\BankOperationsViewModel.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\WarehouseOrderInRow.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\WarehouseOrderIn.cs" />
-    <Compile Include="EntityViewModel\ShipmentRowViewModel.cs" />
-    <Compile Include="EntityViewModel\USER_FORMS_RIGHTViewModel.cs" />
-    <Compile Include="EntityViewModel\Systems\MAIN_DOCUMENT_GROUPViewModel.cs" />
-    <Compile Include="EntityViewModel\Vzaimozachet\SD_111ViewModel.cs" />
-    <Compile Include="EntityViewModel\Systems\EXT_USERSViewModel.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\NomenklTransferViewModel.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\CountriesViewModel.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\NomenklTransferRowViewModel.cs" />
-    <Compile Include="ISummaMultiCurrency.cs" />
-    <Compile Include="ISummaMultiWithPriceCurrency.cs" />
-    <Compile Include="IMultyCurrency.cs" />
     <Compile Include="MonthYearDayItem.cs" />
-    <Compile Include="EntityViewModel\Invoices\InvoiceClientRow.cs" />
-    <Compile Include="EntityViewModel\Invoices\InvoiceClient.cs" />
-    <Compile Include="ViewModel\Base\CurrencyCode.cs" />
-    <Compile Include="ViewModel\Base\EntityLoadCodition.cs" />
-    <Compile Include="ViewModel\Base\IDataUserControl.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\CrossCurrencyRate.cs" />
-    <Compile Include="Helper\DataAnnotationForFluentApiBase.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\NomenklMoveOnSkladViewModel.cs" />
-    <Compile Include="EntityViewModel\Systems\UserProfileViewModel.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Project.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\NomenklMainViewModel.cs" />
     <Compile Include="Errors.cs" />
-    <Compile Include="Control\SearchButtonEditor.xaml.cs">
-      <DependentUpon>SearchButtonEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Control\WindowMenu.xaml.cs">
-      <DependentUpon>WindowMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CurrencyRates.cs" />
     <Compile Include="DataSource.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\COUNTRYViewModel.cs" />
-    <Compile Include="EntityViewModel\Employee\EMP_PAYROLL_TYPEViewModel.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Kontragent\KONTRAGENT_REF_OUTViewModel.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Kontragent\KONTRAGENT_REF_OUT_REQUISITEViewModel.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Kontragent\KONTR_BALANS_OPER_ARCViewModel.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\NomenklCostResetRowsViewModel.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\NomenklCostResetViewModel.cs" />
-    <Compile Include="EntityViewModel\NOM_SKLAD_CURRENCY_PRICEViewModel.cs" />
-    <Compile Include="EntityViewModel\SCHET_FACT_KONTR_OUTViewModel.cs" />
-    <Compile Include="EntityViewModel\SCHET_FACT_KONTR_OUT_ROWSViewModel.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\NomenklProductType.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\CategoryClientTypeViewModel.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\Unit.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\PayCondition.cs" />
-    <Compile Include="EntityViewModel\Cash\Cash.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Region.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\SD_24ViewModel.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\Warehouse.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Currency.cs" />
-    <Compile Include="EntityViewModel\Cash\CashIn.cs" />
-    <Compile Include="EntityViewModel\Cash\CashOut.cs" />
-    <Compile Include="EntityViewModel\SD_375ViewModel.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentGruzoRequisite.cs" />
-    <Compile Include="EntityViewModel\Bank\Bank.cs" />
-    <Compile Include="EntityViewModel\Vzaimozachet\VzaimoraschetType.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\NomenklGroup.cs" />
-    <Compile Include="EntityViewModel\Dogovora\Old\SD_9ViewModel.cs" />
-    <Compile Include="EntityViewModel\TaxUpdateHistoryViewModel.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\TD_24ViewModel.cs" />
-    <Compile Include="EntityViewModel\Invoices\InvoiceProviderRow.cs" />
-    <Compile Include="EntityViewModel\Dogovora\Old\TD_9ViewModel.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentGroup.cs" />
-    <Compile Include="GlobalOptions.cs" />
-    <Compile Include="KursMoney.cs" />
-    <Compile Include="MainReferences.cs" />
-    <Compile Include="Menu\MenuButtonInfo.cs" />
-    <Compile Include="Menu\MenuGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModel\Base\Column\ColumnSummary.cs" />
-    <Compile Include="ViewModel\Base\Column\ColumnHelper.cs" />
-    <Compile Include="ViewModel\Base\Command.cs" />
-    <Compile Include="ViewModel\Base\Column\GridColumnHelper.cs" />
-    <Compile Include="ViewModel\Base\Column\GridColumnTemplateSelector.cs" />
-    <Compile Include="ViewModel\Base\IDocument.cs" />
-    <Compile Include="ViewModel\Base\IEntity.cs" />
-    <Compile Include="ViewModel\Base\ITreeReference.cs" />
-    <Compile Include="ViewModel\Base\IViewModel.cs" />
-    <Compile Include="ViewModel\Base\KursViewModelBase.cs" />
-    <Compile Include="ViewModel\Base\RowStatus.cs" />
-    <Compile Include="ViewModel\Base\RSDataErrorWindowInfoViewModelBase.cs" />
-    <Compile Include="ViewModel\Base\RSViewModelBase.cs" />
-    <Compile Include="ViewModel\Base\RSViewModelData.cs" />
-    <Compile Include="ViewModel\Base\RSViewModelDataEntity.cs" />
-    <Compile Include="ViewModel\Base\RSViewModelWindow.cs" />
-    <Compile Include="ViewModel\Base\RSWindowDataErrorInfoViewModelBase.cs" />
-    <Compile Include="ViewModel\Base\RSWindowDialogViewModelBase.cs" />
-    <Compile Include="ViewModel\Base\RSWindowSearchViewModelBase.cs" />
-    <Compile Include="ViewModel\Base\RSWindowViewModelBase.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\CentrOfResponsibility.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\CurrencyRate.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\NomenklRemains.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\NomenklSkladRemain.cs" />
-    <Compile Include="EntityViewModel\NomenklManagement\NomenklSkladRemains.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\SDRSchet.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\SDRState.cs" />
-    <Compile Include="EntityViewModel\Systems\User.cs" />
-    <Compile Include="EntityViewModel\CommonReferences\Kontragent\KontragentTypeEnum.cs" />
-    <Compile Include="EntityViewModel\Vzaimozachet\TD_110ViewModel.cs" />
-    <Compile Include="EntityViewModel\Vzaimozachet\SD_110ViewModel.cs" />
-    <Compile Include="EntityViewModel\Vzaimozachet\UD_110ViewModel.cs" />
-    <Compile Include="WindowsManager\IWindowManager.cs" />
-    <Compile Include="WindowsManager\WindowLayoutManager.cs" />
-    <Compile Include="WindowsManager\WindowManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj">
@@ -360,6 +141,10 @@
       <Project>{45442B20-578B-4519-A31C-6BA5102B240F}</Project>
       <Name>Helper</Name>
     </ProjectReference>
+    <ProjectReference Include="..\KursDomain\KursDomain.csproj">
+      <Project>{2892B43C-A8F8-4939-9F88-EAB3B8F7108B}</Project>
+      <Name>KursDomain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LayoutManager\LayoutManager.csproj">
       <Project>{0ac84fa1-a12e-414a-8d3e-ede48e795908}</Project>
       <Name>LayoutManager</Name>
@@ -367,32 +152,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\Core.EntityViewModel.WarehouseOrderIn.datasource" />
   </ItemGroup>
-  <ItemGroup>
-    <Page Include="Control\SearchButtonEditor.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Control\WindowMenu.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ViewModel\Base\SplashScreenView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModel\Base\DXWindowViewModel\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

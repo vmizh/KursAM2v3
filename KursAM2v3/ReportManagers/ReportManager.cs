@@ -8,6 +8,7 @@ using Core.WindowsManager;
 using DevExpress.Xpf.Printing;
 using DevExpress.XtraReports.UI;
 using KursDomain;
+using KursDomain.ICommon;
 
 namespace KursAM2.ReportManagers
 {
@@ -92,7 +93,7 @@ namespace KursAM2.ReportManagers
                             Tovar = d.SD_83.NOM_NAME,
                             EdIzmName = d.SD_175.ED_IZM_NAME,
                             NumberItems = d.DDT_KOL_RASHOD,
-                            KladovschikName = MainReferences.Warehouses[d.SD_24.DD_SKLAD_OTPR_DC.Value].Employee.Name,
+                            KladovschikName = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_OTPR_DC).StoreKeeper).Name,
                             SkladName = d.SD_24.SD_271.SKL_NAME
                         }).OrderBy(_ => _.LineNumber).ToList();
                     var fileName = pathToReports + "WarehouseOrderOut.repx";

@@ -31,7 +31,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         #region Fielfds
 
-        private CashIn myCurrentDocument;
+        private CashInViewModel myCurrentDocument;
         private DateTime myDateEnd;
         private DateTime myDateStart;
 
@@ -67,7 +67,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
-        public CashIn CurrentDocument
+        public CashInViewModel CurrentDocument
         {
             get => myCurrentDocument;
             set
@@ -93,8 +93,8 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         #region Commands
 
-        public ObservableCollection<CashIn> DocumentCollection { set; get; } =
-            new ObservableCollection<CashIn>();
+        public ObservableCollection<CashInViewModel> DocumentCollection { set; get; } =
+            new ObservableCollection<CashInViewModel>();
 
         public override void SearchClear(object obj)
         {
@@ -129,7 +129,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                         .ToList();
                     foreach (var d in data)
                         if (d.SD_43.NAME.Contains(SearchText))
-                            DocumentCollection.Add(new CashIn(d));
+                            DocumentCollection.Add(new CashInViewModel(d));
                 }
             }
             catch (Exception ex)
@@ -142,7 +142,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             base.RefreshData(obj);
             SearchText = null;
-            DocumentCollection = new ObservableCollection<CashIn>();
+            DocumentCollection = new ObservableCollection<CashInViewModel>();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -166,7 +166,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                         .OrderByDescending(_ => _.DATE_ORD)
                         .ToList();
                     foreach (var d in data)
-                        DocumentCollection.Add(new CashIn(d)
+                        DocumentCollection.Add(new CashInViewModel(d)
                         {
                             myState = RowStatus.NotEdited
                         });

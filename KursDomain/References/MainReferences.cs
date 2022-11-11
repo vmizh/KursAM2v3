@@ -9,7 +9,6 @@ using Data;
 using Helper;
 using KursDomain;
 using KursDomain.Documents.AccruedAmount;
-using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.Documents.Vzaimozachet;
@@ -17,8 +16,6 @@ using KursDomain.ICommon;
 using KursDomain.References;
 using ContractType = KursDomain.Documents.Dogovora.ContractType;
 using DeliveryCondition = KursDomain.Documents.NomenklManagement.DeliveryCondition;
-using Employee = KursDomain.Documents.Employee.Employee;
-using Project = KursDomain.Documents.CommonReferences.Project;
 using Region = KursDomain.Documents.CommonReferences.Region;
 using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
@@ -54,8 +51,8 @@ public static class MainReferences
         SDRStates = new Dictionary<decimal, SDRState>();
         MutualTypes = new Dictionary<decimal, SD_111ViewModel>();
         BankAccounts = new Dictionary<decimal, BankAccount>();
-        Cashs = new Dictionary<decimal, Cash>();
-        CashsAll = new Dictionary<decimal, Cash>();
+        Cashs = new Dictionary<decimal, CashBox>();
+        CashsAll = new Dictionary<decimal, CashBox>();
         Projects = new Dictionary<Guid, Project>();
         ContractTypes = new Dictionary<decimal, ContractType>();
         DeliveryConditions = new Dictionary<decimal, DeliveryCondition>();
@@ -65,7 +62,7 @@ public static class MainReferences
     }
 
 
-    public static Dictionary<decimal, Cash> CashsAll { get; set; }
+    public static Dictionary<decimal, CashBox> CashsAll { get; set; }
 
     public static bool IsCheckedForUpdate { set; get; } = false;
 
@@ -76,7 +73,7 @@ public static class MainReferences
     public static Dictionary<decimal, DeliveryCondition> DeliveryConditions { set; get; }
     public static Dictionary<decimal, ContractType> ContractTypes { set; get; }
     public static Dictionary<Guid, Project> Projects { set; get; }
-    public static Dictionary<decimal, Cash> Cashs { set; get; }
+    public static Dictionary<decimal, CashBox> Cashs { set; get; }
     public static Dictionary<decimal, BankAccount> BankAccounts { set; get; }
     public static DateTime NomenklLastUpdate { set; get; } = new DateTime(1900, 1, 1);
     public static DateTime KontragentLastUpdate { set; get; } = new DateTime(1900, 1, 1);
@@ -378,19 +375,19 @@ public static class MainReferences
 
     public static Nomenkl GetNomenkl(decimal dc)
     {
-        if (ALLNomenkls.ContainsKey(dc))
-        {
-            if (IsNomMustUpdate(ALLNomenkls[dc])) LoadNomenkl(dc);
-            return ALLNomenkls[dc];
-        }
+        //if (ALLNomenkls.ContainsKey(dc))
+        //{
+        //    if (IsNomMustUpdate(ALLNomenkls[dc])) LoadNomenkl(dc);
+        //    return ALLNomenkls[dc];
+        //}
 
-        LoadNomenkl(dc);
-        if (!ALLNomenkls.ContainsKey(dc))
-            if (dc != 0)
-                //WindowManager.ShowMessage($"Номенклатура с кодом {dc} отсутствует.", "Ошибка", MessageBoxImage.Error);
-                return null;
+        //LoadNomenkl(dc);
+        //if (!ALLNomenkls.ContainsKey(dc))
+        //    if (dc != 0)
+        //        //WindowManager.ShowMessage($"Номенклатура с кодом {dc} отсутствует.", "Ошибка", MessageBoxImage.Error);
+        //        return null;
 
-        return ALLNomenkls[dc];
+        return GlobalOptions.ReferencesCache.GetNomenkl(dc) as Nomenkl;
     }
 
     public static Nomenkl GetNomenkl(Guid id)
@@ -839,12 +836,13 @@ public static class MainReferences
                 if (Employees.ContainsKey(item.DOC_CODE))
                 {
                     var d = Employees[item.DOC_CODE];
-                    d.UpdateFrom(item);
-                    d.myState = RowStatus.NotEdited;
+                    d.LoadFromEntity(item, GlobalOptions.ReferencesCache);
                 }
                 else
                 {
-                    Employees.Add(item.DOC_CODE, new Employee(item) {myState = RowStatus.NotEdited});
+                    var emp = new Employee();
+                    emp.LoadFromEntity(item, GlobalOptions.ReferencesCache);
+                    Employees.Add(item.DOC_CODE, emp);
                 }
 
             keys = Employees.Keys.ToList();
@@ -888,12 +886,13 @@ public static class MainReferences
                 if (Projects.ContainsKey(item.Id))
                 {
                     var d = Projects[item.Id];
-                    d.UpdateFrom(item);
-                    d.myState = RowStatus.NotEdited;
+                    d.LoadFromEntity(item, GlobalOptions.ReferencesCache);
                 }
                 else
                 {
-                    Projects.Add(item.Id, new Project(item) {myState = RowStatus.NotEdited});
+                    var newItem = new Project();
+                    newItem.LoadFromEntity(item, GlobalOptions.ReferencesCache);
+                    Projects.Add(item.Id, newItem);
                 }
 
             var keys1 = Projects.Keys.ToList();
@@ -956,16 +955,12 @@ public static class MainReferences
                 if (CashsAll.ContainsKey(item.DOC_CODE))
                 {
                     var d = CashsAll[item.DOC_CODE];
-                    d.UpdateFrom(item);
-                    d.myState = RowStatus.NotEdited;
+                    d.LoadFromEntity(item, GlobalOptions.ReferencesCache);
                 }
                 else
                 {
-                    var ch = new Cash(item)
-                    {
-                        IsAccessRight = cashAcc.Any(_ => item.DOC_CODE == _.DocCode),
-                        myState = RowStatus.Deleted
-                    };
+                    var ch = new CashBox();
+                    ch.LoadFromEntity(item, GlobalOptions.ReferencesCache);
                     Cashs.Add(item.DOC_CODE, ch);
                     CashsAll.Add(item.DOC_CODE, ch);
                 }

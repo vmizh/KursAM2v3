@@ -94,10 +94,6 @@ public static class GlobalOptions
         if (MainReferences.IsReferenceLoadComplete)
             return ret;
         MainReferences.Reset();
-        while (!MainReferences.IsReferenceLoadComplete)
-        {
-        }
-
         return ret;
     }
 

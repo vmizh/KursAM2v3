@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -52,7 +51,7 @@ public sealed class AccruedAmountForClientRowViewModel : RSViewModelBase, IDataE
         }
 
         if (Entity.CashDC != null)
-            CashDoc = new CashIn(Entity.SD_33);
+            CashDoc = new CashInViewModel(Entity.SD_33);
         if (Entity.SHPZ_DC != null)
             SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SHPZ_DC.Value) as SDRSchet;
         if (Entity.BankCode != null)
@@ -85,7 +84,7 @@ public sealed class AccruedAmountForClientRowViewModel : RSViewModelBase, IDataE
     #region Fields
 
     private AccuredAmountForClientRow myEntity;
-    private CashIn myCashDoc;
+    private CashInViewModel myCashDoc;
     private BankOperationsViewModel myBankDoc;
     private SDRSchet mySDRSchet;
 
@@ -128,10 +127,10 @@ public sealed class AccruedAmountForClientRowViewModel : RSViewModelBase, IDataE
 
     public Nomenkl Nomenkl
     {
-        get => MainReferences.GetNomenkl(Entity.NomenklDC);
+        get => GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) as Nomenkl;
         set
         {
-            if (MainReferences.GetNomenkl(Entity.NomenklDC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) == value) return;
             if (value != null)
             {
                 Entity.NomenklDC = value.DocCode;
@@ -171,7 +170,7 @@ public sealed class AccruedAmountForClientRowViewModel : RSViewModelBase, IDataE
         }
     }
 
-    public CashIn CashDoc
+    public CashInViewModel CashDoc
     {
         get => myCashDoc;
         set

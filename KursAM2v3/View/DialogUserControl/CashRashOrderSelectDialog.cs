@@ -14,7 +14,7 @@ namespace KursAM2.View.DialogUserControl
         private CashOut myCurrentItem;
         private StandartDialogSelectUC myDataUserControl;
 
-        public CashRashOrderSelectDialog(CashIn order)
+        public CashRashOrderSelectDialog(CashInViewModel order)
         {
             Order = order;
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
@@ -25,7 +25,7 @@ namespace KursAM2.View.DialogUserControl
         public ObservableCollection<CashOut> ItemsCollection { set; get; } =
             new ObservableCollection<CashOut>();
 
-        private CashIn Order { get; }
+        private CashInViewModel Order { get; }
 
         public StandartDialogSelectUC DataUserControl
         {

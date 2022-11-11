@@ -3,15 +3,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.View.Management;
 using KursAM2.View.Management.Controls;
 using KursDomain;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Management.Projects
 {
@@ -38,15 +36,15 @@ namespace KursAM2.ViewModel.Management.Projects
             }
         }
 
-        public ObservableCollection<Project> ProjectCollection { set; get; } =
-            new ObservableCollection<Project>();
+        public ObservableCollection<ProjectViewModel> ProjectCollection { set; get; } =
+            new ObservableCollection<ProjectViewModel>();
 
         public Project CurrentProject
         {
             get => myCurrentProject;
             set
             {
-                if (Equals(myCurrentProject,value)) return;
+                if (Equals(myCurrentProject, value)) return;
                 myCurrentProject = value;
                 RaisePropertyChanged();
             }
@@ -58,9 +56,11 @@ namespace KursAM2.ViewModel.Management.Projects
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    ProjectCollection = new ObservableCollection<Project>();
+                    ProjectCollection = new ObservableCollection<ProjectViewModel>();
                     foreach (var p in ctx.Projects.ToList())
-                        ProjectCollection.Add(new Project(p) {State = RowStatus.NotEdited});
+                    {
+                        ProjectCollection.Add(new ProjectViewModel(p) {State = RowStatus.NotEdited});
+                    }
                 }
             }
             catch (Exception ex)

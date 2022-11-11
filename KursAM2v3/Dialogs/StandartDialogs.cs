@@ -27,8 +27,6 @@ using KursDomain.Documents.Periods;
 using KursDomain.Documents.StockHolder;
 using KursDomain.Documents.Systems;
 using KursDomain.References;
-using Employee = KursDomain.Documents.Employee.Employee;
-using Project = KursDomain.Documents.CommonReferences.Project;
 using Region = KursDomain.Documents.CommonReferences.Region;
 using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
@@ -303,7 +301,7 @@ namespace KursAM2.Dialogs
             return null;
         }
 
-        public static Cash SelectCash(List<Cash> exclude)
+        public static CashBox SelectCash(List<CashBox> exclude)
         {
             var ctx = new CashSelectedDialog(exclude);
             var dlg = new SelectDialogView { DataContext = ctx };
@@ -317,7 +315,7 @@ namespace KursAM2.Dialogs
         ///     при перемещенни денег из кассы в кассу
         /// </summary>
         /// <returns></returns>
-        public static CashOut SelectCashRashOrderForPrihod(CashIn ord)
+        public static CashOut SelectCashRashOrderForPrihod(CashInViewModel ord)
         {
             var ctx = new CashRashOrderSelectDialog(ord);
             var dlg = new SelectDialogView { DataContext = ctx };
@@ -331,7 +329,7 @@ namespace KursAM2.Dialogs
         ///     при перемещенни денег из кассы в кассу
         /// </summary>
         /// <returns></returns>
-        public static CashOut SelectCashOrders(CashIn ord)
+        public static CashOut SelectCashOrders(CashInViewModel ord)
         {
             var ctx = new CashRashOrderSelectDialog(ord);
             var dlg = new SelectDialogView { DataContext = ctx };
@@ -340,7 +338,7 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
-        public static List<CashStartRemains> SetCashRemains(Cash cash)
+        public static List<CashStartRemains> SetCashRemains(CashBox cash)
         {
             var ret = new List<CashStartRemains>();
             var ctx = new CashSetRemainsDialog(cash);

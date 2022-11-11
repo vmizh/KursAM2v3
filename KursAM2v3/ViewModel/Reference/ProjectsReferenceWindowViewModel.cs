@@ -3,23 +3,20 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
 using KursAM2.View.KursReferences;
 using KursDomain;
-using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.Employee;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference
 {
     public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     {
-        private Project myCurrentProject;
+        private ProjectViewModel myCurrentProject;
 
         public ProjectReferenceWindowViewModel()
         {
@@ -34,20 +31,20 @@ namespace KursAM2.ViewModel.Reference
             Form = win;
         }
 
-        public ObservableCollection<Project> ProjectCollection { set; get; } =
-            new ObservableCollection<Project>();
+        public ObservableCollection<ProjectViewModel> ProjectCollection { set; get; } =
+            new ObservableCollection<ProjectViewModel>();
 
-        public ObservableCollection<Project> DeletedProjectCollection { set; get; } =
-            new ObservableCollection<Project>();
+        public ObservableCollection<ProjectViewModel> DeletedProjectCollection { set; get; } =
+            new ObservableCollection<ProjectViewModel>();
 
         public ObservableCollection<Employee> PersonaCollection { set; get; } = new ObservableCollection<Employee>();
 
-        public Project CurrentProject
+        public ProjectViewModel CurrentProject
         {
             get => myCurrentProject;
             set
             {
-                if (Equals(myCurrentProject,value)) return;
+                if (Equals(myCurrentProject, value)) return;
                 myCurrentProject = value;
                 RaisePropertyChanged();
             }
@@ -63,10 +60,10 @@ namespace KursAM2.ViewModel.Reference
                 {
                     ProjectCollection.Clear();
                     foreach (var p in ctx.Projects.ToList())
-                        ProjectCollection.Add(new Project(p) {State = RowStatus.NotEdited});
+                        ProjectCollection.Add(new ProjectViewModel(p) {State = RowStatus.NotEdited});
                     if (ProjectCollection.Count == 0)
                     {
-                        var newRow = new Project
+                        var newRow = new ProjectViewModel
                         {
                             Id = Guid.NewGuid(),
                             Name = "Новый проект",
@@ -159,7 +156,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewProject(object obj)
         {
-            var newRow = new Project
+            var newRow = new ProjectViewModel
             {
                 State = RowStatus.NewRow,
                 Id = Guid.NewGuid(),
@@ -192,7 +189,7 @@ namespace KursAM2.ViewModel.Reference
 
         private void AddNewChildProject(object obj)
         {
-            var newRow = new Project
+            var newRow = new ProjectViewModel
             {
                 State = RowStatus.NewRow,
                 Id = Guid.NewGuid(),

@@ -27,7 +27,6 @@ namespace KursAM2.View.Management
             myKontragentLookUpLayoutName =
                 $"{Environment.CurrentDirectory}\\Layout\\KontragentLookUpEdit.{Guid.NewGuid()}.xml";
             Loaded += KontragentBalansForm_Loaded;
-            //Closing += KontragentBalansForm_Closing;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

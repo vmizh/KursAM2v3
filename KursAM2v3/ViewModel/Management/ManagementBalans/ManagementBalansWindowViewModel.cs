@@ -416,10 +416,6 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         public override void RefreshData(object obj)
         {
             myBalansBuilder = new ManagementBalansBuilder();
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             ExtendRows.Clear();
             ExtendRowsActual.Clear();
             BalansStructure.Clear();
@@ -1310,13 +1306,13 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     Summa = -per.DolgSumma,
                     CurrencyName = per.CrsName,
                     // ReSharper disable PossibleInvalidOperationException
-                    SummaEUR = per.Employee.crs_dc.Value == CurrencyCode.EUR ? -per.DolgSumma : 0,
-                    SummaUSD = per.Employee.crs_dc.Value == CurrencyCode.USD ? -per.DolgSumma : 0,
-                    SummaRUB = per.Employee.crs_dc.Value == CurrencyCode.RUB ? -per.DolgSumma : 0,
-                    SummaGBP = per.Employee.crs_dc.Value == CurrencyCode.GBP ? -per.DolgSumma : 0,
-                    SummaCHF = per.Employee.crs_dc.Value == CurrencyCode.CHF ? -per.DolgSumma : 0,
-                    SummaSEK = per.Employee.crs_dc.Value == CurrencyCode.SEK ? -per.DolgSumma : 0,
-                    SummaCNY = per.Employee.crs_dc.Value == CurrencyCode.CNY ? -per.DolgSumma : 0,
+                    SummaEUR = ((IDocCode)per.Employee.Currency).DocCode == CurrencyCode.EUR ? -per.DolgSumma : 0,
+                    SummaUSD = ((IDocCode)per.Employee.Currency).DocCode == CurrencyCode.USD ? -per.DolgSumma : 0,
+                    SummaRUB = ((IDocCode)per.Employee.Currency).DocCode == CurrencyCode.RUB ? -per.DolgSumma : 0,
+                    SummaGBP = ((IDocCode)per.Employee.Currency).DocCode == CurrencyCode.GBP ? -per.DolgSumma : 0,
+                    SummaCHF = ((IDocCode)per.Employee.Currency).DocCode == CurrencyCode.CHF ? -per.DolgSumma : 0,
+                    SummaSEK = ((IDocCode)per.Employee.Currency).DocCode == CurrencyCode.SEK ? -per.DolgSumma : 0,
+                    SummaCNY = ((IDocCode)per.Employee.Currency).DocCode == CurrencyCode.CNY ? -per.DolgSumma : 0,
                     Persona = per.Employee
                     // ReSharper restore PossibleInvalidOperationException
                 });

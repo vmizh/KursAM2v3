@@ -24,7 +24,7 @@ namespace KursAM2.Auxiliary
             #region Касса
 
             var cashIn = ctx.SD_33.ToList();
-            foreach (var doc in cashIn.Select(ent => new CashIn(ent)))
+            foreach (var doc in cashIn.Select(ent => new CashInViewModel(ent)))
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.CashIn), null,
                     doc.DocCode, null, (string)doc.ToJson());
 

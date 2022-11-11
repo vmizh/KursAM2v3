@@ -79,7 +79,7 @@ public class StockHolderViewModel : RSViewModelBase, IDataErrorInfo, IEntity<Sto
         }
     }
 
-    public Employee.Employee Employee
+    public References.Employee Employee
     {
         get => MainReferences.GetEmployee(Entity.EmployeeDC);
         set

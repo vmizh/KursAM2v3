@@ -96,7 +96,7 @@ namespace KursAM2.View.Finance.Cash
                     break;
                 case nameof(doc.Cash):
                     var cb = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Cash, "Cash",
-                        MainReferences.Cashs.Values.Where(_ => _.IsAccessRight).ToList());
+                        GlobalOptions.ReferencesCache.GetCashBoxAll().ToList());
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
                     cb.EditValueChanged += Cb_EditValueChanged;
@@ -400,7 +400,7 @@ namespace KursAM2.View.Finance.Cash
                         if (emp != null) ctx.Document.TABELNUMBER = emp.TabelNumber;
                         ctx.Document.NAME_ORD = emp?.Name;
                         ctx.Document.SFactName = null;
-                        ctx.Document.Currency = emp?.Currency;
+                        ctx.Document.Currency = emp?.Currency as Currency;
                         CurrencyItem.IsEnabled = false;
                         doc.SFACT_DC = null;
                         break;

@@ -70,7 +70,7 @@ public interface IInvoiceClient
     decimal PaySumma { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Ответственный")]
-    Employee.Employee PersonaResponsible { set; get; }
+    References.Employee PersonaResponsible { set; get; }
 
     [Display(AutoGenerateField = false)] ObservableCollection<IInvoiceClientRow> Rows { set; get; }
 }

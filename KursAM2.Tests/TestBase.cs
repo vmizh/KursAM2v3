@@ -29,10 +29,6 @@ namespace KursAM2.Tests
                 NickName = "sysadm"
             };
             MainReferences.Reset();
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             GlobalOptions.SystemProfile = new SystemProfile
             {
                 NationalCurrency = MainReferences.Currencies.Values.Single(_ => _.Name == "RUR"),

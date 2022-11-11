@@ -8,6 +8,7 @@ using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using Core.WindowsManager;
 using KursDomain;
+using KursDomain.ICommon;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal
@@ -113,18 +114,18 @@ namespace KursAM2.ViewModel.Personal
                     CurrencyRate.LoadCBrates(minDate, maxDate);
                     foreach (var row in SourceAll)
                     {
-                        row.Rate = CurrencyRate.GetSummaRate(row.Crs.DocCode, row.Employee.Currency.DocCode,
+                        row.Rate = CurrencyRate.GetSummaRate(row.Crs.DocCode, ((IDocCode)row.Employee.Currency).DocCode,
                             row.DocDate,
                             1);
-                        row.SummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, row.Employee.Currency.DocCode,
+                        row.SummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, ((IDocCode)row.Employee.Currency).DocCode,
                             row.DocDate,
                             row.Summa);
                         if (row.DocDate <= new DateTime(2013, 7, 31)) continue;
-                        row.Rate = CurrencyRate.GetRate(row.Crs.DocCode, row.Employee.Currency.DocCode, row.DocDate);
+                        row.Rate = CurrencyRate.GetRate(row.Crs.DocCode, ((IDocCode)row.Employee.Currency).DocCode, row.DocDate);
                         if (row.Employee.TabelNumber == 38 && row.PlatSumma == 100000)
                             row.PlatSummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode,
-                                row.Employee.Currency.DocCode, row.DocDate, row.PlatSumma);
-                        row.PlatSummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, row.Employee.Currency.DocCode,
+                                ((IDocCode)row.Employee.Currency).DocCode, row.DocDate, row.PlatSumma);
+                        row.PlatSummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, ((IDocCode)row.Employee.Currency).DocCode,
                             row.DocDate, row.PlatSumma);
                     }
                 }

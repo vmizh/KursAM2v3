@@ -4,7 +4,6 @@ using System.Linq;
 using Core.ViewModel.Base;
 using KursDomain.ICommon;
 using KursDomain.References;
-using Employee = KursDomain.Documents.Employee.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -62,7 +61,7 @@ namespace KursAM2.ViewModel.Personal
         }
 
         public int TabelNumber => Employee?.TabelNumber ?? -1;
-        public Currency EmployeeCrs => Employee.Currency;
+        public Currency EmployeeCrs => Employee.Currency as Currency;
 
         public decimal USDSumma
         {

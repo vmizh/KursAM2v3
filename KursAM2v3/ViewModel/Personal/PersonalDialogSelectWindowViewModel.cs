@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
 using KursDomain;
-using KursDomain.Documents.Employee;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -14,11 +13,11 @@ namespace KursAM2.ViewModel.Personal
     {
         private readonly List<decimal> myExistEmploeesDC;
 
-        private ObservableCollection<PersonaDialogSelect> myEmploeeCollection =
-            new ObservableCollection<PersonaDialogSelect>();
+        private ObservableCollection<Employee> myEmploeeCollection =
+            new ObservableCollection<Employee>();
 
-        private ObservableCollection<PersonaDialogSelect> mySelectedCollection =
-            new ObservableCollection<PersonaDialogSelect>();
+        private ObservableCollection<Employee> mySelectedCollection =
+            new ObservableCollection<Employee>();
 
         public PersonalDialogSelectWindowViewModel()
         {
@@ -30,13 +29,13 @@ namespace KursAM2.ViewModel.Personal
             myExistEmploeesDC = exists;
         }
 
-        public ObservableCollection<PersonaDialogSelect> EmployeeSelected { set; get; } =
-            new ObservableCollection<PersonaDialogSelect>();
+        public ObservableCollection<Employee> EmployeeSelected { set; get; } =
+            new ObservableCollection<Employee>();
 
-        public ObservableCollection<PersonaDialogSelect> SelectedItems { set; get; } =
-            new ObservableCollection<PersonaDialogSelect>();
+        public ObservableCollection<Employee> SelectedItems { set; get; } =
+            new ObservableCollection<Employee>();
 
-        public ObservableCollection<PersonaDialogSelect> EmploeeCollection
+        public ObservableCollection<Employee> EmploeeCollection
         {
             set
             {
@@ -46,7 +45,7 @@ namespace KursAM2.ViewModel.Personal
             get => myEmploeeCollection;
         }
 
-        public ObservableCollection<PersonaDialogSelect> SelectedCollection
+        public ObservableCollection<Employee> SelectedCollection
         {
             set
             {
@@ -63,11 +62,9 @@ namespace KursAM2.ViewModel.Personal
             foreach (var s in GlobalOptions.GetEntities().SD_2.Include(_ => _.SD_301))
             {
                 if (myExistEmploeesDC.Any(_ => _ == s.DOC_CODE)) continue;
-                EmploeeCollection.Add(new PersonaDialogSelect
-                {
-                    Persona = new Employee(s),
-                    DocCode = s.DOC_CODE
-                });
+                var emp = new Employee();
+                emp.LoadFromEntity(s, GlobalOptions.ReferencesCache);
+                EmploeeCollection.Add(emp);
             }
 
             RaisePropertyChanged(nameof(EmploeeCollection));
@@ -79,7 +76,7 @@ namespace KursAM2.ViewModel.Personal
             throw new NotImplementedException();
         }
 
-        public void AddToSelected(PersonaDialogSelect item)
+        public void AddToSelected(Employee item)
         {
             if (EmployeeSelected == null)
             {
@@ -100,7 +97,7 @@ namespace KursAM2.ViewModel.Personal
             RaisePropertyChanged(nameof(SelectedCollection));
         }
 
-        public void RemoveFromSelected(PersonaDialogSelect item)
+        public void RemoveFromSelected(Employee item)
         {
             if (SelectedItems == null)
             {
@@ -113,7 +110,7 @@ namespace KursAM2.ViewModel.Personal
             }
             else
             {
-                var tempList = new List<PersonaDialogSelect>(SelectedItems);
+                var tempList = new List<Employee>(SelectedItems);
                 foreach (var s in tempList)
                     if (SelectedCollection.Contains(s))
                         SelectedCollection.Remove(s);

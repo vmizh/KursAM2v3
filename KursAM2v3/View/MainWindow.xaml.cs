@@ -263,7 +263,7 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     // Начисления вынебалансовым Клиентам
-                    case "Реестр прямых расходов для клиентов":
+                    case "Прямые услуги для клиентов":
                         var aad = new AccuredAmountForClientSearchViewModel();
                         form = new StandartSearchView
                         {

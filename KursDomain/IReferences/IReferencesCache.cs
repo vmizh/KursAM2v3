@@ -11,6 +11,7 @@ namespace KursDomain.IReferences;
 public interface IReferencesCache
 {
     ICashBox GetCashBox(decimal? dc);
+    ICashBox GetCashBox(decimal dc);
     IEnumerable<ICashBox> GetCashBoxAll();
 
     INomenklType GetNomenklType(decimal? dc);

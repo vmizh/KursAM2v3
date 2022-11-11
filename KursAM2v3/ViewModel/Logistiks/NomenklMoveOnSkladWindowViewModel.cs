@@ -107,10 +107,6 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentNomenklMoveItem;
             set
             {
-                while (!MainReferences.IsReferenceLoadComplete)
-                {
-                }
-
                 // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (myCurrentNomenklMoveItem == value) return;
                 myCurrentNomenklMoveItem = value;
@@ -596,10 +592,6 @@ namespace KursAM2.ViewModel.Logistiks
         private void LoadDocuments(decimal storeDC)
         {
             DocumentList.Clear();
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             if (CurrentNomenklMoveItem == null || storeDC == 0) return;
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -1267,12 +1259,7 @@ namespace KursAM2.ViewModel.Logistiks
 
             RefreshDataAsync();
 
-            //DocumentList.Clear();
-            //NomenklMoveList.Clear();
-            //if (CurrentSklad == null)
-            //    LoadForAllSklads4();
-            //else
-            //    LoadForCurrentSklad4();
+            
         }
 
         public override void DocumentOpen(object obj)

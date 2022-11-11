@@ -3,7 +3,8 @@ using System.Runtime.Serialization;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using DevExpress.Data;
-using KursDomain.Documents.Employee;
+using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -21,7 +22,7 @@ namespace KursAM2.ViewModel.Personal
 
         [GridColumnView("Валюта", SettingsType.Default, ReadOnly = true)]
         [DataMember]
-        public string CrsName => Employee.Currency.Name;
+        public string CrsName => ((IName)Employee.Currency).Name;
 
         [GridColumnSummary(SummaryItemType.Sum, "n2")]
         [GridColumnView("Начислено", SettingsType.Decimal, ReadOnly = true)]

@@ -9,6 +9,8 @@ using Core.WindowsManager;
 using DevExpress.Xpf.Grid;
 using KursDomain;
 using KursDomain.Documents.Employee;
+using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -39,11 +41,11 @@ namespace KursAM2.ViewModel.Personal
             {
                 var crs = GlobalOptions.GetEntities().SD_301.ToList();
                 foreach (var item in GlobalOptions.GetEntities()
-                             .SD_2.Select(s => new Employee(s)
+                             .SD_2.Select(s => new Employee()
                              ))
                 {
-                    item.Currency.Name =
-                        crs.Where(t => t.DOC_CODE == item.Currency.DocCode)
+                    ((IName)item.Currency).Name =
+                        crs.Where(t => t.DOC_CODE == ((IDocCode)item.Currency).DocCode)
                             .Select(s => s.CRS_SHORTNAME)
                             .FirstOrDefault();
                     Source.Add(new PersonaDialogSelect { Persona = item });

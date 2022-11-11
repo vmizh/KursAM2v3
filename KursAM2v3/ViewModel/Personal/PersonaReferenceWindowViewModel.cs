@@ -6,25 +6,22 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.View.Base;
 using KursDomain;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Systems;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
-using Employee = KursDomain.Documents.Employee.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {
     public class PersonaReferenceWindowViewModel : RSWindowViewModelBase
     {
         private readonly ALFAMEDIAEntities myCtx = GlobalOptions.GetEntities();
-        private Employee myCurrentPersona;
+        private EmployeeViewModel myCurrentPersona;
         private User myCurrentUser;
 
         public PersonaReferenceWindowViewModel()
@@ -35,7 +32,9 @@ namespace KursAM2.ViewModel.Personal
             RefreshData(null);
         }
 
-        public ObservableCollection<Employee> PersonaCollection { set; get; } = new ObservableCollection<Employee>();
+        public ObservableCollection<EmployeeViewModel> PersonaCollection { set; get; } =
+            new ObservableCollection<EmployeeViewModel>();
+
         public ObservableCollection<User> UserCollection { set; get; } = new ObservableCollection<User>();
         public ObservableCollection<User> UserDeleteCollection { set; get; } = new ObservableCollection<User>();
 
@@ -48,7 +47,7 @@ namespace KursAM2.ViewModel.Personal
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public List<Currency> CurenciesCollection { set; get; }
 
-        public Employee CurrentPersona
+        public EmployeeViewModel CurrentPersona
         {
             get => myCurrentPersona;
             set
@@ -81,7 +80,7 @@ namespace KursAM2.ViewModel.Personal
             try
             {
                 foreach (var s in myCtx.SD_2.Include(_ => _.SD_301).ToList())
-                    PersonaCollection.Add(new Employee(s) {State = RowStatus.NotEdited});
+                    PersonaCollection.Add(new EmployeeViewModel(s) { State = RowStatus.NotEdited });
             }
             catch (Exception ex)
             {
@@ -103,7 +102,7 @@ namespace KursAM2.ViewModel.Personal
                         .Select(
                             s => myCtx.EXT_USERS.FirstOrDefault(_ => _.USR_NICKNAME.ToUpper() == s.USER.ToUpper()))
                         .Where(usr => usr != null))
-                    UserCollection.Add(new User(usr) {State = RowStatus.NotEdited});
+                    UserCollection.Add(new User(usr) { State = RowStatus.NotEdited });
             }
             catch (Exception ex)
             {
@@ -134,11 +133,9 @@ namespace KursAM2.ViewModel.Personal
                                 ed.STATUS_NOTES = CurrentPersona.StatusNotes;
                                 ed.NAME = CurrentPersona.Name;
                                 if (ed.crs_dc != CurrentPersona.Currency.DocCode)
-                                {
-                                    if(!(ctxsave.SD_33.Any(_ => _.TABELNUMBER == CurrentPersona.TabelNumber)
-                                       || ctxsave.SD_34.Any(_ => _.TABELNUMBER == CurrentPersona.TabelNumber)))
-                                    ed.crs_dc = CurrentPersona.Currency.DocCode;
-                                }
+                                    if (!(ctxsave.SD_33.Any(_ => _.TABELNUMBER == CurrentPersona.TabelNumber)
+                                          || ctxsave.SD_34.Any(_ => _.TABELNUMBER == CurrentPersona.TabelNumber)))
+                                        ed.crs_dc = CurrentPersona.Currency.DocCode;
 
                                 break;
                             case RowStatus.NewRow:
@@ -216,7 +213,7 @@ namespace KursAM2.ViewModel.Personal
         // ReSharper disable once InconsistentNaming
         private void addNewPersona(object obj)
         {
-            var newPersona = new Employee
+            var newPersona = new EmployeeViewModel
             {
                 IsDeleted = false,
                 CHANGE_DATE = DateTime.Now,
@@ -248,7 +245,7 @@ namespace KursAM2.ViewModel.Personal
         private void addNewUser(object obj)
         {
             var ctxnew = new PersonaAddUserForRights();
-            var dlg = new SelectDialogView {DataContext = ctxnew};
+            var dlg = new SelectDialogView { DataContext = ctxnew };
             dlg.ShowDialog();
             if (!ctxnew.DialogResult) return;
             ctxnew.CurrentRow.State = RowStatus.NewRow;

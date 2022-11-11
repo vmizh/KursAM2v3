@@ -92,7 +92,7 @@ namespace KursAM2.View.Finance.Cash
             {
                 case nameof(doc.Cash):
                     var cb = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Cash, "Cash",
-                        MainReferences.Cashs.Values.Where(_ => _.IsAccessRight).ToList());
+                        GlobalOptions.ReferencesCache.GetCashBoxAll().ToList());
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
                     cb.EditValueChanged += Cb_EditValueChanged;
@@ -416,7 +416,7 @@ namespace KursAM2.View.Finance.Cash
                     ctx.Document.NAME_ORD = emp?.Name;
                     ctx.Document.SPostName = null;
                     ctx.Document.SPOST_DC = null;
-                    ctx.Document.Currency = emp.Currency;
+                    ctx.Document.Currency = emp.Currency as Currency;
                     CurrencyItem.IsEnabled = false;
                     break;
                 case CashKontragentType.Bank:
@@ -435,7 +435,7 @@ namespace KursAM2.View.Finance.Cash
                     CurrencyItem.IsEnabled = false;
                     break;
                 case CashKontragentType.Cash:
-                    var ch = StandartDialogs.SelectCash(new List<KursDomain.Documents.Cash.Cash> {ctx.Document.Cash});
+                    var ch = StandartDialogs.SelectCash(new List<CashBox> {ctx.Document.Cash});
                     if (ch != null) ctx.Document.CashTo = ch;
                     ctx.Document.KONTRAGENT_DC = null;
                     ctx.Document.BankAccount = null;

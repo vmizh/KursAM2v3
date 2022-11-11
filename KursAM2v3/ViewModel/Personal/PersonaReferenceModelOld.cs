@@ -1,7 +1,6 @@
 ﻿using Core.ViewModel.Base;
 using KursDomain.ICommon;
 using KursDomain.References;
-using Employee = KursDomain.Documents.Employee.Employee;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -81,7 +80,7 @@ namespace KursAM2.ViewModel.Personal
 
         public Currency Crs
         {
-            get => _Persona.Currency;
+            get => _Persona.Currency as Currency;
             set
             {
                 if (Equals(_Persona.Currency, value)) return;
@@ -92,26 +91,26 @@ namespace KursAM2.ViewModel.Personal
             }
         }
 
-        public byte[] Photo
-        {
-            get => _Persona.Photo;
-            set
-            {
-                if (_Persona.Photo == value) return;
-                _Persona.Photo = value;
-                if (State == RowStatus.NotEdited)
-                    State = RowStatus.Edited;
-                RaisePropertyChanged();
-            }
-        }
+        //public byte[] Photo
+        //{
+        //    get => _Persona.Photo;
+        //    set
+        //    {
+        //        if (_Persona.Photo == value) return;
+        //        _Persona.Photo = value;
+        //        if (State == RowStatus.NotEdited)
+        //            State = RowStatus.Edited;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         public string StatusNotes
         {
-            get => _Persona.StatusNotes;
+            get => _Persona.Position;
             set
             {
-                if (_Persona.StatusNotes == value) return;
-                _Persona.StatusNotes = value;
+                if (_Persona.Position == value) return;
+                _Persona.Position = value;
                 if (State == RowStatus.NotEdited)
                     State = RowStatus.Edited;
                 RaisePropertyChanged();

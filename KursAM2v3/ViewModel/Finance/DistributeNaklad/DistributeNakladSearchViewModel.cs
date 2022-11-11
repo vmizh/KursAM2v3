@@ -201,10 +201,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         public override void Load(object o)
         {
             Documents.Clear();
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             foreach (var d in distributeNakladRepository.GetAllByDates(StartDate, EndDate))
                 Documents.Add(new DistributeNakladViewModel(d));
             RaisePropertiesChanged(nameof(Documents));

@@ -21,6 +21,7 @@ namespace KursAM2.View.DialogUserControl
         private BankAccount myCurrentChildItem;
         private Bank myCurrentItem;
         private StandartDialogSelectTwoTableUC myDataUserControl;
+        private Currency currency;
 
         //public BankAccountSelectedDialog()
         //{
@@ -34,23 +35,23 @@ namespace KursAM2.View.DialogUserControl
 
         public BankAccountSelectedDialog(Currency crs)
         {
+            currency = crs;
             LayoutControl = myDataUserControl = new StandartDialogSelectTwoTableUC(GetType().Name);
             WindowName = "Выбор банковского счета";
             ItemsCollection = new ObservableCollection<Bank>();
-            if (crs == null)
+            if (currency == null)
             {
-                foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll())
-                    if (ItemsCollection.All(_ => _.DocCode != ((IDocCode)b).DocCode))
-                        ItemsCollection.Add(b.Bank as Bank);
+                foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<Bank>())
+                    if (ItemsCollection.All(_ => _.DocCode != ((IDocCode) b).DocCode))
+                        ItemsCollection.Add(b);
             }
             else
             {
-                foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll().Where(_ => Equals(_.Currency, crs)))
-                    if (ItemsCollection.All(_ => _.DocCode != ((IDocCode)b).DocCode))
+                foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>()
+                             .Where(_ => Equals(_.Currency, crs)))
+                    if (ItemsCollection.All(_ => _.DocCode != ((IDocCode) b).DocCode))
                         ItemsCollection.Add(b.Bank as Bank);
             }
-
-            var bbb = Equals(GlobalOptions.ReferencesCache.GetBankAccountAll().First().Currency,crs);
         }
 
         public BankAccountSelectedDialog(decimal dcOut)
@@ -85,17 +86,27 @@ namespace KursAM2.View.DialogUserControl
                 if (myCurrentItem == null) return;
                 if (excludeAccountDC != null)
                     foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(_ =>
-                                 _.DocCode == myCurrentItem?.DocCode
-                                 && _.DocCode != excludeAccountDC))
+                                 ((IDocCode)_.Bank).DocCode  == myCurrentItem?.DocCode
+                                 && ((IDocCode)_.Bank).DocCode  != excludeAccountDC))
                         ChildItemsCollection.Add(acc);
                 else
-                    foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(_ =>
-                                 _.DocCode == myCurrentItem.DocCode))
-                        ChildItemsCollection.Add(acc);
+                {
+                    if(currency == null)
+                        foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(_ =>
+                                     ((IDocCode) _.Bank).DocCode == myCurrentItem.DocCode))
+                            ChildItemsCollection.Add(acc);
+                    else 
+                        foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(_ =>
+                                     ((IDocCode) _.Bank).DocCode == myCurrentItem.DocCode && Equals(currency,_.Currency)))
+                            ChildItemsCollection.Add(acc);
+                }
                 RaisePropertyChanged();
             }
         }
-
+        public override bool IsOkAllow()
+        {
+            return CurrentChildItem != null;
+        }
         public BankAccount CurrentChildItem
         {
             get => myCurrentChildItem;
@@ -160,6 +171,11 @@ namespace KursAM2.View.DialogUserControl
             }
         }
 
+        public override bool IsOkAllow()
+        {
+            return CurrentChildItem != null;
+        }
+
         public StandartDialogSelectUC DataUserControl
         {
             get => myDataUserControl;
@@ -219,6 +235,8 @@ namespace KursAM2.View.DialogUserControl
         }
 
         public DependencyObject LayoutControl { get; }
+
+       
 
         public override void RefreshData(object obj)
         {

@@ -3,7 +3,6 @@ using Core;
 using Core.ViewModel.Base;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.References;
-using Employee = KursDomain.Documents.Employee.Employee;
 
 namespace KursAM2.ViewModel.Management.ManagementBalans
 {

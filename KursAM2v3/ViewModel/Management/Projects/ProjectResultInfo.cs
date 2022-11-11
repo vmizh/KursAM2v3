@@ -1,15 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using DevExpress.Mvvm.DataAnnotations;
-using KursDomain.Documents.CommonReferences;
+using KursDomain.References;
 using static System.Math;
 
 namespace KursAM2.ViewModel.Management.Projects
 {
     [MetadataType(typeof(DataAnnotationsProjectResultInfoViewModel))]
-    public class ProjectResultInfo : Project, IMultyWithDilerCurrency
+    public class ProjectResultInfo : ProjectViewModel, IMultyWithDilerCurrency
     {
         private decimal myDilerCHF;
         private decimal myDilerEUR;
@@ -284,7 +283,6 @@ namespace KursAM2.ViewModel.Management.Projects
             DateEnd = p.DateEnd;
             IsClosed = p.IsClosed;
             IsDeleted = p.IsDeleted;
-            Responsible = p.Responsible;
         }
     }
 

@@ -18,12 +18,12 @@ namespace KursAM2.View.DialogUserControl
 {
     public class CashSetRemainsDialog : RSWindowViewModelBase, IDataUserControl
     {
-        private readonly Cash Cash;
+        private readonly CashBox Cash;
         private readonly List<Currency> CashCurrencies = new List<Currency>();
         private CashStartRemains myCurrentRemain;
         private CashSetRemainsUC myDataUserControl;
 
-        public CashSetRemainsDialog(Cash cash)
+        public CashSetRemainsDialog(CashBox cash)
         {
             Cash = cash;
             LayoutControl = myDataUserControl = new CashSetRemainsUC();

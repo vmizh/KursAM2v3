@@ -14,7 +14,7 @@ namespace KursDomain.Documents.NomenklManagement;
 [MetadataType(typeof(DataAnnotationsStore))]
 public class Warehouse : RSViewModelBase, IEntity<SD_27>
 {
-    private Employee.Employee myEmployee;
+    private References.Employee myEmployee;
     private SD_27 myEntity;
     private bool myIsCanNegativeRest;
     private Region myRegion;
@@ -118,7 +118,7 @@ public class Warehouse : RSViewModelBase, IEntity<SD_27>
         }
     }
 
-    public Employee.Employee Employee
+    public References.Employee Employee
     {
         get => myEmployee;
         set
@@ -300,7 +300,7 @@ public class Warehouse : RSViewModelBase, IEntity<SD_27>
         if (MainReferences.Employees.Values.Any(_ => _.TabelNumber == Entity.TABELNUMBER))
             Employee = MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == Entity.TABELNUMBER);
         else
-            Employee = new Employee.Employee
+            Employee = new References.Employee
             {
                 DocCode = 0,
                 TabelNumber = 0,

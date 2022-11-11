@@ -14,6 +14,7 @@ using KursAM2.ViewModel.Reference;
 using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
+using KursDomain.References;
 using LayoutManager;
 
 namespace KursAM2.View.KursReferences

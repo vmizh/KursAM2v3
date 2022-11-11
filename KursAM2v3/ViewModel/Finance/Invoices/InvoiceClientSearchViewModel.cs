@@ -326,10 +326,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             IsDocNewCopyAllow = false;
             IsDocNewCopyRequisiteAllow = false;
             IsPrintAllow = false;
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             try
             {
                 foreach (var d in InvoiceClientRepository.GetAllByDates(StartDate, EndDate))

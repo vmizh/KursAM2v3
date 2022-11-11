@@ -85,7 +85,7 @@
                                            IsReadOnly="True"
                                            MinWidth="120"/>
                         <dxe:TextEdit Margin="5 0" EditValue="{Binding Document.Currency, Mode=OneWay}"
-                                      Width="50"/>
+                                      Width="50" IsReadOnly="True"/>
                         <Label Margin="5 0" Content="Оплачено: "/>
                         <dxe:PopupCalcEdit 
                             EditValue="{Binding Document.PaySumma, Mode=OneWay}"

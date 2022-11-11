@@ -2,6 +2,7 @@
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using KursDomain.Documents.CommonReferences;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Management.Projects
 {

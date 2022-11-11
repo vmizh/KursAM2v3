@@ -916,7 +916,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
     /// <summary>
     ///     Ответственный
     /// </summary>
-    public Employee.Employee PersonaResponsible
+    public References.Employee PersonaResponsible
     {
         get => MainReferences.GetEmployee(Entity.PersonalResponsibleDC);
         set

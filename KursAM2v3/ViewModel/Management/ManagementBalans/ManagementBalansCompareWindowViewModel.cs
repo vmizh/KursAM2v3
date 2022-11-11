@@ -23,9 +23,9 @@ using KursAM2.ViewModel.Logistiks;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
-using Employee = KursDomain.Documents.Employee.Employee;
 
 // ReSharper disable All
 namespace KursAM2.ViewModel.Management.ManagementBalans
@@ -1596,7 +1596,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         public class EmployeeSalary : SummaCompareCurrencies
         {
             public Employee Employee { set; get; }
-            public string CurrencyName => Employee?.Currency?.Name;
+            public string CurrencyName => ((IName)Employee?.Currency)?.Name;
         }
 
         public class DataAnnotationsEmployeeSalary : DataAnnotationForFluentApiBase, IMetadataProvider<EmployeeSalary>

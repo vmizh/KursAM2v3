@@ -22,6 +22,7 @@ using KursDomain;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {
@@ -29,7 +30,7 @@ namespace KursAM2.ViewModel.Finance.Cash
     {
         #region Fields
 
-        private KursDomain.Documents.Cash.Cash myCurrentCash;
+        private CashBox myCurrentCash;
         private CashBookDocument myCurrentDocument;
         private DatePeriod myCurrentPeriod;
         private bool myIsPeriodEnabled;
@@ -59,9 +60,8 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         #region Properties
 
-        public ObservableCollection<KursDomain.Documents.Cash.Cash> CashList { set; get; }
-            = new ObservableCollection<KursDomain.Documents.Cash.Cash>(
-                MainReferences.Cashs.Values.Where(_ => _.IsAccessRight));
+        public ObservableCollection<CashBox> CashList { set; get; }
+            = new ObservableCollection<CashBox>(GlobalOptions.ReferencesCache.GetCashBoxAll().Cast<CashBox>());
 
         public ObservableCollection<CashBookDocument> Documents { set; get; }
             = new ObservableCollection<CashBookDocument>();
@@ -90,7 +90,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             }
         }
 
-        public KursDomain.Documents.Cash.Cash CurrentCash
+        public CashBox CurrentCash
         {
             get => myCurrentCash;
             set
@@ -204,10 +204,6 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         private void LoadDocuments()
         {
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             Documents.Clear();
             foreach (var d in CashManager.LoadDocuments(CurrentCash, CurrentPeriod.DateStart, CurrentPeriod.DateEnd))
                 Documents.Add(d);
@@ -524,7 +520,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             var cashOut = vm as CashOut;
             var cashExch = vm as CashCurrencyExchange;
             // ReSharper disable once PossibleInvalidOperationException
-            var date = (DateTime)(vm is CashIn cashIn ? cashIn.DATE_ORD :
+            var date = (DateTime)(vm is CashInViewModel cashIn ? cashIn.DATE_ORD :
                 cashOut != null ? cashOut.DATE_ORD :
                 cashExch?.CH_DATE ?? DateTime.Today);
             RefreshData(null);

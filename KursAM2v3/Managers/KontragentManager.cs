@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using Core;
 using Core.WindowsManager;
 using Data;
 using KursDomain;
@@ -55,7 +54,7 @@ namespace KursAM2.Managers
         {
             try
             {
-                MainReferences.LoadKontragents();
+                //MainReferences.LoadKontragents();
                 using (var dtx = GlobalOptions.KursSystem())
                 {
                     var dd = dtx.KontragentCashes.Where(_ => _.UserId == GlobalOptions.UserInfo.KursId

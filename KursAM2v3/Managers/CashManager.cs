@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -41,7 +40,7 @@ namespace KursAM2.Managers
                         switch (docType)
                         {
                             case CashDocumentType.CashIn:
-                                if (!(doc is CashIn delCashIn)) return;
+                                if (!(doc is CashInViewModel delCashIn)) return;
                                 docDate = (DateTime) delCashIn.DATE_ORD;
                                 docCRS = (decimal) delCashIn.CRS_DC;
                                 cashDC = (decimal) delCashIn.CA_DC;
@@ -72,16 +71,16 @@ namespace KursAM2.Managers
                             var daterems = ctx.SD_251.Where(_ => _.CH_DATE >= docDate).Select(_ => _.CH_DATE).Distinct()
                                 .ToList();
                             foreach (var d in ctx.SD_34.Where(_ => _.DATE_ORD >= docDate)
-                                .Select(k => k.DATE_ORD)
-                                .Distinct().ToList())
+                                         .Select(k => k.DATE_ORD)
+                                         .Distinct().ToList())
                             {
                                 if (daterems.Contains((DateTime) d)) continue;
                                 daterems.Add(d.Value);
                             }
 
                             foreach (var d in ctx.SD_33.Where(_ => _.DATE_ORD >= docDate)
-                                .Select(k => k.DATE_ORD)
-                                .Distinct().ToList())
+                                         .Select(k => k.DATE_ORD)
+                                         .Distinct().ToList())
                             {
                                 if (daterems.Contains((DateTime) d)) continue;
                                 daterems.Add(d.Value);
@@ -111,7 +110,7 @@ namespace KursAM2.Managers
             }
         }
 
-        public static SD_33 CashInViewModelToEntity(CashIn ent)
+        public static SD_33 CashInViewModelToEntity(CashInViewModel ent)
         {
             var ret = new SD_33
             {
@@ -162,7 +161,7 @@ namespace KursAM2.Managers
             return ret;
         }
 
-        public static CashIn LoadCashIn(decimal dc)
+        public static CashInViewModel LoadCashIn(decimal dc)
         {
             try
             {
@@ -187,7 +186,7 @@ namespace KursAM2.Managers
                         .Include(_ => _.StockHolders)
                         .AsNoTracking()
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
-                    var doc = new CashIn(data)
+                    var doc = new CashInViewModel(data)
                     {
                         myState = RowStatus.NotEdited
                     };
@@ -198,9 +197,11 @@ namespace KursAM2.Managers
                             : $"{doc.AcrruedAmountRow.AccruedAmountForClient.DocInNum}/{doc.AcrruedAmountRow.AccruedAmountForClient.DocExtNum}";
                         var nom = MainReferences.GetNomenkl(doc.AcrruedAmountRow.NomenklDC);
                         var snom = $"{nom}({nom.NomenklNumber})";
-                        doc.AccuredInfo = $"Прямой расход №{snum} от {doc.AcrruedAmountRow.AccruedAmountForClient.DocDate.ToShortDateString()} " +
-                                          $"{snom}";
+                        doc.AccuredInfo =
+                            $"Прямой расход №{snum} от {doc.AcrruedAmountRow.AccruedAmountForClient.DocDate.ToShortDateString()} " +
+                            $"{snom}";
                     }
+
                     if (doc.SFACT_DC != null)
                     {
                         var inv = ctx.SD_84.FirstOrDefault(_ => _.DOC_CODE == doc.SFACT_DC);
@@ -221,7 +222,7 @@ namespace KursAM2.Managers
                                 Note = c.NOTES_ORD
                             });
                         foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
-                            .Where(_ => _.VVT_SFACT_CLIENT_DC == doc.SFACT_DC).ToList())
+                                     .Where(_ => _.VVT_SFACT_CLIENT_DC == doc.SFACT_DC).ToList())
                             pDocs.Add(new InvoicePaymentDocument
                             {
                                 DocCode = c.DOC_CODE,
@@ -250,7 +251,7 @@ namespace KursAM2.Managers
             return null;
         }
 
-        public static bool CheckCashIn(CashIn doc)
+        public static bool CheckCashIn(CashInViewModel doc)
         {
             return doc.Cash != null && doc.SUMM_ORD != null && doc.SUMM_ORD != 0 &&
                    !string.IsNullOrWhiteSpace(doc.Kontragent)
@@ -270,9 +271,9 @@ namespace KursAM2.Managers
                                     && doc.SDRSchet != null;
         }
 
-        public static CashIn NewCashIn()
+        public static CashInViewModel NewCashIn()
         {
-            var ret = new CashIn
+            var ret = new CashInViewModel
             {
                 DocCode = -1,
                 DATE_ORD = DateTime.Today,
@@ -292,7 +293,7 @@ namespace KursAM2.Managers
             return ret;
         }
 
-        public static CashIn NewCopyCashIn(decimal dc)
+        public static CashInViewModel NewCopyCashIn(decimal dc)
         {
             var ret = LoadCashIn(dc);
             ret.DocCode = -1;
@@ -331,7 +332,7 @@ namespace KursAM2.Managers
             return ret;
         }
 
-        public static CashIn NewRequisiteCashIn(decimal dc)
+        public static CashInViewModel NewRequisiteCashIn(decimal dc)
         {
             var ret = LoadCashIn(dc);
             ret.DocCode = -1;
@@ -477,7 +478,7 @@ namespace KursAM2.Managers
                         switch (docType)
                         {
                             case CashDocumentType.CashIn:
-                                if (!(doc is CashIn updateCashIn)) return;
+                                if (!(doc is CashInViewModel updateCashIn)) return;
                                 docDate = (DateTime) updateCashIn.DATE_ORD;
                                 docCRS = (decimal) updateCashIn.CRS_DC;
                                 cashDC = (decimal) updateCashIn.CA_DC;
@@ -528,9 +529,9 @@ namespace KursAM2.Managers
                                 break;
                             case CashDocumentType.CashOut:
                                 if (!(doc is CashOut updateCashOut)) return;
-                                docDate = (DateTime)updateCashOut.DATE_ORD;
-                                docCRS = (decimal)updateCashOut.CRS_DC;
-                                cashDC = (decimal)updateCashOut.CA_DC;
+                                docDate = (DateTime) updateCashOut.DATE_ORD;
+                                docCRS = (decimal) updateCashOut.CRS_DC;
+                                cashDC = (decimal) updateCashOut.CA_DC;
                                 cashstart = ctx.TD_22.FirstOrDefault(_ => _.CRS_DC == updateCashOut.Currency.DocCode
                                                                           && updateCashOut.Cash.DocCode == _.DOC_CODE);
                                 if (cashstart == null || updateCashOut.DATE_ORD < cashstart.DATE_START)
@@ -554,14 +555,14 @@ namespace KursAM2.Managers
                                             Id = Guid.NewGuid(),
                                             Rate = 1,
                                             // ReSharper disable once PossibleInvalidOperationException
-                                            Summa = (decimal)updateCashOut.SUMM_ORD,
+                                            Summa = (decimal) updateCashOut.SUMM_ORD,
                                             CashDC = updateCashOut.DocCode,
                                             // ReSharper disable once PossibleInvalidOperationException
-                                            DocDC = (decimal)updateCashOut.SPOST_DC
+                                            DocDC = (decimal) updateCashOut.SPOST_DC
                                         });
                                     else
                                         // ReSharper disable once PossibleInvalidOperationException
-                                        old.Summa = (decimal)updateCashOut.SUMM_ORD;
+                                        old.Summa = (decimal) updateCashOut.SUMM_ORD;
                                     var sql =
                                         "SELECT s26.doc_code as DocCode, s26.SF_CRS_SUMMA as Summa, SUM(ISNULL(s34.CRS_SUMMA,0)+ISNULL(t101.VVT_VAL_RASHOD,0) + ISNULL(t110.VZT_CRS_SUMMA,0)) AS PaySumma " +
                                         "FROM sd_26 s26 " +
@@ -595,14 +596,14 @@ namespace KursAM2.Managers
                                     var s = ctx.SD_34.Where(_ =>
                                             _.AccuredId == updateCashOut.AccuredId &&
                                             _.DOC_CODE != updateCashOut.DocCode
-                                                )?
+                                        )?
                                         .Sum(_ => _.SUMM_ORD) ?? 0;
                                     decimal s2 = 0;
-                                   s2 = ctx.AccuredAmountOfSupplierRow
-                                            .FirstOrDefault(_ => _.Id == updateCashOut.AccuredId)?
-                                            .Summa ?? 0;
+                                    s2 = ctx.AccuredAmountOfSupplierRow
+                                        .FirstOrDefault(_ => _.Id == updateCashOut.AccuredId)?
+                                        .Summa ?? 0;
 
-                                   if (s + updateCashOut.SUMM_ORD > s2)
+                                    if (s + updateCashOut.SUMM_ORD > s2)
                                     {
                                         var res = winManager.ShowWinUIMessageBox(
                                             $"Сумма прямых затрат {s2:n2} меньше сумм оплат {s + updateCashOut.SUMM_ORD:n2}! " +
@@ -661,16 +662,16 @@ namespace KursAM2.Managers
                             var daterems = ctx.SD_251.Where(_ => _.CH_DATE >= docDate).Select(_ => _.CH_DATE).Distinct()
                                 .ToList();
                             foreach (var d in ctx.SD_34.Where(_ => _.DATE_ORD >= docDate)
-                                .Select(k => k.DATE_ORD)
-                                .Distinct().ToList())
+                                         .Select(k => k.DATE_ORD)
+                                         .Distinct().ToList())
                             {
                                 if (daterems.Contains((DateTime) d)) continue;
                                 daterems.Add(d.Value);
                             }
 
                             foreach (var d in ctx.SD_33.Where(_ => _.DATE_ORD >= docDate)
-                                .Select(k => k.DATE_ORD)
-                                .Distinct().ToList())
+                                         .Select(k => k.DATE_ORD)
+                                         .Distinct().ToList())
                             {
                                 if (daterems.Contains((DateTime) d)) continue;
                                 daterems.Add(d.Value);
@@ -751,7 +752,7 @@ namespace KursAM2.Managers
                         switch (docType)
                         {
                             case CashDocumentType.CashIn:
-                                if (!(doc is CashIn insertCashIn)) return;
+                                if (!(doc is CashInViewModel insertCashIn)) return;
                                 cashstart = ctx.TD_22.FirstOrDefault(_ => _.CRS_DC == insertCashIn.Currency.DocCode
                                                                           && insertCashIn.Cash.DocCode == _.DOC_CODE);
                                 if (cashstart == null || insertCashIn.DATE_ORD < cashstart.DATE_START)
@@ -808,10 +809,10 @@ namespace KursAM2.Managers
                                 }
 
                                 ctx.Entry(ent).State = EntityState.Added;
-                                if (((CashIn) doc).AcrruedAmountRow != null)
+                                if (((CashInViewModel) doc).AcrruedAmountRow != null)
                                 {
                                     var old = ctx.AccuredAmountForClientRow.FirstOrDefault(_ =>
-                                        _.Id == ((CashIn) doc).AcrruedAmountRow.Id);
+                                        _.Id == ((CashInViewModel) doc).AcrruedAmountRow.Id);
                                     if (old != null)
                                         old.CashDC = ent.DOC_CODE;
                                 }
@@ -960,16 +961,16 @@ namespace KursAM2.Managers
                             var daterems = ctx.SD_251.Where(_ => _.CH_DATE >= docDate).Select(_ => _.CH_DATE)
                                 .Distinct().ToList();
                             foreach (var d in ctx.SD_34.Where(_ => _.DATE_ORD >= docDate)
-                                .Select(k => k.DATE_ORD)
-                                .Distinct().ToList())
+                                         .Select(k => k.DATE_ORD)
+                                         .Distinct().ToList())
                             {
                                 if (daterems.Contains((DateTime) d)) continue;
                                 daterems.Add(d.Value);
                             }
 
                             foreach (var d in ctx.SD_33.Where(_ => _.DATE_ORD >= docDate)
-                                .Select(k => k.DATE_ORD)
-                                .Distinct().ToList())
+                                         .Select(k => k.DATE_ORD)
+                                         .Distinct().ToList())
                             {
                                 if (daterems.Contains((DateTime) d)) continue;
                                 daterems.Add(d.Value);
@@ -1053,7 +1054,6 @@ namespace KursAM2.Managers
                 PLAT_VED_ROW_CODE = ent.PLAT_VED_ROW_CODE,
                 AccuredId = ent.AccuredId,
                 StockHolderId = ent.StockHolder?.Id
-                
             };
             return ret;
         }
@@ -1094,9 +1094,11 @@ namespace KursAM2.Managers
                             : $"{acc.AccruedAmountOfSupplier.DocInNum}/{acc.AccruedAmountOfSupplier.DocExtNum}";
                         var nom = MainReferences.GetNomenkl(acc.NomenklDC);
                         var snom = $"{nom}({nom.NomenklNumber})";
-                        doc.AccuredInfo = $"Прямой расход №{snum} от {acc.AccruedAmountOfSupplier.DocDate.ToShortDateString()} " +
-                                          $"Ном.№ {snom}";
+                        doc.AccuredInfo =
+                            $"Прямой расход №{snum} от {acc.AccruedAmountOfSupplier.DocDate.ToShortDateString()} " +
+                            $"Ном.№ {snom}";
                     }
+
                     return doc;
                 }
             }
@@ -1167,7 +1169,7 @@ namespace KursAM2.Managers
             return null;
         }
 
-        public bool CheckRemains(Cash cash, DateTime date, Currency crs)
+        public bool CheckRemains(CashBox cash, DateTime date, Currency crs)
         {
             return false;
         }
@@ -1254,7 +1256,7 @@ namespace KursAM2.Managers
         ///     Загрузка приходных кассовых ордеров
         /// </summary>
         [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        public static List<CashBookDocument> LoadCashIn(Cash cash, DateTime dateStart, DateTime dateEnd,
+        public static List<CashBookDocument> LoadCashIn(CashBox cash, DateTime dateStart, DateTime dateEnd,
             string searchText = null)
         {
             var ret = new List<CashBookDocument>();
@@ -1334,6 +1336,7 @@ namespace KursAM2.Managers
                             doc.KontragnetTypeName = "Акционер";
                             doc.KontragnetName = d.StockHolders.Name;
                         }
+
                         ret.Add(doc);
                     }
                 }
@@ -1352,7 +1355,7 @@ namespace KursAM2.Managers
         ///     Загрузка расходных кассовых ордеров
         /// </summary>
         [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        public static List<CashBookDocument> LoadCashOut(Cash cash, DateTime dateStart, DateTime dateEnd,
+        public static List<CashBookDocument> LoadCashOut(CashBox cash, DateTime dateStart, DateTime dateEnd,
             string searchText = null)
         {
             var ret = new List<CashBookDocument>();
@@ -1452,7 +1455,7 @@ namespace KursAM2.Managers
         ///     Загрузка обмена валют
         /// </summary>
         [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        public static List<CashBookDocument> LoadCashCurrencyChange(Cash cash, DateTime dateStart, DateTime dateEnd,
+        public static List<CashBookDocument> LoadCashCurrencyChange(CashBox cash, DateTime dateStart, DateTime dateEnd,
             string searchText = null)
         {
             var ret = new List<CashBookDocument>();
@@ -1608,7 +1611,7 @@ namespace KursAM2.Managers
             return null;
         }
 
-        public static List<CashBookDocument> LoadDocuments(Cash cash, DateTime dateStart, DateTime dateEnd,
+        public static List<CashBookDocument> LoadDocuments(CashBox cash, DateTime dateStart, DateTime dateEnd,
             string searchText = null)
         {
             var ret = new List<CashBookDocument>();
@@ -1620,7 +1623,7 @@ namespace KursAM2.Managers
         }
 
         [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        public static List<MoneyRemains> GetRemains(Cash cash, DatePeriod period, List<CashBookDocument> documents)
+        public static List<MoneyRemains> GetRemains(CashBox cash, DatePeriod period, List<CashBookDocument> documents)
         {
             var ret = new List<MoneyRemains>();
             try

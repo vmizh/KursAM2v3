@@ -4,6 +4,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.References;
 using static Core.MainReferences;
 
 namespace KursDomain.Documents.Cash;
@@ -22,7 +23,7 @@ public class CashOrder : RSViewModelBase
         DocCode = order.DOC_CODE;
         NumOrder = order.NUM_ORD.ToString();
         Currency = Currencies[(decimal)order.CRS_DC];
-        Cash = Cashs[(decimal)order.CA_DC];
+        Cash = GlobalOptions.ReferencesCache.GetCashBox(order.CA_DC) as CashBox;
         Creator = order.CREATOR;
         DateOrder = (DateTime)order.DATE_ORD;
         NameOrder = order.NAME_ORD;
@@ -49,7 +50,7 @@ public class CashOrder : RSViewModelBase
         DocCode = order.DOC_CODE;
         NumOrder = order.NUM_ORD.ToString();
         Currency = Currencies[(decimal)order.CRS_DC];
-        Cash = CashsAll[(decimal)order.CA_DC];
+        Cash = GlobalOptions.ReferencesCache.GetCashBox(order.CA_DC) as CashBox;
         Creator = order.CREATOR;
         DateOrder = (DateTime)order.DATE_ORD;
         NameOrder = order.NAME_ORD;
@@ -71,7 +72,7 @@ public class CashOrder : RSViewModelBase
     #region Properties
 
     public string TypeOrder { set; get; }
-    public Cash Cash { set; get; }
+    public CashBox Cash { set; get; }
     public References.Currency Currency { set; get; }
     public string NumOrder { set; get; }
     public DateTime DateOrder { set; get; }
